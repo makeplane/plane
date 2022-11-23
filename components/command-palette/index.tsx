@@ -5,18 +5,18 @@ import { useRouter } from "next/router";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // hooks
 import useUser from "lib/hooks/useUser";
+import useTheme from "lib/hooks/useTheme";
+import useToast from "lib/hooks/useToast";
 // icons
 import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 import { DocumentPlusIcon, FolderPlusIcon, FolderIcon } from "@heroicons/react/24/outline";
 // commons
-import { classNames } from "constants/common";
+import { classNames, copyTextToClipboard } from "constants/common";
 // components
 import ShortcutsModal from "components/command-palette/shortcuts";
 import CreateProjectModal from "components/project/CreateProjectModal";
 import CreateUpdateIssuesModal from "components/project/issues/CreateUpdateIssueModal";
 import CreateUpdateCycleModal from "components/project/cycles/CreateUpdateCyclesModal";
-// hooks
-import useTheme from "lib/hooks/useTheme";
 // types
 import { IIssue } from "types";
 type ItemType = {
@@ -39,6 +39,8 @@ const CommandPalette: React.FC = () => {
   const { issues, activeProject } = useUser();
 
   const { toggleCollapsed } = useTheme();
+
+  const { setToastAlert } = useToast();
 
   const filteredIssues: IIssue[] =
     query === ""
@@ -72,7 +74,7 @@ const CommandPalette: React.FC = () => {
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      if (e.key === "/") {
+      if (e.ctrlKey && e.key === "/") {
         e.preventDefault();
         setIsPaletteOpen(true);
       } else if (e.ctrlKey && e.key === "i") {
@@ -90,9 +92,28 @@ const CommandPalette: React.FC = () => {
       } else if (e.ctrlKey && e.key === "q") {
         e.preventDefault();
         setIsCreateCycleModalOpen(true);
+      } else if (e.ctrlKey && e.altKey && e.key === "c") {
+        e.preventDefault();
+
+        if (!router.query.issueId) return;
+
+        const url = new URL(window.location.href);
+        copyTextToClipboard(url.href)
+          .then(() => {
+            setToastAlert({
+              type: "success",
+              title: "Copied to clipboard",
+            });
+          })
+          .catch(() => {
+            setToastAlert({
+              type: "error",
+              title: "Some error occurred",
+            });
+          });
       }
     },
-    [toggleCollapsed]
+    [toggleCollapsed, setToastAlert, router]
   );
 
   useEffect(() => {

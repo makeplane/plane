@@ -1,5 +1,5 @@
 // react
-import React, { useState } from "react";
+import React from "react";
 // next
 import type { NextPage } from "next";
 // swr
@@ -8,37 +8,65 @@ import useSWR from "swr";
 import ProjectLayout from "layouts/ProjectLayout";
 // hooks
 import useUser from "lib/hooks/useUser";
-// components
-import CreateUpdateIssuesModal from "components/project/issues/CreateUpdateIssueModal";
 // ui
 import { Spinner } from "ui";
 import { BreadcrumbItem, Breadcrumbs } from "ui/Breadcrumbs";
 import { EmptySpace, EmptySpaceItem } from "ui/EmptySpace";
 import HeaderButton from "ui/HeaderButton";
-// icons
-import { PlusIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
-// services
-import userService from "lib/services/user.service";
-// types
-import { IIssue } from "types";
 // constants
-import ChangeStateDropdown from "components/project/issues/my-issues/ChangeStateDropdown";
 import { USER_ISSUE } from "constants/fetch-keys";
 import { classNames } from "constants/common";
+// services
+import userService from "lib/services/user.service";
+import issuesServices from "lib/services/issues.services";
+// components
+import ChangeStateDropdown from "components/project/issues/my-issues/ChangeStateDropdown";
+// icons
+import { PlusIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
+// types
+import { IIssue } from "types";
 
 const MyIssues: NextPage = () => {
-  const [isOpen, setIsOpen] = useState(false);
-
   const { user } = useUser();
 
-  const { data: myIssues } = useSWR<IIssue[]>(
+  const { data: myIssues, mutate: mutateMyIssue } = useSWR<IIssue[]>(
     user ? USER_ISSUE : null,
     user ? () => userService.userIssues() : null
   );
 
+  const updateMyIssues = (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    issue: Partial<IIssue>
+  ) => {
+    mutateMyIssue((prevData) => {
+      return prevData?.map((prevIssue) => {
+        if (prevIssue.id === issueId) {
+          return {
+            ...prevIssue,
+            ...issue,
+            state_detail: {
+              ...prevIssue.state_detail,
+              ...issue.state_detail,
+            },
+          };
+        }
+        return prevIssue;
+      });
+    }, false);
+    issuesServices
+      .patchIssue(workspaceSlug, projectId, issueId, issue)
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
     <ProjectLayout>
-      <CreateUpdateIssuesModal isOpen={isOpen} setIsOpen={setIsOpen} />
       <div className="w-full h-full flex flex-col space-y-5">
         {myIssues ? (
           <>
@@ -116,13 +144,16 @@ const MyIssues: NextPage = () => {
                                 </td>
                                 <td className="px-3 py-4 max-w-[15rem]">{myIssue.description}</td>
                                 <td className="px-3 py-4">
-                                  {myIssue.project_detail.name}
+                                  {myIssue.project_detail?.name}
                                   <br />
-                                  <span className="text-xs">{`(${myIssue.project_detail.identifier}-${myIssue.sequence_id})`}</span>
+                                  <span className="text-xs">{`(${myIssue.project_detail?.identifier}-${myIssue.sequence_id})`}</span>
                                 </td>
                                 <td className="px-3 py-4 capitalize">{myIssue.priority}</td>
                                 <td className="relative px-3 py-4">
-                                  <ChangeStateDropdown issue={myIssue} />
+                                  <ChangeStateDropdown
+                                    issue={myIssue}
+                                    updateIssues={updateMyIssues}
+                                  />
                                 </td>
                               </tr>
                             ))}
@@ -150,7 +181,13 @@ const MyIssues: NextPage = () => {
                       </span>
                     }
                     Icon={PlusIcon}
-                    action={() => setIsOpen(true)}
+                    action={() => {
+                      const e = new KeyboardEvent("keydown", {
+                        key: "i",
+                        ctrlKey: true,
+                      });
+                      document.dispatchEvent(e);
+                    }}
                   />
                 </EmptySpace>
               </div>

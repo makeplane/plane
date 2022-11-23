@@ -64,7 +64,10 @@ const WorkspaceSettings = () => {
         await mutateWorkspaces((workspaces) => {
           return (workspaces ?? []).map((workspace) => {
             if (workspace.slug === activeWorkspace.slug) {
-              return res;
+              return {
+                ...workspace,
+                ...res,
+              };
             }
             return workspace;
           });

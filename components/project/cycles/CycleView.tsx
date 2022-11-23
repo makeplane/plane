@@ -130,11 +130,11 @@ const SprintView: React.FC<Props> = ({
                               <span
                                 className="text-black rounded px-2 py-0.5 text-sm border"
                                 style={{
-                                  backgroundColor: `${issue.issue_details.state_detail.color}20`,
-                                  borderColor: issue.issue_details.state_detail.color,
+                                  backgroundColor: `${issue.issue_details.state_detail?.color}20`,
+                                  borderColor: issue.issue_details.state_detail?.color,
                                 }}
                               >
-                                {issue.issue_details.state_detail.name}
+                                {issue.issue_details.state_detail?.name}
                               </span>
                               <div className="relative">
                                 <Menu>

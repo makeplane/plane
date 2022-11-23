@@ -59,7 +59,7 @@ const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                           {
                             title: "Navigation",
                             shortcuts: [
-                              { key: "/", description: "To open navigator" },
+                              { key: "Ctrl + /", description: "To open navigator" },
                               { key: "↑", description: "Move up" },
                               { key: "↓", description: "Move down" },
                               { key: "←", description: "Move left" },
@@ -75,6 +75,10 @@ const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                               { key: "Ctrl + i", description: "To open create issue modal" },
                               { key: "Ctrl + q", description: "To open create cycle modal" },
                               { key: "Ctrl + h", description: "To open shortcuts guide" },
+                              {
+                                key: "Ctrl + alt + c",
+                                description: "To copy issue url when on issue detail page.",
+                              },
                             ],
                           },
                         ].map(({ title, shortcuts }) => (

@@ -92,7 +92,6 @@ const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
   const checkIdentifier = (slug: string, value: string) => {
     projectServices.checkProjectIdentifierAvailability(slug, value).then((response) => {
       console.log(response);
-
       if (response.exists) setError("identifier", { message: "Identifier already exists" });
     });
   };
