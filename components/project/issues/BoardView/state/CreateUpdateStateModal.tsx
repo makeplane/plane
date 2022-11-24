@@ -22,9 +22,9 @@ import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import type { IState } from "types";
 type Props = {
   isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   projectId: string;
   data?: IState;
+  handleClose: () => void;
 };
 
 const defaultValues: Partial<IState> = {
@@ -33,14 +33,9 @@ const defaultValues: Partial<IState> = {
   color: "#000000",
 };
 
-const CreateUpdateStateModal: React.FC<Props> = ({
-  isOpen,
-  setIsOpen,
-  data,
-  projectId,
-}) => {
-  const handleClose = () => {
-    setIsOpen(false);
+const CreateUpdateStateModal: React.FC<Props> = ({ isOpen, data, projectId, handleClose }) => {
+  const onClose = () => {
+    handleClose();
     const timeout = setTimeout(() => {
       reset(defaultValues);
       clearTimeout(timeout);
@@ -70,12 +65,8 @@ const CreateUpdateStateModal: React.FC<Props> = ({
       await stateService
         .createState(activeWorkspace.slug, projectId, payload)
         .then((res) => {
-          mutate<IState[]>(
-            STATE_LIST(projectId),
-            (prevData) => [...(prevData ?? []), res],
-            false
-          );
-          handleClose();
+          mutate<IState[]>(STATE_LIST(projectId), (prevData) => [...(prevData ?? []), res], false);
+          onClose();
         })
         .catch((err) => {
           Object.keys(err).map((key) => {
@@ -101,7 +92,7 @@ const CreateUpdateStateModal: React.FC<Props> = ({
             },
             false
           );
-          handleClose();
+          onClose();
         })
         .catch((err) => {
           Object.keys(err).map((key) => {
@@ -115,16 +106,15 @@ const CreateUpdateStateModal: React.FC<Props> = ({
 
   useEffect(() => {
     if (data) {
-      setIsOpen(true);
       reset(data);
     } else {
       reset(defaultValues);
     }
-  }, [data, setIsOpen, reset]);
+  }, [data, reset]);
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={handleClose}>
+      <Dialog as="div" className="relative z-10" onClose={onClose}>
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
@@ -152,10 +142,7 @@ const CreateUpdateStateModal: React.FC<Props> = ({
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div>
                     <div className="mt-3 sm:mt-5">
-                      <Dialog.Title
-                        as="h3"
-                        className="text-lg font-medium leading-6 text-gray-900"
-                      >
+                      <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
                         {data ? "Update" : "Create"} State
                       </Dialog.Title>
                       <div className="mt-2 space-y-3">
@@ -188,8 +175,7 @@ const CreateUpdateStateModal: React.FC<Props> = ({
                                     <span
                                       className="w-4 h-4 ml-2 rounded"
                                       style={{
-                                        backgroundColor:
-                                          watch("color") ?? "green",
+                                        backgroundColor: watch("color") ?? "green",
                                       }}
                                     ></span>
                                   )}
@@ -214,14 +200,10 @@ const CreateUpdateStateModal: React.FC<Props> = ({
                                     <Controller
                                       name="color"
                                       control={control}
-                                      render={({
-                                        field: { value, onChange },
-                                      }) => (
+                                      render={({ field: { value, onChange } }) => (
                                         <TwitterPicker
                                           color={value}
-                                          onChange={(value) =>
-                                            onChange(value.hex)
-                                          }
+                                          onChange={(value) => onChange(value.hex)}
                                         />
                                       )}
                                     />
@@ -245,7 +227,7 @@ const CreateUpdateStateModal: React.FC<Props> = ({
                     </div>
                   </div>
                   <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
-                    <Button theme="secondary" onClick={handleClose}>
+                    <Button theme="secondary" onClick={onClose}>
                       Cancel
                     </Button>
                     <Button type="submit" disabled={isSubmitting}>

@@ -28,9 +28,14 @@ import CreateUpdateStateModal from "components/project/issues/BoardView/state/Cr
 import { Spinner, Button, Input, TextArea, Select } from "ui";
 import { Breadcrumbs, BreadcrumbItem } from "ui/Breadcrumbs";
 // icons
-import { ChevronDownIcon, CheckIcon, PlusIcon } from "@heroicons/react/24/outline";
+import {
+  ChevronDownIcon,
+  CheckIcon,
+  PlusIcon,
+  PencilSquareIcon,
+} from "@heroicons/react/24/outline";
 // types
-import type { IProject, IWorkspace, WorkspaceMember } from "types";
+import type { IProject, IState, IWorkspace, WorkspaceMember } from "types";
 
 const defaultValues: Partial<IProject> = {
   name: "",
@@ -52,6 +57,7 @@ const ProjectSettings: NextPage = () => {
   });
 
   const [isCreateStateModalOpen, setIsCreateStateModalOpen] = useState(false);
+  const [selectedState, setSelectedState] = useState<string | undefined>();
 
   const router = useRouter();
 
@@ -135,9 +141,13 @@ const ProjectSettings: NextPage = () => {
     <ProjectLayout>
       <div className="w-full h-full space-y-5">
         <CreateUpdateStateModal
-          isOpen={isCreateStateModalOpen}
-          setIsOpen={setIsCreateStateModalOpen}
+          isOpen={isCreateStateModalOpen || Boolean(selectedState)}
+          handleClose={() => {
+            setSelectedState(undefined);
+            setIsCreateStateModalOpen(false);
+          }}
           projectId={projectId as string}
+          data={selectedState ? states?.find((state) => state.id === selectedState) : undefined}
         />
         <Breadcrumbs>
           <BreadcrumbItem title="Projects" link="/projects" />
@@ -404,16 +414,23 @@ const ProjectSettings: NextPage = () => {
                       <div className="w-full space-y-5">
                         {states?.map((state) => (
                           <div
-                            className="border p-1 px-4 rounded flex items-center gap-x-2"
+                            className="border p-1 px-4 rounded flex justify-between items-center"
                             key={state.id}
                           >
-                            <div
-                              className="w-3 h-3 rounded-full"
-                              style={{
-                                backgroundColor: state.color,
-                              }}
-                            ></div>
-                            <h4>{addSpaceIfCamelCase(state.name)}</h4>
+                            <div className="flex items-center gap-x-2">
+                              <div
+                                className="w-3 h-3 rounded-full"
+                                style={{
+                                  backgroundColor: state.color,
+                                }}
+                              ></div>
+                              <h4>{addSpaceIfCamelCase(state.name)}</h4>
+                            </div>
+                            <div>
+                              <button type="button" onClick={() => setSelectedState(state.id)}>
+                                <PencilSquareIcon className="h-5 w-5 text-gray-400" />
+                              </button>
+                            </div>
                           </div>
                         ))}
                         <button

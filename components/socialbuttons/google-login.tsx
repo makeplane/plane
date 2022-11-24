@@ -1,4 +1,5 @@
-import { FC, CSSProperties, useEffect, useState } from "react";
+import { FC, CSSProperties } from "react";
+// next
 import Script from "next/script";
 
 export interface IGoogleLoginButton {
@@ -28,7 +29,7 @@ export const GoogleLoginButton: FC<IGoogleLoginButton> = (props) => {
               size: "large",
               logo_alignment: "center",
               width: document.getElementById("googleSignInButton")?.offsetWidth,
-              text: props.text || "Continue with Google",
+              text: "continue_with",
             } as GsiButtonConfiguration // customization attributes
           );
           window?.google?.accounts.id.prompt(); // also display the One Tap dialog

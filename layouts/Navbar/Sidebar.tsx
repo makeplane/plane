@@ -27,6 +27,7 @@ import {
   UserIcon,
   XMarkIcon,
   ArrowLongLeftIcon,
+  QuestionMarkCircleIcon,
 } from "@heroicons/react/24/outline";
 // constants
 import { classNames } from "constants/common";
@@ -488,7 +489,7 @@ const Sidebar: React.FC = () => {
                 </div>
               )}
             </div>
-            <div className="px-2 py-2 bg-gray-50 w-full self-baseline">
+            <div className="px-2 py-2 bg-gray-50 w-full self-baseline flex items-center gap-x-2">
               <button
                 type="button"
                 className={`flex items-center gap-3 px-2 py-2 text-xs font-medium rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-900 w-full ${
@@ -503,6 +504,19 @@ const Sidebar: React.FC = () => {
                     }`}
                   />
                 </Tooltip>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const e = new KeyboardEvent("keydown", {
+                    ctrlKey: true,
+                    key: "h",
+                  });
+                  document.dispatchEvent(e);
+                }}
+                title="Help"
+              >
+                <QuestionMarkCircleIcon className="h-4 w-4 text-gray-500" />
               </button>
             </div>
           </div>

@@ -1,10 +1,9 @@
+import React, { useCallback, useState, useEffect } from "react";
 // next
 import type { NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Image from "next/image";
-// react
-import React, { useCallback, useState } from "react";
 // hooks
 import useUser from "lib/hooks/useUser";
 // services
@@ -37,8 +36,10 @@ const SignIn: NextPage = () => {
 
   const { mutateUser, mutateWorkspaces } = useUser();
 
-  const [githubToken, setGithubToken] = React.useState(undefined);
-  const [loginCallBackURL, setLoginCallBackURL] = React.useState(undefined);
+  const [githubToken, setGithubToken] = useState(undefined);
+  const [loginCallBackURL, setLoginCallBackURL] = useState(undefined);
+
+  const [isGoogleAuthenticationLoading, setIsGoogleAuthenticationLoading] = useState(false);
 
   const onSignInSuccess = useCallback(
     async (res: any) => {
@@ -54,7 +55,7 @@ const SignIn: NextPage = () => {
     return githubToken;
   }, [githubToken]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const {
       query: { code },
     } = router;
@@ -63,7 +64,7 @@ const SignIn: NextPage = () => {
     }
   }, [router, githubTokenMemo]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (githubToken) {
       authenticationService
         .socialAuth({
@@ -80,10 +81,12 @@ const SignIn: NextPage = () => {
     }
   }, [githubToken, mutateUser, mutateWorkspaces, router, onSignInSuccess]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const origin =
       typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
     setLoginCallBackURL(`${origin}/signin` as any);
+
+    return () => setIsGoogleAuthenticationLoading(false);
   }, []);
 
   return (
@@ -92,6 +95,11 @@ const SignIn: NextPage = () => {
         title: "Plane - Sign In",
       }}
     >
+      {isGoogleAuthenticationLoading && (
+        <div className="absolute top-0 left-0 w-full h-full bg-white z-50 flex items-center justify-center">
+          <h2 className="text-2xl text-black">Sign in with Google. Please wait...</h2>
+        </div>
+      )}
       <div className="w-full h-screen flex justify-center items-center bg-gray-50 overflow-auto">
         <div className="min-h-full w-full flex flex-col justify-center py-12 px-6 lg:px-8">
           <div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -129,6 +137,7 @@ const SignIn: NextPage = () => {
                   </button>
                   <GoogleLoginButton
                     onSuccess={({ clientId, credential }) => {
+                      setIsGoogleAuthenticationLoading(true);
                       authenticationService
                         .socialAuth({
                           medium: "google",
@@ -140,6 +149,7 @@ const SignIn: NextPage = () => {
                         })
                         .catch((err) => {
                           console.log(err);
+                          setIsGoogleAuthenticationLoading(false);
                         });
                     }}
                     onFailure={(err) => {
