@@ -43,7 +43,7 @@ type ReducerFunctionType = (state: StateType, action: ReducerActionType) => Stat
 
 export const initialState: StateType = {
   collapsed: false,
-  issueView: null,
+  issueView: "list",
   groupByProperty: null,
 };
 

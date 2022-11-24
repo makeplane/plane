@@ -4,7 +4,7 @@ import Link from "next/link";
 // react
 import React from "react";
 // layouts
-import ProjectLayout from "layouts/ProjectLayout";
+import AdminLayout from "layouts/AdminLayout";
 // swr
 import useSWR from "swr";
 // hooks
@@ -41,18 +41,26 @@ const Workspace: NextPage = () => {
     },
   ];
 
+  const hours = new Date().getHours();
+
   return (
-    <ProjectLayout>
-      <div className="h-full w-full px-2 space-y-5">
-        <div>
-          {user ? (
-            <div className="font-medium text-2xl">Good Morning, {user.first_name}!!</div>
-          ) : (
-            <div className="animate-pulse" role="status">
-              <div className="font-semibold text-2xl h-8 bg-gray-200 rounded dark:bg-gray-700 w-60"></div>
-            </div>
-          )}
-        </div>
+    <AdminLayout>
+      <div className="h-full w-full space-y-5">
+        {user ? (
+          <div className="font-medium text-2xl">
+            Good{" "}
+            {hours >= 4 && hours < 12
+              ? "Morning"
+              : hours >= 12 && hours < 17
+              ? "Afternoon"
+              : "Evening"}
+            , {user.first_name}!!
+          </div>
+        ) : (
+          <div className="animate-pulse" role="status">
+            <div className="font-semibold text-2xl h-8 bg-gray-200 rounded dark:bg-gray-700 w-60"></div>
+          </div>
+        )}
 
         {/* dashboard */}
         <div className="flex flex-col gap-8">
@@ -155,7 +163,7 @@ const Workspace: NextPage = () => {
           </div>
         </div>
       </div>
-    </ProjectLayout>
+    </AdminLayout>
   );
 };
 

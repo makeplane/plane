@@ -135,7 +135,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
         setToastAlert({
           title: "Success",
           type: "success",
-          message: "Issue added to sprint successfully",
+          message: "Issue added to cycle successfully",
         });
       })
       .catch((err) => {
@@ -325,7 +325,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                               register={register}
                             />
                           </div>
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center flex-wrap gap-2">
                             <SelectState control={control} setIsOpen={setIsStateModalOpen} />
                             <SelectCycles control={control} setIsOpen={setIsCycleModalOpen} />
                             <SelectPriority control={control} />

@@ -52,7 +52,7 @@ const SelectParent: React.FC<Props> = ({ control }) => {
                   leaveFrom="opacity-100"
                   leaveTo="opacity-0"
                 >
-                  <Listbox.Options className="absolute mt-1 bg-white shadow-lg max-h-28 max-w-[15rem] rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
+                  <Listbox.Options className="absolute z-10 mt-1 bg-white shadow-lg max-h-28 max-w-[15rem] rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
                     <div className="p-1">
                       {projectIssues?.results?.map((issue) => (
                         <Listbox.Option

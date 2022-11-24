@@ -18,9 +18,9 @@ import SingleBoard from "components/project/issues/BoardView/SingleBoard";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 import CreateUpdateIssuesModal from "components/project/issues/CreateUpdateIssueModal";
 // ui
-import { Spinner, Button } from "ui";
+import { Spinner } from "ui";
 // types
-import type { IState, IIssue, Properties, NestedKeyOf } from "types";
+import type { IState, IIssue, Properties, NestedKeyOf, ProjectMember } from "types";
 
 type Props = {
   properties: Properties;
@@ -28,9 +28,10 @@ type Props = {
   groupedByIssues: {
     [key: string]: IIssue[];
   };
+  members: ProjectMember[] | undefined;
 };
 
-const BoardView: React.FC<Props> = ({ properties, selectedGroup, groupedByIssues }) => {
+const BoardView: React.FC<Props> = ({ properties, selectedGroup, groupedByIssues, members }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const [isIssueOpen, setIsIssueOpen] = useState(false);
@@ -164,7 +165,7 @@ const BoardView: React.FC<Props> = ({ properties, selectedGroup, groupedByIssues
       />
       {groupedByIssues ? (
         groupedByIssues ? (
-          <div className="h-full w-full">
+          <div className="w-full" style={{ height: "calc(82vh - 1.5rem)" }}>
             <DragDropContext onDragEnd={handleOnDragEnd}>
               <div className="h-full w-full overflow-hidden">
                 <StrictModeDroppable droppableId="state" type="state" direction="horizontal">
@@ -180,6 +181,12 @@ const BoardView: React.FC<Props> = ({ properties, selectedGroup, groupedByIssues
                             key={singleGroup}
                             selectedGroup={selectedGroup}
                             groupTitle={singleGroup}
+                            createdBy={
+                              members
+                                ? members?.find((m) => m.member.id === singleGroup)?.member
+                                    .first_name
+                                : undefined
+                            }
                             groupedByIssues={groupedByIssues}
                             index={index}
                             setIsIssueOpen={setIsIssueOpen}
