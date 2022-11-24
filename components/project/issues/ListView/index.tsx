@@ -1,7 +1,8 @@
-// next
-import Link from "next/link";
 // react
 import React from "react";
+// next
+import Link from "next/link";
+import Image from "next/image";
 // swr
 import useSWR, { mutate } from "swr";
 // ui
@@ -274,15 +275,31 @@ const ListView: React.FC<Props> = ({
                                                           value={person.member.id}
                                                         >
                                                           <div
-                                                            className={`flex items-center ${
+                                                            className={`flex items-center gap-x-1 ${
                                                               assignees.includes(
-                                                                person.member.email
+                                                                person.member.first_name
                                                               )
                                                                 ? "font-medium"
                                                                 : "font-normal"
                                                             }`}
                                                           >
-                                                            {person.member.email}
+                                                            {person.member.avatar &&
+                                                            person.member.avatar !== "" ? (
+                                                              <div className="relative w-4 h-4">
+                                                                <Image
+                                                                  src={person.member.avatar}
+                                                                  alt="avatar"
+                                                                  className="rounded-full"
+                                                                  layout="fill"
+                                                                  objectFit="cover"
+                                                                />
+                                                              </div>
+                                                            ) : (
+                                                              <p>
+                                                                {person.member.first_name.charAt(0)}
+                                                              </p>
+                                                            )}
+                                                            <p>{person.member.first_name}</p>
                                                           </div>
                                                         </Listbox.Option>
                                                       ))}

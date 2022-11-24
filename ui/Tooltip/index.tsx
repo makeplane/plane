@@ -1,59 +1,41 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 
-type TooltipProps = {
-  content: string;
-  position: string;
-  children: any;
-  className?: string;
+type Props = {
+  children: React.ReactNode;
+  content: React.ReactNode;
+  position?: "top" | "bottom" | "left" | "right";
 };
 
-const Tooltip: React.FC<TooltipProps> = (props) => {
-  const myRef = useRef<any>();
-  const myRef2 = useRef<any>();
-
-  const [position, setPosition] = useState<any>({});
-  const [show, setShow] = useState<any>(false);
-
-  useEffect(() => {
-    const contentHeight = myRef2.current.clientHeight;
-
-    const pos = {
-      x: myRef.current.offsetLeft + myRef.current.clientWidth / 2,
-      y: myRef.current.offsetTop,
-    };
-
-    setPosition(pos);
-  }, []);
-
+const Tooltip: React.FC<Props> = ({ children, content, position = "top" }) => {
   return (
-    <>
-      <div className="inline-block z-99" ref={myRef}>
+    <div className="relative group">
+      <div
+        className={`fixed pointer-events-none transition-opacity opacity-0 group-hover:opacity-100 bg-black text-white px-3 py-1 rounded ${
+          position === "right"
+            ? "left-14"
+            : position === "left"
+            ? "right-14"
+            : position === "top"
+            ? "bottom-14"
+            : "top-14"
+        }`}
+      >
+        <p className="truncate text-sx">{content}</p>
         <span
-          className={`bg-black text-white p-2 rounded text-xs fixed ${
-            props.position === "top" || props.position === "bottom"
-              ? "translate-x-[-50%]"
-              : "translate-y-[-50%]"
-          } duration-300 ${
-            show ? "opacity-1 pointer-events-all" : "opacity-0 pointer-events-none"
-          } ${props.className}`}
-          style={{ top: `${position.y}px`, left: `${position.x}px` }}
-          ref={myRef2}
-        >
-          {props.content}
-          {/* Lorem ipsum, dolor sit amet consectetur adipisicing elit.Illo consequuntur libero placeat
-          porro facere itaque vitae, iusto quos fugiat consequatur. */}
-        </span>
-        {React.cloneElement(props.children, {
-          onMouseOver: () => setShow(true),
-          onMouseOut: () => setShow(false),
-        })}
+          className={`absolute w-2 h-2 bg-black ${
+            position === "top"
+              ? "top-full left-1/2 transform -translate-y-1/2 -translate-x-1/2 rotate-45"
+              : position === "bottom"
+              ? "bottom-full left-1/2 transform translate-y-1/2 -translate-x-1/2 rotate-45"
+              : position === "left"
+              ? "left-full top-1/2 transform translate-x-1/2 -translate-y-1/2 rotate-45"
+              : "right-full top-1/2 transform translate-x-1/2 -translate-y-1/2 rotate-45"
+          }`}
+        ></span>
       </div>
-    </>
+      {children}
+    </div>
   );
-};
-
-Tooltip.defaultProps = {
-  position: "top",
 };
 
 export default Tooltip;
