@@ -267,7 +267,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
         <>
           <CreateUpdateStateModal
             isOpen={isStateModalOpen}
-            setIsOpen={setIsStateModalOpen}
+            handleClose={() => setIsStateModalOpen(false)}
             projectId={activeProject?.id}
           />
           <CreateUpdateCycleModal
