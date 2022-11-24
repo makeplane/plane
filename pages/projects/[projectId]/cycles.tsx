@@ -12,7 +12,7 @@ import useUser from "lib/hooks/useUser";
 // fetching keys
 import { CYCLE_ISSUES, CYCLE_LIST } from "constants/fetch-keys";
 // layouts
-import ProjectLayout from "layouts/ProjectLayout";
+import AdminLayout from "layouts/AdminLayout";
 // components
 import SprintView from "components/project/cycles/CycleView";
 import ConfirmIssueDeletion from "components/project/issues/ConfirmIssueDeletion";
@@ -98,7 +98,7 @@ const ProjectSprints: NextPage = () => {
   }, [selectedIssues]);
 
   return (
-    <ProjectLayout
+    <AdminLayout
       meta={{
         title: "Plane - Cycles",
       }}
@@ -134,65 +134,58 @@ const ProjectSprints: NextPage = () => {
         setIsOpen={setIsOpen}
         projectId={projectId as string}
       />
-      <div className="w-full h-full flex flex-col space-y-5">
-        {sprints ? (
-          sprints.length > 0 ? (
-            <div className="flex flex-col items-center justify-center w-full h-full px-2">
-              <div className="w-full h-full flex flex-col space-y-5">
-                <Breadcrumbs>
-                  <BreadcrumbItem title="Projects" link="/projects" />
-                  <BreadcrumbItem title={`${activeProject?.name} Cycles`} />
-                </Breadcrumbs>
-                <div className="flex items-center justify-between cursor-pointer w-full">
-                  <h2 className="text-2xl font-medium">Project Cycle</h2>
-                  <HeaderButton Icon={PlusIcon} label="Add Cycle" action={() => setIsOpen(true)} />
-                </div>
-                <div className="w-full h-full pr-2 overflow-auto">
-                  {sprints.map((sprint) => (
-                    <SprintView
-                      sprint={sprint}
-                      selectSprint={setSelectedSprint}
-                      projectId={projectId as string}
-                      workspaceSlug={activeWorkspace?.slug as string}
-                      openIssueModal={openIssueModal}
-                      addIssueToSprint={addIssueToSprint}
-                      key={sprint.id}
-                    />
-                  ))}
-                </div>
-              </div>
+      {sprints ? (
+        sprints.length > 0 ? (
+          <div className="h-full w-full space-y-5">
+            <Breadcrumbs>
+              <BreadcrumbItem title="Projects" link="/projects" />
+              <BreadcrumbItem title={`${activeProject?.name ?? "Project"} Cycles`} />
+            </Breadcrumbs>
+            <div className="flex items-center justify-between cursor-pointer w-full">
+              <h2 className="text-2xl font-medium">Project Cycle</h2>
+              <HeaderButton Icon={PlusIcon} label="Add Cycle" onClick={() => setIsOpen(true)} />
             </div>
-          ) : (
-            <>
-              <div className="w-full h-full flex flex-col justify-center items-center px-4">
-                <EmptySpace
-                  title="You don't have any cycle yet."
-                  description="A cycle is a fixed time period where a team commits to a set number of issues from their backlog. Cycles are usually one, two, or four weeks long."
-                  Icon={ArrowPathIcon}
-                >
-                  <EmptySpaceItem
-                    title="Create a new cycle"
-                    description={
-                      <span>
-                        Use{" "}
-                        <pre className="inline bg-gray-100 px-2 py-1 rounded">Ctrl/Command + Q</pre>{" "}
-                        shortcut to create a new cycle
-                      </span>
-                    }
-                    Icon={PlusIcon}
-                    action={() => setIsOpen(true)}
-                  />
-                </EmptySpace>
-              </div>
-            </>
-          )
-        ) : (
-          <div className="w-full h-full flex justify-center items-center">
-            <Spinner />
+            <div className="h-full w-full">
+              {sprints.map((sprint) => (
+                <SprintView
+                  sprint={sprint}
+                  selectSprint={setSelectedSprint}
+                  projectId={projectId as string}
+                  workspaceSlug={activeWorkspace?.slug as string}
+                  openIssueModal={openIssueModal}
+                  addIssueToSprint={addIssueToSprint}
+                  key={sprint.id}
+                />
+              ))}
+            </div>
           </div>
-        )}
-      </div>
-    </ProjectLayout>
+        ) : (
+          <div className="w-full h-full flex flex-col justify-center items-center px-4">
+            <EmptySpace
+              title="You don't have any cycle yet."
+              description="A cycle is a fixed time period where a team commits to a set number of issues from their backlog. Cycles are usually one, two, or four weeks long."
+              Icon={ArrowPathIcon}
+            >
+              <EmptySpaceItem
+                title="Create a new cycle"
+                description={
+                  <span>
+                    Use <pre className="inline bg-gray-100 px-2 py-1 rounded">Ctrl/Command + Q</pre>{" "}
+                    shortcut to create a new cycle
+                  </span>
+                }
+                Icon={PlusIcon}
+                action={() => setIsOpen(true)}
+              />
+            </EmptySpace>
+          </div>
+        )
+      ) : (
+        <div className="w-full h-full flex justify-center items-center">
+          <Spinner />
+        </div>
+      )}
+    </AdminLayout>
   );
 };
 

@@ -5,6 +5,8 @@ module.exports = {
     extend: {
       colors: {
         theme: "#4338ca",
+        primary: "#f9fafb", // gray-50
+        secondary: "white",
       },
       keyframes: {
         leftToaster: {

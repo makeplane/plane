@@ -11,7 +11,7 @@ Plane helps you track your issues, epics, and product roadmaps. Take off and exp
 <br /><br />
 
 <p align="center">
-<a href="https://discord.com/invite/8SR2N9PAcJ">
+<a href="https://discord.com/invite/29tPNhaV">
 <img alt="Discord" src="https://img.shields.io/discord/1031547764020084846?color=5865F2&label=Discord&style=for-the-badge" />
 </a>
 

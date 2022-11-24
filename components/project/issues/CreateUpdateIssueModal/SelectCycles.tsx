@@ -46,7 +46,7 @@ const SelectSprint: React.FC<Props> = ({ control, setIsOpen }) => {
                     leaveFrom="opacity-100"
                     leaveTo="opacity-0"
                   >
-                    <Listbox.Options className="absolute mt-1 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
+                    <Listbox.Options className="absolute z-10 mt-1 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
                       <div className="p-1">
                         {sprints?.map((sprint) => (
                           <Listbox.Option
@@ -63,16 +63,6 @@ const SelectSprint: React.FC<Props> = ({ control, setIsOpen }) => {
                                 <span className={`block ${selected && "font-semibold"}`}>
                                   {sprint.name}
                                 </span>
-
-                                {selected && (
-                                  <span
-                                    className={`absolute inset-y-0 right-0 flex items-center pr-4 ${
-                                      active ? "text-white" : "text-indigo-600"
-                                    }`}
-                                  >
-                                    <CheckIcon className="h-5 w-5" aria-hidden="true" />
-                                  </span>
-                                )}
                               </>
                             )}
                           </Listbox.Option>

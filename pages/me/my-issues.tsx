@@ -5,7 +5,7 @@ import type { NextPage } from "next";
 // swr
 import useSWR from "swr";
 // layouts
-import ProjectLayout from "layouts/ProjectLayout";
+import AdminLayout from "layouts/AdminLayout";
 // hooks
 import useUser from "lib/hooks/useUser";
 // ui
@@ -66,7 +66,7 @@ const MyIssues: NextPage = () => {
   };
 
   return (
-    <ProjectLayout>
+    <AdminLayout>
       <div className="w-full h-full flex flex-col space-y-5">
         {myIssues ? (
           <>
@@ -81,7 +81,7 @@ const MyIssues: NextPage = () => {
                     <HeaderButton
                       Icon={PlusIcon}
                       label="Add Issue"
-                      action={() => {
+                      onClick={() => {
                         const e = new KeyboardEvent("keydown", {
                           key: "i",
                           ctrlKey: true,
@@ -199,7 +199,7 @@ const MyIssues: NextPage = () => {
           </div>
         )}
       </div>
-    </ProjectLayout>
+    </AdminLayout>
   );
 };
 
