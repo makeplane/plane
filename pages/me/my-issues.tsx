@@ -36,6 +36,7 @@ import {
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/20/solid";
 import workspaceService from "lib/services/workspace.service";
 import useTheme from "lib/hooks/useTheme";
+import issuesServices from "lib/services/issues.services";
 
 const MyIssues: NextPage = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -44,7 +45,7 @@ const MyIssues: NextPage = () => {
 
   const { issueView, setIssueView, groupByProperty, setGroupByProperty } = useTheme();
 
-  const { data: myIssues } = useSWR<IIssue[]>(
+  const { data: myIssues, mutate: mutateMyIssue } = useSWR<IIssue[]>(
     user ? USER_ISSUE : null,
     user ? () => userService.userIssues() : null
   );
@@ -68,6 +69,37 @@ const MyIssues: NextPage = () => {
   const groupedByIssues: {
     [key: string]: IIssue[];
   } = groupBy(myIssues ?? [], groupByProperty ?? "");
+
+  const updateMyIssues = (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    issue: Partial<IIssue>
+  ) => {
+    mutateMyIssue((prevData) => {
+      return prevData?.map((prevIssue) => {
+        if (prevIssue.id === issueId) {
+          return {
+            ...prevIssue,
+            ...issue,
+            state_detail: {
+              ...prevIssue.state_detail,
+              ...issue.state_detail,
+            },
+          };
+        }
+        return prevIssue;
+      });
+    }, false);
+    issuesServices
+      .patchIssue(workspaceSlug, projectId, issueId, issue)
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   return (
     <AdminLayout>
@@ -251,7 +283,10 @@ const MyIssues: NextPage = () => {
                                         {myIssue.description}
                                       </p>
                                     ) : (key as keyof Properties) === "state" ? (
-                                      <ChangeStateDropdown issue={myIssue} />
+                                      <ChangeStateDropdown
+                                        issue={myIssue}
+                                        updateIssues={updateMyIssues}
+                                      />
                                     ) : (key as keyof Properties) === "assignee" ? (
                                       <div className="max-w-xs text-xs">
                                         {myIssue.assignees && myIssue.assignees.length > 0

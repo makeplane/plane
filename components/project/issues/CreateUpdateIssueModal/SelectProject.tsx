@@ -6,8 +6,7 @@ import { Listbox, Transition } from "@headlessui/react";
 // hooks
 import useUser from "lib/hooks/useUser";
 // icons
-import { CheckIcon } from "@heroicons/react/20/solid";
-import { ClipboardDocumentListIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
+import { ClipboardDocumentListIcon } from "@heroicons/react/24/outline";
 // ui
 import { Spinner } from "ui";
 // types

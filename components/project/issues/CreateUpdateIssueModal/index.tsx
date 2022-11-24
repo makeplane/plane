@@ -1,10 +1,18 @@
 import React, { useEffect, useState } from "react";
+// next
+import Link from "next/link";
+import { useRouter } from "next/router";
 // swr
 import { mutate } from "swr";
 // react hook form
 import { useForm } from "react-hook-form";
 // fetching keys
-import { PROJECT_ISSUES_DETAILS, PROJECT_ISSUES_LIST, CYCLE_ISSUES } from "constants/fetch-keys";
+import {
+  PROJECT_ISSUES_DETAILS,
+  PROJECT_ISSUES_LIST,
+  CYCLE_ISSUES,
+  USER_ISSUE,
+} from "constants/fetch-keys";
 // headless
 import { Dialog, Transition } from "@headlessui/react";
 // services
@@ -15,7 +23,7 @@ import useToast from "lib/hooks/useToast";
 // ui
 import { Button, Input, TextArea } from "ui";
 // commons
-import { renderDateFormat } from "constants/common";
+import { renderDateFormat, cosineSimilarity } from "constants/common";
 // components
 import SelectState from "./SelectState";
 import SelectCycles from "./SelectCycles";
@@ -55,6 +63,10 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
   const [isCycleModalOpen, setIsCycleModalOpen] = useState(false);
   const [isStateModalOpen, setIsStateModalOpen] = useState(false);
 
+  const [mostSimilarIssue, setMostSimilarIssue] = useState<string | undefined>();
+
+  const router = useRouter();
+
   const handleClose = () => {
     setIsOpen(false);
     if (data) {
@@ -69,7 +81,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
     }, 500);
   };
 
-  const { activeWorkspace, activeProject } = useUser();
+  const { activeWorkspace, activeProject, user, issues } = useUser();
 
   const { setToastAlert } = useToast();
 
@@ -165,6 +177,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
             },
             false
           );
+
           if (formData.sprints && formData.sprints !== null) {
             await addIssueToSprint(res.id, formData.sprints, formData);
           }
@@ -175,6 +188,15 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
             type: "success",
             message: `Issue ${data ? "updated" : "created"} successfully`,
           });
+          if (formData.assignees_list.some((assignee) => assignee === user?.id)) {
+            mutate<IIssue[]>(
+              USER_ISSUE,
+              (prevData) => {
+                return [res, ...(prevData ?? [])];
+              },
+              false
+            );
+          }
         })
         .catch((err) => {
           Object.keys(err).map((key) => {
@@ -235,6 +257,10 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
     });
   }, [data, prePopulateData, reset, projectId, activeProject, isOpen, watch]);
 
+  useEffect(() => {
+    return () => setMostSimilarIssue(undefined);
+  }, []);
+
   return (
     <>
       {activeProject && (
@@ -293,6 +319,13 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                               label="Name"
                               name="name"
                               rows={1}
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                const similarIssue = issues?.results.find(
+                                  (i) => cosineSimilarity(i.name, value) > 0.7
+                                );
+                                setMostSimilarIssue(similarIssue?.id);
+                              }}
                               className="resize-none"
                               placeholder="Enter name"
                               autoComplete="off"
@@ -302,6 +335,42 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                                 required: "Name is required",
                               }}
                             />
+                            {mostSimilarIssue && (
+                              <div className="flex items-center gap-x-2">
+                                <p className="text-sm text-gray-500">
+                                  Did you mean{" "}
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setMostSimilarIssue(undefined);
+                                      router.push(
+                                        `/projects/${activeProject?.id}/issues/${mostSimilarIssue}`
+                                      );
+                                      handleClose();
+                                      resetForm();
+                                    }}
+                                  >
+                                    <span className="italic">
+                                      {
+                                        issues?.results.find(
+                                          (issue) => issue.id === mostSimilarIssue
+                                        )?.name
+                                      }
+                                    </span>
+                                  </button>
+                                  ?
+                                </p>
+                                <button
+                                  type="button"
+                                  className="text-sm text-blue-500"
+                                  onClick={() => {
+                                    setMostSimilarIssue(undefined);
+                                  }}
+                                >
+                                  No
+                                </button>
+                              </div>
+                            )}
                           </div>
                           <div>
                             <TextArea

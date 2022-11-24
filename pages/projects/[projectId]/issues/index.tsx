@@ -297,7 +297,6 @@ const ProjectIssues: NextPage = () => {
                 selectedGroup={groupByProperty}
                 setSelectedIssue={setSelectedIssue}
                 handleDeleteIssue={setDeleteIssue}
-                members={members}
               />
             ) : (
               <BoardView

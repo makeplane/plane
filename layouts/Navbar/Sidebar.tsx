@@ -1,15 +1,16 @@
+import React, { useState } from "react";
 // next
 import Link from "next/link";
 import { useRouter } from "next/router";
-// react
-import React, { useState } from "react";
+import Image from "next/image";
 // services
-import useUser from "lib/hooks/useUser";
 import userService from "lib/services/user.service";
+import authenticationService from "lib/services/authentication.service";
+// hooks
+import useUser from "lib/hooks/useUser";
+import useTheme from "lib/hooks/useTheme";
 // components
 import CreateProjectModal from "components/project/CreateProjectModal";
-// types
-import { IUser } from "types";
 // headless ui
 import { Dialog, Disclosure, Menu, Transition } from "@headlessui/react";
 // icons
@@ -25,15 +26,15 @@ import {
   UserGroupIcon,
   UserIcon,
   XMarkIcon,
-  InboxIcon,
   ArrowLongLeftIcon,
   QuestionMarkCircleIcon,
 } from "@heroicons/react/24/outline";
 // constants
 import { classNames } from "constants/common";
-import { Spinner } from "ui";
-import useTheme from "lib/hooks/useTheme";
-import authenticationService from "lib/services/authentication.service";
+// ui
+import { Spinner, Tooltip } from "ui";
+// types
+import type { IUser } from "types";
 
 const navigation = (projectId: string) => [
   {
@@ -108,7 +109,7 @@ const Sidebar: React.FC = () => {
 
   const router = useRouter();
 
-  const { projects } = useUser();
+  const { projects, user } = useUser();
 
   const { projectId } = router.query;
 
@@ -206,7 +207,11 @@ const Sidebar: React.FC = () => {
         <div className="flex flex-1 flex-col border-r border-gray-200">
           <div className="h-full flex flex-1 flex-col pt-5">
             <div className="px-2">
-              <div className={`relative ${sidebarCollapse ? "flex" : "grid grid-cols-5 gap-1"}`}>
+              <div
+                className={`relative ${
+                  sidebarCollapse ? "flex" : "grid grid-cols-5 gap-1 items-center"
+                }`}
+              >
                 <Menu as="div" className="col-span-4 inline-block text-left w-full">
                   <div className="w-full">
                     <Menu.Button
@@ -216,16 +221,25 @@ const Sidebar: React.FC = () => {
                           : ""
                       }`}
                     >
-                      <span className="flex gap-x-1 items-center">
-                        <p className="h-5 w-5 p-4 flex items-center justify-center bg-gray-500 text-white rounded uppercase">
-                          {activeWorkspace?.name?.charAt(0) ?? "N"}
-                        </p>
+                      <div className="flex gap-x-1 items-center">
+                        <div className="h-5 w-5 p-4 flex items-center justify-center bg-gray-500 text-white rounded uppercase relative">
+                          {activeWorkspace?.logo && activeWorkspace.logo !== "" ? (
+                            <Image
+                              src={activeWorkspace.logo}
+                              alt="Workspace Logo"
+                              layout="fill"
+                              objectFit="cover"
+                            />
+                          ) : (
+                            activeWorkspace?.name?.charAt(0) ?? "N"
+                          )}
+                        </div>
                         {!sidebarCollapse && (
                           <p className="truncate w-20 text-left ml-1">
                             {activeWorkspace?.name ?? "Loading..."}
                           </p>
                         )}
-                      </span>
+                      </div>
                       {!sidebarCollapse && (
                         <div className="flex-grow flex justify-end">
                           <ChevronDownIcon className="-mr-1 ml-2 h-5 w-5" aria-hidden="true" />
@@ -304,9 +318,19 @@ const Sidebar: React.FC = () => {
                 </Menu>
                 {!sidebarCollapse && (
                   <Menu as="div" className="inline-block text-left w-full">
-                    <div className="h-full w-full">
-                      <Menu.Button className="grid place-items-center h-full w-full rounded-md shadow-sm px-2 py-2 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 focus:bg-gray-50 focus:outline-none">
-                        <UserIcon className="h-5 w-5" />
+                    <div className="h-10 w-10">
+                      <Menu.Button className="grid relative place-items-center h-full w-full rounded-md shadow-sm px-2 py-2 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none">
+                        {user?.avatar && user.avatar !== "" ? (
+                          <Image
+                            src={user.avatar}
+                            alt="User Avatar"
+                            layout="fill"
+                            objectFit="cover"
+                            className="rounded-full"
+                          />
+                        ) : (
+                          <UserIcon className="h-5 w-5" />
+                        )}
                       </Menu.Button>
                     </div>
 
@@ -488,11 +512,13 @@ const Sidebar: React.FC = () => {
                 }`}
                 onClick={() => toggleCollapsed()}
               >
-                <ArrowLongLeftIcon
-                  className={`h-4 w-4 text-gray-500 group-hover:text-gray-900 flex-shrink-0 duration-300 ${
-                    sidebarCollapse ? "rotate-180" : ""
-                  }`}
-                />
+                <Tooltip content="Click to toggle sidebar" position="right">
+                  <ArrowLongLeftIcon
+                    className={`h-4 w-4 text-gray-500 group-hover:text-gray-900 flex-shrink-0 duration-300 ${
+                      sidebarCollapse ? "rotate-180" : ""
+                    }`}
+                  />
+                </Tooltip>
               </button>
             </div>
           </div>

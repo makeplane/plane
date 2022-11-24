@@ -1,44 +1,31 @@
 // react
 import React from "react";
-// ui
-import { Listbox, Transition } from "@headlessui/react";
+// swr
+import useSWR from "swr";
 // hooks
 import useUser from "lib/hooks/useUser";
-// services
-import issuesServices from "lib/services/issues.services";
-import stateServices from "lib/services/state.services";
-// swr
-import useSWR, { mutate } from "swr";
-// types
-import { IIssue, IssueResponse, IState } from "types";
 // constants
 import { addSpaceIfCamelCase, classNames } from "constants/common";
-import { STATE_LIST, USER_ISSUE } from "constants/fetch-keys";
+import { STATE_LIST } from "constants/fetch-keys";
+// services
+import stateServices from "lib/services/state.services";
+// ui
+import { Listbox, Transition } from "@headlessui/react";
+// types
+import { IIssue, IState } from "types";
 
 type Props = {
   issue: IIssue;
+  updateIssues: (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    issue: Partial<IIssue>
+  ) => void;
 };
 
-const ChangeStateDropdown = ({ issue }: Props) => {
+const ChangeStateDropdown: React.FC<Props> = ({ issue, updateIssues }) => {
   const { activeWorkspace } = useUser();
-
-  const partialUpdateIssue = (formData: Partial<IIssue>, projectId: string, issueId: string) => {
-    if (!activeWorkspace) return;
-    issuesServices
-      .patchIssue(activeWorkspace.slug, projectId, issueId, formData)
-      .then((response) => {
-        // mutate<IssueResponse>(
-        //   USER_ISSUE,
-        //   (prevData) => ({
-        //     ...(prevData as IssueResponse),
-        //   }),
-        //   false
-        // );
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
 
   const { data: states } = useSWR<IState[]>(
     activeWorkspace ? STATE_LIST(issue.project) : null,
@@ -51,7 +38,11 @@ const ChangeStateDropdown = ({ issue }: Props) => {
         as="div"
         value={issue.state}
         onChange={(data: string) => {
-          partialUpdateIssue({ state: data }, issue.project, issue.id);
+          if (!activeWorkspace) return;
+          updateIssues(activeWorkspace.slug, issue.project, issue.id, {
+            state: data,
+            state_detail: states?.find((state) => state.id === data),
+          });
         }}
         className="flex-shrink-0"
       >
