@@ -8,11 +8,14 @@ import issuesServices from "lib/services/issues.services";
 // fetch keys
 import { PROJECT_ISSUES_COMMENTS } from "constants/fetch-keys";
 // components
-import CommentCard from "components/project/issues/comment/IssueCommentCard";
+import CommentCard from "components/project/issues/issue-detail/comment/IssueCommentCard";
 // ui
 import { TextArea, Button, Spinner } from "ui";
 // types
 import type { IIssueComment } from "types";
+// icons
+import UploadingIcon from "public/animated-icons/uploading.json";
+
 type Props = {
   comments?: IIssueComment[];
   workspaceSlug: string;
@@ -67,9 +70,9 @@ const IssueCommentSection: React.FC<Props> = ({ comments, issueId, projectId, wo
   };
 
   return (
-    <div className="space-y-3 px-2">
+    <div className="space-y-5">
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="p-2 bg-indigo-50 rounded-md mb-6">
+        <div className="p-2 bg-indigo-50 rounded-md">
           <div className="w-full">
             <TextArea
               id="comment"
@@ -99,6 +102,7 @@ const IssueCommentSection: React.FC<Props> = ({ comments, issueId, projectId, wo
           <div className="w-full flex justify-end">
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting ? "Adding comment..." : "Add comment"}
+              {/* <UploadingIcon /> */}
             </Button>
           </div>
         </div>

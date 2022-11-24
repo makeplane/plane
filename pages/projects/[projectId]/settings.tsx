@@ -11,7 +11,7 @@ import { useForm, Controller } from "react-hook-form";
 // headless ui
 import { Listbox, Transition } from "@headlessui/react";
 // layouts
-import ProjectLayout from "layouts/ProjectLayout";
+import AdminLayout from "layouts/AdminLayout";
 // service
 import projectServices from "lib/services/project.service";
 import workspaceService from "lib/services/workspace.service";
@@ -132,8 +132,8 @@ const ProjectSettings: NextPage = () => {
   const checkIdentifierAvailability = useCallback(debounce(checkIdentifier, 1500), []);
 
   return (
-    <ProjectLayout>
-      <div className="w-full h-full space-y-5">
+    <AdminLayout>
+      <div className="space-y-5">
         <CreateUpdateStateModal
           isOpen={isCreateStateModalOpen}
           setIsOpen={setIsCreateStateModalOpen}
@@ -143,7 +143,7 @@ const ProjectSettings: NextPage = () => {
           <BreadcrumbItem title="Projects" link="/projects" />
           <BreadcrumbItem title={`${activeProject?.name} Settings`} />
         </Breadcrumbs>
-        <div className="w-full h-full flex flex-col space-y-3">
+        <div className="space-y-3">
           {projectDetails ? (
             <div>
               <form onSubmit={handleSubmit(onSubmit)} className="mt-3">
@@ -437,7 +437,7 @@ const ProjectSettings: NextPage = () => {
           )}
         </div>
       </div>
-    </ProjectLayout>
+    </AdminLayout>
   );
 };
 

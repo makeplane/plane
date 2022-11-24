@@ -6,16 +6,29 @@ type HeaderButtonProps = {
     }
   ) => JSX.Element;
   label: string;
-  action: () => void;
+  disabled?: boolean;
+  onClick: () => void;
+  className?: string;
+  position?: "normal" | "reverse";
 };
 
-const HeaderButton = ({ Icon, label, action }: HeaderButtonProps) => {
+const HeaderButton = ({
+  Icon,
+  label,
+  disabled = false,
+  onClick,
+  className = "",
+  position = "normal",
+}: HeaderButtonProps) => {
   return (
     <>
       <button
         type="button"
-        className="bg-theme text-white border border-indigo-600 text-xs flex items-center gap-x-1 p-2 rounded-md font-medium whitespace-nowrap outline-none"
-        onClick={action}
+        className={`bg-theme text-white border border-indigo-600 text-xs flex items-center gap-x-1 p-2 rounded-md font-medium whitespace-nowrap outline-none ${
+          position === "reverse" && "flex-row-reverse"
+        } ${className}`}
+        disabled={disabled}
+        onClick={onClick}
       >
         <Icon className="h-4 w-4" />
         {label}

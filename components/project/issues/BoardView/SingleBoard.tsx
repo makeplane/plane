@@ -36,6 +36,7 @@ type Props = {
   >;
   bgColor?: string;
   stateId?: string;
+  createdBy?: string;
 };
 
 const SingleBoard: React.FC<Props> = ({
@@ -48,6 +49,7 @@ const SingleBoard: React.FC<Props> = ({
   setPreloadedData,
   bgColor = "#0f2b16",
   stateId,
+  createdBy,
 }) => {
   // Collapse/Expand
   const [show, setState] = useState<any>(true);
@@ -118,6 +120,8 @@ const SingleBoard: React.FC<Props> = ({
                     >
                       {groupTitle === null || groupTitle === "null"
                         ? "None"
+                        : createdBy
+                        ? createdBy
                         : addSpaceIfCamelCase(groupTitle)}
                     </h2>
                     <span className="text-gray-500 text-sm ml-0.5">
@@ -280,7 +284,7 @@ const SingleBoard: React.FC<Props> = ({
                                                   </div>
                                                 ) : (
                                                   <div
-                                                    className={`h-5 w-5 bg-gray-500 text-white border-2 border-white grid place-items-center rounded-full`}
+                                                    className={`h-5 w-5 bg-gray-700 text-white border-2 border-white grid place-items-center rounded-full`}
                                                   >
                                                     {assignee.first_name.charAt(0)}
                                                   </div>

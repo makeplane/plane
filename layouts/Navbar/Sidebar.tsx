@@ -27,6 +27,7 @@ import {
   UserIcon,
   XMarkIcon,
   ArrowLongLeftIcon,
+  QuestionMarkCircleIcon,
 } from "@heroicons/react/24/outline";
 // constants
 import { classNames } from "constants/common";
@@ -58,7 +59,7 @@ const navigation = (projectId: string) => [
   },
 ];
 
-const navLinks = [
+const workspaceLinks = [
   {
     icon: HomeIcon,
     name: "Home",
@@ -117,7 +118,7 @@ const Sidebar: React.FC = () => {
   const { collapsed: sidebarCollapse, toggleCollapsed } = useTheme();
 
   return (
-    <nav className="h-screen">
+    <nav className="h-full">
       <CreateProjectModal isOpen={isCreateProjectModal} setIsOpen={setCreateProjectModal} />
       <Transition.Root show={sidebarOpen} as={React.Fragment}>
         <Dialog as="div" className="relative z-40 md:hidden" onClose={setSidebarOpen}>
@@ -203,7 +204,7 @@ const Sidebar: React.FC = () => {
           sidebarCollapse ? "" : "w-auto md:w-64"
         } hidden md:inset-y-0 md:flex md:flex-col h-full`}
       >
-        <div className="h-full flex flex-1 flex-col border-r border-gray-200">
+        <div className="flex flex-1 flex-col border-r border-gray-200">
           <div className="h-full flex flex-1 flex-col pt-5">
             <div className="px-2">
               <div
@@ -215,7 +216,9 @@ const Sidebar: React.FC = () => {
                   <div className="w-full">
                     <Menu.Button
                       className={`inline-flex justify-between items-center w-full rounded-md px-2 py-2 text-sm font-semibold text-gray-700 focus:outline-none ${
-                        !sidebarCollapse ? "hover:bg-gray-50 border border-gray-300 shadow-sm" : ""
+                        !sidebarCollapse
+                          ? "hover:bg-gray-50 focus:bg-gray-50 border border-gray-300 shadow-sm"
+                          : ""
                       }`}
                     >
                       <div className="flex gap-x-1 items-center">
@@ -385,12 +388,14 @@ const Sidebar: React.FC = () => {
                 )}
               </div>
               <div className="mt-3 flex-1 space-y-1 bg-white">
-                {navLinks.map((link, index) => (
+                {workspaceLinks.map((link, index) => (
                   <Link key={index} href={link.href}>
                     <a
                       className={`${
-                        link.href === router.asPath ? "bg-theme text-white" : "hover:bg-indigo-100"
-                      } group flex items-center gap-3 px-2 py-2 text-xs font-medium rounded-md ${
+                        link.href === router.asPath
+                          ? "bg-theme text-white"
+                          : "hover:bg-indigo-100 focus:bg-indigo-100"
+                      } flex items-center gap-3 p-2 text-xs font-medium rounded-md outline-none ${
                         sidebarCollapse ? "justify-center" : ""
                       }`}
                     >
@@ -404,6 +409,17 @@ const Sidebar: React.FC = () => {
                     </a>
                   </Link>
                 ))}
+                <button
+                  type="button"
+                  className="w-full flex items-center gap-3 p-2 hover:bg-indigo-100 text-xs font-medium rounded-md outline-none"
+                  onClick={() => {
+                    const e = new KeyboardEvent("keydown", { key: "h", ctrlKey: true });
+                    document.dispatchEvent(e);
+                  }}
+                >
+                  <QuestionMarkCircleIcon className="flex-shrink-0 h-4 w-4" />
+                  {!sidebarCollapse && "Help Centre"}
+                </button>
               </div>
             </div>
             <div
@@ -445,8 +461,8 @@ const Sidebar: React.FC = () => {
                                   className={classNames(
                                     item.href === router.asPath
                                       ? "bg-gray-200 text-gray-900"
-                                      : "text-gray-500 hover:bg-gray-100 hover:text-gray-900",
-                                    "group flex items-center px-2 py-2 text-xs font-medium rounded-md",
+                                      : "text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900",
+                                    "group flex items-center px-2 py-2 text-xs font-medium rounded-md outline-none",
                                     sidebarCollapse ? "justify-center" : ""
                                   )}
                                 >
@@ -491,8 +507,8 @@ const Sidebar: React.FC = () => {
             <div className="px-2 py-2 bg-gray-50 w-full self-baseline">
               <button
                 type="button"
-                className={`flex items-center gap-3 px-2 py-2 text-xs font-medium rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-900 w-full ${
-                  sidebarCollapse ? "justify-center" : ""
+                className={`flex items-center gap-3 px-2 py-2 text-xs font-medium rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 outline-none ${
+                  sidebarCollapse ? "justify-center w-full" : ""
                 }`}
                 onClick={() => toggleCollapsed()}
               >

@@ -39,7 +39,7 @@ const SelectPriority: React.FC<Props> = ({ control }) => {
                   leaveFrom="opacity-100"
                   leaveTo="opacity-0"
                 >
-                  <Listbox.Options className="absolute mt-1 w-full bg-white shadow-lg max-h-28 rounded-md py-1 ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none text-xs">
+                  <Listbox.Options className="absolute z-10 mt-1 w-full w-[5rem] bg-white shadow-lg max-h-28 rounded-md py-1 ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none text-xs">
                     <div className="p-1">
                       {PRIORITIES.map((priority) => (
                         <Listbox.Option
@@ -55,21 +55,11 @@ const SelectPriority: React.FC<Props> = ({ control }) => {
                             <>
                               <span
                                 className={`block capitalize ${
-                                  selected ? "font-semibold" : "font-normal"
+                                  selected ? "font-medium" : "font-normal"
                                 }`}
                               >
                                 {priority}
                               </span>
-
-                              {selected ? (
-                                <span
-                                  className={`absolute inset-y-0 right-0 flex items-center pr-4 ${
-                                    active ? "text-white" : "text-indigo-600"
-                                  }`}
-                                >
-                                  <CheckIcon className="h-5 w-5" aria-hidden="true" />
-                                </span>
-                              ) : null}
                             </>
                           )}
                         </Listbox.Option>

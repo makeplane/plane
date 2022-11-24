@@ -1,8 +1,6 @@
 // next
-import Link from "next/link";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
-import Image from "next/image";
 // react
 import React, { useCallback, useEffect, useState } from "react";
 // swr
@@ -13,25 +11,30 @@ import { useForm } from "react-hook-form";
 import { Tab } from "@headlessui/react";
 // services
 import issuesServices from "lib/services/issues.services";
+import stateServices from "lib/services/state.services";
 // fetch keys
 import { PROJECT_ISSUES_ACTIVITY, PROJECT_ISSUES_COMMENTS, STATE_LIST } from "constants/fetch-keys";
 // hooks
 import useUser from "lib/hooks/useUser";
 // layouts
-import ProjectLayout from "layouts/ProjectLayout";
+import AdminLayout from "layouts/AdminLayout";
 // components
 import CreateUpdateIssuesModal from "components/project/issues/CreateUpdateIssueModal";
-import IssueCommentSection from "components/project/issues/comment/IssueCommentSection";
+import IssueCommentSection from "components/project/issues/issue-detail/comment/IssueCommentSection";
 // common
-import { timeAgo, debounce, addSpaceIfCamelCase } from "constants/common";
+import { debounce } from "constants/common";
 // components
 import IssueDetailSidebar from "components/project/issues/issue-detail/IssueDetailSidebar";
+// activites
+import IssueActivitySection from "components/project/issues/issue-detail/activity";
 // ui
 import { Spinner, TextArea } from "ui";
+import HeaderButton from "ui/HeaderButton";
+import { BreadcrumbItem, Breadcrumbs } from "ui/Breadcrumbs";
 // types
 import { IIssue, IIssueComment, IssueResponse, IState } from "types";
-import { BreadcrumbItem, Breadcrumbs } from "ui/Breadcrumbs";
-import stateServices from "lib/services/state.services";
+// icons
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 
 const IssueDetail: NextPage = () => {
   const router = useRouter();
@@ -137,7 +140,7 @@ const IssueDetail: NextPage = () => {
   const nextIssue = issues?.results[issues?.results.findIndex((issue) => issue.id === issueId) + 1];
 
   return (
-    <ProjectLayout>
+    <AdminLayout>
       <CreateUpdateIssuesModal
         isOpen={isOpen}
         setIsOpen={setIsOpen}
@@ -149,226 +152,128 @@ const IssueDetail: NextPage = () => {
       <div className="space-y-5">
         <Breadcrumbs>
           <BreadcrumbItem
-            title={`${activeProject?.name} Issues`}
+            title={`${activeProject?.name ?? "Project"} Issues`}
             link={`/projects/${activeProject?.id}/issues`}
           />
           <BreadcrumbItem
-            title={`Issue ${activeProject?.identifier}-${issueDetail?.sequence_id} Details`}
+            title={`Issue ${activeProject?.identifier ?? "Project"}-${
+              issueDetail?.sequence_id ?? "..."
+            } Details`}
           />
         </Breadcrumbs>
-        <div className="bg-gray-50 rounded-xl overflow-hidden">
-          {issueDetail && activeProject ? (
-            <>
-              <div className="w-full py-4 px-10 bg-gray-200 flex justify-between items-center">
-                <p className="text-gray-500">
-                  <Link href={`/projects/${activeProject.id}/issues`}>{activeProject.name}</Link>/
-                  {activeProject.identifier}-{issueDetail.sequence_id}
-                </p>
-                <div className="flex gap-x-2">
-                  <button
-                    type="button"
-                    className={`px-4 py-1.5 bg-white rounded-lg ${
-                      prevIssue ? "hover:bg-gray-100" : "bg-gray-100"
-                    }`}
-                    disabled={prevIssue ? false : true}
-                    onClick={() => {
-                      if (!prevIssue) return;
-                      router.push(`/projects/${prevIssue.project}/issues/${prevIssue.id}`);
-                    }}
-                  >
-                    Previous
-                  </button>
-                  <button
-                    type="button"
-                    className={`px-4 py-1.5 bg-white rounded-lg ${
-                      nextIssue ? "hover:bg-gray-100" : "bg-gray-100"
-                    }`}
-                    disabled={nextIssue ? false : true}
-                    onClick={() => {
-                      if (!nextIssue) return;
-                      router.push(`/projects/${nextIssue.project}/issues/${nextIssue?.id}`);
-                    }}
-                  >
-                    Next
-                  </button>
-                </div>
-              </div>
-              <div>
-                <div className="flex flex-wrap">
-                  <div className="w-full lg:w-3/4 h-full px-2 md:px-10 py-10 overflow-auto">
-                    <div className="w-full h-full space-y-5">
-                      <TextArea
-                        id="name"
-                        placeholder="Enter issue name"
-                        name="name"
-                        autoComplete="off"
-                        validations={{ required: true }}
-                        register={register}
-                        onChange={debounce(() => {
-                          handleSubmit(submitChanges)();
-                        }, 5000)}
-                        mode="transparent"
-                        className="text-3xl sm:text-3xl"
-                      />
-                      <TextArea
-                        id="description"
-                        name="description"
-                        error={errors.description}
-                        validations={{
-                          required: true,
-                        }}
-                        onChange={debounce(() => {
-                          handleSubmit(submitChanges)();
-                        }, 5000)}
-                        placeholder="Enter issue description"
-                        mode="transparent"
-                        register={register}
-                      />
-                      <div className="relative">
-                        <div className="absolute inset-0 flex items-center" aria-hidden="true">
-                          <div className="w-full border-t border-gray-300" />
-                        </div>
-                        <div className="relative flex justify-center">
-                          <span className="bg-gray-50 px-2 text-sm text-gray-500">
-                            Activity/Comments
-                          </span>
-                        </div>
-                      </div>
-                      <div className="w-full">
-                        <Tab.Group>
-                          <Tab.List className="flex gap-x-3">
-                            {["Comments", "Activity"].map((item) => (
-                              <Tab
-                                key={item}
-                                className={({ selected }) =>
-                                  `px-3 py-1 text-sm rounded-md ${
-                                    selected ? "bg-gray-800 text-white" : ""
-                                  }`
-                                }
-                              >
-                                {item}
-                              </Tab>
-                            ))}
-                          </Tab.List>
-                          <Tab.Panels className="mt-5">
-                            <Tab.Panel>
-                              <IssueCommentSection
-                                comments={issueComments}
-                                workspaceSlug={activeWorkspace?.slug as string}
-                                projectId={projectId as string}
-                                issueId={issueId as string}
-                              />
-                            </Tab.Panel>
-                            <Tab.Panel>
-                              {issueActivities ? (
-                                <div className="space-y-3">
-                                  {issueActivities.map((activity) => {
-                                    if (activity.field !== "updated_by")
-                                      return (
-                                        <div
-                                          key={activity.id}
-                                          className="relative flex gap-x-2 w-full"
-                                        >
-                                          {/* <span
-                                            className="absolute top-5 left-5 -ml-1 h-full w-0.5 bg-gray-200"
-                                            aria-hidden="true"
-                                          /> */}
-                                          <div className="flex-shrink-0 -ml-1.5">
-                                            {activity.actor_detail.avatar &&
-                                            activity.actor_detail.avatar !== "" ? (
-                                              <Image
-                                                src={activity.actor_detail.avatar}
-                                                alt={activity.actor_detail.name}
-                                                height={30}
-                                                width={30}
-                                                className="rounded-full"
-                                              />
-                                            ) : (
-                                              <div
-                                                className={`h-8 w-8 bg-gray-500 text-white border-2 border-white grid place-items-center rounded-full`}
-                                              >
-                                                {activity.actor_detail.first_name.charAt(0)}
-                                              </div>
-                                            )}
-                                          </div>
-                                          <div className="w-full">
-                                            <p>
-                                              {activity.actor_detail.first_name}{" "}
-                                              {activity.actor_detail.last_name}{" "}
-                                              <span>{activity.verb}</span>{" "}
-                                              {activity.verb !== "created" ? (
-                                                <span>{activity.field ?? "commented"}</span>
-                                              ) : (
-                                                " this issue"
-                                              )}
-                                            </p>
-                                            <p className="text-xs text-gray-500">
-                                              {timeAgo(activity.created_at)}
-                                            </p>
-                                            <div className="w-full mt-2">
-                                              {activity.verb !== "created" && (
-                                                <div className="text-sm">
-                                                  <div>
-                                                    From:{" "}
-                                                    <span className="text-gray-500">
-                                                      {activity.field === "state"
-                                                        ? activity.old_value
-                                                          ? addSpaceIfCamelCase(
-                                                              states?.find(
-                                                                (s) => s.id === activity.old_value
-                                                              )?.name ?? ""
-                                                            )
-                                                          : "None"
-                                                        : activity.old_value}
-                                                    </span>
-                                                  </div>
-                                                  <div>
-                                                    To:{" "}
-                                                    <span className="text-gray-500">
-                                                      {activity.field === "state"
-                                                        ? activity.new_value
-                                                          ? addSpaceIfCamelCase(
-                                                              states?.find(
-                                                                (s) => s.id === activity.new_value
-                                                              )?.name ?? ""
-                                                            )
-                                                          : "None"
-                                                        : activity.new_value}
-                                                    </span>
-                                                  </div>
-                                                </div>
-                                              )}
-                                            </div>
-                                          </div>
-                                        </div>
-                                      );
-                                  })}
-                                </div>
-                              ) : (
-                                <div className="w-full h-full flex justify-center items-center">
-                                  <Spinner />
-                                </div>
-                              )}
-                            </Tab.Panel>
-                          </Tab.Panels>
-                        </Tab.Group>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="w-full lg:w-1/4 h-full border-l px-2 md:px-10 py-10">
-                    <IssueDetailSidebar control={control} submitChanges={submitChanges} />
-                  </div>
-                </div>
-              </div>
-            </>
-          ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <Spinner />
-            </div>
-          )}
+        <div className="flex items-center justify-between w-full">
+          <h2 className="text-2xl font-medium">{`${activeProject?.name}/${activeProject?.identifier}-${issueDetail?.sequence_id}`}</h2>
+          <div className="flex items-center gap-x-3">
+            <HeaderButton
+              Icon={ChevronLeftIcon}
+              disabled={!prevIssue}
+              label="Previous"
+              onClick={() => {
+                if (!prevIssue) return;
+                router.push(`/projects/${prevIssue.project}/issues/${prevIssue.id}`);
+              }}
+            />
+            <HeaderButton
+              Icon={ChevronRightIcon}
+              disabled={!nextIssue}
+              label="Next"
+              onClick={() => {
+                if (!nextIssue) return;
+                router.push(`/projects/${nextIssue.project}/issues/${nextIssue?.id}`);
+              }}
+              position="reverse"
+            />
+          </div>
         </div>
+        {issueDetail && activeProject ? (
+          <div className="grid grid-cols-4 gap-5">
+            <div className="col-span-3 space-y-5">
+              <div className="bg-secondary rounded-lg p-5">
+                <TextArea
+                  id="name"
+                  placeholder="Enter issue name"
+                  name="name"
+                  autoComplete="off"
+                  validations={{ required: true }}
+                  register={register}
+                  onChange={debounce(() => {
+                    handleSubmit(submitChanges)();
+                  }, 5000)}
+                  mode="transparent"
+                  className="text-3xl sm:text-3xl"
+                />
+                <TextArea
+                  id="description"
+                  name="description"
+                  error={errors.description}
+                  validations={{
+                    required: true,
+                  }}
+                  onChange={debounce(() => {
+                    handleSubmit(submitChanges)();
+                  }, 5000)}
+                  placeholder="Enter issue description"
+                  mode="transparent"
+                  register={register}
+                />
+              </div>
+              <div className="bg-secondary rounded-lg p-5">
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center" aria-hidden="true">
+                    <div className="w-full border-t border-gray-300" />
+                  </div>
+                  <div className="relative flex justify-center">
+                    <span className="bg-white px-2 text-sm text-gray-500">Activity/Comments</span>
+                  </div>
+                </div>
+                <div className="w-full space-y-5 mt-3">
+                  <Tab.Group>
+                    <Tab.List className="flex gap-x-3">
+                      {["Comments", "Activity"].map((item) => (
+                        <Tab
+                          key={item}
+                          className={({ selected }) =>
+                            `px-3 py-1 text-sm rounded-md border border-gray-700 ${
+                              selected ? "bg-gray-700 text-white" : ""
+                            }`
+                          }
+                        >
+                          {item}
+                        </Tab>
+                      ))}
+                    </Tab.List>
+                    <Tab.Panels>
+                      <Tab.Panel>
+                        <IssueCommentSection
+                          comments={issueComments}
+                          workspaceSlug={activeWorkspace?.slug as string}
+                          projectId={projectId as string}
+                          issueId={issueId as string}
+                        />
+                      </Tab.Panel>
+                      <Tab.Panel>
+                        <IssueActivitySection issueActivities={issueActivities} states={states} />
+                      </Tab.Panel>
+                    </Tab.Panels>
+                  </Tab.Group>
+                </div>
+              </div>
+            </div>
+            <div className="sticky top-0 h-min bg-secondary p-4 rounded-lg">
+              <IssueDetailSidebar
+                control={control}
+                issueDetail={issueDetail}
+                submitChanges={submitChanges}
+              />
+            </div>
+          </div>
+        ) : (
+          <div className="h-full w-full grid place-items-center px-4 sm:px-0">
+            <Spinner />
+          </div>
+        )}
       </div>
-    </ProjectLayout>
+    </AdminLayout>
   );
 };
 

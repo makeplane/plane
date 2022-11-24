@@ -32,7 +32,7 @@ export interface ProjectMember {
   email: string;
   message: string;
   role: 5 | 10 | 15 | 20;
-  member: string;
+  member: any;
   member_id: string;
   user_id: string;
 }

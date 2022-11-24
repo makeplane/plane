@@ -18,7 +18,7 @@ type EmptySpaceProps = {
   link?: { text: string; href: string };
 };
 
-const EmptySpace = ({ title, description, children, Icon, link }: EmptySpaceProps) => {
+const EmptySpace: React.FC<EmptySpaceProps> = ({ title, description, children, Icon, link }) => {
   return (
     <>
       <div className="max-w-lg">
@@ -61,13 +61,13 @@ type EmptySpaceItemProps = {
   action: () => void;
 };
 
-const EmptySpaceItem = ({
+const EmptySpaceItem: React.FC<EmptySpaceItemProps> = ({
   title,
   description,
   bgColor = "blue",
   Icon,
   action,
-}: EmptySpaceItemProps) => {
+}) => {
   return (
     <>
       <li className="cursor-pointer" onClick={action}>

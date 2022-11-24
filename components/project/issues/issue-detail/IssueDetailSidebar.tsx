@@ -19,11 +19,20 @@ import {
   PROJECT_ISSUE_LABELS,
 } from "constants/fetch-keys";
 // commons
-import { classNames } from "constants/common";
+import { classNames, copyTextToClipboard } from "constants/common";
 // ui
 import { Input, Button } from "ui";
 // icons
-import { Bars3BottomRightIcon, PlusIcon, UserIcon, TagIcon } from "@heroicons/react/24/outline";
+import {
+  UserIcon,
+  TagIcon,
+  UserGroupIcon,
+  ChevronDownIcon,
+  Squares2X2Icon,
+  ChartBarIcon,
+  ClipboardDocumentIcon,
+  LinkIcon,
+} from "@heroicons/react/24/outline";
 // types
 import type { Control } from "react-hook-form";
 import type { IIssue, IIssueLabels, IssueResponse, IState, WorkspaceMember } from "types";
@@ -31,6 +40,7 @@ import type { IIssue, IIssueLabels, IssueResponse, IState, WorkspaceMember } fro
 type Props = {
   control: Control<IIssue, any>;
   submitChanges: (formData: Partial<IIssue>) => void;
+  issueDetail: IIssue | undefined;
 };
 
 const PRIORITIES = ["high", "medium", "low"];
@@ -39,7 +49,7 @@ const defaultValues: Partial<IIssueLabels> = {
   name: "",
 };
 
-const IssueDetailSidebar: React.FC<Props> = ({ control, submitChanges }) => {
+const IssueDetailSidebar: React.FC<Props> = ({ control, submitChanges, issueDetail }) => {
   const { activeWorkspace, activeProject } = useUser();
 
   const { data: states } = useSWR<IState[]>(
@@ -90,65 +100,88 @@ const IssueDetailSidebar: React.FC<Props> = ({ control, submitChanges }) => {
       });
   };
 
+  const sidebarOptions = [
+    {
+      label: "Priority",
+      name: "priority",
+      canSelectMultipleOptions: false,
+      icon: ChartBarIcon,
+      options: PRIORITIES.map((property) => ({
+        label: property,
+        value: property,
+      })),
+    },
+    {
+      label: "Status",
+      name: "state",
+      canSelectMultipleOptions: false,
+      icon: Squares2X2Icon,
+      options: states?.map((state) => ({
+        label: state.name,
+        value: state.id,
+      })),
+    },
+    {
+      label: "Assignees",
+      name: "assignees_list",
+      canSelectMultipleOptions: true,
+      icon: UserGroupIcon,
+      options: people?.map((person) => ({
+        label: person.member.first_name,
+        value: person.member.id,
+      })),
+    },
+    {
+      label: "Blocker",
+      name: "blockers_list",
+      canSelectMultipleOptions: true,
+      icon: UserIcon,
+      options: projectIssues?.results?.map((issue) => ({
+        label: issue.name,
+        value: issue.id,
+      })),
+    },
+    {
+      label: "Blocked",
+      name: "blocked_list",
+      canSelectMultipleOptions: true,
+      icon: UserIcon,
+      options: projectIssues?.results?.map((issue) => ({
+        label: issue.name,
+        value: issue.id,
+      })),
+    },
+  ];
+
   return (
-    <div className="w-full h-full">
+    <div className="h-full w-full">
       <div className="space-y-3">
         <div className="flex flex-col gap-y-4">
-          {[
-            {
-              label: "Priority",
-              name: "priority",
-              canSelectMultipleOptions: false,
-              icon: Bars3BottomRightIcon,
-              options: PRIORITIES.map((property) => ({
-                label: property,
-                value: property,
-              })),
-            },
-            {
-              label: "Status",
-              name: "state",
-              canSelectMultipleOptions: false,
-              icon: Bars3BottomRightIcon,
-              options: states?.map((state) => ({
-                label: state.name,
-                value: state.id,
-              })),
-            },
-            {
-              label: "Assignees",
-              name: "assignees_list",
-              canSelectMultipleOptions: true,
-              icon: UserIcon,
-              options: people?.map((person) => ({
-                label: person.member.first_name,
-                value: person.member.id,
-              })),
-            },
-            {
-              label: "Blocker",
-              name: "blockers_list",
-              canSelectMultipleOptions: true,
-              icon: UserIcon,
-              options: projectIssues?.results?.map((issue) => ({
-                label: issue.name,
-                value: issue.id,
-              })),
-            },
-            {
-              label: "Blocked",
-              name: "blocked_list",
-              canSelectMultipleOptions: true,
-              icon: UserIcon,
-              options: projectIssues?.results?.map((issue) => ({
-                label: issue.name,
-                value: issue.id,
-              })),
-            },
-          ].map((item) => (
-            <div className="flex items-center gap-x-2" key={item.label}>
-              <div className="flex items-center gap-x-2">
-                <item.icon className="w-5 h-5 text-gray-500" />
+          <h3 className="text-lg font-medium leading-6 text-gray-900">Quick Actions</h3>
+          <div className="flex items-center gap-2 flex-wrap">
+            <button
+              type="button"
+              className="p-2 hover:bg-gray-100 border rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 duration-300"
+              onClick={() =>
+                copyTextToClipboard(
+                  `https://app.plane.so/projects/${activeProject?.id}/issues/${issueDetail?.id}`
+                )
+              }
+            >
+              <LinkIcon className="h-3.5 w-3.5" />
+            </button>
+            <button
+              type="button"
+              className="p-2 hover:bg-gray-100 border rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 duration-300"
+              onClick={() => copyTextToClipboard(`${issueDetail?.id}`)}
+            >
+              <ClipboardDocumentIcon className="h-3.5 w-3.5" />
+            </button>
+          </div>
+          {sidebarOptions.map((item) => (
+            <div className="flex items-center justify-between gap-x-2" key={item.label}>
+              <div className="flex items-center gap-x-2 text-sm">
+                <item.icon className="h-4 w-4" />
                 <p>{item.label}</p>
               </div>
               <div>
@@ -160,68 +193,61 @@ const IssueDetailSidebar: React.FC<Props> = ({ control, submitChanges }) => {
                       as="div"
                       value={value}
                       multiple={item.canSelectMultipleOptions}
-                      onChange={(value) => submitChanges({ [item.name]: value })}
+                      onChange={(value: any) => submitChanges({ [item.name]: value })}
                       className="flex-shrink-0"
                     >
                       {({ open }) => (
-                        <>
-                          <Listbox.Label className="sr-only">{item.label}</Listbox.Label>
-                          <div className="relative">
-                            <Listbox.Button className="relative inline-flex items-center whitespace-nowrap rounded-full bg-gray-50 py-2 px-2 text-sm font-medium text-gray-500 hover:bg-gray-100 sm:px-3 border border-dashed">
-                              <PlusIcon
-                                className="h-5 w-5 flex-shrink-0 text-gray-300 sm:-ml-1"
-                                aria-hidden="true"
-                              />
-                              <span
-                                className={classNames(
-                                  value ? "" : "text-gray-900",
-                                  "hidden truncate capitalize sm:ml-2 sm:block w-16"
-                                )}
-                              >
-                                {value
-                                  ? Array.isArray(value)
-                                    ? value
-                                        .map(
-                                          (i: any) =>
-                                            item.options?.find((option) => option.value === i)
-                                              ?.label
-                                        )
-                                        .join(", ") || `Select ${item.label}`
-                                    : item.options?.find((option) => option.value === value)?.label
-                                  : `Select ${item.label}`}
-                              </span>
-                            </Listbox.Button>
-
-                            <Transition
-                              show={open}
-                              as={React.Fragment}
-                              leave="transition ease-in duration-100"
-                              leaveFrom="opacity-100"
-                              leaveTo="opacity-0"
+                        <div className="relative">
+                          <Listbox.Button className="relative flex justify-between items-center gap-1 hover:bg-gray-100 border rounded-md shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-sm duration-300">
+                            <span
+                              className={classNames(
+                                value ? "" : "text-gray-900",
+                                "hidden truncate sm:block w-16 text-left",
+                                item.label === "Priority" ? "capitalize" : ""
+                              )}
                             >
-                              <Listbox.Options className="absolute right-0 z-10 mt-1 max-h-56 w-52 overflow-auto rounded-lg bg-white py-3 text-base shadow ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                              {value
+                                ? Array.isArray(value)
+                                  ? value
+                                      .map(
+                                        (i: any) =>
+                                          item.options?.find((option) => option.value === i)?.label
+                                      )
+                                      .join(", ") || item.label
+                                  : item.options?.find((option) => option.value === value)?.label
+                                : "None"}
+                            </span>
+                            <ChevronDownIcon className="h-3 w-3" />
+                          </Listbox.Button>
+
+                          <Transition
+                            show={open}
+                            as={React.Fragment}
+                            leave="transition ease-in duration-100"
+                            leaveFrom="opacity-100"
+                            leaveTo="opacity-0"
+                          >
+                            <Listbox.Options className="absolute z-10 right-0 mt-1 w-40 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
+                              <div className="p-1">
                                 {item.options?.map((option) => (
                                   <Listbox.Option
                                     key={option.value}
                                     className={({ active, selected }) =>
-                                      classNames(
-                                        active || selected ? "bg-indigo-50" : "bg-white",
-                                        "relative cursor-default select-none py-2 px-3"
-                                      )
+                                      `${
+                                        active || selected ? "text-white bg-theme" : "text-gray-900"
+                                      } ${
+                                        item.label === "Priority" && "capitalize"
+                                      } cursor-pointer select-none relative p-2 rounded-md truncate`
                                     }
                                     value={option.value}
                                   >
-                                    <div className="flex items-center">
-                                      <span className="ml-3 block capitalize font-medium">
-                                        {option.label}
-                                      </span>
-                                    </div>
+                                    {option.label}
                                   </Listbox.Option>
                                 ))}
-                              </Listbox.Options>
-                            </Transition>
-                          </div>
-                        </>
+                              </div>
+                            </Listbox.Options>
+                          </Transition>
+                        </div>
                       )}
                     </Listbox>
                   )}
@@ -230,11 +256,11 @@ const IssueDetailSidebar: React.FC<Props> = ({ control, submitChanges }) => {
             </div>
           ))}
           <div>
-            <form className="flex" onSubmit={handleSubmit(onSubmit)}>
+            <form className="flex items-center gap-x-2" onSubmit={handleSubmit(onSubmit)}>
               <Input
                 id="name"
                 name="name"
-                placeholder="Add label"
+                placeholder="Add new label"
                 register={register}
                 validations={{
                   required: false,
@@ -246,9 +272,9 @@ const IssueDetailSidebar: React.FC<Props> = ({ control, submitChanges }) => {
               </Button>
             </form>
           </div>
-          <div className="flex items-center gap-x-2">
-            <div className="flex items-center gap-x-2">
-              <TagIcon className="w-5 h-5 text-gray-500" />
+          <div className="flex justify-between items-center gap-x-2">
+            <div className="flex items-center gap-x-2 text-sm">
+              <TagIcon className="w-4 h-4" />
               <p>Label</p>
             </div>
             <div>
@@ -267,15 +293,11 @@ const IssueDetailSidebar: React.FC<Props> = ({ control, submitChanges }) => {
                       <>
                         <Listbox.Label className="sr-only">Label</Listbox.Label>
                         <div className="relative">
-                          <Listbox.Button className="relative inline-flex items-center whitespace-nowrap rounded-full bg-gray-50 py-2 px-2 text-sm font-medium text-gray-500 hover:bg-gray-100 sm:px-3 border border-dashed">
-                            <PlusIcon
-                              className="h-5 w-5 flex-shrink-0 text-gray-300 sm:-ml-1"
-                              aria-hidden="true"
-                            />
+                          <Listbox.Button className="relative flex justify-between items-center gap-1 hover:bg-gray-100 border rounded-md shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-sm duration-300">
                             <span
                               className={classNames(
                                 value ? "" : "text-gray-900",
-                                "hidden truncate capitalize sm:ml-2 sm:block w-16"
+                                "hidden truncate capitalize sm:block w-16 text-left"
                               )}
                             >
                               {value && value.length > 0
@@ -285,8 +307,9 @@ const IssueDetailSidebar: React.FC<Props> = ({ control, submitChanges }) => {
                                         issueLabels?.find((option) => option.id === i)?.name
                                     )
                                     .join(", ")
-                                : `Select label`}
+                                : "None"}
                             </span>
+                            <ChevronDownIcon className="h-3 w-3" />
                           </Listbox.Button>
 
                           <Transition
@@ -296,25 +319,22 @@ const IssueDetailSidebar: React.FC<Props> = ({ control, submitChanges }) => {
                             leaveFrom="opacity-100"
                             leaveTo="opacity-0"
                           >
-                            <Listbox.Options className="absolute right-0 z-10 mt-1 max-h-56 w-52 overflow-auto rounded-lg bg-white py-3 text-base shadow ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                              {issueLabels?.map((label: any) => (
-                                <Listbox.Option
-                                  key={label.id}
-                                  className={({ active, selected }) =>
-                                    classNames(
-                                      active || selected ? "bg-indigo-50" : "bg-white",
-                                      "relative cursor-default select-none py-2 px-3"
-                                    )
-                                  }
-                                  value={label.id}
-                                >
-                                  <div className="flex items-center">
-                                    <span className="ml-3 block capitalize font-medium">
-                                      {label.name}
-                                    </span>
-                                  </div>
-                                </Listbox.Option>
-                              ))}
+                            <Listbox.Options className="absolute z-10 right-0 mt-1 w-40 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
+                              <div className="p-1">
+                                {issueLabels?.map((label: any) => (
+                                  <Listbox.Option
+                                    key={label.id}
+                                    className={({ active, selected }) =>
+                                      `${
+                                        active || selected ? "text-white bg-theme" : "text-gray-900"
+                                      } cursor-pointer select-none relative p-2 rounded-md truncate`
+                                    }
+                                    value={label.id}
+                                  >
+                                    {label.name}
+                                  </Listbox.Option>
+                                ))}
+                              </div>
                             </Listbox.Options>
                           </Transition>
                         </div>
