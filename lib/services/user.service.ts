@@ -27,11 +27,13 @@ class UserService extends APIService {
   }
 
   async currentUser(): Promise<any> {
+    if (!this.getAccessToken()) return null;
     return this.get(USER_ENDPOINT)
       .then((response) => {
         return response?.data;
       })
       .catch((error) => {
+        this.purgeAccessToken();
         throw error?.response?.data;
       });
   }

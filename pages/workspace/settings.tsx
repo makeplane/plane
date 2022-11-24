@@ -64,7 +64,10 @@ const WorkspaceSettings = () => {
         await mutateWorkspaces((workspaces) => {
           return (workspaces ?? []).map((workspace) => {
             if (workspace.slug === activeWorkspace.slug) {
-              return res;
+              return {
+                ...workspace,
+                ...res,
+              };
             }
             return workspace;
           });
@@ -116,10 +119,10 @@ const WorkspaceSettings = () => {
                           <input {...getInputProps()} />
                           <div className="text-gray-500 mb-2">Logo</div>
                           <div>
-                            <div className="h-60 bg-blue-50" {...getRootProps()}>
+                            <div className="w-1/2 aspect-square bg-blue-50" {...getRootProps()}>
                               {((watch("logo") && watch("logo") !== null && watch("logo") !== "") ||
                                 (image && image !== null)) && (
-                                <div className="relative flex mx-auto h-60">
+                                <div className="relative flex mx-auto h-full">
                                   <Image
                                     src={image ? URL.createObjectURL(image) : watch("logo") ?? ""}
                                     alt="Workspace Logo"

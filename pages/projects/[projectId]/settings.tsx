@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback, useState } from "react";
 // swr
 import { mutate } from "swr";
 // next
@@ -20,13 +20,22 @@ import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
 // fetch keys
 import { PROJECT_DETAILS, PROJECTS_LIST, WORKSPACE_MEMBERS } from "constants/fetch-keys";
+// commons
+import { addSpaceIfCamelCase, debounce } from "constants/common";
+// components
+import CreateUpdateStateModal from "components/project/issues/BoardView/state/CreateUpdateStateModal";
 // ui
 import { Spinner, Button, Input, TextArea, Select } from "ui";
 import { Breadcrumbs, BreadcrumbItem } from "ui/Breadcrumbs";
 // icons
-import { ChevronDownIcon, CheckIcon } from "@heroicons/react/24/outline";
+import {
+  ChevronDownIcon,
+  CheckIcon,
+  PlusIcon,
+  PencilSquareIcon,
+} from "@heroicons/react/24/outline";
 // types
-import type { IProject, IWorkspace, WorkspaceMember } from "types";
+import type { IProject, IState, IWorkspace, WorkspaceMember } from "types";
 
 const defaultValues: Partial<IProject> = {
   name: "",
@@ -41,16 +50,20 @@ const ProjectSettings: NextPage = () => {
     handleSubmit,
     reset,
     control,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<IProject>({
     defaultValues,
   });
 
+  const [isCreateStateModalOpen, setIsCreateStateModalOpen] = useState(false);
+  const [selectedState, setSelectedState] = useState<string | undefined>();
+
   const router = useRouter();
 
   const { projectId } = router.query;
 
-  const { activeWorkspace, activeProject } = useUser();
+  const { activeWorkspace, activeProject, states } = useUser();
 
   const { setToastAlert } = useToast();
 
@@ -81,6 +94,7 @@ const ProjectSettings: NextPage = () => {
     const payload: Partial<IProject> = {
       name: formData.name,
       network: formData.network,
+      identifier: formData.identifier,
       description: formData.description,
       default_assignee: formData.default_assignee,
       project_lead: formData.project_lead,
@@ -113,9 +127,28 @@ const ProjectSettings: NextPage = () => {
       });
   };
 
+  const checkIdentifier = (slug: string, value: string) => {
+    projectServices.checkProjectIdentifierAvailability(slug, value).then((response) => {
+      console.log(response);
+      if (response.exists) setError("identifier", { message: "Identifier already exists" });
+    });
+  };
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const checkIdentifierAvailability = useCallback(debounce(checkIdentifier, 1500), []);
+
   return (
     <ProjectLayout>
       <div className="w-full h-full space-y-5">
+        <CreateUpdateStateModal
+          isOpen={isCreateStateModalOpen || Boolean(selectedState)}
+          handleClose={() => {
+            setSelectedState(undefined);
+            setIsCreateStateModalOpen(false);
+          }}
+          projectId={projectId as string}
+          data={selectedState ? states?.find((state) => state.id === selectedState) : undefined}
+        />
         <Breadcrumbs>
           <BreadcrumbItem title="Projects" link="/projects" />
           <BreadcrumbItem title={`${activeProject?.name} Settings`} />
@@ -169,8 +202,20 @@ const ProjectSettings: NextPage = () => {
                           register={register}
                           placeholder="Enter identifier"
                           label="Identifier"
+                          onChange={(e: any) => {
+                            if (!activeWorkspace || !e.target.value) return;
+                            checkIdentifierAvailability(activeWorkspace.slug, e.target.value);
+                          }}
                           validations={{
                             required: "Identifier is required",
+                            minLength: {
+                              value: 1,
+                              message: "Identifier must at least be of 1 character",
+                            },
+                            maxLength: {
+                              value: 9,
+                              message: "Identifier must at most be of 9 characters",
+                            },
                           }}
                         />
                       </div>
@@ -356,6 +401,47 @@ const ProjectSettings: NextPage = () => {
                       <Button type="submit" disabled={isSubmitting}>
                         {isSubmitting ? "Updating Project..." : "Update Project"}
                       </Button>
+                    </div>
+                  </section>
+                  <section className="space-y-5">
+                    <div>
+                      <h3 className="text-lg font-medium leading-6 text-gray-900">State</h3>
+                      <p className="mt-1 text-sm text-gray-500">
+                        Manage the state of this project.
+                      </p>
+                    </div>
+                    <div className="flex justify-between gap-3">
+                      <div className="w-full space-y-5">
+                        {states?.map((state) => (
+                          <div
+                            className="border p-1 px-4 rounded flex justify-between items-center"
+                            key={state.id}
+                          >
+                            <div className="flex items-center gap-x-2">
+                              <div
+                                className="w-3 h-3 rounded-full"
+                                style={{
+                                  backgroundColor: state.color,
+                                }}
+                              ></div>
+                              <h4>{addSpaceIfCamelCase(state.name)}</h4>
+                            </div>
+                            <div>
+                              <button type="button" onClick={() => setSelectedState(state.id)}>
+                                <PencilSquareIcon className="h-5 w-5 text-gray-400" />
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                        <button
+                          type="button"
+                          className="flex items-center gap-x-1"
+                          onClick={() => setIsCreateStateModalOpen(true)}
+                        >
+                          <PlusIcon className="h-4 w-4 text-gray-400" />
+                          <span>Add State</span>
+                        </button>
+                      </div>
                     </div>
                   </section>
                 </div>
