@@ -131,7 +131,7 @@ export const UserProvider = ({ children }: { children: ReactElement }) => {
     <UserContext.Provider
       value={{
         user: error ? undefined : data,
-        isUserLoading: !(!!data || !!error),
+        isUserLoading: Boolean(data === undefined && error === undefined),
         mutateUser: mutate,
         activeWorkspace: workspaceError ? undefined : activeWorkspace,
         mutateWorkspaces: mutateWorkspaces,
