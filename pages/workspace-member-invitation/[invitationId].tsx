@@ -11,8 +11,6 @@ import workspaceService from "lib/services/workspace.service";
 import { WORKSPACE_INVITATION } from "constants/fetch-keys";
 // hooks
 import useUser from "lib/hooks/useUser";
-// hoc
-import withAuthWrapper from "lib/hoc/withAuthWrapper";
 // layouts
 import DefaultLayout from "layouts/DefaultLayout";
 // ui
@@ -149,4 +147,4 @@ const WorkspaceInvitation: NextPage = () => {
   );
 };
 
-export default withAuthWrapper(WorkspaceInvitation);
+export default WorkspaceInvitation;

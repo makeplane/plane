@@ -9,6 +9,8 @@ import AdminLayout from "layouts/AdminLayout";
 import useSWR from "swr";
 // hooks
 import useUser from "lib/hooks/useUser";
+// hoc
+import withAuthWrapper from "lib/hoc/withAuthWrapper";
 // fetch keys
 import { USER_ISSUE } from "constants/fetch-keys";
 // services
@@ -167,4 +169,4 @@ const Workspace: NextPage = () => {
   );
 };
 
-export default Workspace;
+export default withAuthWrapper(Workspace);
