@@ -5,8 +5,6 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 // swr
 import useSWR from "swr";
-// headless ui
-import { Dialog, Transition } from "@headlessui/react";
 // services
 import workspaceService from "lib/services/workspace.service";
 import userService from "lib/services/user.service";
@@ -14,19 +12,16 @@ import userService from "lib/services/user.service";
 import useUser from "lib/hooks/useUser";
 // constants
 import { USER_WORKSPACE_INVITATIONS } from "constants/api-routes";
-// hoc
-import withAuthWrapper from "lib/hoc/withAuthWrapper";
 // layouts
 import DefaultLayout from "layouts/DefaultLayout";
 // ui
 import { Button, Spinner } from "ui";
 // types
 import type { IWorkspaceInvitation } from "types";
-import { ChartBarIcon, ChevronRightIcon, CubeIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { CubeIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { EmptySpace, EmptySpaceItem } from "ui/EmptySpace";
 
 const OnBoard: NextPage = () => {
-  const [canRedirect, setCanRedirect] = useState(true);
   const router = useRouter();
 
   const { workspaces, mutateWorkspaces, user } = useUser();
@@ -63,28 +58,18 @@ const OnBoard: NextPage = () => {
         console.log(res);
         await mutate();
         await mutateWorkspaces();
+        router.push("/workspace");
       })
       .catch((err) => {
         console.log(err);
       });
   };
 
-  // useEffect(() => {
-  //   if (!invitations) return;
-  //   else
-  //     invitations.forEach((invite) => {
-  //       if (invite.accepted)
-  //         setInvitationsRespond((prevData) => {
-  //           return [...prevData, invite.workspace.id];
-  //         });
-  //     });
-  // }, [invitations, router, workspaces]);
-
   useEffect(() => {
-    if (workspaces && workspaces.length === 0) {
-      setCanRedirect(false);
-    }
-  }, [workspaces]);
+    userService.updateUserOnBoard().then((response) => {
+      console.log(response);
+    });
+  }, []);
 
   return (
     <DefaultLayout
@@ -101,7 +86,7 @@ const OnBoard: NextPage = () => {
           </div>
         )}
         <div className="w-full md:w-2/3 lg:w-1/3 p-8 rounded-lg">
-          {invitations ? (
+          {invitations && workspaces ? (
             invitations.length > 0 ? (
               <div className="mt-3 sm:mt-5">
                 <div className="mt-2">
@@ -139,23 +124,6 @@ const OnBoard: NextPage = () => {
                               Accept
                             </label>
                           </div>
-                          {/* <div className="h-full flex items-center gap-x-1">
-                            <input
-                              id={`${item.id}`}
-                              aria-describedby="workspaces"
-                              name={`${item.id}`}
-                              checked={invitationsRespond.includes(item.workspace.id)}
-                              value={item.workspace.name}
-                              onChange={() => {
-                                handleInvitation(item, invitationsRespond.includes(item.workspace.id) ? "withdraw" : "accepted");
-                              }}
-                              type="checkbox"
-                              className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                            />
-                            <label htmlFor={item.id} className="text-sm">
-                              Reject
-                            </label>
-                          </div> */}
                         </div>
                       </div>
                     ))}
@@ -167,26 +135,45 @@ const OnBoard: NextPage = () => {
                   </Button>
                 </div>
               </div>
+            ) : workspaces && workspaces.length > 0 ? (
+              <div className="mt-3 flex flex-col gap-y-3">
+                <h2 className="text-2xl font-medium mb-4">Your workspaces</h2>
+                {workspaces.map((workspace) => (
+                  <div
+                    className="flex items-center justify-between border px-4 py-2 rounded mb-2"
+                    key={workspace.id}
+                  >
+                    <div className="flex items-center gap-x-2">
+                      <CubeIcon className="h-5 w-5 text-gray-400" />
+                      <Link href={"/workspace"}>
+                        <a>{workspace.name}</a>
+                      </Link>
+                    </div>
+                    <div className="flex items-center gap-x-2">
+                      <p className="text-sm">{workspace.owner.first_name}</p>
+                    </div>
+                  </div>
+                ))}
+                <Link href={"/workspace"}>
+                  <Button type="button">Go to workspaces</Button>
+                </Link>
+              </div>
             ) : (
-              <EmptySpace
-                title={`${
-                  canRedirect
-                    ? `You haven't been invited to any workspace yet.`
-                    : "You don't have any workspaces, Start by creating one."
-                }`}
-                description="Your workspace is where you'll create projects, collaborate on your issues, and organize different streams of work in your Plane account."
-              >
-                <EmptySpaceItem
-                  Icon={canRedirect ? CubeIcon : PlusIcon}
-                  title={canRedirect ? "Continue to Dashboard" : "Create your Workspace"}
-                  action={() => {
-                    userService.updateUserOnBoard().then((response) => {
-                      console.log(response);
-                    });
-                    router.push(canRedirect ? "/" : "/create-workspace");
-                  }}
-                />
-              </EmptySpace>
+              invitations.length === 0 &&
+              workspaces.length === 0 && (
+                <EmptySpace
+                  title="You don't have any workspaces yet"
+                  description="Your workspace is where you'll create projects, collaborate on your issues, and organize different streams of work in your Plane account."
+                >
+                  <EmptySpaceItem
+                    Icon={PlusIcon}
+                    title={"Create your Workspace"}
+                    action={() => {
+                      router.push("/create-workspace");
+                    }}
+                  />
+                </EmptySpace>
+              )
             )
           ) : (
             <div className="w-full h-full flex justify-center items-center">
@@ -199,4 +186,4 @@ const OnBoard: NextPage = () => {
   );
 };
 
-export default withAuthWrapper(OnBoard);
+export default OnBoard;
