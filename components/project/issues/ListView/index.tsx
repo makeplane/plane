@@ -1,5 +1,5 @@
 // react
-import React from "react";
+import React, { useEffect, useState } from "react";
 // next
 import Link from "next/link";
 import Image from "next/image";
@@ -25,6 +25,7 @@ import {
   renderShortNumericDateFormat,
   replaceUnderscoreIfSnakeCase,
 } from "constants/common";
+import IssuePreviewModal from "../PreviewModal";
 
 // types
 type Props = {
@@ -44,6 +45,9 @@ const ListView: React.FC<Props> = ({
   setSelectedIssue,
   handleDeleteIssue,
 }) => {
+  const [issuePreviewModal, setIssuePreviewModal] = useState(false);
+  const [previewModalIssueId, setPreviewModalIssueId] = useState<string | null>(null);
+
   const { activeWorkspace, activeProject, states } = useUser();
 
   const partialUpdateIssue = (formData: Partial<IIssue>, issueId: string) => {
@@ -71,8 +75,23 @@ const ListView: React.FC<Props> = ({
     activeWorkspace ? () => workspaceService.workspaceMembers(activeWorkspace.slug) : null
   );
 
+  const handleHover = (issueId: string) => {
+    document.addEventListener("keydown", (e) => {
+      if (e.code === "Space") {
+        e.preventDefault();
+        setPreviewModalIssueId(issueId);
+        setIssuePreviewModal(true);
+      }
+    });
+  };
+
   return (
     <div className="mt-4 flex flex-col">
+      <IssuePreviewModal
+        isOpen={issuePreviewModal}
+        setIsOpen={setIssuePreviewModal}
+        issueId={previewModalIssueId}
+      />
       <div className="overflow-x-auto">
         <div className="inline-block min-w-full p-0.5 align-middle">
           <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
@@ -135,6 +154,7 @@ const ListView: React.FC<Props> = ({
                                 index === 0 ? "border-gray-300" : "border-gray-200",
                                 "border-t"
                               )}
+                              onMouseEnter={() => handleHover(issue.id)}
                             >
                               {Object.keys(properties).map(
                                 (key) =>

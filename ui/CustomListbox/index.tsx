@@ -64,7 +64,7 @@ const CustomListbox: React.FC<Props> = ({
               leaveTo="opacity-0"
             >
               <Listbox.Options
-                className={`absolute mt-1 bg-white shadow-lg ${
+                className={`absolute mt-1 bg-white shadow-lg max-h-32 overflow-auto ${
                   width === "sm"
                     ? "w-32"
                     : width === "md"

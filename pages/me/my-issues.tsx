@@ -25,6 +25,7 @@ import ChangeStateDropdown from "components/project/issues/my-issues/ChangeState
 import { PlusIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
 // types
 import { IIssue } from "types";
+import Link from "next/link";
 
 const MyIssues: NextPage = () => {
   const { user } = useUser();
@@ -139,8 +140,10 @@ const MyIssues: NextPage = () => {
                                   "border-t text-sm text-gray-900"
                                 )}
                               >
-                                <td className="px-3 py-4 text-sm font-medium text-gray-900 max-w-[15rem]">
-                                  {myIssue.name}
+                                <td className="px-3 py-4 text-sm font-medium text-gray-900 hover:text-theme max-w-[15rem] duration-300">
+                                  <Link href={`/projects/${myIssue.project}/issues/${myIssue.id}`}>
+                                    <a>{myIssue.name}</a>
+                                  </Link>
                                 </td>
                                 <td className="px-3 py-4 max-w-[15rem]">{myIssue.description}</td>
                                 <td className="px-3 py-4">
