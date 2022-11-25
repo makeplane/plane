@@ -10,7 +10,9 @@ const Home: NextPage = () => {
 
   const { user, isUserLoading, activeWorkspace, workspaces } = useUser();
 
-  if (!isUserLoading && !user) router.push("/signin");
+  useEffect(() => {
+    if (!isUserLoading && (!user || user === null)) router.push("/signin");
+  }, [isUserLoading, user, router]);
 
   useEffect(() => {
     if (!activeWorkspace && workspaces?.length === 0) router.push("/invitations");
