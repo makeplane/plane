@@ -1,7 +1,8 @@
 // next imports
+import type { NextPageContext } from "next";
 import Router from "next/router";
 
-const redirect = (context: any, target: any) => {
+const redirect = (context: NextPageContext, target: any) => {
   if (context.res) {
     // server
     // 303: "See other"

@@ -54,7 +54,7 @@ const TextArea: React.FC<Props> = ({
           setTextareaValue(e.target.value);
         }}
         className={classNames(
-          "w-full outline-none px-3 py-2",
+          "w-full outline-none px-3 py-2 bg-transparent",
           mode === "primary" ? "border border-gray-300 rounded-md" : "",
           mode === "transparent"
             ? "bg-transparent border-none transition-all ring-0 focus:ring-1 focus:ring-indigo-600 rounded"
