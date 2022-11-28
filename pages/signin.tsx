@@ -8,8 +8,6 @@ import Image from "next/image";
 import useUser from "lib/hooks/useUser";
 // services
 import authenticationService from "lib/services/authentication.service";
-// hoc
-import withAuthWrapper from "lib/hoc/withAuthWrapper";
 // layouts
 import DefaultLayout from "layouts/DefaultLayout";
 // social button
@@ -180,4 +178,4 @@ const SignIn: NextPage = () => {
   );
 };
 
-export default withAuthWrapper(SignIn);
+export default SignIn;
