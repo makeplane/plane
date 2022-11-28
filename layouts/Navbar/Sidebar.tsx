@@ -409,17 +409,6 @@ const Sidebar: React.FC = () => {
                     </a>
                   </Link>
                 ))}
-                <button
-                  type="button"
-                  className="w-full flex items-center gap-3 p-2 hover:bg-indigo-100 text-xs font-medium rounded-md outline-none"
-                  onClick={() => {
-                    const e = new KeyboardEvent("keydown", { key: "h", ctrlKey: true });
-                    document.dispatchEvent(e);
-                  }}
-                >
-                  <QuestionMarkCircleIcon className="flex-shrink-0 h-4 w-4" />
-                  {!sidebarCollapse && "Help Centre"}
-                </button>
               </div>
             </div>
             <div
@@ -432,68 +421,83 @@ const Sidebar: React.FC = () => {
                   {projects.length > 0 ? (
                     projects.map((project) => (
                       <Disclosure key={project?.id} defaultOpen={projectId === project?.id}>
-                        <Disclosure.Button
-                          className={`w-full flex items-center gap-2 font-medium rounded-md p-2 text-sm ${
-                            sidebarCollapse ? "justify-center" : ""
-                          }`}
-                        >
-                          <span className="bg-gray-700 text-white rounded h-7 w-7 grid place-items-center uppercase">
-                            {project?.name.charAt(0)}
-                          </span>
-                          {!sidebarCollapse && project?.name}
-                        </Disclosure.Button>
-                        <Transition
-                          enter="transition duration-100 ease-out"
-                          enterFrom="transform scale-95 opacity-0"
-                          enterTo="transform scale-100 opacity-100"
-                          leave="transition duration-75 ease-out"
-                          leaveFrom="transform scale-100 opacity-100"
-                          leaveTo="transform scale-95 opacity-0"
-                        >
-                          <Disclosure.Panel
-                            className={`${
-                              sidebarCollapse ? "" : "ml-[2.25rem]"
-                            } flex flex-col gap-y-1`}
-                          >
-                            {navigation(project?.id).map((item) => (
-                              <Link key={item.name} href={item.href}>
-                                <a
-                                  className={classNames(
-                                    item.href === router.asPath
-                                      ? "bg-gray-200 text-gray-900"
-                                      : "text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900",
-                                    "group flex items-center px-2 py-2 text-xs font-medium rounded-md outline-none",
-                                    sidebarCollapse ? "justify-center" : ""
-                                  )}
-                                >
-                                  <item.icon
-                                    className={classNames(
-                                      item.href === router.asPath
-                                        ? "text-gray-900"
-                                        : "text-gray-500 group-hover:text-gray-900",
-                                      "flex-shrink-0 h-4 w-4",
-                                      !sidebarCollapse ? "mr-3" : ""
-                                    )}
-                                    aria-hidden="true"
+                        {({ open }) => (
+                          <>
+                            <Disclosure.Button
+                              className={`w-full flex items-center gap-2 font-medium rounded-md p-2 text-sm ${
+                                sidebarCollapse ? "justify-center" : ""
+                              }`}
+                            >
+                              <span className="bg-gray-700 text-white rounded h-7 w-7 grid place-items-center uppercase flex-shrink-0">
+                                {project?.name.charAt(0)}
+                              </span>
+                              {!sidebarCollapse && (
+                                <span className="flex items-center justify-between w-full">
+                                  {project?.name}
+                                  <ChevronDownIcon
+                                    className={`h-4 w-4 duration-300 ${open ? "rotate-180" : ""}`}
                                   />
-                                  {!sidebarCollapse && item.name}
-                                </a>
-                              </Link>
-                            ))}
-                          </Disclosure.Panel>
-                        </Transition>
+                                </span>
+                              )}
+                            </Disclosure.Button>
+                            <Transition
+                              enter="transition duration-100 ease-out"
+                              enterFrom="transform scale-95 opacity-0"
+                              enterTo="transform scale-100 opacity-100"
+                              leave="transition duration-75 ease-out"
+                              leaveFrom="transform scale-100 opacity-100"
+                              leaveTo="transform scale-95 opacity-0"
+                            >
+                              <Disclosure.Panel
+                                className={`${
+                                  sidebarCollapse ? "" : "ml-[2.25rem]"
+                                } flex flex-col gap-y-1`}
+                              >
+                                {navigation(project?.id).map((item) => (
+                                  <Link key={item.name} href={item.href}>
+                                    <a
+                                      className={classNames(
+                                        item.href === router.asPath
+                                          ? "bg-gray-200 text-gray-900"
+                                          : "text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900",
+                                        "group flex items-center px-2 py-2 text-xs font-medium rounded-md outline-none",
+                                        sidebarCollapse ? "justify-center" : ""
+                                      )}
+                                    >
+                                      <item.icon
+                                        className={classNames(
+                                          item.href === router.asPath
+                                            ? "text-gray-900"
+                                            : "text-gray-500 group-hover:text-gray-900",
+                                          "flex-shrink-0 h-4 w-4",
+                                          !sidebarCollapse ? "mr-3" : ""
+                                        )}
+                                        aria-hidden="true"
+                                      />
+                                      {!sidebarCollapse && item.name}
+                                    </a>
+                                  </Link>
+                                ))}
+                              </Disclosure.Panel>
+                            </Transition>
+                          </>
+                        )}
                       </Disclosure>
                     ))
                   ) : (
                     <div className="text-center space-y-3">
-                      <h4 className="text-gray-700 text-sm">You don{"'"}t have any project yet</h4>
+                      {!sidebarCollapse && (
+                        <h4 className="text-gray-700 text-sm">
+                          You don{"'"}t have any project yet
+                        </h4>
+                      )}
                       <button
                         type="button"
                         className="group flex justify-center items-center gap-2 w-full rounded-md p-2 text-sm bg-theme text-white"
                         onClick={() => setCreateProjectModal(true)}
                       >
                         <PlusIcon className="h-5 w-5" />
-                        Create Project
+                        {!sidebarCollapse && "Create Project"}
                       </button>
                     </div>
                   )}

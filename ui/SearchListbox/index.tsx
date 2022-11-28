@@ -82,7 +82,7 @@ const SearchListbox: React.FC<Props> = ({
               leaveTo="opacity-0"
             >
               <Combobox.Options
-                className={`absolute mt-1 bg-white shadow-lg rounded-md py-1 ring-1 ring-black ring-opacity-5 focus:outline-none z-10 ${
+                className={`absolute mt-1 bg-white shadow-lg rounded-md py-1 ring-1 ring-black ring-opacity-5 focus:outline-none max-h-32 overflow-auto z-10 ${
                   width === "sm"
                     ? "w-32"
                     : width === "md"
@@ -109,36 +109,34 @@ const SearchListbox: React.FC<Props> = ({
                 } ${optionsClassName || ""}`}
               >
                 <Combobox.Input
-                  className="w-full bg-transparent border-b py-2 pl-3 mb-1 focus:outline-none sm:text-sm"
+                  className="w-full bg-transparent border-b p-2 mb-1 focus:outline-none sm:text-sm"
                   onChange={(event) => setQuery(event.target.value)}
                   placeholder="Search"
                   displayValue={(assigned: any) => assigned?.name}
                 />
-                {filteredOptions ? (
-                  filteredOptions.length > 0 ? (
-                    filteredOptions.map((option) => (
-                      <Combobox.Option
-                        key={option.value}
-                        className={({ active }) =>
-                          `${
-                            active ? "text-white bg-theme" : "text-gray-900"
-                          } cursor-pointer select-none relative p-2 rounded-md`
-                        }
-                        value={option.value}
-                      >
-                        <div className="flex items-center">
-                          <span className="ml-3 block truncate font-medium">
-                            {option.element ?? option.display}
-                          </span>
-                        </div>
-                      </Combobox.Option>
-                    ))
+                <div className="p-1">
+                  {filteredOptions ? (
+                    filteredOptions.length > 0 ? (
+                      filteredOptions.map((option) => (
+                        <Combobox.Option
+                          key={option.value}
+                          className={({ active }) =>
+                            `${
+                              active ? "text-white bg-theme" : "text-gray-900"
+                            } cursor-pointer select-none truncate font-medium relative p-2 rounded-md`
+                          }
+                          value={option.value}
+                        >
+                          {option.element ?? option.display}
+                        </Combobox.Option>
+                      ))
+                    ) : (
+                      <p className="text-sm text-gray-500">No {title.toLowerCase()} found</p>
+                    )
                   ) : (
-                    <p className="text-sm text-gray-500">No {title.toLowerCase()} found</p>
-                  )
-                ) : (
-                  <p className="text-sm text-gray-500">Loading...</p>
-                )}
+                    <p className="text-sm text-gray-500">Loading...</p>
+                  )}
+                </div>
               </Combobox.Options>
             </Transition>
           </div>

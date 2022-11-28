@@ -71,9 +71,9 @@ const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                           {
                             title: "Common",
                             shortcuts: [
-                              { key: "Ctrl + p", description: "To open create project modal" },
-                              { key: "Ctrl + i", description: "To open create issue modal" },
-                              { key: "Ctrl + q", description: "To open create cycle modal" },
+                              { key: "Ctrl + p", description: "To create project" },
+                              { key: "Ctrl + i", description: "To create issue" },
+                              { key: "Ctrl + q", description: "To create cycle" },
                               { key: "Ctrl + h", description: "To open shortcuts guide" },
                               {
                                 key: "Ctrl + alt + c",

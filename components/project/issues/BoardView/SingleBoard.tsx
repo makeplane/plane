@@ -199,110 +199,107 @@ const SingleBoard: React.FC<Props> = ({
                   {groupedByIssues[groupTitle].map((childIssue: any, index: number) => (
                     <Draggable key={childIssue.id} draggableId={childIssue.id} index={index}>
                       {(provided, snapshot) => (
-                        <div
-                          className={`border rounded bg-white shadow-sm cursor-pointer ${
-                            snapshot.isDragging ? "border-indigo-600 shadow-lg bg-indigo-50" : ""
-                          }`}
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                        >
-                          <div
-                            className="px-2 py-3 space-y-1.5 select-none"
-                            {...provided.dragHandleProps}
+                        <Link href={`/projects/${childIssue.project}/issues/${childIssue.id}`}>
+                          <a
+                            className={`group block border rounded bg-white shadow-sm ${
+                              snapshot.isDragging ? "border-indigo-600 shadow-lg bg-indigo-50" : ""
+                            }`}
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
                           >
-                            {Object.keys(properties).map(
-                              (key) =>
-                                properties[key as keyof Properties] &&
-                                !Array.isArray(childIssue[key as keyof IIssue]) && (
-                                  <div
-                                    key={key}
-                                    className={`${
-                                      key === "name"
-                                        ? "text-sm font-medium mb-2"
-                                        : key === "description"
-                                        ? "text-xs text-black"
-                                        : key === "priority"
-                                        ? `text-xs bg-gray-200 px-2 py-1 mt-2 flex items-center gap-x-1 rounded w-min whitespace-nowrap capitalize font-medium ${
-                                            childIssue.priority === "high"
-                                              ? "bg-red-100 text-red-600"
-                                              : childIssue.priority === "medium"
-                                              ? "bg-orange-100 text-orange-500"
-                                              : childIssue.priority === "low"
-                                              ? "bg-green-100 text-green-500"
-                                              : "hidden"
-                                          }`
-                                        : key === "target_date"
-                                        ? "text-xs bg-indigo-50 px-2 py-1 mt-2 flex items-center gap-x-1 rounded w-min whitespace-nowrap"
-                                        : "text-sm text-gray-500"
-                                    } gap-1
+                            <div
+                              className="px-2 py-3 space-y-1.5 select-none"
+                              {...provided.dragHandleProps}
+                            >
+                              {Object.keys(properties).map(
+                                (key) =>
+                                  properties[key as keyof Properties] &&
+                                  !Array.isArray(childIssue[key as keyof IIssue]) && (
+                                    <div
+                                      key={key}
+                                      className={`${
+                                        key === "name"
+                                          ? "text-sm font-medium mb-2"
+                                          : key === "description"
+                                          ? "text-xs text-black"
+                                          : key === "priority"
+                                          ? `text-xs bg-gray-200 px-2 py-1 mt-2 flex items-center gap-x-1 rounded w-min whitespace-nowrap capitalize font-medium ${
+                                              childIssue.priority === "high"
+                                                ? "bg-red-100 text-red-600"
+                                                : childIssue.priority === "medium"
+                                                ? "bg-orange-100 text-orange-500"
+                                                : childIssue.priority === "low"
+                                                ? "bg-green-100 text-green-500"
+                                                : "hidden"
+                                            }`
+                                          : key === "target_date"
+                                          ? "text-xs bg-indigo-50 px-2 py-1 mt-2 flex items-center gap-x-1 rounded w-min whitespace-nowrap"
+                                          : "text-sm text-gray-500"
+                                      } gap-1
                                       `}
-                                  >
-                                    {key === "target_date" ? (
-                                      <>
-                                        <CalendarDaysIcon className="h-4 w-4" />{" "}
-                                        {childIssue.target_date
-                                          ? renderShortNumericDateFormat(childIssue.target_date)
-                                          : "N/A"}
-                                      </>
-                                    ) : (
-                                      ""
-                                    )}
-                                    {key === "name" && (
-                                      <Link
-                                        href={`/projects/${childIssue.project}/issues/${childIssue.id}`}
-                                      >
-                                        <a className="hover:text-theme duration-300">
+                                    >
+                                      {key === "target_date" ? (
+                                        <>
+                                          <CalendarDaysIcon className="h-4 w-4" />{" "}
+                                          {childIssue.target_date
+                                            ? renderShortNumericDateFormat(childIssue.target_date)
+                                            : "N/A"}
+                                        </>
+                                      ) : (
+                                        ""
+                                      )}
+                                      {key === "name" && (
+                                        <span className="group-hover:text-theme">
                                           {childIssue.name}
-                                        </a>
-                                      </Link>
-                                    )}
-                                    {key === "state" && (
-                                      <>{addSpaceIfCamelCase(childIssue["state_detail"].name)}</>
-                                    )}
-                                    {key === "priority" && <>{childIssue.priority}</>}
-                                    {key === "description" && <>{childIssue.description}</>}
-                                    {key === "assignee" ? (
-                                      <div className="flex items-center gap-1 text-xs">
-                                        {childIssue?.assignee_details?.length > 0 ? (
-                                          childIssue?.assignee_details?.map(
-                                            (assignee: any, index: number) => (
-                                              <div
-                                                key={index}
-                                                className={`relative z-[1] h-5 w-5 rounded-full ${
-                                                  index !== 0 ? "-ml-2.5" : ""
-                                                }`}
-                                              >
-                                                {assignee.avatar && assignee.avatar !== "" ? (
-                                                  <div className="h-5 w-5 border-2 bg-white border-white rounded-full">
-                                                    <Image
-                                                      src={assignee.avatar}
-                                                      height="100%"
-                                                      width="100%"
-                                                      className="rounded-full"
-                                                      alt={assignee.name}
-                                                    />
-                                                  </div>
-                                                ) : (
-                                                  <div
-                                                    className={`h-5 w-5 bg-gray-700 text-white border-2 border-white grid place-items-center rounded-full`}
-                                                  >
-                                                    {assignee.first_name.charAt(0)}
-                                                  </div>
-                                                )}
-                                              </div>
+                                        </span>
+                                      )}
+                                      {key === "state" && (
+                                        <>{addSpaceIfCamelCase(childIssue["state_detail"].name)}</>
+                                      )}
+                                      {key === "priority" && <>{childIssue.priority}</>}
+                                      {key === "description" && <>{childIssue.description}</>}
+                                      {key === "assignee" ? (
+                                        <div className="flex items-center gap-1 text-xs">
+                                          {childIssue?.assignee_details?.length > 0 ? (
+                                            childIssue?.assignee_details?.map(
+                                              (assignee: any, index: number) => (
+                                                <div
+                                                  key={index}
+                                                  className={`relative z-[1] h-5 w-5 rounded-full ${
+                                                    index !== 0 ? "-ml-2.5" : ""
+                                                  }`}
+                                                >
+                                                  {assignee.avatar && assignee.avatar !== "" ? (
+                                                    <div className="h-5 w-5 border-2 bg-white border-white rounded-full">
+                                                      <Image
+                                                        src={assignee.avatar}
+                                                        height="100%"
+                                                        width="100%"
+                                                        className="rounded-full"
+                                                        alt={assignee.name}
+                                                      />
+                                                    </div>
+                                                  ) : (
+                                                    <div
+                                                      className={`h-5 w-5 bg-gray-700 text-white border-2 border-white grid place-items-center rounded-full`}
+                                                    >
+                                                      {assignee.first_name.charAt(0)}
+                                                    </div>
+                                                  )}
+                                                </div>
+                                              )
                                             )
-                                          )
-                                        ) : (
-                                          <span>None</span>
-                                        )}
-                                      </div>
-                                    ) : null}
-                                  </div>
-                                )
-                            )}
-                          </div>
+                                          ) : (
+                                            <span>None</span>
+                                          )}
+                                        </div>
+                                      ) : null}
+                                    </div>
+                                  )
+                              )}
+                            </div>
 
-                          {/* <div
+                            {/* <div
                             className={`p-2 bg-indigo-50 flex items-center justify-between ${
                               snapshot.isDragging ? "bg-indigo-200" : ""
                             }`}
@@ -324,7 +321,8 @@ const SingleBoard: React.FC<Props> = ({
                               </button>
                             </div>
                           </div> */}
-                        </div>
+                          </a>
+                        </Link>
                       )}
                     </Draggable>
                   ))}
