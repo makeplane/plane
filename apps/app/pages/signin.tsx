@@ -95,7 +95,7 @@ const SignIn: NextPage = () => {
     >
       {isGoogleAuthenticationLoading && (
         <div className="absolute top-0 left-0 w-full h-full bg-white z-50 flex items-center justify-center">
-          <h2 className="text-2xl text-black">Sign in with Google. Please wait...</h2>
+          <h2 className="text-2xl text-black">Signing in with Google. Please wait...</h2>
         </div>
       )}
       <div className="w-full h-screen flex justify-center items-center bg-gray-50 overflow-auto">

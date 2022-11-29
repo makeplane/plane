@@ -52,6 +52,7 @@ const SelectParent: React.FC<Props> = ({ control }) => {
             };
           })}
           value={value}
+          width="xs"
           buttonClassName="max-h-30 overflow-y-scroll"
           optionsClassName="max-h-30 overflow-y-scroll"
           onChange={onChange}
