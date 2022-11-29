@@ -1424,6 +1424,11 @@ levn@^0.4.1:
     prelude-ls "^1.2.1"
     type-check "~0.4.0"
 
+lexical@^0.6.4:
+  version "0.6.4"
+  resolved "https://registry.yarnpkg.com/lexical/-/lexical-0.6.4.tgz#00f5070a967fd1410aaa7d4c928f6e61af73c604"
+  integrity sha512-QBJEowv2FRkanu9V4HxCiR/V0rECt98zUeHsaYcgUCphrxbZseQgk8AO5UbHJMgAD4iQ0CCKZWbiqbv7Z8tYnw==
+
 lilconfig@^2.0.5, lilconfig@^2.0.6:
   version "2.0.6"
   resolved "https://registry.npmjs.org/lilconfig/-/lilconfig-2.0.6.tgz"
