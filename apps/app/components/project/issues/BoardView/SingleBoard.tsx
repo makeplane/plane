@@ -18,6 +18,7 @@ import {
   PlusIcon,
 } from "@heroicons/react/24/outline";
 import Image from "next/image";
+import { divide } from "lodash";
 
 type Props = {
   selectedGroup: NestedKeyOf<IIssue> | null;
@@ -190,7 +191,7 @@ const SingleBoard: React.FC<Props> = ({
             <StrictModeDroppable key={groupTitle} droppableId={groupTitle}>
               {(provided, snapshot) => (
                 <div
-                  className={`mt-3 space-y-3 h-full overflow-y-auto px-3 ${
+                  className={`mt-3 space-y-3 h-full overflow-y-auto px-3 pb-3 ${
                     snapshot.isDraggingOver ? "bg-indigo-50 bg-opacity-50" : ""
                   } ${!show ? "hidden" : "block"}`}
                   {...provided.droppableProps}
@@ -219,7 +220,7 @@ const SingleBoard: React.FC<Props> = ({
                                       key={key}
                                       className={`${
                                         key === "name"
-                                          ? "text-sm font-medium mb-2"
+                                          ? "text-sm mb-2"
                                           : key === "description"
                                           ? "text-xs text-black"
                                           : key === "priority"
@@ -236,7 +237,7 @@ const SingleBoard: React.FC<Props> = ({
                                           ? "text-xs bg-indigo-50 px-2 py-1 mt-2 flex items-center gap-x-1 rounded w-min whitespace-nowrap"
                                           : "text-sm text-gray-500"
                                       } gap-1
-                                      `}
+                                    `}
                                     >
                                       {key === "target_date" ? (
                                         <>
@@ -300,27 +301,27 @@ const SingleBoard: React.FC<Props> = ({
                             </div>
 
                             {/* <div
-                            className={`p-2 bg-indigo-50 flex items-center justify-between ${
-                              snapshot.isDragging ? "bg-indigo-200" : ""
-                            }`}
+                          className={`p-2 bg-indigo-50 flex items-center justify-between ${
+                            snapshot.isDragging ? "bg-indigo-200" : ""
+                          }`}
+                        >
+                          <button
+                            type="button"
+                            className="flex flex-col"
+                            {...provided.dragHandleProps}
                           >
-                            <button
-                              type="button"
-                              className="flex flex-col"
-                              {...provided.dragHandleProps}
-                            >
-                              <EllipsisHorizontalIcon className="h-4 w-4 text-gray-600" />
-                              <EllipsisHorizontalIcon className="h-4 w-4 text-gray-600 mt-[-0.7rem]" />
+                            <EllipsisHorizontalIcon className="h-4 w-4 text-gray-600" />
+                            <EllipsisHorizontalIcon className="h-4 w-4 text-gray-600 mt-[-0.7rem]" />
+                          </button>
+                          <div className="flex gap-1 items-center">
+                            <button type="button">
+                              <HeartIcon className="h-4 w-4 text-yellow-500" />
                             </button>
-                            <div className="flex gap-1 items-center">
-                              <button type="button">
-                                <HeartIcon className="h-4 w-4 text-yellow-500" />
-                              </button>
-                              <button type="button">
-                                <CheckCircleIcon className="h-4 w-4 text-green-500" />
-                              </button>
-                            </div>
-                          </div> */}
+                            <button type="button">
+                              <CheckCircleIcon className="h-4 w-4 text-green-500" />
+                            </button>
+                          </div>
+                        </div> */}
                           </a>
                         </Link>
                       )}

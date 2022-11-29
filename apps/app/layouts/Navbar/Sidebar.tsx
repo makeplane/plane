@@ -28,11 +28,13 @@ import {
   XMarkIcon,
   ArrowLongLeftIcon,
   QuestionMarkCircleIcon,
+  EllipsisHorizontalIcon,
+  ClipboardDocumentIcon,
 } from "@heroicons/react/24/outline";
 // constants
-import { classNames } from "constants/common";
+import { classNames, copyTextToClipboard } from "constants/common";
 // ui
-import { Spinner, Tooltip } from "ui";
+import { CustomListbox, Spinner, Tooltip } from "ui";
 // types
 import type { IUser } from "types";
 
@@ -423,23 +425,66 @@ const Sidebar: React.FC = () => {
                       <Disclosure key={project?.id} defaultOpen={projectId === project?.id}>
                         {({ open }) => (
                           <>
-                            <Disclosure.Button
-                              className={`w-full flex items-center gap-2 font-medium rounded-md p-2 text-sm ${
-                                sidebarCollapse ? "justify-center" : ""
-                              }`}
-                            >
-                              <span className="bg-gray-700 text-white rounded h-7 w-7 grid place-items-center uppercase flex-shrink-0">
-                                {project?.name.charAt(0)}
-                              </span>
-                              {!sidebarCollapse && (
-                                <span className="flex items-center justify-between w-full">
-                                  {project?.name}
-                                  <ChevronDownIcon
-                                    className={`h-4 w-4 duration-300 ${open ? "rotate-180" : ""}`}
-                                  />
+                            <div className="flex items-center">
+                              <Disclosure.Button
+                                className={`w-full flex items-center gap-2 font-medium rounded-md p-2 text-sm ${
+                                  sidebarCollapse ? "justify-center" : ""
+                                }`}
+                              >
+                                <span className="bg-gray-700 text-white rounded h-7 w-7 grid place-items-center uppercase flex-shrink-0">
+                                  {project?.name.charAt(0)}
                                 </span>
+                                {!sidebarCollapse && (
+                                  <span className="flex items-center justify-between w-full">
+                                    {project?.name}
+                                    <span>
+                                      <ChevronDownIcon
+                                        className={`h-4 w-4 duration-300 ${
+                                          open ? "rotate-180" : ""
+                                        }`}
+                                      />
+                                    </span>
+                                  </span>
+                                )}
+                              </Disclosure.Button>
+                              {!sidebarCollapse && (
+                                <Menu as="div" className="relative inline-block">
+                                  <Menu.Button className="grid relative place-items-center focus:outline-none">
+                                    <EllipsisHorizontalIcon className="h-4 w-4" />
+                                  </Menu.Button>
+
+                                  <Transition
+                                    as={React.Fragment}
+                                    enter="transition ease-out duration-100"
+                                    enterFrom="transform opacity-0 scale-95"
+                                    enterTo="transform opacity-100 scale-100"
+                                    leave="transition ease-in duration-75"
+                                    leaveFrom="transform opacity-100 scale-100"
+                                    leaveTo="transform opacity-0 scale-95"
+                                  >
+                                    <Menu.Items className="origin-top-right absolute right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                                      <div className="p-1">
+                                        <Menu.Item as="div">
+                                          {(active) => (
+                                            <button
+                                              className="flex items-center gap-2 p-2 text-left text-gray-900 hover:bg-theme hover:text-white rounded-md text-xs whitespace-nowrap"
+                                              onClick={() =>
+                                                copyTextToClipboard(
+                                                  `https://app.plane.so/projects/${project?.id}/issues/`
+                                                )
+                                              }
+                                            >
+                                              <ClipboardDocumentIcon className="h-3 w-3" />
+                                              Copy Link
+                                            </button>
+                                          )}
+                                        </Menu.Item>
+                                      </div>
+                                    </Menu.Items>
+                                  </Transition>
+                                </Menu>
                               )}
-                            </Disclosure.Button>
+                            </div>
                             <Transition
                               enter="transition duration-100 ease-out"
                               enterFrom="transform scale-95 opacity-0"
@@ -509,21 +554,21 @@ const Sidebar: React.FC = () => {
               )}
             </div>
             <div className="px-2 py-2 bg-gray-50 w-full self-baseline flex items-center gap-x-2">
-              <button
-                type="button"
-                className={`flex items-center gap-3 px-2 py-2 text-xs font-medium rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 outline-none ${
-                  sidebarCollapse ? "justify-center w-full" : ""
-                }`}
-                onClick={() => toggleCollapsed()}
-              >
-                <Tooltip content="Click to toggle sidebar" position="right">
+              <Tooltip content="Click to toggle sidebar" position="right">
+                <button
+                  type="button"
+                  className={`flex items-center gap-3 px-2 py-2 text-xs font-medium rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 outline-none ${
+                    sidebarCollapse ? "justify-center w-full" : ""
+                  }`}
+                  onClick={() => toggleCollapsed()}
+                >
                   <ArrowLongLeftIcon
                     className={`h-4 w-4 text-gray-500 group-hover:text-gray-900 flex-shrink-0 duration-300 ${
                       sidebarCollapse ? "rotate-180" : ""
                     }`}
                   />
-                </Tooltip>
-              </button>
+                </button>
+              </Tooltip>
               <button
                 type="button"
                 onClick={() => {

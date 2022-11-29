@@ -77,11 +77,11 @@ const ListView: React.FC<Props> = ({
 
   const handleHover = (issueId: string) => {
     document.addEventListener("keydown", (e) => {
-      if (e.code === "Space") {
-        e.preventDefault();
-        setPreviewModalIssueId(issueId);
-        setIssuePreviewModal(true);
-      }
+      // if (e.code === "Space") {
+      //   e.preventDefault();
+      //   setPreviewModalIssueId(issueId);
+      //   setIssuePreviewModal(true);
+      // }
     });
   };
 

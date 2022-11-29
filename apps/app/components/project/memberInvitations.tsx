@@ -39,7 +39,7 @@ const ProjectMemberInvitations = ({
   return (
     <>
       <div
-        className={`w-full h-full flex flex-col px-4 py-3 rounded-lg bg-indigo-50 ${
+        className={`w-full h-full flex flex-col px-4 py-3 rounded-md bg-white ${
           selected ? "ring-2 ring-indigo-400" : ""
         }`}
       >
