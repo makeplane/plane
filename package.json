@@ -15,8 +15,6 @@
   "devDependencies": {
     "eslint": "^8.28.0",
     "eslint-config-turbo": "latest",
-    "turbo": "latest"
-  },
-  "packageManager": "yarn@1.22.9",
-  "version": "0.0.0"
+    "turbo": "^1.6.3"
+  }
 }
