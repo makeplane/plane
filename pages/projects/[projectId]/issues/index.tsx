@@ -141,152 +141,154 @@ const ProjectIssues: NextPage = () => {
           <Spinner />
         </div>
       ) : projectIssues.count > 0 ? (
-        <div className="w-full space-y-5">
-          <Breadcrumbs>
-            <BreadcrumbItem title="Projects" link="/projects" />
-            <BreadcrumbItem title={`${activeProject?.name ?? "Project"} Issues`} />
-          </Breadcrumbs>
-          <div className="flex items-center justify-between w-full">
-            <h2 className="text-2xl font-medium">Project Issues</h2>
-            <div className="flex items-center gap-x-3">
-              <div className="flex items-center gap-x-1">
-                <button
-                  type="button"
-                  className={`h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-200 duration-300 outline-none ${
-                    issueView === "list" ? "bg-gray-200" : ""
-                  }`}
-                  onClick={() => {
-                    setIssueView("list");
-                    setGroupByProperty(null);
-                  }}
-                >
-                  <ListBulletIcon className="h-4 w-4" />
-                </button>
-                <button
-                  type="button"
-                  className={`h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-200 duration-300 outline-none ${
-                    issueView === "kanban" ? "bg-gray-200" : ""
-                  }`}
-                  onClick={() => {
-                    setIssueView("kanban");
-                    setGroupByProperty("state_detail.name");
-                  }}
-                >
-                  <Squares2X2Icon className="h-4 w-4" />
-                </button>
-              </div>
-              <Menu as="div" className="relative inline-block w-40">
-                <div className="w-full">
-                  <Menu.Button className="inline-flex justify-between items-center w-full rounded-md shadow-sm p-2 border border-gray-300 text-xs font-semibold text-gray-700 hover:bg-gray-100 focus:outline-none">
-                    <span className="flex gap-x-1 items-center">
-                      {groupByOptions.find((option) => option.key === groupByProperty)?.name ??
-                        "No Grouping"}
-                    </span>
-                    <div className="flex-grow flex justify-end">
-                      <ChevronDownIcon className="h-4 w-4" aria-hidden="true" />
-                    </div>
-                  </Menu.Button>
+        <>
+          <div className="w-full space-y-5 mb-5">
+            <Breadcrumbs>
+              <BreadcrumbItem title="Projects" link="/projects" />
+              <BreadcrumbItem title={`${activeProject?.name ?? "Project"} Issues`} />
+            </Breadcrumbs>
+            <div className="flex items-center justify-between w-full">
+              <h2 className="text-2xl font-medium">Project Issues</h2>
+              <div className="flex items-center gap-x-3">
+                <div className="flex items-center gap-x-1">
+                  <button
+                    type="button"
+                    className={`h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-200 duration-300 outline-none ${
+                      issueView === "list" ? "bg-gray-200" : ""
+                    }`}
+                    onClick={() => {
+                      setIssueView("list");
+                      setGroupByProperty(null);
+                    }}
+                  >
+                    <ListBulletIcon className="h-4 w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    className={`h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-200 duration-300 outline-none ${
+                      issueView === "kanban" ? "bg-gray-200" : ""
+                    }`}
+                    onClick={() => {
+                      setIssueView("kanban");
+                      setGroupByProperty("state_detail.name");
+                    }}
+                  >
+                    <Squares2X2Icon className="h-4 w-4" />
+                  </button>
                 </div>
+                <Menu as="div" className="relative inline-block w-40">
+                  <div className="w-full">
+                    <Menu.Button className="inline-flex justify-between items-center w-full rounded-md shadow-sm p-2 border border-gray-300 text-xs font-semibold text-gray-700 hover:bg-gray-100 focus:outline-none">
+                      <span className="flex gap-x-1 items-center">
+                        {groupByOptions.find((option) => option.key === groupByProperty)?.name ??
+                          "No Grouping"}
+                      </span>
+                      <div className="flex-grow flex justify-end">
+                        <ChevronDownIcon className="h-4 w-4" aria-hidden="true" />
+                      </div>
+                    </Menu.Button>
+                  </div>
 
-                <Transition
-                  as={React.Fragment}
-                  enter="transition ease-out duration-100"
-                  enterFrom="transform opacity-0 scale-95"
-                  enterTo="transform opacity-100 scale-100"
-                  leave="transition ease-in duration-75"
-                  leaveFrom="transform opacity-100 scale-100"
-                  leaveTo="transform opacity-0 scale-95"
-                >
-                  <Menu.Items className="origin-top-left absolute left-0 mt-2 w-full rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
-                    <div className="p-1">
-                      {groupByOptions.map((option) => (
-                        <Menu.Item key={option.key}>
-                          {({ active }) => (
-                            <button
-                              type="button"
-                              className={`${
-                                active ? "bg-theme text-white" : "text-gray-900"
-                              } group flex w-full items-center rounded-md p-2 text-xs`}
-                              onClick={() => setGroupByProperty(option.key)}
-                            >
-                              {option.name}
-                            </button>
-                          )}
-                        </Menu.Item>
-                      ))}
-                      {issueView === "list" ? (
-                        <Menu.Item>
-                          {({ active }) => (
-                            <button
-                              type="button"
-                              className={`hover:bg-theme hover:text-white ${
-                                active ? "bg-theme text-white" : "text-gray-900"
-                              } group flex w-full items-center rounded-md p-2 text-xs`}
-                              onClick={() => setGroupByProperty(null)}
-                            >
-                              No grouping
-                            </button>
-                          )}
-                        </Menu.Item>
-                      ) : null}
-                    </div>
-                  </Menu.Items>
-                </Transition>
-              </Menu>
-              <Popover className="relative">
-                {({ open }) => (
-                  <>
-                    <Popover.Button className="inline-flex justify-between items-center rounded-md shadow-sm p-2 border border-gray-300 text-xs font-semibold text-gray-700 hover:bg-gray-100 focus:outline-none w-40">
-                      <span>Properties</span>
-                      <ChevronDownIcon className="h-4 w-4" />
-                    </Popover.Button>
-
-                    <Transition
-                      as={React.Fragment}
-                      enter="transition ease-out duration-200"
-                      enterFrom="opacity-0 translate-y-1"
-                      enterTo="opacity-100 translate-y-0"
-                      leave="transition ease-in duration-150"
-                      leaveFrom="opacity-100 translate-y-0"
-                      leaveTo="opacity-0 translate-y-1"
-                    >
-                      <Popover.Panel className="absolute left-1/2 z-10 mt-1 -translate-x-1/2 transform px-2 sm:px-0 w-full">
-                        <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5">
-                          <div className="relative grid bg-white p-1">
-                            {Object.keys(properties).map((key) => (
+                  <Transition
+                    as={React.Fragment}
+                    enter="transition ease-out duration-100"
+                    enterFrom="transform opacity-0 scale-95"
+                    enterTo="transform opacity-100 scale-100"
+                    leave="transition ease-in duration-75"
+                    leaveFrom="transform opacity-100 scale-100"
+                    leaveTo="transform opacity-0 scale-95"
+                  >
+                    <Menu.Items className="origin-top-left absolute left-0 mt-2 w-full rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                      <div className="p-1">
+                        {groupByOptions.map((option) => (
+                          <Menu.Item key={option.key}>
+                            {({ active }) => (
                               <button
-                                key={key}
-                                className={`text-gray-900 hover:bg-theme hover:text-white flex justify-between w-full items-center rounded-md p-2 text-xs`}
-                                onClick={() => setProperties(key as keyof Properties)}
+                                type="button"
+                                className={`${
+                                  active ? "bg-theme text-white" : "text-gray-900"
+                                } group flex w-full items-center rounded-md p-2 text-xs`}
+                                onClick={() => setGroupByProperty(option.key)}
                               >
-                                <p className="capitalize">{key.replace("_", " ")}</p>
-                                <span className="self-end">
-                                  {properties[key as keyof Properties] ? (
-                                    <EyeIcon width="18" height="18" />
-                                  ) : (
-                                    <EyeSlashIcon width="18" height="18" />
-                                  )}
-                                </span>
+                                {option.name}
                               </button>
-                            ))}
+                            )}
+                          </Menu.Item>
+                        ))}
+                        {issueView === "list" ? (
+                          <Menu.Item>
+                            {({ active }) => (
+                              <button
+                                type="button"
+                                className={`hover:bg-theme hover:text-white ${
+                                  active ? "bg-theme text-white" : "text-gray-900"
+                                } group flex w-full items-center rounded-md p-2 text-xs`}
+                                onClick={() => setGroupByProperty(null)}
+                              >
+                                No grouping
+                              </button>
+                            )}
+                          </Menu.Item>
+                        ) : null}
+                      </div>
+                    </Menu.Items>
+                  </Transition>
+                </Menu>
+                <Popover className="relative">
+                  {({ open }) => (
+                    <>
+                      <Popover.Button className="inline-flex justify-between items-center rounded-md shadow-sm p-2 border border-gray-300 text-xs font-semibold text-gray-700 hover:bg-gray-100 focus:outline-none w-40">
+                        <span>Properties</span>
+                        <ChevronDownIcon className="h-4 w-4" />
+                      </Popover.Button>
+
+                      <Transition
+                        as={React.Fragment}
+                        enter="transition ease-out duration-200"
+                        enterFrom="opacity-0 translate-y-1"
+                        enterTo="opacity-100 translate-y-0"
+                        leave="transition ease-in duration-150"
+                        leaveFrom="opacity-100 translate-y-0"
+                        leaveTo="opacity-0 translate-y-1"
+                      >
+                        <Popover.Panel className="absolute left-1/2 z-10 mt-1 -translate-x-1/2 transform px-2 sm:px-0 w-full">
+                          <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5">
+                            <div className="relative grid bg-white p-1">
+                              {Object.keys(properties).map((key) => (
+                                <button
+                                  key={key}
+                                  className={`text-gray-900 hover:bg-theme hover:text-white flex justify-between w-full items-center rounded-md p-2 text-xs`}
+                                  onClick={() => setProperties(key as keyof Properties)}
+                                >
+                                  <p className="capitalize">{key.replace("_", " ")}</p>
+                                  <span className="self-end">
+                                    {properties[key as keyof Properties] ? (
+                                      <EyeIcon width="18" height="18" />
+                                    ) : (
+                                      <EyeSlashIcon width="18" height="18" />
+                                    )}
+                                  </span>
+                                </button>
+                              ))}
+                            </div>
                           </div>
-                        </div>
-                      </Popover.Panel>
-                    </Transition>
-                  </>
-                )}
-              </Popover>
-              <HeaderButton
-                Icon={PlusIcon}
-                label="Add Issue"
-                onClick={() => {
-                  const e = new KeyboardEvent("keydown", {
-                    key: "i",
-                    ctrlKey: true,
-                  });
-                  document.dispatchEvent(e);
-                }}
-              />
+                        </Popover.Panel>
+                      </Transition>
+                    </>
+                  )}
+                </Popover>
+                <HeaderButton
+                  Icon={PlusIcon}
+                  label="Add Issue"
+                  onClick={() => {
+                    const e = new KeyboardEvent("keydown", {
+                      key: "i",
+                      ctrlKey: true,
+                    });
+                    document.dispatchEvent(e);
+                  }}
+                />
+              </div>
             </div>
           </div>
           {issueView === "list" ? (
@@ -298,14 +300,16 @@ const ProjectIssues: NextPage = () => {
               handleDeleteIssue={setDeleteIssue}
             />
           ) : (
-            <BoardView
-              properties={properties}
-              selectedGroup={groupByProperty}
-              groupedByIssues={groupedByIssues}
-              members={members}
-            />
+            <div className="h-full pb-7 mb-7">
+              <BoardView
+                properties={properties}
+                selectedGroup={groupByProperty}
+                groupedByIssues={groupedByIssues}
+                members={members}
+              />
+            </div>
           )}
-        </div>
+        </>
       ) : (
         <div className="h-full w-full grid place-items-center px-4 sm:px-0">
           <EmptySpace

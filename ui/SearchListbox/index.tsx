@@ -13,7 +13,7 @@ const SearchListbox: React.FC<Props> = ({
   value,
   multiple: canSelectMultiple,
   icon,
-  width,
+  width = "sm",
   optionsFontsize,
   buttonClassName,
   optionsClassName,
@@ -83,7 +83,9 @@ const SearchListbox: React.FC<Props> = ({
             >
               <Combobox.Options
                 className={`absolute mt-1 bg-white shadow-lg rounded-md py-1 ring-1 ring-black ring-opacity-5 focus:outline-none max-h-32 overflow-auto z-10 ${
-                  width === "sm"
+                  width === "xs"
+                    ? "w-20"
+                    : width === "sm"
                     ? "w-32"
                     : width === "md"
                     ? "w-48"

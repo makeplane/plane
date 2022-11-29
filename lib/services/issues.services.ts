@@ -92,8 +92,6 @@ class ProjectIssuesServices extends APIService {
       issue: string;
     }
   ) {
-    console.log(data);
-
     return this.post(CYCLE_DETAIL(workspace_slug, projectId, cycleId), data)
       .then((response) => {
         return response?.data;
