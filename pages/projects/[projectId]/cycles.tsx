@@ -14,21 +14,18 @@ import { CYCLE_ISSUES, CYCLE_LIST } from "constants/fetch-keys";
 // layouts
 import AdminLayout from "layouts/AdminLayout";
 // components
-import SprintView from "components/project/cycles/CycleView";
+import CycleView from "components/project/cycles/CycleView";
 import ConfirmIssueDeletion from "components/project/issues/ConfirmIssueDeletion";
 import ConfirmSprintDeletion from "components/project/cycles/ConfirmCycleDeletion";
 import CreateUpdateIssuesModal from "components/project/issues/CreateUpdateIssueModal";
 import CreateUpdateSprintsModal from "components/project/cycles/CreateUpdateCyclesModal";
 // ui
-import { Spinner } from "ui";
+import { BreadcrumbItem, Breadcrumbs, HeaderButton, Spinner, EmptySpace, EmptySpaceItem } from "ui";
 // icons
 import { PlusIcon } from "@heroicons/react/20/solid";
+import { ArrowPathIcon } from "@heroicons/react/24/outline";
 // types
 import { IIssue, ICycle, SelectSprintType, SelectIssue } from "types";
-import { EmptySpace, EmptySpaceItem } from "ui/EmptySpace";
-import { ArrowPathIcon } from "@heroicons/react/24/outline";
-import HeaderButton from "ui/HeaderButton";
-import { BreadcrumbItem, Breadcrumbs } from "ui/Breadcrumbs";
 
 const ProjectSprints: NextPage = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -44,7 +41,7 @@ const ProjectSprints: NextPage = () => {
 
   const { projectId } = router.query;
 
-  const { data: sprints } = useSWR<ICycle[]>(
+  const { data: cycles } = useSWR<ICycle[]>(
     projectId && activeWorkspace ? CYCLE_LIST(projectId as string) : null,
     activeWorkspace && projectId
       ? () => sprintService.getCycles(activeWorkspace.slug, projectId as string)
@@ -52,14 +49,14 @@ const ProjectSprints: NextPage = () => {
   );
 
   const openIssueModal = (
-    sprintId: string,
+    cycleId: string,
     issue?: IIssue,
     actionType: "create" | "edit" | "delete" = "create"
   ) => {
-    const sprint = sprints?.find((sprint) => sprint.id === sprintId);
-    if (sprint) {
+    const cycle = cycles?.find((cycle) => cycle.id === cycleId);
+    if (cycle) {
       setSelectedSprint({
-        ...sprint,
+        ...cycle,
         actionType: "create-issue",
       });
       if (issue) setSelectedIssues({ ...issue, actionType });
@@ -67,16 +64,16 @@ const ProjectSprints: NextPage = () => {
     }
   };
 
-  const addIssueToSprint = (sprintId: string, issueId: string) => {
+  const addIssueToSprint = (cycleId: string, issueId: string) => {
     if (!activeWorkspace || !projectId) return;
 
     issuesServices
-      .addIssueToSprint(activeWorkspace.slug, projectId as string, sprintId, {
+      .addIssueToSprint(activeWorkspace.slug, projectId as string, cycleId, {
         issue: issueId,
       })
       .then((response) => {
         console.log(response);
-        mutate(CYCLE_ISSUES(sprintId));
+        mutate(CYCLE_ISSUES(cycleId));
       })
       .catch((error) => {
         console.log(error);
@@ -134,8 +131,8 @@ const ProjectSprints: NextPage = () => {
         setIsOpen={setIsOpen}
         projectId={projectId as string}
       />
-      {sprints ? (
-        sprints.length > 0 ? (
+      {cycles ? (
+        cycles.length > 0 ? (
           <div className="h-full w-full space-y-5">
             <Breadcrumbs>
               <BreadcrumbItem title="Projects" link="/projects" />
@@ -146,15 +143,15 @@ const ProjectSprints: NextPage = () => {
               <HeaderButton Icon={PlusIcon} label="Add Cycle" onClick={() => setIsOpen(true)} />
             </div>
             <div className="h-full w-full">
-              {sprints.map((sprint) => (
-                <SprintView
-                  sprint={sprint}
+              {cycles.map((cycle) => (
+                <CycleView
+                  key={cycle.id}
+                  sprint={cycle}
                   selectSprint={setSelectedSprint}
                   projectId={projectId as string}
                   workspaceSlug={activeWorkspace?.slug as string}
                   openIssueModal={openIssueModal}
                   addIssueToSprint={addIssueToSprint}
-                  key={sprint.id}
                 />
               ))}
             </div>

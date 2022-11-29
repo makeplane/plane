@@ -20,7 +20,7 @@ const Tooltip: React.FC<Props> = ({ children, content, position = "top" }) => {
             : "top-14"
         }`}
       >
-        <p className="truncate text-sx">{content}</p>
+        <p className="truncate text-xs">{content}</p>
         <span
           className={`absolute w-2 h-2 bg-black ${
             position === "top"

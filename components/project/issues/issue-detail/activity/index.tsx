@@ -45,7 +45,7 @@ const IssueActivitySection: React.FC<Props> = ({ issueActivities, states }) => {
                       </div>
                     </div>
                   ) : (
-                    <div className="relative z-10 flex-shrink-0 border-2 border-white -ml-1.5">
+                    <div className="relative z-10 flex-shrink-0 border-2 border-white rounded-full h-[34px] -ml-1.5">
                       {activity.actor_detail.avatar && activity.actor_detail.avatar !== "" ? (
                         <Image
                           src={activity.actor_detail.avatar}

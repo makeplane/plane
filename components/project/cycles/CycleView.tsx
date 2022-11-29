@@ -175,7 +175,7 @@ const SprintView: React.FC<Props> = ({
                           </div>
                         ))
                       ) : (
-                        <p className="text-sm text-gray-500">This sprint has no issues.</p>
+                        <p className="text-sm text-gray-500">This cycle has no issues.</p>
                       )
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">

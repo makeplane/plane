@@ -145,7 +145,9 @@ const MyIssues: NextPage = () => {
                                     <a>{myIssue.name}</a>
                                   </Link>
                                 </td>
-                                <td className="px-3 py-4 max-w-[15rem]">{myIssue.description}</td>
+                                <td className="px-3 py-4 max-w-[15rem] truncate">
+                                  {myIssue.description}
+                                </td>
                                 <td className="px-3 py-4">
                                   {myIssue.project_detail?.name}
                                   <br />

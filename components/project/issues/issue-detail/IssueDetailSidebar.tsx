@@ -21,7 +21,7 @@ import {
 // commons
 import { classNames, copyTextToClipboard } from "constants/common";
 // ui
-import { Input, Button } from "ui";
+import { Input, Button, Spinner } from "ui";
 // icons
 import {
   UserIcon,
@@ -32,6 +32,7 @@ import {
   ChartBarIcon,
   ClipboardDocumentIcon,
   LinkIcon,
+  ArrowPathIcon,
 } from "@heroicons/react/24/outline";
 // types
 import type { Control } from "react-hook-form";
@@ -50,7 +51,7 @@ const defaultValues: Partial<IIssueLabels> = {
 };
 
 const IssueDetailSidebar: React.FC<Props> = ({ control, submitChanges, issueDetail }) => {
-  const { activeWorkspace, activeProject } = useUser();
+  const { activeWorkspace, activeProject, cycles } = useUser();
 
   const { data: states } = useSWR<IState[]>(
     activeWorkspace && activeProject ? STATE_LIST(activeProject.id) : null,
@@ -122,6 +123,16 @@ const IssueDetailSidebar: React.FC<Props> = ({ control, submitChanges, issueDeta
       })),
     },
     {
+      label: "Cycle",
+      name: "cycle",
+      canSelectMultipleOptions: false,
+      icon: ArrowPathIcon,
+      options: cycles?.map((cycle) => ({
+        label: cycle.name,
+        value: cycle.id,
+      })),
+    },
+    {
       label: "Assignees",
       name: "assignees_list",
       canSelectMultipleOptions: true,
@@ -152,6 +163,13 @@ const IssueDetailSidebar: React.FC<Props> = ({ control, submitChanges, issueDeta
       })),
     },
   ];
+
+  const handleCycleChange = (cycleId: string) => {
+    if (activeWorkspace && activeProject && issueDetail)
+      issuesServices.addIssueToSprint(activeWorkspace.slug, activeProject.id, cycleId, {
+        issue: issueDetail.id,
+      });
+  };
 
   return (
     <div className="h-full w-full">
@@ -193,7 +211,10 @@ const IssueDetailSidebar: React.FC<Props> = ({ control, submitChanges, issueDeta
                       as="div"
                       value={value}
                       multiple={item.canSelectMultipleOptions}
-                      onChange={(value: any) => submitChanges({ [item.name]: value })}
+                      onChange={(value: any) => {
+                        if (item.name === "cycle") handleCycleChange(value);
+                        else submitChanges({ [item.name]: value });
+                      }}
                       className="flex-shrink-0"
                     >
                       {({ open }) => (
@@ -229,21 +250,31 @@ const IssueDetailSidebar: React.FC<Props> = ({ control, submitChanges, issueDeta
                           >
                             <Listbox.Options className="absolute z-10 right-0 mt-1 w-40 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
                               <div className="p-1">
-                                {item.options?.map((option) => (
-                                  <Listbox.Option
-                                    key={option.value}
-                                    className={({ active, selected }) =>
-                                      `${
-                                        active || selected ? "text-white bg-theme" : "text-gray-900"
-                                      } ${
-                                        item.label === "Priority" && "capitalize"
-                                      } cursor-pointer select-none relative p-2 rounded-md truncate`
-                                    }
-                                    value={option.value}
-                                  >
-                                    {option.label}
-                                  </Listbox.Option>
-                                ))}
+                                {item.options ? (
+                                  item.options.length > 0 ? (
+                                    item.options.map((option) => (
+                                      <Listbox.Option
+                                        key={option.value}
+                                        className={({ active, selected }) =>
+                                          `${
+                                            active || selected
+                                              ? "text-white bg-theme"
+                                              : "text-gray-900"
+                                          } ${
+                                            item.label === "Priority" && "capitalize"
+                                          } cursor-pointer select-none relative p-2 rounded-md truncate`
+                                        }
+                                        value={option.value}
+                                      >
+                                        {option.label}
+                                      </Listbox.Option>
+                                    ))
+                                  ) : (
+                                    <div className="text-center">No {item.label}s found</div>
+                                  )
+                                ) : (
+                                  <Spinner />
+                                )}
                               </div>
                             </Listbox.Options>
                           </Transition>
@@ -321,19 +352,29 @@ const IssueDetailSidebar: React.FC<Props> = ({ control, submitChanges, issueDeta
                           >
                             <Listbox.Options className="absolute z-10 right-0 mt-1 w-40 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
                               <div className="p-1">
-                                {issueLabels?.map((label: any) => (
-                                  <Listbox.Option
-                                    key={label.id}
-                                    className={({ active, selected }) =>
-                                      `${
-                                        active || selected ? "text-white bg-theme" : "text-gray-900"
-                                      } cursor-pointer select-none relative p-2 rounded-md truncate`
-                                    }
-                                    value={label.id}
-                                  >
-                                    {label.name}
-                                  </Listbox.Option>
-                                ))}
+                                {issueLabels ? (
+                                  issueLabels.length > 0 ? (
+                                    issueLabels.map((label: any) => (
+                                      <Listbox.Option
+                                        key={label.id}
+                                        className={({ active, selected }) =>
+                                          `${
+                                            active || selected
+                                              ? "text-white bg-theme"
+                                              : "text-gray-900"
+                                          } cursor-pointer select-none relative p-2 rounded-md truncate`
+                                        }
+                                        value={label.id}
+                                      >
+                                        {label.name}
+                                      </Listbox.Option>
+                                    ))
+                                  ) : (
+                                    <div className="text-center">No labels found</div>
+                                  )
+                                ) : (
+                                  <Spinner />
+                                )}
                               </div>
                             </Listbox.Options>
                           </Transition>
