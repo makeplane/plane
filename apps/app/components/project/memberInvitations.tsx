@@ -63,18 +63,19 @@ const ProjectMemberInvitations = ({
                 type="checkbox"
               />
             ) : null}
-            <Link href={`/projects/${project.id}/issues`} className="flex flex-col">
-              {project.name}
-              <span className="text-xs">({project.identifier})</span>
+            <Link href={`/projects/${project.id}/issues`}>
+              <a className="flex flex-col">
+                {project.name}
+                <span className="text-xs">({project.identifier})</span>
+              </a>
             </Link>
           </div>
           {isMember ? (
             <div className="flex">
-              <Link
-                href={`/projects/${project.id}/settings`}
-                className="h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-200 duration-300 cursor-pointer"
-              >
-                <PencilIcon className="h-4 w-4" />
+              <Link href={`/projects/${project.id}/settings`}>
+                <a className="h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-200 duration-300 cursor-pointer">
+                  <PencilIcon className="h-4 w-4" />
+                </a>
               </Link>
               <button
                 type="button"
@@ -114,12 +115,11 @@ const ProjectMemberInvitations = ({
                 Member
               </span>
             )}
-            <Link
-              href={`/projects/${project.id}/issues`}
-              className="flex items-center gap-1 text-xs font-medium bg-blue-200 hover:bg-blue-300 p-2 rounded duration-300"
-            >
-              <EyeIcon className="h-3 w-3" />
-              View
+            <Link href={`/projects/${project.id}/issues`}>
+              <a className="flex items-center gap-1 text-xs font-medium bg-blue-200 hover:bg-blue-300 p-2 rounded duration-300">
+                <EyeIcon className="h-3 w-3" />
+                View
+              </a>
             </Link>
           </div>
           <div className="flex items-center gap-1 text-xs mb-1">

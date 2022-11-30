@@ -167,9 +167,10 @@ const ListView: React.FC<Props> = ({
                                         <p className="w-[15rem]">
                                           <Link
                                             href={`/projects/${issue.project}/issues/${issue.id}`}
-                                            className="hover:text-theme duration-300"
                                           >
-                                            {issue.name}
+                                            <a className="hover:text-theme duration-300">
+                                              {issue.name}
+                                            </a>
                                           </Link>
                                         </p>
                                       ) : (key as keyof Properties) === "key" ? (

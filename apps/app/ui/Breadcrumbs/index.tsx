@@ -36,14 +36,13 @@ const BreadcrumbItem: React.FC<BreadcrumbItemProps> = ({ title, link, icon }) =>
   return (
     <>
       {link ? (
-        <Link
-          href={link}
-          className="bg-indigo-50 hover:bg-indigo-100 duration-300 px-4 py-1 rounded-tl-lg rounded-tr-md rounded-br-lg rounded-bl-md skew-x-[-20deg] text-sm text-center"
-        >
-          <p className={`skew-x-[20deg] ${icon ? "flex items-center gap-2" : ""}`}>
-            {icon ?? null}
-            {title}
-          </p>
+        <Link href={link}>
+          <a className="bg-indigo-50 hover:bg-indigo-100 duration-300 px-4 py-1 rounded-tl-lg rounded-tr-md rounded-br-lg rounded-bl-md skew-x-[-20deg] text-sm text-center">
+            <p className={`skew-x-[20deg] ${icon ? "flex items-center gap-2" : ""}`}>
+              {icon ?? null}
+              {title}
+            </p>
+          </a>
         </Link>
       ) : (
         <div className="bg-indigo-50 px-4 py-1 rounded-tl-lg rounded-tr-md rounded-br-lg rounded-bl-md skew-x-[-20deg] text-sm text-center">
