@@ -19,6 +19,7 @@ import { LexicalToolbar } from "./toolbar";
 import { initialConfig } from "./config";
 // helpers
 import { getValidatedValue } from "./helpers/editor";
+import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
 
 export interface RichTextEditorProps {
   onChange: (state: string) => void;
@@ -51,6 +52,7 @@ const RichTextEditor: FC<RichTextEditorProps> = (props) => {
             contentEditable={
               <ContentEditable className='className="h-[450px] outline-none py-[15px] px-2.5 resize-none overflow-hidden text-ellipsis' />
             }
+            ErrorBoundary={LexicalErrorBoundary}
             placeholder={
               <div className="absolute top-[15px] left-[10px] pointer-events-none select-none text-gray-400">
                 Enter some text...

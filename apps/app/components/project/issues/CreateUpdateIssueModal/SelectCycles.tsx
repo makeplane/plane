@@ -20,7 +20,7 @@ type Props = {
 };
 
 const SelectSprint: React.FC<Props> = ({ control, setIsOpen }) => {
-  const { sprints } = useUser();
+  const { cycles } = useUser();
 
   return (
     <>
@@ -35,7 +35,7 @@ const SelectSprint: React.FC<Props> = ({ control, setIsOpen }) => {
                   <Listbox.Button className="flex items-center gap-1 hover:bg-gray-100 relative border rounded-md shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm duration-300">
                     <ArrowPathIcon className="h-3 w-3" />
                     <span className="block truncate">
-                      {sprints?.find((i) => i.id.toString() === value?.toString())?.name ?? "Cycle"}
+                      {cycles?.find((i) => i.id.toString() === value?.toString())?.name ?? "Cycle"}
                     </span>
                   </Listbox.Button>
 
@@ -48,10 +48,10 @@ const SelectSprint: React.FC<Props> = ({ control, setIsOpen }) => {
                   >
                     <Listbox.Options className="absolute z-10 mt-1 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
                       <div className="p-1">
-                        {sprints?.map((sprint) => (
+                        {cycles?.map((cycle) => (
                           <Listbox.Option
-                            key={sprint.id}
-                            value={sprint.id}
+                            key={cycle.id}
+                            value={cycle.id}
                             className={({ active }) =>
                               `relative cursor-pointer select-none p-2 rounded-md ${
                                 active ? "bg-theme text-white" : "text-gray-900"
@@ -61,7 +61,7 @@ const SelectSprint: React.FC<Props> = ({ control, setIsOpen }) => {
                             {({ active, selected }) => (
                               <>
                                 <span className={`block ${selected && "font-semibold"}`}>
-                                  {sprint.name}
+                                  {cycle.name}
                                 </span>
                               </>
                             )}

@@ -53,7 +53,19 @@ const IssueDetail: NextPage = () => {
     handleSubmit,
     reset,
     control,
-  } = useForm<IIssue>({});
+  } = useForm<IIssue>({
+    defaultValues: {
+      name: "",
+      description: "",
+      state: "",
+      assignees_list: [],
+      priority: "low",
+      blockers_list: [],
+      blocked_list: [],
+      target_date: new Date().toString(),
+      cycle: "",
+    },
+  });
 
   const { data: issueActivities } = useSWR<any[]>(
     activeWorkspace && projectId && issueId ? PROJECT_ISSUES_ACTIVITY : null,
@@ -150,21 +162,18 @@ const IssueDetail: NextPage = () => {
       />
 
       <div className="space-y-5">
-        <Breadcrumbs>
-          <BreadcrumbItem
-            title={`${activeProject?.name ?? "Project"} Issues`}
-            link={`/projects/${activeProject?.id}/issues`}
-          />
-          <BreadcrumbItem
-            title={`Issue ${activeProject?.identifier ?? "Project"}-${
-              issueDetail?.sequence_id ?? "..."
-            } Details`}
-          />
-        </Breadcrumbs>
         <div className="flex items-center justify-between w-full">
-          <h2 className="text-lg font-medium">{`${activeProject?.name ?? "Project"}/${
-            activeProject?.identifier ?? "..."
-          }-${issueDetail?.sequence_id ?? "..."}`}</h2>
+          <Breadcrumbs>
+            <BreadcrumbItem
+              title={`${activeProject?.name ?? "Project"} Issues`}
+              link={`/projects/${activeProject?.id}/issues`}
+            />
+            <BreadcrumbItem
+              title={`Issue ${activeProject?.identifier ?? "Project"}-${
+                issueDetail?.sequence_id ?? "..."
+              } Details`}
+            />
+          </Breadcrumbs>
           <div className="flex items-center gap-x-3">
             <HeaderButton
               Icon={ChevronLeftIcon}
