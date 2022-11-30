@@ -15,9 +15,11 @@ import {
 // services
 import APIService from "lib/services/api.service";
 
+const { NEXT_PUBLIC_API_BASE_URL } = process.env;
+
 class WorkspaceService extends APIService {
   constructor() {
-    super(process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
+    super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
   }
 
   async userWorkspaces(): Promise<any> {
