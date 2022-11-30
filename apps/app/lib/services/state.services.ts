@@ -3,14 +3,12 @@ import { STATES_ENDPOINT, STATE_DETAIL, ISSUES_BY_STATE } from "constants/api-ro
 // services
 import APIService from "lib/services/api.service";
 
-const { NEXT_PUBLIC_API_BASE_URL } = process.env;
-
 // types
 import type { IState } from "types";
 
 class ProjectStateServices extends APIService {
   constructor() {
-    super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
+    super(process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
   }
 
   async createState(workspace_slug: string, projectId: string, data: any): Promise<any> {

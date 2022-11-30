@@ -2,11 +2,9 @@
 import { USER_ENDPOINT, USER_ISSUES_ENDPOINT, USER_ONBOARD_ENDPOINT } from "constants/api-routes";
 import APIService from "lib/services/api.service";
 
-const { NEXT_PUBLIC_API_BASE_URL } = process.env;
-
 class UserService extends APIService {
   constructor() {
-    super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
+    super(process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
   }
 
   currentUserConfig() {

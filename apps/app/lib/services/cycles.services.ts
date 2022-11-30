@@ -3,11 +3,9 @@ import { CYCLES_ENDPOINT, CYCLE_DETAIL } from "constants/api-routes";
 // services
 import APIService from "lib/services/api.service";
 
-const { NEXT_PUBLIC_API_BASE_URL } = process.env;
-
 class ProjectCycleServices extends APIService {
   constructor() {
-    super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
+    super(process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
   }
 
   async createCycle(workspace_slug: string, projectId: string, data: any): Promise<any> {

@@ -271,26 +271,28 @@ const Profile: NextPage = () => {
                 <h2 className="text-xl font-medium mb-3">Quick Links</h2>
                 <div className="grid grid-cols-3 gap-5">
                   {quickLinks.map((item, index) => (
-                    <Link key={index} href={item.href}>
-                      <a className="group p-5 rounded-lg bg-secondary hover:bg-theme duration-300">
-                        <h4 className="group-hover:text-white flex items-center gap-2 duration-300">
-                          {item.title}
-                          <ChevronRightIcon className="h-3 w-3" />
-                        </h4>
-                        <div className="flex justify-between items-center gap-3">
-                          <div>
-                            <h2 className="mt-3 mb-2 text-3xl font-bold group-hover:text-white duration-300">
-                              {item.number}
-                            </h2>
-                            <p className="text-gray-500 group-hover:text-white text-sm duration-300">
-                              {item.description}
-                            </p>
-                          </div>
-                          <div>
-                            <item.icon className="h-12 w-12 group-hover:text-white duration-300" />
-                          </div>
+                    <Link
+                      key={index}
+                      href={item.href}
+                      className="group p-5 rounded-lg bg-secondary hover:bg-theme duration-300"
+                    >
+                      <h4 className="group-hover:text-white flex items-center gap-2 duration-300">
+                        {item.title}
+                        <ChevronRightIcon className="h-3 w-3" />
+                      </h4>
+                      <div className="flex justify-between items-center gap-3">
+                        <div>
+                          <h2 className="mt-3 mb-2 text-3xl font-bold group-hover:text-white duration-300">
+                            {item.number}
+                          </h2>
+                          <p className="text-gray-500 group-hover:text-white text-sm duration-300">
+                            {item.description}
+                          </p>
                         </div>
-                      </a>
+                        <div>
+                          <item.icon className="h-12 w-12 group-hover:text-white duration-300" />
+                        </div>
+                      </div>
                     </Link>
                   ))}
                 </div>

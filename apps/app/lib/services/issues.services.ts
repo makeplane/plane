@@ -15,11 +15,9 @@ import {
 import APIService from "lib/services/api.service";
 import { IIssue, IIssueComment } from "types";
 
-const { NEXT_PUBLIC_API_BASE_URL } = process.env;
-
 class ProjectIssuesServices extends APIService {
   constructor() {
-    super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
+    super(process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
   }
 
   async createIssues(workspace_slug: string, projectId: string, data: any): Promise<any> {

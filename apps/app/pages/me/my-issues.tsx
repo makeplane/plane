@@ -142,7 +142,7 @@ const MyIssues: NextPage = () => {
                               >
                                 <td className="px-3 py-4 text-sm font-medium text-gray-900 hover:text-theme max-w-[15rem] duration-300">
                                   <Link href={`/projects/${myIssue.project}/issues/${myIssue.id}`}>
-                                    <a>{myIssue.name}</a>
+                                    {myIssue.name}
                                   </Link>
                                 </td>
                                 <td className="px-3 py-4 max-w-[15rem] truncate">

@@ -99,8 +99,11 @@ const Workspace: NextPage = () => {
                           key={index}
                         >
                           <td className="px-3 py-4 font-medium">
-                            <Link href={`/projects/${issue.project}/issues/${issue.id}`}>
-                              <a className="hover:text-theme duration-300">{issue.name}</a>
+                            <Link
+                              href={`/projects/${issue.project}/issues/${issue.id}`}
+                              className="hover:text-theme duration-300"
+                            >
+                              {issue.name}
                             </Link>
                           </td>
                           <td className="px-3 py-4">{issue.sequence_id}</td>
@@ -140,15 +143,17 @@ const Workspace: NextPage = () => {
                       .map(
                         (project, index) =>
                           index < 3 && (
-                            <Link href={`/projects/${project.id}/issues`} key={project.id}>
-                              <a className="flex justify-between">
-                                <div>
-                                  <h3>{project.name}</h3>
-                                </div>
-                                <div className="text-gray-400">
-                                  <ArrowRightIcon className="w-5" />
-                                </div>
-                              </a>
+                            <Link
+                              href={`/projects/${project.id}/issues`}
+                              key={project.id}
+                              className="flex justify-between"
+                            >
+                              <div>
+                                <h3>{project.name}</h3>
+                              </div>
+                              <div className="text-gray-400">
+                                <ArrowRightIcon className="w-5" />
+                              </div>
                             </Link>
                           )
                       )

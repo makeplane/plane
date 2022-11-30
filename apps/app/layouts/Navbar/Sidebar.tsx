@@ -171,26 +171,26 @@ const Sidebar: React.FC = () => {
                   <nav className="mt-5 space-y-1 px-2">
                     {projectId &&
                       navigation(projectId as string).map((item) => (
-                        <Link href={item.href} key={item.name}>
-                          <a
+                        <Link
+                          href={item.href}
+                          key={item.name}
+                          className={classNames(
+                            item.href === router.asPath
+                              ? "bg-gray-100 text-gray-900"
+                              : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
+                            "group flex items-center px-2 py-2 text-base font-medium rounded-md"
+                          )}
+                        >
+                          <item.icon
                             className={classNames(
                               item.href === router.asPath
-                                ? "bg-gray-100 text-gray-900"
-                                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
-                              "group flex items-center px-2 py-2 text-base font-medium rounded-md"
+                                ? "text-gray-500"
+                                : "text-gray-400 group-hover:text-gray-500",
+                              "mr-4 flex-shrink-0 h-6 w-6"
                             )}
-                          >
-                            <item.icon
-                              className={classNames(
-                                item.href === router.asPath
-                                  ? "text-gray-500"
-                                  : "text-gray-400 group-hover:text-gray-500",
-                                "mr-4 flex-shrink-0 h-6 w-6"
-                              )}
-                              aria-hidden="true"
-                            />
-                            {item.name}
-                          </a>
+                            aria-hidden="true"
+                          />
+                          {item.name}
                         </Link>
                       ))}
                   </nav>
@@ -300,11 +300,12 @@ const Sidebar: React.FC = () => {
                             )}
                             <Menu.Item>
                               {(active) => (
-                                <Link href="/create-workspace">
-                                  <a className="flex items-center gap-x-1 p-2 w-full text-left text-gray-900 hover:bg-theme hover:text-white rounded-md text-sm">
-                                    <PlusIcon className="w-5 h-5" />
-                                    <span>Create Workspace</span>
-                                  </a>
+                                <Link
+                                  href="/create-workspace"
+                                  className="flex items-center gap-x-1 p-2 w-full text-left text-gray-900 hover:bg-theme hover:text-white rounded-md text-sm"
+                                >
+                                  <PlusIcon className="w-5 h-5" />
+                                  <span>Create Workspace</span>
                                 </Link>
                               )}
                             </Menu.Item>
@@ -350,10 +351,11 @@ const Sidebar: React.FC = () => {
                           {userLinks.map((item) => (
                             <Menu.Item key={item.name} as="div">
                               {(active) => (
-                                <Link href={item.href}>
-                                  <a className="flex items-center gap-x-1 p-2 w-full text-left text-gray-900 hover:bg-theme hover:text-white rounded-md text-sm">
-                                    {item.name}
-                                  </a>
+                                <Link
+                                  href={item.href}
+                                  className="flex items-center gap-x-1 p-2 w-full text-left text-gray-900 hover:bg-theme hover:text-white rounded-md text-sm"
+                                >
+                                  {item.name}
                                 </Link>
                               )}
                             </Menu.Item>
@@ -391,24 +393,24 @@ const Sidebar: React.FC = () => {
               </div>
               <div className="mt-3 flex-1 space-y-1 bg-white">
                 {workspaceLinks.map((link, index) => (
-                  <Link key={index} href={link.href}>
-                    <a
+                  <Link
+                    key={index}
+                    href={link.href}
+                    className={`${
+                      link.href === router.asPath
+                        ? "bg-theme text-white"
+                        : "hover:bg-indigo-100 focus:bg-indigo-100"
+                    } flex items-center gap-3 p-2 text-xs font-medium rounded-md outline-none ${
+                      sidebarCollapse ? "justify-center" : ""
+                    }`}
+                  >
+                    <link.icon
                       className={`${
-                        link.href === router.asPath
-                          ? "bg-theme text-white"
-                          : "hover:bg-indigo-100 focus:bg-indigo-100"
-                      } flex items-center gap-3 p-2 text-xs font-medium rounded-md outline-none ${
-                        sidebarCollapse ? "justify-center" : ""
-                      }`}
-                    >
-                      <link.icon
-                        className={`${
-                          link.href === router.asPath ? "text-white" : ""
-                        } flex-shrink-0 h-4 w-4`}
-                        aria-hidden="true"
-                      />
-                      {!sidebarCollapse && link.name}
-                    </a>
+                        link.href === router.asPath ? "text-white" : ""
+                      } flex-shrink-0 h-4 w-4`}
+                      aria-hidden="true"
+                    />
+                    {!sidebarCollapse && link.name}
                   </Link>
                 ))}
               </div>
@@ -499,28 +501,28 @@ const Sidebar: React.FC = () => {
                                 } flex flex-col gap-y-1`}
                               >
                                 {navigation(project?.id).map((item) => (
-                                  <Link key={item.name} href={item.href}>
-                                    <a
+                                  <Link
+                                    key={item.name}
+                                    href={item.href}
+                                    className={classNames(
+                                      item.href === router.asPath
+                                        ? "bg-gray-200 text-gray-900"
+                                        : "text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900",
+                                      "group flex items-center px-2 py-2 text-xs font-medium rounded-md outline-none",
+                                      sidebarCollapse ? "justify-center" : ""
+                                    )}
+                                  >
+                                    <item.icon
                                       className={classNames(
                                         item.href === router.asPath
-                                          ? "bg-gray-200 text-gray-900"
-                                          : "text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900",
-                                        "group flex items-center px-2 py-2 text-xs font-medium rounded-md outline-none",
-                                        sidebarCollapse ? "justify-center" : ""
+                                          ? "text-gray-900"
+                                          : "text-gray-500 group-hover:text-gray-900",
+                                        "flex-shrink-0 h-4 w-4",
+                                        !sidebarCollapse ? "mr-3" : ""
                                       )}
-                                    >
-                                      <item.icon
-                                        className={classNames(
-                                          item.href === router.asPath
-                                            ? "text-gray-900"
-                                            : "text-gray-500 group-hover:text-gray-900",
-                                          "flex-shrink-0 h-4 w-4",
-                                          !sidebarCollapse ? "mr-3" : ""
-                                        )}
-                                        aria-hidden="true"
-                                      />
-                                      {!sidebarCollapse && item.name}
-                                    </a>
+                                      aria-hidden="true"
+                                    />
+                                    {!sidebarCollapse && item.name}
                                   </Link>
                                 ))}
                               </Disclosure.Panel>
