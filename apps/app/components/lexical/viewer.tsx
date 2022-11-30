@@ -14,6 +14,7 @@ import ReadOnlyPlugin from "./plugins/read-only";
 import { initialConfig } from "./config";
 // helpers
 import { getValidatedValue } from "./helpers/editor";
+import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
 
 export interface RichTextViewerProps {
   id: string;
@@ -38,6 +39,7 @@ const RichTextViewer: FC<RichTextViewerProps> = (props) => {
           contentEditable={
             <ContentEditable className='className="h-[450px] outline-none py-[15px] resize-none overflow-hidden text-ellipsis' />
           }
+          ErrorBoundary={LexicalErrorBoundary}
           placeholder={
             <div className="absolute top-[15px] left-[10px] pointer-events-none select-none text-gray-400">
               Enter some text...

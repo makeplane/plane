@@ -103,6 +103,13 @@ export const ISSUE_LABELS = (workspaceSlug: string, projectId: string) =>
 
 export const FILTER_STATE_ISSUES = (workspaceSlug: string, projectId: string, state: string) =>
   `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/?state=${state}`;
+export const BULK_DELETE_ISSUES = (workspaceSlug: string, projectId: string) =>
+  `/api/workspaces/${workspaceSlug}/projects/${projectId}/bulk-delete-issues/`;
+export const BULK_ADD_ISSUES_TO_CYCLE = (
+  workspaceSlug: string,
+  projectId: string,
+  cycleId: string
+) => `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/bulk-assign-issues/`;
 
 // states
 export const STATES_ENDPOINT = (workspaceSlug: string, projectId: string) =>
