@@ -163,9 +163,7 @@ const OnBoard: NextPage = () => {
                   >
                     <div className="flex items-center gap-x-2">
                       <CubeIcon className="h-5 w-5 text-gray-400" />
-                      <Link href={"/workspace"}>
-                        <a>{workspace.name}</a>
-                      </Link>
+                      <Link href={"/workspace"}>{workspace.name}</Link>
                     </div>
                     <div className="flex items-center gap-x-2">
                       <p className="text-sm">{workspace.owner.first_name}</p>

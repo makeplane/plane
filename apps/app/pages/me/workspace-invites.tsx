@@ -137,9 +137,7 @@ const MyWorkspacesInvites: NextPage = () => {
             <div>
               <span>No Invitaions Found</span>
               <p>
-                <Link href="/">
-                  <a>Click Here </a>
-                </Link>
+                <Link href="/">Click Here</Link>
 
                 <span>to redirect home</span>
               </p>

@@ -1,5 +1,4 @@
-import "../styles/globals.css";
-import "styles/editor.css";
+import "styles/globals.css";
 import type { AppProps } from "next/app";
 
 import GlobalContextProvider from "contexts/globalContextProvider";

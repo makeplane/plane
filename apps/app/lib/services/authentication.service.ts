@@ -1,13 +1,16 @@
 // api routes
-import { SIGN_IN_ENDPOINT, SOCIAL_AUTH_ENDPOINT, MAGIC_LINK_GENERATE, MAGIC_LINK_SIGNIN } from "constants/api-routes";
+import {
+  SIGN_IN_ENDPOINT,
+  SOCIAL_AUTH_ENDPOINT,
+  MAGIC_LINK_GENERATE,
+  MAGIC_LINK_SIGNIN,
+} from "constants/api-routes";
 // services
 import APIService from "lib/services/api.service";
 
-const { NEXT_PUBLIC_API_BASE_URL } = process.env;
-
 class AuthService extends APIService {
   constructor() {
-    super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
+    super(process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
   }
 
   async emailLogin(data: any) {
