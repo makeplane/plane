@@ -22,6 +22,7 @@ import { Spinner, Button } from "ui";
 import { PlusIcon, EllipsisHorizontalIcon } from "@heroicons/react/20/solid";
 import HeaderButton from "ui/HeaderButton";
 import { BreadcrumbItem, Breadcrumbs } from "ui/Breadcrumbs";
+import Image from "next/image";
 
 const ROLE = {
   5: "Guest",
@@ -54,6 +55,8 @@ const ProjectMembers: NextPage = () => {
   let members = [
     ...(projectMembers?.map((item: any) => ({
       id: item.id,
+      avatar: item.member?.avatar,
+      first_name: item.member?.first_name,
       email: item.member?.email,
       role: item.role,
       status: true,
@@ -61,6 +64,8 @@ const ProjectMembers: NextPage = () => {
     })) || []),
     ...(projectInvitations?.map((item: any) => ({
       id: item.id,
+      avatar: item.avatar ?? "",
+      first_name: item.first_name ?? item.email,
       email: item.email,
       role: item.role,
       status: item.accepted,
@@ -115,7 +120,20 @@ const ProjectMembers: NextPage = () => {
               <tbody className="divide-y divide-gray-200 bg-white">
                 {members?.map((member: any) => (
                   <tr key={member.id}>
-                    <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                    <td className="whitespace-nowrap flex items-center gap-2 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                      {member.avatar && member.avatar !== "" ? (
+                        <Image
+                          src={member.avatar}
+                          height={20}
+                          width={20}
+                          className="rounded-full"
+                          alt={member.first_name}
+                        />
+                      ) : (
+                        <span className="h-5 w-5 capitalize bg-gray-700 text-white grid place-items-center rounded-full">
+                          {member.first_name.charAt(0)}
+                        </span>
+                      )}
                       {member.email ?? "No email has been added."}
                     </td>
                     <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">

@@ -1,15 +1,15 @@
 import React, { useEffect, useCallback, useState } from "react";
-// swr
-import { mutate } from "swr";
 // next
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
+// swr
+import { mutate } from "swr";
 // swr
 import useSWR from "swr";
 // react hook form
 import { useForm, Controller } from "react-hook-form";
 // headless ui
-import { Listbox, Transition } from "@headlessui/react";
+import { Listbox, Tab, Transition } from "@headlessui/react";
 // layouts
 import AdminLayout from "layouts/AdminLayout";
 // service
@@ -37,7 +37,7 @@ import {
   PencilIcon,
 } from "@heroicons/react/24/outline";
 // types
-import type { IProject, IState, IWorkspace, WorkspaceMember } from "types";
+import type { IProject, IWorkspace, WorkspaceMember } from "types";
 
 const defaultValues: Partial<IProject> = {
   name: "",
@@ -142,7 +142,7 @@ const ProjectSettings: NextPage = () => {
 
   return (
     <AdminLayout>
-      <div className="space-y-5">
+      <div className="space-y-5 mb-5">
         <CreateUpdateStateModal
           isOpen={isCreateStateModalOpen || Boolean(selectedState)}
           handleClose={() => {
@@ -154,13 +154,29 @@ const ProjectSettings: NextPage = () => {
         />
         <Breadcrumbs>
           <BreadcrumbItem title="Projects" link="/projects" />
-          <BreadcrumbItem title={`${activeProject?.name} Settings`} />
+          <BreadcrumbItem title={`${activeProject?.name ?? "Project"} Settings`} />
         </Breadcrumbs>
+      </div>
+      {projectDetails ? (
         <div className="space-y-3">
-          {projectDetails ? (
-            <div>
-              <form onSubmit={handleSubmit(onSubmit)} className="mt-3">
-                <div className="space-y-8">
+          <form onSubmit={handleSubmit(onSubmit)} className="mt-3">
+            <Tab.Group>
+              <Tab.List className="flex items-center gap-x-4 gap-y-2 flex-wrap">
+                {["General", "Control", "States", "Labels"].map((tab, index) => (
+                  <Tab
+                    key={index}
+                    className={({ selected }) =>
+                      `px-6 py-2 border-2 border-theme hover:bg-theme hover:text-white text-xs font-medium rounded-md duration-300 ${
+                        selected ? "bg-theme text-white" : ""
+                      }`
+                    }
+                  >
+                    {tab}
+                  </Tab>
+                ))}
+              </Tab.List>
+              <Tab.Panels className="mt-8">
+                <Tab.Panel>
                   <section className="space-y-5">
                     <div>
                       <h3 className="text-lg font-medium leading-6 text-gray-900">General</h3>
@@ -237,6 +253,8 @@ const ProjectSettings: NextPage = () => {
                       />
                     </div>
                   </section>
+                </Tab.Panel>
+                <Tab.Panel>
                   <section className="space-y-5">
                     <div>
                       <h3 className="text-lg font-medium leading-6 text-gray-900">Control</h3>
@@ -406,6 +424,8 @@ const ProjectSettings: NextPage = () => {
                       </Button>
                     </div>
                   </section>
+                </Tab.Panel>
+                <Tab.Panel>
                   <section className="space-y-5">
                     <div>
                       <h3 className="text-lg font-medium leading-6 text-gray-900">State</h3>
@@ -447,6 +467,8 @@ const ProjectSettings: NextPage = () => {
                       </div>
                     </div>
                   </section>
+                </Tab.Panel>
+                <Tab.Panel>
                   <section className="space-y-5">
                     <div className="flex items-center justify-between">
                       <div>
@@ -500,16 +522,16 @@ const ProjectSettings: NextPage = () => {
                       ))}
                     </div>
                   </section>
-                </div>
-              </form>
-            </div>
-          ) : (
-            <div className="w-full h-full flex justify-center items-center">
-              <Spinner />
-            </div>
-          )}
+                </Tab.Panel>
+              </Tab.Panels>
+            </Tab.Group>
+          </form>
         </div>
-      </div>
+      ) : (
+        <div className="h-full w-full flex justify-center items-center">
+          <Spinner />
+        </div>
+      )}
     </AdminLayout>
   );
 };

@@ -47,7 +47,7 @@ const SelectAssignee: React.FC<Props> = ({ control }) => {
           icon={<UserIcon className="h-4 w-4 text-gray-400" />}
         />
       )}
-    ></Controller>
+    />
   );
 };
 

@@ -161,130 +161,118 @@ const IssueDetail: NextPage = () => {
         isUpdatingSingleIssue
       />
 
-      <div className="space-y-5">
-        <div className="flex items-center justify-between w-full">
-          <Breadcrumbs>
-            <BreadcrumbItem
-              title={`${activeProject?.name ?? "Project"} Issues`}
-              link={`/projects/${activeProject?.id}/issues`}
-            />
-            <BreadcrumbItem
-              title={`Issue ${activeProject?.identifier ?? "Project"}-${
-                issueDetail?.sequence_id ?? "..."
-              } Details`}
-            />
-          </Breadcrumbs>
-          <div className="flex items-center gap-x-3">
-            <HeaderButton
-              Icon={ChevronLeftIcon}
-              label="Previous"
-              className={`${!prevIssue ? "cursor-not-allowed opacity-70" : ""}`}
-              onClick={() => {
-                if (!prevIssue) return;
-                router.push(`/projects/${prevIssue.project}/issues/${prevIssue.id}`);
-              }}
-            />
-            <HeaderButton
-              Icon={ChevronRightIcon}
-              disabled={!nextIssue}
-              label="Next"
-              className={`${!nextIssue ? "cursor-not-allowed opacity-70" : ""}`}
-              onClick={() => {
-                if (!nextIssue) return;
-                router.push(`/projects/${nextIssue.project}/issues/${nextIssue?.id}`);
-              }}
-              position="reverse"
+      <div className="flex items-center justify-between w-full mb-5">
+        <Breadcrumbs>
+          <BreadcrumbItem
+            title={`${activeProject?.name ?? "Project"} Issues`}
+            link={`/projects/${activeProject?.id}/issues`}
+          />
+          <BreadcrumbItem
+            title={`Issue ${activeProject?.identifier ?? "Project"}-${
+              issueDetail?.sequence_id ?? "..."
+            } Details`}
+          />
+        </Breadcrumbs>
+        <div className="flex items-center gap-x-3">
+          <HeaderButton
+            Icon={ChevronLeftIcon}
+            label="Previous"
+            className={`${!prevIssue ? "cursor-not-allowed opacity-70" : ""}`}
+            onClick={() => {
+              if (!prevIssue) return;
+              router.push(`/projects/${prevIssue.project}/issues/${prevIssue.id}`);
+            }}
+          />
+          <HeaderButton
+            Icon={ChevronRightIcon}
+            disabled={!nextIssue}
+            label="Next"
+            className={`${!nextIssue ? "cursor-not-allowed opacity-70" : ""}`}
+            onClick={() => {
+              if (!nextIssue) return;
+              router.push(`/projects/${nextIssue.project}/issues/${nextIssue?.id}`);
+            }}
+            position="reverse"
+          />
+        </div>
+      </div>
+      {issueDetail && activeProject ? (
+        <div className="grid grid-cols-4 gap-5">
+          <div className="col-span-3 space-y-5">
+            <div className="bg-secondary rounded-lg p-4">
+              <TextArea
+                id="name"
+                placeholder="Enter issue name"
+                name="name"
+                autoComplete="off"
+                validations={{ required: true }}
+                register={register}
+                onChange={debounce(() => {
+                  handleSubmit(submitChanges)();
+                }, 5000)}
+                mode="transparent"
+                className="text-xl font-medium"
+              />
+              <TextArea
+                id="description"
+                name="description"
+                error={errors.description}
+                validations={{
+                  required: true,
+                }}
+                onChange={debounce(() => {
+                  handleSubmit(submitChanges)();
+                }, 5000)}
+                placeholder="Enter issue description"
+                mode="transparent"
+                register={register}
+              />
+            </div>
+            <div className="bg-secondary rounded-lg p-4 space-y-5">
+              <Tab.Group>
+                <Tab.List className="flex gap-x-3">
+                  {["Comments", "Activity"].map((item) => (
+                    <Tab
+                      key={item}
+                      className={({ selected }) =>
+                        `px-3 py-1 text-sm rounded-md border-2 border-gray-700 ${
+                          selected ? "bg-gray-700 text-white" : ""
+                        }`
+                      }
+                    >
+                      {item}
+                    </Tab>
+                  ))}
+                </Tab.List>
+                <Tab.Panels>
+                  <Tab.Panel>
+                    <IssueCommentSection
+                      comments={issueComments}
+                      workspaceSlug={activeWorkspace?.slug as string}
+                      projectId={projectId as string}
+                      issueId={issueId as string}
+                    />
+                  </Tab.Panel>
+                  <Tab.Panel>
+                    <IssueActivitySection issueActivities={issueActivities} states={states} />
+                  </Tab.Panel>
+                </Tab.Panels>
+              </Tab.Group>
+            </div>
+          </div>
+          <div className="sticky top-0 h-min bg-secondary p-4 rounded-lg">
+            <IssueDetailSidebar
+              control={control}
+              issueDetail={issueDetail}
+              submitChanges={submitChanges}
             />
           </div>
         </div>
-        {issueDetail && activeProject ? (
-          <div className="grid grid-cols-4 gap-5">
-            <div className="col-span-3 space-y-5">
-              <div className="bg-secondary rounded-lg p-4">
-                <TextArea
-                  id="name"
-                  placeholder="Enter issue name"
-                  name="name"
-                  autoComplete="off"
-                  validations={{ required: true }}
-                  register={register}
-                  onChange={debounce(() => {
-                    handleSubmit(submitChanges)();
-                  }, 5000)}
-                  mode="transparent"
-                  className="text-xl font-medium"
-                />
-                <TextArea
-                  id="description"
-                  name="description"
-                  error={errors.description}
-                  validations={{
-                    required: true,
-                  }}
-                  onChange={debounce(() => {
-                    handleSubmit(submitChanges)();
-                  }, 5000)}
-                  placeholder="Enter issue description"
-                  mode="transparent"
-                  register={register}
-                />
-              </div>
-              <div className="bg-secondary rounded-lg p-4">
-                <div className="relative">
-                  <div className="absolute inset-0 flex items-center" aria-hidden="true">
-                    <div className="w-full border-t border-gray-300" />
-                  </div>
-                  <div className="relative flex justify-center">
-                    <span className="bg-white px-2 text-sm text-gray-500">Activity/Comments</span>
-                  </div>
-                </div>
-                <div className="w-full space-y-5 mt-3">
-                  <Tab.Group>
-                    <Tab.List className="flex gap-x-3">
-                      {["Comments", "Activity"].map((item) => (
-                        <Tab
-                          key={item}
-                          className={({ selected }) =>
-                            `px-3 py-1 text-sm rounded-md border-2 border-gray-700 ${
-                              selected ? "bg-gray-700 text-white" : ""
-                            }`
-                          }
-                        >
-                          {item}
-                        </Tab>
-                      ))}
-                    </Tab.List>
-                    <Tab.Panels>
-                      <Tab.Panel>
-                        <IssueCommentSection
-                          comments={issueComments}
-                          workspaceSlug={activeWorkspace?.slug as string}
-                          projectId={projectId as string}
-                          issueId={issueId as string}
-                        />
-                      </Tab.Panel>
-                      <Tab.Panel>
-                        <IssueActivitySection issueActivities={issueActivities} states={states} />
-                      </Tab.Panel>
-                    </Tab.Panels>
-                  </Tab.Group>
-                </div>
-              </div>
-            </div>
-            <div className="sticky top-0 h-min bg-secondary p-4 rounded-lg">
-              <IssueDetailSidebar
-                control={control}
-                issueDetail={issueDetail}
-                submitChanges={submitChanges}
-              />
-            </div>
-          </div>
-        ) : (
-          <div className="h-full w-full grid place-items-center px-4 sm:px-0">
-            <Spinner />
-          </div>
-        )}
-      </div>
+      ) : (
+        <div className="h-full w-full grid place-items-center px-4 sm:px-0">
+          <Spinner />
+        </div>
+      )}
     </AdminLayout>
   );
 };

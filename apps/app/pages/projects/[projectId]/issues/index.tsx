@@ -300,7 +300,7 @@ const ProjectIssues: NextPage = () => {
               handleDeleteIssue={setDeleteIssue}
             />
           ) : (
-            <div className="h-full pb-7 mb-7">
+            <div className="h-full">
               <BoardView
                 properties={properties}
                 selectedGroup={groupByProperty}
