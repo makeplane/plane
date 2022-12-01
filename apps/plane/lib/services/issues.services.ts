@@ -8,6 +8,8 @@ import {
   ISSUE_PROPERTIES_ENDPOINT,
   CYCLE_DETAIL,
   ISSUE_LABELS,
+  BULK_DELETE_ISSUES,
+  BULK_ADD_ISSUES_TO_CYCLE,
 } from "constants/api-routes";
 // services
 import APIService from "lib/services/api.service";
@@ -92,8 +94,6 @@ class ProjectIssuesServices extends APIService {
       issue: string;
     }
   ) {
-    console.log(data);
-
     return this.post(CYCLE_DETAIL(workspace_slug, projectId, cycleId), data)
       .then((response) => {
         return response?.data;
@@ -230,6 +230,31 @@ class ProjectIssuesServices extends APIService {
 
   async deleteIssue(workspace_slug: string, projectId: string, issuesId: string): Promise<any> {
     return this.delete(ISSUE_DETAIL(workspace_slug, projectId, issuesId))
+      .then((response) => {
+        return response?.data;
+      })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async bulkDeleteIssues(workspace_slug: string, projectId: string, data: any): Promise<any> {
+    return this.delete(BULK_DELETE_ISSUES(workspace_slug, projectId), data)
+      .then((response) => {
+        return response?.data;
+      })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async bulkAddIssuesToCycle(
+    workspace_slug: string,
+    projectId: string,
+    cycleId: string,
+    data: any
+  ): Promise<any> {
+    return this.post(BULK_ADD_ISSUES_TO_CYCLE(workspace_slug, projectId, cycleId), data)
       .then((response) => {
         return response?.data;
       })

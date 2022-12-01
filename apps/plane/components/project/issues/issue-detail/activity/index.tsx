@@ -1,6 +1,7 @@
 // next
 import Image from "next/image";
 import {
+  CalendarDaysIcon,
   ChartBarIcon,
   ChatBubbleBottomCenterTextIcon,
   Squares2X2Icon,
@@ -19,6 +20,7 @@ const activityIcons = {
   priority: <ChartBarIcon className="h-4 w-4" />,
   name: <ChatBubbleBottomCenterTextIcon className="h-4 w-4" />,
   description: <ChatBubbleBottomCenterTextIcon className="h-4 w-4" />,
+  target_date: <CalendarDaysIcon className="h-4 w-4" />,
 };
 
 const IssueActivitySection: React.FC<Props> = ({ issueActivities, states }) => {
@@ -45,7 +47,7 @@ const IssueActivitySection: React.FC<Props> = ({ issueActivities, states }) => {
                       </div>
                     </div>
                   ) : (
-                    <div className="relative z-10 flex-shrink-0 border-2 border-white -ml-1.5">
+                    <div className="relative z-10 flex-shrink-0 border-2 border-white rounded-full h-[34px] -ml-1.5">
                       {activity.actor_detail.avatar && activity.actor_detail.avatar !== "" ? (
                         <Image
                           src={activity.actor_detail.avatar}
@@ -64,43 +66,41 @@ const IssueActivitySection: React.FC<Props> = ({ issueActivities, states }) => {
                     </div>
                   )}
 
-                  <div className="w-full">
+                  <div className="w-full text-xs">
                     <p>
-                      {activity.actor_detail.first_name} {activity.actor_detail.last_name}{" "}
+                      <span className="font-medium">
+                        {activity.actor_detail.first_name} {activity.actor_detail.last_name}
+                      </span>{" "}
                       <span>{activity.verb}</span>{" "}
                       {activity.verb !== "created" ? (
                         <span>{activity.field ?? "commented"}</span>
                       ) : (
                         " this issue"
                       )}
+                      <span className="ml-2 text-gray-500">{timeAgo(activity.created_at)}</span>
                     </p>
-                    <p className="text-xs text-gray-500">{timeAgo(activity.created_at)}</p>
                     <div className="w-full mt-2">
                       {activity.verb !== "created" && (
-                        <div className="text-sm">
+                        <div>
                           <div>
-                            From:{" "}
-                            <span className="text-gray-500">
-                              {activity.field === "state"
-                                ? activity.old_value
-                                  ? addSpaceIfCamelCase(
-                                      states?.find((s) => s.id === activity.old_value)?.name ?? ""
-                                    )
-                                  : "None"
-                                : activity.old_value}
-                            </span>
+                            <span className="text-gray-500">From: </span>
+                            {activity.field === "state"
+                              ? activity.old_value
+                                ? addSpaceIfCamelCase(
+                                    states?.find((s) => s.id === activity.old_value)?.name ?? ""
+                                  )
+                                : "None"
+                              : activity.old_value}
                           </div>
                           <div>
-                            To:{" "}
-                            <span className="text-gray-500">
-                              {activity.field === "state"
-                                ? activity.new_value
-                                  ? addSpaceIfCamelCase(
-                                      states?.find((s) => s.id === activity.new_value)?.name ?? ""
-                                    )
-                                  : "None"
-                                : activity.new_value}
-                            </span>
+                            <span className="text-gray-500">To: </span>
+                            {activity.field === "state"
+                              ? activity.new_value
+                                ? addSpaceIfCamelCase(
+                                    states?.find((s) => s.id === activity.new_value)?.name ?? ""
+                                  )
+                                : "None"
+                              : activity.new_value}
                           </div>
                         </div>
                       )}

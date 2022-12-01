@@ -78,10 +78,11 @@ abstract class APIService {
     });
   }
 
-  delete(url: string, config = {}): Promise<any> {
+  delete(url: string, data?: any, config = {}): Promise<any> {
     return axios({
       method: "delete",
       url: this.baseURL + url,
+      data: data,
       headers: this.getAccessToken() ? this.getHeaders() : {},
       ...config,
     });

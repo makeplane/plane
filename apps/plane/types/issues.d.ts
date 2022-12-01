@@ -45,6 +45,7 @@ export interface IIssue {
   blockers: any[];
   blocked_issue_details: any[];
   sprints: string | null;
+  cycle: string | null;
 }
 
 export interface BlockeIssue {
@@ -118,8 +119,10 @@ export interface IIssueLabels {
   updated_at: Date;
   name: string;
   description: string;
+  colour: string;
   created_by: string;
   updated_by: string;
   project: string;
   workspace: string;
+  parent: string | null;
 }

@@ -16,7 +16,6 @@ import {
   CURRENT_USER,
   PROJECTS_LIST,
   USER_WORKSPACES,
-  USER_WORKSPACE_INVITATIONS,
   PROJECT_ISSUES_LIST,
   STATE_LIST,
   CYCLE_LIST,
@@ -24,7 +23,8 @@ import {
 
 // types
 import type { KeyedMutator } from "swr";
-import type { IUser, IWorkspace, IProject, IIssue, IssueResponse, ICycle, IState } from "types";
+import type { IUser, IWorkspace, IProject, IssueResponse, ICycle, IState } from "types";
+
 interface IUserContextProps {
   user?: IUser;
   isUserLoading: boolean;
@@ -38,8 +38,8 @@ interface IUserContextProps {
   activeProject?: IProject;
   issues?: IssueResponse;
   mutateIssues: KeyedMutator<IssueResponse>;
-  sprints?: ICycle[];
-  mutateSprints: KeyedMutator<ICycle[]>;
+  cycles?: ICycle[];
+  mutateCycles: KeyedMutator<ICycle[]>;
   states?: IState[];
   mutateStates: KeyedMutator<IState[]>;
 }
@@ -92,7 +92,7 @@ export const UserProvider = ({ children }: { children: ReactElement }) => {
       : null
   );
 
-  const { data: sprints, mutate: mutateSprints } = useSWR<ICycle[]>(
+  const { data: cycles, mutate: mutateCycles } = useSWR<ICycle[]>(
     activeWorkspace && activeProject ? CYCLE_LIST(activeProject.id) : null,
     activeWorkspace && activeProject
       ? () => sprintsServices.getCycles(activeWorkspace.slug, activeProject.id)
@@ -141,8 +141,8 @@ export const UserProvider = ({ children }: { children: ReactElement }) => {
         activeProject,
         issues,
         mutateIssues,
-        sprints,
-        mutateSprints,
+        cycles,
+        mutateCycles,
         states,
         mutateStates,
         setActiveProject,

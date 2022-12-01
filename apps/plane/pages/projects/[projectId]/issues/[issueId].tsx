@@ -53,7 +53,19 @@ const IssueDetail: NextPage = () => {
     handleSubmit,
     reset,
     control,
-  } = useForm<IIssue>({});
+  } = useForm<IIssue>({
+    defaultValues: {
+      name: "",
+      description: "",
+      state: "",
+      assignees_list: [],
+      priority: "low",
+      blockers_list: [],
+      blocked_list: [],
+      target_date: new Date().toString(),
+      cycle: "",
+    },
+  });
 
   const { data: issueActivities } = useSWR<any[]>(
     activeWorkspace && projectId && issueId ? PROJECT_ISSUES_ACTIVITY : null,
@@ -150,24 +162,23 @@ const IssueDetail: NextPage = () => {
       />
 
       <div className="space-y-5">
-        <Breadcrumbs>
-          <BreadcrumbItem
-            title={`${activeProject?.name ?? "Project"} Issues`}
-            link={`/projects/${activeProject?.id}/issues`}
-          />
-          <BreadcrumbItem
-            title={`Issue ${activeProject?.identifier ?? "Project"}-${
-              issueDetail?.sequence_id ?? "..."
-            } Details`}
-          />
-        </Breadcrumbs>
         <div className="flex items-center justify-between w-full">
-          <h2 className="text-2xl font-medium">{`${activeProject?.name}/${activeProject?.identifier}-${issueDetail?.sequence_id}`}</h2>
+          <Breadcrumbs>
+            <BreadcrumbItem
+              title={`${activeProject?.name ?? "Project"} Issues`}
+              link={`/projects/${activeProject?.id}/issues`}
+            />
+            <BreadcrumbItem
+              title={`Issue ${activeProject?.identifier ?? "Project"}-${
+                issueDetail?.sequence_id ?? "..."
+              } Details`}
+            />
+          </Breadcrumbs>
           <div className="flex items-center gap-x-3">
             <HeaderButton
               Icon={ChevronLeftIcon}
-              disabled={!prevIssue}
               label="Previous"
+              className={`${!prevIssue ? "cursor-not-allowed opacity-70" : ""}`}
               onClick={() => {
                 if (!prevIssue) return;
                 router.push(`/projects/${prevIssue.project}/issues/${prevIssue.id}`);
@@ -177,6 +188,7 @@ const IssueDetail: NextPage = () => {
               Icon={ChevronRightIcon}
               disabled={!nextIssue}
               label="Next"
+              className={`${!nextIssue ? "cursor-not-allowed opacity-70" : ""}`}
               onClick={() => {
                 if (!nextIssue) return;
                 router.push(`/projects/${nextIssue.project}/issues/${nextIssue?.id}`);
@@ -188,7 +200,7 @@ const IssueDetail: NextPage = () => {
         {issueDetail && activeProject ? (
           <div className="grid grid-cols-4 gap-5">
             <div className="col-span-3 space-y-5">
-              <div className="bg-secondary rounded-lg p-5">
+              <div className="bg-secondary rounded-lg p-4">
                 <TextArea
                   id="name"
                   placeholder="Enter issue name"
@@ -200,7 +212,7 @@ const IssueDetail: NextPage = () => {
                     handleSubmit(submitChanges)();
                   }, 5000)}
                   mode="transparent"
-                  className="text-3xl sm:text-3xl"
+                  className="text-xl font-medium"
                 />
                 <TextArea
                   id="description"
@@ -217,7 +229,7 @@ const IssueDetail: NextPage = () => {
                   register={register}
                 />
               </div>
-              <div className="bg-secondary rounded-lg p-5">
+              <div className="bg-secondary rounded-lg p-4">
                 <div className="relative">
                   <div className="absolute inset-0 flex items-center" aria-hidden="true">
                     <div className="w-full border-t border-gray-300" />
@@ -233,7 +245,7 @@ const IssueDetail: NextPage = () => {
                         <Tab
                           key={item}
                           className={({ selected }) =>
-                            `px-3 py-1 text-sm rounded-md border border-gray-700 ${
+                            `px-3 py-1 text-sm rounded-md border-2 border-gray-700 ${
                               selected ? "bg-gray-700 text-white" : ""
                             }`
                           }

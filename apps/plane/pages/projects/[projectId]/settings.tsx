@@ -33,6 +33,8 @@ import {
   CheckIcon,
   PlusIcon,
   PencilSquareIcon,
+  RectangleGroupIcon,
+  PencilIcon,
 } from "@heroicons/react/24/outline";
 // types
 import type { IProject, IState, IWorkspace, WorkspaceMember } from "types";
@@ -58,6 +60,7 @@ const ProjectSettings: NextPage = () => {
 
   const [isCreateStateModalOpen, setIsCreateStateModalOpen] = useState(false);
   const [selectedState, setSelectedState] = useState<string | undefined>();
+  const [newGroupForm, setNewGroupForm] = useState(false);
 
   const router = useRouter();
 
@@ -414,8 +417,8 @@ const ProjectSettings: NextPage = () => {
                       <div className="w-full space-y-5">
                         {states?.map((state) => (
                           <div
-                            className="border p-1 px-4 rounded flex justify-between items-center"
                             key={state.id}
+                            className="bg-white px-4 py-2 rounded flex justify-between items-center"
                           >
                             <div className="flex items-center gap-x-2">
                               <div
@@ -433,25 +436,69 @@ const ProjectSettings: NextPage = () => {
                             </div>
                           </div>
                         ))}
-                        <button
+                        <Button
                           type="button"
                           className="flex items-center gap-x-1"
                           onClick={() => setIsCreateStateModalOpen(true)}
                         >
-                          <PlusIcon className="h-4 w-4 text-gray-400" />
+                          <PlusIcon className="h-4 w-4" />
                           <span>Add State</span>
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   </section>
                   <section className="space-y-5">
-                    <div>
-                      <h3 className="text-lg font-medium leading-6 text-gray-900">Labels</h3>
-                      <p className="mt-1 text-sm text-gray-500">
-                        Manage the labels of this project.
-                      </p>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-lg font-medium leading-6 text-gray-900">Labels</h3>
+                        <p className="mt-1 text-sm text-gray-500">
+                          Manage the labels of this project.
+                        </p>
+                      </div>
+                      <Button
+                        className="flex items-center gap-x-1"
+                        onClick={() => setNewGroupForm(true)}
+                      >
+                        <PlusIcon className="h-4 w-4" />
+                        New group
+                      </Button>
                     </div>
-                    <div></div>
+                    <div className="space-y-5">
+                      <div
+                        className={`bg-white px-4 py-2 flex items-center gap-2 ${
+                          newGroupForm ? "" : "hidden"
+                        }`}
+                      >
+                        <Input type="text" name="groupName" />
+                        <Button
+                          type="button"
+                          theme="secondary"
+                          onClick={() => setNewGroupForm(false)}
+                        >
+                          Cancel
+                        </Button>
+                        <Button type="button">Save</Button>
+                      </div>
+                      {["", ""].map((group, index) => (
+                        <div key={index} className="bg-white p-4 text-gray-900 rounded-md">
+                          <h3 className="font-medium leading-5 flex items-center gap-2">
+                            <RectangleGroupIcon className="h-5 w-5" />
+                            This is the label group title
+                          </h3>
+                          <div className="pl-5 mt-4">
+                            <div className="group text-sm flex justify-between items-center p-2 hover:bg-gray-100 rounded">
+                              <h5 className="flex items-center gap-2">
+                                <div className="w-2 h-2 bg-red-600 rounded-full"></div>
+                                This is the label title
+                              </h5>
+                              <div className="hidden group-hover:block">
+                                <PencilIcon className="h-3 w-3" />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </section>
                 </div>
               </form>

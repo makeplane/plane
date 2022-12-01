@@ -18,6 +18,7 @@ import {
   PlusIcon,
 } from "@heroicons/react/24/outline";
 import Image from "next/image";
+import { divide } from "lodash";
 
 type Props = {
   selectedGroup: NestedKeyOf<IIssue> | null;
@@ -54,9 +55,6 @@ const SingleBoard: React.FC<Props> = ({
   // Collapse/Expand
   const [show, setState] = useState<any>(true);
 
-  // Edit state name
-  const [showInput, setInput] = useState<any>(false);
-
   if (selectedGroup === "priority")
     groupTitle === "high"
       ? (bgColor = "#dc2626")
@@ -79,57 +77,52 @@ const SingleBoard: React.FC<Props> = ({
           <div className={`${!show ? "" : "h-full space-y-3 overflow-y-auto flex flex-col"}`}>
             <div
               className={`flex justify-between p-3 pb-0 ${
-                snapshot.isDragging ? "bg-indigo-50 border-indigo-100 border-b" : ""
-              } ${!show ? "flex-col bg-gray-50 rounded-md border" : ""}`}
+                !show ? "flex-col bg-gray-50 rounded-md border" : ""
+              }`}
             >
-              {showInput ? null : (
-                <div className={`flex items-center ${!show ? "flex-col gap-2" : "gap-1"}`}>
-                  <button
-                    type="button"
-                    {...provided.dragHandleProps}
-                    className={`h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-200 duration-300 outline-none ${
-                      !show ? "" : "rotate-90"
-                    } ${selectedGroup !== "state_detail.name" ? "hidden" : ""}`}
-                  >
-                    <EllipsisHorizontalIcon className="h-4 w-4 text-gray-600" />
-                    <EllipsisHorizontalIcon className="h-4 w-4 text-gray-600 mt-[-0.7rem]" />
-                  </button>
-                  <div
-                    className={`flex items-center gap-x-1 px-2 bg-slate-900 rounded-md cursor-pointer ${
-                      !show ? "py-2 mb-2 flex-col gap-y-2" : ""
-                    }`}
+              <div className={`flex items-center ${!show ? "flex-col gap-2" : "gap-1"}`}>
+                <button
+                  type="button"
+                  {...provided.dragHandleProps}
+                  className={`h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-200 duration-300 outline-none ${
+                    !show ? "" : "rotate-90"
+                  } ${selectedGroup !== "state_detail.name" ? "hidden" : ""}`}
+                >
+                  <EllipsisHorizontalIcon className="h-4 w-4 text-gray-600" />
+                  <EllipsisHorizontalIcon className="h-4 w-4 text-gray-600 mt-[-0.7rem]" />
+                </button>
+                <div
+                  className={`flex items-center gap-x-1 px-2 bg-slate-900 rounded-md cursor-pointer ${
+                    !show ? "py-2 mb-2 flex-col gap-y-2" : ""
+                  }`}
+                  style={{
+                    border: `2px solid ${bgColor}`,
+                    backgroundColor: `${bgColor}20`,
+                  }}
+                >
+                  <span
+                    className={`w-3 h-3 block rounded-full ${!show ? "" : "mr-1"}`}
                     style={{
-                      border: `2px solid ${bgColor}`,
-                      backgroundColor: `${bgColor}20`,
+                      backgroundColor: bgColor,
                     }}
-                    onClick={() => {
-                      // setInput(true);
+                  />
+                  <h2
+                    className={`text-[0.9rem] font-medium capitalize`}
+                    style={{
+                      writingMode: !show ? "vertical-rl" : "horizontal-tb",
                     }}
                   >
-                    <span
-                      className={`w-3 h-3 block rounded-full ${!show ? "" : "mr-1"}`}
-                      style={{
-                        backgroundColor: bgColor,
-                      }}
-                    />
-                    <h2
-                      className={`text-[0.9rem] font-medium capitalize`}
-                      style={{
-                        writingMode: !show ? "vertical-rl" : "horizontal-tb",
-                      }}
-                    >
-                      {groupTitle === null || groupTitle === "null"
-                        ? "None"
-                        : createdBy
-                        ? createdBy
-                        : addSpaceIfCamelCase(groupTitle)}
-                    </h2>
-                    <span className="text-gray-500 text-sm ml-0.5">
-                      {groupedByIssues[groupTitle].length}
-                    </span>
-                  </div>
+                    {groupTitle === null || groupTitle === "null"
+                      ? "None"
+                      : createdBy
+                      ? createdBy
+                      : addSpaceIfCamelCase(groupTitle)}
+                  </h2>
+                  <span className="text-gray-500 text-sm ml-0.5">
+                    {groupedByIssues[groupTitle].length}
+                  </span>
                 </div>
-              )}
+              </div>
 
               <div className={`flex items-center ${!show ? "flex-col pb-2" : ""}`}>
                 <button
@@ -137,7 +130,6 @@ const SingleBoard: React.FC<Props> = ({
                   className="h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-200 duration-300 outline-none"
                   onClick={() => {
                     setState(!show);
-                    setInput(false);
                   }}
                 >
                   {show ? (
@@ -190,7 +182,7 @@ const SingleBoard: React.FC<Props> = ({
             <StrictModeDroppable key={groupTitle} droppableId={groupTitle}>
               {(provided, snapshot) => (
                 <div
-                  className={`mt-3 space-y-3 h-full overflow-y-auto px-3 ${
+                  className={`mt-3 space-y-3 h-full overflow-y-auto px-3 pb-3 ${
                     snapshot.isDraggingOver ? "bg-indigo-50 bg-opacity-50" : ""
                   } ${!show ? "hidden" : "block"}`}
                   {...provided.droppableProps}
@@ -219,7 +211,7 @@ const SingleBoard: React.FC<Props> = ({
                                       key={key}
                                       className={`${
                                         key === "name"
-                                          ? "text-sm font-medium mb-2"
+                                          ? "text-sm mb-2"
                                           : key === "description"
                                           ? "text-xs text-black"
                                           : key === "priority"
@@ -236,7 +228,7 @@ const SingleBoard: React.FC<Props> = ({
                                           ? "text-xs bg-indigo-50 px-2 py-1 mt-2 flex items-center gap-x-1 rounded w-min whitespace-nowrap"
                                           : "text-sm text-gray-500"
                                       } gap-1
-                                      `}
+                                    `}
                                     >
                                       {key === "target_date" ? (
                                         <>
@@ -300,27 +292,27 @@ const SingleBoard: React.FC<Props> = ({
                             </div>
 
                             {/* <div
-                            className={`p-2 bg-indigo-50 flex items-center justify-between ${
-                              snapshot.isDragging ? "bg-indigo-200" : ""
-                            }`}
+                          className={`p-2 bg-indigo-50 flex items-center justify-between ${
+                            snapshot.isDragging ? "bg-indigo-200" : ""
+                          }`}
+                        >
+                          <button
+                            type="button"
+                            className="flex flex-col"
+                            {...provided.dragHandleProps}
                           >
-                            <button
-                              type="button"
-                              className="flex flex-col"
-                              {...provided.dragHandleProps}
-                            >
-                              <EllipsisHorizontalIcon className="h-4 w-4 text-gray-600" />
-                              <EllipsisHorizontalIcon className="h-4 w-4 text-gray-600 mt-[-0.7rem]" />
+                            <EllipsisHorizontalIcon className="h-4 w-4 text-gray-600" />
+                            <EllipsisHorizontalIcon className="h-4 w-4 text-gray-600 mt-[-0.7rem]" />
+                          </button>
+                          <div className="flex gap-1 items-center">
+                            <button type="button">
+                              <HeartIcon className="h-4 w-4 text-yellow-500" />
                             </button>
-                            <div className="flex gap-1 items-center">
-                              <button type="button">
-                                <HeartIcon className="h-4 w-4 text-yellow-500" />
-                              </button>
-                              <button type="button">
-                                <CheckCircleIcon className="h-4 w-4 text-green-500" />
-                              </button>
-                            </div>
-                          </div> */}
+                            <button type="button">
+                              <CheckCircleIcon className="h-4 w-4 text-green-500" />
+                            </button>
+                          </div>
+                        </div> */}
                           </a>
                         </Link>
                       )}

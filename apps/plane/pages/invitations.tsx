@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 // next
 import type { NextPage } from "next";
-import Link from "next/link";
 import { useRouter } from "next/router";
 // swr
 import useSWR from "swr";
@@ -14,12 +13,15 @@ import useUser from "lib/hooks/useUser";
 import { USER_WORKSPACE_INVITATIONS } from "constants/api-routes";
 // layouts
 import DefaultLayout from "layouts/DefaultLayout";
+// components
+import SingleInvitation from "components/workspace/SingleInvitation";
 // ui
-import { Button, Spinner } from "ui";
+import { Button, Spinner, EmptySpace, EmptySpaceItem } from "ui";
+// icons
+import { CubeIcon, PlusIcon } from "@heroicons/react/24/outline";
 // types
 import type { IWorkspaceInvitation } from "types";
-import { CubeIcon, PlusIcon } from "@heroicons/react/24/outline";
-import { EmptySpace, EmptySpaceItem } from "ui/EmptySpace";
+import Link from "next/link";
 
 const OnBoard: NextPage = () => {
   const router = useRouter();
@@ -65,11 +67,9 @@ const OnBoard: NextPage = () => {
       });
   };
 
-  useEffect(() => {
-    userService.updateUserOnBoard().then((response) => {
-      console.log(response);
-    });
-  }, []);
+  // useEffect(() => {
+  //   if (workspaces && workspaces.length === 0) setCanRedirect(false);
+  // }, [workspaces]);
 
   return (
     <DefaultLayout
@@ -85,6 +85,7 @@ const OnBoard: NextPage = () => {
             <p className="text-sm text-center">logged in as {user.email}</p>
           </div>
         )}
+
         <div className="w-full md:w-2/3 lg:w-1/3 p-8 rounded-lg">
           {invitations && workspaces ? (
             invitations.length > 0 ? (
@@ -129,9 +130,26 @@ const OnBoard: NextPage = () => {
                     ))}
                   </div>
                 </div>
-                <div className="flex justify-between mt-4">
+                <h2 className="text-lg font-medium text-gray-900">Workspace Invitations</h2>
+                <p className="mt-1 text-sm text-gray-500">
+                  Select invites that you want to accept.
+                </p>
+                <ul
+                  role="list"
+                  className="mt-6 divide-y divide-gray-200 border-t border-b border-gray-200"
+                >
+                  {invitations.map((invitation) => (
+                    <SingleInvitation
+                      key={invitation.id}
+                      invitation={invitation}
+                      invitationsRespond={invitationsRespond}
+                      handleInvitation={handleInvitation}
+                    />
+                  ))}
+                </ul>
+                <div className="mt-6">
                   <Button className="w-full" onClick={submitInvitations}>
-                    Continue to Dashboard
+                    Accept and Continue
                   </Button>
                 </div>
               </div>
