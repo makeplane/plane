@@ -11,10 +11,14 @@ services:
       POSTGRES_DB: plane
       POSTGRES_PASSWORD: plane
     command: postgres -c 'max_connections=1000'
+    networks:
+      - app_network
   redis:
     image: redis:6.2.7-alpine
     restart: on-failure
     command: redis-server --maxmemory-policy allkeys-lru --maxmemory 200mb
+    networks:
+      - app_network
   plane_web:
     container_name: plane_web
     build:
@@ -37,15 +41,22 @@ services:
     environment:
       SENTRY_DSN: $SENTRY_DSN
       WEB_URL: $WEB_URL
-      DATABASE_URL: postgres://plane:plane@db/plane
-      REDIS_URL: redis://redis
+      PGUSER: plane
+      PGPASSWORD: plane
+      PGHOST: db
+      REDIS_URL: 'redis://redis:6379/'
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
       SECRET_KEY: $SECRET_KEY
     networks:
       - app_network
     depends_on:
       - db
       - redis
-    command: python manage.py migrate && gunicorn plane.wsgi -k gthread --workers 8 --bind 0.0.0.0:8000 --config gunicorn.config.py --max-requests 10000 --max-requests-jitter 1000 --access-logfile -
+    command: ./bin/takeoff
+    links:
+      - db
+      - redis
 networks:
   app_network:
     external: true

@@ -14,9 +14,9 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
         "NAME": "plane",
-        "USER": "",
-        "PASSWORD": "",
-        "HOST": "",
+        "USER": os.environ.get('PGUSER'),
+        "PASSWORD": os.environ.get('PGPASSWORD'),
+        "HOST": os.environ.get('PGHOST'),
     }
 }
 
@@ -28,7 +28,7 @@ CORS_ORIGIN_WHITELIST = [
     # "http://127.0.0.1:9000"
 ]
 # Parse database configuration from $DATABASE_URL
-DATABASES["default"] = dj_database_url.config()
+# DATABASES["default"] = dj_database_url.config()
 SITE_ID = 1
 
 # Enable Connection Pooling (if desired)

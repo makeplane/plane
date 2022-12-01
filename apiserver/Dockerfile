@@ -1,5 +1,7 @@
 FROM python:3.8.14-alpine3.16 AS backend
 
+# set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 WORKDIR /code
@@ -20,12 +22,7 @@ RUN apk --update --no-cache --virtual .build-deps add \
     "cargo~=1.60" \
     "git~=2" \
     "make~=4.3" \
-    "libffi-dev~=3.4" \
-    "libxml2-dev~=2.9" \
-    "libxslt-dev~=1.1" \
-    "xmlsec-dev~=1.2" \
     "postgresql13-dev~=13" \
-    "libmaxminddb~=1.6" \
     && \
     pip install -r requirements.txt --compile --no-cache-dir \
     && \
@@ -45,12 +42,13 @@ COPY plane plane/
 COPY templates templates/
 
 COPY gunicorn.config.py ./
-
-COPY bin/takeoff ./takeoff
+USER root
+RUN apk --update --no-cache add "bash~=5.1"
+COPY ./bin ./bin/
 USER captain
 
 # Expose container port and run entry point script
 EXPOSE 8000
 
-# ENTRYPOINT [ "./takeoff" ]
-CMD python manage.py migrate && python manage.py rqworker & exec gunicorn plane.wsgi -k gthread --workers 8 --bind 0.0.0.0:8000 --config gunicorn.config.py --max-requests 10000 --max-requests-jitter 1000 --access-logfile -
+CMD [ "./bin/takeoff" ]
+
