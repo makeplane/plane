@@ -1,0 +1,66 @@
+FROM node:alpine AS builder
+RUN apk add --no-cache libc6-compat
+RUN apk update
+# Set working directory
+WORKDIR /app
+
+RUN apk add curl
+
+RUN curl -fsSL "https://github.com/pnpm/pnpm/releases/latest/download/pnpm-linuxstatic-x64" -o /bin/pnpm; chmod +x /bin/pnpm;
+
+ENV PNPM_HOME="pnpm"
+ENV PATH="${PATH}:./pnpm"
+
+COPY ./apps ./apps
+COPY ./package.json ./package.json
+COPY ./.eslintrc.json ./.eslintrc.json
+COPY ./turbo.json ./turbo.json
+COPY ./yarn.lock ./yarn.lock
+COPY ./pnpm-workspace.yaml ./pnpm-workspace.yaml
+COPY ./pnpm-lock.yaml ./pnpm-lock.yaml
+
+RUN pnpm add -g turbo
+RUN turbo prune --scope=app --docker
+
+# Add lockfile and package.json's of isolated subworkspace
+FROM node:alpine AS installer
+
+RUN apk add curl
+
+RUN curl -fsSL "https://github.com/pnpm/pnpm/releases/latest/download/pnpm-linuxstatic-x64" -o /bin/pnpm; chmod +x /bin/pnpm;
+
+ENV PNPM_HOME="pnpm"
+ENV PATH="${PATH}:./pnpm"
+
+RUN apk add --no-cache libc6-compat
+RUN apk update
+WORKDIR /app
+
+# First install the dependencies (as they change less often)
+COPY .gitignore .gitignore
+COPY --from=builder /app/out/json/ .
+COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
+RUN pnpm install
+
+# Build the project
+COPY --from=builder /app/out/full/ .
+COPY turbo.json turbo.json
+RUN pnpm turbo run build --filter=app...
+
+FROM node:alpine AS runner
+WORKDIR /app
+
+# Don't run production as root
+RUN addgroup --system --gid 1001 plane
+RUN adduser --system --uid 1001 captain
+USER captain
+
+COPY --from=installer /app/apps/app/next.config.js .
+COPY --from=installer /app/apps/app/package.json .
+
+# Automatically leverage output traces to reduce image size
+# https://nextjs.org/docs/advanced-features/output-file-tracing
+COPY --from=installer --chown=captain:plane /app/apps/app/.next/standalone ./
+COPY --from=installer --chown=captain:plane /app/apps/app/.next/static ./apps/app/.next/static
+
+CMD node apps/app/server.js

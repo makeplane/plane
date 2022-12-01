@@ -23,7 +23,7 @@ services:
     container_name: plane_web
     build:
       context: .
-      dockerfile: ./apps/plane/Dockerfile
+      dockerfile: ./apps/app/Dockerfile
     restart: always
     ports:
       - 3000:3000
