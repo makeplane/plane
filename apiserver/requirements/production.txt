@@ -8,3 +8,5 @@ boto==2.49.0
 django-anymail==8.5
 twilio==7.8.2
 django-debug-toolbar==3.2.4
+gevent==22.10.2
+psycogreen==1.0.2
