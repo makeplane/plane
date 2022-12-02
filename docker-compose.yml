@@ -25,6 +25,10 @@ services:
       context: .
       dockerfile: ./apps/app/Dockerfile
     restart: always
+    environment:
+      NEXT_PUBLIC_GITHUB_ID: $NEXT_PUBLIC_GITHUB_ID
+      NEXT_PUBLIC_GOOGLE_CLIENTID: $NEXT_PUBLIC_GOOGLE_CLIENTID
+      NEXT_PUBLIC_API_BASE_URL: $NEXT_PUBLIC_API_BASE_URL
     ports:
       - 3000:3000
     networks:
@@ -48,6 +52,13 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: 6379
       SECRET_KEY: $SECRET_KEY
+      AWS_REGION: $AWS_REGION
+      AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+      AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+      AWS_S3_BUCKET_NAME: $AWS_S3_BUCKET_NAME
+      EMAIL_HOST: $EMAIL_HOST
+      EMAIL_HOST_USER: $EMAIL_HOST_USER
+      EMAIL_HOST_PASSWORD: $EMAIL_HOST_PASSWORD
     networks:
       - app_network
     depends_on:

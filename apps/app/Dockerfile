@@ -15,7 +15,6 @@ COPY ./apps ./apps
 COPY ./package.json ./package.json
 COPY ./.eslintrc.json ./.eslintrc.json
 COPY ./turbo.json ./turbo.json
-COPY ./yarn.lock ./yarn.lock
 COPY ./pnpm-workspace.yaml ./pnpm-workspace.yaml
 COPY ./pnpm-lock.yaml ./pnpm-lock.yaml
 
@@ -45,6 +44,7 @@ RUN pnpm install
 # Build the project
 COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
+# RUN pnpm add -g turbo
 RUN pnpm turbo run build --filter=app...
 
 FROM node:alpine AS runner

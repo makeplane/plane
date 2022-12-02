@@ -3,6 +3,7 @@ FROM python:3.8.14-alpine3.16 AS backend
 # set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1 
 
 WORKDIR /code
 
@@ -12,9 +13,9 @@ RUN apk --update --no-cache add \
     "nodejs-current~=18" \
     "xmlsec~=1.2"
 
-
 COPY requirements.txt ./
 COPY requirements ./requirements
+RUN apk add libffi-dev
 RUN apk --update --no-cache --virtual .build-deps add \
     "bash~=5.1" \
     "g++~=11.2" \
@@ -23,6 +24,8 @@ RUN apk --update --no-cache --virtual .build-deps add \
     "git~=2" \
     "make~=4.3" \
     "postgresql13-dev~=13" \
+    "libc-dev" \
+    "linux-headers" \
     && \
     pip install -r requirements.txt --compile --no-cache-dir \
     && \
