@@ -262,7 +262,7 @@ const IssueDetailSidebar: React.FC<Props> = ({ control, submitChanges, issueDeta
                       render={({ field: { value, onChange } }) => (
                         <input
                           type="date"
-                          value={value ?? new Date().toString()}
+                          value={""}
                           onChange={(e: any) => {
                             submitChanges({ target_date: e.target.value });
                             onChange(e.target.value);

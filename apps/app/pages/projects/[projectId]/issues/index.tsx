@@ -51,7 +51,7 @@ const ProjectIssues: NextPage = () => {
   const [editIssue, setEditIssue] = useState<string | undefined>();
   const [deleteIssue, setDeleteIssue] = useState<string | undefined>(undefined);
 
-  const { activeWorkspace, activeProject } = useUser();
+  const { activeWorkspace, activeProject, issues } = useUser();
 
   const router = useRouter();
 
