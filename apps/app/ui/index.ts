@@ -3,6 +3,7 @@ export { default as Input } from "./Input";
 export { default as Select } from "./Select";
 export { default as TextArea } from "./TextArea";
 export { default as CustomListbox } from "./CustomListbox";
+export { default as CustomMenu } from "./CustomMenu";
 export { default as Spinner } from "./Spinner";
 export { default as Tooltip } from "./Tooltip";
 export { default as SearchListbox } from "./SearchListbox";

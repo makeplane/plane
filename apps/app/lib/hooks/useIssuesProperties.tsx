@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 // swr
 import useSWR from "swr";
 // api routes
@@ -80,7 +80,22 @@ const useIssuesProperties = (workspaceSlug?: string, projectId?: string) => {
     [workspaceSlug, projectId, issueProperties, user]
   );
 
-  return [properties, updateIssueProperties] as const;
+  const newProperties = Object.keys(properties).reduce((obj: any, key) => {
+    if (
+      key !== "children" &&
+      key !== "name" &&
+      key !== "parent" &&
+      key !== "project" &&
+      key !== "description" &&
+      key !== "attachments" &&
+      key !== "sequence_id"
+    ) {
+      obj[key] = properties[key as keyof Properties];
+    }
+    return obj;
+  }, {});
+
+  return [newProperties, updateIssueProperties] as const;
 };
 
 export default useIssuesProperties;

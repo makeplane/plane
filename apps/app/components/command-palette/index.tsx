@@ -85,25 +85,25 @@ const CommandPalette: React.FC = () => {
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      if (e.ctrlKey && e.key === "/") {
+      if ((e.ctrlKey || e.metaKey) && e.key === "/") {
         e.preventDefault();
         setIsPaletteOpen(true);
-      } else if (e.ctrlKey && e.key === "i") {
+      } else if ((e.ctrlKey || e.metaKey) && e.key === "i") {
         e.preventDefault();
         setIsIssueModalOpen(true);
-      } else if (e.ctrlKey && e.key === "p") {
+      } else if ((e.ctrlKey || e.metaKey) && e.key === "p") {
         e.preventDefault();
         setIsProjectModalOpen(true);
-      } else if (e.ctrlKey && e.key === "b") {
+      } else if ((e.ctrlKey || e.metaKey) && e.key === "b") {
         e.preventDefault();
         toggleCollapsed();
-      } else if (e.ctrlKey && e.key === "h") {
+      } else if ((e.ctrlKey || e.metaKey) && e.key === "h") {
         e.preventDefault();
         setIsShortcutsModalOpen(true);
-      } else if (e.ctrlKey && e.key === "q") {
+      } else if ((e.ctrlKey || e.metaKey) && e.key === "q") {
         e.preventDefault();
         setIsCreateCycleModalOpen(true);
-      } else if (e.ctrlKey && e.altKey && e.key === "c") {
+      } else if ((e.ctrlKey || e.metaKey) && e.altKey && e.key === "c") {
         e.preventDefault();
 
         if (!router.query.issueId) return;
