@@ -61,9 +61,6 @@ const SingleBoard: React.FC<Props> = ({
   // Collapse/Expand
   const [show, setState] = useState<any>(true);
 
-  // Edit state name
-  const [showInput, setInput] = useState<any>(false);
-
   if (selectedGroup === "priority")
     groupTitle === "high"
       ? (bgColor = "#dc2626")
@@ -86,54 +83,52 @@ const SingleBoard: React.FC<Props> = ({
           <div className={`${!show ? "" : "h-full space-y-3 overflow-y-auto flex flex-col"}`}>
             <div
               className={`flex justify-between p-3 pb-0 ${
-                snapshot.isDragging ? "bg-indigo-50 border-indigo-100 border-b" : ""
-              } ${!show ? "flex-col bg-gray-50 rounded-md border" : ""}`}
+                !show ? "flex-col bg-gray-50 rounded-md border" : ""
+              }`}
             >
-              {showInput ? null : (
-                <div className={`flex items-center ${!show ? "flex-col gap-2" : "gap-1"}`}>
-                  <button
-                    type="button"
-                    {...provided.dragHandleProps}
-                    className={`h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-200 duration-300 outline-none ${
-                      !show ? "" : "rotate-90"
-                    } ${selectedGroup !== "state_detail.name" ? "hidden" : ""}`}
-                  >
-                    <EllipsisHorizontalIcon className="h-4 w-4 text-gray-600" />
-                    <EllipsisHorizontalIcon className="h-4 w-4 text-gray-600 mt-[-0.7rem]" />
-                  </button>
-                  <div
-                    className={`flex items-center gap-x-1 px-2 bg-slate-900 rounded-md cursor-pointer ${
-                      !show ? "py-2 mb-2 flex-col gap-y-2" : ""
-                    }`}
+              <div className={`flex items-center ${!show ? "flex-col gap-2" : "gap-1"}`}>
+                <button
+                  type="button"
+                  {...provided.dragHandleProps}
+                  className={`h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-200 duration-300 outline-none ${
+                    !show ? "" : "rotate-90"
+                  } ${selectedGroup !== "state_detail.name" ? "hidden" : ""}`}
+                >
+                  <EllipsisHorizontalIcon className="h-4 w-4 text-gray-600" />
+                  <EllipsisHorizontalIcon className="h-4 w-4 text-gray-600 mt-[-0.7rem]" />
+                </button>
+                <div
+                  className={`flex items-center gap-x-1 px-2 bg-slate-900 rounded-md cursor-pointer ${
+                    !show ? "py-2 mb-2 flex-col gap-y-2" : ""
+                  }`}
+                  style={{
+                    border: `2px solid ${bgColor}`,
+                    backgroundColor: `${bgColor}20`,
+                  }}
+                >
+                  <span
+                    className={`w-3 h-3 block rounded-full ${!show ? "" : "mr-1"}`}
                     style={{
-                      border: `2px solid ${bgColor}`,
-                      backgroundColor: `${bgColor}20`,
+                      backgroundColor: bgColor,
+                    }}
+                  />
+                  <h2
+                    className={`text-[0.9rem] font-medium capitalize`}
+                    style={{
+                      writingMode: !show ? "vertical-rl" : "horizontal-tb",
                     }}
                   >
-                    <span
-                      className={`w-3 h-3 block rounded-full ${!show ? "" : "mr-1"}`}
-                      style={{
-                        backgroundColor: bgColor,
-                      }}
-                    />
-                    <h2
-                      className={`text-[0.9rem] font-medium capitalize`}
-                      style={{
-                        writingMode: !show ? "vertical-rl" : "horizontal-tb",
-                      }}
-                    >
-                      {groupTitle === null || groupTitle === "null"
-                        ? "None"
-                        : createdBy
-                        ? createdBy
-                        : addSpaceIfCamelCase(groupTitle)}
-                    </h2>
-                    <span className="text-gray-500 text-sm ml-0.5">
-                      {groupedByIssues[groupTitle].length}
-                    </span>
-                  </div>
+                    {groupTitle === null || groupTitle === "null"
+                      ? "None"
+                      : createdBy
+                      ? createdBy
+                      : addSpaceIfCamelCase(groupTitle)}
+                  </h2>
+                  <span className="text-gray-500 text-sm ml-0.5">
+                    {groupedByIssues[groupTitle].length}
+                  </span>
                 </div>
-              )}
+              </div>
 
               <div className={`flex items-center ${!show ? "flex-col pb-2" : ""}`}>
                 <button
@@ -141,7 +136,6 @@ const SingleBoard: React.FC<Props> = ({
                   className="h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-200 duration-300 outline-none"
                   onClick={() => {
                     setState(!show);
-                    setInput(false);
                   }}
                 >
                   {show ? (

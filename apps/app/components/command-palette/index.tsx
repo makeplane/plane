@@ -1,6 +1,10 @@
 import React, { useState, useCallback, useEffect } from "react";
 // next
 import { useRouter } from "next/router";
+// swr
+import { mutate } from "swr";
+// react hook form
+import { SubmitHandler, useForm } from "react-hook-form";
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // hooks
@@ -22,9 +26,11 @@ import CreateProjectModal from "components/project/CreateProjectModal";
 import CreateUpdateIssuesModal from "components/project/issues/CreateUpdateIssueModal";
 import CreateUpdateCycleModal from "components/project/cycles/CreateUpdateCyclesModal";
 // types
-import { IIssue } from "types";
+import { IIssue, IProject, IssueResponse } from "types";
 import { Button } from "ui";
-import { SubmitHandler, useForm } from "react-hook-form";
+import issuesServices from "lib/services/issues.services";
+// fetch keys
+import { PROJECTS_LIST, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 
 type ItemType = {
   name: string;
@@ -33,7 +39,7 @@ type ItemType = {
 };
 
 type FormInput = {
-  issue: string[];
+  issue_ids: string[];
 };
 
 const CommandPalette: React.FC = () => {
@@ -47,7 +53,7 @@ const CommandPalette: React.FC = () => {
   const [isShortcutsModalOpen, setIsShortcutsModalOpen] = useState(false);
   const [isCreateCycleModalOpen, setIsCreateCycleModalOpen] = useState(false);
 
-  const { issues, activeProject } = useUser();
+  const { activeWorkspace, activeProject, issues, cycles } = useUser();
 
   const { toggleCollapsed } = useTheme();
 
@@ -58,6 +64,14 @@ const CommandPalette: React.FC = () => {
       ? issues?.results ?? []
       : issues?.results.filter((issue) => issue.name.toLowerCase().includes(query.toLowerCase())) ??
         [];
+
+  const {
+    register,
+    formState: { errors, isSubmitting },
+    handleSubmit,
+    reset,
+    setError,
+  } = useForm<FormInput>();
 
   const quickActions = [
     {
@@ -81,6 +95,7 @@ const CommandPalette: React.FC = () => {
   const handleCommandPaletteClose = () => {
     setIsPaletteOpen(false);
     setQuery("");
+    reset();
   };
 
   const handleKeyDown = useCallback(
@@ -127,21 +142,42 @@ const CommandPalette: React.FC = () => {
     [toggleCollapsed, setToastAlert, router]
   );
 
-  const {
-    register,
-    formState: { errors, isSubmitting },
-    handleSubmit,
-    reset,
-    setError,
-    control,
-  } = useForm<FormInput>();
-
   const handleDelete: SubmitHandler<FormInput> = (data) => {
-    console.log("Deleting... " + JSON.stringify(data));
+    if (activeWorkspace && activeProject && data.issue_ids) {
+      issuesServices
+        .bulkDeleteIssues(activeWorkspace.slug, activeProject.id, data)
+        .then((res) => {
+          mutate<IssueResponse>(
+            PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id),
+            (prevData) => {
+              return {
+                ...(prevData as IssueResponse),
+                count: (prevData?.results ?? []).filter(
+                  (p) => !data.issue_ids.some((id) => p.id === id)
+                ).length,
+                results: (prevData?.results ?? []).filter(
+                  (p) => !data.issue_ids.some((id) => p.id === id)
+                ),
+              };
+            },
+            false
+          );
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    }
   };
 
   const handleAddToCycle: SubmitHandler<FormInput> = (data) => {
-    console.log("Adding to cycle...");
+    if (activeWorkspace && activeProject && data.issue_ids) {
+      issuesServices
+        .bulkAddIssuesToCycle(activeWorkspace.slug, activeProject.id, "", data)
+        .then((res) => {})
+        .catch((e) => {
+          console.log(e);
+        });
+    }
   };
 
   useEffect(() => {
@@ -254,10 +290,16 @@ const CommandPalette: React.FC = () => {
                                     /> */}
                                       <input
                                         type="checkbox"
-                                        {...register("issue")}
+                                        {...register("issue_ids")}
+                                        id={`issue-${issue.id}`}
                                         value={issue.id}
                                       />
-                                      <span className="ml-3 flex-auto truncate">{issue.name}</span>
+                                      <label
+                                        htmlFor={`issue-${issue.id}`}
+                                        className="ml-3 flex-auto truncate"
+                                      >
+                                        {issue.name}
+                                      </label>
                                       {active && (
                                         <span className="ml-3 flex-none text-gray-500">
                                           Jump to...

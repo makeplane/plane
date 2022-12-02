@@ -21,11 +21,7 @@ import { Button, Spinner, EmptySpace, EmptySpaceItem } from "ui";
 import { CubeIcon, PlusIcon } from "@heroicons/react/24/outline";
 // types
 import type { IWorkspaceInvitation } from "types";
-<<<<<<< Updated upstream
-import { CubeIcon, PlusIcon } from "@heroicons/react/24/outline";
-import { EmptySpace, EmptySpaceItem } from "ui/EmptySpace";
-=======
->>>>>>> Stashed changes
+import Link from "next/link";
 
 const OnBoard: NextPage = () => {
   const router = useRouter();
@@ -71,16 +67,9 @@ const OnBoard: NextPage = () => {
       });
   };
 
-  useEffect(() => {
-<<<<<<< Updated upstream
-    userService.updateUserOnBoard().then((response) => {
-      console.log(response);
-    });
-  }, []);
-=======
-    if (workspaces && workspaces.length === 0) setCanRedirect(false);
-  }, [workspaces]);
->>>>>>> Stashed changes
+  // useEffect(() => {
+  //   if (workspaces && workspaces.length === 0) setCanRedirect(false);
+  // }, [workspaces]);
 
   return (
     <DefaultLayout
@@ -100,7 +89,6 @@ const OnBoard: NextPage = () => {
         <div className="w-full md:w-2/3 lg:w-1/3 p-8 rounded-lg">
           {invitations && workspaces ? (
             invitations.length > 0 ? (
-<<<<<<< Updated upstream
               <div className="mt-3 sm:mt-5">
                 <div className="mt-2">
                   <h2 className="text-2xl font-medium mb-4">Join your workspaces</h2>
@@ -141,11 +129,6 @@ const OnBoard: NextPage = () => {
                       </div>
                     ))}
                   </div>
-=======
-              <div className="max-w-lg">
-                <div className="mb-4">
-                  <CubeIcon className="h-14 w-14 text-gray-400" />
->>>>>>> Stashed changes
                 </div>
                 <h2 className="text-lg font-medium text-gray-900">Workspace Invitations</h2>
                 <p className="mt-1 text-sm text-gray-500">
