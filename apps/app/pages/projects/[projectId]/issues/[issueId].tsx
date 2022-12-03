@@ -7,7 +7,7 @@ import React, { useCallback, useEffect, useState } from "react";
 // swr
 import useSWR, { mutate } from "swr";
 // react hook form
-import { useForm, Controller } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 // headless ui
 import { Disclosure, Menu, Tab, Transition } from "@headlessui/react";
 // services
@@ -17,7 +17,6 @@ import stateServices from "lib/services/state.services";
 import {
   PROJECT_ISSUES_ACTIVITY,
   PROJECT_ISSUES_COMMENTS,
-  PROJECT_ISSUES_DETAILS,
   PROJECT_ISSUES_LIST,
   STATE_LIST,
 } from "constants/fetch-keys";
@@ -76,12 +75,17 @@ const IssueDetail: NextPage = () => {
     ssr: false,
   });
 
+  const LexicalViewer = dynamic(() => import("components/lexical/viewer"), {
+    ssr: false,
+  });
+
   const {
     register,
     formState: { errors },
     handleSubmit,
     reset,
     control,
+    watch,
   } = useForm<IIssue>({
     defaultValues: {
       name: "",
@@ -93,6 +97,7 @@ const IssueDetail: NextPage = () => {
       blocked_list: [],
       target_date: new Date().toString(),
       cycle: "",
+      labels_list: [],
     },
   });
 
@@ -130,6 +135,7 @@ const IssueDetail: NextPage = () => {
   const submitChanges = useCallback(
     (formData: Partial<IIssue>) => {
       if (!activeWorkspace || !activeProject || !issueId) return;
+
       mutateIssues(
         (prevData) => ({
           ...(prevData as IssueResponse),
@@ -142,6 +148,7 @@ const IssueDetail: NextPage = () => {
         }),
         false
       );
+
       issuesServices
         .patchIssue(activeWorkspace.slug, projectId as string, issueId as string, formData)
         .then((response) => {
@@ -259,20 +266,6 @@ const IssueDetail: NextPage = () => {
         <div className="grid grid-cols-4 gap-5">
           <div className="col-span-3 space-y-5">
             <div className="bg-secondary rounded-lg p-4">
-              {/* <Controller
-                control={control}
-                name="description"
-                render={({ field: { value, onChange } }) => (
-                  <RichTextEditor
-                    onChange={(state: string) => {
-                      handleDescriptionChange(state);
-                      onChange(issueDescriptionValue);
-                    }}
-                    value={issueDescriptionValue}
-                    id="editor"
-                  />
-                )}
-              /> */}
               <div>
                 <TextArea
                   id="name"
@@ -287,7 +280,7 @@ const IssueDetail: NextPage = () => {
                   mode="transparent"
                   className="text-xl font-medium"
                 />
-                <TextArea
+                {/* <TextArea
                   id="description"
                   name="description"
                   error={errors.description}
@@ -300,7 +293,19 @@ const IssueDetail: NextPage = () => {
                   placeholder="Enter issue description"
                   mode="transparent"
                   register={register}
+                /> */}
+                <Controller
+                  name="description"
+                  control={control}
+                  render={({ field }) => (
+                    <RichTextEditor
+                      {...field}
+                      id="issueDescriptionEditor"
+                      value={JSON.parse(issueDetail.description)}
+                    />
+                  )}
                 />
+                {/* <LexicalViewer id="descriptionViewer" value={JSON.parse(issueDetail.description)} /> */}
               </div>
               <div className="mt-2">
                 {subIssues && subIssues.length > 0 ? (
@@ -349,6 +354,7 @@ const IssueDetail: NextPage = () => {
                                       <Menu.Item as="div">
                                         {(active) => (
                                           <button
+                                            type="button"
                                             className="flex items-center gap-2 p-2 text-left text-gray-900 hover:bg-theme hover:text-white rounded-md text-xs whitespace-nowrap"
                                             onClick={() => setIsAddAsSubIssueOpen(true)}
                                           >
@@ -515,7 +521,11 @@ const IssueDetail: NextPage = () => {
                     />
                   </Tab.Panel>
                   <Tab.Panel>
-                    <IssueActivitySection issueActivities={issueActivities} states={states} />
+                    <IssueActivitySection
+                      issueActivities={issueActivities}
+                      states={states}
+                      issues={issues}
+                    />
                   </Tab.Panel>
                 </Tab.Panels>
               </Tab.Group>

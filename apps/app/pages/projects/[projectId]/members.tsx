@@ -144,7 +144,7 @@ const ProjectMembers: NextPage = () => {
                         "Member"
                       ) : member.status ? (
                         <span className="p-0.5 px-2 text-sm bg-green-700 text-white rounded-full">
-                          Accepted
+                          Active
                         </span>
                       ) : (
                         <span className="p-0.5 px-2 text-sm bg-yellow-400 text-black rounded-full">

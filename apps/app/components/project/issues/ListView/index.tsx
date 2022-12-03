@@ -1,8 +1,9 @@
 // react
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 // next
 import Link from "next/link";
 import Image from "next/image";
+import dynamic from "next/dynamic";
 // swr
 import useSWR, { mutate } from "swr";
 // ui
@@ -10,7 +11,7 @@ import { Listbox, Transition } from "@headlessui/react";
 // icons
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 // types
-import { IIssue, IssueResponse, IState, NestedKeyOf, Properties, WorkspaceMember } from "types";
+import { IIssue, IssueResponse, NestedKeyOf, Properties, WorkspaceMember } from "types";
 // hooks
 import useUser from "lib/hooks/useUser";
 // fetch keys
@@ -48,7 +49,7 @@ const ListView: React.FC<Props> = ({
   const [issuePreviewModal, setIssuePreviewModal] = useState(false);
   const [previewModalIssueId, setPreviewModalIssueId] = useState<string | null>(null);
 
-  const { activeWorkspace, activeProject, states } = useUser();
+  const { activeWorkspace, activeProject, states, issues } = useUser();
 
   const partialUpdateIssue = (formData: Partial<IIssue>, issueId: string) => {
     if (!activeWorkspace || !activeProject) return;
@@ -69,6 +70,10 @@ const ListView: React.FC<Props> = ({
         console.log(error);
       });
   };
+
+  const LexicalViewer = dynamic(() => import("components/lexical/viewer"), {
+    ssr: false,
+  });
 
   const { data: people } = useSWR<WorkspaceMember[]>(
     activeWorkspace ? WORKSPACE_MEMBERS : null,
@@ -177,6 +182,10 @@ const ListView: React.FC<Props> = ({
                                         </td>
                                       ) : (key as keyof Properties) === "description" ? (
                                         <td className="px-3 py-4 font-medium text-gray-900 truncate text-xs max-w-[15rem]">
+                                          {/* <LexicalViewer
+                                            id={`descriptionViewer-${issue.id}`}
+                                            value={JSON.parse(issue.description)}
+                                          /> */}
                                           {issue.description}
                                         </td>
                                       ) : (key as keyof Properties) === "priority" ? (

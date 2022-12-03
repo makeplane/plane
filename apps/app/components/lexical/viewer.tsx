@@ -1,4 +1,3 @@
-import { FC } from "react";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
@@ -17,14 +16,11 @@ import { getValidatedValue } from "./helpers/editor";
 import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
 
 export interface RichTextViewerProps {
-  id: string;
   value: string;
+  id: string;
 }
 
-const RichTextViewer: FC<RichTextViewerProps> = (props) => {
-  // props
-  const { value, id } = props;
-
+const RichTextViewer: React.FC<RichTextViewerProps> = ({ value, id }) => {
   return (
     <LexicalComposer
       initialConfig={{
@@ -37,7 +33,7 @@ const RichTextViewer: FC<RichTextViewerProps> = (props) => {
       <div className="relative">
         <RichTextPlugin
           contentEditable={
-            <ContentEditable className='className="h-[450px] outline-none py-[15px] resize-none overflow-hidden text-ellipsis' />
+            <ContentEditable className='className="h-[450px] outline-none resize-none overflow-hidden text-ellipsis' />
           }
           ErrorBoundary={LexicalErrorBoundary}
           placeholder={

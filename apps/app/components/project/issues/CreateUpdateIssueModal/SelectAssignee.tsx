@@ -44,7 +44,7 @@ const SelectAssignee: React.FC<Props> = ({ control }) => {
           multiple={true}
           value={value}
           onChange={onChange}
-          icon={<UserIcon className="h-4 w-4 text-gray-400" />}
+          icon={<UserIcon className="h-3 w-3 text-gray-500" />}
         />
       )}
     />

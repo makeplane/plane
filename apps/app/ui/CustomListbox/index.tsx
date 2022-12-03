@@ -7,7 +7,7 @@ import { CheckIcon } from "@heroicons/react/20/solid";
 import { Props } from "./types";
 
 const CustomListbox: React.FC<Props> = ({
-  title,
+  title = "",
   options,
   value,
   onChange,
