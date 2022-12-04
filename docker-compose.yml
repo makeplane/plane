@@ -1,4 +1,4 @@
-version: "3"
+version: "3.8"
 
 services:
   db:
@@ -23,7 +23,7 @@ services:
     container_name: plane_web
     build:
       context: .
-      dockerfile: ./apps/app/Dockerfile
+      dockerfile: ./apps/app/Dockerfile.web
     restart: always
     environment:
       NEXT_PUBLIC_GITHUB_ID: $NEXT_PUBLIC_GITHUB_ID
@@ -38,7 +38,7 @@ services:
     container_name: plane_api
     build:
       context: ./apiserver
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.api
     restart: always
     ports:
       - 8000:8000
