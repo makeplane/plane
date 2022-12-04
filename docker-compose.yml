@@ -11,14 +11,12 @@ services:
       POSTGRES_DB: plane
       POSTGRES_PASSWORD: plane
     command: postgres -c 'max_connections=1000'
-    networks:
-      - app_network
+
   redis:
     image: redis:6.2.7-alpine
     restart: on-failure
     command: redis-server --maxmemory-policy allkeys-lru --maxmemory 200mb
-    networks:
-      - app_network
+
   plane_web:
     container_name: plane_web
     build:
@@ -31,8 +29,7 @@ services:
       NEXT_PUBLIC_API_BASE_URL: $NEXT_PUBLIC_API_BASE_URL
     ports:
       - 3000:3000
-    networks:
-      - app_network
+
 
   plane_api:
     container_name: plane_api
@@ -59,8 +56,7 @@ services:
       EMAIL_HOST: $EMAIL_HOST
       EMAIL_HOST_USER: $EMAIL_HOST_USER
       EMAIL_HOST_PASSWORD: $EMAIL_HOST_PASSWORD
-    networks:
-      - app_network
+
     depends_on:
       - db
       - redis
@@ -68,9 +64,17 @@ services:
     links:
       - db
       - redis
-networks:
-  app_network:
-    external: true
+
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - 80:80
+    depends_on:
+      - plane_api
+      - plane_web
 
 volumes:
   postgres-data:
