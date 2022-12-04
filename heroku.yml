@@ -1,0 +1,19 @@
+setup:
+  addons:
+    - plan: heroku-postgresql
+      as: DATABASE
+    - plan: heroku-redis
+      as: REDIS
+  config:
+    env_file: .env
+build:
+  docker:
+    plane_web: ./apps/app/Dockerfile.web
+    plane_api: ./apiserver/Dockerfile.api
+
+release:
+  plane_api: python manage.py migrate
+
+run:
+  plane_web: node apps/app/server.js
+  plane_api: ./bin/takeoff
