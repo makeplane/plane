@@ -37,7 +37,7 @@ const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-                <div className="bg-white p-8">
+                <div className="bg-white p-5">
                   <div className="sm:flex sm:items-start">
                     <div className="text-center sm:text-left w-full">
                       <Dialog.Title
@@ -59,37 +59,46 @@ const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                           {
                             title: "Navigation",
                             shortcuts: [
-                              { key: "Ctrl + /", description: "To open navigator" },
-                              { key: "↑", description: "Move up" },
-                              { key: "↓", description: "Move down" },
-                              { key: "←", description: "Move left" },
-                              { key: "→", description: "Move right" },
-                              { key: "Enter", description: "Select" },
-                              { key: "Esc", description: "Close" },
+                              { keys: "ctrl,/", description: "To open navigator" },
+                              { keys: "↑", description: "Move up" },
+                              { keys: "↓", description: "Move down" },
+                              { keys: "←", description: "Move left" },
+                              { keys: "→", description: "Move right" },
+                              { keys: "Enter", description: "Select" },
+                              { keys: "Esc", description: "Close" },
                             ],
                           },
                           {
                             title: "Common",
                             shortcuts: [
-                              { key: "Ctrl + p", description: "To create project" },
-                              { key: "Ctrl + i", description: "To create issue" },
-                              { key: "Ctrl + q", description: "To create cycle" },
-                              { key: "Ctrl + h", description: "To open shortcuts guide" },
+                              { keys: "ctrl,p", description: "To create project" },
+                              { keys: "ctrl,i", description: "To create issue" },
+                              { keys: "ctrl,q", description: "To create cycle" },
+                              { keys: "ctrl,h", description: "To open shortcuts guide" },
                               {
-                                key: "Ctrl + alt + c",
+                                keys: "ctrl,alt,c",
                                 description: "To copy issue url when on issue detail page.",
                               },
                             ],
                           },
                         ].map(({ title, shortcuts }) => (
-                          <div className="w-full flex flex-col" key={title}>
+                          <div key={title} className="w-full flex flex-col">
                             <p className="font-medium mb-4">{title}</p>
                             <div className="flex flex-col gap-y-3">
-                              {shortcuts.map(({ key, description }) => (
-                                <div className="flex justify-between" key={key}>
+                              {shortcuts.map(({ keys, description }, index) => (
+                                <div key={index} className="flex justify-between">
                                   <p className="text-sm text-gray-500">{description}</p>
-                                  <div className="flex gap-x-1">
-                                    <kbd className="bg-gray-200 text-sm px-1 rounded">{key}</kbd>
+                                  <div className="flex items-center gap-x-1">
+                                    {keys.split(",").map((key, index) => (
+                                      <span key={index} className="flex items-center gap-1">
+                                        <kbd className="bg-gray-200 text-sm px-1 rounded">
+                                          {key}
+                                        </kbd>
+                                        {/* {index !== keys.split(",").length - 1 ? (
+                                          <span className="text-xs">+</span>
+                                        ) : null} */}
+                                      </span>
+                                    ))}
                                   </div>
                                 </div>
                               ))}

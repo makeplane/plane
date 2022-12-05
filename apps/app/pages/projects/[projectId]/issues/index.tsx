@@ -51,7 +51,7 @@ const ProjectIssues: NextPage = () => {
   const [editIssue, setEditIssue] = useState<string | undefined>();
   const [deleteIssue, setDeleteIssue] = useState<string | undefined>(undefined);
 
-  const { activeWorkspace, activeProject } = useUser();
+  const { activeWorkspace, activeProject, issues } = useUser();
 
   const router = useRouter();
 
@@ -300,7 +300,7 @@ const ProjectIssues: NextPage = () => {
               handleDeleteIssue={setDeleteIssue}
             />
           ) : (
-            <div className="h-full pb-7 mb-7">
+            <div className="h-full">
               <BoardView
                 properties={properties}
                 selectedGroup={groupByProperty}

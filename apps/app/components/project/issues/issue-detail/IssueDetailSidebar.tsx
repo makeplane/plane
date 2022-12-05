@@ -34,11 +34,13 @@ import {
   ClipboardDocumentIcon,
   LinkIcon,
   ArrowPathIcon,
+  CalendarDaysIcon,
 } from "@heroicons/react/24/outline";
 // types
 import type { Control } from "react-hook-form";
 import type { IIssue, IIssueLabels, IssueResponse, IState, WorkspaceMember } from "types";
 import { TwitterPicker } from "react-color";
+import useToast from "lib/hooks/useToast";
 
 type Props = {
   control: Control<IIssue, any>;
@@ -55,6 +57,8 @@ const defaultValues: Partial<IIssueLabels> = {
 
 const IssueDetailSidebar: React.FC<Props> = ({ control, submitChanges, issueDetail }) => {
   const { activeWorkspace, activeProject, cycles } = useUser();
+
+  const { setToastAlert } = useToast();
 
   const { data: states } = useSWR<IState[]>(
     activeWorkspace && activeProject ? STATE_LIST(activeProject.id) : null,
@@ -164,7 +168,7 @@ const IssueDetailSidebar: React.FC<Props> = ({ control, submitChanges, issueDeta
         label: "Due Date",
         name: "target_date",
         canSelectMultipleOptions: true,
-        icon: UserIcon,
+        icon: CalendarDaysIcon,
       },
     ],
     [
@@ -202,6 +206,18 @@ const IssueDetailSidebar: React.FC<Props> = ({ control, submitChanges, issueDeta
               copyTextToClipboard(
                 `https://app.plane.so/projects/${activeProject?.id}/issues/${issueDetail?.id}`
               )
+                .then(() => {
+                  setToastAlert({
+                    type: "success",
+                    title: "Copied to clipboard",
+                  });
+                })
+                .catch(() => {
+                  setToastAlert({
+                    type: "error",
+                    title: "Some error occurred",
+                  });
+                })
             }
           >
             <LinkIcon className="h-3.5 w-3.5" />
@@ -209,7 +225,21 @@ const IssueDetailSidebar: React.FC<Props> = ({ control, submitChanges, issueDeta
           <button
             type="button"
             className="p-2 hover:bg-gray-100 border rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 duration-300"
-            onClick={() => copyTextToClipboard(`${issueDetail?.id}`)}
+            onClick={() =>
+              copyTextToClipboard(`${issueDetail?.id}`)
+                .then(() => {
+                  setToastAlert({
+                    type: "success",
+                    title: "Copied to clipboard",
+                  });
+                })
+                .catch(() => {
+                  setToastAlert({
+                    type: "error",
+                    title: "Some error occurred",
+                  });
+                })
+            }
           >
             <ClipboardDocumentIcon className="h-3.5 w-3.5" />
           </button>
@@ -232,7 +262,7 @@ const IssueDetailSidebar: React.FC<Props> = ({ control, submitChanges, issueDeta
                       render={({ field: { value, onChange } }) => (
                         <input
                           type="date"
-                          value={value ?? new Date().toString()}
+                          value={""}
                           onChange={(e: any) => {
                             submitChanges({ target_date: e.target.value });
                             onChange(e.target.value);
