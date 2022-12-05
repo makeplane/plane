@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 // next
-import Link from "next/link";
 import { useRouter } from "next/router";
+import dynamic from "next/dynamic";
 // swr
 import { mutate } from "swr";
 // react hook form
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 // fetching keys
 import {
   PROJECT_ISSUES_DETAILS,
@@ -14,14 +14,14 @@ import {
   USER_ISSUE,
 } from "constants/fetch-keys";
 // headless
-import { Dialog, Transition } from "@headlessui/react";
+import { Dialog, Menu, Popover, Transition } from "@headlessui/react";
 // services
 import issuesServices from "lib/services/issues.services";
 // hooks
 import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
 // ui
-import { Button, Input, TextArea } from "ui";
+import { Button, CustomListbox, Input, TextArea } from "ui";
 // commons
 import { renderDateFormat, cosineSimilarity } from "constants/common";
 // components
@@ -31,12 +31,13 @@ import SelectLabels from "./SelectLabels";
 import SelectProject from "./SelectProject";
 import SelectPriority from "./SelectPriority";
 import SelectAssignee from "./SelectAssignee";
-import SelectParent from "./SelectParentIssues";
+import SelectParent from "./SelectParentIssue";
 import CreateUpdateStateModal from "components/project/issues/BoardView/state/CreateUpdateStateModal";
 import CreateUpdateCycleModal from "components/project/cycles/CreateUpdateCyclesModal";
 
 // types
 import type { IIssue, IssueResponse, SprintIssueResponse } from "types";
+import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
 
 type Props = {
   isOpen: boolean;
@@ -48,8 +49,13 @@ type Props = {
 };
 
 const defaultValues: Partial<IIssue> = {
+  project: "",
   name: "",
-  description: "",
+  // description: "",
+  state: "",
+  sprints: "",
+  priority: "",
+  labels_list: [],
 };
 
 const CreateUpdateIssuesModal: React.FC<Props> = ({
@@ -64,6 +70,16 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
   const [isStateModalOpen, setIsStateModalOpen] = useState(false);
 
   const [mostSimilarIssue, setMostSimilarIssue] = useState<string | undefined>();
+
+  // const [issueDescriptionValue, setIssueDescriptionValue] = useState("");
+  // const handleDescriptionChange: any = (value: any) => {
+  //   console.log(value);
+  //   setIssueDescriptionValue(value);
+  // };
+
+  const RichTextEditor = dynamic(() => import("components/lexical/editor"), {
+    ssr: false,
+  });
 
   const router = useRouter();
 
@@ -93,6 +109,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
     setError,
     control,
     watch,
+    setValue,
   } = useForm<IIssue>({
     defaultValues,
   });
@@ -261,6 +278,8 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
     return () => setMostSimilarIssue(undefined);
   }, []);
 
+  // console.log(watch("parent"));
+
   return (
     <>
       {activeProject && (
@@ -373,13 +392,20 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                             )}
                           </div>
                           <div>
-                            <TextArea
+                            {/* <TextArea
                               id="description"
                               name="description"
                               label="Description"
                               placeholder="Enter description"
                               error={errors.description}
                               register={register}
+                            /> */}
+                            <Controller
+                              name="description"
+                              control={control}
+                              render={({ field }) => (
+                                <RichTextEditor {...field} id="issueDescriptionEditor" />
+                              )}
                             />
                           </div>
                           <div>
@@ -398,9 +424,31 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                             <SelectState control={control} setIsOpen={setIsStateModalOpen} />
                             <SelectCycles control={control} setIsOpen={setIsCycleModalOpen} />
                             <SelectPriority control={control} />
-                            <SelectLabels control={control} />
                             <SelectAssignee control={control} />
-                            <SelectParent control={control} />
+                            <SelectLabels control={control} />
+                            <Menu as="div" className="relative inline-block">
+                              <Menu.Button className="grid relative place-items-center rounded p-1 hover:bg-gray-100 focus:outline-none">
+                                <EllipsisHorizontalIcon className="h-4 w-4" />
+                              </Menu.Button>
+
+                              <Transition
+                                as={React.Fragment}
+                                enter="transition ease-out duration-100"
+                                enterFrom="transform opacity-0 scale-95"
+                                enterTo="transform opacity-100 scale-100"
+                                leave="transition ease-in duration-75"
+                                leaveFrom="transform opacity-100 scale-100"
+                                leaveTo="transform opacity-0 scale-95"
+                              >
+                                <Menu.Items className="origin-top-right absolute right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                                  <div className="p-1">
+                                    <Menu.Item as="div">
+                                      {(active) => <SelectParent control={control} />}
+                                    </Menu.Item>
+                                  </div>
+                                </Menu.Items>
+                              </Transition>
+                            </Menu>
                           </div>
                         </div>
                       </div>
