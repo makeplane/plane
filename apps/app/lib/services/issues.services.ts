@@ -22,8 +22,8 @@ class ProjectIssuesServices extends APIService {
     super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
   }
 
-  async createIssues(workspace_slug: string, projectId: string, data: any): Promise<any> {
-    return this.post(ISSUES_ENDPOINT(workspace_slug, projectId), data)
+  async createIssues(workspaceSlug: string, projectId: string, data: any): Promise<any> {
+    return this.post(ISSUES_ENDPOINT(workspaceSlug, projectId), data)
       .then((response) => {
         return response?.data;
       })
@@ -32,8 +32,8 @@ class ProjectIssuesServices extends APIService {
       });
   }
 
-  async getIssues(workspace_slug: string, projectId: string): Promise<any> {
-    return this.get(ISSUES_ENDPOINT(workspace_slug, projectId))
+  async getIssues(workspaceSlug: string, projectId: string): Promise<any> {
+    return this.get(ISSUES_ENDPOINT(workspaceSlug, projectId))
       .then((response) => {
         return response?.data;
       })
@@ -42,8 +42,8 @@ class ProjectIssuesServices extends APIService {
       });
   }
 
-  async getIssue(workspace_slug: string, projectId: string, issueId: string): Promise<any> {
-    return this.get(ISSUE_DETAIL(workspace_slug, projectId, issueId))
+  async getIssue(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
+    return this.get(ISSUE_DETAIL(workspaceSlug, projectId, issueId))
       .then((response) => {
         return response?.data;
       })
@@ -53,11 +53,11 @@ class ProjectIssuesServices extends APIService {
   }
 
   async getIssueActivities(
-    workspace_slug: string,
+    workspaceSlug: string,
     projectId: string,
     issueId: string
   ): Promise<any> {
-    return this.get(ISSUE_ACTIVITIES(workspace_slug, projectId, issueId))
+    return this.get(ISSUE_ACTIVITIES(workspaceSlug, projectId, issueId))
       .then((response) => {
         return response?.data;
       })
@@ -66,8 +66,8 @@ class ProjectIssuesServices extends APIService {
       });
   }
 
-  async getIssueComments(workspace_slug: string, projectId: string, issueId: string): Promise<any> {
-    return this.get(ISSUE_COMMENTS(workspace_slug, projectId, issueId))
+  async getIssueComments(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
+    return this.get(ISSUE_COMMENTS(workspaceSlug, projectId, issueId))
       .then((response) => {
         return response?.data;
       })
@@ -76,8 +76,8 @@ class ProjectIssuesServices extends APIService {
       });
   }
 
-  async getIssueProperties(workspace_slug: string, projectId: string): Promise<any> {
-    return this.get(ISSUE_PROPERTIES_ENDPOINT(workspace_slug, projectId))
+  async getIssueProperties(workspaceSlug: string, projectId: string): Promise<any> {
+    return this.get(ISSUE_PROPERTIES_ENDPOINT(workspaceSlug, projectId))
       .then((response) => {
         return response?.data;
       })
@@ -87,14 +87,14 @@ class ProjectIssuesServices extends APIService {
   }
 
   async addIssueToSprint(
-    workspace_slug: string,
+    workspaceSlug: string,
     projectId: string,
     cycleId: string,
     data: {
       issue: string;
     }
   ) {
-    return this.post(CYCLE_DETAIL(workspace_slug, projectId, cycleId), data)
+    return this.post(CYCLE_DETAIL(workspaceSlug, projectId, cycleId), data)
       .then((response) => {
         return response?.data;
       })
@@ -103,8 +103,8 @@ class ProjectIssuesServices extends APIService {
       });
   }
 
-  async createIssueProperties(workspace_slug: string, projectId: string, data: any): Promise<any> {
-    return this.post(ISSUE_PROPERTIES_ENDPOINT(workspace_slug, projectId), data)
+  async createIssueProperties(workspaceSlug: string, projectId: string, data: any): Promise<any> {
+    return this.post(ISSUE_PROPERTIES_ENDPOINT(workspaceSlug, projectId), data)
       .then((response) => {
         return response?.data;
       })
@@ -114,13 +114,13 @@ class ProjectIssuesServices extends APIService {
   }
 
   async patchIssueProperties(
-    workspace_slug: string,
+    workspaceSlug: string,
     projectId: string,
     issuePropertyId: string,
     data: any
   ): Promise<any> {
     return this.patch(
-      ISSUE_PROPERTIES_ENDPOINT(workspace_slug, projectId) + `${issuePropertyId}/`,
+      ISSUE_PROPERTIES_ENDPOINT(workspaceSlug, projectId) + `${issuePropertyId}/`,
       data
     )
 
@@ -133,12 +133,12 @@ class ProjectIssuesServices extends APIService {
   }
 
   async createIssueComment(
-    workspace_slug: string,
+    workspaceSlug: string,
     projectId: string,
     issueId: string,
     data: any
   ): Promise<any> {
-    return this.post(ISSUE_COMMENTS(workspace_slug, projectId, issueId), data)
+    return this.post(ISSUE_COMMENTS(workspaceSlug, projectId, issueId), data)
       .then((response) => {
         return response?.data;
       })
@@ -148,13 +148,13 @@ class ProjectIssuesServices extends APIService {
   }
 
   async patchIssueComment(
-    workspace_slug: string,
+    workspaceSlug: string,
     projectId: string,
     issueId: string,
     commentId: string,
     data: IIssueComment
   ): Promise<any> {
-    return this.patch(ISSUE_COMMENT_DETAIL(workspace_slug, projectId, issueId, commentId), data)
+    return this.patch(ISSUE_COMMENT_DETAIL(workspaceSlug, projectId, issueId, commentId), data)
       .then((response) => {
         return response?.data;
       })
@@ -164,12 +164,12 @@ class ProjectIssuesServices extends APIService {
   }
 
   async deleteIssueComment(
-    workspace_slug: string,
+    workspaceSlug: string,
     projectId: string,
     issueId: string,
     commentId: string
   ): Promise<any> {
-    return this.delete(ISSUE_COMMENT_DETAIL(workspace_slug, projectId, issueId, commentId))
+    return this.delete(ISSUE_COMMENT_DETAIL(workspaceSlug, projectId, issueId, commentId))
       .then((response) => {
         return response?.data;
       })
@@ -178,8 +178,8 @@ class ProjectIssuesServices extends APIService {
       });
   }
 
-  async getIssueLabels(workspace_slug: string, projectId: string): Promise<any> {
-    return this.get(ISSUE_LABELS(workspace_slug, projectId))
+  async getIssueLabels(workspaceSlug: string, projectId: string): Promise<any> {
+    return this.get(ISSUE_LABELS(workspaceSlug, projectId))
       .then((response) => {
         return response?.data;
       })
@@ -188,8 +188,8 @@ class ProjectIssuesServices extends APIService {
       });
   }
 
-  async createIssueLabel(workspace_slug: string, projectId: string, data: any): Promise<any> {
-    return this.post(ISSUE_LABELS(workspace_slug, projectId), data)
+  async createIssueLabel(workspaceSlug: string, projectId: string, data: any): Promise<any> {
+    return this.post(ISSUE_LABELS(workspaceSlug, projectId), data)
       .then((response) => {
         return response?.data;
       })
@@ -199,12 +199,12 @@ class ProjectIssuesServices extends APIService {
   }
 
   async updateIssue(
-    workspace_slug: string,
+    workspaceSlug: string,
     projectId: string,
     issueId: string,
     data: any
   ): Promise<any> {
-    return this.put(ISSUE_DETAIL(workspace_slug, projectId, issueId), data)
+    return this.put(ISSUE_DETAIL(workspaceSlug, projectId, issueId), data)
       .then((response) => {
         return response?.data;
       })
@@ -214,12 +214,12 @@ class ProjectIssuesServices extends APIService {
   }
 
   async patchIssue(
-    workspace_slug: string,
+    workspaceSlug: string,
     projectId: string,
     issueId: string,
     data: Partial<IIssue>
   ): Promise<any> {
-    return this.patch(ISSUE_DETAIL(workspace_slug, projectId, issueId), data)
+    return this.patch(ISSUE_DETAIL(workspaceSlug, projectId, issueId), data)
       .then((response) => {
         return response?.data;
       })
@@ -228,8 +228,8 @@ class ProjectIssuesServices extends APIService {
       });
   }
 
-  async deleteIssue(workspace_slug: string, projectId: string, issuesId: string): Promise<any> {
-    return this.delete(ISSUE_DETAIL(workspace_slug, projectId, issuesId))
+  async deleteIssue(workspaceSlug: string, projectId: string, issuesId: string): Promise<any> {
+    return this.delete(ISSUE_DETAIL(workspaceSlug, projectId, issuesId))
       .then((response) => {
         return response?.data;
       })
@@ -238,8 +238,8 @@ class ProjectIssuesServices extends APIService {
       });
   }
 
-  async bulkDeleteIssues(workspace_slug: string, projectId: string, data: any): Promise<any> {
-    return this.delete(BULK_DELETE_ISSUES(workspace_slug, projectId), data)
+  async bulkDeleteIssues(workspaceSlug: string, projectId: string, data: any): Promise<any> {
+    return this.delete(BULK_DELETE_ISSUES(workspaceSlug, projectId), data)
       .then((response) => {
         return response?.data;
       })
@@ -249,12 +249,12 @@ class ProjectIssuesServices extends APIService {
   }
 
   async bulkAddIssuesToCycle(
-    workspace_slug: string,
+    workspaceSlug: string,
     projectId: string,
     cycleId: string,
     data: any
   ): Promise<any> {
-    return this.post(BULK_ADD_ISSUES_TO_CYCLE(workspace_slug, projectId, cycleId), data)
+    return this.post(BULK_ADD_ISSUES_TO_CYCLE(workspaceSlug, projectId, cycleId), data)
       .then((response) => {
         return response?.data;
       })
