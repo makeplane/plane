@@ -97,6 +97,12 @@ const ListView: React.FC<Props> = ({
             <table className="min-w-full">
               <thead className="bg-gray-100">
                 <tr>
+                  <th
+                    scope="col"
+                    className="px-3 py-3.5 text-left uppercase text-sm font-semibold text-gray-900"
+                  >
+                    NAME
+                  </th>
                   {Object.keys(properties).map(
                     (key) =>
                       properties[key as keyof Properties] && (
@@ -155,84 +161,78 @@ const ListView: React.FC<Props> = ({
                               )}
                               onMouseEnter={() => handleHover(issue.id)}
                             >
+                              <td className="px-3 py-4 text-sm font-medium text-gray-900 w-[15rem]">
+                                <Link href={`/projects/${issue.project}/issues/${issue.id}`}>
+                                  <a className="hover:text-theme duration-300">{issue.name}</a>
+                                </Link>
+                              </td>
                               {Object.keys(properties).map(
                                 (key) =>
                                   properties[key as keyof Properties] && (
-                                    <td
-                                      key={key}
-                                      className="px-3 py-4 text-sm font-medium text-gray-900 relative"
-                                    >
-                                      {(key as keyof Properties) === "name" ? (
-                                        <p className="w-[15rem]">
-                                          <Link
-                                            href={`/projects/${issue.project}/issues/${issue.id}`}
-                                          >
-                                            <a className="hover:text-theme duration-300">
-                                              {issue.name}
-                                            </a>
-                                          </Link>
-                                        </p>
-                                      ) : (key as keyof Properties) === "key" ? (
-                                        <p className="text-xs whitespace-nowrap">
+                                    <React.Fragment key={key}>
+                                      {(key as keyof Properties) === "key" ? (
+                                        <td className="px-3 py-4 font-medium text-gray-900 text-xs whitespace-nowrap">
                                           {activeProject?.identifier}-{issue.sequence_id}
-                                        </p>
+                                        </td>
                                       ) : (key as keyof Properties) === "description" ? (
-                                        <p className="truncate text-xs max-w-[15rem]">
+                                        <td className="px-3 py-4 font-medium text-gray-900 truncate text-xs max-w-[15rem]">
                                           {issue.description}
-                                        </p>
+                                        </td>
                                       ) : (key as keyof Properties) === "priority" ? (
-                                        <Listbox
-                                          as="div"
-                                          value={issue.priority}
-                                          onChange={(data: string) => {
-                                            partialUpdateIssue({ priority: data }, issue.id);
-                                          }}
-                                          className="flex-shrink-0"
-                                        >
-                                          {({ open }) => (
-                                            <>
-                                              <div className="">
-                                                <Listbox.Button className="inline-flex items-center whitespace-nowrap rounded-full bg-gray-50 py-1 px-0.5 text-xs font-medium text-gray-500 hover:bg-gray-100 border">
-                                                  <span
-                                                    className={classNames(
-                                                      issue.priority ? "" : "text-gray-900",
-                                                      "hidden truncate capitalize sm:block w-16"
-                                                    )}
-                                                  >
-                                                    {issue.priority ?? "None"}
-                                                  </span>
-                                                </Listbox.Button>
+                                        <td className="px-3 py-4 text-sm font-medium text-gray-900 relative">
+                                          <Listbox
+                                            as="div"
+                                            value={issue.priority}
+                                            onChange={(data: string) => {
+                                              partialUpdateIssue({ priority: data }, issue.id);
+                                            }}
+                                            className="flex-shrink-0"
+                                          >
+                                            {({ open }) => (
+                                              <>
+                                                <div className="">
+                                                  <Listbox.Button className="inline-flex items-center whitespace-nowrap rounded-full bg-gray-50 py-1 px-0.5 text-xs font-medium text-gray-500 hover:bg-gray-100 border">
+                                                    <span
+                                                      className={classNames(
+                                                        issue.priority ? "" : "text-gray-900",
+                                                        "hidden truncate capitalize sm:block w-16"
+                                                      )}
+                                                    >
+                                                      {issue.priority ?? "None"}
+                                                    </span>
+                                                  </Listbox.Button>
 
-                                                <Transition
-                                                  show={open}
-                                                  as={React.Fragment}
-                                                  leave="transition ease-in duration-100"
-                                                  leaveFrom="opacity-100"
-                                                  leaveTo="opacity-0"
-                                                >
-                                                  <Listbox.Options className="absolute z-10 mt-1 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
-                                                    {PRIORITIES?.map((priority) => (
-                                                      <Listbox.Option
-                                                        key={priority}
-                                                        className={({ active }) =>
-                                                          classNames(
-                                                            active ? "bg-indigo-50" : "bg-white",
-                                                            "cursor-pointer capitalize select-none px-3 py-2"
-                                                          )
-                                                        }
-                                                        value={priority}
-                                                      >
-                                                        {priority}
-                                                      </Listbox.Option>
-                                                    ))}
-                                                  </Listbox.Options>
-                                                </Transition>
-                                              </div>
-                                            </>
-                                          )}
-                                        </Listbox>
+                                                  <Transition
+                                                    show={open}
+                                                    as={React.Fragment}
+                                                    leave="transition ease-in duration-100"
+                                                    leaveFrom="opacity-100"
+                                                    leaveTo="opacity-0"
+                                                  >
+                                                    <Listbox.Options className="absolute z-10 mt-1 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
+                                                      {PRIORITIES?.map((priority) => (
+                                                        <Listbox.Option
+                                                          key={priority}
+                                                          className={({ active }) =>
+                                                            classNames(
+                                                              active ? "bg-indigo-50" : "bg-white",
+                                                              "cursor-pointer capitalize select-none px-3 py-2"
+                                                            )
+                                                          }
+                                                          value={priority}
+                                                        >
+                                                          {priority}
+                                                        </Listbox.Option>
+                                                      ))}
+                                                    </Listbox.Options>
+                                                  </Transition>
+                                                </div>
+                                              </>
+                                            )}
+                                          </Listbox>
+                                        </td>
                                       ) : (key as keyof Properties) === "assignee" ? (
-                                        <>
+                                        <td className="px-3 py-4 text-sm font-medium text-gray-900 relative">
                                           <Listbox
                                             as="div"
                                             value={issue.assignees}
@@ -328,80 +328,84 @@ const ListView: React.FC<Props> = ({
                                               </>
                                             )}
                                           </Listbox>
-                                        </>
+                                        </td>
                                       ) : (key as keyof Properties) === "state" ? (
-                                        <Listbox
-                                          as="div"
-                                          value={issue.state}
-                                          onChange={(data: string) => {
-                                            partialUpdateIssue({ state: data }, issue.id);
-                                          }}
-                                          className="flex-shrink-0"
-                                        >
-                                          {({ open }) => (
-                                            <>
-                                              <div>
-                                                <Listbox.Button
-                                                  className="inline-flex items-center whitespace-nowrap rounded-full px-2 py-1 text-xs font-medium text-gray-500 hover:bg-gray-100 border"
-                                                  style={{
-                                                    border: `2px solid ${issue.state_detail.color}`,
-                                                    backgroundColor: `${issue.state_detail.color}20`,
-                                                  }}
-                                                >
-                                                  <span
-                                                    className={classNames(
-                                                      issue.state ? "" : "text-gray-900",
-                                                      "hidden capitalize sm:block w-16"
-                                                    )}
+                                        <td className="px-3 py-4 text-sm font-medium text-gray-900 relative">
+                                          <Listbox
+                                            as="div"
+                                            value={issue.state}
+                                            onChange={(data: string) => {
+                                              partialUpdateIssue({ state: data }, issue.id);
+                                            }}
+                                            className="flex-shrink-0"
+                                          >
+                                            {({ open }) => (
+                                              <>
+                                                <div>
+                                                  <Listbox.Button
+                                                    className="inline-flex items-center whitespace-nowrap rounded-full px-2 py-1 text-xs font-medium text-gray-500 hover:bg-gray-100 border"
+                                                    style={{
+                                                      border: `2px solid ${issue.state_detail.color}`,
+                                                      backgroundColor: `${issue.state_detail.color}20`,
+                                                    }}
                                                   >
-                                                    {addSpaceIfCamelCase(issue.state_detail.name)}
-                                                  </span>
-                                                </Listbox.Button>
+                                                    <span
+                                                      className={classNames(
+                                                        issue.state ? "" : "text-gray-900",
+                                                        "hidden capitalize sm:block w-16"
+                                                      )}
+                                                    >
+                                                      {addSpaceIfCamelCase(issue.state_detail.name)}
+                                                    </span>
+                                                  </Listbox.Button>
 
-                                                <Transition
-                                                  show={open}
-                                                  as={React.Fragment}
-                                                  leave="transition ease-in duration-100"
-                                                  leaveFrom="opacity-100"
-                                                  leaveTo="opacity-0"
-                                                >
-                                                  <Listbox.Options className="absolute z-10 mt-1 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
-                                                    {states?.map((state) => (
-                                                      <Listbox.Option
-                                                        key={state.id}
-                                                        className={({ active }) =>
-                                                          classNames(
-                                                            active ? "bg-indigo-50" : "bg-white",
-                                                            "cursor-pointer select-none px-3 py-2"
-                                                          )
-                                                        }
-                                                        value={state.id}
-                                                      >
-                                                        {addSpaceIfCamelCase(state.name)}
-                                                      </Listbox.Option>
-                                                    ))}
-                                                  </Listbox.Options>
-                                                </Transition>
-                                              </div>
-                                            </>
-                                          )}
-                                        </Listbox>
+                                                  <Transition
+                                                    show={open}
+                                                    as={React.Fragment}
+                                                    leave="transition ease-in duration-100"
+                                                    leaveFrom="opacity-100"
+                                                    leaveTo="opacity-0"
+                                                  >
+                                                    <Listbox.Options className="absolute z-10 mt-1 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
+                                                      {states?.map((state) => (
+                                                        <Listbox.Option
+                                                          key={state.id}
+                                                          className={({ active }) =>
+                                                            classNames(
+                                                              active ? "bg-indigo-50" : "bg-white",
+                                                              "cursor-pointer select-none px-3 py-2"
+                                                            )
+                                                          }
+                                                          value={state.id}
+                                                        >
+                                                          {addSpaceIfCamelCase(state.name)}
+                                                        </Listbox.Option>
+                                                      ))}
+                                                    </Listbox.Options>
+                                                  </Transition>
+                                                </div>
+                                              </>
+                                            )}
+                                          </Listbox>
+                                        </td>
                                       ) : (key as keyof Properties) === "children" ? (
-                                        <p>No children.</p>
+                                        <td className="px-3 py-4 text-sm font-medium text-gray-900">
+                                          No children.
+                                        </td>
                                       ) : (key as keyof Properties) === "target_date" ? (
-                                        <p className="whitespace-nowrap">
+                                        <td className="px-3 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">
                                           {issue.target_date
                                             ? renderShortNumericDateFormat(issue.target_date)
                                             : "-"}
-                                        </p>
+                                        </td>
                                       ) : (
-                                        <p className="capitalize text-sm">
+                                        <td className="px-3 py-4 text-sm font-medium text-gray-900 relative capitalize">
                                           {issue[key as keyof IIssue] ??
                                             (issue[key as keyof IIssue] as any)?.name ??
                                             "None"}
-                                        </p>
+                                        </td>
                                       )}
-                                    </td>
+                                    </React.Fragment>
                                   )
                               )}
                               <td className="px-3">

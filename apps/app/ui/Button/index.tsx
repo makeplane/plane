@@ -36,13 +36,13 @@ const Button = React.forwardRef<HTMLButtonElement, Props>(
           "inline-flex items-center rounded justify-center font-medium",
           theme === "primary"
             ? `${
-                disabled ? "opacity-70" : "bg-theme hover:bg-indigo-700"
-              } text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 border border-transparent`
+                disabled ? "opacity-70" : ""
+              } text-white shadow-sm bg-theme hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 border border-transparent`
             : theme === "secondary"
             ? "border border-gray-300 bg-white"
             : `${
-                disabled ? "opacity-70" : "bg-red-600 hover:bg-red-700"
-              } text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 border border-transparent`,
+                disabled ? "opacity-70" : ""
+              } text-white shadow-sm bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 border border-transparent`,
           size === "sm"
             ? "p-2 text-xs"
             : size === "md"

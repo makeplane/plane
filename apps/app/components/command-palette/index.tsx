@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 // swr
 import { mutate } from "swr";
 // react hook form
-import { SubmitHandler, useForm } from "react-hook-form";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // hooks
@@ -17,6 +17,7 @@ import {
   FolderIcon,
   RectangleStackIcon,
   ClipboardDocumentListIcon,
+  ArrowPathIcon,
 } from "@heroicons/react/24/outline";
 // commons
 import { classNames, copyTextToClipboard } from "constants/common";
@@ -27,7 +28,7 @@ import CreateUpdateIssuesModal from "components/project/issues/CreateUpdateIssue
 import CreateUpdateCycleModal from "components/project/cycles/CreateUpdateCyclesModal";
 // types
 import { IIssue, IProject, IssueResponse } from "types";
-import { Button } from "ui";
+import { Button, SearchListbox } from "ui";
 import issuesServices from "lib/services/issues.services";
 // fetch keys
 import { PROJECTS_LIST, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
@@ -40,6 +41,7 @@ type ItemType = {
 
 type FormInput = {
   issue_ids: string[];
+  cycleId: string;
 };
 
 const CommandPalette: React.FC = () => {
@@ -69,6 +71,7 @@ const CommandPalette: React.FC = () => {
     register,
     formState: { errors, isSubmitting },
     handleSubmit,
+    control,
     reset,
     setError,
   } = useForm<FormInput>();
@@ -143,10 +146,24 @@ const CommandPalette: React.FC = () => {
   );
 
   const handleDelete: SubmitHandler<FormInput> = (data) => {
-    if (activeWorkspace && activeProject && data.issue_ids) {
+    if (!data.issue_ids || data.issue_ids.length === 0) {
+      setToastAlert({
+        title: "Error",
+        type: "error",
+        message: "Please select atleast one issue",
+      });
+      return;
+    }
+
+    if (activeWorkspace && activeProject) {
       issuesServices
         .bulkDeleteIssues(activeWorkspace.slug, activeProject.id, data)
         .then((res) => {
+          setToastAlert({
+            title: "Success",
+            type: "success",
+            message: res.message,
+          });
           mutate<IssueResponse>(
             PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id),
             (prevData) => {
@@ -170,10 +187,30 @@ const CommandPalette: React.FC = () => {
   };
 
   const handleAddToCycle: SubmitHandler<FormInput> = (data) => {
-    if (activeWorkspace && activeProject && data.issue_ids) {
+    if (!data.issue_ids || data.issue_ids.length === 0) {
+      setToastAlert({
+        title: "Error",
+        type: "error",
+        message: "Please select atleast one issue",
+      });
+      return;
+    }
+
+    if (!data.cycleId) {
+      setToastAlert({
+        title: "Error",
+        type: "error",
+        message: "Please select a cycle",
+      });
+      return;
+    }
+
+    if (activeWorkspace && activeProject) {
       issuesServices
-        .bulkAddIssuesToCycle(activeWorkspace.slug, activeProject.id, "", data)
-        .then((res) => {})
+        .bulkAddIssuesToCycle(activeWorkspace.slug, activeProject.id, data.cycleId, data)
+        .then((res) => {
+          console.log(res);
+        })
         .catch((e) => {
           console.log(e);
         });
@@ -230,7 +267,7 @@ const CommandPalette: React.FC = () => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="mx-auto max-w-2xl transform divide-y divide-gray-500 divide-opacity-10 overflow-hidden rounded-xl bg-white bg-opacity-80 shadow-2xl ring-1 ring-black ring-opacity-5 backdrop-blur backdrop-filter transition-all">
+              <Dialog.Panel className="relative mx-auto max-w-2xl transform divide-y divide-gray-500 divide-opacity-10 rounded-xl bg-white bg-opacity-80 shadow-2xl ring-1 ring-black ring-opacity-5 backdrop-blur backdrop-filter transition-all">
                 <form>
                   <Combobox
                   // onChange={(item: ItemType) => {
@@ -369,6 +406,23 @@ const CommandPalette: React.FC = () => {
 
                   <div className="flex justify-between items-center gap-2 p-3">
                     <div className="flex items-center gap-2">
+                      <Controller
+                        control={control}
+                        name="cycleId"
+                        render={({ field: { value, onChange } }) => (
+                          <SearchListbox
+                            title="Cycle"
+                            optionsFontsize="sm"
+                            options={cycles?.map((cycle) => {
+                              return { value: cycle.id, display: cycle.name };
+                            })}
+                            multiple={false}
+                            value={value}
+                            onChange={onChange}
+                            icon={<ArrowPathIcon className="h-4 w-4 text-gray-400" />}
+                          />
+                        )}
+                      />
                       <Button onClick={handleSubmit(handleAddToCycle)} size="sm">
                         Add to Cycle
                       </Button>

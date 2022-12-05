@@ -7,7 +7,7 @@ import {
   Squares2X2Icon,
 } from "@heroicons/react/24/outline";
 import { addSpaceIfCamelCase, timeAgo } from "constants/common";
-import { IState } from "types";
+import { IIssue, IState } from "types";
 import { Spinner } from "ui";
 
 type Props = {
@@ -15,7 +15,9 @@ type Props = {
   states: IState[] | undefined;
 };
 
-const activityIcons = {
+const activityIcons: {
+  [key: string]: JSX.Element;
+} = {
   state: <Squares2X2Icon className="h-4 w-4" />,
   priority: <ChartBarIcon className="h-4 w-4" />,
   name: <ChatBubbleBottomCenterTextIcon className="h-4 w-4" />,
@@ -28,11 +30,11 @@ const IssueActivitySection: React.FC<Props> = ({ issueActivities, states }) => {
     <>
       {issueActivities ? (
         <div className="space-y-3">
-          {issueActivities.map((activity) => {
+          {issueActivities.map((activity, index) => {
             if (activity.field !== "updated_by")
               return (
                 <div key={activity.id} className="relative flex gap-x-2 w-full">
-                  {issueActivities.length > 1 ? (
+                  {issueActivities.length > 1 && index !== issueActivities.length - 1 ? (
                     <span
                       className="absolute top-5 left-2.5 h-full w-0.5 bg-gray-200"
                       aria-hidden="true"
@@ -70,8 +72,8 @@ const IssueActivitySection: React.FC<Props> = ({ issueActivities, states }) => {
                     <p>
                       <span className="font-medium">
                         {activity.actor_detail.first_name} {activity.actor_detail.last_name}
-                      </span>{" "}
-                      <span>{activity.verb}</span>{" "}
+                      </span>
+                      <span> {activity.verb} </span>
                       {activity.verb !== "created" ? (
                         <span>{activity.field ?? "commented"}</span>
                       ) : (
@@ -90,7 +92,7 @@ const IssueActivitySection: React.FC<Props> = ({ issueActivities, states }) => {
                                     states?.find((s) => s.id === activity.old_value)?.name ?? ""
                                   )
                                 : "None"
-                              : activity.old_value}
+                              : activity.old_value ?? "None"}
                           </div>
                           <div>
                             <span className="text-gray-500">To: </span>
@@ -100,7 +102,7 @@ const IssueActivitySection: React.FC<Props> = ({ issueActivities, states }) => {
                                     states?.find((s) => s.id === activity.new_value)?.name ?? ""
                                   )
                                 : "None"
-                              : activity.new_value}
+                              : activity.new_value ?? "None"}
                           </div>
                         </div>
                       )}

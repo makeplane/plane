@@ -18,6 +18,7 @@
     "js-cookie": "^3.0.1",
     "lexical": "^0.6.4",
     "next": "12.2.2",
+    "pnpm": "^7.17.1",
     "prosemirror-example-setup": "^1.2.1",
     "prosemirror-model": "^1.18.1",
     "prosemirror-schema-basic": "^1.2.0",

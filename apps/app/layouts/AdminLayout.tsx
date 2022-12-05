@@ -1,5 +1,9 @@
 // react
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+// next
+import { useRouter } from "next/router";
+// hooks
+import useUser from "lib/hooks/useUser";
 // layouts
 import Container from "layouts/Container";
 import Sidebar from "layouts/Navbar/Sidebar";
@@ -10,6 +14,14 @@ import type { Props } from "./types";
 
 const AdminLayout: React.FC<Props> = ({ meta, children }) => {
   const [isOpen, setIsOpen] = useState(false);
+
+  const router = useRouter();
+
+  const { user, isUserLoading } = useUser();
+
+  useEffect(() => {
+    if (!isUserLoading && (!user || user === null)) router.push("/signin");
+  }, [isUserLoading, user, router]);
 
   return (
     <Container meta={meta}>

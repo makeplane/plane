@@ -21,16 +21,8 @@ import {
   $isListNode,
   ListNode,
 } from "@lexical/list";
-import {
-  $isParentElementRTL,
-  $isAtNodeEnd,
-  $wrapNodes,
-} from "@lexical/selection";
-import {
-  $createHeadingNode,
-  $createQuoteNode,
-  $isHeadingNode,
-} from "@lexical/rich-text";
+import { $isParentElementRTL, $isAtNodeEnd, $wrapNodes } from "@lexical/selection";
+import { $createHeadingNode, $createQuoteNode, $isHeadingNode } from "@lexical/rich-text";
 import {
   $createCodeNode,
   $isCodeNode,
@@ -50,15 +42,7 @@ const BLOCK_DATA = [
   { type: "ul", name: "Bulleted List" },
 ];
 
-const supportedBlockTypes = new Set([
-  "paragraph",
-  "quote",
-  "code",
-  "h1",
-  "h2",
-  "ul",
-  "ol",
-]);
+const supportedBlockTypes = new Set(["paragraph", "quote", "code", "h1", "h2", "ul", "ol"]);
 
 const blockTypeToBlockName: any = {
   code: "Code Block",
@@ -84,8 +68,7 @@ export const BlockTypeSelect: FC<BlockTypeSelectProps> = (props) => {
   // refs
   const dropDownRef = useRef<any>(null);
   // states
-  const [showBlockOptionsDropDown, setShowBlockOptionsDropDown] =
-    useState(false);
+  const [showBlockOptionsDropDown, setShowBlockOptionsDropDown] = useState(false);
 
   useEffect(() => {
     const toolbar = toolbarRef.current;
@@ -205,6 +188,7 @@ export const BlockTypeSelect: FC<BlockTypeSelectProps> = (props) => {
   return (
     <div className="relative">
       <button
+        type="button"
         className="p-2 mr-2 text-sm flex items-center"
         onClick={() => setShowBlockOptionsDropDown(!showBlockOptionsDropDown)}
         aria-label="Formatting Options"
