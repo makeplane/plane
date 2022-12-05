@@ -184,9 +184,9 @@ const ListView: React.FC<Props> = ({
                                         <td className="px-3 py-4 font-medium text-gray-900 truncate text-xs max-w-[15rem]">
                                           {/* <LexicalViewer
                                             id={`descriptionViewer-${issue.id}`}
-                                            value={JSON.parse(issue.description)}
+                                            value={issue.description}
                                           /> */}
-                                          {issue.description}
+                                          {/* {issue.description} */}
                                         </td>
                                       ) : (key as keyof Properties) === "priority" ? (
                                         <td className="px-3 py-4 text-sm font-medium text-gray-900 relative">

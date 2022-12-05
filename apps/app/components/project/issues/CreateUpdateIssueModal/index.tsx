@@ -51,7 +51,7 @@ type Props = {
 const defaultValues: Partial<IIssue> = {
   project: "",
   name: "",
-  description: "",
+  // description: "",
   state: "",
   sprints: "",
   priority: "",
@@ -176,7 +176,6 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
     if (!activeWorkspace || !activeProject) return;
     const payload: Partial<IIssue> = {
       ...formData,
-      description: JSON.stringify(formData.description),
       target_date: formData.target_date ? renderDateFormat(formData.target_date ?? "") : null,
     };
     if (!data) {
