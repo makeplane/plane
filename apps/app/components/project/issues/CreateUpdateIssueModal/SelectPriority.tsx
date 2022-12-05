@@ -5,6 +5,8 @@ import { Controller } from "react-hook-form";
 import { Listbox, Transition } from "@headlessui/react";
 // icons
 import { CheckIcon } from "@heroicons/react/20/solid";
+// constants
+import { PRIORITIES } from "constants/";
 
 // types
 import type { IIssue } from "types";
@@ -14,8 +16,6 @@ import { ChartBarIcon } from "@heroicons/react/24/outline";
 type Props = {
   control: Control<IIssue, any>;
 };
-
-const PRIORITIES = ["high", "medium", "low"];
 
 const SelectPriority: React.FC<Props> = ({ control }) => {
   return (
