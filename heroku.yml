@@ -16,4 +16,4 @@ release:
 
 run:
   plane_web: node apps/app/server.js
-  plane_api: ./bin/takeoff
+  plane_api: ./apiserver/bin/takeoff
