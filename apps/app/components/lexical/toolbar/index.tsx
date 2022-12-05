@@ -25,17 +25,9 @@ import {
 } from "@lexical/list";
 import { $isLinkNode, TOGGLE_LINK_COMMAND } from "@lexical/link";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import {
-  $isParentElementRTL,
-  $wrapNodes,
-  $isAtNodeEnd,
-} from "@lexical/selection";
+import { $isParentElementRTL, $wrapNodes, $isAtNodeEnd } from "@lexical/selection";
 import { $getNearestNodeOfType, mergeRegister } from "@lexical/utils";
-import {
-  $createHeadingNode,
-  $createQuoteNode,
-  $isHeadingNode,
-} from "@lexical/rich-text";
+import { $createHeadingNode, $createQuoteNode, $isHeadingNode } from "@lexical/rich-text";
 // custom elements
 import { FloatingLinkEditor } from "./floating-link-editor";
 import { BlockTypeSelect } from "./block-type-select";
@@ -67,9 +59,7 @@ export const LexicalToolbar = () => {
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
   const [blockType, setBlockType] = useState("paragraph");
-  const [selectedElementKey, setSelectedElementKey] = useState<string | null>(
-    null
-  );
+  const [selectedElementKey, setSelectedElementKey] = useState<string | null>(null);
   const [isRTL, setIsRTL] = useState(false);
   const [isLink, setIsLink] = useState(false);
   const [isBold, setIsBold] = useState(false);
@@ -83,9 +73,7 @@ export const LexicalToolbar = () => {
     if ($isRangeSelection(selection)) {
       const anchorNode = selection.anchor.getNode();
       const element =
-        anchorNode.getKey() === "root"
-          ? anchorNode
-          : anchorNode.getTopLevelElementOrThrow();
+        anchorNode.getKey() === "root" ? anchorNode : anchorNode.getTopLevelElementOrThrow();
       const elementKey = element.getKey();
       const elementDOM = editor.getElementByKey(elementKey);
       if (elementDOM !== null) {
@@ -95,9 +83,7 @@ export const LexicalToolbar = () => {
           const type = parentList ? parentList.getTag() : element.getTag();
           setBlockType(type);
         } else {
-          const type = $isHeadingNode(element)
-            ? element.getTag()
-            : element.getType();
+          const type = $isHeadingNode(element) ? element.getTag() : element.getType();
           setBlockType(type);
         }
       }
@@ -166,11 +152,9 @@ export const LexicalToolbar = () => {
   );
 
   return (
-    <div
-      className="flex items-center mb-1 p-1 w-full flex-wrap border-b "
-      ref={toolbarRef}
-    >
+    <div className="flex items-center mb-1 p-1 w-full flex-wrap border-b " ref={toolbarRef}>
       <button
+        type="button"
         disabled={!canUndo}
         onClick={(e) => {
           e.preventDefault();
@@ -195,6 +179,7 @@ export const LexicalToolbar = () => {
         </svg>
       </button>
       <button
+        type="button"
         disabled={!canRedo}
         onClick={(e) => {
           e.preventDefault();
@@ -218,12 +203,9 @@ export const LexicalToolbar = () => {
           <path d="M8 4.466V.534a.25.25 0 01.41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 018 4.466z"></path>
         </svg>
       </button>
-      <BlockTypeSelect
-        editor={editor}
-        toolbarRef={toolbarRef}
-        blockType={blockType}
-      />
+      <BlockTypeSelect editor={editor} toolbarRef={toolbarRef} blockType={blockType} />
       <button
+        type="button"
         onClick={(e) => {
           e.preventDefault();
           editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold");
@@ -243,6 +225,7 @@ export const LexicalToolbar = () => {
         </svg>
       </button>
       <button
+        type="button"
         onClick={(e) => {
           e.preventDefault();
           editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic");
@@ -262,6 +245,7 @@ export const LexicalToolbar = () => {
         </svg>
       </button>
       <button
+        type="button"
         onClick={(e) => {
           e.preventDefault();
           editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline");
@@ -281,6 +265,7 @@ export const LexicalToolbar = () => {
         </svg>
       </button>
       <button
+        type="button"
         onClick={(e) => {
           e.preventDefault();
           editor.dispatchCommand(FORMAT_TEXT_COMMAND, "strikethrough");
@@ -300,6 +285,7 @@ export const LexicalToolbar = () => {
         </svg>
       </button>
       <button
+        type="button"
         onClick={(e) => {
           e.preventDefault();
           editor.dispatchCommand(FORMAT_TEXT_COMMAND, "code");
@@ -319,6 +305,7 @@ export const LexicalToolbar = () => {
         </svg>
       </button>
       <button
+        type="button"
         onClick={insertLink}
         className={"p-2 mr-2 " + (isLink ? "active" : "")}
         aria-label="Insert Link"
@@ -335,9 +322,9 @@ export const LexicalToolbar = () => {
           <path d="M9 5.5a3 3 0 00-2.83 4h1.098A2 2 0 019 6.5h3a2 2 0 110 4h-1.535a4.02 4.02 0 01-.82 1H12a3 3 0 100-6H9z"></path>
         </svg>
       </button>
-      {isLink &&
-        createPortal(<FloatingLinkEditor editor={editor} />, document.body)}
+      {isLink && createPortal(<FloatingLinkEditor editor={editor} />, document.body)}
       <button
+        type="button"
         onClick={(e) => {
           e.preventDefault();
           editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "left");
@@ -360,6 +347,7 @@ export const LexicalToolbar = () => {
         </svg>
       </button>
       <button
+        type="button"
         onClick={(e) => {
           e.preventDefault();
           editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "center");
@@ -382,6 +370,7 @@ export const LexicalToolbar = () => {
         </svg>
       </button>
       <button
+        type="button"
         onClick={(e) => {
           e.preventDefault();
           editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "right");
@@ -404,6 +393,7 @@ export const LexicalToolbar = () => {
         </svg>
       </button>
       <button
+        type="button"
         onClick={(e) => {
           e.preventDefault();
           editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "justify");

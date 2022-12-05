@@ -16,7 +16,7 @@ const ToastAlerts = () => {
   if (!alerts) return null;
 
   return (
-    <div className="space-y-5 fixed top-8 right-8 w-80 h-full overflow-hidden pointer-events-none z-50">
+    <div className="space-y-5 fixed top-5 right-5 w-80 h-full overflow-hidden pointer-events-none z-50">
       {alerts.map((alert) => (
         <div className="relative text-white rounded-md overflow-hidden" key={alert.id}>
           <div className="absolute top-1 right-1">

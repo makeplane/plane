@@ -1,4 +1,3 @@
-import { FC } from "react";
 import { EditorState, LexicalEditor, $getRoot, $getSelection } from "lexical";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
@@ -25,12 +24,15 @@ export interface RichTextEditorProps {
   onChange: (state: string) => void;
   id: string;
   value: string;
+  placeholder?: string;
 }
 
-const RichTextEditor: FC<RichTextEditorProps> = (props) => {
-  // props
-  const { onChange, value, id } = props;
-
+const RichTextEditor: React.FC<RichTextEditorProps> = ({
+  onChange,
+  id,
+  value,
+  placeholder = "Enter some text...",
+}) => {
   function handleChange(state: EditorState, editor: LexicalEditor) {
     state.read(() => {
       onChange(JSON.stringify(state.toJSON()));
@@ -54,8 +56,8 @@ const RichTextEditor: FC<RichTextEditorProps> = (props) => {
             }
             ErrorBoundary={LexicalErrorBoundary}
             placeholder={
-              <div className="absolute top-[15px] left-[10px] pointer-events-none select-none text-gray-400">
-                Enter some text...
+              <div className="absolute top-4 left-3 pointer-events-none select-none text-gray-400">
+                {placeholder}
               </div>
             }
           />
