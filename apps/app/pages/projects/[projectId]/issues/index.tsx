@@ -193,7 +193,7 @@ const ProjectIssues: NextPage = () => {
                         leaveFrom="opacity-100 translate-y-0"
                         leaveTo="opacity-0 translate-y-1"
                       >
-                        <Popover.Panel className="absolute mr-5 right-1/2 z-10 mt-3 w-screen max-w-xs translate-x-1/2 transform px-2 sm:px-0 bg-white rounded-lg shadow-lg overflow-hidden">
+                        <Popover.Panel className="absolute mr-5 right-1/2 z-10 mt-3 w-screen max-w-xs translate-x-1/2 transform px-2 sm:px-0 bg-gray-0 backdrop-filter backdrop-blur-xl bg-opacity-100 rounded-lg shadow-lg overflow-hidden">
                           <div className="overflow-hidden py-8 px-4">
                             <div className="relative flex flex-col gap-1 gap-y-4">
                               <div className="flex justify-between">
@@ -251,7 +251,7 @@ const ProjectIssues: NextPage = () => {
                                 </CustomMenu>
                               </div>
                               <div className="border-b-2"></div>
-                              <div className="relative bg-white flex flex-col gap-1">
+                              <div className="relative flex flex-col gap-1">
                                 <h4 className="text-base text-gray-600">Properties</h4>
                                 <div>
                                   {Object.keys(properties).map((key) => (

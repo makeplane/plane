@@ -4,11 +4,10 @@ import useTheme from "./useTheme";
 import useUser from "./useUser";
 // commons
 import { groupBy, orderArrayBy } from "constants/common";
-
+// constants
+import { PRIORITIES } from "constants/";
 // types
 import type { IssueResponse, IIssue, NestedKeyOf } from "types";
-
-const PRIORITIES = ["high", "medium", "low"];
 
 const useIssuesFilter = (projectIssues?: IssueResponse) => {
   const { issueView, setIssueView, groupByProperty, setGroupByProperty } = useTheme();
@@ -44,7 +43,10 @@ const useIssuesFilter = (projectIssues?: IssueResponse) => {
 
   if (orderBy !== null) {
     groupedByIssues = Object.fromEntries(
-      Object.entries(groupedByIssues).map(([key, value]) => [key, orderArrayBy(value, orderBy)])
+      Object.entries(groupedByIssues).map(([key, value]) => [
+        key,
+        orderArrayBy(value, orderBy, "descending"),
+      ])
     );
   }
 
