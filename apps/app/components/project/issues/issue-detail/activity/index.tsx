@@ -106,7 +106,6 @@ const IssueActivitySection: React.FC<Props> = ({ issueActivities, states, issues
                               : activity.old_value ?? "None"}
                           </div>
                           <div>
-                            {console.log(activity)}
                             <span className="text-gray-500">To: </span>
                             {activity.field === "state"
                               ? activity.new_value

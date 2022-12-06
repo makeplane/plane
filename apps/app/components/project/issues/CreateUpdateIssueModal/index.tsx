@@ -14,14 +14,14 @@ import {
   USER_ISSUE,
 } from "constants/fetch-keys";
 // headless
-import { Dialog, Menu, Popover, Transition } from "@headlessui/react";
+import { Dialog, Menu, Transition } from "@headlessui/react";
 // services
 import issuesServices from "lib/services/issues.services";
 // hooks
 import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
 // ui
-import { Button, CustomListbox, Input, TextArea } from "ui";
+import { Button, Input, TextArea } from "ui";
 // commons
 import { renderDateFormat, cosineSimilarity } from "constants/common";
 // components
@@ -36,7 +36,7 @@ import CreateUpdateStateModal from "components/project/issues/BoardView/state/Cr
 import CreateUpdateCycleModal from "components/project/cycles/CreateUpdateCyclesModal";
 
 // types
-import type { IIssue, IssueResponse, SprintIssueResponse } from "types";
+import type { IIssue, IssueResponse, CycleIssueResponse } from "types";
 import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
 
 type Props = {
@@ -53,8 +53,8 @@ const defaultValues: Partial<IIssue> = {
   name: "",
   // description: "",
   state: "",
-  sprints: "",
-  priority: "",
+  sprints: null,
+  priority: null,
   labels_list: [],
 };
 
@@ -68,6 +68,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
 }) => {
   const [isCycleModalOpen, setIsCycleModalOpen] = useState(false);
   const [isStateModalOpen, setIsStateModalOpen] = useState(false);
+  const [parentIssueListModalOpen, setParentIssueListModalOpen] = useState(false);
 
   const [mostSimilarIssue, setMostSimilarIssue] = useState<string | undefined>();
 
@@ -90,13 +91,6 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
     }
   };
 
-  const resetForm = () => {
-    const timeout = setTimeout(() => {
-      reset(defaultValues);
-      clearTimeout(timeout);
-    }, 500);
-  };
-
   const { activeWorkspace, activeProject, user, issues } = useUser();
 
   const { setToastAlert } = useToast();
@@ -109,10 +103,16 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
     setError,
     control,
     watch,
-    setValue,
   } = useForm<IIssue>({
     defaultValues,
   });
+
+  const resetForm = () => {
+    const timeout = setTimeout(() => {
+      reset(defaultValues);
+      clearTimeout(timeout);
+    }, 500);
+  };
 
   const addIssueToSprint = async (issueId: string, sprintId: string, issueDetail: IIssue) => {
     if (!activeWorkspace || !activeProject) return;
@@ -121,8 +121,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
         issue: issueId,
       })
       .then((res) => {
-        console.log("add to sprint", res);
-        mutate<SprintIssueResponse[]>(
+        mutate<CycleIssueResponse[]>(
           CYCLE_ISSUES(sprintId),
           (prevData) => {
             const targetResponse = prevData?.find((t) => t.cycle === sprintId);
@@ -135,7 +134,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                 {
                   cycle: sprintId,
                   issue_details: issueDetail,
-                } as SprintIssueResponse,
+                } as CycleIssueResponse,
               ];
             }
           },
@@ -183,17 +182,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
         .createIssues(activeWorkspace.slug, activeProject.id, payload)
         .then(async (res) => {
           console.log(res);
-          mutate<IssueResponse>(
-            PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id),
-            (prevData) => {
-              return {
-                ...(prevData as IssueResponse),
-                results: [res, ...(prevData?.results ?? [])],
-                count: (prevData?.count ?? 0) + 1,
-              };
-            },
-            false
-          );
+          mutate<IssueResponse>(PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id));
 
           if (formData.sprints && formData.sprints !== null) {
             await addIssueToSprint(res.id, formData.sprints, formData);
@@ -206,13 +195,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
             message: `Issue ${data ? "updated" : "created"} successfully`,
           });
           if (formData.assignees_list.some((assignee) => assignee === user?.id)) {
-            mutate<IIssue[]>(
-              USER_ISSUE,
-              (prevData) => {
-                return [res, ...(prevData ?? [])];
-              },
-              false
-            );
+            mutate<IIssue[]>(USER_ISSUE);
           }
         })
         .catch((err) => {
@@ -392,21 +375,21 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                             )}
                           </div>
                           <div>
-                            {/* <TextArea
+                            <TextArea
                               id="description"
                               name="description"
                               label="Description"
                               placeholder="Enter description"
                               error={errors.description}
                               register={register}
-                            /> */}
-                            <Controller
+                            />
+                            {/* <Controller
                               name="description"
                               control={control}
                               render={({ field }) => (
                                 <RichTextEditor {...field} id="issueDescriptionEditor" />
                               )}
-                            />
+                            /> */}
                           </div>
                           <div>
                             <Input
@@ -426,9 +409,15 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                             <SelectPriority control={control} />
                             <SelectAssignee control={control} />
                             <SelectLabels control={control} />
+                            <SelectParent
+                              control={control}
+                              isOpen={parentIssueListModalOpen}
+                              setIsOpen={setParentIssueListModalOpen}
+                              issues={issues}
+                            />
                             <Menu as="div" className="relative inline-block">
-                              <Menu.Button className="grid relative place-items-center rounded p-1 hover:bg-gray-100 focus:outline-none">
-                                <EllipsisHorizontalIcon className="h-4 w-4" />
+                              <Menu.Button className="grid place-items-center p-1 hover:bg-gray-100 border rounded-md shadow-sm cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm duration-300">
+                                <EllipsisHorizontalIcon className="h-5 w-5" />
                               </Menu.Button>
 
                               <Transition
@@ -443,7 +432,18 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                                 <Menu.Items className="origin-top-right absolute right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
                                   <div className="p-1">
                                     <Menu.Item as="div">
-                                      {(active) => <SelectParent control={control} />}
+                                      <button
+                                        type="button"
+                                        className="p-2 text-left text-gray-900 hover:bg-theme hover:text-white rounded-md text-xs whitespace-nowrap "
+                                        onClick={() => setParentIssueListModalOpen(true)}
+                                      >
+                                        {watch("parent") && watch("parent") !== ""
+                                          ? `${activeProject?.identifier}-${
+                                              issues?.results.find((i) => i.id === watch("parent"))
+                                                ?.sequence_id
+                                            }`
+                                          : "Select Parent Issue"}
+                                      </button>
                                     </Menu.Item>
                                   </div>
                                 </Menu.Items>

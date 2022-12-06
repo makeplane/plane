@@ -45,6 +45,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
       if (onChange) onChange(editorData);
     });
   };
+
   // function handleChange(state: EditorState, editor: LexicalEditor) {
   //   state.read(() => {
   //     onChange(state.toJSON());

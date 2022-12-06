@@ -75,7 +75,7 @@ const SingleBoard: React.FC<Props> = ({
       {(provided, snapshot) => (
         <div
           className={`rounded flex-shrink-0 h-full ${
-            snapshot.isDragging ? "border-indigo-600 shadow-lg" : ""
+            snapshot.isDragging ? "border-theme shadow-lg" : ""
           } ${!show ? "" : "w-80 bg-gray-50 border"}`}
           ref={provided.innerRef}
           {...provided.draggableProps}
@@ -196,7 +196,7 @@ const SingleBoard: React.FC<Props> = ({
                               className="px-2 py-3 space-y-1.5 select-none"
                               {...provided.dragHandleProps}
                             >
-                              <span className="group-hover:text-theme break-all">
+                              <span className="group-hover:text-theme text-sm break-all">
                                 {childIssue.name}
                               </span>
                               {Object.keys(properties).map(
@@ -277,6 +277,7 @@ const SingleBoard: React.FC<Props> = ({
                                         <>{addSpaceIfCamelCase(childIssue["state_detail"].name)}</>
                                       )}
                                       {key === "priority" && <>{childIssue.priority}</>}
+                                      {/* {key === "description" && <>{childIssue.description}</>} */}
                                       {key === "assignee" ? (
                                         <div className="flex items-center gap-1 text-xs">
                                           {childIssue?.assignee_details?.length > 0 ? (

@@ -22,7 +22,7 @@ import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 type Props = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  parentId: string;
+  parent: IIssue | undefined;
 };
 
 type FormInput = {
@@ -30,7 +30,7 @@ type FormInput = {
   cycleId: string;
 };
 
-const AddAsSubIssue: React.FC<Props> = ({ isOpen, setIsOpen, parentId }) => {
+const AddAsSubIssue: React.FC<Props> = ({ isOpen, setIsOpen, parent }) => {
   const [query, setQuery] = useState("");
 
   const { activeWorkspace, activeProject, issues } = useUser();
@@ -54,7 +54,7 @@ const AddAsSubIssue: React.FC<Props> = ({ isOpen, setIsOpen, parentId }) => {
   const addAsSubIssue = (issueId: string) => {
     if (activeWorkspace && activeProject) {
       issuesServices
-        .patchIssue(activeWorkspace.slug, activeProject.id, issueId, { parent: parentId })
+        .patchIssue(activeWorkspace.slug, activeProject.id, issueId, { parent: parent?.id })
         .then((res) => {
           mutate<IssueResponse>(
             PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id),
@@ -127,8 +127,9 @@ const AddAsSubIssue: React.FC<Props> = ({ isOpen, setIsOpen, parentId }) => {
                         <ul className="text-sm text-gray-700">
                           {filteredIssues.map((issue) => {
                             if (
-                              (issue.parent === "" || issue.parent === null) &&
-                              issue.id !== parentId
+                              (issue.parent === "" || issue.parent === null) && // issue does not have any other parent
+                              issue.id !== parent?.id && // issue is not itself
+                              issue.id !== parent?.parent // issue is not it's parent
                             )
                               return (
                                 <Combobox.Option

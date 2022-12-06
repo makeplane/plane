@@ -10,6 +10,8 @@ import {
   ISSUE_LABELS,
   BULK_DELETE_ISSUES,
   BULK_ADD_ISSUES_TO_CYCLE,
+  REMOVE_ISSUE_FROM_CYCLE,
+  ISSUE_LABEL_DETAILS,
 } from "constants/api-routes";
 // services
 import APIService from "lib/services/api.service";
@@ -95,6 +97,21 @@ class ProjectIssuesServices extends APIService {
     }
   ) {
     return this.post(CYCLE_DETAIL(workspaceSlug, projectId, cycleId), data)
+      .then((response) => {
+        return response?.data;
+      })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async removeIssueFromCycle(
+    workspaceSlug: string,
+    projectId: string,
+    cycleId: string,
+    bridgeId: string
+  ) {
+    return this.delete(REMOVE_ISSUE_FROM_CYCLE(workspaceSlug, projectId, cycleId, bridgeId))
       .then((response) => {
         return response?.data;
       })
@@ -190,6 +207,31 @@ class ProjectIssuesServices extends APIService {
 
   async createIssueLabel(workspaceSlug: string, projectId: string, data: any): Promise<any> {
     return this.post(ISSUE_LABELS(workspaceSlug, projectId), data)
+      .then((response) => {
+        return response?.data;
+      })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async patchIssueLabel(
+    workspaceSlug: string,
+    projectId: string,
+    labelId: string,
+    data: any
+  ): Promise<any> {
+    return this.patch(ISSUE_LABEL_DETAILS(workspaceSlug, projectId, labelId), data)
+      .then((response) => {
+        return response?.data;
+      })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async deleteIssueLabel(workspaceSlug: string, projectId: string, labelId: string): Promise<any> {
+    return this.delete(ISSUE_LABEL_DETAILS(workspaceSlug, projectId, labelId))
       .then((response) => {
         return response?.data;
       })

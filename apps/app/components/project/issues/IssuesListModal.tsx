@@ -7,6 +7,7 @@ import { MagnifyingGlassIcon, RectangleStackIcon } from "@heroicons/react/24/out
 // types
 import { IIssue, IssueResponse } from "types";
 import { classNames } from "constants/common";
+import useUser from "lib/hooks/useUser";
 
 type Props = {
   isOpen: boolean;
@@ -17,6 +18,8 @@ type Props = {
 
 const IssuesListModal: React.FC<Props> = ({ isOpen, handleClose: onClose, onChange, issues }) => {
   const [query, setQuery] = useState("");
+
+  const { activeProject } = useUser();
 
   const handleClose = () => {
     onClose();
@@ -102,6 +105,9 @@ const IssuesListModal: React.FC<Props> = ({ isOpen, handleClose: onClose, onChan
                                   backgroundColor: issue.state_detail.color,
                                 }}
                               />
+                              <span className="text-xs text-gray-500">
+                                {activeProject?.identifier}-{issue.sequence_id}
+                              </span>{" "}
                               {issue.name}
                             </Combobox.Option>
                           ))}

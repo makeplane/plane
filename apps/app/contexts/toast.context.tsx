@@ -87,7 +87,7 @@ export const ToastContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
       const timer = setTimeout(() => {
         removeAlert(id);
         clearTimeout(timer);
-      }, 5000);
+      }, 3000);
     },
     [removeAlert]
   );
