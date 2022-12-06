@@ -1,18 +1,24 @@
 // next
 import Image from "next/image";
+// ui
+import { Spinner } from "ui";
+// icons
 import {
   CalendarDaysIcon,
   ChartBarIcon,
   ChatBubbleBottomCenterTextIcon,
   Squares2X2Icon,
+  UserIcon,
 } from "@heroicons/react/24/outline";
+// types
+import { IssueResponse, IState } from "types";
+// constants
 import { addSpaceIfCamelCase, timeAgo } from "constants/common";
-import { IIssue, IState } from "types";
-import { Spinner } from "ui";
 
 type Props = {
   issueActivities: any[] | undefined;
   states: IState[] | undefined;
+  issues: IssueResponse | undefined;
 };
 
 const activityIcons: {
@@ -23,9 +29,10 @@ const activityIcons: {
   name: <ChatBubbleBottomCenterTextIcon className="h-4 w-4" />,
   description: <ChatBubbleBottomCenterTextIcon className="h-4 w-4" />,
   target_date: <CalendarDaysIcon className="h-4 w-4" />,
+  parent: <UserIcon className="h-4 w-4" />,
 };
 
-const IssueActivitySection: React.FC<Props> = ({ issueActivities, states }) => {
+const IssueActivitySection: React.FC<Props> = ({ issueActivities, states, issues }) => {
   return (
     <>
       {issueActivities ? (
@@ -92,6 +99,10 @@ const IssueActivitySection: React.FC<Props> = ({ issueActivities, states }) => {
                                     states?.find((s) => s.id === activity.old_value)?.name ?? ""
                                   )
                                 : "None"
+                              : activity.field === "parent"
+                              ? activity.old_value
+                                ? issues?.results.find((i) => i.id === activity.old_value)?.name
+                                : "None"
                               : activity.old_value ?? "None"}
                           </div>
                           <div>
@@ -101,6 +112,10 @@ const IssueActivitySection: React.FC<Props> = ({ issueActivities, states }) => {
                                 ? addSpaceIfCamelCase(
                                     states?.find((s) => s.id === activity.new_value)?.name ?? ""
                                   )
+                                : "None"
+                              : activity.field === "parent"
+                              ? activity.new_value
+                                ? issues?.results.find((i) => i.id === activity.new_value)?.name
                                 : "None"
                               : activity.new_value ?? "None"}
                           </div>

@@ -211,7 +211,7 @@ const Sidebar: React.FC = () => {
             <div className="px-2">
               <div
                 className={`relative ${
-                  sidebarCollapse ? "flex" : "grid grid-cols-5 gap-1 items-center"
+                  sidebarCollapse ? "flex" : "grid grid-cols-5 gap-2 items-center"
                 }`}
               >
                 <Menu as="div" className="col-span-4 inline-block text-left w-full">
@@ -224,7 +224,7 @@ const Sidebar: React.FC = () => {
                       }`}
                     >
                       <div className="flex gap-x-1 items-center">
-                        <div className="h-5 w-5 p-4 flex items-center justify-center bg-gray-500 text-white rounded uppercase relative">
+                        <div className="h-5 w-5 p-4 flex items-center justify-center bg-gray-700 text-white rounded uppercase relative">
                           {activeWorkspace?.logo && activeWorkspace.logo !== "" ? (
                             <Image
                               src={activeWorkspace.logo}
@@ -259,7 +259,7 @@ const Sidebar: React.FC = () => {
                     leaveFrom="transform opacity-100 scale-100"
                     leaveTo="transform opacity-0 scale-95"
                   >
-                    <Menu.Items className="origin-top-left fixed max-w-[15rem] ml-2 left-0 mt-2 w-full rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                    <Menu.Items className="origin-top-left fixed max-w-[15rem] ml-2 left-0 mt-2 w-full rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-20">
                       <div className="p-1">
                         {workspaces ? (
                           <>
@@ -327,16 +327,15 @@ const Sidebar: React.FC = () => {
                   </Transition>
                 </Menu>
                 {!sidebarCollapse && (
-                  <Menu as="div" className="inline-block text-left w-full">
+                  <Menu as="div" className="inline-block text-left flex-shrink-0 w-full">
                     <div className="h-10 w-10">
-                      <Menu.Button className="grid relative place-items-center h-full w-full rounded-md shadow-sm px-2 py-2 bg-white text-gray-700 hover:bg-gray-50 focus:outline-none">
+                      <Menu.Button className="grid relative place-items-center h-full w-full rounded-md shadow-sm bg-white text-gray-700 hover:bg-gray-50 focus:outline-none">
                         {user?.avatar && user.avatar !== "" ? (
                           <Image
                             src={user.avatar}
                             alt="User Avatar"
                             layout="fill"
-                            objectFit="cover"
-                            className="rounded-full"
+                            className="rounded-md"
                           />
                         ) : (
                           <UserIcon className="h-5 w-5" />
@@ -353,7 +352,7 @@ const Sidebar: React.FC = () => {
                       leaveFrom="transform opacity-100 scale-100"
                       leaveTo="transform opacity-0 scale-95"
                     >
-                      <Menu.Items className="origin-top-right absolute left-0 mt-2 w-full rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                      <Menu.Items className="origin-top-right absolute left-0 mt-2 w-full rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-20">
                         <div className="p-1">
                           {userLinks.map((item) => (
                             <Menu.Item key={item.name} as="div">
@@ -470,7 +469,7 @@ const Sidebar: React.FC = () => {
                                     leaveFrom="transform opacity-100 scale-100"
                                     leaveTo="transform opacity-0 scale-95"
                                   >
-                                    <Menu.Items className="origin-top-right absolute right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                                    <Menu.Items className="origin-top-right absolute right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-20">
                                       <div className="p-1">
                                         <Menu.Item as="div">
                                           {(active) => (
@@ -561,24 +560,29 @@ const Sidebar: React.FC = () => {
                 </div>
               )}
             </div>
-            <div className="px-2 py-2 bg-gray-50 w-full self-baseline flex items-center gap-x-2">
-              <Tooltip content="Click to toggle sidebar" position="right">
-                <button
-                  type="button"
-                  className={`flex items-center gap-3 px-2 py-2 text-xs font-medium rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 outline-none ${
-                    sidebarCollapse ? "justify-center w-full" : ""
-                  }`}
-                  onClick={() => toggleCollapsed()}
-                >
-                  <ArrowLongLeftIcon
-                    className={`h-4 w-4 text-gray-500 group-hover:text-gray-900 flex-shrink-0 duration-300 ${
-                      sidebarCollapse ? "rotate-180" : ""
-                    }`}
-                  />
-                </button>
-              </Tooltip>
+            <div
+              className={`px-2 py-2 bg-gray-50 w-full self-baseline flex items-center ${
+                sidebarCollapse ? "flex-col-reverse" : ""
+              }`}
+            >
               <button
                 type="button"
+                className={`flex items-center gap-3 px-2 py-2 text-xs font-medium rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-900 outline-none ${
+                  sidebarCollapse ? "justify-center w-full" : ""
+                }`}
+                onClick={() => toggleCollapsed()}
+              >
+                <ArrowLongLeftIcon
+                  className={`h-4 w-4 text-gray-500 group-hover:text-gray-900 flex-shrink-0 duration-300 ${
+                    sidebarCollapse ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+              <button
+                type="button"
+                className={`flex items-center gap-3 px-2 py-2 text-xs font-medium rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-900 outline-none ${
+                  sidebarCollapse ? "justify-center w-full" : ""
+                }`}
                 onClick={() => {
                   const e = new KeyboardEvent("keydown", {
                     ctrlKey: true,

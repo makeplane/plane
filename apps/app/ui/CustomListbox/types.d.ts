@@ -1,5 +1,5 @@
 export type Props = {
-  title: string;
+  title?: string;
   label?: string;
   options?: Array<{ display: string; value: any }>;
   icon?: JSX.Element;
