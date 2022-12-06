@@ -17,7 +17,7 @@ export interface ICycle {
   issue: string;
 }
 
-export interface SprintIssueResponse {
+export interface CycleIssueResponse {
   id: string;
   issue_details: IIssue;
   created_at: Date;
@@ -30,8 +30,8 @@ export interface SprintIssueResponse {
   cycle: string;
 }
 
-export type SprintViewProps = {
-  sprint: ICycle;
+export type CycleViewProps = {
+  cycle: ICycle;
   selectSprint: React.Dispatch<React.SetStateAction<SelectSprintType>>;
   projectId: string;
   workspaceSlug: string;

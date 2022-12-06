@@ -73,7 +73,7 @@ const ChangeStateDropdown: React.FC<Props> = ({ issue, updateIssues }) => {
                 leaveFrom="opacity-100"
                 leaveTo="opacity-0"
               >
-                <Listbox.Options className="absolute z-10 mt-1 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
+                <Listbox.Options className="fixed z-10 mt-1 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
                   {states?.map((state) => (
                     <Listbox.Option
                       key={state.id}

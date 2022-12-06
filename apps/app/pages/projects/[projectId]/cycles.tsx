@@ -25,7 +25,8 @@ import { BreadcrumbItem, Breadcrumbs, HeaderButton, Spinner, EmptySpace, EmptySp
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 // types
-import { IIssue, ICycle, SelectSprintType, SelectIssue } from "types";
+import { IIssue, ICycle, SelectSprintType, SelectIssue, CycleIssueResponse } from "types";
+import { DragDropContext, DropResult } from "react-beautiful-dnd";
 
 const ProjectSprints: NextPage = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -35,7 +36,7 @@ const ProjectSprints: NextPage = () => {
   const [selectedIssues, setSelectedIssues] = useState<SelectIssue>();
   const [deleteIssue, setDeleteIssue] = useState<string | undefined>();
 
-  const { activeWorkspace, activeProject } = useUser();
+  const { activeWorkspace, activeProject, issues } = useUser();
 
   const router = useRouter();
 
@@ -78,6 +79,75 @@ const ProjectSprints: NextPage = () => {
       .catch((error) => {
         console.log(error);
       });
+  };
+
+  const handleDragEnd = (result: DropResult) => {
+    if (!result.destination) return;
+    const { source, destination } = result;
+
+    if (source.droppableId === destination.droppableId) return;
+
+    if (activeWorkspace && activeProject) {
+      // remove issue from the source cycle
+      mutate<CycleIssueResponse[]>(
+        CYCLE_ISSUES(source.droppableId),
+        (prevData) => prevData?.filter((p) => p.id !== result.draggableId.split(",")[0]),
+        false
+      );
+
+      // add issue to the destination cycle
+      mutate(CYCLE_ISSUES(destination.droppableId));
+
+      // mutate<CycleIssueResponse[]>(
+      //   CYCLE_ISSUES(destination.droppableId),
+      //   (prevData) => {
+      //     const issueDetails = issues?.results.find(
+      //       (i) => i.id === result.draggableId.split(",")[1]
+      //     );
+      //     const targetResponse = prevData?.find((t) => t.cycle === destination.droppableId);
+      //     console.log(issueDetails, targetResponse, prevData);
+      //     if (targetResponse) {
+      //       console.log("if");
+      //       targetResponse.issue_details = issueDetails as IIssue;
+      //       return prevData;
+      //     } else {
+      //       console.log("else");
+      //       return [
+      //         ...(prevData ?? []),
+      //         {
+      //           cycle: destination.droppableId,
+      //           issue_details: issueDetails,
+      //         } as CycleIssueResponse,
+      //       ];
+      //     }
+      //   },
+      //   false
+      // );
+
+      issuesServices
+        .removeIssueFromCycle(
+          activeWorkspace.slug,
+          activeProject.id,
+          source.droppableId,
+          result.draggableId.split(",")[0]
+        )
+        .then((res) => {
+          issuesServices
+            .addIssueToSprint(activeWorkspace.slug, activeProject.id, destination.droppableId, {
+              issue: result.draggableId.split(",")[1],
+            })
+            .then((res) => {
+              console.log(res);
+            })
+            .catch((e) => {
+              console.log(e);
+            });
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    }
+    // console.log(result);
   };
 
   useEffect(() => {
@@ -142,18 +212,20 @@ const ProjectSprints: NextPage = () => {
               <h2 className="text-2xl font-medium">Project Cycle</h2>
               <HeaderButton Icon={PlusIcon} label="Add Cycle" onClick={() => setIsOpen(true)} />
             </div>
-            <div className="h-full w-full">
-              {cycles.map((cycle) => (
-                <CycleView
-                  key={cycle.id}
-                  sprint={cycle}
-                  selectSprint={setSelectedSprint}
-                  projectId={projectId as string}
-                  workspaceSlug={activeWorkspace?.slug as string}
-                  openIssueModal={openIssueModal}
-                  addIssueToSprint={addIssueToSprint}
-                />
-              ))}
+            <div className="space-y-5">
+              <DragDropContext onDragEnd={handleDragEnd}>
+                {cycles.map((cycle) => (
+                  <CycleView
+                    key={cycle.id}
+                    cycle={cycle}
+                    selectSprint={setSelectedSprint}
+                    projectId={projectId as string}
+                    workspaceSlug={activeWorkspace?.slug as string}
+                    openIssueModal={openIssueModal}
+                    addIssueToSprint={addIssueToSprint}
+                  />
+                ))}
+              </DragDropContext>
             </div>
           </div>
         ) : (

@@ -1,8 +1,9 @@
 // react
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 // next
 import Link from "next/link";
 import Image from "next/image";
+import dynamic from "next/dynamic";
 // swr
 import useSWR, { mutate } from "swr";
 // ui
@@ -10,7 +11,7 @@ import { Listbox, Transition } from "@headlessui/react";
 // icons
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 // types
-import { IIssue, IssueResponse, IState, NestedKeyOf, Properties, WorkspaceMember } from "types";
+import { IIssue, IssueResponse, NestedKeyOf, Properties, WorkspaceMember } from "types";
 // hooks
 import useUser from "lib/hooks/useUser";
 // fetch keys
@@ -47,7 +48,7 @@ const ListView: React.FC<Props> = ({
   const [issuePreviewModal, setIssuePreviewModal] = useState(false);
   const [previewModalIssueId, setPreviewModalIssueId] = useState<string | null>(null);
 
-  const { activeWorkspace, activeProject, states } = useUser();
+  const { activeWorkspace, activeProject, states, issues } = useUser();
 
   const partialUpdateIssue = (formData: Partial<IIssue>, issueId: string) => {
     if (!activeWorkspace || !activeProject) return;
@@ -68,6 +69,10 @@ const ListView: React.FC<Props> = ({
         console.log(error);
       });
   };
+
+  const LexicalViewer = dynamic(() => import("components/lexical/viewer"), {
+    ssr: false,
+  });
 
   const { data: people } = useSWR<WorkspaceMember[]>(
     activeWorkspace ? WORKSPACE_MEMBERS : null,
@@ -176,6 +181,10 @@ const ListView: React.FC<Props> = ({
                                         </td>
                                       ) : (key as keyof Properties) === "description" ? (
                                         <td className="px-3 py-4 font-medium text-gray-900 truncate text-xs max-w-[15rem]">
+                                          {/* <LexicalViewer
+                                            id={`descriptionViewer-${issue.id}`}
+                                            value={issue.description}
+                                          /> */}
                                           {issue.description}
                                         </td>
                                       ) : (key as keyof Properties) === "priority" ? (
@@ -209,7 +218,7 @@ const ListView: React.FC<Props> = ({
                                                     leaveFrom="opacity-100"
                                                     leaveTo="opacity-0"
                                                   >
-                                                    <Listbox.Options className="absolute z-10 mt-1 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
+                                                    <Listbox.Options className="fixed z-10 mt-1 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
                                                       {PRIORITIES?.map((priority) => (
                                                         <Listbox.Option
                                                           key={priority}
@@ -281,14 +290,14 @@ const ListView: React.FC<Props> = ({
                                                     leaveFrom="opacity-100"
                                                     leaveTo="opacity-0"
                                                   >
-                                                    <Listbox.Options className="absolute z-10 mt-1 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
+                                                    <Listbox.Options className="fixed z-10 mt-1 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
                                                       {people?.map((person) => (
                                                         <Listbox.Option
                                                           key={person.id}
                                                           className={({ active }) =>
                                                             classNames(
                                                               active ? "bg-indigo-50" : "bg-white",
-                                                              "cursor-pointer select-none px-3 py-2"
+                                                              "cursor-pointer select-none p-2"
                                                             )
                                                           }
                                                           value={person.member.id}
@@ -296,15 +305,15 @@ const ListView: React.FC<Props> = ({
                                                           <div
                                                             className={`flex items-center gap-x-1 ${
                                                               assignees.includes(
-                                                                person.member.first_name
+                                                                person.member.email
                                                               )
                                                                 ? "font-medium"
-                                                                : "font-normal"
+                                                                : "text-gray-500"
                                                             }`}
                                                           >
                                                             {person.member.avatar &&
                                                             person.member.avatar !== "" ? (
-                                                              <div className="relative w-4 h-4">
+                                                              <div className="relative h-4 w-4">
                                                                 <Image
                                                                   src={person.member.avatar}
                                                                   alt="avatar"
@@ -314,11 +323,11 @@ const ListView: React.FC<Props> = ({
                                                                 />
                                                               </div>
                                                             ) : (
-                                                              <p>
+                                                              <span className="h-4 w-4 grid place-items-center bg-gray-700 text-white rounded-full">
                                                                 {person.member.first_name.charAt(0)}
-                                                              </p>
+                                                              </span>
                                                             )}
-                                                            <p>{person.member.first_name}</p>
+                                                            {person.member.first_name}
                                                           </div>
                                                         </Listbox.Option>
                                                       ))}
@@ -366,18 +375,24 @@ const ListView: React.FC<Props> = ({
                                                     leaveFrom="opacity-100"
                                                     leaveTo="opacity-0"
                                                   >
-                                                    <Listbox.Options className="absolute z-10 mt-1 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
+                                                    <Listbox.Options className="fixed z-10 mt-1 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
                                                       {states?.map((state) => (
                                                         <Listbox.Option
                                                           key={state.id}
                                                           className={({ active }) =>
                                                             classNames(
                                                               active ? "bg-indigo-50" : "bg-white",
-                                                              "cursor-pointer select-none px-3 py-2"
+                                                              "flex items-center gap-2 cursor-pointer select-none p-2"
                                                             )
                                                           }
                                                           value={state.id}
                                                         >
+                                                          <span
+                                                            className={`h-1.5 w-1.5 block rounded-full`}
+                                                            style={{
+                                                              backgroundColor: state.color,
+                                                            }}
+                                                          />
                                                           {addSpaceIfCamelCase(state.name)}
                                                         </Listbox.Option>
                                                       ))}
