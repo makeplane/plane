@@ -15,6 +15,7 @@ import { IIssue, IssueResponse, NestedKeyOf, Properties, WorkspaceMember } from 
 // hooks
 import useUser from "lib/hooks/useUser";
 // fetch keys
+import { PRIORITIES } from "constants/";
 import { PROJECT_ISSUES_LIST, WORKSPACE_MEMBERS } from "constants/fetch-keys";
 // services
 import issuesServices from "lib/services/issues.services";
@@ -36,8 +37,6 @@ type Props = {
   setSelectedIssue: any;
   handleDeleteIssue: React.Dispatch<React.SetStateAction<string | undefined>>;
 };
-
-const PRIORITIES = ["high", "medium", "low"];
 
 const ListView: React.FC<Props> = ({
   properties,

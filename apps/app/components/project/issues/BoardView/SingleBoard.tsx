@@ -5,7 +5,11 @@ import Link from "next/link";
 import { Draggable } from "react-beautiful-dnd";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 // common
-import { addSpaceIfCamelCase, renderShortNumericDateFormat } from "constants/common";
+import {
+  addSpaceIfCamelCase,
+  findHowManyDaysLeft,
+  renderShortNumericDateFormat,
+} from "constants/common";
 // types
 import { IIssue, Properties, NestedKeyOf } from "types";
 // icons
@@ -23,7 +27,9 @@ import { divide } from "lodash";
 type Props = {
   selectedGroup: NestedKeyOf<IIssue> | null;
   groupTitle: string;
-  groupedByIssues: any;
+  groupedByIssues: {
+    [key: string]: IIssue[];
+  };
   index: number;
   setIsIssueOpen: React.Dispatch<React.SetStateAction<boolean>>;
   properties: Properties;
@@ -158,25 +164,12 @@ const SingleBoard: React.FC<Props> = ({
                   className="h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-200 duration-300 outline-none"
                   onClick={() =>
                     setPreloadedData({
-                      // ...state,
                       actionType: "edit",
                     })
                   }
                 >
                   <PencilIcon className="h-4 w-4" />
                 </button>
-                {/* <button
-                  type="button"
-                  className="h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-200 duration-300"
-                  onClick={() =>
-                    setSelectedState({
-                      ...state,
-                      actionType: "delete",
-                    })
-                  }
-                >
-                  <TrashIcon className="h-4 w-4 text-red-500" />
-                </button> */}
               </div>
             </div>
             <StrictModeDroppable key={groupTitle} droppableId={groupTitle}>
@@ -188,7 +181,7 @@ const SingleBoard: React.FC<Props> = ({
                   {...provided.droppableProps}
                   ref={provided.innerRef}
                 >
-                  {groupedByIssues[groupTitle].map((childIssue: any, index: number) => (
+                  {groupedByIssues[groupTitle].map((childIssue, index: number) => (
                     <Draggable key={childIssue.id} draggableId={childIssue.id} index={index}>
                       {(provided, snapshot) => (
                         <Link href={`/projects/${childIssue.project}/issues/${childIssue.id}`}>
@@ -203,6 +196,9 @@ const SingleBoard: React.FC<Props> = ({
                               className="px-2 py-3 space-y-1.5 select-none"
                               {...provided.dragHandleProps}
                             >
+                              <span className="group-hover:text-theme break-all">
+                                {childIssue.name}
+                              </span>
                               {Object.keys(properties).map(
                                 (key) =>
                                   properties[key as keyof Properties] &&
@@ -227,34 +223,65 @@ const SingleBoard: React.FC<Props> = ({
                                           : key === "target_date"
                                           ? "text-xs bg-indigo-50 px-2 py-1 mt-2 flex items-center gap-x-1 rounded w-min whitespace-nowrap"
                                           : "text-sm text-gray-500"
-                                      } gap-1
+                                      } gap-1 relative
                                     `}
                                     >
-                                      {key === "target_date" ? (
-                                        <>
-                                          <CalendarDaysIcon className="h-4 w-4" />{" "}
+                                      {key === "start_date" && childIssue.start_date !== null && (
+                                        <span className="text-sm">
+                                          <CalendarDaysIcon className="h-4 w-4" />
+                                          {renderShortNumericDateFormat(childIssue.start_date)} -
                                           {childIssue.target_date
                                             ? renderShortNumericDateFormat(childIssue.target_date)
-                                            : "N/A"}
-                                        </>
-                                      ) : (
-                                        ""
+                                            : "None"}
+                                        </span>
                                       )}
-                                      {key === "name" && (
-                                        <span className="group-hover:text-theme">
-                                          {childIssue.name}
+                                      {key === "target_date" && (
+                                        <>
+                                          <span
+                                            className={`flex items-center gap-x-1 group ${
+                                              childIssue.target_date === null
+                                                ? ""
+                                                : childIssue.target_date < new Date().toISOString()
+                                                ? "text-red-600"
+                                                : findHowManyDaysLeft(childIssue.target_date) <=
+                                                    3 && "text-orange-400"
+                                            }`}
+                                          >
+                                            <CalendarDaysIcon className="h-4 w-4" />
+                                            {childIssue.target_date
+                                              ? renderShortNumericDateFormat(childIssue.target_date)
+                                              : "N/A"}
+                                            {childIssue.target_date && (
+                                              <span className="absolute -top-full mb-2 left-4 border transition-opacity opacity-0 group-hover:opacity-100 bg-white rounded px-2 py-1">
+                                                {childIssue.target_date < new Date().toISOString()
+                                                  ? `Target date has passed by ${findHowManyDaysLeft(
+                                                      childIssue.target_date
+                                                    )} days`
+                                                  : findHowManyDaysLeft(childIssue.target_date) <= 3
+                                                  ? `Target date is in ${findHowManyDaysLeft(
+                                                      childIssue.target_date
+                                                    )} days`
+                                                  : "Target date"}
+                                              </span>
+                                            )}
+                                          </span>
+                                        </>
+                                      )}
+                                      {key === "key" && (
+                                        <span className="text-xs">
+                                          {childIssue.project_detail?.identifier}-
+                                          {childIssue.sequence_id}
                                         </span>
                                       )}
                                       {key === "state" && (
                                         <>{addSpaceIfCamelCase(childIssue["state_detail"].name)}</>
                                       )}
                                       {key === "priority" && <>{childIssue.priority}</>}
-                                      {key === "description" && <>{childIssue.description}</>}
                                       {key === "assignee" ? (
                                         <div className="flex items-center gap-1 text-xs">
                                           {childIssue?.assignee_details?.length > 0 ? (
                                             childIssue?.assignee_details?.map(
-                                              (assignee: any, index: number) => (
+                                              (assignee, index: number) => (
                                                 <div
                                                   key={index}
                                                   className={`relative z-[1] h-5 w-5 rounded-full ${
@@ -282,7 +309,7 @@ const SingleBoard: React.FC<Props> = ({
                                               )
                                             )
                                           ) : (
-                                            <span>None</span>
+                                            <span>No assignee.</span>
                                           )}
                                         </div>
                                       ) : null}
@@ -290,29 +317,6 @@ const SingleBoard: React.FC<Props> = ({
                                   )
                               )}
                             </div>
-
-                            {/* <div
-                          className={`p-2 bg-indigo-50 flex items-center justify-between ${
-                            snapshot.isDragging ? "bg-indigo-200" : ""
-                          }`}
-                        >
-                          <button
-                            type="button"
-                            className="flex flex-col"
-                            {...provided.dragHandleProps}
-                          >
-                            <EllipsisHorizontalIcon className="h-4 w-4 text-gray-600" />
-                            <EllipsisHorizontalIcon className="h-4 w-4 text-gray-600 mt-[-0.7rem]" />
-                          </button>
-                          <div className="flex gap-1 items-center">
-                            <button type="button">
-                              <HeartIcon className="h-4 w-4 text-yellow-500" />
-                            </button>
-                            <button type="button">
-                              <CheckCircleIcon className="h-4 w-4 text-green-500" />
-                            </button>
-                          </div>
-                        </div> */}
                           </a>
                         </Link>
                       )}
