@@ -11,19 +11,12 @@ import useUser from "./useUser";
 import { IssuePriorities, Properties } from "types";
 
 const initialValues: Properties = {
-  name: true,
   key: true,
-  parent: false,
-  project: false,
   state: true,
   assignee: true,
-  description: false,
   priority: false,
   start_date: false,
   target_date: false,
-  sequence_id: false,
-  attachments: false,
-  children: false,
   cycle: false,
 };
 

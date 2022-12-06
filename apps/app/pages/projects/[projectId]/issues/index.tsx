@@ -36,15 +36,17 @@ import { PlusIcon, Squares2X2Icon } from "@heroicons/react/20/solid";
 // types
 import type { IIssue, Properties, NestedKeyOf, ProjectMember } from "types";
 
-const groupByOptions: Array<{ name: string; key: NestedKeyOf<IIssue> }> = [
+const groupByOptions: Array<{ name: string; key: NestedKeyOf<IIssue> | null }> = [
   { name: "State", key: "state_detail.name" },
   { name: "Priority", key: "priority" },
   { name: "Created By", key: "created_by" },
+  { name: "None", key: null },
 ];
 
 const orderByOptions: Array<{ name: string; key: NestedKeyOf<IIssue> }> = [
   { name: "Created", key: "created_at" },
   { name: "Update", key: "updated_at" },
+  { name: "Priority", key: "priority" },
 ];
 
 const filterIssueOptions: Array<{
@@ -222,14 +224,17 @@ const ProjectIssues: NextPage = () => {
                                     "Select"
                                   }
                                 >
-                                  {orderByOptions.map((option) => (
-                                    <CustomMenu.MenuItem
-                                      key={option.key}
-                                      onClick={() => setOrderBy(option.key)}
-                                    >
-                                      {option.name}
-                                    </CustomMenu.MenuItem>
-                                  ))}
+                                  {orderByOptions.map((option) =>
+                                    groupByProperty === "priority" &&
+                                    option.key === "priority" ? null : (
+                                      <CustomMenu.MenuItem
+                                        key={option.key}
+                                        onClick={() => setOrderBy(option.key)}
+                                      >
+                                        {option.name}
+                                      </CustomMenu.MenuItem>
+                                    )
+                                  )}
                                 </CustomMenu>
                               </div>
                               <div className="flex justify-between">

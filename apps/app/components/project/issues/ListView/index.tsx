@@ -174,10 +174,6 @@ const ListView: React.FC<Props> = ({
                                         <td className="px-3 py-4 font-medium text-gray-900 text-xs whitespace-nowrap">
                                           {activeProject?.identifier}-{issue.sequence_id}
                                         </td>
-                                      ) : (key as keyof Properties) === "description" ? (
-                                        <td className="px-3 py-4 font-medium text-gray-900 truncate text-xs max-w-[15rem]">
-                                          {issue.description}
-                                        </td>
                                       ) : (key as keyof Properties) === "priority" ? (
                                         <td className="px-3 py-4 text-sm font-medium text-gray-900 relative">
                                           <Listbox
@@ -387,10 +383,6 @@ const ListView: React.FC<Props> = ({
                                               </>
                                             )}
                                           </Listbox>
-                                        </td>
-                                      ) : (key as keyof Properties) === "children" ? (
-                                        <td className="px-3 py-4 text-sm font-medium text-gray-900">
-                                          No children.
                                         </td>
                                       ) : (key as keyof Properties) === "target_date" ? (
                                         <td className="px-3 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">

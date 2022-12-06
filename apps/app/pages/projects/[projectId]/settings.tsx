@@ -252,6 +252,11 @@ const ProjectSettings: NextPage = () => {
                         }}
                       />
                     </div>
+                    <div className="flex justify-end">
+                      <Button type="submit" disabled={isSubmitting}>
+                        {isSubmitting ? "Updating Project..." : "Update Project"}
+                      </Button>
+                    </div>
                   </section>
                 </Tab.Panel>
                 <Tab.Panel>

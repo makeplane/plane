@@ -8,9 +8,11 @@ import useSWR from "swr";
 import { Menu } from "@headlessui/react";
 // hooks
 import useUser from "lib/hooks/useUser";
+import useToast from "lib/hooks/useToast";
 // services
 import workspaceService from "lib/services/workspace.service";
 // constants
+import { ROLE } from "constants/";
 import { WORKSPACE_INVITATIONS, WORKSPACE_MEMBERS } from "constants/fetch-keys";
 // hoc
 import withAuthWrapper from "lib/hoc/withAuthWrapper";
@@ -18,25 +20,25 @@ import withAuthWrapper from "lib/hoc/withAuthWrapper";
 import AdminLayout from "layouts/AdminLayout";
 // components
 import SendWorkspaceInvitationModal from "components/workspace/SendWorkspaceInvitationModal";
+import ConfirmWorkspaceMemberRemove from "components/workspace/ConfirmWorkspaceMemberRemove";
 // ui
-import { Spinner, Button } from "ui";
+import { Spinner, CustomListbox } from "ui";
 // icons
 import { PlusIcon, EllipsisHorizontalIcon } from "@heroicons/react/20/solid";
 import HeaderButton from "ui/HeaderButton";
 import { BreadcrumbItem, Breadcrumbs } from "ui/Breadcrumbs";
-// types
-
-const ROLE = {
-  5: "Guest",
-  10: "Viewer",
-  15: "Member",
-  20: "Admin",
-};
 
 const WorkspaceInvite: NextPage = () => {
   const [isOpen, setIsOpen] = useState(false);
 
+  const [selectedMember, setSelectedMember] = useState<string | null>(null);
+
+  const [selectedRemoveMember, setSelectedRemoveMember] = useState<string | null>(null);
+  const [selectedInviteRemoveMember, setSelectedInviteRemoveMember] = useState<string | null>(null);
+
   const { activeWorkspace } = useUser();
+
+  const { setToastAlert } = useToast();
 
   const { data: workspaceMembers, mutate: mutateMembers } = useSWR<any[]>(
     activeWorkspace ? WORKSPACE_MEMBERS : null,
@@ -74,6 +76,50 @@ const WorkspaceInvite: NextPage = () => {
         title: "Plane - Workspace Invite",
       }}
     >
+      <ConfirmWorkspaceMemberRemove
+        isOpen={Boolean(selectedRemoveMember) || Boolean(selectedInviteRemoveMember)}
+        onClose={() => {
+          setSelectedRemoveMember(null);
+          setSelectedInviteRemoveMember(null);
+        }}
+        data={
+          selectedRemoveMember
+            ? members.find((item) => item.id === selectedRemoveMember)
+            : selectedInviteRemoveMember
+            ? members.find((item) => item.id === selectedInviteRemoveMember)
+            : null
+        }
+        handleDelete={async () => {
+          if (!activeWorkspace) return;
+          if (selectedRemoveMember) {
+            await workspaceService.deleteWorkspaceMember(
+              activeWorkspace.slug,
+              selectedRemoveMember
+            );
+            mutateMembers(
+              (prevData) => prevData?.filter((item) => item.id !== selectedRemoveMember),
+              false
+            );
+          }
+          if (selectedInviteRemoveMember) {
+            await workspaceService.deleteWorkspaceInvitations(
+              activeWorkspace.slug,
+              selectedInviteRemoveMember
+            );
+            mutateInvitations(
+              (prevData) => prevData?.filter((item) => item.id !== selectedInviteRemoveMember),
+              false
+            );
+          }
+          setToastAlert({
+            type: "success",
+            title: "Success",
+            message: "Member removed successfully",
+          });
+          setSelectedRemoveMember(null);
+          setSelectedInviteRemoveMember(null);
+        }}
+      />
       <SendWorkspaceInvitationModal
         isOpen={isOpen}
         setIsOpen={setIsOpen}
@@ -141,16 +187,51 @@ const WorkspaceInvite: NextPage = () => {
                         {member.email ?? "No email has been added."}
                       </td>
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                        {ROLE[member.role as keyof typeof ROLE] ?? "None"}
+                        {selectedMember === member.id ? (
+                          <CustomListbox
+                            options={Object.keys(ROLE).map((key) => ({
+                              display: ROLE[parseInt(key) as keyof typeof ROLE],
+                              value: key,
+                            }))}
+                            title={ROLE[member.role as keyof typeof ROLE] ?? "None"}
+                            value={member.role}
+                            onChange={(value) => {
+                              workspaceService
+                                .updateWorkspaceMember(activeWorkspace?.slug as string, member.id, {
+                                  role: value,
+                                })
+                                .then(() => {
+                                  mutateMembers(
+                                    (prevData) =>
+                                      prevData?.map((m) => {
+                                        return m.id === selectedMember ? { ...m, role: value } : m;
+                                      }),
+                                    false
+                                  );
+                                  setToastAlert({
+                                    title: "Success",
+                                    type: "success",
+                                    message: "Member role updated successfully.",
+                                  });
+                                  setSelectedMember(null);
+                                })
+                                .catch(() => {
+                                  setToastAlert({
+                                    title: "Error",
+                                    type: "error",
+                                    message: "An error occurred while updating member role.",
+                                  });
+                                });
+                            }}
+                          />
+                        ) : (
+                          ROLE[member.role as keyof typeof ROLE] ?? "None"
+                        )}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 sm:pl-6">
-                        {member?.member ? (
+                        {member.status ? (
                           <span className="p-0.5 px-2 text-sm bg-green-700 text-white rounded-full">
-                            Accepted
-                          </span>
-                        ) : member.status ? (
-                          <span className="p-0.5 px-2 text-sm bg-green-700 text-white rounded-full">
-                            Accepted
+                            Active
                           </span>
                         ) : (
                           <span className="p-0.5 px-2 text-sm bg-yellow-400 text-black rounded-full">
@@ -173,7 +254,18 @@ const WorkspaceInvite: NextPage = () => {
                                 <button
                                   className="w-full text-left py-2 pl-2"
                                   type="button"
-                                  onClick={() => {}}
+                                  onClick={() => {
+                                    if (!member.status || !member.member) {
+                                      setToastAlert({
+                                        type: "error",
+                                        title: "Error",
+                                        message: "You can't edit this member.",
+                                      });
+                                      return;
+                                    } else {
+                                      setSelectedMember(member.id);
+                                    }
+                                  }}
                                 >
                                   Edit
                                 </button>
@@ -184,26 +276,12 @@ const WorkspaceInvite: NextPage = () => {
                                 <button
                                   className="w-full text-left py-2 pl-2"
                                   type="button"
-                                  onClick={async () => {
-                                    member.member
-                                      ? (await workspaceService.deleteWorkspaceMember(
-                                          activeWorkspace?.slug as string,
-                                          member.id
-                                        ),
-                                        await mutateMembers((prevData) => [
-                                          ...(prevData ?? [])?.filter(
-                                            (m: any) => m.id !== member.id
-                                          ),
-                                        ]),
-                                        false)
-                                      : (await workspaceService.deleteWorkspaceInvitations(
-                                          activeWorkspace?.slug as string,
-                                          member.id
-                                        ),
-                                        await mutateInvitations((prevData) => [
-                                          ...(prevData ?? []).filter((m) => m.id !== member.id),
-                                          false,
-                                        ]));
+                                  onClick={() => {
+                                    if (member.status) {
+                                      setSelectedRemoveMember(member.id);
+                                    } else {
+                                      setSelectedInviteRemoveMember(member.id);
+                                    }
                                   }}
                                 >
                                   Remove

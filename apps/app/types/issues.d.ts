@@ -98,18 +98,11 @@ export type IssuePriorities = {
 
 export type Properties = {
   key: boolean;
-  name: boolean;
-  parent: boolean;
-  project: boolean;
   state: boolean;
   assignee: boolean;
-  description: boolean;
   priority: boolean;
   start_date: boolean;
   target_date: boolean;
-  sequence_id: boolean;
-  attachments: boolean;
-  children: boolean;
   cycle: boolean;
 };
 
