@@ -14,7 +14,7 @@ import useUser from "lib/hooks/useUser";
 // layouts
 import DefaultLayout from "layouts/DefaultLayout";
 // ui
-import { Button } from "ui";
+import { Button, Spinner } from "ui";
 // icons
 import {
   ChartBarIcon,
@@ -35,8 +35,9 @@ const WorkspaceInvitation: NextPage = () => {
 
   const { user } = useUser();
 
-  const { data: invitationDetail, error } = useSWR(WORKSPACE_INVITATION, () =>
-    workspaceService.getWorkspaceInvitation(invitationId as string)
+  const { data: invitationDetail, error } = useSWR(
+    invitationId && WORKSPACE_INVITATION,
+    () => invitationId && workspaceService.getWorkspaceInvitation(invitationId as string)
   );
 
   const handleAccept = () => {
@@ -93,7 +94,7 @@ const WorkspaceInvitation: NextPage = () => {
               </>
             )}
           </>
-        ) : (
+        ) : error ? (
           <EmptySpace
             title="This invitation link is not active anymore."
             description="Your workspace is where you'll create projects, collaborate on your issues, and organize different streams of work in your Plane account."
@@ -131,6 +132,10 @@ const WorkspaceInvitation: NextPage = () => {
               }}
             />
           </EmptySpace>
+        ) : (
+          <div className="w-full h-full flex justify-center items-center">
+            <Spinner />
+          </div>
         )}
       </div>
     </DefaultLayout>

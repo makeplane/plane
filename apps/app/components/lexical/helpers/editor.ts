@@ -6,9 +6,7 @@ export const positionEditorElement = (editor: any, rect: any) => {
       editor.style.left = "-1000px";
     } else {
       editor.style.opacity = "1";
-      editor.style.top = `${
-        rect.top + rect.height + window.pageYOffset + 10
-      }px`;
+      editor.style.top = `${rect.top + rect.height + window.pageYOffset + 10}px`;
       editor.style.left = `${
         rect.left + window.pageXOffset - editor.offsetWidth / 2 + rect.width / 2
       }px`;
@@ -22,9 +20,9 @@ export const getValidatedValue = (value: string) => {
 
   if (value) {
     try {
-      const json = JSON.parse(value);
-      return JSON.stringify(json);
-    } catch (error) {
+      console.log(value);
+      return value;
+    } catch (e) {
       return defaultValue;
     }
   }

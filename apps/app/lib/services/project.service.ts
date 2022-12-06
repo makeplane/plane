@@ -124,12 +124,14 @@ class ProjectServices extends APIService {
         throw error?.response?.data;
       });
   }
+
   async updateProjectMember(
     workspace_slug: string,
     project_id: string,
-    memberId: string
+    memberId: string,
+    data: any
   ): Promise<any> {
-    return this.put(PROJECT_MEMBER_DETAIL(workspace_slug, project_id, memberId))
+    return this.put(PROJECT_MEMBER_DETAIL(workspace_slug, project_id, memberId), data)
       .then((response) => {
         return response?.data;
       })
@@ -137,6 +139,7 @@ class ProjectServices extends APIService {
         throw error?.response?.data;
       });
   }
+
   async deleteProjectMember(
     workspace_slug: string,
     project_id: string,
