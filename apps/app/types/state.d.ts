@@ -11,4 +11,5 @@ export interface IState {
   project: string;
   workspace: string;
   sequence: number;
+  group: "backlog" | "unstarted" | "started" | "completed" | "cancelled";
 }

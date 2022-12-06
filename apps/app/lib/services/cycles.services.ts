@@ -10,8 +10,8 @@ class ProjectCycleServices extends APIService {
     super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
   }
 
-  async createCycle(workspace_slug: string, projectId: string, data: any): Promise<any> {
-    return this.post(CYCLES_ENDPOINT(workspace_slug, projectId), data)
+  async createCycle(workspaceSlug: string, projectId: string, data: any): Promise<any> {
+    return this.post(CYCLES_ENDPOINT(workspaceSlug, projectId), data)
       .then((response) => {
         return response?.data;
       })
@@ -20,8 +20,8 @@ class ProjectCycleServices extends APIService {
       });
   }
 
-  async getCycles(workspace_slug: string, projectId: string): Promise<any> {
-    return this.get(CYCLES_ENDPOINT(workspace_slug, projectId))
+  async getCycles(workspaceSlug: string, projectId: string): Promise<any> {
+    return this.get(CYCLES_ENDPOINT(workspaceSlug, projectId))
       .then((response) => {
         return response?.data;
       })
@@ -30,18 +30,8 @@ class ProjectCycleServices extends APIService {
       });
   }
 
-  async getCycleIssues(workspace_slug: string, projectId: string, cycleId: string): Promise<any> {
-    return this.get(CYCLE_DETAIL(workspace_slug, projectId, cycleId))
-      .then((response) => {
-        return response?.data;
-      })
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async getCycle(workspace_slug: string, projectId: string, cycleId: string): Promise<any> {
-    return this.get(CYCLE_DETAIL(workspace_slug, projectId, cycleId))
+  async getCycleIssues(workspaceSlug: string, projectId: string, cycleId: string): Promise<any> {
+    return this.get(CYCLE_DETAIL(workspaceSlug, projectId, cycleId))
       .then((response) => {
         return response?.data;
       })
@@ -51,13 +41,13 @@ class ProjectCycleServices extends APIService {
   }
 
   async updateCycle(
-    workspace_slug: string,
+    workspaceSlug: string,
     projectId: string,
     cycleId: string,
     data: any
   ): Promise<any> {
     return this.put(
-      CYCLE_DETAIL(workspace_slug, projectId, cycleId).replace("cycle-issues/", ""),
+      CYCLE_DETAIL(workspaceSlug, projectId, cycleId).replace("cycle-issues/", ""),
       data
     )
       .then((response) => {
@@ -68,10 +58,8 @@ class ProjectCycleServices extends APIService {
       });
   }
 
-  async deleteCycle(workspace_slug: string, projectId: string, cycleId: string): Promise<any> {
-    return this.delete(
-      CYCLE_DETAIL(workspace_slug, projectId, cycleId).replace("cycle-issues/", "")
-    )
+  async deleteCycle(workspaceSlug: string, projectId: string, cycleId: string): Promise<any> {
+    return this.delete(CYCLE_DETAIL(workspaceSlug, projectId, cycleId).replace("cycle-issues/", ""))
       .then((response) => {
         return response?.data;
       })

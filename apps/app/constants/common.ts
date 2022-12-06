@@ -1,3 +1,5 @@
+import { NestedKeyOf } from "types";
+
 export const classNames = (...classes: string[]) => {
   return classes.filter(Boolean).join(" ");
 };
@@ -28,6 +30,32 @@ export const groupBy = (array: any[], key: string) => {
     (result[key] = result[key] || []).push(currentValue);
     return result;
   }, {});
+};
+
+export const orderArrayBy = (
+  array: any[],
+  key: string,
+  ordering: "ascending" | "descending" = "ascending"
+) => {
+  const innerKey = key.split("."); // split the key by dot
+  return array.sort((a, b) => {
+    const keyA = innerKey.reduce((obj, i) => obj[i], a); // get the value of the inner key
+    const keyB = innerKey.reduce((obj, i) => obj[i], b); // get the value of the inner key
+    if (keyA < keyB) {
+      return ordering === "ascending" ? -1 : 1;
+    }
+    if (keyA > keyB) {
+      return ordering === "ascending" ? 1 : -1;
+    }
+    return 0;
+  });
+};
+
+export const findHowManyDaysLeft = (date: string | Date) => {
+  const today = new Date();
+  const eventDate = new Date(date);
+  const timeDiff = Math.abs(eventDate.getTime() - today.getTime());
+  return Math.ceil(timeDiff / (1000 * 3600 * 24));
 };
 
 export const timeAgo = (time: any) => {

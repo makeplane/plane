@@ -1,4 +1,3 @@
-// react
 import React, { useEffect, useState } from "react";
 // next
 import type { NextPage } from "next";
@@ -6,52 +5,77 @@ import { useRouter } from "next/router";
 // swr
 import useSWR from "swr";
 // headless ui
-import { Menu, Popover, Transition } from "@headlessui/react";
-// services
-import stateServices from "lib/services/state.services";
-import issuesServices from "lib/services/issues.services";
+import { Popover, Transition } from "@headlessui/react";
+// hoc
+import withAuth from "lib/hoc/withAuthWrapper";
 // hooks
 import useUser from "lib/hooks/useUser";
-import useTheme from "lib/hooks/useTheme";
 import useIssuesProperties from "lib/hooks/useIssuesProperties";
-// fetching keys
-import { PROJECT_ISSUES_LIST, STATE_LIST } from "constants/fetch-keys";
+// api routes
+import { PROJECT_MEMBERS } from "constants/api-routes";
+// services
+import projectService from "lib/services/project.service";
 // commons
-import { groupBy } from "constants/common";
+import { classNames, replaceUnderscoreIfSnakeCase } from "constants/common";
 // layouts
 import AdminLayout from "layouts/AdminLayout";
+// hooks
+import useIssuesFilter from "lib/hooks/useIssuesFilter";
 // components
 import ListView from "components/project/issues/ListView";
 import BoardView from "components/project/issues/BoardView";
 import ConfirmIssueDeletion from "components/project/issues/ConfirmIssueDeletion";
 import CreateUpdateIssuesModal from "components/project/issues/CreateUpdateIssueModal";
 // ui
-import { Spinner } from "ui";
+import { Spinner, CustomMenu, BreadcrumbItem, Breadcrumbs } from "ui";
 import { EmptySpace, EmptySpaceItem } from "ui/EmptySpace";
 import HeaderButton from "ui/HeaderButton";
-import { BreadcrumbItem, Breadcrumbs } from "ui";
 // icons
 import { ChevronDownIcon, ListBulletIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
-import { PlusIcon, EyeIcon, EyeSlashIcon, Squares2X2Icon } from "@heroicons/react/20/solid";
+import { PlusIcon, Squares2X2Icon } from "@heroicons/react/20/solid";
 // types
-import type { IIssue, IssueResponse, Properties, IState, NestedKeyOf, ProjectMember } from "types";
-import { PROJECT_MEMBERS } from "constants/api-routes";
-import projectService from "lib/services/project.service";
+import type { IIssue, Properties, NestedKeyOf, ProjectMember } from "types";
 
-const PRIORITIES = ["high", "medium", "low"];
+const groupByOptions: Array<{ name: string; key: NestedKeyOf<IIssue> | null }> = [
+  { name: "State", key: "state_detail.name" },
+  { name: "Priority", key: "priority" },
+  { name: "Created By", key: "created_by" },
+  { name: "None", key: null },
+];
+
+const orderByOptions: Array<{ name: string; key: NestedKeyOf<IIssue> }> = [
+  { name: "Created", key: "created_at" },
+  { name: "Update", key: "updated_at" },
+  { name: "Priority", key: "priority" },
+];
+
+const filterIssueOptions: Array<{
+  name: string;
+  key: "activeIssue" | "backlogIssue" | null;
+}> = [
+  {
+    name: "All",
+    key: null,
+  },
+  {
+    name: "Active Issues",
+    key: "activeIssue",
+  },
+  {
+    name: "Backlog Issues",
+    key: "backlogIssue",
+  },
+];
 
 const ProjectIssues: NextPage = () => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const { issueView, setIssueView, groupByProperty, setGroupByProperty } = useTheme();
-
   const [selectedIssue, setSelectedIssue] = useState<
     (IIssue & { actionType: "edit" | "delete" }) | undefined
   >(undefined);
-  const [editIssue, setEditIssue] = useState<string | undefined>();
   const [deleteIssue, setDeleteIssue] = useState<string | undefined>(undefined);
 
-  const { activeWorkspace, activeProject, issues } = useUser();
+  const { activeWorkspace, activeProject, issues: projectIssues } = useUser();
 
   const router = useRouter();
 
@@ -62,28 +86,24 @@ const ProjectIssues: NextPage = () => {
     projectId as string
   );
 
-  const { data: projectIssues } = useSWR<IssueResponse>(
-    projectId && activeWorkspace
-      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, projectId as string)
-      : null,
-    activeWorkspace && projectId
-      ? () => issuesServices.getIssues(activeWorkspace.slug, projectId as string)
-      : null
-  );
-
-  const { data: states } = useSWR<IState[]>(
-    activeWorkspace && activeProject ? STATE_LIST(activeProject.id) : null,
-    activeWorkspace && activeProject
-      ? () => stateServices.getStates(activeWorkspace.slug, activeProject.id)
-      : null
-  );
-
   const { data: members } = useSWR<ProjectMember[]>(
     activeWorkspace && activeProject ? PROJECT_MEMBERS : null,
     activeWorkspace && activeProject
       ? () => projectService.projectMembers(activeWorkspace.slug, activeProject.id)
       : null
   );
+
+  const {
+    issueView,
+    setIssueView,
+    groupByProperty,
+    setGroupByProperty,
+    groupedByIssues,
+    setOrderBy,
+    setFilterIssue,
+    orderBy,
+    filterIssue,
+  } = useIssuesFilter(projectIssues);
 
   useEffect(() => {
     if (!isOpen) {
@@ -93,35 +113,6 @@ const ProjectIssues: NextPage = () => {
       }, 500);
     }
   }, [isOpen]);
-
-  const groupedByIssues: {
-    [key: string]: IIssue[];
-  } = {
-    ...(groupByProperty === "state_detail.name"
-      ? Object.fromEntries(
-          states
-            ?.sort((a, b) => a.sequence - b.sequence)
-            ?.map((state) => [
-              state.name,
-              projectIssues?.results.filter((issue) => issue.state === state.name) ?? [],
-            ]) ?? []
-        )
-      : groupByProperty === "priority"
-      ? Object.fromEntries(
-          PRIORITIES.map((priority) => [
-            priority,
-            projectIssues?.results.filter((issue) => issue.priority === priority) ?? [],
-          ])
-        )
-      : {}),
-    ...groupBy(projectIssues?.results ?? [], groupByProperty ?? ""),
-  };
-
-  const groupByOptions: Array<{ name: string; key: NestedKeyOf<IIssue> }> = [
-    { name: "State", key: "state_detail.name" },
-    { name: "Priority", key: "priority" },
-    { name: "Created By", key: "created_by" },
-  ];
 
   return (
     <AdminLayout>
@@ -149,7 +140,7 @@ const ProjectIssues: NextPage = () => {
             </Breadcrumbs>
             <div className="flex items-center justify-between w-full">
               <h2 className="text-2xl font-medium">Project Issues</h2>
-              <div className="flex items-center gap-x-3">
+              <div className="flex items-center md:gap-x-6 sm:gap-x-3">
                 <div className="flex items-center gap-x-1">
                   <button
                     type="button"
@@ -176,70 +167,23 @@ const ProjectIssues: NextPage = () => {
                     <Squares2X2Icon className="h-4 w-4" />
                   </button>
                 </div>
-                <Menu as="div" className="relative inline-block w-40">
-                  <div className="w-full">
-                    <Menu.Button className="inline-flex justify-between items-center w-full rounded-md shadow-sm p-2 border border-gray-300 text-xs font-semibold text-gray-700 hover:bg-gray-100 focus:outline-none">
-                      <span className="flex gap-x-1 items-center">
-                        {groupByOptions.find((option) => option.key === groupByProperty)?.name ??
-                          "No Grouping"}
-                      </span>
-                      <div className="flex-grow flex justify-end">
-                        <ChevronDownIcon className="h-4 w-4" aria-hidden="true" />
-                      </div>
-                    </Menu.Button>
-                  </div>
-
-                  <Transition
-                    as={React.Fragment}
-                    enter="transition ease-out duration-100"
-                    enterFrom="transform opacity-0 scale-95"
-                    enterTo="transform opacity-100 scale-100"
-                    leave="transition ease-in duration-75"
-                    leaveFrom="transform opacity-100 scale-100"
-                    leaveTo="transform opacity-0 scale-95"
-                  >
-                    <Menu.Items className="origin-top-left absolute left-0 mt-2 w-full rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
-                      <div className="p-1">
-                        {groupByOptions.map((option) => (
-                          <Menu.Item key={option.key}>
-                            {({ active }) => (
-                              <button
-                                type="button"
-                                className={`${
-                                  active ? "bg-theme text-white" : "text-gray-900"
-                                } group flex w-full items-center rounded-md p-2 text-xs`}
-                                onClick={() => setGroupByProperty(option.key)}
-                              >
-                                {option.name}
-                              </button>
-                            )}
-                          </Menu.Item>
-                        ))}
-                        {issueView === "list" ? (
-                          <Menu.Item>
-                            {({ active }) => (
-                              <button
-                                type="button"
-                                className={`hover:bg-theme hover:text-white ${
-                                  active ? "bg-theme text-white" : "text-gray-900"
-                                } group flex w-full items-center rounded-md p-2 text-xs`}
-                                onClick={() => setGroupByProperty(null)}
-                              >
-                                No grouping
-                              </button>
-                            )}
-                          </Menu.Item>
-                        ) : null}
-                      </div>
-                    </Menu.Items>
-                  </Transition>
-                </Menu>
                 <Popover className="relative">
                   {({ open }) => (
                     <>
-                      <Popover.Button className="inline-flex justify-between items-center rounded-md shadow-sm p-2 border border-gray-300 text-xs font-semibold text-gray-700 hover:bg-gray-100 focus:outline-none w-40">
-                        <span>Properties</span>
-                        <ChevronDownIcon className="h-4 w-4" />
+                      <Popover.Button
+                        className={classNames(
+                          open ? "text-gray-900" : "text-gray-500",
+                          "group inline-flex items-center rounded-md bg-transparent text-base font-medium hover:text-gray-900 focus:outline-none border border-gray-300 px-3 py-1"
+                        )}
+                      >
+                        <span>View</span>
+                        <ChevronDownIcon
+                          className={classNames(
+                            open ? "text-gray-600" : "text-gray-400",
+                            "ml-2 h-4 w-4 group-hover:text-gray-500"
+                          )}
+                          aria-hidden="true"
+                        />
                       </Popover.Button>
 
                       <Transition
@@ -251,25 +195,86 @@ const ProjectIssues: NextPage = () => {
                         leaveFrom="opacity-100 translate-y-0"
                         leaveTo="opacity-0 translate-y-1"
                       >
-                        <Popover.Panel className="absolute left-1/2 z-10 mt-1 -translate-x-1/2 transform px-2 sm:px-0 w-full">
-                          <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5">
-                            <div className="relative grid bg-white p-1">
-                              {Object.keys(properties).map((key) => (
-                                <button
-                                  key={key}
-                                  className={`text-gray-900 hover:bg-theme hover:text-white flex justify-between w-full items-center rounded-md p-2 text-xs`}
-                                  onClick={() => setProperties(key as keyof Properties)}
+                        <Popover.Panel className="absolute mr-5 right-1/2 z-10 mt-3 w-screen max-w-xs translate-x-1/2 transform px-2 sm:px-0 bg-gray-0 backdrop-filter backdrop-blur-xl bg-opacity-100 rounded-lg shadow-lg overflow-hidden">
+                          <div className="overflow-hidden py-8 px-4">
+                            <div className="relative flex flex-col gap-1 gap-y-4">
+                              <div className="flex justify-between">
+                                <h4 className="text-base text-gray-600">Group by</h4>
+                                <CustomMenu
+                                  label={
+                                    groupByOptions.find((option) => option.key === groupByProperty)
+                                      ?.name ?? "Select"
+                                  }
                                 >
-                                  <p className="capitalize">{key.replace("_", " ")}</p>
-                                  <span className="self-end">
-                                    {properties[key as keyof Properties] ? (
-                                      <EyeIcon width="18" height="18" />
-                                    ) : (
-                                      <EyeSlashIcon width="18" height="18" />
-                                    )}
-                                  </span>
-                                </button>
-                              ))}
+                                  {groupByOptions.map((option) => (
+                                    <CustomMenu.MenuItem
+                                      key={option.key}
+                                      onClick={() => setGroupByProperty(option.key)}
+                                    >
+                                      {option.name}
+                                    </CustomMenu.MenuItem>
+                                  ))}
+                                </CustomMenu>
+                              </div>
+                              <div className="flex justify-between">
+                                <h4 className="text-base text-gray-600">Order by</h4>
+                                <CustomMenu
+                                  label={
+                                    orderByOptions.find((option) => option.key === orderBy)?.name ??
+                                    "Select"
+                                  }
+                                >
+                                  {orderByOptions.map((option) =>
+                                    groupByProperty === "priority" &&
+                                    option.key === "priority" ? null : (
+                                      <CustomMenu.MenuItem
+                                        key={option.key}
+                                        onClick={() => setOrderBy(option.key)}
+                                      >
+                                        {option.name}
+                                      </CustomMenu.MenuItem>
+                                    )
+                                  )}
+                                </CustomMenu>
+                              </div>
+                              <div className="flex justify-between">
+                                <h4 className="text-base text-gray-600">Issue type</h4>
+                                <CustomMenu
+                                  label={
+                                    filterIssueOptions.find((option) => option.key === filterIssue)
+                                      ?.name ?? "Select"
+                                  }
+                                >
+                                  {filterIssueOptions.map((option) => (
+                                    <CustomMenu.MenuItem
+                                      key={option.key}
+                                      onClick={() => setFilterIssue(option.key)}
+                                    >
+                                      {option.name}
+                                    </CustomMenu.MenuItem>
+                                  ))}
+                                </CustomMenu>
+                              </div>
+                              <div className="border-b-2"></div>
+                              <div className="relative flex flex-col gap-1">
+                                <h4 className="text-base text-gray-600">Properties</h4>
+                                <div>
+                                  {Object.keys(properties).map((key) => (
+                                    <button
+                                      key={key}
+                                      type="button"
+                                      className={`px-2 py-1 inline capitalize rounded border border-indigo-600 text-sm m-1 ${
+                                        properties[key as keyof Properties]
+                                          ? "border-indigo-600 bg-indigo-600 text-white"
+                                          : ""
+                                      }`}
+                                      onClick={() => setProperties(key as keyof Properties)}
+                                    >
+                                      {replaceUnderscoreIfSnakeCase(key)}
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </Popover.Panel>
@@ -335,4 +340,4 @@ const ProjectIssues: NextPage = () => {
   );
 };
 
-export default ProjectIssues;
+export default withAuth(ProjectIssues);

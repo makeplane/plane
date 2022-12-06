@@ -103,7 +103,9 @@ const Workspace: NextPage = () => {
                               <a className="hover:text-theme duration-300">{issue.name}</a>
                             </Link>
                           </td>
-                          <td className="px-3 py-4">{issue.sequence_id}</td>
+                          <td className="px-3 py-4">
+                            {issue.project_detail?.identifier}-{issue.sequence_id}
+                          </td>
                           <td className="px-3 py-4">
                             <span
                               className="rounded px-2 py-1 text-xs font-medium"
