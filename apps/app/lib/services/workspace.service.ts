@@ -111,8 +111,9 @@ class WorkspaceService extends APIService {
         throw error?.response?.data;
       });
   }
-  async updateWorkspaceMember(workspace_slug: string, memberId: string): Promise<any> {
-    return this.put(WORKSPACE_MEMBER_DETAIL(workspace_slug, memberId))
+
+  async updateWorkspaceMember(workspace_slug: string, memberId: string, data: any): Promise<any> {
+    return this.put(WORKSPACE_MEMBER_DETAIL(workspace_slug, memberId), data)
       .then((response) => {
         return response?.data;
       })
@@ -120,6 +121,7 @@ class WorkspaceService extends APIService {
         throw error?.response?.data;
       });
   }
+
   async deleteWorkspaceMember(workspace_slug: string, memberId: string): Promise<any> {
     return this.delete(WORKSPACE_MEMBER_DETAIL(workspace_slug, memberId))
       .then((response) => {

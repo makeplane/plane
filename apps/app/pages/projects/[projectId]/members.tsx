@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 // next
-import { useRouter } from "next/router";
+import Image from "next/image";
 import type { NextPage } from "next";
+import { useRouter } from "next/router";
 // swr
 import useSWR from "swr";
 // headless ui
@@ -10,19 +11,20 @@ import { Menu } from "@headlessui/react";
 import projectService from "lib/services/project.service";
 // hooks
 import useUser from "lib/hooks/useUser";
+import useToast from "lib/hooks/useToast";
 // fetching keys
 import { PROJECT_MEMBERS, PROJECT_INVITATIONS } from "constants/fetch-keys";
 // layouts
 import AdminLayout from "layouts/AdminLayout";
 // components
 import SendProjectInvitationModal from "components/project/SendProjectInvitationModal";
+import ConfirmProjectMemberRemove from "components/project/ConfirmProjectMemberRemove";
 // ui
-import { Spinner, Button } from "ui";
+import { Spinner, CustomListbox } from "ui";
 // icons
 import { PlusIcon, EllipsisHorizontalIcon } from "@heroicons/react/20/solid";
 import HeaderButton from "ui/HeaderButton";
 import { BreadcrumbItem, Breadcrumbs } from "ui/Breadcrumbs";
-import Image from "next/image";
 
 const ROLE = {
   5: "Guest",
@@ -33,7 +35,15 @@ const ROLE = {
 
 const ProjectMembers: NextPage = () => {
   const [isOpen, setIsOpen] = useState(false);
+
+  const [selectedMember, setSelectedMember] = useState<string | null>(null);
+
+  const [selectedRemoveMember, setSelectedRemoveMember] = useState<string | null>(null);
+  const [selectedInviteRemoveMember, setSelectedInviteRemoveMember] = useState<string | null>(null);
+
   const { activeWorkspace, activeProject } = useUser();
+
+  const { setToastAlert } = useToast();
 
   const router = useRouter();
 
@@ -75,6 +85,48 @@ const ProjectMembers: NextPage = () => {
 
   return (
     <AdminLayout>
+      <ConfirmProjectMemberRemove
+        isOpen={Boolean(selectedRemoveMember) || Boolean(selectedInviteRemoveMember)}
+        onClose={() => {
+          setSelectedRemoveMember(null);
+          setSelectedInviteRemoveMember(null);
+        }}
+        data={members.find(
+          (item) => item.id === selectedRemoveMember || item.id === selectedInviteRemoveMember
+        )}
+        handleDelete={async () => {
+          if (!activeWorkspace || !projectId) return;
+          if (selectedRemoveMember) {
+            await projectService.deleteProjectMember(
+              activeWorkspace.slug,
+              projectId as string,
+              selectedRemoveMember
+            );
+            mutateMembers(
+              (prevData: any[]) =>
+                prevData?.filter((item: any) => item.id !== selectedRemoveMember),
+              false
+            );
+          }
+          if (selectedInviteRemoveMember) {
+            await projectService.deleteProjectInvitation(
+              activeWorkspace.slug,
+              projectId as string,
+              selectedInviteRemoveMember
+            );
+            mutateInvitations(
+              (prevData: any[]) =>
+                prevData?.filter((item: any) => item.id !== selectedInviteRemoveMember),
+              false
+            );
+          }
+          setToastAlert({
+            type: "success",
+            message: "Member removed successfully",
+            title: "Success",
+          });
+        }}
+      />
       <SendProjectInvitationModal isOpen={isOpen} setIsOpen={setIsOpen} members={members} />
       {!projectMembers || !projectInvitations ? (
         <div className="h-full w-full grid place-items-center px-4 sm:px-0">
@@ -137,12 +189,53 @@ const ProjectMembers: NextPage = () => {
                       {member.email ?? "No email has been added."}
                     </td>
                     <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                      {ROLE[member.role as keyof typeof ROLE] ?? "None"}
+                      {selectedMember === member.id ? (
+                        <CustomListbox
+                          options={Object.keys(ROLE).map((key) => ({
+                            value: key,
+                            display: ROLE[parseInt(key) as keyof typeof ROLE],
+                          }))}
+                          title={ROLE[member.role as keyof typeof ROLE] ?? "Select Role"}
+                          value={member.role}
+                          onChange={(value) => {
+                            if (!activeWorkspace || !projectId) return;
+                            projectService
+                              .updateProjectMember(
+                                activeWorkspace.slug,
+                                projectId as string,
+                                member.id,
+                                {
+                                  role: value,
+                                }
+                              )
+                              .then((res) => {
+                                setToastAlert({
+                                  type: "success",
+                                  message: "Member role updated successfully.",
+                                  title: "Success",
+                                });
+                                mutateMembers(
+                                  (prevData: any) =>
+                                    prevData.map((m: any) => {
+                                      return m.id === selectedMember
+                                        ? { ...m, ...res, role: value }
+                                        : m;
+                                    }),
+                                  false
+                                );
+                                setSelectedMember(null);
+                              })
+                              .catch((err) => {
+                                console.log(err);
+                              });
+                          }}
+                        />
+                      ) : (
+                        ROLE[member.role as keyof typeof ROLE] ?? "None"
+                      )}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 sm:pl-6">
-                      {member?.member ? (
-                        "Member"
-                      ) : member.status ? (
+                      {member.status ? (
                         <span className="p-0.5 px-2 text-sm bg-green-700 text-white rounded-full">
                           Active
                         </span>
@@ -167,7 +260,17 @@ const ProjectMembers: NextPage = () => {
                               <button
                                 className="w-full text-left py-2 pl-2"
                                 type="button"
-                                onClick={() => {}}
+                                onClick={() => {
+                                  if (!member.status) {
+                                    setToastAlert({
+                                      type: "error",
+                                      message: "You can't edit a pending invitation.",
+                                      title: "Error",
+                                    });
+                                  } else {
+                                    setSelectedMember(member.id);
+                                  }
+                                }}
                               >
                                 Edit
                               </button>
@@ -178,20 +281,12 @@ const ProjectMembers: NextPage = () => {
                               <button
                                 className="w-full text-left py-2 pl-2"
                                 type="button"
-                                onClick={async () => {
-                                  member.member
-                                    ? (await projectService.deleteProjectMember(
-                                        activeWorkspace?.slug as string,
-                                        projectId as any,
-                                        member.id
-                                      ),
-                                      await mutateMembers())
-                                    : (await projectService.deleteProjectInvitation(
-                                        activeWorkspace?.slug as string,
-                                        projectId as any,
-                                        member.id
-                                      ),
-                                      await mutateInvitations());
+                                onClick={() => {
+                                  if (member.status) {
+                                    setSelectedRemoveMember(member.id);
+                                  } else {
+                                    setSelectedInviteRemoveMember(member.id);
+                                  }
                                 }}
                               >
                                 Remove

@@ -12,6 +12,7 @@ import useToast from "lib/hooks/useToast";
 import projectService from "lib/services/project.service";
 import workspaceService from "lib/services/workspace.service";
 // constants
+import { ROLE } from "constants/";
 import { PROJECT_INVITATIONS, WORKSPACE_MEMBERS } from "constants/fetch-keys";
 // ui
 import { Button, Select, TextArea } from "ui";
@@ -30,13 +31,9 @@ type Props = {
 const defaultValues: Partial<ProjectMember> = {
   email: "",
   message: "",
-};
-
-const ROLE = {
-  5: "Guest",
-  10: "Viewer",
-  15: "Member",
-  20: "Admin",
+  role: 5,
+  member_id: "",
+  user_id: "",
 };
 
 const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, members }) => {

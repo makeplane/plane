@@ -298,14 +298,22 @@ const Sidebar: React.FC = () => {
                             ) : (
                               <p>No workspace found!</p>
                             )}
-                            <Menu.Item>
-                              {(active) => (
-                                <Link href="/create-workspace">
-                                  <a className="flex items-center gap-x-1 p-2 w-full text-left text-gray-900 hover:bg-theme hover:text-white rounded-md text-sm">
-                                    <PlusIcon className="w-5 h-5" />
-                                    <span>Create Workspace</span>
-                                  </a>
-                                </Link>
+                            <Menu.Item
+                              as="button"
+                              onClick={() => {
+                                router.push("/create-workspace");
+                              }}
+                              className="w-full"
+                            >
+                              {({ active }) => (
+                                <a
+                                  className={`flex items-center gap-x-1 p-2 w-full text-left text-gray-900 hover:bg-theme hover:text-white rounded-md text-sm ${
+                                    active ? "bg-theme text-white" : "text-gray-900"
+                                  }`}
+                                >
+                                  <PlusIcon className="w-5 h-5" />
+                                  <span>Create Workspace</span>
+                                </a>
                               )}
                             </Menu.Item>
                           </>
