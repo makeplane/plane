@@ -78,6 +78,10 @@ const useIssuesFilter = (projectIssues?: IssueResponse) => {
     }
   }
 
+  if (groupByProperty === "priority" && orderBy === "priority") {
+    setOrderBy(null);
+  }
+
   return {
     groupedByIssues,
     issueView,

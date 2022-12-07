@@ -1,14 +1,15 @@
 import React, { useState, useEffect, useCallback } from "react";
 // swr
-import { mutate } from "swr";
+import useSWR, { mutate } from "swr";
 // react hook form
 import { useForm } from "react-hook-form";
 // headless
 import { Dialog, Transition } from "@headlessui/react";
 // services
 import projectServices from "lib/services/project.service";
+import workspaceService from "lib/services/workspace.service";
 // fetch keys
-import { PROJECTS_LIST } from "constants/fetch-keys";
+import { PROJECTS_LIST, WORKSPACE_MEMBERS } from "constants/fetch-keys";
 // hooks
 import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
@@ -17,7 +18,7 @@ import { Button, Input, TextArea, Select } from "ui";
 // common
 import { debounce } from "constants/common";
 // types
-import { IProject } from "types";
+import { IProject, WorkspaceMember } from "types";
 
 type Props = {
   isOpen: boolean;
@@ -31,6 +32,23 @@ const defaultValues: Partial<IProject> = {
   description: "",
 };
 
+const IsGuestCondition: React.FC<{
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}> = ({ setIsOpen }) => {
+  const { setToastAlert } = useToast();
+
+  useEffect(() => {
+    setIsOpen(false);
+    setToastAlert({
+      title: "Error",
+      type: "error",
+      message: "You don't have permission to create project.",
+    });
+  }, []);
+
+  return null;
+};
+
 const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
   const handleClose = () => {
     setIsOpen(false);
@@ -40,7 +58,12 @@ const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
     }, 500);
   };
 
-  const { activeWorkspace } = useUser();
+  const { activeWorkspace, user } = useUser();
+
+  const { data: workspaceMembers } = useSWR<WorkspaceMember[]>(
+    activeWorkspace ? WORKSPACE_MEMBERS(activeWorkspace.slug) : null,
+    activeWorkspace ? () => workspaceService.workspaceMembers(activeWorkspace.slug) : null
+  );
 
   const { setToastAlert } = useToast();
 
@@ -56,6 +79,8 @@ const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
     setValue,
   } = useForm<IProject>({
     defaultValues,
+    reValidateMode: "onChange",
+    mode: "all",
   });
 
   const onSubmit = async (formData: IProject) => {
@@ -77,6 +102,15 @@ const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
         handleClose();
       })
       .catch((err) => {
+        if (err.status === 403) {
+          setToastAlert({
+            title: "Error",
+            type: "error",
+            message: "You don't have permission to create project.",
+          });
+          handleClose();
+          return;
+        }
         Object.keys(err).map((key) => {
           const errorMessages = err[key];
           setError(key as keyof IProject, {
@@ -104,6 +138,15 @@ const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
       setValue("identifier", projectName.replace(/ /g, "-").toUpperCase().substring(0, 3));
     }
   }, [projectName, projectIdentifier, setValue, isChangeIdentifierRequired]);
+
+  if (workspaceMembers) {
+    const isMember = workspaceMembers.find((member) => member.member.id === user?.id);
+    const isGuest = workspaceMembers.find(
+      (member) => member.member.id === user?.id && member.role === 5
+    );
+
+    if ((!isMember || isGuest) && isOpen) return <IsGuestCondition setIsOpen={setIsOpen} />;
+  }
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
@@ -203,8 +246,8 @@ const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                               message: "Identifier must at least be of 1 character",
                             },
                             maxLength: {
-                              value: 9,
-                              message: "Identifier must at most be of 9 characters",
+                              value: 5,
+                              message: "Identifier must at most be of 5 characters",
                             },
                           }}
                         />

@@ -78,8 +78,14 @@ const ProjectSettings: NextPage = () => {
   );
 
   const { data: people } = useSWR<WorkspaceMember[]>(
-    activeWorkspace ? WORKSPACE_MEMBERS : null,
-    activeWorkspace ? () => workspaceService.workspaceMembers(activeWorkspace.slug) : null
+    activeWorkspace ? WORKSPACE_MEMBERS(activeWorkspace.slug) : null,
+    activeWorkspace ? () => workspaceService.workspaceMembers(activeWorkspace.slug) : null,
+    {
+      onErrorRetry(err, _, __, revalidate, revalidateOpts) {
+        if (err?.status === 403) return;
+        setTimeout(() => revalidate(revalidateOpts), 5000);
+      },
+    }
   );
 
   useEffect(() => {

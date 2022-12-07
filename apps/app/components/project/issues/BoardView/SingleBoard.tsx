@@ -42,8 +42,8 @@ type Props = {
     >
   >;
   bgColor?: string;
-  stateId?: string;
-  createdBy?: string;
+  stateId: string | null;
+  createdBy: string | null;
 };
 
 const SingleBoard: React.FC<Props> = ({
@@ -109,7 +109,7 @@ const SingleBoard: React.FC<Props> = ({
                   <span
                     className={`w-3 h-3 block rounded-full ${!show ? "" : "mr-1"}`}
                     style={{
-                      backgroundColor: bgColor,
+                      backgroundColor: Boolean(bgColor) ? bgColor : undefined,
                     }}
                   />
                   <h2
@@ -151,7 +151,7 @@ const SingleBoard: React.FC<Props> = ({
                     setIsIssueOpen(true);
                     if (selectedGroup !== null)
                       setPreloadedData({
-                        state: stateId,
+                        state: stateId !== null ? stateId : undefined,
                         [selectedGroup]: groupTitle,
                         actionType: "createIssue",
                       });
@@ -201,10 +201,12 @@ const SingleBoard: React.FC<Props> = ({
                                           ? "text-xs text-black"
                                           : key === "priority"
                                           ? `text-xs bg-gray-200 px-2 py-1 mt-2 flex items-center gap-x-1 rounded w-min whitespace-nowrap capitalize font-medium ${
-                                              childIssue.priority === "high"
+                                              childIssue.priority === "urgent"
                                                 ? "bg-red-100 text-red-600"
+                                                : childIssue.priority === "high"
+                                                ? "bg-orange-100 text-orange-600"
                                                 : childIssue.priority === "medium"
-                                                ? "bg-orange-100 text-orange-500"
+                                                ? "bg-yellow-100 text-yellow-500"
                                                 : childIssue.priority === "low"
                                                 ? "bg-green-100 text-green-500"
                                                 : "hidden"
@@ -224,7 +226,7 @@ const SingleBoard: React.FC<Props> = ({
                                             : "None"}
                                         </span>
                                       )}
-                                      {key === "target_date" && (
+                                      {key === "due_date" && (
                                         <>
                                           <span
                                             className={`flex items-center gap-x-1 group ${
@@ -320,7 +322,7 @@ const SingleBoard: React.FC<Props> = ({
                       setIsIssueOpen(true);
                       if (selectedGroup !== null) {
                         setPreloadedData({
-                          state: stateId,
+                          state: stateId !== null ? stateId : undefined,
                           [selectedGroup]: groupTitle,
                           actionType: "createIssue",
                         });

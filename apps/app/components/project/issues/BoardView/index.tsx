@@ -197,9 +197,10 @@ const BoardView: React.FC<Props> = ({ properties, selectedGroup, groupedByIssues
                           selectedGroup={selectedGroup}
                           groupTitle={singleGroup}
                           createdBy={
-                            members
-                              ? members?.find((m) => m.member.id === singleGroup)?.member.first_name
-                              : undefined
+                            selectedGroup === "created_by"
+                              ? members?.find((m) => m.member.id === singleGroup)?.member
+                                  .first_name ?? "loading..."
+                              : null
                           }
                           groupedByIssues={groupedByIssues}
                           index={index}
@@ -208,8 +209,8 @@ const BoardView: React.FC<Props> = ({ properties, selectedGroup, groupedByIssues
                           setPreloadedData={setPreloadedData}
                           stateId={
                             selectedGroup === "state_detail.name"
-                              ? states?.find((s) => s.name === singleGroup)?.id
-                              : undefined
+                              ? states?.find((s) => s.name === singleGroup)?.id ?? null
+                              : null
                           }
                           bgColor={
                             selectedGroup === "state_detail.name"

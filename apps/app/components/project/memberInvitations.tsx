@@ -3,10 +3,14 @@ import React, { useState } from "react";
 // next
 import Link from "next/link";
 import useSWR from "swr";
-import _ from "lodash";
+// hooks
 import useUser from "lib/hooks/useUser";
 // Services
 import projectService from "lib/services/project.service";
+// fetch keys
+import { PROJECT_MEMBERS } from "constants/fetch-keys";
+// commons
+import { renderShortNumericDateFormat } from "constants/common";
 // icons
 import {
   CalendarDaysIcon,
@@ -17,24 +21,40 @@ import {
   PlusIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
-import { renderShortNumericDateFormat } from "constants/common";
+// types
+import type { IProject } from "types";
+type Props = {
+  project: IProject;
+  slug: string;
+  invitationsRespond: string[];
+  handleInvitation: (project_invitation: any, action: "accepted" | "withdraw") => void;
+  setDeleteProject: React.Dispatch<React.SetStateAction<IProject | undefined>>;
+};
 
-const ProjectMemberInvitations = ({
+const ProjectMemberInvitations: React.FC<Props> = ({
   project,
   slug,
   invitationsRespond,
   handleInvitation,
   setDeleteProject,
-}: any) => {
+}) => {
   const { user } = useUser();
-  const { data: members } = useSWR("PROJECT_MEMBERS", () =>
+
+  const { data: members } = useSWR<any[]>(PROJECT_MEMBERS(project.id), () =>
     projectService.projectMembers(slug, project.id)
   );
 
-  const isMember =
-    _.filter(members, (item: any) => item.member.id === (user as any).id).length === 1;
+  const isMember = members?.some((item: any) => item.member.id === (user as any)?.id);
 
   const [selected, setSelected] = useState<any>(false);
+
+  if (!members) {
+    return (
+      <div className="w-full h-36 flex flex-col px-4 py-3 rounded-md bg-white">
+        <div className="w-full h-full bg-gray-50 animate-pulse" />
+      </div>
+    );
+  }
 
   return (
     <>

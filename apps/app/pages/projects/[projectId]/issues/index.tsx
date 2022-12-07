@@ -87,10 +87,18 @@ const ProjectIssues: NextPage = () => {
   );
 
   const { data: members } = useSWR<ProjectMember[]>(
-    activeWorkspace && activeProject ? PROJECT_MEMBERS : null,
+    activeWorkspace && activeProject
+      ? PROJECT_MEMBERS(activeWorkspace.slug, activeProject.id)
+      : null,
     activeWorkspace && activeProject
       ? () => projectService.projectMembers(activeWorkspace.slug, activeProject.id)
-      : null
+      : null,
+    {
+      onErrorRetry(err, _, __, revalidate, revalidateOpts) {
+        if (err?.status === 403) return;
+        setTimeout(() => revalidate(revalidateOpts), 5000);
+      },
+    }
   );
 
   const {
@@ -173,7 +181,7 @@ const ProjectIssues: NextPage = () => {
                       <Popover.Button
                         className={classNames(
                           open ? "text-gray-900" : "text-gray-500",
-                          "group inline-flex items-center rounded-md bg-transparent text-base font-medium hover:text-gray-900 focus:outline-none border border-gray-300 px-3 py-1"
+                          "group inline-flex items-center rounded-md bg-transparent text-xs font-medium hover:text-gray-900 focus:outline-none border border-gray-300 px-2 py-2"
                         )}
                       >
                         <span>View</span>
@@ -195,7 +203,7 @@ const ProjectIssues: NextPage = () => {
                         leaveFrom="opacity-100 translate-y-0"
                         leaveTo="opacity-0 translate-y-1"
                       >
-                        <Popover.Panel className="absolute mr-5 right-1/2 z-10 mt-3 w-screen max-w-xs translate-x-1/2 transform px-2 sm:px-0 bg-gray-0 backdrop-filter backdrop-blur-xl bg-opacity-100 rounded-lg shadow-lg overflow-hidden">
+                        <Popover.Panel className="absolute mr-5 right-1/2 z-10 mt-3 w-screen max-w-xs translate-x-1/2 transform px-2 sm:px-0 bg-white rounded-lg shadow-lg overflow-hidden">
                           <div className="overflow-hidden py-8 px-4">
                             <div className="relative flex flex-col gap-1 gap-y-4">
                               <div className="flex justify-between">

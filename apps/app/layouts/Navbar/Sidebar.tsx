@@ -9,6 +9,7 @@ import authenticationService from "lib/services/authentication.service";
 // hooks
 import useUser from "lib/hooks/useUser";
 import useTheme from "lib/hooks/useTheme";
+import useToast from "lib/hooks/useToast";
 // components
 import CreateProjectModal from "components/project/CreateProjectModal";
 // headless ui
@@ -118,6 +119,8 @@ const Sidebar: React.FC = () => {
   const { workspaces, activeWorkspace, mutateUser } = useUser();
 
   const { collapsed: sidebarCollapse, toggleCollapsed } = useTheme();
+
+  const { setToastAlert } = useToast();
 
   return (
     <nav className="h-full">
@@ -282,9 +285,11 @@ const Sidebar: React.FC = () => {
                                             last_workspace_id: workspace?.id,
                                           })
                                           .then((res) => {
-                                            router.push("/workspace");
+                                            const isInProject =
+                                              router.pathname.includes("/[projectId]/");
+                                            if (isInProject) router.push("/workspace");
                                           })
-                                          .catch((err) => console.log);
+                                          .catch((err) => console.error(err));
                                       }}
                                       className={`${
                                         active ? "bg-theme text-white" : "text-gray-900"
@@ -478,7 +483,13 @@ const Sidebar: React.FC = () => {
                                               onClick={() =>
                                                 copyTextToClipboard(
                                                   `https://app.plane.so/projects/${project?.id}/issues/`
-                                                )
+                                                ).then(() => {
+                                                  setToastAlert({
+                                                    title: "Link Copied",
+                                                    message: "Link copied to clipboard",
+                                                    type: "success",
+                                                  });
+                                                })
                                               }
                                             >
                                               <ClipboardDocumentIcon className="h-3 w-3" />
