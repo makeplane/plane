@@ -53,7 +53,13 @@ const ProjectMembers: NextPage = () => {
     activeWorkspace && projectId ? PROJECT_MEMBERS(projectId as string) : null,
     activeWorkspace && projectId
       ? () => projectService.projectMembers(activeWorkspace.slug, projectId as any)
-      : null
+      : null,
+    {
+      onErrorRetry(err, _, __, revalidate, revalidateOpts) {
+        if (err?.status === 403) return;
+        setTimeout(() => revalidate(revalidateOpts), 5000);
+      },
+    }
   );
   const { data: projectInvitations, mutate: mutateInvitations } = useSWR(
     activeWorkspace && projectId ? PROJECT_INVITATIONS : null,

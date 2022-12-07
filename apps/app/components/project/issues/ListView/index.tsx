@@ -384,7 +384,7 @@ const ListView: React.FC<Props> = ({
                                             )}
                                           </Listbox>
                                         </td>
-                                      ) : (key as keyof Properties) === "target_date" ? (
+                                      ) : (key as keyof Properties) === "due_date" ? (
                                         <td className="px-3 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">
                                           {issue.target_date
                                             ? renderShortNumericDateFormat(issue.target_date)
