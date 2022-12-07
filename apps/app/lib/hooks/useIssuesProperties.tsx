@@ -16,7 +16,7 @@ const initialValues: Properties = {
   assignee: true,
   priority: false,
   start_date: false,
-  due_date: false,
+  target_date: false,
   cycle: false,
 };
 

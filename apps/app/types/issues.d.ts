@@ -27,7 +27,7 @@ export interface IIssue {
   name: string;
   description: string;
   priority: string | null;
-  start_date: null;
+  start_date: string | null;
   target_date: string | null;
   sequence_id: number;
   attachments: any[];
@@ -102,7 +102,7 @@ export type Properties = {
   assignee: boolean;
   priority: boolean;
   start_date: boolean;
-  due_date: boolean;
+  target_date: boolean;
   cycle: boolean;
 };
 

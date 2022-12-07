@@ -278,15 +278,15 @@ const CommandPalette: React.FC = () => {
                                           value={issue.id}
                                         />
                                         <span
-                                          className={`h-1.5 w-1.5 block rounded-full`}
+                                          className="flex-shrink-0 h-1.5 w-1.5 block rounded-full"
                                           style={{
                                             backgroundColor: issue.state_detail.color,
                                           }}
                                         />
-                                        <span className="text-xs text-gray-500">
+                                        <span className="flex-shrink-0 text-xs text-gray-500">
                                           {activeProject?.identifier}-{issue.sequence_id}
                                         </span>
-                                        {issue.name}
+                                        <span>{issue.name}</span>
                                       </div>
                                       {active && (
                                         <button
@@ -297,10 +297,9 @@ const CommandPalette: React.FC = () => {
                                             );
                                             handleCommandPaletteClose();
                                           }}
+                                          className="flex-shrink-0 text-gray-500"
                                         >
-                                          <span className="justify-self-end flex-none text-gray-500">
-                                            Jump to...
-                                          </span>
+                                          Jump to...
                                         </button>
                                       )}
                                     </>

@@ -12,7 +12,7 @@ import useUser from "lib/hooks/useUser";
 // fetching keys
 import { CYCLE_ISSUES, CYCLE_LIST } from "constants/fetch-keys";
 // layouts
-import AdminLayout from "layouts/AdminLayout";
+import AppLayout from "layouts/AppLayout";
 // components
 import CycleView from "components/project/cycles/CycleView";
 import ConfirmIssueDeletion from "components/project/issues/ConfirmIssueDeletion";
@@ -165,7 +165,7 @@ const ProjectSprints: NextPage = () => {
   }, [selectedIssues]);
 
   return (
-    <AdminLayout
+    <AppLayout
       meta={{
         title: "Plane - Cycles",
       }}
@@ -254,7 +254,7 @@ const ProjectSprints: NextPage = () => {
           <Spinner />
         </div>
       )}
-    </AdminLayout>
+    </AppLayout>
   );
 };
 

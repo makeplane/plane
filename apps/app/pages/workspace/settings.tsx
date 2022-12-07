@@ -9,7 +9,7 @@ import Dropzone from "react-dropzone";
 import workspaceService from "lib/services/workspace.service";
 import fileServices from "lib/services/file.services";
 // layouts
-import AdminLayout from "layouts/AdminLayout";
+import AppLayout from "layouts/AppLayout";
 
 // hooks
 import useUser from "lib/hooks/useUser";
@@ -83,7 +83,7 @@ const WorkspaceSettings = () => {
   };
 
   return (
-    <AdminLayout
+    <AppLayout
       meta={{
         title: "Plane - Workspace Settings",
       }}
@@ -228,7 +228,7 @@ const WorkspaceSettings = () => {
           </div>
         )}
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 };
 

@@ -4,7 +4,7 @@ import type { NextPage } from "next";
 // hooks
 import useUser from "lib/hooks/useUser";
 // layouts
-import AdminLayout from "layouts/AdminLayout";
+import AppLayout from "layouts/AppLayout";
 // components
 import CreateProjectModal from "components/project/CreateProjectModal";
 import ConfirmProjectDeletion from "components/project/ConfirmProjectDeletion";
@@ -61,7 +61,7 @@ const Projects: NextPage = () => {
   }, [isOpen]);
 
   return (
-    <AdminLayout>
+    <AppLayout>
       <CreateProjectModal isOpen={isOpen && !deleteProject} setIsOpen={setIsOpen} />
       <ConfirmProjectDeletion
         isOpen={isOpen && !!deleteProject}
@@ -125,7 +125,7 @@ const Projects: NextPage = () => {
           <Spinner />
         </div>
       )}
-    </AdminLayout>
+    </AppLayout>
   );
 };
 
