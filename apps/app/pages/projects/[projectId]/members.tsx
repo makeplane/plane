@@ -235,7 +235,7 @@ const ProjectMembers: NextPage = () => {
                       )}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 sm:pl-6">
-                      {member.status ? (
+                      {member.member ? (
                         <span className="p-0.5 px-2 text-sm bg-green-700 text-white rounded-full">
                           Active
                         </span>
@@ -261,7 +261,7 @@ const ProjectMembers: NextPage = () => {
                                 className="w-full text-left py-2 pl-2"
                                 type="button"
                                 onClick={() => {
-                                  if (!member.status) {
+                                  if (!member.member) {
                                     setToastAlert({
                                       type: "error",
                                       message: "You can't edit a pending invitation.",
@@ -282,7 +282,7 @@ const ProjectMembers: NextPage = () => {
                                 className="w-full text-left py-2 pl-2"
                                 type="button"
                                 onClick={() => {
-                                  if (member.status) {
+                                  if (member.member) {
                                     setSelectedRemoveMember(member.id);
                                   } else {
                                     setSelectedInviteRemoveMember(member.id);

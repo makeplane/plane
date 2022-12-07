@@ -50,7 +50,7 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
   const { setToastAlert } = useToast();
 
   const { data: people } = useSWR<WorkspaceMember[]>(
-    activeWorkspace ? WORKSPACE_MEMBERS : null,
+    activeWorkspace ? WORKSPACE_MEMBERS(activeWorkspace.slug) : null,
     activeWorkspace ? () => workspaceService.workspaceMembers(activeWorkspace.slug) : null
   );
 
