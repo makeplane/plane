@@ -45,24 +45,14 @@ const SearchListbox: React.FC<Props> = ({
           <Combobox.Label className="sr-only">{title}</Combobox.Label>
           <Combobox.Button
             className={`flex items-center gap-1 hover:bg-gray-100 border rounded-md shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm duration-300 ${
-              width === "sm"
-                ? "w-32"
-                : width === "md"
-                ? "w-48"
-                : width === "lg"
-                ? "w-64"
-                : width === "xl"
-                ? "w-80"
-                : width === "2xl"
-                ? "w-96"
-                : ""
-            } ${buttonClassName || ""}`}
+              buttonClassName || ""
+            }`}
           >
             {icon ?? null}
             <span
               className={classNames(
                 value === null || value === undefined ? "" : "text-gray-900",
-                "hidden truncate sm:ml-2 sm:block"
+                "hidden truncate sm:block"
               )}
             >
               {Array.isArray(value)

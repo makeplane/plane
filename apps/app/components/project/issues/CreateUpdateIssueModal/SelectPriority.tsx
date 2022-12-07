@@ -28,8 +28,10 @@ const SelectPriority: React.FC<Props> = ({ control }) => {
             <>
               <div className="relative">
                 <Listbox.Button className="flex items-center gap-1 hover:bg-gray-100 relative border rounded-md shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm duration-300">
-                  <ChartBarIcon className="h-3 w-3" />
-                  <span className="block capitalize">{value ?? "Priority"}</span>
+                  <ChartBarIcon className="h-3 w-3 text-gray-500" />
+                  <span className="block capitalize">
+                    {value && value !== "" ? value : "Priority"}
+                  </span>
                 </Listbox.Button>
 
                 <Transition
