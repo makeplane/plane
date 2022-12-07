@@ -44,8 +44,8 @@ const groupByOptions: Array<{ name: string; key: NestedKeyOf<IIssue> | null }> =
 ];
 
 const orderByOptions: Array<{ name: string; key: NestedKeyOf<IIssue> }> = [
-  { name: "Created", key: "created_at" },
-  { name: "Update", key: "updated_at" },
+  { name: "Last created", key: "created_at" },
+  { name: "Last updated", key: "updated_at" },
   { name: "Priority", key: "priority" },
 ];
 

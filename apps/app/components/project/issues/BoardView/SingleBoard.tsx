@@ -159,17 +159,6 @@ const SingleBoard: React.FC<Props> = ({
                 >
                   <PlusIcon className="h-4 w-4" />
                 </button>
-                <button
-                  type="button"
-                  className="h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-200 duration-300 outline-none"
-                  onClick={() =>
-                    setPreloadedData({
-                      actionType: "edit",
-                    })
-                  }
-                >
-                  <PencilIcon className="h-4 w-4" />
-                </button>
               </div>
             </div>
             <StrictModeDroppable key={groupTitle} droppableId={groupTitle}>
@@ -254,14 +243,14 @@ const SingleBoard: React.FC<Props> = ({
                                             {childIssue.target_date && (
                                               <span className="absolute -top-full mb-2 left-4 border transition-opacity opacity-0 group-hover:opacity-100 bg-white rounded px-2 py-1">
                                                 {childIssue.target_date < new Date().toISOString()
-                                                  ? `Target date has passed by ${findHowManyDaysLeft(
+                                                  ? `Due date has passed by ${findHowManyDaysLeft(
                                                       childIssue.target_date
                                                     )} days`
                                                   : findHowManyDaysLeft(childIssue.target_date) <= 3
-                                                  ? `Target date is in ${findHowManyDaysLeft(
+                                                  ? `Due date is in ${findHowManyDaysLeft(
                                                       childIssue.target_date
                                                     )} days`
-                                                  : "Target date"}
+                                                  : "Due date"}
                                               </span>
                                             )}
                                           </span>
