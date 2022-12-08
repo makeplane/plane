@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import type { NextPage } from "next";
 // hooks
 import useUser from "lib/hooks/useUser";
+// hoc
+import withAuth from "lib/hoc/withAuthWrapper";
 // layouts
 import AdminLayout from "layouts/AdminLayout";
 // components
@@ -129,4 +131,4 @@ const Projects: NextPage = () => {
   );
 };
 
-export default Projects;
+export default withAuth(Projects);

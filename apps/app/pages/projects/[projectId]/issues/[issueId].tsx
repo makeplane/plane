@@ -22,6 +22,8 @@ import {
 } from "constants/fetch-keys";
 // hooks
 import useUser from "lib/hooks/useUser";
+// hoc
+import withAuth from "lib/hoc/withAuthWrapper";
 // layouts
 import AdminLayout from "layouts/AdminLayout";
 // components
@@ -606,4 +608,4 @@ const IssueDetail: NextPage = () => {
   );
 };
 
-export default IssueDetail;
+export default withAuth(IssueDetail);

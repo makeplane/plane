@@ -10,9 +10,12 @@ import {
   PROJECT_MEMBERS,
   PROJECT_MEMBER_DETAIL,
   USER_PROJECT_INVITATIONS,
+  PROJECT_VIEW_ENDPOINT,
 } from "constants/api-routes";
 // services
 import APIService from "lib/services/api.service";
+// types
+import type { ProjectViewTheme } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -177,12 +180,27 @@ class ProjectServices extends APIService {
         throw error?.response?.data;
       });
   }
+
   async deleteProjectInvitation(
     workspace_slug: string,
     project_id: string,
     invitation_id: string
   ): Promise<any> {
     return this.delete(PROJECT_INVITATION_DETAIL(workspace_slug, project_id, invitation_id))
+      .then((response) => {
+        return response?.data;
+      })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async setProjectView(
+    workspace_slug: string,
+    project_id: string,
+    data: ProjectViewTheme
+  ): Promise<any> {
+    await this.patch(PROJECT_VIEW_ENDPOINT(workspace_slug, project_id), data)
       .then((response) => {
         return response?.data;
       })

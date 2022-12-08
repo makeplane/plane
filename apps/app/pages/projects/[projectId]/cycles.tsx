@@ -11,6 +11,8 @@ import sprintService from "lib/services/cycles.services";
 import useUser from "lib/hooks/useUser";
 // fetching keys
 import { CYCLE_ISSUES, CYCLE_LIST } from "constants/fetch-keys";
+// hoc
+import withAuth from "lib/hoc/withAuthWrapper";
 // layouts
 import AdminLayout from "layouts/AdminLayout";
 // components
@@ -258,4 +260,4 @@ const ProjectSprints: NextPage = () => {
   );
 };
 
-export default ProjectSprints;
+export default withAuth(ProjectSprints);

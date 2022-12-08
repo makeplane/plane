@@ -8,9 +8,10 @@ import Dropzone from "react-dropzone";
 // services
 import workspaceService from "lib/services/workspace.service";
 import fileServices from "lib/services/file.services";
+// hoc
+import withAuth from "lib/hoc/withAuthWrapper";
 // layouts
 import AdminLayout from "layouts/AdminLayout";
-
 // hooks
 import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
@@ -232,4 +233,4 @@ const WorkspaceSettings = () => {
   );
 };
 
-export default WorkspaceSettings;
+export default withAuth(WorkspaceSettings);

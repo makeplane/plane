@@ -8,6 +8,8 @@ import { Dialog, Transition } from "@headlessui/react";
 // services
 import projectServices from "lib/services/project.service";
 import workspaceService from "lib/services/workspace.service";
+// constants
+import { NETWORK_CHOICES } from "constants/";
 // fetch keys
 import { PROJECTS_LIST, WORKSPACE_MEMBERS } from "constants/fetch-keys";
 // hooks
@@ -15,8 +17,6 @@ import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
 // ui
 import { Button, Input, TextArea, Select } from "ui";
-// common
-import { debounce } from "constants/common";
 // types
 import { IProject, WorkspaceMember } from "types";
 
@@ -25,11 +25,11 @@ type Props = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const NETWORK_CHOICES = { "0": "Secret", "2": "Public" };
-
 const defaultValues: Partial<IProject> = {
   name: "",
+  identifier: "",
   description: "",
+  network: 0,
 };
 
 const IsGuestCondition: React.FC<{
@@ -62,7 +62,10 @@ const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
 
   const { data: workspaceMembers } = useSWR<WorkspaceMember[]>(
     activeWorkspace ? WORKSPACE_MEMBERS(activeWorkspace.slug) : null,
-    activeWorkspace ? () => workspaceService.workspaceMembers(activeWorkspace.slug) : null
+    activeWorkspace ? () => workspaceService.workspaceMembers(activeWorkspace.slug) : null,
+    {
+      shouldRetryOnError: false,
+    }
   );
 
   const { setToastAlert } = useToast();
@@ -79,8 +82,6 @@ const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
     setValue,
   } = useForm<IProject>({
     defaultValues,
-    reValidateMode: "onChange",
-    mode: "all",
   });
 
   const onSubmit = async (formData: IProject) => {
@@ -111,6 +112,7 @@ const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
           handleClose();
           return;
         }
+        err = err.data;
         Object.keys(err).map((key) => {
           const errorMessages = err[key];
           setError(key as keyof IProject, {
@@ -122,16 +124,6 @@ const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
 
   const projectName = watch("name") ?? "";
   const projectIdentifier = watch("identifier") ?? "";
-
-  const checkIdentifier = (slug: string, value: string) => {
-    projectServices.checkProjectIdentifierAvailability(slug, value).then((response) => {
-      console.log(response);
-      if (response.exists) setError("identifier", { message: "Identifier already exists" });
-    });
-  };
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const checkIdentifierAvailability = useCallback(debounce(checkIdentifier, 1500), []);
 
   useEffect(() => {
     if (projectName && isChangeIdentifierRequired) {
@@ -234,11 +226,7 @@ const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                           placeholder="Enter Project Identifier"
                           error={errors.identifier}
                           register={register}
-                          onChange={(e: any) => {
-                            setIsChangeIdentifierRequired(false);
-                            if (!activeWorkspace || !e.target.value) return;
-                            checkIdentifierAvailability(activeWorkspace.slug, e.target.value);
-                          }}
+                          onChange={() => setIsChangeIdentifierRequired(false)}
                           validations={{
                             required: "Identifier is required",
                             minLength: {

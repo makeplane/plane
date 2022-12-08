@@ -10,6 +10,8 @@ import useSWR from "swr";
 import { useForm, Controller } from "react-hook-form";
 // headless ui
 import { Listbox, Tab, Transition } from "@headlessui/react";
+// hoc
+import withAuth from "lib/hoc/withAuthWrapper";
 // layouts
 import AdminLayout from "layouts/AdminLayout";
 // service
@@ -20,6 +22,8 @@ import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
 // fetch keys
 import { PROJECT_DETAILS, PROJECTS_LIST, WORKSPACE_MEMBERS } from "constants/fetch-keys";
+// constants
+import { NETWORK_CHOICES } from "constants/";
 // commons
 import { addSpaceIfCamelCase, debounce } from "constants/common";
 // components
@@ -43,8 +47,6 @@ const defaultValues: Partial<IProject> = {
   name: "",
   description: "",
 };
-
-const NETWORK_CHOICES = { "0": "Secret", "2": "Public" };
 
 const ProjectSettings: NextPage = () => {
   const {
@@ -71,7 +73,7 @@ const ProjectSettings: NextPage = () => {
   const { setToastAlert } = useToast();
 
   const { data: projectDetails } = useSWR<IProject>(
-    activeWorkspace && projectId ? PROJECT_DETAILS : null,
+    activeWorkspace && projectId ? PROJECT_DETAILS(projectId as string) : null,
     activeWorkspace
       ? () => projectServices.getProject(activeWorkspace.slug, projectId as string)
       : null
@@ -99,7 +101,7 @@ const ProjectSettings: NextPage = () => {
   }, [projectDetails, reset]);
 
   const onSubmit = async (formData: IProject) => {
-    if (!activeWorkspace) return;
+    if (!activeWorkspace || !projectId) return;
     const payload: Partial<IProject> = {
       name: formData.name,
       network: formData.network,
@@ -111,7 +113,11 @@ const ProjectSettings: NextPage = () => {
     await projectServices
       .updateProject(activeWorkspace.slug, projectId as string, payload)
       .then((res) => {
-        mutate<IProject>(PROJECT_DETAILS, (prevData) => ({ ...prevData, ...res }), false);
+        mutate<IProject>(
+          PROJECT_DETAILS(projectId as string),
+          (prevData) => ({ ...prevData, ...res }),
+          false
+        );
         mutate<IProject[]>(
           PROJECTS_LIST(activeWorkspace.slug),
           (prevData) => {
@@ -253,9 +259,6 @@ const ProjectSettings: NextPage = () => {
                         register={register}
                         label="Description"
                         placeholder="Enter project description"
-                        validations={{
-                          required: "Description is required",
-                        }}
                       />
                     </div>
                     <div className="flex justify-end">
@@ -547,4 +550,4 @@ const ProjectSettings: NextPage = () => {
   );
 };
 
-export default ProjectSettings;
+export default withAuth(ProjectSettings);

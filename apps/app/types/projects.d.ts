@@ -15,3 +15,11 @@ export interface IProject {
   created_by: string;
   updated_by: string;
 }
+
+type ProjectViewTheme = {
+  collapsed: boolean;
+  issueView: "list" | "kanban" | null;
+  groupByProperty: NestedKeyOf<IIssue> | null;
+  filterIssue: "activeIssue" | "backlogIssue" | null;
+  orderBy: NestedKeyOf<IIssue> | null;
+};

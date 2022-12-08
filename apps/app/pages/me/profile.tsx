@@ -8,6 +8,8 @@ import { useForm } from "react-hook-form";
 import Dropzone, { useDropzone } from "react-dropzone";
 // hooks
 import useUser from "lib/hooks/useUser";
+// hoc
+import withAuth from "lib/hoc/withAuthWrapper";
 // layouts
 import AdminLayout from "layouts/AdminLayout";
 // services
@@ -307,4 +309,4 @@ const Profile: NextPage = () => {
   );
 };
 
-export default Profile;
+export default withAuth(Profile);

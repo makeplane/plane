@@ -7,7 +7,7 @@ export const WORKSPACE_INVITATIONS = "WORKSPACE_INVITATIONS";
 export const WORKSPACE_INVITATION = "WORKSPACE_INVITATION";
 
 export const PROJECTS_LIST = (workspaceSlug: string) => `PROJECTS_LIST_${workspaceSlug}`;
-export const PROJECT_DETAILS = "PROJECT_DETAILS";
+export const PROJECT_DETAILS = (projectId: string) => `PROJECT_DETAILS_${projectId}`;
 
 export const PROJECT_MEMBERS = (projectId: string) => `PROJECT_MEMBERS_${projectId}`;
 export const PROJECT_INVITATIONS = "PROJECT_INVITATIONS";

@@ -19,6 +19,8 @@ import { classNames } from "constants/common";
 // services
 import userService from "lib/services/user.service";
 import issuesServices from "lib/services/issues.services";
+// hoc
+import withAuth from "lib/hoc/withAuthWrapper";
 // components
 import ChangeStateDropdown from "components/project/issues/my-issues/ChangeStateDropdown";
 // icons
@@ -278,4 +280,4 @@ const MyIssues: NextPage = () => {
   );
 };
 
-export default MyIssues;
+export default withAuth(MyIssues);

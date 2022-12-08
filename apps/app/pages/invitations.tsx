@@ -11,6 +11,8 @@ import userService from "lib/services/user.service";
 import useUser from "lib/hooks/useUser";
 // constants
 import { USER_WORKSPACE_INVITATIONS } from "constants/api-routes";
+// hoc
+import withAuth from "lib/hoc/withAuthWrapper";
 // layouts
 import DefaultLayout from "layouts/DefaultLayout";
 // components
@@ -204,4 +206,4 @@ const OnBoard: NextPage = () => {
   );
 };
 
-export default OnBoard;
+export default withAuth(OnBoard);

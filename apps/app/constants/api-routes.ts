@@ -65,6 +65,8 @@ export const PROJECT_MEMBERS = (workspaceSlug: string, projectId: string) =>
   `/api/workspaces/${workspaceSlug}/projects/${projectId}/members/`;
 export const PROJECT_MEMBER_DETAIL = (workspaceSlug: string, projectId: string, memberId: string) =>
   `/api/workspaces/${workspaceSlug}/projects/${projectId}/members/${memberId}/`;
+export const PROJECT_VIEW_ENDPOINT = (workspaceSlug: string, projectId: string) =>
+  `/api/workspaces/${workspaceSlug}/projects/${projectId}/project-views/`;
 
 export const PROJECT_INVITATIONS = (workspaceSlug: string, projectId: string) =>
   `/api/workspaces/${workspaceSlug}/projects/${projectId}/invitations/`;
