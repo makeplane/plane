@@ -21,10 +21,11 @@ import type { CycleViewProps as Props, CycleIssueResponse, IssueResponse } from 
 // fetch keys
 import { CYCLE_ISSUES } from "constants/fetch-keys";
 // constants
-import { renderShortNumericDateFormat } from "constants/common";
+import { addSpaceIfCamelCase, renderShortNumericDateFormat } from "constants/common";
 import issuesServices from "lib/services/issues.services";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 import { Draggable } from "react-beautiful-dnd";
+import { CalendarDaysIcon } from "@heroicons/react/24/outline";
 
 const CycleView: React.FC<Props> = ({
   cycle,
@@ -70,14 +71,13 @@ const CycleView: React.FC<Props> = ({
       />
       <Disclosure as="div" defaultOpen>
         {({ open }) => (
-          <div className="bg-white px-4 py-2 rounded-lg space-y-3">
-            <div className="flex items-center">
-              <Disclosure.Button className="w-full">
+          <div className="bg-white rounded-lg">
+            <div className="flex justify-between items-center bg-gray-100 px-4 py-3 rounded-t-lg">
+              <Disclosure.Button>
                 <div className="flex items-center gap-x-2">
                   <span>
                     <ChevronDownIcon
-                      width={22}
-                      className={`text-gray-500 ${!open ? "transform -rotate-90" : ""}`}
+                      className={`h-4 w-4 text-gray-500 ${!open ? "transform -rotate-90" : ""}`}
                     />
                   </span>
                   <h2 className="font-medium leading-5">{cycle.name}</h2>
@@ -93,11 +93,15 @@ const CycleView: React.FC<Props> = ({
                       {cycle.end_date ? renderShortNumericDateFormat(cycle.end_date) : ""}
                     </span>
                   </p>
+                  <p className="text-gray-500 text-sm ml-0.5">{cycleIssues?.length}</p>
                 </div>
               </Disclosure.Button>
 
               <Menu as="div" className="relative inline-block">
-                <Menu.Button className="grid place-items-center rounded p-1 hover:bg-gray-100 focus:outline-none">
+                <Menu.Button
+                  as="button"
+                  className={`h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-200 duration-300 outline-none`}
+                >
                   <EllipsisHorizontalIcon className="h-4 w-4" />
                 </Menu.Button>
                 <Menu.Items className="absolute origin-top-right right-0 mt-1 p-1 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
@@ -134,7 +138,11 @@ const CycleView: React.FC<Props> = ({
               <Disclosure.Panel>
                 <StrictModeDroppable droppableId={cycle.id}>
                   {(provided) => (
-                    <div ref={provided.innerRef} {...provided.droppableProps}>
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.droppableProps}
+                      className="divide-y-2"
+                    >
                       {cycleIssues ? (
                         cycleIssues.length > 0 ? (
                           cycleIssues.map((issue, index) => (
@@ -145,7 +153,7 @@ const CycleView: React.FC<Props> = ({
                             >
                               {(provided, snapshot) => (
                                 <div
-                                  className={`group p-2 hover:bg-gray-100 text-sm rounded flex items-center justify-between ${
+                                  className={`group px-2 py-3 text-sm rounded flex items-center justify-between ${
                                     snapshot.isDragging
                                       ? "bg-gray-100 shadow-lg border border-theme"
                                       : ""
@@ -156,7 +164,7 @@ const CycleView: React.FC<Props> = ({
                                   <div className="flex items-center gap-2">
                                     <button
                                       type="button"
-                                      className={`h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-200 duration-300 rotate-90 outline-none`}
+                                      className={`h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-100 duration-300 rotate-90 outline-none`}
                                       {...provided.dragHandleProps}
                                     >
                                       <EllipsisHorizontalIcon className="h-4 w-4 text-gray-600" />
@@ -172,29 +180,37 @@ const CycleView: React.FC<Props> = ({
                                       href={`/projects/${projectId}/issues/${issue.issue_details.id}`}
                                     >
                                       <a className="flex items-center gap-2">
-                                        <span className="text-xs text-gray-500">
+                                        <span className="flex-shrink-0 text-xs text-gray-500">
                                           {activeProject?.identifier}-
                                           {issue.issue_details.sequence_id}
                                         </span>
-                                        {issue.issue_details.name}
+                                        <span>{issue.issue_details.name}</span>
                                         {/* {cycle.id} */}
                                       </a>
                                     </Link>
                                   </div>
                                   <div className="flex items-center gap-2">
-                                    <span
-                                      className="text-black rounded-md px-2 py-0.5 text-sm"
-                                      style={{
-                                        backgroundColor: `${issue.issue_details.state_detail?.color}20`,
-                                        border: `2px solid ${issue.issue_details.state_detail?.color}`,
-                                      }}
-                                    >
-                                      {issue.issue_details.state_detail?.name}
-                                    </span>
+                                    <div className="flex-shrink-0 flex items-center gap-1 hover:bg-gray-100 border rounded shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300">
+                                      <CalendarDaysIcon className="h-4 w-4" />
+                                      {issue.issue_details.start_date
+                                        ? renderShortNumericDateFormat(
+                                            issue.issue_details.start_date
+                                          )
+                                        : "N/A"}
+                                    </div>
+                                    <div className="flex-shrink-0 flex items-center gap-1 hover:bg-gray-100 border rounded shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300">
+                                      <span
+                                        className="flex-shrink-0 h-1.5 w-1.5 rounded-full"
+                                        style={{
+                                          backgroundColor: issue.issue_details.state_detail.color,
+                                        }}
+                                      ></span>
+                                      {addSpaceIfCamelCase(issue.issue_details.state_detail.name)}
+                                    </div>
                                     <Menu as="div" className="relative">
                                       <Menu.Button
                                         as="button"
-                                        className={`h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-200 duration-300 outline-none`}
+                                        className={`h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-100 duration-300 outline-none`}
                                       >
                                         <EllipsisHorizontalIcon className="h-4 w-4" />
                                       </Menu.Button>
@@ -261,49 +277,51 @@ const CycleView: React.FC<Props> = ({
                 </StrictModeDroppable>
               </Disclosure.Panel>
             </Transition>
-            <Menu as="div" className="relative inline-block">
-              <Menu.Button className="flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-100 text-xs font-medium">
-                <PlusIcon className="h-3 w-3" />
-                Add issue
-              </Menu.Button>
+            <div className="p-3">
+              <Menu as="div" className="relative inline-block">
+                <Menu.Button className="flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-100 text-xs font-medium">
+                  <PlusIcon className="h-3 w-3" />
+                  Add issue
+                </Menu.Button>
 
-              <Transition
-                as={React.Fragment}
-                enter="transition ease-out duration-100"
-                enterFrom="transform opacity-0 scale-95"
-                enterTo="transform opacity-100 scale-100"
-                leave="transition ease-in duration-75"
-                leaveFrom="transform opacity-100 scale-100"
-                leaveTo="transform opacity-0 scale-95"
-              >
-                <Menu.Items className="absolute left-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
-                  <div className="p-1">
-                    <Menu.Item as="div">
-                      {(active) => (
-                        <button
-                          type="button"
-                          className="text-left p-2 text-gray-900 hover:bg-theme hover:text-white rounded-md text-xs whitespace-nowrap w-full"
-                          onClick={() => openIssueModal(cycle.id)}
-                        >
-                          Create new
-                        </button>
-                      )}
-                    </Menu.Item>
-                    <Menu.Item as="div">
-                      {(active) => (
-                        <button
-                          type="button"
-                          className="p-2 text-left text-gray-900 hover:bg-theme hover:text-white rounded-md text-xs whitespace-nowrap"
-                          onClick={() => setCycleIssuesListModal(true)}
-                        >
-                          Add an existing issue
-                        </button>
-                      )}
-                    </Menu.Item>
-                  </div>
-                </Menu.Items>
-              </Transition>
-            </Menu>
+                <Transition
+                  as={React.Fragment}
+                  enter="transition ease-out duration-100"
+                  enterFrom="transform opacity-0 scale-95"
+                  enterTo="transform opacity-100 scale-100"
+                  leave="transition ease-in duration-75"
+                  leaveFrom="transform opacity-100 scale-100"
+                  leaveTo="transform opacity-0 scale-95"
+                >
+                  <Menu.Items className="absolute left-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+                    <div className="p-1">
+                      <Menu.Item as="div">
+                        {(active) => (
+                          <button
+                            type="button"
+                            className="text-left p-2 text-gray-900 hover:bg-theme hover:text-white rounded-md text-xs whitespace-nowrap w-full"
+                            onClick={() => openIssueModal(cycle.id)}
+                          >
+                            Create new
+                          </button>
+                        )}
+                      </Menu.Item>
+                      <Menu.Item as="div">
+                        {(active) => (
+                          <button
+                            type="button"
+                            className="p-2 text-left text-gray-900 hover:bg-theme hover:text-white rounded-md text-xs whitespace-nowrap"
+                            onClick={() => setCycleIssuesListModal(true)}
+                          >
+                            Add an existing issue
+                          </button>
+                        )}
+                      </Menu.Item>
+                    </div>
+                  </Menu.Items>
+                </Transition>
+              </Menu>
+            </div>
           </div>
         )}
       </Disclosure>

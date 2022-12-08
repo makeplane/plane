@@ -5,10 +5,20 @@ import Link from "next/link";
 import Image from "next/image";
 // swr
 import useSWR, { mutate } from "swr";
+// headless ui
+import { Disclosure, Listbox, Menu, Transition } from "@headlessui/react";
 // ui
-import { Listbox, Transition } from "@headlessui/react";
+import { Spinner } from "ui";
 // icons
-import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import {
+  ChevronDownIcon,
+  PlusIcon,
+  CalendarDaysIcon,
+  EllipsisHorizontalIcon,
+} from "@heroicons/react/24/outline";
+import User from "public/user.png";
+// components
+import CreateUpdateIssuesModal from "components/project/issues/CreateUpdateIssueModal";
 // types
 import { IIssue, IssueResponse, NestedKeyOf, Properties, WorkspaceMember } from "types";
 // hooks
@@ -20,7 +30,12 @@ import { PROJECT_ISSUES_LIST, WORKSPACE_MEMBERS } from "constants/fetch-keys";
 import issuesServices from "lib/services/issues.services";
 import workspaceService from "lib/services/workspace.service";
 // constants
-import { addSpaceIfCamelCase, classNames, renderShortNumericDateFormat } from "constants/common";
+import {
+  addSpaceIfCamelCase,
+  classNames,
+  findHowManyDaysLeft,
+  renderShortNumericDateFormat,
+} from "constants/common";
 
 // types
 type Props = {
@@ -38,6 +53,11 @@ const ListView: React.FC<Props> = ({
   setSelectedIssue,
   handleDeleteIssue,
 }) => {
+  const [isCreateIssuesModalOpen, setIsCreateIssuesModalOpen] = useState(false);
+  const [preloadedData, setPreloadedData] = useState<
+    (Partial<IIssue> & { actionType: "createIssue" | "edit" | "delete" }) | undefined
+  >(undefined);
+
   const { activeWorkspace, activeProject, states } = useUser();
 
   const partialUpdateIssue = (formData: Partial<IIssue>, issueId: string) => {
@@ -66,348 +86,449 @@ const ListView: React.FC<Props> = ({
   );
 
   return (
-    <div className="mt-4 flex flex-col space-y-5">
-      {Object.keys(groupedByIssues).map((singleGroup) => (
-        <div key={singleGroup} className="overflow-x-auto">
-          <div className="inline-block min-w-full p-0.5 align-middle">
-            <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-              <table className="min-w-full">
-                {selectedGroup !== null ? (
-                  <thead className="bg-gray-100">
-                    <tr>
-                      <th
-                        colSpan={14}
-                        scope="col"
-                        className="px-3 py-3.5 text-left uppercase text-sm font-semibold text-gray-900"
-                      >
-                        <div className="flex items-center gap-2">
-                          {selectedGroup === "state_detail.name" ? (
-                            <span
-                              className="flex-shrink-0 h-1.5 w-1.5 block rounded-full"
-                              style={{
-                                backgroundColor: states?.find((s) => s.name === singleGroup)?.color,
-                              }}
-                            ></span>
-                          ) : null}
+    <>
+      <CreateUpdateIssuesModal
+        isOpen={isCreateIssuesModalOpen && preloadedData?.actionType === "createIssue"}
+        setIsOpen={setIsCreateIssuesModalOpen}
+        prePopulateData={{
+          ...preloadedData,
+        }}
+        projectId={activeProject?.id as string}
+      />
+      <div className="mt-4 flex flex-col space-y-5">
+        {Object.keys(groupedByIssues).map((singleGroup) => (
+          <Disclosure key={singleGroup} as="div" defaultOpen>
+            {({ open }) => (
+              <div className="bg-white rounded-lg">
+                <div className="bg-gray-100 px-4 py-3 rounded-t-lg">
+                  <Disclosure.Button>
+                    <div className="flex items-center gap-x-2">
+                      <span>
+                        <ChevronDownIcon
+                          className={`h-4 w-4 text-gray-500 ${!open ? "transform -rotate-90" : ""}`}
+                        />
+                      </span>
+                      {selectedGroup !== null ? (
+                        <h2 className="font-medium leading-5 capitalize">
                           {singleGroup === null || singleGroup === "null"
                             ? selectedGroup === "priority" && "No priority"
                             : addSpaceIfCamelCase(singleGroup)}
-                          <span className="ml-2 text-gray-500 font-normal text-sm">
-                            {groupedByIssues[singleGroup as keyof IIssue].length}
-                          </span>
-                        </div>
-                      </th>
-                    </tr>
-                  </thead>
-                ) : (
-                  <thead className="bg-gray-100">
-                    <tr>
-                      <th
-                        colSpan={14}
-                        scope="col"
-                        className="px-3 py-3.5 text-left uppercase text-sm font-semibold text-gray-900"
-                      >
-                        ALL ISSUES
-                        <span className="ml-2 text-gray-500 font-normal text-sm">
-                          {groupedByIssues[singleGroup as keyof IIssue].length}
-                        </span>
-                      </th>
-                    </tr>
-                  </thead>
-                )}
-                <tbody className="bg-white">
-                  {groupedByIssues[singleGroup].length > 0
-                    ? groupedByIssues[singleGroup].map((issue: IIssue, index: number) => {
-                        const assignees = [
-                          ...(issue?.assignees_list ?? []),
-                          ...(issue?.assignees ?? []),
-                        ]?.map(
-                          (assignee) => people?.find((p) => p.member.id === assignee)?.member.email
-                        );
+                        </h2>
+                      ) : (
+                        <h2 className="font-medium leading-5">All Issues</h2>
+                      )}
+                      <p className="text-gray-500 text-sm">
+                        {groupedByIssues[singleGroup as keyof IIssue].length}
+                      </p>
+                    </div>
+                  </Disclosure.Button>
+                </div>
+                <Transition
+                  show={open}
+                  enter="transition duration-100 ease-out"
+                  enterFrom="transform opacity-0"
+                  enterTo="transform opacity-100"
+                  leave="transition duration-75 ease-out"
+                  leaveFrom="transform opacity-100"
+                  leaveTo="transform opacity-0"
+                >
+                  <Disclosure.Panel>
+                    <div className="divide-y-2">
+                      {groupedByIssues[singleGroup] ? (
+                        groupedByIssues[singleGroup].length > 0 ? (
+                          groupedByIssues[singleGroup].map((issue: IIssue) => {
+                            const assignees = [
+                              ...(issue?.assignees_list ?? []),
+                              ...(issue?.assignees ?? []),
+                            ]?.map((assignee) => {
+                              const tempPerson = people?.find(
+                                (p) => p.member.id === assignee
+                              )?.member;
 
-                        return (
-                          <tr
-                            key={issue.id}
-                            className={classNames(
-                              index === 0 ? "border-gray-300" : "border-gray-200",
-                              "border-t"
-                            )}
-                          >
-                            <td className="px-3 py-4 text-sm font-medium text-gray-900 w-[15rem]">
-                              <Link href={`/projects/${issue.project}/issues/${issue.id}`}>
-                                <a className="hover:text-theme duration-300">{issue.name}</a>
-                              </Link>
-                            </td>
-                            {Object.keys(properties).map(
-                              (key) =>
-                                properties[key as keyof Properties] && (
-                                  <React.Fragment key={key}>
-                                    {(key as keyof Properties) === "key" ? (
-                                      <td className="px-3 py-4 font-medium text-gray-900 text-xs whitespace-nowrap">
-                                        {activeProject?.identifier}-{issue.sequence_id}
-                                      </td>
-                                    ) : (key as keyof Properties) === "priority" ? (
-                                      <td className="px-3 py-4 text-sm font-medium text-gray-900 relative">
-                                        <Listbox
-                                          as="div"
-                                          value={issue.priority}
-                                          onChange={(data: string) => {
-                                            partialUpdateIssue({ priority: data }, issue.id);
-                                          }}
-                                          className="flex-shrink-0"
-                                        >
-                                          {({ open }) => (
-                                            <>
-                                              <div className="">
-                                                <Listbox.Button className="inline-flex items-center whitespace-nowrap rounded-full bg-gray-50 py-1 px-0.5 text-xs font-medium text-gray-500 hover:bg-gray-100 border">
-                                                  <span
-                                                    className={classNames(
-                                                      issue.priority ? "" : "text-gray-900",
-                                                      "hidden truncate capitalize sm:block w-16"
-                                                    )}
+                              return {
+                                avatar: tempPerson?.avatar,
+                                first_name: tempPerson?.first_name,
+                                email: tempPerson?.email,
+                              };
+                            });
+
+                            return (
+                              <div
+                                key={issue.id}
+                                className="group px-4 py-3 text-sm rounded flex items-center justify-between"
+                              >
+                                <div className="flex items-center gap-2">
+                                  <span
+                                    className={`h-1.5 w-1.5 block rounded-full`}
+                                    style={{
+                                      backgroundColor: issue.state_detail.color,
+                                    }}
+                                  />
+                                  <Link href={`/projects/${activeProject?.id}/issues/${issue.id}`}>
+                                    <a className="flex items-center gap-2">
+                                      {properties.key && (
+                                        <span className="flex-shrink-0 text-xs text-gray-500">
+                                          {activeProject?.identifier}-{issue.sequence_id}
+                                        </span>
+                                      )}
+                                      <span>{issue.name}</span>
+                                    </a>
+                                  </Link>
+                                </div>
+                                <div className="flex-shrink-0 flex items-center gap-x-1 gap-y-2 text-xs flex-wrap">
+                                  {properties.priority && (
+                                    <Listbox
+                                      as="div"
+                                      value={issue.priority}
+                                      onChange={(data: string) => {
+                                        partialUpdateIssue({ priority: data }, issue.id);
+                                      }}
+                                      className="flex-shrink-0"
+                                    >
+                                      {({ open }) => (
+                                        <>
+                                          <div>
+                                            <Listbox.Button
+                                              className={`rounded shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 capitalize ${
+                                                issue.priority === "urgent"
+                                                  ? "bg-red-100 text-red-600"
+                                                  : issue.priority === "high"
+                                                  ? "bg-orange-100 text-orange-500"
+                                                  : issue.priority === "medium"
+                                                  ? "bg-yellow-100 text-yellow-500"
+                                                  : issue.priority === "low"
+                                                  ? "bg-green-100 text-green-500"
+                                                  : "bg-gray-100"
+                                              }`}
+                                            >
+                                              {issue.priority ?? "None"}
+                                            </Listbox.Button>
+
+                                            <Transition
+                                              show={open}
+                                              as={React.Fragment}
+                                              leave="transition ease-in duration-100"
+                                              leaveFrom="opacity-100"
+                                              leaveTo="opacity-0"
+                                            >
+                                              <Listbox.Options className="absolute z-10 mt-1 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
+                                                {PRIORITIES?.map((priority) => (
+                                                  <Listbox.Option
+                                                    key={priority}
+                                                    className={({ active }) =>
+                                                      classNames(
+                                                        active ? "bg-indigo-50" : "bg-white",
+                                                        "cursor-pointer capitalize select-none px-3 py-2"
+                                                      )
+                                                    }
+                                                    value={priority}
                                                   >
-                                                    {issue.priority ?? "None"}
-                                                  </span>
-                                                </Listbox.Button>
+                                                    {priority}
+                                                  </Listbox.Option>
+                                                ))}
+                                              </Listbox.Options>
+                                            </Transition>
+                                          </div>
+                                        </>
+                                      )}
+                                    </Listbox>
+                                  )}
+                                  {properties.state && (
+                                    <Listbox
+                                      as="div"
+                                      value={issue.state}
+                                      onChange={(data: string) => {
+                                        partialUpdateIssue({ state: data }, issue.id);
+                                      }}
+                                      className="flex-shrink-0"
+                                    >
+                                      {({ open }) => (
+                                        <>
+                                          <div>
+                                            <Listbox.Button className="flex items-center gap-1 hover:bg-gray-100 border rounded shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300">
+                                              <span
+                                                className="flex-shrink-0 h-1.5 w-1.5 rounded-full"
+                                                style={{
+                                                  backgroundColor: issue.state_detail.color,
+                                                }}
+                                              ></span>
+                                              {addSpaceIfCamelCase(issue.state_detail.name)}
+                                            </Listbox.Button>
 
-                                                <Transition
-                                                  show={open}
-                                                  as={React.Fragment}
-                                                  leave="transition ease-in duration-100"
-                                                  leaveFrom="opacity-100"
-                                                  leaveTo="opacity-0"
-                                                >
-                                                  <Listbox.Options className="absolute z-10 mt-1 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
-                                                    {PRIORITIES?.map((priority) => (
-                                                      <Listbox.Option
-                                                        key={priority}
-                                                        className={({ active }) =>
-                                                          classNames(
-                                                            active ? "bg-indigo-50" : "bg-white",
-                                                            "cursor-pointer capitalize select-none px-3 py-2"
-                                                          )
-                                                        }
-                                                        value={priority}
-                                                      >
-                                                        {priority}
-                                                      </Listbox.Option>
-                                                    ))}
-                                                  </Listbox.Options>
-                                                </Transition>
-                                              </div>
-                                            </>
-                                          )}
-                                        </Listbox>
-                                      </td>
-                                    ) : (key as keyof Properties) === "assignee" ? (
-                                      <td className="px-3 py-4 text-sm font-medium text-gray-900 relative">
-                                        <Listbox
-                                          as="div"
-                                          value={issue.assignees}
-                                          onChange={(data: any) => {
-                                            const newData = issue.assignees ?? [];
-                                            if (newData.includes(data)) {
-                                              newData.splice(newData.indexOf(data), 1);
-                                            } else {
-                                              newData.push(data);
-                                            }
-                                            partialUpdateIssue(
-                                              { assignees_list: newData },
-                                              issue.id
-                                            );
-                                          }}
-                                          className="flex-shrink-0"
-                                        >
-                                          {({ open }) => (
-                                            <>
-                                              <div>
-                                                <Listbox.Button className="rounded-full bg-gray-50 px-5 py-1 text-xs text-gray-500 hover:bg-gray-100 border">
-                                                  {() => {
-                                                    if (assignees.length > 0)
-                                                      return (
-                                                        <>
-                                                          {assignees.map((assignee, index) => (
-                                                            <div
-                                                              key={index}
-                                                              className={
-                                                                "hidden truncate sm:block text-left"
-                                                              }
-                                                            >
-                                                              {assignee}
-                                                            </div>
-                                                          ))}
-                                                        </>
-                                                      );
-                                                    else return <span>None</span>;
-                                                  }}
-                                                </Listbox.Button>
-
-                                                <Transition
-                                                  show={open}
-                                                  as={React.Fragment}
-                                                  leave="transition ease-in duration-100"
-                                                  leaveFrom="opacity-100"
-                                                  leaveTo="opacity-0"
-                                                >
-                                                  <Listbox.Options className="absolute z-10 mt-1 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
-                                                    {people?.map((person) => (
-                                                      <Listbox.Option
-                                                        key={person.id}
-                                                        className={({ active }) =>
-                                                          classNames(
-                                                            active ? "bg-indigo-50" : "bg-white",
-                                                            "cursor-pointer select-none px-3 py-2"
-                                                          )
-                                                        }
-                                                        value={person.member.id}
-                                                      >
-                                                        <div
-                                                          className={`flex items-center gap-x-1 ${
-                                                            assignees.includes(
-                                                              person.member.first_name
-                                                            )
-                                                              ? "font-medium"
-                                                              : "font-normal"
-                                                          }`}
-                                                        >
-                                                          {person.member.avatar &&
-                                                          person.member.avatar !== "" ? (
-                                                            <div className="relative w-4 h-4">
-                                                              <Image
-                                                                src={person.member.avatar}
-                                                                alt="avatar"
-                                                                className="rounded-full"
-                                                                layout="fill"
-                                                                objectFit="cover"
-                                                              />
-                                                            </div>
-                                                          ) : (
-                                                            <p>
-                                                              {person.member.first_name.charAt(0)}
-                                                            </p>
-                                                          )}
-                                                          <p>{person.member.first_name}</p>
+                                            <Transition
+                                              show={open}
+                                              as={React.Fragment}
+                                              leave="transition ease-in duration-100"
+                                              leaveFrom="opacity-100"
+                                              leaveTo="opacity-0"
+                                            >
+                                              <Listbox.Options className="absolute z-10 mt-1 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
+                                                {states?.map((state) => (
+                                                  <Listbox.Option
+                                                    key={state.id}
+                                                    className={({ active }) =>
+                                                      classNames(
+                                                        active ? "bg-indigo-50" : "bg-white",
+                                                        "cursor-pointer select-none px-3 py-2"
+                                                      )
+                                                    }
+                                                    value={state.id}
+                                                  >
+                                                    {addSpaceIfCamelCase(state.name)}
+                                                  </Listbox.Option>
+                                                ))}
+                                              </Listbox.Options>
+                                            </Transition>
+                                          </div>
+                                        </>
+                                      )}
+                                    </Listbox>
+                                  )}
+                                  {properties.start_date && (
+                                    <div className="flex-shrink-0 flex items-center gap-1 hover:bg-gray-100 border rounded shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300">
+                                      <CalendarDaysIcon className="h-4 w-4" />
+                                      {issue.start_date
+                                        ? renderShortNumericDateFormat(issue.start_date)
+                                        : "N/A"}
+                                    </div>
+                                  )}
+                                  {properties.target_date && (
+                                    <div
+                                      className={`flex-shrink-0 group flex items-center gap-1 hover:bg-gray-100 border rounded shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300 ${
+                                        issue.target_date === null
+                                          ? ""
+                                          : issue.target_date < new Date().toISOString()
+                                          ? "text-red-600"
+                                          : findHowManyDaysLeft(issue.target_date) <= 3 &&
+                                            "text-orange-400"
+                                      }`}
+                                    >
+                                      <CalendarDaysIcon className="h-4 w-4" />
+                                      {issue.target_date
+                                        ? renderShortNumericDateFormat(issue.target_date)
+                                        : "N/A"}
+                                      {issue.target_date && (
+                                        <span className="absolute -top-full mb-2 left-4 border transition-opacity opacity-0 group-hover:opacity-100 bg-white rounded px-2 py-1">
+                                          {issue.target_date < new Date().toISOString()
+                                            ? `Target date has passed by ${findHowManyDaysLeft(
+                                                issue.target_date
+                                              )} days`
+                                            : findHowManyDaysLeft(issue.target_date) <= 3
+                                            ? `Target date is in ${findHowManyDaysLeft(
+                                                issue.target_date
+                                              )} days`
+                                            : "Target date"}
+                                        </span>
+                                      )}
+                                    </div>
+                                  )}
+                                  {properties.assignee && (
+                                    <Listbox
+                                      as="div"
+                                      value={issue.assignees}
+                                      onChange={(data: any) => {
+                                        const newData = issue.assignees ?? [];
+                                        if (newData.includes(data)) {
+                                          newData.splice(newData.indexOf(data), 1);
+                                        } else {
+                                          newData.push(data);
+                                        }
+                                        partialUpdateIssue({ assignees_list: newData }, issue.id);
+                                      }}
+                                      className="relative flex-shrink-0"
+                                    >
+                                      {({ open }) => (
+                                        <>
+                                          <div>
+                                            <Listbox.Button>
+                                              <div className="flex items-center gap-1 text-xs cursor-pointer">
+                                                {assignees.length > 0 ? (
+                                                  assignees.map((assignee, index: number) => (
+                                                    <div
+                                                      key={index}
+                                                      className={`relative z-[1] h-5 w-5 rounded-full ${
+                                                        index !== 0 ? "-ml-2.5" : ""
+                                                      }`}
+                                                    >
+                                                      {assignee.avatar && assignee.avatar !== "" ? (
+                                                        <div className="h-5 w-5 border-2 bg-white border-white rounded-full">
+                                                          <Image
+                                                            src={assignee.avatar}
+                                                            height="100%"
+                                                            width="100%"
+                                                            className="rounded-full"
+                                                            alt={assignee?.first_name}
+                                                          />
                                                         </div>
-                                                      </Listbox.Option>
-                                                    ))}
-                                                  </Listbox.Options>
-                                                </Transition>
+                                                      ) : (
+                                                        <div
+                                                          className={`h-5 w-5 bg-gray-700 text-white border-2 border-white grid place-items-center rounded-full`}
+                                                        >
+                                                          {assignee.first_name?.charAt(0)}
+                                                        </div>
+                                                      )}
+                                                    </div>
+                                                  ))
+                                                ) : (
+                                                  <div className="h-5 w-5 border-2 bg-white border-white rounded-full">
+                                                    <Image
+                                                      src={User}
+                                                      height="100%"
+                                                      width="100%"
+                                                      className="rounded-full"
+                                                      alt="No user"
+                                                    />
+                                                  </div>
+                                                )}
                                               </div>
-                                            </>
-                                          )}
-                                        </Listbox>
-                                      </td>
-                                    ) : (key as keyof Properties) === "state" ? (
-                                      <td className="px-3 py-4 text-sm font-medium text-gray-900 relative">
-                                        <Listbox
-                                          as="div"
-                                          value={issue.state}
-                                          onChange={(data: string) => {
-                                            partialUpdateIssue({ state: data }, issue.id);
-                                          }}
-                                          className="flex-shrink-0"
-                                        >
-                                          {({ open }) => (
-                                            <>
-                                              <div>
-                                                <Listbox.Button
-                                                  className="inline-flex items-center whitespace-nowrap rounded-full px-2 py-1 text-xs font-medium text-gray-500 hover:bg-gray-100 border"
-                                                  style={{
-                                                    border: `2px solid ${issue.state_detail.color}`,
-                                                    backgroundColor: `${issue.state_detail.color}20`,
-                                                  }}
-                                                >
-                                                  <span
-                                                    className={classNames(
-                                                      issue.state ? "" : "text-gray-900",
-                                                      "hidden capitalize sm:block w-16"
-                                                    )}
-                                                  >
-                                                    {addSpaceIfCamelCase(issue.state_detail.name)}
-                                                  </span>
-                                                </Listbox.Button>
+                                            </Listbox.Button>
 
-                                                <Transition
-                                                  show={open}
-                                                  as={React.Fragment}
-                                                  leave="transition ease-in duration-100"
-                                                  leaveFrom="opacity-100"
-                                                  leaveTo="opacity-0"
-                                                >
-                                                  <Listbox.Options className="absolute z-10 mt-1 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
-                                                    {states?.map((state) => (
-                                                      <Listbox.Option
-                                                        key={state.id}
-                                                        className={({ active }) =>
-                                                          classNames(
-                                                            active ? "bg-indigo-50" : "bg-white",
-                                                            "cursor-pointer select-none px-3 py-2"
-                                                          )
-                                                        }
-                                                        value={state.id}
-                                                      >
-                                                        {addSpaceIfCamelCase(state.name)}
-                                                      </Listbox.Option>
-                                                    ))}
-                                                  </Listbox.Options>
-                                                </Transition>
-                                              </div>
-                                            </>
-                                          )}
-                                        </Listbox>
-                                      </td>
-                                    ) : (key as keyof Properties) === "target_date" ? (
-                                      <td className="px-3 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">
-                                        {issue.target_date
-                                          ? renderShortNumericDateFormat(issue.target_date)
-                                          : "-"}
-                                      </td>
-                                    ) : (
-                                      <td className="px-3 py-4 text-sm font-medium text-gray-900 relative capitalize">
-                                        {issue[key as keyof IIssue] ??
-                                          (issue[key as keyof IIssue] as any)?.name ??
-                                          "None"}
-                                      </td>
-                                    )}
-                                  </React.Fragment>
-                                )
-                            )}
-                            <td className="px-3">
-                              <div className="flex justify-end items-center gap-2">
-                                <button
-                                  type="button"
-                                  className="flex items-center bg-blue-100 text-blue-600 hover:bg-blue-200 duration-300 font-medium px-2 py-1 rounded-md text-sm outline-none"
-                                  onClick={() => {
-                                    setSelectedIssue({
-                                      ...issue,
-                                      actionType: "edit",
-                                    });
-                                  }}
-                                >
-                                  <PencilIcon className="h-3 w-3" />
-                                </button>
-                                <button
-                                  type="button"
-                                  className="flex items-center bg-red-100 text-red-600 hover:bg-red-200 duration-300 font-medium px-2 py-1 rounded-md text-sm outline-none"
-                                  onClick={() => {
-                                    handleDeleteIssue(issue.id);
-                                  }}
-                                >
-                                  <TrashIcon className="h-3 w-3" />
-                                </button>
+                                            <Transition
+                                              show={open}
+                                              as={React.Fragment}
+                                              leave="transition ease-in duration-100"
+                                              leaveFrom="opacity-100"
+                                              leaveTo="opacity-0"
+                                            >
+                                              <Listbox.Options className="absolute right-0 z-10 mt-1 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
+                                                {people?.map((person) => (
+                                                  <Listbox.Option
+                                                    key={person.id}
+                                                    className={({ active }) =>
+                                                      classNames(
+                                                        active ? "bg-indigo-50" : "bg-white",
+                                                        "cursor-pointer select-none px-3 py-2"
+                                                      )
+                                                    }
+                                                    value={person.member.id}
+                                                  >
+                                                    <div
+                                                      className={`flex items-center gap-x-1 ${
+                                                        assignees.includes({
+                                                          avatar: person.member.avatar,
+                                                          first_name: person.member.first_name,
+                                                          email: person.member.email,
+                                                        })
+                                                          ? "font-medium"
+                                                          : "font-normal"
+                                                      }`}
+                                                    >
+                                                      {person.member.avatar &&
+                                                      person.member.avatar !== "" ? (
+                                                        <div className="relative h-4 w-4">
+                                                          <Image
+                                                            src={person.member.avatar}
+                                                            alt="avatar"
+                                                            className="rounded-full"
+                                                            layout="fill"
+                                                            objectFit="cover"
+                                                          />
+                                                        </div>
+                                                      ) : (
+                                                        <div className="h-4 w-4 bg-gray-700 text-white grid place-items-center capitalize rounded-full">
+                                                          {person.member.first_name &&
+                                                          person.member.first_name !== ""
+                                                            ? person.member.first_name.charAt(0)
+                                                            : person.member.email.charAt(0)}
+                                                        </div>
+                                                      )}
+                                                      <p>
+                                                        {person.member.first_name &&
+                                                        person.member.first_name !== ""
+                                                          ? person.member.first_name
+                                                          : person.member.email}
+                                                      </p>
+                                                    </div>
+                                                  </Listbox.Option>
+                                                ))}
+                                              </Listbox.Options>
+                                            </Transition>
+                                          </div>
+                                        </>
+                                      )}
+                                    </Listbox>
+                                  )}
+                                  <Menu as="div" className="relative">
+                                    <Menu.Button
+                                      as="button"
+                                      className={`h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-100 duration-300 outline-none`}
+                                    >
+                                      <EllipsisHorizontalIcon className="h-4 w-4" />
+                                    </Menu.Button>
+                                    <Menu.Items className="absolute origin-top-right right-0.5 mt-1 p-1 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+                                      <Menu.Item>
+                                        <button
+                                          type="button"
+                                          className="text-left p-2 text-gray-900 hover:bg-theme hover:text-white rounded-md text-xs whitespace-nowrap w-full"
+                                          onClick={() => {
+                                            setSelectedIssue({
+                                              ...issue,
+                                              actionType: "edit",
+                                            });
+                                          }}
+                                        >
+                                          Edit
+                                        </button>
+                                      </Menu.Item>
+                                      <Menu.Item>
+                                        <div className="hover:bg-gray-100 border-b last:border-0">
+                                          <button
+                                            type="button"
+                                            className="text-left p-2 text-gray-900 hover:bg-theme hover:text-white rounded-md text-xs whitespace-nowrap w-full"
+                                            onClick={() => {
+                                              handleDeleteIssue(issue.id);
+                                            }}
+                                          >
+                                            Delete permanently
+                                          </button>
+                                        </div>
+                                      </Menu.Item>
+                                    </Menu.Items>
+                                  </Menu>
+                                </div>
                               </div>
-                            </td>
-                          </tr>
-                        );
-                      })
-                    : null}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
+                            );
+                          })
+                        ) : (
+                          <p className="text-sm px-4 py-3 text-gray-500">No issues.</p>
+                        )
+                      ) : (
+                        <div className="h-full w-full flex items-center justify-center">
+                          <Spinner />
+                        </div>
+                      )}
+                    </div>
+                  </Disclosure.Panel>
+                </Transition>
+                <div className="p-3">
+                  <button
+                    type="button"
+                    className="flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-100 text-xs font-medium"
+                    onClick={() => {
+                      setIsCreateIssuesModalOpen(true);
+                      if (selectedGroup !== null) {
+                        const stateId =
+                          selectedGroup === "state_detail.name"
+                            ? states?.find((s) => s.name === singleGroup)?.id ?? null
+                            : null;
+                        setPreloadedData({
+                          state: stateId !== null ? stateId : undefined,
+                          [selectedGroup]: singleGroup,
+                          actionType: "createIssue",
+                        });
+                      }
+                    }}
+                  >
+                    <PlusIcon className="h-3 w-3" />
+                    Add issue
+                  </button>
+                </div>
+              </div>
+            )}
+          </Disclosure>
+        ))}
+      </div>
+    </>
   );
 };
 

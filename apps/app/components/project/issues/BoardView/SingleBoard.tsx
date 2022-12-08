@@ -1,15 +1,10 @@
 import React, { useState } from "react";
 // Next imports
 import Link from "next/link";
+import Image from "next/image";
 // React beautiful dnd
 import { Draggable } from "react-beautiful-dnd";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
-// common
-import {
-  addSpaceIfCamelCase,
-  findHowManyDaysLeft,
-  renderShortNumericDateFormat,
-} from "constants/common";
 // types
 import { IIssue, Properties, NestedKeyOf } from "types";
 // icons
@@ -20,7 +15,13 @@ import {
   EllipsisHorizontalIcon,
   PlusIcon,
 } from "@heroicons/react/24/outline";
-import Image from "next/image";
+import User from "public/user.png";
+// common
+import {
+  addSpaceIfCamelCase,
+  findHowManyDaysLeft,
+  renderShortNumericDateFormat,
+} from "constants/common";
 import { getPriorityIcon } from "constants/global";
 
 type Props = {
@@ -193,17 +194,19 @@ const SingleBoard: React.FC<Props> = ({
                                 {properties.priority && (
                                   <div
                                     className={`rounded shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 capitalize ${
-                                      childIssue.priority === "high"
+                                      childIssue.priority === "urgent"
                                         ? "bg-red-100 text-red-600"
-                                        : childIssue.priority === "medium"
+                                        : childIssue.priority === "high"
                                         ? "bg-orange-100 text-orange-500"
+                                        : childIssue.priority === "medium"
+                                        ? "bg-yellow-100 text-yellow-500"
                                         : childIssue.priority === "low"
                                         ? "bg-green-100 text-green-500"
-                                        : "hidden"
+                                        : "bg-gray-100"
                                     }`}
                                   >
                                     {/* {getPriorityIcon(childIssue.priority ?? "")} */}
-                                    {childIssue.priority}
+                                    {childIssue.priority ?? "None"}
                                   </div>
                                 )}
                                 {properties.state && (
@@ -285,7 +288,15 @@ const SingleBoard: React.FC<Props> = ({
                                         )
                                       )
                                     ) : (
-                                      <span>No assignee.</span>
+                                      <div className="h-5 w-5 border-2 bg-white border-white rounded-full">
+                                        <Image
+                                          src={User}
+                                          height="100%"
+                                          width="100%"
+                                          className="rounded-full"
+                                          alt="No user"
+                                        />
+                                      </div>
                                     )}
                                   </div>
                                 )}

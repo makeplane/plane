@@ -203,7 +203,7 @@ const ProjectSprints: NextPage = () => {
       />
       {cycles ? (
         cycles.length > 0 ? (
-          <div className="h-full w-full space-y-5">
+          <div className="w-full space-y-5">
             <Breadcrumbs>
               <BreadcrumbItem title="Projects" link="/projects" />
               <BreadcrumbItem title={`${activeProject?.name ?? "Project"} Cycles`} />
