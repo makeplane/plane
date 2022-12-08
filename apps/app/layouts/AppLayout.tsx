@@ -12,7 +12,7 @@ import CreateProjectModal from "components/project/CreateProjectModal";
 // types
 import type { Props } from "./types";
 
-const AdminLayout: React.FC<Props> = ({ meta, children }) => {
+const AppLayout: React.FC<Props> = ({ meta, children, noPadding = false, bg = "primary" }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const router = useRouter();
@@ -28,10 +28,16 @@ const AdminLayout: React.FC<Props> = ({ meta, children }) => {
       <CreateProjectModal isOpen={isOpen} setIsOpen={setIsOpen} />
       <div className="h-screen w-full flex overflow-x-hidden">
         <Sidebar />
-        <main className="h-full w-full min-w-0 p-5 bg-primary overflow-y-auto">{children}</main>
+        <main
+          className={`h-full w-full min-w-0 overflow-y-auto ${noPadding ? "" : "p-5"} ${
+            bg === "primary" ? "bg-primary" : bg === "secondary" ? "bg-secondary" : "bg-primary"
+          }`}
+        >
+          {children}
+        </main>
       </div>
     </Container>
   );
 };
 
-export default AdminLayout;
+export default AppLayout;

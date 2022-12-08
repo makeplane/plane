@@ -14,7 +14,7 @@ type Props = {
   control: Control<IIssue, any>;
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  issues: IssueResponse | undefined;
+  issues: IIssue[];
 };
 
 const SelectParent: React.FC<Props> = ({ control, isOpen, setIsOpen, issues }) => {

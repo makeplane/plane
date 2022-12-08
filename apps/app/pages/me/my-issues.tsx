@@ -5,7 +5,7 @@ import type { NextPage } from "next";
 // swr
 import useSWR from "swr";
 // layouts
-import AdminLayout from "layouts/AdminLayout";
+import AppLayout from "layouts/AppLayout";
 // hooks
 import useUser from "lib/hooks/useUser";
 // ui
@@ -74,7 +74,7 @@ const MyIssues: NextPage = () => {
   };
 
   return (
-    <AdminLayout>
+    <AppLayout>
       <div className="w-full h-full flex flex-col space-y-5">
         {myIssues ? (
           <>
@@ -274,7 +274,7 @@ const MyIssues: NextPage = () => {
           </div>
         )}
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 };
 

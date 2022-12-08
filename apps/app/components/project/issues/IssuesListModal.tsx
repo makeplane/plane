@@ -2,35 +2,49 @@
 import React, { useState } from "react";
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
+// ui
+import { Button } from "ui";
 // icons
 import { MagnifyingGlassIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
 // types
-import { IIssue, IssueResponse } from "types";
+import { IIssue } from "types";
 import { classNames } from "constants/common";
 import useUser from "lib/hooks/useUser";
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
+  value?: any;
   onChange: (...event: any[]) => void;
-  issues: IssueResponse | undefined;
+  issues: IIssue[];
+  title?: string;
+  multiple?: boolean;
 };
 
-const IssuesListModal: React.FC<Props> = ({ isOpen, handleClose: onClose, onChange, issues }) => {
+const IssuesListModal: React.FC<Props> = ({
+  isOpen,
+  handleClose: onClose,
+  value,
+  onChange,
+  issues,
+  title = "Issues",
+  multiple = false,
+}) => {
   const [query, setQuery] = useState("");
+  const [values, setValues] = useState<string[]>([]);
 
   const { activeProject } = useUser();
 
   const handleClose = () => {
     onClose();
     setQuery("");
+    setValues([]);
   };
 
   const filteredIssues: IIssue[] =
     query === ""
-      ? issues?.results ?? []
-      : issues?.results.filter((issue) => issue.name.toLowerCase().includes(query.toLowerCase())) ??
-        [];
+      ? issues ?? []
+      : issues?.filter((issue) => issue.name.toLowerCase().includes(query.toLowerCase())) ?? [];
 
   return (
     <>
@@ -59,7 +73,14 @@ const IssuesListModal: React.FC<Props> = ({ isOpen, handleClose: onClose, onChan
               leaveTo="opacity-0 scale-95"
             >
               <Dialog.Panel className="relative mx-auto max-w-2xl transform divide-y divide-gray-500 divide-opacity-10 rounded-xl bg-white bg-opacity-80 shadow-2xl ring-1 ring-black ring-opacity-5 backdrop-blur backdrop-filter transition-all">
-                <Combobox onChange={onChange}>
+                <Combobox
+                  value={value}
+                  onChange={(val) => {
+                    if (multiple) setValues(val);
+                    else onChange(val);
+                  }}
+                  // multiple={multiple}
+                >
                   <div className="relative m-1">
                     <MagnifyingGlassIcon
                       className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-gray-900 text-opacity-40"
@@ -80,7 +101,7 @@ const IssuesListModal: React.FC<Props> = ({ isOpen, handleClose: onClose, onChan
                       <li className="p-2">
                         {query === "" && (
                           <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-gray-900">
-                            Issues
+                            {title}
                           </h2>
                         )}
                         <ul className="text-sm text-gray-700">
@@ -95,20 +116,26 @@ const IssuesListModal: React.FC<Props> = ({ isOpen, handleClose: onClose, onChan
                                 )
                               }
                               onClick={() => {
-                                // setIssueIdFromList(issue.id);
-                                handleClose();
+                                if (!multiple) handleClose();
                               }}
                             >
-                              <span
-                                className={`h-1.5 w-1.5 block rounded-full`}
-                                style={{
-                                  backgroundColor: issue.state_detail.color,
-                                }}
-                              />
-                              <span className="text-xs text-gray-500">
-                                {activeProject?.identifier}-{issue.sequence_id}
-                              </span>{" "}
-                              {issue.name}
+                              {({ selected }) => (
+                                <>
+                                  {multiple ? (
+                                    <input type="checkbox" checked={selected} readOnly />
+                                  ) : null}
+                                  <span
+                                    className="flex-shrink-0 h-1.5 w-1.5 block rounded-full"
+                                    style={{
+                                      backgroundColor: issue.state_detail.color,
+                                    }}
+                                  />
+                                  <span className="flex-shrink-0 text-xs text-gray-500">
+                                    {activeProject?.identifier}-{issue.sequence_id}
+                                  </span>{" "}
+                                  {issue.name}
+                                </>
+                              )}
                             </Combobox.Option>
                           ))}
                         </ul>
@@ -128,6 +155,16 @@ const IssuesListModal: React.FC<Props> = ({ isOpen, handleClose: onClose, onChan
                     </div>
                   )}
                 </Combobox>
+                {multiple ? (
+                  <div className="flex justify-end items-center gap-2 p-3">
+                    <Button type="button" theme="danger" size="sm" onClick={handleClose}>
+                      Cancel
+                    </Button>
+                    <Button type="button" size="sm" onClick={() => onChange(values)}>
+                      Add to Cycle
+                    </Button>
+                  </div>
+                ) : null}
               </Dialog.Panel>
             </Transition.Child>
           </div>

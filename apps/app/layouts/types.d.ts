@@ -8,4 +8,6 @@ export type Meta = {
 export type Props = {
   meta?: Meta;
   children: React.ReactNode;
+  noPadding?: boolean;
+  bg?: "primary" | "secondary";
 };

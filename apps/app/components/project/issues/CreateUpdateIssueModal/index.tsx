@@ -392,16 +392,16 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                             /> */}
                           </div>
                           <div>
-                            <Input
+                            {/* <Input
                               id="target_date"
-                              label="Due Date"
+                              label="Target Date"
                               name="target_date"
                               type="date"
                               placeholder="Enter name"
                               autoComplete="off"
                               error={errors.target_date}
                               register={register}
-                            />
+                            /> */}
                           </div>
                           <div className="flex items-center flex-wrap gap-2">
                             <SelectState control={control} setIsOpen={setIsStateModalOpen} />
@@ -409,11 +409,25 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                             <SelectPriority control={control} />
                             <SelectAssignee control={control} />
                             <SelectLabels control={control} />
+                            <Controller
+                              control={control}
+                              name="target_date"
+                              render={({ field: { value, onChange } }) => (
+                                <input
+                                  type="date"
+                                  value={value ?? ""}
+                                  onChange={(e: any) => {
+                                    onChange(e.target.value);
+                                  }}
+                                  className="hover:bg-gray-100 border rounded-md shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300"
+                                />
+                              )}
+                            />
                             <SelectParent
                               control={control}
                               isOpen={parentIssueListModalOpen}
                               setIsOpen={setParentIssueListModalOpen}
-                              issues={issues}
+                              issues={issues?.results ?? []}
                             />
                             <Menu as="div" className="relative inline-block">
                               <Menu.Button className="grid place-items-center p-1 hover:bg-gray-100 border rounded-md shadow-sm cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm duration-300">
