@@ -44,7 +44,7 @@ const IsGuestCondition: React.FC<{
       type: "error",
       message: "You don't have permission to create project.",
     });
-  }, []);
+  }, [setIsOpen, setToastAlert]);
 
   return null;
 };

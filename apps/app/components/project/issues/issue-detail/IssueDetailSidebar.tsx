@@ -4,13 +4,14 @@ import useSWR from "swr";
 // headless ui
 import { Listbox, Transition } from "@headlessui/react";
 // react hook form
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, UseFormWatch } from "react-hook-form";
 // services
 import stateServices from "lib/services/state.services";
 import issuesServices from "lib/services/issues.services";
 import workspaceService from "lib/services/workspace.service";
 // hooks
 import useUser from "lib/hooks/useUser";
+import useToast from "lib/hooks/useToast";
 // fetching keys
 import {
   PROJECT_ISSUES_LIST,
@@ -20,6 +21,7 @@ import {
 } from "constants/fetch-keys";
 // commons
 import { classNames, copyTextToClipboard } from "constants/common";
+import { PRIORITIES } from "constants/";
 // ui
 import { Input, Button, Spinner } from "ui";
 import { Popover } from "@headlessui/react";
@@ -38,25 +40,40 @@ import {
 } from "@heroicons/react/24/outline";
 // types
 import type { Control } from "react-hook-form";
-import type { IIssue, IIssueLabels, IssueResponse, IState, WorkspaceMember } from "types";
+import type {
+  IIssue,
+  IIssueLabels,
+  IssueResponse,
+  IState,
+  NestedKeyOf,
+  WorkspaceMember,
+} from "types";
 import { TwitterPicker } from "react-color";
-import useToast from "lib/hooks/useToast";
+import IssuesListModal from "components/project/issues/IssuesListModal";
 
 type Props = {
   control: Control<IIssue, any>;
   submitChanges: (formData: Partial<IIssue>) => void;
   issueDetail: IIssue | undefined;
+  watch: UseFormWatch<IIssue>;
 };
-
-const PRIORITIES = ["high", "medium", "low"];
 
 const defaultValues: Partial<IIssueLabels> = {
   name: "",
   colour: "#ff0000",
 };
 
-const IssueDetailSidebar: React.FC<Props> = ({ control, submitChanges, issueDetail }) => {
-  const { activeWorkspace, activeProject, cycles } = useUser();
+const IssueDetailSidebar: React.FC<Props> = ({
+  control,
+  watch: watchIssue,
+  submitChanges,
+  issueDetail,
+}) => {
+  const [isBlockerModalOpen, setIsBlockerModalOpen] = useState(false);
+  const [isBlockedModalOpen, setIsBlockedModalOpen] = useState(false);
+  const [isParentModalOpen, setIsParentModalOpen] = useState(false);
+
+  const { activeWorkspace, activeProject, cycles, issues } = useUser();
 
   const { setToastAlert } = useToast();
 
@@ -70,15 +87,6 @@ const IssueDetailSidebar: React.FC<Props> = ({ control, submitChanges, issueDeta
   const { data: people } = useSWR<WorkspaceMember[]>(
     activeWorkspace ? WORKSPACE_MEMBERS(activeWorkspace.slug) : null,
     activeWorkspace ? () => workspaceService.workspaceMembers(activeWorkspace.slug) : null
-  );
-
-  const { data: projectIssues } = useSWR<IssueResponse>(
-    activeProject && activeWorkspace
-      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
-      : null,
-    activeProject && activeWorkspace
-      ? () => issuesServices.getIssues(activeWorkspace.slug, activeProject.id)
-      : null
   );
 
   const { data: issueLabels, mutate: issueLabelMutate } = useSWR<IIssueLabels[]>(
@@ -110,7 +118,19 @@ const IssueDetailSidebar: React.FC<Props> = ({ control, submitChanges, issueDeta
       });
   };
 
-  const sidebarSections = [
+  const sidebarSections: Array<
+    Array<{
+      label: string;
+      name: NestedKeyOf<IIssue>;
+      canSelectMultipleOptions: boolean;
+      icon: (props: any) => JSX.Element;
+      options?: Array<{ label: string; value: any }>;
+      modal: boolean;
+      issuesList?: Array<IIssue>;
+      isOpen?: boolean;
+      setIsOpen?: (arg: boolean) => void;
+    }>
+  > = [
     [
       {
         label: "Status",
@@ -121,6 +141,7 @@ const IssueDetailSidebar: React.FC<Props> = ({ control, submitChanges, issueDeta
           label: state.name,
           value: state.id,
         })),
+        modal: false,
       },
       {
         label: "Assignees",
@@ -131,6 +152,7 @@ const IssueDetailSidebar: React.FC<Props> = ({ control, submitChanges, issueDeta
           label: person.member.first_name,
           value: person.member.id,
         })),
+        modal: false,
       },
       {
         label: "Priority",
@@ -141,34 +163,52 @@ const IssueDetailSidebar: React.FC<Props> = ({ control, submitChanges, issueDeta
           label: property,
           value: property,
         })),
+        modal: false,
       },
     ],
     [
       {
-        label: "Blocker",
-        name: "blockers_list",
-        canSelectMultipleOptions: true,
+        label: "Parent",
+        name: "parent",
+        canSelectMultipleOptions: false,
         icon: UserIcon,
-        options: projectIssues?.results?.map((issue) => ({
-          label: issue.name,
-          value: issue.id,
-        })),
+        issuesList:
+          issues?.results.filter(
+            (i) =>
+              i.id !== issueDetail?.id &&
+              i.id !== issueDetail?.parent &&
+              i.parent !== issueDetail?.id
+          ) ?? [],
+        modal: true,
+        isOpen: isParentModalOpen,
+        setIsOpen: setIsParentModalOpen,
       },
+      // {
+      //   label: "Blocker",
+      //   name: "blockers_list",
+      //   canSelectMultipleOptions: true,
+      //   icon: UserIcon,
+      //   issuesList: issues?.results.filter((i) => i.id !== issueDetail?.id) ?? [],
+      //   modal: true,
+      //   isOpen: isBlockerModalOpen,
+      //   setIsOpen: setIsBlockerModalOpen,
+      // },
+      // {
+      //   label: "Blocked",
+      //   name: "blocked_list",
+      //   canSelectMultipleOptions: true,
+      //   icon: UserIcon,
+      //   issuesList: issues?.results.filter((i) => i.id !== issueDetail?.id) ?? [],
+      //   modal: true,
+      //   isOpen: isBlockedModalOpen,
+      //   setIsOpen: setIsBlockedModalOpen,
+      // },
       {
-        label: "Blocked",
-        name: "blocked_list",
-        canSelectMultipleOptions: true,
-        icon: UserIcon,
-        options: projectIssues?.results?.map((issue) => ({
-          label: issue.name,
-          value: issue.id,
-        })),
-      },
-      {
-        label: "Due Date",
+        label: "Target Date",
         name: "target_date",
         canSelectMultipleOptions: true,
         icon: CalendarDaysIcon,
+        modal: false,
       },
     ],
     [
@@ -181,6 +221,7 @@ const IssueDetailSidebar: React.FC<Props> = ({ control, submitChanges, issueDeta
           label: cycle.name,
           value: cycle.id,
         })),
+        modal: false,
       },
     ],
   ];
@@ -249,12 +290,12 @@ const IssueDetailSidebar: React.FC<Props> = ({ control, submitChanges, issueDeta
         {sidebarSections.map((section, index) => (
           <div key={index} className="py-1">
             {section.map((item) => (
-              <div key={item.label} className="flex justify-between items-center gap-x-2 py-2">
-                <div className="flex items-center gap-x-2 text-sm">
-                  <item.icon className="h-4 w-4" />
+              <div key={item.label} className="flex items-center py-2 flex-wrap">
+                <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
+                  <item.icon className="flex-shrink-0 h-4 w-4" />
                   <p>{item.label}</p>
                 </div>
-                <div>
+                <div className="sm:basis-1/2">
                   {item.name === "target_date" ? (
                     <Controller
                       control={control}
@@ -262,13 +303,50 @@ const IssueDetailSidebar: React.FC<Props> = ({ control, submitChanges, issueDeta
                       render={({ field: { value, onChange } }) => (
                         <input
                           type="date"
-                          value={""}
+                          value={value ?? ""}
                           onChange={(e: any) => {
                             submitChanges({ target_date: e.target.value });
                             onChange(e.target.value);
                           }}
-                          className="hover:bg-gray-100 border rounded-md shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300"
+                          className="hover:bg-gray-100 border rounded-md shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300 w-full"
                         />
+                      )}
+                    />
+                  ) : item.modal ? (
+                    <Controller
+                      control={control}
+                      name={item.name as keyof IIssue}
+                      render={({ field: { value, onChange } }) => (
+                        <>
+                          <IssuesListModal
+                            isOpen={Boolean(item?.isOpen)}
+                            handleClose={() => item.setIsOpen && item.setIsOpen(false)}
+                            onChange={(val) => {
+                              console.log(val);
+                              // submitChanges({ [item.name]: val });
+                              onChange(val);
+                            }}
+                            issues={item?.issuesList ?? []}
+                            title={`Select ${item.label}`}
+                            multiple={item.canSelectMultipleOptions}
+                            value={value}
+                          />
+                          <button
+                            type="button"
+                            className="flex justify-between items-center gap-1 hover:bg-gray-100 border rounded-md shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300 w-full"
+                            onClick={() => item.setIsOpen && item.setIsOpen(true)}
+                          >
+                            {watchIssue(`${item.name as keyof IIssue}`) &&
+                            watchIssue(`${item.name as keyof IIssue}`) !== ""
+                              ? `${activeProject?.identifier}-
+                                ${
+                                  issues?.results.find(
+                                    (i) => i.id === watchIssue(`${item.name as keyof IIssue}`)
+                                  )?.sequence_id
+                                }`
+                              : `Select ${item.label}`}
+                          </button>
+                        </>
                       )}
                     />
                   ) : (
@@ -288,11 +366,11 @@ const IssueDetailSidebar: React.FC<Props> = ({ control, submitChanges, issueDeta
                         >
                           {({ open }) => (
                             <div className="relative">
-                              <Listbox.Button className="relative flex justify-between items-center gap-1 hover:bg-gray-100 border rounded-md shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-sm duration-300">
+                              <Listbox.Button className="flex justify-between items-center gap-1 hover:bg-gray-100 border rounded-md shadow-sm px-2 w-full py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300">
                                 <span
                                   className={classNames(
                                     value ? "" : "text-gray-900",
-                                    "hidden truncate sm:block w-16 text-left",
+                                    "hidden truncate sm:block text-left",
                                     item.label === "Priority" ? "capitalize" : ""
                                   )}
                                 >
@@ -419,12 +497,12 @@ const IssueDetailSidebar: React.FC<Props> = ({ control, submitChanges, issueDeta
             +
           </Button>
         </form>
-        <div className="flex justify-between items-center gap-x-2">
-          <div className="flex items-center gap-x-2 text-sm">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-x-2 text-sm basis-1/2">
             <TagIcon className="w-4 h-4" />
             <p>Label</p>
           </div>
-          <div>
+          <div className="basis-1/2">
             <Controller
               control={control}
               name="labels_list"
@@ -440,11 +518,11 @@ const IssueDetailSidebar: React.FC<Props> = ({ control, submitChanges, issueDeta
                     <>
                       <Listbox.Label className="sr-only">Label</Listbox.Label>
                       <div className="relative">
-                        <Listbox.Button className="relative flex justify-between items-center gap-1 hover:bg-gray-100 border rounded-md shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-sm duration-300">
+                        <Listbox.Button className="flex justify-between items-center gap-1 hover:bg-gray-100 border rounded-md shadow-sm px-2 w-full py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300">
                           <span
                             className={classNames(
                               value ? "" : "text-gray-900",
-                              "hidden truncate capitalize sm:block w-16 text-left"
+                              "hidden truncate capitalize sm:block text-left"
                             )}
                           >
                             {value && value.length > 0

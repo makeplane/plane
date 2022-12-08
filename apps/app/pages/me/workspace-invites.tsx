@@ -10,7 +10,7 @@ import useUser from "lib/hooks/useUser";
 // hoc
 import withAuthWrapper from "lib/hoc/withAuthWrapper";
 // layouts
-import AdminLayout from "layouts/AdminLayout";
+import AppLayout from "layouts/AppLayout";
 // ui
 import { Button } from "ui";
 // swr
@@ -52,7 +52,7 @@ const MyWorkspacesInvites: NextPage = () => {
   };
 
   return (
-    <AdminLayout
+    <AppLayout
       meta={{
         title: "Plane - My Workspace Invites",
       }}
@@ -147,7 +147,7 @@ const MyWorkspacesInvites: NextPage = () => {
           )}
         </div>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 };
 

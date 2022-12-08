@@ -11,7 +11,8 @@ import fileServices from "lib/services/file.services";
 // hoc
 import withAuth from "lib/hoc/withAuthWrapper";
 // layouts
-import AdminLayout from "layouts/AdminLayout";
+import AppLayout from "layouts/AppLayout";
+
 // hooks
 import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
@@ -84,7 +85,7 @@ const WorkspaceSettings = () => {
   };
 
   return (
-    <AdminLayout
+    <AppLayout
       meta={{
         title: "Plane - Workspace Settings",
       }}
@@ -229,7 +230,7 @@ const WorkspaceSettings = () => {
           </div>
         )}
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 };
 

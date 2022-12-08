@@ -17,7 +17,7 @@ import { PROJECT_MEMBERS, PROJECT_INVITATIONS } from "constants/fetch-keys";
 // hoc
 import withAuth from "lib/hoc/withAuthWrapper";
 // layouts
-import AdminLayout from "layouts/AdminLayout";
+import AppLayout from "layouts/AppLayout";
 // components
 import SendProjectInvitationModal from "components/project/SendProjectInvitationModal";
 import ConfirmProjectMemberRemove from "components/project/ConfirmProjectMemberRemove";
@@ -92,7 +92,7 @@ const ProjectMembers: NextPage = () => {
   ];
 
   return (
-    <AdminLayout>
+    <AppLayout>
       <ConfirmProjectMemberRemove
         isOpen={Boolean(selectedRemoveMember) || Boolean(selectedInviteRemoveMember)}
         onClose={() => {
@@ -311,7 +311,7 @@ const ProjectMembers: NextPage = () => {
           )}
         </div>
       )}
-    </AdminLayout>
+    </AppLayout>
   );
 };
 

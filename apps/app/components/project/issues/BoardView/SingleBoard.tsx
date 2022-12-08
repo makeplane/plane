@@ -18,11 +18,10 @@ import {
   ArrowsPointingOutIcon,
   CalendarDaysIcon,
   EllipsisHorizontalIcon,
-  PencilIcon,
   PlusIcon,
 } from "@heroicons/react/24/outline";
 import Image from "next/image";
-import { divide } from "lodash";
+import { getPriorityIcon } from "constants/global";
 
 type Props = {
   selectedGroup: NestedKeyOf<IIssue> | null;
@@ -181,133 +180,116 @@ const SingleBoard: React.FC<Props> = ({
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                           >
-                            <div
-                              className="px-2 py-3 space-y-1.5 select-none"
-                              {...provided.dragHandleProps}
-                            >
-                              <span className="group-hover:text-theme text-sm break-all">
+                            <div className="p-2 select-none" {...provided.dragHandleProps}>
+                              {properties.key && (
+                                <div className="text-xs font-medium text-gray-500 mb-2">
+                                  {childIssue.project_detail?.identifier}-{childIssue.sequence_id}
+                                </div>
+                              )}
+                              <h5 className="group-hover:text-theme text-sm break-all mb-3">
                                 {childIssue.name}
-                              </span>
-                              {Object.keys(properties).map(
-                                (key) =>
-                                  properties[key as keyof Properties] &&
-                                  !Array.isArray(childIssue[key as keyof IIssue]) && (
-                                    <div
-                                      key={key}
-                                      className={`${
-                                        key === "name"
-                                          ? "text-sm mb-2"
-                                          : key === "description"
-                                          ? "text-xs text-black"
-                                          : key === "priority"
-                                          ? `text-xs bg-gray-200 px-2 py-1 mt-2 flex items-center gap-x-1 rounded w-min whitespace-nowrap capitalize font-medium ${
-                                              childIssue.priority === "urgent"
-                                                ? "bg-red-100 text-red-600"
-                                                : childIssue.priority === "high"
-                                                ? "bg-orange-100 text-orange-600"
-                                                : childIssue.priority === "medium"
-                                                ? "bg-yellow-100 text-yellow-500"
-                                                : childIssue.priority === "low"
-                                                ? "bg-green-100 text-green-500"
-                                                : "hidden"
-                                            }`
-                                          : key === "target_date"
-                                          ? "text-xs bg-indigo-50 px-2 py-1 mt-2 flex items-center gap-x-1 rounded w-min whitespace-nowrap"
-                                          : "text-sm text-gray-500"
-                                      } gap-1 relative
-                                    `}
-                                    >
-                                      {key === "start_date" && childIssue.start_date !== null && (
-                                        <span className="text-sm">
-                                          <CalendarDaysIcon className="h-4 w-4" />
-                                          {renderShortNumericDateFormat(childIssue.start_date)} -
-                                          {childIssue.target_date
-                                            ? renderShortNumericDateFormat(childIssue.target_date)
-                                            : "None"}
-                                        </span>
-                                      )}
-                                      {key === "due_date" && (
-                                        <>
-                                          <span
-                                            className={`flex items-center gap-x-1 group ${
-                                              childIssue.target_date === null
-                                                ? ""
-                                                : childIssue.target_date < new Date().toISOString()
-                                                ? "text-red-600"
-                                                : findHowManyDaysLeft(childIssue.target_date) <=
-                                                    3 && "text-orange-400"
+                              </h5>
+                              <div className="flex items-center gap-x-1 gap-y-2 text-xs flex-wrap">
+                                {properties.priority && (
+                                  <div
+                                    className={`rounded shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 capitalize ${
+                                      childIssue.priority === "high"
+                                        ? "bg-red-100 text-red-600"
+                                        : childIssue.priority === "medium"
+                                        ? "bg-orange-100 text-orange-500"
+                                        : childIssue.priority === "low"
+                                        ? "bg-green-100 text-green-500"
+                                        : "hidden"
+                                    }`}
+                                  >
+                                    {/* {getPriorityIcon(childIssue.priority ?? "")} */}
+                                    {childIssue.priority}
+                                  </div>
+                                )}
+                                {properties.state && (
+                                  <div className="flex-shrink-0 flex items-center gap-1 hover:bg-gray-100 border rounded shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300">
+                                    <span
+                                      className="flex-shrink-0 h-1.5 w-1.5 rounded-full"
+                                      style={{ backgroundColor: childIssue.state_detail.color }}
+                                    ></span>
+                                    {addSpaceIfCamelCase(childIssue.state_detail.name)}
+                                  </div>
+                                )}
+                                {properties.start_date && (
+                                  <div className="flex-shrink-0 flex items-center gap-1 hover:bg-gray-100 border rounded shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300">
+                                    <CalendarDaysIcon className="h-4 w-4" />
+                                    {childIssue.start_date
+                                      ? renderShortNumericDateFormat(childIssue.start_date)
+                                      : "N/A"}
+                                  </div>
+                                )}
+                                {properties.target_date && (
+                                  <div
+                                    className={`flex-shrink-0 group flex items-center gap-1 hover:bg-gray-100 border rounded shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300 ${
+                                      childIssue.target_date === null
+                                        ? ""
+                                        : childIssue.target_date < new Date().toISOString()
+                                        ? "text-red-600"
+                                        : findHowManyDaysLeft(childIssue.target_date) <= 3 &&
+                                          "text-orange-400"
+                                    }`}
+                                  >
+                                    <CalendarDaysIcon className="h-4 w-4" />
+                                    {childIssue.target_date
+                                      ? renderShortNumericDateFormat(childIssue.target_date)
+                                      : "N/A"}
+                                    {childIssue.target_date && (
+                                      <span className="absolute -top-full mb-2 left-4 border transition-opacity opacity-0 group-hover:opacity-100 bg-white rounded px-2 py-1">
+                                        {childIssue.target_date < new Date().toISOString()
+                                          ? `Target date has passed by ${findHowManyDaysLeft(
+                                              childIssue.target_date
+                                            )} days`
+                                          : findHowManyDaysLeft(childIssue.target_date) <= 3
+                                          ? `Target date is in ${findHowManyDaysLeft(
+                                              childIssue.target_date
+                                            )} days`
+                                          : "Target date"}
+                                      </span>
+                                    )}
+                                  </div>
+                                )}
+                                {properties.assignee && (
+                                  <div className="justify-end w-full flex items-center gap-1 text-xs">
+                                    {childIssue?.assignee_details?.length > 0 ? (
+                                      childIssue?.assignee_details?.map(
+                                        (assignee, index: number) => (
+                                          <div
+                                            key={index}
+                                            className={`relative z-[1] h-5 w-5 rounded-full ${
+                                              index !== 0 ? "-ml-2.5" : ""
                                             }`}
                                           >
-                                            <CalendarDaysIcon className="h-4 w-4" />
-                                            {childIssue.target_date
-                                              ? renderShortNumericDateFormat(childIssue.target_date)
-                                              : "N/A"}
-                                            {childIssue.target_date && (
-                                              <span className="absolute -top-full mb-2 left-4 border transition-opacity opacity-0 group-hover:opacity-100 bg-white rounded px-2 py-1">
-                                                {childIssue.target_date < new Date().toISOString()
-                                                  ? `Due date has passed by ${findHowManyDaysLeft(
-                                                      childIssue.target_date
-                                                    )} days`
-                                                  : findHowManyDaysLeft(childIssue.target_date) <= 3
-                                                  ? `Due date is in ${findHowManyDaysLeft(
-                                                      childIssue.target_date
-                                                    )} days`
-                                                  : "Due date"}
-                                              </span>
+                                            {assignee.avatar && assignee.avatar !== "" ? (
+                                              <div className="h-5 w-5 border-2 bg-white border-white rounded-full">
+                                                <Image
+                                                  src={assignee.avatar}
+                                                  height="100%"
+                                                  width="100%"
+                                                  className="rounded-full"
+                                                  alt={assignee.name}
+                                                />
+                                              </div>
+                                            ) : (
+                                              <div
+                                                className={`h-5 w-5 bg-gray-700 text-white border-2 border-white grid place-items-center rounded-full`}
+                                              >
+                                                {assignee.first_name.charAt(0)}
+                                              </div>
                                             )}
-                                          </span>
-                                        </>
-                                      )}
-                                      {key === "key" && (
-                                        <span className="text-xs">
-                                          {childIssue.project_detail?.identifier}-
-                                          {childIssue.sequence_id}
-                                        </span>
-                                      )}
-                                      {key === "state" && (
-                                        <>{addSpaceIfCamelCase(childIssue["state_detail"].name)}</>
-                                      )}
-                                      {key === "priority" && <>{childIssue.priority}</>}
-                                      {/* {key === "description" && <>{childIssue.description}</>} */}
-                                      {key === "assignee" ? (
-                                        <div className="flex items-center gap-1 text-xs">
-                                          {childIssue?.assignee_details?.length > 0 ? (
-                                            childIssue?.assignee_details?.map(
-                                              (assignee, index: number) => (
-                                                <div
-                                                  key={index}
-                                                  className={`relative z-[1] h-5 w-5 rounded-full ${
-                                                    index !== 0 ? "-ml-2.5" : ""
-                                                  }`}
-                                                >
-                                                  {assignee.avatar && assignee.avatar !== "" ? (
-                                                    <div className="h-5 w-5 border-2 bg-white border-white rounded-full">
-                                                      <Image
-                                                        src={assignee.avatar}
-                                                        height="100%"
-                                                        width="100%"
-                                                        className="rounded-full"
-                                                        alt={assignee.name}
-                                                      />
-                                                    </div>
-                                                  ) : (
-                                                    <div
-                                                      className={`h-5 w-5 bg-gray-700 text-white border-2 border-white grid place-items-center rounded-full`}
-                                                    >
-                                                      {assignee.first_name.charAt(0)}
-                                                    </div>
-                                                  )}
-                                                </div>
-                                              )
-                                            )
-                                          ) : (
-                                            <span>No assignee.</span>
-                                          )}
-                                        </div>
-                                      ) : null}
-                                    </div>
-                                  )
-                              )}
+                                          </div>
+                                        )
+                                      )
+                                    ) : (
+                                      <span>No assignee.</span>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           </a>
                         </Link>

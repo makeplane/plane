@@ -12,7 +12,6 @@ import { Controller, useForm } from "react-hook-form";
 import { Disclosure, Menu, Tab, Transition } from "@headlessui/react";
 // services
 import issuesServices from "lib/services/issues.services";
-import stateServices from "lib/services/state.services";
 // fetch keys
 import {
   PROJECT_ISSUES_ACTIVITY,
@@ -25,7 +24,7 @@ import useUser from "lib/hooks/useUser";
 // hoc
 import withAuth from "lib/hoc/withAuthWrapper";
 // layouts
-import AdminLayout from "layouts/AdminLayout";
+import AppLayout from "layouts/AppLayout";
 // components
 import CreateUpdateIssuesModal from "components/project/issues/CreateUpdateIssueModal";
 import IssueCommentSection from "components/project/issues/issue-detail/comment/IssueCommentSection";
@@ -40,7 +39,7 @@ import { Spinner, TextArea } from "ui";
 import HeaderButton from "ui/HeaderButton";
 import { BreadcrumbItem, Breadcrumbs } from "ui/Breadcrumbs";
 // types
-import { IIssue, IIssueComment, IssueResponse, IState } from "types";
+import { IIssue, IIssueComment, IssueResponse } from "types";
 // icons
 import {
   ChevronLeftIcon,
@@ -210,7 +209,7 @@ const IssueDetail: NextPage = () => {
   };
 
   return (
-    <AdminLayout>
+    <AppLayout noPadding={true} bg="secondary">
       <CreateUpdateIssuesModal
         isOpen={isOpen}
         setIsOpen={setIsOpen}
@@ -224,46 +223,23 @@ const IssueDetail: NextPage = () => {
         setIsOpen={setIsAddAsSubIssueOpen}
         parent={issueDetail}
       />
-
-      <div className="flex items-center justify-between w-full mb-5">
-        <Breadcrumbs>
-          <BreadcrumbItem
-            title={`${activeProject?.name ?? "Project"} Issues`}
-            link={`/projects/${activeProject?.id}/issues`}
-          />
-          <BreadcrumbItem
-            title={`Issue ${activeProject?.identifier ?? "Project"}-${
-              issueDetail?.sequence_id ?? "..."
-            } Details`}
-          />
-        </Breadcrumbs>
-        <div className="flex items-center gap-x-3">
-          <HeaderButton
-            Icon={ChevronLeftIcon}
-            label="Previous"
-            className={`${!prevIssue ? "cursor-not-allowed opacity-70" : ""}`}
-            onClick={() => {
-              if (!prevIssue) return;
-              router.push(`/projects/${prevIssue.project}/issues/${prevIssue.id}`);
-            }}
-          />
-          <HeaderButton
-            Icon={ChevronRightIcon}
-            disabled={!nextIssue}
-            label="Next"
-            className={`${!nextIssue ? "cursor-not-allowed opacity-70" : ""}`}
-            onClick={() => {
-              if (!nextIssue) return;
-              router.push(`/projects/${nextIssue.project}/issues/${nextIssue?.id}`);
-            }}
-            position="reverse"
-          />
-        </div>
-      </div>
       {issueDetail && activeProject ? (
-        <div className="grid grid-cols-4 gap-5">
-          <div className="col-span-3 space-y-5">
-            <div className="bg-secondary rounded-lg p-4">
+        <div className="flex gap-5">
+          <div className="basis-3/4 space-y-5 p-5">
+            <div className="mb-5">
+              <Breadcrumbs>
+                <BreadcrumbItem
+                  title={`${activeProject?.name ?? "Project"} Issues`}
+                  link={`/projects/${activeProject?.id}/issues`}
+                />
+                <BreadcrumbItem
+                  title={`Issue ${activeProject?.identifier ?? "Project"}-${
+                    issueDetail?.sequence_id ?? "..."
+                  } Details`}
+                />
+              </Breadcrumbs>
+            </div>
+            <div className="rounded-lg">
               {issueDetail.parent !== null && issueDetail.parent !== "" ? (
                 <div className="bg-gray-100 flex items-center gap-2 p-2 text-xs rounded mb-5 w-min whitespace-nowrap">
                   <Link href={`/projects/${activeProject.id}/issues/${issueDetail.parent}`}>
@@ -275,7 +251,8 @@ const IssueDetail: NextPage = () => {
                         }}
                       />
                       <span className="flex-shrink-0 text-gray-600">
-                        {activeProject.identifier}-{issueDetail.sequence_id}
+                        {activeProject.identifier}-
+                        {issues?.results.find((i) => i.id === issueDetail.parent)?.sequence_id}
                       </span>
                       <span className="font-medium truncate">
                         {issues?.results
@@ -367,7 +344,7 @@ const IssueDetail: NextPage = () => {
               </div>
               <div className="mt-2">
                 {subIssues && subIssues.length > 0 ? (
-                  <Disclosure>
+                  <Disclosure defaultOpen={true}>
                     {({ open }) => (
                       <>
                         <div className="flex justify-between items-center">
@@ -439,7 +416,7 @@ const IssueDetail: NextPage = () => {
                             {subIssues.map((subIssue) => (
                               <div
                                 key={subIssue.id}
-                                className="flex justify-between items-center gap-2 p-2 hover:bg-gray-100"
+                                className="group flex justify-between items-center gap-2 rounded p-2 hover:bg-gray-100"
                               >
                                 <Link href={`/projects/${activeProject.id}/issues/${subIssue.id}`}>
                                   <a className="flex items-center gap-2 rounded text-xs">
@@ -457,9 +434,9 @@ const IssueDetail: NextPage = () => {
                                     </span>
                                   </a>
                                 </Link>
-                                <div>
+                                <div className="opacity-0 group-hover:opacity-100">
                                   <Menu as="div" className="relative inline-block">
-                                    <Menu.Button className="grid relative place-items-center focus:outline-none">
+                                    <Menu.Button className="grid relative place-items-center hover:bg-gray-200 p-1 focus:outline-none">
                                       <EllipsisHorizontalIcon className="h-4 w-4" />
                                     </Menu.Button>
 
@@ -555,7 +532,7 @@ const IssueDetail: NextPage = () => {
                 )}
               </div>
             </div>
-            <div className="bg-secondary rounded-lg p-4 space-y-5">
+            <div className="bg-secondary rounded-lg space-y-5">
               <Tab.Group>
                 <Tab.List className="flex gap-x-3">
                   {["Comments", "Activity"].map((item) => (
@@ -591,11 +568,34 @@ const IssueDetail: NextPage = () => {
               </Tab.Group>
             </div>
           </div>
-          <div className="sticky top-0 h-min bg-secondary p-4 rounded-lg">
+          <div className="basis-1/4 rounded-lg space-y-5 p-5 border-l">
+            <div className="flex justify-end items-center gap-x-3 mb-5">
+              <HeaderButton
+                Icon={ChevronLeftIcon}
+                label="Previous"
+                className={`${!prevIssue ? "cursor-not-allowed opacity-70" : ""}`}
+                onClick={() => {
+                  if (!prevIssue) return;
+                  router.push(`/projects/${prevIssue.project}/issues/${prevIssue.id}`);
+                }}
+              />
+              <HeaderButton
+                Icon={ChevronRightIcon}
+                disabled={!nextIssue}
+                label="Next"
+                className={`${!nextIssue ? "cursor-not-allowed opacity-70" : ""}`}
+                onClick={() => {
+                  if (!nextIssue) return;
+                  router.push(`/projects/${nextIssue.project}/issues/${nextIssue?.id}`);
+                }}
+                position="reverse"
+              />
+            </div>
             <IssueDetailSidebar
               control={control}
               issueDetail={issueDetail}
               submitChanges={submitChanges}
+              watch={watch}
             />
           </div>
         </div>
@@ -604,7 +604,7 @@ const IssueDetail: NextPage = () => {
           <Spinner />
         </div>
       )}
-    </AdminLayout>
+    </AppLayout>
   );
 };
 

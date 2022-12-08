@@ -17,7 +17,7 @@ import { WORKSPACE_INVITATIONS, WORKSPACE_MEMBERS } from "constants/fetch-keys";
 // hoc
 import withAuthWrapper from "lib/hoc/withAuthWrapper";
 // layouts
-import AdminLayout from "layouts/AdminLayout";
+import AppLayout from "layouts/AppLayout";
 // components
 import SendWorkspaceInvitationModal from "components/workspace/SendWorkspaceInvitationModal";
 import ConfirmWorkspaceMemberRemove from "components/workspace/ConfirmWorkspaceMemberRemove";
@@ -71,7 +71,7 @@ const WorkspaceInvite: NextPage = () => {
   ];
 
   return (
-    <AdminLayout
+    <AppLayout
       meta={{
         title: "Plane - Workspace Invite",
       }}
@@ -299,7 +299,7 @@ const WorkspaceInvite: NextPage = () => {
           )}
         </div>
       )}
-    </AdminLayout>
+    </AppLayout>
   );
 };
 

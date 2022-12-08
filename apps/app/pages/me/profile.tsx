@@ -11,7 +11,7 @@ import useUser from "lib/hooks/useUser";
 // hoc
 import withAuth from "lib/hoc/withAuthWrapper";
 // layouts
-import AdminLayout from "layouts/AdminLayout";
+import AppLayout from "layouts/AppLayout";
 // services
 import userService from "lib/services/user.service";
 import fileServices from "lib/services/file.services";
@@ -114,7 +114,7 @@ const Profile: NextPage = () => {
   ];
 
   return (
-    <AdminLayout
+    <AppLayout
       meta={{
         title: "Plane - My Profile",
       }}
@@ -305,7 +305,7 @@ const Profile: NextPage = () => {
           </div>
         )}
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 };
 
