@@ -2,5 +2,4 @@
 set -e
 
 python manage.py migrate
-python manage.py rqworker &
 exec gunicorn plane.wsgi -k gthread --workers 8 --bind 0.0.0.0:8000 --config gunicorn.config.py --max-requests 10000 --max-requests-jitter 1000 --access-logfile -

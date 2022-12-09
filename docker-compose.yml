@@ -17,8 +17,9 @@ services:
     restart: on-failure
     command: redis-server --maxmemory-policy allkeys-lru --maxmemory 200mb
 
-  plane_web:
-    container_name: plane_web
+  plane-web:
+    image: plane-web
+    container_name: plane-frontend
     build:
       context: .
       dockerfile: ./apps/app/Dockerfile.web
@@ -31,8 +32,9 @@ services:
       - 3000:3000
 
 
-  plane_api:
-    container_name: plane_api
+  plane-api:
+    image: plane-api
+    container_name: plane-backend
     build:
       context: ./apiserver
       dockerfile: Dockerfile.api
@@ -65,16 +67,31 @@ services:
       - db
       - redis
 
-  nginx:
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile
-    restart: unless-stopped
-    ports:
-      - 80:80
+  plane-worker:
+    image: plane-api
     depends_on:
-      - plane_api
-      - plane_web
+        - redis
+    command: python manage.py rqworker
+    links:
+        - redis
+    environment:
+      SENTRY_DSN: $SENTRY_DSN
+      WEB_URL: $WEB_URL
+      PGUSER: plane
+      PGPASSWORD: plane
+      PGHOST: db
+      REDIS_URL: 'redis://redis:6379/'
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      SECRET_KEY: $SECRET_KEY
+      AWS_REGION: $AWS_REGION
+      AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+      AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+      AWS_S3_BUCKET_NAME: $AWS_S3_BUCKET_NAME
+      EMAIL_HOST: $EMAIL_HOST
+      EMAIL_HOST_USER: $EMAIL_HOST_USER
+      EMAIL_HOST_PASSWORD: $EMAIL_HOST_PASSWORD
+
 
 volumes:
   postgres-data:

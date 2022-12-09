@@ -8,12 +8,13 @@ setup:
     env_file: .env
 build:
   docker:
-    plane_web: ./apps/app/Dockerfile.web
-    plane_api: ./apiserver/Dockerfile.api
+    plane-frontend: ./apps/app/Dockerfile.web
+    plane-backend: ./apiserver/Dockerfile.api
 
 release:
-  plane_api: python manage.py migrate
+  plane-backend: python manage.py migrate
 
 run:
-  plane_web: node apps/app/server.js
-  plane_api: ./apiserver/bin/takeoff
+  plane-frontend: node apps/app/server.js
+  plane-backend: ./apiserver/bin/takeoff
+  plane-worker: python manage.py rqworker
