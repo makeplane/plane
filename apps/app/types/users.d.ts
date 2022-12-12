@@ -16,3 +16,11 @@ export interface IUser {
   token: string;
   [...rest: string]: any;
 }
+
+export interface IUserLite {
+  readonly id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  avatar: string;
+}

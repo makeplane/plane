@@ -14,11 +14,11 @@ import withAuth from "lib/hoc/withAuthWrapper";
 import AppLayout from "layouts/AppLayout";
 // services
 import userService from "lib/services/user.service";
-import fileServices from "lib/services/file.services";
+import fileServices from "lib/services/file.service";
 // ui
 import { BreadcrumbItem, Breadcrumbs, Button, Input, Spinner } from "ui";
 // types
-import type { IIssue, IUser, IWorkspaceInvitation } from "types";
+import type { IIssue, IUser, IWorkspaceMemberInvitation } from "types";
 import {
   ChevronRightIcon,
   ClipboardDocumentListIcon,
@@ -81,8 +81,9 @@ const Profile: NextPage = () => {
     myProfile ? () => userService.userIssues() : null
   );
 
-  const { data: invitations } = useSWR<IWorkspaceInvitation[]>(USER_WORKSPACE_INVITATIONS, () =>
-    workspaceService.userWorkspaceInvitations()
+  const { data: invitations } = useSWR<IWorkspaceMemberInvitation[]>(
+    USER_WORKSPACE_INVITATIONS,
+    () => workspaceService.userWorkspaceInvitations()
   );
 
   useEffect(() => {

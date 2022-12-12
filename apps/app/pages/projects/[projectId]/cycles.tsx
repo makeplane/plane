@@ -5,8 +5,8 @@ import type { NextPage } from "next";
 // swr
 import useSWR, { mutate } from "swr";
 // services
-import issuesServices from "lib/services/issues.services";
-import sprintService from "lib/services/cycles.services";
+import issuesServices from "lib/services/issues.service";
+import sprintService from "lib/services/cycles.service";
 // hooks
 import useUser from "lib/hooks/useUser";
 // fetching keys

@@ -6,7 +6,7 @@ import { Dialog, Transition } from "@headlessui/react";
 // fetching keys
 import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // services
-import issueServices from "lib/services/issues.services";
+import issueServices from "lib/services/issues.service";
 // hooks
 import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";

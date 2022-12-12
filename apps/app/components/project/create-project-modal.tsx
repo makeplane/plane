@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 // swr
 import useSWR, { mutate } from "swr";
 // react hook form
@@ -8,6 +8,8 @@ import { Dialog, Transition } from "@headlessui/react";
 // services
 import projectServices from "lib/services/project.service";
 import workspaceService from "lib/services/workspace.service";
+// common
+import { createSimilarString } from "constants/common";
 // constants
 import { NETWORK_CHOICES } from "constants/";
 // fetch keys
@@ -18,7 +20,7 @@ import useToast from "lib/hooks/useToast";
 // ui
 import { Button, Input, TextArea, Select } from "ui";
 // types
-import { IProject, WorkspaceMember } from "types";
+import { IProject } from "types";
 
 type Props = {
   isOpen: boolean;
@@ -60,13 +62,15 @@ const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
 
   const { activeWorkspace, user } = useUser();
 
-  const { data: workspaceMembers } = useSWR<WorkspaceMember[]>(
+  const { data: workspaceMembers } = useSWR(
     activeWorkspace ? WORKSPACE_MEMBERS(activeWorkspace.slug) : null,
     activeWorkspace ? () => workspaceService.workspaceMembers(activeWorkspace.slug) : null,
     {
       shouldRetryOnError: false,
     }
   );
+
+  const [recommendedIdentifier, setRecommendedIdentifier] = useState<string[]>([]);
 
   const { setToastAlert } = useToast();
 
@@ -78,6 +82,7 @@ const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
     handleSubmit,
     reset,
     setError,
+    clearErrors,
     watch,
     setValue,
   } = useForm<IProject>({
@@ -125,12 +130,6 @@ const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
   const projectName = watch("name") ?? "";
   const projectIdentifier = watch("identifier") ?? "";
 
-  useEffect(() => {
-    if (projectName && isChangeIdentifierRequired) {
-      setValue("identifier", projectName.replace(/ /g, "-").toUpperCase().substring(0, 3));
-    }
-  }, [projectName, projectIdentifier, setValue, isChangeIdentifierRequired]);
-
   if (workspaceMembers) {
     const isMember = workspaceMembers.find((member) => member.member.id === user?.id);
     const isGuest = workspaceMembers.find(
@@ -139,6 +138,30 @@ const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
 
     if ((!isMember || isGuest) && isOpen) return <IsGuestCondition setIsOpen={setIsOpen} />;
   }
+
+  useEffect(() => {
+    if (projectName && isChangeIdentifierRequired) {
+      setValue("identifier", projectName.replace(/ /g, "").toUpperCase().substring(0, 3));
+    }
+  }, [projectName, projectIdentifier, setValue, isChangeIdentifierRequired]);
+
+  useEffect(() => {
+    if (!projectName) return;
+    const suggestedIdentifier = createSimilarString(
+      projectName.replace(/ /g, "").toUpperCase().substring(0, 3)
+    );
+
+    setRecommendedIdentifier([
+      suggestedIdentifier + Math.floor(Math.random() * 101),
+      suggestedIdentifier + Math.floor(Math.random() * 101),
+      projectIdentifier.toUpperCase().substring(0, 3) + Math.floor(Math.random() * 101),
+      projectIdentifier.toUpperCase().substring(0, 3) + Math.floor(Math.random() * 101),
+    ]);
+  }, [errors.identifier]);
+
+  useEffect(() => {
+    return () => setIsChangeIdentifierRequired(true);
+  }, [isOpen]);
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
@@ -239,6 +262,27 @@ const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                             },
                           }}
                         />
+                        {errors.identifier && (
+                          <div className="mt-2">
+                            <p>Ops! Identifier is already taken. Try one of the following:</p>
+                            <div className="flex gap-x-2">
+                              {recommendedIdentifier.map((identifier) => (
+                                <button
+                                  key={identifier}
+                                  type="button"
+                                  className="text-sm text-gray-500 hover:text-gray-700 border p-2 py-0.5 rounded"
+                                  onClick={() => {
+                                    clearErrors("identifier");
+                                    setValue("identifier", identifier);
+                                    setIsChangeIdentifierRequired(false);
+                                  }}
+                                >
+                                  {identifier}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>

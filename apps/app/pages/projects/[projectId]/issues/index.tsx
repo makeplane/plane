@@ -34,7 +34,7 @@ import HeaderButton from "ui/HeaderButton";
 import { ChevronDownIcon, ListBulletIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
 import { PlusIcon, Squares2X2Icon } from "@heroicons/react/20/solid";
 // types
-import type { IIssue, Properties, NestedKeyOf, ProjectMember } from "types";
+import type { IIssue, Properties, NestedKeyOf } from "types";
 
 const groupByOptions: Array<{ name: string; key: NestedKeyOf<IIssue> | null }> = [
   { name: "State", key: "state_detail.name" },
@@ -86,7 +86,7 @@ const ProjectIssues: NextPage = () => {
     projectId as string
   );
 
-  const { data: members } = useSWR<ProjectMember[]>(
+  const { data: members } = useSWR(
     activeWorkspace && activeProject
       ? PROJECT_MEMBERS(activeWorkspace.slug, activeProject.id)
       : null,

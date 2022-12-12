@@ -3,10 +3,10 @@ import Image from "next/image";
 // react
 import { useState } from "react";
 // types
-import { IWorkspaceInvitation } from "types";
+import { IWorkspaceMemberInvitation } from "types";
 
 type Props = {
-  invitation: IWorkspaceInvitation;
+  invitation: IWorkspaceMemberInvitation;
   invitationsRespond: string[];
   handleInvitation: any;
 };

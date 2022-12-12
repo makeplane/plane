@@ -8,7 +8,7 @@ import withAuth from "lib/hoc/withAuthWrapper";
 // layouts
 import AppLayout from "layouts/AppLayout";
 // components
-import CreateProjectModal from "components/project/CreateProjectModal";
+import CreateProjectModal from "components/project/create-project-modal";
 import ConfirmProjectDeletion from "components/project/ConfirmProjectDeletion";
 // ui
 import { Button, Spinner } from "ui";

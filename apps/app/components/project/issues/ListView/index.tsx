@@ -10,14 +10,14 @@ import { Listbox, Transition } from "@headlessui/react";
 // icons
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 // types
-import { IIssue, IssueResponse, NestedKeyOf, Properties, WorkspaceMember } from "types";
+import { IIssue, IssueResponse, NestedKeyOf, Properties } from "types";
 // hooks
 import useUser from "lib/hooks/useUser";
 // fetch keys
 import { PRIORITIES } from "constants/";
 import { PROJECT_ISSUES_LIST, WORKSPACE_MEMBERS } from "constants/fetch-keys";
 // services
-import issuesServices from "lib/services/issues.services";
+import issuesServices from "lib/services/issues.service";
 import workspaceService from "lib/services/workspace.service";
 // constants
 import { addSpaceIfCamelCase, classNames, renderShortNumericDateFormat } from "constants/common";
@@ -60,7 +60,7 @@ const ListView: React.FC<Props> = ({
       });
   };
 
-  const { data: people } = useSWR<WorkspaceMember[]>(
+  const { data: people } = useSWR(
     activeWorkspace ? WORKSPACE_MEMBERS : null,
     activeWorkspace ? () => workspaceService.workspaceMembers(activeWorkspace.slug) : null
   );

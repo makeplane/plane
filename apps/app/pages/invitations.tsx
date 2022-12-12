@@ -22,7 +22,7 @@ import { Button, Spinner, EmptySpace, EmptySpaceItem } from "ui";
 // icons
 import { CubeIcon, PlusIcon } from "@heroicons/react/24/outline";
 // types
-import type { IWorkspaceInvitation } from "types";
+import type { IWorkspaceMemberInvitation } from "types";
 import Link from "next/link";
 
 const OnBoard: NextPage = () => {
@@ -32,13 +32,12 @@ const OnBoard: NextPage = () => {
 
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
 
-  const { data: invitations, mutate } = useSWR<IWorkspaceInvitation[]>(
-    USER_WORKSPACE_INVITATIONS,
-    () => workspaceService.userWorkspaceInvitations()
+  const { data: invitations, mutate } = useSWR(USER_WORKSPACE_INVITATIONS, () =>
+    workspaceService.userWorkspaceInvitations()
   );
 
   const handleInvitation = (
-    workspace_invitation: IWorkspaceInvitation,
+    workspace_invitation: IWorkspaceMemberInvitation,
     action: "accepted" | "withdraw"
   ) => {
     if (action === "accepted") {

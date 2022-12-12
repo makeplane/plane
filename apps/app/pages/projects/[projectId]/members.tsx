@@ -111,8 +111,7 @@ const ProjectMembers: NextPage = () => {
               selectedRemoveMember
             );
             mutateMembers(
-              (prevData: any[]) =>
-                prevData?.filter((item: any) => item.id !== selectedRemoveMember),
+              (prevData) => prevData?.filter((item: any) => item.id !== selectedRemoveMember),
               false
             );
           }
@@ -123,8 +122,7 @@ const ProjectMembers: NextPage = () => {
               selectedInviteRemoveMember
             );
             mutateInvitations(
-              (prevData: any[]) =>
-                prevData?.filter((item: any) => item.id !== selectedInviteRemoveMember),
+              (prevData) => prevData?.filter((item: any) => item.id !== selectedInviteRemoveMember),
               false
             );
           }

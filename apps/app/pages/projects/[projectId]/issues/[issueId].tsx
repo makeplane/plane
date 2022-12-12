@@ -11,7 +11,7 @@ import { Controller, useForm } from "react-hook-form";
 // headless ui
 import { Disclosure, Menu, Tab, Transition } from "@headlessui/react";
 // services
-import issuesServices from "lib/services/issues.services";
+import issuesServices from "lib/services/issues.service";
 // fetch keys
 import {
   PROJECT_ISSUES_ACTIVITY,

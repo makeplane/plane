@@ -1,4 +1,4 @@
-import type { IWorkspace } from "./";
+import type { IUserLite, IWorkspace } from "./";
 
 export interface IProject {
   id: string;
@@ -23,3 +23,36 @@ type ProjectViewTheme = {
   filterIssue: "activeIssue" | "backlogIssue" | null;
   orderBy: NestedKeyOf<IIssue> | null;
 };
+
+export interface IProjectMember {
+  member: IUserLite;
+  project: IProject;
+  workspace: IWorkspace;
+  comment: string;
+  role: 5 | 10 | 15 | 20;
+  view_props: ProjectViewTheme;
+
+  created_at: Date;
+  updated_at: Date;
+  created_by: string;
+  updated_by: string;
+}
+
+export interface IProjectMemberInvitation {
+  id: string;
+
+  project: IProject;
+  workspace: IWorkspace;
+
+  email: string;
+  accepted: boolean;
+  token: string;
+  message: string;
+  responded_at: Date;
+  role: 5 | 10 | 15 | 20;
+
+  created_at: Date;
+  updated_at: Date;
+  created_by: string;
+  updated_by: string;
+}

@@ -18,7 +18,7 @@ import { USER_ISSUE } from "constants/fetch-keys";
 import { classNames } from "constants/common";
 // services
 import userService from "lib/services/user.service";
-import issuesServices from "lib/services/issues.services";
+import issuesServices from "lib/services/issues.service";
 // hoc
 import withAuth from "lib/hoc/withAuthWrapper";
 // components
