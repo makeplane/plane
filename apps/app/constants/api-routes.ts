@@ -24,7 +24,7 @@ export const S3_URL = `/api/file-assets/`;
 // LIST USER INVITATIONS ---- RESPOND INVITATIONS IN BULK
 export const USER_WORKSPACE_INVITATIONS = "/api/users/me/invitations/workspaces/";
 export const USER_PROJECT_INVITATIONS = "/api/users/me/invitations/projects/";
-
+export const LAST_ACTIVE_WORKSPACE_AND_PROJECTS = "/api/users/last-visited-workspace/";
 export const USER_WORKSPACE_INVITATION = (invitationId: string) =>
   `/api/users/me/invitations/${invitationId}/`;
 

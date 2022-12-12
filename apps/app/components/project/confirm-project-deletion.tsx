@@ -161,7 +161,7 @@ const ConfirmProjectDeletion: React.FC<Props> = ({ isOpen, data, onClose }) => {
                               setConfirmDeleteMyProject(false);
                             }
                           }}
-                          name="projectName"
+                          name="typeDelete"
                         />
                       </div>
                     </div>

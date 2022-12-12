@@ -1,24 +1,30 @@
 import React, { useEffect, useState } from "react";
 // next
+import Link from "next/link";
 import Image from "next/image";
 import type { NextPage } from "next";
+// swr
+import useSWR from "swr";
 // react hook form
 import { useForm } from "react-hook-form";
 // react dropzone
-import Dropzone, { useDropzone } from "react-dropzone";
+import Dropzone from "react-dropzone";
 // hooks
 import useUser from "lib/hooks/useUser";
+import useToast from "lib/hooks/useToast";
 // hoc
 import withAuth from "lib/hoc/withAuthWrapper";
 // layouts
 import AppLayout from "layouts/AppLayout";
+// constants
+import { USER_ISSUE, USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 // services
 import userService from "lib/services/user.service";
 import fileServices from "lib/services/file.service";
+import workspaceService from "lib/services/workspace.service";
 // ui
 import { BreadcrumbItem, Breadcrumbs, Button, Input, Spinner } from "ui";
-// types
-import type { IIssue, IUser, IWorkspaceMemberInvitation } from "types";
+// icons
 import {
   ChevronRightIcon,
   ClipboardDocumentListIcon,
@@ -28,11 +34,8 @@ import {
   UserPlusIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import useSWR from "swr";
-import { USER_ISSUE, USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
-import useToast from "lib/hooks/useToast";
-import Link from "next/link";
-import workspaceService from "lib/services/workspace.service";
+// types
+import type { IIssue, IUser } from "types";
 
 const defaultValues: Partial<IUser> = {
   avatar: "",
@@ -51,8 +54,14 @@ const Profile: NextPage = () => {
   const { setToastAlert } = useToast();
 
   const onSubmit = (formData: IUser) => {
+    const payload: Partial<IUser> = {
+      id: formData.id,
+      first_name: formData.first_name,
+      last_name: formData.last_name,
+      avatar: formData.avatar,
+    };
     userService
-      .updateUser(formData)
+      .updateUser(payload)
       .then((response) => {
         mutateUser(response, false);
         setIsEditing(false);
@@ -81,9 +90,8 @@ const Profile: NextPage = () => {
     myProfile ? () => userService.userIssues() : null
   );
 
-  const { data: invitations } = useSWR<IWorkspaceMemberInvitation[]>(
-    USER_WORKSPACE_INVITATIONS,
-    () => workspaceService.userWorkspaceInvitations()
+  const { data: invitations } = useSWR(USER_WORKSPACE_INVITATIONS, () =>
+    workspaceService.userWorkspaceInvitations()
   );
 
   useEffect(() => {
@@ -128,7 +136,8 @@ const Profile: NextPage = () => {
           <>
             <div className="space-y-5">
               <section className="relative p-5 rounded-xl flex gap-10 bg-secondary">
-                <div
+                <button
+                  type="button"
                   className="absolute top-4 right-4 bg-indigo-100 hover:bg-theme hover:text-white rounded p-1 cursor-pointer duration-300"
                   onClick={() => setIsEditing((prevData) => !prevData)}
                 >
@@ -137,7 +146,7 @@ const Profile: NextPage = () => {
                   ) : (
                     <PencilIcon className="h-4 w-4" />
                   )}
-                </div>
+                </button>
                 <div className="flex-shrink-0">
                   <Dropzone
                     multiple={false}
@@ -244,21 +253,7 @@ const Profile: NextPage = () => {
                     </div>
                     <div>
                       <h4 className="text-sm text-gray-500">Email ID</h4>
-                      {isEditing ? (
-                        <Input
-                          id="email"
-                          type="email"
-                          register={register}
-                          error={errors.email}
-                          name="email"
-                          validations={{
-                            required: "Email is required",
-                          }}
-                          placeholder="Enter email"
-                        />
-                      ) : (
-                        <h2>{myProfile.email}</h2>
-                      )}
+                      <h2>{myProfile.email}</h2>
                     </div>
                   </div>
                   {isEditing && (
