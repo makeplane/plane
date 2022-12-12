@@ -4,7 +4,7 @@ import { mutate } from "swr";
 // react hook form
 import { useForm } from "react-hook-form";
 // services
-import issuesServices from "lib/services/issues.services";
+import issuesServices from "lib/services/issues.service";
 // fetch keys
 import { PROJECT_ISSUES_COMMENTS } from "constants/fetch-keys";
 // components

@@ -10,8 +10,6 @@ import authenticationService from "lib/services/authentication.service";
 import useUser from "lib/hooks/useUser";
 import useTheme from "lib/hooks/useTheme";
 import useToast from "lib/hooks/useToast";
-// components
-import CreateProjectModal from "components/project/CreateProjectModal";
 // headless ui
 import { Dialog, Disclosure, Menu, Transition } from "@headlessui/react";
 // icons
@@ -108,7 +106,6 @@ const userLinks = [
 
 const Sidebar: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [isCreateProjectModal, setCreateProjectModal] = useState(false);
 
   const router = useRouter();
 
@@ -124,7 +121,6 @@ const Sidebar: React.FC = () => {
 
   return (
     <nav className="h-full">
-      <CreateProjectModal isOpen={isCreateProjectModal} setIsOpen={setCreateProjectModal} />
       <Transition.Root show={sidebarOpen} as={React.Fragment}>
         <Dialog as="div" className="relative z-40 md:hidden" onClose={setSidebarOpen}>
           <Transition.Child
@@ -557,7 +553,13 @@ const Sidebar: React.FC = () => {
                       <button
                         type="button"
                         className="group flex justify-center items-center gap-2 w-full rounded-md p-2 text-sm bg-theme text-white"
-                        onClick={() => setCreateProjectModal(true)}
+                        onClick={() => {
+                          const e = new KeyboardEvent("keydown", {
+                            ctrlKey: true,
+                            key: "p",
+                          });
+                          document.dispatchEvent(e);
+                        }}
                       >
                         <PlusIcon className="h-5 w-5" />
                         {!sidebarCollapse && "Create Project"}

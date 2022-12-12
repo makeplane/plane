@@ -8,7 +8,7 @@ import useUser from "lib/hooks/useUser";
 import Container from "layouts/Container";
 import Sidebar from "layouts/Navbar/Sidebar";
 // components
-import CreateProjectModal from "components/project/CreateProjectModal";
+import CreateProjectModal from "components/project/create-project-modal";
 // types
 import type { Props } from "./types";
 

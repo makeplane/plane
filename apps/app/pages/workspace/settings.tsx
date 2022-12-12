@@ -7,7 +7,9 @@ import { useForm } from "react-hook-form";
 import Dropzone from "react-dropzone";
 // services
 import workspaceService from "lib/services/workspace.service";
-import fileServices from "lib/services/file.services";
+import fileServices from "lib/services/file.service";
+// hoc
+import withAuth from "lib/hoc/withAuthWrapper";
 // layouts
 import AppLayout from "layouts/AppLayout";
 
@@ -232,4 +234,4 @@ const WorkspaceSettings = () => {
   );
 };
 
-export default WorkspaceSettings;
+export default withAuth(WorkspaceSettings);

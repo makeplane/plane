@@ -4,7 +4,7 @@ import { mutate } from "swr";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import cycleService from "lib/services/cycles.services";
+import cycleService from "lib/services/cycles.service";
 // fetch api
 import { CYCLE_LIST } from "constants/fetch-keys";
 // hooks

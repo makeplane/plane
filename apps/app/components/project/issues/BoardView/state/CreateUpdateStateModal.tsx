@@ -8,7 +8,7 @@ import { TwitterPicker } from "react-color";
 // headless
 import { Dialog, Popover, Transition } from "@headlessui/react";
 // services
-import stateService from "lib/services/state.services";
+import stateService from "lib/services/state.service";
 // fetch keys
 import { STATE_LIST } from "constants/fetch-keys";
 // hooks

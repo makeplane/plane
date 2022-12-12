@@ -11,7 +11,7 @@ import { Controller, useForm } from "react-hook-form";
 // headless ui
 import { Disclosure, Menu, Tab, Transition } from "@headlessui/react";
 // services
-import issuesServices from "lib/services/issues.services";
+import issuesServices from "lib/services/issues.service";
 // fetch keys
 import {
   PROJECT_ISSUES_ACTIVITY,
@@ -21,6 +21,8 @@ import {
 } from "constants/fetch-keys";
 // hooks
 import useUser from "lib/hooks/useUser";
+// hoc
+import withAuth from "lib/hoc/withAuthWrapper";
 // layouts
 import AppLayout from "layouts/AppLayout";
 // components
@@ -606,4 +608,4 @@ const IssueDetail: NextPage = () => {
   );
 };
 
-export default IssueDetail;
+export default withAuth(IssueDetail);

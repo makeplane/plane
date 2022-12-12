@@ -14,6 +14,8 @@ import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
 // fetching keys
 import { PROJECT_MEMBERS, PROJECT_INVITATIONS } from "constants/fetch-keys";
+// hoc
+import withAuth from "lib/hoc/withAuthWrapper";
 // layouts
 import AppLayout from "layouts/AppLayout";
 // components
@@ -109,8 +111,7 @@ const ProjectMembers: NextPage = () => {
               selectedRemoveMember
             );
             mutateMembers(
-              (prevData: any[]) =>
-                prevData?.filter((item: any) => item.id !== selectedRemoveMember),
+              (prevData) => prevData?.filter((item: any) => item.id !== selectedRemoveMember),
               false
             );
           }
@@ -121,8 +122,7 @@ const ProjectMembers: NextPage = () => {
               selectedInviteRemoveMember
             );
             mutateInvitations(
-              (prevData: any[]) =>
-                prevData?.filter((item: any) => item.id !== selectedInviteRemoveMember),
+              (prevData) => prevData?.filter((item: any) => item.id !== selectedInviteRemoveMember),
               false
             );
           }
@@ -313,4 +313,4 @@ const ProjectMembers: NextPage = () => {
   );
 };
 
-export default ProjectMembers;
+export default withAuth(ProjectMembers);

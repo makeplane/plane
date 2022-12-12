@@ -5,12 +5,14 @@ import type { NextPage } from "next";
 // swr
 import useSWR, { mutate } from "swr";
 // services
-import issuesServices from "lib/services/issues.services";
-import sprintService from "lib/services/cycles.services";
+import issuesServices from "lib/services/issues.service";
+import sprintService from "lib/services/cycles.service";
 // hooks
 import useUser from "lib/hooks/useUser";
 // fetching keys
 import { CYCLE_ISSUES, CYCLE_LIST } from "constants/fetch-keys";
+// hoc
+import withAuth from "lib/hoc/withAuthWrapper";
 // layouts
 import AppLayout from "layouts/AppLayout";
 // components
@@ -258,4 +260,4 @@ const ProjectSprints: NextPage = () => {
   );
 };
 
-export default ProjectSprints;
+export default withAuth(ProjectSprints);

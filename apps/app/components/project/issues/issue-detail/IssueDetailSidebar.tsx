@@ -6,8 +6,8 @@ import { Listbox, Transition } from "@headlessui/react";
 // react hook form
 import { useForm, Controller, UseFormWatch } from "react-hook-form";
 // services
-import stateServices from "lib/services/state.services";
-import issuesServices from "lib/services/issues.services";
+import stateServices from "lib/services/state.service";
+import issuesServices from "lib/services/issues.service";
 import workspaceService from "lib/services/workspace.service";
 // hooks
 import useUser from "lib/hooks/useUser";
@@ -40,14 +40,7 @@ import {
 } from "@heroicons/react/24/outline";
 // types
 import type { Control } from "react-hook-form";
-import type {
-  IIssue,
-  IIssueLabels,
-  IssueResponse,
-  IState,
-  NestedKeyOf,
-  WorkspaceMember,
-} from "types";
+import type { IIssue, IIssueLabels, IssueResponse, IState, NestedKeyOf } from "types";
 import { TwitterPicker } from "react-color";
 import IssuesListModal from "components/project/issues/IssuesListModal";
 
@@ -84,7 +77,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
       : null
   );
 
-  const { data: people } = useSWR<WorkspaceMember[]>(
+  const { data: people } = useSWR(
     activeWorkspace ? WORKSPACE_MEMBERS(activeWorkspace.slug) : null,
     activeWorkspace ? () => workspaceService.workspaceMembers(activeWorkspace.slug) : null
   );
