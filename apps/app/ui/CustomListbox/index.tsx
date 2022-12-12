@@ -7,7 +7,7 @@ import { CheckIcon } from "@heroicons/react/20/solid";
 import { Props } from "./types";
 
 const CustomListbox: React.FC<Props> = ({
-  title,
+  title = "",
   options,
   value,
   onChange,
@@ -90,8 +90,6 @@ const CustomListbox: React.FC<Props> = ({
                     : optionsFontsize === "2xl"
                     ? "text-2xl"
                     : ""
-                } ${
-                  className || ""
                 } rounded-md py-1 ring-1 ring-black ring-opacity-5 focus:outline-none z-10`}
               >
                 <div className="p-1">

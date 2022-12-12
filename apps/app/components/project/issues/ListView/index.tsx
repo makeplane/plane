@@ -14,6 +14,7 @@ import { IIssue, IssueResponse, IState, NestedKeyOf, Properties, WorkspaceMember
 // hooks
 import useUser from "lib/hooks/useUser";
 // fetch keys
+import { PRIORITIES } from "constants/";
 import { PROJECT_ISSUES_LIST, WORKSPACE_MEMBERS } from "constants/fetch-keys";
 // services
 import issuesServices from "lib/services/issues.services";
@@ -35,8 +36,6 @@ type Props = {
   setSelectedIssue: any;
   handleDeleteIssue: React.Dispatch<React.SetStateAction<string | undefined>>;
 };
-
-const PRIORITIES = ["high", "medium", "low"];
 
 const ListView: React.FC<Props> = ({
   properties,
@@ -174,10 +173,6 @@ const ListView: React.FC<Props> = ({
                                       {(key as keyof Properties) === "key" ? (
                                         <td className="px-3 py-4 font-medium text-gray-900 text-xs whitespace-nowrap">
                                           {activeProject?.identifier}-{issue.sequence_id}
-                                        </td>
-                                      ) : (key as keyof Properties) === "description" ? (
-                                        <td className="px-3 py-4 font-medium text-gray-900 truncate text-xs max-w-[15rem]">
-                                          {issue.description}
                                         </td>
                                       ) : (key as keyof Properties) === "priority" ? (
                                         <td className="px-3 py-4 text-sm font-medium text-gray-900 relative">
@@ -388,10 +383,6 @@ const ListView: React.FC<Props> = ({
                                               </>
                                             )}
                                           </Listbox>
-                                        </td>
-                                      ) : (key as keyof Properties) === "children" ? (
-                                        <td className="px-3 py-4 text-sm font-medium text-gray-900">
-                                          No children.
                                         </td>
                                       ) : (key as keyof Properties) === "target_date" ? (
                                         <td className="px-3 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">

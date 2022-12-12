@@ -6,7 +6,7 @@ const Select: React.FC<Props> = ({
   id,
   label,
   value,
-  className,
+  className = "",
   name,
   register,
   disabled,
@@ -27,7 +27,7 @@ const Select: React.FC<Props> = ({
         value={value}
         {...(register && register(name, validations))}
         disabled={disabled}
-        className="mt-1 block w-full px-3 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md bg-transparent"
+        className={`mt-1 block w-full px-3 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md bg-transparent ${className}`}
       >
         {options.map((option, index) => (
           <option value={option.value} key={index}>

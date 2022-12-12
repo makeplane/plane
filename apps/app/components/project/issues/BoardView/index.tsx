@@ -67,8 +67,6 @@ const BoardView: React.FC<Props> = ({ properties, selectedGroup, groupedByIssues
 
         setIssueDeletionData(removedItem);
         setIsIssueDeletionOpen(true);
-
-        console.log(removedItem);
       } else {
         if (type === "state") {
           const newStates = Array.from(states ?? []);
@@ -168,21 +166,6 @@ const BoardView: React.FC<Props> = ({ properties, selectedGroup, groupedByIssues
 
   return (
     <>
-      {/* <CreateUpdateStateModal
-        isOpen={
-          isOpen &&
-          preloadedData?.actionType !== "delete" &&
-          preloadedData?.actionType !== "createIssue"
-        }
-        setIsOpen={setIsOpen}
-        data={preloadedData as Partial<IIssue>}
-        projectId={projectId as string}
-      /> */}
-      {/* <ConfirmStateDeletion
-        isOpen={isOpen && preloadedData?.actionType === "delete"}
-        setIsOpen={setIsOpen}
-        data={preloadedData as Partial<IIssue>}
-      /> */}
       <ConfirmIssueDeletion
         isOpen={isIssueDeletionOpen}
         handleClose={() => setIsIssueDeletionOpen(false)}
@@ -199,21 +182,6 @@ const BoardView: React.FC<Props> = ({ properties, selectedGroup, groupedByIssues
       {groupedByIssues ? (
         <div className="h-full w-full">
           <DragDropContext onDragEnd={handleOnDragEnd}>
-            {/* <StrictModeDroppable droppableId="trashBox">
-              {(provided, snapshot) => (
-                <button
-                  type="button"
-                  className={`fixed bottom-2 right-8 z-10 px-2 py-1 flex items-center gap-2 rounded-lg mb-5 text-red-600 text-sm bg-red-100 border-2 border-transparent ${
-                    snapshot.isDraggingOver ? "border-red-600" : ""
-                  }`}
-                  {...provided.droppableProps}
-                  ref={provided.innerRef}
-                >
-                  <TrashIcon className="h-3 w-3" />
-                  Drop to delete
-                </button>
-              )}
-            </StrictModeDroppable> */}
             <div className="h-full w-full overflow-hidden">
               <StrictModeDroppable droppableId="state" type="state" direction="horizontal">
                 {(provided) => (

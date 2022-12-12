@@ -100,6 +100,8 @@ export const ISSUE_ACTIVITIES = (workspaceSlug: string, projectId: string, issue
 
 export const ISSUE_LABELS = (workspaceSlug: string, projectId: string) =>
   `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-labels/`;
+export const ISSUE_LABEL_DETAILS = (workspaceSlug: string, projectId: string, labelId: string) =>
+  `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-labels/${labelId}/`;
 
 export const FILTER_STATE_ISSUES = (workspaceSlug: string, projectId: string, state: string) =>
   `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/?state=${state}`;
@@ -122,3 +124,10 @@ export const CYCLES_ENDPOINT = (workspaceSlug: string, projectId: string) =>
   `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/`;
 export const CYCLE_DETAIL = (workspaceSlug: string, projectId: string, cycleId: string) =>
   `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-issues/`;
+export const REMOVE_ISSUE_FROM_CYCLE = (
+  workspaceSlug: string,
+  projectId: string,
+  cycleId: string,
+  bridgeId: string
+) =>
+  `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-issues/${bridgeId}/`;

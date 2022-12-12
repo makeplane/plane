@@ -29,7 +29,7 @@ Coming soon.
 
 The Plane community can be found on GitHub Discussions, where you can ask questions, voice ideas, and share your projects.
 
-To chat with other community members you can join the [Plane Discord](https://discord.com/invite/8SR2N9PAcJ).
+To chat with other community members you can join the [Plane Discord](https://discord.com/invite/q9HKAdau).
 
 Our Code of Conduct applies to all Plane community channels.
 

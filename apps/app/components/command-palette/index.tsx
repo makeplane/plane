@@ -4,40 +4,35 @@ import { useRouter } from "next/router";
 // swr
 import { mutate } from "swr";
 // react hook form
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
+// services
+import issuesServices from "lib/services/issues.services";
 // hooks
 import useUser from "lib/hooks/useUser";
 import useTheme from "lib/hooks/useTheme";
 import useToast from "lib/hooks/useToast";
 // icons
-import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 import {
   FolderIcon,
   RectangleStackIcon,
   ClipboardDocumentListIcon,
-  ArrowPathIcon,
+  MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
-// commons
-import { classNames, copyTextToClipboard } from "constants/common";
 // components
 import ShortcutsModal from "components/command-palette/shortcuts";
 import CreateProjectModal from "components/project/CreateProjectModal";
 import CreateUpdateIssuesModal from "components/project/issues/CreateUpdateIssueModal";
 import CreateUpdateCycleModal from "components/project/cycles/CreateUpdateCyclesModal";
+// ui
+import { Button } from "ui";
 // types
-import { IIssue, IProject, IssueResponse } from "types";
-import { Button, SearchListbox } from "ui";
-import issuesServices from "lib/services/issues.services";
+import { IIssue, IssueResponse } from "types";
 // fetch keys
-import { PROJECTS_LIST, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
-
-type ItemType = {
-  name: string;
-  url?: string;
-  onClick?: () => void;
-};
+import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+// constants
+import { classNames, copyTextToClipboard } from "constants/common";
 
 type FormInput = {
   issue_ids: string[];
@@ -45,8 +40,6 @@ type FormInput = {
 };
 
 const CommandPalette: React.FC = () => {
-  const router = useRouter();
-
   const [query, setQuery] = useState("");
 
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
@@ -55,7 +48,9 @@ const CommandPalette: React.FC = () => {
   const [isShortcutsModalOpen, setIsShortcutsModalOpen] = useState(false);
   const [isCreateCycleModalOpen, setIsCreateCycleModalOpen] = useState(false);
 
-  const { activeWorkspace, activeProject, issues, cycles } = useUser();
+  const { activeWorkspace, activeProject, issues } = useUser();
+
+  const router = useRouter();
 
   const { toggleCollapsed } = useTheme();
 
@@ -67,14 +62,7 @@ const CommandPalette: React.FC = () => {
       : issues?.results.filter((issue) => issue.name.toLowerCase().includes(query.toLowerCase())) ??
         [];
 
-  const {
-    register,
-    formState: { errors, isSubmitting },
-    handleSubmit,
-    control,
-    reset,
-    setError,
-  } = useForm<FormInput>();
+  const { register, handleSubmit, reset } = useForm<FormInput>();
 
   const quickActions = [
     {
@@ -103,25 +91,25 @@ const CommandPalette: React.FC = () => {
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      if (e.ctrlKey && e.key === "/") {
+      if ((e.ctrlKey || e.metaKey) && e.key === "/") {
         e.preventDefault();
         setIsPaletteOpen(true);
-      } else if (e.ctrlKey && e.key === "i") {
+      } else if ((e.ctrlKey || e.metaKey) && e.key === "i") {
         e.preventDefault();
         setIsIssueModalOpen(true);
-      } else if (e.ctrlKey && e.key === "p") {
+      } else if ((e.ctrlKey || e.metaKey) && e.key === "p") {
         e.preventDefault();
         setIsProjectModalOpen(true);
-      } else if (e.ctrlKey && e.key === "b") {
+      } else if ((e.ctrlKey || e.metaKey) && e.key === "b") {
         e.preventDefault();
         toggleCollapsed();
-      } else if (e.ctrlKey && e.key === "h") {
+      } else if ((e.ctrlKey || e.metaKey) && e.key === "h") {
         e.preventDefault();
         setIsShortcutsModalOpen(true);
-      } else if (e.ctrlKey && e.key === "q") {
+      } else if ((e.ctrlKey || e.metaKey) && e.key === "q") {
         e.preventDefault();
         setIsCreateCycleModalOpen(true);
-      } else if (e.ctrlKey && e.altKey && e.key === "c") {
+      } else if ((e.ctrlKey || e.metaKey) && e.altKey && e.key === "c") {
         e.preventDefault();
 
         if (!router.query.issueId) return;
@@ -186,37 +174,6 @@ const CommandPalette: React.FC = () => {
     }
   };
 
-  const handleAddToCycle: SubmitHandler<FormInput> = (data) => {
-    if (!data.issue_ids || data.issue_ids.length === 0) {
-      setToastAlert({
-        title: "Error",
-        type: "error",
-        message: "Please select atleast one issue",
-      });
-      return;
-    }
-
-    if (!data.cycleId) {
-      setToastAlert({
-        title: "Error",
-        type: "error",
-        message: "Please select a cycle",
-      });
-      return;
-    }
-
-    if (activeWorkspace && activeProject) {
-      issuesServices
-        .bulkAddIssuesToCycle(activeWorkspace.slug, activeProject.id, data.cycleId, data)
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    }
-  };
-
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
@@ -269,14 +226,7 @@ const CommandPalette: React.FC = () => {
             >
               <Dialog.Panel className="relative mx-auto max-w-2xl transform divide-y divide-gray-500 divide-opacity-10 rounded-xl bg-white bg-opacity-80 shadow-2xl ring-1 ring-black ring-opacity-5 backdrop-blur backdrop-filter transition-all">
                 <form>
-                  <Combobox
-                  // onChange={(item: ItemType) => {
-                  //   const { url, onClick } = item;
-                  //   if (url) router.push(url);
-                  //   else if (onClick) onClick();
-                  //   handleCommandPaletteClose();
-                  // }}
-                  >
+                  <Combobox>
                     <div className="relative m-1">
                       <MagnifyingGlassIcon
                         className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-gray-900 text-opacity-40"
@@ -305,42 +255,53 @@ const CommandPalette: React.FC = () => {
                               {filteredIssues.map((issue) => (
                                 <Combobox.Option
                                   key={issue.id}
+                                  as="label"
+                                  htmlFor={`issue-${issue.id}`}
                                   value={{
                                     name: issue.name,
                                     url: `/projects/${issue.project}/issues/${issue.id}`,
                                   }}
                                   className={({ active }) =>
                                     classNames(
-                                      "flex cursor-pointer select-none items-center rounded-md px-3 py-2",
+                                      "flex items-center justify-between cursor-pointer select-none rounded-md px-3 py-2",
                                       active ? "bg-gray-900 bg-opacity-5 text-gray-900" : ""
                                     )
                                   }
                                 >
                                   {({ active }) => (
                                     <>
-                                      {/* <FolderIcon
-                                      className={classNames(
-                                        "h-6 w-6 flex-none text-gray-900 text-opacity-40",
-                                        active ? "text-opacity-100" : ""
-                                      )}
-                                      aria-hidden="true"
-                                    /> */}
-                                      <input
-                                        type="checkbox"
-                                        {...register("issue_ids")}
-                                        id={`issue-${issue.id}`}
-                                        value={issue.id}
-                                      />
-                                      <label
-                                        htmlFor={`issue-${issue.id}`}
-                                        className="ml-3 flex-auto truncate"
-                                      >
-                                        {issue.name}
-                                      </label>
-                                      {active && (
-                                        <span className="ml-3 flex-none text-gray-500">
-                                          Jump to...
+                                      <div className="flex items-center gap-2">
+                                        <input
+                                          type="checkbox"
+                                          {...register("issue_ids")}
+                                          id={`issue-${issue.id}`}
+                                          value={issue.id}
+                                        />
+                                        <span
+                                          className={`h-1.5 w-1.5 block rounded-full`}
+                                          style={{
+                                            backgroundColor: issue.state_detail.color,
+                                          }}
+                                        />
+                                        <span className="text-xs text-gray-500">
+                                          {activeProject?.identifier}-{issue.sequence_id}
                                         </span>
+                                        {issue.name}
+                                      </div>
+                                      {active && (
+                                        <button
+                                          type="button"
+                                          onClick={() => {
+                                            router.push(
+                                              `/projects/${activeProject?.id}/issues/${issue.id}`
+                                            );
+                                            handleCommandPaletteClose();
+                                          }}
+                                        >
+                                          <span className="justify-self-end flex-none text-gray-500">
+                                            Jump to...
+                                          </span>
+                                        </button>
                                       )}
                                     </>
                                   )}
@@ -405,31 +366,9 @@ const CommandPalette: React.FC = () => {
                   </Combobox>
 
                   <div className="flex justify-between items-center gap-2 p-3">
-                    <div className="flex items-center gap-2">
-                      <Controller
-                        control={control}
-                        name="cycleId"
-                        render={({ field: { value, onChange } }) => (
-                          <SearchListbox
-                            title="Cycle"
-                            optionsFontsize="sm"
-                            options={cycles?.map((cycle) => {
-                              return { value: cycle.id, display: cycle.name };
-                            })}
-                            multiple={false}
-                            value={value}
-                            onChange={onChange}
-                            icon={<ArrowPathIcon className="h-4 w-4 text-gray-400" />}
-                          />
-                        )}
-                      />
-                      <Button onClick={handleSubmit(handleAddToCycle)} size="sm">
-                        Add to Cycle
-                      </Button>
-                      <Button onClick={handleSubmit(handleDelete)} theme="danger" size="sm">
-                        Delete
-                      </Button>
-                    </div>
+                    <Button onClick={handleSubmit(handleDelete)} theme="danger" size="sm">
+                      Delete selected
+                    </Button>
                     <div>
                       <Button type="button" size="sm" onClick={handleCommandPaletteClose}>
                         Close
