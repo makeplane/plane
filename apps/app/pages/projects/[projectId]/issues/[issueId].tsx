@@ -115,7 +115,7 @@ const IssueDetail: NextPage = () => {
   );
 
   const { data: issueComments } = useSWR<IIssueComment[]>(
-    activeWorkspace && projectId && issueId ? PROJECT_ISSUES_COMMENTS : null,
+    activeWorkspace && projectId && issueId ? PROJECT_ISSUES_COMMENTS(issueId as string) : null,
     activeWorkspace && projectId && issueId
       ? () =>
           issuesServices.getIssueComments(

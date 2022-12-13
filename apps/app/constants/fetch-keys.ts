@@ -17,7 +17,7 @@ export const PROJECT_ISSUES_LIST = (workspaceSlug: string, projectId: string) =>
 export const PROJECT_ISSUES_DETAILS = (issueId: string) => `PROJECT_ISSUES_DETAILS_${issueId}`;
 export const PROJECT_ISSUES_PROPERTIES = (projectId: string) =>
   `PROJECT_ISSUES_PROPERTIES_${projectId}`;
-export const PROJECT_ISSUES_COMMENTS = "PROJECT_ISSUES_COMMENTS";
+export const PROJECT_ISSUES_COMMENTS = (issueId: string) => `PROJECT_ISSUES_COMMENTS_${issueId}`;
 export const PROJECT_ISSUES_ACTIVITY = "PROJECT_ISSUES_ACTIVITY";
 export const PROJECT_ISSUE_BY_STATE = (projectId: string) => `PROJECT_ISSUE_BY_STATE_${projectId}`;
 export const PROJECT_ISSUE_LABELS = (projectId: string) => `PROJECT_ISSUE_LABELS_${projectId}`;
