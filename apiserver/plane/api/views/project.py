@@ -130,6 +130,7 @@ class ProjectViewSet(BaseViewSet):
                             project=serializer.instance,
                             sequence=state["sequence"],
                             workspace=serializer.instance.workspace,
+                            group=state["group"],
                         )
                         for state in states
                     ]
