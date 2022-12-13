@@ -32,7 +32,7 @@ import SelectProject from "./SelectProject";
 import SelectPriority from "./SelectPriority";
 import SelectAssignee from "./SelectAssignee";
 import SelectParent from "./SelectParentIssue";
-import CreateUpdateStateModal from "components/project/issues/BoardView/state/CreateUpdateStateModal";
+import CreateUpdateStateModal from "components/project/issues/BoardView/state/create-update-state-modal";
 import CreateUpdateCycleModal from "components/project/cycles/CreateUpdateCyclesModal";
 
 // types

@@ -11,10 +11,12 @@ import { Dialog, Popover, Transition } from "@headlessui/react";
 import stateService from "lib/services/state.service";
 // fetch keys
 import { STATE_LIST } from "constants/fetch-keys";
+// constants
+import { GROUP_CHOICES } from "constants/";
 // hooks
 import useUser from "lib/hooks/useUser";
 // ui
-import { Button, Input, TextArea } from "ui";
+import { Button, Input, Select, TextArea } from "ui";
 // icons
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 
@@ -31,6 +33,7 @@ const defaultValues: Partial<IState> = {
   name: "",
   description: "",
   color: "#000000",
+  group: "backlog",
 };
 
 const CreateUpdateStateModal: React.FC<Props> = ({ isOpen, data, projectId, handleClose }) => {
@@ -159,6 +162,22 @@ const CreateUpdateStateModal: React.FC<Props> = ({ isOpen, data, projectId, hand
                             validations={{
                               required: "Name is required",
                             }}
+                          />
+                        </div>
+                        <div>
+                          <Select
+                            id="group"
+                            label="Group"
+                            name="group"
+                            error={errors.group}
+                            register={register}
+                            validations={{
+                              required: "Group is required",
+                            }}
+                            options={Object.keys(GROUP_CHOICES).map((key) => ({
+                              value: key,
+                              label: GROUP_CHOICES[key as keyof typeof GROUP_CHOICES],
+                            }))}
                           />
                         </div>
                         <div>

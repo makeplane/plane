@@ -18,11 +18,11 @@ import { Button } from "ui";
 import type { IState } from "types";
 type Props = {
   isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  data?: IState;
+  onClose: () => void;
+  data: IState | null;
 };
 
-const ConfirmStateDeletion: React.FC<Props> = ({ isOpen, setIsOpen, data }) => {
+const ConfirmStateDeletion: React.FC<Props> = ({ isOpen, onClose, data }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const { activeWorkspace } = useUser();
@@ -30,7 +30,7 @@ const ConfirmStateDeletion: React.FC<Props> = ({ isOpen, setIsOpen, data }) => {
   const cancelButtonRef = useRef(null);
 
   const handleClose = () => {
-    setIsOpen(false);
+    onClose();
     setIsDeleteLoading(false);
   };
 
@@ -52,10 +52,6 @@ const ConfirmStateDeletion: React.FC<Props> = ({ isOpen, setIsOpen, data }) => {
         setIsDeleteLoading(false);
       });
   };
-
-  useEffect(() => {
-    data && setIsOpen(true);
-  }, [data, setIsOpen]);
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
