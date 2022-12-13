@@ -15,7 +15,8 @@ export const MAGIC_LINK_SIGNIN = "/api/magic-sign-in/";
 export const USER_ENDPOINT = "/api/users/me/";
 export const CHANGE_PASSWORD = "/api/users/me/change-password/";
 export const USER_ONBOARD_ENDPOINT = "/api/users/me/onboard/";
-export const USER_ISSUES_ENDPOINT = "/api/users/me/issues/";
+export const USER_ISSUES_ENDPOINT = (workspaceSlug: string) =>
+  `/api/workspaces/${workspaceSlug}/my-issues/`;
 export const USER_WORKSPACES = "/api/users/me/workspaces";
 
 // s3 file url
@@ -32,8 +33,6 @@ export const JOIN_WORKSPACE = (workspaceSlug: string, invitationId: string) =>
   `/api/users/me/invitations/workspaces/${workspaceSlug}/${invitationId}/join/`;
 export const JOIN_PROJECT = (workspaceSlug: string) =>
   `/api/workspaces/${workspaceSlug}/projects/join/`;
-
-export const USER_ISSUES = "/api/users/me/issues/";
 
 // workspaces
 export const WORKSPACES_ENDPOINT = "/api/workspaces/";

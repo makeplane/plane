@@ -33,11 +33,11 @@ import { Menu, Transition } from "@headlessui/react";
 const MyIssues: NextPage = () => {
   const [selectedWorkspace, setSelectedWorkspace] = useState<string | null>(null);
 
-  const { user, workspaces } = useUser();
+  const { user, workspaces, activeWorkspace } = useUser();
 
   const { data: myIssues, mutate: mutateMyIssues } = useSWR<IIssue[]>(
-    user ? USER_ISSUE : null,
-    user ? () => userService.userIssues() : null
+    user && activeWorkspace ? USER_ISSUE(activeWorkspace.slug) : null,
+    user && activeWorkspace ? () => userService.userIssues(activeWorkspace.slug) : null
   );
 
   const updateMyIssues = (

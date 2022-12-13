@@ -26,8 +26,8 @@ const Workspace: NextPage = () => {
   const { user, activeWorkspace, projects } = useUser();
 
   const { data: myIssues } = useSWR<IIssue[]>(
-    user ? USER_ISSUE : null,
-    user ? () => userService.userIssues() : null
+    user && activeWorkspace ? USER_ISSUE(activeWorkspace.slug) : null,
+    user && activeWorkspace ? () => userService.userIssues(activeWorkspace.slug) : null
   );
 
   const cards = [

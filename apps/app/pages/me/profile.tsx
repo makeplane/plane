@@ -49,7 +49,7 @@ const Profile: NextPage = () => {
   const [isImageUploading, setIsImageUploading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
-  const { user: myProfile, mutateUser, projects } = useUser();
+  const { user: myProfile, mutateUser, projects, activeWorkspace } = useUser();
 
   const { setToastAlert } = useToast();
 
@@ -86,8 +86,8 @@ const Profile: NextPage = () => {
   } = useForm<IUser>({ defaultValues });
 
   const { data: myIssues } = useSWR<IIssue[]>(
-    myProfile ? USER_ISSUE : null,
-    myProfile ? () => userService.userIssues() : null
+    myProfile && activeWorkspace ? USER_ISSUE(activeWorkspace.slug) : null,
+    myProfile && activeWorkspace ? () => userService.userIssues(activeWorkspace.slug) : null
   );
 
   const { data: invitations } = useSWR(USER_WORKSPACE_INVITATIONS, () =>
@@ -103,7 +103,7 @@ const Profile: NextPage = () => {
       icon: RectangleStackIcon,
       title: "My Issues",
       number: myIssues?.length ?? 0,
-      description: "View the list of issues assigned to you across the workspace.",
+      description: "View the list of issues assigned to you for this workspace.",
       href: "/me/my-issues",
     },
     {
