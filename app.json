@@ -1,0 +1,16 @@
+{
+  "name": "Plane",
+  "description": "Plane helps you track your issues, epics, and product roadmaps.",
+  "repository": "http://github.com/makeplane/plane",
+  "logo": "https://avatars.githubusercontent.com/u/115727700?s=200&v=4",
+  "website": "https://plane.so/",
+  "success_url": "/",
+  "stack": "container",
+  "keywords": ["plane", "project management", "django", "next"],
+  "addons": ["heroku-postgresql:mini", "heroku-redis:mini"],
+  "buildpacks": [
+    {
+      "url": "https://github.com/heroku/heroku-buildpack-python.git"
+    }
+  ]
+}

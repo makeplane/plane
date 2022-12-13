@@ -17,4 +17,4 @@ release:
 run:
   plane-frontend: node apps/app/server.js
   plane-backend: ./apiserver/bin/takeoff
-  plane-worker: python manage.py rqworker
+  plane-rqworker: ./apiserver/bin/worker
