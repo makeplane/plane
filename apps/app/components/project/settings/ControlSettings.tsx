@@ -92,7 +92,7 @@ const ControlSettings: React.FC<Props> = ({ control, isSubmitting }) => {
                                     {selected ? (
                                       <span
                                         className={`absolute inset-y-0 right-0 flex items-center pr-4 ${
-                                          active ? "text-white" : "text-indigo-600"
+                                          active ? "text-white" : "text-theme"
                                         }`}
                                       >
                                         <CheckIcon className="h-5 w-5" aria-hidden="true" />
@@ -164,7 +164,7 @@ const ControlSettings: React.FC<Props> = ({ control, isSubmitting }) => {
                                     {selected ? (
                                       <span
                                         className={`absolute inset-y-0 right-0 flex items-center pr-4 ${
-                                          active ? "text-white" : "text-indigo-600"
+                                          active ? "text-white" : "text-theme"
                                         }`}
                                       >
                                         <CheckIcon className="h-5 w-5" aria-hidden="true" />

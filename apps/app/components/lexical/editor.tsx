@@ -27,7 +27,7 @@ import { getValidatedValue } from "./helpers/editor";
 import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
 
 export interface RichTextEditorProps {
-  onChange: (state: SerializedEditorState) => void;
+  onChange: (state: string) => void;
   id: string;
   value: string;
   placeholder?: string;
@@ -41,8 +41,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
 }) => {
   const handleChange = (editorState: EditorState) => {
     editorState.read(() => {
-      let editorData = editorState.toJSON();
-      if (onChange) onChange(editorData);
+      onChange(JSON.stringify(editorState.toJSON()));
     });
   };
 

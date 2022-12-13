@@ -6,7 +6,7 @@ import useUser from "lib/hooks/useUser";
 // hoc
 import withAuth from "lib/hoc/withAuthWrapper";
 // layouts
-import AppLayout from "layouts/AppLayout";
+import AppLayout from "layouts/app-layout";
 // components
 import ProjectMemberInvitations from "components/project/memberInvitations";
 import ConfirmProjectDeletion from "components/project/confirm-project-deletion";

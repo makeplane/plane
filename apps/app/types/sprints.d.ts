@@ -30,19 +30,6 @@ export interface CycleIssueResponse {
   cycle: string;
 }
 
-export type CycleViewProps = {
-  cycle: ICycle;
-  selectSprint: React.Dispatch<React.SetStateAction<SelectSprintType>>;
-  projectId: string;
-  workspaceSlug: string;
-  openIssueModal: (
-    sprintId: string,
-    issue?: IIssue,
-    actionType?: "create" | "edit" | "delete"
-  ) => void;
-  addIssueToSprint: (sprintId: string, issueId: string) => void;
-};
-
 export type SelectSprintType =
   | (ICycle & { actionType: "edit" | "delete" | "create-issue" })
   | undefined;

@@ -12,7 +12,7 @@ import { Tab } from "@headlessui/react";
 // hoc
 import withAuth from "lib/hoc/withAuthWrapper";
 // layouts
-import AppLayout from "layouts/AppLayout";
+import SettingsLayout from "layouts/settings-layout";
 // service
 import projectServices from "lib/services/project.service";
 // hooks
@@ -26,6 +26,26 @@ import { Breadcrumbs, BreadcrumbItem } from "ui/Breadcrumbs";
 // types
 import type { IProject, IWorkspace } from "types";
 
+const GeneralSettings = dynamic(() => import("components/project/settings/GeneralSettings"), {
+  loading: () => <p>Loading...</p>,
+  ssr: false,
+});
+
+const ControlSettings = dynamic(() => import("components/project/settings/ControlSettings"), {
+  loading: () => <p>Loading...</p>,
+  ssr: false,
+});
+
+const StatesSettings = dynamic(() => import("components/project/settings/StatesSettings"), {
+  loading: () => <p>Loading...</p>,
+  ssr: false,
+});
+
+const LabelsSettings = dynamic(() => import("components/project/settings/LabelsSettings"), {
+  loading: () => <p>Loading...</p>,
+  ssr: false,
+});
+
 const defaultValues: Partial<IProject> = {
   name: "",
   description: "",
@@ -34,27 +54,6 @@ const defaultValues: Partial<IProject> = {
 };
 
 const ProjectSettings: NextPage = () => {
-  // FIXME: instead of using dynamic import inside component use it outside
-  const GeneralSettings = dynamic(() => import("components/project/settings/GeneralSettings"), {
-    loading: () => <p>Loading...</p>,
-    ssr: false,
-  });
-
-  const ControlSettings = dynamic(() => import("components/project/settings/ControlSettings"), {
-    loading: () => <p>Loading...</p>,
-    ssr: false,
-  });
-
-  const StatesSettings = dynamic(() => import("components/project/settings/StatesSettings"), {
-    loading: () => <p>Loading...</p>,
-    ssr: false,
-  });
-
-  const LabelsSettings = dynamic(() => import("components/project/settings/LabelsSettings"), {
-    loading: () => <p>Loading...</p>,
-    ssr: false,
-  });
-
   const {
     register,
     handleSubmit,
@@ -133,14 +132,38 @@ const ProjectSettings: NextPage = () => {
       });
   };
 
+  const sidebarLinks: Array<{
+    label: string;
+    href: string;
+  }> = [
+    {
+      label: "General",
+      href: "#",
+    },
+    {
+      label: "Control",
+      href: "#",
+    },
+    {
+      label: "States",
+      href: "#",
+    },
+    {
+      label: "Labels",
+      href: "#",
+    },
+  ];
+
   return (
-    <AppLayout>
-      <div className="space-y-5 mb-5">
+    <SettingsLayout
+      breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem title="Projects" link="/projects" />
           <BreadcrumbItem title={`${activeProject?.name ?? "Project"} Settings`} />
         </Breadcrumbs>
-      </div>
+      }
+      links={sidebarLinks}
+    >
       {projectDetails ? (
         <div className="space-y-3">
           <Tab.Group>
@@ -186,7 +209,7 @@ const ProjectSettings: NextPage = () => {
           <Spinner />
         </div>
       )}
-    </AppLayout>
+    </SettingsLayout>
   );
 };
 

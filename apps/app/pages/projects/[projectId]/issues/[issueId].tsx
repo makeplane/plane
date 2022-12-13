@@ -7,7 +7,7 @@ import React, { useCallback, useEffect, useState } from "react";
 // swr
 import useSWR, { mutate } from "swr";
 // react hook form
-import { Controller, useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 // headless ui
 import { Disclosure, Menu, Tab, Transition } from "@headlessui/react";
 // services
@@ -17,14 +17,13 @@ import {
   PROJECT_ISSUES_ACTIVITY,
   PROJECT_ISSUES_COMMENTS,
   PROJECT_ISSUES_LIST,
-  STATE_LIST,
 } from "constants/fetch-keys";
 // hooks
 import useUser from "lib/hooks/useUser";
 // hoc
 import withAuth from "lib/hoc/withAuthWrapper";
 // layouts
-import AppLayout from "layouts/AppLayout";
+import AppLayout from "layouts/app-layout";
 // components
 import CreateUpdateIssuesModal from "components/project/issues/CreateUpdateIssueModal";
 import IssueCommentSection from "components/project/issues/issue-detail/comment/IssueCommentSection";
@@ -49,13 +48,14 @@ import {
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import AddAsSubIssue from "components/command-palette/addAsSubIssue";
+import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
+
+const RichTextEditor = dynamic(() => import("components/lexical/editor"), {
+  ssr: false,
+});
 
 const IssueDetail: NextPage = () => {
-  const router = useRouter();
-
-  const { issueId, projectId } = router.query;
-
-  const { activeWorkspace, activeProject, issues, mutateIssues, states } = useUser();
+  const [deleteIssueModal, setDeleteIssueModal] = useState(false);
 
   const [isOpen, setIsOpen] = useState(false);
   const [isAddAsSubIssueOpen, setIsAddAsSubIssueOpen] = useState(false);
@@ -67,18 +67,17 @@ const IssueDetail: NextPage = () => {
   >(undefined);
 
   const [issueDescriptionValue, setIssueDescriptionValue] = useState("");
+
+  const router = useRouter();
+
+  const { issueId, projectId } = router.query;
+
+  const { activeWorkspace, activeProject, issues, mutateIssues, states } = useUser();
+
   const handleDescriptionChange: any = (value: any) => {
     console.log(value);
     setIssueDescriptionValue(value);
   };
-
-  const RichTextEditor = dynamic(() => import("components/lexical/editor"), {
-    ssr: false,
-  });
-
-  const LexicalViewer = dynamic(() => import("components/lexical/viewer"), {
-    ssr: false,
-  });
 
   const {
     register,
@@ -143,8 +142,13 @@ const IssueDetail: NextPage = () => {
         false
       );
 
+      const payload = {
+        ...formData,
+        // description: formData.description ? JSON.parse(formData.description) : null,
+      };
+
       issuesServices
-        .patchIssue(activeWorkspace.slug, projectId as string, issueId as string, formData)
+        .patchIssue(activeWorkspace.slug, projectId as string, issueId as string, payload)
         .then((response) => {
           console.log(response);
         })
@@ -159,6 +163,7 @@ const IssueDetail: NextPage = () => {
     if (issueDetail)
       reset({
         ...issueDetail,
+        // description: JSON.stringify(issueDetail.description),
         blockers_list:
           issueDetail.blockers_list ??
           issueDetail.blocker_issues?.map((issue) => issue.blocker_issue_detail?.id),
@@ -208,8 +213,50 @@ const IssueDetail: NextPage = () => {
     }
   };
 
+  // console.log(issueDetail);
+
   return (
-    <AppLayout noPadding={true} bg="secondary">
+    <AppLayout
+      noPadding={true}
+      bg="secondary"
+      breadcrumbs={
+        <Breadcrumbs>
+          <BreadcrumbItem
+            title={`${activeProject?.name ?? "Project"} Issues`}
+            link={`/projects/${activeProject?.id}/issues`}
+          />
+          <BreadcrumbItem
+            title={`Issue ${activeProject?.identifier ?? "Project"}-${
+              issueDetail?.sequence_id ?? "..."
+            } Details`}
+          />
+        </Breadcrumbs>
+      }
+      right={
+        <div className="flex items-center gap-2">
+          <HeaderButton
+            Icon={ChevronLeftIcon}
+            label="Previous"
+            className={`${!prevIssue ? "cursor-not-allowed opacity-70" : ""}`}
+            onClick={() => {
+              if (!prevIssue) return;
+              router.push(`/projects/${prevIssue.project}/issues/${prevIssue.id}`);
+            }}
+          />
+          <HeaderButton
+            Icon={ChevronRightIcon}
+            disabled={!nextIssue}
+            label="Next"
+            className={`${!nextIssue ? "cursor-not-allowed opacity-70" : ""}`}
+            onClick={() => {
+              if (!nextIssue) return;
+              router.push(`/projects/${nextIssue.project}/issues/${nextIssue?.id}`);
+            }}
+            position="reverse"
+          />
+        </div>
+      }
+    >
       <CreateUpdateIssuesModal
         isOpen={isOpen}
         setIsOpen={setIsOpen}
@@ -217,6 +264,11 @@ const IssueDetail: NextPage = () => {
         prePopulateData={{
           ...preloadedData,
         }}
+      />
+      <ConfirmIssueDeletion
+        handleClose={() => setDeleteIssueModal(false)}
+        isOpen={deleteIssueModal}
+        data={issueDetail}
       />
       <AddAsSubIssue
         isOpen={isAddAsSubIssueOpen}
@@ -226,19 +278,7 @@ const IssueDetail: NextPage = () => {
       {issueDetail && activeProject ? (
         <div className="flex gap-5">
           <div className="basis-3/4 space-y-5 p-5">
-            <div className="mb-5">
-              <Breadcrumbs>
-                <BreadcrumbItem
-                  title={`${activeProject?.name ?? "Project"} Issues`}
-                  link={`/projects/${activeProject?.id}/issues`}
-                />
-                <BreadcrumbItem
-                  title={`Issue ${activeProject?.identifier ?? "Project"}-${
-                    issueDetail?.sequence_id ?? "..."
-                  } Details`}
-                />
-              </Breadcrumbs>
-            </div>
+            <div className="mb-5"></div>
             <div className="rounded-lg">
               {issueDetail.parent !== null && issueDetail.parent !== "" ? (
                 <div className="bg-gray-100 flex items-center gap-2 p-2 text-xs rounded mb-5 w-min whitespace-nowrap">
@@ -332,15 +372,21 @@ const IssueDetail: NextPage = () => {
                 {/* <Controller
                   name="description"
                   control={control}
-                  render={({ field }) => (
+                  render={({ field: { value, onChange } }) => (
                     <RichTextEditor
-                      {...field}
+                      // value={JSON.stringify(issueDetail.description)}
+                      value={value}
+                      onChange={(val) => {
+                        debounce(() => {
+                          console.log("Debounce");
+                          // handleSubmit(submitChanges)();
+                        }, 5000)();
+                        onChange(val);
+                      }}
                       id="issueDescriptionEditor"
-                      value={JSON.parse(issueDetail.description)}
                     />
                   )}
                 /> */}
-                {/* <LexicalViewer id="descriptionViewer" value={JSON.parse(issueDetail.description)} /> */}
               </div>
               <div className="mt-2">
                 {subIssues && subIssues.length > 0 ? (
@@ -568,34 +614,13 @@ const IssueDetail: NextPage = () => {
               </Tab.Group>
             </div>
           </div>
-          <div className="basis-1/4 rounded-lg space-y-5 p-5 border-l">
-            <div className="flex justify-end items-center gap-x-3 mb-5">
-              <HeaderButton
-                Icon={ChevronLeftIcon}
-                label="Previous"
-                className={`${!prevIssue ? "cursor-not-allowed opacity-70" : ""}`}
-                onClick={() => {
-                  if (!prevIssue) return;
-                  router.push(`/projects/${prevIssue.project}/issues/${prevIssue.id}`);
-                }}
-              />
-              <HeaderButton
-                Icon={ChevronRightIcon}
-                disabled={!nextIssue}
-                label="Next"
-                className={`${!nextIssue ? "cursor-not-allowed opacity-70" : ""}`}
-                onClick={() => {
-                  if (!nextIssue) return;
-                  router.push(`/projects/${nextIssue.project}/issues/${nextIssue?.id}`);
-                }}
-                position="reverse"
-              />
-            </div>
+          <div className="h-full basis-1/4 space-y-5 p-5 border-l">
             <IssueDetailSidebar
               control={control}
               issueDetail={issueDetail}
               submitChanges={submitChanges}
               watch={watch}
+              setDeleteIssueModal={setDeleteIssueModal}
             />
           </div>
         </div>

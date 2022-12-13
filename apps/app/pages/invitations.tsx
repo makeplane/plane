@@ -82,7 +82,7 @@ const OnBoard: NextPage = () => {
     >
       <div className="flex min-h-full flex-col items-center justify-center p-4 sm:p-0">
         {user && (
-          <div className="w-96 p-2 rounded-lg bg-indigo-100 text-indigo-600 mb-10">
+          <div className="w-96 p-2 rounded-lg bg-indigo-100 text-theme mb-10">
             <p className="text-sm text-center">logged in as {user.email}</p>
           </div>
         )}
@@ -120,7 +120,7 @@ const OnBoard: NextPage = () => {
                                 );
                               }}
                               type="checkbox"
-                              className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                              className="h-4 w-4 rounded border-gray-300 text-theme focus:ring-indigo-500"
                             />
                             <label htmlFor={item.id} className="text-sm">
                               Accept

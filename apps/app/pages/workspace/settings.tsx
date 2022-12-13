@@ -13,8 +13,7 @@ import fileServices from "lib/services/file.service";
 // hoc
 import withAuth from "lib/hoc/withAuthWrapper";
 // layouts
-import AppLayout from "layouts/AppLayout";
-
+import AppLayout from "layouts/app-layout";
 // hooks
 import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
@@ -90,6 +89,11 @@ const WorkspaceSettings = () => {
       meta={{
         title: "Plane - Workspace Settings",
       }}
+      breadcrumbs={
+        <Breadcrumbs>
+          <BreadcrumbItem title={`${activeWorkspace?.name ?? "Workspace"} Settings`} />
+        </Breadcrumbs>
+      }
     >
       <ConfirmWorkspaceDeletion
         isOpen={isOpen}
@@ -99,9 +103,6 @@ const WorkspaceSettings = () => {
         data={activeWorkspace ?? null}
       />
       <div className="space-y-5">
-        <Breadcrumbs>
-          <BreadcrumbItem title={`${activeWorkspace?.name ?? "Workspace"} Settings`} />
-        </Breadcrumbs>
         {activeWorkspace ? (
           <div className="space-y-8">
             <Tab.Group>

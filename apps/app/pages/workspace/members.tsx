@@ -17,7 +17,7 @@ import { WORKSPACE_INVITATIONS, WORKSPACE_MEMBERS } from "constants/fetch-keys";
 // hoc
 import withAuthWrapper from "lib/hoc/withAuthWrapper";
 // layouts
-import AppLayout from "layouts/AppLayout";
+import AppLayout from "layouts/app-layout";
 // components
 import SendWorkspaceInvitationModal from "components/workspace/SendWorkspaceInvitationModal";
 import ConfirmWorkspaceMemberRemove from "components/workspace/ConfirmWorkspaceMemberRemove";
@@ -75,6 +75,12 @@ const WorkspaceInvite: NextPage = () => {
       meta={{
         title: "Plane - Workspace Invite",
       }}
+      breadcrumbs={
+        <Breadcrumbs>
+          <BreadcrumbItem title={`${activeWorkspace?.name ?? "Workspace"} Members`} />
+        </Breadcrumbs>
+      }
+      right={<HeaderButton Icon={PlusIcon} label="Add Member" onClick={() => setIsOpen(true)} />}
     >
       <ConfirmWorkspaceMemberRemove
         isOpen={Boolean(selectedRemoveMember) || Boolean(selectedInviteRemoveMember)}
@@ -132,13 +138,6 @@ const WorkspaceInvite: NextPage = () => {
         </div>
       ) : (
         <div className="w-full space-y-5">
-          <Breadcrumbs>
-            <BreadcrumbItem title={`${activeWorkspace?.name ?? "Workspace"} Members`} />
-          </Breadcrumbs>
-          <div className="flex items-center justify-between cursor-pointer w-full">
-            <h2 className="text-2xl font-medium">Invite Members</h2>
-            <HeaderButton Icon={PlusIcon} label="Add Member" onClick={() => setIsOpen(true)} />
-          </div>
           {members && members.length === 0 ? null : (
             <>
               <table className="min-w-full table-fixed border border-gray-300 md:rounded-lg divide-y divide-gray-300">
@@ -234,7 +233,7 @@ const WorkspaceInvite: NextPage = () => {
                             Active
                           </span>
                         ) : (
-                          <span className="p-0.5 px-2 text-sm bg-yellow-400 text-black rounded-full">
+                          <span className="p-0.5 px-2 text-sm bg-yellow-400 text-gray-900 rounded-full">
                             Pending
                           </span>
                         )}

@@ -216,7 +216,7 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
                                                     {selected ? (
                                                       <span
                                                         className={`absolute inset-y-0 right-0 flex items-center pr-4 ${
-                                                          active ? "text-white" : "text-indigo-600"
+                                                          active ? "text-white" : "text-theme"
                                                         }`}
                                                       >
                                                         <CheckIcon
