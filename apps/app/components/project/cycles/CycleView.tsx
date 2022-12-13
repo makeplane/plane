@@ -7,7 +7,7 @@ import useSWR, { mutate } from "swr";
 // headless ui
 import { Disclosure, Transition, Menu } from "@headlessui/react";
 // services
-import cycleServices from "lib/services/cycles.services";
+import cycleServices from "lib/services/cycles.service";
 // hooks
 import useUser from "lib/hooks/useUser";
 // components
@@ -22,7 +22,7 @@ import type { CycleViewProps as Props, CycleIssueResponse, IssueResponse } from 
 import { CYCLE_ISSUES } from "constants/fetch-keys";
 // constants
 import { renderShortNumericDateFormat } from "constants/common";
-import issuesServices from "lib/services/issues.services";
+import issuesServices from "lib/services/issues.service";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 import { Draggable } from "react-beautiful-dnd";
 

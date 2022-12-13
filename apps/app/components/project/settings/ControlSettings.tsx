@@ -15,7 +15,7 @@ import { Button } from "ui";
 // icons
 import { CheckIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 // types
-import { IProject, WorkspaceMember } from "types";
+import { IProject } from "types";
 // fetch-keys
 import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 
@@ -27,7 +27,7 @@ type Props = {
 const ControlSettings: React.FC<Props> = ({ control, isSubmitting }) => {
   const { activeWorkspace } = useUser();
 
-  const { data: people } = useSWR<WorkspaceMember[]>(
+  const { data: people } = useSWR(
     activeWorkspace ? WORKSPACE_MEMBERS : null,
     activeWorkspace ? () => workspaceService.workspaceMembers(activeWorkspace.slug) : null
   );

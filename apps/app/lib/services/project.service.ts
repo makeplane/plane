@@ -10,9 +10,12 @@ import {
   PROJECT_MEMBERS,
   PROJECT_MEMBER_DETAIL,
   USER_PROJECT_INVITATIONS,
+  PROJECT_VIEW_ENDPOINT,
 } from "constants/api-routes";
 // services
 import APIService from "lib/services/api.service";
+// types
+import type { IProject, IProjectMember, IProjectMemberInvitation, ProjectViewTheme } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -21,13 +24,13 @@ class ProjectServices extends APIService {
     super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
   }
 
-  async createProject(workspace_slug: string, data: any): Promise<any> {
-    return this.post(PROJECTS_ENDPOINT(workspace_slug), data)
+  async createProject(workspacSlug: string, data: Partial<IProject>): Promise<IProject> {
+    return this.post(PROJECTS_ENDPOINT(workspacSlug), data)
       .then((response) => {
         return response?.data;
       })
       .catch((error) => {
-        throw error?.response?.data;
+        throw error?.response;
       });
   }
 
@@ -45,8 +48,8 @@ class ProjectServices extends APIService {
       });
   }
 
-  async getProjects(workspace_slug: string): Promise<any> {
-    return this.get(PROJECTS_ENDPOINT(workspace_slug))
+  async getProjects(workspacSlug: string): Promise<IProject[]> {
+    return this.get(PROJECTS_ENDPOINT(workspacSlug))
       .then((response) => {
         return response?.data;
       })
@@ -55,8 +58,8 @@ class ProjectServices extends APIService {
       });
   }
 
-  async getProject(workspace_slug: string, project_id: string): Promise<any> {
-    return this.get(PROJECT_DETAIL(workspace_slug, project_id))
+  async getProject(workspacSlug: string, projectId: string): Promise<IProject> {
+    return this.get(PROJECT_DETAIL(workspacSlug, projectId))
       .then((response) => {
         return response?.data;
       })
@@ -65,8 +68,12 @@ class ProjectServices extends APIService {
       });
   }
 
-  async updateProject(workspace_slug: string, project_id: string, data: any): Promise<any> {
-    return this.patch(PROJECT_DETAIL(workspace_slug, project_id), data)
+  async updateProject(
+    workspacSlug: string,
+    projectId: string,
+    data: Partial<IProject>
+  ): Promise<IProject> {
+    return this.patch(PROJECT_DETAIL(workspacSlug, projectId), data)
       .then((response) => {
         return response?.data;
       })
@@ -75,8 +82,8 @@ class ProjectServices extends APIService {
       });
   }
 
-  async deleteProject(workspace_slug: string, project_id: string): Promise<any> {
-    return this.delete(PROJECT_DETAIL(workspace_slug, project_id))
+  async deleteProject(workspacSlug: string, projectId: string): Promise<any> {
+    return this.delete(PROJECT_DETAIL(workspacSlug, projectId))
       .then((response) => {
         return response?.data;
       })
@@ -85,8 +92,8 @@ class ProjectServices extends APIService {
       });
   }
 
-  async inviteProject(workspace_slug: string, project_id: string, data: any): Promise<any> {
-    return this.post(INVITE_PROJECT(workspace_slug, project_id), data)
+  async inviteProject(workspacSlug: string, projectId: string, data: any): Promise<any> {
+    return this.post(INVITE_PROJECT(workspacSlug, projectId), data)
       .then((response) => {
         return response?.data;
       })
@@ -95,8 +102,8 @@ class ProjectServices extends APIService {
       });
   }
 
-  async joinProject(workspace_slug: string, data: any): Promise<any> {
-    return this.post(JOIN_PROJECT(workspace_slug), data)
+  async joinProject(workspacSlug: string, data: any): Promise<any> {
+    return this.post(JOIN_PROJECT(workspacSlug), data)
       .then((response) => {
         return response?.data;
       })
@@ -115,8 +122,8 @@ class ProjectServices extends APIService {
       });
   }
 
-  async projectMembers(workspace_slug: string, project_id: string): Promise<any> {
-    return this.get(PROJECT_MEMBERS(workspace_slug, project_id))
+  async projectMembers(workspacSlug: string, projectId: string): Promise<IProjectMember[]> {
+    return this.get(PROJECT_MEMBERS(workspacSlug, projectId))
       .then((response) => {
         return response?.data;
       })
@@ -126,12 +133,12 @@ class ProjectServices extends APIService {
   }
 
   async updateProjectMember(
-    workspace_slug: string,
-    project_id: string,
+    workspacSlug: string,
+    projectId: string,
     memberId: string,
-    data: any
-  ): Promise<any> {
-    return this.put(PROJECT_MEMBER_DETAIL(workspace_slug, project_id, memberId), data)
+    data: Partial<IProjectMember>
+  ): Promise<IProjectMember> {
+    return this.put(PROJECT_MEMBER_DETAIL(workspacSlug, projectId, memberId), data)
       .then((response) => {
         return response?.data;
       })
@@ -141,11 +148,11 @@ class ProjectServices extends APIService {
   }
 
   async deleteProjectMember(
-    workspace_slug: string,
-    project_id: string,
+    workspacSlug: string,
+    projectId: string,
     memberId: string
   ): Promise<any> {
-    return this.delete(PROJECT_MEMBER_DETAIL(workspace_slug, project_id, memberId))
+    return this.delete(PROJECT_MEMBER_DETAIL(workspacSlug, projectId, memberId))
       .then((response) => {
         return response?.data;
       })
@@ -154,8 +161,11 @@ class ProjectServices extends APIService {
       });
   }
 
-  async projectInvitations(workspace_slug: string, project_id: string): Promise<any> {
-    return this.get(PROJECT_INVITATIONS(workspace_slug, project_id))
+  async projectInvitations(
+    workspacSlug: string,
+    projectId: string
+  ): Promise<IProjectMemberInvitation[]> {
+    return this.get(PROJECT_INVITATIONS(workspacSlug, projectId))
       .then((response) => {
         return response?.data;
       })
@@ -165,11 +175,11 @@ class ProjectServices extends APIService {
   }
 
   async updateProjectInvitation(
-    workspace_slug: string,
-    project_id: string,
-    invitation_id: string
+    workspacSlug: string,
+    projectId: string,
+    invitationId: string
   ): Promise<any> {
-    return this.put(PROJECT_INVITATION_DETAIL(workspace_slug, project_id, invitation_id))
+    return this.put(PROJECT_INVITATION_DETAIL(workspacSlug, projectId, invitationId))
       .then((response) => {
         return response?.data;
       })
@@ -177,12 +187,27 @@ class ProjectServices extends APIService {
         throw error?.response?.data;
       });
   }
+
   async deleteProjectInvitation(
-    workspace_slug: string,
-    project_id: string,
-    invitation_id: string
+    workspacSlug: string,
+    projectId: string,
+    invitationId: string
   ): Promise<any> {
-    return this.delete(PROJECT_INVITATION_DETAIL(workspace_slug, project_id, invitation_id))
+    return this.delete(PROJECT_INVITATION_DETAIL(workspacSlug, projectId, invitationId))
+      .then((response) => {
+        return response?.data;
+      })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async setProjectView(
+    workspacSlug: string,
+    projectId: string,
+    data: ProjectViewTheme
+  ): Promise<any> {
+    await this.patch(PROJECT_VIEW_ENDPOINT(workspacSlug, projectId), data)
       .then((response) => {
         return response?.data;
       })

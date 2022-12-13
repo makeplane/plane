@@ -4,7 +4,7 @@ import useSWR from "swr";
 // api routes
 import { ISSUE_PROPERTIES_ENDPOINT } from "constants/api-routes";
 // services
-import issueServices from "lib/services/issues.services";
+import issueServices from "lib/services/issues.service";
 // hooks
 import useUser from "./useUser";
 // types

@@ -8,6 +8,8 @@ import { useForm } from "react-hook-form";
 import workspaceService from "lib/services/workspace.service";
 // hooks
 import useUser from "lib/hooks/useUser";
+// hoc
+import withAuth from "lib/hoc/withAuthWrapper";
 // layouts
 import DefaultLayout from "layouts/DefaultLayout";
 // ui
@@ -144,4 +146,4 @@ const CreateWorkspace: NextPage = () => {
   );
 };
 
-export default CreateWorkspace;
+export default withAuth(CreateWorkspace);

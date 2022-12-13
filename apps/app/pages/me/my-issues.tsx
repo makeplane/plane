@@ -5,7 +5,7 @@ import type { NextPage } from "next";
 // swr
 import useSWR from "swr";
 // layouts
-import AdminLayout from "layouts/AdminLayout";
+import AppLayout from "layouts/AppLayout";
 // hooks
 import useUser from "lib/hooks/useUser";
 // ui
@@ -18,7 +18,9 @@ import { USER_ISSUE } from "constants/fetch-keys";
 import { classNames } from "constants/common";
 // services
 import userService from "lib/services/user.service";
-import issuesServices from "lib/services/issues.services";
+import issuesServices from "lib/services/issues.service";
+// hoc
+import withAuth from "lib/hoc/withAuthWrapper";
 // components
 import ChangeStateDropdown from "components/project/issues/my-issues/ChangeStateDropdown";
 // icons
@@ -31,11 +33,11 @@ import { Menu, Transition } from "@headlessui/react";
 const MyIssues: NextPage = () => {
   const [selectedWorkspace, setSelectedWorkspace] = useState<string | null>(null);
 
-  const { user, workspaces } = useUser();
+  const { user, workspaces, activeWorkspace } = useUser();
 
   const { data: myIssues, mutate: mutateMyIssues } = useSWR<IIssue[]>(
-    user ? USER_ISSUE : null,
-    user ? () => userService.userIssues() : null
+    user && activeWorkspace ? USER_ISSUE(activeWorkspace.slug) : null,
+    user && activeWorkspace ? () => userService.userIssues(activeWorkspace.slug) : null
   );
 
   const updateMyIssues = (
@@ -74,7 +76,7 @@ const MyIssues: NextPage = () => {
   };
 
   return (
-    <AdminLayout>
+    <AppLayout>
       <div className="w-full h-full flex flex-col space-y-5">
         {myIssues ? (
           <>
@@ -274,8 +276,8 @@ const MyIssues: NextPage = () => {
           </div>
         )}
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 };
 
-export default MyIssues;
+export default withAuth(MyIssues);

@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 // headless
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import cycleService from "lib/services/cycles.services";
+import cycleService from "lib/services/cycles.service";
 // fetch keys
 import { CYCLE_LIST } from "constants/fetch-keys";
 // hooks

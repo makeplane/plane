@@ -64,14 +64,14 @@ const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentDeletion
     <div key={comment.id}>
       <div className="w-full h-full flex justify-between">
         <div className="flex gap-x-2 w-full">
-          <div className="flex-shrink-0 -ml-1.5">
+          <div className="flex-shrink-0">
             {comment.actor_detail.avatar && comment.actor_detail.avatar !== "" ? (
               <Image
                 src={comment.actor_detail.avatar}
                 alt={comment.actor_detail.name}
                 height={30}
                 width={30}
-                className="rounded-full"
+                className="rounded"
               />
             ) : (
               <div
@@ -82,11 +82,7 @@ const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentDeletion
             )}
           </div>
           <div className="w-full">
-            <p>
-              {comment.actor_detail.first_name} {comment.actor_detail.last_name}
-            </p>
-            <p className="text-xs text-gray-500">{timeAgo(comment.created_at)}</p>
-            <div className="w-full mt-2">
+            <div>
               {isEditing ? (
                 <form className="flex flex-col gap-2" onSubmit={handleSubmit(onEnter)}>
                   <TextArea
@@ -120,13 +116,19 @@ const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentDeletion
               ) : (
                 <>
                   {comment.comment.split("\n").map((item, index) => (
-                    <p key={index} className="text-sm text-gray-600">
+                    <p key={index} className="text-sm">
                       {item}
                     </p>
                   ))}
                 </>
               )}
             </div>
+            <p className="text-xs text-gray-500 flex items-center gap-2 mt-1">
+              <span>
+                {comment.actor_detail.first_name} {comment.actor_detail.last_name}
+              </span>
+              <span>{timeAgo(comment.created_at)}</span>
+            </p>
           </div>
         </div>
         {user?.id === comment.actor && (

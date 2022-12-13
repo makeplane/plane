@@ -9,8 +9,7 @@ import authenticationService from "lib/services/authentication.service";
 // hooks
 import useUser from "lib/hooks/useUser";
 import useTheme from "lib/hooks/useTheme";
-// components
-import CreateProjectModal from "components/project/CreateProjectModal";
+import useToast from "lib/hooks/useToast";
 // headless ui
 import { Dialog, Disclosure, Menu, Transition } from "@headlessui/react";
 // icons
@@ -107,7 +106,6 @@ const userLinks = [
 
 const Sidebar: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [isCreateProjectModal, setCreateProjectModal] = useState(false);
 
   const router = useRouter();
 
@@ -119,9 +117,10 @@ const Sidebar: React.FC = () => {
 
   const { collapsed: sidebarCollapse, toggleCollapsed } = useTheme();
 
+  const { setToastAlert } = useToast();
+
   return (
     <nav className="h-full">
-      <CreateProjectModal isOpen={isCreateProjectModal} setIsOpen={setCreateProjectModal} />
       <Transition.Root show={sidebarOpen} as={React.Fragment}>
         <Dialog as="div" className="relative z-40 md:hidden" onClose={setSidebarOpen}>
           <Transition.Child
@@ -282,9 +281,11 @@ const Sidebar: React.FC = () => {
                                             last_workspace_id: workspace?.id,
                                           })
                                           .then((res) => {
-                                            router.push("/workspace");
+                                            const isInProject =
+                                              router.pathname.includes("/[projectId]/");
+                                            if (isInProject) router.push("/workspace");
                                           })
-                                          .catch((err) => console.log);
+                                          .catch((err) => console.error(err));
                                       }}
                                       className={`${
                                         active ? "bg-theme text-white" : "text-gray-900"
@@ -478,7 +479,13 @@ const Sidebar: React.FC = () => {
                                               onClick={() =>
                                                 copyTextToClipboard(
                                                   `https://app.plane.so/projects/${project?.id}/issues/`
-                                                )
+                                                ).then(() => {
+                                                  setToastAlert({
+                                                    title: "Link Copied",
+                                                    message: "Link copied to clipboard",
+                                                    type: "success",
+                                                  });
+                                                })
                                               }
                                             >
                                               <ClipboardDocumentIcon className="h-3 w-3" />
@@ -546,7 +553,13 @@ const Sidebar: React.FC = () => {
                       <button
                         type="button"
                         className="group flex justify-center items-center gap-2 w-full rounded-md p-2 text-sm bg-theme text-white"
-                        onClick={() => setCreateProjectModal(true)}
+                        onClick={() => {
+                          const e = new KeyboardEvent("keydown", {
+                            ctrlKey: true,
+                            key: "p",
+                          });
+                          document.dispatchEvent(e);
+                        }}
                       >
                         <PlusIcon className="h-5 w-5" />
                         {!sidebarCollapse && "Create Project"}

@@ -14,8 +14,10 @@ import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
 // fetching keys
 import { PROJECT_MEMBERS, PROJECT_INVITATIONS } from "constants/fetch-keys";
+// hoc
+import withAuth from "lib/hoc/withAuthWrapper";
 // layouts
-import AdminLayout from "layouts/AdminLayout";
+import AppLayout from "layouts/AppLayout";
 // components
 import SendProjectInvitationModal from "components/project/SendProjectInvitationModal";
 import ConfirmProjectMemberRemove from "components/project/ConfirmProjectMemberRemove";
@@ -53,7 +55,13 @@ const ProjectMembers: NextPage = () => {
     activeWorkspace && projectId ? PROJECT_MEMBERS(projectId as string) : null,
     activeWorkspace && projectId
       ? () => projectService.projectMembers(activeWorkspace.slug, projectId as any)
-      : null
+      : null,
+    {
+      onErrorRetry(err, _, __, revalidate, revalidateOpts) {
+        if (err?.status === 403) return;
+        setTimeout(() => revalidate(revalidateOpts), 5000);
+      },
+    }
   );
   const { data: projectInvitations, mutate: mutateInvitations } = useSWR(
     activeWorkspace && projectId ? PROJECT_INVITATIONS : null,
@@ -84,7 +92,7 @@ const ProjectMembers: NextPage = () => {
   ];
 
   return (
-    <AdminLayout>
+    <AppLayout>
       <ConfirmProjectMemberRemove
         isOpen={Boolean(selectedRemoveMember) || Boolean(selectedInviteRemoveMember)}
         onClose={() => {
@@ -103,8 +111,7 @@ const ProjectMembers: NextPage = () => {
               selectedRemoveMember
             );
             mutateMembers(
-              (prevData: any[]) =>
-                prevData?.filter((item: any) => item.id !== selectedRemoveMember),
+              (prevData) => prevData?.filter((item: any) => item.id !== selectedRemoveMember),
               false
             );
           }
@@ -115,8 +122,7 @@ const ProjectMembers: NextPage = () => {
               selectedInviteRemoveMember
             );
             mutateInvitations(
-              (prevData: any[]) =>
-                prevData?.filter((item: any) => item.id !== selectedInviteRemoveMember),
+              (prevData) => prevData?.filter((item: any) => item.id !== selectedInviteRemoveMember),
               false
             );
           }
@@ -235,7 +241,7 @@ const ProjectMembers: NextPage = () => {
                       )}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 sm:pl-6">
-                      {member.status ? (
+                      {member.member ? (
                         <span className="p-0.5 px-2 text-sm bg-green-700 text-white rounded-full">
                           Active
                         </span>
@@ -261,7 +267,7 @@ const ProjectMembers: NextPage = () => {
                                 className="w-full text-left py-2 pl-2"
                                 type="button"
                                 onClick={() => {
-                                  if (!member.status) {
+                                  if (!member.member) {
                                     setToastAlert({
                                       type: "error",
                                       message: "You can't edit a pending invitation.",
@@ -282,7 +288,7 @@ const ProjectMembers: NextPage = () => {
                                 className="w-full text-left py-2 pl-2"
                                 type="button"
                                 onClick={() => {
-                                  if (member.status) {
+                                  if (member.member) {
                                     setSelectedRemoveMember(member.id);
                                   } else {
                                     setSelectedInviteRemoveMember(member.id);
@@ -303,8 +309,8 @@ const ProjectMembers: NextPage = () => {
           )}
         </div>
       )}
-    </AdminLayout>
+    </AppLayout>
   );
 };
 
-export default ProjectMembers;
+export default withAuth(ProjectMembers);

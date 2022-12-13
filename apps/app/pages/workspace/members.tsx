@@ -17,7 +17,7 @@ import { WORKSPACE_INVITATIONS, WORKSPACE_MEMBERS } from "constants/fetch-keys";
 // hoc
 import withAuthWrapper from "lib/hoc/withAuthWrapper";
 // layouts
-import AdminLayout from "layouts/AdminLayout";
+import AppLayout from "layouts/AppLayout";
 // components
 import SendWorkspaceInvitationModal from "components/workspace/SendWorkspaceInvitationModal";
 import ConfirmWorkspaceMemberRemove from "components/workspace/ConfirmWorkspaceMemberRemove";
@@ -41,7 +41,7 @@ const WorkspaceInvite: NextPage = () => {
   const { setToastAlert } = useToast();
 
   const { data: workspaceMembers, mutate: mutateMembers } = useSWR<any[]>(
-    activeWorkspace ? WORKSPACE_MEMBERS : null,
+    activeWorkspace ? WORKSPACE_MEMBERS(activeWorkspace.slug) : null,
     activeWorkspace ? () => workspaceService.workspaceMembers(activeWorkspace.slug) : null
   );
   const { data: workspaceInvitations, mutate: mutateInvitations } = useSWR<any[]>(
@@ -71,7 +71,7 @@ const WorkspaceInvite: NextPage = () => {
   ];
 
   return (
-    <AdminLayout
+    <AppLayout
       meta={{
         title: "Plane - Workspace Invite",
       }}
@@ -229,7 +229,7 @@ const WorkspaceInvite: NextPage = () => {
                         )}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 sm:pl-6">
-                        {member.status ? (
+                        {member.member ? (
                           <span className="p-0.5 px-2 text-sm bg-green-700 text-white rounded-full">
                             Active
                           </span>
@@ -277,7 +277,7 @@ const WorkspaceInvite: NextPage = () => {
                                   className="w-full text-left py-2 pl-2"
                                   type="button"
                                   onClick={() => {
-                                    if (member.status) {
+                                    if (member.member) {
                                       setSelectedRemoveMember(member.id);
                                     } else {
                                       setSelectedInviteRemoveMember(member.id);
@@ -299,7 +299,7 @@ const WorkspaceInvite: NextPage = () => {
           )}
         </div>
       )}
-    </AdminLayout>
+    </AppLayout>
   );
 };
 

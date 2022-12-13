@@ -9,18 +9,25 @@ import useToast from "lib/hooks/useToast";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
-import { Button } from "ui";
+import { Button, Input } from "ui";
 // types
 import type { IProject } from "types";
 
 type Props = {
   isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  data?: IProject;
+  onClose: () => void;
+  data: IProject | null;
 };
 
-const ConfirmProjectDeletion: React.FC<Props> = ({ isOpen, setIsOpen, data }) => {
+const ConfirmProjectDeletion: React.FC<Props> = ({ isOpen, data, onClose }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+
+  const [selectedProject, setSelectedProject] = useState<IProject | null>(null);
+
+  const [confirmProjectName, setConfirmProjectName] = useState("");
+  const [confirmDeleteMyProject, setConfirmDeleteMyProject] = useState(false);
+
+  const canDelete = confirmProjectName === data?.name && confirmDeleteMyProject;
 
   const { activeWorkspace, mutateProjects } = useUser();
 
@@ -29,13 +36,18 @@ const ConfirmProjectDeletion: React.FC<Props> = ({ isOpen, setIsOpen, data }) =>
   const cancelButtonRef = useRef(null);
 
   const handleClose = () => {
-    setIsOpen(false);
     setIsDeleteLoading(false);
+    const timer = setTimeout(() => {
+      setConfirmProjectName("");
+      setConfirmDeleteMyProject(false);
+      clearTimeout(timer);
+    }, 350);
+    onClose();
   };
 
   const handleDeletion = async () => {
     setIsDeleteLoading(true);
-    if (!data || !activeWorkspace) return;
+    if (!data || !activeWorkspace || !canDelete) return;
     await projectService
       .deleteProject(activeWorkspace.slug, data.id)
       .then(() => {
@@ -54,8 +66,14 @@ const ConfirmProjectDeletion: React.FC<Props> = ({ isOpen, setIsOpen, data }) =>
   };
 
   useEffect(() => {
-    data && setIsOpen(true);
-  }, [data, setIsOpen]);
+    if (data) setSelectedProject(data);
+    else {
+      const timer = setTimeout(() => {
+        setSelectedProject(null);
+        clearTimeout(timer);
+      }, 300);
+    }
+  }, [data]);
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
@@ -104,10 +122,47 @@ const ConfirmProjectDeletion: React.FC<Props> = ({ isOpen, setIsOpen, data }) =>
                       <div className="mt-2">
                         <p className="text-sm text-gray-500">
                           Are you sure you want to delete project - {`"`}
-                          <span className="italic">{data?.name}</span>
+                          <span className="italic">{selectedProject?.name}</span>
                           {`"`} ? All of the data related to the project will be permanently
                           removed. This action cannot be undone.
                         </p>
+                      </div>
+                      <div className="h-0.5 bg-gray-200 my-3" />
+                      <div className="mt-3">
+                        <p className="text-sm">
+                          Enter the project name{" "}
+                          <span className="font-semibold">{selectedProject?.name}</span> to
+                          continue:
+                        </p>
+                        <Input
+                          type="text"
+                          placeholder="Project name"
+                          className="mt-2"
+                          value={confirmProjectName}
+                          onChange={(e) => {
+                            setConfirmProjectName(e.target.value);
+                          }}
+                          name="projectName"
+                        />
+                      </div>
+                      <div className="mt-3">
+                        <p className="text-sm">
+                          To confirm, type <span className="font-semibold">delete my project</span>{" "}
+                          below:
+                        </p>
+                        <Input
+                          type="text"
+                          placeholder="Enter 'delete my project'"
+                          className="mt-2"
+                          onChange={(e) => {
+                            if (e.target.value === "delete my project") {
+                              setConfirmDeleteMyProject(true);
+                            } else {
+                              setConfirmDeleteMyProject(false);
+                            }
+                          }}
+                          name="typeDelete"
+                        />
                       </div>
                     </div>
                   </div>
@@ -117,7 +172,7 @@ const ConfirmProjectDeletion: React.FC<Props> = ({ isOpen, setIsOpen, data }) =>
                     type="button"
                     onClick={handleDeletion}
                     theme="danger"
-                    disabled={isDeleteLoading}
+                    disabled={isDeleteLoading || !canDelete}
                     className="inline-flex sm:ml-3"
                   >
                     {isDeleteLoading ? "Deleting..." : "Delete"}

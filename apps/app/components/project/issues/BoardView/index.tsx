@@ -7,8 +7,8 @@ import useSWR from "swr";
 import type { DropResult } from "react-beautiful-dnd";
 import { DragDropContext } from "react-beautiful-dnd";
 // services
-import stateServices from "lib/services/state.services";
-import issuesServices from "lib/services/issues.services";
+import stateServices from "lib/services/state.service";
+import issuesServices from "lib/services/issues.service";
 // hooks
 import useUser from "lib/hooks/useUser";
 // fetching keys
@@ -20,7 +20,7 @@ import CreateUpdateIssuesModal from "components/project/issues/CreateUpdateIssue
 // ui
 import { Spinner } from "ui";
 // types
-import type { IState, IIssue, Properties, NestedKeyOf, ProjectMember } from "types";
+import type { IState, IIssue, Properties, NestedKeyOf, IProjectMember } from "types";
 import ConfirmIssueDeletion from "../ConfirmIssueDeletion";
 import { TrashIcon } from "@heroicons/react/24/outline";
 
@@ -30,7 +30,7 @@ type Props = {
   groupedByIssues: {
     [key: string]: IIssue[];
   };
-  members: ProjectMember[] | undefined;
+  members: IProjectMember[] | undefined;
 };
 
 const BoardView: React.FC<Props> = ({ properties, selectedGroup, groupedByIssues, members }) => {
@@ -197,9 +197,10 @@ const BoardView: React.FC<Props> = ({ properties, selectedGroup, groupedByIssues
                           selectedGroup={selectedGroup}
                           groupTitle={singleGroup}
                           createdBy={
-                            members
-                              ? members?.find((m) => m.member.id === singleGroup)?.member.first_name
-                              : undefined
+                            selectedGroup === "created_by"
+                              ? members?.find((m) => m.member.id === singleGroup)?.member
+                                  .first_name ?? "loading..."
+                              : null
                           }
                           groupedByIssues={groupedByIssues}
                           index={index}
@@ -208,8 +209,8 @@ const BoardView: React.FC<Props> = ({ properties, selectedGroup, groupedByIssues
                           setPreloadedData={setPreloadedData}
                           stateId={
                             selectedGroup === "state_detail.name"
-                              ? states?.find((s) => s.name === singleGroup)?.id
-                              : undefined
+                              ? states?.find((s) => s.name === singleGroup)?.id ?? null
+                              : null
                           }
                           bgColor={
                             selectedGroup === "state_detail.name"

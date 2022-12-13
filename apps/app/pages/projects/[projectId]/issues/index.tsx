@@ -18,7 +18,7 @@ import projectService from "lib/services/project.service";
 // commons
 import { classNames, replaceUnderscoreIfSnakeCase } from "constants/common";
 // layouts
-import AdminLayout from "layouts/AdminLayout";
+import AppLayout from "layouts/AppLayout";
 // hooks
 import useIssuesFilter from "lib/hooks/useIssuesFilter";
 // components
@@ -34,7 +34,7 @@ import HeaderButton from "ui/HeaderButton";
 import { ChevronDownIcon, ListBulletIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
 import { PlusIcon, Squares2X2Icon } from "@heroicons/react/20/solid";
 // types
-import type { IIssue, Properties, NestedKeyOf, ProjectMember } from "types";
+import type { IIssue, Properties, NestedKeyOf } from "types";
 
 const groupByOptions: Array<{ name: string; key: NestedKeyOf<IIssue> | null }> = [
   { name: "State", key: "state_detail.name" },
@@ -44,8 +44,8 @@ const groupByOptions: Array<{ name: string; key: NestedKeyOf<IIssue> | null }> =
 ];
 
 const orderByOptions: Array<{ name: string; key: NestedKeyOf<IIssue> }> = [
-  { name: "Created", key: "created_at" },
-  { name: "Update", key: "updated_at" },
+  { name: "Last created", key: "created_at" },
+  { name: "Last updated", key: "updated_at" },
   { name: "Priority", key: "priority" },
 ];
 
@@ -86,11 +86,19 @@ const ProjectIssues: NextPage = () => {
     projectId as string
   );
 
-  const { data: members } = useSWR<ProjectMember[]>(
-    activeWorkspace && activeProject ? PROJECT_MEMBERS : null,
+  const { data: members } = useSWR(
+    activeWorkspace && activeProject
+      ? PROJECT_MEMBERS(activeWorkspace.slug, activeProject.id)
+      : null,
     activeWorkspace && activeProject
       ? () => projectService.projectMembers(activeWorkspace.slug, activeProject.id)
-      : null
+      : null,
+    {
+      onErrorRetry(err, _, __, revalidate, revalidateOpts) {
+        if (err?.status === 403) return;
+        setTimeout(() => revalidate(revalidateOpts), 5000);
+      },
+    }
   );
 
   const {
@@ -115,7 +123,7 @@ const ProjectIssues: NextPage = () => {
   }, [isOpen]);
 
   return (
-    <AdminLayout>
+    <AppLayout>
       <CreateUpdateIssuesModal
         isOpen={isOpen && selectedIssue?.actionType !== "delete"}
         setIsOpen={setIsOpen}
@@ -173,7 +181,7 @@ const ProjectIssues: NextPage = () => {
                       <Popover.Button
                         className={classNames(
                           open ? "text-gray-900" : "text-gray-500",
-                          "group inline-flex items-center rounded-md bg-transparent text-base font-medium hover:text-gray-900 focus:outline-none border border-gray-300 px-3 py-1"
+                          "group inline-flex items-center rounded-md bg-transparent text-xs font-medium hover:text-gray-900 focus:outline-none border border-gray-300 px-2 py-2"
                         )}
                       >
                         <span>View</span>
@@ -195,85 +203,83 @@ const ProjectIssues: NextPage = () => {
                         leaveFrom="opacity-100 translate-y-0"
                         leaveTo="opacity-0 translate-y-1"
                       >
-                        <Popover.Panel className="absolute mr-5 right-1/2 z-10 mt-3 w-screen max-w-xs translate-x-1/2 transform px-2 sm:px-0 bg-gray-0 backdrop-filter backdrop-blur-xl bg-opacity-100 rounded-lg shadow-lg overflow-hidden">
-                          <div className="overflow-hidden py-8 px-4">
-                            <div className="relative flex flex-col gap-1 gap-y-4">
-                              <div className="flex justify-between">
-                                <h4 className="text-base text-gray-600">Group by</h4>
-                                <CustomMenu
-                                  label={
-                                    groupByOptions.find((option) => option.key === groupByProperty)
-                                      ?.name ?? "Select"
-                                  }
-                                >
-                                  {groupByOptions.map((option) => (
+                        <Popover.Panel className="absolute mr-5 right-1/2 z-10 mt-1 w-screen max-w-xs translate-x-1/2 transform p-4 bg-white rounded-lg shadow-lg overflow-hidden">
+                          <div className="relative flex flex-col gap-1 gap-y-4">
+                            <div className="flex justify-between">
+                              <h4 className="text-base text-gray-600">Group by</h4>
+                              <CustomMenu
+                                label={
+                                  groupByOptions.find((option) => option.key === groupByProperty)
+                                    ?.name ?? "Select"
+                                }
+                              >
+                                {groupByOptions.map((option) => (
+                                  <CustomMenu.MenuItem
+                                    key={option.key}
+                                    onClick={() => setGroupByProperty(option.key)}
+                                  >
+                                    {option.name}
+                                  </CustomMenu.MenuItem>
+                                ))}
+                              </CustomMenu>
+                            </div>
+                            <div className="flex justify-between">
+                              <h4 className="text-base text-gray-600">Order by</h4>
+                              <CustomMenu
+                                label={
+                                  orderByOptions.find((option) => option.key === orderBy)?.name ??
+                                  "Select"
+                                }
+                              >
+                                {orderByOptions.map((option) =>
+                                  groupByProperty === "priority" &&
+                                  option.key === "priority" ? null : (
                                     <CustomMenu.MenuItem
                                       key={option.key}
-                                      onClick={() => setGroupByProperty(option.key)}
+                                      onClick={() => setOrderBy(option.key)}
                                     >
                                       {option.name}
                                     </CustomMenu.MenuItem>
-                                  ))}
-                                </CustomMenu>
-                              </div>
-                              <div className="flex justify-between">
-                                <h4 className="text-base text-gray-600">Order by</h4>
-                                <CustomMenu
-                                  label={
-                                    orderByOptions.find((option) => option.key === orderBy)?.name ??
-                                    "Select"
-                                  }
-                                >
-                                  {orderByOptions.map((option) =>
-                                    groupByProperty === "priority" &&
-                                    option.key === "priority" ? null : (
-                                      <CustomMenu.MenuItem
-                                        key={option.key}
-                                        onClick={() => setOrderBy(option.key)}
-                                      >
-                                        {option.name}
-                                      </CustomMenu.MenuItem>
-                                    )
-                                  )}
-                                </CustomMenu>
-                              </div>
-                              <div className="flex justify-between">
-                                <h4 className="text-base text-gray-600">Issue type</h4>
-                                <CustomMenu
-                                  label={
-                                    filterIssueOptions.find((option) => option.key === filterIssue)
-                                      ?.name ?? "Select"
-                                  }
-                                >
-                                  {filterIssueOptions.map((option) => (
-                                    <CustomMenu.MenuItem
-                                      key={option.key}
-                                      onClick={() => setFilterIssue(option.key)}
-                                    >
-                                      {option.name}
-                                    </CustomMenu.MenuItem>
-                                  ))}
-                                </CustomMenu>
-                              </div>
-                              <div className="border-b-2"></div>
-                              <div className="relative flex flex-col gap-1">
-                                <h4 className="text-base text-gray-600">Properties</h4>
-                                <div>
-                                  {Object.keys(properties).map((key) => (
-                                    <button
-                                      key={key}
-                                      type="button"
-                                      className={`px-2 py-1 inline capitalize rounded border border-indigo-600 text-sm m-1 ${
-                                        properties[key as keyof Properties]
-                                          ? "border-indigo-600 bg-indigo-600 text-white"
-                                          : ""
-                                      }`}
-                                      onClick={() => setProperties(key as keyof Properties)}
-                                    >
-                                      {replaceUnderscoreIfSnakeCase(key)}
-                                    </button>
-                                  ))}
-                                </div>
+                                  )
+                                )}
+                              </CustomMenu>
+                            </div>
+                            <div className="flex justify-between">
+                              <h4 className="text-base text-gray-600">Issue type</h4>
+                              <CustomMenu
+                                label={
+                                  filterIssueOptions.find((option) => option.key === filterIssue)
+                                    ?.name ?? "Select"
+                                }
+                              >
+                                {filterIssueOptions.map((option) => (
+                                  <CustomMenu.MenuItem
+                                    key={option.key}
+                                    onClick={() => setFilterIssue(option.key)}
+                                  >
+                                    {option.name}
+                                  </CustomMenu.MenuItem>
+                                ))}
+                              </CustomMenu>
+                            </div>
+                            <div className="border-b-2"></div>
+                            <div className="relative flex flex-col gap-1">
+                              <h4 className="text-base text-gray-600">Properties</h4>
+                              <div>
+                                {Object.keys(properties).map((key) => (
+                                  <button
+                                    key={key}
+                                    type="button"
+                                    className={`px-2 py-1 inline capitalize rounded border border-indigo-600 text-sm m-1 ${
+                                      properties[key as keyof Properties]
+                                        ? "border-indigo-600 bg-indigo-600 text-white"
+                                        : ""
+                                    }`}
+                                    onClick={() => setProperties(key as keyof Properties)}
+                                  >
+                                    {replaceUnderscoreIfSnakeCase(key)}
+                                  </button>
+                                ))}
                               </div>
                             </div>
                           </div>
@@ -336,7 +342,7 @@ const ProjectIssues: NextPage = () => {
           </EmptySpace>
         </div>
       )}
-    </AdminLayout>
+    </AppLayout>
   );
 };
 
