@@ -22,7 +22,6 @@ from plane.api.serializers import (
     ProjectMemberSerializer,
     ProjectDetailSerializer,
     ProjectMemberInviteSerializer,
-    ProjectIdentifierSerializer,
 )
 
 from plane.api.permissions import ProjectBasePermission

@@ -26,6 +26,7 @@ from plane.api.serializers import (
     TeamSerializer,
     WorkSpaceMemberInviteSerializer,
     UserLiteSerializer,
+    ProjectMemberSerializer,
 )
 from plane.api.views.base import BaseAPIView
 from . import BaseViewSet
@@ -35,6 +36,7 @@ from plane.db.models import (
     WorkspaceMember,
     WorkspaceMemberInvite,
     Team,
+    ProjectMember,
 )
 from plane.api.permissions import WorkSpaceBasePermission, WorkSpaceAdminPermission
 from plane.bgtasks.workspace_invitation_task import workspace_invitation
@@ -460,3 +462,49 @@ class UserWorkspaceInvitationEndpoint(BaseViewSet):
             .filter(pk=self.kwargs.get("pk"))
             .select_related("workspace")
         )
+
+
+class UserLastProjectWithWorkspaceEndpoint(BaseAPIView):
+    def get(self, request):
+        try:
+
+            user = User.objects.get(pk=request.user.id)
+
+            last_workspace_id = user.last_workspace_id
+
+            if last_workspace_id is None:
+                return Response(
+                    {
+                        "project_details": [],
+                        "workspace_details": {},
+                    },
+                    status=status.HTTP_200_OK,
+                )
+
+            workspace = Workspace.objects.get(pk=last_workspace_id)
+            workspace_serializer = WorkSpaceSerializer(workspace)
+
+            project_member = ProjectMember.objects.filter(
+                workspace_id=last_workspace_id, member=request.user
+            ).select_related("workspace", "project", "member")
+
+            project_member_serializer = ProjectMemberSerializer(
+                project_member, many=True
+            )
+
+            return Response(
+                {
+                    "workspace_details": workspace_serializer.data,
+                    "project_details": project_member_serializer.data,
+                },
+                status=status.HTTP_200_OK,
+            )
+
+        except User.DoesNotExist:
+            return Response({"error": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
