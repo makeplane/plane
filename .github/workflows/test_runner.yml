@@ -42,8 +42,10 @@ jobs:
       - name: psycopg2 prerequisites
         run: sudo apt-get install libpq-dev
       - name: Install dependencies
+        working-directory: ./apiserver
         run: |
           python -m pip install --upgrade pip
-          pip install -r apiserver/requirements/test.txt
+          pip install -r requirements/test.txt
       - name: Run Tests
+        working-directory: ./apiserver
         run: coverage run --source='.' manage.py test --settings=plane.settings.test
