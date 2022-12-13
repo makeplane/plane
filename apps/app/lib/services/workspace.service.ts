@@ -11,6 +11,7 @@ import {
   WORKSPACE_INVITATION_DETAIL,
   USER_WORKSPACE_INVITATION,
   USER_WORKSPACE_INVITATIONS,
+  LAST_ACTIVE_WORKSPACE_AND_PROJECTS,
 } from "constants/api-routes";
 // services
 import APIService from "lib/services/api.service";
@@ -18,7 +19,12 @@ import APIService from "lib/services/api.service";
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
 // types
-import { IWorkspace, IWorkspaceMember, IWorkspaceMemberInvitation } from "types";
+import {
+  ILastActiveWorkspaceDetails,
+  IWorkspace,
+  IWorkspaceMember,
+  IWorkspaceMemberInvitation,
+} from "types";
 
 class WorkspaceService extends APIService {
   constructor() {
@@ -89,6 +95,16 @@ class WorkspaceService extends APIService {
 
   async joinWorkspaces(data: any): Promise<any> {
     return this.post(USER_WORKSPACE_INVITATIONS, data)
+      .then((response) => {
+        return response?.data;
+      })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getLastActiveWorkspaceAndProjects(): Promise<ILastActiveWorkspaceDetails> {
+    return this.get(LAST_ACTIVE_WORKSPACE_AND_PROJECTS)
       .then((response) => {
         return response?.data;
       })

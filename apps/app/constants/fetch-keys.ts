@@ -29,4 +29,4 @@ export const CYCLE_DETAIL = "CYCLE_DETAIL";
 export const STATE_LIST = (projectId: string) => `STATE_LIST_${projectId}`;
 export const STATE_DETAIL = "STATE_DETAIL";
 
-export const USER_ISSUE = "USER_ISSUE";
+export const USER_ISSUE = (workspaceSlug: string) => `USER_ISSUE_${workspaceSlug}`;

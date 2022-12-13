@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 // next
 import { useRouter } from "next/router";
 // headless ui
@@ -11,43 +11,54 @@ import useToast from "lib/hooks/useToast";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
-import { Button } from "ui";
+import { Button, Input } from "ui";
 // types
 import type { IWorkspace } from "types";
 
 type Props = {
   isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  data: IWorkspace | null;
+  onClose: () => void;
 };
 
-const ConfirmWorkspaceDeletion: React.FC<Props> = ({ isOpen, setIsOpen }) => {
+const ConfirmWorkspaceDeletion: React.FC<Props> = ({ isOpen, data, onClose }) => {
   const router = useRouter();
 
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
-  const { activeWorkspace, mutateWorkspaces } = useUser();
+  const [selectedWorkspace, setSelectedWorkspace] = useState<IWorkspace | null>(null);
+
+  const [confirmProjectName, setConfirmProjectName] = useState("");
+  const [confirmDeleteMyProject, setConfirmDeleteMyProject] = useState(false);
+
+  const canDelete = confirmProjectName === data?.name && confirmDeleteMyProject;
+
+  const { mutateWorkspaces } = useUser();
 
   const { setToastAlert } = useToast();
 
   const cancelButtonRef = useRef(null);
 
   const handleClose = () => {
-    setIsOpen(false);
+    onClose();
     setIsDeleteLoading(false);
   };
 
   const handleDeletion = async () => {
     setIsDeleteLoading(true);
-    if (!activeWorkspace) return;
+    if (!data || !canDelete) return;
     await workspaceService
-      .deleteWorkspace(activeWorkspace.slug)
+      .deleteWorkspace(data.slug)
       .then(() => {
         handleClose();
         mutateWorkspaces((prevData) => {
-          return (prevData ?? []).filter(
-            (workspace: IWorkspace) => workspace.slug !== activeWorkspace.slug
-          );
+          return (prevData ?? []).filter((workspace: IWorkspace) => workspace.slug !== data.slug);
         }, false);
+        setToastAlert({
+          type: "success",
+          message: "Workspace deleted successfully",
+          title: "Success",
+        });
         router.push("/");
       })
       .catch((error) => {
@@ -55,6 +66,16 @@ const ConfirmWorkspaceDeletion: React.FC<Props> = ({ isOpen, setIsOpen }) => {
         setIsDeleteLoading(false);
       });
   };
+
+  useEffect(() => {
+    if (data) setSelectedWorkspace(data);
+    else {
+      const timer = setTimeout(() => {
+        setSelectedWorkspace(null);
+        clearTimeout(timer);
+      }, 350);
+    }
+  }, [data]);
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
@@ -103,10 +124,46 @@ const ConfirmWorkspaceDeletion: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                       <div className="mt-2">
                         <p className="text-sm text-gray-500">
                           Are you sure you want to delete workspace - {`"`}
-                          <span className="italic">{activeWorkspace?.name}</span>
+                          <span className="italic">{data?.name}</span>
                           {`"`} ? All of the data related to the workspace will be permanently
                           removed. This action cannot be undone.
                         </p>
+                      </div>
+                      <div className="mt-3">
+                        <p className="text-sm">
+                          Enter the workspace name{" "}
+                          <span className="font-semibold">{selectedWorkspace?.name}</span> to
+                          continue:
+                        </p>
+                        <Input
+                          type="text"
+                          placeholder="Project name"
+                          className="mt-2"
+                          value={confirmProjectName}
+                          onChange={(e) => {
+                            setConfirmProjectName(e.target.value);
+                          }}
+                          name="workspaceName"
+                        />
+                      </div>
+                      <div className="mt-3">
+                        <p className="text-sm">
+                          To confirm, type{" "}
+                          <span className="font-semibold">delete my workspace</span> below:
+                        </p>
+                        <Input
+                          type="text"
+                          placeholder="Enter 'delete my workspace'"
+                          className="mt-2"
+                          onChange={(e) => {
+                            if (e.target.value === "delete my workspace") {
+                              setConfirmDeleteMyProject(true);
+                            } else {
+                              setConfirmDeleteMyProject(false);
+                            }
+                          }}
+                          name="typeDelete"
+                        />
                       </div>
                     </div>
                   </div>
@@ -116,7 +173,7 @@ const ConfirmWorkspaceDeletion: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                     type="button"
                     onClick={handleDeletion}
                     theme="danger"
-                    disabled={isDeleteLoading}
+                    disabled={isDeleteLoading || !canDelete}
                     className="inline-flex sm:ml-3"
                   >
                     {isDeleteLoading ? "Deleting..." : "Delete"}
