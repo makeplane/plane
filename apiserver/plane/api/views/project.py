@@ -584,3 +584,36 @@ class ProjectJoinEndpoint(BaseAPIView):
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+
+class ProjectUserViewsEndpoint(BaseAPIView):
+    def post(self, request, slug, project_id):
+        try:
+
+            project = Project.objects.get(pk=project_id, workspace__slug=slug)
+
+            project_member = ProjectMember.objects.filter(
+                member=request.user, project=project
+            ).first()
+
+            if project_member is None:
+                return Response(
+                    {"error": "Forbidden"}, status=status.HTTP_403_FORBIDDEN
+                )
+
+            project_member.view_props = request.data
+
+            project_member.save()
+
+            return Response(status=status.HTTP_200_OK)
+
+        except Project.DoesNotExist:
+            return Response(
+                {"error": "The requested resource does not exists"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except Exception as e:
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )

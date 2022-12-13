@@ -116,6 +116,7 @@ class ProjectMember(ProjectBaseModel):
     )
     comment = models.TextField(blank=True, null=True)
     role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=10)
+    view_props = models.JSONField(null=True)
 
     class Meta:
         unique_together = ["project", "member"]
