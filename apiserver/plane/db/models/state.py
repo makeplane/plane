@@ -12,6 +12,16 @@ class State(ProjectBaseModel):
     color = models.CharField(max_length=255, verbose_name="State Color")
     slug = models.SlugField(max_length=100, blank=True)
     sequence = models.FloatField(default=65535)
+    group = models.CharField(
+        choices=(
+            ("backlog", "Backlog"),
+            ("unstarted", "Unstarted"),
+            ("started", "Started"),
+            ("completed", "Completed"),
+            ("cancelled", "Cancelled"),
+        ),
+        default="backlog",
+    )
 
     def __str__(self):
         """Return name of the state"""
