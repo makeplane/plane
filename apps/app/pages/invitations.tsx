@@ -11,6 +11,8 @@ import userService from "lib/services/user.service";
 import useUser from "lib/hooks/useUser";
 // constants
 import { USER_WORKSPACE_INVITATIONS } from "constants/api-routes";
+// hoc
+import withAuth from "lib/hoc/withAuthWrapper";
 // layouts
 import DefaultLayout from "layouts/DefaultLayout";
 // components
@@ -20,7 +22,7 @@ import { Button, Spinner, EmptySpace, EmptySpaceItem } from "ui";
 // icons
 import { CubeIcon, PlusIcon } from "@heroicons/react/24/outline";
 // types
-import type { IWorkspaceInvitation } from "types";
+import type { IWorkspaceMemberInvitation } from "types";
 import Link from "next/link";
 
 const OnBoard: NextPage = () => {
@@ -30,13 +32,12 @@ const OnBoard: NextPage = () => {
 
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
 
-  const { data: invitations, mutate } = useSWR<IWorkspaceInvitation[]>(
-    USER_WORKSPACE_INVITATIONS,
-    () => workspaceService.userWorkspaceInvitations()
+  const { data: invitations, mutate } = useSWR(USER_WORKSPACE_INVITATIONS, () =>
+    workspaceService.userWorkspaceInvitations()
   );
 
   const handleInvitation = (
-    workspace_invitation: IWorkspaceInvitation,
+    workspace_invitation: IWorkspaceMemberInvitation,
     action: "accepted" | "withdraw"
   ) => {
     if (action === "accepted") {
@@ -81,7 +82,7 @@ const OnBoard: NextPage = () => {
     >
       <div className="flex min-h-full flex-col items-center justify-center p-4 sm:p-0">
         {user && (
-          <div className="w-96 p-2 rounded-lg bg-indigo-100 text-indigo-600 mb-10">
+          <div className="w-96 p-2 rounded-lg bg-indigo-100 text-theme mb-10">
             <p className="text-sm text-center">logged in as {user.email}</p>
           </div>
         )}
@@ -119,7 +120,7 @@ const OnBoard: NextPage = () => {
                                 );
                               }}
                               type="checkbox"
-                              className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                              className="h-4 w-4 rounded border-gray-300 text-theme focus:ring-indigo-500"
                             />
                             <label htmlFor={item.id} className="text-sm">
                               Accept
@@ -204,4 +205,4 @@ const OnBoard: NextPage = () => {
   );
 };
 
-export default OnBoard;
+export default withAuth(OnBoard);

@@ -24,12 +24,12 @@ type Props = {
 const activityIcons: {
   [key: string]: JSX.Element;
 } = {
-  state: <Squares2X2Icon className="h-4 w-4" />,
-  priority: <ChartBarIcon className="h-4 w-4" />,
-  name: <ChatBubbleBottomCenterTextIcon className="h-4 w-4" />,
-  description: <ChatBubbleBottomCenterTextIcon className="h-4 w-4" />,
-  target_date: <CalendarDaysIcon className="h-4 w-4" />,
-  parent: <UserIcon className="h-4 w-4" />,
+  state: <Squares2X2Icon className="h-3.5 w-3.5" />,
+  priority: <ChartBarIcon className="h-3.5 w-3.5" />,
+  name: <ChatBubbleBottomCenterTextIcon className="h-3.5 w-3.5" />,
+  description: <ChatBubbleBottomCenterTextIcon className="h-3.5 w-3.5" />,
+  target_date: <CalendarDaysIcon className="h-3.5 w-3.5" />,
+  parent: <UserIcon className="h-3.5 w-3.5" />,
 };
 
 const IssueActivitySection: React.FC<Props> = ({ issueActivities, states, issues }) => {

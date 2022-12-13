@@ -14,8 +14,10 @@ import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
 // fetching keys
 import { PROJECT_MEMBERS, PROJECT_INVITATIONS } from "constants/fetch-keys";
+// hoc
+import withAuth from "lib/hoc/withAuthWrapper";
 // layouts
-import AppLayout from "layouts/AppLayout";
+import AppLayout from "layouts/app-layout";
 // components
 import SendProjectInvitationModal from "components/project/SendProjectInvitationModal";
 import ConfirmProjectMemberRemove from "components/project/ConfirmProjectMemberRemove";
@@ -90,7 +92,15 @@ const ProjectMembers: NextPage = () => {
   ];
 
   return (
-    <AppLayout>
+    <AppLayout
+      breadcrumbs={
+        <Breadcrumbs>
+          <BreadcrumbItem title="Projects" link="/projects" />
+          <BreadcrumbItem title={`${activeProject?.name ?? "Project"} Members`} />
+        </Breadcrumbs>
+      }
+      right={<HeaderButton Icon={PlusIcon} label="Add Member" onClick={() => setIsOpen(true)} />}
+    >
       <ConfirmProjectMemberRemove
         isOpen={Boolean(selectedRemoveMember) || Boolean(selectedInviteRemoveMember)}
         onClose={() => {
@@ -109,8 +119,7 @@ const ProjectMembers: NextPage = () => {
               selectedRemoveMember
             );
             mutateMembers(
-              (prevData: any[]) =>
-                prevData?.filter((item: any) => item.id !== selectedRemoveMember),
+              (prevData) => prevData?.filter((item: any) => item.id !== selectedRemoveMember),
               false
             );
           }
@@ -121,8 +130,7 @@ const ProjectMembers: NextPage = () => {
               selectedInviteRemoveMember
             );
             mutateInvitations(
-              (prevData: any[]) =>
-                prevData?.filter((item: any) => item.id !== selectedInviteRemoveMember),
+              (prevData) => prevData?.filter((item: any) => item.id !== selectedInviteRemoveMember),
               false
             );
           }
@@ -140,14 +148,6 @@ const ProjectMembers: NextPage = () => {
         </div>
       ) : (
         <div className="h-full w-full space-y-5">
-          <Breadcrumbs>
-            <BreadcrumbItem title="Projects" link="/projects" />
-            <BreadcrumbItem title={`${activeProject?.name ?? "Project"} Members`} />
-          </Breadcrumbs>
-          <div className="flex items-center justify-between cursor-pointer w-full">
-            <h2 className="text-2xl font-medium">Invite Members</h2>
-            <HeaderButton Icon={PlusIcon} label="Add Member" onClick={() => setIsOpen(true)} />
-          </div>
           {members && members.length === 0 ? null : (
             <table className="min-w-full table-fixed border border-gray-300 md:rounded-lg divide-y divide-gray-300">
               <thead className="bg-gray-50">
@@ -246,7 +246,7 @@ const ProjectMembers: NextPage = () => {
                           Active
                         </span>
                       ) : (
-                        <span className="p-0.5 px-2 text-sm bg-yellow-400 text-black rounded-full">
+                        <span className="p-0.5 px-2 text-sm bg-yellow-400 text-gray-900 rounded-full">
                           Pending
                         </span>
                       )}
@@ -313,4 +313,4 @@ const ProjectMembers: NextPage = () => {
   );
 };
 
-export default ProjectMembers;
+export default withAuth(ProjectMembers);

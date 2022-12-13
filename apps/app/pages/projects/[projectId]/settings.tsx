@@ -9,8 +9,10 @@ import useSWR, { mutate } from "swr";
 import { useForm } from "react-hook-form";
 // headless ui
 import { Tab } from "@headlessui/react";
+// hoc
+import withAuth from "lib/hoc/withAuthWrapper";
 // layouts
-import AppLayout from "layouts/AppLayout";
+import SettingsLayout from "layouts/settings-layout";
 // service
 import projectServices from "lib/services/project.service";
 // hooks
@@ -24,32 +26,34 @@ import { Breadcrumbs, BreadcrumbItem } from "ui/Breadcrumbs";
 // types
 import type { IProject, IWorkspace } from "types";
 
+const GeneralSettings = dynamic(() => import("components/project/settings/GeneralSettings"), {
+  loading: () => <p>Loading...</p>,
+  ssr: false,
+});
+
+const ControlSettings = dynamic(() => import("components/project/settings/ControlSettings"), {
+  loading: () => <p>Loading...</p>,
+  ssr: false,
+});
+
+const StatesSettings = dynamic(() => import("components/project/settings/StatesSettings"), {
+  loading: () => <p>Loading...</p>,
+  ssr: false,
+});
+
+const LabelsSettings = dynamic(() => import("components/project/settings/LabelsSettings"), {
+  loading: () => <p>Loading...</p>,
+  ssr: false,
+});
+
 const defaultValues: Partial<IProject> = {
   name: "",
   description: "",
+  identifier: "",
+  network: 0,
 };
 
 const ProjectSettings: NextPage = () => {
-  const GeneralSettings = dynamic(() => import("components/project/settings/GeneralSettings"), {
-    loading: () => <p>Loading...</p>,
-    ssr: false,
-  });
-
-  const ControlSettings = dynamic(() => import("components/project/settings/ControlSettings"), {
-    loading: () => <p>Loading...</p>,
-    ssr: false,
-  });
-
-  const StatesSettings = dynamic(() => import("components/project/settings/StatesSettings"), {
-    loading: () => <p>Loading...</p>,
-    ssr: false,
-  });
-
-  const LabelsSettings = dynamic(() => import("components/project/settings/LabelsSettings"), {
-    loading: () => <p>Loading...</p>,
-    ssr: false,
-  });
-
   const {
     register,
     handleSubmit,
@@ -70,7 +74,7 @@ const ProjectSettings: NextPage = () => {
   const { setToastAlert } = useToast();
 
   const { data: projectDetails } = useSWR<IProject>(
-    activeWorkspace && projectId ? PROJECT_DETAILS : null,
+    activeWorkspace && projectId ? PROJECT_DETAILS(projectId as string) : null,
     activeWorkspace
       ? () => projectServices.getProject(activeWorkspace.slug, projectId as string)
       : null
@@ -87,7 +91,7 @@ const ProjectSettings: NextPage = () => {
   }, [projectDetails, reset]);
 
   const onSubmit = async (formData: IProject) => {
-    if (!activeWorkspace) return;
+    if (!activeWorkspace || !projectId) return;
     const payload: Partial<IProject> = {
       name: formData.name,
       network: formData.network,
@@ -99,7 +103,11 @@ const ProjectSettings: NextPage = () => {
     await projectServices
       .updateProject(activeWorkspace.slug, projectId as string, payload)
       .then((res) => {
-        mutate<IProject>(PROJECT_DETAILS, (prevData) => ({ ...prevData, ...res }), false);
+        mutate<IProject>(
+          PROJECT_DETAILS(projectId as string),
+          (prevData) => ({ ...prevData, ...res }),
+          false
+        );
         mutate<IProject[]>(
           PROJECTS_LIST(activeWorkspace.slug),
           (prevData) => {
@@ -124,14 +132,38 @@ const ProjectSettings: NextPage = () => {
       });
   };
 
+  const sidebarLinks: Array<{
+    label: string;
+    href: string;
+  }> = [
+    {
+      label: "General",
+      href: "#",
+    },
+    {
+      label: "Control",
+      href: "#",
+    },
+    {
+      label: "States",
+      href: "#",
+    },
+    {
+      label: "Labels",
+      href: "#",
+    },
+  ];
+
   return (
-    <AppLayout>
-      <div className="space-y-5 mb-5">
+    <SettingsLayout
+      breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem title="Projects" link="/projects" />
           <BreadcrumbItem title={`${activeProject?.name ?? "Project"} Settings`} />
         </Breadcrumbs>
-      </div>
+      }
+      links={sidebarLinks}
+    >
       {projectDetails ? (
         <div className="space-y-3">
           <Tab.Group>
@@ -177,8 +209,8 @@ const ProjectSettings: NextPage = () => {
           <Spinner />
         </div>
       )}
-    </AppLayout>
+    </SettingsLayout>
   );
 };
 
-export default ProjectSettings;
+export default withAuth(ProjectSettings);

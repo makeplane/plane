@@ -4,7 +4,7 @@ import { mutate } from "swr";
 // react hook form
 import { useForm } from "react-hook-form";
 // services
-import issuesServices from "lib/services/issues.services";
+import issuesServices from "lib/services/issues.service";
 // fetch keys
 import { PROJECT_ISSUES_COMMENTS } from "constants/fetch-keys";
 // components
@@ -71,42 +71,6 @@ const IssueCommentSection: React.FC<Props> = ({ comments, issueId, projectId, wo
 
   return (
     <div className="space-y-5">
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="bg-gray-100 rounded-md">
-          <div className="w-full">
-            <TextArea
-              id="comment"
-              name="comment"
-              register={register}
-              validations={{
-                required: true,
-              }}
-              mode="transparent"
-              error={errors.comment}
-              className="w-full pb-10 resize-none"
-              placeholder="Enter your comment"
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && e.shiftKey) {
-                  e.preventDefault();
-                  const value = e.currentTarget.value;
-                  const start = e.currentTarget.selectionStart;
-                  const end = e.currentTarget.selectionEnd;
-                  setValue("comment", `${value.substring(0, start)}\r ${value.substring(end)}`);
-                } else if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  isSubmitting || handleSubmit(onSubmit)();
-                }
-              }}
-            />
-          </div>
-          <div className="w-full flex justify-end">
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Adding comment..." : "Add comment"}
-              {/* <UploadingIcon /> */}
-            </Button>
-          </div>
-        </div>
-      </form>
       {comments ? (
         comments.length > 0 ? (
           <div className="space-y-5">
@@ -127,6 +91,37 @@ const IssueCommentSection: React.FC<Props> = ({ comments, issueId, projectId, wo
           <Spinner />
         </div>
       )}
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="flex items-start gap-2 border rounded-md p-2">
+          <TextArea
+            id="comment"
+            name="comment"
+            register={register}
+            validations={{
+              required: true,
+            }}
+            mode="transparent"
+            error={errors.comment}
+            placeholder="Enter your comment"
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && e.shiftKey) {
+                e.preventDefault();
+                const value = e.currentTarget.value;
+                const start = e.currentTarget.selectionStart;
+                const end = e.currentTarget.selectionEnd;
+                setValue("comment", `${value.substring(0, start)}\r ${value.substring(end)}`);
+              } else if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                isSubmitting || handleSubmit(onSubmit)();
+              }
+            }}
+          />
+          <Button type="submit" className="whitespace-nowrap" disabled={isSubmitting}>
+            {isSubmitting ? "Adding comment..." : "Add comment"}
+            {/* <UploadingIcon /> */}
+          </Button>
+        </div>
+      </form>
     </div>
   );
 };

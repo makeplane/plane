@@ -1,28 +1,32 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 // next
 import type { NextPage } from "next";
 // hooks
 import useUser from "lib/hooks/useUser";
+// hoc
+import withAuth from "lib/hoc/withAuthWrapper";
 // layouts
-import AppLayout from "layouts/AppLayout";
+import AppLayout from "layouts/app-layout";
 // components
-import CreateProjectModal from "components/project/CreateProjectModal";
-import ConfirmProjectDeletion from "components/project/ConfirmProjectDeletion";
+import ProjectMemberInvitations from "components/project/memberInvitations";
+import ConfirmProjectDeletion from "components/project/confirm-project-deletion";
 // ui
-import { Button, Spinner } from "ui";
-// types
-import { IProject } from "types";
+import {
+  Button,
+  Spinner,
+  HeaderButton,
+  Breadcrumbs,
+  BreadcrumbItem,
+  EmptySpace,
+  EmptySpaceItem,
+} from "ui";
 // services
 import projectService from "lib/services/project.service";
-import ProjectMemberInvitations from "components/project/memberInvitations";
+// icons
 import { ClipboardDocumentListIcon, PlusIcon } from "@heroicons/react/24/outline";
-import { BreadcrumbItem, Breadcrumbs } from "ui/Breadcrumbs";
-import { EmptySpace, EmptySpaceItem } from "ui/EmptySpace";
-import HeaderButton from "ui/HeaderButton";
 
 const Projects: NextPage = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [deleteProject, setDeleteProject] = useState<IProject | undefined>();
+  const [deleteProject, setDeleteProject] = useState<string | null>(null);
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
 
   const { projects, activeWorkspace, mutateProjects } = useUser();
@@ -52,21 +56,12 @@ const Projects: NextPage = () => {
       });
   };
 
-  useEffect(() => {
-    if (isOpen) return;
-    const timer = setTimeout(() => {
-      setDeleteProject(undefined);
-      clearTimeout(timer);
-    }, 300);
-  }, [isOpen]);
-
   return (
     <AppLayout>
-      <CreateProjectModal isOpen={isOpen && !deleteProject} setIsOpen={setIsOpen} />
       <ConfirmProjectDeletion
-        isOpen={isOpen && !!deleteProject}
-        setIsOpen={setIsOpen}
-        data={deleteProject}
+        isOpen={!!deleteProject}
+        onClose={() => setDeleteProject(null)}
+        data={projects?.find((item) => item.id === deleteProject) ?? null}
       />
       {projects ? (
         <>
@@ -87,7 +82,10 @@ const Projects: NextPage = () => {
                     </span>
                   }
                   Icon={PlusIcon}
-                  action={() => setIsOpen(true)}
+                  action={() => {
+                    const e = new KeyboardEvent("keydown", { key: "p", ctrlKey: true });
+                    document.dispatchEvent(e);
+                  }}
                 />
               </EmptySpace>
             </div>
@@ -98,7 +96,14 @@ const Projects: NextPage = () => {
               </Breadcrumbs>
               <div className="flex items-center justify-between cursor-pointer w-full">
                 <h2 className="text-2xl font-medium">Projects</h2>
-                <HeaderButton Icon={PlusIcon} label="Add Project" onClick={() => setIsOpen(true)} />
+                <HeaderButton
+                  Icon={PlusIcon}
+                  label="Add Project"
+                  onClick={() => {
+                    const e = new KeyboardEvent("keydown", { key: "p", ctrlKey: true });
+                    document.dispatchEvent(e);
+                  }}
+                />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {projects.map((item) => (
@@ -129,4 +134,4 @@ const Projects: NextPage = () => {
   );
 };
 
-export default Projects;
+export default withAuth(Projects);

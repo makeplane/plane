@@ -6,3 +6,5 @@ export const ROLE = {
   15: "Member",
   20: "Admin",
 };
+
+export const NETWORK_CHOICES = { "0": "Secret", "2": "Public" };

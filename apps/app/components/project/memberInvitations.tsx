@@ -28,7 +28,7 @@ type Props = {
   slug: string;
   invitationsRespond: string[];
   handleInvitation: (project_invitation: any, action: "accepted" | "withdraw") => void;
-  setDeleteProject: React.Dispatch<React.SetStateAction<IProject | undefined>>;
+  setDeleteProject: (id: string | null) => void;
 };
 
 const ProjectMemberInvitations: React.FC<Props> = ({
@@ -68,7 +68,7 @@ const ProjectMemberInvitations: React.FC<Props> = ({
             {!isMember ? (
               <input
                 id={project.id}
-                className="h-3 w-3 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 mt-2 hidden"
+                className="h-3 w-3 rounded border-gray-300 text-theme focus:ring-indigo-500 mt-2 hidden"
                 aria-describedby="workspaces"
                 name={project.id}
                 checked={invitationsRespond.includes(project.id)}
@@ -100,7 +100,7 @@ const ProjectMemberInvitations: React.FC<Props> = ({
               <button
                 type="button"
                 className="h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-200 duration-300 outline-none"
-                onClick={() => setDeleteProject(project)}
+                onClick={() => setDeleteProject(project.id)}
               >
                 <TrashIcon className="h-4 w-4 text-red-500" />
               </button>

@@ -10,7 +10,7 @@ import useUser from "lib/hooks/useUser";
 // hoc
 import withAuthWrapper from "lib/hoc/withAuthWrapper";
 // layouts
-import AppLayout from "layouts/AppLayout";
+import AppLayout from "layouts/app-layout";
 // ui
 import { Button } from "ui";
 // swr
@@ -89,7 +89,7 @@ const MyWorkspacesInvites: NextPage = () => {
                                 )
                               }
                               type="checkbox"
-                              className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                              className="h-4 w-4 rounded border-gray-300 text-theme focus:ring-indigo-500"
                             />
                           </div>
                           <div className="ml-3 text-sm flex justify-between w-full">

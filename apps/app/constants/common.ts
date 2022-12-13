@@ -207,3 +207,12 @@ export const cosineSimilarity = (a: string, b: string) => {
 
   return dotProduct / Math.sqrt(magnitudeA * magnitudeB);
 };
+
+export const createSimilarString = (str: string) => {
+  const shuffled = str
+    .split("")
+    .sort(() => Math.random() - 0.5)
+    .join("");
+
+  return shuffled;
+};

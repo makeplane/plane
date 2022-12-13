@@ -16,7 +16,7 @@ import {
 // headless
 import { Dialog, Menu, Transition } from "@headlessui/react";
 // services
-import issuesServices from "lib/services/issues.services";
+import issuesServices from "lib/services/issues.service";
 // hooks
 import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
@@ -34,10 +34,13 @@ import SelectAssignee from "./SelectAssignee";
 import SelectParent from "./SelectParentIssue";
 import CreateUpdateStateModal from "components/project/issues/BoardView/state/CreateUpdateStateModal";
 import CreateUpdateCycleModal from "components/project/cycles/CreateUpdateCyclesModal";
-
 // types
 import type { IIssue, IssueResponse, CycleIssueResponse } from "types";
 import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
+
+const RichTextEditor = dynamic(() => import("components/lexical/editor"), {
+  ssr: false,
+});
 
 type Props = {
   isOpen: boolean;
@@ -78,10 +81,6 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
   //   setIssueDescriptionValue(value);
   // };
 
-  const RichTextEditor = dynamic(() => import("components/lexical/editor"), {
-    ssr: false,
-  });
-
   const router = useRouter();
 
   const handleClose = () => {
@@ -117,7 +116,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
   const addIssueToSprint = async (issueId: string, sprintId: string, issueDetail: IIssue) => {
     if (!activeWorkspace || !activeProject) return;
     await issuesServices
-      .addIssueToSprint(activeWorkspace.slug, activeProject.id, sprintId, {
+      .addIssueToCycle(activeWorkspace.slug, activeProject.id, sprintId, {
         issue: issueId,
       })
       .then((res) => {
@@ -176,6 +175,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
     const payload: Partial<IIssue> = {
       ...formData,
       target_date: formData.target_date ? renderDateFormat(formData.target_date ?? "") : null,
+      // description: formData.description ? JSON.parse(formData.description) : null,
     };
     if (!data) {
       await issuesServices

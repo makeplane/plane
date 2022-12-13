@@ -7,7 +7,7 @@ import { Combobox, Dialog, Transition } from "@headlessui/react";
 // ui
 import { Button } from "ui";
 // services
-import issuesServices from "lib/services/issues.services";
+import issuesServices from "lib/services/issues.service";
 // hooks
 import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
@@ -47,7 +47,12 @@ const CycleIssuesListModal: React.FC<Props> = ({
     reset();
   };
 
-  const { handleSubmit, reset, control } = useForm<FormInput>({
+  const {
+    handleSubmit,
+    reset,
+    control,
+    formState: { isSubmitting },
+  } = useForm<FormInput>({
     defaultValues: {
       issue_ids: [],
     },
@@ -68,6 +73,7 @@ const CycleIssuesListModal: React.FC<Props> = ({
         .bulkAddIssuesToCycle(activeWorkspace.slug, activeProject.id, cycleId, data)
         .then((res) => {
           console.log(res);
+          handleClose();
         })
         .catch((e) => {
           console.log(e);
@@ -138,36 +144,39 @@ const CycleIssuesListModal: React.FC<Props> = ({
                                 </h2>
                               )}
                               <ul className="text-sm text-gray-700">
-                                {filteredIssues.map((issue) => (
-                                  <Combobox.Option
-                                    key={issue.id}
-                                    as="label"
-                                    htmlFor={`issue-${issue.id}`}
-                                    value={issue.id}
-                                    className={({ active }) =>
-                                      classNames(
-                                        "flex items-center gap-2 cursor-pointer select-none w-full rounded-md px-3 py-2",
-                                        active ? "bg-gray-900 bg-opacity-5 text-gray-900" : ""
-                                      )
-                                    }
-                                  >
-                                    {({ selected }) => (
-                                      <>
-                                        <input type="checkbox" checked={selected} readOnly />
-                                        <span
-                                          className={`h-1.5 w-1.5 block rounded-full`}
-                                          style={{
-                                            backgroundColor: issue.state_detail.color,
-                                          }}
-                                        />
-                                        <span className="text-xs text-gray-500">
-                                          {activeProject?.identifier}-{issue.sequence_id}
-                                        </span>
-                                        {issue.name}
-                                      </>
-                                    )}
-                                  </Combobox.Option>
-                                ))}
+                                {filteredIssues.map((issue) => {
+                                  // if (issue.cycle !== cycleId)
+                                  return (
+                                    <Combobox.Option
+                                      key={issue.id}
+                                      as="label"
+                                      htmlFor={`issue-${issue.id}`}
+                                      value={issue.id}
+                                      className={({ active }) =>
+                                        classNames(
+                                          "flex items-center gap-2 cursor-pointer select-none w-full rounded-md px-3 py-2",
+                                          active ? "bg-gray-900 bg-opacity-5 text-gray-900" : ""
+                                        )
+                                      }
+                                    >
+                                      {({ selected }) => (
+                                        <>
+                                          <input type="checkbox" checked={selected} readOnly />
+                                          <span
+                                            className="flex-shrink-0 h-1.5 w-1.5 block rounded-full"
+                                            style={{
+                                              backgroundColor: issue.state_detail.color,
+                                            }}
+                                          />
+                                          <span className="flex-shrink-0 text-xs text-gray-500">
+                                            {activeProject?.identifier}-{issue.sequence_id}
+                                          </span>
+                                          {issue.name}
+                                        </>
+                                      )}
+                                    </Combobox.Option>
+                                  );
+                                })}
                               </ul>
                             </li>
                           )}
@@ -191,8 +200,13 @@ const CycleIssuesListModal: React.FC<Props> = ({
                     <Button type="button" theme="danger" size="sm" onClick={handleClose}>
                       Cancel
                     </Button>
-                    <Button type="button" size="sm" onClick={handleSubmit(handleAddToCycle)}>
-                      Add to Cycle
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={handleSubmit(handleAddToCycle)}
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? "Adding..." : "Add to Cycle"}
                     </Button>
                   </div>
                 </form>

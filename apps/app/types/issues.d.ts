@@ -25,7 +25,8 @@ export interface IIssue {
   created_at: Date;
   updated_at: Date;
   name: string;
-  description: string;
+  // TODO change type of description
+  description: any;
   priority: string | null;
   start_date: string | null;
   target_date: string | null;

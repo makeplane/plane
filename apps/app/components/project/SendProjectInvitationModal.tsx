@@ -20,12 +20,17 @@ import { Button, Select, TextArea } from "ui";
 import { ChevronDownIcon, CheckIcon } from "@heroicons/react/20/solid";
 
 // types
-import { ProjectMember, WorkspaceMember } from "types";
+import { IProjectMemberInvitation } from "types";
 
 type Props = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   members: any[];
+};
+
+type ProjectMember = IProjectMemberInvitation & {
+  member_id: string;
+  user_id: string;
 };
 
 const defaultValues: Partial<ProjectMember> = {
@@ -49,7 +54,7 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
 
   const { setToastAlert } = useToast();
 
-  const { data: people } = useSWR<WorkspaceMember[]>(
+  const { data: people } = useSWR(
     activeWorkspace ? WORKSPACE_MEMBERS(activeWorkspace.slug) : null,
     activeWorkspace ? () => workspaceService.workspaceMembers(activeWorkspace.slug) : null,
     {
@@ -211,7 +216,7 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
                                                     {selected ? (
                                                       <span
                                                         className={`absolute inset-y-0 right-0 flex items-center pr-4 ${
-                                                          active ? "text-white" : "text-indigo-600"
+                                                          active ? "text-white" : "text-theme"
                                                         }`}
                                                       >
                                                         <CheckIcon

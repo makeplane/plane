@@ -10,4 +10,6 @@ export type Props = {
   children: React.ReactNode;
   noPadding?: boolean;
   bg?: "primary" | "secondary";
+  breadcrumbs?: JSX.Element;
+  right?: JSX.Element;
 };

@@ -35,12 +35,12 @@ const WorkspaceInvitation: NextPage = () => {
 
   const { user } = useUser();
 
-  const { data: invitationDetail, error } = useSWR(
-    invitationId && WORKSPACE_INVITATION,
-    () => invitationId && workspaceService.getWorkspaceInvitation(invitationId as string)
+  const { data: invitationDetail, error } = useSWR(invitationId && WORKSPACE_INVITATION, () =>
+    invitationId ? workspaceService.getWorkspaceInvitation(invitationId as string) : null
   );
 
   const handleAccept = () => {
+    if (!invitationDetail) return;
     workspaceService
       .joinWorkspace(invitationDetail.workspace.slug, invitationDetail.id, {
         accepted: true,

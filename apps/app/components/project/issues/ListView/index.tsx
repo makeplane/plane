@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 // swr
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 // headless ui
 import { Disclosure, Listbox, Menu, Transition } from "@headlessui/react";
 // ui
@@ -20,15 +20,14 @@ import User from "public/user.png";
 // components
 import CreateUpdateIssuesModal from "components/project/issues/CreateUpdateIssueModal";
 // types
-import { IIssue, IssueResponse, NestedKeyOf, Properties, WorkspaceMember } from "types";
+import { IIssue, IWorkspaceMember, NestedKeyOf, Properties } from "types";
+// services
+import workspaceService from "lib/services/workspace.service";
 // hooks
 import useUser from "lib/hooks/useUser";
 // fetch keys
 import { PRIORITIES } from "constants/";
-import { PROJECT_ISSUES_LIST, WORKSPACE_MEMBERS } from "constants/fetch-keys";
-// services
-import issuesServices from "lib/services/issues.services";
-import workspaceService from "lib/services/workspace.service";
+import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 // constants
 import {
   addSpaceIfCamelCase,
@@ -44,6 +43,7 @@ type Props = {
   selectedGroup: NestedKeyOf<IIssue> | null;
   setSelectedIssue: any;
   handleDeleteIssue: React.Dispatch<React.SetStateAction<string | undefined>>;
+  partialUpdateIssue: (formData: Partial<IIssue>, issueId: string) => void;
 };
 
 const ListView: React.FC<Props> = ({
@@ -52,6 +52,7 @@ const ListView: React.FC<Props> = ({
   selectedGroup,
   setSelectedIssue,
   handleDeleteIssue,
+  partialUpdateIssue,
 }) => {
   const [isCreateIssuesModalOpen, setIsCreateIssuesModalOpen] = useState(false);
   const [preloadedData, setPreloadedData] = useState<
@@ -60,27 +61,7 @@ const ListView: React.FC<Props> = ({
 
   const { activeWorkspace, activeProject, states } = useUser();
 
-  const partialUpdateIssue = (formData: Partial<IIssue>, issueId: string) => {
-    if (!activeWorkspace || !activeProject) return;
-    issuesServices
-      .patchIssue(activeWorkspace.slug, activeProject.id, issueId, formData)
-      .then((response) => {
-        mutate<IssueResponse>(
-          PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id),
-          (prevData) => ({
-            ...(prevData as IssueResponse),
-            results:
-              prevData?.results.map((issue) => (issue.id === response.id ? response : issue)) ?? [],
-          }),
-          false
-        );
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const { data: people } = useSWR<WorkspaceMember[]>(
+  const { data: people } = useSWR<IWorkspaceMember[]>(
     activeWorkspace ? WORKSPACE_MEMBERS : null,
     activeWorkspace ? () => workspaceService.workspaceMembers(activeWorkspace.slug) : null
   );
@@ -95,7 +76,7 @@ const ListView: React.FC<Props> = ({
         }}
         projectId={activeProject?.id as string}
       />
-      <div className="mt-4 flex flex-col space-y-5">
+      <div className="flex flex-col space-y-5">
         {Object.keys(groupedByIssues).map((singleGroup) => (
           <Disclosure key={singleGroup} as="div" defaultOpen>
             {({ open }) => (
@@ -155,23 +136,27 @@ const ListView: React.FC<Props> = ({
                             return (
                               <div
                                 key={issue.id}
-                                className="group px-4 py-3 text-sm rounded flex items-center justify-between"
+                                className="px-4 py-3 text-sm rounded flex justify-between items-center gap-2"
                               >
                                 <div className="flex items-center gap-2">
                                   <span
-                                    className={`h-1.5 w-1.5 block rounded-full`}
+                                    className={`flex-shrink-0 h-1.5 w-1.5 block rounded-full`}
                                     style={{
                                       backgroundColor: issue.state_detail.color,
                                     }}
                                   />
                                   <Link href={`/projects/${activeProject?.id}/issues/${issue.id}`}>
-                                    <a className="flex items-center gap-2">
+                                    <a className="group relative flex items-center gap-2">
                                       {properties.key && (
                                         <span className="flex-shrink-0 text-xs text-gray-500">
                                           {activeProject?.identifier}-{issue.sequence_id}
                                         </span>
                                       )}
-                                      <span>{issue.name}</span>
+                                      <span className="">{issue.name}</span>
+                                      <div className="absolute bottom-full left-0 mb-2 z-10 hidden group-hover:block p-2 bg-white shadow-md rounded-md max-w-sm whitespace-nowrap">
+                                        <h5 className="font-medium mb-1">Name</h5>
+                                        <div>{issue.name}</div>
+                                      </div>
                                     </a>
                                   </Link>
                                 </div>
@@ -183,7 +168,7 @@ const ListView: React.FC<Props> = ({
                                       onChange={(data: string) => {
                                         partialUpdateIssue({ priority: data }, issue.id);
                                       }}
-                                      className="flex-shrink-0"
+                                      className="group relative flex-shrink-0"
                                     >
                                       {({ open }) => (
                                         <>
@@ -229,6 +214,26 @@ const ListView: React.FC<Props> = ({
                                               </Listbox.Options>
                                             </Transition>
                                           </div>
+                                          <div className="absolute bottom-full right-0 mb-2 z-10 hidden group-hover:block p-2 bg-white shadow-md rounded-md whitespace-nowrap">
+                                            <h5 className="font-medium mb-1 text-gray-900">
+                                              Priority
+                                            </h5>
+                                            <div
+                                              className={`capitalize ${
+                                                issue.priority === "urgent"
+                                                  ? "text-red-600"
+                                                  : issue.priority === "high"
+                                                  ? "text-orange-500"
+                                                  : issue.priority === "medium"
+                                                  ? "text-yellow-500"
+                                                  : issue.priority === "low"
+                                                  ? "text-green-500"
+                                                  : ""
+                                              }`}
+                                            >
+                                              {issue.priority ?? "None"}
+                                            </div>
+                                          </div>
                                         </>
                                       )}
                                     </Listbox>
@@ -240,7 +245,7 @@ const ListView: React.FC<Props> = ({
                                       onChange={(data: string) => {
                                         partialUpdateIssue({ state: data }, issue.id);
                                       }}
-                                      className="flex-shrink-0"
+                                      className="group relative flex-shrink-0"
                                     >
                                       {({ open }) => (
                                         <>
@@ -280,21 +285,31 @@ const ListView: React.FC<Props> = ({
                                               </Listbox.Options>
                                             </Transition>
                                           </div>
+                                          <div className="absolute bottom-full right-0 mb-2 z-10 hidden group-hover:block p-2 bg-white shadow-md rounded-md whitespace-nowrap">
+                                            <h5 className="font-medium mb-1">State</h5>
+                                            <div>{issue.state_detail.name}</div>
+                                          </div>
                                         </>
                                       )}
                                     </Listbox>
                                   )}
                                   {properties.start_date && (
-                                    <div className="flex-shrink-0 flex items-center gap-1 hover:bg-gray-100 border rounded shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300">
+                                    <div className="group relative flex-shrink-0 flex items-center gap-1 hover:bg-gray-100 border rounded shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300">
                                       <CalendarDaysIcon className="h-4 w-4" />
                                       {issue.start_date
                                         ? renderShortNumericDateFormat(issue.start_date)
                                         : "N/A"}
+                                      <div className="absolute bottom-full right-0 mb-2 z-10 hidden group-hover:block p-2 bg-white shadow-md rounded-md whitespace-nowrap">
+                                        <h5 className="font-medium mb-1">Started at</h5>
+                                        <div>
+                                          {renderShortNumericDateFormat(issue.start_date ?? "")}
+                                        </div>
+                                      </div>
                                     </div>
                                   )}
                                   {properties.target_date && (
                                     <div
-                                      className={`flex-shrink-0 group flex items-center gap-1 hover:bg-gray-100 border rounded shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300 ${
+                                      className={`group relative flex-shrink-0 group flex items-center gap-1 hover:bg-gray-100 border rounded shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300 ${
                                         issue.target_date === null
                                           ? ""
                                           : issue.target_date < new Date().toISOString()
@@ -307,19 +322,26 @@ const ListView: React.FC<Props> = ({
                                       {issue.target_date
                                         ? renderShortNumericDateFormat(issue.target_date)
                                         : "N/A"}
-                                      {issue.target_date && (
-                                        <span className="absolute -top-full mb-2 left-4 border transition-opacity opacity-0 group-hover:opacity-100 bg-white rounded px-2 py-1">
-                                          {issue.target_date < new Date().toISOString()
-                                            ? `Target date has passed by ${findHowManyDaysLeft(
-                                                issue.target_date
-                                              )} days`
-                                            : findHowManyDaysLeft(issue.target_date) <= 3
-                                            ? `Target date is in ${findHowManyDaysLeft(
-                                                issue.target_date
-                                              )} days`
-                                            : "Target date"}
-                                        </span>
-                                      )}
+                                      <div className="absolute bottom-full right-0 mb-2 z-10 hidden group-hover:block p-2 bg-white shadow-md rounded-md whitespace-nowrap">
+                                        <h5 className="font-medium mb-1 text-gray-900">
+                                          Target date
+                                        </h5>
+                                        <div>
+                                          {renderShortNumericDateFormat(issue.target_date ?? "")}
+                                        </div>
+                                        <div>
+                                          {issue.target_date &&
+                                            (issue.target_date < new Date().toISOString()
+                                              ? `Target date has passed by ${findHowManyDaysLeft(
+                                                  issue.target_date
+                                                )} days`
+                                              : findHowManyDaysLeft(issue.target_date) <= 3
+                                              ? `Target date is in ${findHowManyDaysLeft(
+                                                  issue.target_date
+                                                )} days`
+                                              : "Target date")}
+                                        </div>
+                                      </div>
                                     </div>
                                   )}
                                   {properties.assignee && (
@@ -335,7 +357,7 @@ const ListView: React.FC<Props> = ({
                                         }
                                         partialUpdateIssue({ assignees_list: newData }, issue.id);
                                       }}
-                                      className="relative flex-shrink-0"
+                                      className="group relative flex-shrink-0"
                                     >
                                       {({ open }) => (
                                         <>
@@ -397,7 +419,7 @@ const ListView: React.FC<Props> = ({
                                                     className={({ active }) =>
                                                       classNames(
                                                         active ? "bg-indigo-50" : "bg-white",
-                                                        "cursor-pointer select-none px-3 py-2"
+                                                        "cursor-pointer select-none p-2"
                                                       )
                                                     }
                                                     value={person.member.id}
@@ -443,6 +465,16 @@ const ListView: React.FC<Props> = ({
                                                 ))}
                                               </Listbox.Options>
                                             </Transition>
+                                          </div>
+                                          <div className="absolute bottom-full right-0 mb-2 z-10 hidden group-hover:block p-2 bg-white shadow-md rounded-md whitespace-nowrap">
+                                            <h5 className="font-medium mb-1">Assigned to</h5>
+                                            <div>
+                                              {issue.assignee_details?.length > 0
+                                                ? issue.assignee_details
+                                                    .map((assignee) => assignee.first_name)
+                                                    .join(", ")
+                                                : "No one"}
+                                            </div>
                                           </div>
                                         </>
                                       )}

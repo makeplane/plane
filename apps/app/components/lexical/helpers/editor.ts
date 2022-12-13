@@ -18,10 +18,12 @@ export const getValidatedValue = (value: string) => {
   const defaultValue =
     '{"root":{"children":[{"children":[],"direction":null,"format":"","indent":0,"type":"paragraph","version":1}],"direction":null,"format":"","indent":0,"type":"root","version":1}}';
 
+  console.log("Value: ", value);
+
   if (value) {
     try {
-      console.log(value);
-      return value;
+      const data = JSON.parse(value);
+      return JSON.stringify(data);
     } catch (e) {
       return defaultValue;
     }

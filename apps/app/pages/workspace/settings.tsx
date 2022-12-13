@@ -3,25 +3,27 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 // react hook form
 import { useForm } from "react-hook-form";
+// headless ui
+import { Tab } from "@headlessui/react";
 // react dropzone
 import Dropzone from "react-dropzone";
 // services
 import workspaceService from "lib/services/workspace.service";
-import fileServices from "lib/services/file.services";
+import fileServices from "lib/services/file.service";
+// hoc
+import withAuth from "lib/hoc/withAuthWrapper";
 // layouts
-import AppLayout from "layouts/AppLayout";
-
+import AppLayout from "layouts/app-layout";
 // hooks
 import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
 // components
-import ConfirmWorkspaceDeletion from "components/workspace/ConfirmWorkspaceDeletion";
+import ConfirmWorkspaceDeletion from "components/workspace/confirm-workspace-deletion";
 // ui
 import { Spinner, Button, Input, Select } from "ui";
 import { BreadcrumbItem, Breadcrumbs } from "ui/Breadcrumbs";
 // types
 import type { IWorkspace } from "types";
-import { Tab } from "@headlessui/react";
 
 const defaultValues: Partial<IWorkspace> = {
   name: "",
@@ -87,12 +89,20 @@ const WorkspaceSettings = () => {
       meta={{
         title: "Plane - Workspace Settings",
       }}
-    >
-      <ConfirmWorkspaceDeletion isOpen={isOpen} setIsOpen={setIsOpen} />
-      <div className="space-y-5">
+      breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem title={`${activeWorkspace?.name ?? "Workspace"} Settings`} />
         </Breadcrumbs>
+      }
+    >
+      <ConfirmWorkspaceDeletion
+        isOpen={isOpen}
+        onClose={() => {
+          setIsOpen(false);
+        }}
+        data={activeWorkspace ?? null}
+      />
+      <div className="space-y-5">
         {activeWorkspace ? (
           <div className="space-y-8">
             <Tab.Group>
@@ -232,4 +242,4 @@ const WorkspaceSettings = () => {
   );
 };
 
-export default WorkspaceSettings;
+export default withAuth(WorkspaceSettings);

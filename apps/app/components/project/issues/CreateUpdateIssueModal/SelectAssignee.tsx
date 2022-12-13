@@ -11,7 +11,7 @@ import useUser from "lib/hooks/useUser";
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 // types
 import type { Control } from "react-hook-form";
-import type { IIssue, WorkspaceMember } from "types";
+import type { IIssue } from "types";
 import { UserIcon } from "@heroicons/react/24/outline";
 
 import { SearchListbox } from "ui";
@@ -23,7 +23,7 @@ type Props = {
 const SelectAssignee: React.FC<Props> = ({ control }) => {
   const { activeWorkspace, activeProject } = useUser();
 
-  const { data: people } = useSWR<WorkspaceMember[]>(
+  const { data: people } = useSWR(
     activeWorkspace && activeProject ? PROJECT_MEMBERS(activeProject.id) : null,
     activeWorkspace && activeProject
       ? () => projectServices.projectMembers(activeWorkspace.slug, activeProject.id)

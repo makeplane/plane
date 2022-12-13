@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // services
-import issuesServices from "lib/services/issues.services";
+import issuesServices from "lib/services/issues.service";
 // hooks
 import useUser from "lib/hooks/useUser";
 // icons

@@ -1,66 +1,65 @@
 import React, { useEffect, useRef, useState } from "react";
-// swr
-import { mutate } from "swr";
+// next
+import { useRouter } from "next/router";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
-// fetching keys
-import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // services
-import issueServices from "lib/services/issues.services";
+import workspaceService from "lib/services/workspace.service";
 // hooks
 import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
-import { Button } from "ui";
+import { Button, Input } from "ui";
 // types
-import type { IIssue, IssueResponse } from "types";
+import type { IWorkspace } from "types";
 
 type Props = {
   isOpen: boolean;
-  handleClose: () => void;
-  data?: IIssue;
+  data: IWorkspace | null;
+  onClose: () => void;
 };
 
-const ConfirmIssueDeletion: React.FC<Props> = ({ isOpen, handleClose, data }) => {
+const ConfirmWorkspaceDeletion: React.FC<Props> = ({ isOpen, data, onClose }) => {
+  const router = useRouter();
+
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
-  const { activeWorkspace } = useUser();
+  const [selectedWorkspace, setSelectedWorkspace] = useState<IWorkspace | null>(null);
+
+  const [confirmProjectName, setConfirmProjectName] = useState("");
+  const [confirmDeleteMyProject, setConfirmDeleteMyProject] = useState(false);
+
+  const canDelete = confirmProjectName === data?.name && confirmDeleteMyProject;
+
+  const { mutateWorkspaces } = useUser();
 
   const { setToastAlert } = useToast();
 
   const cancelButtonRef = useRef(null);
 
-  const onClose = () => {
+  const handleClose = () => {
+    onClose();
     setIsDeleteLoading(false);
-    handleClose();
   };
 
   const handleDeletion = async () => {
     setIsDeleteLoading(true);
-    if (!data || !activeWorkspace) return;
-    const projectId = data.project;
-    await issueServices
-      .deleteIssue(activeWorkspace.slug, projectId, data.id)
+    if (!data || !canDelete) return;
+    await workspaceService
+      .deleteWorkspace(data.slug)
       .then(() => {
-        mutate<IssueResponse>(
-          PROJECT_ISSUES_LIST(activeWorkspace.slug, projectId),
-          (prevData) => {
-            return {
-              ...(prevData as IssueResponse),
-              results: prevData?.results.filter((i) => i.id !== data.id) ?? [],
-              count: (prevData?.count as number) - 1,
-            };
-          },
-          false
-        );
-        setToastAlert({
-          title: "Success",
-          type: "success",
-          message: "Issue deleted successfully",
-        });
         handleClose();
+        mutateWorkspaces((prevData) => {
+          return (prevData ?? []).filter((workspace: IWorkspace) => workspace.slug !== data.slug);
+        }, false);
+        setToastAlert({
+          type: "success",
+          message: "Workspace deleted successfully",
+          title: "Success",
+        });
+        router.push("/");
       })
       .catch((error) => {
         console.log(error);
@@ -68,9 +67,24 @@ const ConfirmIssueDeletion: React.FC<Props> = ({ isOpen, handleClose, data }) =>
       });
   };
 
+  useEffect(() => {
+    if (data) setSelectedWorkspace(data);
+    else {
+      const timer = setTimeout(() => {
+        setSelectedWorkspace(null);
+        clearTimeout(timer);
+      }, 350);
+    }
+  }, [data]);
+
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-10" initialFocus={cancelButtonRef} onClose={onClose}>
+      <Dialog
+        as="div"
+        className="relative z-10"
+        initialFocus={cancelButtonRef}
+        onClose={handleClose}
+      >
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
@@ -105,15 +119,51 @@ const ConfirmIssueDeletion: React.FC<Props> = ({ isOpen, handleClose, data }) =>
                     </div>
                     <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                       <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
-                        Delete Issue
+                        Delete Workspace
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-gray-500">
-                          Are you sure you want to delete issue - {`"`}
+                          Are you sure you want to delete workspace - {`"`}
                           <span className="italic">{data?.name}</span>
-                          {`"`} ? All of the data related to the issue will be permanently removed.
-                          This action cannot be undone.
+                          {`"`} ? All of the data related to the workspace will be permanently
+                          removed. This action cannot be undone.
                         </p>
+                      </div>
+                      <div className="mt-3">
+                        <p className="text-sm">
+                          Enter the workspace name{" "}
+                          <span className="font-semibold">{selectedWorkspace?.name}</span> to
+                          continue:
+                        </p>
+                        <Input
+                          type="text"
+                          placeholder="Project name"
+                          className="mt-2"
+                          value={confirmProjectName}
+                          onChange={(e) => {
+                            setConfirmProjectName(e.target.value);
+                          }}
+                          name="workspaceName"
+                        />
+                      </div>
+                      <div className="mt-3">
+                        <p className="text-sm">
+                          To confirm, type{" "}
+                          <span className="font-semibold">delete my workspace</span> below:
+                        </p>
+                        <Input
+                          type="text"
+                          placeholder="Enter 'delete my workspace'"
+                          className="mt-2"
+                          onChange={(e) => {
+                            if (e.target.value === "delete my workspace") {
+                              setConfirmDeleteMyProject(true);
+                            } else {
+                              setConfirmDeleteMyProject(false);
+                            }
+                          }}
+                          name="typeDelete"
+                        />
                       </div>
                     </div>
                   </div>
@@ -123,7 +173,7 @@ const ConfirmIssueDeletion: React.FC<Props> = ({ isOpen, handleClose, data }) =>
                     type="button"
                     onClick={handleDeletion}
                     theme="danger"
-                    disabled={isDeleteLoading}
+                    disabled={isDeleteLoading || !canDelete}
                     className="inline-flex sm:ml-3"
                   >
                     {isDeleteLoading ? "Deleting..." : "Delete"}
@@ -132,7 +182,7 @@ const ConfirmIssueDeletion: React.FC<Props> = ({ isOpen, handleClose, data }) =>
                     type="button"
                     theme="secondary"
                     className="inline-flex sm:ml-3"
-                    onClick={onClose}
+                    onClick={handleClose}
                     ref={cancelButtonRef}
                   >
                     Cancel
@@ -147,4 +197,4 @@ const ConfirmIssueDeletion: React.FC<Props> = ({ isOpen, handleClose, data }) =>
   );
 };
 
-export default ConfirmIssueDeletion;
+export default ConfirmWorkspaceDeletion;

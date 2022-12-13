@@ -31,7 +31,7 @@ const EmptySpace: React.FC<EmptySpaceProps> = ({ title, description, children, I
         {link ? (
           <div className="mt-6 flex">
             <Link href={link.href}>
-              <a className="text-sm font-medium text-indigo-600 hover:text-indigo-500">
+              <a className="text-sm font-medium text-theme hover:text-indigo-500">
                 {link.text}
                 <span aria-hidden="true"> &rarr;</span>
               </a>

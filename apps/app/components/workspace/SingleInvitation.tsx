@@ -3,10 +3,10 @@ import Image from "next/image";
 // react
 import { useState } from "react";
 // types
-import { IWorkspaceInvitation } from "types";
+import { IWorkspaceMemberInvitation } from "types";
 
 type Props = {
-  invitation: IWorkspaceInvitation;
+  invitation: IWorkspaceMemberInvitation;
   invitationsRespond: string[];
   handleInvitation: any;
 };
@@ -65,7 +65,7 @@ const SingleInvitation: React.FC<Props> = ({
                 setIsChecked(e.target.checked);
               }}
               type="checkbox"
-              className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+              className="h-4 w-4 rounded border-gray-300 text-theme focus:ring-indigo-500"
             />
           </div>
         </label>

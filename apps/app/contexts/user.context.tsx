@@ -6,9 +6,9 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 // services
 import userService from "lib/services/user.service";
-import issuesServices from "lib/services/issues.services";
-import stateServices from "lib/services/state.services";
-import sprintsServices from "lib/services/cycles.services";
+import issuesServices from "lib/services/issues.service";
+import stateServices from "lib/services/state.service";
+import sprintsServices from "lib/services/cycles.service";
 import projectServices from "lib/services/project.service";
 import workspaceService from "lib/services/workspace.service";
 // constants

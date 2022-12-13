@@ -6,7 +6,7 @@ import { useForm, Controller } from "react-hook-form";
 // headless ui
 import { Listbox, Transition } from "@headlessui/react";
 // services
-import issuesServices from "lib/services/issues.services";
+import issuesServices from "lib/services/issues.service";
 // hooks
 import useUser from "lib/hooks/useUser";
 // fetching keys
@@ -106,12 +106,16 @@ const SelectLabels: React.FC<Props> = ({ control }) => {
                           className={({ active }) =>
                             `${
                               active ? "text-white bg-theme" : "text-gray-900"
-                            } cursor-pointer select-none w-full p-2 rounded-md`
+                            } flex items-center gap-2 cursor-pointer select-none w-full p-2 rounded-md`
                           }
                           value={label.id}
                         >
                           {({ selected, active }) => (
                             <>
+                              <span
+                                className="h-2 w-2 rounded-full flex-shrink-0"
+                                style={{ backgroundColor: label.colour }}
+                              ></span>
                               <span
                                 className={`${
                                   selected || (value ?? []).some((i) => i === label.id)

@@ -1,4 +1,3 @@
-import { useState } from "react";
 // hooks
 import useTheme from "./useTheme";
 import useUser from "./useUser";
@@ -7,14 +6,19 @@ import { groupBy, orderArrayBy } from "constants/common";
 // constants
 import { PRIORITIES } from "constants/";
 // types
-import type { IssueResponse, IIssue, NestedKeyOf } from "types";
+import type { IIssue } from "types";
 
-const useIssuesFilter = (projectIssues?: IssueResponse) => {
-  const { issueView, setIssueView, groupByProperty, setGroupByProperty } = useTheme();
-
-  const [orderBy, setOrderBy] = useState<NestedKeyOf<IIssue> | null>(null);
-
-  const [filterIssue, setFilterIssue] = useState<"activeIssue" | "backlogIssue" | null>(null);
+const useIssuesFilter = (projectIssues: IIssue[]) => {
+  const {
+    issueView,
+    setIssueView,
+    groupByProperty,
+    setGroupByProperty,
+    orderBy,
+    setOrderBy,
+    filterIssue,
+    setFilterIssue,
+  } = useTheme();
 
   const { states } = useUser();
 
@@ -27,18 +31,18 @@ const useIssuesFilter = (projectIssues?: IssueResponse) => {
             ?.sort((a, b) => a.sequence - b.sequence)
             ?.map((state) => [
               state.name,
-              projectIssues?.results.filter((issue) => issue.state === state.name) ?? [],
+              projectIssues.filter((issue) => issue.state === state.name) ?? [],
             ]) ?? []
         )
       : groupByProperty === "priority"
       ? Object.fromEntries(
           PRIORITIES.map((priority) => [
             priority,
-            projectIssues?.results.filter((issue) => issue.priority === priority) ?? [],
+            projectIssues.filter((issue) => issue.priority === priority) ?? [],
           ])
         )
       : {}),
-    ...groupBy(projectIssues?.results ?? [], groupByProperty ?? ""),
+    ...groupBy(projectIssues ?? [], groupByProperty ?? ""),
   };
 
   if (orderBy !== null) {
@@ -52,29 +56,29 @@ const useIssuesFilter = (projectIssues?: IssueResponse) => {
 
   if (filterIssue !== null) {
     if (filterIssue === "activeIssue") {
-      groupedByIssues = Object.keys(groupedByIssues).reduce((acc, key) => {
-        const value = groupedByIssues[key];
-        const filteredValue = value.filter(
-          (issue) =>
-            issue.state_detail.group === "started" || issue.state_detail.group === "unstarted"
-        );
-        if (filteredValue.length > 0) {
-          acc[key] = filteredValue;
-        }
-        return acc;
-      }, {} as typeof groupedByIssues);
+      const filteredStates = states?.filter(
+        (state) => state.group === "started" || state.group === "unstarted"
+      );
+      groupedByIssues = Object.fromEntries(
+        filteredStates
+          ?.sort((a, b) => a.sequence - b.sequence)
+          ?.map((state) => [
+            state.name,
+            projectIssues.filter((issue) => issue.state === state.id) ?? [],
+          ]) ?? []
+      );
     } else if (filterIssue === "backlogIssue") {
-      groupedByIssues = Object.keys(groupedByIssues).reduce((acc, key) => {
-        const value = groupedByIssues[key];
-        const filteredValue = value.filter(
-          (issue) =>
-            issue.state_detail.group === "backlog" || issue.state_detail.group === "cancelled"
-        );
-        if (filteredValue.length > 0) {
-          acc[key] = filteredValue;
-        }
-        return acc;
-      }, {} as typeof groupedByIssues);
+      const filteredStates = states?.filter(
+        (state) => state.group === "backlog" || state.group === "cancelled"
+      );
+      groupedByIssues = Object.fromEntries(
+        filteredStates
+          ?.sort((a, b) => a.sequence - b.sequence)
+          ?.map((state) => [
+            state.name,
+            projectIssues.filter((issue) => issue.state === state.id) ?? [],
+          ]) ?? []
+      );
     }
   }
 

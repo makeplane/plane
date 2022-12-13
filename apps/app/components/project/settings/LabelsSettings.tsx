@@ -7,7 +7,7 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 // react-color
 import { TwitterPicker } from "react-color";
 // services
-import issuesServices from "lib/services/issues.services";
+import issuesServices from "lib/services/issues.service";
 // hooks
 import useUser from "lib/hooks/useUser";
 // headless ui
@@ -47,7 +47,6 @@ const LabelsSettings: React.FC = () => {
     setValue,
     formState: { errors, isSubmitting },
     watch,
-    setError,
   } = useForm<IIssueLabels>({ defaultValues });
 
   const { data: issueLabels, mutate } = useSWR<IIssueLabels[]>(
@@ -117,7 +116,7 @@ const LabelsSettings: React.FC = () => {
           </Button>
         </div>
         <div className="space-y-5">
-          <form
+          <div
             className={`bg-white px-4 py-2 flex items-center gap-2 ${newLabelForm ? "" : "hidden"}`}
           >
             <div>
@@ -193,7 +192,7 @@ const LabelsSettings: React.FC = () => {
                 {isSubmitting ? "Adding" : "Add"}
               </Button>
             )}
-          </form>
+          </div>
           {issueLabels ? (
             issueLabels.map((label) => {
               const children = getLabelChildren(label.id);

@@ -4,7 +4,7 @@ import Link from "next/link";
 // react
 import React from "react";
 // layouts
-import AppLayout from "layouts/AppLayout";
+import AppLayout from "layouts/app-layout";
 // swr
 import useSWR from "swr";
 // hooks
@@ -26,8 +26,8 @@ const Workspace: NextPage = () => {
   const { user, activeWorkspace, projects } = useUser();
 
   const { data: myIssues } = useSWR<IIssue[]>(
-    user ? USER_ISSUE : null,
-    user ? () => userService.userIssues() : null
+    user && activeWorkspace ? USER_ISSUE(activeWorkspace.slug) : null,
+    user && activeWorkspace ? () => userService.userIssues(activeWorkspace.slug) : null
   );
 
   const cards = [
