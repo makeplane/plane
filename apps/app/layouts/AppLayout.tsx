@@ -1,9 +1,4 @@
-// react
-import React, { useEffect, useState } from "react";
-// next
-import { useRouter } from "next/router";
-// hooks
-import useUser from "lib/hooks/useUser";
+import React, { useState } from "react";
 // layouts
 import Container from "layouts/Container";
 import Sidebar from "layouts/Navbar/Sidebar";
@@ -14,14 +9,6 @@ import type { Props } from "./types";
 
 const AppLayout: React.FC<Props> = ({ meta, children, noPadding = false, bg = "primary" }) => {
   const [isOpen, setIsOpen] = useState(false);
-
-  const router = useRouter();
-
-  const { user, isUserLoading } = useUser();
-
-  useEffect(() => {
-    if (!isUserLoading && (!user || user === null)) router.push("/signin");
-  }, [isUserLoading, user, router]);
 
   return (
     <Container meta={meta}>
