@@ -19,6 +19,8 @@ from plane.db.models import (
     IssueLabel,
     Label,
     IssueBlocker,
+    Cycle,
+    CycleIssue,
 )
 
 
@@ -302,6 +304,38 @@ class IssueAssigneeSerializer(BaseSerializer):
         fields = "__all__"
 
 
+class CycleBaseSerializer(BaseSerializer):
+
+    class Meta:
+        model = Cycle
+        fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "project",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+        ]
+
+class IssueCycleDetailSerializer(BaseSerializer):
+
+    cycle_detail = CycleBaseSerializer(read_only=True, source="cycle")
+
+    class Meta:
+        model = CycleIssue
+        fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "project",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+        ]
+
+
+
 class IssueSerializer(BaseSerializer):
     project_detail = ProjectSerializer(read_only=True, source="project")
     state_detail = StateSerializer(read_only=True, source="state")
@@ -310,6 +344,7 @@ class IssueSerializer(BaseSerializer):
     assignee_details = UserLiteSerializer(read_only=True, source="assignees", many=True)
     blocked_issues = BlockedIssueSerializer(read_only=True, many=True)
     blocker_issues = BlockerIssueSerializer(read_only=True, many=True)
+    issue_cycle = IssueCycleDetailSerializer(read_only=True)
 
     class Meta:
         model = Issue
