@@ -3,19 +3,24 @@ version: "3.8"
 services:
   db:
     image: postgres:12-alpine
-    restart: on-failure
+    restart: always
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: plane
       POSTGRES_DB: plane
       POSTGRES_PASSWORD: plane
     command: postgres -c 'max_connections=1000'
+    ports:
+      - "5432:5432"
 
   redis:
     image: redis:6.2.7-alpine
-    restart: on-failure
-    command: redis-server --maxmemory-policy allkeys-lru --maxmemory 200mb
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
 
   plane-web:
     image: plane-web
@@ -64,16 +69,20 @@ services:
       - redis
     command: ./bin/takeoff
     links:
-      - db
-      - redis
+      - db:db
+      - redis:redis
 
   plane-worker:
     image: plane-api
+    container_name: plane-bg
     depends_on:
         - redis
+        - db
+        - plane-api
     command: ./bin/worker
     links:
-        - redis
+        - redis:redis
+        - db:db
     environment:
       SENTRY_DSN: $SENTRY_DSN
       WEB_URL: $WEB_URL
@@ -94,4 +103,5 @@ services:
 
 
 volumes:
-  postgres-data:
+  pgdata:
+  redisdata:
