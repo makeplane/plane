@@ -158,6 +158,42 @@ class ProjectViewSet(BaseViewSet):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
+    def partial_update(self, request, slug, pk=None):
+        try:
+            workspace = Workspace.objects.get(slug=slug)
+
+            project = Project.objects.get(pk=pk)
+
+            serializer = ProjectSerializer(
+                project,
+                data={**request.data},
+                context={"workspace_id": workspace.id},
+                partial=True,
+            )
+
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        except IntegrityError as e:
+            if "already exists" in str(e):
+                return Response(
+                    {"name": "The project name is already taken"},
+                    status=status.HTTP_410_GONE,
+                )
+        except serializers.ValidationError as e:
+            return Response(
+                {"identifier": "The project identifier is already taken"},
+                status=status.HTTP_410_GONE,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
 
 class InviteProjectEndpoint(BaseAPIView):
 
