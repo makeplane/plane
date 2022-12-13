@@ -59,7 +59,7 @@ class Project(BaseModel):
         return f"{self.name} <{self.workspace.name}>"
 
     class Meta:
-        unique_together = ["identifier", "workspace"]
+        unique_together = [["identifier", "workspace"], ["name", "workspace"]]
         verbose_name = "Project"
         verbose_name_plural = "Projects"
         db_table = "project"
