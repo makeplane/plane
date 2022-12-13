@@ -49,5 +49,5 @@ jobs:
       - name: Run Tests
         working-directory: ./apiserver
         env:
-        SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
         run: coverage run --source='.' manage.py test --settings=plane.settings.test
