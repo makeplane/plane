@@ -14,7 +14,7 @@ import { Button, Input, TextArea, Select } from "ui";
 // hooks
 import useToast from "lib/hooks/useToast";
 // types
-import { WorkspaceMember } from "types";
+import { IWorkspaceMemberInvitation } from "types";
 
 type Props = {
   isOpen: boolean;
@@ -30,7 +30,7 @@ const ROLE = {
   20: "Admin",
 };
 
-const defaultValues: Partial<WorkspaceMember> = {
+const defaultValues: Partial<IWorkspaceMemberInvitation> = {
   email: "",
   role: 5,
   message: "",
@@ -57,7 +57,7 @@ const SendWorkspaceInvitationModal: React.FC<Props> = ({
     formState: { errors, isSubmitting },
     handleSubmit,
     reset,
-  } = useForm<WorkspaceMember>({
+  } = useForm<IWorkspaceMemberInvitation>({
     defaultValues,
     reValidateMode: "onChange",
     mode: "all",

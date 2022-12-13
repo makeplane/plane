@@ -4,7 +4,7 @@ import { mutate } from "swr";
 // react hook form
 import { useForm } from "react-hook-form";
 // services
-import issuesServices from "lib/services/issues.services";
+import issuesServices from "lib/services/issues.service";
 // fetch keys
 import { PROJECT_ISSUES_COMMENTS } from "constants/fetch-keys";
 // components
@@ -72,7 +72,7 @@ const IssueCommentSection: React.FC<Props> = ({ comments, issueId, projectId, wo
   return (
     <div className="space-y-5">
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="p-2 bg-indigo-50 rounded-md">
+        <div className="bg-gray-100 rounded-md">
           <div className="w-full">
             <TextArea
               id="comment"

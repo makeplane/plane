@@ -7,7 +7,7 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 // react-color
 import { TwitterPicker } from "react-color";
 // services
-import issuesServices from "lib/services/issues.services";
+import issuesServices from "lib/services/issues.service";
 // hooks
 import useUser from "lib/hooks/useUser";
 // headless ui
@@ -47,6 +47,7 @@ const LabelsSettings: React.FC = () => {
     setValue,
     formState: { errors, isSubmitting },
     watch,
+    setError,
   } = useForm<IIssueLabels>({ defaultValues });
 
   const { data: issueLabels, mutate } = useSWR<IIssueLabels[]>(
@@ -163,23 +164,33 @@ const LabelsSettings: React.FC = () => {
                 )}
               </Popover>
             </div>
-            <Input
-              type="text"
-              id="labelName"
-              name="name"
-              register={register}
-              placeholder="Lable title"
-            />
+            <div className="w-full flex flex-col justify-center">
+              <Input
+                type="text"
+                id="labelName"
+                name="name"
+                register={register}
+                placeholder="Lable title"
+                validations={{
+                  required: "Label title is required",
+                }}
+                error={errors.name}
+              />
+            </div>
             <Button type="button" theme="secondary" onClick={() => setNewLabelForm(false)}>
               Cancel
             </Button>
             {isUpdating ? (
-              <Button type="button" onClick={handleSubmit(handleLabelUpdate)}>
-                Update
+              <Button
+                type="button"
+                onClick={handleSubmit(handleLabelUpdate)}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Updating" : "Update"}
               </Button>
             ) : (
-              <Button type="button" onClick={handleSubmit(handleNewLabel)}>
-                Add
+              <Button type="button" onClick={handleSubmit(handleNewLabel)} disabled={isSubmitting}>
+                {isSubmitting ? "Adding" : "Add"}
               </Button>
             )}
           </form>
@@ -193,7 +204,7 @@ const LabelsSettings: React.FC = () => {
                     <div className="bg-white p-2 flex items-center justify-between text-gray-900 rounded-md">
                       <div className="flex items-center gap-2">
                         <span
-                          className={`h-1.5 w-1.5 rounded-full`}
+                          className="flex-shrink-0 h-1.5 w-1.5 rounded-full"
                           style={{
                             backgroundColor: label.colour,
                           }}

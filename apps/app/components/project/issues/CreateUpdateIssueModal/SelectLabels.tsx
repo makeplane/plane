@@ -6,7 +6,7 @@ import { useForm, Controller } from "react-hook-form";
 // headless ui
 import { Listbox, Transition } from "@headlessui/react";
 // services
-import issuesServices from "lib/services/issues.services";
+import issuesServices from "lib/services/issues.service";
 // hooks
 import useUser from "lib/hooks/useUser";
 // fetching keys

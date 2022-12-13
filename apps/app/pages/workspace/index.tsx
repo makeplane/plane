@@ -4,7 +4,7 @@ import Link from "next/link";
 // react
 import React from "react";
 // layouts
-import AdminLayout from "layouts/AdminLayout";
+import AppLayout from "layouts/AppLayout";
 // swr
 import useSWR from "swr";
 // hooks
@@ -26,8 +26,8 @@ const Workspace: NextPage = () => {
   const { user, activeWorkspace, projects } = useUser();
 
   const { data: myIssues } = useSWR<IIssue[]>(
-    user ? USER_ISSUE : null,
-    user ? () => userService.userIssues() : null
+    user && activeWorkspace ? USER_ISSUE(activeWorkspace.slug) : null,
+    user && activeWorkspace ? () => userService.userIssues(activeWorkspace.slug) : null
   );
 
   const cards = [
@@ -46,7 +46,7 @@ const Workspace: NextPage = () => {
   const hours = new Date().getHours();
 
   return (
-    <AdminLayout>
+    <AppLayout>
       <div className="h-full w-full space-y-5">
         {user ? (
           <div className="font-medium text-2xl">
@@ -167,7 +167,7 @@ const Workspace: NextPage = () => {
           </div>
         </div>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 };
 

@@ -16,8 +16,8 @@ class UserService extends APIService {
     };
   }
 
-  async userIssues(): Promise<any> {
-    return this.get(USER_ISSUES_ENDPOINT)
+  async userIssues(workspaceSlug: string): Promise<any> {
+    return this.get(USER_ISSUES_ENDPOINT(workspaceSlug))
       .then((response) => {
         return response?.data;
       })

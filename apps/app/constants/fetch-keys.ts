@@ -2,12 +2,12 @@ export const CURRENT_USER = "CURRENT_USER";
 export const USER_WORKSPACE_INVITATIONS = "USER_WORKSPACE_INVITATIONS";
 export const USER_WORKSPACES = "USER_WORKSPACES";
 
-export const WORKSPACE_MEMBERS = "WORKSPACE_MEMBERS";
+export const WORKSPACE_MEMBERS = (workspaceSlug: string) => `WORKSPACE_MEMBERS_${workspaceSlug}`;
 export const WORKSPACE_INVITATIONS = "WORKSPACE_INVITATIONS";
 export const WORKSPACE_INVITATION = "WORKSPACE_INVITATION";
 
 export const PROJECTS_LIST = (workspaceSlug: string) => `PROJECTS_LIST_${workspaceSlug}`;
-export const PROJECT_DETAILS = "PROJECT_DETAILS";
+export const PROJECT_DETAILS = (projectId: string) => `PROJECT_DETAILS_${projectId}`;
 
 export const PROJECT_MEMBERS = (projectId: string) => `PROJECT_MEMBERS_${projectId}`;
 export const PROJECT_INVITATIONS = "PROJECT_INVITATIONS";
@@ -29,4 +29,4 @@ export const CYCLE_DETAIL = "CYCLE_DETAIL";
 export const STATE_LIST = (projectId: string) => `STATE_LIST_${projectId}`;
 export const STATE_DETAIL = "STATE_DETAIL";
 
-export const USER_ISSUE = "USER_ISSUE";
+export const USER_ISSUE = (workspaceSlug: string) => `USER_ISSUE_${workspaceSlug}`;

@@ -1,4 +1,4 @@
-import type { IUser } from "./";
+import type { IUser, IUserLite } from "./";
 
 export interface IWorkspace {
   readonly id: string;
@@ -13,26 +13,31 @@ export interface IWorkspace {
   company_size: number;
 }
 
-export interface WorkspaceMember {
+export interface IWorkspaceMemberInvitation {
   readonly id: string;
   email: string;
+  accepted: boolean;
+  token: string;
   message: string;
+  responded_at: Date;
   role: 5 | 10 | 15 | 20;
-  member: IUser;
-  workspace: IWorkspace | string;
+  workspace: IWorkspace;
+}
+
+export interface IWorkspaceMember {
+  readonly id: string;
+  user: IUserLite;
+  workspace: IWorkspace;
+  member: IUserLite;
+  role: 5 | 10 | 15 | 20;
+  company_role: string | null;
   created_at: Date;
   updated_at: Date;
   created_by: string;
   updated_by: string;
 }
 
-export interface ProjectMember {
-  readonly id: string;
-  readonly project: string;
-  email: string;
-  message: string;
-  role: 5 | 10 | 15 | 20;
-  member: any;
-  member_id: string;
-  user_id: string;
+export interface ILastActiveWorkspaceDetails {
+  workspace_details: IWorkspace;
+  project_details: IProject[];
 }

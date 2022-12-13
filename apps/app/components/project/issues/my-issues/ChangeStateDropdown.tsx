@@ -8,7 +8,7 @@ import useUser from "lib/hooks/useUser";
 import { addSpaceIfCamelCase, classNames } from "constants/common";
 import { STATE_LIST } from "constants/fetch-keys";
 // services
-import stateServices from "lib/services/state.services";
+import stateServices from "lib/services/state.service";
 // ui
 import { Listbox, Transition } from "@headlessui/react";
 // types

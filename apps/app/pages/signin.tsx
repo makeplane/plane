@@ -43,8 +43,14 @@ const SignIn: NextPage = () => {
     async (res: any) => {
       await mutateUser();
       await mutateWorkspaces();
-      if (res.user.is_onboarded) router.push("/");
-      else router.push("/invitations");
+      const nextLocation = router.asPath.split("?next=")[1];
+
+      if (nextLocation) {
+        router.push(nextLocation as string);
+      } else {
+        if (res.user.is_onboarded) router.push("/");
+        else router.push("/invitations");
+      }
     },
     [mutateUser, mutateWorkspaces, router]
   );

@@ -8,7 +8,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // services
-import issuesServices from "lib/services/issues.services";
+import issuesServices from "lib/services/issues.service";
 // hooks
 import useUser from "lib/hooks/useUser";
 import useTheme from "lib/hooks/useTheme";
@@ -22,7 +22,7 @@ import {
 } from "@heroicons/react/24/outline";
 // components
 import ShortcutsModal from "components/command-palette/shortcuts";
-import CreateProjectModal from "components/project/CreateProjectModal";
+import CreateProjectModal from "components/project/create-project-modal";
 import CreateUpdateIssuesModal from "components/project/issues/CreateUpdateIssueModal";
 import CreateUpdateCycleModal from "components/project/cycles/CreateUpdateCyclesModal";
 // ui
@@ -278,15 +278,15 @@ const CommandPalette: React.FC = () => {
                                           value={issue.id}
                                         />
                                         <span
-                                          className={`h-1.5 w-1.5 block rounded-full`}
+                                          className="flex-shrink-0 h-1.5 w-1.5 block rounded-full"
                                           style={{
                                             backgroundColor: issue.state_detail.color,
                                           }}
                                         />
-                                        <span className="text-xs text-gray-500">
+                                        <span className="flex-shrink-0 text-xs text-gray-500">
                                           {activeProject?.identifier}-{issue.sequence_id}
                                         </span>
-                                        {issue.name}
+                                        <span>{issue.name}</span>
                                       </div>
                                       {active && (
                                         <button
@@ -297,10 +297,9 @@ const CommandPalette: React.FC = () => {
                                             );
                                             handleCommandPaletteClose();
                                           }}
+                                          className="flex-shrink-0 text-gray-500"
                                         >
-                                          <span className="justify-self-end flex-none text-gray-500">
-                                            Jump to...
-                                          </span>
+                                          Jump to...
                                         </button>
                                       )}
                                     </>

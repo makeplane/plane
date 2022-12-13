@@ -9,12 +9,7 @@ type EmptySpaceProps = {
   title: string;
   description: string;
   children: any;
-  Icon?: (
-    props: React.SVGProps<SVGSVGElement> & {
-      title?: string | undefined;
-      titleId?: string | undefined;
-    }
-  ) => JSX.Element;
+  Icon?: (props: any) => JSX.Element;
   link?: { text: string; href: string };
 };
 

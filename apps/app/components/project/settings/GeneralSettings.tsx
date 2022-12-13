@@ -7,7 +7,7 @@ import projectServices from "lib/services/project.service";
 // hooks
 import useUser from "lib/hooks/useUser";
 // ui
-import { Input, Select, TextArea } from "ui";
+import { Button, Input, Select, TextArea } from "ui";
 // types
 import { IProject } from "types";
 // constants
@@ -17,11 +17,12 @@ type Props = {
   register: UseFormRegister<IProject>;
   errors: any;
   setError: UseFormSetError<IProject>;
+  isSubmitting: boolean;
 };
 
 const NETWORK_CHOICES = { "0": "Secret", "2": "Public" };
 
-const GeneralSettings: React.FC<Props> = ({ register, errors, setError }) => {
+const GeneralSettings: React.FC<Props> = ({ register, errors, setError, isSubmitting }) => {
   const { activeWorkspace } = useUser();
 
   const checkIdentifier = (slug: string, value: string) => {
@@ -110,6 +111,11 @@ const GeneralSettings: React.FC<Props> = ({ register, errors, setError }) => {
               required: "Description is required",
             }}
           />
+        </div>
+        <div className="flex justify-end">
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Updating Project..." : "Update Project"}
+          </Button>
         </div>
       </section>
     </>

@@ -15,7 +15,8 @@ export const MAGIC_LINK_SIGNIN = "/api/magic-sign-in/";
 export const USER_ENDPOINT = "/api/users/me/";
 export const CHANGE_PASSWORD = "/api/users/me/change-password/";
 export const USER_ONBOARD_ENDPOINT = "/api/users/me/onboard/";
-export const USER_ISSUES_ENDPOINT = "/api/users/me/issues/";
+export const USER_ISSUES_ENDPOINT = (workspaceSlug: string) =>
+  `/api/workspaces/${workspaceSlug}/my-issues/`;
 export const USER_WORKSPACES = "/api/users/me/workspaces";
 
 // s3 file url
@@ -24,7 +25,7 @@ export const S3_URL = `/api/file-assets/`;
 // LIST USER INVITATIONS ---- RESPOND INVITATIONS IN BULK
 export const USER_WORKSPACE_INVITATIONS = "/api/users/me/invitations/workspaces/";
 export const USER_PROJECT_INVITATIONS = "/api/users/me/invitations/projects/";
-
+export const LAST_ACTIVE_WORKSPACE_AND_PROJECTS = "/api/users/last-visited-workspace/";
 export const USER_WORKSPACE_INVITATION = (invitationId: string) =>
   `/api/users/me/invitations/${invitationId}/`;
 
@@ -32,8 +33,6 @@ export const JOIN_WORKSPACE = (workspaceSlug: string, invitationId: string) =>
   `/api/users/me/invitations/workspaces/${workspaceSlug}/${invitationId}/join/`;
 export const JOIN_PROJECT = (workspaceSlug: string) =>
   `/api/workspaces/${workspaceSlug}/projects/join/`;
-
-export const USER_ISSUES = "/api/users/me/issues/";
 
 // workspaces
 export const WORKSPACES_ENDPOINT = "/api/workspaces/";
@@ -65,6 +64,8 @@ export const PROJECT_MEMBERS = (workspaceSlug: string, projectId: string) =>
   `/api/workspaces/${workspaceSlug}/projects/${projectId}/members/`;
 export const PROJECT_MEMBER_DETAIL = (workspaceSlug: string, projectId: string, memberId: string) =>
   `/api/workspaces/${workspaceSlug}/projects/${projectId}/members/${memberId}/`;
+export const PROJECT_VIEW_ENDPOINT = (workspaceSlug: string, projectId: string) =>
+  `/api/workspaces/${workspaceSlug}/projects/${projectId}/project-views/`;
 
 export const PROJECT_INVITATIONS = (workspaceSlug: string, projectId: string) =>
   `/api/workspaces/${workspaceSlug}/projects/${projectId}/invitations/`;
