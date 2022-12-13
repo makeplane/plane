@@ -4,7 +4,7 @@ import Link from "next/link";
 // react
 import React from "react";
 // layouts
-import AppLayout from "layouts/AppLayout";
+import AppLayout from "layouts/app-layout";
 // swr
 import useSWR from "swr";
 // hooks

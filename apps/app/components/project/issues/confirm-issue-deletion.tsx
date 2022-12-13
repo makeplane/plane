@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 // swr
 import { mutate } from "swr";
 // headless ui
@@ -26,7 +26,7 @@ type Props = {
 const ConfirmIssueDeletion: React.FC<Props> = ({ isOpen, handleClose, data }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
-  const { activeWorkspace } = useUser();
+  const { activeWorkspace, activeProject } = useUser();
 
   const { setToastAlert } = useToast();
 
@@ -70,7 +70,7 @@ const ConfirmIssueDeletion: React.FC<Props> = ({ isOpen, handleClose, data }) =>
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-10" initialFocus={cancelButtonRef} onClose={onClose}>
+      <Dialog as="div" className="relative z-20" initialFocus={cancelButtonRef} onClose={onClose}>
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
@@ -97,22 +97,24 @@ const ConfirmIssueDeletion: React.FC<Props> = ({ isOpen, handleClose, data }) =>
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
                 <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                   <div className="sm:flex sm:items-start">
-                    <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-                      <ExclamationTriangleIcon
-                        className="h-6 w-6 text-red-600"
-                        aria-hidden="true"
-                      />
-                    </div>
-                    <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                      <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
-                        Delete Issue
+                    <div>
+                      <div className="mx-auto h-16 w-16 grid place-items-center rounded-full bg-red-100">
+                        <ExclamationTriangleIcon
+                          className="h-8 w-8 text-red-600"
+                          aria-hidden="true"
+                        />
+                      </div>
+                      <Dialog.Title
+                        as="h3"
+                        className="text-lg font-medium leading-6 text-gray-900 mt-3"
+                      >
+                        Are you sure you want to delete {`"`}
+                        {activeProject?.identifier}-{data?.sequence_id} - {data?.name}?{`"`}
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-gray-500">
-                          Are you sure you want to delete issue - {`"`}
-                          <span className="italic">{data?.name}</span>
-                          {`"`} ? All of the data related to the issue will be permanently removed.
-                          This action cannot be undone.
+                          All of the data related to the issue will be permanently removed. This
+                          action cannot be undone.
                         </p>
                       </div>
                     </div>

@@ -36,8 +36,3 @@ export interface IWorkspaceMember {
   created_by: string;
   updated_by: string;
 }
-
-export interface ILastActiveWorkspaceDetails {
-  workspace_details: IWorkspace;
-  project_details: IProject[];
-}

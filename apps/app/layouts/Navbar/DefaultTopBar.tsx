@@ -15,16 +15,14 @@ const DefaultTopBar: React.FC = () => {
             <a className="flex">
               <span className="sr-only">Plane</span>
               <h2 className="text-2xl font-semibold">
-                Plan<span className="text-indigo-600">e</span>
+                Plan<span className="text-theme">e</span>
               </h2>
             </a>
           </Link>
         </div>
         {user && (
           <div>
-            <p className="text-sm text-gray-500">
-              logged in as {user.first_name}
-            </p>
+            <p className="text-sm text-gray-500">logged in as {user.first_name}</p>
           </div>
         )}
       </div>
