@@ -71,7 +71,7 @@ services:
     image: plane-api
     depends_on:
         - redis
-    command: python manage.py rqworker
+    command: ./bin/worker
     links:
         - redis
     environment:
