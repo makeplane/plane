@@ -37,7 +37,6 @@ from plane.api.views import (
     CycleViewSet,
     FileAssetEndpoint,
     IssueViewSet,
-    UserIssuesEndpoint,
     WorkSpaceIssuesEndpoint,
     IssueActivityEndpoint,
     IssueCommentViewSet,
@@ -144,12 +143,6 @@ urlpatterns = [
         "users/me/invitations/projects/",
         UserProjectInvitationsViewset.as_view({"get": "list", "post": "create"}),
         name="user-project-invitaions",
-    ),
-    # user issues
-    path(
-        "users/me/issues/",
-        UserIssuesEndpoint.as_view(),
-        name="user-issues",
     ),
     ## Workspaces ##
     path(

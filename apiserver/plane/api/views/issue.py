@@ -160,19 +160,6 @@ class IssueViewSet(BaseViewSet):
             )
 
 
-class UserIssuesEndpoint(BaseAPIView):
-    def get(self, request):
-        try:
-            issues = Issue.objects.filter(assignees__in=[request.user])
-            serializer = IssueSerializer(issues, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
-
 class UserWorkSpaceIssues(BaseAPIView):
     def get(self, request, slug):
         try:
