@@ -90,10 +90,36 @@ class ProjectViewSet(BaseViewSet):
 
                 ## Default states
                 states = [
-                    {"name": "Todo", "color": "#eb5757", "sequence": 25000},
-                    {"name": "In Progress", "color": "#26b5ce", "sequence": 35000},
-                    {"name": "Done", "color": "#f2c94c", "sequence": 45000},
-                    {"name": "Cancelled", "color": "#4cb782", "sequence": 55000},
+                    {
+                        "name": "Backlog",
+                        "color": "#5e6ad2",
+                        "sequence": 15000,
+                        "group": "backlog",
+                    },
+                    {
+                        "name": "Todo",
+                        "color": "#eb5757",
+                        "sequence": 25000,
+                        "group": "unstarted",
+                    },
+                    {
+                        "name": "In Progress",
+                        "color": "#26b5ce",
+                        "sequence": 35000,
+                        "group": "started",
+                    },
+                    {
+                        "name": "Done",
+                        "color": "#f2c94c",
+                        "sequence": 45000,
+                        "group": "completed",
+                    },
+                    {
+                        "name": "Cancelled",
+                        "color": "#4cb782",
+                        "sequence": 55000,
+                        "group": "cancelled",
+                    },
                 ]
 
                 State.objects.bulk_create(

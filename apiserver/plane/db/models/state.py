@@ -21,6 +21,7 @@ class State(ProjectBaseModel):
             ("cancelled", "Cancelled"),
         ),
         default="backlog",
+        max_length=20,
     )
 
     def __str__(self):
