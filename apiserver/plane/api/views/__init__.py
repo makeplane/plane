@@ -9,7 +9,7 @@ from .project import (
     ProjectIdentifierEndpoint,
     AddMemberToProjectEndpoint,
     ProjectJoinEndpoint,
-     ProjectUserViewsEndpoint,
+    ProjectUserViewsEndpoint,
 )
 from .people import (
     PeopleEndpoint,
@@ -48,6 +48,7 @@ from .issue import (
     IssuePropertyViewSet,
     LabelViewSet,
     BulkDeleteIssuesEndpoint,
+    UserWorkSpaceIssues,
 )
 
 from .auth_extended import (

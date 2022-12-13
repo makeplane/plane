@@ -55,6 +55,7 @@ from plane.api.views import (
     BulkDeleteIssuesEndpoint,
     BulkAssignIssuesToCycleEndpoint,
     ProjectUserViewsEndpoint,
+    UserWorkSpaceIssues,
 )
 
 from plane.api.views.project import AddTeamToProjectEndpoint
@@ -494,6 +495,11 @@ urlpatterns = [
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-delete-issues/",
         BulkDeleteIssuesEndpoint.as_view(),
+    ),
+    path(
+        "workspaces/<str:slug>/me/issues/",
+        UserWorkSpaceIssues.as_view(),
+        name="workspace-issues",
     ),
     ## End Issues
     ## Issue Activity
