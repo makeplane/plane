@@ -29,12 +29,18 @@ class ProjectSerializer(BaseSerializer):
         if identifier == "":
             raise serializers.ValidationError(detail="Project Identifier is required")
 
-        if ProjectIdentifier.objects.filter(name=identifier).exists():
+        if ProjectIdentifier.objects.filter(
+            name=identifier, workspace_id=self.context["workspace_id"]
+        ).exists():
             raise serializers.ValidationError(detail="Project Identifier is taken")
         project = Project.objects.create(
             **validated_data, workspace_id=self.context["workspace_id"]
         )
-        _ = ProjectIdentifier.objects.create(name=project.identifier, project=project)
+        _ = ProjectIdentifier.objects.create(
+            name=project.identifier,
+            project=project,
+            workspace_id=self.context["workspace_id"],
+        )
         return project
 
     def update(self, instance, validated_data):
@@ -47,7 +53,9 @@ class ProjectSerializer(BaseSerializer):
             return project
 
         # If no Project Identifier is found create it
-        project_identifier = ProjectIdentifier.objects.filter(name=identifier).first()
+        project_identifier = ProjectIdentifier.objects.filter(
+            name=identifier, workspace_id=instance.workspace_id
+        ).first()
 
         if project_identifier is None:
             project = super().update(instance, validated_data)
@@ -61,9 +69,7 @@ class ProjectSerializer(BaseSerializer):
             return project
 
         # If not same fail update
-        raise serializers.ValidationError(
-            detail="Project Identifier is already taken"
-        )
+        raise serializers.ValidationError(detail="Project Identifier is already taken")
 
 
 class ProjectDetailSerializer(BaseSerializer):

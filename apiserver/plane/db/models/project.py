@@ -35,7 +35,8 @@ class Project(BaseModel):
         "db.WorkSpace", on_delete=models.CASCADE, related_name="workspace_project"
     )
     identifier = models.CharField(
-        max_length=5, verbose_name="Project Identifier", null=True, blank=True
+        max_length=5,
+        verbose_name="Project Identifier",
     )
     slug = models.SlugField(max_length=100, blank=True)
     default_assignee = models.ForeignKey(
@@ -58,7 +59,7 @@ class Project(BaseModel):
         return f"{self.name} <{self.workspace.name}>"
 
     class Meta:
-        unique_together = ["name", "workspace"]
+        unique_together = ["identifier", "workspace"]
         verbose_name = "Project"
         verbose_name_plural = "Projects"
         db_table = "project"
@@ -131,12 +132,17 @@ class ProjectMember(ProjectBaseModel):
 
 
 class ProjectIdentifier(AuditModel):
+
+    workspace = models.ForeignKey(
+        "db.Workspace", models.CASCADE, related_name="project_identifiers", null=True
+    )
     project = models.OneToOneField(
         Project, on_delete=models.CASCADE, related_name="project_identifier"
     )
     name = models.CharField(max_length=10)
 
     class Meta:
+        unique_together = ["name", "workspace"]
         verbose_name = "Project Identifier"
         verbose_name_plural = "Project Identifiers"
         db_table = "project_identifier"
