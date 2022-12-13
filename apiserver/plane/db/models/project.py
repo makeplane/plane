@@ -130,7 +130,7 @@ class ProjectMember(ProjectBaseModel):
         """Return members of the project"""
         return f"{self.member.email} <{self.project.name}>"
 
-
+# TODO: Remove workspace relation later
 class ProjectIdentifier(AuditModel):
 
     workspace = models.ForeignKey(
