@@ -129,7 +129,6 @@ USER captain
 # Expose container port and run entry point script
 EXPOSE 8000
 
-RUN python manage.py migrate
 
 RUN apk --update add supervisor
 
