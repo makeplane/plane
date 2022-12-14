@@ -129,6 +129,7 @@ USER captain
 # Expose container port and run entry point script
 EXPOSE 8000
 
+USER root
 
 RUN apk --update add supervisor
 
