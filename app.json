@@ -8,9 +8,62 @@
   "stack": "container",
   "keywords": ["plane", "project management", "django", "next"],
   "addons": ["heroku-postgresql:mini", "heroku-redis:mini"],
-  "buildpacks": [
-    {
-      "url": "https://github.com/heroku/heroku-buildpack-python.git"
+  "env": {
+    "EMAIL_HOST": {
+      "description": "Email host to send emails from",
+      "value": ""
+    },
+    "EMAIL_HOST_USER": {
+      "description" : "Email host to send emails from",
+      "value": ""
+    },
+    "EMAIL_HOST_PASSWORD": {
+      "description": "Email host to send emails from",
+      "value": ""
+    },
+    "AWS_REGION": {
+      "description" : "AWS Region to use for S3",
+      "value": "false"
+    },
+    "AWS_ACCESS_KEY_ID": {
+      "description": "AWS Access Key ID to use for S3",
+      "value": ""
+    },
+    "AWS_SECRET_ACCESS_KEY": {
+      "description": "AWS Secret Access Key to use for S3",
+      "value": ""
+    },
+    "SENTRY_DSN": {
+      "description": "",
+      "value": ""
+    },
+    "AWS_S3_BUCKET_NAME": {
+      "description": "AWS Bucket Name to use for S3",
+      "value": ""
+    },
+    "WEB_URL": {
+      "description": "Web URL for Plane",
+      "value": ""
+    },
+    "GITHUB_CLIENT_SECRET": {
+      "description": "Github Client Secret",
+      "value": ""
+    },
+    "NEXT_PUBLIC_GITHUB_ID": {
+      "description": "Next Public Github ID",
+      "value": ""
+    },
+    "NEXT_PUBLIC_GOOGLE_CLIENTID": {
+      "description": "Next Public Google Client ID",
+      "value": ""
+    },
+    "NEXT_PUBLIC_API_BASE_URL": {
+      "description": "Next Public API Base URL",
+      "value": ""
+    },
+    "SECRET_KEY": {
+      "description": "Django Secret Key",
+      "value": ""
     }
-  ]
+  }
 }
