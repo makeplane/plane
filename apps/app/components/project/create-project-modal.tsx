@@ -130,15 +130,6 @@ const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
   const projectName = watch("name") ?? "";
   const projectIdentifier = watch("identifier") ?? "";
 
-  if (workspaceMembers) {
-    const isMember = workspaceMembers.find((member) => member.member.id === user?.id);
-    const isGuest = workspaceMembers.find(
-      (member) => member.member.id === user?.id && member.role === 5
-    );
-
-    if ((!isMember || isGuest) && isOpen) return <IsGuestCondition setIsOpen={setIsOpen} />;
-  }
-
   useEffect(() => {
     if (projectName && isChangeIdentifierRequired) {
       setValue("identifier", projectName.replace(/ /g, "").toUpperCase().substring(0, 3));
@@ -157,11 +148,20 @@ const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
       projectIdentifier.toUpperCase().substring(0, 3) + Math.floor(Math.random() * 101),
       projectIdentifier.toUpperCase().substring(0, 3) + Math.floor(Math.random() * 101),
     ]);
-  }, [errors.identifier]);
+  }, [errors.identifier, projectIdentifier, projectName]);
 
   useEffect(() => {
     return () => setIsChangeIdentifierRequired(true);
   }, [isOpen]);
+
+  if (workspaceMembers) {
+    const isMember = workspaceMembers.find((member) => member.member.id === user?.id);
+    const isGuest = workspaceMembers.find(
+      (member) => member.member.id === user?.id && member.role === 5
+    );
+
+    if ((!isMember || isGuest) && isOpen) return <IsGuestCondition setIsOpen={setIsOpen} />;
+  }
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>

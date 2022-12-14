@@ -131,7 +131,7 @@ const CustomListbox: React.FC<Props> = ({
                                       ? value.includes(option.value)
                                       : value === option.value)
                                       ? "text-white"
-                                      : "text-indigo-600"
+                                      : "text-theme"
                                   }`}
                                 >
                                   <CheckIcon className="h-5 w-5" aria-hidden="true" />

@@ -5,7 +5,7 @@ type Props = {
   children: React.ReactNode;
   type?: "button" | "submit" | "reset";
   className?: string;
-  theme?: "primary" | "secondary" | "danger";
+  theme?: "primary" | "secondary" | "success" | "danger";
   size?: "sm" | "rg" | "md" | "lg";
   disabled?: boolean;
 };
@@ -37,12 +37,16 @@ const Button = React.forwardRef<HTMLButtonElement, Props>(
           theme === "primary"
             ? `${
                 disabled ? "opacity-70" : ""
-              } text-white shadow-sm bg-theme hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 border border-transparent`
+              } text-white shadow-sm bg-theme hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 border border-transparent`
             : theme === "secondary"
-            ? "border border-gray-300 bg-white"
+            ? "border bg-white"
+            : theme === "success"
+            ? `${
+                disabled ? "opacity-70" : ""
+              } text-white shadow-sm bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500  border border-transparent`
             : `${
                 disabled ? "opacity-70" : ""
-              } text-white shadow-sm bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 border border-transparent`,
+              } text-white shadow-sm bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 border border-transparent`,
           size === "sm"
             ? "p-2 text-xs"
             : size === "md"

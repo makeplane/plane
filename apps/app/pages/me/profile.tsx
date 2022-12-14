@@ -15,7 +15,7 @@ import useToast from "lib/hooks/useToast";
 // hoc
 import withAuth from "lib/hoc/withAuthWrapper";
 // layouts
-import AppLayout from "layouts/AppLayout";
+import AppLayout from "layouts/app-layout";
 // constants
 import { USER_ISSUE, USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 // services

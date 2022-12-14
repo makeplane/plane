@@ -1,50 +1,43 @@
-import React, { useEffect, useState } from "react";
+// react
+import React from "react";
 // next
-import type { NextPage } from "next";
 import { useRouter } from "next/router";
 // swr
 import useSWR, { mutate } from "swr";
-// headless ui
-import { Popover, Transition } from "@headlessui/react";
-// hoc
-import withAuth from "lib/hoc/withAuthWrapper";
+// react-beautiful-dnd
+import { DropResult } from "react-beautiful-dnd";
+// layouots
+import AppLayout from "layouts/app-layout";
+// components
+import CyclesListView from "components/project/cycles/ListView";
+import CyclesBoardView from "components/project/cycles/BoardView";
 // services
 import issuesServices from "lib/services/issues.service";
+import cycleServices from "lib/services/cycles.service";
+import projectService from "lib/services/project.service";
 // hooks
 import useUser from "lib/hooks/useUser";
-import useIssuesProperties from "lib/hooks/useIssuesProperties";
-// api routes
-import { PROJECT_MEMBERS } from "constants/api-routes";
-// services
-import projectService from "lib/services/project.service";
-// commons
-import { classNames, replaceUnderscoreIfSnakeCase } from "constants/common";
-// layouts
-import AppLayout from "layouts/app-layout";
-// hooks
 import useIssuesFilter from "lib/hooks/useIssuesFilter";
-// components
-import ListView from "components/project/issues/ListView";
-import BoardView from "components/project/issues/BoardView";
-import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
-import CreateUpdateIssuesModal from "components/project/issues/CreateUpdateIssueModal";
+import useIssuesProperties from "lib/hooks/useIssuesProperties";
+// headless ui
+import { Menu, Popover, Transition } from "@headlessui/react";
 // ui
-import {
-  Spinner,
-  CustomMenu,
-  BreadcrumbItem,
-  Breadcrumbs,
-  EmptySpace,
-  EmptySpaceItem,
-  HeaderButton,
-} from "ui";
+import { BreadcrumbItem, Breadcrumbs, CustomMenu } from "ui";
 // icons
-import { ChevronDownIcon, ListBulletIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
-import { PlusIcon, Squares2X2Icon } from "@heroicons/react/20/solid";
+import { Squares2X2Icon } from "@heroicons/react/20/solid";
+import {
+  ArrowPathIcon,
+  ChevronDownIcon,
+  EllipsisHorizontalIcon,
+  ListBulletIcon,
+} from "@heroicons/react/24/outline";
 // types
-import type { IIssue, Properties, NestedKeyOf, IssueResponse } from "types";
+import { CycleIssueResponse, IIssue, NestedKeyOf, Properties } from "types";
 // fetch-keys
-import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import { CYCLE_ISSUES, PROJECT_MEMBERS } from "constants/fetch-keys";
+// constants
+import { classNames, replaceUnderscoreIfSnakeCase } from "constants/common";
+import Link from "next/link";
 
 const groupByOptions: Array<{ name: string; key: NestedKeyOf<IIssue> | null }> = [
   { name: "State", key: "state_detail.name" },
@@ -77,29 +70,34 @@ const filterIssueOptions: Array<{
   },
 ];
 
-const ProjectIssues: NextPage = () => {
-  const [isOpen, setIsOpen] = useState(false);
+type Props = {};
 
-  const [selectedIssue, setSelectedIssue] = useState<
-    (IIssue & { actionType: "edit" | "delete" }) | undefined
-  >(undefined);
-  const [deleteIssue, setDeleteIssue] = useState<string | undefined>(undefined);
-
-  const { activeWorkspace, activeProject, issues: projectIssues } = useUser();
+const SingleCycle: React.FC<Props> = () => {
+  const { activeWorkspace, activeProject, cycles } = useUser();
 
   const router = useRouter();
 
-  const { projectId } = router.query;
+  const { cycleId } = router.query;
 
   const [properties, setProperties] = useIssuesProperties(
     activeWorkspace?.slug,
-    projectId as string
+    activeProject?.id as string
   );
 
+  const { data: cycleIssues } = useSWR<CycleIssueResponse[]>(
+    activeWorkspace && activeProject && cycleId ? CYCLE_ISSUES(cycleId as string) : null,
+    activeWorkspace && activeProject && cycleId
+      ? () =>
+          cycleServices.getCycleIssues(activeWorkspace?.slug, activeProject?.id, cycleId as string)
+      : null
+  );
+
+  const cycleIssuesArray = cycleIssues?.map((issue) => {
+    return issue.issue_details;
+  });
+
   const { data: members } = useSWR(
-    activeWorkspace && activeProject
-      ? PROJECT_MEMBERS(activeWorkspace.slug, activeProject.id)
-      : null,
+    activeWorkspace && activeProject ? PROJECT_MEMBERS(activeProject.id) : null,
     activeWorkspace && activeProject
       ? () => projectService.projectMembers(activeWorkspace.slug, activeProject.id)
       : null,
@@ -111,26 +109,6 @@ const ProjectIssues: NextPage = () => {
     }
   );
 
-  const partialUpdateIssue = (formData: Partial<IIssue>, issueId: string) => {
-    if (!activeWorkspace || !activeProject) return;
-    issuesServices
-      .patchIssue(activeWorkspace.slug, activeProject.id, issueId, formData)
-      .then((response) => {
-        mutate<IssueResponse>(
-          PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id),
-          (prevData) => ({
-            ...(prevData as IssueResponse),
-            results:
-              prevData?.results.map((issue) => (issue.id === response.id ? response : issue)) ?? [],
-          }),
-          false
-        );
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
   const {
     issueView,
     setIssueView,
@@ -141,23 +119,127 @@ const ProjectIssues: NextPage = () => {
     setFilterIssue,
     orderBy,
     filterIssue,
-  } = useIssuesFilter(projectIssues?.results ?? []);
+  } = useIssuesFilter(cycleIssuesArray ?? []);
 
-  useEffect(() => {
-    if (!isOpen) {
-      const timer = setTimeout(() => {
-        setSelectedIssue(undefined);
-        clearTimeout(timer);
-      }, 500);
+  const addIssueToCycle = (cycleId: string, issueId: string) => {
+    if (!activeWorkspace || !activeProject?.id) return;
+
+    issuesServices
+      .addIssueToCycle(activeWorkspace.slug, activeProject.id, cycleId, {
+        issue: issueId,
+      })
+      .then((response) => {
+        console.log(response);
+        mutate(CYCLE_ISSUES(cycleId));
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const handleDragEnd = (result: DropResult) => {
+    if (!result.destination) return;
+    const { source, destination } = result;
+
+    if (source.droppableId === destination.droppableId) return;
+
+    if (activeWorkspace && activeProject) {
+      // remove issue from the source cycle
+      mutate<CycleIssueResponse[]>(
+        CYCLE_ISSUES(source.droppableId),
+        (prevData) => prevData?.filter((p) => p.id !== result.draggableId.split(",")[0]),
+        false
+      );
+
+      // add issue to the destination cycle
+      mutate(CYCLE_ISSUES(destination.droppableId));
+
+      issuesServices
+        .removeIssueFromCycle(
+          activeWorkspace.slug,
+          activeProject.id,
+          source.droppableId,
+          result.draggableId.split(",")[0]
+        )
+        .then((res) => {
+          issuesServices
+            .addIssueToCycle(activeWorkspace.slug, activeProject.id, destination.droppableId, {
+              issue: result.draggableId.split(",")[1],
+            })
+            .then((res) => {
+              console.log(res);
+            })
+            .catch((e) => {
+              console.log(e);
+            });
+        })
+        .catch((e) => {
+          console.log(e);
+        });
     }
-  }, [isOpen]);
+    // console.log(result);
+  };
+
+  const removeIssueFromCycle = (cycleId: string, bridgeId: string) => {
+    if (activeWorkspace && activeProject) {
+      mutate<CycleIssueResponse[]>(
+        CYCLE_ISSUES(cycleId),
+        (prevData) => prevData?.filter((p) => p.id !== bridgeId),
+        false
+      );
+
+      issuesServices
+        .removeIssueFromCycle(activeWorkspace.slug, activeProject.id, cycleId, bridgeId)
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    }
+  };
 
   return (
     <AppLayout
       breadcrumbs={
         <Breadcrumbs>
-          <BreadcrumbItem title="Projects" link="/projects" />
-          <BreadcrumbItem title={`${activeProject?.name ?? "Project"} Issues`} />
+          <BreadcrumbItem
+            title={`${activeProject?.name ?? "Project"} Cycles`}
+            link={`/projects/${activeProject?.id}/cycles`}
+          />
+          {/* <BreadcrumbItem title={`${cycles?.find((c) => c.id === cycleId)?.name ?? "Cycle"} `} /> */}
+          <Menu as="div" className="relative inline-block">
+            <Menu.Button className="flex items-center gap-1 border ml-3 px-2 py-1 rounded hover:bg-gray-100 text-xs font-medium">
+              <ArrowPathIcon className="h-3 w-3" />
+              Cycle
+            </Menu.Button>
+
+            <Transition
+              as={React.Fragment}
+              enter="transition ease-out duration-100"
+              enterFrom="transform opacity-0 scale-95"
+              enterTo="transform opacity-100 scale-100"
+              leave="transition ease-in duration-75"
+              leaveFrom="transform opacity-100 scale-100"
+              leaveTo="transform opacity-0 scale-95"
+            >
+              <Menu.Items className="absolute left-3 mt-2 p-1 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+                {cycles?.map((cycle) => (
+                  <Menu.Item key={cycle.id}>
+                    <Link href={`/projects/${activeProject?.id}/cycles/${cycle.id}`}>
+                      <a
+                        className={`block text-left p-2 text-gray-900 hover:bg-theme hover:text-white rounded-md text-xs whitespace-nowrap w-full ${
+                          cycle.id === cycleId ? "bg-theme text-white" : ""
+                        }`}
+                      >
+                        {cycle.name}
+                      </a>
+                    </Link>
+                  </Menu.Item>
+                ))}
+              </Menu.Items>
+            </Transition>
+          </Menu>
         </Breadcrumbs>
       }
       right={
@@ -294,82 +376,41 @@ const ProjectIssues: NextPage = () => {
               </>
             )}
           </Popover>
-          <HeaderButton
-            Icon={PlusIcon}
-            label="Add Issue"
-            onClick={() => {
-              const e = new KeyboardEvent("keydown", {
-                key: "i",
-                ctrlKey: true,
-              });
-              document.dispatchEvent(e);
-            }}
-          />
         </div>
       }
     >
-      <CreateUpdateIssuesModal
-        isOpen={isOpen && selectedIssue?.actionType !== "delete"}
-        setIsOpen={setIsOpen}
-        projectId={projectId as string}
-        data={selectedIssue}
-      />
-      <ConfirmIssueDeletion
-        handleClose={() => setDeleteIssue(undefined)}
-        isOpen={!!deleteIssue}
-        data={projectIssues?.results.find((issue) => issue.id === deleteIssue)}
-      />
-      {!projectIssues ? (
-        <div className="h-full w-full flex justify-center items-center">
-          <Spinner />
-        </div>
-      ) : projectIssues.count > 0 ? (
-        <>
-          {issueView === "list" ? (
-            <ListView
-              properties={properties}
-              groupedByIssues={groupedByIssues}
-              selectedGroup={groupByProperty}
-              setSelectedIssue={setSelectedIssue}
-              handleDeleteIssue={setDeleteIssue}
-              partialUpdateIssue={partialUpdateIssue}
-            />
-          ) : (
-            <div className="h-screen">
-              <BoardView
-                properties={properties}
-                selectedGroup={groupByProperty}
-                groupedByIssues={groupedByIssues}
-                members={members}
-                handleDeleteIssue={setDeleteIssue}
-                partialUpdateIssue={partialUpdateIssue}
-              />
-            </div>
-          )}
-        </>
+      {issueView === "list" ? (
+        <CyclesListView
+          groupedByIssues={groupedByIssues}
+          selectedGroup={groupByProperty}
+          properties={properties}
+          openCreateIssueModal={() => {
+            return;
+          }}
+          openIssuesListModal={() => {
+            return;
+          }}
+          removeIssueFromCycle={removeIssueFromCycle}
+        />
       ) : (
-        <div className="h-full w-full grid place-items-center px-4 sm:px-0">
-          <EmptySpace
-            title="You don't have any issue yet."
-            description="Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done."
-            Icon={RectangleStackIcon}
-          >
-            <EmptySpaceItem
-              title="Create a new issue"
-              description={
-                <span>
-                  Use <pre className="inline bg-gray-100 px-2 py-1 rounded">Ctrl/Command + I</pre>{" "}
-                  shortcut to create a new issue
-                </span>
-              }
-              Icon={PlusIcon}
-              action={() => setIsOpen(true)}
-            />
-          </EmptySpace>
+        <div className="h-screen">
+          <CyclesBoardView
+            groupedByIssues={groupedByIssues}
+            properties={properties}
+            removeIssueFromCycle={removeIssueFromCycle}
+            selectedGroup={groupByProperty}
+            members={members}
+            openCreateIssueModal={() => {
+              return;
+            }}
+            openIssuesListModal={() => {
+              return;
+            }}
+          />
         </div>
       )}
     </AppLayout>
   );
 };
 
-export default withAuth(ProjectIssues);
+export default SingleCycle;

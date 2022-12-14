@@ -88,7 +88,7 @@ class ProjectIssuesServices extends APIService {
       });
   }
 
-  async addIssueToSprint(
+  async addIssueToCycle(
     workspaceSlug: string,
     projectId: string,
     cycleId: string,

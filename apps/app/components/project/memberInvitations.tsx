@@ -68,7 +68,7 @@ const ProjectMemberInvitations: React.FC<Props> = ({
             {!isMember ? (
               <input
                 id={project.id}
-                className="h-3 w-3 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 mt-2 hidden"
+                className="h-3 w-3 rounded border-gray-300 text-theme focus:ring-indigo-500 mt-2 hidden"
                 aria-describedby="workspaces"
                 name={project.id}
                 checked={invitationsRespond.includes(project.id)}
