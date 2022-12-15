@@ -38,3 +38,5 @@ from .issue import (
     IssueFlatSerializer,
     IssueStateSerializer,
 )
+
+from .module import ModuleWriteSerializer, ModuleSerializer, ModuleIssueSerializer
