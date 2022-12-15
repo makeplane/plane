@@ -66,3 +66,5 @@ from .authentication import (
     MagicSignInEndpoint,
     MagicSignInGenerateEndpoint,
 )
+
+from .module import ModuleViewSet, ModuleIssueViewSet

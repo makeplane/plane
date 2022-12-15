@@ -36,3 +36,5 @@ from .cycle import Cycle, CycleIssue
 from .shortcut import Shortcut
 
 from .view import View
+
+from .module import Module, ModuleMember, ModuleIssue

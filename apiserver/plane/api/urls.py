@@ -54,6 +54,8 @@ from plane.api.views import (
     BulkDeleteIssuesEndpoint,
     BulkAssignIssuesToCycleEndpoint,
     ProjectUserViewsEndpoint,
+    ModuleViewSet,
+    ModuleIssueViewSet,
     UserLastProjectWithWorkspaceEndpoint,
     UserWorkSpaceIssues,
 )
@@ -587,6 +589,52 @@ urlpatterns = [
         name="File Assets",
     ),
     ## End File Assets
+    ## Modules
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/modules/",
+        ModuleViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="project-modules",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/modules/<uuid:pk>/",
+        ModuleViewSet.as_view(
+            {
+                "get": "retrieve",
+                "put": "update",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="project-modules",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/modules/<uuid:module_id>/module-issues/",
+        ModuleIssueViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="project-module-issues",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/modules/<uuid:module_id>/module-issues/<uuid:pk>/",
+        ModuleIssueViewSet.as_view(
+            {
+                "get": "retrieve",
+                "put": "update",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="project-module-issues",
+    ),
+    ## End Modules
     # path(
     #     "issues/<int:pk>/all/",
     #     IssueViewSet.as_view({"get": "list_issue_history_comments"}),

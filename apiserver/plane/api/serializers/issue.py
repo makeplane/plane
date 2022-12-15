@@ -7,6 +7,7 @@ from .user import UserLiteSerializer
 from .state import StateSerializer
 from .user import UserLiteSerializer
 from .project import ProjectSerializer
+from .workspace import WorkSpaceSerializer
 from plane.db.models import (
     User,
     Issue,
@@ -19,8 +20,8 @@ from plane.db.models import (
     IssueLabel,
     Label,
     IssueBlocker,
-    Cycle,
     CycleIssue,
+    Cycle,
 )
 
 
@@ -54,6 +55,9 @@ class IssueStateSerializer(BaseSerializer):
 class IssueCreateSerializer(BaseSerializer):
 
     state_detail = StateSerializer(read_only=True, source="state")
+    created_by_detail = UserLiteSerializer(read_only=True, source="created_by")
+    project_detail = ProjectSerializer(read_only=True, source="project")
+    workspace_detail = WorkSpaceSerializer(read_only=True, source="workspace")
 
     assignees_list = serializers.ListField(
         child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()),
@@ -213,6 +217,8 @@ class IssueActivitySerializer(BaseSerializer):
 class IssueCommentSerializer(BaseSerializer):
 
     actor_detail = UserLiteSerializer(read_only=True, source="actor")
+    issue_detail = IssueFlatSerializer(read_only=True, source="issue")
+    project_detail = ProjectSerializer(read_only=True, source="project")
 
     class Meta:
         model = IssueComment
@@ -305,7 +311,6 @@ class IssueAssigneeSerializer(BaseSerializer):
 
 
 class CycleBaseSerializer(BaseSerializer):
-
     class Meta:
         model = Cycle
         fields = "__all__"
@@ -317,6 +322,7 @@ class CycleBaseSerializer(BaseSerializer):
             "created_at",
             "updated_at",
         ]
+
 
 class IssueCycleDetailSerializer(BaseSerializer):
 
@@ -333,7 +339,6 @@ class IssueCycleDetailSerializer(BaseSerializer):
             "created_at",
             "updated_at",
         ]
-
 
 
 class IssueSerializer(BaseSerializer):

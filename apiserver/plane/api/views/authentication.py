@@ -34,6 +34,74 @@ def get_tokens_for_user(user):
     )
 
 
+class SignUpEndpoint(BaseAPIView):
+
+    permission_classes = (AllowAny,)
+
+    def post(self, request):
+        try:
+
+            email = request.data.get("email", False)
+            password = request.data.get("password", False)
+
+            ## Raise exception if any of the above are missing
+            if not email or not password:
+                return Response(
+                    {"error": "Both email and password are required"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            email = email.strip().lower()
+
+            try:
+                validate_email(email)
+            except ValidationError as e:
+                return Response(
+                    {"error": "Please provide a valid email address."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            user = User.objects.filter(email=email).first()
+
+            if user is not None:
+                return Response(
+                    {"error": "Email ID is already taken"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            user = User.objects.create(email=email)
+            user.set_password(password)
+
+            # settings last actives for the user
+            user.last_active = timezone.now()
+            user.last_login_time = timezone.now()
+            user.last_login_ip = request.META.get("REMOTE_ADDR")
+            user.last_login_uagent = request.META.get("HTTP_USER_AGENT")
+            user.token_updated_at = timezone.now()
+            user.save()
+
+            serialized_user = UserSerializer(user).data
+
+            access_token, refresh_token = get_tokens_for_user(user)
+
+            data = {
+                "access_token": access_token,
+                "refresh_token": refresh_token,
+                "user": serialized_user,
+            }
+
+            return Response(data, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {
+                    "error": "Something went wrong. Please try again later or contact the support team."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
 class SignInEndpoint(BaseAPIView):
     permission_classes = (AllowAny,)
 
@@ -104,7 +172,6 @@ class SignInEndpoint(BaseAPIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
         except Exception as e:
-            print(e)
             capture_exception(e)
             return Response(
                 {
@@ -218,7 +285,6 @@ class MagicSignInGenerateEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except Exception as e:
-            print(e)
             capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
