@@ -19,6 +19,7 @@ type Props = {
   issues: IIssue[];
   title?: string;
   multiple?: boolean;
+  customDisplay?: JSX.Element;
 };
 
 const IssuesListModal: React.FC<Props> = ({
@@ -29,6 +30,7 @@ const IssuesListModal: React.FC<Props> = ({
   issues,
   title = "Issues",
   multiple = false,
+  customDisplay,
 }) => {
   const [query, setQuery] = useState("");
   const [values, setValues] = useState<string[]>([]);
@@ -90,9 +92,10 @@ const IssuesListModal: React.FC<Props> = ({
                       className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm outline-none"
                       placeholder="Search..."
                       onChange={(e) => setQuery(e.target.value)}
+                      displayValue={() => ""}
                     />
                   </div>
-
+                  <div className="p-3">{customDisplay}</div>
                   <Combobox.Options
                     static
                     className="max-h-80 scroll-py-2 divide-y divide-gray-500 divide-opacity-10 overflow-y-auto"

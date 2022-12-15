@@ -18,7 +18,9 @@ const AppLayout: React.FC<Props> = ({
   children,
   noPadding = false,
   bg = "primary",
+  noHeader = false,
   breadcrumbs,
+  left,
   right,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -37,7 +39,7 @@ const AppLayout: React.FC<Props> = ({
       <div className="h-screen w-full flex overflow-x-hidden">
         <Sidebar />
         <main className="h-screen w-full flex flex-col overflow-y-auto min-w-0">
-          <Header breadcrumbs={breadcrumbs} right={right} />
+          {noHeader ? null : <Header breadcrumbs={breadcrumbs} left={left} right={right} />}
           <div
             className={`w-full flex-grow ${noPadding ? "" : "p-5"} ${
               bg === "primary" ? "bg-primary" : bg === "secondary" ? "bg-secondary" : "bg-primary"

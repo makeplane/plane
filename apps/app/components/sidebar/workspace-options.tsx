@@ -82,9 +82,7 @@ const WorkspaceOptions: React.FC<Props> = ({ sidebarCollapse }) => {
 
   return (
     <div className="px-2">
-      <div
-        className={`relative ${sidebarCollapse ? "flex" : "grid grid-cols-5 gap-2 items-center"}`}
-      >
+      <div className="relative">
         <Menu as="div" className="col-span-4 inline-block text-left w-full">
           <div className="w-full">
             <Menu.Button
@@ -102,14 +100,19 @@ const WorkspaceOptions: React.FC<Props> = ({ sidebarCollapse }) => {
                       alt="Workspace Logo"
                       layout="fill"
                       objectFit="cover"
+                      className="rounded"
                     />
                   ) : (
                     activeWorkspace?.name?.charAt(0) ?? "N"
                   )}
                 </div>
                 {!sidebarCollapse && (
-                  <p className="truncate w-20 text-left ml-1">
-                    {activeWorkspace?.name ?? "Loading..."}
+                  <p className="text-left ml-1">
+                    {activeWorkspace?.name
+                      ? activeWorkspace.name.length > 17
+                        ? `${activeWorkspace.name.substring(0, 17)}...`
+                        : activeWorkspace.name
+                      : "Loading..."}
                   </p>
                 )}
               </div>
@@ -131,74 +134,124 @@ const WorkspaceOptions: React.FC<Props> = ({ sidebarCollapse }) => {
             leaveTo="transform opacity-0 scale-95"
           >
             <Menu.Items className="origin-top-left fixed max-w-[15rem] ml-2 left-0 mt-2 w-full rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-20">
-              <div className="p-1">
-                {workspaces ? (
-                  <>
-                    {workspaces.length > 0 ? (
-                      workspaces.map((workspace: any) => (
-                        <Menu.Item key={workspace.id}>
-                          {({ active }) => (
-                            <button
-                              type="button"
-                              onClick={() => {
-                                mutateUser(
-                                  (prevData) => ({
-                                    ...(prevData as IUser),
-                                    last_workspace_id: workspace.id,
-                                  }),
-                                  false
-                                );
-                                userService
-                                  .updateUser({
-                                    last_workspace_id: workspace?.id,
-                                  })
-                                  .then((res) => {
-                                    const isInProject = router.pathname.includes("/[projectId]/");
-                                    if (isInProject) router.push("/workspace");
-                                  })
-                                  .catch((err) => console.error(err));
-                              }}
-                              className={`${
-                                active ? "bg-theme text-white" : "text-gray-900"
-                              } group flex w-full items-center rounded-md p-2 text-sm`}
-                            >
-                              {workspace.name}
-                            </button>
-                          )}
-                        </Menu.Item>
-                      ))
-                    ) : (
-                      <p>No workspace found!</p>
-                    )}
-                    <Menu.Item
-                      as="button"
-                      onClick={() => {
-                        router.push("/create-workspace");
-                      }}
-                      className="w-full"
-                    >
-                      {({ active }) => (
-                        <a
-                          className={`flex items-center gap-x-1 p-2 w-full text-left text-gray-900 hover:bg-theme hover:text-white rounded-md text-sm ${
-                            active ? "bg-theme text-white" : "text-gray-900"
-                          }`}
-                        >
-                          <PlusIcon className="w-5 h-5" />
-                          <span>Create Workspace</span>
-                        </a>
+              <div className="px-1 py-2 divide-y">
+                <div>
+                  <Menu.Item as="div" className="text-xs px-2 pb-2">
+                    {user?.email}
+                  </Menu.Item>
+                </div>
+                <div className="py-2">
+                  {workspaces ? (
+                    <>
+                      {workspaces.length > 0 ? (
+                        workspaces.map((workspace: any) => (
+                          <Menu.Item key={workspace.id}>
+                            {({ active }) => (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  mutateUser(
+                                    (prevData) => ({
+                                      ...(prevData as IUser),
+                                      last_workspace_id: workspace.id,
+                                    }),
+                                    false
+                                  );
+                                  userService
+                                    .updateUser({
+                                      last_workspace_id: workspace?.id,
+                                    })
+                                    .then((res) => {
+                                      const isInProject = router.pathname.includes("/[projectId]/");
+                                      if (isInProject) router.push("/workspace");
+                                    })
+                                    .catch((err) => console.error(err));
+                                }}
+                                className={`${
+                                  active ? "bg-indigo-50" : ""
+                                } w-full flex items-center gap-2 text-gray-900 rounded-md p-2 text-sm`}
+                              >
+                                <div className="h-5 w-5 p-4 flex items-center justify-center bg-gray-700 text-white rounded uppercase relative">
+                                  {workspace?.logo && workspace.logo !== "" ? (
+                                    <Image
+                                      src={workspace.logo}
+                                      alt="Workspace Logo"
+                                      layout="fill"
+                                      objectFit="cover"
+                                      className="rounded"
+                                    />
+                                  ) : (
+                                    activeWorkspace?.name?.charAt(0) ?? "N"
+                                  )}
+                                </div>
+                                <div className="text-left">
+                                  <h5 className="text-sm">{workspace.name}</h5>
+                                  <div className="text-xs text-gray-500">1 members</div>
+                                </div>
+                              </button>
+                            )}
+                          </Menu.Item>
+                        ))
+                      ) : (
+                        <p>No workspace found!</p>
                       )}
+                      <Menu.Item
+                        as="button"
+                        type="button"
+                        onClick={() => {
+                          router.push("/create-workspace");
+                        }}
+                        className="w-full text-xs flex items-center gap-2 px-2 py-1 text-left rounded hover:bg-gray-100"
+                      >
+                        <PlusIcon className="h-3 w-3" />
+                        Create Workspace
+                      </Menu.Item>
+                    </>
+                  ) : (
+                    <div className="w-full flex justify-center">
+                      <Spinner />
+                    </div>
+                  )}
+                </div>
+                <div className="text-xs pt-2 space-y-1">
+                  {userLinks.map((link, index) => (
+                    <Menu.Item key={index} as="div">
+                      <Link href={link.href}>
+                        <a className="block px-2 py-1 text-left rounded hover:bg-gray-100">
+                          {link.name}
+                        </a>
+                      </Link>
                     </Menu.Item>
-                  </>
-                ) : (
-                  <div className="w-full flex justify-center">
-                    <Spinner />
-                  </div>
-                )}
+                  ))}
+                  <Menu.Item
+                    as="button"
+                    type="button"
+                    className="w-full px-2 py-1 text-left rounded hover:bg-gray-100"
+                    onClick={async () => {
+                      await authenticationService
+                        .signOut({
+                          refresh_token: authenticationService.getRefreshToken(),
+                        })
+                        .then((response) => {
+                          console.log("user signed out", response);
+                        })
+                        .catch((error) => {
+                          console.log("Failed to sign out", error);
+                        })
+                        .finally(() => {
+                          mutateUser();
+                          router.push("/signin");
+                        });
+                    }}
+                  >
+                    Sign out
+                  </Menu.Item>
+                </div>
               </div>
             </Menu.Items>
           </Transition>
         </Menu>
-        {!sidebarCollapse && (
+        {/* {!sidebarCollapse && (
           <Menu as="div" className="inline-block text-left flex-shrink-0 w-full">
             <div className="h-10 w-10">
               <Menu.Button className="h-full w-full grid relative place-items-center rounded-md shadow-sm bg-white text-gray-700 hover:bg-gray-50 focus:outline-none">
@@ -261,7 +314,7 @@ const WorkspaceOptions: React.FC<Props> = ({ sidebarCollapse }) => {
               </Menu.Items>
             </Transition>
           </Menu>
-        )}
+        )} */}
       </div>
       <div className="mt-3 flex-1 space-y-1 bg-white">
         {workspaceLinks.map((link, index) => (

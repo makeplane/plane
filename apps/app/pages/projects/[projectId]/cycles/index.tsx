@@ -3,11 +3,9 @@ import React, { useEffect, useState } from "react";
 // next
 import { useRouter } from "next/router";
 import type { NextPage } from "next";
-import Link from "next/link";
 // swr
 import useSWR from "swr";
 // services
-import issuesServices from "lib/services/issues.service";
 import sprintService from "lib/services/cycles.service";
 // hooks
 import useUser from "lib/hooks/useUser";
@@ -24,6 +22,7 @@ import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deleti
 import ConfirmSprintDeletion from "components/project/cycles/ConfirmCycleDeletion";
 import CreateUpdateIssuesModal from "components/project/issues/CreateUpdateIssueModal";
 import CreateUpdateSprintsModal from "components/project/cycles/CreateUpdateCyclesModal";
+import CycleStatsView from "components/project/cycles/stats-view";
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
 // ui
@@ -204,11 +203,7 @@ const ProjectSprints: NextPage = () => {
       {cycles ? (
         cycles.length > 0 ? (
           <div className="space-y-5">
-            {cycles.map((cycle) => (
-              <Link key={cycle.id} href={`/projects/${activeProject?.id}/cycles/${cycle.id}`}>
-                <a className="block bg-white p-3 rounded-md">{cycle.name}</a>
-              </Link>
-            ))}
+            <CycleStatsView cycles={cycles} />
           </div>
         ) : (
           <div className="w-full h-full flex flex-col justify-center items-center px-4">

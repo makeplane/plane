@@ -1,4 +1,5 @@
 // next
+import Link from "next/link";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
@@ -27,10 +28,12 @@ import AppLayout from "layouts/app-layout";
 // components
 import CreateUpdateIssuesModal from "components/project/issues/CreateUpdateIssueModal";
 import IssueCommentSection from "components/project/issues/issue-detail/comment/IssueCommentSection";
+import AddAsSubIssue from "components/command-palette/addAsSubIssue";
+import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
 // common
 import { debounce } from "constants/common";
 // components
-import IssueDetailSidebar from "components/project/issues/issue-detail/IssueDetailSidebar";
+import IssueDetailSidebar from "components/project/issues/issue-detail/issue-detail-sidebar";
 // activites
 import IssueActivitySection from "components/project/issues/issue-detail/activity";
 // ui
@@ -46,9 +49,6 @@ import {
   EllipsisHorizontalIcon,
   PlusIcon,
 } from "@heroicons/react/24/outline";
-import Link from "next/link";
-import AddAsSubIssue from "components/command-palette/addAsSubIssue";
-import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
 
 const RichTextEditor = dynamic(() => import("components/lexical/editor"), {
   ssr: false,

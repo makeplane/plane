@@ -13,6 +13,7 @@ import { Tab } from "@headlessui/react";
 import withAuth from "lib/hoc/withAuthWrapper";
 // layouts
 import SettingsLayout from "layouts/settings-layout";
+import AppLayout from "layouts/app-layout";
 // service
 import projectServices from "lib/services/project.service";
 // hooks
@@ -155,14 +156,14 @@ const ProjectSettings: NextPage = () => {
   ];
 
   return (
-    <SettingsLayout
+    <AppLayout
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem title="Projects" link="/projects" />
           <BreadcrumbItem title={`${activeProject?.name ?? "Project"} Settings`} />
         </Breadcrumbs>
       }
-      links={sidebarLinks}
+      // links={sidebarLinks}
     >
       {projectDetails ? (
         <div className="space-y-3">
@@ -209,7 +210,7 @@ const ProjectSettings: NextPage = () => {
           <Spinner />
         </div>
       )}
-    </SettingsLayout>
+    </AppLayout>
   );
 };
 

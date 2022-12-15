@@ -15,12 +15,7 @@ import useToast from "lib/hooks/useToast";
 // components
 import IssuesListModal from "components/project/issues/IssuesListModal";
 // fetching keys
-import {
-  PROJECT_ISSUES_LIST,
-  STATE_LIST,
-  WORKSPACE_MEMBERS,
-  PROJECT_ISSUE_LABELS,
-} from "constants/fetch-keys";
+import { STATE_LIST, WORKSPACE_MEMBERS, PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 // commons
 import { classNames, copyTextToClipboard } from "constants/common";
 import { PRIORITIES } from "constants/";
@@ -48,6 +43,11 @@ import type { Control } from "react-hook-form";
 import type { IIssue, IIssueLabels, IssueResponse, IState, NestedKeyOf } from "types";
 import { TwitterPicker } from "react-color";
 import { positionEditorElement } from "components/lexical/helpers/editor";
+import SelectState from "./select-state";
+import SelectPriority from "./select-priority";
+import SelectParent from "./select-parent";
+import SelectCycle from "./select-cycle";
+import SelectAssignee from "./select-assignee";
 
 type Props = {
   control: Control<IIssue, any>;
@@ -71,24 +71,11 @@ const IssueDetailSidebar: React.FC<Props> = ({
 }) => {
   const [isBlockerModalOpen, setIsBlockerModalOpen] = useState(false);
   const [isBlockedModalOpen, setIsBlockedModalOpen] = useState(false);
-  const [isParentModalOpen, setIsParentModalOpen] = useState(false);
   const [createLabelForm, setCreateLabelForm] = useState(false);
 
   const { activeWorkspace, activeProject, cycles, issues } = useUser();
 
   const { setToastAlert } = useToast();
-
-  const { data: states } = useSWR<IState[]>(
-    activeWorkspace && activeProject ? STATE_LIST(activeProject.id) : null,
-    activeWorkspace && activeProject
-      ? () => stateServices.getStates(activeWorkspace.slug, activeProject.id)
-      : null
-  );
-
-  const { data: people } = useSWR(
-    activeWorkspace ? WORKSPACE_MEMBERS(activeWorkspace.slug) : null,
-    activeWorkspace ? () => workspaceService.workspaceMembers(activeWorkspace.slug) : null
-  );
 
   const { data: issueLabels, mutate: issueLabelMutate } = useSWR<IIssueLabels[]>(
     activeProject && activeWorkspace ? PROJECT_ISSUE_LABELS(activeProject.id) : null,
@@ -108,7 +95,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
     defaultValues,
   });
 
-  const onSubmit = (formData: any) => {
+  const handleNewLabel = (formData: any) => {
     if (!activeWorkspace || !activeProject || isSubmitting) return;
     issuesServices
       .createIssueLabel(activeWorkspace.slug, activeProject.id, formData)
@@ -133,58 +120,6 @@ const IssueDetailSidebar: React.FC<Props> = ({
     }>
   > = [
     [
-      {
-        label: "Status",
-        name: "state",
-        canSelectMultipleOptions: false,
-        icon: Squares2X2Icon,
-        options: states?.map((state) => ({
-          label: state.name,
-          value: state.id,
-          color: state.color,
-        })),
-        modal: false,
-      },
-      {
-        label: "Assignees",
-        name: "assignees_list",
-        canSelectMultipleOptions: true,
-        icon: UserGroupIcon,
-        options: people?.map((person) => ({
-          label: person.member.first_name,
-          value: person.member.id,
-        })),
-        modal: false,
-      },
-      {
-        label: "Priority",
-        name: "priority",
-        canSelectMultipleOptions: false,
-        icon: ChartBarIcon,
-        options: PRIORITIES.map((property) => ({
-          label: property,
-          value: property,
-        })),
-        modal: false,
-      },
-    ],
-    [
-      {
-        label: "Parent",
-        name: "parent",
-        canSelectMultipleOptions: false,
-        icon: UserIcon,
-        issuesList:
-          issues?.results.filter(
-            (i) =>
-              i.id !== issueDetail?.id &&
-              i.id !== issueDetail?.parent &&
-              i.parent !== issueDetail?.id
-          ) ?? [],
-        modal: true,
-        isOpen: isParentModalOpen,
-        setIsOpen: setIsParentModalOpen,
-      },
       // {
       //   label: "Blocker",
       //   name: "blockers_list",
@@ -205,26 +140,6 @@ const IssueDetailSidebar: React.FC<Props> = ({
       //   isOpen: isBlockedModalOpen,
       //   setIsOpen: setIsBlockedModalOpen,
       // },
-      {
-        label: "Target Date",
-        name: "target_date",
-        canSelectMultipleOptions: true,
-        icon: CalendarDaysIcon,
-        modal: false,
-      },
-    ],
-    [
-      {
-        label: "Cycle",
-        name: "cycle",
-        canSelectMultipleOptions: false,
-        icon: ArrowPathIcon,
-        options: cycles?.map((cycle) => ({
-          label: cycle.name,
-          value: cycle.id,
-        })),
-        modal: false,
-      },
     ],
   ];
 
@@ -297,7 +212,69 @@ const IssueDetailSidebar: React.FC<Props> = ({
           </div>
         </div>
         <div className="divide-y-2 divide-gray-100">
-          {sidebarSections.map((section, index) => (
+          <div className="py-1">
+            <SelectState control={control} submitChanges={submitChanges} />
+            <SelectAssignee control={control} submitChanges={submitChanges} />
+            <SelectPriority control={control} submitChanges={submitChanges} />
+          </div>
+          <div className="py-1">
+            <SelectParent
+              control={control}
+              submitChanges={submitChanges}
+              issuesList={
+                issues?.results.filter(
+                  (i) =>
+                    i.id !== issueDetail?.id &&
+                    i.id !== issueDetail?.parent &&
+                    i.parent !== issueDetail?.id
+                ) ?? []
+              }
+              customDisplay={
+                issueDetail?.parent_detail ? (
+                  <button
+                    type="button"
+                    className="flex items-center gap-2 bg-gray-100 px-3 py-2 text-xs rounded"
+                    onClick={() => submitChanges({ parent: null })}
+                  >
+                    {issueDetail.parent_detail?.name}
+                    <XMarkIcon className="h-3 w-3" />
+                  </button>
+                ) : (
+                  <div className="inline-block bg-gray-100 px-3 py-2 text-xs rounded">
+                    No parent selected
+                  </div>
+                )
+              }
+              watchIssue={watchIssue}
+            />
+            <div className="flex items-center py-2 flex-wrap">
+              <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
+                <CalendarDaysIcon className="flex-shrink-0 h-4 w-4" />
+                <p>Due date</p>
+              </div>
+              <div className="sm:basis-1/2">
+                <Controller
+                  control={control}
+                  name="target_date"
+                  render={({ field: { value, onChange } }) => (
+                    <input
+                      type="date"
+                      value={value ?? ""}
+                      onChange={(e: any) => {
+                        submitChanges({ target_date: e.target.value });
+                        onChange(e.target.value);
+                      }}
+                      className="hover:bg-gray-100 border rounded-md shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300 w-full"
+                    />
+                  )}
+                />
+              </div>
+            </div>
+          </div>
+          <div className="py-1">
+            <SelectCycle control={control} handleCycleChange={handleCycleChange} />
+          </div>
+          {/* {sidebarSections.map((section, index) => (
             <div key={index} className="py-1">
               {section.map((item) => (
                 <div key={item.label} className="flex items-center py-2 flex-wrap">
@@ -306,154 +283,63 @@ const IssueDetailSidebar: React.FC<Props> = ({
                     <p>{item.label}</p>
                   </div>
                   <div className="sm:basis-1/2">
-                    {item.name === "target_date" ? (
-                      <Controller
-                        control={control}
-                        name="target_date"
-                        render={({ field: { value, onChange } }) => (
-                          <input
-                            type="date"
-                            value={value ?? ""}
-                            onChange={(e: any) => {
-                              submitChanges({ target_date: e.target.value });
-                              onChange(e.target.value);
+                    <Controller
+                      control={control}
+                      name={item.name as keyof IIssue}
+                      render={({ field: { value, onChange } }) => (
+                        <>
+                          <IssuesListModal
+                            isOpen={Boolean(item?.isOpen)}
+                            handleClose={() => item.setIsOpen && item.setIsOpen(false)}
+                            onChange={(val) => {
+                              console.log(val);
+                              submitChanges({ [item.name]: val });
+                              onChange(val);
                             }}
-                            className="hover:bg-gray-100 border rounded-md shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300 w-full"
+                            issues={item?.issuesList ?? []}
+                            title={`Select ${item.label}`}
+                            multiple={item.canSelectMultipleOptions}
+                            value={value}
+                            customDisplay={
+                              issueDetail?.parent_detail ? (
+                                <button
+                                  type="button"
+                                  className="flex items-center gap-2 bg-gray-100 px-3 py-2 text-xs rounded"
+                                  onClick={() => submitChanges({ parent: null })}
+                                >
+                                  {issueDetail.parent_detail?.name}
+                                  <XMarkIcon className="h-3 w-3" />
+                                </button>
+                              ) : (
+                                <div className="inline-block bg-gray-100 px-3 py-2 text-xs rounded">
+                                  No parent selected
+                                </div>
+                              )
+                            }
                           />
-                        )}
-                      />
-                    ) : item.modal ? (
-                      <Controller
-                        control={control}
-                        name={item.name as keyof IIssue}
-                        render={({ field: { value, onChange } }) => (
-                          <>
-                            <IssuesListModal
-                              isOpen={Boolean(item?.isOpen)}
-                              handleClose={() => item.setIsOpen && item.setIsOpen(false)}
-                              onChange={(val) => {
-                                console.log(val);
-                                // submitChanges({ [item.name]: val });
-                                onChange(val);
-                              }}
-                              issues={item?.issuesList ?? []}
-                              title={`Select ${item.label}`}
-                              multiple={item.canSelectMultipleOptions}
-                              value={value}
-                            />
-                            <button
-                              type="button"
-                              className="flex justify-between items-center gap-1 hover:bg-gray-100 border rounded-md shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300 w-full"
-                              onClick={() => item.setIsOpen && item.setIsOpen(true)}
-                            >
-                              {watchIssue(`${item.name as keyof IIssue}`) &&
-                              watchIssue(`${item.name as keyof IIssue}`) !== ""
-                                ? `${activeProject?.identifier}-
+                          <button
+                            type="button"
+                            className="flex justify-between items-center gap-1 hover:bg-gray-100 border rounded-md shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300 w-full"
+                            onClick={() => item.setIsOpen && item.setIsOpen(true)}
+                          >
+                            {watchIssue(`${item.name as keyof IIssue}`) &&
+                            watchIssue(`${item.name as keyof IIssue}`) !== ""
+                              ? `${activeProject?.identifier}-
                                 ${
                                   issues?.results.find(
                                     (i) => i.id === watchIssue(`${item.name as keyof IIssue}`)
                                   )?.sequence_id
                                 }`
-                                : `Select ${item.label}`}
-                            </button>
-                          </>
-                        )}
-                      />
-                    ) : (
-                      <Controller
-                        control={control}
-                        name={item.name as keyof IIssue}
-                        render={({ field: { value } }) => (
-                          <Listbox
-                            as="div"
-                            value={value}
-                            multiple={item.canSelectMultipleOptions}
-                            onChange={(value: any) => {
-                              if (item.name === "cycle") handleCycleChange(value);
-                              else submitChanges({ [item.name]: value });
-                            }}
-                            className="flex-shrink-0"
-                          >
-                            {({ open }) => (
-                              <div className="relative">
-                                <Listbox.Button className="flex justify-between items-center gap-1 hover:bg-gray-100 border rounded-md shadow-sm px-2 w-full py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300">
-                                  <span
-                                    className={classNames(
-                                      value ? "" : "text-gray-900",
-                                      "hidden truncate sm:block text-left",
-                                      item.label === "Priority" ? "capitalize" : ""
-                                    )}
-                                  >
-                                    {value
-                                      ? Array.isArray(value)
-                                        ? value
-                                            .map(
-                                              (i: any) =>
-                                                item.options?.find((option) => option.value === i)
-                                                  ?.label
-                                            )
-                                            .join(", ") || item.label
-                                        : item.options?.find((option) => option.value === value)
-                                            ?.label
-                                      : "None"}
-                                  </span>
-                                  <ChevronDownIcon className="h-3 w-3" />
-                                </Listbox.Button>
-
-                                <Transition
-                                  show={open}
-                                  as={React.Fragment}
-                                  leave="transition ease-in duration-100"
-                                  leaveFrom="opacity-100"
-                                  leaveTo="opacity-0"
-                                >
-                                  <Listbox.Options className="absolute z-10 right-0 mt-1 w-40 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
-                                    <div className="p-1">
-                                      {item.options ? (
-                                        item.options.length > 0 ? (
-                                          item.options.map((option) => (
-                                            <Listbox.Option
-                                              key={option.value}
-                                              className={({ active, selected }) =>
-                                                `${
-                                                  active || selected
-                                                    ? "text-white bg-theme"
-                                                    : "text-gray-900"
-                                                } ${
-                                                  item.label === "Priority" && "capitalize"
-                                                } flex items-center gap-2 cursor-pointer select-none relative p-2 rounded-md truncate`
-                                              }
-                                              value={option.value}
-                                            >
-                                              {option.color && (
-                                                <span
-                                                  className="h-2 w-2 rounded-full flex-shrink-0"
-                                                  style={{ backgroundColor: option.color }}
-                                                ></span>
-                                              )}
-                                              {option.label}
-                                            </Listbox.Option>
-                                          ))
-                                        ) : (
-                                          <div className="text-center">No {item.label}s found</div>
-                                        )
-                                      ) : (
-                                        <Spinner />
-                                      )}
-                                    </div>
-                                  </Listbox.Options>
-                                </Transition>
-                              </div>
-                            )}
-                          </Listbox>
-                        )}
-                      />
-                    )}
+                              : `Select ${item.label}`}
+                          </button>
+                        </>
+                      )}
+                    />
                   </div>
                 </div>
               ))}
             </div>
-          ))}
+          ))} */}
         </div>
         <div className="pt-3 space-y-3">
           <div className="flex justify-between items-start">
@@ -466,18 +352,20 @@ const IssueDetailSidebar: React.FC<Props> = ({
                 {issueDetail?.label_details.map((label) => (
                   <span
                     key={label.id}
-                    className="flex items-center gap-2 border rounded-2xl text-xs px-1 py-0.5 hover:bg-gray-100 cursor-pointer"
-                    // onClick={() =>
-                    //   submitChanges({
-                    //     labels_list: issueDetail?.labels_list.filter((l) => l !== label.id),
-                    //   })
-                    // }
+                    className="group flex items-center gap-1 border rounded-2xl text-xs px-1 py-0.5 hover:bg-red-50 hover:border-red-500 cursor-pointer"
+                    onClick={() => {
+                      const updatedLabels = issueDetail?.labels.filter((l) => l !== label.id);
+                      submitChanges({
+                        labels_list: updatedLabels,
+                      });
+                    }}
                   >
                     <span
                       className="h-2 w-2 rounded-full flex-shrink-0"
                       style={{ backgroundColor: label.colour ?? "green" }}
                     ></span>
                     {label.name}
+                    <XMarkIcon className="h-2 w-2 group-hover:text-red-500" />
                   </span>
                 ))}
                 <Controller
@@ -488,22 +376,15 @@ const IssueDetailSidebar: React.FC<Props> = ({
                       as="div"
                       value={value}
                       multiple
-                      onChange={(value: any) => submitChanges({ labels_list: value })}
+                      onChange={(val) => submitChanges({ labels_list: val })}
                       className="flex-shrink-0"
                     >
                       {({ open }) => (
                         <>
                           <Listbox.Label className="sr-only">Label</Listbox.Label>
                           <div className="relative">
-                            <Listbox.Button className="flex items-center gap-2 border rounded-2xl text-xs px-1 py-0.5 hover:bg-gray-100 cursor-pointer">
-                              <span
-                                className={classNames(
-                                  value ? "" : "text-gray-900",
-                                  "hidden sm:block text-left"
-                                )}
-                              >
-                                Select Label
-                              </span>
+                            <Listbox.Button className="flex items-center gap-2 border rounded-2xl text-xs px-2 py-0.5 hover:bg-gray-100 cursor-pointer">
+                              Select Label
                             </Listbox.Button>
 
                             <Transition
@@ -551,28 +432,26 @@ const IssueDetailSidebar: React.FC<Props> = ({
                     </Listbox>
                   )}
                 />
+                <button
+                  type="button"
+                  className="flex items-center gap-1 border rounded-2xl text-xs px-2 py-0.5 hover:bg-gray-100 cursor-pointer"
+                  onClick={() => setCreateLabelForm((prevData) => !prevData)}
+                >
+                  {createLabelForm ? (
+                    <>
+                      <XMarkIcon className="h-3 w-3" /> Cancel
+                    </>
+                  ) : (
+                    <>
+                      <PlusIcon className="h-3 w-3" /> New
+                    </>
+                  )}
+                </button>
               </div>
             </div>
           </div>
-          <div className="flex justify-end">
-            <button
-              type="button"
-              className="flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-100 text-xs font-medium"
-              onClick={() => setCreateLabelForm((prevData) => !prevData)}
-            >
-              {createLabelForm ? (
-                <>
-                  <XMarkIcon className="h-3 w-3" /> Cancel
-                </>
-              ) : (
-                <>
-                  <PlusIcon className="h-3 w-3" /> Create new
-                </>
-              )}
-            </button>
-          </div>
           {createLabelForm && (
-            <form className="flex items-center gap-x-2" onSubmit={handleSubmit(onSubmit)}>
+            <form className="flex items-center gap-x-2" onSubmit={handleSubmit(handleNewLabel)}>
               <div>
                 <Popover className="relative">
                   {({ open }) => (
