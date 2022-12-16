@@ -61,7 +61,7 @@ const ConfirmStateDeletion: React.FC<Props> = ({ isOpen, onClose, data }) => {
 
   useEffect(() => {
     if (data) setIssuesWithThisStateExist(!!groupedIssues[data.id]);
-  }, [groupedIssues]);
+  }, [groupedIssues, data]);
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>

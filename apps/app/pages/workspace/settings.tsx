@@ -223,7 +223,14 @@ const WorkspaceSettings = () => {
                   </div>
                 </Tab.Panel>
                 <Tab.Panel>
-                  <div>
+                  <div className="space-y-3">
+                    <h2 className="text-2xl text-red-500 font-semibold">Danger Zone</h2>
+                    <p className="w-full md:w-1/2">
+                      The danger zone of the workspace delete page is a critical area that requires
+                      careful consideration and attention. When deleting a workspace, all of the
+                      data and resources within that workspace will be permanently removed and
+                      cannot be recovered.
+                    </p>
                     <Button theme="danger" onClick={() => setIsOpen(true)}>
                       Delete the workspace
                     </Button>

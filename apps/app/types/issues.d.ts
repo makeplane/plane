@@ -1,4 +1,4 @@
-import type { IState, IUser, IProject } from "./";
+import type { IState, IUser, IProject, ICycle } from "./";
 
 export interface IssueResponse {
   next_cursor: string;
@@ -9,6 +9,19 @@ export interface IssueResponse {
   total_pages: number;
   extra_stats: null;
   results: IIssue[];
+}
+
+export interface IIssueCycle {
+  id: string;
+  cycle_detail: ICycle;
+  created_at: Date;
+  updated_at: Date;
+  created_by: string;
+  updated_by: string;
+  project: string;
+  workspace: string;
+  issue: string;
+  cycle: string;
 }
 
 export interface IIssue {
@@ -47,6 +60,8 @@ export interface IIssue {
   blocked_issue_details: any[];
   sprints: string | null;
   cycle: string | null;
+
+  issue_cycle: IIssueCycle;
 }
 
 export interface BlockeIssue {

@@ -8,11 +8,12 @@ import { TwitterPicker } from "react-color";
 // headless
 import { Popover, Transition } from "@headlessui/react";
 // constants
+import { GROUP_CHOICES } from "constants/";
 import { STATE_LIST } from "constants/fetch-keys";
 // services
 import stateService from "lib/services/state.service";
 // ui
-import { Button, Input } from "ui";
+import { Button, Input, Select, Spinner } from "ui";
 // types
 import type { IState } from "types";
 
@@ -26,6 +27,12 @@ type Props = {
 
 export type StateGroup = "backlog" | "unstarted" | "started" | "completed" | "cancelled" | null;
 
+const defaultValues: Partial<IState> = {
+  name: "",
+  color: "#000000",
+  group: "backlog",
+};
+
 export const CreateUpdateStateInline: React.FC<Props> = ({
   workspaceSlug,
   projectId,
@@ -36,17 +43,13 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     setError,
     watch,
     reset,
     control,
   } = useForm<IState>({
-    defaultValues: {
-      name: "",
-      color: "#000000",
-      group: "backlog",
-    },
+    defaultValues,
   });
 
   const handleClose = () => {
@@ -55,13 +58,13 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
   };
 
   const onSubmit = async (formData: IState) => {
-    if (!workspaceSlug || !projectId) return;
+    if (!workspaceSlug || !projectId || isSubmitting) return;
     const payload: IState = {
       ...formData,
     };
     if (!data) {
       await stateService
-        .createState(workspaceSlug, projectId, { ...payload, group: selectedGroup })
+        .createState(workspaceSlug, projectId, { ...payload })
         .then((res) => {
           mutate<IState[]>(STATE_LIST(projectId), (prevData) => [...(prevData ?? []), res], false);
           handleClose();
@@ -77,7 +80,6 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
       await stateService
         .updateState(workspaceSlug, projectId, data.id, {
           ...payload,
-          group: selectedGroup ?? "backlog",
         })
         .then((res) => {
           mutate<IState[]>(
@@ -108,7 +110,15 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
   useEffect(() => {
     if (data === null) return;
     reset(data);
-  }, [data]);
+  }, [data, reset]);
+
+  useEffect(() => {
+    if (!data)
+      reset({
+        ...defaultValues,
+        group: selectedGroup ?? "backlog",
+      });
+  }, [selectedGroup, data, reset]);
 
   return (
     <div className="flex items-center gap-x-2 p-2 bg-gray-50">
@@ -160,11 +170,26 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
         register={register}
         placeholder="Enter state name"
         validations={{
-          required: "Name is required",
+          required: true,
         }}
         error={errors.name}
         autoComplete="off"
       />
+      {data && (
+        <Select
+          id="group"
+          name="group"
+          error={errors.group}
+          register={register}
+          validations={{
+            required: true,
+          }}
+          options={Object.keys(GROUP_CHOICES).map((key) => ({
+            value: key,
+            label: GROUP_CHOICES[key as keyof typeof GROUP_CHOICES],
+          }))}
+        />
+      )}
       <Input
         id="description"
         name="description"
@@ -176,8 +201,8 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
       <Button theme="secondary" onClick={handleClose}>
         Cancel
       </Button>
-      <Button theme="primary" onClick={handleSubmit(onSubmit)}>
-        Save
+      <Button theme="primary" disabled={isSubmitting} onClick={handleSubmit(onSubmit)}>
+        {isSubmitting ? "Loading..." : data ? "Update" : "Create"}
       </Button>
     </div>
   );

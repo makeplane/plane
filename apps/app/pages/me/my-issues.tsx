@@ -1,39 +1,52 @@
 // react
-import React, { useState } from "react";
+import React from "react";
 // next
+import Link from "next/link";
 import type { NextPage } from "next";
 // swr
 import useSWR from "swr";
+// headless ui
+import { Transition, Popover } from "@headlessui/react";
 // layouts
 import AppLayout from "layouts/app-layout";
 // hooks
 import useUser from "lib/hooks/useUser";
 // ui
-import { Spinner } from "ui";
-import { BreadcrumbItem, Breadcrumbs } from "ui/Breadcrumbs";
-import { EmptySpace, EmptySpaceItem } from "ui/EmptySpace";
-import HeaderButton from "ui/HeaderButton";
+import {
+  Spinner,
+  HeaderButton,
+  EmptySpace,
+  EmptySpaceItem,
+  Breadcrumbs,
+  BreadcrumbItem,
+  CustomMenu,
+} from "ui";
 // constants
 import { USER_ISSUE } from "constants/fetch-keys";
-import { classNames } from "constants/common";
+import { classNames, replaceUnderscoreIfSnakeCase } from "constants/common";
 // services
 import userService from "lib/services/user.service";
 import issuesServices from "lib/services/issues.service";
 // hoc
 import withAuth from "lib/hoc/withAuthWrapper";
+import useMyIssuesProperties from "lib/hooks/useMyIssueFilter";
 // components
 import ChangeStateDropdown from "components/project/issues/my-issues/ChangeStateDropdown";
 // icons
 import { ChevronDownIcon, PlusIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
 // types
-import { IIssue } from "types";
-import Link from "next/link";
-import { Menu, Transition } from "@headlessui/react";
+import { IIssue, NestedKeyOf, Properties } from "types";
+
+const groupByOptions: Array<{ name: string; key: NestedKeyOf<IIssue> | null }> = [
+  { name: "State", key: "state_detail.name" },
+  { name: "Priority", key: "priority" },
+  { name: "Cycle", key: "issue_cycle.cycle_detail.name" },
+  { name: "Created By", key: "created_by" },
+  { name: "None", key: null },
+];
 
 const MyIssues: NextPage = () => {
-  const [selectedWorkspace, setSelectedWorkspace] = useState<string | null>(null);
-
-  const { user, workspaces, activeWorkspace } = useUser();
+  const { user, activeWorkspace } = useUser();
 
   const { data: myIssues, mutate: mutateMyIssues } = useSWR<IIssue[]>(
     user && activeWorkspace ? USER_ISSUE(activeWorkspace.slug) : null,
@@ -71,6 +84,14 @@ const MyIssues: NextPage = () => {
       });
   };
 
+  const {
+    filteredIssues,
+    properties,
+    setMyIssueGroupByProperty,
+    setMyIssueProperty,
+    groupByProperty,
+  } = useMyIssuesProperties(myIssues);
+
   return (
     <AppLayout
       breadcrumbs={
@@ -79,17 +100,87 @@ const MyIssues: NextPage = () => {
         </Breadcrumbs>
       }
       right={
-        <HeaderButton
-          Icon={PlusIcon}
-          label="Add Issue"
-          onClick={() => {
-            const e = new KeyboardEvent("keydown", {
-              key: "i",
-              ctrlKey: true,
-            });
-            document.dispatchEvent(e);
-          }}
-        />
+        <>
+          <Popover className="relative">
+            {({ open }) => (
+              <>
+                <Popover.Button
+                  className={classNames(
+                    open ? "bg-gray-100 text-gray-900" : "text-gray-500",
+                    "group flex gap-2 items-center rounded-md bg-transparent text-xs font-medium hover:bg-gray-100 hover:text-gray-900 focus:outline-none border p-2"
+                  )}
+                >
+                  <span>View</span>
+                  <ChevronDownIcon className="h-4 w-4" aria-hidden="true" />
+                </Popover.Button>
+
+                <Transition
+                  as={React.Fragment}
+                  enter="transition ease-out duration-200"
+                  enterFrom="opacity-0 translate-y-1"
+                  enterTo="opacity-100 translate-y-0"
+                  leave="transition ease-in duration-150"
+                  leaveFrom="opacity-100 translate-y-0"
+                  leaveTo="opacity-0 translate-y-1"
+                >
+                  <Popover.Panel className="absolute mr-5 right-1/2 z-10 mt-1 w-screen max-w-xs translate-x-1/2 transform p-3 bg-white rounded-lg shadow-lg">
+                    <div className="relative flex flex-col gap-1 gap-y-4">
+                      <div className="flex justify-between items-center">
+                        <h4 className="text-sm text-gray-600">Group by</h4>
+                        <CustomMenu
+                          label={
+                            groupByOptions.find((option) => option.key === groupByProperty)?.name ??
+                            "Select"
+                          }
+                        >
+                          {groupByOptions.map((option) => (
+                            <CustomMenu.MenuItem
+                              key={option.key}
+                              onClick={() => setMyIssueGroupByProperty(option.key)}
+                            >
+                              {option.name}
+                            </CustomMenu.MenuItem>
+                          ))}
+                        </CustomMenu>
+                      </div>
+                      <div className="border-b-2"></div>
+                      <div className="relative flex flex-col gap-1">
+                        <h4 className="text-base text-gray-600">Properties</h4>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          {Object.keys(properties).map((key) => (
+                            <button
+                              key={key}
+                              type="button"
+                              className={`px-2 py-1 capitalize rounded border border-theme text-xs ${
+                                properties[key as keyof Properties]
+                                  ? "border-theme bg-theme text-white"
+                                  : ""
+                              }`}
+                              onClick={() => setMyIssueProperty(key as keyof Properties)}
+                            >
+                              {replaceUnderscoreIfSnakeCase(key)}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </Popover.Panel>
+                </Transition>
+              </>
+            )}
+          </Popover>
+          <HeaderButton
+            Icon={PlusIcon}
+            label="Add Issue"
+            onClick={() => {
+              const e = new KeyboardEvent("keydown", {
+                key: "i",
+                ctrlKey: true,
+              });
+              document.dispatchEvent(e);
+            }}
+          />
+        </>
       }
     >
       <div className="w-full h-full flex flex-col space-y-5">

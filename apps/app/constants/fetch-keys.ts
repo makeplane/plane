@@ -5,6 +5,7 @@ export const USER_WORKSPACES = "USER_WORKSPACES";
 export const WORKSPACE_MEMBERS = (workspaceSlug: string) => `WORKSPACE_MEMBERS_${workspaceSlug}`;
 export const WORKSPACE_INVITATIONS = "WORKSPACE_INVITATIONS";
 export const WORKSPACE_INVITATION = "WORKSPACE_INVITATION";
+export const LAST_ACTIVE_WORKSPACE_AND_PROJECTS = "LAST_ACTIVE_WORKSPACE_AND_PROJECTS";
 
 export const PROJECTS_LIST = (workspaceSlug: string) => `PROJECTS_LIST_${workspaceSlug}`;
 export const PROJECT_DETAILS = (projectId: string) => `PROJECT_DETAILS_${projectId}`;
@@ -30,3 +31,4 @@ export const STATE_LIST = (projectId: string) => `STATE_LIST_${projectId}`;
 export const STATE_DETAIL = "STATE_DETAIL";
 
 export const USER_ISSUE = (workspaceSlug: string) => `USER_ISSUE_${workspaceSlug}`;
+export const USER_PROJECT_VIEW = (projectId: string) => `USER_PROJECT_VIEW_${projectId}`;
