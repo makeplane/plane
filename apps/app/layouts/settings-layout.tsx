@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import useUser from "lib/hooks/useUser";
 // layouts
 import Container from "layouts/container";
-import Sidebar from "layouts/navbar/main-sidebar";
+import Sidebar from "layouts/navbar/main-siderbar";
 import SettingsSidebar from "layouts/navbar/settings-sidebar";
 import Header from "layouts/navbar/header";
 // components
