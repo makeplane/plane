@@ -19,6 +19,7 @@ import {
   XMarkIcon,
   ArrowLongLeftIcon,
   QuestionMarkCircleIcon,
+  RectangleGroupIcon,
 } from "@heroicons/react/24/outline";
 // constants
 import { classNames } from "constants/common";
@@ -33,6 +34,11 @@ const navigation = (projectId: string) => [
     name: "Cycles",
     href: `/projects/${projectId}/cycles`,
     icon: ArrowPathIcon,
+  },
+  {
+    name: "Modules",
+    href: `/projects/${projectId}/modules`,
+    icon: RectangleGroupIcon,
   },
   {
     name: "Members",
@@ -138,7 +144,7 @@ const Sidebar: React.FC = () => {
       </Transition.Root>
       <div
         className={`${
-          sidebarCollapse ? "" : "w-auto md:w-64"
+          sidebarCollapse ? "" : "w-auto md:w-60"
         } h-full hidden md:inset-y-0 md:flex md:flex-col`}
       >
         <div className="h-full flex flex-1 flex-col border-r border-gray-200">

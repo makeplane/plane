@@ -11,7 +11,7 @@ import cycleServices from "lib/services/cycles.service";
 // hooks
 import useUser from "lib/hooks/useUser";
 // ui
-import { Spinner } from "ui";
+import { CustomMenu, Spinner } from "ui";
 // icons
 import { PlusIcon, EllipsisHorizontalIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
 import { CalendarDaysIcon } from "@heroicons/react/24/outline";
@@ -35,7 +35,7 @@ type Props = {
   selectedGroup: NestedKeyOf<IIssue> | null;
   openCreateIssueModal: (issue?: IIssue, actionType?: "create" | "edit" | "delete") => void;
   openIssuesListModal: (cycleId: string) => void;
-  removeIssueFromCycle: (cycleId: string, bridgeId: string) => void;
+  removeIssueFromCycle: (bridgeId: string) => void;
 };
 
 const CyclesListView: React.FC<Props> = ({
@@ -241,51 +241,19 @@ const CyclesListView: React.FC<Props> = ({
                                     </div>
                                   </div>
                                 )}
-                                <Menu as="div" className="relative">
-                                  <Menu.Button
-                                    as="button"
-                                    className={`h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-100 duration-300 outline-none`}
+                                <CustomMenu width="auto" ellipsis>
+                                  <CustomMenu.MenuItem
+                                    onClick={() => openCreateIssueModal(issue, "edit")}
                                   >
-                                    <EllipsisHorizontalIcon className="h-4 w-4" />
-                                  </Menu.Button>
-                                  <Menu.Items className="absolute origin-top-right right-0.5 mt-1 p-1 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
-                                    <Menu.Item>
-                                      <button
-                                        className="text-left p-2 text-gray-900 hover:bg-theme hover:text-white rounded-md text-xs whitespace-nowrap w-full"
-                                        type="button"
-                                        onClick={() => openCreateIssueModal(issue, "edit")}
-                                      >
-                                        Edit
-                                      </button>
-                                    </Menu.Item>
-                                    <Menu.Item>
-                                      <div className="hover:bg-gray-100 border-b last:border-0">
-                                        <button
-                                          className="text-left p-2 text-gray-900 hover:bg-theme hover:text-white rounded-md text-xs whitespace-nowrap w-full"
-                                          type="button"
-                                          // onClick={() =>
-                                          //   removeIssueFromCycle(issue.cycle, issue.id)
-                                          // }
-                                        >
-                                          Remove from cycle
-                                        </button>
-                                      </div>
-                                    </Menu.Item>
-                                    <Menu.Item>
-                                      <div className="hover:bg-gray-100 border-b last:border-0">
-                                        <button
-                                          className="text-left p-2 text-gray-900 hover:bg-theme hover:text-white rounded-md text-xs whitespace-nowrap w-full"
-                                          type="button"
-                                          // onClick={() =>
-                                          //   openCreateIssueModal(cycle.id, issue, "delete")
-                                          // }
-                                        >
-                                          Delete permanently
-                                        </button>
-                                      </div>
-                                    </Menu.Item>
-                                  </Menu.Items>
-                                </Menu>
+                                    Edit
+                                  </CustomMenu.MenuItem>
+                                  <CustomMenu.MenuItem
+                                    onClick={() => removeIssueFromCycle(issue.bridge ?? "")}
+                                  >
+                                    Remove from cycle
+                                  </CustomMenu.MenuItem>
+                                  <CustomMenu.MenuItem>Delete permanently</CustomMenu.MenuItem>
+                                </CustomMenu>
                               </div>
                             </div>
                           );

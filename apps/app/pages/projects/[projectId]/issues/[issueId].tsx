@@ -8,7 +8,7 @@ import React, { useCallback, useEffect, useState } from "react";
 // swr
 import useSWR, { mutate } from "swr";
 // react hook form
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 // headless ui
 import { Disclosure, Menu, Tab, Transition } from "@headlessui/react";
 // services
@@ -28,7 +28,7 @@ import AppLayout from "layouts/app-layout";
 // components
 import CreateUpdateIssuesModal from "components/project/issues/CreateUpdateIssueModal";
 import IssueCommentSection from "components/project/issues/issue-detail/comment/IssueCommentSection";
-import AddAsSubIssue from "components/command-palette/addAsSubIssue";
+import AddAsSubIssue from "components/project/issues/issue-detail/add-as-sub-issue";
 import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
 // common
 import { debounce } from "constants/common";

@@ -50,8 +50,8 @@ type Props = {
   createdBy: string | null;
   bgColor?: string;
   openCreateIssueModal: (issue?: IIssue, actionType?: "create" | "edit" | "delete") => void;
-  openIssuesListModal: (cycleId: string) => void;
-  removeIssueFromCycle: (cycleId: string, bridgeId: string) => void;
+  openIssuesListModal: () => void;
+  removeIssueFromCycle: (bridgeId: string) => void;
 };
 
 const SingleCycleBoard: React.FC<Props> = ({
@@ -106,12 +106,6 @@ const SingleCycleBoard: React.FC<Props> = ({
                 backgroundColor: `${bgColor}20`,
               }}
             >
-              <span
-                className={`w-3 h-3 block rounded-full ${!show ? "" : "mr-1"}`}
-                style={{
-                  backgroundColor: Boolean(bgColor) ? bgColor : undefined,
-                }}
-              />
               <h2
                 className={`text-[0.9rem] font-medium capitalize`}
                 style={{
@@ -143,13 +137,13 @@ const SingleCycleBoard: React.FC<Props> = ({
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
               >
-                <Menu.Items className="absolute right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
-                  <div className="p-1">
+                <Menu.Items className="absolute right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10 text-xs">
+                  <div className="py-1">
                     <Menu.Item as="div">
                       {(active) => (
                         <button
                           type="button"
-                          className="text-left p-2 text-gray-900 hover:bg-theme hover:text-white rounded-md text-xs whitespace-nowrap w-full"
+                          className="w-full text-left p-2 text-gray-900 hover:bg-indigo-50 whitespace-nowrap"
                           onClick={() => openCreateIssueModal()}
                         >
                           Create new
@@ -160,8 +154,8 @@ const SingleCycleBoard: React.FC<Props> = ({
                       {(active) => (
                         <button
                           type="button"
-                          className="p-2 text-left text-gray-900 hover:bg-theme hover:text-white rounded-md text-xs whitespace-nowrap"
-                          // onClick={() => openIssuesListModal()}
+                          className="w-full text-left p-2 text-gray-900 hover:bg-indigo-50 whitespace-nowrap"
+                          onClick={() => openIssuesListModal()}
                         >
                           Add an existing issue
                         </button>

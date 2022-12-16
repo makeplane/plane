@@ -145,37 +145,37 @@ const CycleIssuesListModal: React.FC<Props> = ({
                               )}
                               <ul className="text-sm text-gray-700">
                                 {filteredIssues.map((issue) => {
-                                  // if (issue.cycle !== cycleId)
-                                  return (
-                                    <Combobox.Option
-                                      key={issue.id}
-                                      as="label"
-                                      htmlFor={`issue-${issue.id}`}
-                                      value={issue.id}
-                                      className={({ active }) =>
-                                        classNames(
-                                          "flex items-center gap-2 cursor-pointer select-none w-full rounded-md px-3 py-2",
-                                          active ? "bg-gray-900 bg-opacity-5 text-gray-900" : ""
-                                        )
-                                      }
-                                    >
-                                      {({ selected }) => (
-                                        <>
-                                          <input type="checkbox" checked={selected} readOnly />
-                                          <span
-                                            className="flex-shrink-0 h-1.5 w-1.5 block rounded-full"
-                                            style={{
-                                              backgroundColor: issue.state_detail.color,
-                                            }}
-                                          />
-                                          <span className="flex-shrink-0 text-xs text-gray-500">
-                                            {activeProject?.identifier}-{issue.sequence_id}
-                                          </span>
-                                          {issue.name}
-                                        </>
-                                      )}
-                                    </Combobox.Option>
-                                  );
+                                  if (!issue.issue_cycle)
+                                    return (
+                                      <Combobox.Option
+                                        key={issue.id}
+                                        as="label"
+                                        htmlFor={`issue-${issue.id}`}
+                                        value={issue.id}
+                                        className={({ active }) =>
+                                          classNames(
+                                            "flex items-center gap-2 cursor-pointer select-none w-full rounded-md px-3 py-2",
+                                            active ? "bg-gray-900 bg-opacity-5 text-gray-900" : ""
+                                          )
+                                        }
+                                      >
+                                        {({ selected }) => (
+                                          <>
+                                            <input type="checkbox" checked={selected} readOnly />
+                                            <span
+                                              className="flex-shrink-0 h-1.5 w-1.5 block rounded-full"
+                                              style={{
+                                                backgroundColor: issue.state_detail.color,
+                                              }}
+                                            />
+                                            <span className="flex-shrink-0 text-xs text-gray-500">
+                                              {activeProject?.identifier}-{issue.sequence_id}
+                                            </span>
+                                            {issue.name}
+                                          </>
+                                        )}
+                                      </Combobox.Option>
+                                    );
                                 })}
                               </ul>
                             </li>

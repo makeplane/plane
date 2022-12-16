@@ -14,8 +14,8 @@ type Props = {
   selectedGroup: NestedKeyOf<IIssue> | null;
   members: IProjectMember[] | undefined;
   openCreateIssueModal: (issue?: IIssue, actionType?: "create" | "edit" | "delete") => void;
-  openIssuesListModal: (cycleId: string) => void;
-  removeIssueFromCycle: (cycleId: string, bridgeId: string) => void;
+  openIssuesListModal: () => void;
+  removeIssueFromCycle: (bridgeId: string) => void;
 };
 
 const CyclesBoardView: React.FC<Props> = ({

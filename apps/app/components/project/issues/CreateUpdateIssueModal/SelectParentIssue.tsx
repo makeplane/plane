@@ -8,7 +8,7 @@ import type { IIssue, IssueResponse } from "types";
 // icons
 import { UserIcon } from "@heroicons/react/24/outline";
 // components
-import IssuesListModal from "components/project/issues/IssuesListModal";
+import IssuesListModal from "components/project/issues/issues-list-modal";
 
 type Props = {
   control: Control<IIssue, any>;

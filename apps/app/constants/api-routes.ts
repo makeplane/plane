@@ -132,3 +132,18 @@ export const REMOVE_ISSUE_FROM_CYCLE = (
   bridgeId: string
 ) =>
   `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-issues/${bridgeId}/`;
+
+// modules
+export const MODULES_ENDPOINT = (workspaceSlug: string, projectId: string) =>
+  `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/`;
+export const MODULE_DETAIL = (workspaceSlug: string, projectId: string, moduleId: string) =>
+  `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/`;
+export const MODULE_ISSUES = (workspaceSlug: string, projectId: string, moduleId: string) =>
+  `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/module-issues/`;
+export const MODULE_ISSUE_DETAIL = (
+  workspaceSlug: string,
+  projectId: string,
+  moduleId: string,
+  issueId: string
+) =>
+  `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/module-issues/${issueId}/`;

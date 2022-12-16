@@ -219,6 +219,7 @@ const ProjectIssues: NextPage = () => {
                             groupByOptions.find((option) => option.key === groupByProperty)?.name ??
                             "Select"
                           }
+                          width="auto"
                         >
                           {groupByOptions.map((option) => (
                             <CustomMenu.MenuItem
@@ -237,6 +238,7 @@ const ProjectIssues: NextPage = () => {
                             orderByOptions.find((option) => option.key === orderBy)?.name ??
                             "Select"
                           }
+                          width="auto"
                         >
                           {orderByOptions.map((option) =>
                             groupByProperty === "priority" && option.key === "priority" ? null : (
@@ -257,6 +259,7 @@ const ProjectIssues: NextPage = () => {
                             filterIssueOptions.find((option) => option.key === filterIssue)?.name ??
                             "Select"
                           }
+                          width="auto"
                         >
                           {filterIssueOptions.map((option) => (
                             <CustomMenu.MenuItem

@@ -24,7 +24,7 @@ import {
 import ShortcutsModal from "components/command-palette/shortcuts";
 import CreateProjectModal from "components/project/create-project-modal";
 import CreateUpdateIssuesModal from "components/project/issues/CreateUpdateIssueModal";
-import CreateUpdateCycleModal from "components/project/cycles/CreateUpdateCyclesModal";
+import CreateUpdateCycleModal from "components/project/cycles/create-update-cycle-modal";
 // ui
 import { Button } from "ui";
 // types
@@ -33,6 +33,7 @@ import { IIssue, IssueResponse } from "types";
 import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // constants
 import { classNames, copyTextToClipboard } from "constants/common";
+import CreateUpdateModuleModal from "components/project/modules/create-update-module-modal";
 
 type FormInput = {
   issue_ids: string[];
@@ -47,6 +48,7 @@ const CommandPalette: React.FC = () => {
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [isShortcutsModalOpen, setIsShortcutsModalOpen] = useState(false);
   const [isCreateCycleModalOpen, setIsCreateCycleModalOpen] = useState(false);
+  const [isCreateModuleModalOpen, setisCreateModuleModalOpen] = useState(false);
 
   const { activeWorkspace, activeProject, issues } = useUser();
 
@@ -109,6 +111,9 @@ const CommandPalette: React.FC = () => {
       } else if ((e.ctrlKey || e.metaKey) && e.key === "q") {
         e.preventDefault();
         setIsCreateCycleModalOpen(true);
+      } else if ((e.ctrlKey || e.metaKey) && e.key === "m") {
+        e.preventDefault();
+        setisCreateModuleModalOpen(true);
       } else if ((e.ctrlKey || e.metaKey) && e.altKey && e.key === "c") {
         e.preventDefault();
 
@@ -184,11 +189,18 @@ const CommandPalette: React.FC = () => {
       <ShortcutsModal isOpen={isShortcutsModalOpen} setIsOpen={setIsShortcutsModalOpen} />
       <CreateProjectModal isOpen={isProjectModalOpen} setIsOpen={setIsProjectModalOpen} />
       {activeProject && (
-        <CreateUpdateCycleModal
-          isOpen={isCreateCycleModalOpen}
-          setIsOpen={setIsCreateCycleModalOpen}
-          projectId={activeProject.id}
-        />
+        <>
+          <CreateUpdateCycleModal
+            isOpen={isCreateCycleModalOpen}
+            setIsOpen={setIsCreateCycleModalOpen}
+            projectId={activeProject.id}
+          />
+          <CreateUpdateModuleModal
+            isOpen={isCreateModuleModalOpen}
+            setIsOpen={setisCreateModuleModalOpen}
+            projectId={activeProject.id}
+          />
+        </>
       )}
       <CreateUpdateIssuesModal
         isOpen={isIssueModalOpen}

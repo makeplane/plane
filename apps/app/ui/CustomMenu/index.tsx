@@ -4,28 +4,41 @@ import Link from "next/link";
 // headless ui
 import { Menu, Transition } from "@headlessui/react";
 // icons
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
-// commons
-import { classNames } from "constants/common";
+import { ChevronDownIcon, EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
 // types
 import type { MenuItemProps, Props } from "./types";
+// constants
+import { classNames } from "constants/common";
 
-const CustomMenu = ({ children, label, textAlignment }: Props) => {
+const CustomMenu = ({
+  children,
+  label,
+  className = "",
+  ellipsis = false,
+  width,
+  textAlignment,
+}: Props) => {
   return (
-    <Menu as="div" className="relative inline-block text-left">
+    <Menu as="div" className={`relative text-left ${className}`}>
       <div>
-        <Menu.Button
-          className={`inline-flex w-32 justify-between gap-x-4 rounded-md border border-gray-300 bg-white px-4 py-1 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-100 ${
-            textAlignment === "right"
-              ? "text-right"
-              : textAlignment === "center"
-              ? "text-center"
-              : "text-left"
-          }`}
-        >
-          <span className="truncate w-20">{label}</span>
-          <ChevronDownIcon className="-mr-1 ml-2 h-5 w-5" aria-hidden="true" />
-        </Menu.Button>
+        {ellipsis ? (
+          <Menu.Button className="grid relative place-items-center hover:bg-gray-100 rounded p-1 focus:outline-none">
+            <EllipsisHorizontalIcon className="h-4 w-4" />
+          </Menu.Button>
+        ) : (
+          <Menu.Button
+            className={`flex justify-between items-center gap-1 hover:bg-gray-100 border rounded-md shadow-sm px-2 w-full py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300 ${
+              textAlignment === "right"
+                ? "text-right"
+                : textAlignment === "center"
+                ? "text-center"
+                : "text-left"
+            }`}
+          >
+            {label}
+            <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
+          </Menu.Button>
+        )}
       </div>
 
       <Transition
@@ -37,7 +50,11 @@ const CustomMenu = ({ children, label, textAlignment }: Props) => {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+        <Menu.Items
+          className={`absolute right-0 z-10 mt-2 origin-top-right rounded-md bg-white text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ${
+            width === "auto" ? "min-w-full whitespace-nowrap" : "w-56"
+          }`}
+        >
           <div className="py-1">{children}</div>
         </Menu.Items>
       </Transition>
@@ -48,14 +65,12 @@ const CustomMenu = ({ children, label, textAlignment }: Props) => {
 const MenuItem: React.FC<MenuItemProps> = ({ children, renderAs, href, onClick }) => {
   return (
     <Menu.Item>
-      {({ active }) =>
+      {({ active, close }) =>
         renderAs === "a" ? (
           <Link href={href ?? ""}>
             <a
-              className={classNames(
-                active ? "bg-gray-100 text-gray-900" : "text-gray-700",
-                "block px-4 py-2 text-sm"
-              )}
+              className="block p-2 text-gray-700 hover:bg-indigo-50 hover:text-gray-900"
+              onClick={close}
             >
               {children}
             </a>
@@ -65,8 +80,8 @@ const MenuItem: React.FC<MenuItemProps> = ({ children, renderAs, href, onClick }
             type="button"
             onClick={onClick}
             className={classNames(
-              active ? "bg-gray-100 text-gray-900" : "text-gray-700",
-              "block w-full px-4 py-2 text-left text-sm"
+              active ? "bg-indigo-50 text-gray-900" : "text-gray-700",
+              "block w-full p-2 text-left"
             )}
           >
             {children}

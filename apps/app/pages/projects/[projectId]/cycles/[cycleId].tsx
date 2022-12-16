@@ -21,7 +21,7 @@ import useUser from "lib/hooks/useUser";
 import useIssuesFilter from "lib/hooks/useIssuesFilter";
 import useIssuesProperties from "lib/hooks/useIssuesProperties";
 // headless ui
-import { Menu, Popover, Transition } from "@headlessui/react";
+import { Popover, Transition } from "@headlessui/react";
 // ui
 import { BreadcrumbItem, Breadcrumbs, CustomMenu } from "ui";
 // icons
@@ -41,6 +41,8 @@ import { CYCLE_ISSUES, PROJECT_MEMBERS } from "constants/fetch-keys";
 // constants
 import { classNames, replaceUnderscoreIfSnakeCase } from "constants/common";
 import CreateUpdateIssuesModal from "components/project/issues/CreateUpdateIssueModal";
+import CycleIssuesListModal from "components/project/cycles/cycle-issues-list-modal";
+import ConfirmCycleDeletion from "components/project/cycles/confirm-cycle-deletion";
 
 const groupByOptions: Array<{ name: string; key: NestedKeyOf<IIssue> | null }> = [
   { name: "State", key: "state_detail.name" },
@@ -79,8 +81,9 @@ const SingleCycle: React.FC<Props> = () => {
   const [isIssueModalOpen, setIsIssueModalOpen] = useState(false);
   const [selectedCycle, setSelectedCycle] = useState<SelectSprintType>();
   const [selectedIssues, setSelectedIssues] = useState<SelectIssue>();
+  const [cycleIssuesListModal, setCycleIssuesListModal] = useState(false);
 
-  const { activeWorkspace, activeProject, cycles } = useUser();
+  const { activeWorkspace, activeProject, cycles, issues } = useUser();
 
   const router = useRouter();
 
@@ -98,9 +101,8 @@ const SingleCycle: React.FC<Props> = () => {
           cycleServices.getCycleIssues(activeWorkspace?.slug, activeProject?.id, cycleId as string)
       : null
   );
-
   const cycleIssuesArray = cycleIssues?.map((issue) => {
-    return issue.issue_details;
+    return { bridge: issue.id, ...issue.issue_details };
   });
 
   const { data: members } = useSWR(
@@ -141,6 +143,10 @@ const SingleCycle: React.FC<Props> = () => {
       if (issue) setSelectedIssues({ ...issue, actionType });
       setIsIssueModalOpen(true);
     }
+  };
+
+  const openIssuesListModal = () => {
+    setCycleIssuesListModal(true);
   };
 
   const addIssueToCycle = (cycleId: string, issueId: string) => {
@@ -202,16 +208,16 @@ const SingleCycle: React.FC<Props> = () => {
     // console.log(result);
   };
 
-  const removeIssueFromCycle = (cycleId: string, bridgeId: string) => {
+  const removeIssueFromCycle = (bridgeId: string) => {
     if (activeWorkspace && activeProject) {
       mutate<CycleIssueResponse[]>(
-        CYCLE_ISSUES(cycleId),
+        CYCLE_ISSUES(cycleId as string),
         (prevData) => prevData?.filter((p) => p.id !== bridgeId),
         false
       );
 
       issuesServices
-        .removeIssueFromCycle(activeWorkspace.slug, activeProject.id, cycleId, bridgeId)
+        .removeIssueFromCycle(activeWorkspace.slug, activeProject.id, cycleId as string, bridgeId)
         .then((res) => {
           console.log(res);
         })
@@ -234,6 +240,12 @@ const SingleCycle: React.FC<Props> = () => {
         setIsOpen={setIsIssueModalOpen}
         projectId={activeProject?.id}
       />
+      <CycleIssuesListModal
+        isOpen={cycleIssuesListModal}
+        handleClose={() => setCycleIssuesListModal(false)}
+        issues={issues}
+        cycleId={cycleId as string}
+      />
       <AppLayout
         breadcrumbs={
           <Breadcrumbs>
@@ -244,38 +256,25 @@ const SingleCycle: React.FC<Props> = () => {
           </Breadcrumbs>
         }
         left={
-          <Menu as="div" className="relative inline-block">
-            <Menu.Button className="flex items-center gap-1 border ml-2 px-2 py-1 rounded hover:bg-gray-100 text-xs font-medium">
-              <ArrowPathIcon className="h-3 w-3" />
-              {cycles?.find((c) => c.id === cycleId)?.name}
-            </Menu.Button>
-
-            <Transition
-              as={React.Fragment}
-              enter="transition ease-out duration-100"
-              enterFrom="transform opacity-0 scale-95"
-              enterTo="transform opacity-100 scale-100"
-              leave="transition ease-in duration-75"
-              leaveFrom="transform opacity-100 scale-100"
-              leaveTo="transform opacity-0 scale-95"
-            >
-              <Menu.Items className="absolute left-3 mt-2 p-1 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
-                {cycles?.map((cycle) => (
-                  <Menu.Item key={cycle.id}>
-                    <Link href={`/projects/${activeProject?.id}/cycles/${cycle.id}`}>
-                      <a
-                        className={`block text-left p-2 text-gray-900 hover:bg-theme hover:text-white rounded-md text-xs whitespace-nowrap w-full ${
-                          cycle.id === cycleId ? "bg-theme text-white" : ""
-                        }`}
-                      >
-                        {cycle.name}
-                      </a>
-                    </Link>
-                  </Menu.Item>
-                ))}
-              </Menu.Items>
-            </Transition>
-          </Menu>
+          <CustomMenu
+            label={
+              <>
+                <ArrowPathIcon className="h-3 w-3" />
+                {cycles?.find((c) => c.id === cycleId)?.name}
+              </>
+            }
+            className="ml-1.5"
+          >
+            {cycles?.map((cycle) => (
+              <CustomMenu.MenuItem
+                key={cycle.id}
+                renderAs="a"
+                href={`/projects/${activeProject?.id}/cycles/${cycle.id}`}
+              >
+                {cycle.name}
+              </CustomMenu.MenuItem>
+            ))}
+          </CustomMenu>
         }
         right={
           <div className="flex items-center gap-2">
@@ -327,7 +326,7 @@ const SingleCycle: React.FC<Props> = () => {
                     leaveFrom="opacity-100 translate-y-0"
                     leaveTo="opacity-0 translate-y-1"
                   >
-                    <Popover.Panel className="absolute mr-5 right-1/2 z-10 mt-1 w-screen max-w-xs translate-x-1/2 transform p-3 bg-white rounded-lg shadow-lg overflow-hidden">
+                    <Popover.Panel className="absolute right-0 z-10 mt-1 w-screen max-w-xs transform p-3 bg-white rounded-lg shadow-lg overflow-hidden">
                       <div className="relative flex flex-col gap-1 gap-y-4">
                         <div className="flex justify-between items-center">
                           <h4 className="text-sm text-gray-600">Group by</h4>
@@ -336,6 +335,7 @@ const SingleCycle: React.FC<Props> = () => {
                               groupByOptions.find((option) => option.key === groupByProperty)
                                 ?.name ?? "Select"
                             }
+                            width="auto"
                           >
                             {groupByOptions.map((option) => (
                               <CustomMenu.MenuItem
@@ -354,6 +354,7 @@ const SingleCycle: React.FC<Props> = () => {
                               orderByOptions.find((option) => option.key === orderBy)?.name ??
                               "Select"
                             }
+                            width="auto"
                           >
                             {orderByOptions.map((option) =>
                               groupByProperty === "priority" && option.key === "priority" ? null : (
@@ -374,6 +375,7 @@ const SingleCycle: React.FC<Props> = () => {
                               filterIssueOptions.find((option) => option.key === filterIssue)
                                 ?.name ?? "Select"
                             }
+                            width="auto"
                           >
                             {filterIssueOptions.map((option) => (
                               <CustomMenu.MenuItem
@@ -420,9 +422,7 @@ const SingleCycle: React.FC<Props> = () => {
             selectedGroup={groupByProperty}
             properties={properties}
             openCreateIssueModal={openCreateIssueModal}
-            openIssuesListModal={() => {
-              return;
-            }}
+            openIssuesListModal={openIssuesListModal}
             removeIssueFromCycle={removeIssueFromCycle}
           />
         ) : (
@@ -434,9 +434,7 @@ const SingleCycle: React.FC<Props> = () => {
               selectedGroup={groupByProperty}
               members={members}
               openCreateIssueModal={openCreateIssueModal}
-              openIssuesListModal={() => {
-                return;
-              }}
+              openIssuesListModal={openIssuesListModal}
             />
           </div>
         )}

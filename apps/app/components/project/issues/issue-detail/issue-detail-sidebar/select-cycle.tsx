@@ -10,6 +10,7 @@ import { classNames } from "constants/common";
 import { Spinner } from "ui";
 import React from "react";
 import { ArrowPathIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
+import CustomSelect from "ui/custom-select";
 
 type Props = {
   control: Control<IIssue, any>;
@@ -30,64 +31,38 @@ const SelectCycle: React.FC<Props> = ({ control, handleCycleChange }) => {
           control={control}
           name="cycle"
           render={({ field: { value } }) => (
-            <Listbox
-              as="div"
-              value={value}
-              onChange={(value: any) => {
-                handleCycleChange(value);
-              }}
-              className="flex-shrink-0"
-            >
-              {({ open }) => (
-                <div className="relative">
-                  <Listbox.Button className="flex justify-between items-center gap-1 hover:bg-gray-100 border rounded-md shadow-sm px-2 w-full py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300">
-                    <span
-                      className={classNames(
-                        value ? "" : "text-gray-900",
-                        "hidden truncate sm:block text-left"
-                      )}
-                    >
-                      {value ? cycles?.find((c) => c.id === value)?.name : "None"}
-                    </span>
-                    <ChevronDownIcon className="h-3 w-3" />
-                  </Listbox.Button>
-
-                  <Transition
-                    show={open}
-                    as={React.Fragment}
-                    leave="transition ease-in duration-100"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
+            <>
+              <CustomSelect
+                label={
+                  <span
+                    className={classNames(
+                      value ? "" : "text-gray-900",
+                      "hidden truncate sm:block text-left"
+                    )}
                   >
-                    <Listbox.Options className="absolute z-10 right-0 mt-1 w-40 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
-                      <div className="p-1">
-                        {cycles ? (
-                          cycles.length > 0 ? (
-                            cycles.map((option) => (
-                              <Listbox.Option
-                                key={option.id}
-                                className={({ active, selected }) =>
-                                  `${
-                                    active || selected ? "text-white bg-theme" : "text-gray-900"
-                                  } flex items-center gap-2 cursor-pointer select-none relative p-2 rounded-md truncate`
-                                }
-                                value={option.id}
-                              >
-                                {option.name}
-                              </Listbox.Option>
-                            ))
-                          ) : (
-                            <div className="text-center">No cycles found</div>
-                          )
-                        ) : (
-                          <Spinner />
-                        )}
-                      </div>
-                    </Listbox.Options>
-                  </Transition>
-                </div>
-              )}
-            </Listbox>
+                    {value ? cycles?.find((c) => c.id === value)?.name : "None"}
+                  </span>
+                }
+                value={value}
+                onChange={(value: any) => {
+                  handleCycleChange(value);
+                }}
+              >
+                {cycles ? (
+                  cycles.length > 0 ? (
+                    cycles.map((option) => (
+                      <CustomSelect.Option key={option.id} value={option.id}>
+                        {option.name}
+                      </CustomSelect.Option>
+                    ))
+                  ) : (
+                    <div className="text-center">No cycles found</div>
+                  )
+                ) : (
+                  <Spinner />
+                )}
+              </CustomSelect>
+            </>
           )}
         />
       </div>

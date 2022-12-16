@@ -6,33 +6,23 @@ import { Listbox, Transition } from "@headlessui/react";
 // react hook form
 import { useForm, Controller, UseFormWatch } from "react-hook-form";
 // services
-import stateServices from "lib/services/state.service";
 import issuesServices from "lib/services/issues.service";
-import workspaceService from "lib/services/workspace.service";
 // hooks
 import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
-// components
-import IssuesListModal from "components/project/issues/IssuesListModal";
 // fetching keys
-import { STATE_LIST, WORKSPACE_MEMBERS, PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
+import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 // commons
-import { classNames, copyTextToClipboard } from "constants/common";
-import { PRIORITIES } from "constants/";
+import { copyTextToClipboard } from "constants/common";
 // ui
 import { Input, Button, Spinner } from "ui";
 import { Popover } from "@headlessui/react";
 // icons
 import {
-  UserIcon,
   TagIcon,
-  UserGroupIcon,
   ChevronDownIcon,
-  Squares2X2Icon,
-  ChartBarIcon,
   ClipboardDocumentIcon,
   LinkIcon,
-  ArrowPathIcon,
   CalendarDaysIcon,
   TrashIcon,
   PlusIcon,
@@ -40,7 +30,7 @@ import {
 } from "@heroicons/react/24/outline";
 // types
 import type { Control } from "react-hook-form";
-import type { IIssue, IIssueLabels, IssueResponse, IState, NestedKeyOf } from "types";
+import type { IIssue, IIssueLabels, NestedKeyOf } from "types";
 import { TwitterPicker } from "react-color";
 import { positionEditorElement } from "components/lexical/helpers/editor";
 import SelectState from "./select-state";
@@ -48,6 +38,8 @@ import SelectPriority from "./select-priority";
 import SelectParent from "./select-parent";
 import SelectCycle from "./select-cycle";
 import SelectAssignee from "./select-assignee";
+import SelectBlocker from "./select-blocker";
+import SelectBlocked from "./select-blocked";
 
 type Props = {
   control: Control<IIssue, any>;
@@ -69,11 +61,9 @@ const IssueDetailSidebar: React.FC<Props> = ({
   watch: watchIssue,
   setDeleteIssueModal,
 }) => {
-  const [isBlockerModalOpen, setIsBlockerModalOpen] = useState(false);
-  const [isBlockedModalOpen, setIsBlockedModalOpen] = useState(false);
   const [createLabelForm, setCreateLabelForm] = useState(false);
 
-  const { activeWorkspace, activeProject, cycles, issues } = useUser();
+  const { activeWorkspace, activeProject, issues } = useUser();
 
   const { setToastAlert } = useToast();
 
@@ -106,49 +96,14 @@ const IssueDetailSidebar: React.FC<Props> = ({
       });
   };
 
-  const sidebarSections: Array<
-    Array<{
-      label: string;
-      name: NestedKeyOf<IIssue>;
-      canSelectMultipleOptions: boolean;
-      icon: (props: any) => JSX.Element;
-      options?: Array<{ label: string; value: any; color?: string }>;
-      modal: boolean;
-      issuesList?: Array<IIssue>;
-      isOpen?: boolean;
-      setIsOpen?: (arg: boolean) => void;
-    }>
-  > = [
-    [
-      // {
-      //   label: "Blocker",
-      //   name: "blockers_list",
-      //   canSelectMultipleOptions: true,
-      //   icon: UserIcon,
-      //   issuesList: issues?.results.filter((i) => i.id !== issueDetail?.id) ?? [],
-      //   modal: true,
-      //   isOpen: isBlockerModalOpen,
-      //   setIsOpen: setIsBlockerModalOpen,
-      // },
-      // {
-      //   label: "Blocked",
-      //   name: "blocked_list",
-      //   canSelectMultipleOptions: true,
-      //   icon: UserIcon,
-      //   issuesList: issues?.results.filter((i) => i.id !== issueDetail?.id) ?? [],
-      //   modal: true,
-      //   isOpen: isBlockedModalOpen,
-      //   setIsOpen: setIsBlockedModalOpen,
-      // },
-    ],
-  ];
-
   const handleCycleChange = (cycleId: string) => {
     if (activeWorkspace && activeProject && issueDetail)
       issuesServices.addIssueToCycle(activeWorkspace.slug, activeProject.id, cycleId, {
         issue: issueDetail.id,
       });
   };
+
+  console.log(issueDetail);
 
   return (
     <>
@@ -215,7 +170,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
           <div className="py-1">
             <SelectState control={control} submitChanges={submitChanges} />
             <SelectAssignee control={control} submitChanges={submitChanges} />
-            <SelectPriority control={control} submitChanges={submitChanges} />
+            <SelectPriority control={control} submitChanges={submitChanges} watch={watchIssue} />
           </div>
           <div className="py-1">
             <SelectParent
@@ -245,7 +200,17 @@ const IssueDetailSidebar: React.FC<Props> = ({
                   </div>
                 )
               }
-              watchIssue={watchIssue}
+              watch={watchIssue}
+            />
+            <SelectBlocker
+              submitChanges={submitChanges}
+              issuesList={issues?.results.filter((i) => i.id !== issueDetail?.id) ?? []}
+              watch={watchIssue}
+            />
+            <SelectBlocked
+              submitChanges={submitChanges}
+              issuesList={issues?.results.filter((i) => i.id !== issueDetail?.id) ?? []}
+              watch={watchIssue}
             />
             <div className="flex items-center py-2 flex-wrap">
               <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
@@ -274,72 +239,6 @@ const IssueDetailSidebar: React.FC<Props> = ({
           <div className="py-1">
             <SelectCycle control={control} handleCycleChange={handleCycleChange} />
           </div>
-          {/* {sidebarSections.map((section, index) => (
-            <div key={index} className="py-1">
-              {section.map((item) => (
-                <div key={item.label} className="flex items-center py-2 flex-wrap">
-                  <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
-                    <item.icon className="flex-shrink-0 h-4 w-4" />
-                    <p>{item.label}</p>
-                  </div>
-                  <div className="sm:basis-1/2">
-                    <Controller
-                      control={control}
-                      name={item.name as keyof IIssue}
-                      render={({ field: { value, onChange } }) => (
-                        <>
-                          <IssuesListModal
-                            isOpen={Boolean(item?.isOpen)}
-                            handleClose={() => item.setIsOpen && item.setIsOpen(false)}
-                            onChange={(val) => {
-                              console.log(val);
-                              submitChanges({ [item.name]: val });
-                              onChange(val);
-                            }}
-                            issues={item?.issuesList ?? []}
-                            title={`Select ${item.label}`}
-                            multiple={item.canSelectMultipleOptions}
-                            value={value}
-                            customDisplay={
-                              issueDetail?.parent_detail ? (
-                                <button
-                                  type="button"
-                                  className="flex items-center gap-2 bg-gray-100 px-3 py-2 text-xs rounded"
-                                  onClick={() => submitChanges({ parent: null })}
-                                >
-                                  {issueDetail.parent_detail?.name}
-                                  <XMarkIcon className="h-3 w-3" />
-                                </button>
-                              ) : (
-                                <div className="inline-block bg-gray-100 px-3 py-2 text-xs rounded">
-                                  No parent selected
-                                </div>
-                              )
-                            }
-                          />
-                          <button
-                            type="button"
-                            className="flex justify-between items-center gap-1 hover:bg-gray-100 border rounded-md shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300 w-full"
-                            onClick={() => item.setIsOpen && item.setIsOpen(true)}
-                          >
-                            {watchIssue(`${item.name as keyof IIssue}`) &&
-                            watchIssue(`${item.name as keyof IIssue}`) !== ""
-                              ? `${activeProject?.identifier}-
-                                ${
-                                  issues?.results.find(
-                                    (i) => i.id === watchIssue(`${item.name as keyof IIssue}`)
-                                  )?.sequence_id
-                                }`
-                              : `Select ${item.label}`}
-                          </button>
-                        </>
-                      )}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          ))} */}
         </div>
         <div className="pt-3 space-y-3">
           <div className="flex justify-between items-start">
@@ -376,7 +275,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
                       as="div"
                       value={value}
                       multiple
-                      onChange={(val) => submitChanges({ labels_list: val })}
+                      onChange={(val: any) => submitChanges({ labels_list: val })}
                       className="flex-shrink-0"
                     >
                       {({ open }) => (
@@ -395,7 +294,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
                               leaveTo="opacity-0"
                             >
                               <Listbox.Options className="absolute z-10 right-0 mt-1 w-40 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
-                                <div className="p-1">
+                                <div className="py-1">
                                   {issueLabels ? (
                                     issueLabels.length > 0 ? (
                                       issueLabels.map((label: IIssueLabels) => (
@@ -403,10 +302,8 @@ const IssueDetailSidebar: React.FC<Props> = ({
                                           key={label.id}
                                           className={({ active, selected }) =>
                                             `${
-                                              active || selected
-                                                ? "text-white bg-theme"
-                                                : "text-gray-900"
-                                            } flex items-center gap-2 cursor-pointer select-none relative p-2 rounded-md truncate`
+                                              active || selected ? "bg-indigo-50" : ""
+                                            } flex items-center gap-2 text-gray-900 cursor-pointer select-none relative p-2 truncate`
                                           }
                                           value={label.id}
                                         >

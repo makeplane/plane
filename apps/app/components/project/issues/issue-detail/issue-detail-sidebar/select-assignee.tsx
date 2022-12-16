@@ -126,7 +126,7 @@ const SelectAssignee: React.FC<Props> = ({ control, submitChanges }) => {
                     leaveTo="opacity-0"
                   >
                     <Listbox.Options className="absolute z-10 right-0 mt-1 w-40 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
-                      <div className="p-1">
+                      <div className="py-1">
                         {people ? (
                           people.length > 0 ? (
                             people.map((option) => (
@@ -134,8 +134,8 @@ const SelectAssignee: React.FC<Props> = ({ control, submitChanges }) => {
                                 key={option.member.id}
                                 className={({ active, selected }) =>
                                   `${
-                                    active || selected ? "text-white bg-theme" : "text-gray-900"
-                                  } flex items-center gap-2 cursor-pointer select-none relative p-2 rounded-md truncate`
+                                    active || selected ? "bg-indigo-50" : ""
+                                  } flex items-center gap-2 text-gray-900 cursor-pointer select-none relative p-2 rounded-md truncate`
                                 }
                                 value={option.member.id}
                               >

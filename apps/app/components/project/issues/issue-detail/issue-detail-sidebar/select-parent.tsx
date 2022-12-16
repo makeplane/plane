@@ -5,7 +5,7 @@ import { Control, Controller, UseFormWatch } from "react-hook-form";
 // hooks
 import useUser from "lib/hooks/useUser";
 // components
-import IssuesListModal from "components/project/issues/IssuesListModal";
+import IssuesListModal from "components/project/issues/issues-list-modal";
 // icons
 import { UserIcon } from "@heroicons/react/24/outline";
 // types
@@ -16,7 +16,7 @@ type Props = {
   submitChanges: (formData: Partial<IIssue>) => void;
   issuesList: IIssue[];
   customDisplay: JSX.Element;
-  watchIssue: UseFormWatch<IIssue>;
+  watch: UseFormWatch<IIssue>;
 };
 
 const SelectParent: React.FC<Props> = ({
@@ -24,7 +24,7 @@ const SelectParent: React.FC<Props> = ({
   submitChanges,
   issuesList,
   customDisplay,
-  watchIssue,
+  watch,
 }) => {
   const [isParentModalOpen, setIsParentModalOpen] = useState(false);
 
@@ -60,11 +60,11 @@ const SelectParent: React.FC<Props> = ({
           className="flex justify-between items-center gap-1 hover:bg-gray-100 border rounded-md shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300 w-full"
           onClick={() => setIsParentModalOpen(true)}
         >
-          {watchIssue("parent") && watchIssue("parent") !== ""
+          {watch("parent") && watch("parent") !== ""
             ? `${activeProject?.identifier}-${
-                issues?.results.find((i) => i.id === watchIssue("parent"))?.sequence_id
+                issues?.results.find((i) => i.id === watch("parent"))?.sequence_id
               }`
-            : "Select Parent"}
+            : "Select issue"}
         </button>
       </div>
     </div>
