@@ -130,12 +130,6 @@ const SingleBoard: React.FC<Props> = ({
                     backgroundColor: `${bgColor}20`,
                   }}
                 >
-                  <span
-                    className={`w-3 h-3 block rounded-full ${!show ? "" : "mr-1"}`}
-                    style={{
-                      backgroundColor: Boolean(bgColor) ? bgColor : undefined,
-                    }}
-                  />
                   <h2
                     className={`text-[0.9rem] font-medium capitalize`}
                     style={{

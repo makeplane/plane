@@ -1,8 +1,8 @@
 import React from "react";
 
 // layouts
-import Container from "layouts/Container";
-import DefaultTopBar from "layouts/Navbar/DefaultTopBar";
+import Container from "layouts/container";
+import DefaultTopBar from "layouts/navbar/DefaultTopBar";
 
 // types
 import type { Props } from "./types";

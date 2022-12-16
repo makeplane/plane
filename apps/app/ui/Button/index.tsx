@@ -20,7 +20,7 @@ const Button = React.forwardRef<HTMLButtonElement, Props>(
       onClick,
       type = "button",
       size = "sm",
-      className,
+      className = "",
       theme = "primary",
       disabled = false,
     },
@@ -39,7 +39,7 @@ const Button = React.forwardRef<HTMLButtonElement, Props>(
                 disabled ? "opacity-70" : ""
               } text-white shadow-sm bg-theme hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 border border-transparent`
             : theme === "secondary"
-            ? "border bg-white"
+            ? "border bg-white hover:bg-gray-100"
             : theme === "success"
             ? `${
                 disabled ? "opacity-70" : ""
@@ -54,7 +54,7 @@ const Button = React.forwardRef<HTMLButtonElement, Props>(
             : size === "lg"
             ? "px-4 py-2 text-base"
             : "px-2.5 py-2 text-sm",
-          className || ""
+          className
         )}
       >
         {children}

@@ -1,6 +1,9 @@
 export type Props = {
   children: React.ReactNode;
-  label: string;
+  label?: string | JSX.Element;
+  className?: string;
+  ellipsis?: boolean;
+  width?: "auto";
   textAlignment?: "left" | "center" | "right";
 };
 

@@ -33,7 +33,7 @@ import SelectPriority from "./SelectPriority";
 import SelectAssignee from "./SelectAssignee";
 import SelectParent from "./SelectParentIssue";
 import CreateUpdateStateModal from "components/project/issues/BoardView/state/CreateUpdateStateModal";
-import CreateUpdateCycleModal from "components/project/cycles/CreateUpdateCyclesModal";
+import CreateUpdateCycleModal from "components/project/cycles/create-update-cycle-modal";
 // types
 import type { IIssue, IssueResponse, CycleIssueResponse } from "types";
 import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
