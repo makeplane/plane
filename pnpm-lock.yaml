@@ -9,15 +9,22 @@ importers:
       turbo: latest
     devDependencies:
       eslint: 8.28.0
-      eslint-config-turbo: 0.0.4_eslint@8.28.0
+      eslint-config-turbo: 0.0.7_eslint@8.28.0
       turbo: 1.6.3
 
   apps/app:
     specifiers:
       '@headlessui/react': ^1.7.3
       '@heroicons/react': ^2.0.12
+      '@lexical/code': ^0.6.4
+      '@lexical/html': ^0.6.4
+      '@lexical/link': ^0.6.4
       '@lexical/list': ^0.6.4
+      '@lexical/markdown': ^0.6.4
       '@lexical/react': ^0.6.4
+      '@lexical/rich-text': ^0.6.4
+      '@lexical/selection': ^0.6.4
+      '@lexical/table': ^0.6.4
       '@lexical/utils': ^0.6.4
       '@types/js-cookie': ^3.0.2
       '@types/lodash': ^4.14.188
@@ -54,8 +61,15 @@ importers:
     dependencies:
       '@headlessui/react': 1.7.4_biqbaboplfbrettd7655fr4n2y
       '@heroicons/react': 2.0.13_react@18.2.0
+      '@lexical/code': 0.6.4_lexical@0.6.4
+      '@lexical/html': 0.6.4_lexical@0.6.4
+      '@lexical/link': 0.6.4_lexical@0.6.4
       '@lexical/list': 0.6.4_lexical@0.6.4
+      '@lexical/markdown': 0.6.4_bxsdi55v3sssedk76lbl4oc7vi
       '@lexical/react': 0.6.4_kpr2eqve2cw3wrreahgz2ip7ja
+      '@lexical/rich-text': 0.6.4_57tb3ip3heyjq7opzdlcjoitia
+      '@lexical/selection': 0.6.4_lexical@0.6.4
+      '@lexical/table': 0.6.4_lexical@0.6.4
       '@lexical/utils': 0.6.4_lexical@0.6.4
       axios: 1.2.0
       js-cookie: 3.0.1
@@ -267,6 +281,23 @@ packages:
       lexical: 0.6.4
     dev: false
 
+  /@lexical/markdown/0.6.4_bxsdi55v3sssedk76lbl4oc7vi:
+    resolution: {integrity: sha512-9kg+BsP4ePCztrK7UYW8a+8ad1/h/OLziJkMZkl3YAkfhJudkHoj4ljCTJZcLuXHtVXmvLZhyGZktitcJImnOg==}
+    peerDependencies:
+      lexical: 0.6.4
+    dependencies:
+      '@lexical/code': 0.6.4_lexical@0.6.4
+      '@lexical/link': 0.6.4_lexical@0.6.4
+      '@lexical/list': 0.6.4_lexical@0.6.4
+      '@lexical/rich-text': 0.6.4_57tb3ip3heyjq7opzdlcjoitia
+      '@lexical/text': 0.6.4_lexical@0.6.4
+      '@lexical/utils': 0.6.4_lexical@0.6.4
+      lexical: 0.6.4
+    transitivePeerDependencies:
+      - '@lexical/clipboard'
+      - '@lexical/selection'
+    dev: false
+
   /@lexical/markdown/0.6.4_dlxdgdmlaurtixklkqcbpqk7be:
     resolution: {integrity: sha512-9kg+BsP4ePCztrK7UYW8a+8ad1/h/OLziJkMZkl3YAkfhJudkHoj4ljCTJZcLuXHtVXmvLZhyGZktitcJImnOg==}
     peerDependencies:
@@ -344,6 +375,19 @@ packages:
       react-error-boundary: 3.1.4_react@18.2.0
     transitivePeerDependencies:
       - yjs
+    dev: false
+
+  /@lexical/rich-text/0.6.4_57tb3ip3heyjq7opzdlcjoitia:
+    resolution: {integrity: sha512-GUTAEUPmSKzL1kldvdHqM9IgiAJC1qfMeDQFyUS2xwWKQnid0nVeUZXNxyBwxZLyOcyDkx5dXp9YiEO6X4x+TQ==}
+    peerDependencies:
+      '@lexical/clipboard': 0.6.4
+      '@lexical/selection': 0.6.4
+      '@lexical/utils': 0.6.4
+      lexical: 0.6.4
+    dependencies:
+      '@lexical/selection': 0.6.4_lexical@0.6.4
+      '@lexical/utils': 0.6.4_lexical@0.6.4
+      lexical: 0.6.4
     dev: false
 
   /@lexical/rich-text/0.6.4_jxqtqauh5scnexlu66czmxsxkq:
@@ -1193,13 +1237,13 @@ packages:
       - supports-color
     dev: true
 
-  /eslint-config-turbo/0.0.4_eslint@8.28.0:
-    resolution: {integrity: sha512-HErPS/wfWkSdV9Yd2dDkhZt3W2B78Ih/aWPFfaHmCMjzPalh+5KxRRGTf8MOBQLCebcWJX0lP1Zvc1rZIHlXGg==}
+  /eslint-config-turbo/0.0.7_eslint@8.28.0:
+    resolution: {integrity: sha512-WbrGlyfs94rOXrhombi1wjIAYGdV2iosgJRndOZtmDQeq5GLTzYmBUCJQZWtLBEBUPCj96RxZ2OL7Cn+xv/Azg==}
     peerDependencies:
-      eslint: ^7.23.0 || ^8.0.0
+      eslint: '>6.6.0'
     dependencies:
       eslint: 8.28.0
-      eslint-plugin-turbo: 0.0.4_eslint@8.28.0
+      eslint-plugin-turbo: 0.0.7_eslint@8.28.0
     dev: true
 
   /eslint-import-resolver-node/0.3.6:
@@ -1345,10 +1389,10 @@ packages:
       string.prototype.matchall: 4.0.8
     dev: true
 
-  /eslint-plugin-turbo/0.0.4_eslint@8.28.0:
-    resolution: {integrity: sha512-dfmYE/iPvoJInQq+5E/0mj140y/rYwKtzZkn3uVK8+nvwC5zmWKQ6ehMWrL4bYBkGzSgpOndZM+jOXhPQ2m8Cg==}
+  /eslint-plugin-turbo/0.0.7_eslint@8.28.0:
+    resolution: {integrity: sha512-iajOH8eD4jha3duztGVBD1BEmvNrQBaA/y3HFHf91vMDRYRwH7BpHSDFtxydDpk5ghlhRxG299SFxz7D6z4MBQ==}
     peerDependencies:
-      eslint: ^7.23.0 || ^8.0.0
+      eslint: '>6.6.0'
     dependencies:
       eslint: 8.28.0
     dev: true
