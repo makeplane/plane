@@ -8,13 +8,21 @@
   "stack": "container",
   "keywords": ["plane", "project management", "django", "next"],
   "addons": ["heroku-postgresql:mini", "heroku-redis:mini"],
+  "buildpacks": [
+    {
+      "url": "https://github.com/heroku/heroku-buildpack-python.git"
+    },
+    {
+      "url": "https://github.com/heroku/heroku-buildpack-nodejs#v176"
+    }
+  ],
   "env": {
     "EMAIL_HOST": {
       "description": "Email host to send emails from",
       "value": ""
     },
     "EMAIL_HOST_USER": {
-      "description" : "Email host to send emails from",
+      "description": "Email host to send emails from",
       "value": ""
     },
     "EMAIL_HOST_PASSWORD": {
@@ -22,7 +30,7 @@
       "value": ""
     },
     "AWS_REGION": {
-      "description" : "AWS Region to use for S3",
+      "description": "AWS Region to use for S3",
       "value": "false"
     },
     "AWS_ACCESS_KEY_ID": {
