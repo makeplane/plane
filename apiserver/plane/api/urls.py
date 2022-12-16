@@ -322,7 +322,7 @@ urlpatterns = [
         name="project-view",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/project-member/me/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/project-members/me/",
         ProjectMemberUserEndpoint.as_view(),
         name="project-view",
     ),
