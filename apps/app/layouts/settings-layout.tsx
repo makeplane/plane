@@ -6,9 +6,9 @@ import { useRouter } from "next/router";
 import useUser from "lib/hooks/useUser";
 // layouts
 import Container from "layouts/container";
-import Sidebar from "layouts/Navbar/main-sidebar";
-import SettingsSidebar from "layouts/Navbar/settings-sidebar";
-import Header from "layouts/Navbar/header";
+import Sidebar from "layouts/navbar/main-sidebar";
+import SettingsSidebar from "layouts/navbar/settings-sidebar";
+import Header from "layouts/navbar/header";
 // components
 import CreateProjectModal from "components/project/create-project-modal";
 // types
