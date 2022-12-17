@@ -5,40 +5,25 @@ import Link from "next/link";
 import Image from "next/image";
 // swr
 import useSWR from "swr";
-// services
-import cycleServices from "lib/services/cycles.service";
 // hooks
 import useUser from "lib/hooks/useUser";
 // ui
-import { Spinner } from "ui";
+import { CustomMenu } from "ui";
 // icons
-import {
-  ArrowsPointingInIcon,
-  ArrowsPointingOutIcon,
-  CalendarDaysIcon,
-  PlusIcon,
-  EllipsisHorizontalIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
+import { CalendarDaysIcon, PlusIcon } from "@heroicons/react/24/outline";
 import User from "public/user.png";
 // types
-import {
-  CycleIssueResponse,
-  ICycle,
-  IIssue,
-  IWorkspaceMember,
-  NestedKeyOf,
-  Properties,
-} from "types";
+import { IIssue, IWorkspaceMember, NestedKeyOf, Properties } from "types";
 // constants
-import { CYCLE_ISSUES, WORKSPACE_MEMBERS } from "constants/fetch-keys";
+import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 import {
   addSpaceIfCamelCase,
+  classNames,
   findHowManyDaysLeft,
   renderShortNumericDateFormat,
 } from "constants/common";
-import { Menu, Transition } from "@headlessui/react";
 import workspaceService from "lib/services/workspace.service";
+import { Menu, Transition } from "@headlessui/react";
 
 type Props = {
   properties: Properties;
@@ -123,48 +108,14 @@ const SingleCycleBoard: React.FC<Props> = ({
               </span>
             </div>
 
-            <Menu as="div" className="relative inline-block">
-              <Menu.Button className="h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-200 duration-300 outline-none">
-                <EllipsisHorizontalIcon className="h-4 w-4" />
-              </Menu.Button>
-
-              <Transition
-                as={React.Fragment}
-                enter="transition ease-out duration-100"
-                enterFrom="transform opacity-0 scale-95"
-                enterTo="transform opacity-100 scale-100"
-                leave="transition ease-in duration-75"
-                leaveFrom="transform opacity-100 scale-100"
-                leaveTo="transform opacity-0 scale-95"
-              >
-                <Menu.Items className="absolute right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10 text-xs">
-                  <div className="py-1">
-                    <Menu.Item as="div">
-                      {(active) => (
-                        <button
-                          type="button"
-                          className="w-full text-left p-2 text-gray-900 hover:bg-indigo-50 whitespace-nowrap"
-                          onClick={() => openCreateIssueModal()}
-                        >
-                          Create new
-                        </button>
-                      )}
-                    </Menu.Item>
-                    <Menu.Item as="div">
-                      {(active) => (
-                        <button
-                          type="button"
-                          className="w-full text-left p-2 text-gray-900 hover:bg-indigo-50 whitespace-nowrap"
-                          onClick={() => openIssuesListModal()}
-                        >
-                          Add an existing issue
-                        </button>
-                      )}
-                    </Menu.Item>
-                  </div>
-                </Menu.Items>
-              </Transition>
-            </Menu>
+            <CustomMenu width="auto" ellipsis>
+              <CustomMenu.MenuItem onClick={() => openCreateIssueModal()}>
+                Create new
+              </CustomMenu.MenuItem>
+              <CustomMenu.MenuItem onClick={() => openIssuesListModal()}>
+                Add an existing issue
+              </CustomMenu.MenuItem>
+            </CustomMenu>
           </div>
         </div>
         <div
@@ -355,13 +306,56 @@ const SingleCycleBoard: React.FC<Props> = ({
               </div>
             );
           })}
-          <button
-            type="button"
-            className="flex items-center text-xs font-medium hover:bg-gray-100 p-2 rounded duration-300 outline-none"
-          >
-            <PlusIcon className="h-3 w-3 mr-1" />
-            Create
-          </button>
+
+          <Menu as="div" className="relative text-left">
+            <Menu.Button className="flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-100 text-xs font-medium">
+              <PlusIcon className="h-3 w-3" />
+              Add issue
+            </Menu.Button>
+
+            <Transition
+              as={React.Fragment}
+              enter="transition ease-out duration-100"
+              enterFrom="transform opacity-0 scale-95"
+              enterTo="transform opacity-100 scale-100"
+              leave="transition ease-in duration-75"
+              leaveFrom="transform opacity-100 scale-100"
+              leaveTo="transform opacity-0 scale-95"
+            >
+              <Menu.Items className="absolute left-0 z-10 mt-1 rounded-md bg-white text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none whitespace-nowrap">
+                <div className="py-1">
+                  <Menu.Item>
+                    {({ active }) => (
+                      <button
+                        type="button"
+                        className={classNames(
+                          active ? "bg-indigo-50 text-gray-900" : "text-gray-700",
+                          "block w-full p-2 text-left"
+                        )}
+                        onClick={() => openCreateIssueModal()}
+                      >
+                        Create new
+                      </button>
+                    )}
+                  </Menu.Item>
+                  <Menu.Item>
+                    {({ active }) => (
+                      <button
+                        type="button"
+                        className={classNames(
+                          active ? "bg-indigo-50 text-gray-900" : "text-gray-700",
+                          "block w-full p-2 text-left"
+                        )}
+                        onClick={() => openIssuesListModal()}
+                      >
+                        Add an existing issue
+                      </button>
+                    )}
+                  </Menu.Item>
+                </div>
+              </Menu.Items>
+            </Transition>
+          </Menu>
         </div>
       </div>
     </div>

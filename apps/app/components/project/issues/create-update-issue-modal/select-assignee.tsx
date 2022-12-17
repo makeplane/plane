@@ -39,7 +39,13 @@ const SelectAssignee: React.FC<Props> = ({ control }) => {
           title="Assignees"
           optionsFontsize="sm"
           options={people?.map((person) => {
-            return { value: person.member.id, display: person.member.first_name };
+            return {
+              value: person.member.id,
+              display:
+                person.member.first_name && person.member.first_name !== ""
+                  ? person.member.first_name
+                  : person.member.email,
+            };
           })}
           multiple={true}
           value={value}

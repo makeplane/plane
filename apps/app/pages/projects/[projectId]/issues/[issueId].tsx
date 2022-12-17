@@ -9,16 +9,8 @@ import React, { useCallback, useEffect, useState } from "react";
 import useSWR, { mutate } from "swr";
 // react hook form
 import { useForm } from "react-hook-form";
-// headless ui
-import { Disclosure, Menu, Tab, Transition } from "@headlessui/react";
 // services
 import issuesServices from "lib/services/issues.service";
-// fetch keys
-import {
-  PROJECT_ISSUES_ACTIVITY,
-  PROJECT_ISSUES_COMMENTS,
-  PROJECT_ISSUES_LIST,
-} from "constants/fetch-keys";
 // hooks
 import useUser from "lib/hooks/useUser";
 // hoc
@@ -26,22 +18,18 @@ import withAuth from "lib/hoc/withAuthWrapper";
 // layouts
 import AppLayout from "layouts/app-layout";
 // components
-import CreateUpdateIssuesModal from "components/project/issues/CreateUpdateIssueModal";
+import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
 import IssueCommentSection from "components/project/issues/issue-detail/comment/IssueCommentSection";
 import AddAsSubIssue from "components/project/issues/issue-detail/add-as-sub-issue";
 import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
-// common
-import { debounce } from "constants/common";
-// components
 import IssueDetailSidebar from "components/project/issues/issue-detail/issue-detail-sidebar";
-// activites
 import IssueActivitySection from "components/project/issues/issue-detail/activity";
+// headless ui
+import { Disclosure, Menu, Tab, Transition } from "@headlessui/react";
 // ui
 import { Spinner, TextArea } from "ui";
 import HeaderButton from "ui/HeaderButton";
 import { BreadcrumbItem, Breadcrumbs } from "ui/Breadcrumbs";
-// types
-import { IIssue, IIssueComment, IssueResponse } from "types";
 // icons
 import {
   ChevronLeftIcon,
@@ -49,6 +37,16 @@ import {
   EllipsisHorizontalIcon,
   PlusIcon,
 } from "@heroicons/react/24/outline";
+// types
+import { IIssue, IIssueComment, IssueResponse } from "types";
+// fetch keys
+import {
+  PROJECT_ISSUES_ACTIVITY,
+  PROJECT_ISSUES_COMMENTS,
+  PROJECT_ISSUES_LIST,
+} from "constants/fetch-keys";
+// common
+import { debounce } from "constants/common";
 
 const RichTextEditor = dynamic(() => import("components/lexical/editor"), {
   ssr: false,
@@ -276,8 +274,8 @@ const IssueDetail: NextPage = () => {
         parent={issueDetail}
       />
       {issueDetail && activeProject ? (
-        <div className="flex gap-5">
-          <div className="basis-3/4 space-y-5 p-5">
+        <div className="h-full flex gap-5">
+          <div className="basis-2/3 space-y-5 p-5">
             <div className="mb-5"></div>
             <div className="rounded-lg">
               {issueDetail.parent !== null && issueDetail.parent !== "" ? (
@@ -614,7 +612,8 @@ const IssueDetail: NextPage = () => {
               </Tab.Group>
             </div>
           </div>
-          <div className="h-full basis-1/4 space-y-5 p-5 border-l">
+          <div className="h-full basis-1/3 space-y-5 p-5 border-l">
+            {/* TODO add flex-grow, if needed */}
             <IssueDetailSidebar
               control={control}
               issueDetail={issueDetail}

@@ -235,7 +235,7 @@ const SingleBoard: React.FC<Props> = ({
                                     </div>
                                   )}
                                   <h5
-                                    className="group-hover:text-theme text-sm break-all mb-3"
+                                    className="group-hover:text-theme text-sm mb-3"
                                     style={{ lineClamp: 3, WebkitLineClamp: 3 }}
                                   >
                                     {childIssue.name}

@@ -40,7 +40,7 @@ import {
 import { CYCLE_ISSUES, PROJECT_MEMBERS } from "constants/fetch-keys";
 // constants
 import { classNames, replaceUnderscoreIfSnakeCase } from "constants/common";
-import CreateUpdateIssuesModal from "components/project/issues/CreateUpdateIssueModal";
+import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
 import CycleIssuesListModal from "components/project/cycles/cycle-issues-list-modal";
 import ConfirmCycleDeletion from "components/project/cycles/confirm-cycle-deletion";
 
@@ -149,22 +149,6 @@ const SingleCycle: React.FC<Props> = () => {
     setCycleIssuesListModal(true);
   };
 
-  const addIssueToCycle = (cycleId: string, issueId: string) => {
-    if (!activeWorkspace || !activeProject?.id) return;
-
-    issuesServices
-      .addIssueToCycle(activeWorkspace.slug, activeProject.id, cycleId, {
-        issue: issueId,
-      })
-      .then((response) => {
-        console.log(response);
-        mutate(CYCLE_ISSUES(cycleId));
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
     const { source, destination } = result;
@@ -264,6 +248,7 @@ const SingleCycle: React.FC<Props> = () => {
               </>
             }
             className="ml-1.5"
+            width="auto"
           >
             {cycles?.map((cycle) => (
               <CustomMenu.MenuItem

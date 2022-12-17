@@ -10,9 +10,17 @@ type CustomSelectProps = {
   children: React.ReactNode;
   label: string | JSX.Element;
   textAlignment?: "left" | "center" | "right";
+  width?: "auto" | string;
 };
 
-const CustomSelect = ({ children, label, textAlignment, value, onChange }: CustomSelectProps) => {
+const CustomSelect = ({
+  children,
+  label,
+  textAlignment,
+  value,
+  onChange,
+  width = "auto",
+}: CustomSelectProps) => {
   return (
     <Listbox
       as="div"
@@ -44,7 +52,11 @@ const CustomSelect = ({ children, label, textAlignment, value, onChange }: Custo
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Listbox.Options className="absolute right-0 z-10 mt-1 w-56 origin-top-right rounded-md bg-white text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+        <Listbox.Options
+          className={`absolute right-0 z-10 mt-1 origin-top-right rounded-md bg-white text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ${
+            width === "auto" ? "min-w-full whitespace-nowrap" : "w-56"
+          }`}
+        >
           <div className="py-1">{children}</div>
         </Listbox.Options>
       </Transition>

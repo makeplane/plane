@@ -6,22 +6,21 @@ import Link from "next/link";
 import useSWR from "swr";
 // headless ui
 import { Disclosure, Transition, Menu } from "@headlessui/react";
-// services
-import cycleServices from "lib/services/cycles.service";
 // hooks
 import useUser from "lib/hooks/useUser";
 // ui
 import { CustomMenu, Spinner } from "ui";
 // icons
-import { PlusIcon, EllipsisHorizontalIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
+import { PlusIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
 import { CalendarDaysIcon } from "@heroicons/react/24/outline";
 // types
-import { IIssue, IWorkspaceMember, NestedKeyOf, Properties, SelectSprintType } from "types";
+import { IIssue, IWorkspaceMember, NestedKeyOf, Properties } from "types";
 // fetch keys
-import { CYCLE_ISSUES, WORKSPACE_MEMBERS } from "constants/fetch-keys";
+import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 // constants
 import {
   addSpaceIfCamelCase,
+  classNames,
   findHowManyDaysLeft,
   renderShortNumericDateFormat,
 } from "constants/common";
@@ -34,7 +33,7 @@ type Props = {
   properties: Properties;
   selectedGroup: NestedKeyOf<IIssue> | null;
   openCreateIssueModal: (issue?: IIssue, actionType?: "create" | "edit" | "delete") => void;
-  openIssuesListModal: (cycleId: string) => void;
+  openIssuesListModal: () => void;
   removeIssueFromCycle: (bridgeId: string) => void;
 };
 
@@ -269,51 +268,60 @@ const CyclesListView: React.FC<Props> = ({
                   </div>
                 </Disclosure.Panel>
               </Transition>
-              <div className="p-3">
-                <button
-                  type="button"
-                  className="flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-100 text-xs font-medium"
-                  // onClick={() => {
-                  //   setIsCreateIssuesModalOpen(true);
-                  //   if (selectedGroup !== null) {
-                  //     const stateId =
-                  //       selectedGroup === "state_detail.name"
-                  //         ? states?.find((s) => s.name === singleGroup)?.id ?? null
-                  //         : null;
-                  //     setPreloadedData({
-                  //       state: stateId !== null ? stateId : undefined,
-                  //       [selectedGroup]: singleGroup,
-                  //       actionType: "createIssue",
-                  //     });
-                  //   }
-                  // }}
-                >
+              <Menu as="div" className="relative text-left p-3">
+                <Menu.Button className="flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-100 text-xs font-medium">
                   <PlusIcon className="h-3 w-3" />
                   Add issue
-                </button>
-              </div>
+                </Menu.Button>
+
+                <Transition
+                  as={React.Fragment}
+                  enter="transition ease-out duration-100"
+                  enterFrom="transform opacity-0 scale-95"
+                  enterTo="transform opacity-100 scale-100"
+                  leave="transition ease-in duration-75"
+                  leaveFrom="transform opacity-100 scale-100"
+                  leaveTo="transform opacity-0 scale-95"
+                >
+                  <Menu.Items className="absolute left-0 z-10 mt-1 rounded-md bg-white text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none whitespace-nowrap">
+                    <div className="py-1">
+                      <Menu.Item>
+                        {({ active }) => (
+                          <button
+                            type="button"
+                            className={classNames(
+                              active ? "bg-indigo-50 text-gray-900" : "text-gray-700",
+                              "block w-full p-2 text-left"
+                            )}
+                            onClick={() => openCreateIssueModal()}
+                          >
+                            Create new
+                          </button>
+                        )}
+                      </Menu.Item>
+                      <Menu.Item>
+                        {({ active }) => (
+                          <button
+                            type="button"
+                            className={classNames(
+                              active ? "bg-indigo-50 text-gray-900" : "text-gray-700",
+                              "block w-full p-2 text-left"
+                            )}
+                            onClick={() => openIssuesListModal()}
+                          >
+                            Add an existing issue
+                          </button>
+                        )}
+                      </Menu.Item>
+                    </div>
+                  </Menu.Items>
+                </Transition>
+              </Menu>
             </div>
           )}
         </Disclosure>
       ))}
     </div>
-    // <button
-    //                     type="button"
-    //                     className="text-left p-2 text-gray-900 hover:bg-theme hover:text-white rounded-md text-xs whitespace-nowrap w-full"
-    //                     onClick={() => selectSprint({ ...cycle, actionType: "edit" })}
-    //                   >
-    //                     Edit
-    //                   </button>
-    //                 </Menu.Item>
-    //                 <Menu.Item>
-    //                   <button
-    //                     type="button"
-    //                     className="text-left p-2 text-gray-900 hover:bg-theme hover:text-white rounded-md text-xs whitespace-nowrap w-full"
-    //                     onClick={() => selectSprint({ ...cycle, actionType: "delete" })}
-    //                   >
-    //                     Delete
-    //                   </button>
-    //                 </Menu.Item
   );
 };
 
