@@ -1,5 +1,5 @@
 // components
-import SingleBoard from "components/project/cycles/BoardView/single-board";
+import SingleBoard from "components/project/cycles/board-view/single-board";
 // ui
 import { Spinner } from "ui";
 // types
@@ -13,13 +13,9 @@ type Props = {
   properties: Properties;
   selectedGroup: NestedKeyOf<IIssue> | null;
   members: IProjectMember[] | undefined;
-  openCreateIssueModal: (
-    sprintId: string,
-    issue?: IIssue,
-    actionType?: "create" | "edit" | "delete"
-  ) => void;
-  openIssuesListModal: (cycleId: string) => void;
-  removeIssueFromCycle: (cycleId: string, bridgeId: string) => void;
+  openCreateIssueModal: (issue?: IIssue, actionType?: "create" | "edit" | "delete") => void;
+  openIssuesListModal: () => void;
+  removeIssueFromCycle: (bridgeId: string) => void;
 };
 
 const CyclesBoardView: React.FC<Props> = ({

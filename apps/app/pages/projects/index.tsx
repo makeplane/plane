@@ -57,7 +57,23 @@ const Projects: NextPage = () => {
   };
 
   return (
-    <AppLayout>
+    <AppLayout
+      breadcrumbs={
+        <Breadcrumbs>
+          <BreadcrumbItem title={`${activeWorkspace?.name ?? "Workspace"} Projects`} />
+        </Breadcrumbs>
+      }
+      right={
+        <HeaderButton
+          Icon={PlusIcon}
+          label="Add Project"
+          onClick={() => {
+            const e = new KeyboardEvent("keydown", { key: "p", ctrlKey: true });
+            document.dispatchEvent(e);
+          }}
+        />
+      }
+    >
       <ConfirmProjectDeletion
         isOpen={!!deleteProject}
         onClose={() => setDeleteProject(null)}
@@ -91,20 +107,6 @@ const Projects: NextPage = () => {
             </div>
           ) : (
             <div className="h-full w-full space-y-5">
-              <Breadcrumbs>
-                <BreadcrumbItem title={`${activeWorkspace?.name ?? "Workspace"} Projects`} />
-              </Breadcrumbs>
-              <div className="flex items-center justify-between cursor-pointer w-full">
-                <h2 className="text-2xl font-medium">Projects</h2>
-                <HeaderButton
-                  Icon={PlusIcon}
-                  label="Add Project"
-                  onClick={() => {
-                    const e = new KeyboardEvent("keydown", { key: "p", ctrlKey: true });
-                    document.dispatchEvent(e);
-                  }}
-                />
-              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {projects.map((item) => (
                   <ProjectMemberInvitations

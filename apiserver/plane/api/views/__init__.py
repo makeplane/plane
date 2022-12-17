@@ -10,6 +10,7 @@ from .project import (
     AddMemberToProjectEndpoint,
     ProjectJoinEndpoint,
     ProjectUserViewsEndpoint,
+    ProjectMemberUserEndpoint,
 )
 from .people import (
     PeopleEndpoint,

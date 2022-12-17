@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 // layouts
-import Container from "layouts/Container";
-import Sidebar from "layouts/Navbar/main-sidebar";
-import Header from "layouts/Navbar/Header";
+import Container from "layouts/container";
+import Sidebar from "layouts/navbar/main-siderbar";
+import Header from "layouts/navbar/header";
 // components
 import CreateProjectModal from "components/project/create-project-modal";
 // types
@@ -13,7 +13,9 @@ const AppLayout: React.FC<Props> = ({
   children,
   noPadding = false,
   bg = "primary",
+  noHeader = false,
   breadcrumbs,
+  left,
   right,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -24,7 +26,7 @@ const AppLayout: React.FC<Props> = ({
       <div className="h-screen w-full flex overflow-x-hidden">
         <Sidebar />
         <main className="h-screen w-full flex flex-col overflow-y-auto min-w-0">
-          <Header breadcrumbs={breadcrumbs} right={right} />
+          {noHeader ? null : <Header breadcrumbs={breadcrumbs} left={left} right={right} />}
           <div
             className={`w-full flex-grow ${noPadding ? "" : "p-5"} ${
               bg === "primary" ? "bg-primary" : bg === "secondary" ? "bg-secondary" : "bg-primary"

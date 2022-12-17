@@ -6,7 +6,7 @@ import { Listbox, Transition } from "@headlessui/react";
 // hooks
 import useUser from "lib/hooks/useUser";
 // components
-import CreateUpdateSprintsModal from "components/project/cycles/CreateUpdateCyclesModal";
+import CreateUpdateSprintsModal from "components/project/cycles/create-update-cycle-modal";
 // icons
 import { CheckIcon, ChevronDownIcon, PlusIcon } from "@heroicons/react/20/solid";
 // types

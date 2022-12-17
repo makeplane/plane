@@ -1,4 +1,4 @@
-import type { IUser, IIssue } from "./";
+import type { IUser, IIssue } from ".";
 
 export interface ICycle {
   id: string;

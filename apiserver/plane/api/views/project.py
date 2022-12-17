@@ -625,3 +625,27 @@ class ProjectUserViewsEndpoint(BaseAPIView):
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+
+class ProjectMemberUserEndpoint(BaseAPIView):
+    def get(self, request, slug, project_id):
+        try:
+
+            project_member = ProjectMember.objects.get(
+                project=project_id, workpsace__slug=slug, member=request.user
+            )
+            serializer = ProjectMemberSerializer(project_member)
+
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        except ProjectMember.DoesNotExist:
+            return Response(
+                {"error": "User not a member of the project"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )

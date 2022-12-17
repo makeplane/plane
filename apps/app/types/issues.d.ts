@@ -30,6 +30,7 @@ export interface IIssue {
   label_details: any[];
   assignee_details: IUser[];
   assignees_list: string[];
+  bridge?: string;
   blocked_by_issue_details: any[];
   blocked_issues: BlockeIssue[];
   blocker_issues: BlockeIssue[];
@@ -39,6 +40,18 @@ export interface IIssue {
   updated_at: Date;
   name: string;
   // TODO change type of description
+  issue_cycle: {
+    created_at: Date;
+    created_by: string;
+    cycle: string;
+    cycle_detail: ICycle;
+    id: string;
+    issue: string;
+    project: string;
+    updated_at: Date;
+    updated_by: string;
+    workspace: string;
+  };
   description: any;
   priority: string | null;
   start_date: string | null;

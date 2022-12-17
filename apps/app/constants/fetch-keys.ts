@@ -24,7 +24,7 @@ export const PROJECT_ISSUE_BY_STATE = (projectId: string) => `PROJECT_ISSUE_BY_S
 export const PROJECT_ISSUE_LABELS = (projectId: string) => `PROJECT_ISSUE_LABELS_${projectId}`;
 
 export const CYCLE_LIST = (projectId: string) => `CYCLE_LIST_${projectId}`;
-export const CYCLE_ISSUES = (sprintId: string) => `CYCLE_ISSUES_${sprintId}`;
+export const CYCLE_ISSUES = (cycleId: string) => `CYCLE_ISSUES_${cycleId}`;
 export const CYCLE_DETAIL = "CYCLE_DETAIL";
 
 export const STATE_LIST = (projectId: string) => `STATE_LIST_${projectId}`;
@@ -32,3 +32,7 @@ export const STATE_DETAIL = "STATE_DETAIL";
 
 export const USER_ISSUE = (workspaceSlug: string) => `USER_ISSUE_${workspaceSlug}`;
 export const USER_PROJECT_VIEW = (projectId: string) => `USER_PROJECT_VIEW_${projectId}`;
+
+export const MODULE_LIST = (projectId: string) => `MODULE_LIST_${projectId}`;
+export const MODULE_ISSUES = (moduleId: string) => `MODULE_ISSUES_${moduleId}`;
+export const MODULE_DETAIL = "MODULE_DETAIL";
