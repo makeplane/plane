@@ -25,7 +25,7 @@ import SelectProject from "components/project/issues/create-update-issue-modal/s
 import SelectPriority from "components/project/issues/create-update-issue-modal/select-priority";
 import SelectAssignee from "components/project/issues/create-update-issue-modal/select-assignee";
 import SelectParent from "components/project/issues/create-update-issue-modal/select-parent-issue";
-import CreateUpdateStateModal from "components/project/issues/BoardView/state/CreateUpdateStateModal";
+import CreateUpdateStateModal from "components/project/issues/BoardView/state/create-update-state-modal";
 import CreateUpdateCycleModal from "components/project/cycles/create-update-cycle-modal";
 // types
 import type { IIssue, IssueResponse } from "types";

@@ -1,3 +1,5 @@
+import { IIssue, NestedKeyOf, Properties } from "./";
+
 export interface IUser {
   id: readonly string;
   last_login: readonly Date;
@@ -14,6 +16,12 @@ export interface IUser {
   created_location: readonly string;
   is_email_verified: boolean;
   token: string;
+
+  my_issues_prop?: {
+    properties: Properties;
+    groupBy: NestedKeyOf<IIssue> | null;
+  };
+
   [...rest: string]: any;
 }
 

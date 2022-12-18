@@ -11,6 +11,19 @@ export interface IssueResponse {
   results: IIssue[];
 }
 
+export interface IIssueCycle {
+  id: string;
+  cycle_detail: ICycle;
+  created_at: Date;
+  updated_at: Date;
+  created_by: string;
+  updated_by: string;
+  project: string;
+  workspace: string;
+  issue: string;
+  cycle: string;
+}
+
 export interface IIssue {
   id: string;
   state_detail: IState;
@@ -60,6 +73,8 @@ export interface IIssue {
   blocked_issue_details: any[];
   sprints: string | null;
   cycle: string | null;
+
+  issue_cycle: IIssueCycle;
 }
 
 export interface BlockeIssue {

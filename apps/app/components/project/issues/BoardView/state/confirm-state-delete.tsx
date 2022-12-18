@@ -9,6 +9,8 @@ import stateServices from "lib/services/state.service";
 import { STATE_LIST } from "constants/fetch-keys";
 // hooks
 import useUser from "lib/hooks/useUser";
+// common
+import { groupBy } from "constants/common";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
@@ -18,25 +20,27 @@ import { Button } from "ui";
 import type { IState } from "types";
 type Props = {
   isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  data?: IState;
+  onClose: () => void;
+  data: IState | null;
 };
 
-const ConfirmStateDeletion: React.FC<Props> = ({ isOpen, setIsOpen, data }) => {
+const ConfirmStateDeletion: React.FC<Props> = ({ isOpen, onClose, data }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
-  const { activeWorkspace } = useUser();
+  const [issuesWithThisStateExist, setIssuesWithThisStateExist] = useState(true);
+
+  const { activeWorkspace, issues } = useUser();
 
   const cancelButtonRef = useRef(null);
 
   const handleClose = () => {
-    setIsOpen(false);
+    onClose();
     setIsDeleteLoading(false);
   };
 
   const handleDeletion = async () => {
     setIsDeleteLoading(true);
-    if (!data || !activeWorkspace) return;
+    if (!data || !activeWorkspace || issuesWithThisStateExist) return;
     await stateServices
       .deleteState(activeWorkspace.slug, data.project, data.id)
       .then(() => {
@@ -53,9 +57,11 @@ const ConfirmStateDeletion: React.FC<Props> = ({ isOpen, setIsOpen, data }) => {
       });
   };
 
+  const groupedIssues = groupBy(issues?.results ?? [], "state");
+
   useEffect(() => {
-    data && setIsOpen(true);
-  }, [data, setIsOpen]);
+    if (data) setIssuesWithThisStateExist(!!groupedIssues[data.id]);
+  }, [groupedIssues, data]);
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
@@ -109,6 +115,14 @@ const ConfirmStateDeletion: React.FC<Props> = ({ isOpen, setIsOpen, data }) => {
                           This action cannot be undone.
                         </p>
                       </div>
+                      <div className="mt-2">
+                        {issuesWithThisStateExist && (
+                          <p className="text-sm text-red-500">
+                            There are issues with this state. Please move them to another state
+                            before deleting this state.
+                          </p>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -117,7 +131,7 @@ const ConfirmStateDeletion: React.FC<Props> = ({ isOpen, setIsOpen, data }) => {
                     type="button"
                     onClick={handleDeletion}
                     theme="danger"
-                    disabled={isDeleteLoading}
+                    disabled={isDeleteLoading || issuesWithThisStateExist}
                     className="inline-flex sm:ml-3"
                   >
                     {isDeleteLoading ? "Deleting..." : "Delete"}

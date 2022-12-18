@@ -1,17 +1,18 @@
 // react
 import React from "react";
 // next
-import type { NextPage } from "next";
 import Link from "next/link";
+import type { NextPage } from "next";
 import Image from "next/image";
 // swr
 import useSWR from "swr";
+// headless ui
+import { Disclosure, Listbox, Menu, Popover, Transition } from "@headlessui/react";
 // layouts
 import AppLayout from "layouts/app-layout";
 // hooks
 import useUser from "lib/hooks/useUser";
 // headless ui
-import { Disclosure, Listbox, Menu, Popover, Transition } from "@headlessui/react";
 // ui
 import { Spinner, Breadcrumbs, BreadcrumbItem, EmptySpace, EmptySpaceItem, HeaderButton } from "ui";
 // icons
@@ -31,6 +32,7 @@ import workspaceService from "lib/services/workspace.service";
 import useIssuesProperties from "lib/hooks/useIssuesProperties";
 // hoc
 import withAuth from "lib/hoc/withAuthWrapper";
+import useMyIssuesProperties from "lib/hooks/useMyIssueFilter";
 // components
 import ChangeStateDropdown from "components/project/issues/my-issues/ChangeStateDropdown";
 // types
@@ -96,6 +98,9 @@ const MyIssues: NextPage = () => {
         console.log(error);
       });
   };
+
+  const { filteredIssues, setMyIssueGroupByProperty, setMyIssueProperty, groupByProperty } =
+    useMyIssuesProperties(myIssues);
 
   return (
     <AppLayout

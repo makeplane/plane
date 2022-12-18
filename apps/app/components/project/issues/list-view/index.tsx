@@ -93,6 +93,9 @@ const ListView: React.FC<Props> = ({
                         <h2 className="font-medium leading-5 capitalize">
                           {singleGroup === null || singleGroup === "null"
                             ? selectedGroup === "priority" && "No priority"
+                            : selectedGroup === "created_by"
+                            ? people?.find((p) => p.member.id === singleGroup)?.member
+                                ?.first_name ?? "Loading..."
                             : addSpaceIfCamelCase(singleGroup)}
                         </h2>
                       ) : (

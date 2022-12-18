@@ -26,7 +26,7 @@ export const renderShortNumericDateFormat = (date: string | Date) => {
 export const groupBy = (array: any[], key: string) => {
   const innerKey = key.split("."); // split the key by dot
   return array.reduce((result, currentValue) => {
-    const key = innerKey.reduce((obj, i) => obj[i], currentValue); // get the value of the inner key
+    const key = innerKey.reduce((obj, i) => obj?.[i], currentValue) ?? "None"; // get the value of the inner key
     (result[key] = result[key] || []).push(currentValue);
     return result;
   }, {});
