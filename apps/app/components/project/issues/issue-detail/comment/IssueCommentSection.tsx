@@ -13,8 +13,6 @@ import CommentCard from "components/project/issues/issue-detail/comment/IssueCom
 import { TextArea, Button, Spinner } from "ui";
 // types
 import type { IIssueComment } from "types";
-// icons
-import UploadingIcon from "public/animated-icons/uploading.json";
 
 type Props = {
   comments?: IIssueComment[];
@@ -41,11 +39,10 @@ const IssueCommentSection: React.FC<Props> = ({ comments, issueId, projectId, wo
       .createIssueComment(workspaceSlug, projectId, issueId, formData)
       .then((response) => {
         console.log(response);
-        mutate<IIssueComment[]>(
-          PROJECT_ISSUES_COMMENTS,
-          (prevData) => [...(prevData ?? []), response],
-          false
-        );
+        mutate<IIssueComment[]>(PROJECT_ISSUES_COMMENTS(issueId), (prevData) => [
+          response,
+          ...(prevData ?? []),
+        ]);
         reset(defaultValues);
       })
       .catch((error) => {
@@ -58,6 +55,12 @@ const IssueCommentSection: React.FC<Props> = ({ comments, issueId, projectId, wo
       .patchIssueComment(workspaceSlug, projectId, issueId, comment.id, comment)
       .then((response) => {
         console.log(response);
+        mutate<IIssueComment[]>(PROJECT_ISSUES_COMMENTS(issueId), (prevData) => {
+          const newData = prevData ?? [];
+          const index = newData.findIndex((comment) => comment.id === response.id);
+          newData[index] = response;
+          return [...newData];
+        });
       });
   };
 
@@ -65,6 +68,9 @@ const IssueCommentSection: React.FC<Props> = ({ comments, issueId, projectId, wo
     await issuesServices
       .deleteIssueComment(workspaceSlug, projectId, issueId, commentId)
       .then((response) => {
+        mutate<IIssueComment[]>(PROJECT_ISSUES_COMMENTS(issueId), (prevData) =>
+          (prevData ?? []).filter((c) => c.id !== commentId)
+        );
         console.log(response);
       });
   };

@@ -1,4 +1,6 @@
 import React, { createContext, useCallback, useReducer, useEffect } from "react";
+// swr
+import useSWR from "swr";
 // constants
 import {
   TOGGLE_SIDEBAR,
@@ -10,6 +12,12 @@ import {
 } from "constants/theme.context.constants";
 // components
 import ToastAlert from "components/toast-alert";
+// hooks
+import useUser from "lib/hooks/useUser";
+// constants
+import { PROJECT_MEMBERS, USER_PROJECT_VIEW } from "constants/fetch-keys";
+// services
+import projectService from "lib/services/project.service";
 
 export const themeContext = createContext<ContextType>({} as ContextType);
 
@@ -122,53 +130,89 @@ export const reducer: ReducerFunctionType = (state, action) => {
 export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
+  const { activeProject, activeWorkspace, user } = useUser();
+
+  const { data: projectMember } = useSWR(
+    activeWorkspace && activeProject ? PROJECT_MEMBERS(activeProject.id) : null,
+    activeWorkspace && activeProject
+      ? () => projectService.projectMembers(activeWorkspace.slug, activeProject.id)
+      : null
+  );
+
   const toggleCollapsed = useCallback(() => {
     dispatch({
       type: TOGGLE_SIDEBAR,
     });
   }, []);
 
-  const setIssueView = useCallback((display: "list" | "kanban") => {
-    dispatch({
-      type: SET_ISSUE_VIEW,
-      payload: {
-        issueView: display,
-      },
-    });
-  }, []);
+  const saveDataToServer = useCallback(() => {
+    if (!activeProject || !activeWorkspace) return;
+    projectService
+      .setProjectView(activeWorkspace.slug, activeProject.id, state)
+      .then((res) => {
+        console.log("saved", res);
+      })
+      .catch((error) => {});
+  }, [activeProject, activeWorkspace, state]);
 
-  const setGroupByProperty = useCallback((property: NestedKeyOf<IIssue> | null) => {
-    dispatch({
-      type: SET_GROUP_BY_PROPERTY,
-      payload: {
-        groupByProperty: property,
-      },
-    });
-  }, []);
+  const setIssueView = useCallback(
+    (display: "list" | "kanban") => {
+      dispatch({
+        type: SET_ISSUE_VIEW,
+        payload: {
+          issueView: display,
+        },
+      });
+      saveDataToServer();
+    },
+    [saveDataToServer]
+  );
 
-  const setOrderBy = useCallback((property: NestedKeyOf<IIssue> | null) => {
-    dispatch({
-      type: SET_ORDER_BY_PROPERTY,
-      payload: {
-        orderBy: property,
-      },
-    });
-  }, []);
+  const setGroupByProperty = useCallback(
+    (property: NestedKeyOf<IIssue> | null) => {
+      dispatch({
+        type: SET_GROUP_BY_PROPERTY,
+        payload: {
+          groupByProperty: property,
+        },
+      });
+      saveDataToServer();
+    },
+    [saveDataToServer]
+  );
 
-  const setFilterIssue = useCallback((property: "activeIssue" | "backlogIssue" | null) => {
-    dispatch({
-      type: SET_FILTER_ISSUES,
-      payload: {
-        filterIssue: property,
-      },
-    });
-  }, []);
+  const setOrderBy = useCallback(
+    (property: NestedKeyOf<IIssue> | null) => {
+      dispatch({
+        type: SET_ORDER_BY_PROPERTY,
+        payload: {
+          orderBy: property,
+        },
+      });
+      saveDataToServer();
+    },
+    [saveDataToServer]
+  );
+
+  const setFilterIssue = useCallback(
+    (property: "activeIssue" | "backlogIssue" | null) => {
+      dispatch({
+        type: SET_FILTER_ISSUES,
+        payload: {
+          filterIssue: property,
+        },
+      });
+      saveDataToServer();
+    },
+    [saveDataToServer]
+  );
 
   useEffect(() => {
     dispatch({
       type: REHYDRATE_THEME,
+      payload: projectMember?.find((member) => member.member.id === user?.id)?.view_props,
     });
-  }, []);
+  }, [projectMember, user]);
 
   return (
     <themeContext.Provider

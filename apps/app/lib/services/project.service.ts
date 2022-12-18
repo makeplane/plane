@@ -132,6 +132,20 @@ class ProjectServices extends APIService {
       });
   }
 
+  async getProjectMember(
+    workspacSlug: string,
+    projectId: string,
+    memberId: string
+  ): Promise<IProjectMember> {
+    return this.get(PROJECT_MEMBER_DETAIL(workspacSlug, projectId, memberId))
+      .then((response) => {
+        return response?.data;
+      })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async updateProjectMember(
     workspacSlug: string,
     projectId: string,
@@ -207,7 +221,7 @@ class ProjectServices extends APIService {
     projectId: string,
     data: ProjectViewTheme
   ): Promise<any> {
-    await this.patch(PROJECT_VIEW_ENDPOINT(workspacSlug, projectId), data)
+    await this.post(PROJECT_VIEW_ENDPOINT(workspacSlug, projectId), data)
       .then((response) => {
         return response?.data;
       })
