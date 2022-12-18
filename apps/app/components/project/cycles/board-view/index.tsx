@@ -16,6 +16,8 @@ type Props = {
   openCreateIssueModal: (issue?: IIssue, actionType?: "create" | "edit" | "delete") => void;
   openIssuesListModal: () => void;
   removeIssueFromCycle: (bridgeId: string) => void;
+  partialUpdateIssue: (formData: Partial<IIssue>, issueId: string) => void;
+  handleDeleteIssue: React.Dispatch<React.SetStateAction<string | undefined>>;
 };
 
 const CyclesBoardView: React.FC<Props> = ({
@@ -26,6 +28,8 @@ const CyclesBoardView: React.FC<Props> = ({
   openCreateIssueModal,
   openIssuesListModal,
   removeIssueFromCycle,
+  partialUpdateIssue,
+  handleDeleteIssue,
 }) => {
   const { states } = useUser();
 
@@ -57,6 +61,8 @@ const CyclesBoardView: React.FC<Props> = ({
                     removeIssueFromCycle={removeIssueFromCycle}
                     openIssuesListModal={openIssuesListModal}
                     openCreateIssueModal={openCreateIssueModal}
+                    partialUpdateIssue={partialUpdateIssue}
+                    handleDeleteIssue={handleDeleteIssue}
                   />
                 ))}
               </div>

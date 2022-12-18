@@ -24,10 +24,10 @@ import AppLayout from "layouts/app-layout";
 // hooks
 import useIssuesFilter from "lib/hooks/useIssuesFilter";
 // components
-import ListView from "components/project/issues/ListView";
+import ListView from "components/project/issues/list-view";
 import BoardView from "components/project/issues/BoardView";
 import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
-import CreateUpdateIssuesModal from "components/project/issues/CreateUpdateIssueModal";
+import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
 // ui
 import {
   Spinner,

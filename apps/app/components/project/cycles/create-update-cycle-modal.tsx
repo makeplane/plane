@@ -195,6 +195,9 @@ const CreateUpdateCycleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, proj
                             placeholder="Enter start date"
                             error={errors.start_date}
                             register={register}
+                            validations={{
+                              required: "Start date is required",
+                            }}
                           />
                         </div>
                         <div className="w-full">
@@ -206,6 +209,9 @@ const CreateUpdateCycleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, proj
                             placeholder="Enter end date"
                             error={errors.end_date}
                             register={register}
+                            validations={{
+                              required: "End date is required",
+                            }}
                           />
                         </div>
                       </div>

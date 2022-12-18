@@ -100,12 +100,12 @@ const SearchListbox: React.FC<Props> = ({
               } ${optionsClassName || ""}`}
             >
               <Combobox.Input
-                className="w-full bg-transparent border-b p-2 mb-1 focus:outline-none sm:text-sm"
+                className="w-full bg-transparent border-b p-2 focus:outline-none text-xs"
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Search"
                 displayValue={(assigned: any) => assigned?.name}
               />
-              <div className="p-1">
+              <div className="py-1">
                 {filteredOptions ? (
                   filteredOptions.length > 0 ? (
                     filteredOptions.map((option) => (
@@ -113,8 +113,8 @@ const SearchListbox: React.FC<Props> = ({
                         key={option.value}
                         className={({ active }) =>
                           `${
-                            active ? "text-white bg-theme" : "text-gray-900"
-                          } cursor-pointer select-none truncate font-medium relative p-2 rounded-md`
+                            active ? "bg-indigo-50" : ""
+                          } cursor-pointer select-none truncate text-gray-900 p-2`
                         }
                         value={option.value}
                       >

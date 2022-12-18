@@ -6,13 +6,6 @@ import dynamic from "next/dynamic";
 import { mutate } from "swr";
 // react hook form
 import { Controller, useForm } from "react-hook-form";
-// fetching keys
-import {
-  PROJECT_ISSUES_DETAILS,
-  PROJECT_ISSUES_LIST,
-  CYCLE_ISSUES,
-  USER_ISSUE,
-} from "constants/fetch-keys";
 // headless
 import { Dialog, Menu, Transition } from "@headlessui/react";
 // services
@@ -21,22 +14,30 @@ import issuesServices from "lib/services/issues.service";
 import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
 // ui
-import { Button, Input, TextArea } from "ui";
-// commons
-import { renderDateFormat, cosineSimilarity } from "constants/common";
+import { Button, TextArea } from "ui";
+// icons
+import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
 // components
-import SelectState from "./SelectState";
-import SelectCycles from "./SelectCycles";
-import SelectLabels from "./SelectLabels";
-import SelectProject from "./SelectProject";
-import SelectPriority from "./SelectPriority";
-import SelectAssignee from "./SelectAssignee";
-import SelectParent from "./SelectParentIssue";
+import SelectState from "components/project/issues/create-update-issue-modal/select-state";
+import SelectCycles from "components/project/issues/create-update-issue-modal/select-cycle";
+import SelectLabels from "components/project/issues/create-update-issue-modal/select-labels";
+import SelectProject from "components/project/issues/create-update-issue-modal/select-project";
+import SelectPriority from "components/project/issues/create-update-issue-modal/select-priority";
+import SelectAssignee from "components/project/issues/create-update-issue-modal/select-assignee";
+import SelectParent from "components/project/issues/create-update-issue-modal/select-parent-issue";
 import CreateUpdateStateModal from "components/project/issues/BoardView/state/create-update-state-modal";
 import CreateUpdateCycleModal from "components/project/cycles/create-update-cycle-modal";
 // types
-import type { IIssue, IssueResponse, CycleIssueResponse } from "types";
-import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
+import type { IIssue, IssueResponse } from "types";
+// fetching keys
+import {
+  PROJECT_ISSUES_DETAILS,
+  PROJECT_ISSUES_LIST,
+  CYCLE_ISSUES,
+  USER_ISSUE,
+} from "constants/fetch-keys";
+// common
+import { renderDateFormat, cosineSimilarity } from "constants/common";
 
 const RichTextEditor = dynamic(() => import("components/lexical/editor"), {
   ssr: false,
@@ -113,36 +114,18 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
     }, 500);
   };
 
-  const addIssueToSprint = async (issueId: string, sprintId: string, issueDetail: IIssue) => {
+  const addIssueToCycle = async (issueId: string, cycleId: string, issueDetail: IIssue) => {
     if (!activeWorkspace || !activeProject) return;
     await issuesServices
-      .addIssueToCycle(activeWorkspace.slug, activeProject.id, sprintId, {
+      .addIssueToCycle(activeWorkspace.slug, activeProject.id, cycleId, {
         issue: issueId,
       })
       .then((res) => {
-        mutate<CycleIssueResponse[]>(
-          CYCLE_ISSUES(sprintId),
-          (prevData) => {
-            const targetResponse = prevData?.find((t) => t.cycle === sprintId);
-            if (targetResponse) {
-              targetResponse.issue_details = issueDetail;
-              return prevData;
-            } else {
-              return [
-                ...(prevData ?? []),
-                {
-                  cycle: sprintId,
-                  issue_details: issueDetail,
-                } as CycleIssueResponse,
-              ];
-            }
-          },
-          false
-        );
+        mutate(CYCLE_ISSUES(cycleId));
         if (isUpdatingSingleIssue) {
           mutate<IIssue>(
             PROJECT_ISSUES_DETAILS,
-            (prevData) => ({ ...(prevData as IIssue), sprints: sprintId }),
+            (prevData) => ({ ...(prevData as IIssue), sprints: cycleId }),
             false
           );
         } else
@@ -152,7 +135,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
               return {
                 ...(prevData as IssueResponse),
                 results: (prevData?.results ?? []).map((issue) => {
-                  if (issue.id === res.id) return { ...issue, sprints: sprintId };
+                  if (issue.id === res.id) return { ...issue, sprints: cycleId };
                   return issue;
                 }),
               };
@@ -185,7 +168,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
           mutate<IssueResponse>(PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id));
 
           if (formData.sprints && formData.sprints !== null) {
-            await addIssueToSprint(res.id, formData.sprints, formData);
+            await addIssueToCycle(res.id, formData.sprints, formData);
           }
           handleClose();
           resetForm();
@@ -225,7 +208,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
               false
             );
           if (formData.sprints && formData.sprints !== null) {
-            await addIssueToSprint(res.id, formData.sprints, formData);
+            await addIssueToCycle(res.id, formData.sprints, formData);
           }
           handleClose();
           resetForm();

@@ -31,18 +31,20 @@ import { ArrowPathIcon, ChevronDownIcon, ListBulletIcon } from "@heroicons/react
 import {
   CycleIssueResponse,
   IIssue,
+  IssueResponse,
   NestedKeyOf,
   Properties,
   SelectIssue,
   SelectSprintType,
 } from "types";
 // fetch-keys
-import { CYCLE_ISSUES, PROJECT_MEMBERS } from "constants/fetch-keys";
+import { CYCLE_ISSUES, PROJECT_ISSUES_LIST, PROJECT_MEMBERS } from "constants/fetch-keys";
 // constants
 import { classNames, replaceUnderscoreIfSnakeCase } from "constants/common";
-import CreateUpdateIssuesModal from "components/project/issues/CreateUpdateIssueModal";
+import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
 import CycleIssuesListModal from "components/project/cycles/cycle-issues-list-modal";
 import ConfirmCycleDeletion from "components/project/cycles/confirm-cycle-deletion";
+import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
 
 const groupByOptions: Array<{ name: string; key: NestedKeyOf<IIssue> | null }> = [
   { name: "State", key: "state_detail.name" },
@@ -82,6 +84,7 @@ const SingleCycle: React.FC<Props> = () => {
   const [selectedCycle, setSelectedCycle] = useState<SelectSprintType>();
   const [selectedIssues, setSelectedIssues] = useState<SelectIssue>();
   const [cycleIssuesListModal, setCycleIssuesListModal] = useState(false);
+  const [deleteIssue, setDeleteIssue] = useState<string | undefined>(undefined);
 
   const { activeWorkspace, activeProject, cycles, issues } = useUser();
 
@@ -118,6 +121,18 @@ const SingleCycle: React.FC<Props> = () => {
     }
   );
 
+  const partialUpdateIssue = (formData: Partial<IIssue>, issueId: string) => {
+    if (!activeWorkspace || !activeProject) return;
+    issuesServices
+      .patchIssue(activeWorkspace.slug, activeProject.id, issueId, formData)
+      .then((response) => {
+        mutate(CYCLE_ISSUES(cycleId as string));
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   const {
     issueView,
     setIssueView,
@@ -147,22 +162,6 @@ const SingleCycle: React.FC<Props> = () => {
 
   const openIssuesListModal = () => {
     setCycleIssuesListModal(true);
-  };
-
-  const addIssueToCycle = (cycleId: string, issueId: string) => {
-    if (!activeWorkspace || !activeProject?.id) return;
-
-    issuesServices
-      .addIssueToCycle(activeWorkspace.slug, activeProject.id, cycleId, {
-        issue: issueId,
-      })
-      .then((response) => {
-        console.log(response);
-        mutate(CYCLE_ISSUES(cycleId));
-      })
-      .catch((error) => {
-        console.log(error);
-      });
   };
 
   const handleDragEnd = (result: DropResult) => {
@@ -246,6 +245,11 @@ const SingleCycle: React.FC<Props> = () => {
         issues={issues}
         cycleId={cycleId as string}
       />
+      <ConfirmIssueDeletion
+        handleClose={() => setDeleteIssue(undefined)}
+        isOpen={!!deleteIssue}
+        data={issues?.results.find((issue) => issue.id === deleteIssue)}
+      />
       <AppLayout
         breadcrumbs={
           <Breadcrumbs>
@@ -264,6 +268,7 @@ const SingleCycle: React.FC<Props> = () => {
               </>
             }
             className="ml-1.5"
+            width="auto"
           >
             {cycles?.map((cycle) => (
               <CustomMenu.MenuItem
@@ -435,6 +440,8 @@ const SingleCycle: React.FC<Props> = () => {
               members={members}
               openCreateIssueModal={openCreateIssueModal}
               openIssuesListModal={openIssuesListModal}
+              handleDeleteIssue={setDeleteIssue}
+              partialUpdateIssue={partialUpdateIssue}
             />
           </div>
         )}

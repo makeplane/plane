@@ -4,7 +4,7 @@ import { mutate } from "swr";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // fetching keys
-import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import { CYCLE_ISSUES, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // services
 import issueServices from "lib/services/issues.service";
 // hooks
@@ -55,6 +55,7 @@ const ConfirmIssueDeletion: React.FC<Props> = ({ isOpen, handleClose, data }) =>
           },
           false
         );
+        mutate(CYCLE_ISSUES(data.issue_cycle.id));
         setToastAlert({
           title: "Success",
           type: "success",

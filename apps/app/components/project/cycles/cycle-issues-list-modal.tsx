@@ -17,6 +17,8 @@ import { MagnifyingGlassIcon, RectangleStackIcon } from "@heroicons/react/24/out
 import { IIssue, IssueResponse } from "types";
 // constants
 import { classNames } from "constants/common";
+import { mutate } from "swr";
+import { CYCLE_ISSUES } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
@@ -73,6 +75,7 @@ const CycleIssuesListModal: React.FC<Props> = ({
         .bulkAddIssuesToCycle(activeWorkspace.slug, activeProject.id, cycleId, data)
         .then((res) => {
           console.log(res);
+          mutate(CYCLE_ISSUES(cycleId));
           handleClose();
         })
         .catch((e) => {

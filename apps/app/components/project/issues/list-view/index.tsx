@@ -18,7 +18,7 @@ import {
 } from "@heroicons/react/24/outline";
 import User from "public/user.png";
 // components
-import CreateUpdateIssuesModal from "components/project/issues/CreateUpdateIssueModal";
+import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
 // types
 import { IIssue, IWorkspaceMember, NestedKeyOf, Properties } from "types";
 // services

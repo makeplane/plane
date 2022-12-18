@@ -58,7 +58,7 @@ const ProjectsList: React.FC<Props> = ({ navigation, sidebarCollapse }) => {
                     <>
                       <div className="flex items-center">
                         <Disclosure.Button
-                          className={`w-full flex items-center gap-2 font-medium rounded-md p-2 text-sm ${
+                          className={`w-full flex items-center text-left gap-2 font-medium rounded-md p-2 text-sm ${
                             sidebarCollapse ? "justify-center" : ""
                           }`}
                         >
