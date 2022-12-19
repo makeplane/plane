@@ -33,13 +33,15 @@ const ControlSettings: React.FC<Props> = ({ control, isSubmitting }) => {
   );
   return (
     <>
-      <section className="space-y-5">
+      <section className="space-y-8">
         <div>
-          <h3 className="text-lg font-medium leading-6 text-gray-900">Control</h3>
-          <p className="mt-1 text-sm text-gray-500">Set the control for the project.</p>
+          <h3 className="text-3xl font-bold leading-6 text-gray-900">Control</h3>
+          <p className="mt-4 text-sm text-gray-500">Set the control for the project.</p>
         </div>
-        <div className="flex justify-between gap-3">
-          <div className="w-full md:w-1/2">
+        <div className="grid grid-cols-2 gap-16">
+          <div>
+            <h4 className="text-md leading-6 text-gray-900 mb-1">Project Lead</h4>
+            <p className="text-sm text-gray-500 mb-3">Select the project leader.</p>
             <Controller
               control={control}
               name="project_lead"
@@ -47,18 +49,13 @@ const ControlSettings: React.FC<Props> = ({ control, isSubmitting }) => {
                 <Listbox value={value} onChange={onChange}>
                   {({ open }) => (
                     <>
-                      <Listbox.Label>
-                        <div className="text-gray-500 mb-2">Project Lead</div>
-                      </Listbox.Label>
                       <div className="relative">
-                        <Listbox.Button className="bg-white relative w-full border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        <Listbox.Button className="relative w-full flex justify-between items-center gap-4 border border-gray-300 rounded-md shadow-sm p-3 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                           <span className="block truncate">
                             {people?.find((person) => person.member.id === value)?.member
                               .first_name ?? "Select Lead"}
                           </span>
-                          <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                            <ChevronDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-                          </span>
+                          <ChevronDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
                         </Listbox.Button>
 
                         <Transition
@@ -68,14 +65,14 @@ const ControlSettings: React.FC<Props> = ({ control, isSubmitting }) => {
                           leaveFrom="opacity-100"
                           leaveTo="opacity-0"
                         >
-                          <Listbox.Options className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
+                          <Listbox.Options className="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
                             {people?.map((person) => (
                               <Listbox.Option
                                 key={person.id}
                                 className={({ active }) =>
                                   `${
-                                    active ? "text-white bg-theme" : "text-gray-900"
-                                  } cursor-default select-none relative py-2 pl-3 pr-9`
+                                    active ? "bg-indigo-50" : ""
+                                  } text-gray-900 cursor-default select-none relative px-3 py-2`
                                 }
                                 value={person.member.id}
                               >
@@ -86,7 +83,9 @@ const ControlSettings: React.FC<Props> = ({ control, isSubmitting }) => {
                                         selected ? "font-semibold" : "font-normal"
                                       } block truncate`}
                                     >
-                                      {person.member.first_name}
+                                      {person.member.first_name !== ""
+                                        ? person.member.first_name
+                                        : person.member.email}
                                     </span>
 
                                     {selected ? (
@@ -111,7 +110,11 @@ const ControlSettings: React.FC<Props> = ({ control, isSubmitting }) => {
               )}
             />
           </div>
-          <div className="w-full md:w-1/2">
+          <div>
+            <h4 className="text-md leading-6 text-gray-900 mb-1">Default Assignee</h4>
+            <p className="text-sm text-gray-500 mb-3">
+              Select the default assignee for the project.
+            </p>
             <Controller
               control={control}
               name="default_assignee"
@@ -119,18 +122,13 @@ const ControlSettings: React.FC<Props> = ({ control, isSubmitting }) => {
                 <Listbox value={value} onChange={onChange}>
                   {({ open }) => (
                     <>
-                      <Listbox.Label>
-                        <div className="text-gray-500 mb-2">Default Assignee</div>
-                      </Listbox.Label>
                       <div className="relative">
-                        <Listbox.Button className="bg-white relative w-full border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        <Listbox.Button className="relative w-full flex justify-between items-center gap-4 border border-gray-300 rounded-md shadow-sm p-3 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                           <span className="block truncate">
                             {people?.find((p) => p.member.id === value)?.member.first_name ??
                               "Select Default Assignee"}
                           </span>
-                          <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                            <ChevronDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-                          </span>
+                          <ChevronDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
                         </Listbox.Button>
 
                         <Transition
@@ -140,14 +138,14 @@ const ControlSettings: React.FC<Props> = ({ control, isSubmitting }) => {
                           leaveFrom="opacity-100"
                           leaveTo="opacity-0"
                         >
-                          <Listbox.Options className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
+                          <Listbox.Options className="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
                             {people?.map((person) => (
                               <Listbox.Option
                                 key={person.id}
                                 className={({ active }) =>
                                   `${
-                                    active ? "text-white bg-theme" : "text-gray-900"
-                                  } cursor-default select-none relative py-2 pl-3 pr-9`
+                                    active ? "bg-indigo-50" : ""
+                                  } text-gray-900 cursor-default select-none relative px-3 py-2`
                                 }
                                 value={person.member.id}
                               >
@@ -158,7 +156,9 @@ const ControlSettings: React.FC<Props> = ({ control, isSubmitting }) => {
                                         selected ? "font-semibold" : "font-normal"
                                       } block truncate`}
                                     >
-                                      {person.member.first_name}
+                                      {person.member.first_name !== ""
+                                        ? person.member.first_name
+                                        : person.member.email}
                                     </span>
 
                                     {selected ? (
@@ -184,7 +184,7 @@ const ControlSettings: React.FC<Props> = ({ control, isSubmitting }) => {
             />
           </div>
         </div>
-        <div className="flex justify-end">
+        <div>
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting ? "Updating Project..." : "Update Project"}
           </Button>
