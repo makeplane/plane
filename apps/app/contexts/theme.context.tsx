@@ -68,13 +68,9 @@ export const reducer: ReducerFunctionType = (state, action) => {
         ...state,
         collapsed: !state.collapsed,
       };
-      localStorage.setItem("theme", JSON.stringify(newState));
       return newState;
     case REHYDRATE_THEME: {
-      let newState: any = localStorage.getItem("theme");
-      if (newState !== null) {
-        newState = JSON.parse(newState);
-      }
+      const newState = payload;
       return { ...initialState, ...newState };
     }
     case SET_ISSUE_VIEW: {
@@ -82,7 +78,6 @@ export const reducer: ReducerFunctionType = (state, action) => {
         ...state,
         issueView: payload?.issueView || "list",
       };
-      localStorage.setItem("theme", JSON.stringify(newState));
       return {
         ...state,
         ...newState,
@@ -93,7 +88,6 @@ export const reducer: ReducerFunctionType = (state, action) => {
         ...state,
         groupByProperty: payload?.groupByProperty || null,
       };
-      localStorage.setItem("theme", JSON.stringify(newState));
       return {
         ...state,
         ...newState,
@@ -104,7 +98,6 @@ export const reducer: ReducerFunctionType = (state, action) => {
         ...state,
         orderBy: payload?.orderBy || null,
       };
-      localStorage.setItem("theme", JSON.stringify(newState));
       return {
         ...state,
         ...newState,
@@ -115,7 +108,6 @@ export const reducer: ReducerFunctionType = (state, action) => {
         ...state,
         filterIssue: payload?.filterIssue || null,
       };
-      localStorage.setItem("theme", JSON.stringify(newState));
       return {
         ...state,
         ...newState,
@@ -125,6 +117,10 @@ export const reducer: ReducerFunctionType = (state, action) => {
       return state;
     }
   }
+};
+
+const saveDataToServer = async (workspaceSlug: string, projectID: string, state: any) => {
+  await projectService.setProjectView(workspaceSlug, projectID, state);
 };
 
 export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -145,16 +141,6 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
     });
   }, []);
 
-  const saveDataToServer = useCallback(() => {
-    if (!activeProject || !activeWorkspace) return;
-    projectService
-      .setProjectView(activeWorkspace.slug, activeProject.id, state)
-      .then((res) => {
-        console.log("saved", res);
-      })
-      .catch((error) => {});
-  }, [activeProject, activeWorkspace, state]);
-
   const setIssueView = useCallback(
     (display: "list" | "kanban") => {
       dispatch({
@@ -163,9 +149,14 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
           issueView: display,
         },
       });
-      saveDataToServer();
+
+      if (!activeWorkspace || !activeProject) return;
+      saveDataToServer(activeWorkspace.slug, activeProject.id, {
+        ...state,
+        issueView: display,
+      });
     },
-    [saveDataToServer]
+    [activeProject, activeWorkspace, state]
   );
 
   const setGroupByProperty = useCallback(
@@ -176,9 +167,14 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
           groupByProperty: property,
         },
       });
-      saveDataToServer();
+
+      if (!activeWorkspace || !activeProject) return;
+      saveDataToServer(activeWorkspace.slug, activeProject.id, {
+        ...state,
+        groupByProperty: property,
+      });
     },
-    [saveDataToServer]
+    [activeProject, activeWorkspace, state]
   );
 
   const setOrderBy = useCallback(
@@ -189,11 +185,12 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
           orderBy: property,
         },
       });
-      saveDataToServer();
-    },
-    [saveDataToServer]
-  );
 
+      if (!activeWorkspace || !activeProject) return;
+      saveDataToServer(activeWorkspace.slug, activeProject.id, state);
+    },
+    [activeProject, activeWorkspace, state]
+  );
   const setFilterIssue = useCallback(
     (property: "activeIssue" | "backlogIssue" | null) => {
       dispatch({
@@ -202,9 +199,14 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
           filterIssue: property,
         },
       });
-      saveDataToServer();
+
+      if (!activeWorkspace || !activeProject) return;
+      saveDataToServer(activeWorkspace.slug, activeProject.id, {
+        ...state,
+        filterIssue: property,
+      });
     },
-    [saveDataToServer]
+    [activeProject, activeWorkspace, state]
   );
 
   useEffect(() => {

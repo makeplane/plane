@@ -100,6 +100,7 @@ const ProjectSettings: NextPage = () => {
       description: formData.description,
       default_assignee: formData.default_assignee,
       project_lead: formData.project_lead,
+      icon: formData.icon,
     };
     await projectServices
       .updateProject(activeWorkspace.slug, projectId as string, payload)
@@ -186,6 +187,7 @@ const ProjectSettings: NextPage = () => {
               <form onSubmit={handleSubmit(onSubmit)}>
                 <Tab.Panel>
                   <GeneralSettings
+                    control={control}
                     register={register}
                     errors={errors}
                     setError={setError}

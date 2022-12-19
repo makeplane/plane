@@ -133,6 +133,7 @@ export type Properties = {
   start_date: boolean;
   target_date: boolean;
   cycle: boolean;
+  children_count: boolean;
 };
 
 export interface IIssueLabels {
