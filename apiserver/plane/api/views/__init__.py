@@ -38,7 +38,7 @@ from .workspace import (
 from .state import StateViewSet
 from .shortcut import ShortCutViewSet
 from .view import ViewViewSet
-from .cycle import CycleViewSet, CycleIssueViewSet, BulkAssignIssuesToCycleEndpoint
+from .cycle import CycleViewSet, CycleIssueViewSet
 from .asset import FileAssetEndpoint
 from .issue import (
     IssueViewSet,
