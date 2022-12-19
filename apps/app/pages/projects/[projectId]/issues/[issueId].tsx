@@ -94,7 +94,7 @@ const IssueDetail: NextPage = () => {
       blockers_list: [],
       blocked_list: [],
       target_date: new Date().toString(),
-      cycle: "",
+      issue_cycle: null,
       labels_list: [],
     },
   });
@@ -171,6 +171,7 @@ const IssueDetail: NextPage = () => {
         assignees_list:
           issueDetail.assignees_list ?? issueDetail.assignee_details?.map((user) => user.id),
         labels_list: issueDetail.labels_list ?? issueDetail.labels?.map((label) => label),
+        labels: issueDetail.labels_list ?? issueDetail.labels?.map((label) => label),
       });
   }, [issueDetail, reset]);
 
@@ -211,7 +212,7 @@ const IssueDetail: NextPage = () => {
     }
   };
 
-  // console.log(issueDetail);
+  console.log(issueDetail);
 
   return (
     <AppLayout

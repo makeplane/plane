@@ -39,7 +39,7 @@ const Button = React.forwardRef<HTMLButtonElement, Props>(
                 disabled ? "opacity-70" : ""
               } text-white shadow-sm bg-theme hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 border border-transparent`
             : theme === "secondary"
-            ? "border bg-white hover:bg-gray-100"
+            ? "border bg-transparent hover:bg-gray-100"
             : theme === "success"
             ? `${
                 disabled ? "opacity-70" : ""

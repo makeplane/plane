@@ -55,7 +55,7 @@ const ConfirmIssueDeletion: React.FC<Props> = ({ isOpen, handleClose, data }) =>
           },
           false
         );
-        mutate(CYCLE_ISSUES(data.issue_cycle.id));
+        mutate(CYCLE_ISSUES(data.issue_cycle?.id ?? ""));
         setToastAlert({
           title: "Success",
           type: "success",

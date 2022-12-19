@@ -28,7 +28,7 @@ const SelectState: React.FC<Props> = ({ control, setIsOpen }) => {
         <CustomListbox
           title="State"
           options={states?.map((state) => {
-            return { value: state.id, display: state.name };
+            return { value: state.id, display: state.name, color: state.color };
           })}
           value={value}
           optionsFontsize="sm"

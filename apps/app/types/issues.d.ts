@@ -30,7 +30,6 @@ export interface IIssue {
   label_details: any[];
   assignee_details: IUser[];
   assignees_list: string[];
-  bridge?: string;
   blocked_by_issue_details: any[];
   blocked_issues: BlockeIssue[];
   blocker_issues: BlockeIssue[];
@@ -51,7 +50,7 @@ export interface IIssue {
     updated_at: Date;
     updated_by: string;
     workspace: string;
-  };
+  } | null;
   description: any;
   priority: string | null;
   start_date: string | null;

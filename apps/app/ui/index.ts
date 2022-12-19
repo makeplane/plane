@@ -4,6 +4,7 @@ export { default as Select } from "./Select";
 export { default as TextArea } from "./TextArea";
 export { default as CustomListbox } from "./custom-listbox";
 export { default as CustomMenu } from "./custom-menu";
+export { default as CustomSelect } from "./custom-select";
 export { default as Spinner } from "./Spinner";
 export { default as Tooltip } from "./Tooltip";
 export { default as SearchListbox } from "./search-listbox";

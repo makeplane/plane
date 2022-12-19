@@ -93,6 +93,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
         console.log(res);
         reset(defaultValues);
         issueLabelMutate((prevData) => [...(prevData ?? []), res], false);
+        submitChanges({ labels_list: [res.id] });
       });
   };
 
@@ -103,7 +104,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
       });
   };
 
-  console.log(issueDetail);
+  console.log(issueDetail?.labels, issueDetail?.labels_list);
 
   return (
     <>
@@ -248,25 +249,32 @@ const IssueDetailSidebar: React.FC<Props> = ({
             </div>
             <div className="basis-1/2">
               <div className="flex gap-1 flex-wrap">
-                {issueDetail?.label_details.map((label) => (
-                  <span
-                    key={label.id}
-                    className="group flex items-center gap-1 border rounded-2xl text-xs px-1 py-0.5 hover:bg-red-50 hover:border-red-500 cursor-pointer"
-                    onClick={() => {
-                      const updatedLabels = issueDetail?.labels.filter((l) => l !== label.id);
-                      submitChanges({
-                        labels_list: updatedLabels,
-                      });
-                    }}
-                  >
+                {issueDetail?.labels.map((label) => {
+                  const singleLabel = issueLabels?.find((l) => l.id === label);
+
+                  if (!singleLabel) return null;
+
+                  return (
                     <span
-                      className="h-2 w-2 rounded-full flex-shrink-0"
-                      style={{ backgroundColor: label.colour ?? "green" }}
-                    ></span>
-                    {label.name}
-                    <XMarkIcon className="h-2 w-2 group-hover:text-red-500" />
-                  </span>
-                ))}
+                      key={singleLabel.id}
+                      className="group flex items-center gap-1 border rounded-2xl text-xs px-1 py-0.5 hover:bg-red-50 hover:border-red-500 cursor-pointer"
+                      onClick={() => {
+                        const updatedLabels = issueDetail?.labels.filter((l) => l !== label);
+                        // submitChanges({
+                        //   labels_list: updatedLabels,
+                        // });
+                        console.log(updatedLabels);
+                      }}
+                    >
+                      <span
+                        className="h-2 w-2 rounded-full flex-shrink-0"
+                        style={{ backgroundColor: singleLabel.colour ?? "green" }}
+                      ></span>
+                      {singleLabel.name}
+                      <XMarkIcon className="h-2 w-2 group-hover:text-red-500" />
+                    </span>
+                  );
+                })}
                 <Controller
                   control={control}
                   name="labels_list"
@@ -274,9 +282,9 @@ const IssueDetailSidebar: React.FC<Props> = ({
                     <Listbox
                       as="div"
                       value={value}
-                      multiple
                       onChange={(val: any) => submitChanges({ labels_list: val })}
                       className="flex-shrink-0"
+                      multiple
                     >
                       {({ open }) => (
                         <>

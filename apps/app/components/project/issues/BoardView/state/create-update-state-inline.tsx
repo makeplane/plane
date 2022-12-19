@@ -122,7 +122,7 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
 
   return (
     <div className="flex items-center gap-x-2 p-2 bg-gray-50">
-      <div className="w-8 h-8 shrink-0">
+      <div className="flex-shrink-0 h-8 w-8">
         <Popover className="relative w-full h-full flex justify-center items-center bg-gray-200 rounded-xl">
           {({ open }) => (
             <>
@@ -150,7 +150,7 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
                 leaveFrom="opacity-100 translate-y-0"
                 leaveTo="opacity-0 translate-y-1"
               >
-                <Popover.Panel className="absolute top-full z-50 left-0 mt-3 px-2 w-screen max-w-xs sm:px-0">
+                <Popover.Panel className="absolute top-full z-20 left-0 mt-3 px-2 w-screen max-w-xs sm:px-0">
                   <Controller
                     name="color"
                     control={control}

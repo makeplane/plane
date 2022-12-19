@@ -5,6 +5,8 @@ export type Props = {
   ellipsis?: boolean;
   width?: "auto";
   textAlignment?: "left" | "center" | "right";
+  withoutBorder?: boolean;
+  optionsPosition?: "left" | "right";
 };
 
 export type MenuItemProps = {

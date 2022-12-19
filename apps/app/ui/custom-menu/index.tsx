@@ -15,11 +15,13 @@ const CustomMenu = ({
   label,
   className = "",
   ellipsis = false,
-  width,
+  width = "auto",
   textAlignment,
+  withoutBorder = false,
+  optionsPosition = "right",
 }: Props) => {
   return (
-    <Menu as="div" className={`relative text-left ${className}`}>
+    <Menu as="div" className={`relative w-min whitespace-nowrap text-left ${className}`}>
       <div>
         {ellipsis ? (
           <Menu.Button className="grid relative place-items-center hover:bg-gray-100 rounded p-1 focus:outline-none">
@@ -27,16 +29,20 @@ const CustomMenu = ({
           </Menu.Button>
         ) : (
           <Menu.Button
-            className={`flex justify-between items-center gap-1 hover:bg-gray-100 border rounded-md shadow-sm px-2 w-full py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300 ${
+            className={`flex justify-between items-center gap-1 hover:bg-gray-100 px-2 py-1 cursor-pointer text-xs duration-300 ${
               textAlignment === "right"
                 ? "text-right"
                 : textAlignment === "center"
                 ? "text-center"
                 : "text-left"
+            } ${
+              withoutBorder
+                ? "rounded"
+                : "w-full border shadow-sm rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
             }`}
           >
             {label}
-            <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
+            {!withoutBorder && <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />}
           </Menu.Button>
         )}
       </div>
@@ -51,9 +57,9 @@ const CustomMenu = ({
         leaveTo="transform opacity-0 scale-95"
       >
         <Menu.Items
-          className={`absolute right-0 z-10 mt-1 origin-top-right rounded-md bg-white text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ${
-            width === "auto" ? "min-w-full whitespace-nowrap" : "w-56"
-          }`}
+          className={`absolute z-20 mt-1 rounded-md bg-white text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ${
+            optionsPosition === "left" ? "left-0 origin-top-left" : "right-0 origin-top-right"
+          } ${width === "auto" ? "min-w-full whitespace-nowrap" : "w-56"}`}
         >
           <div className="py-1">{children}</div>
         </Menu.Items>

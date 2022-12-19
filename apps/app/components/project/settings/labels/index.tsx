@@ -13,7 +13,7 @@ import useUser from "lib/hooks/useUser";
 // headless ui
 import { Popover, Transition, Menu } from "@headlessui/react";
 // ui
-import { Button, Input, Spinner } from "ui";
+import { Button, CustomMenu, Input, Spinner } from "ui";
 // icons
 import {
   ChevronDownIcon,
@@ -26,6 +26,7 @@ import {
 import { IIssueLabels } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
+import SingleLabel from "./single-label";
 
 const defaultValues: Partial<IIssueLabels> = {
   name: "",
@@ -68,6 +69,14 @@ const LabelsSettings: React.FC = () => {
       });
   };
 
+  const editLabel = (label: IIssueLabels) => {
+    setNewLabelForm(true);
+    setValue("colour", label.colour);
+    setValue("name", label.name);
+    setIsUpdating(true);
+    setLabelidForUpdate(label.id);
+  };
+
   const handleLabelUpdate: SubmitHandler<IIssueLabels> = (formData) => {
     if (!activeWorkspace || !activeProject || isSubmitting) return;
     issuesServices
@@ -98,10 +107,6 @@ const LabelsSettings: React.FC = () => {
     }
   };
 
-  const getLabelChildren = (labelId: string) => {
-    return issueLabels?.filter((l) => l.parent === labelId);
-  };
-
   return (
     <>
       <section className="space-y-5">
@@ -110,31 +115,38 @@ const LabelsSettings: React.FC = () => {
             <h3 className="text-lg font-medium leading-6 text-gray-900">Labels</h3>
             <p className="mt-1 text-sm text-gray-500">Manage the labels of this project.</p>
           </div>
-          <Button className="flex items-center gap-x-1" onClick={() => setNewLabelForm(true)}>
+          <Button
+            theme="secondary"
+            className="flex items-center gap-x-1"
+            onClick={() => setNewLabelForm(true)}
+          >
             <PlusIcon className="h-4 w-4" />
             New label
           </Button>
         </div>
         <div className="space-y-5">
           <div
-            className={`bg-white px-4 py-2 flex items-center gap-2 ${newLabelForm ? "" : "hidden"}`}
+            className={`md:w-2/3 border p-3 rounded-md flex items-center gap-2 ${
+              newLabelForm ? "" : "hidden"
+            }`}
           >
-            <div>
-              <Popover className="relative">
+            <div className="flex-shrink-0 h-8 w-8">
+              <Popover className="relative w-full h-full flex justify-center items-center bg-gray-200 rounded-xl">
                 {({ open }) => (
                   <>
                     <Popover.Button
-                      className={`bg-white flex items-center gap-1 rounded-md p-1 outline-none focus:ring-2 focus:ring-indigo-500`}
+                      className={`group inline-flex items-center text-base font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
+                        open ? "text-gray-900" : "text-gray-500"
+                      }`}
                     >
                       {watch("colour") && watch("colour") !== "" && (
                         <span
-                          className="w-6 h-6 rounded"
+                          className="w-4 h-4 rounded"
                           style={{
                             backgroundColor: watch("colour") ?? "green",
                           }}
                         ></span>
                       )}
-                      <ChevronDownIcon className="h-4 w-4" />
                     </Popover.Button>
 
                     <Transition
@@ -146,7 +158,7 @@ const LabelsSettings: React.FC = () => {
                       leaveFrom="opacity-100 translate-y-0"
                       leaveTo="opacity-0 translate-y-1"
                     >
-                      <Popover.Panel className="absolute z-20 transform left-0 mt-1 px-2 max-w-xs sm:px-0">
+                      <Popover.Panel className="absolute top-full z-20 left-0 mt-3 px-2 w-screen max-w-xs sm:px-0">
                         <Controller
                           name="colour"
                           control={control}
@@ -193,89 +205,23 @@ const LabelsSettings: React.FC = () => {
               </Button>
             )}
           </div>
-          {issueLabels ? (
-            issueLabels.map((label) => {
-              const children = getLabelChildren(label.id);
-
-              return (
-                <React.Fragment key={label.id}>
-                  {children && children.length === 0 ? (
-                    <div className="bg-white p-2 flex items-center justify-between text-gray-900 rounded-md">
-                      <div className="flex items-center gap-2">
-                        <span
-                          className="flex-shrink-0 h-1.5 w-1.5 rounded-full"
-                          style={{
-                            backgroundColor: label.colour,
-                          }}
-                        />
-                        <p className="text-sm">{label.name}</p>
-                      </div>
-                      <div>
-                        <Menu as="div" className="relative">
-                          <Menu.Button
-                            as="button"
-                            className={`h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-100 duration-300 outline-none`}
-                          >
-                            <EllipsisHorizontalIcon className="h-4 w-4" />
-                          </Menu.Button>
-                          <Menu.Items className="absolute origin-top-right right-0.5 mt-1 p-1 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
-                            <Menu.Item>
-                              <button
-                                type="button"
-                                className="text-left p-2 text-gray-900 hover:bg-theme hover:text-white rounded-md text-xs whitespace-nowrap w-full"
-                                onClick={() => {
-                                  setNewLabelForm(true);
-                                  setValue("colour", label.colour);
-                                  setValue("name", label.name);
-                                  setIsUpdating(true);
-                                  setLabelidForUpdate(label.id);
-                                }}
-                              >
-                                Edit
-                              </button>
-                            </Menu.Item>
-                            <Menu.Item>
-                              <div className="hover:bg-gray-100 border-b last:border-0">
-                                <button
-                                  type="button"
-                                  className="text-left p-2 text-gray-900 hover:bg-theme hover:text-white rounded-md text-xs whitespace-nowrap w-full"
-                                  onClick={() => handleLabelDelete(label.id)}
-                                >
-                                  Delete
-                                </button>
-                              </div>
-                            </Menu.Item>
-                          </Menu.Items>
-                        </Menu>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="bg-white p-4 text-gray-900 rounded-md">
-                      <h3 className="font-medium leading-5 flex items-center gap-2">
-                        <RectangleGroupIcon className="h-5 w-5" />
-                        This is the label group title
-                      </h3>
-                      <div className="pl-5 mt-4">
-                        <div className="group text-sm flex justify-between items-center p-2 hover:bg-gray-100 rounded">
-                          <h5 className="flex items-center gap-2">
-                            <div className="w-2 h-2 bg-red-600 rounded-full"></div>
-                            This is the label title
-                          </h5>
-                          <button type="button" className="hidden group-hover:block">
-                            <PencilIcon className="h-3 w-3" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </React.Fragment>
-              );
-            })
-          ) : (
-            <div className="flex justify-center py-4">
-              <Spinner />
-            </div>
-          )}
+          <>
+            {issueLabels ? (
+              issueLabels.map((label) => (
+                <SingleLabel
+                  key={label.id}
+                  label={label}
+                  issueLabels={issueLabels}
+                  editLabel={editLabel}
+                  handleLabelDelete={handleLabelDelete}
+                />
+              ))
+            ) : (
+              <div className="flex justify-center py-4">
+                <Spinner />
+              </div>
+            )}
+          </>
         </div>
       </section>
     </>

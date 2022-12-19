@@ -117,7 +117,7 @@ const SingleIssue: React.FC<Props> = ({
                       leaveFrom="opacity-100"
                       leaveTo="opacity-0"
                     >
-                      <Listbox.Options className="absolute z-10 mt-1 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
+                      <Listbox.Options className="absolute z-20 mt-1 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
                         {PRIORITIES?.map((priority) => (
                           <Listbox.Option
                             key={priority}
@@ -186,18 +186,24 @@ const SingleIssue: React.FC<Props> = ({
                       leaveFrom="opacity-100"
                       leaveTo="opacity-0"
                     >
-                      <Listbox.Options className="absolute z-10 mt-1 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
+                      <Listbox.Options className="absolute z-20 mt-1 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
                         {states?.map((state) => (
                           <Listbox.Option
                             key={state.id}
                             className={({ active }) =>
                               classNames(
                                 active ? "bg-indigo-50" : "bg-white",
-                                "cursor-pointer select-none px-3 py-2"
+                                "flex items-center gap-2 cursor-pointer select-none px-3 py-2"
                               )
                             }
                             value={state.id}
                           >
+                            <span
+                              className="flex-shrink-0 h-1.5 w-1.5 rounded-full"
+                              style={{
+                                backgroundColor: state.color,
+                              }}
+                            ></span>
                             {addSpaceIfCamelCase(state.name)}
                           </Listbox.Option>
                         ))}
@@ -316,7 +322,7 @@ const SingleIssue: React.FC<Props> = ({
                       leaveFrom="opacity-100"
                       leaveTo="opacity-0"
                     >
-                      <Listbox.Options className="absolute left-0 z-10 mt-1 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
+                      <Listbox.Options className="absolute left-0 z-20 mt-1 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
                         {people?.map((person) => (
                           <Listbox.Option
                             key={person.id}

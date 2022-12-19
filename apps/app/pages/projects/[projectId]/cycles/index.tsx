@@ -106,7 +106,13 @@ const ProjectSprints: NextPage = () => {
                   </span>
                 }
                 Icon={PlusIcon}
-                action={() => setCreateUpdateCycleModal(true)}
+                action={() => {
+                  const e = new KeyboardEvent("keydown", {
+                    ctrlKey: true,
+                    key: "q",
+                  });
+                  document.dispatchEvent(e);
+                }}
               />
             </EmptySpace>
           </div>

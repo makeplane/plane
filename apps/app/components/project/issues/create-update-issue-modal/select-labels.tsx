@@ -99,14 +99,14 @@ const SelectLabels: React.FC<Props> = ({ control }) => {
                   leaveTo="opacity-0"
                 >
                   <Listbox.Options className="absolute z-10 mt-1 bg-white shadow-lg max-h-28 rounded-md text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
-                    <div className="p-1">
+                    <div className="py-1">
                       {issueLabels?.map((label) => (
                         <Listbox.Option
                           key={label.id}
                           className={({ active }) =>
                             `${
-                              active ? "text-white bg-theme" : "text-gray-900"
-                            } flex items-center gap-2 cursor-pointer select-none w-full p-2 rounded-md`
+                              active ? "bg-indigo-50" : ""
+                            } flex items-center gap-2 text-gray-900 cursor-pointer select-none w-full p-2`
                           }
                           value={label.id}
                         >

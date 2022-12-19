@@ -29,7 +29,7 @@ import CreateUpdateStateModal from "components/project/issues/BoardView/state/cr
 import CreateUpdateCycleModal from "components/project/cycles/create-update-cycle-modal";
 // types
 import type { IIssue, IssueResponse } from "types";
-// fetching keys
+// fetch keys
 import {
   PROJECT_ISSUES_DETAILS,
   PROJECT_ISSUES_LIST,

@@ -47,14 +47,14 @@ const SelectSprint: React.FC<Props> = ({ control, setIsOpen }) => {
                     leaveTo="opacity-0"
                   >
                     <Listbox.Options className="absolute z-10 mt-1 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
-                      <div className="p-1">
+                      <div className="py-1">
                         {cycles?.map((cycle) => (
                           <Listbox.Option
                             key={cycle.id}
                             value={cycle.id}
                             className={({ active }) =>
-                              `relative cursor-pointer select-none p-2 rounded-md ${
-                                active ? "bg-theme text-white" : "text-gray-900"
+                              `text-gray-900 cursor-pointer select-none p-2 ${
+                                active ? "bg-indigo-50" : ""
                               }`
                             }
                           >
