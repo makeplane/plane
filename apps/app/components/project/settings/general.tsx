@@ -45,68 +45,70 @@ const GeneralSettings: React.FC<Props> = ({
 
   return (
     <>
-      <section className="space-y-5">
+      <section className="space-y-8">
         <div>
-          <h3 className="text-lg font-medium leading-6 text-gray-900">General</h3>
-          <p className="mt-1 text-sm text-gray-500">
+          <h3 className="text-3xl font-bold leading-6 text-gray-900">General</h3>
+          <p className="mt-4 text-sm text-gray-500">
             This information will be displayed to every member of the project.
           </p>
         </div>
-        <div className="grid grid-cols-10 gap-3 items-center">
-          <div className="col-span-1">
-            <div>
-              <label htmlFor="icon" className="text-gray-500 mb-2">
-                Icon
-              </label>
+        <div className="grid grid-cols-2 gap-16">
+          <div>
+            <h4 className="text-md leading-6 text-gray-900 mb-1">Icon & Name</h4>
+            <p className="text-sm text-gray-500 mb-3">Select an icon and a name for the project.</p>
+            <div className="flex gap-2">
               <Controller
                 control={control}
                 name="icon"
                 render={({ field: { value, onChange } }) => (
                   <EmojiIconPicker
-                    label={value ? String.fromCodePoint(parseInt(value)) : "Select Icon"}
+                    label={value ? String.fromCodePoint(parseInt(value)) : "Icon"}
                     value={value}
                     onChange={onChange}
                   />
                 )}
               />
+              <Input
+                id="name"
+                name="name"
+                error={errors.name}
+                register={register}
+                placeholder="Project Name"
+                size="lg"
+                className="w-auto"
+                validations={{
+                  required: "Name is required",
+                }}
+              />
             </div>
           </div>
-          <div className="col-span-5">
-            <Input
-              id="name"
-              name="name"
-              error={errors.name}
+          <div>
+            <h4 className="text-md leading-6 text-gray-900 mb-1">Description</h4>
+            <p className="text-sm text-gray-500 mb-3">Give a description to the project.</p>
+            <TextArea
+              id="description"
+              name="description"
+              error={errors.description}
               register={register}
-              placeholder="Project Name"
-              label="Name"
+              placeholder="Enter project description"
               validations={{
-                required: "Name is required",
+                required: "Description is required",
               }}
             />
           </div>
-          <div className="col-span-2">
-            <Select
-              name="network"
-              id="network"
-              options={Object.keys(NETWORK_CHOICES).map((key) => ({
-                value: key,
-                label: NETWORK_CHOICES[key as keyof typeof NETWORK_CHOICES],
-              }))}
-              label="Network"
-              register={register}
-              validations={{
-                required: "Network is required",
-              }}
-            />
-          </div>
-          <div className="col-span-2">
+          <div>
+            <h4 className="text-md leading-6 text-gray-900 mb-1">Identifier</h4>
+            <p className="text-sm text-gray-500 mb-3">
+              Create a 1-6 characters{"'"} identifier for the project.
+            </p>
             <Input
               id="identifier"
               name="identifier"
               error={errors.identifier}
               register={register}
               placeholder="Enter identifier"
-              label="Identifier"
+              className="w-40"
+              size="lg"
               onChange={(e: any) => {
                 if (!activeWorkspace || !e.target.value) return;
                 checkIdentifierAvailability(activeWorkspace.slug, e.target.value);
@@ -124,21 +126,26 @@ const GeneralSettings: React.FC<Props> = ({
               }}
             />
           </div>
+          <div>
+            <h4 className="text-md leading-6 text-gray-900 mb-1">Network</h4>
+            <p className="text-sm text-gray-500 mb-3">Select privacy type for the project.</p>
+            <Select
+              name="network"
+              id="network"
+              options={Object.keys(NETWORK_CHOICES).map((key) => ({
+                value: key,
+                label: NETWORK_CHOICES[key as keyof typeof NETWORK_CHOICES],
+              }))}
+              size="lg"
+              register={register}
+              validations={{
+                required: "Network is required",
+              }}
+              className="w-40"
+            />
+          </div>
         </div>
         <div>
-          <TextArea
-            id="description"
-            name="description"
-            error={errors.description}
-            register={register}
-            label="Description"
-            placeholder="Enter project description"
-            validations={{
-              required: "Description is required",
-            }}
-          />
-        </div>
-        <div className="flex justify-end">
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting ? "Updating Project..." : "Update Project"}
           </Button>

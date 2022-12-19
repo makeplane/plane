@@ -35,16 +35,16 @@ const navigation = (projectId: string) => [
     href: `/projects/${projectId}/cycles`,
     icon: ArrowPathIcon,
   },
-  {
-    name: "Modules",
-    href: `/projects/${projectId}/modules`,
-    icon: RectangleGroupIcon,
-  },
-  {
-    name: "Members",
-    href: `/projects/${projectId}/members`,
-    icon: UserGroupIcon,
-  },
+  // {
+  //   name: "Modules",
+  //   href: `/projects/${projectId}/modules`,
+  //   icon: RectangleGroupIcon,
+  // },
+  // {
+  //   name: "Members",
+  //   href: `/projects/${projectId}/members`,
+  //   icon: UserGroupIcon,
+  // },
   {
     name: "Settings",
     href: `/projects/${projectId}/settings`,

@@ -39,7 +39,7 @@ const EmojiIconPicker: React.FC<Props> = ({ label, value, onChange }) => {
   return (
     <Popover className="relative" ref={ref}>
       <Popover.Button
-        className="bg-gray-100 px-3 py-1 rounded-full outline-none"
+        className="border border-gray-300 p-3 sm:text-sm rounded-md outline-none"
         onClick={() => setIsOpen((prev) => !prev)}
       >
         {label}

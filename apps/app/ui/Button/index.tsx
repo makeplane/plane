@@ -33,6 +33,7 @@ const Button = React.forwardRef<HTMLButtonElement, Props>(
         type={type}
         disabled={disabled}
         className={classNames(
+          className,
           "inline-flex items-center rounded justify-center font-medium",
           theme === "primary"
             ? `${
@@ -53,8 +54,7 @@ const Button = React.forwardRef<HTMLButtonElement, Props>(
             ? "px-3 py-2 text-base"
             : size === "lg"
             ? "px-4 py-2 text-base"
-            : "px-2.5 py-2 text-sm",
-          className
+            : "px-2.5 py-2 text-sm"
         )}
       >
         {children}

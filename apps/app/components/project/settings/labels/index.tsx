@@ -11,17 +11,11 @@ import issuesServices from "lib/services/issues.service";
 // hooks
 import useUser from "lib/hooks/useUser";
 // headless ui
-import { Popover, Transition, Menu } from "@headlessui/react";
+import { Popover, Transition } from "@headlessui/react";
 // ui
-import { Button, CustomMenu, Input, Spinner } from "ui";
+import { Button, Input, Spinner } from "ui";
 // icons
-import {
-  ChevronDownIcon,
-  EllipsisHorizontalIcon,
-  PencilIcon,
-  PlusIcon,
-  RectangleGroupIcon,
-} from "@heroicons/react/24/outline";
+import { PlusIcon } from "@heroicons/react/24/outline";
 // types
 import { IIssueLabels } from "types";
 // fetch-keys
@@ -109,11 +103,11 @@ const LabelsSettings: React.FC = () => {
 
   return (
     <>
-      <section className="space-y-5">
-        <div className="flex items-center justify-between">
+      <section className="space-y-8">
+        <div className="md:w-2/3 flex justify-between items-center gap-2">
           <div>
-            <h3 className="text-lg font-medium leading-6 text-gray-900">Labels</h3>
-            <p className="mt-1 text-sm text-gray-500">Manage the labels of this project.</p>
+            <h3 className="text-3xl font-bold leading-6 text-gray-900">Labels</h3>
+            <p className="mt-4 text-sm text-gray-500">Manage the labels of this project.</p>
           </div>
           <Button
             theme="secondary"

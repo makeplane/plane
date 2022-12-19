@@ -25,7 +25,7 @@ const defaultValues: Partial<IIssueLabels> = {
 };
 
 const SingleLabel: React.FC<Props> = ({ label, issueLabels, editLabel, handleLabelDelete }) => {
-  const [newLabelForm, setNewLabelForm] = useState(true);
+  const [newLabelForm, setNewLabelForm] = useState(false);
 
   const {
     register,
@@ -54,7 +54,7 @@ const SingleLabel: React.FC<Props> = ({ label, issueLabels, editLabel, handleLab
               <h6 className="text-sm">{label.name}</h6>
             </div>
             <CustomMenu ellipsis>
-              <CustomMenu.MenuItem>Convert to group</CustomMenu.MenuItem>
+              {/* <CustomMenu.MenuItem>Convert to group</CustomMenu.MenuItem> */}
               <CustomMenu.MenuItem
                 onClick={() => {
                   editLabel(label);

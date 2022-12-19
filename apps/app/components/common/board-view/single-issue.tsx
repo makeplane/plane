@@ -56,7 +56,7 @@ const SingleIssue: React.FC<Props> = ({
     >
       <div className="group/card relative p-2 select-none">
         {handleDeleteIssue && (
-          <div className="opacity-0 group-hover/card:opacity-100 absolute top-1 right-1 z-10">
+          <div className="opacity-0 group-hover/card:opacity-100 absolute top-1.5 right-1.5 z-10">
             <button
               type="button"
               className="h-7 w-7 p-1 grid place-items-center rounded text-red-500 bg-white hover:bg-red-50 duration-300 outline-none"

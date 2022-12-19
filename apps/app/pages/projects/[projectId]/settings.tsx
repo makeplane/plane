@@ -22,12 +22,17 @@ import useToast from "lib/hooks/useToast";
 // fetch keys
 import { PROJECT_DETAILS, PROJECTS_LIST } from "constants/fetch-keys";
 // ui
-import { Spinner } from "ui";
+import { Button, Spinner } from "ui";
 import { Breadcrumbs, BreadcrumbItem } from "ui/Breadcrumbs";
 // types
 import type { IProject, IWorkspace } from "types";
 
 const GeneralSettings = dynamic(() => import("components/project/settings/general"), {
+  loading: () => <p>Loading...</p>,
+  ssr: false,
+});
+
+const MembersSettings = dynamic(() => import("components/project/settings/members"), {
   loading: () => <p>Loading...</p>,
   ssr: false,
 });
@@ -167,19 +172,16 @@ const ProjectSettings: NextPage = () => {
       // links={sidebarLinks}
     >
       {projectDetails ? (
-        <div className="space-y-3">
+        <div className="space-y-3 px-10">
           <Tab.Group>
             <Tab.List className="flex items-center gap-x-4 gap-y-2 flex-wrap mb-8">
-              {["General", "Control", "States", "Labels"].map((tab, index) => (
-                <Tab
-                  key={index}
-                  className={({ selected }) =>
-                    `px-6 py-2 border-2 border-theme hover:bg-theme hover:text-white text-xs font-medium rounded-md outline-none duration-300 ${
-                      selected ? "bg-theme text-white" : ""
-                    }`
-                  }
-                >
-                  {tab}
+              {["General", "Control", "Members", "States", "Labels"].map((tab, index) => (
+                <Tab key={index}>
+                  {({ selected }) => (
+                    <Button theme="secondary" className={selected ? "border-theme" : ""}>
+                      {tab}
+                    </Button>
+                  )}
                 </Tab>
               ))}
             </Tab.List>
@@ -199,7 +201,10 @@ const ProjectSettings: NextPage = () => {
                 </Tab.Panel>
               </form>
               <Tab.Panel>
-                <StatesSettings projectId={projectId} />
+                <MembersSettings projectId={projectId as string} />
+              </Tab.Panel>
+              <Tab.Panel>
+                <StatesSettings projectId={projectId as string} />
               </Tab.Panel>
               <Tab.Panel>
                 <LabelsSettings />

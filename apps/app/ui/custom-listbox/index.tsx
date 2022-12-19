@@ -30,7 +30,7 @@ const CustomListbox: React.FC<Props> = ({
           )}
           <div className="relative">
             <Listbox.Button
-              className={`flex items-center gap-1 hover:bg-gray-100 relative border rounded-md shadow-sm cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm duration-300 ${
+              className={`flex items-center gap-1 hover:bg-gray-100 text-xs relative border rounded-md shadow-sm cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm duration-300 ${
                 width === "sm"
                   ? "w-32"
                   : width === "md"
@@ -48,7 +48,7 @@ const CustomListbox: React.FC<Props> = ({
               ${className || "px-2 py-1"}`}
             >
               {icon ?? null}
-              <span className="block truncate">
+              <span className="block truncate text-xs">
                 {Array.isArray(value)
                   ? value.map((v) => options?.find((o) => o.value === v)?.display).join(", ") ||
                     `${title}`
