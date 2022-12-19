@@ -62,9 +62,16 @@ const ProjectsList: React.FC<Props> = ({ navigation, sidebarCollapse }) => {
                             sidebarCollapse ? "justify-center" : ""
                           }`}
                         >
-                          <span className="bg-gray-700 text-white rounded h-7 w-7 grid place-items-center uppercase flex-shrink-0">
-                            {project?.name.charAt(0)}
-                          </span>
+                          {project.icon ? (
+                            <span className="text-white rounded h-7 w-7 grid place-items-center uppercase flex-shrink-0">
+                              {String.fromCodePoint(parseInt(project.icon))}
+                            </span>
+                          ) : (
+                            <span className="bg-gray-700 text-white rounded h-7 w-7 grid place-items-center uppercase flex-shrink-0">
+                              {project?.name.charAt(0)}
+                            </span>
+                          )}
+
                           {!sidebarCollapse && (
                             <span className="flex items-center justify-between w-full">
                               {project?.name}

@@ -1,4 +1,3 @@
-// hooks
 import useTheme from "./useTheme";
 import useUser from "./useUser";
 // commons

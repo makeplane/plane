@@ -142,7 +142,7 @@ const ProjectIssues: NextPage = () => {
     setFilterIssue,
     orderBy,
     filterIssue,
-  } = useIssuesFilter(projectIssues?.results ?? []);
+  } = useIssuesFilter(projectIssues?.results.filter((p) => p.parent === null) ?? []);
 
   useEffect(() => {
     if (!isOpen) {

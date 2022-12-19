@@ -14,6 +14,7 @@ export interface IProject {
   slug: string;
   created_by: string;
   updated_by: string;
+  icon: string;
 }
 
 type ProjectViewTheme = {

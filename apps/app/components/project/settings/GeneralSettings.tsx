@@ -1,13 +1,14 @@
 // react
 import { useCallback } from "react";
 // react-hook-form
-import { UseFormRegister, UseFormSetError } from "react-hook-form";
+import { Controller } from "react-hook-form";
+import type { Control, UseFormRegister, UseFormSetError } from "react-hook-form";
 // services
 import projectServices from "lib/services/project.service";
 // hooks
 import useUser from "lib/hooks/useUser";
 // ui
-import { Button, Input, Select, TextArea } from "ui";
+import { Button, Input, Select, TextArea, EmojiIconPicker } from "ui";
 // types
 import { IProject } from "types";
 // constants
@@ -18,11 +19,18 @@ type Props = {
   errors: any;
   setError: UseFormSetError<IProject>;
   isSubmitting: boolean;
+  control: Control<IProject, any>;
 };
 
 const NETWORK_CHOICES = { "0": "Secret", "2": "Public" };
 
-const GeneralSettings: React.FC<Props> = ({ register, errors, setError, isSubmitting }) => {
+const GeneralSettings: React.FC<Props> = ({
+  register,
+  errors,
+  setError,
+  isSubmitting,
+  control,
+}) => {
   const { activeWorkspace } = useUser();
 
   const checkIdentifier = (slug: string, value: string) => {
@@ -44,8 +52,26 @@ const GeneralSettings: React.FC<Props> = ({ register, errors, setError, isSubmit
             This information will be displayed to every member of the project.
           </p>
         </div>
-        <div className="grid grid-cols-4 gap-3">
-          <div className="col-span-2">
+        <div className="grid grid-cols-10 gap-3 items-center">
+          <div className="col-span-1">
+            <div>
+              <label htmlFor="icon" className="text-gray-500 mb-2">
+                Icon
+              </label>
+              <Controller
+                control={control}
+                name="icon"
+                render={({ field: { value, onChange } }) => (
+                  <EmojiIconPicker
+                    label={value ? String.fromCodePoint(parseInt(value)) : "Select Icon"}
+                    value={value}
+                    onChange={onChange}
+                  />
+                )}
+              />
+            </div>
+          </div>
+          <div className="col-span-5">
             <Input
               id="name"
               name="name"
@@ -58,7 +84,7 @@ const GeneralSettings: React.FC<Props> = ({ register, errors, setError, isSubmit
               }}
             />
           </div>
-          <div>
+          <div className="col-span-2">
             <Select
               name="network"
               id="network"
@@ -73,7 +99,7 @@ const GeneralSettings: React.FC<Props> = ({ register, errors, setError, isSubmit
               }}
             />
           </div>
-          <div>
+          <div className="col-span-2">
             <Input
               id="identifier"
               name="identifier"

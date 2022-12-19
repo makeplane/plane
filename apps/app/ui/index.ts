@@ -10,3 +10,4 @@ export { default as SearchListbox } from "./search-listbox";
 export { default as HeaderButton } from "./HeaderButton";
 export * from "./Breadcrumbs";
 export * from "./EmptySpace";
+export { default as EmojiIconPicker } from "./emoji-icon-picker";

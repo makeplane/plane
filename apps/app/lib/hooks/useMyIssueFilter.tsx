@@ -18,6 +18,7 @@ const initialValues: Properties = {
   start_date: false,
   target_date: false,
   cycle: false,
+  children_count: false,
 };
 
 const useMyIssuesProperties = (issues?: IIssue[]) => {

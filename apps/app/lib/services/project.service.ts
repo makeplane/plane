@@ -11,6 +11,7 @@ import {
   PROJECT_MEMBER_DETAIL,
   USER_PROJECT_INVITATIONS,
   PROJECT_VIEW_ENDPOINT,
+  PROJECT_MEMBER_ME,
 } from "constants/api-routes";
 // services
 import APIService from "lib/services/api.service";
@@ -124,6 +125,16 @@ class ProjectServices extends APIService {
 
   async projectMembers(workspacSlug: string, projectId: string): Promise<IProjectMember[]> {
     return this.get(PROJECT_MEMBERS(workspacSlug, projectId))
+      .then((response) => {
+        return response?.data;
+      })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async projectMemberMe(workspacSlug: string, projectId: string): Promise<IProjectMember> {
+    return this.get(PROJECT_MEMBER_ME(workspacSlug, projectId))
       .then((response) => {
         return response?.data;
       })
