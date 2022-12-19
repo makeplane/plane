@@ -1,7 +1,7 @@
 export type Props = {
   title?: string;
   label?: string;
-  options?: Array<{ display: string; value: any }>;
+  options?: Array<{ display: string; value: any; color?: string }>;
   icon?: JSX.Element;
   value: any;
   onChange: (value: any) => void;

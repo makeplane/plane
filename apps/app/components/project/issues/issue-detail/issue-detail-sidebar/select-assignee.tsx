@@ -58,7 +58,7 @@ const SelectAssignee: React.FC<Props> = ({ control, submitChanges }) => {
             >
               {({ open }) => (
                 <div className="relative">
-                  <Listbox.Button className="w-full flex justify-end items-center gap-1 text-xs cursor-pointer">
+                  <Listbox.Button className="w-full flex items-center gap-1 text-xs cursor-pointer">
                     <span
                       className={classNames(
                         value ? "" : "text-gray-900",
@@ -121,9 +121,12 @@ const SelectAssignee: React.FC<Props> = ({ control, submitChanges }) => {
                   <Transition
                     show={open}
                     as={React.Fragment}
-                    leave="transition ease-in duration-100"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
+                    enter="transition ease-out duration-100"
+                    enterFrom="transform opacity-0 scale-95"
+                    enterTo="transform opacity-100 scale-100"
+                    leave="transition ease-in duration-75"
+                    leaveFrom="transform opacity-100 scale-100"
+                    leaveTo="transform opacity-0 scale-95"
                   >
                     <Listbox.Options className="absolute z-10 right-0 mt-1 w-auto bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
                       <div className="py-1">

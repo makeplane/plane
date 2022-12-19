@@ -1,7 +1,6 @@
 // react
 import React, { useState } from "react";
 // next
-import Link from "next/link";
 import { useRouter } from "next/router";
 // swr
 import useSWR, { mutate } from "swr";
@@ -12,6 +11,9 @@ import AppLayout from "layouts/app-layout";
 // components
 import CyclesListView from "components/project/cycles/list-view";
 import CyclesBoardView from "components/project/cycles/board-view";
+import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
+import CycleIssuesListModal from "components/project/cycles/cycle-issues-list-modal";
+import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
 // services
 import issuesServices from "lib/services/issues.service";
 import cycleServices from "lib/services/cycles.service";
@@ -28,23 +30,11 @@ import { BreadcrumbItem, Breadcrumbs, CustomMenu } from "ui";
 import { Squares2X2Icon } from "@heroicons/react/20/solid";
 import { ArrowPathIcon, ChevronDownIcon, ListBulletIcon } from "@heroicons/react/24/outline";
 // types
-import {
-  CycleIssueResponse,
-  IIssue,
-  IssueResponse,
-  NestedKeyOf,
-  Properties,
-  SelectIssue,
-  SelectSprintType,
-} from "types";
+import { CycleIssueResponse, IIssue, NestedKeyOf, Properties, SelectIssue } from "types";
 // fetch-keys
-import { CYCLE_ISSUES, PROJECT_ISSUES_LIST, PROJECT_MEMBERS } from "constants/fetch-keys";
-// constants
+import { CYCLE_ISSUES, PROJECT_MEMBERS } from "constants/fetch-keys";
+// common
 import { classNames, replaceUnderscoreIfSnakeCase } from "constants/common";
-import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
-import CycleIssuesListModal from "components/project/cycles/cycle-issues-list-modal";
-import ConfirmCycleDeletion from "components/project/cycles/confirm-cycle-deletion";
-import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
 
 const groupByOptions: Array<{ name: string; key: NestedKeyOf<IIssue> | null }> = [
   { name: "State", key: "state_detail.name" },
@@ -77,14 +67,15 @@ const filterIssueOptions: Array<{
   },
 ];
 
-type Props = {};
-
-const SingleCycle: React.FC<Props> = () => {
+const SingleCycle: React.FC = () => {
   const [isIssueModalOpen, setIsIssueModalOpen] = useState(false);
-  const [selectedCycle, setSelectedCycle] = useState<SelectSprintType>();
   const [selectedIssues, setSelectedIssues] = useState<SelectIssue>();
   const [cycleIssuesListModal, setCycleIssuesListModal] = useState(false);
   const [deleteIssue, setDeleteIssue] = useState<string | undefined>(undefined);
+
+  const [preloadedData, setPreloadedData] = useState<
+    (Partial<IIssue> & { actionType: "createIssue" | "edit" | "delete" }) | undefined
+  >(undefined);
 
   const { activeWorkspace, activeProject, cycles, issues } = useUser();
 
@@ -149,15 +140,8 @@ const SingleCycle: React.FC<Props> = () => {
     issue?: IIssue,
     actionType: "create" | "edit" | "delete" = "create"
   ) => {
-    const cycle = cycles?.find((cycle) => cycle.id === cycleId);
-    if (cycle) {
-      setSelectedCycle({
-        ...cycle,
-        actionType: "create-issue",
-      });
-      if (issue) setSelectedIssues({ ...issue, actionType });
-      setIsIssueModalOpen(true);
-    }
+    if (issue) setSelectedIssues({ ...issue, actionType });
+    setIsIssueModalOpen(true);
   };
 
   const openIssuesListModal = () => {
@@ -229,13 +213,9 @@ const SingleCycle: React.FC<Props> = () => {
   return (
     <>
       <CreateUpdateIssuesModal
-        isOpen={
-          isIssueModalOpen &&
-          selectedCycle?.actionType === "create-issue" &&
-          selectedIssues?.actionType !== "delete"
-        }
+        isOpen={isIssueModalOpen && selectedIssues?.actionType !== "delete"}
         data={selectedIssues}
-        prePopulateData={{ sprints: selectedCycle?.id }}
+        prePopulateData={{ sprints: cycleId as string, ...preloadedData }}
         setIsOpen={setIsIssueModalOpen}
         projectId={activeProject?.id}
       />
@@ -429,6 +409,7 @@ const SingleCycle: React.FC<Props> = () => {
             openCreateIssueModal={openCreateIssueModal}
             openIssuesListModal={openIssuesListModal}
             removeIssueFromCycle={removeIssueFromCycle}
+            setPreloadedData={setPreloadedData}
           />
         ) : (
           <div className="h-screen">
@@ -442,6 +423,7 @@ const SingleCycle: React.FC<Props> = () => {
               openIssuesListModal={openIssuesListModal}
               handleDeleteIssue={setDeleteIssue}
               partialUpdateIssue={partialUpdateIssue}
+              setPreloadedData={setPreloadedData}
             />
           </div>
         )}

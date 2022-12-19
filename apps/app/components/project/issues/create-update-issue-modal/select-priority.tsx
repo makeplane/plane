@@ -42,14 +42,14 @@ const SelectPriority: React.FC<Props> = ({ control }) => {
                   leaveTo="opacity-0"
                 >
                   <Listbox.Options className="absolute z-10 mt-1 w-full w-[5rem] bg-white shadow-lg max-h-28 rounded-md py-1 ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none text-xs">
-                    <div className="p-1">
+                    <div className="py-1">
                       {PRIORITIES.map((priority) => (
                         <Listbox.Option
                           key={priority}
                           className={({ active }) =>
                             `${
-                              active ? "text-white bg-theme" : "text-gray-900"
-                            } cursor-pointer select-none relative p-2 rounded-md`
+                              active ? "bg-indigo-50" : ""
+                            } text-gray-900 cursor-pointer select-none p-2`
                           }
                           value={priority}
                         >

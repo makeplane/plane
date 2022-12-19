@@ -20,7 +20,7 @@ import { addSpaceIfCamelCase } from "constants/common";
 import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 // types
 import { IIssue, Properties, NestedKeyOf, IWorkspaceMember } from "types";
-import SingleIssue from "components/project/common/board-view/single-issue";
+import SingleIssue from "components/common/board-view/single-issue";
 
 type Props = {
   selectedGroup: NestedKeyOf<IIssue> | null;

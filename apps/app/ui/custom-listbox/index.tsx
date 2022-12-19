@@ -92,7 +92,7 @@ const CustomListbox: React.FC<Props> = ({
                     : ""
                 } rounded-md py-1 ring-1 ring-black ring-opacity-5 focus:outline-none z-10`}
               >
-                <div className="p-1">
+                <div className="py-1">
                   {options ? (
                     options.length > 0 ? (
                       options.map((option) => (
@@ -100,8 +100,8 @@ const CustomListbox: React.FC<Props> = ({
                           key={option.value}
                           className={({ active }) =>
                             `${
-                              active ? "text-white bg-theme" : "text-gray-900"
-                            } cursor-pointer select-none relative p-2 rounded-md`
+                              active ? "bg-indigo-50" : ""
+                            } text-gray-900 cursor-pointer select-none relative p-2`
                           }
                           value={option.value}
                         >
@@ -115,8 +115,16 @@ const CustomListbox: React.FC<Props> = ({
                                     : value === option.value)
                                     ? "font-semibold"
                                     : "font-normal"
-                                } block truncate`}
+                                } flex items-center gap-2 truncate`}
                               >
+                                {option.color && (
+                                  <span
+                                    className="flex-shrink-0 h-1.5 w-1.5 rounded-full"
+                                    style={{
+                                      backgroundColor: option.color,
+                                    }}
+                                  ></span>
+                                )}
                                 {option.display}
                               </span>
 

@@ -56,50 +56,7 @@ const StatesSettings: React.FC<Props> = ({ projectId }) => {
                   <span>Add</span>
                 </button>
               </div>
-              <div className="w-full md:w-2/3 space-y-1 border p-1 rounded-xl bg-gray-50">
-                <div className="w-full">
-                  {groupedStates[key]?.map((state) =>
-                    state.id !== selectedState ? (
-                      <div
-                        key={state.id}
-                        className={`bg-gray-50 px-5 py-4 flex justify-between items-center border-b ${
-                          Boolean(activeGroup !== key) ? "last:border-0" : ""
-                        }`}
-                      >
-                        <div className="flex items-center gap-x-8">
-                          <div
-                            className="w-6 h-6 rounded-full"
-                            style={{
-                              backgroundColor: state.color,
-                            }}
-                          ></div>
-                          <h4>{addSpaceIfCamelCase(state.name)}</h4>
-                        </div>
-                        <div className="flex gap-x-2">
-                          <button type="button" onClick={() => setSelectDeleteState(state.id)}>
-                            <TrashIcon className="h-5 w-5 text-red-400" />
-                          </button>
-                          <button type="button" onClick={() => setSelectedState(state.id)}>
-                            <PencilSquareIcon className="h-5 w-5 text-gray-400" />
-                          </button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className={`border-b last:border-b-0`} key={state.id}>
-                        <CreateUpdateStateInline
-                          projectId={projectId as string}
-                          onClose={() => {
-                            setActiveGroup(null);
-                            setSelectedState(null);
-                          }}
-                          workspaceSlug={activeWorkspace?.slug}
-                          data={states?.find((state) => state.id === selectedState) ?? null}
-                          selectedGroup={key as keyof StateGroup}
-                        />
-                      </div>
-                    )
-                  )}
-                </div>
+              <div className="md:w-2/3 space-y-1 border p-1 rounded-xl">
                 {key === activeGroup && (
                   <CreateUpdateStateInline
                     projectId={projectId as string}
@@ -111,6 +68,47 @@ const StatesSettings: React.FC<Props> = ({ projectId }) => {
                     data={null}
                     selectedGroup={key as keyof StateGroup}
                   />
+                )}
+                {groupedStates[key]?.map((state) =>
+                  state.id !== selectedState ? (
+                    <div
+                      key={state.id}
+                      className={`bg-gray-50 p-3 flex justify-between items-center gap-2 border-b ${
+                        Boolean(activeGroup !== key) ? "last:border-0" : ""
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <div
+                          className="flex-shrink-0 h-3 w-3 rounded-full"
+                          style={{
+                            backgroundColor: state.color,
+                          }}
+                        ></div>
+                        <h6 className="text-sm">{addSpaceIfCamelCase(state.name)}</h6>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button type="button" onClick={() => setSelectDeleteState(state.id)}>
+                          <TrashIcon className="h-4 w-4 text-red-400" />
+                        </button>
+                        <button type="button" onClick={() => setSelectedState(state.id)}>
+                          <PencilSquareIcon className="h-4 w-4 text-gray-400" />
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className={`border-b last:border-b-0`} key={state.id}>
+                      <CreateUpdateStateInline
+                        projectId={projectId as string}
+                        onClose={() => {
+                          setActiveGroup(null);
+                          setSelectedState(null);
+                        }}
+                        workspaceSlug={activeWorkspace?.slug}
+                        data={states?.find((state) => state.id === selectedState) ?? null}
+                        selectedGroup={key as keyof StateGroup}
+                      />
+                    </div>
+                  )
                 )}
               </div>
             </React.Fragment>

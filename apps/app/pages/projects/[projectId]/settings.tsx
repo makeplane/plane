@@ -27,22 +27,22 @@ import { Breadcrumbs, BreadcrumbItem } from "ui/Breadcrumbs";
 // types
 import type { IProject, IWorkspace } from "types";
 
-const GeneralSettings = dynamic(() => import("components/project/settings/GeneralSettings"), {
+const GeneralSettings = dynamic(() => import("components/project/settings/general"), {
   loading: () => <p>Loading...</p>,
   ssr: false,
 });
 
-const ControlSettings = dynamic(() => import("components/project/settings/ControlSettings"), {
+const ControlSettings = dynamic(() => import("components/project/settings/control"), {
   loading: () => <p>Loading...</p>,
   ssr: false,
 });
 
-const StatesSettings = dynamic(() => import("components/project/settings/StatesSettings"), {
+const StatesSettings = dynamic(() => import("components/project/settings/states"), {
   loading: () => <p>Loading...</p>,
   ssr: false,
 });
 
-const LabelsSettings = dynamic(() => import("components/project/settings/LabelsSettings"), {
+const LabelsSettings = dynamic(() => import("components/project/settings/labels"), {
   loading: () => <p>Loading...</p>,
   ssr: false,
 });

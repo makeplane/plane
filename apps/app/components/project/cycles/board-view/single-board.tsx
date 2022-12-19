@@ -7,7 +7,7 @@ import workspaceService from "lib/services/workspace.service";
 // hooks
 import useUser from "lib/hooks/useUser";
 // components
-import SingleIssue from "components/project/common/board-view/single-issue";
+import SingleIssue from "components/common/board-view/single-issue";
 // headless ui
 import { Menu, Transition } from "@headlessui/react";
 // ui
@@ -35,6 +35,15 @@ type Props = {
   removeIssueFromCycle: (bridgeId: string) => void;
   partialUpdateIssue: (formData: Partial<IIssue>, issueId: string) => void;
   handleDeleteIssue: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setPreloadedData: React.Dispatch<
+    React.SetStateAction<
+      | (Partial<IIssue> & {
+          actionType: "createIssue" | "edit" | "delete";
+        })
+      | undefined
+    >
+  >;
+  stateId: string | null;
 };
 
 const SingleCycleBoard: React.FC<Props> = ({
@@ -49,6 +58,8 @@ const SingleCycleBoard: React.FC<Props> = ({
   removeIssueFromCycle,
   partialUpdateIssue,
   handleDeleteIssue,
+  setPreloadedData,
+  stateId,
 }) => {
   // Collapse/Expand
   const [show, setState] = useState(true);
@@ -109,7 +120,18 @@ const SingleCycleBoard: React.FC<Props> = ({
             </div>
 
             <CustomMenu width="auto" ellipsis>
-              <CustomMenu.MenuItem onClick={() => openCreateIssueModal()}>
+              <CustomMenu.MenuItem
+                onClick={() => {
+                  openCreateIssueModal();
+                  if (selectedGroup !== null) {
+                    setPreloadedData({
+                      state: stateId !== null ? stateId : undefined,
+                      [selectedGroup]: groupTitle,
+                      actionType: "createIssue",
+                    });
+                  }
+                }}
+              >
                 Create new
               </CustomMenu.MenuItem>
               <CustomMenu.MenuItem onClick={() => openIssuesListModal()}>
@@ -150,55 +172,35 @@ const SingleCycleBoard: React.FC<Props> = ({
             );
           })}
 
-          <Menu as="div" className="relative text-left">
-            <Menu.Button className="flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-100 text-xs font-medium">
-              <PlusIcon className="h-3 w-3" />
-              Add issue
-            </Menu.Button>
-
-            <Transition
-              as={React.Fragment}
-              enter="transition ease-out duration-100"
-              enterFrom="transform opacity-0 scale-95"
-              enterTo="transform opacity-100 scale-100"
-              leave="transition ease-in duration-75"
-              leaveFrom="transform opacity-100 scale-100"
-              leaveTo="transform opacity-0 scale-95"
+          <CustomMenu
+            label={
+              <span className="flex items-center gap-1">
+                <PlusIcon className="h-3 w-3" />
+                Add issue
+              </span>
+            }
+            className="mt-1"
+            optionsPosition="left"
+            withoutBorder
+          >
+            <CustomMenu.MenuItem
+              onClick={() => {
+                openCreateIssueModal();
+                if (selectedGroup !== null) {
+                  setPreloadedData({
+                    state: stateId !== null ? stateId : undefined,
+                    [selectedGroup]: groupTitle,
+                    actionType: "createIssue",
+                  });
+                }
+              }}
             >
-              <Menu.Items className="absolute left-0 z-10 mt-1 rounded-md bg-white text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none whitespace-nowrap">
-                <div className="py-1">
-                  <Menu.Item>
-                    {({ active }) => (
-                      <button
-                        type="button"
-                        className={classNames(
-                          active ? "bg-indigo-50 text-gray-900" : "text-gray-700",
-                          "block w-full p-2 text-left"
-                        )}
-                        onClick={() => openCreateIssueModal()}
-                      >
-                        Create new
-                      </button>
-                    )}
-                  </Menu.Item>
-                  <Menu.Item>
-                    {({ active }) => (
-                      <button
-                        type="button"
-                        className={classNames(
-                          active ? "bg-indigo-50 text-gray-900" : "text-gray-700",
-                          "block w-full p-2 text-left"
-                        )}
-                        onClick={() => openIssuesListModal()}
-                      >
-                        Add an existing issue
-                      </button>
-                    )}
-                  </Menu.Item>
-                </div>
-              </Menu.Items>
-            </Transition>
-          </Menu>
+              Create new
+            </CustomMenu.MenuItem>
+            <CustomMenu.MenuItem onClick={() => openIssuesListModal()}>
+              Add an existing issue
+            </CustomMenu.MenuItem>
+          </CustomMenu>
         </div>
       </div>
     </div>
