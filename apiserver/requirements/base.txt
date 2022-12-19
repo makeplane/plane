@@ -26,3 +26,4 @@ google-auth==2.9.1
 google-api-python-client==2.55.0
 django-rq==2.5.1
 django-redis==5.2.0
+channels==3.0.5

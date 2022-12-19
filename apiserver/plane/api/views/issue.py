@@ -9,6 +9,8 @@ from django.db.models import Count, Sum
 from rest_framework.response import Response
 from rest_framework import status
 from sentry_sdk import capture_exception
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 # Module imports
 from . import BaseViewSet, BaseAPIView
@@ -65,6 +67,19 @@ class IssueViewSet(BaseViewSet):
 
     def perform_create(self, serializer):
         serializer.save(project_id=self.kwargs.get("project_id"))
+
+
+    def perform_update(self, serializer):
+        print("Hello From Issue Update")
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            'issue',
+            {
+                'type': 'issue.activity',
+                'message': "event_trigered_from_views"
+            }
+        ) 
+        return super().perform_update(serializer)
 
     def get_queryset(self):
         return (
@@ -201,7 +216,7 @@ class IssueActivityEndpoint(BaseAPIView):
         try:
             issue_activities = IssueActivity.objects.filter(issue_id=issue_id).filter(
                 project__project_projectmember__member=self.request.user
-            )
+            ).select_related("actor")
             serializer = IssueActivitySerializer(issue_activities, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
