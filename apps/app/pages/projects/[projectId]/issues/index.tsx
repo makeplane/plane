@@ -134,7 +134,6 @@ const ProjectIssues: NextPage = () => {
 
   const {
     issueView,
-    setIssueView,
     groupByProperty,
     setGroupByProperty,
     groupedByIssues,
@@ -144,6 +143,8 @@ const ProjectIssues: NextPage = () => {
     filterIssue,
     resetFilterToDefault,
     setNewFilterDefaultView,
+    setIssueViewToKanban,
+    setIssueViewToList,
   } = useIssuesFilter(projectIssues?.results.filter((p) => p.parent === null) ?? []);
 
   useEffect(() => {
@@ -171,10 +172,7 @@ const ProjectIssues: NextPage = () => {
               className={`h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-200 duration-300 outline-none ${
                 issueView === "list" ? "bg-gray-200" : ""
               }`}
-              onClick={() => {
-                setIssueView("list");
-                setGroupByProperty(null);
-              }}
+              onClick={() => setIssueViewToList()}
             >
               <ListBulletIcon className="h-4 w-4" />
             </button>
@@ -183,10 +181,7 @@ const ProjectIssues: NextPage = () => {
               className={`h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-200 duration-300 outline-none ${
                 issueView === "kanban" ? "bg-gray-200" : ""
               }`}
-              onClick={() => {
-                setIssueView("kanban");
-                setGroupByProperty("state_detail.name");
-              }}
+              onClick={() => setIssueViewToKanban()}
             >
               <Squares2X2Icon className="h-4 w-4" />
             </button>
