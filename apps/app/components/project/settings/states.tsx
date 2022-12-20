@@ -76,8 +76,8 @@ const StatesSettings: React.FC<Props> = ({ projectId }) => {
                     state.id !== selectedState ? (
                       <div
                         key={state.id}
-                        className={`bg-gray-50 p-3 flex justify-between items-center gap-2 border-b ${
-                          Boolean(activeGroup !== key) ? "last:border-0" : ""
+                        className={`bg-gray-50 p-3 flex justify-between items-center gap-2 border-t ${
+                          Boolean(activeGroup !== key) ? "first:border-0" : ""
                         }`}
                       >
                         <div className="flex items-center gap-2">
@@ -99,7 +99,7 @@ const StatesSettings: React.FC<Props> = ({ projectId }) => {
                         </div>
                       </div>
                     ) : (
-                      <div className={`border-b last:border-b-0`} key={state.id}>
+                      <div className={`border-t first:border-t-0`} key={state.id}>
                         <CreateUpdateStateInline
                           projectId={projectId as string}
                           onClose={() => {

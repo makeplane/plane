@@ -176,7 +176,7 @@ const ProjectSettings: NextPage = () => {
           <Tab.Group>
             <Tab.List className="flex items-center gap-x-4 gap-y-2 flex-wrap mb-8">
               {["General", "Control", "Members", "States", "Labels"].map((tab, index) => (
-                <Tab key={index}>
+                <Tab key={index} as="div">
                   {({ selected }) => (
                     <Button theme="secondary" className={selected ? "border-theme" : ""}>
                       {tab}
