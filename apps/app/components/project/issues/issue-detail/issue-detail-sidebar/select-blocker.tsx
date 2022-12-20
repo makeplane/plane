@@ -10,12 +10,7 @@ import { Combobox, Dialog, Transition } from "@headlessui/react";
 // ui
 import { Button } from "ui";
 // icons
-import {
-  FolderIcon,
-  MagnifyingGlassIcon,
-  UserGroupIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
+import { FlagIcon, FolderIcon, MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // types
 import { IIssue } from "types";
 // constants
@@ -62,8 +57,8 @@ const SelectBlocker: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
   return (
     <div className="flex items-start py-2 flex-wrap">
       <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
-        <UserGroupIcon className="flex-shrink-0 h-4 w-4" />
-        <p>Blocker issues</p>
+        <FlagIcon className="flex-shrink-0 h-4 w-4" />
+        <p>Blocking</p>
       </div>
       <div className="sm:basis-1/2 space-y-1">
         <div className="flex gap-1 flex-wrap">
@@ -71,7 +66,7 @@ const SelectBlocker: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
             ? watch("blockers_list").map((issue) => (
                 <span
                   key={issue}
-                  className="group flex items-center gap-1 border rounded-2xl text-xs px-1 py-0.5 hover:bg-red-50 hover:border-red-500 cursor-pointer"
+                  className="group flex items-center gap-1 border rounded-2xl text-xs px-1.5 py-0.5 text-yellow-500 hover:bg-yellow-50 border-yellow-500 cursor-pointer"
                   onClick={() => {
                     const updatedBlockers = watch("blockers_list").filter((i) => i !== issue);
                     submitChanges({
@@ -145,7 +140,10 @@ const SelectBlocker: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
                               )}
                               <ul className="text-sm text-gray-700">
                                 {issuesList.map((issue) => {
-                                  if (!watch("blockers_list").includes(issue.id)) {
+                                  if (
+                                    !watch("blockers_list").includes(issue.id) &&
+                                    !watch("blocked_list").includes(issue.id)
+                                  ) {
                                     return (
                                       <Combobox.Option
                                         key={issue.id}

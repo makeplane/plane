@@ -10,32 +10,28 @@ import { Combobox, Dialog, Transition } from "@headlessui/react";
 // ui
 import { Button } from "ui";
 // icons
-import {
-  FolderIcon,
-  MagnifyingGlassIcon,
-  UserGroupIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
+import { FolderIcon, MagnifyingGlassIcon, FlagIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // types
-import { IIssue } from "types";
+import { IIssue, IssueResponse } from "types";
 // constants
 import { classNames } from "constants/common";
+import issuesService from "lib/services/issues.service";
 
 type FormInput = {
   issue_ids: string[];
 };
 
 type Props = {
-  submitChanges: (formData: Partial<IIssue>) => void;
+  issueDetail: IIssue | undefined;
   issuesList: IIssue[];
   watch: UseFormWatch<IIssue>;
 };
 
-const SelectBlocked: React.FC<Props> = ({ submitChanges, issuesList, watch }) => {
+const SelectBlocked: React.FC<Props> = ({ issueDetail, issuesList, watch }) => {
   const [query, setQuery] = useState("");
   const [isBlockedModalOpen, setIsBlockedModalOpen] = useState(false);
 
-  const { activeProject, issues } = useUser();
+  const { activeWorkspace, activeProject, issues, mutateIssues } = useUser();
   const { setToastAlert } = useToast();
 
   const { register, handleSubmit, reset, watch: watchIssues } = useForm<FormInput>();
@@ -54,16 +50,73 @@ const SelectBlocked: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
       });
       return;
     }
-    const newBlocked = [...watch("blocked_list"), ...data.issue_ids];
-    submitChanges({ blocked_list: newBlocked });
-    handleClose();
+
+    data.issue_ids.map((issue) => {
+      if (!activeWorkspace || !activeProject || !issueDetail) return;
+
+      const currentBlockers =
+        issues?.results
+          .find((i) => i.id === issue)
+          ?.blocker_issues.map((b) => b.blocker_issue_detail?.id ?? "") ?? [];
+
+      issuesService
+        .patchIssue(activeWorkspace.slug, activeProject.id, issue, {
+          blockers_list: [...currentBlockers, issueDetail.id],
+        })
+        .then((response) => {
+          mutateIssues((prevData) => ({
+            ...(prevData as IssueResponse),
+            results: (prevData?.results ?? []).map((issue) => {
+              if (issue.id === issueDetail.id) {
+                return { ...issue, ...response };
+              }
+              return issue;
+            }),
+          }));
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    });
+
+    // handleClose();
+  };
+
+  const removeBlocked = (issueId: string) => {
+    if (!activeWorkspace || !activeProject || !issueDetail) return;
+
+    const currentBlockers =
+      issues?.results
+        .find((i) => i.id === issueId)
+        ?.blocker_issues.map((b) => b.blocker_issue_detail?.id ?? "") ?? [];
+
+    const updatedBlockers = currentBlockers.filter((b) => b !== issueDetail.id);
+
+    issuesService
+      .patchIssue(activeWorkspace.slug, activeProject.id, issueId, {
+        blockers_list: updatedBlockers,
+      })
+      .then((response) => {
+        mutateIssues((prevData) => ({
+          ...(prevData as IssueResponse),
+          results: (prevData?.results ?? []).map((issue) => {
+            if (issue.id === issueDetail.id) {
+              return { ...issue, ...response };
+            }
+            return issue;
+          }),
+        }));
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
     <div className="flex items-start py-2 flex-wrap">
       <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
-        <UserGroupIcon className="flex-shrink-0 h-4 w-4" />
-        <p>Blocked issues</p>
+        <FlagIcon className="flex-shrink-0 h-4 w-4" />
+        <p>Blocked by</p>
       </div>
       <div className="sm:basis-1/2 space-y-1">
         <div className="flex gap-1 flex-wrap">
@@ -71,13 +124,8 @@ const SelectBlocked: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
             ? watch("blocked_list").map((issue) => (
                 <span
                   key={issue}
-                  className="group flex items-center gap-1 border rounded-2xl text-xs px-1 py-0.5 hover:bg-red-50 hover:border-red-500 cursor-pointer"
-                  onClick={() => {
-                    const updatedBlockers = watch("blocked_list").filter((i) => i !== issue);
-                    submitChanges({
-                      blocked_list: updatedBlockers,
-                    });
-                  }}
+                  className="group flex items-center gap-1 border rounded-2xl text-xs px-1.5 py-0.5 text-red-500 hover:bg-red-50 border-red-500 cursor-pointer"
+                  onClick={() => removeBlocked(issue)}
                 >
                   {`${activeProject?.identifier}-${
                     issues?.results.find((i) => i.id === issue)?.sequence_id
@@ -145,7 +193,10 @@ const SelectBlocked: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
                               )}
                               <ul className="text-sm text-gray-700">
                                 {issuesList.map((issue) => {
-                                  if (!watch("blocked_list").includes(issue.id)) {
+                                  if (
+                                    !watch("blocked_list").includes(issue.id) &&
+                                    !watch("blockers_list").includes(issue.id)
+                                  ) {
                                     return (
                                       <Combobox.Option
                                         key={issue.id}

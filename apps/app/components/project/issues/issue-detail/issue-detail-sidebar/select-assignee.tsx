@@ -128,7 +128,7 @@ const SelectAssignee: React.FC<Props> = ({ control, submitChanges }) => {
                     leaveFrom="transform opacity-100 scale-100"
                     leaveTo="transform opacity-0 scale-95"
                   >
-                    <Listbox.Options className="absolute z-10 right-0 mt-1 w-auto bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
+                    <Listbox.Options className="absolute z-10 right-0 mt-1 w-auto bg-white shadow-lg max-h-48 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
                       <div className="py-1">
                         {people ? (
                           people.length > 0 ? (

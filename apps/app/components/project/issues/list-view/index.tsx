@@ -8,7 +8,7 @@ import useSWR from "swr";
 // headless ui
 import { Disclosure, Listbox, Menu, Transition } from "@headlessui/react";
 // ui
-import { Spinner } from "ui";
+import { CustomMenu, Spinner } from "ui";
 // icons
 import {
   ChevronDownIcon,
@@ -483,43 +483,25 @@ const ListView: React.FC<Props> = ({
                                       )}
                                     </Listbox>
                                   )}
-                                  <Menu as="div" className="relative">
-                                    <Menu.Button
-                                      as="button"
-                                      className={`h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-100 duration-300 outline-none`}
+                                  <CustomMenu ellipsis>
+                                    <CustomMenu.MenuItem
+                                      onClick={() => {
+                                        setSelectedIssue({
+                                          ...issue,
+                                          actionType: "edit",
+                                        });
+                                      }}
                                     >
-                                      <EllipsisHorizontalIcon className="h-4 w-4" />
-                                    </Menu.Button>
-                                    <Menu.Items className="absolute origin-top-right right-0.5 mt-1 p-1 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
-                                      <Menu.Item>
-                                        <button
-                                          type="button"
-                                          className="text-left p-2 text-gray-900 hover:bg-theme hover:text-white rounded-md text-xs whitespace-nowrap w-full"
-                                          onClick={() => {
-                                            setSelectedIssue({
-                                              ...issue,
-                                              actionType: "edit",
-                                            });
-                                          }}
-                                        >
-                                          Edit
-                                        </button>
-                                      </Menu.Item>
-                                      <Menu.Item>
-                                        <div className="hover:bg-gray-100 border-b last:border-0">
-                                          <button
-                                            type="button"
-                                            className="text-left p-2 text-gray-900 hover:bg-theme hover:text-white rounded-md text-xs whitespace-nowrap w-full"
-                                            onClick={() => {
-                                              handleDeleteIssue(issue.id);
-                                            }}
-                                          >
-                                            Delete permanently
-                                          </button>
-                                        </div>
-                                      </Menu.Item>
-                                    </Menu.Items>
-                                  </Menu>
+                                      Edit
+                                    </CustomMenu.MenuItem>
+                                    <CustomMenu.MenuItem
+                                      onClick={() => {
+                                        handleDeleteIssue(issue.id);
+                                      }}
+                                    >
+                                      Delete permanently
+                                    </CustomMenu.MenuItem>
+                                  </CustomMenu>
                                 </div>
                               </div>
                             );

@@ -28,7 +28,7 @@ type Props = {
 };
 
 type FormInput = {
-  issue: string[];
+  issues: string[];
 };
 
 const CycleIssuesListModal: React.FC<Props> = ({
@@ -56,12 +56,12 @@ const CycleIssuesListModal: React.FC<Props> = ({
     formState: { isSubmitting },
   } = useForm<FormInput>({
     defaultValues: {
-      issue: [],
+      issues: [],
     },
   });
 
   const handleAddToCycle: SubmitHandler<FormInput> = (data) => {
-    if (!data.issue || data.issue.length === 0) {
+    if (!data.issues || data.issues.length === 0) {
       setToastAlert({
         title: "Error",
         type: "error",
@@ -120,7 +120,7 @@ const CycleIssuesListModal: React.FC<Props> = ({
                 <form>
                   <Controller
                     control={control}
-                    name="issue"
+                    name="issues"
                     render={({ field }) => (
                       <Combobox as="div" {...field} multiple>
                         <div className="relative m-1">

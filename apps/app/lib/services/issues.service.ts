@@ -92,7 +92,7 @@ class ProjectIssuesServices extends APIService {
     projectId: string,
     cycleId: string,
     data: {
-      issue: string[];
+      issues: string[];
     }
   ) {
     return this.post(CYCLE_DETAIL(workspaceSlug, projectId, cycleId), data)
