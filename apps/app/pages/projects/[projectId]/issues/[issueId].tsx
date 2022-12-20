@@ -1,16 +1,25 @@
+import React, { useCallback, useEffect, useState } from "react";
 // next
 import Link from "next/link";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
-// react
-import React, { useCallback, useEffect, useState } from "react";
 // swr
 import useSWR, { mutate } from "swr";
 // react hook form
 import { useForm } from "react-hook-form";
+// headless ui
+import { Disclosure, Menu, Tab, Transition } from "@headlessui/react";
+// fetch keys
+import {
+  PROJECT_ISSUES_ACTIVITY,
+  PROJECT_ISSUES_COMMENTS,
+  PROJECT_ISSUES_LIST,
+} from "constants/fetch-keys";
 // services
 import issuesServices from "lib/services/issues.service";
+// common
+import { debounce } from "constants/common";
 // hooks
 import useUser from "lib/hooks/useUser";
 // hoc
@@ -24,12 +33,8 @@ import AddAsSubIssue from "components/project/issues/issue-detail/add-as-sub-iss
 import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
 import IssueDetailSidebar from "components/project/issues/issue-detail/issue-detail-sidebar";
 import IssueActivitySection from "components/project/issues/issue-detail/activity";
-// headless ui
-import { Disclosure, Menu, Tab, Transition } from "@headlessui/react";
 // ui
-import { Spinner, TextArea } from "ui";
-import HeaderButton from "ui/HeaderButton";
-import { BreadcrumbItem, Breadcrumbs } from "ui/Breadcrumbs";
+import { Spinner, TextArea, HeaderButton, Breadcrumbs, BreadcrumbItem } from "ui";
 // icons
 import {
   ChevronLeftIcon,
@@ -39,14 +44,6 @@ import {
 } from "@heroicons/react/24/outline";
 // types
 import { IIssue, IIssueComment, IssueResponse } from "types";
-// fetch keys
-import {
-  PROJECT_ISSUES_ACTIVITY,
-  PROJECT_ISSUES_COMMENTS,
-  PROJECT_ISSUES_LIST,
-} from "constants/fetch-keys";
-// common
-import { debounce } from "constants/common";
 
 const RichTextEditor = dynamic(() => import("components/lexical/editor"), {
   ssr: false,
@@ -148,7 +145,15 @@ const IssueDetail: NextPage = () => {
       issuesServices
         .patchIssue(activeWorkspace.slug, projectId as string, issueId as string, payload)
         .then((response) => {
-          console.log(response);
+          mutateIssues((prevData) => ({
+            ...(prevData as IssueResponse),
+            results: (prevData?.results ?? []).map((issue) => {
+              if (issue.id === issueId) {
+                return { ...issue, ...response };
+              }
+              return issue;
+            }),
+          }));
         })
         .catch((error) => {
           console.log(error);
@@ -170,25 +175,23 @@ const IssueDetail: NextPage = () => {
           issueDetail.blocked_issues?.map((issue) => issue.blocked_issue_detail?.id),
         assignees_list:
           issueDetail.assignees_list ?? issueDetail.assignee_details?.map((user) => user.id),
-        labels_list: issueDetail.labels_list ?? issueDetail.labels?.map((label) => label),
-        labels: issueDetail.labels_list ?? issueDetail.labels?.map((label) => label),
+        labels_list: issueDetail.labels_list ?? issueDetail.labels,
+        labels: issueDetail.labels_list ?? issueDetail.labels,
       });
   }, [issueDetail, reset]);
 
   useEffect(() => {
-    const issueIndex = issues?.results.findIndex((issue) => issue.id === issueId);
-    if (issueIndex === undefined) return;
-    const issueDetail = issues?.results[issueIndex];
+    const issueDetail = issues?.results.find((issue) => issue.id === issueId);
     setIssueDetail(issueDetail);
-  }, [issues, issueId]);
+  }, [issueId, issues]);
 
   const prevIssue = issues?.results[issues?.results.findIndex((issue) => issue.id === issueId) - 1];
   const nextIssue = issues?.results[issues?.results.findIndex((issue) => issue.id === issueId) + 1];
 
-  const subIssues = (issues && issues.results.filter((i) => i.parent === issueDetail?.id)) ?? [];
+  const subIssues = (issues && issues.results.filter((i) => i.parent === issueId)) ?? [];
   const siblingIssues =
     issueDetail &&
-    issues?.results.filter((i) => i.parent === issueDetail.parent && i.id !== issueDetail.id);
+    issues?.results.filter((i) => i.parent === issueDetail.parent && i.id !== issueId);
 
   const handleSubIssueRemove = (issueId: string) => {
     if (activeWorkspace && activeProject) {
@@ -212,8 +215,6 @@ const IssueDetail: NextPage = () => {
     }
   };
 
-  console.log(issueDetail);
-
   return (
     <AppLayout
       noPadding={true}
@@ -236,7 +237,7 @@ const IssueDetail: NextPage = () => {
           <HeaderButton
             Icon={ChevronLeftIcon}
             label="Previous"
-            className={`${!prevIssue ? "cursor-not-allowed opacity-70" : ""}`}
+            className={!prevIssue ? "cursor-not-allowed opacity-70" : ""}
             onClick={() => {
               if (!prevIssue) return;
               router.push(`/projects/${prevIssue.project}/issues/${prevIssue.id}`);
@@ -246,7 +247,7 @@ const IssueDetail: NextPage = () => {
             Icon={ChevronRightIcon}
             disabled={!nextIssue}
             label="Next"
-            className={`${!nextIssue ? "cursor-not-allowed opacity-70" : ""}`}
+            className={!nextIssue ? "cursor-not-allowed opacity-70" : ""}
             onClick={() => {
               if (!nextIssue) return;
               router.push(`/projects/${nextIssue.project}/issues/${nextIssue?.id}`);
@@ -284,7 +285,7 @@ const IssueDetail: NextPage = () => {
                   <Link href={`/projects/${activeProject.id}/issues/${issueDetail.parent}`}>
                     <a className="flex items-center gap-2">
                       <span
-                        className={`h-1.5 w-1.5 block rounded-full`}
+                        className="h-1.5 w-1.5 block rounded-full"
                         style={{
                           backgroundColor: issueDetail.state_detail.color,
                         }}
@@ -432,15 +433,13 @@ const IssueDetail: NextPage = () => {
                                   <Menu.Items className="origin-top-right absolute right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
                                     <div className="p-1">
                                       <Menu.Item as="div">
-                                        {(active) => (
-                                          <button
-                                            type="button"
-                                            className="flex items-center gap-2 p-2 text-left text-gray-900 hover:bg-theme hover:text-white rounded-md text-xs whitespace-nowrap"
-                                            onClick={() => setIsAddAsSubIssueOpen(true)}
-                                          >
-                                            Add an existing issue
-                                          </button>
-                                        )}
+                                        <button
+                                          type="button"
+                                          className="flex items-center gap-2 p-2 text-left text-gray-900 hover:bg-theme hover:text-white rounded-md text-xs whitespace-nowrap"
+                                          onClick={() => setIsAddAsSubIssueOpen(true)}
+                                        >
+                                          Add an existing issue
+                                        </button>
                                       </Menu.Item>
                                     </div>
                                   </Menu.Items>
@@ -497,14 +496,12 @@ const IssueDetail: NextPage = () => {
                                       <Menu.Items className="origin-top-right absolute right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
                                         <div className="p-1">
                                           <Menu.Item as="div">
-                                            {(active) => (
-                                              <button
-                                                className="flex items-center gap-2 p-2 text-left text-gray-900 hover:bg-theme hover:text-white rounded-md text-xs whitespace-nowrap"
-                                                onClick={() => handleSubIssueRemove(subIssue.id)}
-                                              >
-                                                Remove as sub-issue
-                                              </button>
-                                            )}
+                                            <button
+                                              className="flex items-center gap-2 p-2 text-left text-gray-900 hover:bg-theme hover:text-white rounded-md text-xs whitespace-nowrap"
+                                              onClick={() => handleSubIssueRemove(subIssue.id)}
+                                            >
+                                              Remove as sub-issue
+                                            </button>
                                           </Menu.Item>
                                         </div>
                                       </Menu.Items>
@@ -537,38 +534,34 @@ const IssueDetail: NextPage = () => {
                       <Menu.Items className="absolute origin-top-right left-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
                         <div className="p-1">
                           <Menu.Item as="div">
-                            {(active) => (
-                              <button
-                                type="button"
-                                className="text-left p-2 text-gray-900 hover:bg-theme hover:text-white rounded-md text-xs whitespace-nowrap w-full"
-                                onClick={() => {
-                                  setIsOpen(true);
-                                  setPreloadedData({
-                                    parent: issueDetail.id,
-                                    actionType: "createIssue",
-                                  });
-                                }}
-                              >
-                                Create new
-                              </button>
-                            )}
+                            <button
+                              type="button"
+                              className="text-left p-2 text-gray-900 hover:bg-theme hover:text-white rounded-md text-xs whitespace-nowrap w-full"
+                              onClick={() => {
+                                setIsOpen(true);
+                                setPreloadedData({
+                                  parent: issueDetail.id,
+                                  actionType: "createIssue",
+                                });
+                              }}
+                            >
+                              Create new
+                            </button>
                           </Menu.Item>
                           <Menu.Item as="div">
-                            {(active) => (
-                              <button
-                                type="button"
-                                className="p-2 text-left text-gray-900 hover:bg-theme hover:text-white rounded-md text-xs whitespace-nowrap"
-                                onClick={() => {
-                                  setIsAddAsSubIssueOpen(true);
-                                  setPreloadedData({
-                                    parent: issueDetail.id,
-                                    actionType: "createIssue",
-                                  });
-                                }}
-                              >
-                                Add an existing issue
-                              </button>
-                            )}
+                            <button
+                              type="button"
+                              className="p-2 text-left text-gray-900 hover:bg-theme hover:text-white rounded-md text-xs whitespace-nowrap"
+                              onClick={() => {
+                                setIsAddAsSubIssueOpen(true);
+                                setPreloadedData({
+                                  parent: issueDetail.id,
+                                  actionType: "createIssue",
+                                });
+                              }}
+                            >
+                              Add an existing issue
+                            </button>
                           </Menu.Item>
                         </div>
                       </Menu.Items>

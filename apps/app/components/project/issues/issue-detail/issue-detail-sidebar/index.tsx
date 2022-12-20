@@ -99,12 +99,14 @@ const IssueDetailSidebar: React.FC<Props> = ({
 
   const handleCycleChange = (cycleId: string) => {
     if (activeWorkspace && activeProject && issueDetail)
-      issuesServices.addIssueToCycle(activeWorkspace.slug, activeProject.id, cycleId, {
-        issue: issueDetail.id,
-      });
+      issuesServices
+        .addIssueToCycle(activeWorkspace.slug, activeProject.id, cycleId, {
+          issue: issueDetail.id,
+        })
+        .then(() => {
+          submitChanges({});
+        });
   };
-
-  console.log(issueDetail?.labels, issueDetail?.labels_list);
 
   return (
     <>
@@ -141,7 +143,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
               type="button"
               className="p-2 hover:bg-gray-100 border rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 duration-300"
               onClick={() =>
-                copyTextToClipboard(`${issueDetail?.id}`)
+                copyTextToClipboard(issueDetail?.id ?? "")
                   .then(() => {
                     setToastAlert({
                       type: "success",
@@ -249,7 +251,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
             </div>
             <div className="basis-1/2">
               <div className="flex gap-1 flex-wrap">
-                {issueDetail?.labels.map((label) => {
+                {watchIssue("labels_list")?.map((label) => {
                   const singleLabel = issueLabels?.find((l) => l.id === label);
 
                   if (!singleLabel) return null;
@@ -259,11 +261,10 @@ const IssueDetailSidebar: React.FC<Props> = ({
                       key={singleLabel.id}
                       className="group flex items-center gap-1 border rounded-2xl text-xs px-1 py-0.5 hover:bg-red-50 hover:border-red-500 cursor-pointer"
                       onClick={() => {
-                        const updatedLabels = issueDetail?.labels.filter((l) => l !== label);
-                        // submitChanges({
-                        //   labels_list: updatedLabels,
-                        // });
-                        console.log(updatedLabels);
+                        const updatedLabels = watchIssue("labels_list")?.filter((l) => l !== label);
+                        submitChanges({
+                          labels_list: updatedLabels,
+                        });
                       }}
                     >
                       <span
