@@ -31,7 +31,9 @@ export interface IProjectMember {
   workspace: IWorkspace;
   comment: string;
   role: 5 | 10 | 15 | 20;
+
   view_props: ProjectViewTheme;
+  default_props: ProjectViewTheme;
 
   created_at: Date;
   updated_at: Date;

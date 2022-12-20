@@ -142,6 +142,8 @@ const ProjectIssues: NextPage = () => {
     setFilterIssue,
     orderBy,
     filterIssue,
+    resetFilterToDefault,
+    setNewFilterDefaultView,
   } = useIssuesFilter(projectIssues?.results.filter((p) => p.parent === null) ?? []);
 
   useEffect(() => {
@@ -291,6 +293,23 @@ const ProjectIssues: NextPage = () => {
                             </button>
                           ))}
                         </div>
+                      </div>
+                      <div className="border-b-2"></div>
+                      <div className="relative flex justify-end gap-x-3">
+                        <button
+                          type="button"
+                          className="text-xs"
+                          onClick={() => resetFilterToDefault()}
+                        >
+                          Reset to default
+                        </button>
+                        <button
+                          type="button"
+                          className="text-xs font-medium text-theme"
+                          onClick={() => setNewFilterDefaultView()}
+                        >
+                          Set as default
+                        </button>
                       </div>
                     </div>
                   </Popover.Panel>

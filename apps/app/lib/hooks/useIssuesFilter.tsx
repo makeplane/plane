@@ -17,6 +17,8 @@ const useIssuesFilter = (projectIssues: IIssue[]) => {
     setOrderBy,
     filterIssue,
     setFilterIssue,
+    resetFilterToDefault,
+    setNewFilterDefaultView,
   } = useTheme();
 
   const { states } = useUser();
@@ -95,6 +97,8 @@ const useIssuesFilter = (projectIssues: IIssue[]) => {
     setOrderBy,
     filterIssue,
     setFilterIssue,
+    resetFilterToDefault,
+    setNewFilterDefaultView,
   } as const;
 };
 
