@@ -632,7 +632,7 @@ class ProjectMemberUserEndpoint(BaseAPIView):
         try:
 
             project_member = ProjectMember.objects.get(
-                project=project_id, workpsace__slug=slug, member=request.user
+                project_id=project_id, workspace__slug=slug, member=request.user
             )
             serializer = ProjectMemberSerializer(project_member)
 
