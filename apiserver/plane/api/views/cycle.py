@@ -1,9 +1,10 @@
 # Third party imports
 from rest_framework.response import Response
 from rest_framework import status
+from sentry_sdk import capture_exception
 
 # Module imports
-from . import BaseViewSet, BaseAPIView
+from . import BaseViewSet
 from plane.api.serializers import CycleSerializer, CycleIssueSerializer
 from plane.api.permissions import ProjectEntityPermission
 from plane.db.models import Cycle, CycleIssue, Issue
@@ -66,25 +67,26 @@ class CycleIssueViewSet(BaseViewSet):
             .distinct()
         )
 
-
-class BulkAssignIssuesToCycleEndpoint(BaseAPIView):
-
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
-
-    def post(self, request, slug, project_id, cycle_id):
+    def create(self, request, slug, project_id, cycle_id):
         try:
 
-            issue_ids = request.data.get("issue_ids")
+            issues = request.data.get("issue", [])
+
+            if not len(issues):
+                return Response(
+                    {"error": "Issues are required"}, status=status.HTTP_400_BAD_REQUEST
+                )
 
             cycle = Cycle.objects.get(
                 workspace__slug=slug, project_id=project_id, pk=cycle_id
             )
 
             issues = Issue.objects.filter(
-                pk__in=issue_ids, workspace__slug=slug, project_id=project_id
+                pk__in=issues, workspace__slug=slug, project_id=project_id
             )
+
+            # Delete old records in order to maintain the database integrity
+            CycleIssue.objects.filter(issue_id__in=issues).delete()
 
             CycleIssue.objects.bulk_create(
                 [
@@ -106,4 +108,10 @@ class BulkAssignIssuesToCycleEndpoint(BaseAPIView):
         except Cycle.DoesNotExist:
             return Response(
                 {"error": "Cycle not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_200_OK,
             )
