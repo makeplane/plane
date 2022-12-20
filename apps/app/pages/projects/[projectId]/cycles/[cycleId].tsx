@@ -175,7 +175,7 @@ const SingleCycle: React.FC = () => {
         .then((res) => {
           issuesServices
             .addIssueToCycle(activeWorkspace.slug, activeProject.id, destination.droppableId, {
-              issue: result.draggableId.split(",")[1],
+              issue: [result.draggableId.split(",")[1]],
             })
             .then((res) => {
               console.log(res);

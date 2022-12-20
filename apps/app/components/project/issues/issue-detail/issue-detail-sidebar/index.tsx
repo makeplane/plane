@@ -101,7 +101,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
     if (activeWorkspace && activeProject && issueDetail)
       issuesServices
         .addIssueToCycle(activeWorkspace.slug, activeProject.id, cycleId, {
-          issue: issueDetail.id,
+          issue: [issueDetail.id],
         })
         .then(() => {
           submitChanges({});

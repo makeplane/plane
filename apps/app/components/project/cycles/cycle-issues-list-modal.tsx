@@ -28,7 +28,7 @@ type Props = {
 };
 
 type FormInput = {
-  issue_ids: string[];
+  issue: string[];
 };
 
 const CycleIssuesListModal: React.FC<Props> = ({
@@ -56,12 +56,12 @@ const CycleIssuesListModal: React.FC<Props> = ({
     formState: { isSubmitting },
   } = useForm<FormInput>({
     defaultValues: {
-      issue_ids: [],
+      issue: [],
     },
   });
 
   const handleAddToCycle: SubmitHandler<FormInput> = (data) => {
-    if (!data.issue_ids || data.issue_ids.length === 0) {
+    if (!data.issue || data.issue.length === 0) {
       setToastAlert({
         title: "Error",
         type: "error",
@@ -72,7 +72,7 @@ const CycleIssuesListModal: React.FC<Props> = ({
 
     if (activeWorkspace && activeProject) {
       issuesServices
-        .bulkAddIssuesToCycle(activeWorkspace.slug, activeProject.id, cycleId, data)
+        .addIssueToCycle(activeWorkspace.slug, activeProject.id, cycleId, data)
         .then((res) => {
           console.log(res);
           mutate(CYCLE_ISSUES(cycleId));
@@ -120,7 +120,7 @@ const CycleIssuesListModal: React.FC<Props> = ({
                 <form>
                   <Controller
                     control={control}
-                    name="issue_ids"
+                    name="issue"
                     render={({ field }) => (
                       <Combobox as="div" {...field} multiple>
                         <div className="relative m-1">

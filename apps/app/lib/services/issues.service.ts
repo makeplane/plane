@@ -9,7 +9,6 @@ import {
   CYCLE_DETAIL,
   ISSUE_LABELS,
   BULK_DELETE_ISSUES,
-  BULK_ADD_ISSUES_TO_CYCLE,
   REMOVE_ISSUE_FROM_CYCLE,
   ISSUE_LABEL_DETAILS,
 } from "constants/api-routes";
@@ -93,7 +92,7 @@ class ProjectIssuesServices extends APIService {
     projectId: string,
     cycleId: string,
     data: {
-      issue: string;
+      issue: string[];
     }
   ) {
     return this.post(CYCLE_DETAIL(workspaceSlug, projectId, cycleId), data)
@@ -282,21 +281,6 @@ class ProjectIssuesServices extends APIService {
 
   async bulkDeleteIssues(workspaceSlug: string, projectId: string, data: any): Promise<any> {
     return this.delete(BULK_DELETE_ISSUES(workspaceSlug, projectId), data)
-      .then((response) => {
-        return response?.data;
-      })
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async bulkAddIssuesToCycle(
-    workspaceSlug: string,
-    projectId: string,
-    cycleId: string,
-    data: any
-  ): Promise<any> {
-    return this.post(BULK_ADD_ISSUES_TO_CYCLE(workspaceSlug, projectId, cycleId), data)
       .then((response) => {
         return response?.data;
       })
