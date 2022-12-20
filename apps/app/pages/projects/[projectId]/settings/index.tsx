@@ -12,7 +12,7 @@ import projectService from "lib/services/project.service";
 import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
 // ui
-import { Button, EmojiIconPicker, Input, Select, TextArea } from "ui";
+import { BreadcrumbItem, Breadcrumbs, Button, EmojiIconPicker, Input, Select, TextArea } from "ui";
 // types
 import { IProject, IWorkspace } from "types";
 // fetch-keys
@@ -116,7 +116,18 @@ const GeneralSettings = () => {
   }, [projectDetails, reset]);
 
   return (
-    <SettingsLayout type="project" noHeader>
+    <SettingsLayout
+      type="project"
+      breadcrumbs={
+        <Breadcrumbs>
+          <BreadcrumbItem
+            title={`${activeProject?.name ?? "Project"}`}
+            link={`/projects/${activeProject?.id}/issues`}
+          />
+          <BreadcrumbItem title="General Settings" />
+        </Breadcrumbs>
+      }
+    >
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="space-y-8">
           <div>

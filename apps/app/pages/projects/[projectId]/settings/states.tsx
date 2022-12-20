@@ -11,7 +11,7 @@ import {
   StateGroup,
 } from "components/project/issues/BoardView/state/create-update-state-inline";
 // ui
-import { Spinner } from "ui";
+import { BreadcrumbItem, Breadcrumbs, Spinner } from "ui";
 // icons
 import { PencilSquareIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 // types
@@ -37,7 +37,18 @@ const StatesSettings = () => {
         data={states?.find((state) => state.id === selectDeleteState) ?? null}
         onClose={() => setSelectDeleteState(null)}
       />
-      <SettingsLayout type="project" noHeader>
+      <SettingsLayout
+        type="project"
+        breadcrumbs={
+          <Breadcrumbs>
+            <BreadcrumbItem
+              title={`${activeProject?.name ?? "Project"}`}
+              link={`/projects/${activeProject?.id}/issues`}
+            />
+            <BreadcrumbItem title="States Settings" />
+          </Breadcrumbs>
+        }
+      >
         <div className="space-y-8">
           <div>
             <h3 className="text-3xl font-bold leading-6 text-gray-900">States</h3>

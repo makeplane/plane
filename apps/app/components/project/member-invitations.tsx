@@ -66,7 +66,7 @@ const ProjectMemberInvitations: React.FC<Props> = ({
   return (
     <>
       <div
-        className={`w-full h-full flex flex-col px-4 py-3 rounded-md bg-white ${
+        className={`w-full h-full flex flex-col px-4 py-3 rounded-md border bg-white ${
           selected ? "ring-2 ring-indigo-400" : ""
         }`}
       >
