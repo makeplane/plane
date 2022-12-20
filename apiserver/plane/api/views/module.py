@@ -5,6 +5,7 @@ from django.db.models import Prefetch
 # Third party imports
 from rest_framework.response import Response
 from rest_framework import status
+from sentry_sdk import capture_exception
 
 # Module imports
 from . import BaseViewSet
@@ -71,6 +72,13 @@ class ModuleViewSet(BaseViewSet):
                     {"name": "The module name is already taken"},
                     status=status.HTTP_410_GONE,
                 )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+  
 
 
 class ModuleIssueViewSet(BaseViewSet):
@@ -107,3 +115,40 @@ class ModuleIssueViewSet(BaseViewSet):
             .select_related("issue")
             .distinct()
         )
+
+    def create(self, request, slug, project_id, module_id):
+        try:
+            issues = request.data.get("issues", [])
+            if not len(issues):
+                return Response(
+                    {"error": "Issues are required"}, status=status.HTTP_400_BAD_REQUEST
+                )
+            module = Module.objects.get(
+                workspace__slug=slug, project_id=project_id, pk=module_id
+            )
+            ModuleIssue.objects.bulk_create(
+                [
+                    ModuleIssue(
+                        module=module,
+                        issue_id=issue,
+                        project_id=project_id,
+                        workspace=module.workspace,
+                        created_by=request.user,
+                        updated_by=request.user,
+                    )
+                    for issue in issues
+                ],
+                batch_size=10,
+                ignore_conflicts=True,
+            )
+            return Response({"message": "Success"}, status=status.HTTP_200_OK)
+        except Module.DoesNotExist:
+            return Response(
+                {"error": "Module Does not exists"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
