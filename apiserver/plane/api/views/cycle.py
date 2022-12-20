@@ -70,7 +70,7 @@ class CycleIssueViewSet(BaseViewSet):
     def create(self, request, slug, project_id, cycle_id):
         try:
 
-            issues = request.data.get("issue", [])
+            issues = request.data.get("issues", [])
 
             if not len(issues):
                 return Response(
