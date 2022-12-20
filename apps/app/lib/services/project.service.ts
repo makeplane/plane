@@ -230,7 +230,10 @@ class ProjectServices extends APIService {
   async setProjectView(
     workspacSlug: string,
     projectId: string,
-    data: ProjectViewTheme
+    data: {
+      view_props?: ProjectViewTheme;
+      default_props?: ProjectViewTheme;
+    }
   ): Promise<any> {
     await this.post(PROJECT_VIEW_ENDPOINT(workspacSlug, projectId), data)
       .then((response) => {
