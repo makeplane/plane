@@ -15,7 +15,7 @@ import useUser from "lib/hooks/useUser";
 // headless ui
 import { Listbox, Transition } from "@headlessui/react";
 // ui
-import { Button } from "ui";
+import { BreadcrumbItem, Breadcrumbs, Button } from "ui";
 // icons
 import { CheckIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 // types
@@ -101,7 +101,18 @@ const ControlSettings = () => {
   }, [projectDetails, reset]);
 
   return (
-    <SettingsLayout type="project" noHeader>
+    <SettingsLayout
+      type="project"
+      breadcrumbs={
+        <Breadcrumbs>
+          <BreadcrumbItem
+            title={`${activeProject?.name ?? "Project"}`}
+            link={`/projects/${activeProject?.id}/issues`}
+          />
+          <BreadcrumbItem title="Control Settings" />
+        </Breadcrumbs>
+      }
+    >
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="space-y-8">
           <div>

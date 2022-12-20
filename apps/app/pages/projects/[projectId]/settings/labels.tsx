@@ -17,7 +17,7 @@ import SingleLabel from "components/project/settings/single-label";
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
 // ui
-import { Button, Input, Spinner } from "ui";
+import { BreadcrumbItem, Breadcrumbs, Button, Input, Spinner } from "ui";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 // fetch-keys
@@ -103,7 +103,18 @@ const LabelsSettings = () => {
   };
 
   return (
-    <SettingsLayout type="project" noHeader>
+    <SettingsLayout
+      type="project"
+      breadcrumbs={
+        <Breadcrumbs>
+          <BreadcrumbItem
+            title={`${activeProject?.name ?? "Project"}`}
+            link={`/projects/${activeProject?.id}/issues`}
+          />
+          <BreadcrumbItem title="Labels Settings" />
+        </Breadcrumbs>
+      }
+    >
       <section className="space-y-8">
         <div>
           <h3 className="text-3xl font-bold leading-6 text-gray-900">Labels</h3>

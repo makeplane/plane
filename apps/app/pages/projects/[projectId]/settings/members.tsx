@@ -15,7 +15,7 @@ import SettingsLayout from "layouts/settings-layout";
 import ConfirmProjectMemberRemove from "components/project/confirm-project-member-remove";
 import SendProjectInvitationModal from "components/project/send-project-invitation-modal";
 // ui
-import { Button, CustomListbox, CustomMenu, Spinner } from "ui";
+import { BreadcrumbItem, Breadcrumbs, Button, CustomListbox, CustomMenu, Spinner } from "ui";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 // fetch-keys
@@ -128,7 +128,18 @@ const MembersSettings = () => {
         setIsOpen={setInviteModal}
         members={members}
       />
-      <SettingsLayout type="project" noHeader>
+      <SettingsLayout
+        type="project"
+        breadcrumbs={
+          <Breadcrumbs>
+            <BreadcrumbItem
+              title={`${activeProject?.name ?? "Project"}`}
+              link={`/projects/${activeProject?.id}/issues`}
+            />
+            <BreadcrumbItem title="Members Settings" />
+          </Breadcrumbs>
+        }
+      >
         <section className="space-y-8">
           <div>
             <h3 className="text-3xl font-bold leading-6 text-gray-900">Members</h3>
