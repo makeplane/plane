@@ -10,7 +10,6 @@ import type { IIssue } from "types";
 const useIssuesFilter = (projectIssues: IIssue[]) => {
   const {
     issueView,
-    setIssueView,
     groupByProperty,
     setGroupByProperty,
     orderBy,
@@ -19,6 +18,8 @@ const useIssuesFilter = (projectIssues: IIssue[]) => {
     setFilterIssue,
     resetFilterToDefault,
     setNewFilterDefaultView,
+    setIssueViewToKanban,
+    setIssueViewToList,
   } = useTheme();
 
   const { states } = useUser();
@@ -90,7 +91,6 @@ const useIssuesFilter = (projectIssues: IIssue[]) => {
   return {
     groupedByIssues,
     issueView,
-    setIssueView,
     groupByProperty,
     setGroupByProperty,
     orderBy,
@@ -99,6 +99,8 @@ const useIssuesFilter = (projectIssues: IIssue[]) => {
     setFilterIssue,
     resetFilterToDefault,
     setNewFilterDefaultView,
+    setIssueViewToKanban,
+    setIssueViewToList,
   } as const;
 };
 
