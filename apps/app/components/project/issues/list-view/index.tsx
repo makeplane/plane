@@ -551,6 +551,10 @@ const ListView: React.FC<Props> = ({
                           [selectedGroup]: singleGroup,
                           actionType: "createIssue",
                         });
+                      } else {
+                        setPreloadedData({
+                          actionType: "createIssue",
+                        });
                       }
                     }}
                   >
