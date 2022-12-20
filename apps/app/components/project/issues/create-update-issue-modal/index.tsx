@@ -118,7 +118,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
     if (!activeWorkspace || !activeProject) return;
     await issuesServices
       .addIssueToCycle(activeWorkspace.slug, activeProject.id, cycleId, {
-        issue: issueId,
+        issues: [issueId],
       })
       .then((res) => {
         mutate(CYCLE_ISSUES(cycleId));

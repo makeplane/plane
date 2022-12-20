@@ -7,27 +7,30 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 // react-color
 import { TwitterPicker } from "react-color";
 // services
-import issuesServices from "lib/services/issues.service";
+import issuesService from "lib/services/issues.service";
 // hooks
 import useUser from "lib/hooks/useUser";
+// layouts
+import SettingsLayout from "layouts/settings-layout";
+// components
+import SingleLabel from "components/project/settings/single-label";
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
 // ui
 import { Button, Input, Spinner } from "ui";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
-// types
-import { IIssueLabels } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
-import SingleLabel from "./single-label";
+// types
+import { IIssueLabels } from "types";
 
 const defaultValues: Partial<IIssueLabels> = {
   name: "",
   colour: "#ff0000",
 };
 
-const LabelsSettings: React.FC = () => {
+const LabelsSettings = () => {
   const [newLabelForm, setNewLabelForm] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [labelIdForUpdate, setLabelidForUpdate] = useState<string | null>(null);
@@ -47,20 +50,18 @@ const LabelsSettings: React.FC = () => {
   const { data: issueLabels, mutate } = useSWR<IIssueLabels[]>(
     activeProject && activeWorkspace ? PROJECT_ISSUE_LABELS(activeProject.id) : null,
     activeProject && activeWorkspace
-      ? () => issuesServices.getIssueLabels(activeWorkspace.slug, activeProject.id)
+      ? () => issuesService.getIssueLabels(activeWorkspace.slug, activeProject.id)
       : null
   );
 
   const handleNewLabel: SubmitHandler<IIssueLabels> = (formData) => {
     if (!activeWorkspace || !activeProject || isSubmitting) return;
-    issuesServices
-      .createIssueLabel(activeWorkspace.slug, activeProject.id, formData)
-      .then((res) => {
-        console.log(res);
-        reset(defaultValues);
-        mutate((prevData) => [...(prevData ?? []), res], false);
-        setNewLabelForm(false);
-      });
+    issuesService.createIssueLabel(activeWorkspace.slug, activeProject.id, formData).then((res) => {
+      console.log(res);
+      reset(defaultValues);
+      mutate((prevData) => [...(prevData ?? []), res], false);
+      setNewLabelForm(false);
+    });
   };
 
   const editLabel = (label: IIssueLabels) => {
@@ -73,7 +74,7 @@ const LabelsSettings: React.FC = () => {
 
   const handleLabelUpdate: SubmitHandler<IIssueLabels> = (formData) => {
     if (!activeWorkspace || !activeProject || isSubmitting) return;
-    issuesServices
+    issuesService
       .patchIssueLabel(activeWorkspace.slug, activeProject.id, labelIdForUpdate ?? "", formData)
       .then((res) => {
         console.log(res);
@@ -90,7 +91,7 @@ const LabelsSettings: React.FC = () => {
   const handleLabelDelete = (labelId: string) => {
     if (activeWorkspace && activeProject) {
       mutate((prevData) => prevData?.filter((p) => p.id !== labelId), false);
-      issuesServices
+      issuesService
         .deleteIssueLabel(activeWorkspace.slug, activeProject.id, labelId)
         .then((res) => {
           console.log(res);
@@ -102,13 +103,14 @@ const LabelsSettings: React.FC = () => {
   };
 
   return (
-    <>
+    <SettingsLayout type="project" noHeader>
       <section className="space-y-8">
+        <div>
+          <h3 className="text-3xl font-bold leading-6 text-gray-900">Labels</h3>
+          <p className="mt-4 text-sm text-gray-500">Manage the labels of this project.</p>
+        </div>
         <div className="md:w-2/3 flex justify-between items-center gap-2">
-          <div>
-            <h3 className="text-3xl font-bold leading-6 text-gray-900">Labels</h3>
-            <p className="mt-4 text-sm text-gray-500">Manage the labels of this project.</p>
-          </div>
+          <h4 className="text-md leading-6 text-gray-900 mb-1">Manage labels</h4>
           <Button
             theme="secondary"
             className="flex items-center gap-x-1"
@@ -218,7 +220,7 @@ const LabelsSettings: React.FC = () => {
           </>
         </div>
       </section>
-    </>
+    </SettingsLayout>
   );
 };
 

@@ -101,7 +101,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
     if (activeWorkspace && activeProject && issueDetail)
       issuesServices
         .addIssueToCycle(activeWorkspace.slug, activeProject.id, cycleId, {
-          issue: issueDetail.id,
+          issues: [issueDetail.id],
         })
         .then(() => {
           submitChanges({});
@@ -211,7 +211,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
               watch={watchIssue}
             />
             <SelectBlocked
-              submitChanges={submitChanges}
+              issueDetail={issueDetail}
               issuesList={issues?.results.filter((i) => i.id !== issueDetail?.id) ?? []}
               watch={watchIssue}
             />
@@ -227,6 +227,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
                   render={({ field: { value, onChange } }) => (
                     <input
                       type="date"
+                      id="issueDate"
                       value={value ?? ""}
                       onChange={(e: any) => {
                         submitChanges({ target_date: e.target.value });

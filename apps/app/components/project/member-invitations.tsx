@@ -3,14 +3,13 @@ import React, { useState } from "react";
 // next
 import Link from "next/link";
 import useSWR from "swr";
+import { useRouter } from "next/router";
+// services
+import projectService from "lib/services/project.service";
 // hooks
 import useUser from "lib/hooks/useUser";
-// Services
-import projectService from "lib/services/project.service";
-// fetch keys
-import { PROJECT_MEMBERS } from "constants/fetch-keys";
-// commons
-import { renderShortNumericDateFormat } from "constants/common";
+// ui
+import { Button } from "ui";
 // icons
 import {
   CalendarDaysIcon,
@@ -20,9 +19,15 @@ import {
   PencilIcon,
   PlusIcon,
   TrashIcon,
+  ClipboardDocumentListIcon,
 } from "@heroicons/react/24/outline";
 // types
 import type { IProject } from "types";
+// fetch-keys
+import { PROJECT_MEMBERS } from "constants/fetch-keys";
+// common
+import { renderShortNumericDateFormat } from "constants/common";
+
 type Props = {
   project: IProject;
   slug: string;
@@ -39,6 +44,8 @@ const ProjectMemberInvitations: React.FC<Props> = ({
   setDeleteProject,
 }) => {
   const { user } = useUser();
+
+  const router = useRouter();
 
   const { data: members } = useSWR<any[]>(PROJECT_MEMBERS(project.id), () =>
     projectService.projectMembers(slug, project.id)
@@ -93,13 +100,13 @@ const ProjectMemberInvitations: React.FC<Props> = ({
           {isMember ? (
             <div className="flex">
               <Link href={`/projects/${project.id}/settings`}>
-                <a className="h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-200 duration-300 cursor-pointer">
+                <a className="h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-100 duration-300 cursor-pointer">
                   <PencilIcon className="h-4 w-4" />
                 </a>
               </Link>
               <button
                 type="button"
-                className="h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-200 duration-300 outline-none"
+                className="h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-100 duration-300 outline-none"
                 onClick={() => setDeleteProject(project.id)}
               >
                 <TrashIcon className="h-4 w-4 text-red-500" />
@@ -115,7 +122,7 @@ const ProjectMemberInvitations: React.FC<Props> = ({
             {!isMember ? (
               <label
                 htmlFor={project.id}
-                className="flex items-center gap-1 text-xs font-medium bg-blue-200 hover:bg-blue-300 p-2 rounded duration-300 cursor-pointer"
+                className="flex items-center gap-1 text-xs font-medium border hover:bg-gray-100 p-2 rounded duration-300 cursor-pointer"
               >
                 {selected ? (
                   <>
@@ -130,17 +137,19 @@ const ProjectMemberInvitations: React.FC<Props> = ({
                 )}
               </label>
             ) : (
-              <span className="flex items-center gap-1 text-xs bg-green-200 p-2 rounded">
+              <Button theme="secondary" className="flex items-center gap-1" disabled>
                 <CheckIcon className="h-3 w-3" />
                 Member
-              </span>
+              </Button>
             )}
-            <Link href={`/projects/${project.id}/issues`}>
-              <a className="flex items-center gap-1 text-xs font-medium bg-blue-200 hover:bg-blue-300 p-2 rounded duration-300">
-                <EyeIcon className="h-3 w-3" />
-                View
-              </a>
-            </Link>
+            <Button
+              theme="secondary"
+              className="flex items-center gap-1"
+              onClick={() => router.push(`/projects/${project.id}/issues`)}
+            >
+              <ClipboardDocumentListIcon className="h-3 w-3" />
+              Open Project
+            </Button>
           </div>
           <div className="flex items-center gap-1 text-xs mb-1">
             <CalendarDaysIcon className="h-4 w-4" />

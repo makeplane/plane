@@ -34,7 +34,7 @@ import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deleti
 import IssueDetailSidebar from "components/project/issues/issue-detail/issue-detail-sidebar";
 import IssueActivitySection from "components/project/issues/issue-detail/activity";
 // ui
-import { Spinner, TextArea, HeaderButton, Breadcrumbs, BreadcrumbItem } from "ui";
+import { Spinner, TextArea, HeaderButton, Breadcrumbs, BreadcrumbItem, CustomMenu } from "ui";
 // icons
 import {
   ChevronLeftIcon,
@@ -214,6 +214,8 @@ const IssueDetail: NextPage = () => {
         });
     }
   };
+
+  console.log("Issue detail", issueDetail);
 
   return (
     <AppLayout
@@ -531,12 +533,12 @@ const IssueDetail: NextPage = () => {
                       leaveFrom="transform opacity-100 scale-100"
                       leaveTo="transform opacity-0 scale-95"
                     >
-                      <Menu.Items className="absolute origin-top-right left-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
-                        <div className="p-1">
+                      <Menu.Items className="absolute origin-top-right left-0 mt-1 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+                        <div className="py-1">
                           <Menu.Item as="div">
                             <button
                               type="button"
-                              className="text-left p-2 text-gray-900 hover:bg-theme hover:text-white rounded-md text-xs whitespace-nowrap w-full"
+                              className="text-left p-2 text-gray-900 hover:bg-indigo-50 text-xs whitespace-nowrap w-full"
                               onClick={() => {
                                 setIsOpen(true);
                                 setPreloadedData({
@@ -551,7 +553,7 @@ const IssueDetail: NextPage = () => {
                           <Menu.Item as="div">
                             <button
                               type="button"
-                              className="p-2 text-left text-gray-900 hover:bg-theme hover:text-white rounded-md text-xs whitespace-nowrap"
+                              className="p-2 text-left text-gray-900 hover:bg-indigo-50 text-xs whitespace-nowrap"
                               onClick={() => {
                                 setIsAddAsSubIssueOpen(true);
                                 setPreloadedData({
