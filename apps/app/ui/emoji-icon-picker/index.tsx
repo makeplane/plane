@@ -39,7 +39,7 @@ const EmojiIconPicker: React.FC<Props> = ({ label, value, onChange }) => {
   });
 
   useEffect(() => {
-    if (!value) onChange(getRandomEmoji());
+    if (!value || value?.length === 0) onChange(getRandomEmoji());
   }, [value, onChange]);
 
   return (
