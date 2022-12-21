@@ -72,6 +72,7 @@ export interface IIssue {
   blocked_issue_details: any[];
   sprints: string | null;
   cycle: string | null;
+  cycle_detail: ICycle | null;
 
   issue_cycle: IIssueCycle;
 }

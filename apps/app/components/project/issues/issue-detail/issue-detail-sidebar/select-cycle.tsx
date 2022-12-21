@@ -9,13 +9,13 @@ import { Spinner, CustomSelect } from "ui";
 // icons
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 // types
-import { IIssue } from "types";
+import { ICycle, IIssue } from "types";
 // common
 import { classNames } from "constants/common";
 
 type Props = {
   control: Control<IIssue, any>;
-  handleCycleChange: (cycleId: string) => void;
+  handleCycleChange: (cycle: ICycle) => void;
 };
 
 const SelectCycle: React.FC<Props> = ({ control, handleCycleChange }) => {
@@ -46,7 +46,7 @@ const SelectCycle: React.FC<Props> = ({ control, handleCycleChange }) => {
                 }
                 value={value}
                 onChange={(value: any) => {
-                  handleCycleChange(value);
+                  handleCycleChange(cycles?.find((c) => c.id === value) as any);
                 }}
               >
                 {cycles ? (

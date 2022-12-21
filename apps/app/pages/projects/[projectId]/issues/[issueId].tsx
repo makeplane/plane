@@ -1,21 +1,17 @@
 import React, { useCallback, useEffect, useState } from "react";
 // next
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
-import dynamic from "next/dynamic";
 // swr
-import useSWR, { mutate } from "swr";
+import { mutate } from "swr";
 // react hook form
 import { useForm } from "react-hook-form";
 // headless ui
 import { Disclosure, Menu, Tab, Transition } from "@headlessui/react";
 // fetch keys
-import {
-  PROJECT_ISSUES_ACTIVITY,
-  PROJECT_ISSUES_COMMENTS,
-  PROJECT_ISSUES_LIST,
-} from "constants/fetch-keys";
+import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // services
 import issuesServices from "lib/services/issues.service";
 // common
@@ -27,14 +23,23 @@ import withAuth from "lib/hoc/withAuthWrapper";
 // layouts
 import AppLayout from "layouts/app-layout";
 // components
-import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
-import IssueCommentSection from "components/project/issues/issue-detail/comment/IssueCommentSection";
 import AddAsSubIssue from "components/project/issues/issue-detail/add-as-sub-issue";
-import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
+import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
 import IssueDetailSidebar from "components/project/issues/issue-detail/issue-detail-sidebar";
-import IssueActivitySection from "components/project/issues/issue-detail/activity";
+import IssueCommentSection from "components/project/issues/issue-detail/comment/IssueCommentSection";
+const IssueActivitySection = dynamic(
+  () => import("components/project/issues/issue-detail/activity"),
+  {
+    loading: () => (
+      <div className="w-full h-full flex justify-center items-center">
+        <Spinner />
+      </div>
+    ),
+    ssr: false,
+  }
+);
 // ui
-import { Spinner, TextArea, HeaderButton, Breadcrumbs, BreadcrumbItem, CustomMenu } from "ui";
+import { Spinner, TextArea, HeaderButton, Breadcrumbs } from "ui";
 // icons
 import {
   ChevronLeftIcon,
@@ -43,31 +48,50 @@ import {
   PlusIcon,
 } from "@heroicons/react/24/outline";
 // types
-import { IIssue, IIssueComment, IssueResponse } from "types";
+import { IIssue, IssueResponse } from "types";
 
 const RichTextEditor = dynamic(() => import("components/lexical/editor"), {
   ssr: false,
 });
 
+const defaultValues = {
+  name: "",
+  description: "",
+  state: "",
+  assignees_list: [],
+  priority: "low",
+  blockers_list: [],
+  blocked_list: [],
+  target_date: new Date().toString(),
+  issue_cycle: null,
+  labels_list: [],
+};
+
 const IssueDetail: NextPage = () => {
-  const [deleteIssueModal, setDeleteIssueModal] = useState(false);
+  const router = useRouter();
+
+  const { issueId, projectId } = router.query;
+
+  const { activeWorkspace, activeProject, issues, mutateIssues } = useUser();
+
+  const issueDetail = issues?.results?.find((issue) => issue.id === issueId);
+
+  const prevIssue = issues?.results[issues?.results.findIndex((issue) => issue.id === issueId) - 1];
+  const nextIssue = issues?.results[issues?.results.findIndex((issue) => issue.id === issueId) + 1];
+
+  const subIssues = (issues && issues.results.filter((i) => i.parent === issueId)) ?? [];
+  const siblingIssues =
+    issueDetail &&
+    issues?.results.filter((i) => i.parent === issueDetail.parent && i.id !== issueId);
 
   const [isOpen, setIsOpen] = useState(false);
   const [isAddAsSubIssueOpen, setIsAddAsSubIssueOpen] = useState(false);
-
-  const [issueDetail, setIssueDetail] = useState<IIssue | undefined>(undefined);
 
   const [preloadedData, setPreloadedData] = useState<
     (Partial<IIssue> & { actionType: "createIssue" | "edit" | "delete" }) | undefined
   >(undefined);
 
   const [issueDescriptionValue, setIssueDescriptionValue] = useState("");
-
-  const router = useRouter();
-
-  const { issueId, projectId } = router.query;
-
-  const { activeWorkspace, activeProject, issues, mutateIssues, states } = useUser();
 
   const handleDescriptionChange: any = (value: any) => {
     console.log(value);
@@ -82,43 +106,8 @@ const IssueDetail: NextPage = () => {
     control,
     watch,
   } = useForm<IIssue>({
-    defaultValues: {
-      name: "",
-      description: "",
-      state: "",
-      assignees_list: [],
-      priority: "low",
-      blockers_list: [],
-      blocked_list: [],
-      target_date: new Date().toString(),
-      issue_cycle: null,
-      labels_list: [],
-    },
+    defaultValues,
   });
-
-  const { data: issueActivities } = useSWR<any[]>(
-    activeWorkspace && projectId && issueId ? PROJECT_ISSUES_ACTIVITY : null,
-    activeWorkspace && projectId && issueId
-      ? () =>
-          issuesServices.getIssueActivities(
-            activeWorkspace.slug,
-            projectId as string,
-            issueId as string
-          )
-      : null
-  );
-
-  const { data: issueComments } = useSWR<IIssueComment[]>(
-    activeWorkspace && projectId && issueId ? PROJECT_ISSUES_COMMENTS(issueId as string) : null,
-    activeWorkspace && projectId && issueId
-      ? () =>
-          issuesServices.getIssueComments(
-            activeWorkspace.slug,
-            projectId as string,
-            issueId as string
-          )
-      : null
-  );
 
   const submitChanges = useCallback(
     (formData: Partial<IIssue>) => {
@@ -180,19 +169,6 @@ const IssueDetail: NextPage = () => {
       });
   }, [issueDetail, reset]);
 
-  useEffect(() => {
-    const issueDetail = issues?.results.find((issue) => issue.id === issueId);
-    setIssueDetail(issueDetail);
-  }, [issueId, issues]);
-
-  const prevIssue = issues?.results[issues?.results.findIndex((issue) => issue.id === issueId) - 1];
-  const nextIssue = issues?.results[issues?.results.findIndex((issue) => issue.id === issueId) + 1];
-
-  const subIssues = (issues && issues.results.filter((i) => i.parent === issueId)) ?? [];
-  const siblingIssues =
-    issueDetail &&
-    issues?.results.filter((i) => i.parent === issueDetail.parent && i.id !== issueId);
-
   const handleSubIssueRemove = (issueId: string) => {
     if (activeWorkspace && activeProject) {
       issuesServices
@@ -215,19 +191,17 @@ const IssueDetail: NextPage = () => {
     }
   };
 
-  console.log("Issue detail", issueDetail);
-
   return (
     <AppLayout
       noPadding={true}
       bg="secondary"
       breadcrumbs={
         <Breadcrumbs>
-          <BreadcrumbItem
+          <Breadcrumbs.BreadcrumbItem
             title={`${activeProject?.name ?? "Project"} Issues`}
             link={`/projects/${activeProject?.id}/issues`}
           />
-          <BreadcrumbItem
+          <Breadcrumbs.BreadcrumbItem
             title={`Issue ${activeProject?.identifier ?? "Project"}-${
               issueDetail?.sequence_id ?? "..."
             } Details`}
@@ -259,24 +233,23 @@ const IssueDetail: NextPage = () => {
         </div>
       }
     >
-      <CreateUpdateIssuesModal
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        projectId={projectId as string}
-        prePopulateData={{
-          ...preloadedData,
-        }}
-      />
-      <ConfirmIssueDeletion
-        handleClose={() => setDeleteIssueModal(false)}
-        isOpen={deleteIssueModal}
-        data={issueDetail}
-      />
-      <AddAsSubIssue
-        isOpen={isAddAsSubIssueOpen}
-        setIsOpen={setIsAddAsSubIssueOpen}
-        parent={issueDetail}
-      />
+      {isOpen && (
+        <CreateUpdateIssuesModal
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          projectId={projectId as string}
+          prePopulateData={{
+            ...preloadedData,
+          }}
+        />
+      )}
+      {isAddAsSubIssueOpen && (
+        <AddAsSubIssue
+          isOpen={isAddAsSubIssueOpen}
+          setIsOpen={setIsAddAsSubIssueOpen}
+          parent={issueDetail}
+        />
+      )}
       {issueDetail && activeProject ? (
         <div className="h-full flex gap-5">
           <div className="basis-2/3 space-y-5 p-5">
@@ -590,19 +563,10 @@ const IssueDetail: NextPage = () => {
                 </Tab.List>
                 <Tab.Panels>
                   <Tab.Panel>
-                    <IssueCommentSection
-                      comments={issueComments}
-                      workspaceSlug={activeWorkspace?.slug as string}
-                      projectId={projectId as string}
-                      issueId={issueId as string}
-                    />
+                    <IssueCommentSection />
                   </Tab.Panel>
                   <Tab.Panel>
-                    <IssueActivitySection
-                      issueActivities={issueActivities}
-                      states={states}
-                      issues={issues}
-                    />
+                    <IssueActivitySection />
                   </Tab.Panel>
                 </Tab.Panels>
               </Tab.Group>
@@ -615,7 +579,6 @@ const IssueDetail: NextPage = () => {
               issueDetail={issueDetail}
               submitChanges={submitChanges}
               watch={watch}
-              setDeleteIssueModal={setDeleteIssueModal}
             />
           </div>
         </div>

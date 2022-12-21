@@ -6,7 +6,7 @@ type BreadcrumbsProps = {
   children: any;
 };
 
-const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ children }: BreadcrumbsProps) => {
+const Breadcrumbs = ({ children }: BreadcrumbsProps) => {
   const router = useRouter();
 
   return (
@@ -53,5 +53,7 @@ const BreadcrumbItem: React.FC<BreadcrumbItemProps> = ({ title, link, icon }) =>
     </>
   );
 };
+
+Breadcrumbs.BreadcrumbItem = BreadcrumbItem;
 
 export { Breadcrumbs, BreadcrumbItem };
