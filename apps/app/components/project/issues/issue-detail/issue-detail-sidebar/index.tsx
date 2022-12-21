@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 // swr
 import useSWR from "swr";
+import dynamic from "next/dynamic";
 // headless ui
 import { Listbox, Transition } from "@headlessui/react";
 // react hook form
@@ -14,6 +15,8 @@ import useToast from "lib/hooks/useToast";
 import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 // commons
 import { copyTextToClipboard } from "constants/common";
+// components
+import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
 // ui
 import { Input, Button, Spinner } from "ui";
 import { Popover } from "@headlessui/react";
@@ -30,7 +33,7 @@ import {
 } from "@heroicons/react/24/outline";
 // types
 import type { Control } from "react-hook-form";
-import type { IIssue, IIssueLabels, NestedKeyOf } from "types";
+import type { ICycle, IIssue, IIssueLabels, NestedKeyOf } from "types";
 import { TwitterPicker } from "react-color";
 import { positionEditorElement } from "components/lexical/helpers/editor";
 import SelectState from "./select-state";
@@ -46,7 +49,6 @@ type Props = {
   submitChanges: (formData: Partial<IIssue>) => void;
   issueDetail: IIssue | undefined;
   watch: UseFormWatch<IIssue>;
-  setDeleteIssueModal: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const defaultValues: Partial<IIssueLabels> = {
@@ -59,7 +61,6 @@ const IssueDetailSidebar: React.FC<Props> = ({
   submitChanges,
   issueDetail,
   watch: watchIssue,
-  setDeleteIssueModal,
 }) => {
   const [createLabelForm, setCreateLabelForm] = useState(false);
 
@@ -73,6 +74,8 @@ const IssueDetailSidebar: React.FC<Props> = ({
       ? () => issuesServices.getIssueLabels(activeWorkspace.slug, activeProject.id)
       : null
   );
+
+  const [deleteIssueModal, setDeleteIssueModal] = useState(false);
 
   const {
     register,
@@ -97,15 +100,17 @@ const IssueDetailSidebar: React.FC<Props> = ({
       });
   };
 
-  const handleCycleChange = (cycleId: string) => {
-    if (activeWorkspace && activeProject && issueDetail)
+  const handleCycleChange = (cycleDetail: ICycle) => {
+    if (activeWorkspace && activeProject && issueDetail) {
+      submitChanges({ cycle: cycleDetail.id, cycle_detail: cycleDetail });
       issuesServices
-        .addIssueToCycle(activeWorkspace.slug, activeProject.id, cycleId, {
+        .addIssueToCycle(activeWorkspace.slug, activeProject.id, cycleDetail.id, {
           issues: [issueDetail.id],
         })
         .then(() => {
           submitChanges({});
         });
+    }
   };
 
   return (
@@ -420,6 +425,11 @@ const IssueDetailSidebar: React.FC<Props> = ({
           )}
         </div>
       </div>
+      <ConfirmIssueDeletion
+        handleClose={() => setDeleteIssueModal(false)}
+        isOpen={deleteIssueModal}
+        data={issueDetail}
+      />
     </>
   );
 };

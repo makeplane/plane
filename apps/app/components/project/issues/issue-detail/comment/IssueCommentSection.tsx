@@ -1,12 +1,16 @@
 import React from "react";
+// router
+import { useRouter } from "next/router";
 // swr
-import { mutate } from "swr";
+import useSWR from "swr";
 // react hook form
 import { useForm } from "react-hook-form";
 // services
 import issuesServices from "lib/services/issues.service";
 // fetch keys
 import { PROJECT_ISSUES_COMMENTS } from "constants/fetch-keys";
+// hooks
+import useUser from "lib/hooks/useUser";
 // components
 import CommentCard from "components/project/issues/issue-detail/comment/IssueCommentCard";
 // ui
@@ -14,18 +18,11 @@ import { TextArea, Button, Spinner } from "ui";
 // types
 import type { IIssueComment } from "types";
 
-type Props = {
-  comments?: IIssueComment[];
-  workspaceSlug: string;
-  projectId: string;
-  issueId: string;
-};
-
 const defaultValues: Partial<IIssueComment> = {
   comment: "",
 };
 
-const IssueCommentSection: React.FC<Props> = ({ comments, issueId, projectId, workspaceSlug }) => {
+const IssueCommentSection: React.FC = () => {
   const {
     register,
     handleSubmit,
@@ -34,15 +31,31 @@ const IssueCommentSection: React.FC<Props> = ({ comments, issueId, projectId, wo
     reset,
   } = useForm<IIssueComment>({ defaultValues });
 
+  const router = useRouter();
+
+  let { issueId, projectId } = router.query;
+
+  const { activeWorkspace } = useUser();
+
+  const { data: comments, mutate } = useSWR<IIssueComment[]>(
+    activeWorkspace && projectId && issueId ? PROJECT_ISSUES_COMMENTS(issueId as string) : null,
+    activeWorkspace && projectId && issueId
+      ? () =>
+          issuesServices.getIssueComments(
+            activeWorkspace.slug,
+            projectId as string,
+            issueId as string
+          )
+      : null
+  );
+
   const onSubmit = async (formData: IIssueComment) => {
+    if (!activeWorkspace || !projectId || !issueId || isSubmitting) return;
     await issuesServices
-      .createIssueComment(workspaceSlug, projectId, issueId, formData)
+      .createIssueComment(activeWorkspace.slug, projectId as string, issueId as string, formData)
       .then((response) => {
         console.log(response);
-        mutate<IIssueComment[]>(PROJECT_ISSUES_COMMENTS(issueId), (prevData) => [
-          response,
-          ...(prevData ?? []),
-        ]);
+        mutate((prevData) => [response, ...(prevData ?? [])]);
         reset(defaultValues);
       })
       .catch((error) => {
@@ -51,26 +64,34 @@ const IssueCommentSection: React.FC<Props> = ({ comments, issueId, projectId, wo
   };
 
   const onCommentUpdate = async (comment: IIssueComment) => {
+    if (!activeWorkspace || !projectId || !issueId || isSubmitting) return;
     await issuesServices
-      .patchIssueComment(workspaceSlug, projectId, issueId, comment.id, comment)
+      .patchIssueComment(
+        activeWorkspace.slug,
+        projectId as string,
+        issueId as string,
+        comment.id,
+        comment
+      )
       .then((response) => {
-        console.log(response);
-        mutate<IIssueComment[]>(PROJECT_ISSUES_COMMENTS(issueId), (prevData) => {
-          const newData = prevData ?? [];
-          const index = newData.findIndex((comment) => comment.id === response.id);
-          newData[index] = response;
-          return [...newData];
+        mutate((prevData) => {
+          const updatedComments = prevData?.map((c) => {
+            if (c.id === comment.id) {
+              return comment;
+            }
+            return c;
+          });
+          return updatedComments;
         });
       });
   };
 
   const onCommentDelete = async (commentId: string) => {
+    if (!activeWorkspace || !projectId || !issueId || isSubmitting) return;
     await issuesServices
-      .deleteIssueComment(workspaceSlug, projectId, issueId, commentId)
+      .deleteIssueComment(activeWorkspace.slug, projectId as string, issueId as string, commentId)
       .then((response) => {
-        mutate<IIssueComment[]>(PROJECT_ISSUES_COMMENTS(issueId), (prevData) =>
-          (prevData ?? []).filter((c) => c.id !== commentId)
-        );
+        mutate((prevData) => (prevData ?? []).filter((c) => c.id !== commentId));
         console.log(response);
       });
   };
@@ -124,7 +145,6 @@ const IssueCommentSection: React.FC<Props> = ({ comments, issueId, projectId, wo
           />
           <Button type="submit" className="whitespace-nowrap" disabled={isSubmitting}>
             {isSubmitting ? "Adding comment..." : "Add comment"}
-            {/* <UploadingIcon /> */}
           </Button>
         </div>
       </form>

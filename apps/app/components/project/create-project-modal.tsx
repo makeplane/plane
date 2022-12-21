@@ -9,7 +9,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import projectServices from "lib/services/project.service";
 import workspaceService from "lib/services/workspace.service";
 // common
-import { createSimilarString } from "constants/common";
+import { createSimilarString, getRandomEmoji } from "constants/common";
 // constants
 import { NETWORK_CHOICES } from "constants/";
 // fetch keys
@@ -32,7 +32,7 @@ const defaultValues: Partial<IProject> = {
   identifier: "",
   description: "",
   network: 0,
-  icon: "",
+  icon: getRandomEmoji(),
 };
 
 const IsGuestCondition: React.FC<{

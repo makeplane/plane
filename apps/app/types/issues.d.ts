@@ -72,6 +72,7 @@ export interface IIssue {
   blocked_issue_details: any[];
   sprints: string | null;
   cycle: string | null;
+  cycle_detail: ICycle | null;
 
   issue_cycle: IIssueCycle;
 }
@@ -130,7 +131,7 @@ export type Properties = {
   assignee: boolean;
   priority: boolean;
   start_date: boolean;
-  target_date: boolean;
+  due_date: boolean;
   cycle: boolean;
   children_count: boolean;
 };

@@ -398,7 +398,7 @@ const MyIssues: NextPage = () => {
                                         </div>
                                       </div>
                                     )}
-                                    {properties.target_date && (
+                                    {properties.due_date && (
                                       <div
                                         className={`group relative flex-shrink-0 group flex items-center gap-1 hover:bg-gray-100 border rounded shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300 ${
                                           issue.target_date === null
@@ -415,7 +415,7 @@ const MyIssues: NextPage = () => {
                                           : "N/A"}
                                         <div className="absolute bottom-full right-0 mb-2 z-10 hidden group-hover:block p-2 bg-white shadow-md rounded-md whitespace-nowrap">
                                           <h5 className="font-medium mb-1 text-gray-900">
-                                            Target date
+                                            Due date
                                           </h5>
                                           <div>
                                             {renderShortNumericDateFormat(issue.target_date ?? "")}
@@ -423,14 +423,14 @@ const MyIssues: NextPage = () => {
                                           <div>
                                             {issue.target_date &&
                                               (issue.target_date < new Date().toISOString()
-                                                ? `Target date has passed by ${findHowManyDaysLeft(
+                                                ? `Due date has passed by ${findHowManyDaysLeft(
                                                     issue.target_date
                                                   )} days`
                                                 : findHowManyDaysLeft(issue.target_date) <= 3
-                                                ? `Target date is in ${findHowManyDaysLeft(
+                                                ? `Due date is in ${findHowManyDaysLeft(
                                                     issue.target_date
                                                   )} days`
-                                                : "Target date")}
+                                                : "Due date")}
                                           </div>
                                         </div>
                                       </div>

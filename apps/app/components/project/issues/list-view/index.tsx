@@ -310,7 +310,7 @@ const ListView: React.FC<Props> = ({
                                       </div>
                                     </div>
                                   )}
-                                  {properties.target_date && (
+                                  {properties.due_date && (
                                     <div
                                       className={`group relative flex-shrink-0 group flex items-center gap-1 hover:bg-gray-100 border rounded shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300 ${
                                         issue.target_date === null
@@ -335,14 +335,14 @@ const ListView: React.FC<Props> = ({
                                         <div>
                                           {issue.target_date &&
                                             (issue.target_date < new Date().toISOString()
-                                              ? `Target date has passed by ${findHowManyDaysLeft(
+                                              ? `Due date has passed by ${findHowManyDaysLeft(
                                                   issue.target_date
                                                 )} days`
                                               : findHowManyDaysLeft(issue.target_date) <= 3
-                                              ? `Target date is in ${findHowManyDaysLeft(
+                                              ? `Due date is in ${findHowManyDaysLeft(
                                                   issue.target_date
                                                 )} days`
-                                              : "Target date")}
+                                              : "Due date")}
                                         </div>
                                       </div>
                                     </div>
