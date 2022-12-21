@@ -177,9 +177,7 @@ const GeneralSettings = () => {
                 error={errors.description}
                 register={register}
                 placeholder="Enter project description"
-                validations={{
-                  required: "Description is required",
-                }}
+                validations={{}}
               />
             </div>
             <div>
