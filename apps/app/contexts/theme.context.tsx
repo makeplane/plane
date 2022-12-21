@@ -258,8 +258,10 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
   const setNewDefaultView = useCallback(() => {
     if (!activeWorkspace || !activeProject) return;
-    setNewDefault(activeWorkspace.slug, activeProject.id, state);
-  }, [activeProject, activeWorkspace, state]);
+    setNewDefault(activeWorkspace.slug, activeProject.id, state).then(() => {
+      mutateMyViewProps();
+    });
+  }, [activeProject, activeWorkspace, state, mutateMyViewProps]);
 
   const resetToDefault = useCallback(() => {
     dispatch({
@@ -267,12 +269,8 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
       payload: myViewProps?.default_props,
     });
     if (!activeWorkspace || !activeProject) return;
-    saveDataToServer(activeWorkspace.slug, activeProject.id, myViewProps?.default_props).then(
-      () => {
-        mutateMyViewProps();
-      }
-    );
-  }, [activeProject, activeWorkspace, myViewProps, mutateMyViewProps]);
+    saveDataToServer(activeWorkspace.slug, activeProject.id, myViewProps?.default_props);
+  }, [activeProject, activeWorkspace, myViewProps]);
 
   useEffect(() => {
     dispatch({

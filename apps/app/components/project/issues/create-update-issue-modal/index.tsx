@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 // next
-import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
+import Link from "next/link";
+import { useRouter } from "next/router";
 // swr
 import { mutate } from "swr";
 // react hook form
@@ -244,8 +245,6 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
     return () => setMostSimilarIssue(undefined);
   }, []);
 
-  // console.log(watch("parent"));
-
   return (
     <>
       {activeProject && (
@@ -323,27 +322,30 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                             {mostSimilarIssue && (
                               <div className="flex items-center gap-x-2">
                                 <p className="text-sm text-gray-500">
-                                  Did you mean{" "}
-                                  <button
-                                    type="button"
-                                    onClick={() => {
-                                      setMostSimilarIssue(undefined);
-                                      router.push(
-                                        `/projects/${activeProject?.id}/issues/${mostSimilarIssue}`
-                                      );
-                                      handleClose();
-                                      resetForm();
-                                    }}
+                                  <Link
+                                    href={`/projects/${activeProject?.id}/issues/${mostSimilarIssue}`}
                                   >
-                                    <span className="italic">
-                                      {
-                                        issues?.results.find(
-                                          (issue) => issue.id === mostSimilarIssue
-                                        )?.name
-                                      }
-                                    </span>
-                                  </button>
-                                  ?
+                                    <a target="_blank" type="button" className="inline text-left">
+                                      <span>Did you mean </span>
+                                      <span className="italic">
+                                        {
+                                          issues?.results.find((i) => i.id === mostSimilarIssue)
+                                            ?.project_detail.identifier
+                                        }
+                                        -
+                                        {
+                                          issues?.results.find((i) => i.id === mostSimilarIssue)
+                                            ?.sequence_id
+                                        }
+                                        :{" "}
+                                        {
+                                          issues?.results.find((i) => i.id === mostSimilarIssue)
+                                            ?.name
+                                        }{" "}
+                                      </span>
+                                      ?
+                                    </a>
+                                  </Link>{" "}
                                 </p>
                                 <button
                                   type="button"
