@@ -1,16 +1,12 @@
 import React, { useEffect, useState } from "react";
 // next
 import Image from "next/image";
-// swr
-import { mutate } from "swr";
 // headless ui
 import { Menu } from "@headlessui/react";
 // react hook form
 import { useForm } from "react-hook-form";
 // hooks
 import useUser from "lib/hooks/useUser";
-// fetch keys
-import { PROJECT_ISSUES_COMMENTS } from "constants/fetch-keys";
 // common
 import { timeAgo } from "constants/common";
 // ui
@@ -42,16 +38,6 @@ const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentDeletion
 
   const onEnter = (formData: IIssueComment) => {
     if (isSubmitting) return;
-    mutate<IIssueComment[]>(
-      PROJECT_ISSUES_COMMENTS,
-      (prevData) => {
-        const newData = prevData ?? [];
-        const index = newData.findIndex((comment) => comment.id === formData.id);
-        newData[index] = formData;
-        return [...newData];
-      },
-      false
-    );
     setIsEditing(false);
     onSubmit(formData);
   };
@@ -155,11 +141,6 @@ const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentDeletion
                       className="w-full text-left py-2 pl-2"
                       type="button"
                       onClick={() => {
-                        mutate<IIssueComment[]>(
-                          PROJECT_ISSUES_COMMENTS,
-                          (prevData) => (prevData ?? []).filter((c) => c.id !== comment.id),
-                          false
-                        );
                         handleCommentDeletion(comment.id);
                       }}
                     >

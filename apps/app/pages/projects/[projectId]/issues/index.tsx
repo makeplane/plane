@@ -17,6 +17,8 @@ import useIssuesProperties from "lib/hooks/useIssuesProperties";
 import { PROJECT_MEMBERS } from "constants/api-routes";
 // services
 import projectService from "lib/services/project.service";
+// constants
+import { filterIssueOptions, groupByOptions, orderByOptions } from "constants/";
 // commons
 import { classNames, replaceUnderscoreIfSnakeCase } from "constants/common";
 // layouts
@@ -24,10 +26,10 @@ import AppLayout from "layouts/app-layout";
 // hooks
 import useIssuesFilter from "lib/hooks/useIssuesFilter";
 // components
-import ListView from "components/project/issues/ListView";
+import ListView from "components/project/issues/list-view";
 import BoardView from "components/project/issues/BoardView";
 import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
-import CreateUpdateIssuesModal from "components/project/issues/CreateUpdateIssueModal";
+import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
 // ui
 import {
   Spinner,
@@ -42,40 +44,9 @@ import {
 import { ChevronDownIcon, ListBulletIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
 import { PlusIcon, Squares2X2Icon } from "@heroicons/react/20/solid";
 // types
-import type { IIssue, Properties, NestedKeyOf, IssueResponse } from "types";
+import type { IIssue, Properties, IssueResponse } from "types";
 // fetch-keys
 import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
-
-const groupByOptions: Array<{ name: string; key: NestedKeyOf<IIssue> | null }> = [
-  { name: "State", key: "state_detail.name" },
-  { name: "Priority", key: "priority" },
-  { name: "Created By", key: "created_by" },
-  { name: "None", key: null },
-];
-
-const orderByOptions: Array<{ name: string; key: NestedKeyOf<IIssue> }> = [
-  { name: "Last created", key: "created_at" },
-  { name: "Last updated", key: "updated_at" },
-  { name: "Priority", key: "priority" },
-];
-
-const filterIssueOptions: Array<{
-  name: string;
-  key: "activeIssue" | "backlogIssue" | null;
-}> = [
-  {
-    name: "All",
-    key: null,
-  },
-  {
-    name: "Active Issues",
-    key: "activeIssue",
-  },
-  {
-    name: "Backlog Issues",
-    key: "backlogIssue",
-  },
-];
 
 const ProjectIssues: NextPage = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -133,7 +104,6 @@ const ProjectIssues: NextPage = () => {
 
   const {
     issueView,
-    setIssueView,
     groupByProperty,
     setGroupByProperty,
     groupedByIssues,
@@ -141,7 +111,11 @@ const ProjectIssues: NextPage = () => {
     setFilterIssue,
     orderBy,
     filterIssue,
-  } = useIssuesFilter(projectIssues?.results ?? []);
+    resetFilterToDefault,
+    setNewFilterDefaultView,
+    setIssueViewToKanban,
+    setIssueViewToList,
+  } = useIssuesFilter(projectIssues?.results.filter((p) => p.parent === null) ?? []);
 
   useEffect(() => {
     if (!isOpen) {
@@ -168,10 +142,7 @@ const ProjectIssues: NextPage = () => {
               className={`h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-200 duration-300 outline-none ${
                 issueView === "list" ? "bg-gray-200" : ""
               }`}
-              onClick={() => {
-                setIssueView("list");
-                setGroupByProperty(null);
-              }}
+              onClick={() => setIssueViewToList()}
             >
               <ListBulletIcon className="h-4 w-4" />
             </button>
@@ -180,10 +151,7 @@ const ProjectIssues: NextPage = () => {
               className={`h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-200 duration-300 outline-none ${
                 issueView === "kanban" ? "bg-gray-200" : ""
               }`}
-              onClick={() => {
-                setIssueView("kanban");
-                setGroupByProperty("state_detail.name");
-              }}
+              onClick={() => setIssueViewToKanban()}
             >
               <Squares2X2Icon className="h-4 w-4" />
             </button>
@@ -210,7 +178,7 @@ const ProjectIssues: NextPage = () => {
                   leaveFrom="opacity-100 translate-y-0"
                   leaveTo="opacity-0 translate-y-1"
                 >
-                  <Popover.Panel className="absolute mr-5 right-1/2 z-10 mt-1 w-screen max-w-xs translate-x-1/2 transform p-3 bg-white rounded-lg shadow-lg overflow-hidden">
+                  <Popover.Panel className="absolute mr-5 right-1/2 z-20 mt-1 w-screen max-w-xs translate-x-1/2 transform p-3 bg-white rounded-lg shadow-lg overflow-hidden">
                     <div className="relative flex flex-col gap-1 gap-y-4">
                       <div className="flex justify-between items-center">
                         <h4 className="text-sm text-gray-600">Group by</h4>
@@ -290,6 +258,23 @@ const ProjectIssues: NextPage = () => {
                             </button>
                           ))}
                         </div>
+                      </div>
+                      <div className="border-b-2"></div>
+                      <div className="relative flex justify-end gap-x-3">
+                        <button
+                          type="button"
+                          className="text-xs"
+                          onClick={() => resetFilterToDefault()}
+                        >
+                          Reset to default
+                        </button>
+                        <button
+                          type="button"
+                          className="text-xs font-medium text-theme"
+                          onClick={() => setNewFilterDefaultView()}
+                        >
+                          Set as default
+                        </button>
                       </div>
                     </div>
                   </Popover.Panel>

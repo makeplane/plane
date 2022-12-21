@@ -33,13 +33,14 @@ const Button = React.forwardRef<HTMLButtonElement, Props>(
         type={type}
         disabled={disabled}
         className={classNames(
+          className,
           "inline-flex items-center rounded justify-center font-medium",
           theme === "primary"
             ? `${
                 disabled ? "opacity-70" : ""
               } text-white shadow-sm bg-theme hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 border border-transparent`
             : theme === "secondary"
-            ? "border bg-white hover:bg-gray-100"
+            ? "border bg-transparent hover:bg-gray-100"
             : theme === "success"
             ? `${
                 disabled ? "opacity-70" : ""
@@ -53,8 +54,7 @@ const Button = React.forwardRef<HTMLButtonElement, Props>(
             ? "px-3 py-2 text-base"
             : size === "lg"
             ? "px-4 py-2 text-base"
-            : "px-2.5 py-2 text-sm",
-          className
+            : "px-2.5 py-2 text-sm"
         )}
       >
         {children}

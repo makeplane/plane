@@ -1,20 +1,21 @@
+// react
+import React from "react";
 // react-hook-form
 import { Control, Controller } from "react-hook-form";
 // hooks
 import useUser from "lib/hooks/useUser";
-// headless ui
-import { Listbox, Transition } from "@headlessui/react";
+// ui
+import { Spinner, CustomSelect } from "ui";
+// icons
+import { ArrowPathIcon } from "@heroicons/react/24/outline";
 // types
-import { IIssue } from "types";
+import { ICycle, IIssue } from "types";
+// common
 import { classNames } from "constants/common";
-import { Spinner } from "ui";
-import React from "react";
-import { ArrowPathIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
-import CustomSelect from "ui/custom-select";
 
 type Props = {
   control: Control<IIssue, any>;
-  handleCycleChange: (cycleId: string) => void;
+  handleCycleChange: (cycle: ICycle) => void;
 };
 
 const SelectCycle: React.FC<Props> = ({ control, handleCycleChange }) => {
@@ -29,7 +30,7 @@ const SelectCycle: React.FC<Props> = ({ control, handleCycleChange }) => {
       <div className="sm:basis-1/2">
         <Controller
           control={control}
-          name="cycle"
+          name="issue_cycle"
           render={({ field: { value } }) => (
             <>
               <CustomSelect
@@ -40,12 +41,12 @@ const SelectCycle: React.FC<Props> = ({ control, handleCycleChange }) => {
                       "hidden truncate sm:block text-left"
                     )}
                   >
-                    {value ? cycles?.find((c) => c.id === value)?.name : "None"}
+                    {value ? cycles?.find((c) => c.id === value.cycle_detail.id)?.name : "None"}
                   </span>
                 }
                 value={value}
                 onChange={(value: any) => {
-                  handleCycleChange(value);
+                  handleCycleChange(cycles?.find((c) => c.id === value) as any);
                 }}
               >
                 {cycles ? (

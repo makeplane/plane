@@ -8,7 +8,7 @@ import withAuth from "lib/hoc/withAuthWrapper";
 // layouts
 import AppLayout from "layouts/app-layout";
 // components
-import ProjectMemberInvitations from "components/project/memberInvitations";
+import ProjectMemberInvitations from "components/project/member-invitations";
 import ConfirmProjectDeletion from "components/project/confirm-project-deletion";
 // ui
 import {

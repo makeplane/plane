@@ -1,7 +1,6 @@
 // react
 import React, { useState } from "react";
 // next
-import Link from "next/link";
 import { useRouter } from "next/router";
 // swr
 import useSWR, { mutate } from "swr";
@@ -12,6 +11,11 @@ import AppLayout from "layouts/app-layout";
 // components
 import CyclesListView from "components/project/cycles/list-view";
 import CyclesBoardView from "components/project/cycles/board-view";
+import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
+import CycleIssuesListModal from "components/project/cycles/cycle-issues-list-modal";
+import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
+// constants
+import { filterIssueOptions, groupByOptions, orderByOptions } from "constants/";
 // services
 import issuesServices from "lib/services/issues.service";
 import cycleServices from "lib/services/cycles.service";
@@ -28,60 +32,21 @@ import { BreadcrumbItem, Breadcrumbs, CustomMenu } from "ui";
 import { Squares2X2Icon } from "@heroicons/react/20/solid";
 import { ArrowPathIcon, ChevronDownIcon, ListBulletIcon } from "@heroicons/react/24/outline";
 // types
-import {
-  CycleIssueResponse,
-  IIssue,
-  NestedKeyOf,
-  Properties,
-  SelectIssue,
-  SelectSprintType,
-} from "types";
+import { CycleIssueResponse, IIssue, NestedKeyOf, Properties, SelectIssue } from "types";
 // fetch-keys
 import { CYCLE_ISSUES, PROJECT_MEMBERS } from "constants/fetch-keys";
-// constants
+// common
 import { classNames, replaceUnderscoreIfSnakeCase } from "constants/common";
-import CreateUpdateIssuesModal from "components/project/issues/CreateUpdateIssueModal";
-import CycleIssuesListModal from "components/project/cycles/cycle-issues-list-modal";
-import ConfirmCycleDeletion from "components/project/cycles/confirm-cycle-deletion";
 
-const groupByOptions: Array<{ name: string; key: NestedKeyOf<IIssue> | null }> = [
-  { name: "State", key: "state_detail.name" },
-  { name: "Priority", key: "priority" },
-  { name: "Created By", key: "created_by" },
-  { name: "None", key: null },
-];
-
-const orderByOptions: Array<{ name: string; key: NestedKeyOf<IIssue> }> = [
-  { name: "Last created", key: "created_at" },
-  { name: "Last updated", key: "updated_at" },
-  { name: "Priority", key: "priority" },
-];
-
-const filterIssueOptions: Array<{
-  name: string;
-  key: "activeIssue" | "backlogIssue" | null;
-}> = [
-  {
-    name: "All",
-    key: null,
-  },
-  {
-    name: "Active Issues",
-    key: "activeIssue",
-  },
-  {
-    name: "Backlog Issues",
-    key: "backlogIssue",
-  },
-];
-
-type Props = {};
-
-const SingleCycle: React.FC<Props> = () => {
+const SingleCycle: React.FC = () => {
   const [isIssueModalOpen, setIsIssueModalOpen] = useState(false);
-  const [selectedCycle, setSelectedCycle] = useState<SelectSprintType>();
   const [selectedIssues, setSelectedIssues] = useState<SelectIssue>();
   const [cycleIssuesListModal, setCycleIssuesListModal] = useState(false);
+  const [deleteIssue, setDeleteIssue] = useState<string | undefined>(undefined);
+
+  const [preloadedData, setPreloadedData] = useState<
+    (Partial<IIssue> & { actionType: "createIssue" | "edit" | "delete" }) | undefined
+  >(undefined);
 
   const { activeWorkspace, activeProject, cycles, issues } = useUser();
 
@@ -118,9 +83,20 @@ const SingleCycle: React.FC<Props> = () => {
     }
   );
 
+  const partialUpdateIssue = (formData: Partial<IIssue>, issueId: string) => {
+    if (!activeWorkspace || !activeProject) return;
+    issuesServices
+      .patchIssue(activeWorkspace.slug, activeProject.id, issueId, formData)
+      .then((response) => {
+        mutate(CYCLE_ISSUES(cycleId as string));
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   const {
     issueView,
-    setIssueView,
     groupByProperty,
     setGroupByProperty,
     groupedByIssues,
@@ -128,41 +104,20 @@ const SingleCycle: React.FC<Props> = () => {
     setFilterIssue,
     orderBy,
     filterIssue,
+    setIssueViewToKanban,
+    setIssueViewToList,
   } = useIssuesFilter(cycleIssuesArray ?? []);
 
   const openCreateIssueModal = (
     issue?: IIssue,
     actionType: "create" | "edit" | "delete" = "create"
   ) => {
-    const cycle = cycles?.find((cycle) => cycle.id === cycleId);
-    if (cycle) {
-      setSelectedCycle({
-        ...cycle,
-        actionType: "create-issue",
-      });
-      if (issue) setSelectedIssues({ ...issue, actionType });
-      setIsIssueModalOpen(true);
-    }
+    if (issue) setSelectedIssues({ ...issue, actionType });
+    setIsIssueModalOpen(true);
   };
 
   const openIssuesListModal = () => {
     setCycleIssuesListModal(true);
-  };
-
-  const addIssueToCycle = (cycleId: string, issueId: string) => {
-    if (!activeWorkspace || !activeProject?.id) return;
-
-    issuesServices
-      .addIssueToCycle(activeWorkspace.slug, activeProject.id, cycleId, {
-        issue: issueId,
-      })
-      .then((response) => {
-        console.log(response);
-        mutate(CYCLE_ISSUES(cycleId));
-      })
-      .catch((error) => {
-        console.log(error);
-      });
   };
 
   const handleDragEnd = (result: DropResult) => {
@@ -192,7 +147,7 @@ const SingleCycle: React.FC<Props> = () => {
         .then((res) => {
           issuesServices
             .addIssueToCycle(activeWorkspace.slug, activeProject.id, destination.droppableId, {
-              issue: result.draggableId.split(",")[1],
+              issues: [result.draggableId.split(",")[1]],
             })
             .then((res) => {
               console.log(res);
@@ -230,13 +185,9 @@ const SingleCycle: React.FC<Props> = () => {
   return (
     <>
       <CreateUpdateIssuesModal
-        isOpen={
-          isIssueModalOpen &&
-          selectedCycle?.actionType === "create-issue" &&
-          selectedIssues?.actionType !== "delete"
-        }
+        isOpen={isIssueModalOpen && selectedIssues?.actionType !== "delete"}
         data={selectedIssues}
-        prePopulateData={{ sprints: selectedCycle?.id }}
+        prePopulateData={{ sprints: cycleId as string, ...preloadedData }}
         setIsOpen={setIsIssueModalOpen}
         projectId={activeProject?.id}
       />
@@ -245,6 +196,11 @@ const SingleCycle: React.FC<Props> = () => {
         handleClose={() => setCycleIssuesListModal(false)}
         issues={issues}
         cycleId={cycleId as string}
+      />
+      <ConfirmIssueDeletion
+        handleClose={() => setDeleteIssue(undefined)}
+        isOpen={!!deleteIssue}
+        data={issues?.results.find((issue) => issue.id === deleteIssue)}
       />
       <AppLayout
         breadcrumbs={
@@ -264,6 +220,7 @@ const SingleCycle: React.FC<Props> = () => {
               </>
             }
             className="ml-1.5"
+            width="auto"
           >
             {cycles?.map((cycle) => (
               <CustomMenu.MenuItem
@@ -284,10 +241,7 @@ const SingleCycle: React.FC<Props> = () => {
                 className={`h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-200 duration-300 outline-none ${
                   issueView === "list" ? "bg-gray-200" : ""
                 }`}
-                onClick={() => {
-                  setIssueView("list");
-                  setGroupByProperty(null);
-                }}
+                onClick={() => setIssueViewToList()}
               >
                 <ListBulletIcon className="h-4 w-4" />
               </button>
@@ -296,10 +250,7 @@ const SingleCycle: React.FC<Props> = () => {
                 className={`h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-200 duration-300 outline-none ${
                   issueView === "kanban" ? "bg-gray-200" : ""
                 }`}
-                onClick={() => {
-                  setIssueView("kanban");
-                  setGroupByProperty("state_detail.name");
-                }}
+                onClick={() => setIssueViewToKanban()}
               >
                 <Squares2X2Icon className="h-4 w-4" />
               </button>
@@ -326,7 +277,7 @@ const SingleCycle: React.FC<Props> = () => {
                     leaveFrom="opacity-100 translate-y-0"
                     leaveTo="opacity-0 translate-y-1"
                   >
-                    <Popover.Panel className="absolute right-0 z-10 mt-1 w-screen max-w-xs transform p-3 bg-white rounded-lg shadow-lg overflow-hidden">
+                    <Popover.Panel className="absolute right-0 z-20 mt-1 w-screen max-w-xs transform p-3 bg-white rounded-lg shadow-lg overflow-hidden">
                       <div className="relative flex flex-col gap-1 gap-y-4">
                         <div className="flex justify-between items-center">
                           <h4 className="text-sm text-gray-600">Group by</h4>
@@ -424,6 +375,7 @@ const SingleCycle: React.FC<Props> = () => {
             openCreateIssueModal={openCreateIssueModal}
             openIssuesListModal={openIssuesListModal}
             removeIssueFromCycle={removeIssueFromCycle}
+            setPreloadedData={setPreloadedData}
           />
         ) : (
           <div className="h-screen">
@@ -435,6 +387,9 @@ const SingleCycle: React.FC<Props> = () => {
               members={members}
               openCreateIssueModal={openCreateIssueModal}
               openIssuesListModal={openIssuesListModal}
+              handleDeleteIssue={setDeleteIssue}
+              partialUpdateIssue={partialUpdateIssue}
+              setPreloadedData={setPreloadedData}
             />
           </div>
         )}

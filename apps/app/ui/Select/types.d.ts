@@ -1,8 +1,4 @@
-import type {
-  UseFormRegister,
-  RegisterOptions,
-  FieldError,
-} from "react-hook-form";
+import type { UseFormRegister, RegisterOptions, FieldError } from "react-hook-form";
 
 export type Props = {
   label?: string;
@@ -16,4 +12,6 @@ export type Props = {
   error?: FieldError;
   autoComplete?: "on" | "off";
   options: { label: string; value: any }[];
+  size?: "rg" | "lg";
+  fullWidth?: boolean;
 };

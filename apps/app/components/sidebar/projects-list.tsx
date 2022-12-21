@@ -58,13 +58,20 @@ const ProjectsList: React.FC<Props> = ({ navigation, sidebarCollapse }) => {
                     <>
                       <div className="flex items-center">
                         <Disclosure.Button
-                          className={`w-full flex items-center gap-2 font-medium rounded-md p-2 text-sm ${
+                          className={`w-full flex items-center text-left gap-2 font-medium rounded-md p-2 text-sm ${
                             sidebarCollapse ? "justify-center" : ""
                           }`}
                         >
-                          <span className="bg-gray-700 text-white rounded h-7 w-7 grid place-items-center uppercase flex-shrink-0">
-                            {project?.name.charAt(0)}
-                          </span>
+                          {project.icon ? (
+                            <span className="text-white rounded h-7 w-7 grid place-items-center uppercase flex-shrink-0">
+                              {String.fromCodePoint(parseInt(project.icon))}
+                            </span>
+                          ) : (
+                            <span className="bg-gray-700 text-white rounded h-7 w-7 grid place-items-center uppercase flex-shrink-0">
+                              {project?.name.charAt(0)}
+                            </span>
+                          )}
+
                           {!sidebarCollapse && (
                             <span className="flex items-center justify-between w-full">
                               {project?.name}

@@ -16,7 +16,7 @@ import { STATE_LIST } from "constants/fetch-keys";
 // components
 import SingleBoard from "components/project/issues/BoardView/single-board";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
-import CreateUpdateIssuesModal from "components/project/issues/CreateUpdateIssueModal";
+import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
 // ui
 import { Spinner } from "ui";
 // types

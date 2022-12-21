@@ -58,7 +58,7 @@ const SelectAssignee: React.FC<Props> = ({ control, submitChanges }) => {
             >
               {({ open }) => (
                 <div className="relative">
-                  <Listbox.Button className="w-full flex justify-end items-center gap-1 text-xs cursor-pointer">
+                  <Listbox.Button className="w-full flex items-center gap-1 text-xs cursor-pointer">
                     <span
                       className={classNames(
                         value ? "" : "text-gray-900",
@@ -121,11 +121,14 @@ const SelectAssignee: React.FC<Props> = ({ control, submitChanges }) => {
                   <Transition
                     show={open}
                     as={React.Fragment}
-                    leave="transition ease-in duration-100"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
+                    enter="transition ease-out duration-100"
+                    enterFrom="transform opacity-0 scale-95"
+                    enterTo="transform opacity-100 scale-100"
+                    leave="transition ease-in duration-75"
+                    leaveFrom="transform opacity-100 scale-100"
+                    leaveTo="transform opacity-0 scale-95"
                   >
-                    <Listbox.Options className="absolute z-10 right-0 mt-1 w-40 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
+                    <Listbox.Options className="absolute z-10 right-0 mt-1 w-auto bg-white shadow-lg max-h-48 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
                       <div className="py-1">
                         {people ? (
                           people.length > 0 ? (
@@ -135,7 +138,7 @@ const SelectAssignee: React.FC<Props> = ({ control, submitChanges }) => {
                                 className={({ active, selected }) =>
                                   `${
                                     active || selected ? "bg-indigo-50" : ""
-                                  } flex items-center gap-2 text-gray-900 cursor-pointer select-none relative p-2 rounded-md truncate`
+                                  } flex items-center gap-2 text-gray-900 cursor-pointer select-none p-2 truncate`
                                 }
                                 value={option.member.id}
                               >
@@ -150,13 +153,15 @@ const SelectAssignee: React.FC<Props> = ({ control, submitChanges }) => {
                                     />
                                   </div>
                                 ) : (
-                                  <div className="h-4 w-4 bg-gray-700 text-white grid place-items-center capitalize rounded-full">
+                                  <div className="flex-shrink-0 h-4 w-4 bg-gray-700 text-white grid place-items-center capitalize rounded-full">
                                     {option.member.first_name && option.member.first_name !== ""
                                       ? option.member.first_name.charAt(0)
                                       : option.member.email.charAt(0)}
                                   </div>
                                 )}
-                                {option.member.first_name}
+                                {option.member.first_name && option.member.first_name !== ""
+                                  ? option.member.first_name
+                                  : option.member.email}
                               </Listbox.Option>
                             ))
                           ) : (

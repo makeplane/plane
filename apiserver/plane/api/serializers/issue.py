@@ -37,6 +37,7 @@ class IssueFlatSerializer(BaseSerializer):
             "priority",
             "start_date",
             "target_date",
+            "sequence_id",
         ]
 
 

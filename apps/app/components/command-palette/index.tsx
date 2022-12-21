@@ -23,7 +23,7 @@ import {
 // components
 import ShortcutsModal from "components/command-palette/shortcuts";
 import CreateProjectModal from "components/project/create-project-modal";
-import CreateUpdateIssuesModal from "components/project/issues/CreateUpdateIssueModal";
+import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
 import CreateUpdateCycleModal from "components/project/cycles/create-update-cycle-modal";
 // ui
 import { Button } from "ui";
@@ -260,7 +260,7 @@ const CommandPalette: React.FC = () => {
                           <li className="p-2">
                             {query === "" && (
                               <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-gray-900">
-                                Issues
+                                Select issues
                               </h2>
                             )}
                             <ul className="text-sm text-gray-700">
@@ -376,9 +376,9 @@ const CommandPalette: React.FC = () => {
                     )}
                   </Combobox>
 
-                  <div className="flex justify-between items-center gap-2 p-3">
+                  <div className="flex justify-end items-center gap-2 p-3">
                     <Button onClick={handleSubmit(handleDelete)} theme="danger" size="sm">
-                      Delete selected
+                      Delete selected issues
                     </Button>
                     <div>
                       <Button type="button" size="sm" onClick={handleCommandPaletteClose}>

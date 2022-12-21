@@ -80,13 +80,17 @@ const ProjectModules: NextPage = () => {
                 title="Create a new module"
                 description={
                   <span>
-                    Use <pre className="inline bg-gray-100 px-2 py-1 rounded">Ctrl/Command + Q</pre>{" "}
+                    Use <pre className="inline bg-gray-100 px-2 py-1 rounded">Ctrl/Command + M</pre>{" "}
                     shortcut to create a new cycle
                   </span>
                 }
                 Icon={PlusIcon}
                 action={() => {
-                  return;
+                  const e = new KeyboardEvent("keydown", {
+                    ctrlKey: true,
+                    key: "m",
+                  });
+                  document.dispatchEvent(e);
                 }}
               />
             </EmptySpace>

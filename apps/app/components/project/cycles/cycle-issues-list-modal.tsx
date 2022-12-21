@@ -17,6 +17,8 @@ import { MagnifyingGlassIcon, RectangleStackIcon } from "@heroicons/react/24/out
 import { IIssue, IssueResponse } from "types";
 // constants
 import { classNames } from "constants/common";
+import { mutate } from "swr";
+import { CYCLE_ISSUES } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
@@ -26,7 +28,7 @@ type Props = {
 };
 
 type FormInput = {
-  issue_ids: string[];
+  issues: string[];
 };
 
 const CycleIssuesListModal: React.FC<Props> = ({
@@ -54,12 +56,12 @@ const CycleIssuesListModal: React.FC<Props> = ({
     formState: { isSubmitting },
   } = useForm<FormInput>({
     defaultValues: {
-      issue_ids: [],
+      issues: [],
     },
   });
 
   const handleAddToCycle: SubmitHandler<FormInput> = (data) => {
-    if (!data.issue_ids || data.issue_ids.length === 0) {
+    if (!data.issues || data.issues.length === 0) {
       setToastAlert({
         title: "Error",
         type: "error",
@@ -70,9 +72,10 @@ const CycleIssuesListModal: React.FC<Props> = ({
 
     if (activeWorkspace && activeProject) {
       issuesServices
-        .bulkAddIssuesToCycle(activeWorkspace.slug, activeProject.id, cycleId, data)
+        .addIssueToCycle(activeWorkspace.slug, activeProject.id, cycleId, data)
         .then((res) => {
           console.log(res);
+          mutate(CYCLE_ISSUES(cycleId));
           handleClose();
         })
         .catch((e) => {
@@ -117,7 +120,7 @@ const CycleIssuesListModal: React.FC<Props> = ({
                 <form>
                   <Controller
                     control={control}
-                    name="issue_ids"
+                    name="issues"
                     render={({ field }) => (
                       <Combobox as="div" {...field} multiple>
                         <div className="relative m-1">

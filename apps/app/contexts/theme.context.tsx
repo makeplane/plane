@@ -1,4 +1,6 @@
 import React, { createContext, useCallback, useReducer, useEffect } from "react";
+// swr
+import useSWR from "swr";
 // constants
 import {
   TOGGLE_SIDEBAR,
@@ -7,9 +9,16 @@ import {
   SET_GROUP_BY_PROPERTY,
   SET_ORDER_BY_PROPERTY,
   SET_FILTER_ISSUES,
+  RESET_TO_DEFAULT,
 } from "constants/theme.context.constants";
 // components
 import ToastAlert from "components/toast-alert";
+// hooks
+import useUser from "lib/hooks/useUser";
+// constants
+import { USER_PROJECT_VIEW } from "constants/fetch-keys";
+// services
+import projectService from "lib/services/project.service";
 
 export const themeContext = createContext<ContextType>({} as ContextType);
 
@@ -23,7 +32,8 @@ type ReducerActionType = {
     | typeof SET_ISSUE_VIEW
     | typeof SET_ORDER_BY_PROPERTY
     | typeof SET_FILTER_ISSUES
-    | typeof SET_GROUP_BY_PROPERTY;
+    | typeof SET_GROUP_BY_PROPERTY
+    | typeof RESET_TO_DEFAULT;
   payload?: Partial<Theme>;
 };
 
@@ -34,10 +44,13 @@ type ContextType = {
   groupByProperty: NestedKeyOf<IIssue> | null;
   filterIssue: "activeIssue" | "backlogIssue" | null;
   toggleCollapsed: () => void;
-  setIssueView: (display: "list" | "kanban") => void;
   setGroupByProperty: (property: NestedKeyOf<IIssue> | null) => void;
   setOrderBy: (property: NestedKeyOf<IIssue> | null) => void;
   setFilterIssue: (property: "activeIssue" | "backlogIssue" | null) => void;
+  resetFilterToDefault: () => void;
+  setNewFilterDefaultView: () => void;
+  setIssueViewToKanban: () => void;
+  setIssueViewToList: () => void;
 };
 
 type StateType = Theme;
@@ -60,21 +73,18 @@ export const reducer: ReducerFunctionType = (state, action) => {
         ...state,
         collapsed: !state.collapsed,
       };
-      localStorage.setItem("theme", JSON.stringify(newState));
+      localStorage.setItem("collapsed", JSON.stringify(newState.collapsed));
       return newState;
     case REHYDRATE_THEME: {
-      let newState: any = localStorage.getItem("theme");
-      if (newState !== null) {
-        newState = JSON.parse(newState);
-      }
-      return { ...initialState, ...newState };
+      let collapsed: any = localStorage.getItem("collapsed");
+      collapsed = collapsed ? JSON.parse(collapsed) : false;
+      return { ...initialState, ...payload, collapsed };
     }
     case SET_ISSUE_VIEW: {
       const newState = {
         ...state,
         issueView: payload?.issueView || "list",
       };
-      localStorage.setItem("theme", JSON.stringify(newState));
       return {
         ...state,
         ...newState,
@@ -85,7 +95,6 @@ export const reducer: ReducerFunctionType = (state, action) => {
         ...state,
         groupByProperty: payload?.groupByProperty || null,
       };
-      localStorage.setItem("theme", JSON.stringify(newState));
       return {
         ...state,
         ...newState,
@@ -96,7 +105,6 @@ export const reducer: ReducerFunctionType = (state, action) => {
         ...state,
         orderBy: payload?.orderBy || null,
       };
-      localStorage.setItem("theme", JSON.stringify(newState));
       return {
         ...state,
         ...newState,
@@ -107,10 +115,15 @@ export const reducer: ReducerFunctionType = (state, action) => {
         ...state,
         filterIssue: payload?.filterIssue || null,
       };
-      localStorage.setItem("theme", JSON.stringify(newState));
       return {
         ...state,
         ...newState,
+      };
+    }
+    case RESET_TO_DEFAULT: {
+      return {
+        ...initialState,
+        ...payload,
       };
     }
     default: {
@@ -119,8 +132,30 @@ export const reducer: ReducerFunctionType = (state, action) => {
   }
 };
 
+const saveDataToServer = async (workspaceSlug: string, projectID: string, state: any) => {
+  await projectService.setProjectView(workspaceSlug, projectID, {
+    view_props: state,
+  });
+};
+
+const setNewDefault = async (workspaceSlug: string, projectID: string, state: any) => {
+  await projectService.setProjectView(workspaceSlug, projectID, {
+    view_props: state,
+    default_props: state,
+  });
+};
+
 export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
+
+  const { activeProject, activeWorkspace } = useUser();
+
+  const { data: myViewProps, mutate: mutateMyViewProps } = useSWR(
+    activeWorkspace && activeProject ? USER_PROJECT_VIEW(activeProject.id) : null,
+    activeWorkspace && activeProject
+      ? () => projectService.projectMemberMe(activeWorkspace.slug, activeProject.id)
+      : null
+  );
 
   const toggleCollapsed = useCallback(() => {
     dispatch({
@@ -128,47 +163,121 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
     });
   }, []);
 
-  const setIssueView = useCallback((display: "list" | "kanban") => {
+  const setIssueViewToKanban = useCallback(() => {
     dispatch({
       type: SET_ISSUE_VIEW,
       payload: {
-        issueView: display,
+        issueView: "kanban",
       },
     });
-  }, []);
-
-  const setGroupByProperty = useCallback((property: NestedKeyOf<IIssue> | null) => {
     dispatch({
       type: SET_GROUP_BY_PROPERTY,
       payload: {
+        groupByProperty: "state_detail.name",
+      },
+    });
+    if (!activeWorkspace || !activeProject) return;
+    saveDataToServer(activeWorkspace.slug, activeProject.id, {
+      ...state,
+      issueView: "kanban",
+      groupByProperty: "state_detail.name",
+    });
+  }, [activeWorkspace, activeProject, state]);
+
+  const setIssueViewToList = useCallback(() => {
+    dispatch({
+      type: SET_ISSUE_VIEW,
+      payload: {
+        issueView: "list",
+      },
+    });
+    dispatch({
+      type: SET_GROUP_BY_PROPERTY,
+      payload: {
+        groupByProperty: null,
+      },
+    });
+    if (!activeWorkspace || !activeProject) return;
+    saveDataToServer(activeWorkspace.slug, activeProject.id, {
+      ...state,
+      issueView: "list",
+      groupByProperty: null,
+    });
+  }, [activeWorkspace, activeProject, state]);
+
+  const setGroupByProperty = useCallback(
+    (property: NestedKeyOf<IIssue> | null) => {
+      dispatch({
+        type: SET_GROUP_BY_PROPERTY,
+        payload: {
+          groupByProperty: property,
+        },
+      });
+
+      if (!activeWorkspace || !activeProject) return;
+      saveDataToServer(activeWorkspace.slug, activeProject.id, {
+        ...state,
         groupByProperty: property,
-      },
-    });
-  }, []);
+      });
+    },
+    [activeProject, activeWorkspace, state]
+  );
 
-  const setOrderBy = useCallback((property: NestedKeyOf<IIssue> | null) => {
-    dispatch({
-      type: SET_ORDER_BY_PROPERTY,
-      payload: {
-        orderBy: property,
-      },
-    });
-  }, []);
+  const setOrderBy = useCallback(
+    (property: NestedKeyOf<IIssue> | null) => {
+      dispatch({
+        type: SET_ORDER_BY_PROPERTY,
+        payload: {
+          orderBy: property,
+        },
+      });
 
-  const setFilterIssue = useCallback((property: "activeIssue" | "backlogIssue" | null) => {
-    dispatch({
-      type: SET_FILTER_ISSUES,
-      payload: {
+      if (!activeWorkspace || !activeProject) return;
+      saveDataToServer(activeWorkspace.slug, activeProject.id, state);
+    },
+    [activeProject, activeWorkspace, state]
+  );
+
+  const setFilterIssue = useCallback(
+    (property: "activeIssue" | "backlogIssue" | null) => {
+      dispatch({
+        type: SET_FILTER_ISSUES,
+        payload: {
+          filterIssue: property,
+        },
+      });
+
+      if (!activeWorkspace || !activeProject) return;
+      saveDataToServer(activeWorkspace.slug, activeProject.id, {
+        ...state,
         filterIssue: property,
-      },
+      });
+    },
+    [activeProject, activeWorkspace, state]
+  );
+
+  const setNewDefaultView = useCallback(() => {
+    if (!activeWorkspace || !activeProject) return;
+    setNewDefault(activeWorkspace.slug, activeProject.id, state).then(() => {
+      mutateMyViewProps();
     });
-  }, []);
+  }, [activeProject, activeWorkspace, state, mutateMyViewProps]);
+
+  const resetToDefault = useCallback(() => {
+    dispatch({
+      type: RESET_TO_DEFAULT,
+      payload: myViewProps?.default_props,
+    });
+    if (!activeWorkspace || !activeProject) return;
+    saveDataToServer(activeWorkspace.slug, activeProject.id, myViewProps?.default_props);
+  }, [activeProject, activeWorkspace, myViewProps]);
 
   useEffect(() => {
     dispatch({
       type: REHYDRATE_THEME,
+      payload: myViewProps?.view_props,
     });
-  }, []);
+  }, [myViewProps]);
 
   return (
     <themeContext.Provider
@@ -176,13 +285,16 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
         collapsed: state.collapsed,
         toggleCollapsed,
         issueView: state.issueView,
-        setIssueView,
         groupByProperty: state.groupByProperty,
         setGroupByProperty,
         orderBy: state.orderBy,
         setOrderBy,
         filterIssue: state.filterIssue,
         setFilterIssue,
+        resetFilterToDefault: resetToDefault,
+        setNewFilterDefaultView: setNewDefaultView,
+        setIssueViewToKanban,
+        setIssueViewToList,
       }}
     >
       <ToastAlert />

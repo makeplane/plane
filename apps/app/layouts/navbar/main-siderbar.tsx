@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // next
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -15,14 +15,15 @@ import {
   Bars3Icon,
   Cog6ToothIcon,
   RectangleStackIcon,
-  UserGroupIcon,
   XMarkIcon,
   ArrowLongLeftIcon,
   QuestionMarkCircleIcon,
   RectangleGroupIcon,
 } from "@heroicons/react/24/outline";
-// constants
+// common
 import { classNames } from "constants/common";
+
+type Props = { collapse?: boolean };
 
 const navigation = (projectId: string) => [
   {
@@ -35,16 +36,11 @@ const navigation = (projectId: string) => [
     href: `/projects/${projectId}/cycles`,
     icon: ArrowPathIcon,
   },
-  {
-    name: "Modules",
-    href: `/projects/${projectId}/modules`,
-    icon: RectangleGroupIcon,
-  },
-  {
-    name: "Members",
-    href: `/projects/${projectId}/members`,
-    icon: UserGroupIcon,
-  },
+  // {
+  //   name: "Modules",
+  //   href: `/projects/${projectId}/modules`,
+  //   icon: RectangleGroupIcon,
+  // },
   {
     name: "Settings",
     href: `/projects/${projectId}/settings`,
@@ -52,7 +48,7 @@ const navigation = (projectId: string) => [
   },
 ];
 
-const Sidebar: React.FC = () => {
+const Sidebar: React.FC<Props> = ({ collapse = false }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const router = useRouter();
@@ -144,35 +140,35 @@ const Sidebar: React.FC = () => {
       </Transition.Root>
       <div
         className={`${
-          sidebarCollapse ? "" : "w-auto md:w-60"
+          sidebarCollapse || collapse ? "" : "w-auto md:w-60"
         } h-full hidden md:inset-y-0 md:flex md:flex-col`}
       >
         <div className="h-full flex flex-1 flex-col border-r border-gray-200">
           <div className="h-full flex flex-1 flex-col pt-2">
-            <WorkspaceOptions sidebarCollapse={sidebarCollapse} />
-            <ProjectsList navigation={navigation} sidebarCollapse={sidebarCollapse} />
+            <WorkspaceOptions sidebarCollapse={sidebarCollapse || collapse} />
+            <ProjectsList navigation={navigation} sidebarCollapse={sidebarCollapse || collapse} />
             <div
               className={`px-2 py-2 w-full self-baseline flex items-center bg-primary ${
-                sidebarCollapse ? "flex-col-reverse" : ""
+                sidebarCollapse || collapse ? "flex-col-reverse" : ""
               }`}
             >
               <button
                 type="button"
                 className={`flex items-center gap-3 px-2 py-2 text-xs font-medium rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-900 outline-none ${
-                  sidebarCollapse ? "justify-center w-full" : ""
+                  sidebarCollapse || collapse ? "justify-center w-full" : ""
                 }`}
                 onClick={() => toggleCollapsed()}
               >
                 <ArrowLongLeftIcon
                   className={`h-4 w-4 text-gray-500 group-hover:text-gray-900 flex-shrink-0 duration-300 ${
-                    sidebarCollapse ? "rotate-180" : ""
+                    sidebarCollapse || collapse ? "rotate-180" : ""
                   }`}
                 />
               </button>
               <button
                 type="button"
                 className={`flex items-center gap-3 px-2 py-2 text-xs font-medium rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-900 outline-none ${
-                  sidebarCollapse ? "justify-center w-full" : ""
+                  sidebarCollapse || collapse ? "justify-center w-full" : ""
                 }`}
                 onClick={() => {
                   const e = new KeyboardEvent("keydown", {
