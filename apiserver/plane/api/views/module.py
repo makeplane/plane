@@ -130,7 +130,7 @@ class ModuleIssueViewSet(BaseViewSet):
                 [
                     ModuleIssue(
                         module=module,
-                        issue_id=issue,
+                        issue=issue,
                         project_id=project_id,
                         workspace=module.workspace,
                         created_by=request.user,
