@@ -130,7 +130,7 @@ export type Properties = {
   assignee: boolean;
   priority: boolean;
   start_date: boolean;
-  target_date: boolean;
+  due_date: boolean;
   cycle: boolean;
   children_count: boolean;
 };

@@ -16,7 +16,7 @@ const initialValues: Properties = {
   assignee: true,
   priority: false,
   start_date: false,
-  target_date: false,
+  due_date: false,
   cycle: false,
   children_count: false,
 };
@@ -26,7 +26,7 @@ const useIssuesProperties = (workspaceSlug?: string, projectId?: string) => {
 
   const { user } = useUser();
 
-  const { data: issueProperties } = useSWR<IssuePriorities>(
+  const { data: issueProperties, mutate: mutateIssueProperties } = useSWR<IssuePriorities>(
     workspaceSlug && projectId ? ISSUE_PROPERTIES_ENDPOINT(workspaceSlug, projectId) : null,
     workspaceSlug && projectId
       ? () => issueServices.getIssueProperties(workspaceSlug, projectId)
@@ -56,6 +56,14 @@ const useIssuesProperties = (workspaceSlug?: string, projectId?: string) => {
     (key: keyof Properties) => {
       if (!workspaceSlug || !projectId || !issueProperties || !user) return;
       setProperties((prev) => ({ ...prev, [key]: !prev[key] }));
+      mutateIssueProperties(
+        (prev) =>
+          ({
+            ...prev,
+            properties: { ...prev?.properties, [key]: !prev?.properties?.[key] },
+          } as IssuePriorities),
+        false
+      );
       if (Object.keys(issueProperties).length > 0) {
         issueServices.patchIssueProperties(workspaceSlug, projectId, issueProperties.id, {
           properties: {
@@ -71,23 +79,19 @@ const useIssuesProperties = (workspaceSlug?: string, projectId?: string) => {
         });
       }
     },
-    [workspaceSlug, projectId, issueProperties, user]
+    [workspaceSlug, projectId, issueProperties, user, mutateIssueProperties]
   );
 
-  const newProperties = Object.keys(properties).reduce((obj: any, key) => {
-    if (
-      key !== "children" &&
-      key !== "name" &&
-      key !== "parent" &&
-      key !== "project" &&
-      key !== "description" &&
-      key !== "attachments" &&
-      key !== "sequence_id"
-    ) {
-      obj[key] = properties[key as keyof Properties];
-    }
-    return obj;
-  }, {});
+  const newProperties: Properties = {
+    key: properties.key,
+    state: properties.state,
+    assignee: properties.assignee,
+    priority: properties.priority,
+    start_date: properties.start_date,
+    due_date: properties.due_date,
+    cycle: properties.cycle,
+    children_count: properties.children_count,
+  };
 
   return [newProperties, updateIssueProperties] as const;
 };
