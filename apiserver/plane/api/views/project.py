@@ -609,7 +609,13 @@ class ProjectUserViewsEndpoint(BaseAPIView):
                     {"error": "Forbidden"}, status=status.HTTP_403_FORBIDDEN
                 )
 
-            project_member.view_props = request.data
+            view_props = project_member.view_props
+            default_props = project_member.default_props
+
+            project_member.view_props = request.data.get("view_props", view_props)
+            project_member.default_props = request.data.get(
+                "default_props", default_props
+            )
 
             project_member.save()
 
