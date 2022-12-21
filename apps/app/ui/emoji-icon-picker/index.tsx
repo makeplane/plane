@@ -3,6 +3,8 @@ import React, { useEffect, useState, useRef } from "react";
 import { Tab, Transition, Popover } from "@headlessui/react";
 // hooks
 import useOutsideClickDetector from "lib/hooks/useOutsideClickDetector";
+// common
+import { getRandomEmoji } from "constants/common";
 // emoji
 import emojis from "./emojis.json";
 // helpers
@@ -35,6 +37,10 @@ const EmojiIconPicker: React.FC<Props> = ({ label, value, onChange }) => {
   useOutsideClickDetector(ref, () => {
     setIsOpen(false);
   });
+
+  useEffect(() => {
+    if (!value) onChange(getRandomEmoji());
+  }, [value, onChange]);
 
   return (
     <Popover className="relative" ref={ref}>

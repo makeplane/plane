@@ -14,6 +14,8 @@ import CyclesBoardView from "components/project/cycles/board-view";
 import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
 import CycleIssuesListModal from "components/project/cycles/cycle-issues-list-modal";
 import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
+// constants
+import { filterIssueOptions, groupByOptions, orderByOptions } from "constants/";
 // services
 import issuesServices from "lib/services/issues.service";
 import cycleServices from "lib/services/cycles.service";
@@ -35,37 +37,6 @@ import { CycleIssueResponse, IIssue, NestedKeyOf, Properties, SelectIssue } from
 import { CYCLE_ISSUES, PROJECT_MEMBERS } from "constants/fetch-keys";
 // common
 import { classNames, replaceUnderscoreIfSnakeCase } from "constants/common";
-
-const groupByOptions: Array<{ name: string; key: NestedKeyOf<IIssue> | null }> = [
-  { name: "State", key: "state_detail.name" },
-  { name: "Priority", key: "priority" },
-  { name: "Created By", key: "created_by" },
-  { name: "None", key: null },
-];
-
-const orderByOptions: Array<{ name: string; key: NestedKeyOf<IIssue> }> = [
-  { name: "Last created", key: "created_at" },
-  { name: "Last updated", key: "updated_at" },
-  { name: "Priority", key: "priority" },
-];
-
-const filterIssueOptions: Array<{
-  name: string;
-  key: "activeIssue" | "backlogIssue" | null;
-}> = [
-  {
-    name: "All",
-    key: null,
-  },
-  {
-    name: "Active Issues",
-    key: "activeIssue",
-  },
-  {
-    name: "Backlog Issues",
-    key: "backlogIssue",
-  },
-];
 
 const SingleCycle: React.FC = () => {
   const [isIssueModalOpen, setIsIssueModalOpen] = useState(false);

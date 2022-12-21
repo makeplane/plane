@@ -17,6 +17,8 @@ import useIssuesProperties from "lib/hooks/useIssuesProperties";
 import { PROJECT_MEMBERS } from "constants/api-routes";
 // services
 import projectService from "lib/services/project.service";
+// constants
+import { filterIssueOptions, groupByOptions, orderByOptions } from "constants/";
 // commons
 import { classNames, replaceUnderscoreIfSnakeCase } from "constants/common";
 // layouts
@@ -42,41 +44,9 @@ import {
 import { ChevronDownIcon, ListBulletIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
 import { PlusIcon, Squares2X2Icon } from "@heroicons/react/20/solid";
 // types
-import type { IIssue, Properties, NestedKeyOf, IssueResponse } from "types";
+import type { IIssue, Properties, IssueResponse } from "types";
 // fetch-keys
 import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
-
-const groupByOptions: Array<{ name: string; key: NestedKeyOf<IIssue> | null }> = [
-  { name: "State", key: "state_detail.name" },
-  { name: "Priority", key: "priority" },
-  // { name: "Cycle", key: "issue_cycle.cycle_detail.name" },
-  { name: "Created By", key: "created_by" },
-  { name: "None", key: null },
-];
-
-const orderByOptions: Array<{ name: string; key: NestedKeyOf<IIssue> }> = [
-  { name: "Last created", key: "created_at" },
-  { name: "Last updated", key: "updated_at" },
-  { name: "Priority", key: "priority" },
-];
-
-const filterIssueOptions: Array<{
-  name: string;
-  key: "activeIssue" | "backlogIssue" | null;
-}> = [
-  {
-    name: "All",
-    key: null,
-  },
-  {
-    name: "Active Issues",
-    key: "activeIssue",
-  },
-  {
-    name: "Backlog Issues",
-    key: "backlogIssue",
-  },
-];
 
 const ProjectIssues: NextPage = () => {
   const [isOpen, setIsOpen] = useState(false);
