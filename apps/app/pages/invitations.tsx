@@ -82,7 +82,7 @@ const OnBoard: NextPage = () => {
     >
       <div className="flex min-h-full flex-col items-center justify-center p-4 sm:p-0">
         {user && (
-          <div className="w-96 p-2 rounded-lg bg-indigo-100 text-indigo-600 mb-10">
+          <div className="w-96 p-2 rounded-lg bg-indigo-100 text-theme mb-10">
             <p className="text-sm text-center">logged in as {user.email}</p>
           </div>
         )}
@@ -90,47 +90,7 @@ const OnBoard: NextPage = () => {
         <div className="w-full md:w-2/3 lg:w-1/3 p-8 rounded-lg">
           {invitations && workspaces ? (
             invitations.length > 0 ? (
-              <div className="mt-3 sm:mt-5">
-                <div className="mt-2">
-                  <h2 className="text-2xl font-medium mb-4">Join your workspaces</h2>
-                  <div className="space-y-2 mb-12">
-                    {invitations.map((item) => (
-                      <div
-                        className="relative flex items-center border px-4 py-2 rounded"
-                        key={item.id}
-                      >
-                        <div className="ml-3 text-sm flex flex-col items-start w-full">
-                          <h3 className="font-medium text-xl text-gray-700">
-                            {item.workspace.name}
-                          </h3>
-                          <p className="text-sm">invited by {item.workspace.owner.first_name}</p>
-                        </div>
-                        <div className="flex gap-x-2 h-5 items-center">
-                          <div className="h-full flex items-center gap-x-1">
-                            <input
-                              id={`${item.id}`}
-                              aria-describedby="workspaces"
-                              name={`${item.id}`}
-                              checked={invitationsRespond.includes(item.id)}
-                              value={item.workspace.name}
-                              onChange={() => {
-                                handleInvitation(
-                                  item,
-                                  invitationsRespond.includes(item.id) ? "withdraw" : "accepted"
-                                );
-                              }}
-                              type="checkbox"
-                              className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                            />
-                            <label htmlFor={item.id} className="text-sm">
-                              Accept
-                            </label>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+              <div>
                 <h2 className="text-lg font-medium text-gray-900">Workspace Invitations</h2>
                 <p className="mt-1 text-sm text-gray-500">
                   Select invites that you want to accept.

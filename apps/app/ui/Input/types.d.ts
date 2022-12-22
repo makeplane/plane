@@ -10,4 +10,6 @@ export interface Props extends React.ComponentPropsWithoutRef<"input"> {
   validations?: RegisterOptions;
   error?: FieldError;
   className?: string;
+  size?: "rg" | "lg";
+  fullWidth?: boolean;
 }

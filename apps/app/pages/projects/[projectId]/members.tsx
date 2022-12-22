@@ -5,28 +5,26 @@ import type { NextPage } from "next";
 import { useRouter } from "next/router";
 // swr
 import useSWR from "swr";
-// headless ui
-import { Menu } from "@headlessui/react";
 // services
 import projectService from "lib/services/project.service";
 // hooks
 import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
-// fetching keys
-import { PROJECT_MEMBERS, PROJECT_INVITATIONS } from "constants/fetch-keys";
 // hoc
 import withAuth from "lib/hoc/withAuthWrapper";
 // layouts
-import AppLayout from "layouts/AppLayout";
+import AppLayout from "layouts/app-layout";
 // components
-import SendProjectInvitationModal from "components/project/SendProjectInvitationModal";
-import ConfirmProjectMemberRemove from "components/project/ConfirmProjectMemberRemove";
+import ConfirmProjectMemberRemove from "components/project/confirm-project-member-remove";
+import SendProjectInvitationModal from "components/project/send-project-invitation-modal";
+// headless ui
+import { Menu } from "@headlessui/react";
 // ui
-import { Spinner, CustomListbox } from "ui";
+import { Spinner, CustomListbox, BreadcrumbItem, Breadcrumbs, HeaderButton } from "ui";
 // icons
 import { PlusIcon, EllipsisHorizontalIcon } from "@heroicons/react/20/solid";
-import HeaderButton from "ui/HeaderButton";
-import { BreadcrumbItem, Breadcrumbs } from "ui/Breadcrumbs";
+// fetch-keys
+import { PROJECT_MEMBERS, PROJECT_INVITATIONS } from "constants/fetch-keys";
 
 const ROLE = {
   5: "Guest",
@@ -63,6 +61,7 @@ const ProjectMembers: NextPage = () => {
       },
     }
   );
+
   const { data: projectInvitations, mutate: mutateInvitations } = useSWR(
     activeWorkspace && projectId ? PROJECT_INVITATIONS : null,
     activeWorkspace && projectId
@@ -92,7 +91,15 @@ const ProjectMembers: NextPage = () => {
   ];
 
   return (
-    <AppLayout>
+    <AppLayout
+      breadcrumbs={
+        <Breadcrumbs>
+          <BreadcrumbItem title="Projects" link="/projects" />
+          <BreadcrumbItem title={`${activeProject?.name ?? "Project"} Members`} />
+        </Breadcrumbs>
+      }
+      right={<HeaderButton Icon={PlusIcon} label="Add Member" onClick={() => setIsOpen(true)} />}
+    >
       <ConfirmProjectMemberRemove
         isOpen={Boolean(selectedRemoveMember) || Boolean(selectedInviteRemoveMember)}
         onClose={() => {
@@ -140,14 +147,6 @@ const ProjectMembers: NextPage = () => {
         </div>
       ) : (
         <div className="h-full w-full space-y-5">
-          <Breadcrumbs>
-            <BreadcrumbItem title="Projects" link="/projects" />
-            <BreadcrumbItem title={`${activeProject?.name ?? "Project"} Members`} />
-          </Breadcrumbs>
-          <div className="flex items-center justify-between cursor-pointer w-full">
-            <h2 className="text-2xl font-medium">Invite Members</h2>
-            <HeaderButton Icon={PlusIcon} label="Add Member" onClick={() => setIsOpen(true)} />
-          </div>
           {members && members.length === 0 ? null : (
             <table className="min-w-full table-fixed border border-gray-300 md:rounded-lg divide-y divide-gray-300">
               <thead className="bg-gray-50">
@@ -246,7 +245,7 @@ const ProjectMembers: NextPage = () => {
                           Active
                         </span>
                       ) : (
-                        <span className="p-0.5 px-2 text-sm bg-yellow-400 text-black rounded-full">
+                        <span className="p-0.5 px-2 text-sm bg-yellow-400 text-gray-900 rounded-full">
                           Pending
                         </span>
                       )}

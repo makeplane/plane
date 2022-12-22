@@ -19,11 +19,13 @@ import {
   PROJECT_ISSUES_LIST,
   STATE_LIST,
   CYCLE_LIST,
+  MODULE_LIST,
 } from "constants/fetch-keys";
 
 // types
 import type { KeyedMutator } from "swr";
-import type { IUser, IWorkspace, IProject, IssueResponse, ICycle, IState } from "types";
+import type { IUser, IWorkspace, IProject, IssueResponse, ICycle, IState, IModule } from "types";
+import modulesService from "lib/services/modules.service";
 
 interface IUserContextProps {
   user?: IUser;
@@ -40,6 +42,8 @@ interface IUserContextProps {
   mutateIssues: KeyedMutator<IssueResponse>;
   cycles?: ICycle[];
   mutateCycles: KeyedMutator<ICycle[]>;
+  modules?: IModule[];
+  mutateModules: KeyedMutator<IModule[]>;
   states?: IState[];
   mutateStates: KeyedMutator<IState[]>;
 }
@@ -99,6 +103,13 @@ export const UserProvider = ({ children }: { children: ReactElement }) => {
       : null
   );
 
+  const { data: modules, mutate: mutateModules } = useSWR<IModule[]>(
+    activeWorkspace && activeProject ? MODULE_LIST(activeProject.id) : null,
+    activeWorkspace && activeProject
+      ? () => modulesService.getModules(activeWorkspace.slug, activeProject.id)
+      : null
+  );
+
   useEffect(() => {
     if (!projects) return;
     const activeProject = projects.find((project) => project.id === projectId);
@@ -143,6 +154,8 @@ export const UserProvider = ({ children }: { children: ReactElement }) => {
         mutateIssues,
         cycles,
         mutateCycles,
+        modules,
+        mutateModules,
         states,
         mutateStates,
         setActiveProject,

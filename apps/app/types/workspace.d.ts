@@ -1,4 +1,4 @@
-import type { IUser, IUserLite } from "./";
+import type { IProjectMember, IUser, IUserLite } from "./";
 
 export interface IWorkspace {
   readonly id: string;
@@ -39,5 +39,5 @@ export interface IWorkspaceMember {
 
 export interface ILastActiveWorkspaceDetails {
   workspace_details: IWorkspace;
-  project_details: IProject[];
+  project_details?: IProjectMember[];
 }

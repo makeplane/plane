@@ -1,10 +1,11 @@
 export * from "./users";
 export * from "./workspace";
-export * from "./sprints";
+export * from "./cycles";
 export * from "./projects";
 export * from "./state";
 export * from "./invitation";
 export * from "./issues";
+export * from "./modules";
 
 export type NestedKeyOf<ObjectType extends object> = {
   [Key in keyof ObjectType & (string | number)]: ObjectType[Key] extends object

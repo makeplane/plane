@@ -5,7 +5,7 @@ type Props = {
   children: React.ReactNode;
   type?: "button" | "submit" | "reset";
   className?: string;
-  theme?: "primary" | "secondary" | "danger";
+  theme?: "primary" | "secondary" | "success" | "danger";
   size?: "sm" | "rg" | "md" | "lg";
   disabled?: boolean;
 };
@@ -20,7 +20,7 @@ const Button = React.forwardRef<HTMLButtonElement, Props>(
       onClick,
       type = "button",
       size = "sm",
-      className,
+      className = "",
       theme = "primary",
       disabled = false,
     },
@@ -33,24 +33,28 @@ const Button = React.forwardRef<HTMLButtonElement, Props>(
         type={type}
         disabled={disabled}
         className={classNames(
+          className,
           "inline-flex items-center rounded justify-center font-medium",
           theme === "primary"
             ? `${
                 disabled ? "opacity-70" : ""
-              } text-white shadow-sm bg-theme hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 border border-transparent`
+              } text-white shadow-sm bg-theme hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 border border-transparent`
             : theme === "secondary"
-            ? "border border-gray-300 bg-white"
+            ? "border bg-transparent hover:bg-gray-100"
+            : theme === "success"
+            ? `${
+                disabled ? "opacity-70" : ""
+              } text-white shadow-sm bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500  border border-transparent`
             : `${
                 disabled ? "opacity-70" : ""
-              } text-white shadow-sm bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 border border-transparent`,
+              } text-white shadow-sm bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 border border-transparent`,
           size === "sm"
             ? "p-2 text-xs"
             : size === "md"
             ? "px-3 py-2 text-base"
             : size === "lg"
             ? "px-4 py-2 text-base"
-            : "px-2.5 py-2 text-sm",
-          className || ""
+            : "px-2.5 py-2 text-sm"
         )}
       >
         {children}

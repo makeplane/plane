@@ -68,7 +68,7 @@ const CreateWorkspace: NextPage = () => {
     <DefaultLayout>
       <div className="flex flex-col items-center justify-center w-full h-full px-4">
         {user && (
-          <div className="w-96 p-2 rounded-lg bg-indigo-100 text-indigo-600 mb-10 lg:mb-20">
+          <div className="w-96 p-2 rounded-lg bg-indigo-100 text-theme mb-10 lg:mb-20">
             <p className="text-sm text-center">logged in as {user.email}</p>
           </div>
         )}

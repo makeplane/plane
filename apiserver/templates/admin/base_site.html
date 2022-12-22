@@ -1,0 +1,23 @@
+{% extends "admin/base.html" %}{% load i18n %}
+
+{% block title %}{{ title }} | {% trans  'plane Admin' %} {% endblock %}
+
+{% block branding %}
+
+<style type="text/css">
+  #header
+  {
+    background: #24292e;
+    color: #FFFFFF;
+  }
+  #site-name{
+  color: #FFFFFF;
+  }
+  #branding h1, #branding h1 a:link, #branding h1 a:visited {
+    color: #FFFFFF;
+}
+</style>
+<h1 id="site-name">{% trans 'plane Admin'  %} </h1>
+
+
+{% endblock %}{% block nav-global %}{% endblock %}

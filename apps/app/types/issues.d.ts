@@ -1,4 +1,4 @@
-import type { IState, IUser, IProject } from "./";
+import type { IState, IUser, IProject, ICycle } from "./";
 
 export interface IssueResponse {
   next_cursor: string;
@@ -9,6 +9,19 @@ export interface IssueResponse {
   total_pages: number;
   extra_stats: null;
   results: IIssue[];
+}
+
+export interface IIssueCycle {
+  id: string;
+  cycle_detail: ICycle;
+  created_at: Date;
+  updated_at: Date;
+  created_by: string;
+  updated_by: string;
+  project: string;
+  workspace: string;
+  issue: string;
+  cycle: string;
 }
 
 export interface IIssue {
@@ -25,7 +38,20 @@ export interface IIssue {
   created_at: Date;
   updated_at: Date;
   name: string;
-  description: string;
+  // TODO change type of description
+  issue_cycle: {
+    created_at: Date;
+    created_by: string;
+    cycle: string;
+    cycle_detail: ICycle;
+    id: string;
+    issue: string;
+    project: string;
+    updated_at: Date;
+    updated_by: string;
+    workspace: string;
+  } | null;
+  description: any;
   priority: string | null;
   start_date: string | null;
   target_date: string | null;
@@ -46,6 +72,9 @@ export interface IIssue {
   blocked_issue_details: any[];
   sprints: string | null;
   cycle: string | null;
+  cycle_detail: ICycle | null;
+
+  issue_cycle: IIssueCycle;
 }
 
 export interface BlockeIssue {
@@ -102,8 +131,9 @@ export type Properties = {
   assignee: boolean;
   priority: boolean;
   start_date: boolean;
-  target_date: boolean;
+  due_date: boolean;
   cycle: boolean;
+  children_count: boolean;
 };
 
 export interface IIssueLabels {

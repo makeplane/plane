@@ -1,18 +1,22 @@
+// react
 import React, { useState, useCallback, useEffect } from "react";
 // next
 import { useRouter } from "next/router";
-// swr
-import { mutate } from "swr";
-// react hook form
-import { SubmitHandler, useForm } from "react-hook-form";
-// headless ui
-import { Combobox, Dialog, Transition } from "@headlessui/react";
-// services
-import issuesServices from "lib/services/issues.service";
 // hooks
 import useUser from "lib/hooks/useUser";
 import useTheme from "lib/hooks/useTheme";
 import useToast from "lib/hooks/useToast";
+// components
+import ShortcutsModal from "components/command-palette/shortcuts";
+import CreateProjectModal from "components/project/create-project-modal";
+import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
+import CreateUpdateCycleModal from "components/project/cycles/create-update-cycle-modal";
+import CreateUpdateModuleModal from "components/project/modules/create-update-module-modal";
+import BulkDeleteIssuesModal from "components/common/bulk-delete-issues-modal";
+// headless ui
+import { Combobox, Dialog, Transition } from "@headlessui/react";
+// ui
+import { Button } from "ui";
 // icons
 import {
   FolderIcon,
@@ -20,24 +24,10 @@ import {
   ClipboardDocumentListIcon,
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
-// components
-import ShortcutsModal from "components/command-palette/shortcuts";
-import CreateProjectModal from "components/project/create-project-modal";
-import CreateUpdateIssuesModal from "components/project/issues/CreateUpdateIssueModal";
-import CreateUpdateCycleModal from "components/project/cycles/CreateUpdateCyclesModal";
-// ui
-import { Button } from "ui";
 // types
-import { IIssue, IssueResponse } from "types";
-// fetch keys
-import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
-// constants
+import { IIssue } from "types";
+// common
 import { classNames, copyTextToClipboard } from "constants/common";
-
-type FormInput = {
-  issue_ids: string[];
-  cycleId: string;
-};
 
 const CommandPalette: React.FC = () => {
   const [query, setQuery] = useState("");
@@ -47,8 +37,10 @@ const CommandPalette: React.FC = () => {
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [isShortcutsModalOpen, setIsShortcutsModalOpen] = useState(false);
   const [isCreateCycleModalOpen, setIsCreateCycleModalOpen] = useState(false);
+  const [isCreateModuleModalOpen, setisCreateModuleModalOpen] = useState(false);
+  const [isBulkDeleteIssuesModalOpen, setIsBulkDeleteIssuesModalOpen] = useState(false);
 
-  const { activeWorkspace, activeProject, issues } = useUser();
+  const { activeProject, issues } = useUser();
 
   const router = useRouter();
 
@@ -61,8 +53,6 @@ const CommandPalette: React.FC = () => {
       ? issues?.results ?? []
       : issues?.results.filter((issue) => issue.name.toLowerCase().includes(query.toLowerCase())) ??
         [];
-
-  const { register, handleSubmit, reset } = useForm<FormInput>();
 
   const quickActions = [
     {
@@ -86,7 +76,6 @@ const CommandPalette: React.FC = () => {
   const handleCommandPaletteClose = () => {
     setIsPaletteOpen(false);
     setQuery("");
-    reset();
   };
 
   const handleKeyDown = useCallback(
@@ -109,6 +98,12 @@ const CommandPalette: React.FC = () => {
       } else if ((e.ctrlKey || e.metaKey) && e.key === "q") {
         e.preventDefault();
         setIsCreateCycleModalOpen(true);
+      } else if ((e.ctrlKey || e.metaKey) && e.key === "m") {
+        e.preventDefault();
+        setisCreateModuleModalOpen(true);
+      } else if ((e.ctrlKey || e.metaKey) && e.key === "d") {
+        e.preventDefault();
+        setIsBulkDeleteIssuesModalOpen(true);
       } else if ((e.ctrlKey || e.metaKey) && e.altKey && e.key === "c") {
         e.preventDefault();
 
@@ -133,47 +128,6 @@ const CommandPalette: React.FC = () => {
     [toggleCollapsed, setToastAlert, router]
   );
 
-  const handleDelete: SubmitHandler<FormInput> = (data) => {
-    if (!data.issue_ids || data.issue_ids.length === 0) {
-      setToastAlert({
-        title: "Error",
-        type: "error",
-        message: "Please select atleast one issue",
-      });
-      return;
-    }
-
-    if (activeWorkspace && activeProject) {
-      issuesServices
-        .bulkDeleteIssues(activeWorkspace.slug, activeProject.id, data)
-        .then((res) => {
-          setToastAlert({
-            title: "Success",
-            type: "success",
-            message: res.message,
-          });
-          mutate<IssueResponse>(
-            PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id),
-            (prevData) => {
-              return {
-                ...(prevData as IssueResponse),
-                count: (prevData?.results ?? []).filter(
-                  (p) => !data.issue_ids.some((id) => p.id === id)
-                ).length,
-                results: (prevData?.results ?? []).filter(
-                  (p) => !data.issue_ids.some((id) => p.id === id)
-                ),
-              };
-            },
-            false
-          );
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    }
-  };
-
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
@@ -184,16 +138,27 @@ const CommandPalette: React.FC = () => {
       <ShortcutsModal isOpen={isShortcutsModalOpen} setIsOpen={setIsShortcutsModalOpen} />
       <CreateProjectModal isOpen={isProjectModalOpen} setIsOpen={setIsProjectModalOpen} />
       {activeProject && (
-        <CreateUpdateCycleModal
-          isOpen={isCreateCycleModalOpen}
-          setIsOpen={setIsCreateCycleModalOpen}
-          projectId={activeProject.id}
-        />
+        <>
+          <CreateUpdateCycleModal
+            isOpen={isCreateCycleModalOpen}
+            setIsOpen={setIsCreateCycleModalOpen}
+            projectId={activeProject.id}
+          />
+          <CreateUpdateModuleModal
+            isOpen={isCreateModuleModalOpen}
+            setIsOpen={setisCreateModuleModalOpen}
+            projectId={activeProject.id}
+          />
+        </>
       )}
       <CreateUpdateIssuesModal
         isOpen={isIssueModalOpen}
         setIsOpen={setIsIssueModalOpen}
         projectId={activeProject?.id}
+      />
+      <BulkDeleteIssuesModal
+        isOpen={isBulkDeleteIssuesModalOpen}
+        setIsOpen={setIsBulkDeleteIssuesModalOpen}
       />
       <Transition.Root
         show={isPaletteOpen}
@@ -248,7 +213,7 @@ const CommandPalette: React.FC = () => {
                           <li className="p-2">
                             {query === "" && (
                               <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-gray-900">
-                                Issues
+                                Select issues
                               </h2>
                             )}
                             <ul className="text-sm text-gray-700">
@@ -271,12 +236,6 @@ const CommandPalette: React.FC = () => {
                                   {({ active }) => (
                                     <>
                                       <div className="flex items-center gap-2">
-                                        <input
-                                          type="checkbox"
-                                          {...register("issue_ids")}
-                                          id={`issue-${issue.id}`}
-                                          value={issue.id}
-                                        />
                                         <span
                                           className="flex-shrink-0 h-1.5 w-1.5 block rounded-full"
                                           style={{
@@ -364,10 +323,7 @@ const CommandPalette: React.FC = () => {
                     )}
                   </Combobox>
 
-                  <div className="flex justify-between items-center gap-2 p-3">
-                    <Button onClick={handleSubmit(handleDelete)} theme="danger" size="sm">
-                      Delete selected
-                    </Button>
+                  <div className="flex justify-end items-center gap-2 p-3">
                     <div>
                       <Button type="button" size="sm" onClick={handleCommandPaletteClose}>
                         Close

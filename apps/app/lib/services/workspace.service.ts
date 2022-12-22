@@ -20,10 +20,10 @@ const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
 // types
 import {
-  ILastActiveWorkspaceDetails,
   IWorkspace,
   IWorkspaceMember,
   IWorkspaceMemberInvitation,
+  ILastActiveWorkspaceDetails,
 } from "types";
 
 class WorkspaceService extends APIService {

@@ -1,5 +1,16 @@
+import React from "react";
 // next
+import { useRouter } from "next/router";
 import Image from "next/image";
+// swr
+import useSWR from "swr";
+// constants
+import { PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
+import { addSpaceIfCamelCase, timeAgo } from "constants/common";
+// services
+import issuesServices from "lib/services/issues.service";
+// hooks
+import useUser from "lib/hooks/useUser";
 // ui
 import { Spinner } from "ui";
 // icons
@@ -12,27 +23,37 @@ import {
 } from "@heroicons/react/24/outline";
 // types
 import { IssueResponse, IState } from "types";
-// constants
-import { addSpaceIfCamelCase, timeAgo } from "constants/common";
-
-type Props = {
-  issueActivities: any[] | undefined;
-  states: IState[] | undefined;
-  issues: IssueResponse | undefined;
-};
 
 const activityIcons: {
   [key: string]: JSX.Element;
 } = {
-  state: <Squares2X2Icon className="h-4 w-4" />,
-  priority: <ChartBarIcon className="h-4 w-4" />,
-  name: <ChatBubbleBottomCenterTextIcon className="h-4 w-4" />,
-  description: <ChatBubbleBottomCenterTextIcon className="h-4 w-4" />,
-  target_date: <CalendarDaysIcon className="h-4 w-4" />,
-  parent: <UserIcon className="h-4 w-4" />,
+  state: <Squares2X2Icon className="h-3.5 w-3.5" />,
+  priority: <ChartBarIcon className="h-3.5 w-3.5" />,
+  name: <ChatBubbleBottomCenterTextIcon className="h-3.5 w-3.5" />,
+  description: <ChatBubbleBottomCenterTextIcon className="h-3.5 w-3.5" />,
+  target_date: <CalendarDaysIcon className="h-3.5 w-3.5" />,
+  parent: <UserIcon className="h-3.5 w-3.5" />,
 };
 
-const IssueActivitySection: React.FC<Props> = ({ issueActivities, states, issues }) => {
+const IssueActivitySection: React.FC = () => {
+  const router = useRouter();
+
+  const { issueId, projectId } = router.query;
+
+  const { activeWorkspace, states, issues } = useUser();
+
+  const { data: issueActivities } = useSWR<any[]>(
+    activeWorkspace && projectId && issueId ? PROJECT_ISSUES_ACTIVITY : null,
+    activeWorkspace && projectId && issueId
+      ? () =>
+          issuesServices.getIssueActivities(
+            activeWorkspace.slug,
+            projectId as string,
+            issueId as string
+          )
+      : null
+  );
+
   return (
     <>
       {issueActivities ? (

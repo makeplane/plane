@@ -13,6 +13,8 @@ const Select: React.FC<Props> = ({
   validations,
   error,
   options,
+  size = "rg",
+  fullWidth = true,
 }) => {
   return (
     <>
@@ -27,7 +29,9 @@ const Select: React.FC<Props> = ({
         value={value}
         {...(register && register(name, validations))}
         disabled={disabled}
-        className={`mt-1 block w-full px-3 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md bg-transparent ${className}`}
+        className={`mt-1 block text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md bg-transparent ${
+          fullWidth ? "w-full" : ""
+        } ${size === "rg" ? "px-3 py-2" : size === "lg" ? "p-3" : ""} ${className}`}
       >
         {options.map((option, index) => (
           <option value={option.value} key={index}>

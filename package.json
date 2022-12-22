@@ -17,5 +17,5 @@
     "eslint-config-turbo": "latest",
     "turbo": "latest"
   },
-  "packageManager": "pnpm@7.15.0"
+  "packageManager": "pnpm@7.17.1"
 }

@@ -1,4 +1,3 @@
-// hooks
 import useTheme from "./useTheme";
 import useUser from "./useUser";
 // commons
@@ -6,18 +5,21 @@ import { groupBy, orderArrayBy } from "constants/common";
 // constants
 import { PRIORITIES } from "constants/";
 // types
-import type { IssueResponse, IIssue } from "types";
+import type { IIssue } from "types";
 
-const useIssuesFilter = (projectIssues?: IssueResponse) => {
+const useIssuesFilter = (projectIssues: IIssue[]) => {
   const {
     issueView,
-    setIssueView,
     groupByProperty,
     setGroupByProperty,
     orderBy,
     setOrderBy,
     filterIssue,
     setFilterIssue,
+    resetFilterToDefault,
+    setNewFilterDefaultView,
+    setIssueViewToKanban,
+    setIssueViewToList,
   } = useTheme();
 
   const { states } = useUser();
@@ -31,18 +33,18 @@ const useIssuesFilter = (projectIssues?: IssueResponse) => {
             ?.sort((a, b) => a.sequence - b.sequence)
             ?.map((state) => [
               state.name,
-              projectIssues?.results.filter((issue) => issue.state === state.name) ?? [],
+              projectIssues.filter((issue) => issue.state === state.name) ?? [],
             ]) ?? []
         )
       : groupByProperty === "priority"
       ? Object.fromEntries(
           PRIORITIES.map((priority) => [
             priority,
-            projectIssues?.results.filter((issue) => issue.priority === priority) ?? [],
+            projectIssues.filter((issue) => issue.priority === priority) ?? [],
           ])
         )
       : {}),
-    ...groupBy(projectIssues?.results ?? [], groupByProperty ?? ""),
+    ...groupBy(projectIssues ?? [], groupByProperty ?? ""),
   };
 
   if (orderBy !== null) {
@@ -64,7 +66,7 @@ const useIssuesFilter = (projectIssues?: IssueResponse) => {
           ?.sort((a, b) => a.sequence - b.sequence)
           ?.map((state) => [
             state.name,
-            projectIssues?.results.filter((issue) => issue.state === state.id) ?? [],
+            projectIssues.filter((issue) => issue.state === state.id) ?? [],
           ]) ?? []
       );
     } else if (filterIssue === "backlogIssue") {
@@ -76,7 +78,7 @@ const useIssuesFilter = (projectIssues?: IssueResponse) => {
           ?.sort((a, b) => a.sequence - b.sequence)
           ?.map((state) => [
             state.name,
-            projectIssues?.results.filter((issue) => issue.state === state.id) ?? [],
+            projectIssues.filter((issue) => issue.state === state.id) ?? [],
           ]) ?? []
       );
     }
@@ -89,13 +91,16 @@ const useIssuesFilter = (projectIssues?: IssueResponse) => {
   return {
     groupedByIssues,
     issueView,
-    setIssueView,
     groupByProperty,
     setGroupByProperty,
     orderBy,
     setOrderBy,
     filterIssue,
     setFilterIssue,
+    resetFilterToDefault,
+    setNewFilterDefaultView,
+    setIssueViewToKanban,
+    setIssueViewToList,
   } as const;
 };
 

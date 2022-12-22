@@ -26,7 +26,7 @@ export const renderShortNumericDateFormat = (date: string | Date) => {
 export const groupBy = (array: any[], key: string) => {
   const innerKey = key.split("."); // split the key by dot
   return array.reduce((result, currentValue) => {
-    const key = innerKey.reduce((obj, i) => obj[i], currentValue); // get the value of the inner key
+    const key = innerKey.reduce((obj, i) => obj?.[i], currentValue) ?? "None"; // get the value of the inner key
     (result[key] = result[key] || []).push(currentValue);
     return result;
   }, {});
@@ -215,4 +215,24 @@ export const createSimilarString = (str: string) => {
     .join("");
 
   return shuffled;
+};
+
+export const getRandomEmoji = () => {
+  const emojis = [
+    "8986",
+    "9200",
+    "128204",
+    "127773",
+    "127891",
+    "127947",
+    "128076",
+    "128077",
+    "128187",
+    "128188",
+    "128512",
+    "128522",
+    "128578",
+  ];
+
+  return emojis[Math.floor(Math.random() * emojis.length)];
 };

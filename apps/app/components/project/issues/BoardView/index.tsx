@@ -14,15 +14,14 @@ import useUser from "lib/hooks/useUser";
 // fetching keys
 import { STATE_LIST } from "constants/fetch-keys";
 // components
-import SingleBoard from "components/project/issues/BoardView/SingleBoard";
+import SingleBoard from "components/project/issues/BoardView/single-board";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
-import CreateUpdateIssuesModal from "components/project/issues/CreateUpdateIssueModal";
+import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
 // ui
 import { Spinner } from "ui";
 // types
 import type { IState, IIssue, Properties, NestedKeyOf, IProjectMember } from "types";
-import ConfirmIssueDeletion from "../ConfirmIssueDeletion";
-import { TrashIcon } from "@heroicons/react/24/outline";
+import ConfirmIssueDeletion from "../confirm-issue-deletion";
 
 type Props = {
   properties: Properties;
@@ -31,9 +30,18 @@ type Props = {
     [key: string]: IIssue[];
   };
   members: IProjectMember[] | undefined;
+  handleDeleteIssue: React.Dispatch<React.SetStateAction<string | undefined>>;
+  partialUpdateIssue: (formData: Partial<IIssue>, issueId: string) => void;
 };
 
-const BoardView: React.FC<Props> = ({ properties, selectedGroup, groupedByIssues, members }) => {
+const BoardView: React.FC<Props> = ({
+  properties,
+  selectedGroup,
+  groupedByIssues,
+  members,
+  handleDeleteIssue,
+  partialUpdateIssue,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const [isIssueOpen, setIsIssueOpen] = useState(false);
@@ -217,6 +225,8 @@ const BoardView: React.FC<Props> = ({ properties, selectedGroup, groupedByIssues
                               ? states?.find((s) => s.name === singleGroup)?.color
                               : undefined
                           }
+                          handleDeleteIssue={handleDeleteIssue}
+                          partialUpdateIssue={partialUpdateIssue}
                         />
                       ))}
                     </div>

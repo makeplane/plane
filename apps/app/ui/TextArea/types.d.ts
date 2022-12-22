@@ -8,5 +8,5 @@ export interface Props extends React.ComponentPropsWithoutRef<"textarea"> {
   register?: UseFormRegister<any>;
   mode?: "primary" | "transparent" | "secondary" | "disabled";
   validations?: RegisterOptions;
-  error?: FieldError;
+  error?: FieldError | Merge<FieldError, FieldErrorsImpl<any>>;
 }

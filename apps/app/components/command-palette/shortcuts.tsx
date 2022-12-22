@@ -1,15 +1,55 @@
-import React from "react";
+import React, { useState } from "react";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // icons
 import { XMarkIcon } from "@heroicons/react/20/solid";
+// ui
+import { Input } from "ui";
 
 type Props = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
+const shortcuts = [
+  {
+    title: "Navigation",
+    shortcuts: [
+      { keys: "ctrl,/", description: "To open navigator" },
+      { keys: "↑", description: "Move up" },
+      { keys: "↓", description: "Move down" },
+      { keys: "←", description: "Move left" },
+      { keys: "→", description: "Move right" },
+      { keys: "Enter", description: "Select" },
+      { keys: "Esc", description: "Close" },
+    ],
+  },
+  {
+    title: "Common",
+    shortcuts: [
+      { keys: "ctrl,p", description: "To create project" },
+      { keys: "ctrl,i", description: "To create issue" },
+      { keys: "ctrl,q", description: "To create cycle" },
+      { keys: "ctrl,m", description: "To create module" },
+      { keys: "ctrl,d", description: "To bulk delete issues" },
+      { keys: "ctrl,h", description: "To open shortcuts guide" },
+      {
+        keys: "ctrl,alt,c",
+        description: "To copy issue url when on issue detail page.",
+      },
+    ],
+  },
+];
+
 const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
+  const [query, setQuery] = useState("");
+
+  const filteredShortcuts = shortcuts.filter((shortcut) =>
+    shortcut.shortcuts.some((item) => item.description.includes(query.trim())) || query === ""
+      ? true
+      : false
+  );
+
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
       <Dialog as="div" className="relative z-10" onClose={setIsOpen}>
@@ -39,7 +79,7 @@ const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
                 <div className="bg-white p-5">
                   <div className="sm:flex sm:items-start">
-                    <div className="text-center sm:text-left w-full">
+                    <div className="flex flex-col gap-y-4 text-center sm:text-left w-full">
                       <Dialog.Title
                         as="h3"
                         className="text-lg font-medium leading-6 text-gray-900 flex justify-between"
@@ -54,57 +94,50 @@ const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                           </button>
                         </span>
                       </Dialog.Title>
-                      <div className="mt-2 pt-5 flex flex-col gap-y-3 w-full">
-                        {[
-                          {
-                            title: "Navigation",
-                            shortcuts: [
-                              { keys: "ctrl,/", description: "To open navigator" },
-                              { keys: "↑", description: "Move up" },
-                              { keys: "↓", description: "Move down" },
-                              { keys: "←", description: "Move left" },
-                              { keys: "→", description: "Move right" },
-                              { keys: "Enter", description: "Select" },
-                              { keys: "Esc", description: "Close" },
-                            ],
-                          },
-                          {
-                            title: "Common",
-                            shortcuts: [
-                              { keys: "ctrl,p", description: "To create project" },
-                              { keys: "ctrl,i", description: "To create issue" },
-                              { keys: "ctrl,q", description: "To create cycle" },
-                              { keys: "ctrl,h", description: "To open shortcuts guide" },
-                              {
-                                keys: "ctrl,alt,c",
-                                description: "To copy issue url when on issue detail page.",
-                              },
-                            ],
-                          },
-                        ].map(({ title, shortcuts }) => (
-                          <div key={title} className="w-full flex flex-col">
-                            <p className="font-medium mb-4">{title}</p>
-                            <div className="flex flex-col gap-y-3">
-                              {shortcuts.map(({ keys, description }, index) => (
-                                <div key={index} className="flex justify-between">
-                                  <p className="text-sm text-gray-500">{description}</p>
-                                  <div className="flex items-center gap-x-1">
-                                    {keys.split(",").map((key, index) => (
-                                      <span key={index} className="flex items-center gap-1">
-                                        <kbd className="bg-gray-200 text-sm px-1 rounded">
-                                          {key}
-                                        </kbd>
-                                        {/* {index !== keys.split(",").length - 1 ? (
-                                          <span className="text-xs">+</span>
-                                        ) : null} */}
-                                      </span>
-                                    ))}
+                      <div>
+                        <Input
+                          id="search"
+                          name="search"
+                          type="text"
+                          placeholder="Search for shortcuts"
+                          onChange={(e) => setQuery(e.target.value)}
+                        />
+                      </div>
+                      <div className="flex flex-col gap-y-3 w-full">
+                        {filteredShortcuts.length > 0 ? (
+                          filteredShortcuts.map(({ title, shortcuts }) => (
+                            <div key={title} className="w-full flex flex-col">
+                              <p className="font-medium mb-4">{title}</p>
+                              <div className="flex flex-col gap-y-3">
+                                {shortcuts.map(({ keys, description }, index) => (
+                                  <div key={index} className="flex justify-between">
+                                    <p className="text-sm text-gray-500">{description}</p>
+                                    <div className="flex items-center gap-x-1">
+                                      {keys.split(",").map((key, index) => (
+                                        <span key={index} className="flex items-center gap-1">
+                                          <kbd className="bg-gray-200 text-sm px-1 rounded">
+                                            {key}
+                                          </kbd>
+                                        </span>
+                                      ))}
+                                    </div>
                                   </div>
-                                </div>
-                              ))}
+                                ))}
+                              </div>
                             </div>
+                          ))
+                        ) : (
+                          <div className="flex flex-col gap-y-3">
+                            <p className="text-sm text-gray-500">
+                              No shortcuts found for{" "}
+                              <span className="font-semibold italic">
+                                {`"`}
+                                {query}
+                                {`"`}
+                              </span>
+                            </p>
                           </div>
-                        ))}
+                        )}
                       </div>
                     </div>
                   </div>
