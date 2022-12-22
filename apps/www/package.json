@@ -1,9 +1,9 @@
 {
-  "name": "plane",
+  "name": "www",
   "description": "plane.so",
   "private": true,
-  "repository": "caravel/plane.so",
-  "author": "caravel",
+  "repository": "makeplane/plane.so",
+  "author": "makeplane",
   "license": "Apache-2.0",
   "scripts": {
     "dev": "next dev --port 3001",
