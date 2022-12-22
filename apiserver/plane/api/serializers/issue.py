@@ -229,6 +229,7 @@ class IssueCreateSerializer(BaseSerializer):
             )
 
         if blocks is not None:
+            IssueBlocker.objects.filter(blocked_by=instance).delete()
             IssueBlocker.objects.bulk_create(
                 [
                     IssueBlocker(
