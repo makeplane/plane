@@ -5,7 +5,7 @@ from rest_framework import serializers
 from .base import BaseSerializer
 from .user import UserLiteSerializer
 from .project import ProjectSerializer
-from .issue import IssueFlatSerializer
+from .issue import IssueStateSerializer
 
 from plane.db.models import User, Module, ModuleMember, ModuleIssue
 
@@ -100,7 +100,7 @@ class ModuleFlatSerializer(BaseSerializer):
 class ModuleIssueSerializer(BaseSerializer):
 
     module_detail = ModuleFlatSerializer(read_only=True, source="module")
-    issue_detail = IssueFlatSerializer(read_only=True, source="issue")
+    issue_detail = IssueStateSerializer(read_only=True, source="issue")
 
     class Meta:
         model = ModuleIssue
