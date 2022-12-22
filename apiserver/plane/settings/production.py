@@ -28,7 +28,7 @@ CORS_ORIGIN_WHITELIST = [
     # "http://127.0.0.1:9000"
 ]
 # Parse database configuration from $DATABASE_URL
-# DATABASES["default"] = dj_database_url.config()
+DATABASES["default"] = dj_database_url.config()
 SITE_ID = 1
 
 # Enable Connection Pooling (if desired)
