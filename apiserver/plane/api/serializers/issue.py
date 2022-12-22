@@ -384,7 +384,7 @@ class IssueSerializer(BaseSerializer):
     blocked_issues = BlockedIssueSerializer(read_only=True, many=True)
     blocker_issues = BlockerIssueSerializer(read_only=True, many=True)
     issue_cycle = IssueCycleDetailSerializer(read_only=True)
-    issue_module = IssueModuleDetailSerializer(read_only=True)
+    issue_module = IssueModuleDetailSerializer(read_only=True, many=True)
 
     class Meta:
         model = Issue
