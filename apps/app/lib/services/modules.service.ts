@@ -50,6 +50,16 @@ class ProjectIssuesServices extends APIService {
       });
   }
 
+  async getModuleDetails(workspaceSlug: string, projectId: string, moduleId: string): Promise<any> {
+    return this.get(MODULE_DETAIL(workspaceSlug, projectId, moduleId))
+      .then((response) => {
+        return response?.data;
+      })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async patchModule(
     workspaceSlug: string,
     projectId: string,
@@ -85,11 +95,11 @@ class ProjectIssuesServices extends APIService {
       });
   }
 
-  async addIssueToModule(
+  async addIssuesToModule(
     workspaceSlug: string,
     projectId: string,
     moduleId: string,
-    data: any
+    data: { issues: string[] }
   ): Promise<any> {
     return this.post(MODULE_ISSUES(workspaceSlug, projectId, moduleId), data)
       .then((response) => {
@@ -104,9 +114,9 @@ class ProjectIssuesServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     moduleId: string,
-    issueId: string
+    bridgeId: string
   ): Promise<any> {
-    return this.delete(MODULE_ISSUE_DETAIL(workspaceSlug, projectId, moduleId, issueId))
+    return this.delete(MODULE_ISSUE_DETAIL(workspaceSlug, projectId, moduleId, bridgeId))
       .then((response) => {
         return response?.data;
       })

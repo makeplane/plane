@@ -17,6 +17,9 @@ import type { IModule } from "types";
 import { renderDateFormat } from "constants/common";
 // fetch keys
 import { MODULE_LIST } from "constants/fetch-keys";
+import SelectLead from "./select-lead";
+import SelectMembers from "./select-members";
+import SelectStatus from "./select-status";
 
 type Props = {
   isOpen: boolean;
@@ -28,6 +31,9 @@ type Props = {
 const defaultValues: Partial<IModule> = {
   name: "",
   description: "",
+  status: null,
+  lead: null,
+  members_list: [],
 };
 
 const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, projectId }) => {
@@ -45,6 +51,7 @@ const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, pro
     register,
     formState: { errors, isSubmitting },
     handleSubmit,
+    control,
     reset,
     setError,
   } = useForm<IModule>({
@@ -140,7 +147,7 @@ const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, pro
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-5 py-8 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
+              <Dialog.Panel className="relative transform rounded-lg bg-white px-5 py-8 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="space-y-5">
                     <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
@@ -172,26 +179,6 @@ const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, pro
                           register={register}
                         />
                       </div>
-                      <div>
-                        <Select
-                          id="status"
-                          name="status"
-                          label="Status"
-                          error={errors.status}
-                          register={register}
-                          validations={{
-                            required: "Status is required",
-                          }}
-                          options={[
-                            { label: "Backlog", value: "backlog" },
-                            { label: "Planned", value: "planned" },
-                            { label: "In Progress", value: "in-progress" },
-                            { label: "Paused", value: "paused" },
-                            { label: "Completed", value: "completed" },
-                            { label: "Cancelled", value: "cancelled" },
-                          ]}
-                        />
-                      </div>
                       <div className="flex gap-x-2">
                         <div className="w-full">
                           <Input
@@ -215,6 +202,11 @@ const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, pro
                             register={register}
                           />
                         </div>
+                      </div>
+                      <div className="flex items-center flex-wrap gap-2">
+                        <SelectStatus control={control} />
+                        <SelectLead control={control} />
+                        <SelectMembers control={control} />
                       </div>
                     </div>
                   </div>

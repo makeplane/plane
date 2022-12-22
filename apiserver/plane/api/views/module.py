@@ -44,7 +44,7 @@ class ModuleViewSet(BaseViewSet):
             .prefetch_related("members")
             .prefetch_related(
                 Prefetch(
-                    "module_issues",
+                    "issue_module",
                     queryset=ModuleIssue.objects.select_related("module", "issue"),
                 )
             )

@@ -35,6 +35,7 @@ type Props = {
   openCreateIssueModal: (issue?: IIssue, actionType?: "create" | "edit" | "delete") => void;
   openIssuesListModal: () => void;
   removeIssueFromCycle: (bridgeId: string) => void;
+  handleDeleteIssue: React.Dispatch<React.SetStateAction<string | undefined>>;
   setPreloadedData: React.Dispatch<
     React.SetStateAction<
       | (Partial<IIssue> & {
@@ -52,6 +53,7 @@ const CyclesListView: React.FC<Props> = ({
   openIssuesListModal,
   properties,
   removeIssueFromCycle,
+  handleDeleteIssue,
   setPreloadedData,
 }) => {
   const { activeWorkspace, activeProject, states } = useUser();
@@ -264,7 +266,11 @@ const CyclesListView: React.FC<Props> = ({
                                     >
                                       Remove from cycle
                                     </CustomMenu.MenuItem>
-                                    <CustomMenu.MenuItem>Delete permanently</CustomMenu.MenuItem>
+                                    <CustomMenu.MenuItem
+                                      onClick={() => handleDeleteIssue(issue.id)}
+                                    >
+                                      Delete permanently
+                                    </CustomMenu.MenuItem>
                                   </CustomMenu>
                                 </div>
                               </div>

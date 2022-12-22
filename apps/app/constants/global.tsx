@@ -1,4 +1,6 @@
-export const getPriorityIcon = (priority: string, className: string) => {
+export const getPriorityIcon = (priority: string, className?: string) => {
+  if (!className || className === "") className = "text-xs";
+
   switch (priority) {
     case "urgent":
       return <span className={`material-symbols-rounded ${className}`}>error</span>;
@@ -13,6 +15,6 @@ export const getPriorityIcon = (priority: string, className: string) => {
         <span className={`material-symbols-rounded ${className}`}>signal_cellular_alt_1_bar</span>
       );
     default:
-      return null;
+      return "None";
   }
 };

@@ -51,7 +51,7 @@ const SelectProject: React.FC<Props> = ({ control }) => {
                     leaveTo="opacity-0"
                   >
                     <Listbox.Options className="absolute z-10 mt-1 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
-                      <div className="p-1">
+                      <div className="py-1">
                         {projects ? (
                           projects.length > 0 ? (
                             projects.map((project) => (
@@ -59,8 +59,8 @@ const SelectProject: React.FC<Props> = ({ control }) => {
                                 key={project.id}
                                 className={({ active }) =>
                                   `${
-                                    active ? "text-white bg-theme" : "text-gray-900"
-                                  } cursor-pointer select-none p-2 rounded-md`
+                                    active ? "bg-indigo-50" : ""
+                                  } text-gray-900 cursor-pointer select-none p-2`
                                 }
                                 value={project.id}
                               >

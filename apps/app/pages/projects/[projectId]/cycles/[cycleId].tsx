@@ -12,8 +12,8 @@ import AppLayout from "layouts/app-layout";
 import CyclesListView from "components/project/cycles/list-view";
 import CyclesBoardView from "components/project/cycles/board-view";
 import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
-import CycleIssuesListModal from "components/project/cycles/cycle-issues-list-modal";
 import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
+import ExistingIssuesListModal from "components/common/existing-issues-list-modal";
 // constants
 import { filterIssueOptions, groupByOptions, orderByOptions } from "constants/";
 // services
@@ -67,7 +67,7 @@ const SingleCycle: React.FC = () => {
       : null
   );
   const cycleIssuesArray = cycleIssues?.map((issue) => {
-    return { bridge: issue.id, ...issue.issue_details };
+    return { bridge: issue.id, ...issue.issue_detail };
   });
 
   const { data: members } = useSWR(
@@ -163,6 +163,20 @@ const SingleCycle: React.FC = () => {
     // console.log(result);
   };
 
+  const handleAddIssuesToCycle = (data: { issues: string[] }) => {
+    if (activeWorkspace && activeProject) {
+      issuesServices
+        .addIssueToCycle(activeWorkspace.slug, activeProject.id, cycleId as string, data)
+        .then((res) => {
+          console.log(res);
+          mutate(CYCLE_ISSUES(cycleId as string));
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    }
+  };
+
   const removeIssueFromCycle = (bridgeId: string) => {
     if (activeWorkspace && activeProject) {
       mutate<CycleIssueResponse[]>(
@@ -191,11 +205,12 @@ const SingleCycle: React.FC = () => {
         setIsOpen={setIsIssueModalOpen}
         projectId={activeProject?.id}
       />
-      <CycleIssuesListModal
+      <ExistingIssuesListModal
         isOpen={cycleIssuesListModal}
         handleClose={() => setCycleIssuesListModal(false)}
-        issues={issues}
-        cycleId={cycleId as string}
+        type="cycle"
+        issues={issues?.results ?? []}
+        handleOnSubmit={handleAddIssuesToCycle}
       />
       <ConfirmIssueDeletion
         handleClose={() => setDeleteIssue(undefined)}
@@ -375,23 +390,22 @@ const SingleCycle: React.FC = () => {
             openCreateIssueModal={openCreateIssueModal}
             openIssuesListModal={openIssuesListModal}
             removeIssueFromCycle={removeIssueFromCycle}
+            handleDeleteIssue={setDeleteIssue}
             setPreloadedData={setPreloadedData}
           />
         ) : (
-          <div className="h-screen">
-            <CyclesBoardView
-              groupedByIssues={groupedByIssues}
-              properties={properties}
-              removeIssueFromCycle={removeIssueFromCycle}
-              selectedGroup={groupByProperty}
-              members={members}
-              openCreateIssueModal={openCreateIssueModal}
-              openIssuesListModal={openIssuesListModal}
-              handleDeleteIssue={setDeleteIssue}
-              partialUpdateIssue={partialUpdateIssue}
-              setPreloadedData={setPreloadedData}
-            />
-          </div>
+          <CyclesBoardView
+            groupedByIssues={groupedByIssues}
+            properties={properties}
+            removeIssueFromCycle={removeIssueFromCycle}
+            selectedGroup={groupByProperty}
+            members={members}
+            openCreateIssueModal={openCreateIssueModal}
+            openIssuesListModal={openIssuesListModal}
+            handleDeleteIssue={setDeleteIssue}
+            partialUpdateIssue={partialUpdateIssue}
+            setPreloadedData={setPreloadedData}
+          />
         )}
       </AppLayout>
     </>

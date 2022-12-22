@@ -19,7 +19,7 @@ export interface ICycle {
 
 export interface CycleIssueResponse {
   id: string;
-  issue_details: IIssue;
+  issue_detail: IIssue;
   created_at: Date;
   updated_at: Date;
   created_by: string;

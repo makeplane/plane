@@ -8,8 +8,6 @@ import workspaceService from "lib/services/workspace.service";
 import useUser from "lib/hooks/useUser";
 // components
 import SingleIssue from "components/common/board-view/single-issue";
-// headless ui
-import { Menu, Transition } from "@headlessui/react";
 // ui
 import { CustomMenu } from "ui";
 // icons
@@ -19,7 +17,7 @@ import { IIssue, IWorkspaceMember, NestedKeyOf, Properties } from "types";
 // fetch-keys
 import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 // common
-import { addSpaceIfCamelCase, classNames } from "constants/common";
+import { addSpaceIfCamelCase } from "constants/common";
 
 type Props = {
   properties: Properties;
@@ -46,7 +44,7 @@ type Props = {
   stateId: string | null;
 };
 
-const SingleCycleBoard: React.FC<Props> = ({
+const SingleModuleBoard: React.FC<Props> = ({
   properties,
   groupedByIssues,
   selectedGroup,
@@ -207,4 +205,4 @@ const SingleCycleBoard: React.FC<Props> = ({
   );
 };
 
-export default SingleCycleBoard;
+export default SingleModuleBoard;

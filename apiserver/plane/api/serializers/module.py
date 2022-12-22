@@ -5,7 +5,7 @@ from rest_framework import serializers
 from .base import BaseSerializer
 from .user import UserLiteSerializer
 from .project import ProjectSerializer
-from .issue import IssueFlatSerializer
+from .issue import IssueStateSerializer
 
 from plane.db.models import User, Module, ModuleMember, ModuleIssue
 
@@ -52,6 +52,7 @@ class ModuleWriteSerializer(BaseSerializer):
                     for member in members
                 ],
                 batch_size=10,
+                ignore_conflicts=True,
             )
 
         return module
@@ -59,25 +60,22 @@ class ModuleWriteSerializer(BaseSerializer):
     def update(self, instance, validated_data):
 
         members = validated_data.pop("members_list", None)
-
-        project = self.context["project"]
-
-        module = Module.objects.create(**validated_data, project=project)
-
         if members is not None:
+            ModuleIssue.objects.filter(module=instance).delete()
             ModuleMember.objects.bulk_create(
                 [
                     ModuleMember(
-                        module=module,
+                        module=instance,
                         member=member,
-                        project=project,
-                        workspace=project.workspace,
-                        created_by=module.created_by,
-                        updated_by=module.updated_by,
+                        project=instance.project,
+                        workspace=instance.project.workspace,
+                        created_by=instance.created_by,
+                        updated_by=instance.updated_by,
                     )
                     for member in members
                 ],
                 batch_size=10,
+                ignore_conflicts=True
             )
 
         return super().update(instance, validated_data)
@@ -100,7 +98,7 @@ class ModuleFlatSerializer(BaseSerializer):
 class ModuleIssueSerializer(BaseSerializer):
 
     module_detail = ModuleFlatSerializer(read_only=True, source="module")
-    issue_detail = IssueFlatSerializer(read_only=True, source="issue")
+    issue_detail = IssueStateSerializer(read_only=True, source="issue")
 
     class Meta:
         model = ModuleIssue

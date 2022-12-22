@@ -22,6 +22,8 @@ from plane.db.models import (
     IssueBlocker,
     CycleIssue,
     Cycle,
+    Module,
+    ModuleIssue,
 )
 
 
@@ -75,6 +77,11 @@ class IssueCreateSerializer(BaseSerializer):
         write_only=True,
         required=False,
     )
+    blocks_list = serializers.ListField(
+        child=serializers.PrimaryKeyRelatedField(queryset=Issue.objects.all()),
+        write_only=True,
+        required=False,
+    )
 
     class Meta:
         model = Issue
@@ -92,6 +99,7 @@ class IssueCreateSerializer(BaseSerializer):
         blockers = validated_data.pop("blockers_list", None)
         assignees = validated_data.pop("assignees_list", None)
         labels = validated_data.pop("labels_list", None)
+        blocks = validated_data.pop("blocks_list", None)
 
         project = self.context["project"]
         issue = Issue.objects.create(**validated_data, project=project)
@@ -144,6 +152,22 @@ class IssueCreateSerializer(BaseSerializer):
                 batch_size=10,
             )
 
+        if blocks is not None:
+            IssueBlocker.objects.bulk_create(
+                [
+                    IssueBlocker(
+                        block=block,
+                        blocked_by=issue,
+                        project=project,
+                        workspace=project.workspace,
+                        created_by=issue.created_by,
+                        updated_by=issue.updated_by,
+                    )
+                    for block in blocks
+                ],
+                batch_size=10,
+            )
+
         return issue
 
     def update(self, instance, validated_data):
@@ -151,6 +175,7 @@ class IssueCreateSerializer(BaseSerializer):
         blockers = validated_data.pop("blockers_list", None)
         assignees = validated_data.pop("assignees_list", None)
         labels = validated_data.pop("labels_list", None)
+        blocks = validated_data.pop("blocks_list", None)
 
         if blockers is not None:
             IssueBlocker.objects.filter(block=instance).delete()
@@ -199,6 +224,23 @@ class IssueCreateSerializer(BaseSerializer):
                         updated_by=instance.updated_by,
                     )
                     for label in labels
+                ],
+                batch_size=10,
+            )
+
+        if blocks is not None:
+            IssueBlocker.objects.filter(blocked_by=instance).delete()
+            IssueBlocker.objects.bulk_create(
+                [
+                    IssueBlocker(
+                        block=block,
+                        blocked_by=instance,
+                        project=instance.project,
+                        workspace=instance.project.workspace,
+                        created_by=instance.created_by,
+                        updated_by=instance.updated_by,
+                    )
+                    for block in blocks
                 ],
                 batch_size=10,
             )
@@ -342,6 +384,37 @@ class IssueCycleDetailSerializer(BaseSerializer):
         ]
 
 
+class ModuleBaseSerializer(BaseSerializer):
+    class Meta:
+        model = Module
+        fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "project",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+        ]
+
+
+class IssueModuleDetailSerializer(BaseSerializer):
+
+    module_detail = ModuleBaseSerializer(read_only=True, source="module")
+
+    class Meta:
+        model = ModuleIssue
+        fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "project",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+        ]
+
+
 class IssueSerializer(BaseSerializer):
     project_detail = ProjectSerializer(read_only=True, source="project")
     state_detail = StateSerializer(read_only=True, source="state")
@@ -351,6 +424,7 @@ class IssueSerializer(BaseSerializer):
     blocked_issues = BlockedIssueSerializer(read_only=True, many=True)
     blocker_issues = BlockerIssueSerializer(read_only=True, many=True)
     issue_cycle = IssueCycleDetailSerializer(read_only=True)
+    issue_module = IssueModuleDetailSerializer(read_only=True, many=True)
 
     class Meta:
         model = Issue

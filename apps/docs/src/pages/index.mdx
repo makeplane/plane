@@ -1,0 +1,32 @@
+import { Guides } from '@/components/Guides'
+import { Resources } from '@/components/Resources'
+import { HeroPattern } from '@/components/HeroPattern'
+
+export const description =
+  'Learn everything there is to know about the Protocol API and integrate Protocol into your product.'
+
+export const sections = [
+  { title: 'Resources', id: 'resources' },
+  { title: 'Contributing', id: 'contributing' },
+]
+
+<HeroPattern />
+
+# Plane Documentation
+
+This is where the learning begins and the veterans return for their references. This is the Plane documentation.
+
+<div className="not-prose mb-16 mt-6 flex gap-3">
+  <Button href="/quickstart" arrow="right" children="Quickstart" />
+  <Button
+    href="https://github.com/makeplane/plane"
+    variant="outline"
+    children="Star us on GitHub"
+  />
+</div>
+
+<Resources />
+
+## Contributing
+
+Each page footer contains an "Edit on GitHub" Link. Make a pull request, and we'll merge it!

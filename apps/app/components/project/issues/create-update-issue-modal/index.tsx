@@ -115,7 +115,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
     }, 500);
   };
 
-  const addIssueToCycle = async (issueId: string, cycleId: string, issueDetail: IIssue) => {
+  const addIssueToCycle = async (issueId: string, cycleId: string) => {
     if (!activeWorkspace || !activeProject) return;
     await issuesServices
       .addIssueToCycle(activeWorkspace.slug, activeProject.id, cycleId, {
@@ -169,7 +169,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
           mutate<IssueResponse>(PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id));
 
           if (formData.sprints && formData.sprints !== null) {
-            await addIssueToCycle(res.id, formData.sprints, formData);
+            await addIssueToCycle(res.id, formData.sprints);
           }
           handleClose();
           resetForm();
@@ -209,7 +209,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
               false
             );
           if (formData.sprints && formData.sprints !== null) {
-            await addIssueToCycle(res.id, formData.sprints, formData);
+            await addIssueToCycle(res.id, formData.sprints);
           }
           handleClose();
           resetForm();

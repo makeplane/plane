@@ -15,7 +15,7 @@ import { Listbox, Transition } from "@headlessui/react";
 // ui
 import { Spinner } from "ui";
 // icons
-import { ArrowPathIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
+import { UserGroupIcon } from "@heroicons/react/24/outline";
 import User from "public/user.png";
 // types
 import { IIssue } from "types";
@@ -39,7 +39,7 @@ const SelectAssignee: React.FC<Props> = ({ control, submitChanges }) => {
   return (
     <div className="flex items-center py-2 flex-wrap">
       <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
-        <ArrowPathIcon className="flex-shrink-0 h-4 w-4" />
+        <UserGroupIcon className="flex-shrink-0 h-4 w-4" />
         <p>Assignees</p>
       </div>
       <div className="sm:basis-1/2">
@@ -128,7 +128,7 @@ const SelectAssignee: React.FC<Props> = ({ control, submitChanges }) => {
                     leaveFrom="transform opacity-100 scale-100"
                     leaveTo="transform opacity-0 scale-95"
                   >
-                    <Listbox.Options className="absolute z-10 right-0 mt-1 w-auto bg-white shadow-lg max-h-48 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
+                    <Listbox.Options className="absolute z-10 left-0 mt-1 w-auto bg-white shadow-lg max-h-48 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
                       <div className="py-1">
                         {people ? (
                           people.length > 0 ? (
