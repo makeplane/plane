@@ -60,9 +60,8 @@ class ModuleWriteSerializer(BaseSerializer):
 
         members = validated_data.pop("members_list", None)
 
-        project = self.context["project"]
 
-        module = Module.objects.create(**validated_data, project=project)
+        module = Module.objects.create(**validated_data, project=instance.project)
 
         if members is not None:
             ModuleMember.objects.bulk_create(
@@ -70,8 +69,8 @@ class ModuleWriteSerializer(BaseSerializer):
                     ModuleMember(
                         module=module,
                         member=member,
-                        project=project,
-                        workspace=project.workspace,
+                        project=instance.project,
+                        workspace=instance.project.workspace,
                         created_by=module.created_by,
                         updated_by=module.updated_by,
                     )
