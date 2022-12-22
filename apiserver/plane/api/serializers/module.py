@@ -52,6 +52,7 @@ class ModuleWriteSerializer(BaseSerializer):
                     for member in members
                 ],
                 batch_size=10,
+                ignore_conflicts=True,
             )
 
         return module
@@ -59,24 +60,22 @@ class ModuleWriteSerializer(BaseSerializer):
     def update(self, instance, validated_data):
 
         members = validated_data.pop("members_list", None)
-
-
-        module = Module.objects.create(**validated_data, project=instance.project)
-
         if members is not None:
+            ModuleIssue.objects.filter(module=instance).delete()
             ModuleMember.objects.bulk_create(
                 [
                     ModuleMember(
-                        module=module,
+                        module=instance,
                         member=member,
                         project=instance.project,
                         workspace=instance.project.workspace,
-                        created_by=module.created_by,
-                        updated_by=module.updated_by,
+                        created_by=instance.created_by,
+                        updated_by=instance.updated_by,
                     )
                     for member in members
                 ],
                 batch_size=10,
+                ignore_conflicts=True
             )
 
         return super().update(instance, validated_data)
