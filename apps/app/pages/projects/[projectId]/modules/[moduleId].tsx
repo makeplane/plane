@@ -4,71 +4,106 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 // swr
 import useSWR, { mutate } from "swr";
-// react-beautiful-dnd
-import { DropResult } from "react-beautiful-dnd";
-// layouots
-import AppLayout from "layouts/app-layout";
-// components
-import CyclesListView from "components/project/cycles/list-view";
-import CyclesBoardView from "components/project/cycles/board-view";
-import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
-import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
-import ExistingIssuesListModal from "components/common/existing-issues-list-modal";
-// constants
-import { filterIssueOptions, groupByOptions, orderByOptions } from "constants/";
 // services
-import issuesServices from "lib/services/issues.service";
-import cycleServices from "lib/services/cycles.service";
+import modulesService from "lib/services/modules.service";
 import projectService from "lib/services/project.service";
+import issuesService from "lib/services/issues.service";
 // hooks
 import useUser from "lib/hooks/useUser";
 import useIssuesFilter from "lib/hooks/useIssuesFilter";
 import useIssuesProperties from "lib/hooks/useIssuesProperties";
+// layouts
+import AppLayout from "layouts/app-layout";
+// components
+import ExistingIssuesListModal from "components/common/existing-issues-list-modal";
+import ModulesBoardView from "components/project/modules/board-view";
+import ModulesListView from "components/project/modules/list-view";
+import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
+import ModuleDetailSidebar from "components/project/modules/module-detail-sidebar";
+import ConfirmModuleDeletion from "components/project/modules/confirm-module-deleteion";
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
 // ui
 import { BreadcrumbItem, Breadcrumbs, CustomMenu } from "ui";
 // icons
+import {
+  ArrowLeftIcon,
+  ArrowPathIcon,
+  ChevronDownIcon,
+  ListBulletIcon,
+} from "@heroicons/react/24/outline";
 import { Squares2X2Icon } from "@heroicons/react/20/solid";
-import { ArrowPathIcon, ChevronDownIcon, ListBulletIcon } from "@heroicons/react/24/outline";
 // types
-import { CycleIssueResponse, IIssue, NestedKeyOf, Properties, SelectIssue } from "types";
+import { IIssue, IModule, ModuleIssueResponse, Properties, SelectModuleType } from "types";
 // fetch-keys
-import { CYCLE_ISSUES, PROJECT_MEMBERS } from "constants/fetch-keys";
+import { MODULE_DETAIL, MODULE_ISSUES, PROJECT_MEMBERS } from "constants/fetch-keys";
 // common
 import { classNames, replaceUnderscoreIfSnakeCase } from "constants/common";
+// constants
+import { filterIssueOptions, groupByOptions, orderByOptions } from "constants/";
 
-const SingleCycle: React.FC = () => {
-  const [isIssueModalOpen, setIsIssueModalOpen] = useState(false);
-  const [selectedIssues, setSelectedIssues] = useState<SelectIssue>();
-  const [cycleIssuesListModal, setCycleIssuesListModal] = useState(false);
+const SingleModule = () => {
+  const [moduleIssuesListModal, setModuleIssuesListModal] = useState(false);
   const [deleteIssue, setDeleteIssue] = useState<string | undefined>(undefined);
+  const [moduleSidebar, setModuleSidebar] = useState(false);
+
+  const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
+  const [selectedModuleForDelete, setSelectedModuleForDelete] = useState<SelectModuleType>();
 
   const [preloadedData, setPreloadedData] = useState<
     (Partial<IIssue> & { actionType: "createIssue" | "edit" | "delete" }) | undefined
   >(undefined);
 
-  const { activeWorkspace, activeProject, cycles, issues } = useUser();
+  const { activeWorkspace, activeProject, issues, modules } = useUser();
 
   const router = useRouter();
 
-  const { cycleId } = router.query;
+  const { moduleId } = router.query;
 
   const [properties, setProperties] = useIssuesProperties(
     activeWorkspace?.slug,
     activeProject?.id as string
   );
 
-  const { data: cycleIssues } = useSWR<CycleIssueResponse[]>(
-    activeWorkspace && activeProject && cycleId ? CYCLE_ISSUES(cycleId as string) : null,
-    activeWorkspace && activeProject && cycleId
+  const { data: moduleIssues } = useSWR<ModuleIssueResponse[]>(
+    activeWorkspace && activeProject && moduleId ? MODULE_ISSUES(moduleId as string) : null,
+    activeWorkspace && activeProject && moduleId
       ? () =>
-          cycleServices.getCycleIssues(activeWorkspace?.slug, activeProject?.id, cycleId as string)
+          modulesService.getModuleIssues(
+            activeWorkspace?.slug,
+            activeProject?.id,
+            moduleId as string
+          )
       : null
   );
-  const cycleIssuesArray = cycleIssues?.map((issue) => {
+  const moduleIssuesArray = moduleIssues?.map((issue) => {
     return { bridge: issue.id, ...issue.issue_detail };
   });
+
+  const { data: moduleDetail } = useSWR<IModule>(
+    MODULE_DETAIL,
+    activeWorkspace && activeProject && moduleId
+      ? () =>
+          modulesService.getModuleDetails(
+            activeWorkspace?.slug,
+            activeProject?.id,
+            moduleId as string
+          )
+      : null
+  );
+
+  const {
+    issueView,
+    groupByProperty,
+    setGroupByProperty,
+    groupedByIssues,
+    setOrderBy,
+    setFilterIssue,
+    orderBy,
+    filterIssue,
+    setIssueViewToKanban,
+    setIssueViewToList,
+  } = useIssuesFilter(moduleIssuesArray ?? []);
 
   const { data: members } = useSWR(
     activeWorkspace && activeProject ? PROJECT_MEMBERS(activeProject.id) : null,
@@ -83,145 +118,84 @@ const SingleCycle: React.FC = () => {
     }
   );
 
+  const handleAddIssuesToModule = (data: { issues: string[] }) => {
+    if (activeWorkspace && activeProject) {
+      modulesService
+        .addIssuesToModule(activeWorkspace.slug, activeProject.id, moduleId as string, data)
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((e) => console.log(e));
+    }
+  };
+
   const partialUpdateIssue = (formData: Partial<IIssue>, issueId: string) => {
     if (!activeWorkspace || !activeProject) return;
-    issuesServices
+    issuesService
       .patchIssue(activeWorkspace.slug, activeProject.id, issueId, formData)
       .then((response) => {
-        mutate(CYCLE_ISSUES(cycleId as string));
+        mutate(MODULE_ISSUES(moduleId as string));
       })
       .catch((error) => {
         console.log(error);
       });
   };
 
-  const {
-    issueView,
-    groupByProperty,
-    setGroupByProperty,
-    groupedByIssues,
-    setOrderBy,
-    setFilterIssue,
-    orderBy,
-    filterIssue,
-    setIssueViewToKanban,
-    setIssueViewToList,
-  } = useIssuesFilter(cycleIssuesArray ?? []);
-
-  const openCreateIssueModal = (
-    issue?: IIssue,
-    actionType: "create" | "edit" | "delete" = "create"
-  ) => {
-    if (issue) setSelectedIssues({ ...issue, actionType });
-    setIsIssueModalOpen(true);
-  };
+  const openCreateIssueModal = () => {};
 
   const openIssuesListModal = () => {
-    setCycleIssuesListModal(true);
+    setModuleIssuesListModal(true);
   };
 
-  const handleDragEnd = (result: DropResult) => {
-    if (!result.destination) return;
-    const { source, destination } = result;
+  const removeIssueFromModule = (issueId: string) => {
+    if (!activeWorkspace || !activeProject) return;
 
-    if (source.droppableId === destination.droppableId) return;
-
-    if (activeWorkspace && activeProject) {
-      // remove issue from the source cycle
-      mutate<CycleIssueResponse[]>(
-        CYCLE_ISSUES(source.droppableId),
-        (prevData) => prevData?.filter((p) => p.id !== result.draggableId.split(",")[0]),
-        false
-      );
-
-      // add issue to the destination cycle
-      mutate(CYCLE_ISSUES(destination.droppableId));
-
-      issuesServices
-        .removeIssueFromCycle(
-          activeWorkspace.slug,
-          activeProject.id,
-          source.droppableId,
-          result.draggableId.split(",")[0]
-        )
-        .then((res) => {
-          issuesServices
-            .addIssueToCycle(activeWorkspace.slug, activeProject.id, destination.droppableId, {
-              issues: [result.draggableId.split(",")[1]],
-            })
-            .then((res) => {
-              console.log(res);
-            })
-            .catch((e) => {
-              console.log(e);
-            });
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    }
-    // console.log(result);
+    modulesService
+      .removeIssueFromModule(activeWorkspace.slug, activeProject.id, moduleId as string, issueId)
+      .then((res) => {
+        console.log(res);
+        mutate(MODULE_ISSUES(moduleId as string));
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   };
 
-  const handleAddIssuesToCycle = (data: { issues: string[] }) => {
-    if (activeWorkspace && activeProject) {
-      issuesServices
-        .addIssueToCycle(activeWorkspace.slug, activeProject.id, cycleId as string, data)
-        .then((res) => {
-          console.log(res);
-          mutate(CYCLE_ISSUES(cycleId as string));
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    }
-  };
+  const handleDeleteModule = () => {
+    if (!moduleDetail) return;
 
-  const removeIssueFromCycle = (bridgeId: string) => {
-    if (activeWorkspace && activeProject) {
-      mutate<CycleIssueResponse[]>(
-        CYCLE_ISSUES(cycleId as string),
-        (prevData) => prevData?.filter((p) => p.id !== bridgeId),
-        false
-      );
-
-      issuesServices
-        .removeIssueFromCycle(activeWorkspace.slug, activeProject.id, cycleId as string, bridgeId)
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    }
+    setSelectedModuleForDelete({ ...moduleDetail, actionType: "delete" });
+    setModuleDeleteModal(true);
   };
 
   return (
     <>
-      <CreateUpdateIssuesModal
-        isOpen={isIssueModalOpen && selectedIssues?.actionType !== "delete"}
-        data={selectedIssues}
-        prePopulateData={{ sprints: cycleId as string, ...preloadedData }}
-        setIsOpen={setIsIssueModalOpen}
-        projectId={activeProject?.id}
-      />
       <ExistingIssuesListModal
-        isOpen={cycleIssuesListModal}
-        handleClose={() => setCycleIssuesListModal(false)}
-        type="cycle"
+        isOpen={moduleIssuesListModal}
+        handleClose={() => setModuleIssuesListModal(false)}
+        type="module"
         issues={issues?.results ?? []}
-        handleOnSubmit={handleAddIssuesToCycle}
+        handleOnSubmit={handleAddIssuesToModule}
       />
       <ConfirmIssueDeletion
         handleClose={() => setDeleteIssue(undefined)}
         isOpen={!!deleteIssue}
         data={issues?.results.find((issue) => issue.id === deleteIssue)}
       />
+      <ConfirmModuleDeletion
+        isOpen={
+          moduleDeleteModal &&
+          !!selectedModuleForDelete &&
+          selectedModuleForDelete.actionType === "delete"
+        }
+        setIsOpen={setModuleDeleteModal}
+        data={selectedModuleForDelete}
+      />
       <AppLayout
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem
-              title={`${activeProject?.name ?? "Project"} Cycles`}
+              title={`${activeProject?.name ?? "Project"} Modules`}
               link={`/projects/${activeProject?.id}/cycles`}
             />
           </Breadcrumbs>
@@ -231,30 +205,32 @@ const SingleCycle: React.FC = () => {
             label={
               <>
                 <ArrowPathIcon className="h-3 w-3" />
-                {cycles?.find((c) => c.id === cycleId)?.name}
+                {modules?.find((c) => c.id === moduleId)?.name}
               </>
             }
             className="ml-1.5"
             width="auto"
           >
-            {cycles?.map((cycle) => (
+            {modules?.map((module) => (
               <CustomMenu.MenuItem
-                key={cycle.id}
+                key={module.id}
                 renderAs="a"
-                href={`/projects/${activeProject?.id}/cycles/${cycle.id}`}
+                href={`/projects/${activeProject?.id}/modules/${module.id}`}
               >
-                {cycle.name}
+                {module.name}
               </CustomMenu.MenuItem>
             ))}
           </CustomMenu>
         }
         right={
-          <div className="flex items-center gap-2">
+          <div
+            className={`flex items-center gap-2 ${moduleSidebar ? "mr-[24rem]" : ""} duration-300`}
+          >
             <div className="flex items-center gap-x-1">
               <button
                 type="button"
-                className={`h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-200 duration-300 outline-none ${
-                  issueView === "list" ? "bg-gray-200" : ""
+                className={`h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-100 duration-300 outline-none ${
+                  issueView === "list" ? "bg-gray-100" : ""
                 }`}
                 onClick={() => setIssueViewToList()}
               >
@@ -262,8 +238,8 @@ const SingleCycle: React.FC = () => {
               </button>
               <button
                 type="button"
-                className={`h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-200 duration-300 outline-none ${
-                  issueView === "kanban" ? "bg-gray-200" : ""
+                className={`h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-100 duration-300 outline-none ${
+                  issueView === "kanban" ? "bg-gray-100" : ""
                 }`}
                 onClick={() => setIssueViewToKanban()}
               >
@@ -379,37 +355,53 @@ const SingleCycle: React.FC = () => {
                 </>
               )}
             </Popover>
+            <button
+              type="button"
+              className={`h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-100 duration-300 outline-none ${
+                moduleSidebar ? "rotate-180" : ""
+              }`}
+              onClick={() => setModuleSidebar((prevData) => !prevData)}
+            >
+              <ArrowLeftIcon className="h-4 w-4" />
+            </button>
           </div>
         }
       >
-        {issueView === "list" ? (
-          <CyclesListView
-            groupedByIssues={groupedByIssues}
-            selectedGroup={groupByProperty}
-            properties={properties}
-            openCreateIssueModal={openCreateIssueModal}
-            openIssuesListModal={openIssuesListModal}
-            removeIssueFromCycle={removeIssueFromCycle}
-            handleDeleteIssue={setDeleteIssue}
-            setPreloadedData={setPreloadedData}
-          />
-        ) : (
-          <CyclesBoardView
-            groupedByIssues={groupedByIssues}
-            properties={properties}
-            removeIssueFromCycle={removeIssueFromCycle}
-            selectedGroup={groupByProperty}
-            members={members}
-            openCreateIssueModal={openCreateIssueModal}
-            openIssuesListModal={openIssuesListModal}
-            handleDeleteIssue={setDeleteIssue}
-            partialUpdateIssue={partialUpdateIssue}
-            setPreloadedData={setPreloadedData}
-          />
-        )}
+        <div className={`h-full ${moduleSidebar ? "mr-[28rem]" : ""} duration-300`}>
+          {issueView === "list" ? (
+            <ModulesListView
+              groupedByIssues={groupedByIssues}
+              selectedGroup={groupByProperty}
+              properties={properties}
+              openCreateIssueModal={openCreateIssueModal}
+              openIssuesListModal={openIssuesListModal}
+              removeIssueFromModule={removeIssueFromModule}
+              handleDeleteIssue={setDeleteIssue}
+              setPreloadedData={setPreloadedData}
+            />
+          ) : (
+            <ModulesBoardView
+              groupedByIssues={groupedByIssues}
+              properties={properties}
+              removeIssueFromModule={removeIssueFromModule}
+              selectedGroup={groupByProperty}
+              members={members}
+              openCreateIssueModal={openCreateIssueModal}
+              openIssuesListModal={openIssuesListModal}
+              handleDeleteIssue={setDeleteIssue}
+              partialUpdateIssue={partialUpdateIssue}
+              setPreloadedData={setPreloadedData}
+            />
+          )}
+        </div>
+        <ModuleDetailSidebar
+          module={moduleDetail}
+          isOpen={moduleSidebar}
+          handleDeleteModule={handleDeleteModule}
+        />
       </AppLayout>
     </>
   );
 };
 
-export default SingleCycle;
+export default SingleModule;

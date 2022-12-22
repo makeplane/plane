@@ -18,17 +18,17 @@ import { Spinner } from "ui";
 import { UserGroupIcon } from "@heroicons/react/24/outline";
 import User from "public/user.png";
 // types
-import { IIssue } from "types";
+import { IModule } from "types";
 // constants
 import { classNames } from "constants/common";
 import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 
 type Props = {
-  control: Control<IIssue, any>;
-  submitChanges: (formData: Partial<IIssue>) => void;
+  control: Control<Partial<IModule>, any>;
+  submitChanges: (formData: Partial<IModule>) => void;
 };
 
-const SelectAssignee: React.FC<Props> = ({ control, submitChanges }) => {
+const SelectMembers: React.FC<Props> = ({ control, submitChanges }) => {
   const { activeWorkspace } = useUser();
 
   const { data: people } = useSWR(
@@ -45,14 +45,14 @@ const SelectAssignee: React.FC<Props> = ({ control, submitChanges }) => {
       <div className="sm:basis-1/2">
         <Controller
           control={control}
-          name="assignees_list"
+          name="members_list"
           render={({ field: { value } }) => (
             <Listbox
               as="div"
               value={value}
               multiple={true}
               onChange={(value: any) => {
-                submitChanges({ assignees_list: value });
+                submitChanges({ members_list: value });
               }}
               className="flex-shrink-0"
             >
@@ -93,9 +93,11 @@ const SelectAssignee: React.FC<Props> = ({ control, submitChanges }) => {
                                       </div>
                                     ) : (
                                       <div
-                                        className={`h-5 w-5 bg-gray-700 text-white border-2 border-white grid place-items-center rounded-full`}
+                                        className={`h-5 w-5 bg-gray-700 text-white border-2 border-white grid place-items-center rounded-full capitalize`}
                                       >
-                                        {person?.first_name.charAt(0)}
+                                        {person?.first_name && person.first_name !== ""
+                                          ? person.first_name.charAt(0)
+                                          : person?.email.charAt(0)}
                                       </div>
                                     )}
                                   </div>
@@ -183,4 +185,4 @@ const SelectAssignee: React.FC<Props> = ({ control, submitChanges }) => {
   );
 };
 
-export default SelectAssignee;
+export default SelectMembers;

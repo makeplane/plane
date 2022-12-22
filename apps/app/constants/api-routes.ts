@@ -141,6 +141,6 @@ export const MODULE_ISSUE_DETAIL = (
   workspaceSlug: string,
   projectId: string,
   moduleId: string,
-  issueId: string
+  bridgeId: string
 ) =>
-  `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/module-issues/${issueId}/`;
+  `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/module-issues/${bridgeId}/`;

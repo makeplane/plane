@@ -334,6 +334,7 @@ const ProjectIssues: NextPage = () => {
               />
             </div>
           )}
+          <div></div>
         </>
       ) : (
         <div className="h-full w-full grid place-items-center px-4 sm:px-0">

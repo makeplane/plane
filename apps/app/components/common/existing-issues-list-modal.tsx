@@ -2,44 +2,42 @@
 import React, { useState } from "react";
 // react-hook-form
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
+// hooks
+import useUser from "lib/hooks/useUser";
+import useToast from "lib/hooks/useToast";
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // ui
 import { Button } from "ui";
-// services
-import issuesServices from "lib/services/issues.service";
-// hooks
-import useUser from "lib/hooks/useUser";
-import useToast from "lib/hooks/useToast";
 // icons
 import { MagnifyingGlassIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
 // types
 import { IIssue, IssueResponse } from "types";
-// constants
+// common
 import { classNames } from "constants/common";
-import { mutate } from "swr";
-import { CYCLE_ISSUES } from "constants/fetch-keys";
-
-type Props = {
-  isOpen: boolean;
-  handleClose: () => void;
-  issues: IssueResponse | undefined;
-  cycleId: string;
-};
 
 type FormInput = {
   issues: string[];
 };
 
-const CycleIssuesListModal: React.FC<Props> = ({
+type Props = {
+  isOpen: boolean;
+  handleClose: () => void;
+  type: string;
+  issues: IIssue[];
+  handleOnSubmit: (data: FormInput) => void;
+};
+
+const ExistingIssuesListModal: React.FC<Props> = ({
   isOpen,
   handleClose: onClose,
   issues,
-  cycleId,
+  handleOnSubmit,
+  type,
 }) => {
   const [query, setQuery] = useState("");
 
-  const { activeWorkspace, activeProject } = useUser();
+  const { activeProject } = useUser();
 
   const { setToastAlert } = useToast();
 
@@ -60,7 +58,7 @@ const CycleIssuesListModal: React.FC<Props> = ({
     },
   });
 
-  const handleAddToCycle: SubmitHandler<FormInput> = (data) => {
+  const onSubmit: SubmitHandler<FormInput> = (data) => {
     if (!data.issues || data.issues.length === 0) {
       setToastAlert({
         title: "Error",
@@ -70,25 +68,14 @@ const CycleIssuesListModal: React.FC<Props> = ({
       return;
     }
 
-    if (activeWorkspace && activeProject) {
-      issuesServices
-        .addIssueToCycle(activeWorkspace.slug, activeProject.id, cycleId, data)
-        .then((res) => {
-          console.log(res);
-          mutate(CYCLE_ISSUES(cycleId));
-          handleClose();
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    }
+    handleOnSubmit(data);
+    handleClose();
   };
 
   const filteredIssues: IIssue[] =
     query === ""
-      ? issues?.results ?? []
-      : issues?.results.filter((issue) => issue.name.toLowerCase().includes(query.toLowerCase())) ??
-        [];
+      ? issues ?? []
+      : issues.filter((issue) => issue.name.toLowerCase().includes(query.toLowerCase())) ?? [];
 
   return (
     <>
@@ -143,12 +130,12 @@ const CycleIssuesListModal: React.FC<Props> = ({
                             <li className="p-2">
                               {query === "" && (
                                 <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-gray-900">
-                                  Select issues to add to cycle
+                                  Select issues to add to {type}
                                 </h2>
                               )}
                               <ul className="text-sm text-gray-700">
                                 {filteredIssues.map((issue) => {
-                                  if (!issue.issue_cycle)
+                                  if ((type === "cycle" && !issue.issue_cycle) || type === "module")
                                     return (
                                       <Combobox.Option
                                         key={issue.id}
@@ -206,10 +193,10 @@ const CycleIssuesListModal: React.FC<Props> = ({
                     <Button
                       type="button"
                       size="sm"
-                      onClick={handleSubmit(handleAddToCycle)}
+                      onClick={handleSubmit(onSubmit)}
                       disabled={isSubmitting}
                     >
-                      {isSubmitting ? "Adding..." : "Add to Cycle"}
+                      {isSubmitting ? "Adding..." : `Add to ${type}`}
                     </Button>
                   </div>
                 </form>
@@ -222,4 +209,4 @@ const CycleIssuesListModal: React.FC<Props> = ({
   );
 };
 
-export default CycleIssuesListModal;
+export default ExistingIssuesListModal;

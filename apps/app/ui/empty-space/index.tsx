@@ -24,7 +24,7 @@ const EmptySpace: React.FC<EmptySpaceProps> = ({ title, description, children, I
         ) : null}
 
         <h2 className="text-lg font-medium text-gray-900">{title}</h2>
-        <p className="mt-1 text-sm text-gray-500">{description}</p>
+        <div className="mt-1 text-sm text-gray-500">{description}</div>
         <ul role="list" className="mt-6 divide-y divide-gray-200 border-t border-b border-gray-200">
           {children}
         </ul>
@@ -80,7 +80,7 @@ const EmptySpaceItem: React.FC<EmptySpaceItemProps> = ({
           </div>
           <div className="min-w-0 flex-1">
             <div className="text-sm font-medium text-gray-900">{title}</div>
-            {description ? <p className="text-sm text-gray-500">{description}</p> : null}
+            {description ? <div className="text-sm text-gray-500">{description}</div> : null}
           </div>
           <div className="flex-shrink-0 self-center">
             <ChevronRightIcon

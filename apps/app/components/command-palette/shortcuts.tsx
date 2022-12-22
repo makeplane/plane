@@ -30,6 +30,8 @@ const shortcuts = [
       { keys: "ctrl,p", description: "To create project" },
       { keys: "ctrl,i", description: "To create issue" },
       { keys: "ctrl,q", description: "To create cycle" },
+      { keys: "ctrl,m", description: "To create module" },
+      { keys: "ctrl,d", description: "To bulk delete issues" },
       { keys: "ctrl,h", description: "To open shortcuts guide" },
       {
         keys: "ctrl,alt,c",

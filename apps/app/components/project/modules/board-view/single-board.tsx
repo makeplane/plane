@@ -30,7 +30,7 @@ type Props = {
   bgColor?: string;
   openCreateIssueModal: (issue?: IIssue, actionType?: "create" | "edit" | "delete") => void;
   openIssuesListModal: () => void;
-  removeIssueFromCycle: (bridgeId: string) => void;
+  removeIssueFromModule: (bridgeId: string) => void;
   partialUpdateIssue: (formData: Partial<IIssue>, issueId: string) => void;
   handleDeleteIssue: React.Dispatch<React.SetStateAction<string | undefined>>;
   setPreloadedData: React.Dispatch<
@@ -44,7 +44,7 @@ type Props = {
   stateId: string | null;
 };
 
-const SingleModuleBoard: React.FC<Props> = ({
+const SingleCycleBoard: React.FC<Props> = ({
   properties,
   groupedByIssues,
   selectedGroup,
@@ -53,7 +53,7 @@ const SingleModuleBoard: React.FC<Props> = ({
   bgColor,
   openCreateIssueModal,
   openIssuesListModal,
-  removeIssueFromCycle,
+  removeIssueFromModule,
   partialUpdateIssue,
   handleDeleteIssue,
   setPreloadedData,
@@ -205,4 +205,4 @@ const SingleModuleBoard: React.FC<Props> = ({
   );
 };
 
-export default SingleModuleBoard;
+export default SingleCycleBoard;

@@ -19,6 +19,15 @@ export const GROUP_CHOICES = {
   cancelled: "Cancelled",
 };
 
+export const MODULE_STATUS = [
+  { label: "Backlog", value: "backlog" },
+  { label: "Planned", value: "planned" },
+  { label: "In Progress", value: "in-progress" },
+  { label: "Paused", value: "paused" },
+  { label: "Completed", value: "completed" },
+  { label: "Cancelled", value: "cancelled" },
+];
+
 export const groupByOptions: Array<{ name: string; key: NestedKeyOf<IIssue> | null }> = [
   { name: "State", key: "state_detail.name" },
   { name: "Priority", key: "priority" },

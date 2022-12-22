@@ -243,11 +243,11 @@ const MyIssues: NextPage = () => {
                                             {issue.project_detail.identifier}-{issue.sequence_id}
                                           </span>
                                         )} */}
-                                        <span className="">{issue.name}</span>
-                                        <div className="absolute bottom-full left-0 mb-2 z-10 hidden group-hover:block p-2 bg-white shadow-md rounded-md max-w-sm whitespace-nowrap">
+                                        <span>{issue.name}</span>
+                                        {/* <div className="absolute bottom-full left-0 mb-2 z-10 hidden group-hover:block p-2 bg-white shadow-md rounded-md max-w-sm whitespace-nowrap">
                                           <h5 className="font-medium mb-1">Name</h5>
                                           <div>{issue.name}</div>
-                                        </div>
+                                        </div> */}
                                       </a>
                                     </Link>
                                   </div>

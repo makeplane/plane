@@ -1,4 +1,4 @@
-import type { IUser, IIssue, IProject } from ".";
+import type { IUser, IUserLite, IIssue, IProject } from ".";
 
 export interface IModule {
   created_at: Date;
@@ -9,13 +9,29 @@ export interface IModule {
   id: string;
   lead: string | null;
   lead_detail: IUserLite;
+  members: string[];
   members_list: string[];
+  members_detail: IUserLite[];
   name: string;
   project: string;
   project_detail: IProject;
-  start_date: Date | null;
-  status: "backlog" | "planned" | "in-progress" | "paused" | "completed" | "cancelled";
-  target_date: Date | null;
+  start_date: string | null;
+  status: "backlog" | "planned" | "in-progress" | "paused" | "completed" | "cancelled" | null;
+  target_date: string | null;
+  updated_at: Date;
+  updated_by: string;
+  workspace: string;
+}
+
+export interface ModuleIssueResponse {
+  created_at: Date;
+  created_by: string;
+  id: string;
+  issue: string;
+  issue_detail: IIssue;
+  module: string;
+  module_detail: IModule;
+  project: string;
   updated_at: Date;
   updated_by: string;
   workspace: string;
