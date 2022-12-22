@@ -5,7 +5,7 @@ import Link from "next/link";
 // swr
 import useSWR from "swr";
 // headless ui
-import { Disclosure, Transition, Menu } from "@headlessui/react";
+import { Disclosure, Transition } from "@headlessui/react";
 // hooks
 import useUser from "lib/hooks/useUser";
 // ui
@@ -20,7 +20,6 @@ import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 // constants
 import {
   addSpaceIfCamelCase,
-  classNames,
   findHowManyDaysLeft,
   renderShortNumericDateFormat,
 } from "constants/common";
@@ -34,7 +33,7 @@ type Props = {
   selectedGroup: NestedKeyOf<IIssue> | null;
   openCreateIssueModal: (issue?: IIssue, actionType?: "create" | "edit" | "delete") => void;
   openIssuesListModal: () => void;
-  removeIssueFromCycle: (bridgeId: string) => void;
+  removeIssueFromModule: (issueId: string) => void;
   handleDeleteIssue: React.Dispatch<React.SetStateAction<string | undefined>>;
   setPreloadedData: React.Dispatch<
     React.SetStateAction<
@@ -46,13 +45,13 @@ type Props = {
   >;
 };
 
-const CyclesListView: React.FC<Props> = ({
+const ModulesListView: React.FC<Props> = ({
   groupedByIssues,
   selectedGroup,
   openCreateIssueModal,
   openIssuesListModal,
   properties,
-  removeIssueFromCycle,
+  removeIssueFromModule,
   handleDeleteIssue,
   setPreloadedData,
 }) => {
@@ -262,9 +261,9 @@ const CyclesListView: React.FC<Props> = ({
                                       Edit
                                     </CustomMenu.MenuItem>
                                     <CustomMenu.MenuItem
-                                      onClick={() => removeIssueFromCycle(issue.bridge ?? "")}
+                                      onClick={() => removeIssueFromModule(issue.bridge ?? "")}
                                     >
-                                      Remove from cycle
+                                      Remove from module
                                     </CustomMenu.MenuItem>
                                     <CustomMenu.MenuItem
                                       onClick={() => handleDeleteIssue(issue.id)}
@@ -326,4 +325,4 @@ const CyclesListView: React.FC<Props> = ({
   );
 };
 
-export default CyclesListView;
+export default ModulesListView;

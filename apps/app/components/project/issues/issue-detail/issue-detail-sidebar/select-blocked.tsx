@@ -79,7 +79,7 @@ const SelectBlocked: React.FC<Props> = ({ issueDetail, issuesList, watch }) => {
         });
     });
 
-    // handleClose();
+    handleClose();
   };
 
   const removeBlocked = (issueId: string) => {

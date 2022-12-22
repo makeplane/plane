@@ -26,7 +26,7 @@ import {
   UserIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { EmptySpace, EmptySpaceItem } from "ui/EmptySpace";
+import { EmptySpace, EmptySpaceItem } from "ui/empty-space";
 
 const WorkspaceInvitation: NextPage = () => {
   const router = useRouter();

@@ -10,6 +10,8 @@ import withAuth from "lib/hoc/withAuthWrapper";
 import modulesService from "lib/services/modules.service";
 // hooks
 import useUser from "lib/hooks/useUser";
+// components
+import SingleModuleCard from "components/project/modules/single-module-card";
 // ui
 import { BreadcrumbItem, Breadcrumbs, EmptySpace, EmptySpaceItem, HeaderButton, Spinner } from "ui";
 // icons
@@ -17,7 +19,7 @@ import { PlusIcon, RectangleGroupIcon } from "@heroicons/react/24/outline";
 // types
 import { IModule } from "types/modules";
 // fetch-keys
-import { MODULE_LIST } from "constants/fetch-keys";
+import { MODULE_LIST, WORKSPACE_MEMBERS } from "constants/fetch-keys";
 
 const ProjectModules: NextPage = () => {
   const { activeWorkspace, activeProject } = useUser();
@@ -62,12 +64,11 @@ const ProjectModules: NextPage = () => {
       {modules ? (
         modules.length > 0 ? (
           <div className="space-y-5">
-            {modules.map((module) => (
-              <div key={module.id} className="bg-white p-3 rounded-md">
-                <h3>{module.name}</h3>
-                <p className="text-gray-500 text-sm mt-2">{module.description}</p>
-              </div>
-            ))}
+            <div className="grid grid-cols-3 gap-2">
+              {modules.map((module) => (
+                <SingleModuleCard key={module.id} module={module} />
+              ))}
+            </div>
           </div>
         ) : (
           <div className="w-full h-full flex flex-col justify-center items-center px-4">

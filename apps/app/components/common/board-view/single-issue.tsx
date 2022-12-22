@@ -22,6 +22,7 @@ import {
 import { PRIORITIES } from "constants/";
 import useUser from "lib/hooks/useUser";
 import React from "react";
+import { getPriorityIcon } from "constants/global";
 
 type Props = {
   issue: IIssue;
@@ -95,7 +96,7 @@ const SingleIssue: React.FC<Props> = ({
                 <>
                   <div>
                     <Listbox.Button
-                      className={`rounded shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 capitalize ${
+                      className={`grid place-items-center rounded shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 capitalize ${
                         issue.priority === "urgent"
                           ? "bg-red-100 text-red-600"
                           : issue.priority === "high"
@@ -107,7 +108,7 @@ const SingleIssue: React.FC<Props> = ({
                           : "bg-gray-100"
                       }`}
                     >
-                      {issue.priority ?? "None"}
+                      {getPriorityIcon(issue?.priority ?? "None")}
                     </Listbox.Button>
 
                     <Transition
@@ -124,18 +125,19 @@ const SingleIssue: React.FC<Props> = ({
                             className={({ active }) =>
                               classNames(
                                 active ? "bg-indigo-50" : "bg-white",
-                                "cursor-pointer capitalize select-none px-3 py-2"
+                                "flex items-center gap-2 cursor-pointer capitalize select-none px-3 py-2"
                               )
                             }
                             value={priority}
                           >
+                            {getPriorityIcon(priority)}
                             {priority}
                           </Listbox.Option>
                         ))}
                       </Listbox.Options>
                     </Transition>
                   </div>
-                  <div className="absolute bottom-full right-0 mb-2 z-10 hidden group-hover:block p-2 bg-white shadow-md rounded-md whitespace-nowrap">
+                  {/* <div className="absolute bottom-full right-0 mb-2 z-10 hidden group-hover:block p-2 bg-white shadow-md rounded-md whitespace-nowrap">
                     <h5 className="font-medium mb-1 text-gray-900">Priority</h5>
                     <div
                       className={`capitalize ${
@@ -152,7 +154,7 @@ const SingleIssue: React.FC<Props> = ({
                     >
                       {issue.priority ?? "None"}
                     </div>
-                  </div>
+                  </div> */}
                 </>
               )}
             </Listbox>
@@ -210,10 +212,10 @@ const SingleIssue: React.FC<Props> = ({
                       </Listbox.Options>
                     </Transition>
                   </div>
-                  <div className="absolute bottom-full right-0 mb-2 z-10 hidden group-hover:block p-2 bg-white shadow-md rounded-md whitespace-nowrap">
+                  {/* <div className="absolute bottom-full right-0 mb-2 z-10 hidden group-hover:block p-2 bg-white shadow-md rounded-md whitespace-nowrap">
                     <h5 className="font-medium mb-1">State</h5>
                     <div>{issue.state_detail.name}</div>
-                  </div>
+                  </div> */}
                 </>
               )}
             </Listbox>
@@ -222,10 +224,10 @@ const SingleIssue: React.FC<Props> = ({
             <div className="group flex-shrink-0 flex items-center gap-1 hover:bg-gray-100 border rounded shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300">
               <CalendarDaysIcon className="h-4 w-4" />
               {issue.start_date ? renderShortNumericDateFormat(issue.start_date) : "N/A"}
-              <div className="fixed -translate-y-3/4 z-10 hidden group-hover:block p-2 bg-white shadow-md rounded-md whitespace-nowrap">
+              {/* <div className="fixed -translate-y-3/4 z-10 hidden group-hover:block p-2 bg-white shadow-md rounded-md whitespace-nowrap">
                 <h5 className="font-medium mb-1">Started at</h5>
                 <div>{renderShortNumericDateFormat(issue.start_date ?? "")}</div>
-              </div>
+              </div> */}
             </div>
           )}
           {properties.due_date && (
@@ -240,7 +242,7 @@ const SingleIssue: React.FC<Props> = ({
             >
               <CalendarDaysIcon className="h-4 w-4" />
               {issue.target_date ? renderShortNumericDateFormat(issue.target_date) : "N/A"}
-              <div className="fixed -translate-y-3/4 z-10 hidden group-hover:block p-2 bg-white shadow-md rounded-md whitespace-nowrap">
+              {/* <div className="fixed -translate-y-3/4 z-10 hidden group-hover:block p-2 bg-white shadow-md rounded-md whitespace-nowrap">
                 <h5 className="font-medium mb-1 text-gray-900">Target date</h5>
                 <div>{renderShortNumericDateFormat(issue.target_date ?? "")}</div>
                 <div>
@@ -251,7 +253,7 @@ const SingleIssue: React.FC<Props> = ({
                       ? `Due date is in ${findHowManyDaysLeft(issue.target_date)} days`
                       : "Due date")}
                 </div>
-              </div>
+              </div> */}
             </div>
           )}
           {properties.assignee && (
@@ -373,14 +375,14 @@ const SingleIssue: React.FC<Props> = ({
                       </Listbox.Options>
                     </Transition>
                   </div>
-                  <div className="absolute bottom-full left-0 mb-2 z-10 hidden group-hover:block p-2 bg-white shadow-md rounded-md whitespace-nowrap">
+                  {/* <div className="absolute bottom-full left-0 mb-2 z-10 hidden group-hover:block p-2 bg-white shadow-md rounded-md whitespace-nowrap">
                     <h5 className="font-medium mb-1">Assigned to</h5>
                     <div>
                       {issue.assignee_details?.length > 0
                         ? issue.assignee_details.map((assignee) => assignee.first_name).join(", ")
                         : "No one"}
                     </div>
-                  </div>
+                  </div> */}
                 </>
               )}
             </Listbox>
