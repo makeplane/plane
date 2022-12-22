@@ -77,6 +77,11 @@ class IssueCreateSerializer(BaseSerializer):
         write_only=True,
         required=False,
     )
+    blocks_list = serializers.ListField(
+        child=serializers.PrimaryKeyRelatedField(queryset=Issue.objects.all()),
+        write_only=True,
+        required=False,
+    )
 
     class Meta:
         model = Issue
@@ -94,6 +99,7 @@ class IssueCreateSerializer(BaseSerializer):
         blockers = validated_data.pop("blockers_list", None)
         assignees = validated_data.pop("assignees_list", None)
         labels = validated_data.pop("labels_list", None)
+        blocks = validated_data.pop("blocks_list", None)
 
         project = self.context["project"]
         issue = Issue.objects.create(**validated_data, project=project)
@@ -146,6 +152,22 @@ class IssueCreateSerializer(BaseSerializer):
                 batch_size=10,
             )
 
+        if blocks is not None:
+            IssueBlocker.objects.bulk_create(
+                [
+                    IssueBlocker(
+                        block=block,
+                        blocked_by=issue,
+                        project=project,
+                        workspace=project.workspace,
+                        created_by=issue.created_by,
+                        updated_by=issue.updated_by,
+                    )
+                    for block in blocks
+                ],
+                batch_size=10,
+            )
+
         return issue
 
     def update(self, instance, validated_data):
@@ -153,6 +175,7 @@ class IssueCreateSerializer(BaseSerializer):
         blockers = validated_data.pop("blockers_list", None)
         assignees = validated_data.pop("assignees_list", None)
         labels = validated_data.pop("labels_list", None)
+        blocks = validated_data.pop("blocks_list", None)
 
         if blockers is not None:
             IssueBlocker.objects.filter(block=instance).delete()
@@ -201,6 +224,22 @@ class IssueCreateSerializer(BaseSerializer):
                         updated_by=instance.updated_by,
                     )
                     for label in labels
+                ],
+                batch_size=10,
+            )
+
+        if blocks is not None:
+            IssueBlocker.objects.bulk_create(
+                [
+                    IssueBlocker(
+                        block=block,
+                        blocked_by=instance,
+                        project=instance.project,
+                        workspace=instance.project.workspace,
+                        created_by=instance.created_by,
+                        updated_by=instance.updated_by,
+                    )
+                    for block in blocks
                 ],
                 batch_size=10,
             )
