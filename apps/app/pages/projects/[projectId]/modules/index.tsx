@@ -13,13 +13,13 @@ import useUser from "lib/hooks/useUser";
 // components
 import SingleModuleCard from "components/project/modules/single-module-card";
 // ui
-import { BreadcrumbItem, Breadcrumbs, EmptySpace, EmptySpaceItem, HeaderButton, Spinner } from "ui";
+import { BreadcrumbItem, Breadcrumbs, EmptySpace, EmptySpaceItem, HeaderButton, Loader } from "ui";
 // icons
 import { PlusIcon, RectangleGroupIcon } from "@heroicons/react/24/outline";
 // types
 import { IModule } from "types/modules";
 // fetch-keys
-import { MODULE_LIST, WORKSPACE_MEMBERS } from "constants/fetch-keys";
+import { MODULE_LIST } from "constants/fetch-keys";
 
 const ProjectModules: NextPage = () => {
   const { activeWorkspace, activeProject } = useUser();
@@ -98,9 +98,14 @@ const ProjectModules: NextPage = () => {
           </div>
         )
       ) : (
-        <div className="w-full h-full flex justify-center items-center">
-          <Spinner />
-        </div>
+        <Loader className="grid grid-cols-3 gap-4">
+          <Loader.Item height="100px"></Loader.Item>
+          <Loader.Item height="100px"></Loader.Item>
+          <Loader.Item height="100px"></Loader.Item>
+          <Loader.Item height="100px"></Loader.Item>
+          <Loader.Item height="100px"></Loader.Item>
+          <Loader.Item height="100px"></Loader.Item>
+        </Loader>
       )}
     </AppLayout>
   );

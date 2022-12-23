@@ -1,4 +1,4 @@
-import type { IState, IUser, IProject, ICycle } from "./";
+import type { IState, IUser, IProject, ICycle, IModule } from "./";
 
 export interface IssueResponse {
   next_cursor: string;
@@ -38,7 +38,6 @@ export interface IIssue {
   created_at: Date;
   updated_at: Date;
   name: string;
-  // TODO change type of description
   issue_cycle: {
     created_at: Date;
     created_by: string;
@@ -51,6 +50,22 @@ export interface IIssue {
     updated_by: string;
     workspace: string;
   } | null;
+  issue_module:
+    | [
+        {
+          created_at: Date;
+          created_by: string;
+          id: string;
+          issue: string;
+          module: string;
+          module_detail: IModule;
+          project: string;
+          updated_at: Date;
+          updated_by: string;
+          workspace: string;
+        }
+      ]
+    | [];
   description: any;
   priority: string | null;
   start_date: string | null;

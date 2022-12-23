@@ -11,8 +11,6 @@ import authenticationService from "lib/services/authentication.service";
 import useUser from "lib/hooks/useUser";
 // headless ui
 import { Menu, Transition } from "@headlessui/react";
-// ui
-import { Spinner } from "ui";
 // icons
 import {
   ChevronDownIcon,
@@ -22,10 +20,10 @@ import {
   PlusIcon,
   RectangleStackIcon,
   UserGroupIcon,
-  UserIcon,
 } from "@heroicons/react/24/outline";
 // types
 import { IUser } from "types";
+import { Loader } from "ui";
 
 type Props = {
   sidebarCollapse: boolean;
@@ -208,8 +206,11 @@ const WorkspaceOptions: React.FC<Props> = ({ sidebarCollapse }) => {
                       </Menu.Item>
                     </>
                   ) : (
-                    <div className="w-full flex justify-center">
-                      <Spinner />
+                    <div className="w-full">
+                      <Loader className="space-y-2">
+                        <Loader.Item height="30px"></Loader.Item>
+                        <Loader.Item height="30px"></Loader.Item>
+                      </Loader>
                     </div>
                   )}
                 </div>

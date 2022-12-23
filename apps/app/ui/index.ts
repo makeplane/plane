@@ -9,6 +9,7 @@ export { default as Spinner } from "./Spinner";
 export { default as Tooltip } from "./Tooltip";
 export { default as SearchListbox } from "./search-listbox";
 export { default as HeaderButton } from "./HeaderButton";
+export { default as Loader } from "./loader";
 export * from "./Breadcrumbs";
 export * from "./empty-space";
 export { default as EmojiIconPicker } from "./emoji-icon-picker";

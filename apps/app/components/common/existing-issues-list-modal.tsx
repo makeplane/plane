@@ -135,7 +135,12 @@ const ExistingIssuesListModal: React.FC<Props> = ({
                               )}
                               <ul className="text-sm text-gray-700">
                                 {filteredIssues.map((issue) => {
-                                  if ((type === "cycle" && !issue.issue_cycle) || type === "module")
+                                  if (
+                                    (type === "cycle" && !issue.issue_cycle) ||
+                                    (type === "module" &&
+                                      issue.issue_module &&
+                                      issue.issue_module.length === 0)
+                                  )
                                     return (
                                       <Combobox.Option
                                         key={issue.id}

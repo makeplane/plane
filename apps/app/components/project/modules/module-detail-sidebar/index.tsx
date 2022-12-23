@@ -1,5 +1,5 @@
 // react
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 // swr
 import useSWR, { mutate } from "swr";
 // react-hook-form
@@ -29,6 +29,8 @@ import { IModule } from "types";
 import { MODULE_DETAIL } from "constants/fetch-keys";
 // common
 import { copyTextToClipboard } from "constants/common";
+import ModuleLinkModal from "../module-link-modal";
+import Link from "next/link";
 
 const defaultValues: Partial<IModule> = {
   members_list: [],
@@ -44,6 +46,8 @@ type Props = {
 };
 
 const ModuleDetailSidebar: React.FC<Props> = ({ module, isOpen, handleDeleteModule }) => {
+  const [moduleLinkModal, setModuleLinkModal] = useState(false);
+
   const { activeWorkspace, activeProject } = useUser();
 
   const { setToastAlert } = useToast();
@@ -70,16 +74,21 @@ const ModuleDetailSidebar: React.FC<Props> = ({ module, isOpen, handleDeleteModu
     if (module)
       reset({
         ...module,
-        members_list: module.members_list ?? module.members_detail?.map((member) => member.id),
+        members_list: module.members_list ?? module.members_detail?.map((m) => m.id),
       });
   }, [module, reset]);
 
   return (
     <>
+      <ModuleLinkModal
+        isOpen={moduleLinkModal}
+        handleClose={() => setModuleLinkModal(false)}
+        module={module}
+      />
       <div
         className={`fixed top-0 ${
           isOpen ? "right-0" : "-right-[24rem]"
-        } z-30 bg-gray-50 border-l h-full p-5 w-[24rem] overflow-y-auto duration-300`}
+        } z-20 bg-gray-50 border-l h-full p-5 w-[24rem] overflow-y-auto duration-300`}
       >
         {module ? (
           <>
@@ -213,22 +222,45 @@ const ModuleDetailSidebar: React.FC<Props> = ({ module, isOpen, handleDeleteModu
                   <button
                     type="button"
                     className="h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-100 duration-300 outline-none"
+                    onClick={() => setModuleLinkModal(true)}
                   >
                     <PlusIcon className="h-4 w-4" />
                   </button>
                 </div>
                 <div className="mt-2 space-y-2">
-                  <div className="flex gap-2 border bg-gray-100 rounded-md p-2">
-                    <div className="mt-0.5">
-                      <LinkIcon className="h-3.5 w-3.5" />
-                    </div>
-                    <div>
-                      <h5>Aaryan Khandelwal</h5>
-                      <p className="text-gray-500 mt-0.5">
-                        Added 2 days ago by aaryan.khandelwal@caravel.tech
-                      </p>
-                    </div>
-                  </div>
+                  {module.link_module.length > 0
+                    ? module.link_module.map((link) => (
+                        <div key={link.id} className="group relative">
+                          <div className="opacity-0 group-hover:opacity-100 absolute top-1.5 right-1.5 z-10">
+                            <button
+                              type="button"
+                              className="h-7 w-7 p-1 grid place-items-center rounded text-red-500 bg-gray-100 hover:bg-red-50 duration-300 outline-none"
+                              onClick={() => {
+                                const updatedLinks = module.link_module.filter(
+                                  (l) => l.id !== link.id
+                                );
+                                submitChanges({ links_list: updatedLinks });
+                              }}
+                            >
+                              <TrashIcon className="h-4 w-4" />
+                            </button>
+                          </div>
+                          <Link href={link.url} target="_blank">
+                            <a className="group relative flex gap-2 border bg-gray-100 rounded-md p-2">
+                              <div className="mt-0.5">
+                                <LinkIcon className="h-3.5 w-3.5" />
+                              </div>
+                              <div>
+                                <h5>{link.title}</h5>
+                                <p className="text-gray-500 mt-0.5">
+                                  Added 2 days ago by {link.created_by_detail.email}
+                                </p>
+                              </div>
+                            </a>
+                          </Link>
+                        </div>
+                      ))
+                    : null}
                 </div>
               </div>
             </div>

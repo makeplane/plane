@@ -10,7 +10,7 @@ export type Props = {
 };
 
 export type MenuItemProps = {
-  children: string;
+  children: JSX.Element | string;
   renderAs?: "button" | "a";
   href?: string;
   onClick?: () => void;

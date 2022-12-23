@@ -21,6 +21,7 @@ import ModulesListView from "components/project/modules/list-view";
 import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
 import ModuleDetailSidebar from "components/project/modules/module-detail-sidebar";
 import ConfirmModuleDeletion from "components/project/modules/confirm-module-deleteion";
+import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
 // ui
@@ -34,7 +35,14 @@ import {
 } from "@heroicons/react/24/outline";
 import { Squares2X2Icon } from "@heroicons/react/20/solid";
 // types
-import { IIssue, IModule, ModuleIssueResponse, Properties, SelectModuleType } from "types";
+import {
+  IIssue,
+  IModule,
+  ModuleIssueResponse,
+  Properties,
+  SelectIssue,
+  SelectModuleType,
+} from "types";
 // fetch-keys
 import { MODULE_DETAIL, MODULE_ISSUES, PROJECT_MEMBERS } from "constants/fetch-keys";
 // common
@@ -43,6 +51,8 @@ import { classNames, replaceUnderscoreIfSnakeCase } from "constants/common";
 import { filterIssueOptions, groupByOptions, orderByOptions } from "constants/";
 
 const SingleModule = () => {
+  const [createUpdateIssueModal, setCreateUpdateIssueModal] = useState(false);
+  const [selectedIssues, setSelectedIssues] = useState<SelectIssue>();
   const [moduleIssuesListModal, setModuleIssuesListModal] = useState(false);
   const [deleteIssue, setDeleteIssue] = useState<string | undefined>(undefined);
   const [moduleSidebar, setModuleSidebar] = useState(false);
@@ -82,7 +92,7 @@ const SingleModule = () => {
 
   const { data: moduleDetail } = useSWR<IModule>(
     MODULE_DETAIL,
-    activeWorkspace && activeProject && moduleId
+    activeWorkspace && activeProject
       ? () =>
           modulesService.getModuleDetails(
             activeWorkspace?.slug,
@@ -91,6 +101,8 @@ const SingleModule = () => {
           )
       : null
   );
+
+  console.log(moduleDetail);
 
   const {
     issueView,
@@ -124,6 +136,7 @@ const SingleModule = () => {
         .addIssuesToModule(activeWorkspace.slug, activeProject.id, moduleId as string, data)
         .then((res) => {
           console.log(res);
+          mutate(MODULE_ISSUES(moduleId as string));
         })
         .catch((e) => console.log(e));
     }
@@ -141,7 +154,13 @@ const SingleModule = () => {
       });
   };
 
-  const openCreateIssueModal = () => {};
+  const openCreateIssueModal = (
+    issue?: IIssue,
+    actionType: "create" | "edit" | "delete" = "create"
+  ) => {
+    if (issue) setSelectedIssues({ ...issue, actionType });
+    setCreateUpdateIssueModal(true);
+  };
 
   const openIssuesListModal = () => {
     setModuleIssuesListModal(true);
@@ -150,11 +169,16 @@ const SingleModule = () => {
   const removeIssueFromModule = (issueId: string) => {
     if (!activeWorkspace || !activeProject) return;
 
+    mutate<ModuleIssueResponse[]>(
+      MODULE_ISSUES(moduleId as string),
+      (prevData) => prevData?.filter((p) => p.id !== issueId),
+      false
+    );
+
     modulesService
       .removeIssueFromModule(activeWorkspace.slug, activeProject.id, moduleId as string, issueId)
       .then((res) => {
         console.log(res);
-        mutate(MODULE_ISSUES(moduleId as string));
       })
       .catch((e) => {
         console.log(e);
@@ -170,6 +194,13 @@ const SingleModule = () => {
 
   return (
     <>
+      <CreateUpdateIssuesModal
+        isOpen={createUpdateIssueModal && selectedIssues?.actionType !== "delete"}
+        data={selectedIssues}
+        prePopulateData={{ sprints: moduleId as string, ...preloadedData }}
+        setIsOpen={setCreateUpdateIssueModal}
+        projectId={activeProject?.id}
+      />
       <ExistingIssuesListModal
         isOpen={moduleIssuesListModal}
         handleClose={() => setModuleIssuesListModal(false)}
@@ -367,7 +398,7 @@ const SingleModule = () => {
           </div>
         }
       >
-        <div className={`h-full ${moduleSidebar ? "mr-[28rem]" : ""} duration-300`}>
+        <div className={`h-full ${moduleSidebar ? "mr-[24rem]" : ""} duration-300`}>
           {issueView === "list" ? (
             <ModulesListView
               groupedByIssues={groupedByIssues}

@@ -1,22 +1,23 @@
+// react
 import React from "react";
-// router
+// next
 import { useRouter } from "next/router";
 // swr
 import useSWR from "swr";
-// react hook form
+// react-hook-form
 import { useForm } from "react-hook-form";
 // services
 import issuesServices from "lib/services/issues.service";
-// fetch keys
-import { PROJECT_ISSUES_COMMENTS } from "constants/fetch-keys";
 // hooks
 import useUser from "lib/hooks/useUser";
 // components
-import CommentCard from "components/project/issues/issue-detail/comment/IssueCommentCard";
+import CommentCard from "components/project/issues/issue-detail/comment/issue-comment-card";
 // ui
 import { TextArea, Button, Spinner } from "ui";
 // types
 import type { IIssueComment } from "types";
+// fetch-keys
+import { PROJECT_ISSUES_COMMENTS } from "constants/fetch-keys";
 
 const defaultValues: Partial<IIssueComment> = {
   comment: "",

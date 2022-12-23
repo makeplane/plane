@@ -17,7 +17,7 @@ import AppLayout from "layouts/app-layout";
 import CreateUpdateCycleModal from "components/project/cycles/create-update-cycle-modal";
 import CycleStatsView from "components/project/cycles/stats-view";
 // ui
-import { BreadcrumbItem, Breadcrumbs, HeaderButton, Spinner, EmptySpace, EmptySpaceItem } from "ui";
+import { BreadcrumbItem, Breadcrumbs, HeaderButton, EmptySpace, EmptySpaceItem, Loader } from "ui";
 // icons
 import { ArrowPathIcon, PlusIcon } from "@heroicons/react/24/outline";
 // types
@@ -118,9 +118,10 @@ const ProjectSprints: NextPage = () => {
           </div>
         )
       ) : (
-        <div className="w-full h-full flex justify-center items-center">
-          <Spinner />
-        </div>
+        <Loader className="space-y-5">
+          <Loader.Item height="150px"></Loader.Item>
+          <Loader.Item height="150px"></Loader.Item>
+        </Loader>
       )}
     </AppLayout>
   );

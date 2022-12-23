@@ -1,25 +1,32 @@
 import React, { useState } from "react";
+// next
+import dynamic from "next/dynamic";
 // swr
 import useSWR from "swr";
-import dynamic from "next/dynamic";
-// headless ui
-import { Listbox, Transition } from "@headlessui/react";
 // react hook form
 import { useForm, Controller, UseFormWatch } from "react-hook-form";
+// react-color
+import { TwitterPicker } from "react-color";
 // services
 import issuesServices from "lib/services/issues.service";
 // hooks
 import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
-// fetching keys
-import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
-// commons
-import { copyTextToClipboard } from "constants/common";
 // components
 import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
+import SelectState from "components/project/issues/issue-detail/issue-detail-sidebar/select-state";
+import SelectPriority from "components/project/issues/issue-detail/issue-detail-sidebar/select-priority";
+import SelectParent from "components/project/issues/issue-detail/issue-detail-sidebar/select-parent";
+import SelectCycle from "components/project/issues/issue-detail/issue-detail-sidebar/select-cycle";
+import SelectAssignee from "components/project/issues/issue-detail/issue-detail-sidebar/select-assignee";
+import SelectBlocker from "components/project/issues/issue-detail/issue-detail-sidebar/select-blocker";
+import SelectBlocked from "components/project/issues/issue-detail/issue-detail-sidebar/select-blocked";
+import SelectModule from "components/project/issues/issue-detail/issue-detail-sidebar/select-module";
+import { positionEditorElement } from "components/lexical/helpers/editor";
+// headless ui
+import { Popover, Listbox, Transition } from "@headlessui/react";
 // ui
 import { Input, Button, Spinner } from "ui";
-import { Popover } from "@headlessui/react";
 // icons
 import {
   TagIcon,
@@ -33,16 +40,11 @@ import {
 } from "@heroicons/react/24/outline";
 // types
 import type { Control } from "react-hook-form";
-import type { ICycle, IIssue, IIssueLabels, NestedKeyOf } from "types";
-import { TwitterPicker } from "react-color";
-import { positionEditorElement } from "components/lexical/helpers/editor";
-import SelectState from "./select-state";
-import SelectPriority from "./select-priority";
-import SelectParent from "./select-parent";
-import SelectCycle from "./select-cycle";
-import SelectAssignee from "./select-assignee";
-import SelectBlocker from "./select-blocker";
-import SelectBlocked from "./select-blocked";
+import type { ICycle, IIssue, IIssueLabels, IModule } from "types";
+// fetch-keys
+import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
+// common
+import { copyTextToClipboard } from "constants/common";
 
 type Props = {
   control: Control<IIssue, any>;
@@ -75,6 +77,8 @@ const IssueDetailSidebar: React.FC<Props> = ({
       : null
   );
 
+  console.log(issueDetail);
+
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
 
   const {
@@ -101,20 +105,31 @@ const IssueDetailSidebar: React.FC<Props> = ({
   };
 
   const handleCycleChange = (cycleDetail: ICycle) => {
-    if (activeWorkspace && activeProject && issueDetail) {
-      submitChanges({ cycle: cycleDetail.id, cycle_detail: cycleDetail });
-      issuesServices
-        .addIssueToCycle(activeWorkspace.slug, activeProject.id, cycleDetail.id, {
-          issues: [issueDetail.id],
-        })
-        .then(() => {
-          submitChanges({});
-        });
-    }
+    if (!activeWorkspace || !activeProject || !issueDetail) return;
+
+    submitChanges({ cycle: cycleDetail.id, cycle_detail: cycleDetail });
+    issuesServices
+      .addIssueToCycle(activeWorkspace.slug, activeProject.id, cycleDetail.id, {
+        issues: [issueDetail.id],
+      })
+      .then(() => {
+        submitChanges({});
+      });
+  };
+
+  const handleModuleChange = (moduleDetail: IModule) => {
+    if (!activeWorkspace || !activeProject) return;
+
+    // console.log(moduleDetail);
   };
 
   return (
     <>
+      <ConfirmIssueDeletion
+        handleClose={() => setDeleteIssueModal(false)}
+        isOpen={deleteIssueModal}
+        data={issueDetail}
+      />
       <div className="h-full w-full divide-y-2 divide-gray-100">
         <div className="flex justify-between items-center pb-3">
           <h4 className="text-sm font-medium">
@@ -247,6 +262,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
           </div>
           <div className="py-1">
             <SelectCycle control={control} handleCycleChange={handleCycleChange} />
+            {/* <SelectModule control={control} handleModuleChange={handleModuleChange} /> */}
           </div>
         </div>
         <div className="pt-3 space-y-3">
@@ -425,11 +441,6 @@ const IssueDetailSidebar: React.FC<Props> = ({
           )}
         </div>
       </div>
-      <ConfirmIssueDeletion
-        handleClose={() => setDeleteIssueModal(false)}
-        isOpen={deleteIssueModal}
-        data={issueDetail}
-      />
     </>
   );
 };
