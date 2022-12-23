@@ -39,7 +39,7 @@ from plane.db.models import (
     Label,
     IssueBlocker,
     CycleIssue,
-    ModuleIssue
+    ModuleIssue,
 )
 
 
@@ -69,18 +69,13 @@ class IssueViewSet(BaseViewSet):
     def perform_create(self, serializer):
         serializer.save(project_id=self.kwargs.get("project_id"))
 
-
-    def perform_update(self, serializer):
-        print("Hello From Issue Update")
-        channel_layer = get_channel_layer()
-        async_to_sync(channel_layer.group_send)(
-            'issues',
-            {
-                'type': 'issue.activity',
-                'content': "event_trigered_from_views"
-            }
-        ) 
-        return super().perform_update(serializer)
+    # def perform_update(self, serializer):
+    #     print("Hello From Issue Update")
+    #     channel_layer = get_channel_layer()
+    #     async_to_sync(channel_layer.group_send)(
+    #         "issues", {"type": "issue.activity", "content": "event_trigered_from_views"}
+    #     )
+    #     return super().perform_update(serializer)
 
     def get_queryset(self):
         return (
@@ -181,6 +176,14 @@ class IssueViewSet(BaseViewSet):
                 {"error": "Project was not found"}, status=status.HTTP_404_NOT_FOUND
             )
 
+    def partial_update(self, request, *args, **kwargs):
+        print("Hello")
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            "issues", {"type": "issue.activity", "content": "event_trigered_from_views"}
+        )
+        return super().partial_update(request, *args, **kwargs)
+
 
 class UserWorkSpaceIssues(BaseAPIView):
     def get(self, request, slug):
@@ -222,9 +225,11 @@ class WorkSpaceIssuesEndpoint(BaseAPIView):
 class IssueActivityEndpoint(BaseAPIView):
     def get(self, request, slug, project_id, issue_id):
         try:
-            issue_activities = IssueActivity.objects.filter(issue_id=issue_id).filter(
-                project__project_projectmember__member=self.request.user
-            ).select_related("actor")
+            issue_activities = (
+                IssueActivity.objects.filter(issue_id=issue_id)
+                .filter(project__project_projectmember__member=self.request.user)
+                .select_related("actor")
+            )
             serializer = IssueActivitySerializer(issue_activities, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
