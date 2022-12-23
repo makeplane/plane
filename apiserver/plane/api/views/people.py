@@ -52,7 +52,6 @@ class PeopleEndpoint(BaseAPIView):
 class UserEndpoint(BaseViewSet):
     serializer_class = UserSerializer
     model = User
-    serializers = {}
 
     def get_object(self):
         return self.request.user

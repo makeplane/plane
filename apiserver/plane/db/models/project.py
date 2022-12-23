@@ -19,6 +19,15 @@ ROLE_CHOICES = (
 )
 
 
+def get_default_props():
+    return {
+        "issueView": "list",
+        "groupByProperty": None,
+        "orderBy": None,
+        "filterIssue": None,
+    }
+
+
 class Project(BaseModel):
 
     NETWORK_CHOICES = ((0, "Secret"), (2, "Public"))
@@ -119,6 +128,7 @@ class ProjectMember(ProjectBaseModel):
     comment = models.TextField(blank=True, null=True)
     role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=10)
     view_props = models.JSONField(null=True)
+    default_props = models.JSONField(default=get_default_props)
 
     class Meta:
         unique_together = ["project", "member"]

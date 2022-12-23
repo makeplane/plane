@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 // swr
 import useSWR from "swr";
+import dynamic from "next/dynamic";
 // headless ui
 import { Listbox, Transition } from "@headlessui/react";
 // react hook form
@@ -14,6 +15,8 @@ import useToast from "lib/hooks/useToast";
 import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 // commons
 import { copyTextToClipboard } from "constants/common";
+// components
+import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
 // ui
 import { Input, Button, Spinner } from "ui";
 import { Popover } from "@headlessui/react";
@@ -30,7 +33,7 @@ import {
 } from "@heroicons/react/24/outline";
 // types
 import type { Control } from "react-hook-form";
-import type { IIssue, IIssueLabels, NestedKeyOf } from "types";
+import type { ICycle, IIssue, IIssueLabels, NestedKeyOf } from "types";
 import { TwitterPicker } from "react-color";
 import { positionEditorElement } from "components/lexical/helpers/editor";
 import SelectState from "./select-state";
@@ -46,7 +49,6 @@ type Props = {
   submitChanges: (formData: Partial<IIssue>) => void;
   issueDetail: IIssue | undefined;
   watch: UseFormWatch<IIssue>;
-  setDeleteIssueModal: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const defaultValues: Partial<IIssueLabels> = {
@@ -59,7 +61,6 @@ const IssueDetailSidebar: React.FC<Props> = ({
   submitChanges,
   issueDetail,
   watch: watchIssue,
-  setDeleteIssueModal,
 }) => {
   const [createLabelForm, setCreateLabelForm] = useState(false);
 
@@ -73,6 +74,8 @@ const IssueDetailSidebar: React.FC<Props> = ({
       ? () => issuesServices.getIssueLabels(activeWorkspace.slug, activeProject.id)
       : null
   );
+
+  const [deleteIssueModal, setDeleteIssueModal] = useState(false);
 
   const {
     register,
@@ -93,17 +96,22 @@ const IssueDetailSidebar: React.FC<Props> = ({
         console.log(res);
         reset(defaultValues);
         issueLabelMutate((prevData) => [...(prevData ?? []), res], false);
+        submitChanges({ labels_list: [res.id] });
       });
   };
 
-  const handleCycleChange = (cycleId: string) => {
-    if (activeWorkspace && activeProject && issueDetail)
-      issuesServices.addIssueToCycle(activeWorkspace.slug, activeProject.id, cycleId, {
-        issue: issueDetail.id,
-      });
+  const handleCycleChange = (cycleDetail: ICycle) => {
+    if (activeWorkspace && activeProject && issueDetail) {
+      submitChanges({ cycle: cycleDetail.id, cycle_detail: cycleDetail });
+      issuesServices
+        .addIssueToCycle(activeWorkspace.slug, activeProject.id, cycleDetail.id, {
+          issues: [issueDetail.id],
+        })
+        .then(() => {
+          submitChanges({});
+        });
+    }
   };
-
-  console.log(issueDetail);
 
   return (
     <>
@@ -140,7 +148,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
               type="button"
               className="p-2 hover:bg-gray-100 border rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 duration-300"
               onClick={() =>
-                copyTextToClipboard(`${issueDetail?.id}`)
+                copyTextToClipboard(issueDetail?.id ?? "")
                   .then(() => {
                     setToastAlert({
                       type: "success",
@@ -208,7 +216,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
               watch={watchIssue}
             />
             <SelectBlocked
-              submitChanges={submitChanges}
+              issueDetail={issueDetail}
               issuesList={issues?.results.filter((i) => i.id !== issueDetail?.id) ?? []}
               watch={watchIssue}
             />
@@ -224,6 +232,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
                   render={({ field: { value, onChange } }) => (
                     <input
                       type="date"
+                      id="issueDate"
                       value={value ?? ""}
                       onChange={(e: any) => {
                         submitChanges({ target_date: e.target.value });
@@ -248,25 +257,31 @@ const IssueDetailSidebar: React.FC<Props> = ({
             </div>
             <div className="basis-1/2">
               <div className="flex gap-1 flex-wrap">
-                {issueDetail?.label_details.map((label) => (
-                  <span
-                    key={label.id}
-                    className="group flex items-center gap-1 border rounded-2xl text-xs px-1 py-0.5 hover:bg-red-50 hover:border-red-500 cursor-pointer"
-                    onClick={() => {
-                      const updatedLabels = issueDetail?.labels.filter((l) => l !== label.id);
-                      submitChanges({
-                        labels_list: updatedLabels,
-                      });
-                    }}
-                  >
+                {watchIssue("labels_list")?.map((label) => {
+                  const singleLabel = issueLabels?.find((l) => l.id === label);
+
+                  if (!singleLabel) return null;
+
+                  return (
                     <span
-                      className="h-2 w-2 rounded-full flex-shrink-0"
-                      style={{ backgroundColor: label.colour ?? "green" }}
-                    ></span>
-                    {label.name}
-                    <XMarkIcon className="h-2 w-2 group-hover:text-red-500" />
-                  </span>
-                ))}
+                      key={singleLabel.id}
+                      className="group flex items-center gap-1 border rounded-2xl text-xs px-1 py-0.5 hover:bg-red-50 hover:border-red-500 cursor-pointer"
+                      onClick={() => {
+                        const updatedLabels = watchIssue("labels_list")?.filter((l) => l !== label);
+                        submitChanges({
+                          labels_list: updatedLabels,
+                        });
+                      }}
+                    >
+                      <span
+                        className="h-2 w-2 rounded-full flex-shrink-0"
+                        style={{ backgroundColor: singleLabel.colour ?? "green" }}
+                      ></span>
+                      {singleLabel.name}
+                      <XMarkIcon className="h-2 w-2 group-hover:text-red-500" />
+                    </span>
+                  );
+                })}
                 <Controller
                   control={control}
                   name="labels_list"
@@ -274,9 +289,9 @@ const IssueDetailSidebar: React.FC<Props> = ({
                     <Listbox
                       as="div"
                       value={value}
-                      multiple
                       onChange={(val: any) => submitChanges({ labels_list: val })}
                       className="flex-shrink-0"
+                      multiple
                     >
                       {({ open }) => (
                         <>
@@ -410,6 +425,11 @@ const IssueDetailSidebar: React.FC<Props> = ({
           )}
         </div>
       </div>
+      <ConfirmIssueDeletion
+        handleClose={() => setDeleteIssueModal(false)}
+        isOpen={deleteIssueModal}
+        data={issueDetail}
+      />
     </>
   );
 };

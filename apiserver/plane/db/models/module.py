@@ -71,10 +71,10 @@ class ModuleMember(ProjectBaseModel):
 class ModuleIssue(ProjectBaseModel):
 
     module = models.ForeignKey(
-        "db.Module", on_delete=models.CASCADE, related_name="module_issues"
+        "db.Module", on_delete=models.CASCADE, related_name="issue_module"
     )
     issue = models.ForeignKey(
-        "db.Issue", on_delete=models.CASCADE, related_name="module_issues"
+        "db.Issue", on_delete=models.CASCADE, related_name="issue_module"
     )
 
     class Meta:

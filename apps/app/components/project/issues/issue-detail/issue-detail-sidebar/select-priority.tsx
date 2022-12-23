@@ -12,6 +12,7 @@ import { IIssue } from "types";
 import { classNames } from "constants/common";
 import { PRIORITIES } from "constants/";
 import CustomSelect from "ui/custom-select";
+import { getPriorityIcon } from "constants/global";
 
 type Props = {
   control: Control<IIssue, any>;
@@ -33,7 +34,18 @@ const SelectPriority: React.FC<Props> = ({ control, submitChanges, watch }) => {
           render={({ field: { value } }) => (
             <CustomSelect
               label={
-                <span className={classNames(value ? "" : "text-gray-900", "text-left capitalize")}>
+                <span
+                  className={classNames(
+                    value ? "" : "text-gray-900",
+                    "text-left capitalize flex items-center gap-2"
+                  )}
+                >
+                  {getPriorityIcon(
+                    watch("priority") && watch("priority") !== ""
+                      ? watch("priority") ?? ""
+                      : "None",
+                    "text-sm"
+                  )}
                   {watch("priority") && watch("priority") !== "" ? watch("priority") : "None"}
                 </span>
               }
@@ -44,7 +56,10 @@ const SelectPriority: React.FC<Props> = ({ control, submitChanges, watch }) => {
             >
               {PRIORITIES.map((option) => (
                 <CustomSelect.Option key={option} value={option} className="capitalize">
-                  {option}
+                  <>
+                    {getPriorityIcon(option, "text-sm")}
+                    {option}
+                  </>
                 </CustomSelect.Option>
               ))}
             </CustomSelect>

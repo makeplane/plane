@@ -63,43 +63,50 @@ const SingleStat: React.FC<Props> = ({ cycle, handleEditCycle, handleDeleteCycle
 
   return (
     <>
-      <div className="bg-white p-3">
+      <div className="border bg-white p-3 rounded-md">
         <div className="grid grid-cols-8 gap-2 divide-x">
           <div className="col-span-3 space-y-3">
-            <Link href={`/projects/${activeProject?.id}/cycles/${cycle.id}`}>
-              <a className="flex justify-between items-center">
-                <h2 className="font-medium">{cycle.name}</h2>
+            <div className="flex justify-between items-center gap-2">
+              <Link href={`/projects/${activeProject?.id}/cycles/${cycle.id}`}>
+                <a>
+                  <h2 className="font-medium">{cycle.name}</h2>
+                </a>
+              </Link>
+              <div className="flex items-center gap-2">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs bg-gray-100 px-2 py-1 rounded-xl">
-                    {today.getDate() < startDate.getDate()
-                      ? "Not started"
-                      : today.getDate() > endDate.getDate()
-                      ? "Over"
-                      : "Active"}
+                  <span
+                    className={`text-xs border px-3 py-0.5 rounded-xl ${
+                      today < startDate
+                        ? "text-orange-500 border-orange-500"
+                        : today > endDate
+                        ? "text-red-500 border-red-500"
+                        : "text-green-500 border-green-500"
+                    }`}
+                  >
+                    {today < startDate ? "Not started" : today > endDate ? "Over" : "Active"}
                   </span>
-                  <CustomMenu width="auto" ellipsis>
-                    <CustomMenu.MenuItem onClick={handleEditCycle}>Edit cycle</CustomMenu.MenuItem>
-                    <CustomMenu.MenuItem onClick={handleDeleteCycle}>
-                      Delete cycle permanently
-                    </CustomMenu.MenuItem>
-                  </CustomMenu>
                 </div>
-              </a>
-            </Link>
-
-            <div className="grid grid-cols-2 gap-x-2 gap-y-3 text-xs">
+                <CustomMenu width="auto" ellipsis>
+                  <CustomMenu.MenuItem onClick={handleEditCycle}>Edit cycle</CustomMenu.MenuItem>
+                  <CustomMenu.MenuItem onClick={handleDeleteCycle}>
+                    Delete cycle permanently
+                  </CustomMenu.MenuItem>
+                </CustomMenu>
+              </div>
+            </div>
+            <div className="grid grid-cols-3 gap-x-2 gap-y-3 text-xs">
               <div className="flex items-center gap-2 text-gray-500">
                 <CalendarDaysIcon className="h-4 w-4" />
                 Cycle dates
               </div>
-              <div>
+              <div className="col-span-2">
                 {renderShortNumericDateFormat(startDate)} - {renderShortNumericDateFormat(endDate)}
               </div>
               <div className="flex items-center gap-2 text-gray-500">
                 <UserIcon className="h-4 w-4" />
                 Created by
               </div>
-              <div className="flex items-center gap-2">
+              <div className="col-span-2 flex items-center gap-2">
                 {cycle.owned_by.avatar && cycle.owned_by.avatar !== "" ? (
                   <Image
                     src={cycle.owned_by.avatar}
@@ -119,7 +126,7 @@ const SingleStat: React.FC<Props> = ({ cycle, handleEditCycle, handleDeleteCycle
                 <CalendarDaysIcon className="h-4 w-4" />
                 Active members
               </div>
-              <div></div>
+              <div className="col-span-2"></div>
             </div>
             <div className="flex items-center gap-2">
               <Button theme="secondary" className="flex items-center gap-2" disabled>
@@ -157,7 +164,9 @@ const SingleStat: React.FC<Props> = ({ cycle, handleEditCycle, handleDeleteCycle
                         <span className="text-gray-500">
                           -{" "}
                           {cycleIssues && cycleIssues.length > 0
-                            ? `${(groupedIssues[group].length / cycleIssues.length) * 100}%`
+                            ? `${Math.round(
+                                (groupedIssues[group].length / cycleIssues.length) * 100
+                              )}%`
                             : "0%"}
                         </span>
                       </span>

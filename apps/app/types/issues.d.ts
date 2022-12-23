@@ -11,13 +11,25 @@ export interface IssueResponse {
   results: IIssue[];
 }
 
+export interface IIssueCycle {
+  id: string;
+  cycle_detail: ICycle;
+  created_at: Date;
+  updated_at: Date;
+  created_by: string;
+  updated_by: string;
+  project: string;
+  workspace: string;
+  issue: string;
+  cycle: string;
+}
+
 export interface IIssue {
   id: string;
   state_detail: IState;
   label_details: any[];
   assignee_details: IUser[];
   assignees_list: string[];
-  bridge?: string;
   blocked_by_issue_details: any[];
   blocked_issues: BlockeIssue[];
   blocker_issues: BlockeIssue[];
@@ -38,7 +50,7 @@ export interface IIssue {
     updated_at: Date;
     updated_by: string;
     workspace: string;
-  };
+  } | null;
   description: any;
   priority: string | null;
   start_date: string | null;
@@ -60,6 +72,9 @@ export interface IIssue {
   blocked_issue_details: any[];
   sprints: string | null;
   cycle: string | null;
+  cycle_detail: ICycle | null;
+
+  issue_cycle: IIssueCycle;
 }
 
 export interface BlockeIssue {
@@ -116,8 +131,9 @@ export type Properties = {
   assignee: boolean;
   priority: boolean;
   start_date: boolean;
-  target_date: boolean;
+  due_date: boolean;
   cycle: boolean;
+  children_count: boolean;
 };
 
 export interface IIssueLabels {

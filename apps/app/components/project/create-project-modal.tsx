@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 // swr
 import useSWR, { mutate } from "swr";
 // react hook form
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 // headless
 import { Dialog, Transition } from "@headlessui/react";
 // services
 import projectServices from "lib/services/project.service";
 import workspaceService from "lib/services/workspace.service";
 // common
-import { createSimilarString } from "constants/common";
+import { createSimilarString, getRandomEmoji } from "constants/common";
 // constants
 import { NETWORK_CHOICES } from "constants/";
 // fetch keys
@@ -18,7 +18,7 @@ import { PROJECTS_LIST, WORKSPACE_MEMBERS } from "constants/fetch-keys";
 import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
 // ui
-import { Button, Input, TextArea, Select } from "ui";
+import { Button, Input, TextArea, Select, EmojiIconPicker } from "ui";
 // types
 import { IProject } from "types";
 
@@ -32,6 +32,7 @@ const defaultValues: Partial<IProject> = {
   identifier: "",
   description: "",
   network: 0,
+  icon: getRandomEmoji(),
 };
 
 const IsGuestCondition: React.FC<{
@@ -83,6 +84,7 @@ const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
     reset,
     setError,
     clearErrors,
+    control,
     watch,
     setValue,
   } = useForm<IProject>({
@@ -201,6 +203,22 @@ const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                       </p>
                     </div>
                     <div className="space-y-3">
+                      <div>
+                        <label htmlFor="icon" className="text-gray-500 mb-2">
+                          Icon
+                        </label>
+                        <Controller
+                          control={control}
+                          name="icon"
+                          render={({ field: { value, onChange } }) => (
+                            <EmojiIconPicker
+                              label={value ? String.fromCodePoint(parseInt(value)) : "Select Icon"}
+                              value={value}
+                              onChange={onChange}
+                            />
+                          )}
+                        />
+                      </div>
                       <div>
                         <Input
                           id="name"

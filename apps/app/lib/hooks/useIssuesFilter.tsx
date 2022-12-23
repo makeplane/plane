@@ -1,4 +1,3 @@
-// hooks
 import useTheme from "./useTheme";
 import useUser from "./useUser";
 // commons
@@ -11,13 +10,16 @@ import type { IIssue } from "types";
 const useIssuesFilter = (projectIssues: IIssue[]) => {
   const {
     issueView,
-    setIssueView,
     groupByProperty,
     setGroupByProperty,
     orderBy,
     setOrderBy,
     filterIssue,
     setFilterIssue,
+    resetFilterToDefault,
+    setNewFilterDefaultView,
+    setIssueViewToKanban,
+    setIssueViewToList,
   } = useTheme();
 
   const { states } = useUser();
@@ -89,13 +91,16 @@ const useIssuesFilter = (projectIssues: IIssue[]) => {
   return {
     groupedByIssues,
     issueView,
-    setIssueView,
     groupByProperty,
     setGroupByProperty,
     orderBy,
     setOrderBy,
     filterIssue,
     setFilterIssue,
+    resetFilterToDefault,
+    setNewFilterDefaultView,
+    setIssueViewToKanban,
+    setIssueViewToList,
   } as const;
 };
 

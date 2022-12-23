@@ -11,6 +11,7 @@ import {
   PROJECT_MEMBER_DETAIL,
   USER_PROJECT_INVITATIONS,
   PROJECT_VIEW_ENDPOINT,
+  PROJECT_MEMBER_ME,
 } from "constants/api-routes";
 // services
 import APIService from "lib/services/api.service";
@@ -132,6 +133,30 @@ class ProjectServices extends APIService {
       });
   }
 
+  async projectMemberMe(workspacSlug: string, projectId: string): Promise<IProjectMember> {
+    return this.get(PROJECT_MEMBER_ME(workspacSlug, projectId))
+      .then((response) => {
+        return response?.data;
+      })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getProjectMember(
+    workspacSlug: string,
+    projectId: string,
+    memberId: string
+  ): Promise<IProjectMember> {
+    return this.get(PROJECT_MEMBER_DETAIL(workspacSlug, projectId, memberId))
+      .then((response) => {
+        return response?.data;
+      })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async updateProjectMember(
     workspacSlug: string,
     projectId: string,
@@ -205,9 +230,12 @@ class ProjectServices extends APIService {
   async setProjectView(
     workspacSlug: string,
     projectId: string,
-    data: ProjectViewTheme
+    data: {
+      view_props?: ProjectViewTheme;
+      default_props?: ProjectViewTheme;
+    }
   ): Promise<any> {
-    await this.patch(PROJECT_VIEW_ENDPOINT(workspacSlug, projectId), data)
+    await this.post(PROJECT_VIEW_ENDPOINT(workspacSlug, projectId), data)
       .then((response) => {
         return response?.data;
       })

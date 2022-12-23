@@ -1,0 +1,132 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Lexend", sans-serif;
+  font-style: normal;
+  font-weight: 100 300 400 500 600 900;
+  font-display: optional;
+  src: url(/fonts/inter-v7-latin-regular.woff2) format("woff2");
+}
+
+html {
+  scroll-behavior: smooth;
+  min-width: 360px;
+}
+
+body {
+  font-family: "Lexend", sans-serif, BlinkMacSystemFont, "Segoe UI", Helvetica,
+    "Apple Color Emoji", Inter, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+  /* background-color: #e5e5e5; */
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+@layer utilities {
+  @variants responsive {
+    /* Chrome, Safari and Opera */
+    .scrollbar-hidden::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Hide scrollbar for IE, Edge add Firefox */
+    .scrollbar-hidden {
+      -ms-overflow-style: none;
+      scrollbar-width: none; /* Firefox */
+    }
+  }
+}
+
+.loader {
+  border-top-color: #3498db;
+  -webkit-animation: spinner 1.5s linear infinite;
+  animation: spinner 1.5s linear infinite;
+}
+@-webkit-keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+@keyframes spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.hero-gradient {
+  background: linear-gradient(
+    145.77deg,
+    #18c0ea 0%,
+    #848fec 26.36%,
+    #c671eb 51.56%,
+    #e55c8f 76.51%,
+    #f5515f 100%
+  );
+}
+.form-gradient {
+  background: linear-gradient(110.01deg, #0575e6 0%, #021b79 100%);
+}
+.triangle-right {
+  border-left: 96vw solid #f8f8fa;
+  border-bottom: 200px solid transparent;
+}
+
+
+
+.button-gradient {
+  background: linear-gradient(98.61deg, #3f76ff -1.18%, #05c3ff 102.69%);
+}
+
+.text-gradient {
+  background: linear-gradient(98.61deg, #3f76ff -1.18%, #05c3ff 102.69%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+}
+
+.card-gradient {
+  background: linear-gradient(
+    138.04deg,
+    rgba(255, 255, 255, 0.1) 10.76%,
+    rgba(255, 255, 255, 0.05) 87.87%
+  );
+}
+
+.nav-border-gradient {
+  background: linear-gradient(
+    270deg,
+    rgba(255, 255, 255, 0) 0%,
+    #ffffff 47.71%,
+    rgba(255, 255, 255, 0) 100%
+  );
+}
+
+.card-border-gradient {
+  background: linear-gradient(141.85deg, #096e8d 4.6%, #00091f 100%);
+}
+.nav-gradient {
+  background: linear-gradient(
+    90.09deg,
+    rgba(21, 21, 21, 0.4) 2.9%,
+    rgba(21, 21, 21, 0.32) 98.12%
+  );
+}

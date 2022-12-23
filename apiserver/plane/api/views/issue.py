@@ -39,6 +39,7 @@ from plane.db.models import (
     Label,
     IssueBlocker,
     CycleIssue,
+    ModuleIssue
 )
 
 
@@ -109,6 +110,12 @@ class IssueViewSet(BaseViewSet):
                 Prefetch(
                     "issue_cycle",
                     queryset=CycleIssue.objects.select_related("cycle", "issue"),
+                ),
+            )
+            .prefetch_related(
+                Prefetch(
+                    "issue_module",
+                    queryset=ModuleIssue.objects.select_related("module", "issue"),
                 ),
             )
         )
@@ -189,6 +196,7 @@ class UserWorkSpaceIssues(BaseAPIView):
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
 
 class WorkSpaceIssuesEndpoint(BaseAPIView):
 

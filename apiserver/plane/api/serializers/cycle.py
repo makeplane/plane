@@ -21,7 +21,7 @@ class CycleSerializer(BaseSerializer):
 
 class CycleIssueSerializer(BaseSerializer):
 
-    issue_details = IssueStateSerializer(read_only=True, source="issue")
+    issue_detail = IssueStateSerializer(read_only=True, source="issue")
 
     class Meta:
         model = CycleIssue

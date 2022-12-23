@@ -13,9 +13,11 @@ const Input: React.FC<Props> = ({
   error,
   mode = "primary",
   onChange,
-  className,
+  className = "",
   type,
   id,
+  size = "rg",
+  fullWidth = true,
   ...rest
 }) => {
   return (
@@ -35,14 +37,16 @@ const Input: React.FC<Props> = ({
           onChange && onChange(e);
         }}
         className={classNames(
-          "mt-1 block w-full px-3 py-2 text-base focus:outline-none sm:text-sm rounded-md bg-transparent",
+          "block text-base focus:outline-none sm:text-sm rounded-md bg-transparent",
           mode === "primary" ? "border border-gray-300 rounded-md" : "",
           mode === "transparent"
             ? "bg-transparent border-none transition-all ring-0 focus:ring-1 focus:ring-indigo-500 rounded"
             : "",
           error ? "border-red-500" : "",
           error && mode === "primary" ? "bg-red-100" : "",
-          className ?? ""
+          fullWidth ? "w-full" : "",
+          size === "rg" ? "px-3 py-2" : size === "lg" ? "p-3" : "",
+          className
         )}
         {...rest}
       />

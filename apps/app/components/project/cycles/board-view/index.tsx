@@ -16,6 +16,16 @@ type Props = {
   openCreateIssueModal: (issue?: IIssue, actionType?: "create" | "edit" | "delete") => void;
   openIssuesListModal: () => void;
   removeIssueFromCycle: (bridgeId: string) => void;
+  partialUpdateIssue: (formData: Partial<IIssue>, issueId: string) => void;
+  handleDeleteIssue: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setPreloadedData: React.Dispatch<
+    React.SetStateAction<
+      | (Partial<IIssue> & {
+          actionType: "createIssue" | "edit" | "delete";
+        })
+      | undefined
+    >
+  >;
 };
 
 const CyclesBoardView: React.FC<Props> = ({
@@ -26,6 +36,9 @@ const CyclesBoardView: React.FC<Props> = ({
   openCreateIssueModal,
   openIssuesListModal,
   removeIssueFromCycle,
+  partialUpdateIssue,
+  handleDeleteIssue,
+  setPreloadedData,
 }) => {
   const { states } = useUser();
 
@@ -57,6 +70,14 @@ const CyclesBoardView: React.FC<Props> = ({
                     removeIssueFromCycle={removeIssueFromCycle}
                     openIssuesListModal={openIssuesListModal}
                     openCreateIssueModal={openCreateIssueModal}
+                    partialUpdateIssue={partialUpdateIssue}
+                    handleDeleteIssue={handleDeleteIssue}
+                    setPreloadedData={setPreloadedData}
+                    stateId={
+                      selectedGroup === "state_detail.name"
+                        ? states?.find((s) => s.name === singleGroup)?.id ?? null
+                        : null
+                    }
                   />
                 ))}
               </div>

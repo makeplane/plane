@@ -1,26 +1,27 @@
-// next
-import type { NextPage } from "next";
-import Link from "next/link";
 // react
 import React from "react";
-// layouts
-import AppLayout from "layouts/app-layout";
+// next
+import Link from "next/link";
+import type { NextPage } from "next";
 // swr
 import useSWR from "swr";
+// services
+import userService from "lib/services/user.service";
 // hooks
 import useUser from "lib/hooks/useUser";
 // hoc
 import withAuthWrapper from "lib/hoc/withAuthWrapper";
-// fetch keys
-import { USER_ISSUE } from "constants/fetch-keys";
-// services
-import userService from "lib/services/user.service";
+// layouts
+import AppLayout from "layouts/app-layout";
 // ui
 import { Spinner } from "ui";
 // icons
 import { ArrowRightIcon, CalendarDaysIcon } from "@heroicons/react/24/outline";
 // types
 import type { IIssue } from "types";
+// fetch-keys
+import { USER_ISSUE } from "constants/fetch-keys";
+// common
 import {
   addSpaceIfCamelCase,
   findHowManyDaysLeft,
@@ -112,10 +113,6 @@ const Workspace: NextPage = () => {
                                           </span>
                                         )} */}
                                   <span className="">{issue.name}</span>
-                                  <div className="absolute bottom-full left-0 mb-2 z-10 hidden group-hover:block p-2 bg-white shadow-md rounded-md max-w-sm whitespace-nowrap">
-                                    <h5 className="font-medium mb-1">Name</h5>
-                                    <div>{issue.name}</div>
-                                  </div>
                                 </a>
                               </Link>
                             </div>

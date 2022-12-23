@@ -1,6 +1,7 @@
 // services
 import { USER_ENDPOINT, USER_ISSUES_ENDPOINT, USER_ONBOARD_ENDPOINT } from "constants/api-routes";
 import APIService from "lib/services/api.service";
+import type { IUser } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -38,7 +39,7 @@ class UserService extends APIService {
       });
   }
 
-  async updateUser(data = {}): Promise<any> {
+  async updateUser(data: Partial<IUser>): Promise<any> {
     return this.patch(USER_ENDPOINT, data)
       .then((response) => {
         return response?.data;
