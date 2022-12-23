@@ -130,6 +130,9 @@ class ModuleIssueViewSet(BaseViewSet):
                 pk__in=issues, workspace__slug=slug, project_id=project_id
             )
 
+            # Delete old records in order to maintain the database integrity
+            ModuleIssue.objects.filter(issue_id__in=issues).delete()
+
             ModuleIssue.objects.bulk_create(
                 [
                     ModuleIssue(
