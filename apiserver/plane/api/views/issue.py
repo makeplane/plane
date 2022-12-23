@@ -74,10 +74,10 @@ class IssueViewSet(BaseViewSet):
         print("Hello From Issue Update")
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
-            'issue',
+            'issues',
             {
                 'type': 'issue.activity',
-                'message': "event_trigered_from_views"
+                'content': "event_trigered_from_views"
             }
         ) 
         return super().perform_update(serializer)

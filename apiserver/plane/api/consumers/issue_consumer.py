@@ -1,41 +1,39 @@
-from channels.generic.websocket import AsyncWebsocketConsumer
+from channels.generic.websocket import JsonWebsocketConsumer
 import json
 from channels.db import database_sync_to_async
+from asgiref.sync import async_to_sync
 from plane.db.models import IssueActivity
 
 
-class IssueConsumer(AsyncWebsocketConsumer):
-    async def connect(self):
-
-        self.room_group_name = "issue"
-
+class IssueConsumer(JsonWebsocketConsumer):
+    def connect(self):
+        print("inside EventConsumer connect()")
+        self.room_group_name = "issues"
         # Join room group
-        await self.channel_layer.group_add(self.room_group_name, self.channel_name)
+        async_to_sync(self.channel_layer.group_add)(
+            self.room_group_name, self.channel_name
+        )
+        self.accept()
 
-        await self.accept()
-
-    async def disconnect(self, close_code):
-        # Leave room group
-
-        await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+    def disconnect(self, close_code):
+        print("inside EventConsumer disconnect()")
+        print("Closed websocket with code: ", close_code)
+        async_to_sync(self.channel_layer.group_discard)(
+            self.room_group_name, self.channel_name
+        )
+        self.close()
 
     # Receive message from WebSocket
-    async def receive(self, text_data):
-        print(text_data)
-        text_data_json = json.loads(text_data)
-        message = text_data_json["message"]
-
-        # Send message to room group
-        await self.channel_layer.group_send(
-            self.room_group_name, {"type": "issue_activity", "message": message}
-        )
+    def receive(self, content, **kwargs):
+        print("inside EventConsumer receive_json()")
+        print("Received event: {}".format(content))
+        self.send_json(content)
 
     # Receive message from room group
-    async def issue_activity(self, event):
+    def issue_activity(self, event):
         print(event)
-        message = event["message"]
-        await database_sync_to_async(IssueActivity.objects.create)(
-            issue_id="1b2756d8-d545-41c0-923c-c9ce19e48248", verb="Hello", field="Hello"
-        )
+        # database_sync_to_async(IssueActivity.objects.create)(
+        #     issue_id="1b2756d8-d545-41c0-923c-c9ce19e48248", verb="Hello", field="Hello"
+        # )
         # Send message to WebSocket
-        await self.send(text_data=json.dumps({"message": message}))
+        self.send_json({"type": "issue.activity", "content": "Hellow"})
