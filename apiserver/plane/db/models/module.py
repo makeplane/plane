@@ -40,6 +40,7 @@ class Module(ProjectBaseModel):
         through="ModuleMember",
         through_fields=("module", "member"),
     )
+    links = models.JSONField(default=list)
 
     class Meta:
         unique_together = ["name", "project"]
