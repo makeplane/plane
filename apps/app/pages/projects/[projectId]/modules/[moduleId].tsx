@@ -25,13 +25,15 @@ import CreateUpdateIssuesModal from "components/project/issues/create-update-iss
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
 // ui
-import { BreadcrumbItem, Breadcrumbs, CustomMenu } from "ui";
+import { BreadcrumbItem, Breadcrumbs, CustomMenu, EmptySpace, EmptySpaceItem, Spinner } from "ui";
 // icons
 import {
   ArrowLeftIcon,
-  ArrowPathIcon,
   ChevronDownIcon,
   ListBulletIcon,
+  PlusIcon,
+  RectangleGroupIcon,
+  RectangleStackIcon,
 } from "@heroicons/react/24/outline";
 import { Squares2X2Icon } from "@heroicons/react/20/solid";
 // types
@@ -55,7 +57,7 @@ const SingleModule = () => {
   const [selectedIssues, setSelectedIssues] = useState<SelectIssue>();
   const [moduleIssuesListModal, setModuleIssuesListModal] = useState(false);
   const [deleteIssue, setDeleteIssue] = useState<string | undefined>(undefined);
-  const [moduleSidebar, setModuleSidebar] = useState(false);
+  const [moduleSidebar, setModuleSidebar] = useState(true);
 
   const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
   const [selectedModuleForDelete, setSelectedModuleForDelete] = useState<SelectModuleType>();
@@ -102,8 +104,6 @@ const SingleModule = () => {
       : null
   );
 
-  console.log(moduleDetail);
-
   const {
     issueView,
     groupByProperty,
@@ -129,6 +129,8 @@ const SingleModule = () => {
       },
     }
   );
+
+  console.log(moduleDetail);
 
   const handleAddIssuesToModule = (data: { issues: string[] }) => {
     if (activeWorkspace && activeProject) {
@@ -235,7 +237,7 @@ const SingleModule = () => {
           <CustomMenu
             label={
               <>
-                <ArrowPathIcon className="h-3 w-3" />
+                <RectangleGroupIcon className="h-3 w-3" />
                 {modules?.find((c) => c.id === moduleId)?.name}
               </>
             }
@@ -398,36 +400,82 @@ const SingleModule = () => {
           </div>
         }
       >
-        <div className={`h-full ${moduleSidebar ? "mr-[24rem]" : ""} duration-300`}>
-          {issueView === "list" ? (
-            <ModulesListView
-              groupedByIssues={groupedByIssues}
-              selectedGroup={groupByProperty}
-              properties={properties}
-              openCreateIssueModal={openCreateIssueModal}
-              openIssuesListModal={openIssuesListModal}
-              removeIssueFromModule={removeIssueFromModule}
-              handleDeleteIssue={setDeleteIssue}
-              setPreloadedData={setPreloadedData}
-            />
+        {Object.keys(groupedByIssues) ? (
+          Object.keys(groupedByIssues).length > 0 ? (
+            <div className={`h-full ${moduleSidebar ? "mr-[24rem]" : ""} duration-300`}>
+              {issueView === "list" ? (
+                <ModulesListView
+                  groupedByIssues={groupedByIssues}
+                  selectedGroup={groupByProperty}
+                  properties={properties}
+                  openCreateIssueModal={openCreateIssueModal}
+                  openIssuesListModal={openIssuesListModal}
+                  removeIssueFromModule={removeIssueFromModule}
+                  handleDeleteIssue={setDeleteIssue}
+                  setPreloadedData={setPreloadedData}
+                />
+              ) : (
+                <ModulesBoardView
+                  groupedByIssues={groupedByIssues}
+                  properties={properties}
+                  removeIssueFromModule={removeIssueFromModule}
+                  selectedGroup={groupByProperty}
+                  members={members}
+                  openCreateIssueModal={openCreateIssueModal}
+                  openIssuesListModal={openIssuesListModal}
+                  handleDeleteIssue={setDeleteIssue}
+                  partialUpdateIssue={partialUpdateIssue}
+                  setPreloadedData={setPreloadedData}
+                />
+              )}
+            </div>
           ) : (
-            <ModulesBoardView
-              groupedByIssues={groupedByIssues}
-              properties={properties}
-              removeIssueFromModule={removeIssueFromModule}
-              selectedGroup={groupByProperty}
-              members={members}
-              openCreateIssueModal={openCreateIssueModal}
-              openIssuesListModal={openIssuesListModal}
-              handleDeleteIssue={setDeleteIssue}
-              partialUpdateIssue={partialUpdateIssue}
-              setPreloadedData={setPreloadedData}
-            />
-          )}
-        </div>
+            <div
+              className={`h-full flex flex-col justify-center items-center px-4 ${
+                moduleSidebar ? "mr-[24rem]" : ""
+              } duration-300`}
+            >
+              <EmptySpace
+                title="You don't have any issue yet."
+                description="A cycle is a fixed time period where a team commits to a set number of issues from their backlog. Cycles are usually one, two, or four weeks long."
+                Icon={RectangleStackIcon}
+              >
+                <EmptySpaceItem
+                  title="Create a new issue"
+                  description={
+                    <span>
+                      Use{" "}
+                      <pre className="inline bg-gray-100 px-2 py-1 rounded">Ctrl/Command + I</pre>{" "}
+                      shortcut to create a new cycle
+                    </span>
+                  }
+                  Icon={PlusIcon}
+                  action={() => {
+                    const e = new KeyboardEvent("keydown", {
+                      ctrlKey: true,
+                      key: "i",
+                    });
+                    document.dispatchEvent(e);
+                  }}
+                />
+                <EmptySpaceItem
+                  title="Add an existing issue"
+                  description={<span>Open list</span>}
+                  Icon={ListBulletIcon}
+                  action={() => openIssuesListModal()}
+                />
+              </EmptySpace>
+            </div>
+          )
+        ) : (
+          <div className="w-full h-full flex justify-center items-center">
+            <Spinner />
+          </div>
+        )}
         <ModuleDetailSidebar
           module={moduleDetail}
           isOpen={moduleSidebar}
+          moduleIssues={moduleIssues}
           handleDeleteModule={handleDeleteModule}
         />
       </AppLayout>

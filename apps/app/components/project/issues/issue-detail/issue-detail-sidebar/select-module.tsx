@@ -40,9 +40,7 @@ const SelectModule: React.FC<Props> = ({ control, handleModuleChange }) => {
                     "hidden truncate sm:block text-left"
                   )}
                 >
-                  {value && value.length > 0
-                    ? modules?.find((m) => m.id === value[0]?.module_detail.id)?.name
-                    : "None"}
+                  {value ? modules?.find((m) => m.id === value?.module_detail.id)?.name : "None"}
                 </span>
               }
               value={value}

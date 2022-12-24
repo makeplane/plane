@@ -1,7 +1,9 @@
 // react
 import { useEffect, useState } from "react";
+// next
+import Link from "next/link";
 // swr
-import useSWR, { mutate } from "swr";
+import { mutate } from "swr";
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // services
@@ -12,11 +14,13 @@ import useToast from "lib/hooks/useToast";
 // components
 import SelectMembers from "components/project/modules/module-detail-sidebar/select-members";
 import SelectStatus from "components/project/modules/module-detail-sidebar/select-status";
+import ModuleLinkModal from "components/project/modules/module-link-modal";
 // ui
-import { Spinner } from "ui";
+import { Loader } from "ui";
 // icons
 import {
   CalendarDaysIcon,
+  ChartPieIcon,
   ClipboardDocumentIcon,
   LinkIcon,
   PlusIcon,
@@ -24,13 +28,11 @@ import {
   UserIcon,
 } from "@heroicons/react/24/outline";
 // types
-import { IModule } from "types";
+import { IModule, ModuleIssueResponse } from "types";
 // fetch-keys
 import { MODULE_DETAIL } from "constants/fetch-keys";
 // common
-import { copyTextToClipboard } from "constants/common";
-import ModuleLinkModal from "../module-link-modal";
-import Link from "next/link";
+import { copyTextToClipboard, groupBy } from "constants/common";
 
 const defaultValues: Partial<IModule> = {
   members_list: [],
@@ -42,10 +44,16 @@ const defaultValues: Partial<IModule> = {
 type Props = {
   module?: IModule;
   isOpen: boolean;
+  moduleIssues: ModuleIssueResponse[] | undefined;
   handleDeleteModule: () => void;
 };
 
-const ModuleDetailSidebar: React.FC<Props> = ({ module, isOpen, handleDeleteModule }) => {
+const ModuleDetailSidebar: React.FC<Props> = ({
+  module,
+  isOpen,
+  moduleIssues,
+  handleDeleteModule,
+}) => {
   const [moduleLinkModal, setModuleLinkModal] = useState(false);
 
   const { activeWorkspace, activeProject } = useUser();
@@ -55,6 +63,15 @@ const ModuleDetailSidebar: React.FC<Props> = ({ module, isOpen, handleDeleteModu
   const { reset, watch, control } = useForm({
     defaultValues,
   });
+
+  const groupedIssues = {
+    backlog: [],
+    unstarted: [],
+    started: [],
+    cancelled: [],
+    completed: [],
+    ...groupBy(moduleIssues ?? [], "issue_detail.state_detail.group"),
+  };
 
   const submitChanges = (data: Partial<IModule>) => {
     if (!activeWorkspace || !activeProject || !module) return;
@@ -166,6 +183,18 @@ const ModuleDetailSidebar: React.FC<Props> = ({ module, isOpen, handleDeleteModu
                   </div>
                 </div>
                 <SelectMembers control={control} submitChanges={submitChanges} />
+                <div className="flex items-center py-2 flex-wrap">
+                  <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
+                    <ChartPieIcon className="flex-shrink-0 h-4 w-4" />
+                    <p>Progress</p>
+                  </div>
+                  <div className="sm:basis-1/2 flex items-center gap-2">
+                    <div className="flex-shrink-0 grid place-items-center">
+                      <span className="h-4 w-4 rounded-full border-2 border-gray-300 border-r-blue-500"></span>
+                    </div>
+                    {groupedIssues.completed.length}/{moduleIssues?.length}
+                  </div>
+                </div>
               </div>
               <div className="py-1">
                 <div className="flex items-center py-2 flex-wrap">
@@ -266,9 +295,17 @@ const ModuleDetailSidebar: React.FC<Props> = ({ module, isOpen, handleDeleteModu
             </div>
           </>
         ) : (
-          <div className="h-full w-full flex justify-center items-center">
-            <Spinner />
-          </div>
+          <Loader>
+            <div className="space-y-2">
+              <Loader.Item height="15px" width="50%"></Loader.Item>
+              <Loader.Item height="15px" width="30%"></Loader.Item>
+            </div>
+            <div className="mt-8 space-y-3">
+              <Loader.Item height="30px"></Loader.Item>
+              <Loader.Item height="30px"></Loader.Item>
+              <Loader.Item height="30px"></Loader.Item>
+            </div>
+          </Loader>
         )}
       </div>
     </>

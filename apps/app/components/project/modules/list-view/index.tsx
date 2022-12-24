@@ -11,10 +11,9 @@ import SingleListIssue from "components/common/list-view/single-issue";
 // headless ui
 import { Disclosure, Transition } from "@headlessui/react";
 // ui
-import { CustomMenu, EmptySpace, EmptySpaceItem, Spinner } from "ui";
+import { CustomMenu, Spinner } from "ui";
 // icons
 import { PlusIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
-import { RectangleStackIcon } from "@heroicons/react/24/outline";
 // types
 import { IIssue, IWorkspaceMember, NestedKeyOf, Properties } from "types";
 // fetch-keys
@@ -61,165 +60,126 @@ const ModulesListView: React.FC<Props> = ({
 
   return (
     <div className="h-full flex flex-col space-y-5">
-      {Object.keys(groupedByIssues) ? (
-        <>
-          {Object.keys(groupedByIssues).length > 0 ? (
-            Object.keys(groupedByIssues).map((singleGroup) => {
-              const stateId =
-                selectedGroup === "state_detail.name"
-                  ? states?.find((s) => s.name === singleGroup)?.id ?? null
-                  : null;
+      {Object.keys(groupedByIssues).map((singleGroup) => {
+        const stateId =
+          selectedGroup === "state_detail.name"
+            ? states?.find((s) => s.name === singleGroup)?.id ?? null
+            : null;
 
-              return (
-                <Disclosure key={singleGroup} as="div" defaultOpen>
-                  {({ open }) => (
-                    <div className="bg-white rounded-lg">
-                      <div className="bg-gray-100 px-4 py-3 rounded-t-lg">
-                        <Disclosure.Button>
-                          <div className="flex items-center gap-x-2">
-                            <span>
-                              <ChevronDownIcon
-                                className={`h-4 w-4 text-gray-500 ${
-                                  !open ? "transform -rotate-90" : ""
-                                }`}
-                              />
-                            </span>
-                            {selectedGroup !== null ? (
-                              <h2 className="font-medium leading-5 capitalize">
-                                {singleGroup === null || singleGroup === "null"
-                                  ? selectedGroup === "priority" && "No priority"
-                                  : addSpaceIfCamelCase(singleGroup)}
-                              </h2>
-                            ) : (
-                              <h2 className="font-medium leading-5">All Issues</h2>
-                            )}
-                            <p className="text-gray-500 text-sm">
-                              {groupedByIssues[singleGroup as keyof IIssue].length}
-                            </p>
-                          </div>
-                        </Disclosure.Button>
-                      </div>
-                      <Transition
-                        show={open}
-                        enter="transition duration-100 ease-out"
-                        enterFrom="transform opacity-0"
-                        enterTo="transform opacity-100"
-                        leave="transition duration-75 ease-out"
-                        leaveFrom="transform opacity-100"
-                        leaveTo="transform opacity-0"
-                      >
-                        <Disclosure.Panel>
-                          <div className="divide-y-2">
-                            {groupedByIssues[singleGroup] ? (
-                              groupedByIssues[singleGroup].length > 0 ? (
-                                groupedByIssues[singleGroup].map((issue) => {
-                                  const assignees = [
-                                    ...(issue?.assignees_list ?? []),
-                                    ...(issue?.assignees ?? []),
-                                  ]?.map((assignee) => {
-                                    const tempPerson = people?.find(
-                                      (p) => p.member.id === assignee
-                                    )?.member;
-
-                                    return {
-                                      avatar: tempPerson?.avatar,
-                                      first_name: tempPerson?.first_name,
-                                      email: tempPerson?.email,
-                                    };
-                                  });
-
-                                  return (
-                                    <SingleListIssue
-                                      key={issue.id}
-                                      type="module"
-                                      issue={issue}
-                                      properties={properties}
-                                      editIssue={() => openCreateIssueModal(issue, "edit")}
-                                      handleDeleteIssue={() => handleDeleteIssue(issue.id)}
-                                      removeIssue={() => removeIssueFromModule(issue.bridge ?? "")}
-                                    />
-                                  );
-                                })
-                              ) : (
-                                <p className="text-sm px-4 py-3 text-gray-500">No issues.</p>
-                              )
-                            ) : (
-                              <div className="h-full w-full flex items-center justify-center">
-                                <Spinner />
-                              </div>
-                            )}
-                          </div>
-                        </Disclosure.Panel>
-                      </Transition>
-                      <div className="p-3">
-                        <CustomMenu
-                          label={
-                            <span className="flex items-center gap-1">
-                              <PlusIcon className="h-3 w-3" />
-                              Add issue
-                            </span>
-                          }
-                          optionsPosition="left"
-                          withoutBorder
-                        >
-                          <CustomMenu.MenuItem
-                            onClick={() => {
-                              openCreateIssueModal();
-                              if (selectedGroup !== null) {
-                                setPreloadedData({
-                                  state: stateId !== null ? stateId : undefined,
-                                  [selectedGroup]: singleGroup,
-                                  actionType: "createIssue",
-                                });
-                              }
-                            }}
-                          >
-                            Create new
-                          </CustomMenu.MenuItem>
-                          <CustomMenu.MenuItem onClick={() => openIssuesListModal()}>
-                            Add an existing issue
-                          </CustomMenu.MenuItem>
-                        </CustomMenu>
-                      </div>
+        return (
+          <Disclosure key={singleGroup} as="div" defaultOpen>
+            {({ open }) => (
+              <div className="bg-white rounded-lg">
+                <div className="bg-gray-100 px-4 py-3 rounded-t-lg">
+                  <Disclosure.Button>
+                    <div className="flex items-center gap-x-2">
+                      <span>
+                        <ChevronDownIcon
+                          className={`h-4 w-4 text-gray-500 ${!open ? "transform -rotate-90" : ""}`}
+                        />
+                      </span>
+                      {selectedGroup !== null ? (
+                        <h2 className="font-medium leading-5 capitalize">
+                          {singleGroup === null || singleGroup === "null"
+                            ? selectedGroup === "priority" && "No priority"
+                            : addSpaceIfCamelCase(singleGroup)}
+                        </h2>
+                      ) : (
+                        <h2 className="font-medium leading-5">All Issues</h2>
+                      )}
+                      <p className="text-gray-500 text-sm">
+                        {groupedByIssues[singleGroup as keyof IIssue].length}
+                      </p>
                     </div>
-                  )}
-                </Disclosure>
-              );
-            })
-          ) : (
-            <div className="h-full flex flex-col justify-center items-center px-4">
-              <EmptySpace
-                title="You don't have any issue yet."
-                description="A cycle is a fixed time period where a team commits to a set number of issues from their backlog. Cycles are usually one, two, or four weeks long."
-                Icon={RectangleStackIcon}
-              >
-                <EmptySpaceItem
-                  title="Create a new issue"
-                  description={
-                    <span>
-                      Use{" "}
-                      <pre className="inline bg-gray-100 px-2 py-1 rounded">Ctrl/Command + I</pre>{" "}
-                      shortcut to create a new cycle
-                    </span>
-                  }
-                  Icon={PlusIcon}
-                  action={() => {
-                    const e = new KeyboardEvent("keydown", {
-                      ctrlKey: true,
-                      key: "i",
-                    });
-                    document.dispatchEvent(e);
-                  }}
-                />
-              </EmptySpace>
-            </div>
-          )}
-        </>
-      ) : (
-        <div className="w-full h-full flex justify-center items-center">
-          <Spinner />
-        </div>
-      )}
+                  </Disclosure.Button>
+                </div>
+                <Transition
+                  show={open}
+                  enter="transition duration-100 ease-out"
+                  enterFrom="transform opacity-0"
+                  enterTo="transform opacity-100"
+                  leave="transition duration-75 ease-out"
+                  leaveFrom="transform opacity-100"
+                  leaveTo="transform opacity-0"
+                >
+                  <Disclosure.Panel>
+                    <div className="divide-y-2">
+                      {groupedByIssues[singleGroup] ? (
+                        groupedByIssues[singleGroup].length > 0 ? (
+                          groupedByIssues[singleGroup].map((issue) => {
+                            const assignees = [
+                              ...(issue?.assignees_list ?? []),
+                              ...(issue?.assignees ?? []),
+                            ]?.map((assignee) => {
+                              const tempPerson = people?.find(
+                                (p) => p.member.id === assignee
+                              )?.member;
+
+                              return {
+                                avatar: tempPerson?.avatar,
+                                first_name: tempPerson?.first_name,
+                                email: tempPerson?.email,
+                              };
+                            });
+
+                            return (
+                              <SingleListIssue
+                                key={issue.id}
+                                type="module"
+                                issue={issue}
+                                properties={properties}
+                                editIssue={() => openCreateIssueModal(issue, "edit")}
+                                handleDeleteIssue={() => handleDeleteIssue(issue.id)}
+                                removeIssue={() => removeIssueFromModule(issue.bridge ?? "")}
+                              />
+                            );
+                          })
+                        ) : (
+                          <p className="text-sm px-4 py-3 text-gray-500">No issues.</p>
+                        )
+                      ) : (
+                        <div className="h-full w-full flex items-center justify-center">
+                          <Spinner />
+                        </div>
+                      )}
+                    </div>
+                  </Disclosure.Panel>
+                </Transition>
+                <div className="p-3">
+                  <CustomMenu
+                    label={
+                      <span className="flex items-center gap-1">
+                        <PlusIcon className="h-3 w-3" />
+                        Add issue
+                      </span>
+                    }
+                    optionsPosition="left"
+                    withoutBorder
+                  >
+                    <CustomMenu.MenuItem
+                      onClick={() => {
+                        openCreateIssueModal();
+                        if (selectedGroup !== null) {
+                          setPreloadedData({
+                            state: stateId !== null ? stateId : undefined,
+                            [selectedGroup]: singleGroup,
+                            actionType: "createIssue",
+                          });
+                        }
+                      }}
+                    >
+                      Create new
+                    </CustomMenu.MenuItem>
+                    <CustomMenu.MenuItem onClick={() => openIssuesListModal()}>
+                      Add an existing issue
+                    </CustomMenu.MenuItem>
+                  </CustomMenu>
+                </div>
+              </div>
+            )}
+          </Disclosure>
+        );
+      })}
     </div>
   );
 };

@@ -50,22 +50,18 @@ export interface IIssue {
     updated_by: string;
     workspace: string;
   } | null;
-  issue_module:
-    | [
-        {
-          created_at: Date;
-          created_by: string;
-          id: string;
-          issue: string;
-          module: string;
-          module_detail: IModule;
-          project: string;
-          updated_at: Date;
-          updated_by: string;
-          workspace: string;
-        }
-      ]
-    | [];
+  issue_module: {
+    created_at: Date;
+    created_by: string;
+    id: string;
+    issue: string;
+    module: string;
+    module_detail: IModule;
+    project: string;
+    updated_at: Date;
+    updated_by: string;
+    workspace: string;
+  } | null;
   description: any;
   priority: string | null;
   start_date: string | null;
