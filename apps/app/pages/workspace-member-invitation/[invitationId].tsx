@@ -47,7 +47,11 @@ const WorkspaceInvitation: NextPage = () => {
         email: invitationDetail.email,
       })
       .then((res) => {
-        router.push("/signin");
+        if (email === user?.email) {
+          router.push("/invitations");
+        } else {
+          router.push("/signin");
+        }
       })
       .catch((err) => console.error(err));
   };

@@ -8,6 +8,7 @@ import Image from "next/image";
 import useUser from "lib/hooks/useUser";
 // services
 import authenticationService from "lib/services/authentication.service";
+import workspaceService from "lib/services/workspace.service";
 // layouts
 import DefaultLayout from "layouts/DefaultLayout";
 // social button
@@ -48,8 +49,10 @@ const SignIn: NextPage = () => {
       if (nextLocation) {
         router.push(nextLocation as string);
       } else {
-        if (res.user.is_onboarded) router.push("/");
-        else router.push("/invitations");
+        const invitations = await workspaceService.userWorkspaceInvitations();
+
+        if (invitations.length > 0) router.push("/invitations");
+        else router.push("/workspace");
       }
     },
     [mutateUser, mutateWorkspaces, router]
