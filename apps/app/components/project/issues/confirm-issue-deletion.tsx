@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 // swr
 import { mutate } from "swr";
 // headless ui
@@ -68,6 +68,10 @@ const ConfirmIssueDeletion: React.FC<Props> = ({ isOpen, handleClose, data }) =>
         setIsDeleteLoading(false);
       });
   };
+
+  useEffect(() => {
+    setIsDeleteLoading(false);
+  }, [isOpen]);
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
