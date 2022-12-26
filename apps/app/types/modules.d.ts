@@ -9,6 +9,14 @@ export interface IModule {
   id: string;
   lead: string | null;
   lead_detail: IUserLite;
+  link_module: {
+    created_by: string;
+    created_by_detail: IUserLite;
+    id: string;
+    title: string;
+    url: string;
+  }[];
+  links_list: ModuleLink[];
   members: string[];
   members_list: string[];
   members_detail: IUserLite[];
@@ -36,6 +44,11 @@ export interface ModuleIssueResponse {
   updated_by: string;
   workspace: string;
 }
+
+export type ModuleLink = {
+  title: string;
+  url: string;
+};
 
 export type SelectModuleType =
   | (IModule & { actionType: "edit" | "delete" | "create-issue" })

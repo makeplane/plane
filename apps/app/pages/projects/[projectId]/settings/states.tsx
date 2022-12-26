@@ -11,7 +11,7 @@ import {
   StateGroup,
 } from "components/project/issues/BoardView/state/create-update-state-inline";
 // ui
-import { BreadcrumbItem, Breadcrumbs, Spinner } from "ui";
+import { BreadcrumbItem, Breadcrumbs, Loader } from "ui";
 // icons
 import { PencilSquareIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 // types
@@ -127,9 +127,12 @@ const StatesSettings = () => {
                 </div>
               ))
             ) : (
-              <div className="h-full w-full grid place-items-center px-4 sm:px-0">
-                <Spinner />
-              </div>
+              <Loader className="md:w-2/3 space-y-5">
+                <Loader.Item height="40px"></Loader.Item>
+                <Loader.Item height="40px"></Loader.Item>
+                <Loader.Item height="40px"></Loader.Item>
+                <Loader.Item height="40px"></Loader.Item>
+              </Loader>
             )}
           </div>
         </div>

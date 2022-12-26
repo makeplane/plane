@@ -1,18 +1,16 @@
+// react
 import React from "react";
 // next
 import { useRouter } from "next/router";
 import Image from "next/image";
 // swr
 import useSWR from "swr";
-// constants
-import { PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
-import { addSpaceIfCamelCase, timeAgo } from "constants/common";
 // services
 import issuesServices from "lib/services/issues.service";
 // hooks
 import useUser from "lib/hooks/useUser";
 // ui
-import { Spinner } from "ui";
+import { Loader } from "ui";
 // icons
 import {
   CalendarDaysIcon,
@@ -21,8 +19,10 @@ import {
   Squares2X2Icon,
   UserIcon,
 } from "@heroicons/react/24/outline";
-// types
-import { IssueResponse, IState } from "types";
+// fetch-keys
+import { PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
+// common
+import { addSpaceIfCamelCase, timeAgo } from "constants/common";
 
 const activityIcons: {
   [key: string]: JSX.Element;
@@ -149,9 +149,20 @@ const IssueActivitySection: React.FC = () => {
           })}
         </div>
       ) : (
-        <div className="w-full h-full flex justify-center items-center">
-          <Spinner />
-        </div>
+        <Loader className="space-y-4">
+          <div className="space-y-2">
+            <Loader.Item height="30px" width="40%"></Loader.Item>
+            <Loader.Item height="15px" width="60%"></Loader.Item>
+          </div>
+          <div className="space-y-2">
+            <Loader.Item height="30px" width="40%"></Loader.Item>
+            <Loader.Item height="15px" width="60%"></Loader.Item>
+          </div>
+          <div className="space-y-2">
+            <Loader.Item height="30px" width="40%"></Loader.Item>
+            <Loader.Item height="15px" width="60%"></Loader.Item>
+          </div>
+        </Loader>
       )}
     </>
   );

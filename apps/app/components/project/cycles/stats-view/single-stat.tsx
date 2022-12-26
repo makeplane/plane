@@ -1,8 +1,9 @@
 // react
-import React, { useState } from "react";
+import React from "react";
 // next
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/router";
 // swr
 import useSWR from "swr";
 // services
@@ -11,14 +12,15 @@ import cyclesService from "lib/services/cycles.service";
 import useUser from "lib/hooks/useUser";
 // ui
 import { Button, CustomMenu } from "ui";
+// icons
+import { CalendarDaysIcon } from "@heroicons/react/20/solid";
+import { ArrowPathIcon, CheckIcon, UserIcon } from "@heroicons/react/24/outline";
 // types
 import { CycleIssueResponse, ICycle } from "types";
 // fetch-keys
 import { CYCLE_ISSUES } from "constants/fetch-keys";
+// common
 import { groupBy, renderShortNumericDateFormat } from "constants/common";
-import { ArrowPathIcon, CheckIcon, UserIcon } from "@heroicons/react/24/outline";
-import { CalendarDaysIcon } from "@heroicons/react/20/solid";
-import { useRouter } from "next/router";
 
 type Props = {
   cycle: ICycle;
@@ -54,8 +56,10 @@ const SingleStat: React.FC<Props> = ({ cycle, handleEditCycle, handleDeleteCycle
     started: [],
     cancelled: [],
     completed: [],
-    ...groupBy(cycleIssues ?? [], "issue_details.state_detail.group"),
+    ...groupBy(cycleIssues ?? [], "issue_detail.state_detail.group"),
   };
+
+  console.log(cycleIssues);
 
   const startDate = new Date(cycle.start_date ?? "");
   const endDate = new Date(cycle.end_date ?? "");

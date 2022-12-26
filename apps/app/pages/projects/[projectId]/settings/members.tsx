@@ -15,7 +15,7 @@ import SettingsLayout from "layouts/settings-layout";
 import ConfirmProjectMemberRemove from "components/project/confirm-project-member-remove";
 import SendProjectInvitationModal from "components/project/send-project-invitation-modal";
 // ui
-import { BreadcrumbItem, Breadcrumbs, Button, CustomListbox, CustomMenu, Spinner } from "ui";
+import { BreadcrumbItem, Breadcrumbs, Button, CustomListbox, CustomMenu, Loader } from "ui";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 // fetch-keys
@@ -146,9 +146,12 @@ const MembersSettings = () => {
             <p className="mt-4 text-sm text-gray-500">Manage all the members of the project.</p>
           </div>
           {!projectMembers || !projectInvitations ? (
-            <div className="h-full w-full grid place-items-center px-4 sm:px-0">
-              <Spinner />
-            </div>
+            <Loader className="md:w-2/3 space-y-5">
+              <Loader.Item height="40px"></Loader.Item>
+              <Loader.Item height="40px"></Loader.Item>
+              <Loader.Item height="40px"></Loader.Item>
+              <Loader.Item height="40px"></Loader.Item>
+            </Loader>
           ) : (
             <div className="md:w-2/3">
               <div className="flex justify-between items-center gap-2">

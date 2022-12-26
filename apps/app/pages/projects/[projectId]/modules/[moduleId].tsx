@@ -21,20 +21,30 @@ import ModulesListView from "components/project/modules/list-view";
 import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
 import ModuleDetailSidebar from "components/project/modules/module-detail-sidebar";
 import ConfirmModuleDeletion from "components/project/modules/confirm-module-deleteion";
+import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
 // ui
-import { BreadcrumbItem, Breadcrumbs, CustomMenu } from "ui";
+import { BreadcrumbItem, Breadcrumbs, CustomMenu, EmptySpace, EmptySpaceItem, Spinner } from "ui";
 // icons
 import {
   ArrowLeftIcon,
-  ArrowPathIcon,
   ChevronDownIcon,
   ListBulletIcon,
+  PlusIcon,
+  RectangleGroupIcon,
+  RectangleStackIcon,
 } from "@heroicons/react/24/outline";
 import { Squares2X2Icon } from "@heroicons/react/20/solid";
 // types
-import { IIssue, IModule, ModuleIssueResponse, Properties, SelectModuleType } from "types";
+import {
+  IIssue,
+  IModule,
+  ModuleIssueResponse,
+  Properties,
+  SelectIssue,
+  SelectModuleType,
+} from "types";
 // fetch-keys
 import { MODULE_DETAIL, MODULE_ISSUES, PROJECT_MEMBERS } from "constants/fetch-keys";
 // common
@@ -43,9 +53,11 @@ import { classNames, replaceUnderscoreIfSnakeCase } from "constants/common";
 import { filterIssueOptions, groupByOptions, orderByOptions } from "constants/";
 
 const SingleModule = () => {
+  const [createUpdateIssueModal, setCreateUpdateIssueModal] = useState(false);
+  const [selectedIssues, setSelectedIssues] = useState<SelectIssue>();
   const [moduleIssuesListModal, setModuleIssuesListModal] = useState(false);
   const [deleteIssue, setDeleteIssue] = useState<string | undefined>(undefined);
-  const [moduleSidebar, setModuleSidebar] = useState(false);
+  const [moduleSidebar, setModuleSidebar] = useState(true);
 
   const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
   const [selectedModuleForDelete, setSelectedModuleForDelete] = useState<SelectModuleType>();
@@ -82,7 +94,7 @@ const SingleModule = () => {
 
   const { data: moduleDetail } = useSWR<IModule>(
     MODULE_DETAIL,
-    activeWorkspace && activeProject && moduleId
+    activeWorkspace && activeProject
       ? () =>
           modulesService.getModuleDetails(
             activeWorkspace?.slug,
@@ -118,12 +130,15 @@ const SingleModule = () => {
     }
   );
 
+  console.log(moduleDetail);
+
   const handleAddIssuesToModule = (data: { issues: string[] }) => {
     if (activeWorkspace && activeProject) {
       modulesService
         .addIssuesToModule(activeWorkspace.slug, activeProject.id, moduleId as string, data)
         .then((res) => {
           console.log(res);
+          mutate(MODULE_ISSUES(moduleId as string));
         })
         .catch((e) => console.log(e));
     }
@@ -141,7 +156,13 @@ const SingleModule = () => {
       });
   };
 
-  const openCreateIssueModal = () => {};
+  const openCreateIssueModal = (
+    issue?: IIssue,
+    actionType: "create" | "edit" | "delete" = "create"
+  ) => {
+    if (issue) setSelectedIssues({ ...issue, actionType });
+    setCreateUpdateIssueModal(true);
+  };
 
   const openIssuesListModal = () => {
     setModuleIssuesListModal(true);
@@ -150,11 +171,16 @@ const SingleModule = () => {
   const removeIssueFromModule = (issueId: string) => {
     if (!activeWorkspace || !activeProject) return;
 
+    mutate<ModuleIssueResponse[]>(
+      MODULE_ISSUES(moduleId as string),
+      (prevData) => prevData?.filter((p) => p.id !== issueId),
+      false
+    );
+
     modulesService
       .removeIssueFromModule(activeWorkspace.slug, activeProject.id, moduleId as string, issueId)
       .then((res) => {
         console.log(res);
-        mutate(MODULE_ISSUES(moduleId as string));
       })
       .catch((e) => {
         console.log(e);
@@ -170,6 +196,13 @@ const SingleModule = () => {
 
   return (
     <>
+      <CreateUpdateIssuesModal
+        isOpen={createUpdateIssueModal && selectedIssues?.actionType !== "delete"}
+        data={selectedIssues}
+        prePopulateData={{ sprints: moduleId as string, ...preloadedData }}
+        setIsOpen={setCreateUpdateIssueModal}
+        projectId={activeProject?.id}
+      />
       <ExistingIssuesListModal
         isOpen={moduleIssuesListModal}
         handleClose={() => setModuleIssuesListModal(false)}
@@ -204,7 +237,7 @@ const SingleModule = () => {
           <CustomMenu
             label={
               <>
-                <ArrowPathIcon className="h-3 w-3" />
+                <RectangleGroupIcon className="h-3 w-3" />
                 {modules?.find((c) => c.id === moduleId)?.name}
               </>
             }
@@ -367,36 +400,82 @@ const SingleModule = () => {
           </div>
         }
       >
-        <div className={`h-full ${moduleSidebar ? "mr-[28rem]" : ""} duration-300`}>
-          {issueView === "list" ? (
-            <ModulesListView
-              groupedByIssues={groupedByIssues}
-              selectedGroup={groupByProperty}
-              properties={properties}
-              openCreateIssueModal={openCreateIssueModal}
-              openIssuesListModal={openIssuesListModal}
-              removeIssueFromModule={removeIssueFromModule}
-              handleDeleteIssue={setDeleteIssue}
-              setPreloadedData={setPreloadedData}
-            />
+        {Object.keys(groupedByIssues) ? (
+          Object.keys(groupedByIssues).length > 0 ? (
+            <div className={`h-full ${moduleSidebar ? "mr-[24rem]" : ""} duration-300`}>
+              {issueView === "list" ? (
+                <ModulesListView
+                  groupedByIssues={groupedByIssues}
+                  selectedGroup={groupByProperty}
+                  properties={properties}
+                  openCreateIssueModal={openCreateIssueModal}
+                  openIssuesListModal={openIssuesListModal}
+                  removeIssueFromModule={removeIssueFromModule}
+                  handleDeleteIssue={setDeleteIssue}
+                  setPreloadedData={setPreloadedData}
+                />
+              ) : (
+                <ModulesBoardView
+                  groupedByIssues={groupedByIssues}
+                  properties={properties}
+                  removeIssueFromModule={removeIssueFromModule}
+                  selectedGroup={groupByProperty}
+                  members={members}
+                  openCreateIssueModal={openCreateIssueModal}
+                  openIssuesListModal={openIssuesListModal}
+                  handleDeleteIssue={setDeleteIssue}
+                  partialUpdateIssue={partialUpdateIssue}
+                  setPreloadedData={setPreloadedData}
+                />
+              )}
+            </div>
           ) : (
-            <ModulesBoardView
-              groupedByIssues={groupedByIssues}
-              properties={properties}
-              removeIssueFromModule={removeIssueFromModule}
-              selectedGroup={groupByProperty}
-              members={members}
-              openCreateIssueModal={openCreateIssueModal}
-              openIssuesListModal={openIssuesListModal}
-              handleDeleteIssue={setDeleteIssue}
-              partialUpdateIssue={partialUpdateIssue}
-              setPreloadedData={setPreloadedData}
-            />
-          )}
-        </div>
+            <div
+              className={`h-full flex flex-col justify-center items-center px-4 ${
+                moduleSidebar ? "mr-[24rem]" : ""
+              } duration-300`}
+            >
+              <EmptySpace
+                title="You don't have any issue yet."
+                description="A cycle is a fixed time period where a team commits to a set number of issues from their backlog. Cycles are usually one, two, or four weeks long."
+                Icon={RectangleStackIcon}
+              >
+                <EmptySpaceItem
+                  title="Create a new issue"
+                  description={
+                    <span>
+                      Use{" "}
+                      <pre className="inline bg-gray-100 px-2 py-1 rounded">Ctrl/Command + I</pre>{" "}
+                      shortcut to create a new cycle
+                    </span>
+                  }
+                  Icon={PlusIcon}
+                  action={() => {
+                    const e = new KeyboardEvent("keydown", {
+                      ctrlKey: true,
+                      key: "i",
+                    });
+                    document.dispatchEvent(e);
+                  }}
+                />
+                <EmptySpaceItem
+                  title="Add an existing issue"
+                  description={<span>Open list</span>}
+                  Icon={ListBulletIcon}
+                  action={() => openIssuesListModal()}
+                />
+              </EmptySpace>
+            </div>
+          )
+        ) : (
+          <div className="w-full h-full flex justify-center items-center">
+            <Spinner />
+          </div>
+        )}
         <ModuleDetailSidebar
           module={moduleDetail}
           isOpen={moduleSidebar}
+          moduleIssues={moduleIssues}
           handleDeleteModule={handleDeleteModule}
         />
       </AppLayout>

@@ -9,16 +9,11 @@ import useUser from "lib/hooks/useUser";
 // components
 import CreateProjectModal from "components/project/create-project-modal";
 // headless ui
-import { Disclosure, Menu, Transition } from "@headlessui/react";
+import { Disclosure, Transition } from "@headlessui/react";
 // ui
-import { Spinner } from "ui";
+import { CustomMenu, Loader, Spinner } from "ui";
 // icons
-import {
-  ChevronDownIcon,
-  ClipboardDocumentIcon,
-  EllipsisHorizontalIcon,
-  PlusIcon,
-} from "@heroicons/react/24/outline";
+import { ChevronDownIcon, PlusIcon } from "@heroicons/react/24/outline";
 // constants
 import { classNames, copyTextToClipboard } from "constants/common";
 
@@ -84,47 +79,23 @@ const ProjectsList: React.FC<Props> = ({ navigation, sidebarCollapse }) => {
                           )}
                         </Disclosure.Button>
                         {!sidebarCollapse && (
-                          <Menu as="div" className="relative inline-block">
-                            <Menu.Button className="grid relative place-items-center focus:outline-none">
-                              <EllipsisHorizontalIcon className="h-4 w-4" />
-                            </Menu.Button>
-
-                            <Transition
-                              as={React.Fragment}
-                              enter="transition ease-out duration-100"
-                              enterFrom="transform opacity-0 scale-95"
-                              enterTo="transform opacity-100 scale-100"
-                              leave="transition ease-in duration-75"
-                              leaveFrom="transform opacity-100 scale-100"
-                              leaveTo="transform opacity-0 scale-95"
+                          <CustomMenu ellipsis>
+                            <CustomMenu.MenuItem
+                              onClick={() =>
+                                copyTextToClipboard(
+                                  `https://app.plane.so/projects/${project?.id}/issues/`
+                                ).then(() => {
+                                  setToastAlert({
+                                    title: "Link Copied",
+                                    message: "Link copied to clipboard",
+                                    type: "success",
+                                  });
+                                })
+                              }
                             >
-                              <Menu.Items className="origin-top-right absolute right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-20">
-                                <div className="p-1">
-                                  <Menu.Item as="div">
-                                    {(active) => (
-                                      <button
-                                        className="flex items-center gap-2 p-2 text-left text-gray-900 hover:bg-theme hover:text-white rounded-md text-xs whitespace-nowrap"
-                                        onClick={() =>
-                                          copyTextToClipboard(
-                                            `https://app.plane.so/projects/${project?.id}/issues/`
-                                          ).then(() => {
-                                            setToastAlert({
-                                              title: "Link Copied",
-                                              message: "Link copied to clipboard",
-                                              type: "success",
-                                            });
-                                          })
-                                        }
-                                      >
-                                        <ClipboardDocumentIcon className="h-3 w-3" />
-                                        Copy Link
-                                      </button>
-                                    )}
-                                  </Menu.Item>
-                                </div>
-                              </Menu.Items>
-                            </Transition>
-                          </Menu>
+                              Copy link
+                            </CustomMenu.MenuItem>
+                          </CustomMenu>
                         )}
                       </div>
                       <Transition
@@ -188,8 +159,21 @@ const ProjectsList: React.FC<Props> = ({ navigation, sidebarCollapse }) => {
             )}
           </>
         ) : (
-          <div className="w-full flex justify-center">
-            <Spinner />
+          <div className="w-full">
+            <Loader className="space-y-5">
+              <div className="space-y-2">
+                <Loader.Item height="30px"></Loader.Item>
+                <Loader.Item height="15px" width="80%" light></Loader.Item>
+                <Loader.Item height="15px" width="80%" light></Loader.Item>
+                <Loader.Item height="15px" width="80%" light></Loader.Item>
+              </div>
+              <div className="space-y-2">
+                <Loader.Item height="30px"></Loader.Item>
+                <Loader.Item height="15px" width="80%" light></Loader.Item>
+                <Loader.Item height="15px" width="80%" light></Loader.Item>
+                <Loader.Item height="15px" width="80%" light></Loader.Item>
+              </div>
+            </Loader>
           </div>
         )}
       </div>

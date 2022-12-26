@@ -38,7 +38,7 @@ type Props = {
   partialUpdateIssue: (formData: Partial<IIssue>, childIssueId: string) => void;
 };
 
-const SingleIssue: React.FC<Props> = ({
+const SingleBoardIssue: React.FC<Props> = ({
   issue,
   properties,
   snapshot,
@@ -393,4 +393,4 @@ const SingleIssue: React.FC<Props> = ({
   );
 };
 
-export default SingleIssue;
+export default SingleBoardIssue;

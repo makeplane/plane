@@ -1,6 +1,9 @@
+// react
 import React, { useState } from "react";
 // next
 import type { NextPage } from "next";
+// services
+import projectService from "lib/services/project.service";
 // hooks
 import useUser from "lib/hooks/useUser";
 // hoc
@@ -13,15 +16,13 @@ import ConfirmProjectDeletion from "components/project/confirm-project-deletion"
 // ui
 import {
   Button,
-  Spinner,
   HeaderButton,
   Breadcrumbs,
   BreadcrumbItem,
   EmptySpace,
   EmptySpaceItem,
+  Loader,
 } from "ui";
-// services
-import projectService from "lib/services/project.service";
 // icons
 import { ClipboardDocumentListIcon, PlusIcon } from "@heroicons/react/24/outline";
 
@@ -128,9 +129,14 @@ const Projects: NextPage = () => {
           )}
         </>
       ) : (
-        <div className="w-full h-full flex justify-center items-center">
-          <Spinner />
-        </div>
+        <Loader className="grid grid-cols-3 gap-4">
+          <Loader.Item height="100px"></Loader.Item>
+          <Loader.Item height="100px"></Loader.Item>
+          <Loader.Item height="100px"></Loader.Item>
+          <Loader.Item height="100px"></Loader.Item>
+          <Loader.Item height="100px"></Loader.Item>
+          <Loader.Item height="100px"></Loader.Item>
+        </Loader>
       )}
     </AppLayout>
   );

@@ -1,20 +1,21 @@
+// react
 import React, { useEffect, useState } from "react";
 // next
 import Image from "next/image";
-// headless ui
-import { Menu } from "@headlessui/react";
-// react hook form
+// react-hook-form
 import { useForm } from "react-hook-form";
 // hooks
 import useUser from "lib/hooks/useUser";
-// common
-import { timeAgo } from "constants/common";
+// headless ui
+import { Menu } from "@headlessui/react";
 // ui
 import { TextArea } from "ui";
-// icon
+// icons
 import { CheckIcon, EllipsisHorizontalIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // types
 import type { IIssueComment } from "types";
+// common
+import { timeAgo } from "constants/common";
 
 type Props = {
   comment: IIssueComment;
