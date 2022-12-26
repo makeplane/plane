@@ -8,19 +8,28 @@ import { Controller, useForm } from "react-hook-form";
 import SettingsLayout from "layouts/settings-layout";
 // services
 import projectService from "lib/services/project.service";
+// constants
+import { NETWORK_CHOICES } from "constants/";
 // hooks
 import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
 // ui
-import { BreadcrumbItem, Breadcrumbs, Button, EmojiIconPicker, Input, Select, TextArea } from "ui";
+import {
+  BreadcrumbItem,
+  Breadcrumbs,
+  Button,
+  EmojiIconPicker,
+  Input,
+  Select,
+  TextArea,
+  Loader,
+} from "ui";
 // types
 import { IProject, IWorkspace } from "types";
 // fetch-keys
 import { PROJECTS_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
 // common
 import { debounce } from "constants/common";
-
-const NETWORK_CHOICES = { "0": "Secret", "2": "Public" };
 
 const defaultValues: Partial<IProject> = {
   name: "",
@@ -144,29 +153,41 @@ const GeneralSettings = () => {
                   Select an icon and a name for the project.
                 </p>
                 <div className="flex gap-2">
-                  <Controller
-                    control={control}
-                    name="icon"
-                    render={({ field: { value, onChange } }) => (
-                      <EmojiIconPicker
-                        label={value ? String.fromCodePoint(parseInt(value)) : "Icon"}
-                        value={value}
-                        onChange={onChange}
-                      />
-                    )}
-                  />
-                  <Input
-                    id="name"
-                    name="name"
-                    error={errors.name}
-                    register={register}
-                    placeholder="Project Name"
-                    size="lg"
-                    className="w-auto"
-                    validations={{
-                      required: "Name is required",
-                    }}
-                  />
+                  {projectDetails ? (
+                    <Controller
+                      control={control}
+                      name="icon"
+                      render={({ field: { value, onChange } }) => (
+                        <EmojiIconPicker
+                          label={value ? String.fromCodePoint(parseInt(value)) : "Icon"}
+                          value={value}
+                          onChange={onChange}
+                        />
+                      )}
+                    />
+                  ) : (
+                    <Loader>
+                      <Loader.Item height="46px" width="46px" light />
+                    </Loader>
+                  )}
+                  {projectDetails ? (
+                    <Input
+                      id="name"
+                      name="name"
+                      error={errors.name}
+                      register={register}
+                      placeholder="Project Name"
+                      size="lg"
+                      className="w-auto"
+                      validations={{
+                        required: "Name is required",
+                      }}
+                    />
+                  ) : (
+                    <Loader className="">
+                      <Loader.Item height="46px" width="225px" light />
+                    </Loader>
+                  )}
                 </div>
               </div>
               <div>
@@ -174,62 +195,80 @@ const GeneralSettings = () => {
                 <p className="text-sm text-gray-500 mb-3">
                   Create a 1-6 characters{"'"} identifier for the project.
                 </p>
-                <Input
-                  id="identifier"
-                  name="identifier"
-                  error={errors.identifier}
-                  register={register}
-                  placeholder="Enter identifier"
-                  className="w-40"
-                  size="lg"
-                  onChange={(e: any) => {
-                    if (!activeWorkspace || !e.target.value) return;
-                    checkIdentifierAvailability(activeWorkspace.slug, e.target.value);
-                  }}
-                  validations={{
-                    required: "Identifier is required",
-                    minLength: {
-                      value: 1,
-                      message: "Identifier must at least be of 1 character",
-                    },
-                    maxLength: {
-                      value: 9,
-                      message: "Identifier must at most be of 9 characters",
-                    },
-                  }}
-                />
+                {projectDetails ? (
+                  <Input
+                    id="identifier"
+                    name="identifier"
+                    error={errors.identifier}
+                    register={register}
+                    placeholder="Enter identifier"
+                    className="w-40"
+                    size="lg"
+                    onChange={(e: any) => {
+                      if (!activeWorkspace || !e.target.value) return;
+                      checkIdentifierAvailability(activeWorkspace.slug, e.target.value);
+                    }}
+                    validations={{
+                      required: "Identifier is required",
+                      minLength: {
+                        value: 1,
+                        message: "Identifier must at least be of 1 character",
+                      },
+                      maxLength: {
+                        value: 9,
+                        message: "Identifier must at most be of 9 characters",
+                      },
+                    }}
+                  />
+                ) : (
+                  <Loader>
+                    <Loader.Item height="46px" width="160px" light />
+                  </Loader>
+                )}
               </div>
             </div>
             <div className="col-span-5 space-y-16">
               <div>
                 <h4 className="text-md leading-6 text-gray-900 mb-1">Description</h4>
                 <p className="text-sm text-gray-500 mb-3">Give a description to the project.</p>
-                <TextArea
-                  id="description"
-                  name="description"
-                  error={errors.description}
-                  register={register}
-                  placeholder="Enter project description"
-                  validations={{}}
-                />
+                {projectDetails ? (
+                  <TextArea
+                    id="description"
+                    name="description"
+                    error={errors.description}
+                    register={register}
+                    placeholder="Enter project description"
+                    validations={{}}
+                  />
+                ) : (
+                  <Loader className="w-full">
+                    <Loader.Item height="65px" width="full" light />
+                  </Loader>
+                )}
               </div>
               <div>
                 <h4 className="text-md leading-6 text-gray-900 mb-1">Network</h4>
                 <p className="text-sm text-gray-500 mb-3">Select privacy type for the project.</p>
-                <Select
-                  name="network"
-                  id="network"
-                  options={Object.keys(NETWORK_CHOICES).map((key) => ({
-                    value: key,
-                    label: NETWORK_CHOICES[key as keyof typeof NETWORK_CHOICES],
-                  }))}
-                  size="lg"
-                  register={register}
-                  validations={{
-                    required: "Network is required",
-                  }}
-                  className="w-40"
-                />
+                {projectDetails ? (
+                  <Select
+                    name="network"
+                    id="network"
+                    options={Object.keys(NETWORK_CHOICES).map((key) => ({
+                      value: key,
+                      label: NETWORK_CHOICES[key as keyof typeof NETWORK_CHOICES],
+                    }))}
+                    size="lg"
+                    register={register}
+                    validations={{
+                      required: "Network is required",
+                    }}
+                    className="w-40"
+                  />
+                ) : (
+                  <Loader className="w-full">
+                    <Loader.Item height="46px" width="160px" light />
+                  </Loader>
+                )}
               </div>
             </div>
           </div>
