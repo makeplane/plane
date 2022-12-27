@@ -1,9 +1,11 @@
 # Python imports
+import json
 from itertools import groupby
 
 # Django imports
 from django.db.models import Prefetch
 from django.db.models import Count, Sum
+from django.core.serializers.json import DjangoJSONEncoder
 
 # Third Party imports
 from rest_framework.response import Response
@@ -69,13 +71,29 @@ class IssueViewSet(BaseViewSet):
     def perform_create(self, serializer):
         serializer.save(project_id=self.kwargs.get("project_id"))
 
-    # def perform_update(self, serializer):
-    #     print("Hello From Issue Update")
-    #     channel_layer = get_channel_layer()
-    #     async_to_sync(channel_layer.group_send)(
-    #         "issues", {"type": "issue.activity", "content": "event_trigered_from_views"}
-    #     )
-    #     return super().perform_update(serializer)
+    def perform_update(self, serializer):
+        print("Hello From Issue Update")
+        print(self.request.data)
+        requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
+        current_instance = Issue.objects.filter(pk=self.kwargs.get("pk", None)).first()
+        if current_instance is not None:
+
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.send)(
+                "issue-activites",
+                {
+                    "type": "issue.activity",
+                    "requested_data": requested_data,
+                    "actor_id": str(self.request.user.id),
+                    "issue_id": str(self.kwargs.get("pk", None)),
+                    "project_id": str(self.kwargs.get("project_id", None)),
+                    "current_instance": json.dumps(
+                        IssueSerializer(current_instance).data, cls=DjangoJSONEncoder
+                    ),
+                },
+            )
+
+        return super().perform_update(serializer)
 
     def get_queryset(self):
         return (
@@ -175,14 +193,6 @@ class IssueViewSet(BaseViewSet):
             return Response(
                 {"error": "Project was not found"}, status=status.HTTP_404_NOT_FOUND
             )
-
-    def partial_update(self, request, *args, **kwargs):
-        print("Hello")
-        channel_layer = get_channel_layer()
-        async_to_sync(channel_layer.group_send)(
-            "issues", {"type": "issue.activity", "content": "event_trigered_from_views"}
-        )
-        return super().partial_update(request, *args, **kwargs)
 
 
 class UserWorkSpaceIssues(BaseAPIView):

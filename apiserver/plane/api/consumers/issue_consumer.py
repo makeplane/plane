@@ -1,39 +1,369 @@
-from channels.generic.websocket import JsonWebsocketConsumer
+from channels.generic.websocket import SyncConsumer
 import json
 from channels.db import database_sync_to_async
 from asgiref.sync import async_to_sync
-from plane.db.models import IssueActivity
+from plane.db.models import IssueActivity, Project, User, Issue, State, Label
 
 
-class IssueConsumer(JsonWebsocketConsumer):
-    def connect(self):
-        print("inside EventConsumer connect()")
-        self.room_group_name = "issues"
-        # Join room group
-        async_to_sync(self.channel_layer.group_add)(
-            self.room_group_name, self.channel_name
-        )
-        self.accept()
-
-    def disconnect(self, close_code):
-        print("inside EventConsumer disconnect()")
-        print("Closed websocket with code: ", close_code)
-        async_to_sync(self.channel_layer.group_discard)(
-            self.room_group_name, self.channel_name
-        )
-        self.close()
-
-    # Receive message from WebSocket
-    def receive(self, content, **kwargs):
-        print("inside EventConsumer receive_json()")
-        print("Received event: {}".format(content))
-        self.send_json(content)
+class IssueConsumer(SyncConsumer):
 
     # Receive message from room group
     def issue_activity(self, event):
-        print(event)
-        # database_sync_to_async(IssueActivity.objects.create)(
-        #     issue_id="1b2756d8-d545-41c0-923c-c9ce19e48248", verb="Hello", field="Hello"
-        # )
-        # Send message to WebSocket
-        self.send_json({"type": "issue.activity", "content": "Hellow"})
+
+        issue_activities = []
+        # Remove event type:
+        event.pop("type")
+
+        requested_data = json.loads(event.get("requested_data"))
+        current_instance = json.loads(event.get("current_instance"))
+        issue_id = event.get("issue_id")
+        actor_id = event.get("actor_id")
+        project_id = event.get("project_id")
+
+        actor = User.objects.get(pk=actor_id)
+
+        project = Project.objects.get(pk=project_id)
+
+        for key in requested_data:
+
+            if key == "name":
+                if current_instance.get("name") != requested_data.get("name"):
+                    issue_activities.append(
+                        IssueActivity(
+                            issue_id=issue_id,
+                            actor_id=actor_id,
+                            verb="updated",
+                            old_value=current_instance.get("name"),
+                            new_value=requested_data.get("name"),
+                            field="name",
+                            project=project,
+                            workspace=project.workspace,
+                            comment=f"{actor.email} updated the start date to {requested_data.get('name')}",
+                        )
+                    )
+
+            if key == "parent":
+                if current_instance.get("parent") != requested_data.get("parent"):
+
+                    if requested_data.get("parent") == None:
+                        old_parent = Issue.objects.get(
+                            pk=current_instance.get("parent")
+                        )
+                        issue_activities.append(
+                            IssueActivity(
+                                issue_id=issue_id,
+                                actor_id=actor_id,
+                                verb="updated",
+                                old_value=f"{project.identifier}-{old_parent.sequence_id}",
+                                new_value=None,
+                                field="parent",
+                                project=project,
+                                workspace=project.workspace,
+                                comment=f"{actor.email} updated the parent issue to None",
+                            )
+                        )
+                    else:
+                        new_parent = Issue.objects.get(pk=requested_data.get("parent"))
+                        old_parent = Issue.objects.get(
+                            pk=current_instance.get("parent")
+                        )
+                        issue_activities.append(
+                            IssueActivity(
+                                issue_id=issue_id,
+                                actor_id=actor_id,
+                                verb="updated",
+                                old_value=f"{project.identifier}-{old_parent.sequence_id}",
+                                new_value=f"{project.identifier}-{new_parent.sequence_id}",
+                                field="parent",
+                                project=project,
+                                workspace=project.workspace,
+                                comment=f"{actor.email} updated the parent issue to {new_parent.name}",
+                            )
+                        )
+
+            if key == "priority":
+                if current_instance.get("priority") != requested_data.get("priority"):
+                    if requested_data.get("priority") == None:
+                        issue_activities.append(
+                            IssueActivity(
+                                issue_id=issue_id,
+                                actor_id=actor_id,
+                                verb="updated",
+                                old_value=current_instance.get("parent"),
+                                new_value=requested_data.get("parent"),
+                                field="priority",
+                                project=project,
+                                workspace=project.workspace,
+                                comment=f"{actor.email} updated the priority to None",
+                            )
+                        )
+                    else:
+                        issue_activities.append(
+                            IssueActivity(
+                                issue_id=issue_id,
+                                actor_id=actor_id,
+                                verb="updated",
+                                old_value=current_instance.get("priority"),
+                                new_value=requested_data.get("priority"),
+                                field="priority",
+                                project=project,
+                                workspace=project.workspace,
+                                comment=f"{actor.email} updated the priority to {requested_data.get('priority')}",
+                            )
+                        )
+
+            if key == "state":
+                if current_instance.get("state") != requested_data.get("state"):
+
+                    new_state = State.objects.get(pk=requested_data.get("state", None))
+                    old_state = State.objects.get(
+                        pk=current_instance.get("state", None)
+                    )
+
+                    issue_activities.append(
+                        IssueActivity(
+                            issue_id=issue_id,
+                            actor_id=actor_id,
+                            verb="updated",
+                            old_value=old_state.name,
+                            new_value=new_state.name,
+                            field="state",
+                            project=project,
+                            workspace=project.workspace,
+                            comment=f"{actor.email} updated the state to {new_state.name}",
+                        )
+                    )
+
+            if key == "description":
+                if current_instance.get("description") != requested_data.get(
+                    "description"
+                ):
+
+                    issue_activities.append(
+                        IssueActivity(
+                            issue_id=issue_id,
+                            actor_id=actor_id,
+                            verb="updated",
+                            old_value=current_instance.get("description"),
+                            new_value=requested_data.get("description"),
+                            field="description",
+                            project=project,
+                            workspace=project.workspace,
+                            comment=f"{actor.email} updated the description to {requested_data.get('description')}",
+                        )
+                    )
+
+            if key == "target_date":
+                if current_instance.get("target_date") != requested_data.get(
+                    "target_date"
+                ):
+                    if requested_data.get("target_date") == None:
+                        issue_activities.append(
+                            IssueActivity(
+                                issue_id=issue_id,
+                                actor_id=actor_id,
+                                verb="updated",
+                                old_value=current_instance.get("target_date"),
+                                new_value=requested_data.get("target_date"),
+                                field="target_date",
+                                project=project,
+                                workspace=project.workspace,
+                                comment=f"{actor.email} updated the target date to None",
+                            )
+                        )
+                    else:
+                        issue_activities.append(
+                            IssueActivity(
+                                issue_id=issue_id,
+                                actor_id=actor_id,
+                                verb="updated",
+                                old_value=current_instance.get("target_date"),
+                                new_value=requested_data.get("target_date"),
+                                field="target_date",
+                                project=project,
+                                workspace=project.workspace,
+                                comment=f"{actor.email} updated the target date to {requested_data.get('target_date')}",
+                            )
+                        )
+
+            if key == "start_date":
+                if current_instance.get("start_date") != requested_data.get(
+                    "start_date"
+                ):
+                    if requested_data.get("start_date") == None:
+                        issue_activities.append(
+                            IssueActivity(
+                                issue_id=issue_id,
+                                actor_id=actor_id,
+                                verb="updated",
+                                old_value=current_instance.get("start_date"),
+                                new_value=requested_data.get("start_date"),
+                                field="start_date",
+                                project=project,
+                                workspace=project.workspace,
+                                comment=f"{actor.email} updated the start date to None",
+                            )
+                        )
+                    else:
+                        issue_activities.append(
+                            IssueActivity(
+                                issue_id=issue_id,
+                                actor_id=actor_id,
+                                verb="updated",
+                                old_value=current_instance.get("start_date"),
+                                new_value=requested_data.get("start_date"),
+                                field="start_date",
+                                project=project,
+                                workspace=project.workspace,
+                                comment=f"{actor.email} updated the start date to {requested_data.get('start_date')}",
+                            )
+                        )
+
+            if key == "labels_list":
+
+                # Label Addition
+                if len(requested_data.get("labels_list")) > len(
+                    current_instance.get("labels")
+                ):
+
+                    for label in requested_data.get("labels_list"):
+                        if label not in current_instance.get("labels"):
+                            label = Label.objects.get(pk=label)
+                            issue_activities.append(
+                                IssueActivity(
+                                    issue_id=issue_id,
+                                    actor_id=actor_id,
+                                    verb="updated",
+                                    old_value="",
+                                    new_value=label.name,
+                                    field="labels",
+                                    project=project,
+                                    workspace=project.workspace,
+                                    comment=f"{actor.email} added label {label.name}",
+                                )
+                            )
+
+                # Label Removal
+                if len(requested_data.get("labels_list")) < len(
+                    current_instance.get("labels")
+                ):
+
+                    for label in current_instance.get("labels"):
+                        if label not in requested_data.get("labels_list"):
+                            label = Label.objects.get(pk=label)
+                            issue_activities.append(
+                                IssueActivity(
+                                    issue_id=issue_id,
+                                    actor_id=actor_id,
+                                    verb="updated",
+                                    old_value=label.name,
+                                    new_value="",
+                                    field="labels",
+                                    project=project,
+                                    workspace=project.workspace,
+                                    comment=f"{actor.email} removed label {label.name}",
+                                )
+                            )
+
+            if key == "assignees_list":
+
+                # Assignee Addition
+                if len(requested_data.get("assignees_list")) > len(
+                    current_instance.get("assignees")
+                ):
+
+                    for assignee in requested_data.get("assignees_list"):
+                        if assignee not in current_instance.get("assignees"):
+                            assignee = User.objects.get(pk=assignee)
+                            issue_activities.append(
+                                IssueActivity(
+                                    issue_id=issue_id,
+                                    actor_id=actor_id,
+                                    verb="updated",
+                                    old_value="",
+                                    new_value=assignee.email,
+                                    field="assignees",
+                                    project=project,
+                                    workspace=project.workspace,
+                                    comment=f"{actor.email} added assignee {assignee.email}",
+                                )
+                            )
+
+                # Assignee Removal
+                if len(requested_data.get("assignees_list")) < len(
+                    current_instance.get("assignees")
+                ):
+
+                    for assignee in current_instance.get("assignees"):
+                        if assignee not in requested_data.get("assignees_list"):
+                            assignee = User.objects.get(pk=assignee)
+                            issue_activities.append(
+                                IssueActivity(
+                                    issue_id=issue_id,
+                                    actor_id=actor_id,
+                                    verb="updated",
+                                    old_value=assignee.email,
+                                    new_value="",
+                                    field="assignee",
+                                    project=project,
+                                    workspace=project.workspace,
+                                    comment=f"{actor.email} removed assignee {assignee.email}",
+                                )
+                            )
+
+            if key == "blockers_list":
+                # Blockers Addition
+                if len(requested_data.get("blockers_list")) > len(
+                    current_instance.get("blocker_issues")
+                ):
+
+                    for blocked_by in requested_data.get("blockers_list"):
+
+                        blocked = [
+                            blocked
+                            for blocked_by_issues in current_instance.get(
+                                "blocker_issues"
+                            )
+                            if blocked_by_issues.get("blocked_by") == blocked_by
+                        ]
+                        if not len(blocked):
+                            blocked_by = Issue.objects.get(pk=blocked_by)
+                            issue_activities.append(
+                                IssueActivity(
+                                    issue_id=issue_id,
+                                    actor_id=actor_id,
+                                    verb="updated",
+                                    old_value="",
+                                    new_value=f"{project.identifier}-{blocked_by.sequence_id}",
+                                    field="blocked by",
+                                    project=project,
+                                    workspace=project.workspace,
+                                    comment=f"{actor.email} added  {blocked_by.sequence_id}",
+                                )
+                            )
+
+                # Blocked By Removal
+                if len(requested_data.get("blockers_list")) < len(
+                    current_instance.get("blocker_issues")
+                ):
+
+
+
+                    for blocker in current_instance.get("blocker_issues"):
+                        if assignee not in requested_data.get("blockers_list"):
+                            assignee = User.objects.get(pk=assignee)
+                            issue_activities.append(
+                                IssueActivity(
+                                    issue_id=issue_id,
+                                    actor_id=actor_id,
+                                    verb="updated",
+                                    old_value=assignee.email,
+                                    new_value="",
+                                    field="assignee",
+                                    project=project,
+                                    workspace=project.workspace,
+                                    comment=f"{actor.email} removed assignee {assignee.email}",
+                                )
+                            )
+
+        IssueActivity.objects.bulk_create(issue_activities)
