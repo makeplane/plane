@@ -80,7 +80,7 @@ const ExistingIssuesListModal: React.FC<Props> = ({
   return (
     <>
       <Transition.Root show={isOpen} as={React.Fragment} afterLeave={() => setQuery("")} appear>
-        <Dialog as="div" className="relative z-10" onClose={handleClose}>
+        <Dialog as="div" className="relative z-20" onClose={handleClose}>
           <Transition.Child
             as={React.Fragment}
             enter="ease-out duration-300"
@@ -135,7 +135,10 @@ const ExistingIssuesListModal: React.FC<Props> = ({
                               )}
                               <ul className="text-sm text-gray-700">
                                 {filteredIssues.map((issue) => {
-                                  if ((type === "cycle" && !issue.issue_cycle) || type === "module")
+                                  if (
+                                    (type === "cycle" && !issue.issue_cycle) ||
+                                    (type === "module" && !issue.issue_module)
+                                  )
                                     return (
                                       <Combobox.Option
                                         key={issue.id}

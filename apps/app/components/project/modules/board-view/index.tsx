@@ -1,10 +1,11 @@
+// hooks
+import useUser from "lib/hooks/useUser";
 // components
 import SingleBoard from "components/project/modules/board-view/single-board";
 // ui
 import { Spinner } from "ui";
 // types
 import { IIssue, IProjectMember, NestedKeyOf, Properties } from "types";
-import useUser from "lib/hooks/useUser";
 
 type Props = {
   groupedByIssues: {

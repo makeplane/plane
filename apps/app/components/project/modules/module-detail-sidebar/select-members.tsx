@@ -40,7 +40,7 @@ const SelectMembers: React.FC<Props> = ({ control, submitChanges }) => {
     <div className="flex items-center py-2 flex-wrap">
       <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
         <UserGroupIcon className="flex-shrink-0 h-4 w-4" />
-        <p>Assignees</p>
+        <p>Members</p>
       </div>
       <div className="sm:basis-1/2">
         <Controller
@@ -69,10 +69,8 @@ const SelectMembers: React.FC<Props> = ({ control, submitChanges }) => {
                         {value && Array.isArray(value) ? (
                           <>
                             {value.length > 0 ? (
-                              value.map((assignee, index: number) => {
-                                const person = people?.find(
-                                  (p) => p.member.id === assignee
-                                )?.member;
+                              value.map((member, index: number) => {
+                                const person = people?.find((p) => p.member.id === member)?.member;
 
                                 return (
                                   <div
@@ -167,7 +165,7 @@ const SelectMembers: React.FC<Props> = ({ control, submitChanges }) => {
                               </Listbox.Option>
                             ))
                           ) : (
-                            <div className="text-center">No assignees found</div>
+                            <div className="text-center">No members found</div>
                           )
                         ) : (
                           <Spinner />

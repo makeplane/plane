@@ -6,16 +6,10 @@ import type { NextPage } from "next";
 import { useRouter } from "next/router";
 // swr
 import { mutate } from "swr";
-// react hook form
+// react-hook-form
 import { useForm } from "react-hook-form";
-// headless ui
-import { Disclosure, Menu, Tab, Transition } from "@headlessui/react";
-// fetch keys
-import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // services
 import issuesServices from "lib/services/issues.service";
-// common
-import { debounce } from "constants/common";
 // hooks
 import useUser from "lib/hooks/useUser";
 // hoc
@@ -26,20 +20,11 @@ import AppLayout from "layouts/app-layout";
 import AddAsSubIssue from "components/project/issues/issue-detail/add-as-sub-issue";
 import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
 import IssueDetailSidebar from "components/project/issues/issue-detail/issue-detail-sidebar";
-import IssueCommentSection from "components/project/issues/issue-detail/comment/IssueCommentSection";
-const IssueActivitySection = dynamic(
-  () => import("components/project/issues/issue-detail/activity"),
-  {
-    loading: () => (
-      <div className="w-full h-full flex justify-center items-center">
-        <Spinner />
-      </div>
-    ),
-    ssr: false,
-  }
-);
+import IssueCommentSection from "components/project/issues/issue-detail/comment/issue-comment-section";
+// headless ui
+import { Disclosure, Menu, Tab, Transition } from "@headlessui/react";
 // ui
-import { Spinner, TextArea, HeaderButton, Breadcrumbs } from "ui";
+import { Loader, TextArea, HeaderButton, Breadcrumbs } from "ui";
 // icons
 import {
   ChevronLeftIcon,
@@ -49,6 +34,25 @@ import {
 } from "@heroicons/react/24/outline";
 // types
 import { IIssue, IssueResponse } from "types";
+// fetch-keys
+import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+// common
+import { debounce } from "constants/common";
+
+const IssueActivitySection = dynamic(
+  () => import("components/project/issues/issue-detail/activity"),
+  {
+    loading: () => (
+      <Loader>
+        <div className="space-y-2">
+          <Loader.Item height="30px" width="40%"></Loader.Item>
+          <Loader.Item height="15px" width="60%"></Loader.Item>
+        </div>
+      </Loader>
+    ),
+    ssr: false,
+  }
+);
 
 const RichTextEditor = dynamic(() => import("components/lexical/editor"), {
   ssr: false,
@@ -583,9 +587,20 @@ const IssueDetail: NextPage = () => {
           </div>
         </div>
       ) : (
-        <div className="h-full w-full grid place-items-center px-4 sm:px-0">
-          <Spinner />
-        </div>
+        <Loader className="h-full flex gap-5 p-5">
+          <div className="basis-2/3 space-y-2">
+            <Loader.Item height="30px" width="40%"></Loader.Item>
+            <Loader.Item height="15px" width="60%" light></Loader.Item>
+            <Loader.Item height="15px" width="60%" light></Loader.Item>
+            <Loader.Item height="15px" width="40%" light></Loader.Item>
+          </div>
+          <div className="basis-1/3 space-y-3">
+            <Loader.Item height="30px"></Loader.Item>
+            <Loader.Item height="30px"></Loader.Item>
+            <Loader.Item height="30px"></Loader.Item>
+            <Loader.Item height="30px"></Loader.Item>
+          </div>
+        </Loader>
       )}
     </AppLayout>
   );

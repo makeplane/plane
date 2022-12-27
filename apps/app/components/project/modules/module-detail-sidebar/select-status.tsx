@@ -39,6 +39,13 @@ const SelectStatus: React.FC<Props> = ({ control, submitChanges, watch }) => {
                     "text-left capitalize flex items-center gap-2"
                   )}
                 >
+                  <span
+                    className="h-2 w-2 rounded-full flex-shrink-0"
+                    style={{
+                      backgroundColor: MODULE_STATUS?.find((option) => option.value === value)
+                        ?.color,
+                    }}
+                  ></span>
                   {watch("status")}
                 </span>
               }
@@ -49,7 +56,13 @@ const SelectStatus: React.FC<Props> = ({ control, submitChanges, watch }) => {
             >
               {MODULE_STATUS.map((option) => (
                 <CustomSelect.Option key={option.value} value={option.value}>
-                  {option.label}
+                  <>
+                    <span
+                      className="h-2 w-2 rounded-full flex-shrink-0"
+                      style={{ backgroundColor: option.color }}
+                    ></span>
+                    {option.label}
+                  </>
                 </CustomSelect.Option>
               ))}
             </CustomSelect>

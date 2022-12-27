@@ -178,22 +178,22 @@ const SingleCycle: React.FC = () => {
   };
 
   const removeIssueFromCycle = (bridgeId: string) => {
-    if (activeWorkspace && activeProject) {
-      mutate<CycleIssueResponse[]>(
-        CYCLE_ISSUES(cycleId as string),
-        (prevData) => prevData?.filter((p) => p.id !== bridgeId),
-        false
-      );
+    if (!activeWorkspace || !activeProject) return;
 
-      issuesServices
-        .removeIssueFromCycle(activeWorkspace.slug, activeProject.id, cycleId as string, bridgeId)
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    }
+    mutate<CycleIssueResponse[]>(
+      CYCLE_ISSUES(cycleId as string),
+      (prevData) => prevData?.filter((p) => p.id !== bridgeId),
+      false
+    );
+
+    issuesServices
+      .removeIssueFromCycle(activeWorkspace.slug, activeProject.id, cycleId as string, bridgeId)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   };
 
   return (

@@ -17,7 +17,7 @@ import SingleLabel from "components/project/settings/single-label";
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
 // ui
-import { BreadcrumbItem, Breadcrumbs, Button, Input, Spinner } from "ui";
+import { BreadcrumbItem, Breadcrumbs, Button, Input, Loader } from "ui";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 // fetch-keys
@@ -224,9 +224,12 @@ const LabelsSettings = () => {
                 />
               ))
             ) : (
-              <div className="flex justify-center py-4">
-                <Spinner />
-              </div>
+              <Loader className="md:w-2/3 space-y-5">
+                <Loader.Item height="40px"></Loader.Item>
+                <Loader.Item height="40px"></Loader.Item>
+                <Loader.Item height="40px"></Loader.Item>
+                <Loader.Item height="40px"></Loader.Item>
+              </Loader>
             )}
           </>
         </div>
