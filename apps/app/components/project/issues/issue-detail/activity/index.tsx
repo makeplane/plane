@@ -1,11 +1,15 @@
-// react
 import React from "react";
 // next
 import { useRouter } from "next/router";
 import Image from "next/image";
+// fetch-keys
+import { PROJECT_ISSUES_ACTIVITY, STATE_LIST } from "constants/fetch-keys";
+// common
+import { addSpaceIfCamelCase, timeAgo } from "constants/common";
 // swr
 import useSWR from "swr";
 // services
+import stateService from "lib/services/state.service";
 import issuesServices from "lib/services/issues.service";
 // hooks
 import useUser from "lib/hooks/useUser";
@@ -19,10 +23,6 @@ import {
   Squares2X2Icon,
   UserIcon,
 } from "@heroicons/react/24/outline";
-// fetch-keys
-import { PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
-// common
-import { addSpaceIfCamelCase, timeAgo } from "constants/common";
 
 const activityIcons: {
   [key: string]: JSX.Element;
@@ -40,7 +40,7 @@ const IssueActivitySection: React.FC = () => {
 
   const { issueId, projectId } = router.query;
 
-  const { activeWorkspace, states, issues } = useUser();
+  const { activeWorkspace, activeProject, issues } = useUser();
 
   const { data: issueActivities } = useSWR<any[]>(
     activeWorkspace && projectId && issueId ? PROJECT_ISSUES_ACTIVITY : null,
@@ -54,6 +54,13 @@ const IssueActivitySection: React.FC = () => {
       : null
   );
 
+  const { data: states } = useSWR(
+    activeWorkspace && activeProject ? STATE_LIST(activeProject.id) : null,
+    activeWorkspace && activeProject
+      ? () => stateService.getStates(activeWorkspace.slug, activeProject.id)
+      : null
+  );
+
   return (
     <>
       {issueActivities ? (
@@ -61,7 +68,7 @@ const IssueActivitySection: React.FC = () => {
           {issueActivities.map((activity, index) => {
             if (activity.field !== "updated_by")
               return (
-                <div key={activity.id} className="relative flex gap-x-2 w-full">
+                <div key={activity.id} className="relative flex w-full gap-x-2">
                   {issueActivities.length > 1 && index !== issueActivities.length - 1 ? (
                     <span
                       className="absolute top-5 left-2.5 h-full w-0.5 bg-gray-200"
@@ -69,15 +76,15 @@ const IssueActivitySection: React.FC = () => {
                     />
                   ) : null}
                   {activity.field ? (
-                    <div className="relative z-10 flex-shrink-0 -ml-1">
+                    <div className="relative z-10 -ml-1 flex-shrink-0">
                       <div
-                        className={`h-7 w-7 bg-gray-700 text-white border-2 border-white grid place-items-center rounded-full`}
+                        className={`grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-700 text-white`}
                       >
                         {activityIcons[activity.field as keyof typeof activityIcons]}
                       </div>
                     </div>
                   ) : (
-                    <div className="relative z-10 flex-shrink-0 border-2 border-white rounded-full h-[34px] -ml-1.5">
+                    <div className="relative z-10 -ml-1.5 h-[34px] flex-shrink-0 rounded-full border-2 border-white">
                       {activity.actor_detail.avatar && activity.actor_detail.avatar !== "" ? (
                         <Image
                           src={activity.actor_detail.avatar}
@@ -88,7 +95,7 @@ const IssueActivitySection: React.FC = () => {
                         />
                       ) : (
                         <div
-                          className={`h-8 w-8 bg-gray-700 text-white border-2 border-white grid place-items-center rounded-full`}
+                          className={`grid h-8 w-8 place-items-center rounded-full border-2 border-white bg-gray-700 text-white`}
                         >
                           {activity.actor_detail.first_name.charAt(0)}
                         </div>
@@ -109,7 +116,7 @@ const IssueActivitySection: React.FC = () => {
                       )}
                       <span className="ml-2 text-gray-500">{timeAgo(activity.created_at)}</span>
                     </p>
-                    <div className="w-full mt-2">
+                    <div className="mt-2 w-full">
                       {activity.verb !== "created" && (
                         <div>
                           <div>

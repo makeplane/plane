@@ -28,6 +28,7 @@ import User from "public/user.png";
 import userService from "lib/services/user.service";
 import issuesServices from "lib/services/issues.service";
 import workspaceService from "lib/services/workspace.service";
+import stateService from "lib/services/state.service";
 // hooks
 import useIssuesProperties from "lib/hooks/useIssuesProperties";
 // hoc
@@ -38,7 +39,7 @@ import ChangeStateDropdown from "components/project/issues/my-issues/ChangeState
 // types
 import { IIssue, IWorkspaceMember, Properties } from "types";
 // constants
-import { USER_ISSUE, WORKSPACE_MEMBERS } from "constants/fetch-keys";
+import { STATE_LIST, USER_ISSUE, WORKSPACE_MEMBERS } from "constants/fetch-keys";
 import {
   addSpaceIfCamelCase,
   classNames,
@@ -49,9 +50,7 @@ import {
 import { PRIORITIES } from "constants/";
 
 const MyIssues: NextPage = () => {
-  const { activeWorkspace, user, states } = useUser();
-
-  console.log(states);
+  const { activeWorkspace, activeProject, user } = useUser();
 
   const { data: myIssues, mutate: mutateMyIssues } = useSWR<IIssue[]>(
     user && activeWorkspace ? USER_ISSUE(activeWorkspace.slug) : null,
@@ -61,6 +60,13 @@ const MyIssues: NextPage = () => {
   const { data: people } = useSWR<IWorkspaceMember[]>(
     activeWorkspace ? WORKSPACE_MEMBERS : null,
     activeWorkspace ? () => workspaceService.workspaceMembers(activeWorkspace.slug) : null
+  );
+
+  const { data: states } = useSWR(
+    activeWorkspace && activeProject ? STATE_LIST(activeProject.id) : null,
+    activeWorkspace && activeProject
+      ? () => stateService.getStates(activeWorkspace.slug, activeProject.id)
+      : null
   );
 
   const [properties, setProperties] = useIssuesProperties(
@@ -117,7 +123,7 @@ const MyIssues: NextPage = () => {
                 <Popover.Button
                   className={classNames(
                     open ? "bg-gray-100 text-gray-900" : "text-gray-500",
-                    "group flex gap-2 items-center rounded-md bg-transparent text-xs font-medium hover:bg-gray-100 hover:text-gray-900 focus:outline-none border p-2"
+                    "group flex items-center gap-2 rounded-md border bg-transparent p-2 text-xs font-medium hover:bg-gray-100 hover:text-gray-900 focus:outline-none"
                   )}
                 >
                   <span>View</span>
@@ -133,16 +139,16 @@ const MyIssues: NextPage = () => {
                   leaveFrom="opacity-100 translate-y-0"
                   leaveTo="opacity-0 translate-y-1"
                 >
-                  <Popover.Panel className="absolute mr-5 right-1/2 z-10 mt-1 w-screen max-w-xs translate-x-1/2 transform p-3 bg-white rounded-lg shadow-lg overflow-hidden">
+                  <Popover.Panel className="absolute right-1/2 z-10 mr-5 mt-1 w-screen max-w-xs translate-x-1/2 transform overflow-hidden rounded-lg bg-white p-3 shadow-lg">
                     <div className="relative flex flex-col gap-1 gap-y-4">
                       <div className="relative flex flex-col gap-1">
                         <h4 className="text-base text-gray-600">Properties</h4>
-                        <div className="flex items-center gap-2 flex-wrap">
+                        <div className="flex flex-wrap items-center gap-2">
                           {Object.keys(properties).map((key) => (
                             <button
                               key={key}
                               type="button"
-                              className={`px-2 py-1 capitalize rounded border border-theme text-xs ${
+                              className={`rounded border border-theme px-2 py-1 text-xs capitalize ${
                                 properties[key as keyof Properties]
                                   ? "border-theme bg-theme text-white"
                                   : ""
@@ -174,26 +180,26 @@ const MyIssues: NextPage = () => {
         </div>
       }
     >
-      <div className="w-full h-full flex flex-col space-y-5">
+      <div className="flex h-full w-full flex-col space-y-5">
         {myIssues ? (
           <>
             {myIssues.length > 0 ? (
               <div className="flex flex-col space-y-5">
                 <Disclosure as="div" defaultOpen>
                   {({ open }) => (
-                    <div className="bg-white rounded-lg">
-                      <div className="bg-gray-100 px-4 py-3 rounded-t-lg">
+                    <div className="rounded-lg bg-white">
+                      <div className="rounded-t-lg bg-gray-100 px-4 py-3">
                         <Disclosure.Button>
                           <div className="flex items-center gap-x-2">
                             <span>
                               <ChevronDownIcon
                                 className={`h-4 w-4 text-gray-500 ${
-                                  !open ? "transform -rotate-90" : ""
+                                  !open ? "-rotate-90 transform" : ""
                                 }`}
                               />
                             </span>
                             <h2 className="font-medium leading-5">My Issues</h2>
-                            <p className="text-gray-500 text-sm">{myIssues.length}</p>
+                            <p className="text-sm text-gray-500">{myIssues.length}</p>
                           </div>
                         </Disclosure.Button>
                       </div>
@@ -227,11 +233,11 @@ const MyIssues: NextPage = () => {
                               return (
                                 <div
                                   key={issue.id}
-                                  className="px-4 py-3 text-sm rounded flex justify-between items-center gap-2"
+                                  className="flex items-center justify-between gap-2 rounded px-4 py-3 text-sm"
                                 >
                                   <div className="flex items-center gap-2">
                                     <span
-                                      className={`flex-shrink-0 h-1.5 w-1.5 block rounded-full`}
+                                      className={`block h-1.5 w-1.5 flex-shrink-0 rounded-full`}
                                       style={{
                                         backgroundColor: issue.state_detail.color,
                                       }}
@@ -251,7 +257,7 @@ const MyIssues: NextPage = () => {
                                       </a>
                                     </Link>
                                   </div>
-                                  <div className="flex-shrink-0 flex items-center gap-x-1 gap-y-2 text-xs flex-wrap">
+                                  <div className="flex flex-shrink-0 flex-wrap items-center gap-x-1 gap-y-2 text-xs">
                                     {properties.priority && (
                                       <Listbox
                                         as="div"
@@ -265,7 +271,7 @@ const MyIssues: NextPage = () => {
                                           <>
                                             <div>
                                               <Listbox.Button
-                                                className={`rounded shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 capitalize ${
+                                                className={`cursor-pointer rounded px-2 py-1 capitalize shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
                                                   issue.priority === "urgent"
                                                     ? "bg-red-100 text-red-600"
                                                     : issue.priority === "high"
@@ -287,14 +293,14 @@ const MyIssues: NextPage = () => {
                                                 leaveFrom="opacity-100"
                                                 leaveTo="opacity-0"
                                               >
-                                                <Listbox.Options className="absolute z-10 mt-1 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
+                                                <Listbox.Options className="absolute z-10 mt-1 max-h-28 overflow-auto rounded-md bg-white py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                                                   {PRIORITIES?.map((priority) => (
                                                     <Listbox.Option
                                                       key={priority}
                                                       className={({ active }) =>
                                                         classNames(
                                                           active ? "bg-indigo-50" : "bg-white",
-                                                          "cursor-pointer capitalize select-none px-3 py-2"
+                                                          "cursor-pointer select-none px-3 py-2 capitalize"
                                                         )
                                                       }
                                                       value={priority}
@@ -305,8 +311,8 @@ const MyIssues: NextPage = () => {
                                                 </Listbox.Options>
                                               </Transition>
                                             </div>
-                                            <div className="absolute bottom-full right-0 mb-2 z-10 hidden group-hover:block p-2 bg-white shadow-md rounded-md whitespace-nowrap">
-                                              <h5 className="font-medium mb-1 text-gray-900">
+                                            <div className="absolute bottom-full right-0 z-10 mb-2 hidden whitespace-nowrap rounded-md bg-white p-2 shadow-md group-hover:block">
+                                              <h5 className="mb-1 font-medium text-gray-900">
                                                 Priority
                                               </h5>
                                               <div
@@ -341,9 +347,9 @@ const MyIssues: NextPage = () => {
                                         {({ open }) => (
                                           <>
                                             <div>
-                                              <Listbox.Button className="flex items-center gap-1 hover:bg-gray-100 border rounded shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300">
+                                              <Listbox.Button className="flex cursor-pointer items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
                                                 <span
-                                                  className="flex-shrink-0 h-1.5 w-1.5 rounded-full"
+                                                  className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
                                                   style={{
                                                     backgroundColor: issue.state_detail.color,
                                                   }}
@@ -358,7 +364,7 @@ const MyIssues: NextPage = () => {
                                                 leaveFrom="opacity-100"
                                                 leaveTo="opacity-0"
                                               >
-                                                <Listbox.Options className="absolute z-10 mt-1 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
+                                                <Listbox.Options className="absolute z-10 mt-1 max-h-28 overflow-auto rounded-md bg-white py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                                                   {states?.map((state) => (
                                                     <Listbox.Option
                                                       key={state.id}
@@ -376,8 +382,8 @@ const MyIssues: NextPage = () => {
                                                 </Listbox.Options>
                                               </Transition>
                                             </div>
-                                            <div className="absolute bottom-full right-0 mb-2 z-10 hidden group-hover:block p-2 bg-white shadow-md rounded-md whitespace-nowrap">
-                                              <h5 className="font-medium mb-1">State</h5>
+                                            <div className="absolute bottom-full right-0 z-10 mb-2 hidden whitespace-nowrap rounded-md bg-white p-2 shadow-md group-hover:block">
+                                              <h5 className="mb-1 font-medium">State</h5>
                                               <div>{issue.state_detail.name}</div>
                                             </div>
                                           </>
@@ -385,13 +391,13 @@ const MyIssues: NextPage = () => {
                                       </Listbox>
                                     )}
                                     {properties.start_date && (
-                                      <div className="group relative flex-shrink-0 flex items-center gap-1 hover:bg-gray-100 border rounded shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300">
+                                      <div className="group relative flex flex-shrink-0 cursor-pointer items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
                                         <CalendarDaysIcon className="h-4 w-4" />
                                         {issue.start_date
                                           ? renderShortNumericDateFormat(issue.start_date)
                                           : "N/A"}
-                                        <div className="absolute bottom-full right-0 mb-2 z-10 hidden group-hover:block p-2 bg-white shadow-md rounded-md whitespace-nowrap">
-                                          <h5 className="font-medium mb-1">Started at</h5>
+                                        <div className="absolute bottom-full right-0 z-10 mb-2 hidden whitespace-nowrap rounded-md bg-white p-2 shadow-md group-hover:block">
+                                          <h5 className="mb-1 font-medium">Started at</h5>
                                           <div>
                                             {renderShortNumericDateFormat(issue.start_date ?? "")}
                                           </div>
@@ -400,7 +406,7 @@ const MyIssues: NextPage = () => {
                                     )}
                                     {properties.due_date && (
                                       <div
-                                        className={`group relative flex-shrink-0 group flex items-center gap-1 hover:bg-gray-100 border rounded shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300 ${
+                                        className={`group group relative flex flex-shrink-0 cursor-pointer items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
                                           issue.target_date === null
                                             ? ""
                                             : issue.target_date < new Date().toISOString()
@@ -413,8 +419,8 @@ const MyIssues: NextPage = () => {
                                         {issue.target_date
                                           ? renderShortNumericDateFormat(issue.target_date)
                                           : "N/A"}
-                                        <div className="absolute bottom-full right-0 mb-2 z-10 hidden group-hover:block p-2 bg-white shadow-md rounded-md whitespace-nowrap">
-                                          <h5 className="font-medium mb-1 text-gray-900">
+                                        <div className="absolute bottom-full right-0 z-10 mb-2 hidden whitespace-nowrap rounded-md bg-white p-2 shadow-md group-hover:block">
+                                          <h5 className="mb-1 font-medium text-gray-900">
                                             Due date
                                           </h5>
                                           <div>
@@ -454,7 +460,7 @@ const MyIssues: NextPage = () => {
                                           <>
                                             <div>
                                               <Listbox.Button>
-                                                <div className="flex items-center gap-1 text-xs cursor-pointer">
+                                                <div className="flex cursor-pointer items-center gap-1 text-xs">
                                                   {assignees.length > 0 ? (
                                                     assignees.map((assignee, index: number) => (
                                                       <div
@@ -465,7 +471,7 @@ const MyIssues: NextPage = () => {
                                                       >
                                                         {assignee.avatar &&
                                                         assignee.avatar !== "" ? (
-                                                          <div className="h-5 w-5 border-2 bg-white border-white rounded-full">
+                                                          <div className="h-5 w-5 rounded-full border-2 border-white bg-white">
                                                             <Image
                                                               src={assignee.avatar}
                                                               height="100%"
@@ -476,7 +482,7 @@ const MyIssues: NextPage = () => {
                                                           </div>
                                                         ) : (
                                                           <div
-                                                            className={`h-5 w-5 bg-gray-700 text-white border-2 border-white grid place-items-center rounded-full`}
+                                                            className={`grid h-5 w-5 place-items-center rounded-full border-2 border-white bg-gray-700 text-white`}
                                                           >
                                                             {assignee.first_name?.charAt(0)}
                                                           </div>
@@ -484,7 +490,7 @@ const MyIssues: NextPage = () => {
                                                       </div>
                                                     ))
                                                   ) : (
-                                                    <div className="h-5 w-5 border-2 bg-white border-white rounded-full">
+                                                    <div className="h-5 w-5 rounded-full border-2 border-white bg-white">
                                                       <Image
                                                         src={User}
                                                         height="100%"
@@ -504,7 +510,7 @@ const MyIssues: NextPage = () => {
                                                 leaveFrom="opacity-100"
                                                 leaveTo="opacity-0"
                                               >
-                                                <Listbox.Options className="absolute right-0 z-10 mt-1 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
+                                                <Listbox.Options className="absolute right-0 z-10 mt-1 max-h-28 overflow-auto rounded-md bg-white py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                                                   {people?.map((person) => (
                                                     <Listbox.Option
                                                       key={person.id}
@@ -539,7 +545,7 @@ const MyIssues: NextPage = () => {
                                                             />
                                                           </div>
                                                         ) : (
-                                                          <div className="h-4 w-4 bg-gray-700 text-white grid place-items-center capitalize rounded-full">
+                                                          <div className="grid h-4 w-4 place-items-center rounded-full bg-gray-700 capitalize text-white">
                                                             {person.member.first_name &&
                                                             person.member.first_name !== ""
                                                               ? person.member.first_name.charAt(0)
@@ -558,8 +564,8 @@ const MyIssues: NextPage = () => {
                                                 </Listbox.Options>
                                               </Transition>
                                             </div>
-                                            <div className="absolute bottom-full right-0 mb-2 z-10 hidden group-hover:block p-2 bg-white shadow-md rounded-md whitespace-nowrap">
-                                              <h5 className="font-medium mb-1">Assigned to</h5>
+                                            <div className="absolute bottom-full right-0 z-10 mb-2 hidden whitespace-nowrap rounded-md bg-white p-2 shadow-md group-hover:block">
+                                              <h5 className="mb-1 font-medium">Assigned to</h5>
                                               <div>
                                                 {issue.assignee_details?.length > 0
                                                   ? issue.assignee_details
@@ -575,15 +581,15 @@ const MyIssues: NextPage = () => {
                                     <Menu as="div" className="relative">
                                       <Menu.Button
                                         as="button"
-                                        className={`h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-100 duration-300 outline-none`}
+                                        className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-100`}
                                       >
                                         <EllipsisHorizontalIcon className="h-4 w-4" />
                                       </Menu.Button>
-                                      <Menu.Items className="absolute origin-top-right right-0.5 mt-1 p-1 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+                                      <Menu.Items className="absolute right-0.5 z-10 mt-1 origin-top-right rounded-md bg-white p-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                                         <Menu.Item>
                                           <button
                                             type="button"
-                                            className="text-left p-2 text-gray-900 hover:bg-theme hover:text-white rounded-md text-xs whitespace-nowrap w-full"
+                                            className="w-full whitespace-nowrap rounded-md p-2 text-left text-xs text-gray-900 hover:bg-theme hover:text-white"
                                             onClick={() => {
                                               // setSelectedIssue({
                                               //   ...issue,
@@ -595,10 +601,10 @@ const MyIssues: NextPage = () => {
                                           </button>
                                         </Menu.Item>
                                         <Menu.Item>
-                                          <div className="hover:bg-gray-100 border-b last:border-0">
+                                          <div className="border-b last:border-0 hover:bg-gray-100">
                                             <button
                                               type="button"
-                                              className="text-left p-2 text-gray-900 hover:bg-theme hover:text-white rounded-md text-xs whitespace-nowrap w-full"
+                                              className="w-full whitespace-nowrap rounded-md p-2 text-left text-xs text-gray-900 hover:bg-theme hover:text-white"
                                               onClick={() => {
                                                 // handleDeleteIssue(issue.id);
                                               }}
@@ -621,7 +627,7 @@ const MyIssues: NextPage = () => {
                 </Disclosure>
               </div>
             ) : (
-              <div className="w-full h-full flex flex-col justify-center items-center px-4">
+              <div className="flex h-full w-full flex-col items-center justify-center px-4">
                 <EmptySpace
                   title="You don't have any issue assigned to you yet."
                   description="Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done."
@@ -632,7 +638,7 @@ const MyIssues: NextPage = () => {
                     description={
                       <span>
                         Use{" "}
-                        <pre className="inline bg-gray-100 px-2 py-1 rounded">Ctrl/Command + I</pre>{" "}
+                        <pre className="inline rounded bg-gray-100 px-2 py-1">Ctrl/Command + I</pre>{" "}
                         shortcut to create a new issue
                       </span>
                     }
@@ -650,7 +656,7 @@ const MyIssues: NextPage = () => {
             )}
           </>
         ) : (
-          <div className="w-full h-full flex justify-center items-center">
+          <div className="flex h-full w-full items-center justify-center">
             <Spinner />
           </div>
         )}

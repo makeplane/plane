@@ -1,4 +1,10 @@
 import { useEffect, useState } from "react";
+// swr
+import useSWR from "swr";
+// constants
+import { STATE_LIST } from "constants/fetch-keys";
+// services
+import stateService from "lib/services/state.service";
 // hooks
 import useUser from "./useUser";
 // types
@@ -25,7 +31,14 @@ const useMyIssuesProperties = (issues?: IIssue[]) => {
   const [properties, setProperties] = useState<Properties>(initialValues);
   const [groupByProperty, setGroupByProperty] = useState<NestedKeyOf<IIssue> | null>(null);
 
-  const { states, user } = useUser();
+  const { activeWorkspace, activeProject, user } = useUser();
+
+  const { data: states } = useSWR(
+    activeWorkspace && activeProject ? STATE_LIST(activeProject.id) : null,
+    activeWorkspace && activeProject
+      ? () => stateService.getStates(activeWorkspace.slug, activeProject.id)
+      : null
+  );
 
   useEffect(() => {
     if (!user) return;

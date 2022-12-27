@@ -7,8 +7,6 @@ import useSWR from "swr";
 // services
 import userService from "lib/services/user.service";
 import issuesServices from "lib/services/issues.service";
-import stateServices from "lib/services/state.service";
-import sprintsServices from "lib/services/cycles.service";
 import projectServices from "lib/services/project.service";
 import workspaceService from "lib/services/workspace.service";
 // constants
@@ -17,14 +15,11 @@ import {
   PROJECTS_LIST,
   USER_WORKSPACES,
   PROJECT_ISSUES_LIST,
-  STATE_LIST,
-  CYCLE_LIST,
-  MODULE_LIST,
 } from "constants/fetch-keys";
 
 // types
 import type { KeyedMutator } from "swr";
-import type { IUser, IWorkspace, IProject, IssueResponse, ICycle, IState } from "types";
+import type { IUser, IWorkspace, IProject, IssueResponse } from "types";
 
 interface IUserContextProps {
   user?: IUser;
@@ -39,8 +34,6 @@ interface IUserContextProps {
   activeProject?: IProject;
   issues?: IssueResponse;
   mutateIssues: KeyedMutator<IssueResponse>;
-  states?: IState[];
-  mutateStates: KeyedMutator<IState[]>;
 }
 
 export const UserContext = createContext<IUserContextProps>({} as IUserContextProps);
@@ -81,13 +74,6 @@ export const UserProvider = ({ children }: { children: ReactElement }) => {
       : null,
     activeWorkspace && activeProject
       ? () => issuesServices.getIssues(activeWorkspace.slug, activeProject.id)
-      : null
-  );
-
-  const { data: states, mutate: mutateStates } = useSWR<IState[]>(
-    activeWorkspace && activeProject ? STATE_LIST(activeProject.id) : null,
-    activeWorkspace && activeProject
-      ? () => stateServices.getStates(activeWorkspace.slug, activeProject.id)
       : null
   );
 
@@ -133,8 +119,6 @@ export const UserProvider = ({ children }: { children: ReactElement }) => {
         activeProject,
         issues,
         mutateIssues,
-        states,
-        mutateStates,
         setActiveProject,
       }}
     >

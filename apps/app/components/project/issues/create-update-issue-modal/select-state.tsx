@@ -1,6 +1,12 @@
 import React from "react";
+// swr
+import useSWR from "swr";
 // react hook form
 import { Controller } from "react-hook-form";
+// services
+import stateService from "lib/services/state.service";
+// constants
+import { STATE_LIST } from "constants/fetch-keys";
 // hooks
 import useUser from "lib/hooks/useUser";
 // icons
@@ -18,7 +24,14 @@ type Props = {
 };
 
 const SelectState: React.FC<Props> = ({ control, setIsOpen }) => {
-  const { states } = useUser();
+  const { activeWorkspace, activeProject } = useUser();
+
+  const { data: states } = useSWR(
+    activeWorkspace && activeProject ? STATE_LIST(activeProject.id) : null,
+    activeWorkspace && activeProject
+      ? () => stateService.getStates(activeWorkspace.slug, activeProject.id)
+      : null
+  );
 
   return (
     <Controller
@@ -37,7 +50,7 @@ const SelectState: React.FC<Props> = ({ control, setIsOpen }) => {
           footerOption={
             <button
               type="button"
-              className="select-none relative py-2 pl-3 pr-9 flex items-center gap-x-2 text-gray-400 hover:text-gray-500"
+              className="relative flex select-none items-center gap-x-2 py-2 pl-3 pr-9 text-gray-400 hover:text-gray-500"
               onClick={() => setIsOpen(true)}
             >
               <span>
