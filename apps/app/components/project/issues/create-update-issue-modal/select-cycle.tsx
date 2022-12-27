@@ -1,14 +1,18 @@
 import React from "react";
+// swr
+import useSWR from "swr";
 // react hook form
 import { Controller } from "react-hook-form";
 // headless ui
 import { Listbox, Transition } from "@headlessui/react";
+// services
+import cycleServices from "lib/services/cycles.service";
+// constants
+import { CYCLE_LIST } from "constants/fetch-keys";
 // hooks
 import useUser from "lib/hooks/useUser";
-// components
-import CreateUpdateSprintsModal from "components/project/cycles/create-update-cycle-modal";
 // icons
-import { CheckIcon, ChevronDownIcon, PlusIcon } from "@heroicons/react/20/solid";
+import { PlusIcon } from "@heroicons/react/20/solid";
 // types
 import type { IIssue } from "types";
 import type { Control } from "react-hook-form";
@@ -19,8 +23,15 @@ type Props = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const SelectSprint: React.FC<Props> = ({ control, setIsOpen }) => {
-  const { cycles } = useUser();
+const SelectCycle: React.FC<Props> = ({ control, setIsOpen }) => {
+  const { activeWorkspace, activeProject } = useUser();
+
+  const { data: cycles } = useSWR(
+    activeWorkspace && activeProject ? CYCLE_LIST(activeProject.id) : null,
+    activeWorkspace && activeProject
+      ? () => cycleServices.getCycles(activeWorkspace.slug, activeProject.id)
+      : null
+  );
 
   return (
     <>
@@ -32,7 +43,7 @@ const SelectSprint: React.FC<Props> = ({ control, setIsOpen }) => {
             {({ open }) => (
               <>
                 <div className="relative">
-                  <Listbox.Button className="flex items-center gap-1 hover:bg-gray-100 relative border rounded-md shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm duration-300">
+                  <Listbox.Button className="relative flex cursor-pointer items-center gap-1 rounded-md border px-2 py-1 shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm">
                     <ArrowPathIcon className="h-3 w-3 text-gray-500" />
                     <span className="block truncate">
                       {cycles?.find((i) => i.id.toString() === value?.toString())?.name ?? "Cycle"}
@@ -46,14 +57,14 @@ const SelectSprint: React.FC<Props> = ({ control, setIsOpen }) => {
                     leaveFrom="opacity-100"
                     leaveTo="opacity-0"
                   >
-                    <Listbox.Options className="absolute z-10 mt-1 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
+                    <Listbox.Options className="absolute z-10 mt-1 max-h-28 overflow-auto rounded-md bg-white py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                       <div className="py-1">
                         {cycles?.map((cycle) => (
                           <Listbox.Option
                             key={cycle.id}
                             value={cycle.id}
                             className={({ active }) =>
-                              `text-gray-900 cursor-pointer select-none p-2 ${
+                              `cursor-pointer select-none p-2 text-gray-900 ${
                                 active ? "bg-indigo-50" : ""
                               }`
                             }
@@ -70,7 +81,7 @@ const SelectSprint: React.FC<Props> = ({ control, setIsOpen }) => {
                       </div>
                       <button
                         type="button"
-                        className="relative select-none py-2 pl-3 pr-9 flex items-center gap-x-2 text-gray-400 hover:text-gray-500"
+                        className="relative flex select-none items-center gap-x-2 py-2 pl-3 pr-9 text-gray-400 hover:text-gray-500"
                         onClick={() => setIsOpen(true)}
                       >
                         <span>
@@ -92,4 +103,4 @@ const SelectSprint: React.FC<Props> = ({ control, setIsOpen }) => {
   );
 };
 
-export default SelectSprint;
+export default SelectCycle;

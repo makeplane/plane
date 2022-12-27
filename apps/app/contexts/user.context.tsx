@@ -39,8 +39,6 @@ interface IUserContextProps {
   activeProject?: IProject;
   issues?: IssueResponse;
   mutateIssues: KeyedMutator<IssueResponse>;
-  cycles?: ICycle[];
-  mutateCycles: KeyedMutator<ICycle[]>;
   states?: IState[];
   mutateStates: KeyedMutator<IState[]>;
 }
@@ -93,13 +91,6 @@ export const UserProvider = ({ children }: { children: ReactElement }) => {
       : null
   );
 
-  const { data: cycles, mutate: mutateCycles } = useSWR<ICycle[]>(
-    activeWorkspace && activeProject ? CYCLE_LIST(activeProject.id) : null,
-    activeWorkspace && activeProject
-      ? () => sprintsServices.getCycles(activeWorkspace.slug, activeProject.id)
-      : null
-  );
-
   useEffect(() => {
     if (!projects) return;
     const activeProject = projects.find((project) => project.id === projectId);
@@ -142,8 +133,6 @@ export const UserProvider = ({ children }: { children: ReactElement }) => {
         activeProject,
         issues,
         mutateIssues,
-        cycles,
-        mutateCycles,
         states,
         mutateStates,
         setActiveProject,
