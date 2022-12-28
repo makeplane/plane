@@ -72,8 +72,6 @@ class IssueViewSet(BaseViewSet):
         serializer.save(project_id=self.kwargs.get("project_id"))
 
     def perform_update(self, serializer):
-        print("Hello From Issue Update")
-        print(self.request.data)
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
         current_instance = Issue.objects.filter(pk=self.kwargs.get("pk", None)).first()
         if current_instance is not None:
