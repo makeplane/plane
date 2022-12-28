@@ -184,6 +184,17 @@ class IssueViewSet(BaseViewSet):
 
             if serializer.is_valid():
                 serializer.save()
+
+                # Track the issue
+                IssueActivity.objects.create(
+                    issue_id=serializer.data["id"],
+                    project_id=project_id,
+                    workspace_id=serializer["workspace"],
+                    comment=f"{request.user.email} created the issue",
+                    verb="created",
+                    actor=request.user,
+                )
+
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
