@@ -1,6 +1,6 @@
 import type { IIssue, NestedKeyOf } from "types";
 
-export const PRIORITIES = ["urgent", "high", "medium", "low"];
+export const PRIORITIES = ["urgent", "high", "medium", "low", null];
 
 export const ROLE = {
   5: "Guest",

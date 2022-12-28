@@ -31,13 +31,14 @@ const SelectState: React.FC<Props> = ({ control, setIsOpen }) => {
             return { value: state.id, display: state.name, color: state.color };
           })}
           value={value}
+          width="xs"
           optionsFontsize="sm"
           onChange={onChange}
           icon={<Squares2X2Icon className="h-4 w-4 text-gray-400" />}
           footerOption={
             <button
               type="button"
-              className="select-none relative py-2 pl-3 pr-9 flex items-center gap-x-2 text-gray-400 hover:text-gray-500"
+              className="relative flex select-none items-center gap-x-2 py-2 pl-3 pr-9 text-gray-400 hover:text-gray-500"
               onClick={() => setIsOpen(true)}
             >
               <span>

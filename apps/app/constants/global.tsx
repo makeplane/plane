@@ -1,4 +1,4 @@
-export const getPriorityIcon = (priority: string, className?: string) => {
+export const getPriorityIcon = (priority: string | null, className?: string) => {
   if (!className || className === "") className = "text-xs";
 
   switch (priority) {

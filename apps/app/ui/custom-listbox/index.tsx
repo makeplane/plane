@@ -25,12 +25,14 @@ const CustomListbox: React.FC<Props> = ({
         <>
           {label && (
             <Listbox.Label>
-              <div className="text-gray-500 mb-2">{label}</div>
+              <div className="mb-2 text-gray-500">{label}</div>
             </Listbox.Label>
           )}
           <Listbox.Button
-            className={`flex items-center gap-1 hover:bg-gray-100 border rounded-md shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300 ${
-              width === "sm"
+            className={`flex cursor-pointer items-center gap-1 rounded-md border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
+              width === "xs"
+                ? "w-20"
+                : width === "sm"
                 ? "w-32"
                 : width === "md"
                 ? "w-48"
@@ -63,8 +65,10 @@ const CustomListbox: React.FC<Props> = ({
             leaveTo="opacity-0"
           >
             <Listbox.Options
-              className={`absolute mt-1 bg-white shadow-lg max-h-32 overflow-auto ${
-                width === "sm"
+              className={`absolute mt-1 max-h-32 overflow-auto bg-white shadow-lg ${
+                width === "xs"
+                  ? "w-20"
+                  : width === "sm"
                   ? "w-32"
                   : width === "md"
                   ? "w-48"
@@ -89,7 +93,7 @@ const CustomListbox: React.FC<Props> = ({
                   : optionsFontsize === "2xl"
                   ? "text-2xl"
                   : ""
-              } rounded-md py-1 ring-1 ring-black ring-opacity-5 focus:outline-none z-10`}
+              } z-10 rounded-md py-1 ring-1 ring-black ring-opacity-5 focus:outline-none`}
             >
               <div className="py-1">
                 {options ? (
@@ -100,7 +104,7 @@ const CustomListbox: React.FC<Props> = ({
                         className={({ active }) =>
                           `${
                             active ? "bg-indigo-50" : ""
-                          } text-gray-900 cursor-pointer select-none relative p-2`
+                          } relative cursor-pointer select-none p-2 text-gray-900`
                         }
                         value={option.value}
                       >
@@ -118,7 +122,7 @@ const CustomListbox: React.FC<Props> = ({
                             >
                               {option.color && (
                                 <span
-                                  className="flex-shrink-0 h-1.5 w-1.5 rounded-full"
+                                  className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
                                   style={{
                                     backgroundColor: option.color,
                                   }}
@@ -149,10 +153,10 @@ const CustomListbox: React.FC<Props> = ({
                       </Listbox.Option>
                     ))
                   ) : (
-                    <p className="text-sm text-gray-500 text-center">No options</p>
+                    <p className="text-center text-sm text-gray-500">No options</p>
                   )
                 ) : (
-                  <p className="text-sm text-gray-500 text-center">Loading...</p>
+                  <p className="text-center text-sm text-gray-500">Loading...</p>
                 )}
               </div>
               {footerOption ?? null}

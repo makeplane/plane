@@ -54,10 +54,6 @@ const IssueActivitySection = dynamic(
   }
 );
 
-const RichTextEditor = dynamic(() => import("components/lexical/editor"), {
-  ssr: false,
-});
-
 const defaultValues = {
   name: "",
   description: "",
@@ -95,13 +91,6 @@ const IssueDetail: NextPage = () => {
     (Partial<IIssue> & { actionType: "createIssue" | "edit" | "delete" }) | undefined
   >(undefined);
 
-  const [issueDescriptionValue, setIssueDescriptionValue] = useState("");
-
-  const handleDescriptionChange: any = (value: any) => {
-    console.log(value);
-    setIssueDescriptionValue(value);
-  };
-
   const {
     register,
     formState: { errors },
@@ -132,7 +121,6 @@ const IssueDetail: NextPage = () => {
 
       const payload = {
         ...formData,
-        // description: formData.description ? JSON.parse(formData.description) : null,
       };
 
       issuesServices
@@ -159,7 +147,6 @@ const IssueDetail: NextPage = () => {
     if (issueDetail)
       reset({
         ...issueDetail,
-        // description: JSON.stringify(issueDetail.description),
         blockers_list:
           issueDetail.blockers_list ??
           issueDetail.blocker_issues?.map((issue) => issue.blocker_issue_detail?.id),
@@ -255,16 +242,16 @@ const IssueDetail: NextPage = () => {
         />
       )}
       {issueDetail && activeProject ? (
-        <div className="h-full flex gap-5">
+        <div className="flex h-full gap-5">
           <div className="basis-2/3 space-y-5 p-5">
             <div className="mb-5"></div>
             <div className="rounded-lg">
               {issueDetail.parent !== null && issueDetail.parent !== "" ? (
-                <div className="bg-gray-100 flex items-center gap-2 p-2 text-xs rounded mb-5 w-min whitespace-nowrap">
+                <div className="mb-5 flex w-min items-center gap-2 whitespace-nowrap rounded bg-gray-100 p-2 text-xs">
                   <Link href={`/projects/${activeProject.id}/issues/${issueDetail.parent}`}>
                     <a className="flex items-center gap-2">
                       <span
-                        className="h-1.5 w-1.5 block rounded-full"
+                        className="block h-1.5 w-1.5 rounded-full"
                         style={{
                           backgroundColor: issueDetail.state_detail.color,
                         }}
@@ -273,7 +260,7 @@ const IssueDetail: NextPage = () => {
                         {activeProject.identifier}-
                         {issues?.results.find((i) => i.id === issueDetail.parent)?.sequence_id}
                       </span>
-                      <span className="font-medium truncate">
+                      <span className="truncate font-medium">
                         {issues?.results
                           .find((i) => i.id === issueDetail.parent)
                           ?.name.substring(0, 50)}
@@ -281,7 +268,7 @@ const IssueDetail: NextPage = () => {
                     </a>
                   </Link>
                   <Menu as="div" className="relative inline-block">
-                    <Menu.Button className="grid relative place-items-center hover:bg-gray-200 rounded p-1 focus:outline-none">
+                    <Menu.Button className="relative grid place-items-center rounded p-1 hover:bg-gray-200 focus:outline-none">
                       <EllipsisHorizontalIcon className="h-4 w-4" />
                     </Menu.Button>
 
@@ -294,13 +281,13 @@ const IssueDetail: NextPage = () => {
                       leaveFrom="transform opacity-100 scale-100"
                       leaveTo="transform opacity-0 scale-95"
                     >
-                      <Menu.Items className="absolute left-0 mt-1 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                      <Menu.Items className="absolute left-0 z-50 mt-1 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                         <div className="p-1">
                           {siblingIssues && siblingIssues.length > 0 ? (
                             siblingIssues.map((issue) => (
                               <Menu.Item as="div" key={issue.id}>
                                 <Link href={`/projects/${activeProject.id}/issues/${issue.id}`}>
-                                  <a className="flex items-center gap-2 p-2 text-left text-gray-900 hover:bg-theme hover:text-white rounded-md text-xs whitespace-nowrap">
+                                  <a className="flex items-center gap-2 whitespace-nowrap rounded-md p-2 text-left text-xs text-gray-900 hover:bg-theme hover:text-white">
                                     {activeProject.identifier}-{issue.sequence_id}
                                   </a>
                                 </Link>
@@ -309,7 +296,7 @@ const IssueDetail: NextPage = () => {
                           ) : (
                             <Menu.Item
                               as="div"
-                              className="flex items-center gap-2 p-2 text-left text-gray-900 text-xs whitespace-nowrap"
+                              className="flex items-center gap-2 whitespace-nowrap p-2 text-left text-xs text-gray-900"
                             >
                               No other sub-issues
                             </Menu.Item>
@@ -348,41 +335,23 @@ const IssueDetail: NextPage = () => {
                   mode="transparent"
                   register={register}
                 />
-                {/* <Controller
-                  name="description"
-                  control={control}
-                  render={({ field: { value, onChange } }) => (
-                    <RichTextEditor
-                      // value={JSON.stringify(issueDetail.description)}
-                      value={value}
-                      onChange={(val) => {
-                        debounce(() => {
-                          console.log("Debounce");
-                          // handleSubmit(submitChanges)();
-                        }, 5000)();
-                        onChange(val);
-                      }}
-                      id="issueDescriptionEditor"
-                    />
-                  )}
-                /> */}
               </div>
               <div className="mt-2">
                 {subIssues && subIssues.length > 0 ? (
                   <Disclosure defaultOpen={true}>
                     {({ open }) => (
                       <>
-                        <div className="flex justify-between items-center">
-                          <Disclosure.Button className="flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-100 text-xs font-medium">
+                        <div className="flex items-center justify-between">
+                          <Disclosure.Button className="flex items-center gap-1 rounded px-2 py-1 text-xs font-medium hover:bg-gray-100">
                             <ChevronRightIcon className={`h-3 w-3 ${open ? "rotate-90" : ""}`} />
                             Sub-issues{" "}
-                            <span className="text-gray-600 ml-1">{subIssues.length}</span>
+                            <span className="ml-1 text-gray-600">{subIssues.length}</span>
                           </Disclosure.Button>
                           {open ? (
                             <div className="flex items-center">
                               <button
                                 type="button"
-                                className="flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-100 text-xs font-medium"
+                                className="flex items-center gap-1 rounded px-2 py-1 text-xs font-medium hover:bg-gray-100"
                                 onClick={() => {
                                   setIsOpen(true);
                                   setPreloadedData({
@@ -396,7 +365,7 @@ const IssueDetail: NextPage = () => {
                               </button>
 
                               <Menu as="div" className="relative inline-block">
-                                <Menu.Button className="grid relative place-items-center rounded p-1 hover:bg-gray-100 focus:outline-none">
+                                <Menu.Button className="relative grid place-items-center rounded p-1 hover:bg-gray-100 focus:outline-none">
                                   <EllipsisHorizontalIcon className="h-4 w-4" />
                                 </Menu.Button>
 
@@ -409,12 +378,12 @@ const IssueDetail: NextPage = () => {
                                   leaveFrom="transform opacity-100 scale-100"
                                   leaveTo="transform opacity-0 scale-95"
                                 >
-                                  <Menu.Items className="origin-top-right absolute right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                                  <Menu.Items className="absolute right-0 z-50 mt-2 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                                     <div className="p-1">
                                       <Menu.Item as="div">
                                         <button
                                           type="button"
-                                          className="flex items-center gap-2 p-2 text-left text-gray-900 hover:bg-theme hover:text-white rounded-md text-xs whitespace-nowrap"
+                                          className="flex items-center gap-2 whitespace-nowrap rounded-md p-2 text-left text-xs text-gray-900 hover:bg-theme hover:text-white"
                                           onClick={() => setIsAddAsSubIssueOpen(true)}
                                         >
                                           Add an existing issue
@@ -435,16 +404,16 @@ const IssueDetail: NextPage = () => {
                           leaveFrom="transform scale-100 opacity-100"
                           leaveTo="transform scale-95 opacity-0"
                         >
-                          <Disclosure.Panel className="flex flex-col gap-y-1 mt-3">
+                          <Disclosure.Panel className="mt-3 flex flex-col gap-y-1">
                             {subIssues.map((subIssue) => (
                               <div
                                 key={subIssue.id}
-                                className="group flex justify-between items-center gap-2 rounded p-2 hover:bg-gray-100"
+                                className="group flex items-center justify-between gap-2 rounded p-2 hover:bg-gray-100"
                               >
                                 <Link href={`/projects/${activeProject.id}/issues/${subIssue.id}`}>
                                   <a className="flex items-center gap-2 rounded text-xs">
                                     <span
-                                      className={`h-1.5 w-1.5 block rounded-full`}
+                                      className={`block h-1.5 w-1.5 rounded-full`}
                                       style={{
                                         backgroundColor: subIssue.state_detail.color,
                                       }}
@@ -452,14 +421,14 @@ const IssueDetail: NextPage = () => {
                                     <span className="flex-shrink-0 text-gray-600">
                                       {activeProject.identifier}-{subIssue.sequence_id}
                                     </span>
-                                    <span className="font-medium max-w-sm break-all">
+                                    <span className="max-w-sm break-all font-medium">
                                       {subIssue.name}
                                     </span>
                                   </a>
                                 </Link>
                                 <div className="opacity-0 group-hover:opacity-100">
                                   <Menu as="div" className="relative inline-block">
-                                    <Menu.Button className="grid relative place-items-center hover:bg-gray-200 p-1 focus:outline-none">
+                                    <Menu.Button className="relative grid place-items-center p-1 hover:bg-gray-200 focus:outline-none">
                                       <EllipsisHorizontalIcon className="h-4 w-4" />
                                     </Menu.Button>
 
@@ -472,11 +441,11 @@ const IssueDetail: NextPage = () => {
                                       leaveFrom="transform opacity-100 scale-100"
                                       leaveTo="transform opacity-0 scale-95"
                                     >
-                                      <Menu.Items className="origin-top-right absolute right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                                      <Menu.Items className="absolute right-0 z-50 mt-2 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                                         <div className="p-1">
                                           <Menu.Item as="div">
                                             <button
-                                              className="flex items-center gap-2 p-2 text-left text-gray-900 hover:bg-theme hover:text-white rounded-md text-xs whitespace-nowrap"
+                                              className="flex items-center gap-2 whitespace-nowrap rounded-md p-2 text-left text-xs text-gray-900 hover:bg-theme hover:text-white"
                                               onClick={() => handleSubIssueRemove(subIssue.id)}
                                             >
                                               Remove as sub-issue
@@ -496,7 +465,7 @@ const IssueDetail: NextPage = () => {
                   </Disclosure>
                 ) : (
                   <Menu as="div" className="relative inline-block">
-                    <Menu.Button className="flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-100 text-xs font-medium">
+                    <Menu.Button className="flex items-center gap-1 rounded px-2 py-1 text-xs font-medium hover:bg-gray-100">
                       <PlusIcon className="h-3 w-3" />
                       Add sub-issue
                     </Menu.Button>
@@ -510,12 +479,12 @@ const IssueDetail: NextPage = () => {
                       leaveFrom="transform opacity-100 scale-100"
                       leaveTo="transform opacity-0 scale-95"
                     >
-                      <Menu.Items className="absolute origin-top-right left-0 mt-1 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+                      <Menu.Items className="absolute left-0 z-10 mt-1 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                         <div className="py-1">
                           <Menu.Item as="div">
                             <button
                               type="button"
-                              className="text-left p-2 text-gray-900 hover:bg-indigo-50 text-xs whitespace-nowrap w-full"
+                              className="w-full whitespace-nowrap p-2 text-left text-xs text-gray-900 hover:bg-indigo-50"
                               onClick={() => {
                                 setIsOpen(true);
                                 setPreloadedData({
@@ -530,7 +499,7 @@ const IssueDetail: NextPage = () => {
                           <Menu.Item as="div">
                             <button
                               type="button"
-                              className="p-2 text-left text-gray-900 hover:bg-indigo-50 text-xs whitespace-nowrap"
+                              className="whitespace-nowrap p-2 text-left text-xs text-gray-900 hover:bg-indigo-50"
                               onClick={() => {
                                 setIsAddAsSubIssueOpen(true);
                                 setPreloadedData({
@@ -549,14 +518,14 @@ const IssueDetail: NextPage = () => {
                 )}
               </div>
             </div>
-            <div className="bg-secondary rounded-lg space-y-5">
+            <div className="space-y-5 rounded-lg bg-secondary">
               <Tab.Group>
                 <Tab.List className="flex gap-x-3">
                   {["Comments", "Activity"].map((item) => (
                     <Tab
                       key={item}
                       className={({ selected }) =>
-                        `px-3 py-1 text-sm rounded-md border-2 border-gray-700 ${
+                        `rounded-md border-2 border-gray-700 px-3 py-1 text-sm ${
                           selected ? "bg-gray-700 text-white" : ""
                         }`
                       }
@@ -576,7 +545,7 @@ const IssueDetail: NextPage = () => {
               </Tab.Group>
             </div>
           </div>
-          <div className="h-full basis-1/3 space-y-5 p-5 border-l">
+          <div className="h-full basis-1/3 space-y-5 border-l p-5">
             {/* TODO add flex-grow, if needed */}
             <IssueDetailSidebar
               control={control}
@@ -587,7 +556,7 @@ const IssueDetail: NextPage = () => {
           </div>
         </div>
       ) : (
-        <Loader className="h-full flex gap-5 p-5">
+        <Loader className="flex h-full gap-5 p-5">
           <div className="basis-2/3 space-y-2">
             <Loader.Item height="30px" width="40%"></Loader.Item>
             <Loader.Item height="15px" width="60%" light></Loader.Item>

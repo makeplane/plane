@@ -26,11 +26,11 @@ const CustomSelect = ({
       as="div"
       value={value}
       onChange={onChange}
-      className="relative text-left flex-shrink-0"
+      className="relative flex-shrink-0 text-left"
     >
       <div>
         <Listbox.Button
-          className={`flex justify-between items-center gap-1 hover:bg-gray-100 border rounded-md shadow-sm px-2 w-full py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300 ${
+          className={`flex w-full cursor-pointer items-center justify-between gap-1 rounded-md border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
             textAlignment === "right"
               ? "text-right"
               : textAlignment === "center"
@@ -66,7 +66,7 @@ const CustomSelect = ({
 
 type OptionProps = {
   children: string | JSX.Element;
-  value: string;
+  value: any;
   className?: string;
 };
 
@@ -77,7 +77,7 @@ const Option: React.FC<OptionProps> = ({ children, value, className }) => {
       className={({ active, selected }) =>
         `${
           active || selected ? "bg-indigo-50" : ""
-        } flex items-center gap-2 text-gray-900 cursor-pointer select-none relative p-2 truncate ${className}`
+        } relative flex cursor-pointer select-none items-center gap-2 truncate p-2 text-gray-900 ${className}`
       }
     >
       {children}

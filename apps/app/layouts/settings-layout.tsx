@@ -98,10 +98,10 @@ const SettingsLayout: React.FC<Props> = ({
   return (
     <Container meta={meta}>
       <CreateProjectModal isOpen={isOpen} setIsOpen={setIsOpen} />
-      <div className="h-screen w-full flex overflow-x-hidden">
-        <Sidebar collapse />
+      <div className="flex h-screen w-full overflow-x-hidden">
+        <Sidebar />
         <SettingsSidebar links={type === "workspace" ? workspaceLinks : sidebarLinks} />
-        <main className="h-screen w-full flex flex-col overflow-y-auto min-w-0">
+        <main className="flex h-screen w-full min-w-0 flex-col overflow-y-auto">
           {noHeader ? null : <Header breadcrumbs={breadcrumbs} left={left} right={right} />}
           <div
             className={`w-full flex-grow ${noPadding ? "" : "p-5 px-16"} ${

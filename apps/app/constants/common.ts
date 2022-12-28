@@ -236,3 +236,5 @@ export const getRandomEmoji = () => {
 
   return emojis[Math.floor(Math.random() * emojis.length)];
 };
+
+export const capitalizeFirstLetter = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);

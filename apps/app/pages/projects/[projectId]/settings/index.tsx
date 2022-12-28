@@ -148,8 +148,8 @@ const GeneralSettings = () => {
           <div className="grid grid-cols-12 gap-16">
             <div className="col-span-5 space-y-16">
               <div>
-                <h4 className="text-md leading-6 text-gray-900 mb-1">Icon & Name</h4>
-                <p className="text-sm text-gray-500 mb-3">
+                <h4 className="text-md mb-1 leading-6 text-gray-900">Icon & Name</h4>
+                <p className="mb-3 text-sm text-gray-500">
                   Select an icon and a name for the project.
                 </p>
                 <div className="flex gap-2">
@@ -191,8 +191,8 @@ const GeneralSettings = () => {
                 </div>
               </div>
               <div>
-                <h4 className="text-md leading-6 text-gray-900 mb-1">Identifier</h4>
-                <p className="text-sm text-gray-500 mb-3">
+                <h4 className="text-md mb-1 leading-6 text-gray-900">Identifier</h4>
+                <p className="mb-3 text-sm text-gray-500">
                   Create a 1-6 characters{"'"} identifier for the project.
                 </p>
                 {projectDetails ? (
@@ -229,8 +229,8 @@ const GeneralSettings = () => {
             </div>
             <div className="col-span-5 space-y-16">
               <div>
-                <h4 className="text-md leading-6 text-gray-900 mb-1">Description</h4>
-                <p className="text-sm text-gray-500 mb-3">Give a description to the project.</p>
+                <h4 className="text-md mb-1 leading-6 text-gray-900">Description</h4>
+                <p className="mb-3 text-sm text-gray-500">Give a description to the project.</p>
                 {projectDetails ? (
                   <TextArea
                     id="description"
@@ -239,16 +239,17 @@ const GeneralSettings = () => {
                     register={register}
                     placeholder="Enter project description"
                     validations={{}}
+                    className="min-h-[46px]"
                   />
                 ) : (
                   <Loader className="w-full">
-                    <Loader.Item height="65px" width="full" light />
+                    <Loader.Item height="46px" width="full" light />
                   </Loader>
                 )}
               </div>
               <div>
-                <h4 className="text-md leading-6 text-gray-900 mb-1">Network</h4>
-                <p className="text-sm text-gray-500 mb-3">Select privacy type for the project.</p>
+                <h4 className="text-md mb-1 leading-6 text-gray-900">Network</h4>
+                <p className="mb-3 text-sm text-gray-500">Select privacy type for the project.</p>
                 {projectDetails ? (
                   <Select
                     name="network"

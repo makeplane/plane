@@ -115,12 +115,12 @@ const IssueCommentSection: React.FC = () => {
           <p className="text-sm">No comments yet. Be the first to comment.</p>
         )
       ) : (
-        <div className="w-full flex justify-center">
+        <div className="flex w-full justify-center">
           <Spinner />
         </div>
       )}
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex items-start gap-2 border rounded-md p-2">
+        <div className="flex items-start gap-2 rounded-md border p-2 pt-3">
           <TextArea
             id="comment"
             name="comment"
@@ -144,9 +144,13 @@ const IssueCommentSection: React.FC = () => {
               }
             }}
           />
-          <Button type="submit" className="whitespace-nowrap" disabled={isSubmitting}>
-            {isSubmitting ? "Adding comment..." : "Add comment"}
-          </Button>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="rounded-md bg-gray-300 p-2 px-4 text-sm text-black hover:bg-gray-300"
+          >
+            {isSubmitting ? "Adding..." : "Comment"}
+          </button>
         </div>
       </form>
     </div>

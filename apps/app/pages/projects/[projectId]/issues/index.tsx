@@ -139,7 +139,7 @@ const ProjectIssues: NextPage = () => {
           <div className="flex items-center gap-x-1">
             <button
               type="button"
-              className={`h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-200 duration-300 outline-none ${
+              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200 ${
                 issueView === "list" ? "bg-gray-200" : ""
               }`}
               onClick={() => setIssueViewToList()}
@@ -148,7 +148,7 @@ const ProjectIssues: NextPage = () => {
             </button>
             <button
               type="button"
-              className={`h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-200 duration-300 outline-none ${
+              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200 ${
                 issueView === "kanban" ? "bg-gray-200" : ""
               }`}
               onClick={() => setIssueViewToKanban()}
@@ -162,7 +162,7 @@ const ProjectIssues: NextPage = () => {
                 <Popover.Button
                   className={classNames(
                     open ? "bg-gray-100 text-gray-900" : "text-gray-500",
-                    "group flex gap-2 items-center rounded-md bg-transparent text-xs font-medium hover:bg-gray-100 hover:text-gray-900 focus:outline-none border p-2"
+                    "group flex items-center gap-2 rounded-md border bg-transparent p-2 text-xs font-medium hover:bg-gray-100 hover:text-gray-900 focus:outline-none"
                   )}
                 >
                   <span>View</span>
@@ -178,16 +178,16 @@ const ProjectIssues: NextPage = () => {
                   leaveFrom="opacity-100 translate-y-0"
                   leaveTo="opacity-0 translate-y-1"
                 >
-                  <Popover.Panel className="absolute mr-5 right-1/2 z-20 mt-1 w-screen max-w-xs translate-x-1/2 transform p-3 bg-white rounded-lg shadow-lg overflow-hidden">
+                  <Popover.Panel className="absolute right-1/2 z-20 mr-5 mt-1 w-screen max-w-xs translate-x-1/2 transform overflow-hidden rounded-lg bg-white p-3 shadow-lg">
                     <div className="relative flex flex-col gap-1 gap-y-4">
-                      <div className="flex justify-between items-center">
+                      <div className="flex items-center justify-between">
                         <h4 className="text-sm text-gray-600">Group by</h4>
                         <CustomMenu
                           label={
                             groupByOptions.find((option) => option.key === groupByProperty)?.name ??
                             "Select"
                           }
-                          width="auto"
+                          width="lg"
                         >
                           {groupByOptions.map((option) => (
                             <CustomMenu.MenuItem
@@ -199,14 +199,14 @@ const ProjectIssues: NextPage = () => {
                           ))}
                         </CustomMenu>
                       </div>
-                      <div className="flex justify-between items-center">
+                      <div className="flex items-center justify-between">
                         <h4 className="text-sm text-gray-600">Order by</h4>
                         <CustomMenu
                           label={
                             orderByOptions.find((option) => option.key === orderBy)?.name ??
                             "Select"
                           }
-                          width="auto"
+                          width="lg"
                         >
                           {orderByOptions.map((option) =>
                             groupByProperty === "priority" && option.key === "priority" ? null : (
@@ -220,14 +220,14 @@ const ProjectIssues: NextPage = () => {
                           )}
                         </CustomMenu>
                       </div>
-                      <div className="flex justify-between items-center">
+                      <div className="flex items-center justify-between">
                         <h4 className="text-sm text-gray-600">Issue type</h4>
                         <CustomMenu
                           label={
                             filterIssueOptions.find((option) => option.key === filterIssue)?.name ??
                             "Select"
                           }
-                          width="auto"
+                          width="lg"
                         >
                           {filterIssueOptions.map((option) => (
                             <CustomMenu.MenuItem
@@ -242,15 +242,15 @@ const ProjectIssues: NextPage = () => {
                       <div className="border-b-2"></div>
                       <div className="relative flex flex-col gap-1">
                         <h4 className="text-base text-gray-600">Properties</h4>
-                        <div className="flex items-center gap-2 flex-wrap">
+                        <div className="flex flex-wrap items-center gap-2">
                           {Object.keys(properties).map((key) => (
                             <button
                               key={key}
                               type="button"
-                              className={`px-2 py-1 capitalize rounded border border-theme text-xs ${
+                              className={`rounded border px-2 py-1 text-xs capitalize ${
                                 properties[key as keyof Properties]
                                   ? "border-theme bg-theme text-white"
-                                  : ""
+                                  : "border-gray-300"
                               }`}
                               onClick={() => setProperties(key as keyof Properties)}
                             >
@@ -308,7 +308,7 @@ const ProjectIssues: NextPage = () => {
         data={projectIssues?.results.find((issue) => issue.id === deleteIssue)}
       />
       {!projectIssues ? (
-        <div className="h-full w-full flex justify-center items-center">
+        <div className="flex h-full w-full items-center justify-center">
           <Spinner />
         </div>
       ) : projectIssues.count > 0 ? (
@@ -336,7 +336,7 @@ const ProjectIssues: NextPage = () => {
           )}
         </>
       ) : (
-        <div className="h-full w-full grid place-items-center px-4 sm:px-0">
+        <div className="grid h-full w-full place-items-center px-4 sm:px-0">
           <EmptySpace
             title="You don't have any issue yet."
             description="Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done."
@@ -346,7 +346,7 @@ const ProjectIssues: NextPage = () => {
               title="Create a new issue"
               description={
                 <span>
-                  Use <pre className="inline bg-gray-100 px-2 py-1 rounded">Ctrl/Command + I</pre>{" "}
+                  Use <pre className="inline rounded bg-gray-100 px-2 py-1">Ctrl/Command + I</pre>{" "}
                   shortcut to create a new issue
                 </span>
               }
