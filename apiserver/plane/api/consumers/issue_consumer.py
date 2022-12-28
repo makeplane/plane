@@ -372,6 +372,134 @@ class IssueConsumer(SyncConsumer):
                         )
                     )
 
+    # Track changes in blocking issues
+    def track_blocks(
+        self,
+        requested_data,
+        current_instance,
+        issue_id,
+        project,
+        actor,
+        issue_activities,
+    ):
+        if len(requested_data.get("blocks_list")) > len(
+            current_instance.get("blocked_issues")
+        ):
+
+            for block in requested_data.get("blocks_list"):
+                if (
+                    len(
+                        [
+                            blocked
+                            for blocked in current_instance.get("blocked_issues")
+                            if blocked.get("block") == block
+                        ]
+                    )
+                    == 0
+                ):
+                    issue = Issue.objects.get(pk=block)
+                    issue_activities.append(
+                        IssueActivity(
+                            issue_id=issue_id,
+                            actor=actor,
+                            verb="updated",
+                            old_value="",
+                            new_value=f"{project.identifier}-{issue.sequence_id}",
+                            field="blocks",
+                            project=project,
+                            workspace=project.workspace,
+                            comment=f"{actor.email} added blocking issue {project.identifier}-{issue.sequence_id}",
+                            new_identifier=issue.id,
+                        )
+                    )
+
+        # Blocked Issue Removal
+        if len(requested_data.get("blocks_list")) < len(
+            current_instance.get("blocked_issues")
+        ):
+
+            for blocked in current_instance.get("blocked_issues"):
+                if blocked.get("block") not in requested_data.get("blocks_list"):
+                    issue = Issue.objects.get(pk=blocked.get("block"))
+                    issue_activities.append(
+                        IssueActivity(
+                            issue_id=issue_id,
+                            actor=actor,
+                            verb="updated",
+                            old_value=f"{project.identifier}-{issue.sequence_id}",
+                            new_value="",
+                            field="blocks",
+                            project=project,
+                            workspace=project.workspace,
+                            comment=f"{actor.email} removed blocking issue {project.identifier}-{issue.sequence_id}",
+                            old_identifier=issue.id,
+                        )
+                    )
+
+    # Track changes in blocked_by issues
+    def track_blockings(
+        self,
+        requested_data,
+        current_instance,
+        issue_id,
+        project,
+        actor,
+        issue_activities,
+    ):
+        if len(requested_data.get("blockers_list")) > len(
+            current_instance.get("blocker_issues")
+        ):
+
+            for block in requested_data.get("blockers_list"):
+                if (
+                    len(
+                        [
+                            blocked
+                            for blocked in current_instance.get("blocker_issues")
+                            if blocked.get("blocked_by") == block
+                        ]
+                    )
+                    == 0
+                ):
+                    issue = Issue.objects.get(pk=block)
+                    issue_activities.append(
+                        IssueActivity(
+                            issue_id=issue_id,
+                            actor=actor,
+                            verb="updated",
+                            old_value="",
+                            new_value=f"{project.identifier}-{issue.sequence_id}",
+                            field="blocking",
+                            project=project,
+                            workspace=project.workspace,
+                            comment=f"{actor.email} added blocked by issue {project.identifier}-{issue.sequence_id}",
+                            new_identifier=issue.id,
+                        )
+                    )
+
+        # Blocked Issue Removal
+        if len(requested_data.get("blockers_list")) < len(
+            current_instance.get("blocker_issues")
+        ):
+
+            for blocked in current_instance.get("blocker_issues"):
+                if blocked.get("blocked_by") not in requested_data.get("blockers_list"):
+                    issue = Issue.objects.get(pk=blocked.get("blocked_by"))
+                    issue_activities.append(
+                        IssueActivity(
+                            issue_id=issue_id,
+                            actor=actor,
+                            verb="updated",
+                            old_value=f"{project.identifier}-{issue.sequence_id}",
+                            new_value="",
+                            field="blocking",
+                            project=project,
+                            workspace=project.workspace,
+                            comment=f"{actor.email} removed blocked by issue {project.identifier}-{issue.sequence_id}",
+                            old_identifier=issue.id,
+                        )
+                    )
+
     # Receive message from room group
     def issue_activity(self, event):
 
@@ -399,6 +527,8 @@ class IssueConsumer(SyncConsumer):
             "start_date": self.track_start_date,
             "labels_list": self.track_labels,
             "assignees_list": self.track_assignees,
+            "blocks_list": self.track_blocks,
+            "blockers_list": self.track_blockings,
         }
 
         for key in requested_data:
@@ -412,6 +542,6 @@ class IssueConsumer(SyncConsumer):
                     actor,
                     issue_activities,
                 )
-
-        # TODO: Add blocking and blocker issue tracking once cleared from frontend
+        
+        # Save all the values to database
         IssueActivity.objects.bulk_create(issue_activities)
