@@ -2,6 +2,8 @@
 import { CYCLES_ENDPOINT, CYCLE_DETAIL } from "constants/api-routes";
 // services
 import APIService from "lib/services/api.service";
+// types
+import type { ICycle } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -20,7 +22,7 @@ class ProjectCycleServices extends APIService {
       });
   }
 
-  async getCycles(workspaceSlug: string, projectId: string): Promise<any> {
+  async getCycles(workspaceSlug: string, projectId: string): Promise<ICycle[]> {
     return this.get(CYCLES_ENDPOINT(workspaceSlug, projectId))
       .then((response) => {
         return response?.data;

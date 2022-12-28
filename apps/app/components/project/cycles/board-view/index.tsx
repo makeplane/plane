@@ -1,10 +1,18 @@
+import React from "react";
+// swr
+import useSWR from "swr";
+// services
+import stateService from "lib/services/state.service";
+// constants
+import { STATE_LIST } from "constants/fetch-keys";
+// hooks
+import useUser from "lib/hooks/useUser";
 // components
 import SingleBoard from "components/project/cycles/board-view/single-board";
 // ui
 import { Spinner } from "ui";
 // types
 import { IIssue, IProjectMember, NestedKeyOf, Properties } from "types";
-import useUser from "lib/hooks/useUser";
 
 type Props = {
   groupedByIssues: {
@@ -40,7 +48,14 @@ const CyclesBoardView: React.FC<Props> = ({
   handleDeleteIssue,
   setPreloadedData,
 }) => {
-  const { states } = useUser();
+  const { activeProject, activeWorkspace } = useUser();
+
+  const { data: states } = useSWR(
+    activeWorkspace && activeProject ? STATE_LIST(activeProject.id) : null,
+    activeWorkspace && activeProject
+      ? () => stateService.getStates(activeWorkspace.slug, activeProject.id)
+      : null
+  );
 
   return (
     <>
@@ -48,7 +63,7 @@ const CyclesBoardView: React.FC<Props> = ({
         <div className="h-full w-full">
           <div className="h-full w-full overflow-hidden">
             <div className="h-full w-full">
-              <div className="flex gap-x-4 h-full overflow-x-auto overflow-y-hidden pb-3">
+              <div className="flex h-full gap-x-4 overflow-x-auto overflow-y-hidden pb-3">
                 {Object.keys(groupedByIssues).map((singleGroup) => (
                   <SingleBoard
                     key={singleGroup}
@@ -85,7 +100,7 @@ const CyclesBoardView: React.FC<Props> = ({
           </div>
         </div>
       ) : (
-        <div className="h-full w-full flex justify-center items-center">
+        <div className="flex h-full w-full items-center justify-center">
           <Spinner />
         </div>
       )}

@@ -1,3 +1,10 @@
+// swr
+import useSWR from "swr";
+// services
+import stateService from "lib/services/state.service";
+// constants
+import { STATE_LIST } from "constants/fetch-keys";
+// hooks
 import useTheme from "./useTheme";
 import useUser from "./useUser";
 // commons
@@ -22,7 +29,14 @@ const useIssuesFilter = (projectIssues: IIssue[]) => {
     setIssueViewToList,
   } = useTheme();
 
-  const { states } = useUser();
+  const { activeWorkspace, activeProject } = useUser();
+
+  const { data: states } = useSWR(
+    activeWorkspace && activeProject ? STATE_LIST(activeProject.id) : null,
+    activeWorkspace && activeProject
+      ? () => stateService.getStates(activeWorkspace.slug, activeProject.id)
+      : null
+  );
 
   let groupedByIssues: {
     [key: string]: IIssue[];

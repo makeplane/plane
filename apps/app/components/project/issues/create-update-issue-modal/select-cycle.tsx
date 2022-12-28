@@ -1,8 +1,14 @@
 import React from "react";
+// swr
+import useSWR from "swr";
 // react hook form
 import { Controller } from "react-hook-form";
 // hooks
 import useUser from "lib/hooks/useUser";
+// services
+import cycleServices from "lib/services/cycles.service";
+// constants
+import { CYCLE_LIST } from "constants/fetch-keys";
 // ui
 import { CustomListbox } from "ui";
 // icons
@@ -17,8 +23,15 @@ type Props = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const SelectSprint: React.FC<Props> = ({ control, setIsOpen }) => {
-  const { cycles } = useUser();
+const SelectCycle: React.FC<Props> = ({ control, setIsOpen }) => {
+  const { activeWorkspace, activeProject } = useUser();
+
+  const { data: cycles } = useSWR(
+    activeWorkspace && activeProject ? CYCLE_LIST(activeProject.id) : null,
+    activeWorkspace && activeProject
+      ? () => cycleServices.getCycles(activeWorkspace.slug, activeProject.id)
+      : null
+  );
 
   return (
     <Controller
@@ -54,4 +67,4 @@ const SelectSprint: React.FC<Props> = ({ control, setIsOpen }) => {
   );
 };
 
-export default SelectSprint;
+export default SelectCycle;

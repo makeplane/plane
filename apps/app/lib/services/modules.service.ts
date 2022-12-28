@@ -7,6 +7,8 @@ import {
 } from "constants/api-routes";
 // services
 import APIService from "lib/services/api.service";
+// types
+import type { IModule } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -15,7 +17,7 @@ class ProjectIssuesServices extends APIService {
     super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
   }
 
-  async getModules(workspaceSlug: string, projectId: string): Promise<any> {
+  async getModules(workspaceSlug: string, projectId: string): Promise<IModule[]> {
     return this.get(MODULES_ENDPOINT(workspaceSlug, projectId))
       .then((response) => {
         return response?.data;

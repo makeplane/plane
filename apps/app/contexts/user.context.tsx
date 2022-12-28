@@ -7,8 +7,6 @@ import useSWR from "swr";
 // services
 import userService from "lib/services/user.service";
 import issuesServices from "lib/services/issues.service";
-import stateServices from "lib/services/state.service";
-import sprintsServices from "lib/services/cycles.service";
 import projectServices from "lib/services/project.service";
 import workspaceService from "lib/services/workspace.service";
 // constants
@@ -17,15 +15,11 @@ import {
   PROJECTS_LIST,
   USER_WORKSPACES,
   PROJECT_ISSUES_LIST,
-  STATE_LIST,
-  CYCLE_LIST,
-  MODULE_LIST,
 } from "constants/fetch-keys";
 
 // types
 import type { KeyedMutator } from "swr";
-import type { IUser, IWorkspace, IProject, IssueResponse, ICycle, IState, IModule } from "types";
-import modulesService from "lib/services/modules.service";
+import type { IUser, IWorkspace, IProject, IssueResponse } from "types";
 
 interface IUserContextProps {
   user?: IUser;
@@ -40,12 +34,6 @@ interface IUserContextProps {
   activeProject?: IProject;
   issues?: IssueResponse;
   mutateIssues: KeyedMutator<IssueResponse>;
-  cycles?: ICycle[];
-  mutateCycles: KeyedMutator<ICycle[]>;
-  modules?: IModule[];
-  mutateModules: KeyedMutator<IModule[]>;
-  states?: IState[];
-  mutateStates: KeyedMutator<IState[]>;
 }
 
 export const UserContext = createContext<IUserContextProps>({} as IUserContextProps);
@@ -86,27 +74,6 @@ export const UserProvider = ({ children }: { children: ReactElement }) => {
       : null,
     activeWorkspace && activeProject
       ? () => issuesServices.getIssues(activeWorkspace.slug, activeProject.id)
-      : null
-  );
-
-  const { data: states, mutate: mutateStates } = useSWR<IState[]>(
-    activeWorkspace && activeProject ? STATE_LIST(activeProject.id) : null,
-    activeWorkspace && activeProject
-      ? () => stateServices.getStates(activeWorkspace.slug, activeProject.id)
-      : null
-  );
-
-  const { data: cycles, mutate: mutateCycles } = useSWR<ICycle[]>(
-    activeWorkspace && activeProject ? CYCLE_LIST(activeProject.id) : null,
-    activeWorkspace && activeProject
-      ? () => sprintsServices.getCycles(activeWorkspace.slug, activeProject.id)
-      : null
-  );
-
-  const { data: modules, mutate: mutateModules } = useSWR<IModule[]>(
-    activeWorkspace && activeProject ? MODULE_LIST(activeProject.id) : null,
-    activeWorkspace && activeProject
-      ? () => modulesService.getModules(activeWorkspace.slug, activeProject.id)
       : null
   );
 
@@ -152,12 +119,6 @@ export const UserProvider = ({ children }: { children: ReactElement }) => {
         activeProject,
         issues,
         mutateIssues,
-        cycles,
-        mutateCycles,
-        modules,
-        mutateModules,
-        states,
-        mutateStates,
         setActiveProject,
       }}
     >

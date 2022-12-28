@@ -4,6 +4,9 @@ import React from "react";
 import useSWR from "swr";
 // services
 import workspaceService from "lib/services/workspace.service";
+import stateService from "lib/services/state.service";
+// common
+import { addSpaceIfCamelCase } from "constants/common";
 // hooks
 import useUser from "lib/hooks/useUser";
 // components
@@ -17,9 +20,7 @@ import { PlusIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
 // types
 import { IIssue, IWorkspaceMember, NestedKeyOf, Properties } from "types";
 // fetch-keys
-import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
-// common
-import { addSpaceIfCamelCase } from "constants/common";
+import { STATE_LIST, WORKSPACE_MEMBERS } from "constants/fetch-keys";
 
 type Props = {
   groupedByIssues: {
@@ -51,15 +52,22 @@ const ModulesListView: React.FC<Props> = ({
   handleDeleteIssue,
   setPreloadedData,
 }) => {
-  const { activeWorkspace, states } = useUser();
+  const { activeWorkspace, activeProject } = useUser();
 
   const { data: people } = useSWR<IWorkspaceMember[]>(
     activeWorkspace ? WORKSPACE_MEMBERS : null,
     activeWorkspace ? () => workspaceService.workspaceMembers(activeWorkspace.slug) : null
   );
 
+  const { data: states } = useSWR(
+    activeWorkspace && activeProject ? STATE_LIST(activeProject.id) : null,
+    activeWorkspace && activeProject
+      ? () => stateService.getStates(activeWorkspace.slug, activeProject.id)
+      : null
+  );
+
   return (
-    <div className="h-full flex flex-col space-y-5">
+    <div className="flex h-full flex-col space-y-5">
       {Object.keys(groupedByIssues).map((singleGroup) => {
         const stateId =
           selectedGroup === "state_detail.name"
@@ -69,17 +77,17 @@ const ModulesListView: React.FC<Props> = ({
         return (
           <Disclosure key={singleGroup} as="div" defaultOpen>
             {({ open }) => (
-              <div className="bg-white rounded-lg">
-                <div className="bg-gray-100 px-4 py-3 rounded-t-lg">
+              <div className="rounded-lg bg-white">
+                <div className="rounded-t-lg bg-gray-100 px-4 py-3">
                   <Disclosure.Button>
                     <div className="flex items-center gap-x-2">
                       <span>
                         <ChevronDownIcon
-                          className={`h-4 w-4 text-gray-500 ${!open ? "transform -rotate-90" : ""}`}
+                          className={`h-4 w-4 text-gray-500 ${!open ? "-rotate-90 transform" : ""}`}
                         />
                       </span>
                       {selectedGroup !== null ? (
-                        <h2 className="font-medium leading-5 capitalize">
+                        <h2 className="font-medium capitalize leading-5">
                           {singleGroup === null || singleGroup === "null"
                             ? selectedGroup === "priority" && "No priority"
                             : addSpaceIfCamelCase(singleGroup)}
@@ -87,7 +95,7 @@ const ModulesListView: React.FC<Props> = ({
                       ) : (
                         <h2 className="font-medium leading-5">All Issues</h2>
                       )}
-                      <p className="text-gray-500 text-sm">
+                      <p className="text-sm text-gray-500">
                         {groupedByIssues[singleGroup as keyof IIssue].length}
                       </p>
                     </div>
@@ -135,10 +143,10 @@ const ModulesListView: React.FC<Props> = ({
                             );
                           })
                         ) : (
-                          <p className="text-sm px-4 py-3 text-gray-500">No issues.</p>
+                          <p className="px-4 py-3 text-sm text-gray-500">No issues.</p>
                         )
                       ) : (
-                        <div className="h-full w-full flex items-center justify-center">
+                        <div className="flex h-full w-full items-center justify-center">
                           <Spinner />
                         </div>
                       )}

@@ -1,4 +1,3 @@
-// react
 import React, { useState } from "react";
 // next
 import Link from "next/link";
@@ -6,28 +5,12 @@ import Image from "next/image";
 // swr
 import useSWR from "swr";
 // headless ui
-import { Disclosure, Listbox, Menu, Transition } from "@headlessui/react";
-// ui
-import { CustomMenu, Spinner } from "ui";
-// icons
-import {
-  ChevronDownIcon,
-  PlusIcon,
-  CalendarDaysIcon,
-  EllipsisHorizontalIcon,
-} from "@heroicons/react/24/outline";
-import User from "public/user.png";
-// components
-import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
-// types
-import { IIssue, IWorkspaceMember, NestedKeyOf, Properties } from "types";
-// services
-import workspaceService from "lib/services/workspace.service";
+import { Disclosure, Listbox, Transition } from "@headlessui/react";
 // hooks
 import useUser from "lib/hooks/useUser";
-// fetch keys
-import { PRIORITIES } from "constants/";
-import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
+// services
+import workspaceService from "lib/services/workspace.service";
+import stateService from "lib/services/state.service";
 // constants
 import {
   addSpaceIfCamelCase,
@@ -35,7 +18,18 @@ import {
   findHowManyDaysLeft,
   renderShortNumericDateFormat,
 } from "constants/common";
+import { PRIORITIES } from "constants/";
 import { getPriorityIcon } from "constants/global";
+import { STATE_LIST, WORKSPACE_MEMBERS } from "constants/fetch-keys";
+// ui
+import { CustomMenu, Spinner } from "ui";
+// icons
+import User from "public/user.png";
+import { ChevronDownIcon, PlusIcon, CalendarDaysIcon } from "@heroicons/react/24/outline";
+// components
+import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
+// types
+import { IIssue, IWorkspaceMember, NestedKeyOf, Properties } from "types";
 
 // types
 type Props = {
@@ -60,7 +54,14 @@ const ListView: React.FC<Props> = ({
     (Partial<IIssue> & { actionType: "createIssue" | "edit" | "delete" }) | undefined
   >(undefined);
 
-  const { activeWorkspace, activeProject, states } = useUser();
+  const { activeWorkspace, activeProject } = useUser();
+
+  const { data: states } = useSWR(
+    activeWorkspace && activeProject ? STATE_LIST(activeProject.id) : null,
+    activeWorkspace && activeProject
+      ? () => stateService.getStates(activeWorkspace.slug, activeProject.id)
+      : null
+  );
 
   const { data: people } = useSWR<IWorkspaceMember[]>(
     activeWorkspace ? WORKSPACE_MEMBERS : null,
