@@ -156,6 +156,8 @@ class IssueActivity(ProjectBaseModel):
         null=True,
         related_name="issue_activities",
     )
+    old_identifier = models.UUIDField(null=True)
+    new_identifier = models.UUIDField(null=True)
 
     class Meta:
         verbose_name = "Issue Activity"

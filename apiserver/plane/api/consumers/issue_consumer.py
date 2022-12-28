@@ -55,6 +55,8 @@ class IssueConsumer(SyncConsumer):
                         project=project,
                         workspace=project.workspace,
                         comment=f"{actor.email} updated the parent issue to None",
+                        old_identifier=old_parent.id,
+                        new_identifier=None,
                     )
                 )
             else:
@@ -75,6 +77,10 @@ class IssueConsumer(SyncConsumer):
                         project=project,
                         workspace=project.workspace,
                         comment=f"{actor.email} updated the parent issue to {new_parent.name}",
+                        old_identifier=old_parent.id
+                        if old_parent is not None
+                        else None,
+                        new_identifier=new_parent.id,
                     )
                 )
 
@@ -144,6 +150,8 @@ class IssueConsumer(SyncConsumer):
                     project=project,
                     workspace=project.workspace,
                     comment=f"{actor.email} updated the state to {new_state.name}",
+                    old_identifier=old_state.id,
+                    new_identifier=new_state.id,
                 )
             )
 
@@ -280,6 +288,8 @@ class IssueConsumer(SyncConsumer):
                             project=project,
                             workspace=project.workspace,
                             comment=f"{actor.email} added label {label.name}",
+                            new_identifier=label.id,
+                            old_identifier=None,
                         )
                     )
 
@@ -300,6 +310,8 @@ class IssueConsumer(SyncConsumer):
                             project=project,
                             workspace=project.workspace,
                             comment=f"{actor.email} removed label {label.name}",
+                            old_identifier=label.id,
+                            new_identifier=None,
                         )
                     )
 
@@ -333,6 +345,7 @@ class IssueConsumer(SyncConsumer):
                             project=project,
                             workspace=project.workspace,
                             comment=f"{actor.email} added assignee {assignee.email}",
+                            new_identifier=actor.id,
                         )
                     )
 
@@ -355,6 +368,7 @@ class IssueConsumer(SyncConsumer):
                             project=project,
                             workspace=project.workspace,
                             comment=f"{actor.email} removed assignee {assignee.email}",
+                            old_identifier=actor.id,
                         )
                     )
 
