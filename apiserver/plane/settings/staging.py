@@ -48,7 +48,7 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 
 sentry_sdk.init(
-    dsn=os.environ.get("SENTRY_DSN"),
+    dsn=os.environ.get("PLANE_SENTRY_DSN"),
     integrations=[DjangoIntegration(), RedisIntegration()],
     # If you wish to associate users to errors (assuming you are using
     # django.contrib.auth) you may enable sending PII data.
@@ -58,20 +58,20 @@ sentry_sdk.init(
 )
 
 # The AWS region to connect to.
-AWS_REGION = os.environ.get("AWS_REGION")
+AWS_REGION = os.environ.get("PLANE_AWS_REGION")
 
 # The AWS access key to use.
-AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+AWS_ACCESS_KEY_ID = os.environ.get("PLANE_AWS_ACCESS_KEY_ID")
 
 # The AWS secret access key to use.
-AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+AWS_SECRET_ACCESS_KEY = os.environ.get("PLANE_AWS_SECRET_ACCESS_KEY")
 
 # The optional AWS session token to use.
 # AWS_SESSION_TOKEN = ""
 
 
 # The name of the bucket to store files in.
-AWS_S3_BUCKET_NAME = os.environ.get("AWS_S3_BUCKET_NAME")
+AWS_S3_BUCKET_NAME = os.environ.get("PLANE_AWS_S3_BUCKET_NAME")
 
 # How to construct S3 URLs ("auto", "path", "virtual").
 AWS_S3_ADDRESSING_STYLE = "auto"
@@ -185,4 +185,4 @@ RQ_QUEUES = {
     }
 }
 
-WEB_URL = os.environ.get("WEB_URL")
+WEB_URL = os.environ.get("PLANE_WEB_URL")

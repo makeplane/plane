@@ -6,16 +6,30 @@ WORKDIR /app
 
 RUN apk add curl
 
+RUN curl -fsSL "https://github.com/pnpm/pnpm/releases/latest/download/pnpm-linuxstatic-x64" -o /bin/pnpm; chmod +x /bin/pnpm;
+
+ENV PNPM_HOME="pnpm"
+ENV PATH="${PATH}:./pnpm"
+
 COPY ./apps ./apps
 COPY ./package.json ./package.json
 COPY ./.eslintrc.json ./.eslintrc.json
-COPY ./yarn.lock ./yarn.lock
+COPY ./turbo.json ./turbo.json
+COPY ./pnpm-workspace.yaml ./pnpm-workspace.yaml
+COPY ./pnpm-lock.yaml ./pnpm-lock.yaml
 
-RUN yarn global add turbo
+RUN pnpm add -g turbo
 RUN turbo prune --scope=app --docker
 
 # Add lockfile and package.json's of isolated subworkspace
 FROM node:18-alpine AS installer
+
+RUN apk add curl
+
+RUN curl -fsSL "https://github.com/pnpm/pnpm/releases/latest/download/pnpm-linuxstatic-x64" -o /bin/pnpm; chmod +x /bin/pnpm;
+
+ENV PNPM_HOME="pnpm"
+ENV PATH="${PATH}:./pnpm"
 
 RUN apk add --no-cache libc6-compat
 RUN apk update
@@ -24,39 +38,22 @@ WORKDIR /app
 # First install the dependencies (as they change less often)
 COPY .gitignore .gitignore
 COPY --from=builder /app/out/json/ .
-COPY --from=builder /app/out/yarn.lock ./yarn.lock
-RUN yarn install
+COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
+RUN pnpm install
 
 # Build the project
 COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
 
-RUN yarn turbo run build --filter=app...
+RUN pnpm turbo run build --filter=app...
 
+# Base Image
 FROM python:3.8.14-alpine3.16 AS runner
 
-ENV SECRET_KEY ${SECRET_KEY}
-ENV DATABASE_URL ${DATABASE_URL}
-ENV REDIS_URL ${REDIS_URL}
-ENV EMAIL_HOST ${EMAIL_HOST}
-ENV EMAIL_HOST_USER ${EMAIL_HOST_USER}
-ENV EMAIL_HOST_PASSWORD ${EMAIL_HOST_PASSWORD}
-
-ENV AWS_REGION ${AWS_REGION}
-ENV AWS_ACCESS_KEY_ID ${AWS_ACCESS_KEY_ID}
-ENV AWS_SECRET_ACCESS_KEY ${AWS_SECRET_ACCESS_KEY}
-ENV AWS_S3_BUCKET_NAME ${AWS_S3_BUCKET_NAME}
 
 
-ENV SENTRY_DSN ${SENTRY_DSN}
-ENV WEB_URL ${WEB_URL}
 
-ENV DISABLE_COLLECTSTATIC ${DISABLE_COLLECTSTATIC}
-
-ENV GITHUB_CLIENT_SECRET ${GITHUB_CLIENT_SECRET}
-ENV NEXT_PUBLIC_GITHUB_ID ${NEXT_PUBLIC_GITHUB_ID}
-ENV NEXT_PUBLIC_GOOGLE_CLIENTID ${NEXT_PUBLIC_GOOGLE_CLIENTID}
-ENV NEXT_PUBLIC_API_BASE_URL ${NEXT_PUBLIC_API_BASE_URL}
+VOLUME [ "/plane-stacks" ]
 
 # Frontend
 
@@ -66,7 +63,7 @@ RUN apk --update --no-cache add \
     "nodejs-current~=18" \
     "xmlsec~=1.2"
 
-WORKDIR /app
+WORKDIR /opt/plane
 
 # Don't run production as root
 RUN addgroup -S plane && \
@@ -113,7 +110,7 @@ RUN apk --update --no-cache --virtual .build-deps add \
     apk del .build-deps
 
 
-RUN chown captain.plane /app
+RUN chown captain.plane /opt/plane
 
 # Add in Django deps and generate Django's static files
 COPY ./apiserver/manage.py manage.py
@@ -123,8 +120,11 @@ COPY ./apiserver/templates templates/
 COPY ./apiserver/gunicorn.config.py ./
 USER root
 RUN apk --update --no-cache add "bash~=5.1"
-COPY ./bin ./bin/
+COPY ./apiserver/bin ./bin/
 USER captain
+
+# Add bootstrapfile
+COPY ./scripts ./scripts/
 
 # Expose container port and run entry point script
 EXPOSE 8000
@@ -133,6 +133,8 @@ USER root
 
 RUN apk --update add supervisor
 
-ADD /supervisor /src/supervisor
+RUN chmod +x scripts/entrypoint.sh scripts/docker.env.sh scripts/run_env.sh 
 
-CMD ["supervisord","-c","/src/supervisor/service_script.conf"]
+COPY supervisord.conf /etc/supervisor/supervisord.conf
+ENTRYPOINT [ "/opt/plane/scripts/entrypoint.sh" ]
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf", "-n"]
