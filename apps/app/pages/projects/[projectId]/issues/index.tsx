@@ -56,7 +56,16 @@ const ProjectIssues: NextPage = () => {
   >(undefined);
   const [deleteIssue, setDeleteIssue] = useState<string | undefined>(undefined);
 
-  const { activeWorkspace, activeProject, issues: projectIssues } = useUser();
+  const { activeWorkspace, activeProject } = useUser();
+
+  const { data: projectIssues } = useSWR(
+    activeWorkspace && activeProject
+      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
+      : null,
+    activeWorkspace && activeProject
+      ? () => issuesServices.getIssues(activeWorkspace.slug, activeProject.id)
+      : null
+  );
 
   const router = useRouter();
 

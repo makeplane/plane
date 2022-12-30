@@ -34,7 +34,12 @@ import { ArrowPathIcon, ChevronDownIcon, ListBulletIcon } from "@heroicons/react
 // types
 import { CycleIssueResponse, IIssue, NestedKeyOf, Properties, SelectIssue } from "types";
 // fetch-keys
-import { CYCLE_ISSUES, CYCLE_LIST, PROJECT_MEMBERS } from "constants/fetch-keys";
+import {
+  CYCLE_ISSUES,
+  CYCLE_LIST,
+  PROJECT_ISSUES_LIST,
+  PROJECT_MEMBERS,
+} from "constants/fetch-keys";
 // common
 import { classNames, replaceUnderscoreIfSnakeCase } from "constants/common";
 
@@ -48,7 +53,16 @@ const SingleCycle: React.FC = () => {
     (Partial<IIssue> & { actionType: "createIssue" | "edit" | "delete" }) | undefined
   >(undefined);
 
-  const { activeWorkspace, activeProject, issues } = useUser();
+  const { activeWorkspace, activeProject } = useUser();
+
+  const { data: issues } = useSWR(
+    activeWorkspace && activeProject
+      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
+      : null,
+    activeWorkspace && activeProject
+      ? () => issuesServices.getIssues(activeWorkspace.slug, activeProject.id)
+      : null
+  );
 
   const router = useRouter();
 

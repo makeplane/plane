@@ -1,7 +1,7 @@
 // react
 import React, { useState } from "react";
 // swr
-import { mutate } from "swr";
+import useSWR, { mutate } from "swr";
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // services
@@ -26,7 +26,16 @@ type Props = {
 const AddAsSubIssue: React.FC<Props> = ({ isOpen, setIsOpen, parent }) => {
   const [query, setQuery] = useState("");
 
-  const { activeWorkspace, activeProject, issues } = useUser();
+  const { activeWorkspace, activeProject } = useUser();
+
+  const { data: issues } = useSWR(
+    activeWorkspace && activeProject
+      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
+      : null,
+    activeWorkspace && activeProject
+      ? () => issuesServices.getIssues(activeWorkspace.slug, activeProject.id)
+      : null
+  );
 
   const filteredIssues: IIssue[] =
     query === ""

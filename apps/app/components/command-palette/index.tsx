@@ -2,10 +2,16 @@
 import React, { useState, useCallback, useEffect } from "react";
 // next
 import { useRouter } from "next/router";
+// swr
+import useSWR from "swr";
 // hooks
 import useUser from "lib/hooks/useUser";
 import useTheme from "lib/hooks/useTheme";
 import useToast from "lib/hooks/useToast";
+// constants
+import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+// services
+import issuesServices from "lib/services/issues.service";
 // components
 import ShortcutsModal from "components/command-palette/shortcuts";
 import CreateProjectModal from "components/project/create-project-modal";
@@ -40,7 +46,16 @@ const CommandPalette: React.FC = () => {
   const [isCreateModuleModalOpen, setIsCreateModuleModalOpen] = useState(false);
   const [isBulkDeleteIssuesModalOpen, setIsBulkDeleteIssuesModalOpen] = useState(false);
 
-  const { activeProject, issues } = useUser();
+  const { activeProject, activeWorkspace } = useUser();
+
+  const { data: issues } = useSWR(
+    activeWorkspace && activeProject
+      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
+      : null,
+    activeWorkspace && activeProject
+      ? () => issuesServices.getIssues(activeWorkspace.slug, activeProject.id)
+      : null
+  );
 
   const router = useRouter();
 
@@ -202,7 +217,7 @@ const CommandPalette: React.FC = () => {
                       aria-hidden="true"
                     />
                     <Combobox.Input
-                      className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm outline-none"
+                      className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder-gray-500 outline-none focus:ring-0 sm:text-sm"
                       placeholder="Search..."
                       autoComplete="off"
                       onChange={(event) => setQuery(event.target.value)}
@@ -233,7 +248,7 @@ const CommandPalette: React.FC = () => {
                                 }}
                                 className={({ active }) =>
                                   classNames(
-                                    "flex items-center justify-between cursor-pointer select-none rounded-md px-3 py-2",
+                                    "flex cursor-pointer select-none items-center justify-between rounded-md px-3 py-2",
                                     active ? "bg-gray-500 bg-opacity-5 text-gray-900" : ""
                                   )
                                 }
@@ -242,7 +257,7 @@ const CommandPalette: React.FC = () => {
                                   <>
                                     <div className="flex items-center gap-2">
                                       <span
-                                        className="flex-shrink-0 h-1.5 w-1.5 block rounded-full"
+                                        className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
                                         style={{
                                           backgroundColor: issue.state_detail.color,
                                         }}
@@ -254,10 +269,10 @@ const CommandPalette: React.FC = () => {
                                     </div>
                                     <button
                                       type="button"
-                                      className={`flex-shrink-0 text-gray-500 border border-gray-300 rounded-md px-2 py-1 text-sm hover:bg-gray-500 hover:bg-opacity-5 transition-opacity duration-75 ${
+                                      className={`flex-shrink-0 rounded-md border border-gray-300 px-2 py-1 text-sm text-gray-500 transition-opacity duration-75 hover:bg-gray-500 hover:bg-opacity-5 ${
                                         active
-                                          ? "opacity-100 pointer-events-auto"
-                                          : "opacity-0 pointer-events-none"
+                                          ? "pointer-events-auto opacity-100"
+                                          : "pointer-events-none opacity-0"
                                       }`}
                                     >
                                       Jump to
@@ -324,7 +339,7 @@ const CommandPalette: React.FC = () => {
                   )}
                 </Combobox>
 
-                <div className="flex justify-end items-center gap-2 p-3">
+                <div className="flex items-center justify-end gap-2 p-3">
                   <div>
                     <Button type="button" size="sm" onClick={handleCommandPaletteClose}>
                       Close

@@ -3,7 +3,7 @@ import React from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 // fetch-keys
-import { PROJECT_ISSUES_ACTIVITY, STATE_LIST } from "constants/fetch-keys";
+import { PROJECT_ISSUES_ACTIVITY, STATE_LIST, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // common
 import { addSpaceIfCamelCase, timeAgo } from "constants/common";
 // swr
@@ -40,7 +40,16 @@ const IssueActivitySection: React.FC = () => {
 
   const { issueId, projectId } = router.query;
 
-  const { activeWorkspace, activeProject, issues } = useUser();
+  const { activeWorkspace, activeProject } = useUser();
+
+  const { data: issues } = useSWR(
+    activeWorkspace && activeProject
+      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
+      : null,
+    activeWorkspace && activeProject
+      ? () => issuesServices.getIssues(activeWorkspace.slug, activeProject.id)
+      : null
+  );
 
   const { data: issueActivities } = useSWR<any[]>(
     activeWorkspace && projectId && issueId ? PROJECT_ISSUES_ACTIVITY : null,

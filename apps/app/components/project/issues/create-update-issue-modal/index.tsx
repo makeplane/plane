@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/router";
 // swr
-import { mutate } from "swr";
+import useSWR, { mutate } from "swr";
 // react hook form
 import { Controller, useForm } from "react-hook-form";
 // headless
@@ -92,7 +92,16 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
     }
   };
 
-  const { activeWorkspace, activeProject, user, issues } = useUser();
+  const { activeWorkspace, activeProject, user } = useUser();
+
+  const { data: issues } = useSWR(
+    activeWorkspace && activeProject
+      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
+      : null,
+    activeWorkspace && activeProject
+      ? () => issuesServices.getIssues(activeWorkspace.slug, activeProject.id)
+      : null
+  );
 
   const { setToastAlert } = useToast();
 

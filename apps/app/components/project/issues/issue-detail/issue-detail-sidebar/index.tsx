@@ -38,7 +38,7 @@ import {
 import type { Control } from "react-hook-form";
 import type { ICycle, IIssue, IIssueLabels, IModule } from "types";
 // fetch-keys
-import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
+import { PROJECT_ISSUE_LABELS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // common
 import { copyTextToClipboard } from "constants/common";
 
@@ -62,9 +62,18 @@ const IssueDetailSidebar: React.FC<Props> = ({
 }) => {
   const [createLabelForm, setCreateLabelForm] = useState(false);
 
-  const { activeWorkspace, activeProject, issues } = useUser();
+  const { activeWorkspace, activeProject } = useUser();
 
   const { setToastAlert } = useToast();
+
+  const { data: issues } = useSWR(
+    activeWorkspace && activeProject
+      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
+      : null,
+    activeWorkspace && activeProject
+      ? () => issuesServices.getIssues(activeWorkspace.slug, activeProject.id)
+      : null
+  );
 
   const { data: issueLabels, mutate: issueLabelMutate } = useSWR<IIssueLabels[]>(
     activeProject && activeWorkspace ? PROJECT_ISSUE_LABELS(activeProject.id) : null,

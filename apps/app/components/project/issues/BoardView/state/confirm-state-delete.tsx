@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 // swr
-import { mutate } from "swr";
+import useSWR, { mutate } from "swr";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
 import stateServices from "lib/services/state.service";
+import issuesServices from "lib/services/issues.service";
 // fetch api
-import { STATE_LIST } from "constants/fetch-keys";
+import { STATE_LIST, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // hooks
 import useUser from "lib/hooks/useUser";
 // common
@@ -29,7 +30,16 @@ const ConfirmStateDeletion: React.FC<Props> = ({ isOpen, onClose, data }) => {
 
   const [issuesWithThisStateExist, setIssuesWithThisStateExist] = useState(true);
 
-  const { activeWorkspace, issues } = useUser();
+  const { activeWorkspace, activeProject } = useUser();
+
+  const { data: issues } = useSWR(
+    activeWorkspace && activeProject
+      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
+      : null,
+    activeWorkspace && activeProject
+      ? () => issuesServices.getIssues(activeWorkspace.slug, activeProject.id)
+      : null
+  );
 
   const cancelButtonRef = useRef(null);
 

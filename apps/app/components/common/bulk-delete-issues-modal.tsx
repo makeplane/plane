@@ -1,7 +1,7 @@
 // react
 import React, { useState } from "react";
 // swr
-import { mutate } from "swr";
+import useSWR, { mutate } from "swr";
 // react hook form
 import { SubmitHandler, useForm } from "react-hook-form";
 // services
@@ -35,7 +35,16 @@ type Props = {
 const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
   const [query, setQuery] = useState("");
 
-  const { activeWorkspace, activeProject, issues } = useUser();
+  const { activeWorkspace, activeProject } = useUser();
+
+  const { data: issues } = useSWR(
+    activeWorkspace && activeProject
+      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
+      : null,
+    activeWorkspace && activeProject
+      ? () => issuesServices.getIssues(activeWorkspace.slug, activeProject.id)
+      : null
+  );
 
   const { setToastAlert } = useToast();
 
@@ -129,7 +138,7 @@ const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                         aria-hidden="true"
                       />
                       <Combobox.Input
-                        className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm outline-none"
+                        className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder-gray-500 outline-none focus:ring-0 sm:text-sm"
                         placeholder="Search..."
                         onChange={(event) => setQuery(event.target.value)}
                       />
@@ -159,7 +168,7 @@ const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                                   }}
                                   className={({ active }) =>
                                     classNames(
-                                      "flex items-center justify-between cursor-pointer select-none rounded-md px-3 py-2",
+                                      "flex cursor-pointer select-none items-center justify-between rounded-md px-3 py-2",
                                       active ? "bg-gray-900 bg-opacity-5 text-gray-900" : ""
                                     )
                                   }
@@ -174,7 +183,7 @@ const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                                           value={issue.id}
                                         />
                                         <span
-                                          className="flex-shrink-0 h-1.5 w-1.5 block rounded-full"
+                                          className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
                                           style={{
                                             backgroundColor: issue.state_detail.color,
                                           }}
@@ -207,7 +216,7 @@ const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                     )}
                   </Combobox>
 
-                  <div className="flex justify-end items-center gap-2 p-3">
+                  <div className="flex items-center justify-end gap-2 p-3">
                     <Button onClick={handleSubmit(handleDelete)} theme="danger" size="sm">
                       Delete selected issues
                     </Button>

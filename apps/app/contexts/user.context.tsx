@@ -1,4 +1,4 @@
-import React, { createContext, ReactElement, useEffect, useState, useCallback } from "react";
+import React, { createContext, ReactElement, useEffect, useState } from "react";
 // next
 import Router from "next/router";
 import { useRouter } from "next/router";
@@ -6,20 +6,14 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 // services
 import userService from "lib/services/user.service";
-import issuesServices from "lib/services/issues.service";
 import projectServices from "lib/services/project.service";
 import workspaceService from "lib/services/workspace.service";
 // constants
-import {
-  CURRENT_USER,
-  PROJECTS_LIST,
-  USER_WORKSPACES,
-  PROJECT_ISSUES_LIST,
-} from "constants/fetch-keys";
+import { CURRENT_USER, PROJECTS_LIST, USER_WORKSPACES } from "constants/fetch-keys";
 
 // types
 import type { KeyedMutator } from "swr";
-import type { IUser, IWorkspace, IProject, IssueResponse } from "types";
+import type { IUser, IWorkspace, IProject } from "types";
 
 interface IUserContextProps {
   user?: IUser;
@@ -32,8 +26,6 @@ interface IUserContextProps {
   setActiveProject: React.Dispatch<React.SetStateAction<IProject | undefined>>;
   mutateProjects: KeyedMutator<IProject[]>;
   activeProject?: IProject;
-  issues?: IssueResponse;
-  mutateIssues: KeyedMutator<IssueResponse>;
 }
 
 export const UserContext = createContext<IUserContextProps>({} as IUserContextProps);
@@ -66,15 +58,6 @@ export const UserProvider = ({ children }: { children: ReactElement }) => {
   const { data: projects, mutate: mutateProjects } = useSWR<IProject[]>(
     activeWorkspace ? PROJECTS_LIST(activeWorkspace.slug) : null,
     activeWorkspace ? () => projectServices.getProjects(activeWorkspace.slug) : null
-  );
-
-  const { data: issues, mutate: mutateIssues } = useSWR<IssueResponse>(
-    activeWorkspace && activeProject
-      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
-      : null,
-    activeWorkspace && activeProject
-      ? () => issuesServices.getIssues(activeWorkspace.slug, activeProject.id)
-      : null
   );
 
   useEffect(() => {
@@ -117,8 +100,6 @@ export const UserProvider = ({ children }: { children: ReactElement }) => {
         projects,
         mutateProjects: mutateProjects,
         activeProject,
-        issues,
-        mutateIssues,
         setActiveProject,
       }}
     >

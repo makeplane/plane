@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 // swr
-import { mutate } from "swr";
+import useSWR, { mutate } from "swr";
 // react-hook-form
 import { useForm } from "react-hook-form";
 // services
@@ -72,7 +72,16 @@ const IssueDetail: NextPage = () => {
 
   const { issueId, projectId } = router.query;
 
-  const { activeWorkspace, activeProject, issues, mutateIssues } = useUser();
+  const { activeWorkspace, activeProject } = useUser();
+
+  const { data: issues, mutate: mutateIssues } = useSWR(
+    activeWorkspace && activeProject
+      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
+      : null,
+    activeWorkspace && activeProject
+      ? () => issuesServices.getIssues(activeWorkspace.slug, activeProject.id)
+      : null
+  );
 
   const issueDetail = issues?.results?.find((issue) => issue.id === issueId);
 

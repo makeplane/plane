@@ -46,7 +46,13 @@ import {
   SelectModuleType,
 } from "types";
 // fetch-keys
-import { MODULE_DETAIL, MODULE_ISSUES, MODULE_LIST, PROJECT_MEMBERS } from "constants/fetch-keys";
+import {
+  MODULE_DETAIL,
+  MODULE_ISSUES,
+  MODULE_LIST,
+  PROJECT_ISSUES_LIST,
+  PROJECT_MEMBERS,
+} from "constants/fetch-keys";
 // common
 import { classNames, replaceUnderscoreIfSnakeCase } from "constants/common";
 // constants
@@ -66,7 +72,16 @@ const SingleModule = () => {
     (Partial<IIssue> & { actionType: "createIssue" | "edit" | "delete" }) | undefined
   >(undefined);
 
-  const { activeWorkspace, activeProject, issues } = useUser();
+  const { activeWorkspace, activeProject } = useUser();
+
+  const { data: issues } = useSWR(
+    activeWorkspace && activeProject
+      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
+      : null,
+    activeWorkspace && activeProject
+      ? () => issuesService.getIssues(activeWorkspace.slug, activeProject.id)
+      : null
+  );
 
   const router = useRouter();
 
