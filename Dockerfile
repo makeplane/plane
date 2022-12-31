@@ -123,8 +123,6 @@ RUN apk --update --no-cache add "bash~=5.1"
 COPY ./apiserver/bin ./bin/
 USER captain
 
-# Add bootstrapfile
-COPY ./scripts ./scripts/
 
 # Expose container port and run entry point script
 EXPOSE 8000
@@ -133,8 +131,6 @@ USER root
 
 RUN apk --update add supervisor
 
-RUN chmod +x scripts/entrypoint.sh scripts/docker.env.sh scripts/run_env.sh 
-
 COPY supervisord.conf /etc/supervisor/supervisord.conf
-# ENTRYPOINT [ "/opt/plane/scripts/entrypoint.sh" ]
+
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf", "-n"]
