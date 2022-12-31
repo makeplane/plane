@@ -136,5 +136,5 @@ RUN apk --update add supervisor
 RUN chmod +x scripts/entrypoint.sh scripts/docker.env.sh scripts/run_env.sh 
 
 COPY supervisord.conf /etc/supervisor/supervisord.conf
-ENTRYPOINT [ "/opt/plane/scripts/entrypoint.sh" ]
+# ENTRYPOINT [ "/opt/plane/scripts/entrypoint.sh" ]
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf", "-n"]
