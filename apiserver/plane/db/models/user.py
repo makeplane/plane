@@ -77,7 +77,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     class Meta:
         verbose_name = "User"
         verbose_name_plural = "Users"
-        db_table = "user"
+        db_table = "users"
         ordering = ("-created_at",)
 
     def __str__(self):
