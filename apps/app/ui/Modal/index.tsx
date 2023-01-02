@@ -2,7 +2,7 @@ import { Fragment, ReactNode } from "react";
 // Headless ui imports
 import { Dialog, Transition } from "@headlessui/react";
 // Design components
-import Button from "ui/Button";
+import Button from "ui/button";
 // Icons
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
@@ -93,9 +93,7 @@ const Modal = (props: ModalProps) => {
                       <Button theme="secondary" onClick={closeModal}>
                         {props.closeButton}
                       </Button>
-                      <Button onClick={closeModal}>
-                        {props.continueButton}
-                      </Button>
+                      <Button onClick={closeModal}>{props.continueButton}</Button>
                     </div>
                   </div>
                 </Dialog.Panel>

@@ -80,6 +80,55 @@ const SettingsLayout: React.FC<Props> = ({
   right,
   type,
 }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const router = useRouter();
+
+  const { activeProject, user, isUserLoading } = useUser();
+
+  useEffect(() => {
+    if (!isUserLoading && (!user || user === null)) router.push("/signin");
+  }, [isUserLoading, user, router]);
+
+  const workspaceLinks: {
+    label: string;
+    href: string;
+  }[] = [
+    {
+      label: "General",
+      href: "/workspace/settings",
+    },
+    {
+      label: "Members",
+      href: "/workspace/settings/members",
+    },
+  ];
+
+  const sidebarLinks: {
+    label: string;
+    href: string;
+  }[] = [
+    {
+      label: "General",
+      href: `/projects/${activeProject?.id}/settings`,
+    },
+    {
+      label: "Control",
+      href: `/projects/${activeProject?.id}/settings/control`,
+    },
+    {
+      label: "Members",
+      href: `/projects/${activeProject?.id}/settings/members`,
+    },
+    {
+      label: "States",
+      href: `/projects/${activeProject?.id}/settings/states`,
+    },
+    {
+      label: "Labels",
+      href: `/projects/${activeProject?.id}/settings/labels`,
+    },
+  ];
   const { activeProject } = useUser();
 
   return (

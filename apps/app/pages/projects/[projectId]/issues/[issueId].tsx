@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 // swr
 import useSWR, { mutate } from "swr";
 // react-hook-form
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 // services
 import issuesServices from "lib/services/issues.service";
 // hooks
@@ -39,6 +39,7 @@ import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // common
 import { debounce } from "constants/common";
 
+const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), { ssr: false });
 const IssueActivitySection = dynamic(
   () => import("components/project/issues/issue-detail/activity"),
   {
@@ -191,6 +192,8 @@ const IssueDetail: NextPage = () => {
     }
   };
 
+  console.log(watch("description"));
+
   return (
     <AppLayout
       noPadding={true}
@@ -330,7 +333,7 @@ const IssueDetail: NextPage = () => {
                   mode="transparent"
                   className="text-xl font-medium"
                 />
-                <TextArea
+                {/* <TextArea
                   id="description"
                   name="description"
                   error={errors.description}
@@ -343,6 +346,17 @@ const IssueDetail: NextPage = () => {
                   placeholder="Enter issue description"
                   mode="transparent"
                   register={register}
+                /> */}
+                <Controller
+                  name="description"
+                  control={control}
+                  render={({ field: { value, onChange } }) => (
+                    <RemirrorRichTextEditor
+                      value={value}
+                      onChange={onChange}
+                      placeholder="Enter Your Text..."
+                    />
+                  )}
                 />
               </div>
               <div className="mt-2">

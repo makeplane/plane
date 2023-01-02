@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 // next
-import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import dynamic from "next/dynamic";
 // swr
 import useSWR, { mutate } from "swr";
 // react hook form
@@ -40,9 +39,7 @@ import {
 // common
 import { renderDateFormat, cosineSimilarity } from "constants/common";
 
-const RichTextEditor = dynamic(() => import("components/lexical/editor"), {
-  ssr: false,
-});
+const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), { ssr: false });
 
 type Props = {
   isOpen: boolean;
@@ -76,14 +73,6 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
   const [parentIssueListModalOpen, setParentIssueListModalOpen] = useState(false);
 
   const [mostSimilarIssue, setMostSimilarIssue] = useState<string | undefined>();
-
-  // const [issueDescriptionValue, setIssueDescriptionValue] = useState("");
-  // const handleDescriptionChange: any = (value: any) => {
-  //   console.log(value);
-  //   setIssueDescriptionValue(value);
-  // };
-
-  const router = useRouter();
 
   const handleClose = () => {
     setIsOpen(false);
@@ -168,8 +157,8 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
     const payload: Partial<IIssue> = {
       ...formData,
       target_date: formData.target_date ? renderDateFormat(formData.target_date ?? "") : null,
-      // description: formData.description ? JSON.parse(formData.description) : null,
     };
+
     if (!data) {
       await issuesServices
         .createIssues(activeWorkspace.slug, activeProject.id, payload)
@@ -253,6 +242,8 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
   useEffect(() => {
     return () => setMostSimilarIssue(undefined);
   }, []);
+
+  console.log(watch("description"));
 
   return (
     <>
@@ -369,13 +360,23 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                             )}
                           </div>
                           <div>
-                            <TextArea
+                            {/* <TextArea
                               id="description"
                               name="description"
                               label="Description"
                               placeholder="Enter description"
                               error={errors.description}
                               register={register}
+                            /> */}
+                            <Controller
+                              name="description"
+                              control={control}
+                              render={({ field }) => (
+                                <RemirrorRichTextEditor
+                                  {...field}
+                                  placeholder="Enter Your Text..."
+                                />
+                              )}
                             />
                           </div>
                           <div className="flex flex-wrap items-center gap-2">
