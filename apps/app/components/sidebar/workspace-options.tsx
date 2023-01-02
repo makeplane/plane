@@ -45,11 +45,6 @@ const workspaceLinks = [
     name: "My Issues",
     href: "/me/my-issues",
   },
-  {
-    icon: UserGroupIcon,
-    name: "Members",
-    href: "/workspace/members",
-  },
   // {
   //   icon: InboxIcon,
   //   name: "Inbox",
@@ -131,7 +126,7 @@ const WorkspaceOptions: React.FC<Props> = ({ sidebarCollapse }) => {
             leaveFrom="transform opacity-100 scale-100"
             leaveTo="transform opacity-0 scale-95"
           >
-            <Menu.Items className="origin-top-left fixed max-w-[15rem] ml-2 left-0 mt-2 w-full rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-20">
+            <Menu.Items className="origin-top-left fixed max-w-[14rem] left-2 mt-1 w-full rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-20">
               <div className="px-1 py-2 divide-y">
                 <div>
                   <Menu.Item as="div" className="text-xs px-2 pb-2">
@@ -166,7 +161,7 @@ const WorkspaceOptions: React.FC<Props> = ({ sidebarCollapse }) => {
                                     .catch((err) => console.error(err));
                                 }}
                                 className={`${
-                                  active ? "bg-indigo-50" : ""
+                                  active ? "bg-gray-100" : ""
                                 } w-full flex items-center gap-2 text-gray-900 rounded-md p-2 text-sm`}
                               >
                                 <div className="h-5 w-5 p-4 flex items-center justify-center bg-gray-700 text-white rounded uppercase relative">

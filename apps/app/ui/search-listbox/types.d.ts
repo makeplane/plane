@@ -11,4 +11,5 @@ export type Props = {
   optionsClassName?: string;
   width?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
   optionsFontsize?: "sm" | "md" | "lg" | "xl" | "2xl";
+  assignee?: boolean;
 };

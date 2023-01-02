@@ -184,7 +184,7 @@ const GeneralSettings = () => {
                       }}
                     />
                   ) : (
-                    <Loader className="">
+                    <Loader>
                       <Loader.Item height="46px" width="225px" light />
                     </Loader>
                   )}

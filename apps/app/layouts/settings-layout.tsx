@@ -41,7 +41,7 @@ const SettingsLayout: React.FC<Props> = ({
 
   const router = useRouter();
 
-  const { activeWorkspace, activeProject, user, isUserLoading } = useUser();
+  const { activeProject, user, isUserLoading } = useUser();
 
   useEffect(() => {
     if (!isUserLoading && (!user || user === null)) router.push("/signin");
@@ -53,19 +53,11 @@ const SettingsLayout: React.FC<Props> = ({
   }[] = [
     {
       label: "General",
-      href: "#",
+      href: "/workspace/settings",
     },
     {
-      label: "Control",
-      href: "#",
-    },
-    {
-      label: "States",
-      href: "#",
-    },
-    {
-      label: "Labels",
-      href: "#",
+      label: "Members",
+      href: "/workspace/settings/members",
     },
   ];
 

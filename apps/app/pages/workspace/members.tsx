@@ -25,8 +25,8 @@ import ConfirmWorkspaceMemberRemove from "components/workspace/ConfirmWorkspaceM
 import { Spinner, CustomListbox } from "ui";
 // icons
 import { PlusIcon, EllipsisHorizontalIcon } from "@heroicons/react/20/solid";
-import HeaderButton from "ui/HeaderButton";
-import { BreadcrumbItem, Breadcrumbs } from "ui/Breadcrumbs";
+import HeaderButton from "ui/header-button";
+import { BreadcrumbItem, Breadcrumbs } from "ui/breadcrumbs";
 
 const WorkspaceInvite: NextPage = () => {
   const [isOpen, setIsOpen] = useState(false);
