@@ -3,7 +3,7 @@ export type Props = {
   label?: string | JSX.Element;
   className?: string;
   ellipsis?: boolean;
-  width?: "auto";
+  width?: "sm" | "md" | "lg" | "xl" | "auto";
   textAlignment?: "left" | "center" | "right";
   withoutBorder?: boolean;
   optionsPosition?: "left" | "right";

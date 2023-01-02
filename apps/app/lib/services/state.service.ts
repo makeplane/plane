@@ -23,7 +23,7 @@ class ProjectStateServices extends APIService {
       });
   }
 
-  async getStates(workspace_slug: string, projectId: string): Promise<any> {
+  async getStates(workspace_slug: string, projectId: string): Promise<IState[]> {
     return this.get(STATES_ENDPOINT(workspace_slug, projectId))
       .then((response) => {
         return response?.data;

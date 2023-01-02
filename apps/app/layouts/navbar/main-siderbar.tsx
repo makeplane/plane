@@ -8,7 +8,7 @@ import useTheme from "lib/hooks/useTheme";
 import ProjectsList from "components/sidebar/projects-list";
 import WorkspaceOptions from "components/sidebar/workspace-options";
 // headless ui
-import { Dialog, Transition } from "@headlessui/react";
+import { Transition } from "@headlessui/react";
 // icons
 import {
   ArrowPathIcon,
@@ -22,8 +22,6 @@ import {
 } from "@heroicons/react/24/outline";
 // common
 import { classNames } from "constants/common";
-
-type Props = { collapse?: boolean };
 
 const navigation = (projectId: string) => [
   {
@@ -48,9 +46,7 @@ const navigation = (projectId: string) => [
   },
 ];
 
-const Sidebar: React.FC<Props> = ({ collapse = false }) => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
+const Sidebar: React.FC = () => {
   const router = useRouter();
 
   const { projectId } = router.query;
@@ -59,8 +55,8 @@ const Sidebar: React.FC<Props> = ({ collapse = false }) => {
 
   return (
     <nav className="h-screen">
-      <Transition.Root show={sidebarOpen} as={React.Fragment}>
-        <Dialog as="div" className="relative z-40 md:hidden" onClose={setSidebarOpen}>
+      <Transition.Root show={sidebarCollapse} as={React.Fragment}>
+        <div className="relative z-40 md:hidden">
           <Transition.Child
             as={React.Fragment}
             enter="transition-opacity ease-linear duration-300"
@@ -83,7 +79,7 @@ const Sidebar: React.FC<Props> = ({ collapse = false }) => {
               leaveFrom="translate-x-0"
               leaveTo="-translate-x-full"
             >
-              <Dialog.Panel className="relative flex w-full max-w-xs flex-1 flex-col bg-white">
+              <div className="relative flex w-full max-w-xs flex-1 flex-col bg-white">
                 <Transition.Child
                   as={React.Fragment}
                   enter="ease-in-out duration-300"
@@ -97,7 +93,7 @@ const Sidebar: React.FC<Props> = ({ collapse = false }) => {
                     <button
                       type="button"
                       className="ml-1 flex h-10 w-10 items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-                      onClick={() => setSidebarOpen(false)}
+                      onClick={() => toggleCollapsed()}
                     >
                       <span className="sr-only">Close sidebar</span>
                       <XMarkIcon className="h-6 w-6 text-white" aria-hidden="true" />
@@ -132,43 +128,43 @@ const Sidebar: React.FC<Props> = ({ collapse = false }) => {
                       ))}
                   </nav>
                 </div>
-              </Dialog.Panel>
+              </div>
             </Transition.Child>
             <div className="w-14 flex-shrink-0" />
           </div>
-        </Dialog>
+        </div>
       </Transition.Root>
       <div
         className={`${
-          sidebarCollapse || collapse ? "" : "w-auto md:w-60"
+          sidebarCollapse ? "" : "w-auto md:w-60"
         } h-full hidden md:inset-y-0 md:flex md:flex-col`}
       >
         <div className="h-full flex flex-1 flex-col border-r border-gray-200">
           <div className="h-full flex flex-1 flex-col pt-2">
-            <WorkspaceOptions sidebarCollapse={sidebarCollapse || collapse} />
-            <ProjectsList navigation={navigation} sidebarCollapse={sidebarCollapse || collapse} />
+            <WorkspaceOptions sidebarCollapse={sidebarCollapse} />
+            <ProjectsList navigation={navigation} sidebarCollapse={sidebarCollapse} />
             <div
               className={`px-2 py-2 w-full self-baseline flex items-center bg-primary ${
-                sidebarCollapse || collapse ? "flex-col-reverse" : ""
+                sidebarCollapse ? "flex-col-reverse" : ""
               }`}
             >
               <button
                 type="button"
                 className={`flex items-center gap-3 px-2 py-2 text-xs font-medium rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-900 outline-none ${
-                  sidebarCollapse || collapse ? "justify-center w-full" : ""
+                  sidebarCollapse ? "justify-center w-full" : ""
                 }`}
                 onClick={() => toggleCollapsed()}
               >
                 <ArrowLongLeftIcon
                   className={`h-4 w-4 text-gray-500 group-hover:text-gray-900 flex-shrink-0 duration-300 ${
-                    sidebarCollapse || collapse ? "rotate-180" : ""
+                    sidebarCollapse ? "rotate-180" : ""
                   }`}
                 />
               </button>
               <button
                 type="button"
                 className={`flex items-center gap-3 px-2 py-2 text-xs font-medium rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-900 outline-none ${
-                  sidebarCollapse || collapse ? "justify-center w-full" : ""
+                  sidebarCollapse ? "justify-center w-full" : ""
                 }`}
                 onClick={() => {
                   const e = new KeyboardEvent("keydown", {
@@ -190,7 +186,7 @@ const Sidebar: React.FC<Props> = ({ collapse = false }) => {
         <button
           type="button"
           className="-ml-0.5 -mt-0.5 inline-flex h-12 w-12 items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
-          onClick={() => setSidebarOpen(true)}
+          onClick={() => toggleCollapsed()}
         >
           <span className="sr-only">Open sidebar</span>
           <Bars3Icon className="h-6 w-6" aria-hidden="true" />

@@ -34,7 +34,12 @@ import { ArrowPathIcon, ChevronDownIcon, ListBulletIcon } from "@heroicons/react
 // types
 import { CycleIssueResponse, IIssue, NestedKeyOf, Properties, SelectIssue } from "types";
 // fetch-keys
-import { CYCLE_ISSUES, PROJECT_MEMBERS } from "constants/fetch-keys";
+import {
+  CYCLE_ISSUES,
+  CYCLE_LIST,
+  PROJECT_ISSUES_LIST,
+  PROJECT_MEMBERS,
+} from "constants/fetch-keys";
 // common
 import { classNames, replaceUnderscoreIfSnakeCase } from "constants/common";
 
@@ -48,7 +53,16 @@ const SingleCycle: React.FC = () => {
     (Partial<IIssue> & { actionType: "createIssue" | "edit" | "delete" }) | undefined
   >(undefined);
 
-  const { activeWorkspace, activeProject, cycles, issues } = useUser();
+  const { activeWorkspace, activeProject } = useUser();
+
+  const { data: issues } = useSWR(
+    activeWorkspace && activeProject
+      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
+      : null,
+    activeWorkspace && activeProject
+      ? () => issuesServices.getIssues(activeWorkspace.slug, activeProject.id)
+      : null
+  );
 
   const router = useRouter();
 
@@ -57,6 +71,13 @@ const SingleCycle: React.FC = () => {
   const [properties, setProperties] = useIssuesProperties(
     activeWorkspace?.slug,
     activeProject?.id as string
+  );
+
+  const { data: cycles } = useSWR(
+    activeWorkspace && activeProject ? CYCLE_LIST(activeProject.id) : null,
+    activeWorkspace && activeProject
+      ? () => cycleServices.getCycles(activeWorkspace.slug, activeProject.id)
+      : null
   );
 
   const { data: cycleIssues } = useSWR<CycleIssueResponse[]>(
@@ -253,7 +274,7 @@ const SingleCycle: React.FC = () => {
             <div className="flex items-center gap-x-1">
               <button
                 type="button"
-                className={`h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-200 duration-300 outline-none ${
+                className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200 ${
                   issueView === "list" ? "bg-gray-200" : ""
                 }`}
                 onClick={() => setIssueViewToList()}
@@ -262,7 +283,7 @@ const SingleCycle: React.FC = () => {
               </button>
               <button
                 type="button"
-                className={`h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-200 duration-300 outline-none ${
+                className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200 ${
                   issueView === "kanban" ? "bg-gray-200" : ""
                 }`}
                 onClick={() => setIssueViewToKanban()}
@@ -276,7 +297,7 @@ const SingleCycle: React.FC = () => {
                   <Popover.Button
                     className={classNames(
                       open ? "bg-gray-100 text-gray-900" : "text-gray-500",
-                      "group flex gap-2 items-center rounded-md bg-transparent text-xs font-medium hover:bg-gray-100 hover:text-gray-900 focus:outline-none border p-2"
+                      "group flex items-center gap-2 rounded-md border bg-transparent p-2 text-xs font-medium hover:bg-gray-100 hover:text-gray-900 focus:outline-none"
                     )}
                   >
                     <span>View</span>
@@ -292,9 +313,9 @@ const SingleCycle: React.FC = () => {
                     leaveFrom="opacity-100 translate-y-0"
                     leaveTo="opacity-0 translate-y-1"
                   >
-                    <Popover.Panel className="absolute right-0 z-20 mt-1 w-screen max-w-xs transform p-3 bg-white rounded-lg shadow-lg overflow-hidden">
+                    <Popover.Panel className="absolute right-0 z-20 mt-1 w-screen max-w-xs transform overflow-hidden rounded-lg bg-white p-3 shadow-lg">
                       <div className="relative flex flex-col gap-1 gap-y-4">
-                        <div className="flex justify-between items-center">
+                        <div className="flex items-center justify-between">
                           <h4 className="text-sm text-gray-600">Group by</h4>
                           <CustomMenu
                             label={
@@ -313,7 +334,7 @@ const SingleCycle: React.FC = () => {
                             ))}
                           </CustomMenu>
                         </div>
-                        <div className="flex justify-between items-center">
+                        <div className="flex items-center justify-between">
                           <h4 className="text-sm text-gray-600">Order by</h4>
                           <CustomMenu
                             label={
@@ -334,7 +355,7 @@ const SingleCycle: React.FC = () => {
                             )}
                           </CustomMenu>
                         </div>
-                        <div className="flex justify-between items-center">
+                        <div className="flex items-center justify-between">
                           <h4 className="text-sm text-gray-600">Issue type</h4>
                           <CustomMenu
                             label={
@@ -356,12 +377,12 @@ const SingleCycle: React.FC = () => {
                         <div className="border-b-2"></div>
                         <div className="relative flex flex-col gap-1">
                           <h4 className="text-base text-gray-600">Properties</h4>
-                          <div className="flex items-center gap-2 flex-wrap">
+                          <div className="flex flex-wrap items-center gap-2">
                             {Object.keys(properties).map((key) => (
                               <button
                                 key={key}
                                 type="button"
-                                className={`px-2 py-1 capitalize rounded border border-theme text-xs ${
+                                className={`rounded border border-theme px-2 py-1 text-xs capitalize ${
                                   properties[key as keyof Properties]
                                     ? "border-theme bg-theme text-white"
                                     : ""

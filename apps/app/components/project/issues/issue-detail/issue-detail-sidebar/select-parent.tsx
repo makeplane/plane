@@ -1,7 +1,13 @@
 // react
 import React, { useState } from "react";
+// swr
+import useSWR from "swr";
 // react-hook-form
 import { Control, Controller, UseFormWatch } from "react-hook-form";
+// fetch keys
+import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+// services
+import issuesServices from "lib/services/issues.service";
 // hooks
 import useUser from "lib/hooks/useUser";
 // components
@@ -28,12 +34,21 @@ const SelectParent: React.FC<Props> = ({
 }) => {
   const [isParentModalOpen, setIsParentModalOpen] = useState(false);
 
-  const { activeProject, issues } = useUser();
+  const { activeProject, activeWorkspace } = useUser();
+
+  const { data: issues } = useSWR(
+    activeWorkspace && activeProject
+      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
+      : null,
+    activeWorkspace && activeProject
+      ? () => issuesServices.getIssues(activeWorkspace.slug, activeProject.id)
+      : null
+  );
 
   return (
-    <div className="flex items-center py-2 flex-wrap">
+    <div className="flex flex-wrap items-center py-2">
       <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
-        <UserIcon className="flex-shrink-0 h-4 w-4" />
+        <UserIcon className="h-4 w-4 flex-shrink-0" />
         <p>Parent</p>
       </div>
       <div className="sm:basis-1/2">
@@ -57,7 +72,7 @@ const SelectParent: React.FC<Props> = ({
         />
         <button
           type="button"
-          className="flex justify-between items-center gap-1 hover:bg-gray-100 border rounded-md shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300 w-full"
+          className="flex w-full cursor-pointer items-center justify-between gap-1 rounded-md border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
           onClick={() => setIsParentModalOpen(true)}
         >
           {watch("parent") && watch("parent") !== ""

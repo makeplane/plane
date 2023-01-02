@@ -57,8 +57,8 @@ const ProjectMemberInvitations: React.FC<Props> = ({
 
   if (!members) {
     return (
-      <div className="w-full h-36 flex flex-col px-4 py-3 rounded-md bg-white">
-        <div className="w-full h-full bg-gray-50 animate-pulse" />
+      <div className="flex h-36 w-full flex-col rounded-md bg-white px-4 py-3">
+        <div className="h-full w-full animate-pulse bg-gray-50" />
       </div>
     );
   }
@@ -66,16 +66,16 @@ const ProjectMemberInvitations: React.FC<Props> = ({
   return (
     <>
       <div
-        className={`w-full h-full flex flex-col px-4 py-3 rounded-md border bg-white ${
+        className={`flex h-full w-full flex-col rounded-md border bg-white px-4 py-3 ${
           selected ? "ring-2 ring-indigo-400" : ""
         }`}
       >
-        <div className="flex justify-between items-center">
-          <div className="font-medium text-lg flex gap-2">
+        <div className="flex items-center justify-between">
+          <div className="flex gap-2 text-lg font-medium">
             {!isMember ? (
               <input
                 id={project.id}
-                className="h-3 w-3 rounded border-gray-300 text-theme focus:ring-indigo-500 mt-2 hidden"
+                className="mt-2 hidden h-3 w-3 rounded border-gray-300 text-theme focus:ring-indigo-500"
                 aria-describedby="workspaces"
                 name={project.id}
                 checked={invitationsRespond.includes(project.id)}
@@ -91,22 +91,25 @@ const ProjectMemberInvitations: React.FC<Props> = ({
               />
             ) : null}
             <Link href={`/projects/${project.id}/issues`}>
-              <a className="flex flex-col">
-                {project.name}
-                <span className="text-xs">({project.identifier})</span>
+              <a className="flex items-center gap-x-3">
+                {project.icon && (
+                  <span className="text-base">{String.fromCodePoint(parseInt(project.icon))}</span>
+                )}
+                <span>{project.name}</span>
+                <span className="text-xs text-gray-500">{project.identifier}</span>
               </a>
             </Link>
           </div>
           {isMember ? (
             <div className="flex">
               <Link href={`/projects/${project.id}/settings`}>
-                <a className="h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-100 duration-300 cursor-pointer">
+                <a className="grid h-7 w-7 cursor-pointer place-items-center rounded p-1 duration-300 hover:bg-gray-100">
                   <PencilIcon className="h-4 w-4" />
                 </a>
               </Link>
               <button
                 type="button"
-                className="h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-100 duration-300 outline-none"
+                className="grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-100"
                 onClick={() => setDeleteProject(project.id)}
               >
                 <TrashIcon className="h-4 w-4 text-red-500" />
@@ -117,12 +120,12 @@ const ProjectMemberInvitations: React.FC<Props> = ({
         <div className="mt-2">
           <p className="text-sm">{project.description}</p>
         </div>
-        <div className="mt-3 h-full flex justify-between items-end">
+        <div className="mt-3 flex h-full items-end justify-between">
           <div className="flex gap-2">
             {!isMember ? (
               <label
                 htmlFor={project.id}
-                className="flex items-center gap-1 text-xs font-medium border hover:bg-gray-100 p-2 rounded duration-300 cursor-pointer"
+                className="flex cursor-pointer items-center gap-1 rounded border p-2 text-xs font-medium duration-300 hover:bg-gray-100"
               >
                 {selected ? (
                   <>
@@ -151,7 +154,7 @@ const ProjectMemberInvitations: React.FC<Props> = ({
               Open Project
             </Button>
           </div>
-          <div className="flex items-center gap-1 text-xs mb-1">
+          <div className="mb-1 flex items-center gap-1 text-xs">
             <CalendarDaysIcon className="h-4 w-4" />
             {renderShortNumericDateFormat(project.created_at)}
           </div>

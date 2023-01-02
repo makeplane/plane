@@ -1,5 +1,10 @@
-// react
 import { useState } from "react";
+// swr
+import useSWR from "swr";
+// constants
+import { STATE_LIST } from "constants/fetch-keys";
+// services
+import stateService from "lib/services/state.service";
 // hooks
 import useUser from "lib/hooks/useUser";
 // layouts
@@ -24,7 +29,14 @@ const StatesSettings = () => {
   const [selectedState, setSelectedState] = useState<string | null>(null);
   const [selectDeleteState, setSelectDeleteState] = useState<string | null>(null);
 
-  const { activeWorkspace, activeProject, states } = useUser();
+  const { activeWorkspace, activeProject } = useUser();
+
+  const { data: states } = useSWR(
+    activeWorkspace && activeProject ? STATE_LIST(activeProject.id) : null,
+    activeWorkspace && activeProject
+      ? () => stateService.getStates(activeWorkspace.slug, activeProject.id)
+      : null
+  );
 
   const groupedStates: {
     [key: string]: IState[];
@@ -58,18 +70,18 @@ const StatesSettings = () => {
             {states && activeProject ? (
               Object.keys(groupedStates).map((key) => (
                 <div key={key}>
-                  <div className="flex justify-between w-full md:w-2/3 mb-2">
-                    <p className="text-md leading-6 text-gray-900 capitalize">{key} states</p>
+                  <div className="mb-2 flex w-full justify-between md:w-2/3">
+                    <p className="text-md capitalize leading-6 text-gray-900">{key} states</p>
                     <button
                       type="button"
                       onClick={() => setActiveGroup(key as keyof StateGroup)}
-                      className="flex items-center gap-2 text-theme text-xs"
+                      className="flex items-center gap-2 text-xs text-theme"
                     >
                       <PlusIcon className="h-3 w-3 text-theme" />
                       Add
                     </button>
                   </div>
-                  <div className="md:w-2/3 space-y-1 border p-1 rounded-xl">
+                  <div className="space-y-1 rounded-xl border p-1 md:w-2/3">
                     {key === activeGroup && (
                       <CreateUpdateStateInline
                         projectId={activeProject.id}
@@ -86,13 +98,13 @@ const StatesSettings = () => {
                       state.id !== selectedState ? (
                         <div
                           key={state.id}
-                          className={`bg-gray-50 p-3 flex justify-between items-center gap-2 border-b ${
+                          className={`flex items-center justify-between gap-2 border-b bg-gray-50 p-3 ${
                             Boolean(activeGroup !== key) ? "last:border-0" : ""
                           }`}
                         >
                           <div className="flex items-center gap-2">
                             <div
-                              className="flex-shrink-0 h-3 w-3 rounded-full"
+                              className="h-3 w-3 flex-shrink-0 rounded-full"
                               style={{
                                 backgroundColor: state.color,
                               }}
@@ -127,7 +139,7 @@ const StatesSettings = () => {
                 </div>
               ))
             ) : (
-              <Loader className="md:w-2/3 space-y-5">
+              <Loader className="space-y-5 md:w-2/3">
                 <Loader.Item height="40px"></Loader.Item>
                 <Loader.Item height="40px"></Loader.Item>
                 <Loader.Item height="40px"></Loader.Item>

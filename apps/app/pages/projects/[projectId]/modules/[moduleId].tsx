@@ -46,7 +46,13 @@ import {
   SelectModuleType,
 } from "types";
 // fetch-keys
-import { MODULE_DETAIL, MODULE_ISSUES, PROJECT_MEMBERS } from "constants/fetch-keys";
+import {
+  MODULE_DETAIL,
+  MODULE_ISSUES,
+  MODULE_LIST,
+  PROJECT_ISSUES_LIST,
+  PROJECT_MEMBERS,
+} from "constants/fetch-keys";
 // common
 import { classNames, replaceUnderscoreIfSnakeCase } from "constants/common";
 // constants
@@ -66,7 +72,16 @@ const SingleModule = () => {
     (Partial<IIssue> & { actionType: "createIssue" | "edit" | "delete" }) | undefined
   >(undefined);
 
-  const { activeWorkspace, activeProject, issues, modules } = useUser();
+  const { activeWorkspace, activeProject } = useUser();
+
+  const { data: issues } = useSWR(
+    activeWorkspace && activeProject
+      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
+      : null,
+    activeWorkspace && activeProject
+      ? () => issuesService.getIssues(activeWorkspace.slug, activeProject.id)
+      : null
+  );
 
   const router = useRouter();
 
@@ -75,6 +90,13 @@ const SingleModule = () => {
   const [properties, setProperties] = useIssuesProperties(
     activeWorkspace?.slug,
     activeProject?.id as string
+  );
+
+  const { data: modules } = useSWR(
+    activeWorkspace && activeProject ? MODULE_LIST(activeProject.id) : null,
+    activeWorkspace && activeProject
+      ? () => modulesService.getModules(activeWorkspace.slug, activeProject.id)
+      : null
   );
 
   const { data: moduleIssues } = useSWR<ModuleIssueResponse[]>(
@@ -88,6 +110,7 @@ const SingleModule = () => {
           )
       : null
   );
+
   const moduleIssuesArray = moduleIssues?.map((issue) => {
     return { bridge: issue.id, ...issue.issue_detail };
   });
@@ -262,7 +285,7 @@ const SingleModule = () => {
             <div className="flex items-center gap-x-1">
               <button
                 type="button"
-                className={`h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-100 duration-300 outline-none ${
+                className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-100 ${
                   issueView === "list" ? "bg-gray-100" : ""
                 }`}
                 onClick={() => setIssueViewToList()}
@@ -271,7 +294,7 @@ const SingleModule = () => {
               </button>
               <button
                 type="button"
-                className={`h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-100 duration-300 outline-none ${
+                className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-100 ${
                   issueView === "kanban" ? "bg-gray-100" : ""
                 }`}
                 onClick={() => setIssueViewToKanban()}
@@ -285,7 +308,7 @@ const SingleModule = () => {
                   <Popover.Button
                     className={classNames(
                       open ? "bg-gray-100 text-gray-900" : "text-gray-500",
-                      "group flex gap-2 items-center rounded-md bg-transparent text-xs font-medium hover:bg-gray-100 hover:text-gray-900 focus:outline-none border p-2"
+                      "group flex items-center gap-2 rounded-md border bg-transparent p-2 text-xs font-medium hover:bg-gray-100 hover:text-gray-900 focus:outline-none"
                     )}
                   >
                     <span>View</span>
@@ -301,9 +324,9 @@ const SingleModule = () => {
                     leaveFrom="opacity-100 translate-y-0"
                     leaveTo="opacity-0 translate-y-1"
                   >
-                    <Popover.Panel className="absolute right-0 z-20 mt-1 w-screen max-w-xs transform p-3 bg-white rounded-lg shadow-lg overflow-hidden">
+                    <Popover.Panel className="absolute right-0 z-20 mt-1 w-screen max-w-xs transform overflow-hidden rounded-lg bg-white p-3 shadow-lg">
                       <div className="relative flex flex-col gap-1 gap-y-4">
-                        <div className="flex justify-between items-center">
+                        <div className="flex items-center justify-between">
                           <h4 className="text-sm text-gray-600">Group by</h4>
                           <CustomMenu
                             label={
@@ -322,7 +345,7 @@ const SingleModule = () => {
                             ))}
                           </CustomMenu>
                         </div>
-                        <div className="flex justify-between items-center">
+                        <div className="flex items-center justify-between">
                           <h4 className="text-sm text-gray-600">Order by</h4>
                           <CustomMenu
                             label={
@@ -343,7 +366,7 @@ const SingleModule = () => {
                             )}
                           </CustomMenu>
                         </div>
-                        <div className="flex justify-between items-center">
+                        <div className="flex items-center justify-between">
                           <h4 className="text-sm text-gray-600">Issue type</h4>
                           <CustomMenu
                             label={
@@ -365,12 +388,12 @@ const SingleModule = () => {
                         <div className="border-b-2"></div>
                         <div className="relative flex flex-col gap-1">
                           <h4 className="text-base text-gray-600">Properties</h4>
-                          <div className="flex items-center gap-2 flex-wrap">
+                          <div className="flex flex-wrap items-center gap-2">
                             {Object.keys(properties).map((key) => (
                               <button
                                 key={key}
                                 type="button"
-                                className={`px-2 py-1 capitalize rounded border border-theme text-xs ${
+                                className={`rounded border border-theme px-2 py-1 text-xs capitalize ${
                                   properties[key as keyof Properties]
                                     ? "border-theme bg-theme text-white"
                                     : ""
@@ -390,7 +413,7 @@ const SingleModule = () => {
             </Popover>
             <button
               type="button"
-              className={`h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-100 duration-300 outline-none ${
+              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-100 ${
                 moduleSidebar ? "rotate-180" : ""
               }`}
               onClick={() => setModuleSidebar((prevData) => !prevData)}
@@ -431,7 +454,7 @@ const SingleModule = () => {
             </div>
           ) : (
             <div
-              className={`h-full flex flex-col justify-center items-center px-4 ${
+              className={`flex h-full flex-col items-center justify-center px-4 ${
                 moduleSidebar ? "mr-[24rem]" : ""
               } duration-300`}
             >
@@ -445,7 +468,7 @@ const SingleModule = () => {
                   description={
                     <span>
                       Use{" "}
-                      <pre className="inline bg-gray-100 px-2 py-1 rounded">Ctrl/Command + I</pre>{" "}
+                      <pre className="inline rounded bg-gray-100 px-2 py-1">Ctrl/Command + I</pre>{" "}
                       shortcut to create a new cycle
                     </span>
                   }
@@ -468,7 +491,7 @@ const SingleModule = () => {
             </div>
           )
         ) : (
-          <div className="w-full h-full flex justify-center items-center">
+          <div className="flex h-full w-full items-center justify-center">
             <Spinner />
           </div>
         )}

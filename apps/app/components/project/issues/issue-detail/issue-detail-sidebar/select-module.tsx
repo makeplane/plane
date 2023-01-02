@@ -1,9 +1,14 @@
-// react
 import React from "react";
+// swr
+import useSWR from "swr";
 // react-hook-form
 import { Control, Controller } from "react-hook-form";
 // hooks
 import useUser from "lib/hooks/useUser";
+// constants
+import { MODULE_LIST } from "constants/fetch-keys";
+// services
+import modulesService from "lib/services/modules.service";
 // ui
 import { Spinner, CustomSelect } from "ui";
 // icons
@@ -19,12 +24,19 @@ type Props = {
 };
 
 const SelectModule: React.FC<Props> = ({ control, handleModuleChange }) => {
-  const { modules } = useUser();
+  const { activeWorkspace, activeProject } = useUser();
+
+  const { data: modules } = useSWR(
+    activeWorkspace && activeProject ? MODULE_LIST(activeProject.id) : null,
+    activeWorkspace && activeProject
+      ? () => modulesService.getModules(activeWorkspace.slug, activeProject.id)
+      : null
+  );
 
   return (
-    <div className="flex items-center py-2 flex-wrap">
+    <div className="flex flex-wrap items-center py-2">
       <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
-        <RectangleGroupIcon className="flex-shrink-0 h-4 w-4" />
+        <RectangleGroupIcon className="h-4 w-4 flex-shrink-0" />
         <p>Module</p>
       </div>
       <div className="sm:basis-1/2">
@@ -37,7 +49,7 @@ const SelectModule: React.FC<Props> = ({ control, handleModuleChange }) => {
                 <span
                   className={classNames(
                     value ? "" : "text-gray-900",
-                    "hidden truncate sm:block text-left"
+                    "hidden truncate text-left sm:block"
                   )}
                 >
                   {value ? modules?.find((m) => m.id === value?.module_detail.id)?.name : "None"}

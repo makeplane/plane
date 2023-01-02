@@ -1,9 +1,14 @@
-// react
 import React from "react";
+// swr
+import useSWR from "swr";
 // react-hook-form
 import { Control, Controller } from "react-hook-form";
 // hooks
 import useUser from "lib/hooks/useUser";
+// constants
+import { CYCLE_LIST } from "constants/fetch-keys";
+// services
+import cyclesService from "lib/services/cycles.service";
 // ui
 import { Spinner, CustomSelect } from "ui";
 // icons
@@ -19,12 +24,19 @@ type Props = {
 };
 
 const SelectCycle: React.FC<Props> = ({ control, handleCycleChange }) => {
-  const { cycles } = useUser();
+  const { activeWorkspace, activeProject } = useUser();
+
+  const { data: cycles } = useSWR(
+    activeWorkspace && activeProject ? CYCLE_LIST(activeProject.id) : null,
+    activeWorkspace && activeProject
+      ? () => cyclesService.getCycles(activeWorkspace.slug, activeProject.id)
+      : null
+  );
 
   return (
-    <div className="flex items-center py-2 flex-wrap">
+    <div className="flex flex-wrap items-center py-2">
       <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
-        <ArrowPathIcon className="flex-shrink-0 h-4 w-4" />
+        <ArrowPathIcon className="h-4 w-4 flex-shrink-0" />
         <p>Cycle</p>
       </div>
       <div className="sm:basis-1/2">
@@ -38,7 +50,7 @@ const SelectCycle: React.FC<Props> = ({ control, handleCycleChange }) => {
                   <span
                     className={classNames(
                       value ? "" : "text-gray-900",
-                      "hidden truncate sm:block text-left"
+                      "hidden truncate text-left sm:block"
                     )}
                   >
                     {value ? cycles?.find((c) => c.id === value.cycle_detail.id)?.name : "None"}

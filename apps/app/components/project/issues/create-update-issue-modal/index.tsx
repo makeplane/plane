@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/router";
 // swr
-import { mutate } from "swr";
+import useSWR, { mutate } from "swr";
 // react hook form
 import { Controller, useForm } from "react-hook-form";
 // headless
@@ -92,7 +92,16 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
     }
   };
 
-  const { activeWorkspace, activeProject, user, issues } = useUser();
+  const { activeWorkspace, activeProject, user } = useUser();
+
+  const { data: issues } = useSWR(
+    activeWorkspace && activeProject
+      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
+      : null,
+    activeWorkspace && activeProject
+      ? () => issuesServices.getIssues(activeWorkspace.slug, activeProject.id)
+      : null
+  );
 
   const { setToastAlert } = useToast();
 
@@ -368,27 +377,8 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                               error={errors.description}
                               register={register}
                             />
-                            {/* <Controller
-                              name="description"
-                              control={control}
-                              render={({ field }) => (
-                                <RichTextEditor {...field} id="issueDescriptionEditor" />
-                              )}
-                            /> */}
                           </div>
-                          <div>
-                            {/* <Input
-                              id="target_date"
-                              label="Target Date"
-                              name="target_date"
-                              type="date"
-                              placeholder="Enter name"
-                              autoComplete="off"
-                              error={errors.target_date}
-                              register={register}
-                            /> */}
-                          </div>
-                          <div className="flex items-center flex-wrap gap-2">
+                          <div className="flex flex-wrap items-center gap-2">
                             <SelectState control={control} setIsOpen={setIsStateModalOpen} />
                             <SelectCycles control={control} setIsOpen={setIsCycleModalOpen} />
                             <SelectPriority control={control} />
@@ -404,7 +394,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                                   onChange={(e: any) => {
                                     onChange(e.target.value);
                                   }}
-                                  className="hover:bg-gray-100 border rounded-md shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300"
+                                  className="cursor-pointer rounded-md border px-2 py-[3px] text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                                 />
                               )}
                             />
@@ -415,7 +405,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                               issues={issues?.results ?? []}
                             />
                             <Menu as="div" className="relative inline-block">
-                              <Menu.Button className="grid place-items-center p-1 hover:bg-gray-100 border rounded-md shadow-sm cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm duration-300">
+                              <Menu.Button className="grid cursor-pointer place-items-center rounded-md border p-1 py-0.5 shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm">
                                 <EllipsisHorizontalIcon className="h-5 w-5" />
                               </Menu.Button>
 
@@ -428,12 +418,12 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                                 leaveFrom="transform opacity-100 scale-100"
                                 leaveTo="transform opacity-0 scale-95"
                               >
-                                <Menu.Items className="origin-top-right absolute right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                                <Menu.Items className="absolute right-0 z-50 mt-2 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                                   <div className="p-1">
                                     <Menu.Item as="div">
                                       <button
                                         type="button"
-                                        className="p-2 text-left text-gray-900 hover:bg-theme hover:text-white rounded-md text-xs whitespace-nowrap "
+                                        className="whitespace-nowrap rounded-md p-2 text-left text-xs text-gray-900 hover:bg-theme hover:text-white "
                                         onClick={() => setParentIssueListModalOpen(true)}
                                       >
                                         {watch("parent") && watch("parent") !== ""

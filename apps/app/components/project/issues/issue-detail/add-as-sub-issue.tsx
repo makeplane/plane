@@ -1,9 +1,7 @@
 // react
 import React, { useState } from "react";
 // swr
-import { mutate } from "swr";
-// react hook form
-import { useForm } from "react-hook-form";
+import useSWR, { mutate } from "swr";
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // services
@@ -25,26 +23,25 @@ type Props = {
   parent: IIssue | undefined;
 };
 
-type FormInput = {
-  issue_ids: string[];
-  cycleId: string;
-};
-
 const AddAsSubIssue: React.FC<Props> = ({ isOpen, setIsOpen, parent }) => {
   const [query, setQuery] = useState("");
 
-  const { activeWorkspace, activeProject, issues } = useUser();
+  const { activeWorkspace, activeProject } = useUser();
+
+  const { data: issues } = useSWR(
+    activeWorkspace && activeProject
+      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
+      : null,
+    activeWorkspace && activeProject
+      ? () => issuesServices.getIssues(activeWorkspace.slug, activeProject.id)
+      : null
+  );
 
   const filteredIssues: IIssue[] =
     query === ""
       ? issues?.results ?? []
       : issues?.results.filter((issue) => issue.name.toLowerCase().includes(query.toLowerCase())) ??
         [];
-
-  const {
-    formState: { errors, isSubmitting },
-    reset,
-  } = useForm<FormInput>();
 
   const handleCommandPaletteClose = () => {
     setIsOpen(false);
@@ -106,7 +103,7 @@ const AddAsSubIssue: React.FC<Props> = ({ isOpen, setIsOpen, parent }) => {
                     aria-hidden="true"
                   />
                   <Combobox.Input
-                    className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm outline-none"
+                    className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder-gray-500 outline-none focus:ring-0 sm:text-sm"
                     placeholder="Search..."
                     onChange={(e) => setQuery(e.target.value)}
                   />
@@ -139,7 +136,7 @@ const AddAsSubIssue: React.FC<Props> = ({ isOpen, setIsOpen, parent }) => {
                                   }}
                                   className={({ active }) =>
                                     classNames(
-                                      "flex items-center gap-2 cursor-pointer select-none rounded-md px-3 py-2",
+                                      "flex cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2",
                                       active ? "bg-gray-900 bg-opacity-5 text-gray-900" : ""
                                     )
                                   }
@@ -149,7 +146,7 @@ const AddAsSubIssue: React.FC<Props> = ({ isOpen, setIsOpen, parent }) => {
                                   }}
                                 >
                                   <span
-                                    className={`h-1.5 w-1.5 block rounded-full`}
+                                    className={`block h-1.5 w-1.5 rounded-full`}
                                     style={{
                                       backgroundColor: issue.state_detail.color,
                                     }}
