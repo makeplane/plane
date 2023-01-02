@@ -9,43 +9,43 @@
   "keywords": ["plane", "project management", "django", "next"],
   "addons": ["heroku-postgresql:mini", "heroku-redis:mini"],
   "env": {
-    "PLANE_EMAIL_HOST": {
+    "EMAIL_HOST": {
       "description": "Email host to send emails from",
       "value": ""
     },
-    "PLANE_EMAIL_HOST_USER": {
+    "EMAIL_HOST_USER": {
       "description": "Email host to send emails from",
       "value": ""
     },
-    "PLANE_EMAIL_HOST_PASSWORD": {
+    "EMAIL_HOST_PASSWORD": {
       "description": "Email host to send emails from",
       "value": ""
     },
-    "PLANE_AWS_REGION": {
+    "AWS_REGION": {
       "description": "AWS Region to use for S3",
       "value": ""
     },
-    "PLANE_AWS_ACCESS_KEY_ID": {
+    "AWS_ACCESS_KEY_ID": {
       "description": "AWS Access Key ID to use for S3",
       "value": ""
     },
-    "PLANE_AWS_SECRET_ACCESS_KEY": {
+    "AWS_SECRET_ACCESS_KEY": {
       "description": "AWS Secret Access Key to use for S3",
       "value": ""
     },
-    "PLANE_SENTRY_DSN": {
+    "SENTRY_DSN": {
       "description": "",
       "value": ""
     },
-    "PLANE_AWS_S3_BUCKET_NAME": {
+    "AWS_S3_BUCKET_NAME": {
       "description": "AWS Bucket Name to use for S3",
       "value": ""
     },
-    "PLANE_WEB_URL": {
+    "WEB_URL": {
       "description": "Web URL for Plane",
       "value": ""
     },
-    "PLANE_GITHUB_CLIENT_SECRET": {
+    "GITHUB_CLIENT_SECRET": {
       "description": "Github Client Secret",
       "value": ""
     },
@@ -61,7 +61,7 @@
       "description": "Next Public API Base URL",
       "value": ""
     },
-    "PLANE_SECRET_KEY": {
+    "SECRET_KEY": {
       "description": "Django Secret Key",
       "value": ""
     }
