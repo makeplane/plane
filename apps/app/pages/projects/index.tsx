@@ -1,13 +1,13 @@
 // react
 import React, { useState } from "react";
 // next
-import type { NextPage } from "next";
+import type { NextPage, NextPageContext } from "next";
 // services
 import projectService from "lib/services/project.service";
 // hooks
 import useUser from "lib/hooks/useUser";
-// hoc
-import withAuth from "lib/hoc/withAuthWrapper";
+// lib
+import { requiredAuth } from "lib/auth";
 // layouts
 import AppLayout from "layouts/app-layout";
 // components
@@ -83,7 +83,7 @@ const Projects: NextPage = () => {
       {projects ? (
         <>
           {projects.length === 0 ? (
-            <div className="h-full w-full grid place-items-center px-4 sm:px-0">
+            <div className="grid h-full w-full place-items-center px-4 sm:px-0">
               <EmptySpace
                 title="You don't have any project yet."
                 description="Projects are a collection of issues. They can be used to represent the development work for a product, project, or service."
@@ -94,7 +94,7 @@ const Projects: NextPage = () => {
                   description={
                     <span>
                       Use{" "}
-                      <pre className="inline bg-gray-100 px-2 py-1 rounded">Ctrl/Command + P</pre>{" "}
+                      <pre className="inline rounded bg-gray-100 px-2 py-1">Ctrl/Command + P</pre>{" "}
                       shortcut to create a new project
                     </span>
                   }
@@ -108,7 +108,7 @@ const Projects: NextPage = () => {
             </div>
           ) : (
             <div className="h-full w-full space-y-5">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {projects.map((item) => (
                   <ProjectMemberInvitations
                     key={item.id}
@@ -121,7 +121,7 @@ const Projects: NextPage = () => {
                 ))}
               </div>
               {invitationsRespond.length > 0 && (
-                <div className="flex justify-between mt-4">
+                <div className="mt-4 flex justify-between">
                   <Button onClick={submitInvitations}>Submit</Button>
                 </div>
               )}
@@ -142,4 +142,25 @@ const Projects: NextPage = () => {
   );
 };
 
-export default withAuth(Projects);
+export const getServerSideProps = async (ctx: NextPageContext) => {
+  const user = await requiredAuth(ctx.req?.headers.cookie);
+
+  const redirectAfterSignIn = ctx.req?.url;
+
+  if (!user) {
+    return {
+      redirect: {
+        destination: `/signin?next=${redirectAfterSignIn}`,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      user,
+    },
+  };
+};
+
+export default Projects;

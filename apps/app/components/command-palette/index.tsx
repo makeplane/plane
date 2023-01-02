@@ -1,4 +1,5 @@
-// react
+// TODO: Refactor this component: into a different file, use this file to export the components
+
 import React, { useState, useCallback, useEffect } from "react";
 // next
 import { useRouter } from "next/router";
@@ -14,7 +15,7 @@ import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 import issuesServices from "lib/services/issues.service";
 // components
 import ShortcutsModal from "components/command-palette/shortcuts";
-import CreateProjectModal from "components/project/create-project-modal";
+import { CreateProjectModal } from "components/project";
 import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
 import CreateUpdateCycleModal from "components/project/cycles/create-update-cycle-modal";
 import CreateUpdateModuleModal from "components/project/modules/create-update-module-modal";

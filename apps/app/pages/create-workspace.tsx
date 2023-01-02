@@ -1,6 +1,6 @@
 import React from "react";
 // next
-import type { NextPage } from "next";
+import type { NextPage, NextPageContext } from "next";
 import { useRouter } from "next/router";
 // react hook form
 import { useForm } from "react-hook-form";
@@ -8,8 +8,8 @@ import { useForm } from "react-hook-form";
 import workspaceService from "lib/services/workspace.service";
 // hooks
 import useUser from "lib/hooks/useUser";
-// hoc
-import withAuth from "lib/hoc/withAuthWrapper";
+// constants
+import { requiredAuth } from "lib/auth";
 // layouts
 import DefaultLayout from "layouts/DefaultLayout";
 // ui
@@ -51,29 +51,16 @@ const CreateWorkspace: NextPage = () => {
       });
   };
 
-  // const workspaceName = watch("name") ?? "";
-
-  // useEffect(() => {
-  //   workspaceName && workspaceName !== ""
-  //     ? setValue(
-  //         "url",
-  //         `${window.location.origin}/${workspaceName
-  //           .toLowerCase()
-  //           .replace(/ /g, "")}`
-  //       )
-  //     : setValue("url", workspaceName);
-  // }, [workspaceName, setValue]);
-
   return (
     <DefaultLayout>
-      <div className="flex flex-col items-center justify-center w-full h-full px-4">
+      <div className="flex h-full w-full flex-col items-center justify-center px-4">
         {user && (
-          <div className="w-96 p-2 rounded-lg bg-indigo-100 text-theme mb-10 lg:mb-20">
-            <p className="text-sm text-center">logged in as {user.email}</p>
+          <div className="mb-10 w-96 rounded-lg bg-indigo-100 p-2 text-theme lg:mb-20">
+            <p className="text-center text-sm">logged in as {user.email}</p>
           </div>
         )}
-        <div className="rounded border p-4 px-6 w-full md:w-2/3 lg:w-1/3 space-y-4 flex flex-col justify-between bg-white">
-          <h2 className="text-2xl text-center font-medium mb-4">Create a new workspace</h2>
+        <div className="flex w-full flex-col justify-between space-y-4 rounded border bg-white p-4 px-6 md:w-2/3 lg:w-1/3">
+          <h2 className="mb-4 text-center text-2xl font-medium">Create a new workspace</h2>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="space-y-4">
               <div>
@@ -125,16 +112,6 @@ const CreateWorkspace: NextPage = () => {
                   placeholder="Head of Engineering"
                 />
               </div>
-              {/* <div>
-          <TextArea
-            id="description"
-            label="Description"
-            name="description"
-            register={register}
-            error={errors.description}
-            placeholder="Enter workspace description"
-          />
-        </div> */}
               <Button type="submit" className="w-full" disabled={isSubmitting}>
                 {isSubmitting ? "Creating Workspace..." : "Create Workspace"}
               </Button>
@@ -146,4 +123,25 @@ const CreateWorkspace: NextPage = () => {
   );
 };
 
-export default withAuth(CreateWorkspace);
+export const getServerSideProps = async (ctx: NextPageContext) => {
+  const user = await requiredAuth(ctx.req?.headers.cookie);
+
+  const redirectAfterSignIn = ctx.req?.url;
+
+  if (!user) {
+    return {
+      redirect: {
+        destination: `/signin?next=${redirectAfterSignIn}`,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      user,
+    },
+  };
+};
+
+export default CreateWorkspace;
