@@ -163,11 +163,6 @@ CSRF_COOKIE_SECURE = True
 
 REDIS_URL = os.environ.get("REDIS_URL")
 
-REDIS_TLS_URL = os.environ.get("REDIS_TLS_URL")
-
-if REDIS_TLS_URL:
-    REDIS_URL = REDIS_TLS_URL
-
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
