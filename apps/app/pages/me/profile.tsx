@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 // next
 import Link from "next/link";
 import Image from "next/image";
-import type { NextPage } from "next";
+import type { NextPage, NextPageContext } from "next";
 // swr
 import useSWR from "swr";
 // react hook form
@@ -12,8 +12,8 @@ import Dropzone from "react-dropzone";
 // hooks
 import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
-// hoc
-import withAuth from "lib/hoc/withAuthWrapper";
+// lib
+import { requiredAuth } from "lib/auth";
 // layouts
 import AppLayout from "layouts/app-layout";
 // constants
@@ -135,10 +135,10 @@ const Profile: NextPage = () => {
         {myProfile ? (
           <>
             <div className="space-y-5">
-              <section className="relative p-5 rounded-xl flex gap-10 bg-secondary">
+              <section className="relative flex gap-10 rounded-xl bg-secondary p-5">
                 <button
                   type="button"
-                  className="absolute top-4 right-4 bg-indigo-100 hover:bg-theme hover:text-white rounded p-1 cursor-pointer duration-300"
+                  className="absolute top-4 right-4 cursor-pointer rounded bg-indigo-100 p-1 duration-300 hover:bg-theme hover:text-white"
                   onClick={() => setIsEditing((prevData) => !prevData)}
                 >
                   {isEditing ? (
@@ -162,7 +162,7 @@ const Profile: NextPage = () => {
                         <input {...getInputProps()} />
                         <div className="relative">
                           <span
-                            className="inline-block h-40 w-40 rounded overflow-hidden bg-gray-100"
+                            className="inline-block h-40 w-40 overflow-hidden rounded bg-gray-100"
                             {...getRootProps()}
                           >
                             {(!watch("avatar") || watch("avatar") === "") &&
@@ -181,7 +181,7 @@ const Profile: NextPage = () => {
                             )}
                           </span>
                         </div>
-                        <p className="text-gray-500 text-sm">
+                        <p className="text-sm text-gray-500">
                           Max file size is 500kb.
                           <br />
                           Supported file types are .jpg and .png.
@@ -217,7 +217,7 @@ const Profile: NextPage = () => {
                   </Dropzone>
                 </div>
                 <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
-                  <div className="grid grid-cols-2 gap-x-10 gap-y-5 mt-2">
+                  <div className="mt-2 grid grid-cols-2 gap-x-10 gap-y-5">
                     <div>
                       <h4 className="text-sm text-gray-500">First Name</h4>
                       {isEditing ? (
@@ -266,26 +266,26 @@ const Profile: NextPage = () => {
                 </form>
               </section>
               <section>
-                <h2 className="text-xl font-medium mb-3">Quick Links</h2>
+                <h2 className="mb-3 text-xl font-medium">Quick Links</h2>
                 <div className="grid grid-cols-3 gap-5">
                   {quickLinks.map((item, index) => (
                     <Link key={index} href={item.href}>
-                      <a className="group p-5 rounded-lg bg-secondary hover:bg-theme duration-300">
-                        <h4 className="group-hover:text-white flex items-center gap-2 duration-300">
+                      <a className="group rounded-lg bg-secondary p-5 duration-300 hover:bg-theme">
+                        <h4 className="flex items-center gap-2 duration-300 group-hover:text-white">
                           {item.title}
                           <ChevronRightIcon className="h-3 w-3" />
                         </h4>
-                        <div className="flex justify-between items-center gap-3">
+                        <div className="flex items-center justify-between gap-3">
                           <div>
-                            <h2 className="mt-3 mb-2 text-3xl font-bold group-hover:text-white duration-300">
+                            <h2 className="mt-3 mb-2 text-3xl font-bold duration-300 group-hover:text-white">
                               {item.number}
                             </h2>
-                            <p className="text-gray-500 group-hover:text-white text-sm duration-300">
+                            <p className="text-sm text-gray-500 duration-300 group-hover:text-white">
                               {item.description}
                             </p>
                           </div>
                           <div>
-                            <item.icon className="h-12 w-12 group-hover:text-white duration-300" />
+                            <item.icon className="h-12 w-12 duration-300 group-hover:text-white" />
                           </div>
                         </div>
                       </a>
@@ -296,7 +296,7 @@ const Profile: NextPage = () => {
             </div>
           </>
         ) : (
-          <div className="w-full mx-auto h-full flex justify-center items-center">
+          <div className="mx-auto flex h-full w-full items-center justify-center">
             <Spinner />
           </div>
         )}
@@ -305,4 +305,25 @@ const Profile: NextPage = () => {
   );
 };
 
-export default withAuth(Profile);
+export const getServerSideProps = async (ctx: NextPageContext) => {
+  const user = await requiredAuth(ctx.req?.headers.cookie);
+
+  const redirectAfterSignIn = ctx.req?.url;
+
+  if (!user) {
+    return {
+      redirect: {
+        destination: `/signin?next=${redirectAfterSignIn}`,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      user,
+    },
+  };
+};
+
+export default Profile;
