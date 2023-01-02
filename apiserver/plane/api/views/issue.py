@@ -37,7 +37,7 @@ from plane.db.models import (
     Label,
     IssueBlocker,
     CycleIssue,
-    ModuleIssue
+    ModuleIssue,
 )
 
 
@@ -205,6 +205,11 @@ class WorkSpaceIssuesEndpoint(BaseAPIView):
 
 
 class IssueActivityEndpoint(BaseAPIView):
+
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+
     def get(self, request, slug, project_id, issue_id):
         try:
             issue_activities = IssueActivity.objects.filter(issue_id=issue_id).filter(
@@ -224,6 +229,9 @@ class IssueCommentViewSet(BaseViewSet):
 
     serializer_class = IssueCommentSerializer
     model = IssueComment
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
 
     filterset_fields = [
         "issue__id",
