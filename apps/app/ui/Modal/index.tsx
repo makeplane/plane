@@ -2,7 +2,7 @@ import { Fragment, ReactNode } from "react";
 // Headless ui imports
 import { Dialog, Transition } from "@headlessui/react";
 // Design components
-import Button from "ui/button";
+import Button from "ui/Button";
 // Icons
 import { XMarkIcon } from "@heroicons/react/24/outline";
 

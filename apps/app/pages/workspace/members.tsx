@@ -26,7 +26,7 @@ import { Spinner, CustomListbox } from "ui";
 // icons
 import { PlusIcon, EllipsisHorizontalIcon } from "@heroicons/react/20/solid";
 import HeaderButton from "ui/header-button";
-import { BreadcrumbItem, Breadcrumbs } from "ui/breadcrumbs";
+import { BreadcrumbItem, Breadcrumbs } from "ui/Breadcrumbs";
 
 const WorkspaceInvite: NextPage = () => {
   const [isOpen, setIsOpen] = useState(false);

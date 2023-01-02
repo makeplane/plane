@@ -21,7 +21,7 @@ import useToast from "lib/hooks/useToast";
 import ConfirmWorkspaceDeletion from "components/workspace/confirm-workspace-deletion";
 // ui
 import { Spinner, Button, Input, Select } from "ui";
-import { BreadcrumbItem, Breadcrumbs } from "ui/breadcrumbs";
+import { BreadcrumbItem, Breadcrumbs } from "ui/Breadcrumbs";
 // types
 import type { IWorkspace } from "types";
 

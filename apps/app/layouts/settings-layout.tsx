@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 // hooks
 import useUser from "lib/hooks/useUser";
 // layouts
@@ -8,6 +8,7 @@ import Sidebar from "layouts/navbar/main-siderbar";
 import SettingsSidebar from "layouts/navbar/settings-sidebar";
 // types
 import { Meta } from "./types";
+import { useRouter } from "next/router";
 
 type Props = {
   meta?: Meta;
@@ -80,8 +81,6 @@ const SettingsLayout: React.FC<Props> = ({
   right,
   type,
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
   const router = useRouter();
 
   const { activeProject, user, isUserLoading } = useUser();
@@ -103,33 +102,6 @@ const SettingsLayout: React.FC<Props> = ({
       href: "/workspace/settings/members",
     },
   ];
-
-  const sidebarLinks: {
-    label: string;
-    href: string;
-  }[] = [
-    {
-      label: "General",
-      href: `/projects/${activeProject?.id}/settings`,
-    },
-    {
-      label: "Control",
-      href: `/projects/${activeProject?.id}/settings/control`,
-    },
-    {
-      label: "Members",
-      href: `/projects/${activeProject?.id}/settings/members`,
-    },
-    {
-      label: "States",
-      href: `/projects/${activeProject?.id}/settings/states`,
-    },
-    {
-      label: "Labels",
-      href: `/projects/${activeProject?.id}/settings/labels`,
-    },
-  ];
-  const { activeProject } = useUser();
 
   return (
     <Container meta={meta}>
