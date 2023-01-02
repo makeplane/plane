@@ -1,9 +1,12 @@
-// react
 import React, { useEffect } from "react";
+// next
+import type { NextPageContext, NextPage } from "next";
 // swr
 import useSWR, { mutate } from "swr";
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
+// lib
+import { requiredAuth } from "lib/auth";
 // layouts
 import SettingsLayout from "layouts/settings-layout";
 // services
@@ -23,10 +26,9 @@ import { IProject, IWorkspace } from "types";
 // fetch-keys
 import { PROJECTS_LIST, PROJECT_DETAILS, WORKSPACE_MEMBERS } from "constants/fetch-keys";
 
-const ControlSettings = () => {
-  const { activeWorkspace, activeProject } = useUser();
-
+const ControlSettings: NextPage = () => {
   const { setToastAlert } = useToast();
+  const { activeWorkspace, activeProject } = useUser();
 
   const { data: projectDetails } = useSWR<IProject>(
     activeWorkspace && activeProject ? PROJECT_DETAILS(activeProject.id) : null,
@@ -46,6 +48,16 @@ const ControlSettings = () => {
     control,
     formState: { isSubmitting },
   } = useForm<IProject>({});
+
+  useEffect(() => {
+    projectDetails &&
+      reset({
+        ...projectDetails,
+        default_assignee: projectDetails.default_assignee?.id,
+        project_lead: projectDetails.project_lead?.id,
+        workspace: (projectDetails.workspace as IWorkspace).id,
+      });
+  }, [projectDetails, reset]);
 
   const onSubmit = async (formData: IProject) => {
     if (!activeWorkspace || !activeProject) return;
@@ -90,16 +102,6 @@ const ControlSettings = () => {
       });
   };
 
-  useEffect(() => {
-    projectDetails &&
-      reset({
-        ...projectDetails,
-        default_assignee: projectDetails.default_assignee?.id,
-        project_lead: projectDetails.project_lead?.id,
-        workspace: (projectDetails.workspace as IWorkspace).id,
-      });
-  }, [projectDetails, reset]);
-
   return (
     <SettingsLayout
       type="project"
@@ -122,8 +124,8 @@ const ControlSettings = () => {
           <div className="grid grid-cols-12 gap-16">
             <div className="col-span-5 space-y-16">
               <div>
-                <h4 className="text-md leading-6 text-gray-900 mb-1">Project Lead</h4>
-                <p className="text-sm text-gray-500 mb-3">Select the project leader.</p>
+                <h4 className="text-md mb-1 leading-6 text-gray-900">Project Lead</h4>
+                <p className="mb-3 text-sm text-gray-500">Select the project leader.</p>
                 <Controller
                   control={control}
                   name="project_lead"
@@ -132,7 +134,7 @@ const ControlSettings = () => {
                       {({ open }) => (
                         <>
                           <div className="relative">
-                            <Listbox.Button className="relative w-full flex justify-between items-center gap-4 border border-gray-300 rounded-md shadow-sm p-3 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            <Listbox.Button className="relative flex w-full cursor-default items-center justify-between gap-4 rounded-md border border-gray-300 p-3 text-left shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm">
                               <span className="block truncate">
                                 {people?.find((person) => person.member.id === value)?.member
                                   .first_name ?? "Select Lead"}
@@ -150,14 +152,14 @@ const ControlSettings = () => {
                               leaveFrom="opacity-100"
                               leaveTo="opacity-0"
                             >
-                              <Listbox.Options className="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
+                              <Listbox.Options className="absolute z-20 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
                                 {people?.map((person) => (
                                   <Listbox.Option
                                     key={person.id}
                                     className={({ active }) =>
                                       `${
                                         active ? "bg-indigo-50" : ""
-                                      } text-gray-900 cursor-default select-none relative px-3 py-2`
+                                      } relative cursor-default select-none px-3 py-2 text-gray-900`
                                     }
                                     value={person.member.id}
                                   >
@@ -198,8 +200,8 @@ const ControlSettings = () => {
             </div>
             <div className="col-span-5 space-y-16">
               <div>
-                <h4 className="text-md leading-6 text-gray-900 mb-1">Default Assignee</h4>
-                <p className="text-sm text-gray-500 mb-3">
+                <h4 className="text-md mb-1 leading-6 text-gray-900">Default Assignee</h4>
+                <p className="mb-3 text-sm text-gray-500">
                   Select the default assignee for the project.
                 </p>
                 <Controller
@@ -210,7 +212,7 @@ const ControlSettings = () => {
                       {({ open }) => (
                         <>
                           <div className="relative">
-                            <Listbox.Button className="relative w-full flex justify-between items-center gap-4 border border-gray-300 rounded-md shadow-sm p-3 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            <Listbox.Button className="relative flex w-full cursor-default items-center justify-between gap-4 rounded-md border border-gray-300 p-3 text-left shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm">
                               <span className="block truncate">
                                 {people?.find((p) => p.member.id === value)?.member.first_name ??
                                   "Select Default Assignee"}
@@ -228,14 +230,14 @@ const ControlSettings = () => {
                               leaveFrom="opacity-100"
                               leaveTo="opacity-0"
                             >
-                              <Listbox.Options className="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
+                              <Listbox.Options className="absolute z-20 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
                                 {people?.map((person) => (
                                   <Listbox.Option
                                     key={person.id}
                                     className={({ active }) =>
                                       `${
                                         active ? "bg-indigo-50" : ""
-                                      } text-gray-900 cursor-default select-none relative px-3 py-2`
+                                      } relative cursor-default select-none px-3 py-2 text-gray-900`
                                     }
                                     value={person.member.id}
                                   >
@@ -284,6 +286,29 @@ const ControlSettings = () => {
       </form>
     </SettingsLayout>
   );
+};
+
+export const getServerSideProps = async (ctx: NextPageContext) => {
+  const user = await requiredAuth(ctx.req?.headers.cookie);
+
+  const redirectAfterSignIn = ctx.req?.url;
+
+  if (!user) {
+    return {
+      redirect: {
+        destination: `/signin?next=${redirectAfterSignIn}`,
+        permanent: false,
+      },
+    };
+  }
+
+  // TODO: add authorization logic
+
+  return {
+    props: {
+      user,
+    },
+  };
 };
 
 export default ControlSettings;

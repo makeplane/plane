@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 // next
 import Image from "next/image";
+import { NextPageContext } from "next";
 // react hook form
 import { useForm } from "react-hook-form";
 // headless ui
@@ -10,8 +11,8 @@ import Dropzone from "react-dropzone";
 // services
 import workspaceService from "lib/services/workspace.service";
 import fileServices from "lib/services/file.service";
-// hoc
-import withAuth from "lib/hoc/withAuthWrapper";
+// lib
+import { requiredAuth } from "lib/auth";
 // layouts
 import AppLayout from "layouts/app-layout";
 // hooks
@@ -111,7 +112,7 @@ const WorkspaceSettings = () => {
                   <Tab
                     key={index}
                     className={({ selected }) =>
-                      `text-md leading-6 text-gray-900 px-4 py-1 rounded outline-none ${
+                      `text-md rounded px-4 py-1 leading-6 text-gray-900 outline-none ${
                         selected ? "bg-gray-700 text-white" : "hover:bg-gray-200"
                       } duration-300`
                     }
@@ -136,14 +137,14 @@ const WorkspaceSettings = () => {
                         {({ getRootProps, getInputProps }) => (
                           <div>
                             <input {...getInputProps()} />
-                            <div className="text-gray-500 mb-2">Logo</div>
+                            <div className="mb-2 text-gray-500">Logo</div>
                             <div>
                               <div className="h-60 bg-blue-50" {...getRootProps()}>
                                 {((watch("logo") &&
                                   watch("logo") !== null &&
                                   watch("logo") !== "") ||
                                   (image && image !== null)) && (
-                                  <div className="relative flex mx-auto h-60">
+                                  <div className="relative mx-auto flex h-60">
                                     <Image
                                       src={image ? URL.createObjectURL(image) : watch("logo") ?? ""}
                                       alt="Workspace Logo"
@@ -154,7 +155,7 @@ const WorkspaceSettings = () => {
                                   </div>
                                 )}
                               </div>
-                              <p className="text-sm text-gray-500 mt-2">
+                              <p className="mt-2 text-sm text-gray-500">
                                 Max file size is 500kb. Supported file types are .jpg and .png.
                               </p>
                             </div>
@@ -224,7 +225,7 @@ const WorkspaceSettings = () => {
                 </Tab.Panel>
                 <Tab.Panel>
                   <div className="space-y-3">
-                    <h2 className="text-2xl text-red-500 font-semibold">Danger Zone</h2>
+                    <h2 className="text-2xl font-semibold text-red-500">Danger Zone</h2>
                     <p className="w-full md:w-1/2">
                       The danger zone of the workspace delete page is a critical area that requires
                       careful consideration and attention. When deleting a workspace, all of the
@@ -240,7 +241,7 @@ const WorkspaceSettings = () => {
             </Tab.Group>
           </div>
         ) : (
-          <div className="h-full w-full grid place-items-center px-4 sm:px-0">
+          <div className="grid h-full w-full place-items-center px-4 sm:px-0">
             <Spinner />
           </div>
         )}
@@ -249,4 +250,25 @@ const WorkspaceSettings = () => {
   );
 };
 
-export default withAuth(WorkspaceSettings);
+export const getServerSideProps = async (ctx: NextPageContext) => {
+  const user = await requiredAuth(ctx.req?.headers.cookie);
+
+  const redirectAfterSignIn = ctx.req?.url;
+
+  if (!user) {
+    return {
+      redirect: {
+        destination: `/signin?next=${redirectAfterSignIn}`,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      user,
+    },
+  };
+};
+
+export default WorkspaceSettings;

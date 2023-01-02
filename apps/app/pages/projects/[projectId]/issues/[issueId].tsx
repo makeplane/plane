@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 // next
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import type { NextPage } from "next";
+import type { NextPage, NextPageContext } from "next";
 import { useRouter } from "next/router";
 // swr
 import useSWR, { mutate } from "swr";
@@ -12,8 +12,8 @@ import { useForm } from "react-hook-form";
 import issuesServices from "lib/services/issues.service";
 // hooks
 import useUser from "lib/hooks/useUser";
-// hoc
-import withAuth from "lib/hoc/withAuthWrapper";
+// lib
+import { requiredAuth } from "lib/auth";
 // layouts
 import AppLayout from "layouts/app-layout";
 // components
@@ -584,4 +584,25 @@ const IssueDetail: NextPage = () => {
   );
 };
 
-export default withAuth(IssueDetail);
+export const getServerSideProps = async (ctx: NextPageContext) => {
+  const user = await requiredAuth(ctx.req?.headers.cookie);
+
+  const redirectAfterSignIn = ctx.req?.url;
+
+  if (!user) {
+    return {
+      redirect: {
+        destination: `/signin?next=${redirectAfterSignIn}`,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      user,
+    },
+  };
+};
+
+export default IssueDetail;

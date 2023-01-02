@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 // next
 import Image from "next/image";
-import type { NextPage } from "next";
 import { useRouter } from "next/router";
+import type { NextPage, NextPageContext } from "next";
 // swr
 import useSWR from "swr";
 // services
@@ -10,8 +10,10 @@ import projectService from "lib/services/project.service";
 // hooks
 import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
-// hoc
-import withAuth from "lib/hoc/withAuthWrapper";
+// lib
+import { requiredAuth } from "lib/auth";
+// constants
+import { ROLE } from "constants/";
 // layouts
 import AppLayout from "layouts/app-layout";
 // components
@@ -25,13 +27,6 @@ import { Spinner, CustomListbox, BreadcrumbItem, Breadcrumbs, HeaderButton } fro
 import { PlusIcon, EllipsisHorizontalIcon } from "@heroicons/react/20/solid";
 // fetch-keys
 import { PROJECT_MEMBERS, PROJECT_INVITATIONS } from "constants/fetch-keys";
-
-const ROLE = {
-  5: "Guest",
-  10: "Viewer",
-  15: "Member",
-  20: "Admin",
-};
 
 const ProjectMembers: NextPage = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -142,13 +137,13 @@ const ProjectMembers: NextPage = () => {
       />
       <SendProjectInvitationModal isOpen={isOpen} setIsOpen={setIsOpen} members={members} />
       {!projectMembers || !projectInvitations ? (
-        <div className="h-full w-full grid place-items-center px-4 sm:px-0">
+        <div className="grid h-full w-full place-items-center px-4 sm:px-0">
           <Spinner />
         </div>
       ) : (
         <div className="h-full w-full space-y-5">
           {members && members.length === 0 ? null : (
-            <table className="min-w-full table-fixed border border-gray-300 md:rounded-lg divide-y divide-gray-300">
+            <table className="min-w-full table-fixed divide-y divide-gray-300 border border-gray-300 md:rounded-lg">
               <thead className="bg-gray-50">
                 <tr>
                   <th
@@ -169,7 +164,7 @@ const ProjectMembers: NextPage = () => {
                   >
                     Status
                   </th>
-                  <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6 w-10">
+                  <th scope="col" className="relative w-10 py-3.5 pl-3 pr-4 sm:pr-6">
                     <span className="sr-only">Edit</span>
                   </th>
                 </tr>
@@ -177,7 +172,7 @@ const ProjectMembers: NextPage = () => {
               <tbody className="divide-y divide-gray-200 bg-white">
                 {members?.map((member: any) => (
                   <tr key={member.id}>
-                    <td className="whitespace-nowrap flex items-center gap-2 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                    <td className="flex items-center gap-2 whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
                       {member.avatar && member.avatar !== "" ? (
                         <Image
                           src={member.avatar}
@@ -187,7 +182,7 @@ const ProjectMembers: NextPage = () => {
                           alt={member.first_name}
                         />
                       ) : (
-                        <span className="h-5 w-5 capitalize bg-gray-700 text-white grid place-items-center rounded-full">
+                        <span className="grid h-5 w-5 place-items-center rounded-full bg-gray-700 capitalize text-white">
                           {member.first_name.charAt(0)}
                         </span>
                       )}
@@ -241,11 +236,11 @@ const ProjectMembers: NextPage = () => {
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 sm:pl-6">
                       {member.member ? (
-                        <span className="p-0.5 px-2 text-sm bg-green-700 text-white rounded-full">
+                        <span className="rounded-full bg-green-700 p-0.5 px-2 text-sm text-white">
                           Active
                         </span>
                       ) : (
-                        <span className="p-0.5 px-2 text-sm bg-yellow-400 text-gray-900 rounded-full">
+                        <span className="rounded-full bg-yellow-400 p-0.5 px-2 text-sm text-gray-900">
                           Pending
                         </span>
                       )}
@@ -259,11 +254,11 @@ const ProjectMembers: NextPage = () => {
                             className="inline text-gray-500"
                           />
                         </Menu.Button>
-                        <Menu.Items className="absolute z-50 w-28  bg-white rounded border cursor-pointer -left-20 top-9">
+                        <Menu.Items className="absolute -left-20 top-9  z-50 w-28 cursor-pointer rounded border bg-white">
                           <Menu.Item>
-                            <div className="hover:bg-gray-100 border-b last:border-0">
+                            <div className="border-b last:border-0 hover:bg-gray-100">
                               <button
-                                className="w-full text-left py-2 pl-2"
+                                className="w-full py-2 pl-2 text-left"
                                 type="button"
                                 onClick={() => {
                                   if (!member.member) {
@@ -282,9 +277,9 @@ const ProjectMembers: NextPage = () => {
                             </div>
                           </Menu.Item>
                           <Menu.Item>
-                            <div className="hover:bg-gray-100 border-b last:border-0">
+                            <div className="border-b last:border-0 hover:bg-gray-100">
                               <button
-                                className="w-full text-left py-2 pl-2"
+                                className="w-full py-2 pl-2 text-left"
                                 type="button"
                                 onClick={() => {
                                   if (member.member) {
@@ -312,4 +307,25 @@ const ProjectMembers: NextPage = () => {
   );
 };
 
-export default withAuth(ProjectMembers);
+export const getServerSideProps = async (ctx: NextPageContext) => {
+  const user = await requiredAuth(ctx.req?.headers.cookie);
+
+  const redirectAfterSignIn = ctx.req?.url;
+
+  if (!user) {
+    return {
+      redirect: {
+        destination: `/signin?next=${redirectAfterSignIn}`,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      user,
+    },
+  };
+};
+
+export default ProjectMembers;

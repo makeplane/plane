@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 // next
 import { useRouter } from "next/router";
-import type { NextPage } from "next";
+import type { NextPage, NextPageContext } from "next";
 // swr
 import useSWR from "swr";
 // hoc
@@ -24,6 +24,7 @@ import { ArrowPathIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { ICycle, SelectSprintType } from "types";
 // fetching keys
 import { CYCLE_LIST } from "constants/fetch-keys";
+import { requiredAuth } from "lib/auth";
 
 const ProjectSprints: NextPage = () => {
   const [selectedCycle, setSelectedCycle] = useState<SelectSprintType>();
@@ -91,7 +92,7 @@ const ProjectSprints: NextPage = () => {
             />
           </div>
         ) : (
-          <div className="w-full h-full flex flex-col justify-center items-center px-4">
+          <div className="flex h-full w-full flex-col items-center justify-center px-4">
             <EmptySpace
               title="You don't have any cycle yet."
               description="A cycle is a fixed time period where a team commits to a set number of issues from their backlog. Cycles are usually one, two, or four weeks long."
@@ -101,7 +102,7 @@ const ProjectSprints: NextPage = () => {
                 title="Create a new cycle"
                 description={
                   <span>
-                    Use <pre className="inline bg-gray-100 px-2 py-1 rounded">Ctrl/Command + Q</pre>{" "}
+                    Use <pre className="inline rounded bg-gray-100 px-2 py-1">Ctrl/Command + Q</pre>{" "}
                     shortcut to create a new cycle
                   </span>
                 }
@@ -127,4 +128,25 @@ const ProjectSprints: NextPage = () => {
   );
 };
 
-export default withAuth(ProjectSprints);
+export const getServerSideProps = async (ctx: NextPageContext) => {
+  const user = await requiredAuth(ctx.req?.headers.cookie);
+
+  const redirectAfterSignIn = ctx.req?.url;
+
+  if (!user) {
+    return {
+      redirect: {
+        destination: `/signin?next=${redirectAfterSignIn}`,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      user,
+    },
+  };
+};
+
+export default ProjectSprints;

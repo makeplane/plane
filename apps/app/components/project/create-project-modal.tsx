@@ -52,16 +52,14 @@ const IsGuestCondition: React.FC<{
   return null;
 };
 
-const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
-  const handleClose = () => {
-    setIsOpen(false);
-    const timeout = setTimeout(() => {
-      reset(defaultValues);
-      clearTimeout(timeout);
-    }, 500);
-  };
+export const CreateProjectModal: React.FC<Props> = (props) => {
+  const { isOpen, setIsOpen } = props;
 
+  const { setToastAlert } = useToast();
   const { activeWorkspace, user } = useUser();
+
+  const [recommendedIdentifier, setRecommendedIdentifier] = useState<string[]>([]);
+  const [isChangeIdentifierRequired, setIsChangeIdentifierRequired] = useState(true);
 
   const { data: workspaceMembers } = useSWR(
     activeWorkspace ? WORKSPACE_MEMBERS(activeWorkspace.slug) : null,
@@ -70,12 +68,6 @@ const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
       shouldRetryOnError: false,
     }
   );
-
-  const [recommendedIdentifier, setRecommendedIdentifier] = useState<string[]>([]);
-
-  const { setToastAlert } = useToast();
-
-  const [isChangeIdentifierRequired, setIsChangeIdentifierRequired] = useState(true);
 
   const {
     register,
@@ -90,6 +82,38 @@ const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
   } = useForm<IProject>({
     defaultValues,
   });
+
+  const projectName = watch("name") ?? "";
+  const projectIdentifier = watch("identifier") ?? "";
+
+  useEffect(() => {
+    if (projectName && isChangeIdentifierRequired) {
+      setValue("identifier", projectName.replace(/ /g, "").toUpperCase().substring(0, 3));
+    }
+  }, [projectName, projectIdentifier, setValue, isChangeIdentifierRequired]);
+
+  useEffect(() => {
+    if (!projectName) return;
+    const suggestedIdentifier = createSimilarString(
+      projectName.replace(/ /g, "").toUpperCase().substring(0, 3)
+    );
+
+    setRecommendedIdentifier([
+      suggestedIdentifier + Math.floor(Math.random() * 101),
+      suggestedIdentifier + Math.floor(Math.random() * 101),
+      projectIdentifier.toUpperCase().substring(0, 3) + Math.floor(Math.random() * 101),
+      projectIdentifier.toUpperCase().substring(0, 3) + Math.floor(Math.random() * 101),
+    ]);
+  }, [errors.identifier, projectIdentifier, projectName]);
+
+  useEffect(() => {
+    return () => setIsChangeIdentifierRequired(true);
+  }, [isOpen]);
+
+  const handleClose = () => {
+    setIsOpen(false);
+    reset(defaultValues);
+  };
 
   const onSubmit = async (formData: IProject) => {
     if (!activeWorkspace) return;
@@ -129,33 +153,7 @@ const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
       });
   };
 
-  const projectName = watch("name") ?? "";
-  const projectIdentifier = watch("identifier") ?? "";
-
-  useEffect(() => {
-    if (projectName && isChangeIdentifierRequired) {
-      setValue("identifier", projectName.replace(/ /g, "").toUpperCase().substring(0, 3));
-    }
-  }, [projectName, projectIdentifier, setValue, isChangeIdentifierRequired]);
-
-  useEffect(() => {
-    if (!projectName) return;
-    const suggestedIdentifier = createSimilarString(
-      projectName.replace(/ /g, "").toUpperCase().substring(0, 3)
-    );
-
-    setRecommendedIdentifier([
-      suggestedIdentifier + Math.floor(Math.random() * 101),
-      suggestedIdentifier + Math.floor(Math.random() * 101),
-      projectIdentifier.toUpperCase().substring(0, 3) + Math.floor(Math.random() * 101),
-      projectIdentifier.toUpperCase().substring(0, 3) + Math.floor(Math.random() * 101),
-    ]);
-  }, [errors.identifier, projectIdentifier, projectName]);
-
-  useEffect(() => {
-    return () => setIsChangeIdentifierRequired(true);
-  }, [isOpen]);
-
+  // FIXME: remove this and authorize using getServerSideProps
   if (workspaceMembers) {
     const isMember = workspaceMembers.find((member) => member.member.id === user?.id);
     const isGuest = workspaceMembers.find(
@@ -204,7 +202,7 @@ const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                     </div>
                     <div className="space-y-3">
                       <div>
-                        <label htmlFor="icon" className="text-gray-500 mb-2">
+                        <label htmlFor="icon" className="mb-2 text-gray-500">
                           Icon
                         </label>
                         <Controller
@@ -288,7 +286,7 @@ const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                                 <button
                                   key={identifier}
                                   type="button"
-                                  className="text-sm text-gray-500 hover:text-gray-700 border p-2 py-0.5 rounded"
+                                  className="rounded border p-2 py-0.5 text-sm text-gray-500 hover:text-gray-700"
                                   onClick={() => {
                                     clearErrors("identifier");
                                     setValue("identifier", identifier);
@@ -321,5 +319,3 @@ const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
     </Transition.Root>
   );
 };
-
-export default CreateProjectModal;
