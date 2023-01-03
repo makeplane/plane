@@ -41,6 +41,7 @@ class Module(ProjectBaseModel):
         through_fields=("module", "member"),
     )
 
+
     class Meta:
         unique_together = ["name", "project"]
         verbose_name = "Module"
@@ -86,3 +87,19 @@ class ModuleIssue(ProjectBaseModel):
 
     def __str__(self):
         return f"{self.module.name} {self.issue.name}"
+
+
+class ModuleLink(ProjectBaseModel):
+
+    title = models.CharField(max_length=255, null=True)
+    url = models.URLField()
+    module = models.ForeignKey(Module, on_delete=models.CASCADE, related_name="link_module")
+
+    class Meta:
+        verbose_name = "Module Link"
+        verbose_name_plural = "Module Links"
+        db_table = "module_links"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.module.name} {self.url}"
