@@ -2,18 +2,18 @@ import React, { useCallback, useEffect, useState } from "react";
 // next
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import type { NextPage } from "next";
+import type { NextPage, NextPageContext } from "next";
 import { useRouter } from "next/router";
 // swr
 import useSWR, { mutate } from "swr";
 // react-hook-form
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 // services
 import issuesServices from "lib/services/issues.service";
 // hooks
 import useUser from "lib/hooks/useUser";
-// hoc
-import withAuth from "lib/hoc/withAuthWrapper";
+// lib
+import { requiredAuth } from "lib/auth";
 // layouts
 import AppLayout from "layouts/app-layout";
 // components
@@ -39,6 +39,7 @@ import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // common
 import { debounce } from "constants/common";
 
+const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), { ssr: false });
 const IssueActivitySection = dynamic(
   () => import("components/project/issues/issue-detail/activity"),
   {
@@ -68,6 +69,8 @@ const defaultValues = {
 };
 
 const IssueDetail: NextPage = () => {
+  const [descriptionToolbar, setDescriptionToolbar] = useState(false);
+
   const router = useRouter();
 
   const { issueId, projectId } = router.query;
@@ -330,20 +333,28 @@ const IssueDetail: NextPage = () => {
                   mode="transparent"
                   className="text-xl font-medium"
                 />
-                <TextArea
-                  id="description"
-                  name="description"
-                  error={errors.description}
-                  validations={{
-                    required: true,
-                  }}
-                  onChange={debounce(() => {
-                    handleSubmit(submitChanges)();
-                  }, 5000)}
-                  placeholder="Enter issue description"
-                  mode="transparent"
-                  register={register}
-                />
+                <div
+                  onFocus={() => setDescriptionToolbar(true)}
+                  onBlur={() => setDescriptionToolbar(false)}
+                >
+                  <Controller
+                    name="description"
+                    control={control}
+                    render={({ field: { value, onChange } }) => (
+                      <RemirrorRichTextEditor
+                        value={value}
+                        onChange={(val) => {
+                          onChange(val);
+                          debounce(() => {
+                            handleSubmit(submitChanges)();
+                          }, 5000)();
+                        }}
+                        placeholder="Issue description..."
+                        // showToolbar={descriptionToolbar}
+                      />
+                    )}
+                  />
+                </div>
               </div>
               <div className="mt-2">
                 {subIssues && subIssues.length > 0 ? (
@@ -388,11 +399,11 @@ const IssueDetail: NextPage = () => {
                                   leaveTo="transform opacity-0 scale-95"
                                 >
                                   <Menu.Items className="absolute right-0 z-50 mt-2 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                    <div className="p-1">
+                                    <div className="py-1">
                                       <Menu.Item as="div">
                                         <button
                                           type="button"
-                                          className="flex items-center gap-2 whitespace-nowrap rounded-md p-2 text-left text-xs text-gray-900 hover:bg-theme hover:text-white"
+                                          className="flex items-center gap-2 whitespace-nowrap p-2 text-left text-xs text-gray-900 hover:bg-indigo-50"
                                           onClick={() => setIsAddAsSubIssueOpen(true)}
                                         >
                                           Add an existing issue
@@ -451,10 +462,10 @@ const IssueDetail: NextPage = () => {
                                       leaveTo="transform opacity-0 scale-95"
                                     >
                                       <Menu.Items className="absolute right-0 z-50 mt-2 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                        <div className="p-1">
+                                        <div className="py-1">
                                           <Menu.Item as="div">
                                             <button
-                                              className="flex items-center gap-2 whitespace-nowrap rounded-md p-2 text-left text-xs text-gray-900 hover:bg-theme hover:text-white"
+                                              className="flex items-center gap-2 whitespace-nowrap p-2 text-left text-xs text-gray-900 hover:bg-indigo-50"
                                               onClick={() => handleSubIssueRemove(subIssue.id)}
                                             >
                                               Remove as sub-issue
@@ -584,4 +595,25 @@ const IssueDetail: NextPage = () => {
   );
 };
 
-export default withAuth(IssueDetail);
+export const getServerSideProps = async (ctx: NextPageContext) => {
+  const user = await requiredAuth(ctx.req?.headers.cookie);
+
+  const redirectAfterSignIn = ctx.req?.url;
+
+  if (!user) {
+    return {
+      redirect: {
+        destination: `/signin?next=${redirectAfterSignIn}`,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      user,
+    },
+  };
+};
+
+export default IssueDetail;

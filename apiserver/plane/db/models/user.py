@@ -77,7 +77,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     class Meta:
         verbose_name = "User"
         verbose_name_plural = "Users"
-        db_table = "user"
+        db_table = "users"
         ordering = ("-created_at",)
 
     def __str__(self):
@@ -105,7 +105,7 @@ def send_welcome_email(sender, instance, created, **kwargs):
             to_email = instance.email
             from_email_string = f"Team Plane <team@mailer.plane.so>"
 
-            subject = f"Welcome {first_name}!"
+            subject = f"Welcome to Plane ✈️!"
 
             context = {"first_name": first_name, "email": instance.email}
 

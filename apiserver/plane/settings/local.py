@@ -65,3 +65,12 @@ RQ_QUEUES = {
 }
 
 WEB_URL = "http://localhost:3000"
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [(REDIS_HOST, REDIS_PORT)],
+        },
+    },
+}

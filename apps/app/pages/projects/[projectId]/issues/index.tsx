@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 // next
-import type { NextPage } from "next";
 import { useRouter } from "next/router";
+import type { NextPage, NextPageContext } from "next";
 // swr
 import useSWR, { mutate } from "swr";
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
-// hoc
-import withAuth from "lib/hoc/withAuthWrapper";
+// lib
+import { requiredAuth } from "lib/auth";
 // services
 import issuesServices from "lib/services/issues.service";
 // hooks
@@ -369,4 +369,25 @@ const ProjectIssues: NextPage = () => {
   );
 };
 
-export default withAuth(ProjectIssues);
+export const getServerSideProps = async (ctx: NextPageContext) => {
+  const user = await requiredAuth(ctx.req?.headers.cookie);
+
+  const redirectAfterSignIn = ctx.req?.url;
+
+  if (!user) {
+    return {
+      redirect: {
+        destination: `/signin?next=${redirectAfterSignIn}`,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      user,
+    },
+  };
+};
+
+export default ProjectIssues;

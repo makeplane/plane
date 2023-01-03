@@ -37,4 +37,4 @@ from .shortcut import Shortcut
 
 from .view import View
 
-from .module import Module, ModuleMember, ModuleIssue
+from .module import Module, ModuleMember, ModuleIssue, ModuleLink 

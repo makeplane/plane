@@ -2,7 +2,7 @@
 import React from "react";
 // next
 import Link from "next/link";
-import type { NextPage } from "next";
+import type { NextPage, NextPageContext } from "next";
 import Image from "next/image";
 // swr
 import useSWR from "swr";
@@ -31,14 +31,11 @@ import workspaceService from "lib/services/workspace.service";
 import stateService from "lib/services/state.service";
 // hooks
 import useIssuesProperties from "lib/hooks/useIssuesProperties";
-// hoc
-import withAuth from "lib/hoc/withAuthWrapper";
 import useMyIssuesProperties from "lib/hooks/useMyIssueFilter";
-// components
-import ChangeStateDropdown from "components/project/issues/my-issues/ChangeStateDropdown";
 // types
 import { IIssue, IWorkspaceMember, Properties } from "types";
 // constants
+import { requiredAuth } from "lib/auth";
 import { STATE_LIST, USER_ISSUE, WORKSPACE_MEMBERS } from "constants/fetch-keys";
 import {
   addSpaceIfCamelCase,
@@ -244,16 +241,7 @@ const MyIssues: NextPage = () => {
                                     />
                                     <Link href={`/projects/${issue.project}/issues/${issue.id}`}>
                                       <a className="group relative flex items-center gap-2">
-                                        {/* {properties.key && (
-                                          <span className="flex-shrink-0 text-xs text-gray-500">
-                                            {issue.project_detail.identifier}-{issue.sequence_id}
-                                          </span>
-                                        )} */}
                                         <span>{issue.name}</span>
-                                        {/* <div className="absolute bottom-full left-0 mb-2 z-10 hidden group-hover:block p-2 bg-white shadow-md rounded-md max-w-sm whitespace-nowrap">
-                                          <h5 className="font-medium mb-1">Name</h5>
-                                          <div>{issue.name}</div>
-                                        </div> */}
                                       </a>
                                     </Link>
                                   </div>
@@ -262,9 +250,6 @@ const MyIssues: NextPage = () => {
                                       <Listbox
                                         as="div"
                                         value={issue.priority}
-                                        onChange={(data: string) => {
-                                          // partialUpdateIssue({ priority: data }, issue.id);
-                                        }}
                                         className="group relative flex-shrink-0"
                                       >
                                         {({ open }) => (
@@ -665,4 +650,25 @@ const MyIssues: NextPage = () => {
   );
 };
 
-export default withAuth(MyIssues);
+export const getServerSideProps = async (ctx: NextPageContext) => {
+  const user = await requiredAuth(ctx.req?.headers.cookie);
+
+  const redirectAfterSignIn = ctx.req?.url;
+
+  if (!user) {
+    return {
+      redirect: {
+        destination: `/signin?next=${redirectAfterSignIn}`,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      user,
+    },
+  };
+};
+
+export default MyIssues;

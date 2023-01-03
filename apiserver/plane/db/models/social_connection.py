@@ -26,7 +26,7 @@ class SocialLoginConnection(BaseModel):
     class Meta:
         verbose_name = "Social Login Connection"
         verbose_name_plural = "Social Login Connections"
-        db_table = "social_login_connection"
+        db_table = "social_login_connections"
         ordering = ("-created_at",)
 
     def __str__(self):

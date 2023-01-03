@@ -1,18 +1,14 @@
-// react
-import React, { useEffect, useState } from "react";
-// next
-import { useRouter } from "next/router";
+import React, { useEffect } from "react";
 // hooks
 import useUser from "lib/hooks/useUser";
 // layouts
 import Container from "layouts/container";
+import Header from "layouts/navbar/header";
 import Sidebar from "layouts/navbar/main-siderbar";
 import SettingsSidebar from "layouts/navbar/settings-sidebar";
-import Header from "layouts/navbar/header";
-// components
-import CreateProjectModal from "components/project/create-project-modal";
 // types
 import { Meta } from "./types";
+import { useRouter } from "next/router";
 
 type Props = {
   meta?: Meta;
@@ -26,6 +22,54 @@ type Props = {
   type: "workspace" | "project";
 };
 
+const workspaceLinks: {
+  label: string;
+  href: string;
+}[] = [
+  {
+    label: "General",
+    href: "#",
+  },
+  {
+    label: "Control",
+    href: "#",
+  },
+  {
+    label: "States",
+    href: "#",
+  },
+  {
+    label: "Labels",
+    href: "#",
+  },
+];
+
+const sidebarLinks: (pId?: string) => Array<{
+  label: string;
+  href: string;
+}> = (projectId) => [
+  {
+    label: "General",
+    href: `/projects/${projectId}/settings`,
+  },
+  {
+    label: "Control",
+    href: `/projects/${projectId}/settings/control`,
+  },
+  {
+    label: "Members",
+    href: `/projects/${projectId}/settings/members`,
+  },
+  {
+    label: "States",
+    href: `/projects/${projectId}/settings/states`,
+  },
+  {
+    label: "Labels",
+    href: `/projects/${projectId}/settings/labels`,
+  },
+];
+
 const SettingsLayout: React.FC<Props> = ({
   meta,
   children,
@@ -37,11 +81,9 @@ const SettingsLayout: React.FC<Props> = ({
   right,
   type,
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
   const router = useRouter();
 
-  const { activeWorkspace, activeProject, user, isUserLoading } = useUser();
+  const { activeProject, user, isUserLoading } = useUser();
 
   useEffect(() => {
     if (!isUserLoading && (!user || user === null)) router.push("/signin");
@@ -53,58 +95,33 @@ const SettingsLayout: React.FC<Props> = ({
   }[] = [
     {
       label: "General",
-      href: "#",
-    },
-    {
-      label: "Control",
-      href: "#",
-    },
-    {
-      label: "States",
-      href: "#",
-    },
-    {
-      label: "Labels",
-      href: "#",
-    },
-  ];
-
-  const sidebarLinks: {
-    label: string;
-    href: string;
-  }[] = [
-    {
-      label: "General",
-      href: `/projects/${activeProject?.id}/settings`,
-    },
-    {
-      label: "Control",
-      href: `/projects/${activeProject?.id}/settings/control`,
+      href: "/workspace/settings",
     },
     {
       label: "Members",
-      href: `/projects/${activeProject?.id}/settings/members`,
+      href: "/workspace/settings/members",
     },
     {
-      label: "States",
-      href: `/projects/${activeProject?.id}/settings/states`,
+      label: "Features",
+      href: "/workspace/settings/features",
     },
     {
-      label: "Labels",
-      href: `/projects/${activeProject?.id}/settings/labels`,
+      label: "Billing & Plans",
+      href: "/workspace/settings/billing",
     },
   ];
 
   return (
     <Container meta={meta}>
-      <CreateProjectModal isOpen={isOpen} setIsOpen={setIsOpen} />
       <div className="flex h-screen w-full overflow-x-hidden">
         <Sidebar />
-        <SettingsSidebar links={type === "workspace" ? workspaceLinks : sidebarLinks} />
+        <SettingsSidebar
+          links={type === "workspace" ? workspaceLinks : sidebarLinks(activeProject?.id)}
+        />
         <main className="flex h-screen w-full min-w-0 flex-col overflow-y-auto">
           {noHeader ? null : <Header breadcrumbs={breadcrumbs} left={left} right={right} />}
           <div
-            className={`w-full flex-grow ${noPadding ? "" : "p-5 px-16"} ${
+            className={`w-full flex-grow ${noPadding ? "" : "px-16 pt-10 pb-5"} ${
               bg === "primary" ? "bg-primary" : bg === "secondary" ? "bg-secondary" : "bg-primary"
             }`}
           >

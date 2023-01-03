@@ -32,7 +32,7 @@ class State(ProjectBaseModel):
         unique_together = ["name", "project"]
         verbose_name = "State"
         verbose_name_plural = "States"
-        db_table = "state"
+        db_table = "states"
         ordering = ("sequence",)
 
     def save(self, *args, **kwargs):

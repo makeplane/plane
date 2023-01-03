@@ -1,11 +1,13 @@
+import React from "react";
 // next
-import type { NextPage } from "next";
-import useSWR from "swr";
+import type { NextPage, NextPageContext } from "next";
 import { useRouter } from "next/router";
+// swr
+import useSWR from "swr";
 // layouts
 import AppLayout from "layouts/app-layout";
-// hoc
-import withAuth from "lib/hoc/withAuthWrapper";
+// lib
+import { requiredAuth } from "lib/auth";
 // services
 import modulesService from "lib/services/modules.service";
 // hooks
@@ -71,7 +73,7 @@ const ProjectModules: NextPage = () => {
             </div>
           </div>
         ) : (
-          <div className="w-full h-full flex flex-col justify-center items-center px-4">
+          <div className="flex h-full w-full flex-col items-center justify-center px-4">
             <EmptySpace
               title="You don't have any module yet."
               description="A cycle is a fixed time period where a team commits to a set number of issues from their backlog. Cycles are usually one, two, or four weeks long."
@@ -81,7 +83,7 @@ const ProjectModules: NextPage = () => {
                 title="Create a new module"
                 description={
                   <span>
-                    Use <pre className="inline bg-gray-100 px-2 py-1 rounded">Ctrl/Command + M</pre>{" "}
+                    Use <pre className="inline rounded bg-gray-100 px-2 py-1">Ctrl/Command + M</pre>{" "}
                     shortcut to create a new cycle
                   </span>
                 }
@@ -111,4 +113,25 @@ const ProjectModules: NextPage = () => {
   );
 };
 
-export default withAuth(ProjectModules);
+export const getServerSideProps = async (ctx: NextPageContext) => {
+  const user = await requiredAuth(ctx.req?.headers.cookie);
+
+  const redirectAfterSignIn = ctx.req?.url;
+
+  if (!user) {
+    return {
+      redirect: {
+        destination: `/signin?next=${redirectAfterSignIn}`,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      user,
+    },
+  };
+};
+
+export default ProjectModules;

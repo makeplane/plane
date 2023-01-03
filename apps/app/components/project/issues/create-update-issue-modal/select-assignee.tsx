@@ -51,6 +51,7 @@ const SelectAssignee: React.FC<Props> = ({ control }) => {
           value={value}
           onChange={onChange}
           icon={<UserIcon className="h-3 w-3 text-gray-500" />}
+          assignee
         />
       )}
     />

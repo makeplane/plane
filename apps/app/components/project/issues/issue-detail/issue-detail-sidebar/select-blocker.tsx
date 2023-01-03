@@ -64,6 +64,7 @@ const SelectBlocker: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
       });
       return;
     }
+
     const newBlockers = [...watch("blockers_list"), ...data.issue_ids];
     submitChanges({ blockers_list: newBlockers });
     handleClose();
@@ -83,7 +84,9 @@ const SelectBlocker: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
                   key={issue}
                   className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-yellow-500 px-1.5 py-0.5 text-xs text-yellow-500 hover:bg-yellow-50"
                   onClick={() => {
-                    const updatedBlockers = watch("blockers_list").filter((i) => i !== issue);
+                    const updatedBlockers: string[] = watch("blockers_list").filter(
+                      (i) => i !== issue
+                    );
                     submitChanges({
                       blockers_list: updatedBlockers,
                     });

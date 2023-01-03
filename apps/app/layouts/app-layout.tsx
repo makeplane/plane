@@ -4,7 +4,7 @@ import Container from "layouts/container";
 import Sidebar from "layouts/navbar/main-siderbar";
 import Header from "layouts/navbar/header";
 // components
-import CreateProjectModal from "components/project/create-project-modal";
+import { CreateProjectModal } from "components/project";
 // types
 import type { Props } from "./types";
 
@@ -23,9 +23,9 @@ const AppLayout: React.FC<Props> = ({
   return (
     <Container meta={meta}>
       <CreateProjectModal isOpen={isOpen} setIsOpen={setIsOpen} />
-      <div className="h-screen w-full flex overflow-x-hidden">
+      <div className="flex h-screen w-full overflow-x-hidden">
         <Sidebar />
-        <main className="h-screen w-full flex flex-col overflow-y-auto min-w-0">
+        <main className="flex h-screen w-full min-w-0 flex-col overflow-y-auto">
           {noHeader ? null : <Header breadcrumbs={breadcrumbs} left={left} right={right} />}
           <div
             className={`w-full flex-grow ${noPadding ? "" : "p-5"} ${
