@@ -28,7 +28,7 @@ def workspace_invitation(email, workspace_id, token, current_site, invitor):
 
         from_email_string = f"Team Plane <team@mailer.plane.so>"
 
-        subject = f"Welcome {email}!"
+        subject = f"{invitor or email} invited you to join {workspace.name} on Plane"
 
         context = {
             "email": email,
