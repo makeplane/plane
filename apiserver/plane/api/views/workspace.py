@@ -261,6 +261,21 @@ class JoinWorkspaceEndpoint(BaseAPIView):
                 workspace_invite.save()
 
                 if workspace_invite.accepted:
+
+                    # Check if the user created account after invitation
+                    user = User.objects.filter(email=email).first()
+
+                    # If the user is present then create the workspace member
+                    if user is not None:
+                        WorkspaceMember.objects.create(
+                            workspace=workspace_invite.workspace,
+                            member=user,
+                            role=workspace_invite.role,
+                        )
+
+                        # Delete the invitation
+                        workspace_invite.delete()
+
                     return Response(
                         {"message": "Workspace Invitation Accepted"},
                         status=status.HTTP_200_OK,
