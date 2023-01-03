@@ -76,17 +76,17 @@ const WorkspaceOptions: React.FC<Props> = ({ sidebarCollapse }) => {
   return (
     <div className="px-2">
       <div className="relative">
-        <Menu as="div" className="col-span-4 inline-block text-left w-full">
+        <Menu as="div" className="col-span-4 inline-block w-full text-left">
           <div className="w-full">
             <Menu.Button
-              className={`inline-flex justify-between items-center w-full rounded-md px-1 py-2 text-sm font-semibold text-gray-700 focus:outline-none ${
+              className={`inline-flex w-full items-center justify-between rounded-md px-1 py-2 text-sm font-semibold text-gray-700 focus:outline-none ${
                 !sidebarCollapse
-                  ? "hover:bg-gray-50 focus:bg-gray-50 border border-gray-300 shadow-sm"
+                  ? "border border-gray-300 shadow-sm hover:bg-gray-50 focus:bg-gray-50"
                   : ""
               }`}
             >
-              <div className="flex gap-x-1 items-center">
-                <div className="h-5 w-5 p-4 flex items-center justify-center bg-gray-700 text-white rounded uppercase relative">
+              <div className="flex items-center gap-x-1">
+                <div className="relative flex h-5 w-5 items-center justify-center rounded bg-gray-700 p-4 uppercase text-white">
                   {activeWorkspace?.logo && activeWorkspace.logo !== "" ? (
                     <Image
                       src={activeWorkspace.logo}
@@ -100,7 +100,7 @@ const WorkspaceOptions: React.FC<Props> = ({ sidebarCollapse }) => {
                   )}
                 </div>
                 {!sidebarCollapse && (
-                  <p className="text-left ml-1">
+                  <p className="ml-1 text-left">
                     {activeWorkspace?.name
                       ? activeWorkspace.name.length > 17
                         ? `${activeWorkspace.name.substring(0, 17)}...`
@@ -110,7 +110,7 @@ const WorkspaceOptions: React.FC<Props> = ({ sidebarCollapse }) => {
                 )}
               </div>
               {!sidebarCollapse && (
-                <div className="flex-grow flex justify-end">
+                <div className="flex flex-grow justify-end">
                   <ChevronDownIcon className="ml-2 h-3 w-3" aria-hidden="true" />
                 </div>
               )}
@@ -126,10 +126,10 @@ const WorkspaceOptions: React.FC<Props> = ({ sidebarCollapse }) => {
             leaveFrom="transform opacity-100 scale-100"
             leaveTo="transform opacity-0 scale-95"
           >
-            <Menu.Items className="origin-top-left fixed max-w-[14rem] left-2 mt-1 w-full rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-20">
-              <div className="px-1 py-2 divide-y">
+            <Menu.Items className="fixed left-2 z-20 mt-1 w-full max-w-[14rem] origin-top-left rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+              <div className="divide-y px-1 py-2">
                 <div>
-                  <Menu.Item as="div" className="text-xs px-2 pb-2">
+                  <Menu.Item as="div" className="px-2 pb-2 text-xs">
                     {user?.email}
                   </Menu.Item>
                 </div>
@@ -162,9 +162,9 @@ const WorkspaceOptions: React.FC<Props> = ({ sidebarCollapse }) => {
                                 }}
                                 className={`${
                                   active ? "bg-gray-100" : ""
-                                } w-full flex items-center gap-2 text-gray-900 rounded-md p-2 text-sm`}
+                                } flex w-full items-center gap-2 rounded-md p-2 text-sm text-gray-900`}
                               >
-                                <div className="h-5 w-5 p-4 flex items-center justify-center bg-gray-700 text-white rounded uppercase relative">
+                                <div className="relative flex h-5 w-5 items-center justify-center rounded bg-gray-700 p-4 uppercase text-white">
                                   {workspace?.logo && workspace.logo !== "" ? (
                                     <Image
                                       src={workspace.logo}
@@ -194,7 +194,7 @@ const WorkspaceOptions: React.FC<Props> = ({ sidebarCollapse }) => {
                         onClick={() => {
                           router.push("/create-workspace");
                         }}
-                        className="w-full text-xs flex items-center gap-2 px-2 py-1 text-left rounded hover:bg-gray-100"
+                        className="flex w-full items-center gap-2 rounded px-2 py-1 text-left text-xs hover:bg-gray-100"
                       >
                         <PlusIcon className="h-3 w-3" />
                         Create Workspace
@@ -209,11 +209,11 @@ const WorkspaceOptions: React.FC<Props> = ({ sidebarCollapse }) => {
                     </div>
                   )}
                 </div>
-                <div className="text-xs pt-2 space-y-1">
+                <div className="space-y-1 pt-2 text-xs">
                   {userLinks.map((link, index) => (
                     <Menu.Item key={index} as="div">
                       <Link href={link.href}>
-                        <a className="block px-2 py-1 text-left rounded hover:bg-gray-100">
+                        <a className="block rounded px-2 py-1 text-left hover:bg-gray-100">
                           {link.name}
                         </a>
                       </Link>
@@ -222,7 +222,7 @@ const WorkspaceOptions: React.FC<Props> = ({ sidebarCollapse }) => {
                   <Menu.Item
                     as="button"
                     type="button"
-                    className="w-full px-2 py-1 text-left rounded hover:bg-gray-100"
+                    className="w-full rounded px-2 py-1 text-left hover:bg-gray-100"
                     onClick={async () => {
                       await authenticationService
                         .signOut({
@@ -318,16 +318,16 @@ const WorkspaceOptions: React.FC<Props> = ({ sidebarCollapse }) => {
             <a
               className={`${
                 link.href === router.asPath
-                  ? "bg-theme text-white"
-                  : "hover:bg-indigo-100 focus:bg-indigo-100"
-              } flex items-center gap-3 p-2 text-xs font-medium rounded-md outline-none ${
+                  ? "bg-gray-200 text-gray-900"
+                  : "text-gray-500 hover:bg-gray-100 focus:bg-gray-100"
+              } flex items-center gap-3 rounded-md p-2 text-xs font-medium outline-none ${
                 sidebarCollapse ? "justify-center" : ""
               }`}
             >
               <link.icon
                 className={`${
-                  link.href === router.asPath ? "text-white" : ""
-                } flex-shrink-0 h-4 w-4`}
+                  link.href === router.asPath ? "text-gray-900" : "text-gray-500"
+                } h-4 w-4 flex-shrink-0`}
                 aria-hidden="true"
               />
               {!sidebarCollapse && link.name}

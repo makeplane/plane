@@ -20,6 +20,7 @@ import {
   MentionAtomExtension,
 } from "remirror/extensions";
 import { Remirror, useRemirror, EditorComponent, OnChangeJSON } from "@remirror/react";
+import { TableExtension } from "@remirror/extension-react-tables";
 // components`
 import { RichTextToolbar } from "./toolbar";
 import { MentionAutoComplete } from "./mention-autocomplete";
@@ -36,6 +37,7 @@ export interface IRemirrorRichTextEditor {
   tags?: any[];
   onChange: (value: any) => void;
   value?: any;
+  showToolbar?: boolean;
 }
 
 const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = ({
@@ -44,6 +46,7 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = ({
   tags = [],
   onChange,
   value = "",
+  showToolbar = true,
 }) => {
   // remirror error handler
   const onError: InvalidContentHandler = useCallback(
@@ -53,6 +56,7 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = ({
     },
     []
   );
+
   // remirror manager
   const { manager, state } = useRemirror({
     extensions: () => [
@@ -80,6 +84,7 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = ({
           { name: "tag", char: "#" },
         ],
       }),
+      new TableExtension(),
     ],
     content: value,
     selection: "start",
@@ -88,20 +93,20 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = ({
   });
 
   return (
-    <>
-      <div className="mb-4">
-        <Remirror manager={manager} initialContent={state} classNames={["p-4 focus:outline-none"]}>
-          <div className="rounded-md border ">
-            <div className="box-border w-full border-b px-5 py-3">
+    <div className="mt-2 mb-4">
+      <Remirror manager={manager} initialContent={state} classNames={["p-4 focus:outline-none"]}>
+        <div className="rounded-md border">
+          {showToolbar && (
+            <div className="box-border w-full border-b py-2">
               <RichTextToolbar />
             </div>
-            <EditorComponent />
-            <MentionAutoComplete mentions={mentions} tags={tags} />
-            <OnChangeJSON onChange={onChange} />
-          </div>
-        </Remirror>
-      </div>
-    </>
+          )}
+          <EditorComponent />
+          <MentionAutoComplete mentions={mentions} tags={tags} />
+          <OnChangeJSON onChange={onChange} />
+        </div>
+      </Remirror>
+    </div>
   );
 };
 

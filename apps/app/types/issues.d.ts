@@ -35,6 +35,7 @@ export interface IIssue {
   blocker_issues: BlockeIssue[];
   blockers_list: string[];
   blocked_list: string[];
+  blocks_list: string[];
   created_at: Date;
   updated_at: Date;
   name: string;
