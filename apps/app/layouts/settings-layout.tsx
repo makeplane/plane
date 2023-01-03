@@ -101,6 +101,14 @@ const SettingsLayout: React.FC<Props> = ({
       label: "Members",
       href: "/workspace/settings/members",
     },
+    {
+      label: "Features",
+      href: "/workspace/settings/features",
+    },
+    {
+      label: "Billing & Plans",
+      href: "/workspace/settings/billing",
+    },
   ];
 
   return (
