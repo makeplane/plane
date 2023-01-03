@@ -1,4 +1,4 @@
-import { IIssue, NestedKeyOf, Properties } from "./";
+import { IIssue, IWorkspace, NestedKeyOf, Properties } from "./";
 
 export interface IUser {
   id: readonly string;
@@ -17,6 +17,7 @@ export interface IUser {
   is_email_verified: boolean;
   token: string;
 
+  workspace: IWorkspace;
   last_workspace_slug: string;
 
   my_issues_prop?: {

@@ -47,9 +47,7 @@ export const requiredAdmin = async (projectId: string, cookie?: string) => {
 
   let memberDetail: IProjectMember | null = null;
 
-  // const workspaceSlug = user.workspace.slug;
-  // FIXME: remove this hardcode
-  const workspaceSlug = "skingo";
+  const workspaceSlug = user.workspace.slug;
 
   try {
     const data = await fetch(`${baseUrl}${PROJECT_MEMBER_ME(workspaceSlug, projectId)}`, {
