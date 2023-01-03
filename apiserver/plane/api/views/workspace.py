@@ -511,3 +511,22 @@ class UserLastProjectWithWorkspaceEndpoint(BaseAPIView):
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+
+class WorkspaceMemberUserEndpoint(BaseAPIView):
+
+    def get(self, request, slug):
+        try:
+            workspace_member = WorkspaceMember.objects.get(
+                member=request.user, workspace__slug=slug
+            )
+            serializer = WorkSpaceMemberSerializer(workspace_member)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Workspace.DoesNotExist:
+            return Response({"error": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )

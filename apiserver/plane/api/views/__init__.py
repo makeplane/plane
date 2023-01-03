@@ -34,6 +34,7 @@ from .workspace import (
     UserWorkspaceInvitationsEndpoint,
     UserWorkspaceInvitationEndpoint,
     UserLastProjectWithWorkspaceEndpoint,
+    WorkspaceMemberUserEndpoint,
 )
 from .state import StateViewSet
 from .shortcut import ShortCutViewSet
