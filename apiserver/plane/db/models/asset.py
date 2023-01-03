@@ -16,7 +16,7 @@ class FileAsset(BaseModel):
     class Meta:
         verbose_name = "File Asset"
         verbose_name_plural = "File Assets"
-        db_table = "file_asset"
+        db_table = "file_assets"
         ordering = ("-created_at",)
 
     def __str__(self):

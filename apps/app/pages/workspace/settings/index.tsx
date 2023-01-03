@@ -20,8 +20,7 @@ import useToast from "lib/hooks/useToast";
 // components
 import ConfirmWorkspaceDeletion from "components/workspace/confirm-workspace-deletion";
 // ui
-import { Spinner, Button, Input, Select } from "ui";
-import { BreadcrumbItem, Breadcrumbs } from "ui/Breadcrumbs";
+import { Spinner, Button, Input, Select, BreadcrumbItem, Breadcrumbs } from "ui";
 // types
 import type { IWorkspace } from "types";
 
@@ -114,9 +113,9 @@ const WorkspaceSettings = () => {
           <div className="grid grid-cols-12 gap-x-16 gap-y-8">
             <div className="col-span-5 space-y-16">
               <div>
-                <h4 className="text-md leading-6 text-gray-900 mb-1">Logo</h4>
+                <h4 className="text-md mb-1 leading-6 text-gray-900">Logo</h4>
                 {/* <p className="text-sm text-gray-500 mb-3">Upload a logo for the workspace.</p> */}
-                <div className="w-full flex gap-2">
+                <div className="flex w-full gap-2">
                   <Dropzone
                     multiple={false}
                     accept={{
@@ -131,12 +130,12 @@ const WorkspaceSettings = () => {
                         <input {...getInputProps()} />
                         <div>
                           <div
-                            className="grid place-items-center p-2 w-16 border rounded-md"
+                            className="grid w-16 place-items-center rounded-md border p-2"
                             {...getRootProps()}
                           >
                             {((watch("logo") && watch("logo") !== null && watch("logo") !== "") ||
                               (image && image !== null)) && (
-                              <div className="relative flex mx-auto h-12 w-12">
+                              <div className="relative mx-auto flex h-12 w-12">
                                 <Image
                                   src={image ? URL.createObjectURL(image) : watch("logo") ?? ""}
                                   alt="Workspace Logo"
@@ -152,7 +151,7 @@ const WorkspaceSettings = () => {
                     )}
                   </Dropzone>
                   <div>
-                    <p className="text-sm text-gray-500 mb-2">
+                    <p className="mb-2 text-sm text-gray-500">
                       Max file size is 500kb. Supported file types are .jpg and .png.
                     </p>
                     <Button
@@ -181,8 +180,8 @@ const WorkspaceSettings = () => {
                 </div>
               </div>
               <div>
-                <h4 className="text-md leading-6 text-gray-900 mb-1">URL</h4>
-                <p className="text-sm text-gray-500 mb-3">Give a name to your workspace.</p>
+                <h4 className="text-md mb-1 leading-6 text-gray-900">URL</h4>
+                <p className="mb-3 text-sm text-gray-500">Give a name to your workspace.</p>
                 <Input
                   id="url"
                   name="url"
@@ -200,8 +199,8 @@ const WorkspaceSettings = () => {
             </div>
             <div className="col-span-5 space-y-16">
               <div>
-                <h4 className="text-md leading-6 text-gray-900 mb-1">Name</h4>
-                <p className="text-sm text-gray-500 mb-3">Give a name to your workspace.</p>
+                <h4 className="text-md mb-1 leading-6 text-gray-900">Name</h4>
+                <p className="mb-3 text-sm text-gray-500">Give a name to your workspace.</p>
                 <Input
                   id="name"
                   name="name"
@@ -217,8 +216,8 @@ const WorkspaceSettings = () => {
                 />
               </div>
               <div>
-                <h4 className="text-md leading-6 text-gray-900 mb-1">Company Size</h4>
-                <p className="text-sm text-gray-500 mb-3">How big is your company?</p>
+                <h4 className="text-md mb-1 leading-6 text-gray-900">Company Size</h4>
+                <p className="mb-3 text-sm text-gray-500">How big is your company?</p>
                 <Select
                   id="company_size"
                   name="company_size"
@@ -240,8 +239,8 @@ const WorkspaceSettings = () => {
             </div>
             <div className="col-span-10 space-y-8">
               <div>
-                <h4 className="text-md leading-6 text-gray-900 mb-1">Danger Zone</h4>
-                <p className="text-sm text-gray-500 mb-3">
+                <h4 className="text-md mb-1 leading-6 text-gray-900">Danger Zone</h4>
+                <p className="mb-3 text-sm text-gray-500">
                   The danger zone of the workspace delete page is a critical area that requires
                   careful consideration and attention. When deleting a workspace, all of the data
                   and resources within that workspace will be permanently removed and cannot be
@@ -257,7 +256,7 @@ const WorkspaceSettings = () => {
           </div>
         </div>
       ) : (
-        <div className="h-full w-full grid place-items-center px-4 sm:px-0">
+        <div className="grid h-full w-full place-items-center px-4 sm:px-0">
           <Spinner />
         </div>
       )}

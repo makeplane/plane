@@ -34,7 +34,7 @@ class Workspace(BaseModel):
         unique_together = ["name", "owner"]
         verbose_name = "Workspace"
         verbose_name_plural = "Workspaces"
-        db_table = "workspace"
+        db_table = "workspaces"
         ordering = ("-created_at",)
 
     def save(self, *args, **kwargs):
@@ -58,7 +58,7 @@ class WorkspaceMember(BaseModel):
         unique_together = ["workspace", "member"]
         verbose_name = "Workspace Member"
         verbose_name_plural = "Workspace Members"
-        db_table = "workspace_member"
+        db_table = "workspace_members"
         ordering = ("-created_at",)
 
     def __str__(self):
@@ -80,7 +80,7 @@ class WorkspaceMemberInvite(BaseModel):
     class Meta:
         verbose_name = "Workspace Member Invite"
         verbose_name_plural = "Workspace Member Invites"
-        db_table = "workspace_member_invite"
+        db_table = "workspace_member_invites"
         ordering = ("-created_at",)
 
     def __str__(self):
@@ -109,7 +109,7 @@ class Team(BaseModel):
         unique_together = ["name", "workspace"]
         verbose_name = "Team"
         verbose_name_plural = "Teams"
-        db_table = "team"
+        db_table = "teams"
         ordering = ("-created_at",)
 
 
@@ -130,5 +130,5 @@ class TeamMember(BaseModel):
         unique_together = ["team", "member"]
         verbose_name = "Team Member"
         verbose_name_plural = "Team Members"
-        db_table = "team_member"
+        db_table = "team_members"
         ordering = ("-created_at",)

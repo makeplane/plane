@@ -1,14 +1,18 @@
 # Python imports
+import json
 from itertools import groupby
 
 # Django imports
 from django.db.models import Prefetch
 from django.db.models import Count, Sum
+from django.core.serializers.json import DjangoJSONEncoder
 
 # Third Party imports
 from rest_framework.response import Response
 from rest_framework import status
 from sentry_sdk import capture_exception
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 # Module imports
 from . import BaseViewSet, BaseAPIView
@@ -37,7 +41,7 @@ from plane.db.models import (
     Label,
     IssueBlocker,
     CycleIssue,
-    ModuleIssue
+    ModuleIssue,
 )
 
 
@@ -66,6 +70,28 @@ class IssueViewSet(BaseViewSet):
 
     def perform_create(self, serializer):
         serializer.save(project_id=self.kwargs.get("project_id"))
+
+    def perform_update(self, serializer):
+        requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
+        current_instance = Issue.objects.filter(pk=self.kwargs.get("pk", None)).first()
+        if current_instance is not None:
+
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.send)(
+                "issue-activites",
+                {
+                    "type": "issue.activity",
+                    "requested_data": requested_data,
+                    "actor_id": str(self.request.user.id),
+                    "issue_id": str(self.kwargs.get("pk", None)),
+                    "project_id": str(self.kwargs.get("project_id", None)),
+                    "current_instance": json.dumps(
+                        IssueSerializer(current_instance).data, cls=DjangoJSONEncoder
+                    ),
+                },
+            )
+
+        return super().perform_update(serializer)
 
     def get_queryset(self):
         return (
@@ -158,6 +184,17 @@ class IssueViewSet(BaseViewSet):
 
             if serializer.is_valid():
                 serializer.save()
+
+                # Track the issue
+                IssueActivity.objects.create(
+                    issue_id=serializer.data["id"],
+                    project_id=project_id,
+                    workspace_id=serializer["workspace"],
+                    comment=f"{request.user.email} created the issue",
+                    verb="created",
+                    actor=request.user,
+                )
+
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -205,10 +242,17 @@ class WorkSpaceIssuesEndpoint(BaseAPIView):
 
 
 class IssueActivityEndpoint(BaseAPIView):
+
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+
     def get(self, request, slug, project_id, issue_id):
         try:
-            issue_activities = IssueActivity.objects.filter(issue_id=issue_id).filter(
-                project__project_projectmember__member=self.request.user
+            issue_activities = (
+                IssueActivity.objects.filter(issue_id=issue_id)
+                .filter(project__project_projectmember__member=self.request.user)
+                .select_related("actor")
             )
             serializer = IssueActivitySerializer(issue_activities, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -224,6 +268,9 @@ class IssueCommentViewSet(BaseViewSet):
 
     serializer_class = IssueCommentSerializer
     model = IssueComment
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
 
     filterset_fields = [
         "issue__id",

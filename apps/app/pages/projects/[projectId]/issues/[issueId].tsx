@@ -69,6 +69,8 @@ const defaultValues = {
 };
 
 const IssueDetail: NextPage = () => {
+  const [descriptionToolbar, setDescriptionToolbar] = useState(false);
+
   const router = useRouter();
 
   const { issueId, projectId } = router.query;
@@ -191,8 +193,6 @@ const IssueDetail: NextPage = () => {
         });
     }
   };
-
-  console.log(watch("description"));
 
   return (
     <AppLayout
@@ -333,31 +333,28 @@ const IssueDetail: NextPage = () => {
                   mode="transparent"
                   className="text-xl font-medium"
                 />
-                {/* <TextArea
-                  id="description"
-                  name="description"
-                  error={errors.description}
-                  validations={{
-                    required: true,
-                  }}
-                  onChange={debounce(() => {
-                    handleSubmit(submitChanges)();
-                  }, 5000)}
-                  placeholder="Enter issue description"
-                  mode="transparent"
-                  register={register}
-                /> */}
-                <Controller
-                  name="description"
-                  control={control}
-                  render={({ field: { value, onChange } }) => (
-                    <RemirrorRichTextEditor
-                      value={value}
-                      onChange={onChange}
-                      placeholder="Enter Your Text..."
-                    />
-                  )}
-                />
+                <div
+                  onFocus={() => setDescriptionToolbar(true)}
+                  onBlur={() => setDescriptionToolbar(false)}
+                >
+                  <Controller
+                    name="description"
+                    control={control}
+                    render={({ field: { value, onChange } }) => (
+                      <RemirrorRichTextEditor
+                        value={value}
+                        onChange={(val) => {
+                          onChange(val);
+                          debounce(() => {
+                            handleSubmit(submitChanges)();
+                          }, 5000)();
+                        }}
+                        placeholder="Issue description..."
+                        // showToolbar={descriptionToolbar}
+                      />
+                    )}
+                  />
+                </div>
               </div>
               <div className="mt-2">
                 {subIssues && subIssues.length > 0 ? (
@@ -402,11 +399,11 @@ const IssueDetail: NextPage = () => {
                                   leaveTo="transform opacity-0 scale-95"
                                 >
                                   <Menu.Items className="absolute right-0 z-50 mt-2 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                    <div className="p-1">
+                                    <div className="py-1">
                                       <Menu.Item as="div">
                                         <button
                                           type="button"
-                                          className="flex items-center gap-2 whitespace-nowrap rounded-md p-2 text-left text-xs text-gray-900 hover:bg-theme hover:text-white"
+                                          className="flex items-center gap-2 whitespace-nowrap p-2 text-left text-xs text-gray-900 hover:bg-indigo-50"
                                           onClick={() => setIsAddAsSubIssueOpen(true)}
                                         >
                                           Add an existing issue
@@ -465,10 +462,10 @@ const IssueDetail: NextPage = () => {
                                       leaveTo="transform opacity-0 scale-95"
                                     >
                                       <Menu.Items className="absolute right-0 z-50 mt-2 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                        <div className="p-1">
+                                        <div className="py-1">
                                           <Menu.Item as="div">
                                             <button
-                                              className="flex items-center gap-2 whitespace-nowrap rounded-md p-2 text-left text-xs text-gray-900 hover:bg-theme hover:text-white"
+                                              className="flex items-center gap-2 whitespace-nowrap p-2 text-left text-xs text-gray-900 hover:bg-indigo-50"
                                               onClick={() => handleSubIssueRemove(subIssue.id)}
                                             >
                                               Remove as sub-issue

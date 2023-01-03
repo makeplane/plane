@@ -2,7 +2,7 @@ import { Fragment, ReactNode } from "react";
 // Headless ui imports
 import { Dialog, Transition } from "@headlessui/react";
 // Design components
-import Button from "ui/Button";
+import { Button } from "ui";
 // Icons
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
@@ -73,11 +73,11 @@ const Modal = (props: ModalProps) => {
                 leaveTo="opacity-0 scale-95"
               >
                 <Dialog.Panel
-                  className={`transform rounded-2xl ${width} bg-white p-8 text-left max-h-full shadow-xl transition-all`}
+                  className={`transform rounded-2xl ${width} max-h-full bg-white p-8 text-left shadow-xl transition-all`}
                 >
                   <Dialog.Title
                     as="h3"
-                    className="text-lg font-medium leading-6 text-gray-900 relative"
+                    className="relative text-lg font-medium leading-6 text-gray-900"
                   >
                     <div
                       className="absolute top-[-1rem] right-[-1rem] cursor-pointer"
@@ -89,7 +89,7 @@ const Modal = (props: ModalProps) => {
                   </Dialog.Title>
                   <div className="mt-2">{props.children}</div>
                   <div className="mt-4">
-                    <div className={`flex gap-2 justify-end`}>
+                    <div className={`flex justify-end gap-2`}>
                       <Button theme="secondary" onClick={closeModal}>
                         {props.closeButton}
                       </Button>

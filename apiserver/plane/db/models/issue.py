@@ -57,7 +57,7 @@ class Issue(ProjectBaseModel):
     class Meta:
         verbose_name = "Issue"
         verbose_name_plural = "Issues"
-        db_table = "issue"
+        db_table = "issues"
         ordering = ("-created_at",)
 
     def save(self, *args, **kwargs):
@@ -99,7 +99,7 @@ class IssueBlocker(ProjectBaseModel):
     class Meta:
         verbose_name = "Issue Blocker"
         verbose_name_plural = "Issue Blockers"
-        db_table = "issue_blocker"
+        db_table = "issue_blockers"
         ordering = ("-created_at",)
 
     def __str__(self):
@@ -120,7 +120,7 @@ class IssueAssignee(ProjectBaseModel):
         unique_together = ["issue", "assignee"]
         verbose_name = "Issue Assignee"
         verbose_name_plural = "Issue Assignees"
-        db_table = "issue_assignee"
+        db_table = "issue_assignees"
         ordering = ("-created_at",)
 
     def __str__(self):
@@ -156,11 +156,13 @@ class IssueActivity(ProjectBaseModel):
         null=True,
         related_name="issue_activities",
     )
+    old_identifier = models.UUIDField(null=True)
+    new_identifier = models.UUIDField(null=True)
 
     class Meta:
         verbose_name = "Issue Activity"
         verbose_name_plural = "Issue Activities"
-        db_table = "issue_activity"
+        db_table = "issue_activities"
         ordering = ("-created_at",)
 
     def __str__(self):
@@ -178,7 +180,7 @@ class TimelineIssue(ProjectBaseModel):
     class Meta:
         verbose_name = "Timeline Issue"
         verbose_name_plural = "Timeline Issues"
-        db_table = "issue_timeline"
+        db_table = "issue_timelines"
         ordering = ("-created_at",)
 
     def __str__(self):
@@ -201,7 +203,7 @@ class IssueComment(ProjectBaseModel):
     class Meta:
         verbose_name = "Issue Comment"
         verbose_name_plural = "Issue Comments"
-        db_table = "issue_comment"
+        db_table = "issue_comments"
         ordering = ("-created_at",)
 
     def __str__(self):
@@ -220,7 +222,7 @@ class IssueProperty(ProjectBaseModel):
     class Meta:
         verbose_name = "Issue Property"
         verbose_name_plural = "Issue Properties"
-        db_table = "issue_property"
+        db_table = "issue_properties"
         ordering = ("-created_at",)
         unique_together = ["user", "project"]
 
@@ -245,7 +247,7 @@ class Label(ProjectBaseModel):
     class Meta:
         verbose_name = "Label"
         verbose_name_plural = "Labels"
-        db_table = "label"
+        db_table = "labels"
         ordering = ("-created_at",)
 
     def __str__(self):
@@ -264,7 +266,7 @@ class IssueLabel(ProjectBaseModel):
     class Meta:
         verbose_name = "Issue Label"
         verbose_name_plural = "Issue Labels"
-        db_table = "issue_label"
+        db_table = "issue_labels"
         ordering = ("-created_at",)
 
     def __str__(self):
@@ -282,7 +284,7 @@ class IssueSequence(ProjectBaseModel):
     class Meta:
         verbose_name = "Issue Sequence"
         verbose_name_plural = "Issue Sequences"
-        db_table = "issue_sequence"
+        db_table = "issue_sequences"
         ordering = ("-created_at",)
 
 

@@ -105,16 +105,16 @@ const ModuleDetailSidebar: React.FC<Props> = ({
       <div
         className={`fixed top-0 ${
           isOpen ? "right-0" : "-right-[24rem]"
-        } z-20 bg-gray-50 border-l h-full p-5 w-[24rem] overflow-y-auto duration-300`}
+        } z-20 h-full w-[24rem] overflow-y-auto border-l bg-gray-50 p-5 duration-300`}
       >
         {module ? (
           <>
-            <div className="flex justify-between items-center pb-3">
+            <div className="flex items-center justify-between pb-3">
               <h4 className="text-sm font-medium">{module.name}</h4>
-              <div className="flex items-center gap-2 flex-wrap">
+              <div className="flex flex-wrap items-center gap-2">
                 <button
                   type="button"
-                  className="p-2 hover:bg-gray-100 border rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 duration-300"
+                  className="rounded-md border p-2 shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                   onClick={() =>
                     copyTextToClipboard(
                       `https://app.plane.so/projects/${activeProject?.id}/modules/${module.id}`
@@ -137,7 +137,7 @@ const ModuleDetailSidebar: React.FC<Props> = ({
                 </button>
                 <button
                   type="button"
-                  className="p-2 hover:bg-gray-100 border rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 duration-300"
+                  className="rounded-md border p-2 shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                   onClick={() =>
                     copyTextToClipboard(module.id)
                       .then(() => {
@@ -158,7 +158,7 @@ const ModuleDetailSidebar: React.FC<Props> = ({
                 </button>
                 <button
                   type="button"
-                  className="p-2 hover:bg-red-50 text-red-500 border border-red-500 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 duration-300"
+                  className="rounded-md border border-red-500 p-2 text-red-500 shadow-sm duration-300 hover:bg-red-50 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                   onClick={() => handleDeleteModule()}
                 >
                   <TrashIcon className="h-3.5 w-3.5" />
@@ -167,9 +167,9 @@ const ModuleDetailSidebar: React.FC<Props> = ({
             </div>
             <div className="divide-y-2 divide-gray-100 text-xs">
               <div className="py-1">
-                <div className="flex items-center py-2 flex-wrap">
+                <div className="flex flex-wrap items-center py-2">
                   <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
-                    <UserIcon className="flex-shrink-0 h-4 w-4" />
+                    <UserIcon className="h-4 w-4 flex-shrink-0" />
                     <p>Lead</p>
                   </div>
                   <div className="sm:basis-1/2">
@@ -183,13 +183,13 @@ const ModuleDetailSidebar: React.FC<Props> = ({
                   </div>
                 </div>
                 <SelectMembers control={control} submitChanges={submitChanges} />
-                <div className="flex items-center py-2 flex-wrap">
+                <div className="flex flex-wrap items-center py-2">
                   <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
-                    <ChartPieIcon className="flex-shrink-0 h-4 w-4" />
+                    <ChartPieIcon className="h-4 w-4 flex-shrink-0" />
                     <p>Progress</p>
                   </div>
-                  <div className="sm:basis-1/2 flex items-center gap-2">
-                    <div className="flex-shrink-0 grid place-items-center">
+                  <div className="flex items-center gap-2 sm:basis-1/2">
+                    <div className="grid flex-shrink-0 place-items-center">
                       <span className="h-4 w-4 rounded-full border-2 border-gray-300 border-r-blue-500"></span>
                     </div>
                     {groupedIssues.completed.length}/{moduleIssues?.length}
@@ -197,9 +197,9 @@ const ModuleDetailSidebar: React.FC<Props> = ({
                 </div>
               </div>
               <div className="py-1">
-                <div className="flex items-center py-2 flex-wrap">
+                <div className="flex flex-wrap items-center py-2">
                   <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
-                    <CalendarDaysIcon className="flex-shrink-0 h-4 w-4" />
+                    <CalendarDaysIcon className="h-4 w-4 flex-shrink-0" />
                     <p>Start date</p>
                   </div>
                   <div className="sm:basis-1/2">
@@ -212,15 +212,15 @@ const ModuleDetailSidebar: React.FC<Props> = ({
                           id="issueDate"
                           value={value ?? ""}
                           onChange={onChange}
-                          className="hover:bg-gray-100 bg-transparent border rounded-md shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300 w-full"
+                          className="w-full cursor-pointer rounded-md border bg-transparent px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                         />
                       )}
                     />
                   </div>
                 </div>
-                <div className="flex items-center py-2 flex-wrap">
+                <div className="flex flex-wrap items-center py-2">
                   <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
-                    <CalendarDaysIcon className="flex-shrink-0 h-4 w-4" />
+                    <CalendarDaysIcon className="h-4 w-4 flex-shrink-0" />
                     <p>End date</p>
                   </div>
                   <div className="sm:basis-1/2">
@@ -235,7 +235,7 @@ const ModuleDetailSidebar: React.FC<Props> = ({
                             submitChanges({ target_date: e.target.value });
                             onChange(e.target.value);
                           }}
-                          className="hover:bg-gray-100 bg-transparent border rounded-md shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300 w-full"
+                          className="w-full cursor-pointer rounded-md border bg-transparent px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                         />
                       )}
                     />
@@ -246,24 +246,24 @@ const ModuleDetailSidebar: React.FC<Props> = ({
                 <SelectStatus control={control} submitChanges={submitChanges} watch={watch} />
               </div>
               <div className="py-1">
-                <div className="flex justify-between items-center gap-2">
+                <div className="flex items-center justify-between gap-2">
                   <h4>Links</h4>
                   <button
                     type="button"
-                    className="h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-100 duration-300 outline-none"
+                    className="grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-100"
                     onClick={() => setModuleLinkModal(true)}
                   >
                     <PlusIcon className="h-4 w-4" />
                   </button>
                 </div>
                 <div className="mt-2 space-y-2">
-                  {module.link_module.length > 0
+                  {module.link_module && module.link_module.length > 0
                     ? module.link_module.map((link) => (
                         <div key={link.id} className="group relative">
-                          <div className="opacity-0 group-hover:opacity-100 absolute top-1.5 right-1.5 z-10">
+                          <div className="absolute top-1.5 right-1.5 z-10 opacity-0 group-hover:opacity-100">
                             <button
                               type="button"
-                              className="h-7 w-7 p-1 grid place-items-center rounded text-red-500 bg-gray-100 hover:bg-red-50 duration-300 outline-none"
+                              className="grid h-7 w-7 place-items-center rounded bg-gray-100 p-1 text-red-500 outline-none duration-300 hover:bg-red-50"
                               onClick={() => {
                                 const updatedLinks = module.link_module.filter(
                                   (l) => l.id !== link.id
@@ -275,13 +275,13 @@ const ModuleDetailSidebar: React.FC<Props> = ({
                             </button>
                           </div>
                           <Link href={link.url} target="_blank">
-                            <a className="group relative flex gap-2 border bg-gray-100 rounded-md p-2">
+                            <a className="group relative flex gap-2 rounded-md border bg-gray-100 p-2">
                               <div className="mt-0.5">
                                 <LinkIcon className="h-3.5 w-3.5" />
                               </div>
                               <div>
                                 <h5>{link.title}</h5>
-                                <p className="text-gray-500 mt-0.5">
+                                <p className="mt-0.5 text-gray-500">
                                   Added 2 days ago by {link.created_by_detail.email}
                                 </p>
                               </div>

@@ -31,7 +31,7 @@ class Cycle(ProjectBaseModel):
     class Meta:
         verbose_name = "Cycle"
         verbose_name_plural = "Cycles"
-        db_table = "cycle"
+        db_table = "cycles"
         ordering = ("-created_at",)
 
     def __str__(self):
@@ -54,7 +54,7 @@ class CycleIssue(ProjectBaseModel):
     class Meta:
         verbose_name = "Cycle Issue"
         verbose_name_plural = "Cycle Issues"
-        db_table = "cycle_issue"
+        db_table = "cycle_issues"
         ordering = ("-created_at",)
 
     def __str__(self):

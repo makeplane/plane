@@ -72,7 +72,7 @@ class Project(BaseModel):
         unique_together = [["identifier", "workspace"], ["name", "workspace"]]
         verbose_name = "Project"
         verbose_name_plural = "Projects"
-        db_table = "project"
+        db_table = "projects"
         ordering = ("-created_at",)
 
     def save(self, *args, **kwargs):
@@ -109,7 +109,7 @@ class ProjectMemberInvite(ProjectBaseModel):
     class Meta:
         verbose_name = "Project Member Invite"
         verbose_name_plural = "Project Member Invites"
-        db_table = "project_member_invite"
+        db_table = "project_member_invites"
         ordering = ("-created_at",)
 
     def __str__(self):
@@ -134,7 +134,7 @@ class ProjectMember(ProjectBaseModel):
         unique_together = ["project", "member"]
         verbose_name = "Project Member"
         verbose_name_plural = "Project Members"
-        db_table = "project_member"
+        db_table = "project_members"
         ordering = ("-created_at",)
 
     def __str__(self):
@@ -156,5 +156,5 @@ class ProjectIdentifier(AuditModel):
         unique_together = ["name", "workspace"]
         verbose_name = "Project Identifier"
         verbose_name_plural = "Project Identifiers"
-        db_table = "project_identifier"
+        db_table = "project_identifiers"
         ordering = ("-created_at",)

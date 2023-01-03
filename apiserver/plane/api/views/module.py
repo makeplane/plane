@@ -15,7 +15,7 @@ from plane.api.serializers import (
     ModuleIssueSerializer,
 )
 from plane.api.permissions import ProjectEntityPermission
-from plane.db.models import Module, ModuleIssue, Project, Issue
+from plane.db.models import Module, ModuleIssue, Project, Issue, ModuleLink
 
 
 class ModuleViewSet(BaseViewSet):
@@ -46,6 +46,12 @@ class ModuleViewSet(BaseViewSet):
                 Prefetch(
                     "issue_module",
                     queryset=ModuleIssue.objects.select_related("module", "issue"),
+                )
+            )
+            .prefetch_related(
+                Prefetch(
+                    "link_module",
+                    queryset=ModuleLink.objects.select_related("module"),
                 )
             )
         )
@@ -129,6 +135,9 @@ class ModuleIssueViewSet(BaseViewSet):
             issues = Issue.objects.filter(
                 pk__in=issues, workspace__slug=slug, project_id=project_id
             )
+
+            # Delete old records in order to maintain the database integrity
+            ModuleIssue.objects.filter(issue_id__in=issues).delete()
 
             ModuleIssue.objects.bulk_create(
                 [

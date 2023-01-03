@@ -26,7 +26,7 @@ def project_invitation(email, project_id, token, current_site):
 
         from_email_string = f"Team Plane <team@mailer.plane.so>"
 
-        subject = f"Welcome {email}!"
+        subject = f"{project.created_by.first_name or project.created_by.email} invited you to join {project.name} on Plane"
 
         context = {
             "email": email,
