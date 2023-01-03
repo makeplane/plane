@@ -113,7 +113,7 @@ const SettingsLayout: React.FC<Props> = ({
         <main className="flex h-screen w-full min-w-0 flex-col overflow-y-auto">
           {noHeader ? null : <Header breadcrumbs={breadcrumbs} left={left} right={right} />}
           <div
-            className={`w-full flex-grow ${noPadding ? "" : "p-5 px-16"} ${
+            className={`w-full flex-grow ${noPadding ? "" : "px-16 pt-10 pb-5"} ${
               bg === "primary" ? "bg-primary" : bg === "secondary" ? "bg-secondary" : "bg-primary"
             }`}
           >

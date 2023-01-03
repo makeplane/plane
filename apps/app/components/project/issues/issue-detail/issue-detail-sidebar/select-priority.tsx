@@ -2,17 +2,17 @@
 import React from "react";
 // react-hook-form
 import { Control, Controller, UseFormWatch } from "react-hook-form";
-// headless ui
-import { Listbox, Transition } from "@headlessui/react";
+// ui
+import { CustomSelect } from "ui";
 // icons
-import { ChevronDownIcon, ChartBarIcon } from "@heroicons/react/24/outline";
+import { ChartBarIcon } from "@heroicons/react/24/outline";
 // types
 import { IIssue } from "types";
-// constants
+// common
 import { classNames } from "constants/common";
-import { PRIORITIES } from "constants/";
-import CustomSelect from "ui/custom-select";
+// constants
 import { getPriorityIcon } from "constants/global";
+import { PRIORITIES } from "constants/";
 
 type Props = {
   control: Control<IIssue, any>;

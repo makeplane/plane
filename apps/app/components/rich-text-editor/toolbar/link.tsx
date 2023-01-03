@@ -7,16 +7,18 @@ export const LinkButton = () => {
 
   return (
     <button
+      type="button"
       onClick={() => {
         // toggleLink();
         focus();
       }}
+      className={`${active.link() ? "bg-gray-200" : "hover:bg-gray-100"} rounded p-1`}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        height="22"
-        width="22"
-        fill={active.link() ? "rgb(99 ,102 ,241 ,1)" : "black"}
+        height="18"
+        width="18"
+        fill="black"
         viewBox="0 0 48 48"
       >
         <path d="M22.5 34H14q-4.15 0-7.075-2.925T4 24q0-4.15 2.925-7.075T14 14h8.5v3H14q-2.9 0-4.95 2.05Q7 21.1 7 24q0 2.9 2.05 4.95Q11.1 31 14 31h8.5Zm-6.25-8.5v-3h15.5v3ZM25.5 34v-3H34q2.9 0 4.95-2.05Q41 26.9 41 24q0-2.9-2.05-4.95Q36.9 17 34 17h-8.5v-3H34q4.15 0 7.075 2.925T44 24q0 4.15-2.925 7.075T34 34Z" />
