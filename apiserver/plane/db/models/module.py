@@ -74,12 +74,11 @@ class ModuleIssue(ProjectBaseModel):
     module = models.ForeignKey(
         "db.Module", on_delete=models.CASCADE, related_name="issue_module"
     )
-    issue = models.ForeignKey(
+    issue = models.OneToOneField(
         "db.Issue", on_delete=models.CASCADE, related_name="issue_module"
     )
 
     class Meta:
-        unique_together = ["module", "issue"]
         verbose_name = "Module Issue"
         verbose_name_plural = "Module Issues"
         db_table = "module_issues"
