@@ -381,6 +381,9 @@ class TeamMemberViewSet(BaseViewSet):
 
     serializer_class = TeamSerializer
     model = Team
+    permission_classes = [
+        WorkSpaceAdminPermission,
+    ]
 
     search_fields = [
         "member__email",

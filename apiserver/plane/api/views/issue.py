@@ -242,6 +242,11 @@ class WorkSpaceIssuesEndpoint(BaseAPIView):
 
 
 class IssueActivityEndpoint(BaseAPIView):
+
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+
     def get(self, request, slug, project_id, issue_id):
         try:
             issue_activities = (
@@ -263,6 +268,9 @@ class IssueCommentViewSet(BaseViewSet):
 
     serializer_class = IssueCommentSerializer
     model = IssueComment
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
 
     filterset_fields = [
         "issue__id",
