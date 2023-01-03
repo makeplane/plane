@@ -22,7 +22,7 @@ import { CYCLE_ISSUES } from "constants/fetch-keys";
 // common
 import { groupBy, renderShortNumericDateFormat } from "constants/common";
 
-type Props = {
+type TSingleStatProps = {
   cycle: ICycle;
   handleEditCycle: () => void;
   handleDeleteCycle: () => void;
@@ -38,10 +38,11 @@ const stateGroupColours: {
   completed: "#096e8d",
 };
 
-const SingleStat: React.FC<Props> = ({ cycle, handleEditCycle, handleDeleteCycle }) => {
-  const { activeWorkspace, activeProject } = useUser();
+const SingleStat: React.FC<TSingleStatProps> = (props) => {
+  const { cycle, handleEditCycle, handleDeleteCycle } = props;
 
   const router = useRouter();
+  const { activeWorkspace, activeProject } = useUser();
 
   const { data: cycleIssues } = useSWR<CycleIssueResponse[]>(
     activeWorkspace && activeProject && cycle.id ? CYCLE_ISSUES(cycle.id as string) : null,
@@ -50,6 +51,11 @@ const SingleStat: React.FC<Props> = ({ cycle, handleEditCycle, handleDeleteCycle
           cyclesService.getCycleIssues(activeWorkspace?.slug, activeProject?.id, cycle.id as string)
       : null
   );
+
+  const today = new Date();
+  const endDate = new Date(cycle.end_date ?? "");
+  const startDate = new Date(cycle.start_date ?? "");
+
   const groupedIssues = {
     backlog: [],
     unstarted: [],
@@ -58,10 +64,6 @@ const SingleStat: React.FC<Props> = ({ cycle, handleEditCycle, handleDeleteCycle
     completed: [],
     ...groupBy(cycleIssues ?? [], "issue_detail.state_detail.group"),
   };
-
-  const startDate = new Date(cycle.start_date ?? "");
-  const endDate = new Date(cycle.end_date ?? "");
-  const today = new Date();
 
   return (
     <>

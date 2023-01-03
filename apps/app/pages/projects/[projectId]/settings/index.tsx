@@ -1,15 +1,22 @@
-// react
 import { useCallback, useEffect } from "react";
+// next
+import type { NextPage, NextPageContext } from "next";
 // swr
 import useSWR, { mutate } from "swr";
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
+// fetch-keys
+import { PROJECTS_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
+// common
+import { debounce } from "constants/common";
+// constants
+import { NETWORK_CHOICES } from "constants/";
+// lib
+import { requiredAdmin } from "lib/auth";
 // layouts
 import SettingsLayout from "layouts/settings-layout";
 // services
 import projectService from "lib/services/project.service";
-// constants
-import { NETWORK_CHOICES } from "constants/";
 // hooks
 import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
@@ -26,10 +33,6 @@ import {
 } from "ui";
 // types
 import { IProject, IWorkspace } from "types";
-// fetch-keys
-import { PROJECTS_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
-// common
-import { debounce } from "constants/common";
 
 const defaultValues: Partial<IProject> = {
   name: "",
@@ -38,10 +41,18 @@ const defaultValues: Partial<IProject> = {
   network: 0,
 };
 
-const GeneralSettings = () => {
-  const { activeWorkspace, activeProject } = useUser();
+type TGeneralSettingsProps = {
+  isMember: boolean;
+  isOwner: boolean;
+  isViewer: boolean;
+  isGuest: boolean;
+};
+
+const GeneralSettings: NextPage<TGeneralSettingsProps> = (props) => {
+  const { isMember, isOwner, isViewer, isGuest } = props;
 
   const { setToastAlert } = useToast();
+  const { activeWorkspace, activeProject } = useUser();
 
   const { data: projectDetails } = useSWR<IProject>(
     activeWorkspace && activeProject ? PROJECT_DETAILS(activeProject.id) : null,
@@ -60,6 +71,25 @@ const GeneralSettings = () => {
   } = useForm<IProject>({
     defaultValues,
   });
+
+  const checkIdentifier = (slug: string, value: string) => {
+    projectService.checkProjectIdentifierAvailability(slug, value).then((response) => {
+      if (response.exists) setError("identifier", { message: "Identifier already exists" });
+    });
+  };
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const checkIdentifierAvailability = useCallback(debounce(checkIdentifier, 1500), []);
+
+  useEffect(() => {
+    projectDetails &&
+      reset({
+        ...projectDetails,
+        default_assignee: projectDetails.default_assignee?.id,
+        project_lead: projectDetails.project_lead?.id,
+        workspace: (projectDetails.workspace as IWorkspace).id,
+      });
+  }, [projectDetails, reset]);
 
   const onSubmit = async (formData: IProject) => {
     if (!activeWorkspace || !activeProject) return;
@@ -100,32 +130,13 @@ const GeneralSettings = () => {
         });
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
       });
   };
-
-  const checkIdentifier = (slug: string, value: string) => {
-    projectService.checkProjectIdentifierAvailability(slug, value).then((response) => {
-      console.log(response);
-      if (response.exists) setError("identifier", { message: "Identifier already exists" });
-    });
-  };
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const checkIdentifierAvailability = useCallback(debounce(checkIdentifier, 1500), []);
-
-  useEffect(() => {
-    projectDetails &&
-      reset({
-        ...projectDetails,
-        default_assignee: projectDetails.default_assignee?.id,
-        project_lead: projectDetails.project_lead?.id,
-        workspace: (projectDetails.workspace as IWorkspace).id,
-      });
-  }, [projectDetails, reset]);
 
   return (
     <SettingsLayout
+      memberType={{ isMember, isOwner, isViewer, isGuest }}
       type="project"
       breadcrumbs={
         <Breadcrumbs>
@@ -282,6 +293,21 @@ const GeneralSettings = () => {
       </form>
     </SettingsLayout>
   );
+};
+
+export const getServerSideProps = async (ctx: NextPageContext) => {
+  const projectId = ctx.query.projectId as string;
+
+  const memberDetail = await requiredAdmin(projectId, ctx.req?.headers.cookie);
+
+  return {
+    props: {
+      isOwner: memberDetail?.role === 20,
+      isMember: memberDetail?.role === 15,
+      isViewer: memberDetail?.role === 10,
+      isGuest: memberDetail?.role === 5,
+    },
+  };
 };
 
 export default GeneralSettings;

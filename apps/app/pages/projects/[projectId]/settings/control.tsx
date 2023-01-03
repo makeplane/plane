@@ -3,10 +3,12 @@ import React, { useEffect } from "react";
 import type { NextPageContext, NextPage } from "next";
 // swr
 import useSWR, { mutate } from "swr";
+// headless ui
+import { Listbox, Transition } from "@headlessui/react";
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // lib
-import { requiredAuth } from "lib/auth";
+import { requiredAdmin } from "lib/auth";
 // layouts
 import SettingsLayout from "layouts/settings-layout";
 // services
@@ -15,8 +17,6 @@ import workspaceService from "lib/services/workspace.service";
 // hooks
 import useToast from "lib/hooks/useToast";
 import useUser from "lib/hooks/useUser";
-// headless ui
-import { Listbox, Transition } from "@headlessui/react";
 // ui
 import { BreadcrumbItem, Breadcrumbs, Button } from "ui";
 // icons
@@ -26,7 +26,16 @@ import { IProject, IWorkspace } from "types";
 // fetch-keys
 import { PROJECTS_LIST, PROJECT_DETAILS, WORKSPACE_MEMBERS } from "constants/fetch-keys";
 
-const ControlSettings: NextPage = () => {
+type TControlSettingsProps = {
+  isMember: boolean;
+  isOwner: boolean;
+  isViewer: boolean;
+  isGuest: boolean;
+};
+
+const ControlSettings: NextPage<TControlSettingsProps> = (props) => {
+  const { isMember, isOwner, isViewer, isGuest } = props;
+
   const { setToastAlert } = useToast();
   const { activeWorkspace, activeProject } = useUser();
 
@@ -105,6 +114,7 @@ const ControlSettings: NextPage = () => {
   return (
     <SettingsLayout
       type="project"
+      memberType={{ isMember, isOwner, isViewer, isGuest }}
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem
@@ -289,24 +299,16 @@ const ControlSettings: NextPage = () => {
 };
 
 export const getServerSideProps = async (ctx: NextPageContext) => {
-  const user = await requiredAuth(ctx.req?.headers.cookie);
+  const projectId = ctx.query.projectId as string;
 
-  const redirectAfterSignIn = ctx.req?.url;
-
-  if (!user) {
-    return {
-      redirect: {
-        destination: `/signin?next=${redirectAfterSignIn}`,
-        permanent: false,
-      },
-    };
-  }
-
-  // TODO: add authorization logic
+  const memberDetail = await requiredAdmin(projectId, ctx.req?.headers.cookie);
 
   return {
     props: {
-      user,
+      isOwner: memberDetail?.role === 20,
+      isMember: memberDetail?.role === 15,
+      isViewer: memberDetail?.role === 10,
+      isGuest: memberDetail?.role === 5,
     },
   };
 };

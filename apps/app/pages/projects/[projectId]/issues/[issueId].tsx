@@ -147,7 +147,7 @@ const IssueDetail: NextPage = () => {
           }));
         })
         .catch((error) => {
-          console.log(error);
+          console.error(error);
         });
     },
     [activeProject, activeWorkspace, issueId, projectId, mutateIssues]
@@ -187,12 +187,10 @@ const IssueDetail: NextPage = () => {
           );
         })
         .catch((e) => {
-          console.log(e);
+          console.error(e);
         });
     }
   };
-
-  console.log(watch("description"));
 
   return (
     <AppLayout
@@ -333,20 +331,6 @@ const IssueDetail: NextPage = () => {
                   mode="transparent"
                   className="text-xl font-medium"
                 />
-                {/* <TextArea
-                  id="description"
-                  name="description"
-                  error={errors.description}
-                  validations={{
-                    required: true,
-                  }}
-                  onChange={debounce(() => {
-                    handleSubmit(submitChanges)();
-                  }, 5000)}
-                  placeholder="Enter issue description"
-                  mode="transparent"
-                  register={register}
-                /> */}
                 <Controller
                   name="description"
                   control={control}

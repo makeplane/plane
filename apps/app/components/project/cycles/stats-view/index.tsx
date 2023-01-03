@@ -6,19 +6,17 @@ import ConfirmCycleDeletion from "components/project/cycles/confirm-cycle-deleti
 // types
 import { ICycle, SelectSprintType } from "types";
 
-type Props = {
+type TCycleStatsViewProps = {
   cycles: ICycle[];
   setCreateUpdateCycleModal: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedCycle: React.Dispatch<React.SetStateAction<SelectSprintType>>;
 };
 
-const CycleStatsView: React.FC<Props> = ({
-  cycles,
-  setCreateUpdateCycleModal,
-  setSelectedCycle,
-}) => {
-  const [selectedCycleForDelete, setSelectedCycleForDelete] = useState<SelectSprintType>();
+const CycleStatsView: React.FC<TCycleStatsViewProps> = (props) => {
+  const { cycles, setCreateUpdateCycleModal, setSelectedCycle } = props;
+
   const [cycleDeleteModal, setCycleDeleteModal] = useState(false);
+  const [selectedCycleForDelete, setSelectedCycleForDelete] = useState<SelectSprintType>();
 
   const handleDeleteCycle = (cycle: ICycle) => {
     setSelectedCycleForDelete({ ...cycle, actionType: "delete" });

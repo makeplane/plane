@@ -17,6 +17,8 @@ export interface IUser {
   is_email_verified: boolean;
   token: string;
 
+  last_workspace_slug: string;
+
   my_issues_prop?: {
     properties: Properties;
     groupBy: NestedKeyOf<IIssue> | null;

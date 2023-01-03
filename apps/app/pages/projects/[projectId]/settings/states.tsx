@@ -1,10 +1,14 @@
-import { useState } from "react";
+import React, { useState } from "react";
+// next
+import type { NextPage, NextPageContext } from "next";
 // swr
 import useSWR from "swr";
 // constants
 import { STATE_LIST } from "constants/fetch-keys";
 // services
 import stateService from "lib/services/state.service";
+// lib
+import { requiredAdmin } from "lib/auth";
 // hooks
 import useUser from "lib/hooks/useUser";
 // layouts
@@ -24,7 +28,16 @@ import { IState } from "types";
 // common
 import { addSpaceIfCamelCase, groupBy } from "constants/common";
 
-const StatesSettings = () => {
+type TStateSettingsProps = {
+  isMember: boolean;
+  isOwner: boolean;
+  isViewer: boolean;
+  isGuest: boolean;
+};
+
+const StatesSettings: NextPage<TStateSettingsProps> = (props) => {
+  const { isMember, isOwner, isViewer, isGuest } = props;
+
   const [activeGroup, setActiveGroup] = useState<StateGroup>(null);
   const [selectedState, setSelectedState] = useState<string | null>(null);
   const [selectDeleteState, setSelectDeleteState] = useState<string | null>(null);
@@ -51,6 +64,7 @@ const StatesSettings = () => {
       />
       <SettingsLayout
         type="project"
+        memberType={{ isMember, isOwner, isViewer, isGuest }}
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem
@@ -151,6 +165,21 @@ const StatesSettings = () => {
       </SettingsLayout>
     </>
   );
+};
+
+export const getServerSideProps = async (ctx: NextPageContext) => {
+  const projectId = ctx.query.projectId as string;
+
+  const memberDetail = await requiredAdmin(projectId, ctx.req?.headers.cookie);
+
+  return {
+    props: {
+      isOwner: memberDetail?.role === 20,
+      isMember: memberDetail?.role === 15,
+      isViewer: memberDetail?.role === 10,
+      isGuest: memberDetail?.role === 5,
+    },
+  };
 };
 
 export default StatesSettings;

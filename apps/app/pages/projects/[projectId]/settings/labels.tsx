@@ -1,5 +1,6 @@
-// react
 import React, { useState } from "react";
+// next
+import type { NextPageContext, NextPage } from "next";
 // swr
 import useSWR from "swr";
 // react-hook-form
@@ -24,13 +25,23 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 // types
 import { IIssueLabels } from "types";
+import { requiredAdmin } from "lib/auth";
 
 const defaultValues: Partial<IIssueLabels> = {
   name: "",
   colour: "#ff0000",
 };
 
-const LabelsSettings = () => {
+type TLabelSettingsProps = {
+  isMember: boolean;
+  isOwner: boolean;
+  isViewer: boolean;
+  isGuest: boolean;
+};
+
+const LabelsSettings: NextPage<TLabelSettingsProps> = (props) => {
+  const { isMember, isOwner, isViewer, isGuest } = props;
+
   const [newLabelForm, setNewLabelForm] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [labelIdForUpdate, setLabelidForUpdate] = useState<string | null>(null);
@@ -105,6 +116,7 @@ const LabelsSettings = () => {
   return (
     <SettingsLayout
       type="project"
+      memberType={{ isMember, isOwner, isViewer, isGuest }}
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem
@@ -120,8 +132,8 @@ const LabelsSettings = () => {
           <h3 className="text-3xl font-bold leading-6 text-gray-900">Labels</h3>
           <p className="mt-4 text-sm text-gray-500">Manage the labels of this project.</p>
         </div>
-        <div className="md:w-2/3 flex justify-between items-center gap-2">
-          <h4 className="text-md leading-6 text-gray-900 mb-1">Manage labels</h4>
+        <div className="flex items-center justify-between gap-2 md:w-2/3">
+          <h4 className="text-md mb-1 leading-6 text-gray-900">Manage labels</h4>
           <Button
             theme="secondary"
             className="flex items-center gap-x-1"
@@ -133,22 +145,22 @@ const LabelsSettings = () => {
         </div>
         <div className="space-y-5">
           <div
-            className={`md:w-2/3 border p-3 rounded-md flex items-center gap-2 ${
+            className={`flex items-center gap-2 rounded-md border p-3 md:w-2/3 ${
               newLabelForm ? "" : "hidden"
             }`}
           >
-            <div className="flex-shrink-0 h-8 w-8">
-              <Popover className="relative w-full h-full flex justify-center items-center bg-gray-200 rounded-xl">
+            <div className="h-8 w-8 flex-shrink-0">
+              <Popover className="relative flex h-full w-full items-center justify-center rounded-xl bg-gray-200">
                 {({ open }) => (
                   <>
                     <Popover.Button
-                      className={`group inline-flex items-center text-base font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
+                      className={`group inline-flex items-center text-base font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
                         open ? "text-gray-900" : "text-gray-500"
                       }`}
                     >
                       {watch("colour") && watch("colour") !== "" && (
                         <span
-                          className="w-4 h-4 rounded"
+                          className="h-4 w-4 rounded"
                           style={{
                             backgroundColor: watch("colour") ?? "green",
                           }}
@@ -165,7 +177,7 @@ const LabelsSettings = () => {
                       leaveFrom="opacity-100 translate-y-0"
                       leaveTo="opacity-0 translate-y-1"
                     >
-                      <Popover.Panel className="absolute top-full z-20 left-0 mt-3 px-2 w-screen max-w-xs sm:px-0">
+                      <Popover.Panel className="absolute top-full left-0 z-20 mt-3 w-screen max-w-xs px-2 sm:px-0">
                         <Controller
                           name="colour"
                           control={control}
@@ -182,7 +194,7 @@ const LabelsSettings = () => {
                 )}
               </Popover>
             </div>
-            <div className="w-full flex flex-col justify-center">
+            <div className="flex w-full flex-col justify-center">
               <Input
                 type="text"
                 id="labelName"
@@ -224,7 +236,7 @@ const LabelsSettings = () => {
                 />
               ))
             ) : (
-              <Loader className="md:w-2/3 space-y-5">
+              <Loader className="space-y-5 md:w-2/3">
                 <Loader.Item height="40px"></Loader.Item>
                 <Loader.Item height="40px"></Loader.Item>
                 <Loader.Item height="40px"></Loader.Item>
@@ -236,6 +248,21 @@ const LabelsSettings = () => {
       </section>
     </SettingsLayout>
   );
+};
+
+export const getServerSideProps = async (ctx: NextPageContext) => {
+  const projectId = ctx.query.projectId as string;
+
+  const memberDetail = await requiredAdmin(projectId, ctx.req?.headers.cookie);
+
+  return {
+    props: {
+      isOwner: memberDetail?.role === 20,
+      isMember: memberDetail?.role === 15,
+      isViewer: memberDetail?.role === 10,
+      isGuest: memberDetail?.role === 5,
+    },
+  };
 };
 
 export default LabelsSettings;

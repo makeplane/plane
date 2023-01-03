@@ -1,14 +1,18 @@
-// react
 import { useState } from "react";
 // next
 import Image from "next/image";
+import type { NextPage, NextPageContext } from "next";
 // swr
 import useSWR from "swr";
 // services
 import projectService from "lib/services/project.service";
+// lib
+import { requiredAdmin } from "lib/auth";
 // hooks
 import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
+// constants
+import { ROLE } from "constants/";
 // layouts
 import SettingsLayout from "layouts/settings-layout";
 // components
@@ -21,22 +25,23 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 // fetch-keys
 import { PROJECT_INVITATIONS, PROJECT_MEMBERS } from "constants/fetch-keys";
 
-const ROLE = {
-  5: "Guest",
-  10: "Viewer",
-  15: "Member",
-  20: "Admin",
+type TMemberSettingsProps = {
+  isMember: boolean;
+  isOwner: boolean;
+  isViewer: boolean;
+  isGuest: boolean;
 };
 
-const MembersSettings = () => {
+const MembersSettings: NextPage<TMemberSettingsProps> = (props) => {
+  const { isMember, isOwner, isViewer, isGuest } = props;
+
+  const [inviteModal, setInviteModal] = useState(false);
   const [selectedMember, setSelectedMember] = useState<string | null>(null);
   const [selectedRemoveMember, setSelectedRemoveMember] = useState<string | null>(null);
   const [selectedInviteRemoveMember, setSelectedInviteRemoveMember] = useState<string | null>(null);
-  const [inviteModal, setInviteModal] = useState(false);
-
-  const { activeWorkspace, activeProject } = useUser();
 
   const { setToastAlert } = useToast();
+  const { activeWorkspace, activeProject } = useUser();
 
   const { data: projectMembers, mutate: mutateMembers } = useSWR(
     activeWorkspace && activeProject ? PROJECT_MEMBERS(activeProject.id) : null,
@@ -130,6 +135,7 @@ const MembersSettings = () => {
       />
       <SettingsLayout
         type="project"
+        memberType={{ isMember, isOwner, isViewer, isGuest }}
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem
@@ -146,7 +152,7 @@ const MembersSettings = () => {
             <p className="mt-4 text-sm text-gray-500">Manage all the members of the project.</p>
           </div>
           {!projectMembers || !projectInvitations ? (
-            <Loader className="md:w-2/3 space-y-5">
+            <Loader className="space-y-5 md:w-2/3">
               <Loader.Item height="40px"></Loader.Item>
               <Loader.Item height="40px"></Loader.Item>
               <Loader.Item height="40px"></Loader.Item>
@@ -154,8 +160,8 @@ const MembersSettings = () => {
             </Loader>
           ) : (
             <div className="md:w-2/3">
-              <div className="flex justify-between items-center gap-2">
-                <h4 className="text-md leading-6 text-gray-900 mb-1">Manage members</h4>
+              <div className="flex items-center justify-between gap-2">
+                <h4 className="text-md mb-1 leading-6 text-gray-900">Manage members</h4>
                 <Button
                   theme="secondary"
                   className="flex items-center gap-x-1"
@@ -165,12 +171,12 @@ const MembersSettings = () => {
                   Add Member
                 </Button>
               </div>
-              <div className="space-y-6 mt-6">
+              <div className="mt-6 space-y-6">
                 {members.length > 0
                   ? members.map((member) => (
-                      <div key={member.id} className="flex justify-between items-center">
+                      <div key={member.id} className="flex items-center justify-between">
                         <div className="flex items-center gap-x-8 gap-y-2">
-                          <div className="h-10 w-10 p-4 flex items-center justify-center bg-gray-700 text-white rounded capitalize relative">
+                          <div className="relative flex h-10 w-10 items-center justify-center rounded bg-gray-700 p-4 capitalize text-white">
                             {member.avatar && member.avatar !== "" ? (
                               <Image
                                 src={member.avatar}
@@ -276,6 +282,21 @@ const MembersSettings = () => {
       </SettingsLayout>
     </>
   );
+};
+
+export const getServerSideProps = async (ctx: NextPageContext) => {
+  const projectId = ctx.query.projectId as string;
+
+  const memberDetail = await requiredAdmin(projectId, ctx.req?.headers.cookie);
+
+  return {
+    props: {
+      isOwner: memberDetail?.role === 20,
+      isMember: memberDetail?.role === 15,
+      isViewer: memberDetail?.role === 10,
+      isGuest: memberDetail?.role === 5,
+    },
+  };
 };
 
 export default MembersSettings;

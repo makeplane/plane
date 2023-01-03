@@ -9,6 +9,9 @@ import SettingsSidebar from "layouts/navbar/settings-sidebar";
 // types
 import { Meta } from "./types";
 import { useRouter } from "next/router";
+import { NotAuthorizedView } from "components/core";
+import Link from "next/link";
+import { Button } from "ui";
 
 type Props = {
   meta?: Meta;
@@ -20,6 +23,12 @@ type Props = {
   left?: JSX.Element;
   right?: JSX.Element;
   type: "workspace" | "project";
+  memberType?: {
+    isMember: boolean;
+    isOwner: boolean;
+    isViewer: boolean;
+    isGuest: boolean;
+  };
 };
 
 const workspaceLinks: {
@@ -28,19 +37,11 @@ const workspaceLinks: {
 }[] = [
   {
     label: "General",
-    href: "#",
+    href: "/workspace/settings",
   },
   {
-    label: "Control",
-    href: "#",
-  },
-  {
-    label: "States",
-    href: "#",
-  },
-  {
-    label: "Labels",
-    href: "#",
+    label: "Members",
+    href: "/workspace/settings/members",
   },
 ];
 
@@ -70,17 +71,16 @@ const sidebarLinks: (pId?: string) => Array<{
   },
 ];
 
-const SettingsLayout: React.FC<Props> = ({
-  meta,
-  children,
-  noPadding = false,
-  bg = "primary",
-  noHeader = false,
-  breadcrumbs,
-  left,
-  right,
-  type,
-}) => {
+const SettingsLayout: React.FC<Props> = (props) => {
+  const { meta, children, noPadding, bg, noHeader, breadcrumbs, left, right, type, memberType } =
+    props;
+  const { isMember, isOwner, isViewer, isGuest } = memberType ?? {
+    isMember: false,
+    isOwner: false,
+    isViewer: false,
+    isGuest: false,
+  };
+
   const router = useRouter();
 
   const { activeProject, user, isUserLoading } = useUser();
@@ -89,19 +89,20 @@ const SettingsLayout: React.FC<Props> = ({
     if (!isUserLoading && (!user || user === null)) router.push("/signin");
   }, [isUserLoading, user, router]);
 
-  const workspaceLinks: {
-    label: string;
-    href: string;
-  }[] = [
-    {
-      label: "General",
-      href: "/workspace/settings",
-    },
-    {
-      label: "Members",
-      href: "/workspace/settings/members",
-    },
-  ];
+  if (!isMember && !isOwner)
+    return (
+      <NotAuthorizedView
+        actionButton={
+          (isViewer || isGuest) && (
+            <Button size="sm">
+              <Link href={`/projects/${activeProject?.id}/issues`}>
+                <a>Go to Issues</a>
+              </Link>
+            </Button>
+          )
+        }
+      />
+    );
 
   return (
     <Container meta={meta}>
