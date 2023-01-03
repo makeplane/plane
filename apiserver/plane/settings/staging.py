@@ -1,13 +1,18 @@
 """Production settings and globals."""
 import ssl
-from plane.settings.local import WEB_URL
-from .common import *  # noqa
+from typing import Optional
+from urllib.parse import urlparse
 
 import dj_database_url
 from urllib.parse import urlparse
+from redis.asyncio.connection import Connection, RedisSSLContext
+
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
+
+from plane.settings.local import WEB_URL
+from .common import *  # noqa
 
 # Database
 DEBUG = False
@@ -181,21 +186,52 @@ RQ_QUEUES = {
     }
 }
 
+class CustomSSLConnection(Connection):
+    def __init__(
+        self,
+        ssl_context: Optional[str] = None,
+        **kwargs,
+    ):
+        super().__init__(**kwargs)
+        self.ssl_context = RedisSSLContext(ssl_context)
+
+class RedisSSLContext:
+    __slots__ = (
+        "context",
+    )
+
+    def __init__(
+        self,
+        ssl_context,
+    ):
+        self.context = ssl_context
+
+    def get(self):
+        return self.context
+
+
+url = urlparse(os.environ.get("REDIS_URL"))
+
 ssl_context = ssl.SSLContext()
 ssl_context.check_hostname = False
 
-heroku_redis_ssl_host = {
-    'address': REDIS_URL, # The 'rediss' schema denotes a SSL connection.
-    'ssl': ssl_context
-}
-
 CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [(heroku_redis_ssl_host)],
-        },
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [
+                    {
+                        'host': url.hostname,
+                        'port': url.port,
+                        'username': url.username,
+                        'password': url.password,
+                        'connection_class': CustomSSLConnection,
+                        'ssl_context': ssl_context,
+                    }
+                ],
+        }
     },
 }
+
 
 WEB_URL = os.environ.get("WEB_URL")
