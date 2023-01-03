@@ -46,7 +46,7 @@ class Module(ProjectBaseModel):
         unique_together = ["name", "project"]
         verbose_name = "Module"
         verbose_name_plural = "Modules"
-        db_table = "module"
+        db_table = "modules"
         ordering = ("-created_at",)
 
     def __str__(self):
@@ -62,7 +62,7 @@ class ModuleMember(ProjectBaseModel):
         unique_together = ["module", "member"]
         verbose_name = "Module Member"
         verbose_name_plural = "Module Members"
-        db_table = "module_member"
+        db_table = "module_members"
         ordering = ("-created_at",)
 
     def __str__(self):
