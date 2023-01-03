@@ -1,4 +1,5 @@
 """Production settings and globals."""
+import ssl
 from plane.settings.local import WEB_URL
 from .common import *  # noqa
 
@@ -180,12 +181,19 @@ RQ_QUEUES = {
     }
 }
 
+ssl_context = ssl.SSLContext()
+ssl_context.check_hostname = False
+
+heroku_redis_ssl_host = {
+    'address': REDIS_URL, # The 'rediss' schema denotes a SSL connection.
+    'ssl': ssl_context
+}
 
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [(REDIS_URL)],
+            "hosts": [(heroku_redis_ssl_host)],
         },
     },
 }
