@@ -1,4 +1,4 @@
-import { useCallback, FC } from "react";
+import { useCallback, FC, useEffect } from "react";
 import { InvalidContentHandler } from "remirror";
 import {
   BoldExtension,
@@ -91,6 +91,10 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = ({
     stringHandler: "html",
     onError,
   });
+
+  useEffect(() => {
+    manager.view.updateState(manager.createState({ content: value }));
+  }, [manager, value]);
 
   return (
     <div className="mt-2 mb-4">
