@@ -194,15 +194,11 @@ class InviteWorkspaceEndpoint(BaseAPIView):
                 algorithm="HS256",
             )
 
-            # Check if user is already member of plane
-            user = User.objects.filter(email=email).first()
-
             workspace_invitation_obj = WorkspaceMemberInvite.objects.create(
                 email=email.strip().lower(),
                 workspace_id=workspace.id,
                 token=token,
                 role=request.data.get("role", 10),
-                user=user,
             )
 
             domain = settings.WEB_URL

@@ -71,13 +71,6 @@ class WorkspaceMemberInvite(BaseModel):
         "db.Workspace", on_delete=models.CASCADE, related_name="workspace_member_invite"
     )
     email = models.CharField(max_length=255)
-    user = models.ForeignKey(
-        "db.User",
-        null=True,
-        on_delete=models.CASCADE,
-        blank=True,
-        related_name="user_invites",
-    )
     accepted = models.BooleanField(default=False)
     token = models.CharField(max_length=255)
     message = models.TextField(null=True)
