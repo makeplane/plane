@@ -1,16 +1,16 @@
 import os
 
-from channels.routing import ProtocolTypeRouter, URLRouter, ChannelNameRouter
+from channels.routing import ProtocolTypeRouter, ChannelNameRouter
 from django.core.asgi import get_asgi_application
-from plane.api.consumers import IssueConsumer
-from django.urls import re_path
-from channels.auth import AuthMiddlewareStack
-from channels.security.websocket import AllowedHostsOriginValidator
+
+django_asgi_app = get_asgi_application()
+
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "plane.settings.production")
 # Initialize Django ASGI application early to ensure the AppRegistry
 # is populated before importing code that may import ORM models.
 
+from plane.api.consumers import IssueConsumer
 
 application = ProtocolTypeRouter(
     {
