@@ -10,13 +10,12 @@ import { Popover, Transition } from "@headlessui/react";
 import { requiredAuth } from "lib/auth";
 // services
 import issuesServices from "lib/services/issues.service";
+import projectService from "lib/services/project.service";
+import workspaceService from "lib/services/workspace.service";
 // hooks
-import useUser from "lib/hooks/useUser";
 import useIssuesProperties from "lib/hooks/useIssuesProperties";
 // api routes
 import { PROJECT_MEMBERS } from "constants/api-routes";
-// services
-import projectService from "lib/services/project.service";
 // constants
 import { filterIssueOptions, groupByOptions, orderByOptions } from "constants/";
 // commons
@@ -46,17 +45,30 @@ import { PlusIcon, Squares2X2Icon } from "@heroicons/react/20/solid";
 // types
 import type { IIssue, Properties, IssueResponse } from "types";
 // fetch-keys
-import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import { PROJECT_DETAILS, PROJECT_ISSUES_LIST, WORKSPACE_DETAILS } from "constants/fetch-keys";
 
 const ProjectIssues: NextPage = () => {
   const [isOpen, setIsOpen] = useState(false);
-
   const [selectedIssue, setSelectedIssue] = useState<
     (IIssue & { actionType: "edit" | "delete" }) | undefined
   >(undefined);
   const [deleteIssue, setDeleteIssue] = useState<string | undefined>(undefined);
 
-  const { activeWorkspace, activeProject } = useUser();
+  const {
+    query: { workspaceSlug, projectId },
+  } = useRouter();
+
+  const { data: activeWorkspace } = useSWR(
+    workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
+    () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null)
+  );
+
+  const { data: activeProject } = useSWR(
+    activeWorkspace && projectId ? PROJECT_DETAILS(projectId as string) : null,
+    activeWorkspace && projectId
+      ? () => projectService.getProject(activeWorkspace.slug, projectId as string)
+      : null
+  );
 
   const { data: projectIssues } = useSWR(
     activeWorkspace && activeProject
@@ -65,15 +77,6 @@ const ProjectIssues: NextPage = () => {
     activeWorkspace && activeProject
       ? () => issuesServices.getIssues(activeWorkspace.slug, activeProject.id)
       : null
-  );
-
-  const router = useRouter();
-
-  const { projectId } = router.query;
-
-  const [properties, setProperties] = useIssuesProperties(
-    activeWorkspace?.slug,
-    projectId as string
   );
 
   const { data: members } = useSWR(
@@ -91,25 +94,10 @@ const ProjectIssues: NextPage = () => {
     }
   );
 
-  const partialUpdateIssue = (formData: Partial<IIssue>, issueId: string) => {
-    if (!activeWorkspace || !activeProject) return;
-    issuesServices
-      .patchIssue(activeWorkspace.slug, activeProject.id, issueId, formData)
-      .then((response) => {
-        mutate<IssueResponse>(
-          PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id),
-          (prevData) => ({
-            ...(prevData as IssueResponse),
-            results:
-              prevData?.results.map((issue) => (issue.id === response.id ? response : issue)) ?? [],
-          }),
-          false
-        );
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+  const [properties, setProperties] = useIssuesProperties(
+    activeWorkspace?.slug,
+    projectId as string
+  );
 
   const {
     issueView,
@@ -134,6 +122,26 @@ const ProjectIssues: NextPage = () => {
       }, 500);
     }
   }, [isOpen]);
+
+  const partialUpdateIssue = (formData: Partial<IIssue>, issueId: string) => {
+    if (!activeWorkspace || !activeProject) return;
+    issuesServices
+      .patchIssue(activeWorkspace.slug, activeProject.id, issueId, formData)
+      .then((response) => {
+        mutate<IssueResponse>(
+          PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id),
+          (prevData) => ({
+            ...(prevData as IssueResponse),
+            results:
+              prevData?.results.map((issue) => (issue.id === response.id ? response : issue)) ?? [],
+          }),
+          false
+        );
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   return (
     <AppLayout

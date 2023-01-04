@@ -1,12 +1,15 @@
 import React, { useState } from "react";
-// next
+
+import { useRouter } from "next/router";
 import type { NextPage, NextPageContext } from "next";
-// swr
+
 import useSWR from "swr";
-// constants
-import { STATE_LIST } from "constants/fetch-keys";
+
+import { PROJECT_DETAILS, STATE_LIST, WORKSPACE_DETAILS } from "constants/fetch-keys";
 // services
 import stateService from "lib/services/state.service";
+import projectService from "lib/services/project.service";
+import workspaceService from "lib/services/workspace.service";
 // lib
 import { requiredAdmin } from "lib/auth";
 // hooks
@@ -42,7 +45,21 @@ const StatesSettings: NextPage<TStateSettingsProps> = (props) => {
   const [selectedState, setSelectedState] = useState<string | null>(null);
   const [selectDeleteState, setSelectDeleteState] = useState<string | null>(null);
 
-  const { activeWorkspace, activeProject } = useUser();
+  const {
+    query: { workspaceSlug, projectId },
+  } = useRouter();
+
+  const { data: activeWorkspace } = useSWR(
+    workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
+    () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null)
+  );
+
+  const { data: activeProject } = useSWR(
+    activeWorkspace && projectId ? PROJECT_DETAILS(projectId as string) : null,
+    activeWorkspace && projectId
+      ? () => projectService.getProject(activeWorkspace.slug, projectId as string)
+      : null
+  );
 
   const { data: states } = useSWR(
     activeWorkspace && activeProject ? STATE_LIST(activeProject.id) : null,

@@ -22,6 +22,7 @@
     "@lexical/table": "^0.6.4",
     "@lexical/utils": "^0.6.4",
     "@remirror/core": "^2.0.11",
+    "@remirror/extension-react-tables": "^2.2.11",
     "@remirror/pm": "^2.0.3",
     "@remirror/react": "^2.0.24",
     "axios": "^1.1.3",

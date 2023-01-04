@@ -1,8 +1,15 @@
 import React, { useState } from "react";
-// next
+
 import type { NextPage } from "next";
+import { useRouter } from "next/router";
+
+import useSWR from "swr";
+
 // services
 import projectService from "lib/services/project.service";
+import workspaceService from "lib/services/workspace.service";
+// constants
+import { WORKSPACE_DETAILS, PROJECTS_LIST } from "constants/fetch-keys";
 // hooks
 import useUser from "lib/hooks/useUser";
 // layouts
@@ -27,7 +34,19 @@ const Projects: NextPage = () => {
   const [deleteProject, setDeleteProject] = useState<string | null>(null);
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
 
-  const { projects, activeWorkspace, mutateProjects } = useUser();
+  const {
+    query: { workspaceSlug },
+  } = useRouter();
+
+  const { data: activeWorkspace } = useSWR(
+    workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
+    () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null)
+  );
+
+  const { data: projects, mutate: mutateProjects } = useSWR(
+    workspaceSlug ? PROJECTS_LIST(workspaceSlug as string) : null,
+    () => (workspaceSlug ? projectService.getProjects(workspaceSlug as string) : null)
+  );
 
   const handleInvitation = (project_invitation: any, action: "accepted" | "withdraw") => {
     if (action === "accepted") {
@@ -42,8 +61,9 @@ const Projects: NextPage = () => {
   };
 
   const submitInvitations = () => {
+    if (!workspaceSlug) return;
     projectService
-      .joinProject((activeWorkspace as any)?.slug, { project_ids: invitationsRespond })
+      .joinProject(workspaceSlug as string, { project_ids: invitationsRespond })
       .then(async (res: any) => {
         console.log(res);
         setInvitationsRespond([]);
@@ -110,7 +130,7 @@ const Projects: NextPage = () => {
                   <ProjectMemberInvitations
                     key={item.id}
                     project={item}
-                    slug={(activeWorkspace as any).slug}
+                    slug={(activeWorkspace as any)?.slug}
                     invitationsRespond={invitationsRespond}
                     handleInvitation={handleInvitation}
                     setDeleteProject={setDeleteProject}

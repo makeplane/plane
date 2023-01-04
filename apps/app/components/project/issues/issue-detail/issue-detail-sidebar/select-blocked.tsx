@@ -27,12 +27,13 @@ type FormInput = {
 };
 
 type Props = {
+  submitChanges: (formData: Partial<IIssue>) => void;
   issueDetail: IIssue | undefined;
   issuesList: IIssue[];
   watch: UseFormWatch<IIssue>;
 };
 
-const SelectBlocked: React.FC<Props> = ({ issueDetail, issuesList, watch }) => {
+const SelectBlocked: React.FC<Props> = ({ submitChanges, issueDetail, issuesList, watch }) => {
   const [query, setQuery] = useState("");
   const [isBlockedModalOpen, setIsBlockedModalOpen] = useState(false);
 
@@ -65,65 +66,9 @@ const SelectBlocked: React.FC<Props> = ({ issueDetail, issuesList, watch }) => {
       return;
     }
 
-    data.issue_ids.map((issue) => {
-      if (!activeWorkspace || !activeProject || !issueDetail) return;
-
-      const currentBlockers =
-        issues?.results
-          .find((i) => i.id === issue)
-          ?.blocker_issues.map((b) => b.blocker_issue_detail?.id ?? "") ?? [];
-
-      issuesService
-        .patchIssue(activeWorkspace.slug, activeProject.id, issue, {
-          blockers_list: [...currentBlockers, issueDetail.id],
-        })
-        .then((response) => {
-          mutateIssues((prevData) => ({
-            ...(prevData as IssueResponse),
-            results: (prevData?.results ?? []).map((issue) => {
-              if (issue.id === issueDetail.id) {
-                return { ...issue, ...response };
-              }
-              return issue;
-            }),
-          }));
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    });
-
+    const newBlocked = [...watch("blocked_list"), ...data.issue_ids];
+    submitChanges({ blocks_list: newBlocked });
     handleClose();
-  };
-
-  const removeBlocked = (issueId: string) => {
-    if (!activeWorkspace || !activeProject || !issueDetail) return;
-
-    const currentBlockers =
-      issues?.results
-        .find((i) => i.id === issueId)
-        ?.blocker_issues.map((b) => b.blocker_issue_detail?.id ?? "") ?? [];
-
-    const updatedBlockers = currentBlockers.filter((b) => b !== issueDetail.id);
-
-    issuesService
-      .patchIssue(activeWorkspace.slug, activeProject.id, issueId, {
-        blockers_list: updatedBlockers,
-      })
-      .then((response) => {
-        mutateIssues((prevData) => ({
-          ...(prevData as IssueResponse),
-          results: (prevData?.results ?? []).map((issue) => {
-            if (issue.id === issueDetail.id) {
-              return { ...issue, ...response };
-            }
-            return issue;
-          }),
-        }));
-      })
-      .catch((error) => {
-        console.log(error);
-      });
   };
 
   return (
@@ -139,7 +84,14 @@ const SelectBlocked: React.FC<Props> = ({ issueDetail, issuesList, watch }) => {
                 <span
                   key={issue}
                   className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-red-500 px-1.5 py-0.5 text-xs text-red-500 hover:bg-red-50"
-                  onClick={() => removeBlocked(issue)}
+                  onClick={() => {
+                    const updatedBlocked: string[] = watch("blocked_list").filter(
+                      (i) => i !== issue
+                    );
+                    submitChanges({
+                      blocks_list: updatedBlocked,
+                    });
+                  }}
                 >
                   {`${activeProject?.identifier}-${
                     issues?.results.find((i) => i.id === issue)?.sequence_id

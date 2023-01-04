@@ -8,8 +8,8 @@ import useSWR, { mutate } from "swr";
 import modulesService from "lib/services/modules.service";
 import projectService from "lib/services/project.service";
 import issuesService from "lib/services/issues.service";
+import workspaceService from "lib/services/workspace.service";
 // hooks
-import useUser from "lib/hooks/useUser";
 import useIssuesFilter from "lib/hooks/useIssuesFilter";
 import useIssuesProperties from "lib/hooks/useIssuesProperties";
 // layouts
@@ -50,8 +50,10 @@ import {
   MODULE_DETAIL,
   MODULE_ISSUES,
   MODULE_LIST,
+  PROJECT_DETAILS,
   PROJECT_ISSUES_LIST,
   PROJECT_MEMBERS,
+  WORKSPACE_DETAILS,
 } from "constants/fetch-keys";
 // common
 import { classNames, replaceUnderscoreIfSnakeCase } from "constants/common";
@@ -59,20 +61,32 @@ import { classNames, replaceUnderscoreIfSnakeCase } from "constants/common";
 import { filterIssueOptions, groupByOptions, orderByOptions } from "constants/";
 
 const SingleModule = () => {
-  const [createUpdateIssueModal, setCreateUpdateIssueModal] = useState(false);
+  const [moduleSidebar, setModuleSidebar] = useState(true);
+  const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
   const [selectedIssues, setSelectedIssues] = useState<SelectIssue>();
   const [moduleIssuesListModal, setModuleIssuesListModal] = useState(false);
+  const [createUpdateIssueModal, setCreateUpdateIssueModal] = useState(false);
   const [deleteIssue, setDeleteIssue] = useState<string | undefined>(undefined);
-  const [moduleSidebar, setModuleSidebar] = useState(true);
-
-  const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
   const [selectedModuleForDelete, setSelectedModuleForDelete] = useState<SelectModuleType>();
-
   const [preloadedData, setPreloadedData] = useState<
     (Partial<IIssue> & { actionType: "createIssue" | "edit" | "delete" }) | undefined
   >(undefined);
 
-  const { activeWorkspace, activeProject } = useUser();
+  const {
+    query: { workspaceSlug, projectId, moduleId },
+  } = useRouter();
+
+  const { data: activeWorkspace } = useSWR(
+    workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
+    () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null)
+  );
+
+  const { data: activeProject } = useSWR(
+    activeWorkspace && projectId ? PROJECT_DETAILS(projectId as string) : null,
+    activeWorkspace && projectId
+      ? () => projectService.getProject(activeWorkspace.slug, projectId as string)
+      : null
+  );
 
   const { data: issues } = useSWR(
     activeWorkspace && activeProject
@@ -82,10 +96,6 @@ const SingleModule = () => {
       ? () => issuesService.getIssues(activeWorkspace.slug, activeProject.id)
       : null
   );
-
-  const router = useRouter();
-
-  const { moduleId } = router.query;
 
   const [properties, setProperties] = useIssuesProperties(
     activeWorkspace?.slug,
@@ -111,10 +121,6 @@ const SingleModule = () => {
       : null
   );
 
-  const moduleIssuesArray = moduleIssues?.map((issue) => {
-    return { bridge: issue.id, ...issue.issue_detail };
-  });
-
   const { data: moduleDetail } = useSWR<IModule>(
     MODULE_DETAIL,
     activeWorkspace && activeProject
@@ -126,19 +132,6 @@ const SingleModule = () => {
           )
       : null
   );
-
-  const {
-    issueView,
-    groupByProperty,
-    setGroupByProperty,
-    groupedByIssues,
-    setOrderBy,
-    setFilterIssue,
-    orderBy,
-    filterIssue,
-    setIssueViewToKanban,
-    setIssueViewToList,
-  } = useIssuesFilter(moduleIssuesArray ?? []);
 
   const { data: members } = useSWR(
     activeWorkspace && activeProject ? PROJECT_MEMBERS(activeProject.id) : null,
@@ -153,7 +146,22 @@ const SingleModule = () => {
     }
   );
 
-  console.log(moduleDetail);
+  const moduleIssuesArray = moduleIssues?.map((issue) => {
+    return { bridge: issue.id, ...issue.issue_detail };
+  });
+
+  const {
+    issueView,
+    groupByProperty,
+    setGroupByProperty,
+    groupedByIssues,
+    setOrderBy,
+    setFilterIssue,
+    orderBy,
+    filterIssue,
+    setIssueViewToKanban,
+    setIssueViewToList,
+  } = useIssuesFilter(moduleIssuesArray ?? []);
 
   const handleAddIssuesToModule = (data: { issues: string[] }) => {
     if (activeWorkspace && activeProject) {

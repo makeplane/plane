@@ -1,12 +1,13 @@
 import { useCallback, useEffect } from "react";
-// next
+
+import { useRouter } from "next/router";
 import type { NextPage, NextPageContext } from "next";
-// swr
+
 import useSWR, { mutate } from "swr";
-// react-hook-form
+
 import { Controller, useForm } from "react-hook-form";
 // fetch-keys
-import { PROJECTS_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
+import { PROJECTS_LIST, PROJECT_DETAILS, WORKSPACE_DETAILS } from "constants/fetch-keys";
 // common
 import { debounce } from "constants/common";
 // constants
@@ -17,8 +18,8 @@ import { requiredAdmin } from "lib/auth";
 import SettingsLayout from "layouts/settings-layout";
 // services
 import projectService from "lib/services/project.service";
+import workspaceService from "lib/services/workspace.service";
 // hooks
-import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
 // ui
 import {
@@ -52,7 +53,22 @@ const GeneralSettings: NextPage<TGeneralSettingsProps> = (props) => {
   const { isMember, isOwner, isViewer, isGuest } = props;
 
   const { setToastAlert } = useToast();
-  const { activeWorkspace, activeProject } = useUser();
+
+  const {
+    query: { workspaceSlug, projectId },
+  } = useRouter();
+
+  const { data: activeWorkspace } = useSWR(
+    workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
+    () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null)
+  );
+
+  const { data: activeProject } = useSWR(
+    activeWorkspace && projectId ? PROJECT_DETAILS(projectId as string) : null,
+    activeWorkspace && projectId
+      ? () => projectService.getProject(activeWorkspace.slug, projectId as string)
+      : null
+  );
 
   const { data: projectDetails } = useSWR<IProject>(
     activeWorkspace && activeProject ? PROJECT_DETAILS(activeProject.id) : null,

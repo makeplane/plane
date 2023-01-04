@@ -261,6 +261,21 @@ class JoinWorkspaceEndpoint(BaseAPIView):
                 workspace_invite.save()
 
                 if workspace_invite.accepted:
+
+                    # Check if the user created account after invitation
+                    user = User.objects.filter(email=email).first()
+
+                    # If the user is present then create the workspace member
+                    if user is not None:
+                        WorkspaceMember.objects.create(
+                            workspace=workspace_invite.workspace,
+                            member=user,
+                            role=workspace_invite.role,
+                        )
+
+                        # Delete the invitation
+                        workspace_invite.delete()
+
                     return Response(
                         {"message": "Workspace Invitation Accepted"},
                         status=status.HTTP_200_OK,
@@ -381,6 +396,9 @@ class TeamMemberViewSet(BaseViewSet):
 
     serializer_class = TeamSerializer
     model = Team
+    permission_classes = [
+        WorkSpaceAdminPermission,
+    ]
 
     search_fields = [
         "member__email",
@@ -501,6 +519,25 @@ class UserLastProjectWithWorkspaceEndpoint(BaseAPIView):
             )
 
         except User.DoesNotExist:
+            return Response({"error": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+
+class WorkspaceMemberUserEndpoint(BaseAPIView):
+
+    def get(self, request, slug):
+        try:
+            workspace_member = WorkspaceMember.objects.get(
+                member=request.user, workspace__slug=slug
+            )
+            serializer = WorkSpaceMemberSerializer(workspace_member)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Workspace.DoesNotExist:
             return Response({"error": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             capture_exception(e)

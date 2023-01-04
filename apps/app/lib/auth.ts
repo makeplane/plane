@@ -66,3 +66,4 @@ export const requiredAdmin = async (projectId: string, cookie?: string) => {
 
   return memberDetail || null;
 };
+

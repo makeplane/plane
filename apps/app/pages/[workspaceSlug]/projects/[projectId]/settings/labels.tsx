@@ -1,16 +1,17 @@
 import React, { useState } from "react";
-// next
+
+import { useRouter } from "next/router";
 import type { NextPageContext, NextPage } from "next";
-// swr
+
 import useSWR from "swr";
-// react-hook-form
+
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-// react-color
+
 import { TwitterPicker } from "react-color";
 // services
+import projectService from "lib/services/project.service";
+import workspaceService from "lib/services/workspace.service";
 import issuesService from "lib/services/issues.service";
-// hooks
-import useUser from "lib/hooks/useUser";
 // layouts
 import SettingsLayout from "layouts/settings-layout";
 // components
@@ -22,7 +23,7 @@ import { BreadcrumbItem, Breadcrumbs, Button, Input, Loader } from "ui";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 // fetch-keys
-import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
+import { PROJECT_DETAILS, PROJECT_ISSUE_LABELS, WORKSPACE_DETAILS } from "constants/fetch-keys";
 // types
 import { IIssueLabels } from "types";
 import { requiredAdmin } from "lib/auth";
@@ -44,9 +45,23 @@ const LabelsSettings: NextPage<TLabelSettingsProps> = (props) => {
 
   const [newLabelForm, setNewLabelForm] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
-  const [labelIdForUpdate, setLabelidForUpdate] = useState<string | null>(null);
+  const [labelIdForUpdate, setLabelIdForUpdate] = useState<string | null>(null);
 
-  const { activeWorkspace, activeProject } = useUser();
+  const {
+    query: { workspaceSlug, projectId },
+  } = useRouter();
+
+  const { data: activeWorkspace } = useSWR(
+    workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
+    () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null)
+  );
+
+  const { data: activeProject } = useSWR(
+    activeWorkspace && projectId ? PROJECT_DETAILS(projectId as string) : null,
+    activeWorkspace && projectId
+      ? () => projectService.getProject(activeWorkspace.slug, projectId as string)
+      : null
+  );
 
   const {
     register,
@@ -80,7 +95,7 @@ const LabelsSettings: NextPage<TLabelSettingsProps> = (props) => {
     setValue("colour", label.colour);
     setValue("name", label.name);
     setIsUpdating(true);
-    setLabelidForUpdate(label.id);
+    setLabelIdForUpdate(label.id);
   };
 
   const handleLabelUpdate: SubmitHandler<IIssueLabels> = (formData) => {

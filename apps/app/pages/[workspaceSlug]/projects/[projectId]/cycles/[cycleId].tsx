@@ -20,6 +20,7 @@ import { filterIssueOptions, groupByOptions, orderByOptions } from "constants/";
 import issuesServices from "lib/services/issues.service";
 import cycleServices from "lib/services/cycles.service";
 import projectService from "lib/services/project.service";
+import workspaceService from "lib/services/workspace.service";
 // hooks
 import useUser from "lib/hooks/useUser";
 import useIssuesFilter from "lib/hooks/useIssuesFilter";
@@ -39,6 +40,8 @@ import {
   CYCLE_LIST,
   PROJECT_ISSUES_LIST,
   PROJECT_MEMBERS,
+  WORKSPACE_DETAILS,
+  PROJECT_DETAILS,
 } from "constants/fetch-keys";
 // common
 import { classNames, replaceUnderscoreIfSnakeCase } from "constants/common";
@@ -53,20 +56,30 @@ const SingleCycle: React.FC = () => {
     (Partial<IIssue> & { actionType: "createIssue" | "edit" | "delete" }) | undefined
   >(undefined);
 
-  const { activeWorkspace, activeProject } = useUser();
+  const {
+    query: { workspaceSlug, projectId, cycleId },
+  } = useRouter();
 
-  const { data: issues } = useSWR(
-    activeWorkspace && activeProject
-      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
-      : null,
-    activeWorkspace && activeProject
-      ? () => issuesServices.getIssues(activeWorkspace.slug, activeProject.id)
+  const { data: activeWorkspace } = useSWR(
+    workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
+    () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null)
+  );
+
+  const { data: activeProject } = useSWR(
+    activeWorkspace && projectId ? PROJECT_DETAILS(projectId as string) : null,
+    activeWorkspace && projectId
+      ? () => projectService.getProject(activeWorkspace.slug, projectId as string)
       : null
   );
 
-  const router = useRouter();
-
-  const { cycleId } = router.query;
+  const { data: issues } = useSWR(
+    activeWorkspace && projectId
+      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, projectId as string)
+      : null,
+    activeWorkspace && projectId
+      ? () => issuesServices.getIssues(activeWorkspace.slug, projectId as string)
+      : null
+  );
 
   const [properties, setProperties] = useIssuesProperties(
     activeWorkspace?.slug,

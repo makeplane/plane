@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-// next
+
 import Image from "next/image";
 import { useRouter } from "next/router";
 import type { NextPage, NextPageContext } from "next";
-// swr
+
 import useSWR from "swr";
 // services
 import projectService from "lib/services/project.service";
+import workspaceService from "lib/services/workspace.service";
 // hooks
-import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
 // lib
 import { requiredAuth } from "lib/auth";
@@ -26,7 +26,12 @@ import { Spinner, CustomListbox, BreadcrumbItem, Breadcrumbs, HeaderButton } fro
 // icons
 import { PlusIcon, EllipsisHorizontalIcon } from "@heroicons/react/20/solid";
 // fetch-keys
-import { PROJECT_MEMBERS, PROJECT_INVITATIONS } from "constants/fetch-keys";
+import {
+  PROJECT_MEMBERS,
+  PROJECT_INVITATIONS,
+  WORKSPACE_DETAILS,
+  PROJECT_DETAILS,
+} from "constants/fetch-keys";
 
 const ProjectMembers: NextPage = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -36,13 +41,23 @@ const ProjectMembers: NextPage = () => {
   const [selectedRemoveMember, setSelectedRemoveMember] = useState<string | null>(null);
   const [selectedInviteRemoveMember, setSelectedInviteRemoveMember] = useState<string | null>(null);
 
-  const { activeWorkspace, activeProject } = useUser();
+  const {
+    query: { workspaceSlug, projectId },
+  } = useRouter();
 
   const { setToastAlert } = useToast();
 
-  const router = useRouter();
+  const { data: activeWorkspace } = useSWR(
+    workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
+    () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null)
+  );
 
-  const { projectId } = router.query;
+  const { data: activeProject } = useSWR(
+    activeWorkspace && projectId ? PROJECT_DETAILS(projectId as string) : null,
+    activeWorkspace && projectId
+      ? () => projectService.getProject(activeWorkspace.slug, projectId as string)
+      : null
+  );
 
   const { data: projectMembers, mutate: mutateMembers } = useSWR(
     activeWorkspace && projectId ? PROJECT_MEMBERS(projectId as string) : null,

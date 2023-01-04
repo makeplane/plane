@@ -1,23 +1,27 @@
 import React, { useEffect, useState } from "react";
-// next
+
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import type { NextPage, NextPageContext } from "next";
-// swr
+
 import useSWR from "swr";
-// react hook form
+
 import { useForm } from "react-hook-form";
-// react dropzone
+
 import Dropzone from "react-dropzone";
+
 // hooks
 import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
 // lib
 import { requiredAuth } from "lib/auth";
+// services
+import projectService from "lib/services/project.service";
 // layouts
 import AppLayout from "layouts/app-layout";
 // constants
-import { USER_ISSUE, USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
+import { USER_ISSUE, USER_WORKSPACE_INVITATIONS, PROJECTS_LIST } from "constants/fetch-keys";
 // services
 import userService from "lib/services/user.service";
 import fileServices from "lib/services/file.service";
@@ -45,13 +49,43 @@ const defaultValues: Partial<IUser> = {
 };
 
 const Profile: NextPage = () => {
+  const [isEditing, setIsEditing] = useState(false);
   const [image, setImage] = useState<File | null>(null);
   const [isImageUploading, setIsImageUploading] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
 
-  const { user: myProfile, mutateUser, projects, activeWorkspace } = useUser();
+  const {
+    query: { workspaceSlug },
+  } = useRouter();
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    watch,
+    setValue,
+    formState: { errors, isSubmitting },
+  } = useForm<IUser>({ defaultValues });
 
   const { setToastAlert } = useToast();
+  const { user: myProfile, mutateUser } = useUser();
+
+  const { data: myIssues } = useSWR<IIssue[]>(
+    myProfile && workspaceSlug ? USER_ISSUE(workspaceSlug as string) : null,
+    myProfile && workspaceSlug ? () => userService.userIssues(workspaceSlug as string) : null
+  );
+
+  const { data: invitations } = useSWR(USER_WORKSPACE_INVITATIONS, () =>
+    workspaceService.userWorkspaceInvitations()
+  );
+
+  const { data: projects } = useSWR(
+    workspaceSlug ? PROJECTS_LIST(workspaceSlug as string) : null,
+    () => (workspaceSlug ? () => projectService.getProjects(workspaceSlug as string) : null)
+  );
+
+  useEffect(() => {
+    reset({ ...defaultValues, ...myProfile });
+  }, [myProfile, reset]);
 
   const onSubmit = (formData: IUser) => {
     const payload: Partial<IUser> = {
@@ -75,28 +109,6 @@ const Profile: NextPage = () => {
         console.log(error);
       });
   };
-
-  const {
-    register,
-    handleSubmit,
-    reset,
-    watch,
-    setValue,
-    formState: { errors, isSubmitting },
-  } = useForm<IUser>({ defaultValues });
-
-  const { data: myIssues } = useSWR<IIssue[]>(
-    myProfile && activeWorkspace ? USER_ISSUE(activeWorkspace.slug) : null,
-    myProfile && activeWorkspace ? () => userService.userIssues(activeWorkspace.slug) : null
-  );
-
-  const { data: invitations } = useSWR(USER_WORKSPACE_INVITATIONS, () =>
-    workspaceService.userWorkspaceInvitations()
-  );
-
-  useEffect(() => {
-    reset({ ...defaultValues, ...myProfile });
-  }, [myProfile, reset]);
 
   const quickLinks = [
     {

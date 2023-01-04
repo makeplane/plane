@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
-// next
+
 import Image from "next/image";
 import { NextPageContext } from "next";
-// react hook form
+import { useRouter } from "next/router";
+
+import useSWR from "swr";
+
 import { useForm } from "react-hook-form";
-// headless ui
+
 import { Tab } from "@headlessui/react";
-// react dropzone
+
 import Dropzone from "react-dropzone";
 // services
 import workspaceService from "lib/services/workspace.service";
@@ -21,24 +24,33 @@ import useToast from "lib/hooks/useToast";
 // components
 import ConfirmWorkspaceDeletion from "components/workspace/confirm-workspace-deletion";
 // ui
-import { Spinner, Button, Input, Select } from "ui";
-import { BreadcrumbItem, Breadcrumbs } from "ui/Breadcrumbs";
+import { Spinner, Button, Input, Select, BreadcrumbItem, Breadcrumbs } from "ui";
 // types
 import type { IWorkspace } from "types";
+// constants
+import { WORKSPACE_DETAILS } from "constants/fetch-keys";
 
 const defaultValues: Partial<IWorkspace> = {
   name: "",
 };
 
 const WorkspaceSettings = () => {
-  const { activeWorkspace, mutateWorkspaces } = useUser();
+  const { mutateWorkspaces } = useUser();
+
+  const {
+    query: { workspaceSlug },
+  } = useRouter();
 
   const { setToastAlert } = useToast();
 
   const [isOpen, setIsOpen] = useState(false);
-
   const [image, setImage] = useState<File | null>(null);
   const [isImageUploading, setIsImageUploading] = useState(false);
+
+  const { data: activeWorkspace } = useSWR(
+    workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
+    () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null)
+  );
 
   const {
     register,

@@ -353,6 +353,11 @@ class ProjectMemberViewSet(BaseViewSet):
 
 
 class AddMemberToProjectEndpoint(BaseAPIView):
+
+    permission_classes = [
+        ProjectBasePermission,
+    ]
+
     def post(self, request, slug, project_id):
         try:
 
@@ -404,6 +409,11 @@ class AddMemberToProjectEndpoint(BaseAPIView):
 
 
 class AddTeamToProjectEndpoint(BaseAPIView):
+
+    permission_classes = [
+        ProjectBasePermission,
+    ]
+
     def post(self, request, slug, project_id):
 
         try:

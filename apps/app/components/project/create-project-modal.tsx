@@ -13,7 +13,7 @@ import { createSimilarString, getRandomEmoji } from "constants/common";
 // constants
 import { NETWORK_CHOICES } from "constants/";
 // fetch keys
-import { PROJECTS_LIST, WORKSPACE_MEMBERS } from "constants/fetch-keys";
+import { PROJECTS_LIST, WORKSPACE_MEMBERS, WORKSPACE_MEMBERS_ME } from "constants/fetch-keys";
 // hooks
 import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
@@ -61,13 +61,15 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
   const [recommendedIdentifier, setRecommendedIdentifier] = useState<string[]>([]);
   const [isChangeIdentifierRequired, setIsChangeIdentifierRequired] = useState(true);
 
-  const { data: workspaceMembers } = useSWR(
-    activeWorkspace ? WORKSPACE_MEMBERS(activeWorkspace.slug) : null,
-    activeWorkspace ? () => workspaceService.workspaceMembers(activeWorkspace.slug) : null,
+  const { data: myWorkspaceMembership } = useSWR(
+    activeWorkspace ? WORKSPACE_MEMBERS_ME(activeWorkspace.slug) : null,
+    activeWorkspace ? () => workspaceService.workspaceMemberMe(activeWorkspace.slug) : null,
     {
       shouldRetryOnError: false,
     }
   );
+
+  // console.log(workspaceMembers);
 
   const {
     register,
@@ -154,14 +156,19 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
   };
 
   // FIXME: remove this and authorize using getServerSideProps
-  if (workspaceMembers) {
-    const isMember = workspaceMembers.find((member) => member.member.id === user?.id);
-    const isGuest = workspaceMembers.find(
-      (member) => member.member.id === user?.id && member.role === 5
-    );
 
-    if ((!isMember || isGuest) && isOpen) return <IsGuestCondition setIsOpen={setIsOpen} />;
+  if (myWorkspaceMembership) {
+    if (myWorkspaceMembership.role <= 10) return <IsGuestCondition setIsOpen={setIsOpen} />;
   }
+
+  // if (workspaceMembers) {
+  //   const isMember = workspaceMembers.find((member) => member.member.id === user?.id);
+  //   const isGuest = workspaceMembers.find(
+  //     (member) => member.member.id === user?.id && member.role === 5
+  //   );
+
+  //   if ((!isMember || isGuest) && isOpen) return <IsGuestCondition setIsOpen={setIsOpen} />;
+  // }
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>

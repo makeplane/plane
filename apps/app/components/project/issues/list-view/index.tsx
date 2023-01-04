@@ -10,6 +10,7 @@ import { Disclosure, Listbox, Transition } from "@headlessui/react";
 import useUser from "lib/hooks/useUser";
 // services
 import workspaceService from "lib/services/workspace.service";
+import issuesService from "lib/services/issues.service";
 import stateService from "lib/services/state.service";
 // constants
 import {
@@ -20,7 +21,7 @@ import {
 } from "constants/common";
 import { PRIORITIES } from "constants/";
 import { getPriorityIcon } from "constants/global";
-import { STATE_LIST, WORKSPACE_MEMBERS } from "constants/fetch-keys";
+import { PROJECT_ISSUES_LIST, STATE_LIST, WORKSPACE_MEMBERS } from "constants/fetch-keys";
 // ui
 import { CustomMenu, Spinner } from "ui";
 // icons
@@ -29,7 +30,7 @@ import { ChevronDownIcon, PlusIcon, CalendarDaysIcon } from "@heroicons/react/24
 // components
 import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
 // types
-import { IIssue, IWorkspaceMember, NestedKeyOf, Properties } from "types";
+import { IIssue, IssueResponse, IWorkspaceMember, NestedKeyOf, Properties } from "types";
 
 // types
 type Props = {
@@ -55,6 +56,15 @@ const ListView: React.FC<Props> = ({
   >(undefined);
 
   const { activeWorkspace, activeProject } = useUser();
+
+  const { data: issues } = useSWR<IssueResponse>(
+    activeWorkspace && activeProject
+      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
+      : null,
+    activeWorkspace && activeProject
+      ? () => issuesService.getIssues(activeWorkspace.slug, activeProject.id)
+      : null
+  );
 
   const { data: states } = useSWR(
     activeWorkspace && activeProject ? STATE_LIST(activeProject.id) : null,
@@ -137,6 +147,10 @@ const ListView: React.FC<Props> = ({
                                 email: tempPerson?.email,
                               };
                             });
+
+                            const totalChildren = issues?.results.filter(
+                              (i) => i.parent === issue.id
+                            ).length;
 
                             return (
                               <div
@@ -307,20 +321,6 @@ const ListView: React.FC<Props> = ({
                                       )}
                                     </Listbox>
                                   )}
-                                  {properties.start_date && (
-                                    <div className="group relative flex flex-shrink-0 cursor-pointer items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
-                                      <CalendarDaysIcon className="h-4 w-4" />
-                                      {issue.start_date
-                                        ? renderShortNumericDateFormat(issue.start_date)
-                                        : "N/A"}
-                                      <div className="absolute bottom-full right-0 z-10 mb-2 hidden whitespace-nowrap rounded-md bg-white p-2 shadow-md group-hover:block">
-                                        <h5 className="mb-1 font-medium">Started at</h5>
-                                        <div>
-                                          {renderShortNumericDateFormat(issue.start_date ?? "")}
-                                        </div>
-                                      </div>
-                                    </div>
-                                  )}
                                   {properties.due_date && (
                                     <div
                                       className={`group group relative flex flex-shrink-0 cursor-pointer items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
@@ -356,6 +356,11 @@ const ListView: React.FC<Props> = ({
                                               : "Due date")}
                                         </div>
                                       </div>
+                                    </div>
+                                  )}
+                                  {properties.children_count && (
+                                    <div className="flex flex-shrink-0 items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                                      {totalChildren} {totalChildren === 1 ? "child" : "children"}
                                     </div>
                                   )}
                                   {properties.assignee && (

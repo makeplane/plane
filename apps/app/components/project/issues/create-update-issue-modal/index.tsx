@@ -410,11 +410,11 @@ const CreateUpdateIssuesModal: React.FC<Props> = (props) => {
                                 leaveTo="transform opacity-0 scale-95"
                               >
                                 <Menu.Items className="absolute right-0 z-50 mt-2 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                  <div className="p-1">
+                                  <div className="py-1">
                                     <Menu.Item as="div">
                                       <button
                                         type="button"
-                                        className="whitespace-nowrap rounded-md p-2 text-left text-xs text-gray-900 hover:bg-theme hover:text-white "
+                                        className="whitespace-nowrap p-2 text-left text-xs text-gray-900 hover:bg-indigo-50"
                                         onClick={() => setParentIssueListModalOpen(true)}
                                       >
                                         {watch("parent") && watch("parent") !== ""

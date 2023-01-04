@@ -1,17 +1,17 @@
 import React from "react";
-// next
-import type { NextPage, NextPageContext } from "next";
+
 import { useRouter } from "next/router";
-// swr
+import type { NextPage, NextPageContext } from "next";
+
 import useSWR from "swr";
 // layouts
 import AppLayout from "layouts/app-layout";
 // lib
 import { requiredAuth } from "lib/auth";
 // services
+import projectService from "lib/services/project.service";
+import workspaceService from "lib/services/workspace.service";
 import modulesService from "lib/services/modules.service";
-// hooks
-import useUser from "lib/hooks/useUser";
 // components
 import SingleModuleCard from "components/project/modules/single-module-card";
 // ui
@@ -21,13 +21,24 @@ import { PlusIcon, RectangleGroupIcon } from "@heroicons/react/24/outline";
 // types
 import { IModule } from "types/modules";
 // fetch-keys
-import { MODULE_LIST } from "constants/fetch-keys";
+import { MODULE_LIST, PROJECT_DETAILS, WORKSPACE_DETAILS } from "constants/fetch-keys";
 
 const ProjectModules: NextPage = () => {
-  const { activeWorkspace, activeProject } = useUser();
+  const {
+    query: { workspaceSlug, projectId },
+  } = useRouter();
 
-  const router = useRouter();
-  const { projectId } = router.query;
+  const { data: activeWorkspace } = useSWR(
+    workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
+    () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null)
+  );
+
+  const { data: activeProject } = useSWR(
+    activeWorkspace && projectId ? PROJECT_DETAILS(projectId as string) : null,
+    activeWorkspace && projectId
+      ? () => projectService.getProject(activeWorkspace.slug, projectId as string)
+      : null
+  );
 
   const { data: modules } = useSWR<IModule[]>(
     activeWorkspace && projectId ? MODULE_LIST(projectId as string) : null,
@@ -35,8 +46,6 @@ const ProjectModules: NextPage = () => {
       ? () => modulesService.getModules(activeWorkspace.slug, projectId as string)
       : null
   );
-
-  console.log(modules);
 
   return (
     <AppLayout

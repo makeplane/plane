@@ -27,7 +27,6 @@ import { Input, Button, Spinner } from "ui";
 import {
   TagIcon,
   ChevronDownIcon,
-  ClipboardDocumentIcon,
   LinkIcon,
   CalendarDaysIcon,
   TrashIcon,
@@ -103,7 +102,8 @@ const IssueDetailSidebar: React.FC<Props> = ({
         console.log(res);
         reset(defaultValues);
         issueLabelMutate((prevData) => [...(prevData ?? []), res], false);
-        submitChanges({ labels_list: [res.id] });
+        submitChanges({ labels_list: [...(issueDetail?.labels ?? []), res.id] });
+        setCreateLabelForm(false);
       });
   };
 
@@ -143,7 +143,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
                   .then(() => {
                     setToastAlert({
                       type: "success",
-                      title: "Copied to clipboard",
+                      title: "Issue link copied to clipboard",
                     });
                   })
                   .catch(() => {
@@ -155,27 +155,6 @@ const IssueDetailSidebar: React.FC<Props> = ({
               }
             >
               <LinkIcon className="h-3.5 w-3.5" />
-            </button>
-            <button
-              type="button"
-              className="rounded-md border p-2 shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-              onClick={() =>
-                copyTextToClipboard(issueDetail?.id ?? "")
-                  .then(() => {
-                    setToastAlert({
-                      type: "success",
-                      title: "Copied to clipboard",
-                    });
-                  })
-                  .catch(() => {
-                    setToastAlert({
-                      type: "error",
-                      title: "Some error occurred",
-                    });
-                  })
-              }
-            >
-              <ClipboardDocumentIcon className="h-3.5 w-3.5" />
             </button>
             <button
               type="button"
@@ -228,6 +207,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
               watch={watchIssue}
             />
             <SelectBlocked
+              submitChanges={submitChanges}
               issueDetail={issueDetail}
               issuesList={issues?.results.filter((i) => i.id !== issueDetail?.id) ?? []}
               watch={watchIssue}
@@ -258,7 +238,12 @@ const IssueDetailSidebar: React.FC<Props> = ({
             </div>
           </div>
           <div className="py-1">
-            <SelectCycle control={control} handleCycleChange={handleCycleChange} />
+            <SelectCycle
+              issueDetail={issueDetail}
+              control={control}
+              handleCycleChange={handleCycleChange}
+              watch={watchIssue}
+            />
           </div>
         </div>
         <div className="space-y-3 pt-3">

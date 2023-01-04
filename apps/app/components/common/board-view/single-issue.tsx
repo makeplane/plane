@@ -10,18 +10,19 @@ import { DraggableStateSnapshot } from "react-beautiful-dnd";
 import { Listbox, Transition } from "@headlessui/react";
 // constants
 import { PRIORITIES } from "constants/";
-import { STATE_LIST } from "constants/fetch-keys";
+import { PROJECT_ISSUES_LIST, STATE_LIST } from "constants/fetch-keys";
 import { getPriorityIcon } from "constants/global";
+// services
+import issuesService from "lib/services/issues.service";
+import stateService from "lib/services/state.service";
 // hooks
 import useUser from "lib/hooks/useUser";
-// services
-import stateService from "lib/services/state.service";
 // icons
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { CalendarDaysIcon } from "@heroicons/react/20/solid";
 import User from "public/user.png";
 // types
-import { IIssue, IWorkspaceMember, Properties } from "types";
+import { IIssue, IssueResponse, IWorkspaceMember, Properties } from "types";
 // common
 import {
   addSpaceIfCamelCase,
@@ -55,12 +56,23 @@ const SingleBoardIssue: React.FC<Props> = ({
 }) => {
   const { activeProject, activeWorkspace } = useUser();
 
+  const { data: issues } = useSWR<IssueResponse>(
+    activeWorkspace && activeProject
+      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
+      : null,
+    activeWorkspace && activeProject
+      ? () => issuesService.getIssues(activeWorkspace.slug, activeProject.id)
+      : null
+  );
+
   const { data: states } = useSWR(
     activeWorkspace && activeProject ? STATE_LIST(activeProject.id) : null,
     activeWorkspace && activeProject
       ? () => stateService.getStates(activeWorkspace.slug, activeProject.id)
       : null
   );
+
+  const totalChildren = issues?.results.filter((i) => i.parent === issue.id).length;
 
   return (
     <div
@@ -233,19 +245,9 @@ const SingleBoardIssue: React.FC<Props> = ({
               )}
             </Listbox>
           )}
-          {properties.start_date && (
-            <div className="group flex flex-shrink-0 cursor-pointer items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
-              <CalendarDaysIcon className="h-4 w-4" />
-              {issue.start_date ? renderShortNumericDateFormat(issue.start_date) : "N/A"}
-              {/* <div className="fixed -translate-y-3/4 z-10 hidden group-hover:block p-2 bg-white shadow-md rounded-md whitespace-nowrap">
-                <h5 className="font-medium mb-1">Started at</h5>
-                <div>{renderShortNumericDateFormat(issue.start_date ?? "")}</div>
-              </div> */}
-            </div>
-          )}
           {properties.due_date && (
             <div
-              className={`group group flex flex-shrink-0 cursor-pointer items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
+              className={`group flex flex-shrink-0 cursor-pointer items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
                 issue.target_date === null
                   ? ""
                   : issue.target_date < new Date().toISOString()
@@ -267,6 +269,11 @@ const SingleBoardIssue: React.FC<Props> = ({
                       : "Due date")}
                 </div>
               </div> */}
+            </div>
+          )}
+          {properties.children_count && (
+            <div className="flex flex-shrink-0 items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+              {totalChildren} {totalChildren === 1 ? "child" : "children"}
             </div>
           )}
           {properties.assignee && (

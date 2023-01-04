@@ -15,10 +15,9 @@ const initialValues: Properties = {
   state: true,
   assignee: true,
   priority: false,
-  start_date: false,
   due_date: false,
   cycle: false,
-  children_count: false,
+  sub_issue_count: false,
 };
 
 const useIssuesProperties = (workspaceSlug?: string, projectId?: string) => {
@@ -87,10 +86,9 @@ const useIssuesProperties = (workspaceSlug?: string, projectId?: string) => {
     state: properties.state,
     assignee: properties.assignee,
     priority: properties.priority,
-    start_date: properties.start_date,
     due_date: properties.due_date,
     cycle: properties.cycle,
-    children_count: properties.children_count,
+    sub_issue_count: properties.sub_issue_count,
   };
 
   return [newProperties, updateIssueProperties] as const;

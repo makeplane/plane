@@ -35,6 +35,7 @@ export interface IIssue {
   blocker_issues: BlockeIssue[];
   blockers_list: string[];
   blocked_list: string[];
+  blocks_list: string[];
   created_at: Date;
   updated_at: Date;
   name: string;
@@ -141,10 +142,9 @@ export type Properties = {
   state: boolean;
   assignee: boolean;
   priority: boolean;
-  start_date: boolean;
   due_date: boolean;
   cycle: boolean;
-  children_count: boolean;
+  sub_issue_count: boolean;
 };
 
 export interface IIssueLabels {

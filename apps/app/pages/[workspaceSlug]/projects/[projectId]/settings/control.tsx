@@ -1,11 +1,12 @@
 import React, { useEffect } from "react";
-// next
+
+import { useRouter } from "next/router";
 import type { NextPageContext, NextPage } from "next";
-// swr
+
 import useSWR, { mutate } from "swr";
-// headless ui
+
 import { Listbox, Transition } from "@headlessui/react";
-// react-hook-form
+
 import { Controller, useForm } from "react-hook-form";
 // lib
 import { requiredAdmin } from "lib/auth";
@@ -16,7 +17,6 @@ import projectService from "lib/services/project.service";
 import workspaceService from "lib/services/workspace.service";
 // hooks
 import useToast from "lib/hooks/useToast";
-import useUser from "lib/hooks/useUser";
 // ui
 import { BreadcrumbItem, Breadcrumbs, Button } from "ui";
 // icons
@@ -24,7 +24,12 @@ import { CheckIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 // types
 import { IProject, IWorkspace } from "types";
 // fetch-keys
-import { PROJECTS_LIST, PROJECT_DETAILS, WORKSPACE_MEMBERS } from "constants/fetch-keys";
+import {
+  PROJECTS_LIST,
+  PROJECT_DETAILS,
+  WORKSPACE_DETAILS,
+  WORKSPACE_MEMBERS,
+} from "constants/fetch-keys";
 
 type TControlSettingsProps = {
   isMember: boolean;
@@ -37,7 +42,22 @@ const ControlSettings: NextPage<TControlSettingsProps> = (props) => {
   const { isMember, isOwner, isViewer, isGuest } = props;
 
   const { setToastAlert } = useToast();
-  const { activeWorkspace, activeProject } = useUser();
+
+  const {
+    query: { workspaceSlug, projectId },
+  } = useRouter();
+
+  const { data: activeWorkspace } = useSWR(
+    workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
+    () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null)
+  );
+
+  const { data: activeProject } = useSWR(
+    activeWorkspace && projectId ? PROJECT_DETAILS(projectId as string) : null,
+    activeWorkspace && projectId
+      ? () => projectService.getProject(activeWorkspace.slug, projectId as string)
+      : null
+  );
 
   const { data: projectDetails } = useSWR<IProject>(
     activeWorkspace && activeProject ? PROJECT_DETAILS(activeProject.id) : null,
