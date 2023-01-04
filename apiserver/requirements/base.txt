@@ -28,3 +28,4 @@ django-rq==2.5.1
 django-redis==5.2.0
 channels==4.0.0
 channels-redis==4.0.0
+uvicorn==0.20.0
