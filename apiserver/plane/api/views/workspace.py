@@ -168,66 +168,92 @@ class InviteWorkspaceEndpoint(BaseAPIView):
     def post(self, request, slug):
         try:
 
-            email = request.data.get("email", False)
+            emails = request.data.get("emails", False)
 
             # Check if email is provided
-            if not email:
+            if not emails or not len(emails):
                 return Response(
-                    {"error": "Email is required"}, status=status.HTTP_400_BAD_REQUEST
+                    {"error": "Emails are required"}, status=status.HTTP_400_BAD_REQUEST
                 )
 
-            validate_email(email)
-            # Check if user is already a member of workspace
             workspace = Workspace.objects.get(slug=slug)
 
-            if WorkspaceMember.objects.filter(
-                workspace_id=workspace.id, member__email=email
-            ).exists():
+            # Check if user is already a member of workspace
+            workspace_members = WorkspaceMember.objects.filter(
+                workspace_id=workspace.id, member__email__in=emails
+            )
+
+            if len(workspace_members):
                 return Response(
-                    {"error": "User is already member of workspace"},
+                    {
+                        "error": "Some users are already member of workspace",
+                        "workspace_users": WorkSpaceMemberSerializer(
+                            workspace_members, many=True
+                        ).data,
+                    },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            token = jwt.encode(
-                {"email": email, "timestamp": datetime.now().timestamp()},
-                settings.SECRET_KEY,
-                algorithm="HS256",
+            workspace_invitations = []
+            for email in emails:
+                try:
+                    validate_email(email)
+                    workspace_invitations.append(
+                        WorkspaceMemberInvite(
+                            email=email.strip().lower(),
+                            workspace_id=workspace.id,
+                            token=jwt.encode(
+                                {
+                                    "email": email,
+                                    "timestamp": datetime.now().timestamp(),
+                                },
+                                settings.SECRET_KEY,
+                                algorithm="HS256",
+                            ),
+                            role=request.data.get("role", 10),
+                        )
+                    )
+                except ValidationError:
+                    return Response(
+                        {
+                            "error": f"Invalid email - {email} provided a valid email address is required to send the invite"
+                        },
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+            WorkspaceMemberInvite.objects.bulk_create(
+                workspace_invitations,
+                batch_size=10,
             )
 
-            workspace_invitation_obj = WorkspaceMemberInvite.objects.create(
-                email=email.strip().lower(),
-                workspace_id=workspace.id,
-                token=token,
-                role=request.data.get("role", 10),
-            )
+            workspace_invitations = WorkspaceMemberInvite.objects.filter(
+                email__in=emails
+            ).select_related("workspace")
 
-            domain = settings.WEB_URL
-
-            workspace_invitation.delay(
-                email, workspace.id, token, domain, request.user.email
-            )
+            for workspace_invitation in workspace_invitations:
+                workspace_invitation.delay(
+                    workspace_invitation.email,
+                    workspace.id,
+                    workspace_invitation.token,
+                    settings.WEB_URL,
+                    request.user.email,
+                )
 
             return Response(
                 {
-                    "message": "Email sent successfully",
-                    "id": workspace_invitation_obj.id,
+                    "message": "Emails sent successfully",
+                    "invitations": WorkSpaceMemberInviteSerializer(
+                        workspace_invitations, many=True
+                    ).data,
                 },
                 status=status.HTTP_200_OK,
             )
-        except ValidationError:
-            return Response(
-                {
-                    "error": "Invalid email address provided a valid email address is required to send the invite"
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+
         except Workspace.DoesNotExist:
             return Response(
                 {"error": "Workspace does not exists"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except Exception as e:
-            print(e)
             capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
@@ -529,7 +555,6 @@ class UserLastProjectWithWorkspaceEndpoint(BaseAPIView):
 
 
 class WorkspaceMemberUserEndpoint(BaseAPIView):
-
     def get(self, request, slug):
         try:
             workspace_member = WorkspaceMember.objects.get(
