@@ -14,7 +14,6 @@ import { Button } from "ui";
 import {
   CalendarDaysIcon,
   CheckIcon,
-  EyeIcon,
   MinusIcon,
   PencilIcon,
   PlusIcon,
@@ -28,32 +27,34 @@ import { PROJECT_MEMBERS } from "constants/fetch-keys";
 // common
 import { renderShortNumericDateFormat } from "constants/common";
 
-type Props = {
-  project: IProject;
+type TProjectCardProps = {
   slug: string;
+  project: IProject;
   invitationsRespond: string[];
   handleInvitation: (project_invitation: any, action: "accepted" | "withdraw") => void;
   setDeleteProject: (id: string | null) => void;
 };
 
-const ProjectMemberInvitations: React.FC<Props> = ({
-  project,
-  slug,
-  invitationsRespond,
-  handleInvitation,
-  setDeleteProject,
-}) => {
-  const { user } = useUser();
+const ProjectMemberInvitations: React.FC<TProjectCardProps> = (props) => {
+  const { slug, project, invitationsRespond, handleInvitation, setDeleteProject } = props;
 
+  const [selected, setSelected] = useState<any>(false);
+
+  const { user } = useUser();
   const router = useRouter();
 
-  const { data: members } = useSWR<any[]>(PROJECT_MEMBERS(project.id), () =>
+  const { data: members } = useSWR(PROJECT_MEMBERS(project.id), () =>
     projectService.projectMembers(slug, project.id)
   );
 
   const isMember = members?.some((item: any) => item.member.id === (user as any)?.id);
 
-  const [selected, setSelected] = useState<any>(false);
+  const canEdit = members?.some(
+    (item) => (item.member.id === (user as any)?.id && item.role === 20) || item.role === 15
+  );
+  const canDelete = members?.some(
+    (item) => item.member.id === (user as any)?.id && item.role === 20
+  );
 
   if (!members) {
     return (
@@ -102,18 +103,22 @@ const ProjectMemberInvitations: React.FC<Props> = ({
           </div>
           {isMember ? (
             <div className="flex">
-              <Link href={`/projects/${project.id}/settings`}>
-                <a className="grid h-7 w-7 cursor-pointer place-items-center rounded p-1 duration-300 hover:bg-gray-100">
-                  <PencilIcon className="h-4 w-4" />
-                </a>
-              </Link>
-              <button
-                type="button"
-                className="grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-100"
-                onClick={() => setDeleteProject(project.id)}
-              >
-                <TrashIcon className="h-4 w-4 text-red-500" />
-              </button>
+              {canEdit && (
+                <Link href={`/projects/${project.id}/settings`}>
+                  <a className="grid h-7 w-7 cursor-pointer place-items-center rounded p-1 duration-300 hover:bg-gray-100">
+                    <PencilIcon className="h-4 w-4" />
+                  </a>
+                </Link>
+              )}
+              {canDelete && (
+                <button
+                  type="button"
+                  className="grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-100"
+                  onClick={() => setDeleteProject(project.id)}
+                >
+                  <TrashIcon className="h-4 w-4 text-red-500" />
+                </button>
+              )}
             </div>
           ) : null}
         </div>

@@ -162,24 +162,6 @@ const SingleBoardIssue: React.FC<Props> = ({
                       </Listbox.Options>
                     </Transition>
                   </div>
-                  {/* <div className="absolute bottom-full right-0 mb-2 z-10 hidden group-hover:block p-2 bg-white shadow-md rounded-md whitespace-nowrap">
-                    <h5 className="font-medium mb-1 text-gray-900">Priority</h5>
-                    <div
-                      className={`capitalize ${
-                        issue.priority === "urgent"
-                          ? "text-red-600"
-                          : issue.priority === "high"
-                          ? "text-orange-500"
-                          : issue.priority === "medium"
-                          ? "text-yellow-500"
-                          : issue.priority === "low"
-                          ? "text-green-500"
-                          : ""
-                      }`}
-                    >
-                      {issue.priority ?? "None"}
-                    </div>
-                  </div> */}
                 </>
               )}
             </Listbox>
@@ -257,21 +239,9 @@ const SingleBoardIssue: React.FC<Props> = ({
             >
               <CalendarDaysIcon className="h-4 w-4" />
               {issue.target_date ? renderShortNumericDateFormat(issue.target_date) : "N/A"}
-              {/* <div className="fixed -translate-y-3/4 z-10 hidden group-hover:block p-2 bg-white shadow-md rounded-md whitespace-nowrap">
-                <h5 className="font-medium mb-1 text-gray-900">Target date</h5>
-                <div>{renderShortNumericDateFormat(issue.target_date ?? "")}</div>
-                <div>
-                  {issue.target_date &&
-                    (issue.target_date < new Date().toISOString()
-                      ? `Due date has passed by ${findHowManyDaysLeft(issue.target_date)} days`
-                      : findHowManyDaysLeft(issue.target_date) <= 3
-                      ? `Due date is in ${findHowManyDaysLeft(issue.target_date)} days`
-                      : "Due date")}
-                </div>
-              </div> */}
             </div>
           )}
-          {properties.children_count && (
+          {properties.sub_issue_count && (
             <div className="flex flex-shrink-0 items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
               {totalChildren} {totalChildren === 1 ? "child" : "children"}
             </div>

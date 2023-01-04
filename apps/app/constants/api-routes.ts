@@ -45,6 +45,8 @@ export const WORKSPACE_MEMBERS = (workspaceSlug: string) =>
   `/api/workspaces/${workspaceSlug}/members/`;
 export const WORKSPACE_MEMBER_DETAIL = (workspaceSlug: string, memberId: string) =>
   `/api/workspaces/${workspaceSlug}/members/${memberId}/`;
+export const WORKSPACE_MEMBER_ME = (workspaceSlug: string) =>
+  `workspaces/${workspaceSlug}/workspace-members/me/`;
 
 export const WORKSPACE_INVITATIONS = (workspaceSlug: string) =>
   `/api/workspaces/${workspaceSlug}/invitations/`;

@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
-// swr
+
+import { useRouter } from "next/router";
+
 import useSWR, { mutate } from "swr";
-// react hook form
+
 import { useForm, Controller } from "react-hook-form";
-// headless
+
 import { Dialog, Transition } from "@headlessui/react";
 // services
 import projectServices from "lib/services/project.service";
@@ -13,7 +15,12 @@ import { createSimilarString, getRandomEmoji } from "constants/common";
 // constants
 import { NETWORK_CHOICES } from "constants/";
 // fetch keys
-import { PROJECTS_LIST, WORKSPACE_MEMBERS } from "constants/fetch-keys";
+import {
+  PROJECTS_LIST,
+  WORKSPACE_DETAILS,
+  WORKSPACE_MEMBERS,
+  WORKSPACE_MEMBERS_ME,
+} from "constants/fetch-keys";
 // hooks
 import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
@@ -55,15 +62,23 @@ const IsGuestCondition: React.FC<{
 export const CreateProjectModal: React.FC<Props> = (props) => {
   const { isOpen, setIsOpen } = props;
 
-  const { setToastAlert } = useToast();
-  const { activeWorkspace, user } = useUser();
-
   const [recommendedIdentifier, setRecommendedIdentifier] = useState<string[]>([]);
   const [isChangeIdentifierRequired, setIsChangeIdentifierRequired] = useState(true);
 
-  const { data: workspaceMembers } = useSWR(
-    activeWorkspace ? WORKSPACE_MEMBERS(activeWorkspace.slug) : null,
-    activeWorkspace ? () => workspaceService.workspaceMembers(activeWorkspace.slug) : null,
+  const { setToastAlert } = useToast();
+
+  const {
+    query: { workspaceSlug },
+  } = useRouter();
+
+  const { data: activeWorkspace } = useSWR(
+    workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
+    () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null)
+  );
+
+  const { data: myWorkspaceMembership } = useSWR(
+    workspaceSlug ? WORKSPACE_MEMBERS_ME(workspaceSlug as string) : null,
+    workspaceSlug ? () => workspaceService.workspaceMemberMe(workspaceSlug as string) : null,
     {
       shouldRetryOnError: false,
     }
@@ -154,14 +169,19 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
   };
 
   // FIXME: remove this and authorize using getServerSideProps
-  if (workspaceMembers) {
-    const isMember = workspaceMembers.find((member) => member.member.id === user?.id);
-    const isGuest = workspaceMembers.find(
-      (member) => member.member.id === user?.id && member.role === 5
-    );
 
-    if ((!isMember || isGuest) && isOpen) return <IsGuestCondition setIsOpen={setIsOpen} />;
+  if (myWorkspaceMembership) {
+    if (myWorkspaceMembership.role <= 10) return <IsGuestCondition setIsOpen={setIsOpen} />;
   }
+
+  // if (workspaceMembers) {
+  //   const isMember = workspaceMembers.find((member) => member.member.id === user?.id);
+  //   const isGuest = workspaceMembers.find(
+  //     (member) => member.member.id === user?.id && member.role === 5
+  //   );
+
+  //   if ((!isMember || isGuest) && isOpen) return <IsGuestCondition setIsOpen={setIsOpen} />;
+  // }
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>

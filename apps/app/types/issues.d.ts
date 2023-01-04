@@ -142,10 +142,9 @@ export type Properties = {
   state: boolean;
   assignee: boolean;
   priority: boolean;
-  start_date: boolean;
   due_date: boolean;
   cycle: boolean;
-  children_count: boolean;
+  sub_issue_count: boolean;
 };
 
 export interface IIssueLabels {
