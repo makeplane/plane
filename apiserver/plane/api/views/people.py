@@ -58,25 +58,16 @@ class UserEndpoint(BaseViewSet):
 
     def retrieve(self, request):
         try:
-
             workspace = Workspace.objects.get(pk=request.user.last_workspace_id)
-            user = UserSerializer(request.user)
-            workspace = WorkSpaceSerializer(workspace)
             return Response(
-                {"user": user.data, "workspace": workspace.data},
-                status=status.HTTP_200_OK,
+                {"user": UserSerializer(request.user).data, "slug": workspace.slug}
             )
         except Workspace.DoesNotExist:
-            user = UserSerializer(request.user)
-            return Response(
-                {"user": user.data, "workspace": None}, status=status.HTTP_200_OK
-            )
-
+            return Response({"user": UserSerializer(request.user).data, "slug": None})
         except Exception as e:
-            capture_exception(e)
             return Response(
-                {"message": "Something went wrong"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
 
