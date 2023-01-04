@@ -56,29 +56,6 @@ class UserEndpoint(BaseViewSet):
     def get_object(self):
         return self.request.user
 
-    def retrieve(self, request):
-        try:
-
-            workspace = Workspace.objects.get(pk=request.user.last_workspace_id)
-            user = UserSerializer(request.user)
-            workspace = WorkSpaceSerializer(workspace)
-            return Response(
-                {"user": user.data, "workspace": workspace.data},
-                status=status.HTTP_200_OK,
-            )
-        except Workspace.DoesNotExist:
-            user = UserSerializer(request.user)
-            return Response(
-                {"user": user.data, "workspace": None}, status=status.HTTP_200_OK
-            )
-
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"message": "Something went wrong"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
-
 
 class UpdateUserOnBoardedEndpoint(BaseAPIView):
     def patch(self, request):
