@@ -31,65 +31,54 @@ type Props = {
   };
 };
 
-// const workspaceLinks: {
-//   label: string;
-//   href: string;
-// }[] = [
-//   {
-//     label: "General",
-//     href: "/workspace/settings",
-//   },
-//   {
-//     label: "Members",
-//     href: "/workspace/settings/members",
-//   },
-// ];
-
-const workspaceLinks: {
+const workspaceLinks: (wSlug: string) => Array<{
   label: string;
   href: string;
-}[] = [
+}> = (workspaceSlug) => [
   {
     label: "General",
-    href: "/workspace/settings",
+    href: `/${workspaceSlug}/settings`,
   },
   {
     label: "Members",
-    href: "/workspace/settings/members",
+    href: `/${workspaceSlug}/settings/members`,
   },
   {
     label: "Features",
-    href: "/workspace/settings/features",
+    href: `/${workspaceSlug}/settings/features`,
   },
   {
     label: "Billing & Plans",
-    href: "/workspace/settings/billing",
+    href: `/${workspaceSlug}/settings/billing`,
   },
 ];
 
-const sidebarLinks: (pId?: string) => Array<{
+const sidebarLinks: (
+  wSlug?: string,
+  pId?: string
+) => Array<{
   label: string;
   href: string;
-}> = (projectId) => [
+}> = (workspaceSlug, projectId) => [
   {
     label: "General",
-    href: `/projects/${projectId}/settings`,
+    href: `/${workspaceSlug}/projects/${projectId}/settings`,
   },
   {
     label: "Control",
-    href: `/projects/${projectId}/settings/control`,
+    href: `/${workspaceSlug}/projects/${projectId}/settings/control`,
   },
   {
     label: "Members",
-    href: `/projects/${projectId}/settings/members`,
+    href: `/${workspaceSlug}/projects/${projectId}/settings/members`,
   },
   {
     label: "States",
-    href: `/projects/${projectId}/settings/states`,
+    href: `/${workspaceSlug}/projects/${projectId}/settings/states`,
   },
   {
     label: "Labels",
-    href: `/projects/${projectId}/settings/labels`,
+    href: `/${workspaceSlug}/projects/${projectId}/settings/labels`,
   },
 ];
 
@@ -103,13 +92,9 @@ const SettingsLayout: React.FC<Props> = (props) => {
     isGuest: false,
   };
 
-  const router = useRouter();
-
-  const { activeProject, user, isUserLoading } = useUser();
-
-  useEffect(() => {
-    if (!isUserLoading && (!user || user === null)) router.push("/signin");
-  }, [isUserLoading, user, router]);
+  const {
+    query: { workspaceSlug, projectId },
+  } = useRouter();
 
   if (!isMember && !isOwner)
     return (
@@ -117,7 +102,7 @@ const SettingsLayout: React.FC<Props> = (props) => {
         actionButton={
           (isViewer || isGuest) && (
             <Button size="sm">
-              <Link href={`/projects/${activeProject?.id}/issues`}>
+              <Link href={`/projects/${projectId}/issues`}>
                 <a>Go to Issues</a>
               </Link>
             </Button>
@@ -131,7 +116,11 @@ const SettingsLayout: React.FC<Props> = (props) => {
       <div className="flex h-screen w-full overflow-x-hidden">
         <Sidebar />
         <SettingsSidebar
-          links={type === "workspace" ? workspaceLinks : sidebarLinks(activeProject?.id)}
+          links={
+            type === "workspace"
+              ? workspaceLinks(workspaceSlug as string)
+              : sidebarLinks(workspaceSlug as string, projectId as string)
+          }
         />
         <main className="flex h-screen w-full min-w-0 flex-col overflow-y-auto">
           {noHeader ? null : <Header breadcrumbs={breadcrumbs} left={left} right={right} />}

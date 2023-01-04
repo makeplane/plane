@@ -267,8 +267,9 @@ const LabelsSettings: NextPage<TLabelSettingsProps> = (props) => {
 
 export const getServerSideProps = async (ctx: NextPageContext) => {
   const projectId = ctx.query.projectId as string;
+  const workspaceSlug = ctx.query.workspaceSlug as string;
 
-  const memberDetail = await requiredAdmin(projectId, ctx.req?.headers.cookie);
+  const memberDetail = await requiredAdmin(workspaceSlug, projectId, ctx.req?.headers.cookie);
 
   return {
     props: {

@@ -35,7 +35,7 @@ export const requiredAuth = async (cookie?: string) => {
   return user;
 };
 
-export const requiredAdmin = async (projectId: string, cookie?: string) => {
+export const requiredAdmin = async (workspaceSlug: string, projectId: string, cookie?: string) => {
   const user = await requiredAuth(cookie);
 
   if (!user) return null;
@@ -46,8 +46,6 @@ export const requiredAdmin = async (projectId: string, cookie?: string) => {
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || BASE_STAGING;
 
   let memberDetail: IProjectMember | null = null;
-
-  const workspaceSlug = user.workspace.slug;
 
   try {
     const data = await fetch(`${baseUrl}${PROJECT_MEMBER_ME(workspaceSlug, projectId)}`, {
@@ -66,4 +64,3 @@ export const requiredAdmin = async (projectId: string, cookie?: string) => {
 
   return memberDetail || null;
 };
-

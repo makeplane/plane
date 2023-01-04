@@ -23,25 +23,25 @@ import {
 // common
 import { classNames } from "constants/common";
 
-const navigation = (projectId: string) => [
+const navigation = (workspaceSlug: string, projectId: string) => [
   {
     name: "Issues",
-    href: `/projects/${projectId}/issues`,
+    href: `/${workspaceSlug}/projects/${projectId}/issues`,
     icon: RectangleStackIcon,
   },
   {
     name: "Cycles",
-    href: `/projects/${projectId}/cycles`,
+    href: `/${workspaceSlug}/projects/${projectId}/cycles`,
     icon: ArrowPathIcon,
   },
   {
     name: "Modules",
-    href: `/projects/${projectId}/modules`,
+    href: `/${workspaceSlug}/projects/${projectId}/modules`,
     icon: RectangleGroupIcon,
   },
   {
     name: "Settings",
-    href: `/projects/${projectId}/settings`,
+    href: `/${workspaceSlug}/projects/${projectId}/settings`,
     icon: Cog6ToothIcon,
   },
 ];
@@ -49,7 +49,7 @@ const navigation = (projectId: string) => [
 const Sidebar: React.FC = () => {
   const router = useRouter();
 
-  const { projectId } = router.query;
+  const { workspaceSlug, projectId } = router.query;
 
   const { collapsed: sidebarCollapse, toggleCollapsed } = useTheme();
 
@@ -103,14 +103,14 @@ const Sidebar: React.FC = () => {
                 <div className="h-0 flex-1 overflow-y-auto pt-5 pb-4">
                   <nav className="mt-5 space-y-1 px-2">
                     {projectId &&
-                      navigation(projectId as string).map((item) => (
+                      navigation(workspaceSlug as string, projectId as string).map((item) => (
                         <Link href={item.href} key={item.name}>
                           <a
                             className={classNames(
                               item.href === router.asPath
                                 ? "bg-gray-100 text-gray-900"
                                 : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
-                              "group flex items-center px-2 py-2 text-base font-medium rounded-md"
+                              "group flex items-center rounded-md px-2 py-2 text-base font-medium"
                             )}
                           >
                             <item.icon
@@ -118,7 +118,7 @@ const Sidebar: React.FC = () => {
                                 item.href === router.asPath
                                   ? "text-gray-500"
                                   : "text-gray-400 group-hover:text-gray-500",
-                                "mr-4 flex-shrink-0 h-6 w-6"
+                                "mr-4 h-6 w-6 flex-shrink-0"
                               )}
                               aria-hidden="true"
                             />
@@ -137,34 +137,34 @@ const Sidebar: React.FC = () => {
       <div
         className={`${
           sidebarCollapse ? "" : "w-auto md:w-60"
-        } h-full hidden md:inset-y-0 md:flex md:flex-col`}
+        } hidden h-full md:inset-y-0 md:flex md:flex-col`}
       >
-        <div className="h-full flex flex-1 flex-col border-r border-gray-200">
-          <div className="h-full flex flex-1 flex-col pt-2">
+        <div className="flex h-full flex-1 flex-col border-r border-gray-200">
+          <div className="flex h-full flex-1 flex-col pt-2">
             <WorkspaceOptions sidebarCollapse={sidebarCollapse} />
             <ProjectsList navigation={navigation} sidebarCollapse={sidebarCollapse} />
             <div
-              className={`px-2 py-2 w-full self-baseline flex items-center bg-primary ${
+              className={`flex w-full items-center self-baseline bg-primary px-2 py-2 ${
                 sidebarCollapse ? "flex-col-reverse" : ""
               }`}
             >
               <button
                 type="button"
-                className={`flex items-center gap-3 px-2 py-2 text-xs font-medium rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-900 outline-none ${
-                  sidebarCollapse ? "justify-center w-full" : ""
+                className={`flex items-center gap-3 rounded-md px-2 py-2 text-xs font-medium text-gray-500 outline-none hover:bg-gray-100 hover:text-gray-900 ${
+                  sidebarCollapse ? "w-full justify-center" : ""
                 }`}
                 onClick={() => toggleCollapsed()}
               >
                 <ArrowLongLeftIcon
-                  className={`h-4 w-4 text-gray-500 group-hover:text-gray-900 flex-shrink-0 duration-300 ${
+                  className={`h-4 w-4 flex-shrink-0 text-gray-500 duration-300 group-hover:text-gray-900 ${
                     sidebarCollapse ? "rotate-180" : ""
                   }`}
                 />
               </button>
               <button
                 type="button"
-                className={`flex items-center gap-3 px-2 py-2 text-xs font-medium rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-900 outline-none ${
-                  sidebarCollapse ? "justify-center w-full" : ""
+                className={`flex items-center gap-3 rounded-md px-2 py-2 text-xs font-medium text-gray-500 outline-none hover:bg-gray-100 hover:text-gray-900 ${
+                  sidebarCollapse ? "w-full justify-center" : ""
                 }`}
                 onClick={() => {
                   const e = new KeyboardEvent("keydown", {
