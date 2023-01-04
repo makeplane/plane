@@ -71,7 +71,7 @@ const SelectCycle: React.FC<Props> = ({ issueDetail, control, handleCycleChange,
         {issueDetail?.issue_cycle && watch("issue_cycle") && (
           <div className="flex flex-wrap gap-1">
             <span
-              className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-red-500 px-1.5 py-0.5 text-xs text-red-500 hover:bg-yellow-50"
+              className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-white px-1.5 py-0.5 text-xs text-red-500 duration-300 hover:border-red-500 hover:bg-yellow-50"
               onClick={() =>
                 removeIssueFromCycle(
                   issueDetail.issue_cycle?.id ?? "",
@@ -79,8 +79,9 @@ const SelectCycle: React.FC<Props> = ({ issueDetail, control, handleCycleChange,
                 )
               }
             >
+              <ArrowPathIcon className="h-3 w-3" />
               {watch("issue_cycle")?.cycle_detail.name}
-              <XMarkIcon className="h-2 w-2 group-hover:text-red-500" />
+              <XMarkIcon className="h-2 w-2 opacity-0 duration-300 group-hover:text-red-500 group-hover:opacity-100" />
             </span>
           </div>
         )}

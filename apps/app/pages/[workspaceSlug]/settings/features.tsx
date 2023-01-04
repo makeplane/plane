@@ -4,6 +4,8 @@ import { useRouter } from "next/router";
 import type { NextPage } from "next";
 
 import useSWR from "swr";
+// hoc
+import withAuth from "lib/hoc/withAuthWrapper";
 
 // constants
 import { WORKSPACE_DETAILS } from "constants/fetch-keys";
@@ -12,7 +14,7 @@ import workspaceService from "lib/services/workspace.service";
 // layouts
 import SettingsLayout from "layouts/settings-layout";
 // ui
-import { BreadcrumbItem, Breadcrumbs } from "ui";
+import { BreadcrumbItem, Breadcrumbs, Button } from "ui";
 
 const FeaturesSettings: NextPage = () => {
   const {
@@ -27,6 +29,12 @@ const FeaturesSettings: NextPage = () => {
   return (
     <>
       <SettingsLayout
+        memberType={{
+          isGuest: true,
+          isMember: true,
+          isOwner: true,
+          isViewer: true,
+        }}
         type="workspace"
         breadcrumbs={
           <Breadcrumbs>
@@ -112,6 +120,18 @@ const FeaturesSettings: NextPage = () => {
                 </button>
               </div>
             </div>
+            <div className="flex items-center gap-2">
+              <a href="https://plane.so/" target="_blank" rel="noreferrer">
+                <Button theme="secondary" size="rg" className="text-xs">
+                  Plane is open-source, view Roadmap
+                </Button>
+              </a>
+              <a href="https://github.com/makeplane/plane" target="_blank" rel="noreferrer">
+                <Button theme="secondary" size="rg" className="text-xs">
+                  Star us on GitHub
+                </Button>
+              </a>
+            </div>
           </div>
         </section>
       </SettingsLayout>
@@ -119,4 +139,4 @@ const FeaturesSettings: NextPage = () => {
   );
 };
 
-export default FeaturesSettings;
+export default withAuth(FeaturesSettings);

@@ -29,23 +29,7 @@ const CustomListbox: React.FC<Props> = ({
             </Listbox.Label>
           )}
           <Listbox.Button
-            className={`flex cursor-pointer items-center gap-1 rounded-md border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
-              width === "xs"
-                ? "w-20"
-                : width === "sm"
-                ? "w-32"
-                : width === "md"
-                ? "w-48"
-                : width === "lg"
-                ? "w-64"
-                : width === "xl"
-                ? "w-80"
-                : width === "2xl"
-                ? "w-96"
-                : width === "w-full"
-                ? "w-full"
-                : ""
-            }
+            className={`flex cursor-pointer items-center gap-1 rounded-md border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500
               ${className || "px-2 py-1"}`}
           >
             {icon ?? null}
@@ -65,7 +49,7 @@ const CustomListbox: React.FC<Props> = ({
             leaveTo="opacity-0"
           >
             <Listbox.Options
-              className={`absolute mt-1 max-h-32 overflow-auto bg-white shadow-lg ${
+              className={`absolute mt-1 max-h-32 overflow-y-auto whitespace-nowrap bg-white shadow-lg ${
                 width === "xs"
                   ? "w-20"
                   : width === "sm"
@@ -80,7 +64,7 @@ const CustomListbox: React.FC<Props> = ({
                   ? "w-96"
                   : width === "w-full"
                   ? "w-full"
-                  : ""
+                  : "min-w-full"
               } ${
                 optionsFontsize === "sm"
                   ? "text-xs"

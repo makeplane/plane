@@ -1,5 +1,7 @@
 // react
 import React, { useState } from "react";
+// next
+import Link from "next/link";
 // swr
 import useSWR from "swr";
 // react-hook-form
@@ -16,7 +18,8 @@ import { Combobox, Dialog, Transition } from "@headlessui/react";
 // ui
 import { Button } from "ui";
 // icons
-import { FlagIcon, FolderIcon, MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { FolderIcon, MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { BlockerIcon } from "ui/icons";
 // types
 import { IIssue } from "types";
 // constants
@@ -65,6 +68,8 @@ const SelectBlocker: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
       return;
     }
 
+    if (!Array.isArray(data.issue_ids)) data.issue_ids = [data.issue_ids];
+
     const newBlockers = [...watch("blockers_list"), ...data.issue_ids];
     submitChanges({ blockers_list: newBlockers });
     handleClose();
@@ -73,30 +78,43 @@ const SelectBlocker: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
   return (
     <div className="flex flex-wrap items-start py-2">
       <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
-        <FlagIcon className="h-4 w-4 flex-shrink-0" />
+        <BlockerIcon height={16} width={16} />
         <p>Blocking</p>
       </div>
       <div className="space-y-1 sm:basis-1/2">
         <div className="flex flex-wrap gap-1">
           {watch("blockers_list") && watch("blockers_list").length > 0
             ? watch("blockers_list").map((issue) => (
-                <span
+                <div
                   key={issue}
-                  className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-yellow-500 px-1.5 py-0.5 text-xs text-yellow-500 hover:bg-yellow-50"
-                  onClick={() => {
-                    const updatedBlockers: string[] = watch("blockers_list").filter(
-                      (i) => i !== issue
-                    );
-                    submitChanges({
-                      blockers_list: updatedBlockers,
-                    });
-                  }}
+                  className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-white px-1.5 py-0.5 text-xs text-yellow-500 duration-300 hover:border-yellow-500 hover:bg-yellow-50"
                 >
-                  {`${activeProject?.identifier}-${
-                    issues?.results.find((i) => i.id === issue)?.sequence_id
-                  }`}
-                  <XMarkIcon className="h-2 w-2 group-hover:text-red-500" />
-                </span>
+                  <Link
+                    href={`/projects/${activeProject?.id}/issues/${
+                      issues?.results.find((i) => i.id === issue)?.id
+                    }`}
+                  >
+                    <a className="flex items-center gap-1">
+                      <BlockerIcon height={10} width={10} />
+                      {`${activeProject?.identifier}-${
+                        issues?.results.find((i) => i.id === issue)?.sequence_id
+                      }`}
+                    </a>
+                  </Link>
+                  <span
+                    className="opacity-0 duration-300 group-hover:opacity-100"
+                    onClick={() => {
+                      const updatedBlockers: string[] = watch("blockers_list").filter(
+                        (i) => i !== issue
+                      );
+                      submitChanges({
+                        blockers_list: updatedBlockers,
+                      });
+                    }}
+                  >
+                    <XMarkIcon className="h-2 w-2" />
+                  </span>
+                </div>
               ))
             : null}
         </div>

@@ -1,4 +1,6 @@
 export * from "./attachment-icon";
+export * from "./blocked-icon";
+export * from "./blocker-icon";
 export * from "./calendar-month-icon";
 export * from "./cancel-icon";
 export * from "./clipboard-icon";
@@ -6,7 +8,6 @@ export * from "./cycle-icon";
 export * from "./edit-icon";
 export * from "./ellipsis-horizontal-icon";
 export * from "./heartbeat-icon";
-export * from "./index.js";
 export * from "./layer-diagonal-icon";
 export * from "./lock-icon";
 export * from "./menu-icon";

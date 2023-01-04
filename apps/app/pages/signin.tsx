@@ -50,7 +50,7 @@ const SignIn: NextPage = () => {
       if (nextLocation) {
         router.push(nextLocation as string);
       } else {
-        if (res.user.is_onboarded) router.push("/home");
+        if (res.user.is_onboarded && res.user.workspace) router.push(`/${res.user.workspace.slug}`);
         else router.push("/invitations");
       }
     },

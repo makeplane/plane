@@ -3,8 +3,7 @@ import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 // react hook form
 import { useForm, Controller } from "react-hook-form";
-// headless ui
-import { Listbox, Transition } from "@headlessui/react";
+import type { Control } from "react-hook-form";
 // services
 import issuesServices from "lib/services/issues.service";
 // hooks
@@ -12,13 +11,13 @@ import useUser from "lib/hooks/useUser";
 // fetching keys
 import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 // icons
-import { CheckIcon, PlusIcon, XMarkIcon } from "@heroicons/react/20/solid";
+import { PlusIcon, XMarkIcon } from "@heroicons/react/20/solid";
 // ui
-import { Button, Input, CustomListbox } from "ui";
-// types
-import type { Control } from "react-hook-form";
-import type { IIssue, IIssueLabels } from "types";
+import { Input, CustomListbox } from "ui";
+// icons
 import { TagIcon } from "@heroicons/react/24/outline";
+// types
+import type { IIssue, IIssueLabels } from "types";
 
 type Props = {
   control: Control<IIssue, any>;

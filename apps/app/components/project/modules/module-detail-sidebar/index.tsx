@@ -122,7 +122,7 @@ const ModuleDetailSidebar: React.FC<Props> = ({
                       .then(() => {
                         setToastAlert({
                           type: "success",
-                          title: "Copied to clipboard",
+                          title: "Module link copied to clipboard",
                         });
                       })
                       .catch(() => {
@@ -134,27 +134,6 @@ const ModuleDetailSidebar: React.FC<Props> = ({
                   }
                 >
                   <LinkIcon className="h-3.5 w-3.5" />
-                </button>
-                <button
-                  type="button"
-                  className="rounded-md border p-2 shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                  onClick={() =>
-                    copyTextToClipboard(module.id)
-                      .then(() => {
-                        setToastAlert({
-                          type: "success",
-                          title: "Copied to clipboard",
-                        });
-                      })
-                      .catch(() => {
-                        setToastAlert({
-                          type: "error",
-                          title: "Some error occurred",
-                        });
-                      })
-                  }
-                >
-                  <ClipboardDocumentIcon className="h-3.5 w-3.5" />
                 </button>
                 <button
                   type="button"
@@ -209,7 +188,7 @@ const ModuleDetailSidebar: React.FC<Props> = ({
                       render={({ field: { value, onChange } }) => (
                         <input
                           type="date"
-                          id="issueDate"
+                          id="moduleStartDate"
                           value={value ?? ""}
                           onChange={onChange}
                           className="w-full cursor-pointer rounded-md border bg-transparent px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
@@ -230,6 +209,7 @@ const ModuleDetailSidebar: React.FC<Props> = ({
                       render={({ field: { value, onChange } }) => (
                         <input
                           type="date"
+                          is="moduleTargetDate"
                           value={value ?? ""}
                           onChange={(e: any) => {
                             submitChanges({ target_date: e.target.value });

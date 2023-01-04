@@ -88,14 +88,20 @@ const CustomMenu = ({
   );
 };
 
-const MenuItem: React.FC<MenuItemProps> = ({ children, renderAs, href, onClick }) => {
+const MenuItem: React.FC<MenuItemProps> = ({
+  children,
+  renderAs,
+  href,
+  onClick,
+  className = "",
+}) => {
   return (
     <Menu.Item>
       {({ active, close }) =>
         renderAs === "a" ? (
           <Link href={href ?? ""}>
             <a
-              className="block p-2 text-gray-700 hover:bg-indigo-50 hover:text-gray-900"
+              className={`${className} block p-2 text-gray-700 hover:bg-indigo-50 hover:text-gray-900`}
               onClick={close}
             >
               {children}
@@ -106,6 +112,7 @@ const MenuItem: React.FC<MenuItemProps> = ({ children, renderAs, href, onClick }
             type="button"
             onClick={onClick}
             className={classNames(
+              className,
               active ? "bg-indigo-50 text-gray-900" : "text-gray-700",
               "block w-full p-2 text-left"
             )}

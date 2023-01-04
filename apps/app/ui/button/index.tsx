@@ -34,26 +34,26 @@ const Button = React.forwardRef<HTMLButtonElement, Props>(
         disabled={disabled}
         className={classNames(
           className,
-          "inline-flex items-center rounded justify-center font-medium",
+          "inline-flex items-center justify-center rounded font-medium",
           theme === "primary"
             ? `${
                 disabled ? "opacity-70" : ""
-              } text-white shadow-sm bg-theme hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 border border-transparent`
+              } border border-transparent bg-theme text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500`
             : theme === "secondary"
             ? "border bg-transparent hover:bg-gray-100"
             : theme === "success"
             ? `${
                 disabled ? "opacity-70" : ""
-              } text-white shadow-sm bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500  border border-transparent`
+              } border border-transparent bg-green-500 text-white shadow-sm hover:bg-green-600 focus:outline-none  focus:ring-2 focus:ring-green-500`
             : `${
                 disabled ? "opacity-70" : ""
-              } text-white shadow-sm bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 border border-transparent`,
+              } border border-transparent bg-red-500 text-white shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500`,
           size === "sm"
             ? "p-2 text-xs"
             : size === "md"
-            ? "px-3 py-2 text-base"
+            ? "text-md px-3 py-2"
             : size === "lg"
-            ? "px-4 py-2 text-base"
+            ? "text-md px-4 py-2"
             : "px-2.5 py-2 text-sm"
         )}
       >

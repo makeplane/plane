@@ -60,6 +60,24 @@ class ProjectCycleServices extends APIService {
       });
   }
 
+  async patchCycle(
+    workspaceSlug: string,
+    projectId: string,
+    cycleId: string,
+    data: any
+  ): Promise<any> {
+    return this.patch(
+      CYCLE_DETAIL(workspaceSlug, projectId, cycleId).replace("cycle-issues/", ""),
+      data
+    )
+      .then((response) => {
+        return response?.data;
+      })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async deleteCycle(workspaceSlug: string, projectId: string, cycleId: string): Promise<any> {
     return this.delete(CYCLE_DETAIL(workspaceSlug, projectId, cycleId).replace("cycle-issues/", ""))
       .then((response) => {

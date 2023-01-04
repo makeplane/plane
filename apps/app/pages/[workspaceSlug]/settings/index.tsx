@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 
 import Image from "next/image";
 import { useRouter } from "next/router";
-
+// swr
+import useSWR from "swr";
 import { useForm } from "react-hook-form";
 
 import Dropzone from "react-dropzone";
@@ -23,7 +24,6 @@ import { Spinner, Button, Input, Select, BreadcrumbItem, Breadcrumbs } from "ui"
 // types
 import type { IWorkspace } from "types";
 import { WORKSPACE_DETAILS } from "constants/fetch-keys";
-import useSWR from "swr";
 
 const defaultValues: Partial<IWorkspace> = {
   name: "",

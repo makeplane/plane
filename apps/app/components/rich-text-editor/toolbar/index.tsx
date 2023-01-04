@@ -8,9 +8,7 @@ import { UnderlineButton } from "./underline";
 import { StrikeButton } from "./strike";
 import { LinkButton } from "./link";
 // headings
-import { Heading1Button } from "./heading-1";
-import { Heading2Button } from "./heading-2";
-import { Heading3Button } from "./heading-3";
+import HeadingControls from "./heading-controls";
 // list
 import { OrderedListButton } from "./ordered-list";
 import { UnorderedListButton } from "./unordered-list";
@@ -24,10 +22,8 @@ export const RichTextToolbar: React.FC = () => {
         <UndoButton />
         <RedoButton />
       </div>
-      <div className="flex items-center gap-x-1 px-2">
-        <Heading1Button />
-        <Heading2Button />
-        <Heading3Button />
+      <div className="px-2">
+        <HeadingControls />
       </div>
       <div className="flex items-center gap-x-1 px-2">
         <BoldButton />
@@ -39,7 +35,7 @@ export const RichTextToolbar: React.FC = () => {
         <OrderedListButton />
         <UnorderedListButton />
       </div>
-      <div className="flex items-center gap-x-1 px-2">
+      <div className="px-2">
         <TableControls />
       </div>
       <div className="flex items-center gap-x-1 px-2">
