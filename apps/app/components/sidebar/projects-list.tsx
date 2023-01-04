@@ -148,10 +148,10 @@ const ProjectsList: React.FC<Props> = ({ navigation, sidebarCollapse }) => {
                 )}
                 <button
                   type="button"
-                  className="group flex w-full items-center justify-center gap-2 rounded-md bg-theme p-2 text-sm text-white"
+                  className="group flex w-full items-center justify-center gap-2 rounded-md bg-gray-200 p-2 text-xs text-gray-900"
                   onClick={() => setCreateProjectModal(true)}
                 >
-                  <PlusIcon className="h-5 w-5" />
+                  <PlusIcon className="h-4 w-4" />
                   {!sidebarCollapse && "Create Project"}
                 </button>
               </div>

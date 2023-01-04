@@ -5,8 +5,6 @@ import { useRouter } from "next/router";
 import type { NextPage, NextPageContext } from "next";
 // swr
 import useSWR from "swr";
-// hoc
-import withAuth from "lib/hoc/withAuthWrapper";
 // services
 import sprintService from "lib/services/cycles.service";
 // hooks
@@ -25,6 +23,7 @@ import { ICycle, SelectSprintType } from "types";
 // fetching keys
 import { CYCLE_LIST } from "constants/fetch-keys";
 import { requiredAuth } from "lib/auth";
+import { Tab } from "@headlessui/react";
 
 const ProjectSprints: NextPage = () => {
   const [selectedCycle, setSelectedCycle] = useState<SelectSprintType>();
@@ -41,6 +40,26 @@ const ProjectSprints: NextPage = () => {
     activeWorkspace && projectId
       ? () => sprintService.getCycles(activeWorkspace.slug, projectId as string)
       : null
+  );
+
+  const getCycleStatus = (startDate: string, endDate: string) => {
+    const today = new Date();
+
+    if (today < new Date(startDate)) return "upcoming";
+    else if (today > new Date(endDate)) return "completed";
+    else return "current";
+  };
+
+  const currentCycles = cycles?.filter(
+    (c) => getCycleStatus(c.start_date ?? "", c.end_date ?? "") === "current"
+  );
+
+  const upcomingCycles = cycles?.filter(
+    (c) => getCycleStatus(c.start_date ?? "", c.end_date ?? "") === "upcoming"
+  );
+
+  const completedCycles = cycles?.filter(
+    (c) => getCycleStatus(c.start_date ?? "", c.end_date ?? "") === "completed"
   );
 
   useEffect(() => {
@@ -85,11 +104,48 @@ const ProjectSprints: NextPage = () => {
       {cycles ? (
         cycles.length > 0 ? (
           <div className="space-y-5">
+            <h3 className="text-2xl font-medium leading-6 text-gray-900">Current Cycle</h3>
             <CycleStatsView
-              cycles={cycles}
+              cycles={currentCycles ?? []}
               setCreateUpdateCycleModal={setCreateUpdateCycleModal}
               setSelectedCycle={setSelectedCycle}
             />
+            <div className="space-y-5">
+              <Tab.Group>
+                <Tab.List as="div" className="flex items-center gap-4 text-sm">
+                  <Tab
+                    className={({ selected }) =>
+                      `rounded border px-6 py-2 ${selected ? "bg-gray-200" : "hover:bg-gray-100"}`
+                    }
+                  >
+                    Upcoming
+                  </Tab>
+                  <Tab
+                    className={({ selected }) =>
+                      `rounded border px-6 py-2 ${selected ? "bg-gray-200" : "hover:bg-gray-100"}`
+                    }
+                  >
+                    Completed
+                  </Tab>
+                </Tab.List>
+                <Tab.Panels>
+                  <Tab.Panel>
+                    <CycleStatsView
+                      cycles={upcomingCycles ?? []}
+                      setCreateUpdateCycleModal={setCreateUpdateCycleModal}
+                      setSelectedCycle={setSelectedCycle}
+                    />
+                  </Tab.Panel>
+                  <Tab.Panel>
+                    <CycleStatsView
+                      cycles={completedCycles ?? []}
+                      setCreateUpdateCycleModal={setCreateUpdateCycleModal}
+                      setSelectedCycle={setSelectedCycle}
+                    />
+                  </Tab.Panel>
+                </Tab.Panels>
+              </Tab.Group>
+            </div>
           </div>
         ) : (
           <div className="flex h-full w-full flex-col items-center justify-center px-4">

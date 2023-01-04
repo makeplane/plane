@@ -2,7 +2,7 @@ import React from "react";
 
 import type { Props } from "./types";
 
-export const HeartbeatIcon: React.FC<Props> = ({ width, height, className }) => {
+export const HeartbeatIcon: React.FC<Props> = ({ width = "24", height = "24", className }) => {
   return (
     <svg
       width={width}

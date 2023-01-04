@@ -35,7 +35,7 @@ import {
 } from "@heroicons/react/24/outline";
 // types
 import type { Control } from "react-hook-form";
-import type { ICycle, IIssue, IIssueLabels, IModule } from "types";
+import type { ICycle, IIssue, IIssueLabels } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // common
@@ -388,7 +388,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
                         leaveFrom="opacity-100 translate-y-0"
                         leaveTo="opacity-0 translate-y-1"
                       >
-                        <Popover.Panel className="absolute right-0 z-10 mt-1 max-w-xs transform px-2 sm:px-0">
+                        <Popover.Panel className="absolute right-0 bottom-8 z-10 mt-1 max-w-xs transform px-2 sm:px-0">
                           <Controller
                             name="colour"
                             control={controlLabel}
@@ -415,8 +415,11 @@ const IssueDetailSidebar: React.FC<Props> = ({
                 }}
                 autoComplete="off"
               />
+              <Button type="submit" theme="danger" onClick={() => setCreateLabelForm(false)}>
+                <XMarkIcon className="h-4 w-4 text-white" />
+              </Button>
               <Button type="submit" theme="success" disabled={isSubmitting}>
-                +
+                <PlusIcon className="h-4 w-4 text-white" />
               </Button>
             </form>
           )}

@@ -103,7 +103,14 @@ const OnBoard: NextPage = () => {
                     />
                   ))}
                 </ul>
-                <div className="mt-6">
+                <div className="mt-6 flex items-center gap-2">
+                  <Button
+                    className="w-full"
+                    theme="secondary"
+                    onClick={() => router.push("/workspace")}
+                  >
+                    Skip
+                  </Button>
                   <Button className="w-full" onClick={submitInvitations}>
                     Accept and Continue
                   </Button>

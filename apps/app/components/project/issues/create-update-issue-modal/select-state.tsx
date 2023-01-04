@@ -13,10 +13,11 @@ import useUser from "lib/hooks/useUser";
 import { PlusIcon } from "@heroicons/react/20/solid";
 // ui
 import { CustomListbox } from "ui";
+// icons
+import { Squares2X2Icon } from "@heroicons/react/24/outline";
 // types
 import type { Control } from "react-hook-form";
 import type { IIssue } from "types";
-import { Squares2X2Icon } from "@heroicons/react/24/outline";
 
 type Props = {
   control: Control<IIssue, any>;
@@ -44,7 +45,6 @@ const SelectState: React.FC<Props> = ({ control, setIsOpen }) => {
             return { value: state.id, display: state.name, color: state.color };
           })}
           value={value}
-          width="xs"
           optionsFontsize="sm"
           onChange={onChange}
           icon={<Squares2X2Icon className="h-4 w-4 text-gray-400" />}

@@ -61,40 +61,24 @@ const SingleStat: React.FC<Props> = ({ cycle, handleEditCycle, handleDeleteCycle
 
   const startDate = new Date(cycle.start_date ?? "");
   const endDate = new Date(cycle.end_date ?? "");
-  const today = new Date();
 
   return (
     <>
       <div className="rounded-md border bg-white p-3">
-        <div className="grid grid-cols-8 gap-2 divide-x">
-          <div className="col-span-3 space-y-3">
+        <div className="grid grid-cols-9 gap-2 divide-x">
+          <div className="col-span-3 flex flex-col space-y-3">
             <div className="flex items-center justify-between gap-2">
               <Link href={`/projects/${activeProject?.id}/cycles/${cycle.id}`}>
                 <a>
                   <h2 className="font-medium">{cycle.name}</h2>
                 </a>
               </Link>
-              <div className="flex items-center gap-2">
-                <div className="flex items-center gap-2">
-                  <span
-                    className={`rounded-xl border px-3 py-0.5 text-xs ${
-                      today < startDate
-                        ? "border-orange-500 text-orange-500"
-                        : today > endDate
-                        ? "border-red-500 text-red-500"
-                        : "border-green-500 text-green-500"
-                    }`}
-                  >
-                    {today < startDate ? "Not started" : today > endDate ? "Over" : "Active"}
-                  </span>
-                </div>
-                <CustomMenu width="auto" ellipsis>
-                  <CustomMenu.MenuItem onClick={handleEditCycle}>Edit cycle</CustomMenu.MenuItem>
-                  <CustomMenu.MenuItem onClick={handleDeleteCycle}>
-                    Delete cycle permanently
-                  </CustomMenu.MenuItem>
-                </CustomMenu>
-              </div>
+              <CustomMenu width="auto" ellipsis>
+                <CustomMenu.MenuItem onClick={handleEditCycle}>Edit cycle</CustomMenu.MenuItem>
+                <CustomMenu.MenuItem onClick={handleDeleteCycle}>
+                  Delete cycle permanently
+                </CustomMenu.MenuItem>
+              </CustomMenu>
             </div>
             <div className="grid grid-cols-3 gap-x-2 gap-y-3 text-xs">
               <div className="flex items-center gap-2 text-gray-500">
@@ -124,17 +108,8 @@ const SingleStat: React.FC<Props> = ({ cycle, handleEditCycle, handleDeleteCycle
                 )}
                 {cycle.owned_by.first_name}
               </div>
-              <div className="flex items-center gap-2 text-gray-500">
-                <UserGroupIcon className="h-4 w-4" />
-                Active members
-              </div>
-              <div className="col-span-2"></div>
             </div>
-            <div className="flex items-center gap-2">
-              <Button theme="secondary" className="flex items-center gap-2" disabled>
-                <CheckIcon className="h-3 w-3" />
-                Participating
-              </Button>
+            <div className="flex h-full items-end">
               <Button
                 theme="secondary"
                 className="flex items-center gap-2"
@@ -178,7 +153,7 @@ const SingleStat: React.FC<Props> = ({ cycle, handleEditCycle, handleDeleteCycle
               })}
             </div>
           </div>
-          <div className="col-span-3"></div>
+          <div className="col-span-4"></div>
         </div>
       </div>
     </>

@@ -18,9 +18,18 @@ import {
   DropCursorExtension,
   StrikeExtension,
   MentionAtomExtension,
+  FontSizeExtension,
 } from "remirror/extensions";
-import { Remirror, useRemirror, EditorComponent, OnChangeJSON } from "@remirror/react";
-import { TableExtension } from "@remirror/extension-react-tables";
+import {
+  Remirror,
+  useRemirror,
+  EditorComponent,
+  OnChangeJSON,
+  TableComponents,
+  useRemirrorContext,
+  ReactComponentExtension,
+} from "@remirror/react";
+import { tableControllerPluginKey, TableExtension } from "@remirror/extension-react-tables";
 // components`
 import { RichTextToolbar } from "./toolbar";
 import { MentionAutoComplete } from "./mention-autocomplete";
@@ -64,6 +73,7 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = ({
       new ItalicExtension(),
       new UnderlineExtension(),
       new HeadingExtension({ levels: [1, 2, 3] }),
+      new FontSizeExtension({ defaultSize: "16", unit: "px" }),
       new OrderedListExtension(),
       new ListItemExtension(),
       new BulletListExtension({ enableSpine: true }),
@@ -106,6 +116,7 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = ({
             </div>
           )}
           <EditorComponent />
+          {/* <TableComponents /> */}
           <MentionAutoComplete mentions={mentions} tags={tags} />
           <OnChangeJSON onChange={onChange} />
         </div>

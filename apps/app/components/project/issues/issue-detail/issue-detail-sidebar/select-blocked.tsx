@@ -1,5 +1,7 @@
 // react
 import React, { useState } from "react";
+// next
+import Link from "next/link";
 // swr
 import useSWR from "swr";
 // react-hook-form
@@ -16,9 +18,10 @@ import { Combobox, Dialog, Transition } from "@headlessui/react";
 // ui
 import { Button } from "ui";
 // icons
-import { FolderIcon, MagnifyingGlassIcon, FlagIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { FolderIcon, MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { BlockedIcon } from "ui/icons";
 // types
-import { IIssue, IssueResponse } from "types";
+import { IIssue } from "types";
 // constants
 import { classNames } from "constants/common";
 
@@ -66,6 +69,8 @@ const SelectBlocked: React.FC<Props> = ({ submitChanges, issueDetail, issuesList
       return;
     }
 
+    if (!Array.isArray(data.issue_ids)) data.issue_ids = [data.issue_ids];
+
     const newBlocked = [...watch("blocked_list"), ...data.issue_ids];
     submitChanges({ blocks_list: newBlocked });
     handleClose();
@@ -74,7 +79,7 @@ const SelectBlocked: React.FC<Props> = ({ submitChanges, issueDetail, issuesList
   return (
     <div className="flex flex-wrap items-start py-2">
       <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
-        <FlagIcon className="h-4 w-4 flex-shrink-0" />
+        <BlockedIcon height={16} width={16} />
         <p>Blocked by</p>
       </div>
       <div className="space-y-1 sm:basis-1/2">
@@ -83,7 +88,7 @@ const SelectBlocked: React.FC<Props> = ({ submitChanges, issueDetail, issuesList
             ? watch("blocked_list").map((issue) => (
                 <span
                   key={issue}
-                  className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-red-500 px-1.5 py-0.5 text-xs text-red-500 hover:bg-red-50"
+                  className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-white px-1.5 py-0.5 text-xs text-red-500 duration-300 hover:border-red-500 hover:bg-red-50"
                   onClick={() => {
                     const updatedBlocked: string[] = watch("blocked_list").filter(
                       (i) => i !== issue
@@ -93,10 +98,21 @@ const SelectBlocked: React.FC<Props> = ({ submitChanges, issueDetail, issuesList
                     });
                   }}
                 >
-                  {`${activeProject?.identifier}-${
-                    issues?.results.find((i) => i.id === issue)?.sequence_id
-                  }`}
-                  <XMarkIcon className="h-2 w-2 group-hover:text-red-500" />
+                  <Link
+                    href={`/projects/${activeProject?.id}/issues/${
+                      issues?.results.find((i) => i.id === issue)?.id
+                    }`}
+                  >
+                    <a className="flex items-center gap-1">
+                      <BlockedIcon height={10} width={10} />
+                      {`${activeProject?.identifier}-${
+                        issues?.results.find((i) => i.id === issue)?.sequence_id
+                      }`}
+                    </a>
+                  </Link>
+                  <span className="opacity-0 duration-300 group-hover:opacity-100">
+                    <XMarkIcon className="h-2 w-2" />
+                  </span>
                 </span>
               ))
             : null}

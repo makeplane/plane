@@ -4,8 +4,6 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 // swr
 import useSWR, { mutate } from "swr";
-// react-beautiful-dnd
-import { DropResult } from "react-beautiful-dnd";
 // layouots
 import AppLayout from "layouts/app-layout";
 // components
@@ -32,7 +30,7 @@ import { BreadcrumbItem, Breadcrumbs, CustomMenu } from "ui";
 import { Squares2X2Icon } from "@heroicons/react/20/solid";
 import { ArrowPathIcon, ChevronDownIcon, ListBulletIcon } from "@heroicons/react/24/outline";
 // types
-import { CycleIssueResponse, IIssue, NestedKeyOf, Properties, SelectIssue } from "types";
+import { CycleIssueResponse, IIssue, Properties, SelectIssue } from "types";
 // fetch-keys
 import {
   CYCLE_ISSUES,
@@ -42,6 +40,7 @@ import {
 } from "constants/fetch-keys";
 // common
 import { classNames, replaceUnderscoreIfSnakeCase } from "constants/common";
+import CycleDetailSidebar from "components/project/cycles/cycle-detail-sidebar";
 
 const SingleCycle: React.FC = () => {
   const [isIssueModalOpen, setIsIssueModalOpen] = useState(false);
@@ -139,49 +138,6 @@ const SingleCycle: React.FC = () => {
 
   const openIssuesListModal = () => {
     setCycleIssuesListModal(true);
-  };
-
-  const handleDragEnd = (result: DropResult) => {
-    if (!result.destination) return;
-    const { source, destination } = result;
-
-    if (source.droppableId === destination.droppableId) return;
-
-    if (activeWorkspace && activeProject) {
-      // remove issue from the source cycle
-      mutate<CycleIssueResponse[]>(
-        CYCLE_ISSUES(source.droppableId),
-        (prevData) => prevData?.filter((p) => p.id !== result.draggableId.split(",")[0]),
-        false
-      );
-
-      // add issue to the destination cycle
-      mutate(CYCLE_ISSUES(destination.droppableId));
-
-      issuesServices
-        .removeIssueFromCycle(
-          activeWorkspace.slug,
-          activeProject.id,
-          source.droppableId,
-          result.draggableId.split(",")[0]
-        )
-        .then((res) => {
-          issuesServices
-            .addIssueToCycle(activeWorkspace.slug, activeProject.id, destination.droppableId, {
-              issues: [result.draggableId.split(",")[1]],
-            })
-            .then((res) => {
-              console.log(res);
-            })
-            .catch((e) => {
-              console.log(e);
-            });
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    }
-    // console.log(result);
   };
 
   const handleAddIssuesToCycle = (data: { issues: string[] }) => {
@@ -402,32 +358,43 @@ const SingleCycle: React.FC = () => {
             </Popover>
           </div>
         }
+        noPadding
       >
-        {issueView === "list" ? (
-          <CyclesListView
-            groupedByIssues={groupedByIssues}
-            selectedGroup={groupByProperty}
-            properties={properties}
-            openCreateIssueModal={openCreateIssueModal}
-            openIssuesListModal={openIssuesListModal}
-            removeIssueFromCycle={removeIssueFromCycle}
-            handleDeleteIssue={setDeleteIssue}
-            setPreloadedData={setPreloadedData}
-          />
-        ) : (
-          <CyclesBoardView
-            groupedByIssues={groupedByIssues}
-            properties={properties}
-            removeIssueFromCycle={removeIssueFromCycle}
-            selectedGroup={groupByProperty}
-            members={members}
-            openCreateIssueModal={openCreateIssueModal}
-            openIssuesListModal={openIssuesListModal}
-            handleDeleteIssue={setDeleteIssue}
-            partialUpdateIssue={partialUpdateIssue}
-            setPreloadedData={setPreloadedData}
-          />
-        )}
+        <div className="flex h-full gap-5 pl-5">
+          <div className="h-full w-[calc(100vw-24rem)] min-w-0 flex-grow-0 py-5">
+            {issueView === "list" ? (
+              <CyclesListView
+                groupedByIssues={groupedByIssues}
+                selectedGroup={groupByProperty}
+                properties={properties}
+                openCreateIssueModal={openCreateIssueModal}
+                openIssuesListModal={openIssuesListModal}
+                removeIssueFromCycle={removeIssueFromCycle}
+                handleDeleteIssue={setDeleteIssue}
+                setPreloadedData={setPreloadedData}
+              />
+            ) : (
+              <CyclesBoardView
+                groupedByIssues={groupedByIssues}
+                properties={properties}
+                removeIssueFromCycle={removeIssueFromCycle}
+                selectedGroup={groupByProperty}
+                members={members}
+                openCreateIssueModal={openCreateIssueModal}
+                openIssuesListModal={openIssuesListModal}
+                handleDeleteIssue={setDeleteIssue}
+                partialUpdateIssue={partialUpdateIssue}
+                setPreloadedData={setPreloadedData}
+              />
+            )}
+          </div>
+          <div className="w-[24rem] flex-shrink-0">
+            <CycleDetailSidebar
+              cycle={cycles?.find((c) => c.id === (cycleId as string))}
+              cycleIssues={cycleIssues ?? []}
+            />
+          </div>
+        </div>
       </AppLayout>
     </>
   );

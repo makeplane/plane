@@ -14,4 +14,5 @@ export type MenuItemProps = {
   renderAs?: "button" | "a";
   href?: string;
   onClick?: () => void;
+  className?: string;
 };
