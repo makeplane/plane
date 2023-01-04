@@ -53,7 +53,7 @@ type Props = {
 const defaultValues: Partial<IIssue> = {
   project: "",
   name: "",
-  // description: "",
+  description: "",
   state: "",
   sprints: null,
   priority: null,
