@@ -2,6 +2,7 @@ import React, { useState } from "react";
 // next
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/router";
 // swr
 import useSWR from "swr";
 // headless ui
@@ -54,6 +55,12 @@ const ListView: React.FC<Props> = ({
   const [preloadedData, setPreloadedData] = useState<
     (Partial<IIssue> & { actionType: "createIssue" | "edit" | "delete" }) | undefined
   >(undefined);
+  
+  const router = useRouter();
+
+  const {
+    query: { workspaceSlug },
+  } = router;
 
   const { activeWorkspace, activeProject } = useUser();
 
@@ -164,7 +171,7 @@ const ListView: React.FC<Props> = ({
                                       backgroundColor: issue.state_detail.color,
                                     }}
                                   />
-                                  <Link href={`/projects/${activeProject?.id}/issues/${issue.id}`}>
+                                  <Link href={`/${workspaceSlug}/projects/${activeProject?.id}/issues/${issue.id}`}>
                                     <a className="group relative flex items-center gap-2">
                                       {properties.key && (
                                         <span className="flex-shrink-0 text-xs text-gray-500">
