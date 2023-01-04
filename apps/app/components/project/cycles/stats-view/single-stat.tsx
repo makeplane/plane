@@ -117,7 +117,9 @@ const SingleStat: React.FC<TSingleStatProps> = (props) => {
               <Button
                 theme="secondary"
                 className="flex items-center gap-2"
-                onClick={() => router.push(`/projects/${activeProject?.id}/cycles/${cycle.id}`)}
+                onClick={() =>
+                  router.push(`/${workspaceSlug}/projects/${activeProject?.id}/cycles/${cycle.id}`)
+                }
               >
                 <ArrowPathIcon className="h-3 w-3" />
                 Open Cycle

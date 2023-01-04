@@ -26,6 +26,7 @@ interface IUserContextProps {
   setActiveProject: React.Dispatch<React.SetStateAction<IProject | undefined>>;
   mutateProjects: KeyedMutator<IProject[]>;
   activeProject?: IProject;
+  slug?: string;
 }
 
 export const UserContext = createContext<IUserContextProps>({} as IUserContextProps);
@@ -39,7 +40,7 @@ export const UserProvider = ({ children }: { children: ReactElement }) => {
   const [activeProject, setActiveProject] = useState<IProject | undefined>();
 
   // API to fetch user information
-  const { data, error, mutate } = useSWR<IUser>(CURRENT_USER, () => userService.currentUser(), {
+  const { data, error, mutate } = useSWR<any>(CURRENT_USER, () => userService.currentUser(), {
     shouldRetryOnError: false,
   });
 
@@ -67,8 +68,8 @@ export const UserProvider = ({ children }: { children: ReactElement }) => {
   }, [projectId, projects]);
 
   useEffect(() => {
-    if (data?.last_workspace_id) {
-      const workspace = workspaces?.find((item) => item.id === data?.last_workspace_id);
+    if (data?.user?.last_workspace_id) {
+      const workspace = workspaces?.find((item) => item.id === data?.user?.last_workspace_id);
       if (workspace) {
         setActiveWorkspace(workspace);
       } else {
@@ -91,7 +92,7 @@ export const UserProvider = ({ children }: { children: ReactElement }) => {
   return (
     <UserContext.Provider
       value={{
-        user: error ? undefined : data,
+        user: error ? undefined : data?.user,
         isUserLoading: Boolean(data === undefined && error === undefined),
         mutateUser: mutate,
         activeWorkspace: workspaceError ? undefined : activeWorkspace,
@@ -101,6 +102,7 @@ export const UserProvider = ({ children }: { children: ReactElement }) => {
         mutateProjects: mutateProjects,
         activeProject,
         setActiveProject,
+        slug: error ? undefined : data?.slug,
       }}
     >
       {children}

@@ -1,5 +1,6 @@
 // next
 import Link from "next/link";
+import { useRouter } from "next/router";
 // swr
 import useSWR from "swr";
 // hooks
@@ -40,6 +41,12 @@ const SingleListIssue: React.FC<Props> = ({
 }) => {
   const { activeWorkspace, activeProject } = useUser();
 
+  const router = useRouter();
+
+  const {
+    query: { workspaceSlug },
+  } = router;
+
   const { data: issues } = useSWR<IssueResponse>(
     activeWorkspace && activeProject
       ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
@@ -63,7 +70,7 @@ const SingleListIssue: React.FC<Props> = ({
             backgroundColor: issue.state_detail.color,
           }}
         />
-        <Link href={`/projects/${activeProject?.id}/issues/${issue.id}`}>
+        <Link href={`/${workspaceSlug}/projects/${activeProject?.id}/issues/${issue.id}`}>
           <a className="group relative flex items-center gap-2">
             {properties.key && (
               <span className="flex-shrink-0 text-xs text-gray-500">

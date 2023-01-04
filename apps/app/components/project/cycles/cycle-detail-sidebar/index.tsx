@@ -1,5 +1,7 @@
 // react
 import { useEffect } from "react";
+// next
+import { useRouter } from "next/router";
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // hooks
@@ -36,6 +38,11 @@ const defaultValues: Partial<ICycle> = {
 
 const CycleDetailSidebar: React.FC<Props> = ({ cycle, cycleIssues }) => {
   const { activeWorkspace, activeProject } = useUser();
+
+  const router = useRouter();
+  const {
+    query: { workspaceSlug },
+  } = router;
 
   const { setToastAlert } = useToast();
 
@@ -87,7 +94,7 @@ const CycleDetailSidebar: React.FC<Props> = ({ cycle, cycleIssues }) => {
                 className="rounded-md border p-2 shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                 onClick={() =>
                   copyTextToClipboard(
-                    `https://app.plane.so/projects/${activeProject?.id}/cycles/${cycle.id}`
+                    `https://app.plane.so/${workspaceSlug}/projects/${activeProject?.id}/cycles/${cycle.id}`
                   )
                     .then(() => {
                       setToastAlert({

@@ -123,7 +123,7 @@ const Profile: NextPage = () => {
       title: "My Projects",
       number: projects?.length ?? 0,
       description: "View the list of projects of the workspace.",
-      href: "/projects",
+      href: `/${workspaceSlug}/projects`,
     },
     {
       icon: UserPlusIcon,

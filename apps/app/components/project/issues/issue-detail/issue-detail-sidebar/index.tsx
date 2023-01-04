@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+// next
+import { useRouter } from "next/router";
 // swr
 import useSWR from "swr";
 // react hook form
@@ -62,6 +64,12 @@ const IssueDetailSidebar: React.FC<Props> = ({
   const [createLabelForm, setCreateLabelForm] = useState(false);
 
   const { activeWorkspace, activeProject } = useUser();
+
+  const router = useRouter();
+
+  const {
+    query: { workspaceSlug },
+  } = router;
 
   const { setToastAlert } = useToast();
 
@@ -138,7 +146,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
               className="rounded-md border p-2 shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
               onClick={() =>
                 copyTextToClipboard(
-                  `https://app.plane.so/projects/${activeProject?.id}/issues/${issueDetail?.id}`
+                  `https://app.plane.so/${workspaceSlug}/projects/${activeProject?.id}/issues/${issueDetail?.id}`
                 )
                   .then(() => {
                     setToastAlert({

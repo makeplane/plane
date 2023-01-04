@@ -38,7 +38,10 @@ const FeaturesSettings: NextPage = () => {
         type="workspace"
         breadcrumbs={
           <Breadcrumbs>
-            <BreadcrumbItem title={`${activeWorkspace?.name ?? "Workspace"}`} link={`/workspace`} />
+            <BreadcrumbItem
+              title={`${activeWorkspace?.name ?? "Workspace"}`}
+              link={`/${workspaceSlug}`}
+            />
             <BreadcrumbItem title="Members Settings" />
           </Breadcrumbs>
         }

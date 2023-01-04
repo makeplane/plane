@@ -59,7 +59,9 @@ const CommandPalette: React.FC = () => {
   );
 
   const router = useRouter();
-
+  const {
+    query: { workspaceSlug },
+  } = router;
   const { toggleCollapsed } = useTheme();
 
   const { setToastAlert } = useToast();
@@ -245,7 +247,7 @@ const CommandPalette: React.FC = () => {
                                 htmlFor={`issue-${issue.id}`}
                                 value={{
                                   name: issue.name,
-                                  url: `/projects/${issue.project}/issues/${issue.id}`,
+                                  url: `/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`,
                                 }}
                                 className={({ active }) =>
                                   classNames(

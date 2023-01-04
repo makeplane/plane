@@ -2,6 +2,7 @@ import React from "react";
 // next
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/router";
 // swr
 import useSWR from "swr";
 // react-beautiful-dnd
@@ -55,6 +56,10 @@ const SingleBoardIssue: React.FC<Props> = ({
   partialUpdateIssue,
 }) => {
   const { activeProject, activeWorkspace } = useUser();
+  const router = useRouter();
+  const {
+    query: { workspaceSlug },
+  } = router;
 
   const { data: issues } = useSWR<IssueResponse>(
     activeWorkspace && activeProject
@@ -92,7 +97,7 @@ const SingleBoardIssue: React.FC<Props> = ({
             </button>
           </div>
         )}
-        <Link href={`/projects/${issue.project}/issues/${issue.id}`}>
+        <Link href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}>
           <a>
             {properties.key && (
               <div className="mb-2 text-xs font-medium text-gray-500">
