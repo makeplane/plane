@@ -12,6 +12,7 @@ import {
   USER_WORKSPACE_INVITATION,
   USER_WORKSPACE_INVITATIONS,
   LAST_ACTIVE_WORKSPACE_AND_PROJECTS,
+  WORKSPACE_MEMBER_ME,
 } from "constants/api-routes";
 // services
 import APIService from "lib/services/api.service";
@@ -33,6 +34,16 @@ class WorkspaceService extends APIService {
 
   async userWorkspaces(): Promise<IWorkspace[]> {
     return this.get(USER_WORKSPACES)
+      .then((response) => {
+        return response?.data;
+      })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getWorkspace(workspaceSlug: string): Promise<IWorkspace> {
+    return this.get(WORKSPACE_DETAIL(workspaceSlug))
       .then((response) => {
         return response?.data;
       })
@@ -125,6 +136,16 @@ class WorkspaceService extends APIService {
 
   async workspaceMembers(workspaceSlug: string): Promise<IWorkspaceMember[]> {
     return this.get(WORKSPACE_MEMBERS(workspaceSlug))
+      .then((response) => {
+        return response?.data;
+      })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async workspaceMemberMe(workspaceSlug: string): Promise<IWorkspaceMember> {
+    return this.get(WORKSPACE_MEMBER_ME(workspaceSlug))
       .then((response) => {
         return response?.data;
       })

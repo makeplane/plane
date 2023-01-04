@@ -60,27 +60,22 @@ const defaultValues: Partial<IIssue> = {
   labels_list: [],
 };
 
-const CreateUpdateIssuesModal: React.FC<Props> = ({
-  isOpen,
-  setIsOpen,
-  data,
-  projectId,
-  prePopulateData,
-  isUpdatingSingleIssue = false,
-}) => {
+const CreateUpdateIssuesModal: React.FC<Props> = (props) => {
+  const {
+    isOpen,
+    setIsOpen,
+    data,
+    projectId,
+    prePopulateData,
+    isUpdatingSingleIssue = false,
+  } = props;
+
   const [isCycleModalOpen, setIsCycleModalOpen] = useState(false);
   const [isStateModalOpen, setIsStateModalOpen] = useState(false);
   const [parentIssueListModalOpen, setParentIssueListModalOpen] = useState(false);
-
   const [mostSimilarIssue, setMostSimilarIssue] = useState<string | undefined>();
 
-  const handleClose = () => {
-    setIsOpen(false);
-    if (data) {
-      resetForm();
-    }
-  };
-
+  const { setToastAlert } = useToast();
   const { activeWorkspace, activeProject, user } = useUser();
 
   const { data: issues } = useSWR(
@@ -91,8 +86,6 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
       ? () => issuesServices.getIssues(activeWorkspace.slug, activeProject.id)
       : null
   );
-
-  const { setToastAlert } = useToast();
 
   const {
     register,
@@ -106,11 +99,36 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
     defaultValues,
   });
 
+  useEffect(() => {
+    if (data) setIsOpen(true);
+  }, [data, setIsOpen]);
+
+  useEffect(() => {
+    reset({
+      ...defaultValues,
+      ...watch(),
+      ...data,
+      project: activeProject?.id ?? projectId,
+      ...prePopulateData,
+    });
+  }, [data, prePopulateData, reset, projectId, activeProject, isOpen, watch]);
+
+  useEffect(() => {
+    return () => setMostSimilarIssue(undefined);
+  }, []);
+
   const resetForm = () => {
     const timeout = setTimeout(() => {
       reset(defaultValues);
       clearTimeout(timeout);
     }, 500);
+  };
+
+  const handleClose = () => {
+    setIsOpen(false);
+    if (data) {
+      resetForm();
+    }
   };
 
   const addIssueToCycle = async (issueId: string, cycleId: string) => {
@@ -224,26 +242,6 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
         });
     }
   };
-
-  useEffect(() => {
-    if (data) setIsOpen(true);
-  }, [data, setIsOpen]);
-
-  useEffect(() => {
-    reset({
-      ...defaultValues,
-      ...watch(),
-      ...data,
-      project: activeProject?.id ?? projectId,
-      ...prePopulateData,
-    });
-  }, [data, prePopulateData, reset, projectId, activeProject, isOpen, watch]);
-
-  useEffect(() => {
-    return () => setMostSimilarIssue(undefined);
-  }, []);
-
-  console.log(watch("description"));
 
   return (
     <>
@@ -360,14 +358,6 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                             )}
                           </div>
                           <div>
-                            {/* <TextArea
-                              id="description"
-                              name="description"
-                              label="Description"
-                              placeholder="Enter description"
-                              error={errors.description}
-                              register={register}
-                            /> */}
                             <Controller
                               name="description"
                               control={control}

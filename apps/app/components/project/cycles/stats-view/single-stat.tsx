@@ -22,7 +22,7 @@ import { CYCLE_ISSUES } from "constants/fetch-keys";
 // common
 import { groupBy, renderShortNumericDateFormat } from "constants/common";
 
-type Props = {
+type TSingleStatProps = {
   cycle: ICycle;
   handleEditCycle: () => void;
   handleDeleteCycle: () => void;
@@ -38,10 +38,13 @@ const stateGroupColours: {
   completed: "#096e8d",
 };
 
-const SingleStat: React.FC<Props> = ({ cycle, handleEditCycle, handleDeleteCycle }) => {
-  const { activeWorkspace, activeProject } = useUser();
+const SingleStat: React.FC<TSingleStatProps> = (props) => {
+  const { cycle, handleEditCycle, handleDeleteCycle } = props;
 
   const router = useRouter();
+  const { workspaceSlug } = router.query;
+
+  const { activeWorkspace, activeProject } = useUser();
 
   const { data: cycleIssues } = useSWR<CycleIssueResponse[]>(
     activeWorkspace && activeProject && cycle.id ? CYCLE_ISSUES(cycle.id as string) : null,
@@ -50,6 +53,10 @@ const SingleStat: React.FC<Props> = ({ cycle, handleEditCycle, handleDeleteCycle
           cyclesService.getCycleIssues(activeWorkspace?.slug, activeProject?.id, cycle.id as string)
       : null
   );
+
+  const endDate = new Date(cycle.end_date ?? "");
+  const startDate = new Date(cycle.start_date ?? "");
+
   const groupedIssues = {
     backlog: [],
     unstarted: [],
@@ -59,16 +66,13 @@ const SingleStat: React.FC<Props> = ({ cycle, handleEditCycle, handleDeleteCycle
     ...groupBy(cycleIssues ?? [], "issue_detail.state_detail.group"),
   };
 
-  const startDate = new Date(cycle.start_date ?? "");
-  const endDate = new Date(cycle.end_date ?? "");
-
   return (
     <>
       <div className="rounded-md border bg-white p-3">
         <div className="grid grid-cols-9 gap-2 divide-x">
           <div className="col-span-3 flex flex-col space-y-3">
             <div className="flex items-center justify-between gap-2">
-              <Link href={`/projects/${activeProject?.id}/cycles/${cycle.id}`}>
+              <Link href={`/${workspaceSlug}/projects/${activeProject?.id}/cycles/${cycle.id}`}>
                 <a>
                   <h2 className="font-medium">{cycle.name}</h2>
                 </a>

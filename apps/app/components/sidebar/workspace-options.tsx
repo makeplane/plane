@@ -1,17 +1,11 @@
-// react
 import React from "react";
-// next
+
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Image from "next/image";
-// services
-import userService from "lib/services/user.service";
-import authenticationService from "lib/services/authentication.service";
-// hooks
-import useUser from "lib/hooks/useUser";
-// headless ui
-import { Menu, Transition } from "@headlessui/react";
-// icons
+
+import useSWR from "swr";
+
 import {
   ChevronDownIcon,
   ClipboardDocumentListIcon,
@@ -19,41 +13,46 @@ import {
   HomeIcon,
   PlusIcon,
   RectangleStackIcon,
-  UserGroupIcon,
 } from "@heroicons/react/24/outline";
+import { Menu, Transition } from "@headlessui/react";
+
+// services
+import userService from "lib/services/user.service";
+import workspaceService from "lib/services/workspace.service";
+import authenticationService from "lib/services/authentication.service";
+// hooks
+import useUser from "lib/hooks/useUser";
+// constants
+import { USER_WORKSPACES } from "constants/fetch-keys";
 // types
 import { IUser } from "types";
+// ui
 import { Loader } from "ui";
 
 type Props = {
   sidebarCollapse: boolean;
 };
 
-const workspaceLinks = [
+const workspaceLinks = (workspaceSlug: string) => [
   {
     icon: HomeIcon,
     name: "Home",
-    href: `/workspace`,
+    href: `/${workspaceSlug}`,
   },
   {
     icon: ClipboardDocumentListIcon,
     name: "Projects",
-    href: "/projects",
+    href: `/${workspaceSlug}/projects`,
   },
   {
     icon: RectangleStackIcon,
     name: "My Issues",
-    href: "/me/my-issues",
+    href: `/${workspaceSlug}/me/my-issues`,
   },
-  // {
-  //   icon: InboxIcon,
-  //   name: "Inbox",
-  //   href: "#",
-  // },
   {
     icon: Cog6ToothIcon,
     name: "Settings",
-    href: "/workspace/settings",
+    href: `/${workspaceSlug}/settings`,
   },
 ];
 
@@ -69,9 +68,18 @@ const userLinks = [
 ];
 
 const WorkspaceOptions: React.FC<Props> = ({ sidebarCollapse }) => {
-  const { workspaces, activeWorkspace, user, mutateUser } = useUser();
-
   const router = useRouter();
+  const { user, mutateUser } = useUser();
+
+  const { data: workspaces } = useSWR(USER_WORKSPACES, () => workspaceService.userWorkspaces(), {
+    shouldRetryOnError: false,
+  });
+
+  const {
+    query: { workspaceSlug },
+  } = router;
+
+  const activeWorkspace = workspaces?.find((w) => w.slug === workspaceSlug);
 
   return (
     <div className="px-2">
@@ -137,12 +145,13 @@ const WorkspaceOptions: React.FC<Props> = ({ sidebarCollapse }) => {
                   {workspaces ? (
                     <>
                       {workspaces.length > 0 ? (
-                        workspaces.map((workspace: any) => (
+                        workspaces.map((workspace) => (
                           <Menu.Item key={workspace.id}>
                             {({ active }) => (
                               <button
                                 type="button"
                                 onClick={() => {
+                                  router.push(`/${workspace.slug}/`);
                                   mutateUser(
                                     (prevData) => ({
                                       ...(prevData as IUser),
@@ -154,10 +163,7 @@ const WorkspaceOptions: React.FC<Props> = ({ sidebarCollapse }) => {
                                     .updateUser({
                                       last_workspace_id: workspace?.id,
                                     })
-                                    .then((res) => {
-                                      const isInProject = router.pathname.includes("/[projectId]/");
-                                      if (isInProject) router.push("/workspace");
-                                    })
+                                    .then((res) => {})
                                     .catch((err) => console.error(err));
                                 }}
                                 className={`${
@@ -247,73 +253,9 @@ const WorkspaceOptions: React.FC<Props> = ({ sidebarCollapse }) => {
             </Menu.Items>
           </Transition>
         </Menu>
-        {/* {!sidebarCollapse && (
-          <Menu as="div" className="inline-block text-left flex-shrink-0 w-full">
-            <div className="h-10 w-10">
-              <Menu.Button className="h-full w-full grid relative place-items-center rounded-md shadow-sm bg-white text-gray-700 hover:bg-gray-50 focus:outline-none">
-                {user?.avatar && user.avatar !== "" ? (
-                  <Image src={user.avatar} alt="User Avatar" layout="fill" className="rounded-md" />
-                ) : (
-                  <UserIcon className="h-5 w-5" />
-                )}
-              </Menu.Button>
-            </div>
-
-            <Transition
-              as={React.Fragment}
-              enter="transition ease-out duration-100"
-              enterFrom="transform opacity-0 scale-95"
-              enterTo="transform opacity-100 scale-100"
-              leave="transition ease-in duration-75"
-              leaveFrom="transform opacity-100 scale-100"
-              leaveTo="transform opacity-0 scale-95"
-            >
-              <Menu.Items className="origin-top-right absolute left-0 mt-2 w-full rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-20">
-                <div className="p-1">
-                  {userLinks.map((item) => (
-                    <Menu.Item key={item.name} as="div">
-                      {(active) => (
-                        <Link href={item.href}>
-                          <a className="flex items-center gap-x-1 p-2 w-full text-left text-gray-900 hover:bg-theme hover:text-white rounded-md text-sm">
-                            {item.name}
-                          </a>
-                        </Link>
-                      )}
-                    </Menu.Item>
-                  ))}
-
-                  <Menu.Item as="div">
-                    <button
-                      type="button"
-                      className="flex items-center gap-x-1 p-2 w-full text-left text-gray-900 hover:bg-theme hover:text-white rounded-md text-sm"
-                      onClick={async () => {
-                        await authenticationService
-                          .signOut({
-                            refresh_token: authenticationService.getRefreshToken(),
-                          })
-                          .then((response) => {
-                            console.log("user signed out", response);
-                          })
-                          .catch((error) => {
-                            console.log("Failed to sign out", error);
-                          })
-                          .finally(() => {
-                            mutateUser();
-                            router.push("/signin");
-                          });
-                      }}
-                    >
-                      Sign Out
-                    </button>
-                  </Menu.Item>
-                </div>
-              </Menu.Items>
-            </Transition>
-          </Menu>
-        )} */}
       </div>
       <div className="mt-3 flex-1 space-y-1 bg-white">
-        {workspaceLinks.map((link, index) => (
+        {workspaceLinks(workspaceSlug as string).map((link, index) => (
           <Link key={index} href={link.href}>
             <a
               className={`${

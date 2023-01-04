@@ -21,10 +21,9 @@ const initialValues: Properties = {
   state: true,
   assignee: true,
   priority: false,
-  start_date: false,
   due_date: false,
   cycle: false,
-  children_count: false,
+  sub_issue_count: false,
 };
 
 const useMyIssuesProperties = (issues?: IIssue[]) => {

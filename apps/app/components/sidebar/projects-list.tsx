@@ -17,7 +17,10 @@ import { ChevronDownIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { classNames, copyTextToClipboard } from "constants/common";
 
 type Props = {
-  navigation: (projectId: string) => Array<{
+  navigation: (
+    workspaceSlug: string,
+    projectId: string
+  ) => Array<{
     name: string;
     href: string;
     icon: (props: any) => JSX.Element;
@@ -28,12 +31,12 @@ type Props = {
 const ProjectsList: React.FC<Props> = ({ navigation, sidebarCollapse }) => {
   const [isCreateProjectModal, setCreateProjectModal] = useState(false);
 
+  const router = useRouter();
+
   const { projects } = useUser();
   const { setToastAlert } = useToast();
 
-  const router = useRouter();
-
-  const { projectId } = router.query;
+  const { workspaceSlug, projectId } = router.query;
 
   return (
     <>
@@ -110,7 +113,7 @@ const ProjectsList: React.FC<Props> = ({ navigation, sidebarCollapse }) => {
                             sidebarCollapse ? "" : "ml-[2.25rem]"
                           } flex flex-col gap-y-1`}
                         >
-                          {navigation(project?.id).map((item) => (
+                          {navigation(workspaceSlug as string, project?.id).map((item) => (
                             <Link key={item.name} href={item.href}>
                               <a
                                 className={classNames(
