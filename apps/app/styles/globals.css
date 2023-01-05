@@ -43,4 +43,8 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #908f8f;
 }
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
 /* End scrollbar style */

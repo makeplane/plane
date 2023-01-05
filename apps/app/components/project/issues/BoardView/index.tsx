@@ -52,16 +52,14 @@ const BoardView: React.FC<Props> = ({
     (Partial<IIssue> & { actionType: "createIssue" | "edit" | "delete" }) | undefined
   >(undefined);
 
-  const { activeWorkspace } = useUser();
-
   const router = useRouter();
 
-  const { projectId } = router.query;
+  const { workspaceSlug, projectId } = router.query;
 
   const { data: states, mutate: mutateState } = useSWR<IState[]>(
-    projectId && activeWorkspace ? STATE_LIST(projectId as string) : null,
-    activeWorkspace
-      ? () => stateServices.getStates(activeWorkspace.slug, projectId as string)
+    workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
+    workspaceSlug
+      ? () => stateServices.getStates(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -95,10 +93,10 @@ const BoardView: React.FC<Props> = ({
           newStates[destination.index].sequence = sequenceNumber;
 
           mutateState(newStates, false);
-          if (!activeWorkspace) return;
+          if (!workspaceSlug) return;
           stateServices
             .patchState(
-              activeWorkspace.slug,
+              workspaceSlug as string,
               projectId as string,
               newStates[destination.index].id,
               {
@@ -126,7 +124,7 @@ const BoardView: React.FC<Props> = ({
 
               // patch request
               issuesServices.patchIssue(
-                activeWorkspace!.slug,
+                workspaceSlug as string,
                 projectId as string,
                 removedItem.id,
                 {
@@ -144,7 +142,7 @@ const BoardView: React.FC<Props> = ({
 
               // patch request
               issuesServices.patchIssue(
-                activeWorkspace!.slug,
+                workspaceSlug as string,
                 projectId as string,
                 removedItem.id,
                 {
@@ -161,7 +159,7 @@ const BoardView: React.FC<Props> = ({
         }
       }
     },
-    [activeWorkspace, mutateState, groupedByIssues, projectId, selectedGroup, states]
+    [workspaceSlug, mutateState, groupedByIssues, projectId, selectedGroup, states]
   );
 
   useEffect(() => {
@@ -198,7 +196,7 @@ const BoardView: React.FC<Props> = ({
                     {...provided.droppableProps}
                     ref={provided.innerRef}
                   >
-                    <div className="flex gap-x-4 h-full overflow-x-auto overflow-y-hidden pb-3">
+                    <div className="flex h-full gap-x-4 overflow-x-auto overflow-y-hidden pb-3">
                       {Object.keys(groupedByIssues).map((singleGroup, index) => (
                         <SingleBoard
                           key={singleGroup}
@@ -238,7 +236,7 @@ const BoardView: React.FC<Props> = ({
           </DragDropContext>
         </div>
       ) : (
-        <div className="h-full w-full flex justify-center items-center">
+        <div className="flex h-full w-full items-center justify-center">
           <Spinner />
         </div>
       )}

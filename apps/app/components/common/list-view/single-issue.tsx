@@ -3,10 +3,9 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 // swr
 import useSWR from "swr";
-// hooks
-import useUser from "lib/hooks/useUser";
 // services
 import issuesService from "lib/services/issues.service";
+import projectService from "lib/services/project.service";
 // ui
 import { CustomMenu } from "ui";
 // icons
@@ -14,7 +13,7 @@ import { CalendarDaysIcon } from "@heroicons/react/24/outline";
 // types
 import { IIssue, IssueResponse, Properties } from "types";
 // fetch-keys
-import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import { PROJECT_DETAILS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // common
 import {
   addSpaceIfCamelCase,
@@ -39,20 +38,22 @@ const SingleListIssue: React.FC<Props> = ({
   handleDeleteIssue,
   removeIssue,
 }) => {
-  const { activeWorkspace, activeProject } = useUser();
-
   const router = useRouter();
-
-  const {
-    query: { workspaceSlug },
-  } = router;
+  const { workspaceSlug, projectId } = router.query;
 
   const { data: issues } = useSWR<IssueResponse>(
-    activeWorkspace && activeProject
-      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId
+      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
       : null,
-    activeWorkspace && activeProject
-      ? () => issuesService.getIssues(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId
+      ? () => issuesService.getIssues(workspaceSlug as string, projectId as string)
+      : null
+  );
+
+  const { data: projectDetails } = useSWR(
+    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -70,11 +71,11 @@ const SingleListIssue: React.FC<Props> = ({
             backgroundColor: issue.state_detail.color,
           }}
         />
-        <Link href={`/${workspaceSlug}/projects/${activeProject?.id}/issues/${issue.id}`}>
+        <Link href={`/projects/${projectId}/issues/${issue.id}`}>
           <a className="group relative flex items-center gap-2">
             {properties.key && (
               <span className="flex-shrink-0 text-xs text-gray-500">
-                {activeProject?.identifier}-{issue.sequence_id}
+                {projectDetails?.identifier}-{issue.sequence_id}
               </span>
             )}
             <span>{issue.name}</span>

@@ -32,7 +32,7 @@ const TextArea: React.FC<Props> = ({
   return (
     <>
       {label && (
-        <label htmlFor={id} className="text-gray-500 mb-2">
+        <label htmlFor={id} className="mb-2 text-gray-500">
           {label}
         </label>
       )}
@@ -54,10 +54,10 @@ const TextArea: React.FC<Props> = ({
           setTextareaValue(e.target.value);
         }}
         className={classNames(
-          "w-full outline-none px-3 py-2 bg-transparent",
-          mode === "primary" ? "border border-gray-300 rounded-md" : "",
+          "no-scrollbar w-full bg-transparent px-3 py-2 outline-none",
+          mode === "primary" ? "rounded-md border border-gray-300" : "",
           mode === "transparent"
-            ? "bg-transparent border-none transition-all ring-0 focus:ring-1 focus:ring-theme rounded"
+            ? "rounded border-none bg-transparent ring-0 transition-all focus:ring-1 focus:ring-theme"
             : "",
           error ? "border-red-500" : "",
           error && mode === "primary" ? "bg-red-100" : "",
@@ -65,7 +65,7 @@ const TextArea: React.FC<Props> = ({
         )}
         {...rest}
       ></textarea>
-      {error?.message && <div className="text-red-500 text-sm">{error.message}</div>}
+      {error?.message && <div className="text-sm text-red-500">{error.message}</div>}
     </>
   );
 };

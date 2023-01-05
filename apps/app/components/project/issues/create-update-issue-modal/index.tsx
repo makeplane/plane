@@ -36,9 +36,12 @@ import {
   PROJECT_ISSUES_LIST,
   CYCLE_ISSUES,
   USER_ISSUE,
+  PROJECT_DETAILS,
+  PROJECTS_LIST,
 } from "constants/fetch-keys";
 // common
 import { renderDateFormat, cosineSimilarity } from "constants/common";
+import projectService from "lib/services/project.service";
 
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), { ssr: false });
 
@@ -75,24 +78,36 @@ const CreateUpdateIssuesModal: React.FC<Props> = (props) => {
   const [isStateModalOpen, setIsStateModalOpen] = useState(false);
   const [parentIssueListModalOpen, setParentIssueListModalOpen] = useState(false);
   const [mostSimilarIssue, setMostSimilarIssue] = useState<string | undefined>();
+  const [createMore, setCreateMore] = useState(true);
 
   const router = useRouter();
-
-  const {
-    query: { workspaceSlug },
-  } = router;
+  const { workspaceSlug } = router.query;
 
   const { setToastAlert } = useToast();
-  const { activeWorkspace, activeProject, user } = useUser();
+  const { user } = useUser();
 
   const { data: issues } = useSWR(
-    activeWorkspace && activeProject
-      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
-      : null,
-    activeWorkspace && activeProject
-      ? () => issuesServices.getIssues(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId) : null,
+    workspaceSlug && projectId
+      ? () => issuesServices.getIssues(workspaceSlug as string, projectId)
       : null
   );
+
+  const { data: projects } = useSWR(
+    workspaceSlug ? PROJECTS_LIST(workspaceSlug as string) : null,
+    workspaceSlug ? () => projectService.getProjects(workspaceSlug as string) : null
+  );
+
+  const { data: projectDetails } = useSWR(
+    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
+      : null
+  );
+
+  const [activeProject, setActiveProject] = useState<string | null>(null);
+  // console.log("Projects", projects, "Pid", projectId, "Ap", activeProject, projects[0].id);
+  // console.log(projectId ? projects?.find((p) => p.id === projectId)?.id : projects?.[0].id);
 
   const {
     register,
@@ -111,14 +126,18 @@ const CreateUpdateIssuesModal: React.FC<Props> = (props) => {
   }, [data, setIsOpen]);
 
   useEffect(() => {
+    setActiveProject(projects?.find((p) => p.id === projectId)?.id ?? projects?.[0].id ?? null);
+  }, [projectId, projects]);
+
+  useEffect(() => {
     reset({
       ...defaultValues,
       ...watch(),
       ...data,
-      project: activeProject?.id ?? projectId,
+      project: activeProject ?? "",
       ...prePopulateData,
     });
-  }, [data, prePopulateData, reset, projectId, activeProject, isOpen, watch]);
+  }, [data, prePopulateData, reset, activeProject, isOpen, watch]);
 
   useEffect(() => {
     return () => setMostSimilarIssue(undefined);
@@ -139,9 +158,9 @@ const CreateUpdateIssuesModal: React.FC<Props> = (props) => {
   };
 
   const addIssueToCycle = async (issueId: string, cycleId: string) => {
-    if (!activeWorkspace || !activeProject) return;
+    if (!workspaceSlug || !projectId) return;
     await issuesServices
-      .addIssueToCycle(activeWorkspace.slug, activeProject.id, cycleId, {
+      .addIssueToCycle(workspaceSlug as string, projectId, cycleId, {
         issues: [issueId],
       })
       .then((res) => {
@@ -154,7 +173,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = (props) => {
           );
         } else
           mutate<IssueResponse>(
-            PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id),
+            PROJECT_ISSUES_LIST(workspaceSlug as string, projectId),
             (prevData) => {
               return {
                 ...(prevData as IssueResponse),
@@ -178,24 +197,26 @@ const CreateUpdateIssuesModal: React.FC<Props> = (props) => {
   };
 
   const onSubmit = async (formData: IIssue) => {
-    if (!activeWorkspace || !activeProject) return;
+    if (!workspaceSlug || !projectId) return;
+
     const payload: Partial<IIssue> = {
       ...formData,
       target_date: formData.target_date ? renderDateFormat(formData.target_date ?? "") : null,
     };
+    console.log(true);
 
     if (!data) {
       await issuesServices
-        .createIssues(activeWorkspace.slug, activeProject.id, payload)
+        .createIssues(workspaceSlug as string, projectId, payload)
         .then(async (res) => {
           console.log(res);
-          mutate<IssueResponse>(PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id));
+          mutate<IssueResponse>(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId));
 
           if (formData.sprints && formData.sprints !== null) {
             await addIssueToCycle(res.id, formData.sprints);
           }
-          handleClose();
           resetForm();
+          if (!createMore) handleClose();
           setToastAlert({
             title: "Success",
             type: "success",
@@ -212,14 +233,14 @@ const CreateUpdateIssuesModal: React.FC<Props> = (props) => {
         });
     } else {
       await issuesServices
-        .updateIssue(activeWorkspace.slug, activeProject.id, data.id, payload)
+        .updateIssue(workspaceSlug as string, projectId, data.id, payload)
         .then(async (res) => {
           console.log(res);
           if (isUpdatingSingleIssue) {
             mutate<IIssue>(PROJECT_ISSUES_DETAILS, (prevData) => ({ ...prevData, ...res }), false);
           } else
             mutate<IssueResponse>(
-              PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id),
+              PROJECT_ISSUES_LIST(workspaceSlug as string, projectId),
               (prevData) => {
                 return {
                   ...(prevData as IssueResponse),
@@ -234,8 +255,8 @@ const CreateUpdateIssuesModal: React.FC<Props> = (props) => {
           if (formData.sprints && formData.sprints !== null) {
             await addIssueToCycle(res.id, formData.sprints);
           }
-          handleClose();
           resetForm();
+          if (!createMore) handleClose();
           setToastAlert({
             title: "Success",
             type: "success",
@@ -252,17 +273,17 @@ const CreateUpdateIssuesModal: React.FC<Props> = (props) => {
 
   return (
     <>
-      {activeProject && (
+      {projectId && (
         <>
           <CreateUpdateStateModal
             isOpen={isStateModalOpen}
             handleClose={() => setIsStateModalOpen(false)}
-            projectId={activeProject?.id}
+            projectId={projectId}
           />
           <CreateUpdateCycleModal
             isOpen={isCycleModalOpen}
             setIsOpen={setIsCycleModalOpen}
-            projectId={activeProject?.id}
+            projectId={projectId}
           />
         </>
       )}
@@ -295,7 +316,11 @@ const CreateUpdateIssuesModal: React.FC<Props> = (props) => {
                   <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="space-y-5">
                       <div className="flex items-center gap-x-2">
-                        <SelectProject control={control} />
+                        <SelectProject
+                          control={control}
+                          activeProject={activeProject ?? ""}
+                          setActiveProject={setActiveProject}
+                        />
                         <h3 className="text-lg font-medium leading-6 text-gray-900">
                           {data ? "Update" : "Create"} Issue
                         </h3>
@@ -328,7 +353,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = (props) => {
                               <div className="flex items-center gap-x-2">
                                 <p className="text-sm text-gray-500">
                                   <Link
-                                    href={`/${workspaceSlug}/projects/${activeProject?.id}/issues/${mostSimilarIssue}`}
+                                    href={`/${workspaceSlug}/projects/${projectId}/issues/${mostSimilarIssue}`}
                                   >
                                     <a target="_blank" type="button" className="inline text-left">
                                       <span>Did you mean </span>
@@ -378,7 +403,11 @@ const CreateUpdateIssuesModal: React.FC<Props> = (props) => {
                           </div>
                           <div className="flex flex-wrap items-center gap-2">
                             <SelectState control={control} setIsOpen={setIsStateModalOpen} />
-                            <SelectCycles control={control} setIsOpen={setIsCycleModalOpen} />
+                            <SelectCycles
+                              control={control}
+                              setIsOpen={setIsCycleModalOpen}
+                              activeProject={activeProject ?? ""}
+                            />
                             <SelectPriority control={control} />
                             <SelectAssignee control={control} />
                             <SelectLabels control={control} />
@@ -425,7 +454,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = (props) => {
                                         onClick={() => setParentIssueListModalOpen(true)}
                                       >
                                         {watch("parent") && watch("parent") !== ""
-                                          ? `${activeProject?.identifier}-${
+                                          ? `${projectDetails?.identifier}-${
                                               issues?.results.find((i) => i.id === watch("parent"))
                                                 ?.sequence_id
                                             }`
@@ -440,7 +469,29 @@ const CreateUpdateIssuesModal: React.FC<Props> = (props) => {
                         </div>
                       </div>
                     </div>
-                    <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
+                    <div className="mt-5 flex items-center justify-end gap-2">
+                      <div
+                        className="flex cursor-pointer items-center gap-1"
+                        onClick={() => setCreateMore((prevData) => !prevData)}
+                      >
+                        <span className="text-xs">Create more</span>
+                        <button
+                          type="button"
+                          className={`pointer-events-none relative inline-flex h-4 w-7 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent ${
+                            createMore ? "bg-theme" : "bg-gray-300"
+                          } transition-colors duration-300 ease-in-out focus:outline-none`}
+                          role="switch"
+                          aria-checked="false"
+                        >
+                          <span className="sr-only">Create more</span>
+                          <span
+                            aria-hidden="true"
+                            className={`pointer-events-none inline-block h-3 w-3 ${
+                              createMore ? "translate-x-3" : "translate-x-0"
+                            } transform rounded-full bg-white shadow ring-0 transition duration-300 ease-in-out`}
+                          ></span>
+                        </button>
+                      </div>
                       <Button
                         theme="secondary"
                         onClick={() => {

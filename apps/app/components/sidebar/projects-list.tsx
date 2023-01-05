@@ -2,9 +2,12 @@ import React, { useState } from "react";
 // next
 import { useRouter } from "next/router";
 import Link from "next/link";
+// swr
+import useSWR from "swr";
 // hooks
 import useToast from "lib/hooks/useToast";
-import useUser from "lib/hooks/useUser";
+// services
+import projectService from "lib/services/project.service";
 // components
 import { CreateProjectModal } from "components/project";
 // headless ui
@@ -13,6 +16,8 @@ import { Disclosure, Transition } from "@headlessui/react";
 import { CustomMenu, Loader } from "ui";
 // icons
 import { ChevronDownIcon, PlusIcon } from "@heroicons/react/24/outline";
+// fetch-keys
+import { PROJECTS_LIST } from "constants/fetch-keys";
 // constants
 import { classNames, copyTextToClipboard } from "constants/common";
 
@@ -33,16 +38,20 @@ const ProjectsList: React.FC<Props> = ({ navigation, sidebarCollapse }) => {
 
   const router = useRouter();
 
-  const { projects } = useUser();
+  const { workspaceSlug, projectId } = router.query;
+
   const { setToastAlert } = useToast();
 
-  const { workspaceSlug, projectId } = router.query;
+  const { data: projects } = useSWR(
+    workspaceSlug ? PROJECTS_LIST(workspaceSlug as string) : null,
+    () => (workspaceSlug ? projectService.getProjects(workspaceSlug as string) : null)
+  );
 
   return (
     <>
       <CreateProjectModal isOpen={isCreateProjectModal} setIsOpen={setCreateProjectModal} />
       <div
-        className={`mt-3 flex h-full flex-col space-y-2 overflow-y-auto bg-primary px-2 pt-5 pb-3 ${
+        className={`no-scrollbar mt-3 flex h-full flex-col space-y-2 overflow-y-auto bg-primary px-2 pt-5 pb-3 ${
           sidebarCollapse ? "rounded-xl" : "rounded-t-3xl"
         }`}
       >

@@ -25,11 +25,11 @@ import { CubeIcon, PlusIcon } from "@heroicons/react/24/outline";
 import type { IWorkspaceMemberInvitation } from "types";
 
 const OnBoard: NextPage = () => {
-  const router = useRouter();
+  const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
 
   const { workspaces, mutateWorkspaces, user, slug } = useUser();
 
-  const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
+  const router = useRouter();
 
   const { data: invitations, mutate } = useSWR(USER_WORKSPACE_INVITATIONS, () =>
     workspaceService.userWorkspaceInvitations()
