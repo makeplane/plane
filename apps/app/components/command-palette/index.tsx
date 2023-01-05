@@ -172,17 +172,17 @@ const CommandPalette: React.FC = () => {
           <CreateUpdateCycleModal
             isOpen={isCreateCycleModalOpen}
             setIsOpen={setIsCreateCycleModalOpen}
-            projectId={activeProject.slug}
+            projectId={activeProject.id}
           />
           <CreateUpdateModuleModal
             isOpen={isCreateModuleModalOpen}
             setIsOpen={setIsCreateModuleModalOpen}
-            projectId={activeProject.slug}
+            projectId={activeProject.id}
           />
           <CreateUpdateIssuesModal
             isOpen={isIssueModalOpen}
             setIsOpen={setIsIssueModalOpen}
-            projectId={activeProject.slug}
+            projectId={activeProject.id}
           />
         </>
       )}
