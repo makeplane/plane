@@ -1,12 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-// next
+
 import { useRouter } from "next/router";
-// headless ui
+
 import { Dialog, Transition } from "@headlessui/react";
 // services
 import workspaceService from "lib/services/workspace.service";
 // hooks
-import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
@@ -22,22 +21,26 @@ type Props = {
 };
 
 const ConfirmWorkspaceDeletion: React.FC<Props> = ({ isOpen, data, onClose }) => {
-  const router = useRouter();
-
+  const cancelButtonRef = useRef(null);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
-
-  const [selectedWorkspace, setSelectedWorkspace] = useState<IWorkspace | null>(null);
-
   const [confirmProjectName, setConfirmProjectName] = useState("");
   const [confirmDeleteMyProject, setConfirmDeleteMyProject] = useState(false);
+  const [selectedWorkspace, setSelectedWorkspace] = useState<IWorkspace | null>(null);
 
-  const canDelete = confirmProjectName === data?.name && confirmDeleteMyProject;
-
-  const { mutateWorkspaces } = useUser();
-
+  const router = useRouter();
   const { setToastAlert } = useToast();
 
-  const cancelButtonRef = useRef(null);
+  useEffect(() => {
+    if (data) setSelectedWorkspace(data);
+    else {
+      const timer = setTimeout(() => {
+        setSelectedWorkspace(null);
+        clearTimeout(timer);
+      }, 350);
+    }
+  }, [data]);
+
+  const canDelete = confirmProjectName === data?.name && confirmDeleteMyProject;
 
   const handleClose = () => {
     onClose();
@@ -51,9 +54,7 @@ const ConfirmWorkspaceDeletion: React.FC<Props> = ({ isOpen, data, onClose }) =>
       .deleteWorkspace(data.slug)
       .then(() => {
         handleClose();
-        mutateWorkspaces((prevData) => {
-          return (prevData ?? []).filter((workspace: IWorkspace) => workspace.slug !== data.slug);
-        }, false);
+        // TODO: add workspace mutation
         setToastAlert({
           type: "success",
           message: "Workspace deleted successfully",
@@ -66,16 +67,6 @@ const ConfirmWorkspaceDeletion: React.FC<Props> = ({ isOpen, data, onClose }) =>
         setIsDeleteLoading(false);
       });
   };
-
-  useEffect(() => {
-    if (data) setSelectedWorkspace(data);
-    else {
-      const timer = setTimeout(() => {
-        setSelectedWorkspace(null);
-        clearTimeout(timer);
-      }, 350);
-    }
-  }, [data]);
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>

@@ -20,7 +20,7 @@ const MagicSignIn: NextPage = () => {
 
   const { setToastAlert } = useToast();
 
-  const { mutateUser, mutateWorkspaces } = useUser();
+  const { mutateUser } = useUser();
 
   useEffect(() => {
     setIsSigningIn(true);
@@ -31,7 +31,7 @@ const MagicSignIn: NextPage = () => {
       .then(async (res) => {
         setIsSigningIn(false);
         await mutateUser();
-        await mutateWorkspaces();
+        // TODO: add workspace mutations
         if (res.user.is_onboarded) router.push("/");
         else router.push("/invitations");
       })
@@ -39,7 +39,7 @@ const MagicSignIn: NextPage = () => {
         setErrorSignIn(err.response.data.error);
         setIsSigningIn(false);
       });
-  }, [password, key, mutateUser, mutateWorkspaces, router]);
+  }, [password, key, mutateUser, router]);
 
   return (
     <DefaultLayout
@@ -47,21 +47,21 @@ const MagicSignIn: NextPage = () => {
         title: "Magic Sign In",
       }}
     >
-      <div className="w-full h-screen flex justify-center items-center bg-gray-50 overflow-auto">
+      <div className="flex h-screen w-full items-center justify-center overflow-auto bg-gray-50">
         {isSigningIn ? (
-          <div className="w-full h-full flex flex-col gap-y-2 justify-center items-center">
+          <div className="flex h-full w-full flex-col items-center justify-center gap-y-2">
             <h2 className="text-4xl">Signing you in...</h2>
             <p className="text-sm text-gray-600">
               Please wait while we are preparing your take off.
             </p>
           </div>
         ) : errorSigningIn ? (
-          <div className="w-full h-full flex flex-col gap-y-2 justify-center items-center">
+          <div className="flex h-full w-full flex-col items-center justify-center gap-y-2">
             <h2 className="text-4xl">Error</h2>
             <p className="text-sm text-gray-600">
               {errorSigningIn}.
               <span
-                className="underline cursor-pointer"
+                className="cursor-pointer underline"
                 onClick={() => {
                   authenticationService
                     .emailCode({ email: (key as string).split("_")[1] })
@@ -86,7 +86,7 @@ const MagicSignIn: NextPage = () => {
             </p>
           </div>
         ) : (
-          <div className="w-full h-full flex flex-col gap-y-2 justify-center items-center">
+          <div className="flex h-full w-full flex-col items-center justify-center gap-y-2">
             <h2 className="text-4xl">Success</h2>
             <p className="text-sm text-gray-600">Redirecting you to the app...</p>
           </div>

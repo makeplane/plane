@@ -1,15 +1,14 @@
-// react
 import React, { useState } from "react";
-// swr
+
+import { useRouter } from "next/router";
+
 import useSWR from "swr";
-// react-hook-form
+
 import { Control, Controller, UseFormWatch } from "react-hook-form";
 // fetch keys
 import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // services
 import issuesServices from "lib/services/issues.service";
-// hooks
-import useUser from "lib/hooks/useUser";
 // components
 import IssuesListModal from "components/project/issues/issues-list-modal";
 // icons
@@ -34,14 +33,15 @@ const SelectParent: React.FC<Props> = ({
 }) => {
   const [isParentModalOpen, setIsParentModalOpen] = useState(false);
 
-  const { activeProject, activeWorkspace } = useUser();
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
 
   const { data: issues } = useSWR(
-    activeWorkspace && activeProject
-      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId
+      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
       : null,
-    activeWorkspace && activeProject
-      ? () => issuesServices.getIssues(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId
+      ? () => issuesServices.getIssues(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -76,9 +76,9 @@ const SelectParent: React.FC<Props> = ({
           onClick={() => setIsParentModalOpen(true)}
         >
           {watch("parent") && watch("parent") !== ""
-            ? `${activeProject?.identifier}-${
-                issues?.results.find((i) => i.id === watch("parent"))?.sequence_id
-              }`
+            ? `${
+                issues?.results.find((i) => i.id === watch("parent"))?.project_detail?.identifier
+              }-${issues?.results.find((i) => i.id === watch("parent"))?.sequence_id}`
             : "Select issue"}
         </button>
       </div>

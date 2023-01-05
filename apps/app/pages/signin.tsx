@@ -34,7 +34,7 @@ const SignIn: NextPage = () => {
   const [useCode, setUseCode] = useState(true);
   const router = useRouter();
 
-  const { mutateUser, mutateWorkspaces, slug } = useUser();
+  const { mutateUser } = useUser();
 
   const [githubToken, setGithubToken] = useState(undefined);
   const [loginCallBackURL, setLoginCallBackURL] = useState(undefined);
@@ -44,16 +44,17 @@ const SignIn: NextPage = () => {
   const onSignInSuccess = useCallback(
     async (res: IUser) => {
       await mutateUser();
-      await mutateWorkspaces();
+      // TODO: add mutate workspaces
       const nextLocation = router.asPath.split("?next=")[1];
 
       if (nextLocation) {
         router.push(nextLocation as string);
       } else {
         if (!res.user.is_onboarded) router.push("/invitations");
+        else router.push("/home");
       }
     },
-    [mutateUser, mutateWorkspaces, router]
+    [mutateUser, router]
   );
 
   const githubTokenMemo = React.useMemo(() => {
@@ -84,7 +85,7 @@ const SignIn: NextPage = () => {
           console.log(err);
         });
     }
-  }, [githubToken, mutateUser, mutateWorkspaces, router, onSignInSuccess]);
+  }, [githubToken, mutateUser, router, onSignInSuccess]);
 
   useEffect(() => {
     const origin =
@@ -93,10 +94,6 @@ const SignIn: NextPage = () => {
 
     return () => setIsGoogleAuthenticationLoading(false);
   }, []);
-
-  if (slug) {
-    router.push(`/${slug}`);
-  }
 
   return (
     <DefaultLayout

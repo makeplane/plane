@@ -8,16 +8,12 @@ import useUser from "lib/hooks/useUser";
 const Home: NextPage = () => {
   const router = useRouter();
 
-  const { user, isUserLoading, activeWorkspace, workspaces, slug } = useUser();
+  const { user, isUserLoading } = useUser();
 
   useEffect(() => {
     if (!isUserLoading && (!user || user === null)) router.push("/signin");
+    else router.push("/home");
   }, [isUserLoading, user, router]);
-
-  useEffect(() => {
-    if (slug) router.push(`/${slug}`);
-    else if (!activeWorkspace && workspaces?.length === 0) router.push("/invitations");
-  }, [activeWorkspace, router, workspaces, slug]);
 
   return <></>;
 };
