@@ -40,7 +40,7 @@ class BaseViewSet(ModelViewSet, BasePaginator):
         except Exception as e:
             print(e)
             raise APIException(
-                "Please check the view", status.HTTP_500_INTERNAL_SERVER_ERROR
+                "Please check the view", status.HTTP_400_BAD_REQUEST
             )
 
     def dispatch(self, request, *args, **kwargs):

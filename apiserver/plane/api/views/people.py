@@ -44,8 +44,8 @@ class PeopleEndpoint(BaseAPIView):
         except Exception as e:
             capture_exception(e)
             return Response(
-                {"message": "Something went wrong"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                {"message": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
 

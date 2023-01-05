@@ -172,7 +172,7 @@ class IssueViewSet(BaseViewSet):
             capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
     def create(self, request, slug, project_id):
@@ -216,7 +216,7 @@ class UserWorkSpaceIssues(BaseAPIView):
             capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
 
@@ -237,7 +237,7 @@ class WorkSpaceIssuesEndpoint(BaseAPIView):
             capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
 
@@ -260,7 +260,7 @@ class IssueActivityEndpoint(BaseAPIView):
             capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
 
@@ -390,7 +390,7 @@ class IssuePropertyViewSet(BaseViewSet):
             capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
 
@@ -454,5 +454,5 @@ class BulkDeleteIssuesEndpoint(BaseAPIView):
             capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                status=status.HTTP_400_BAD_REQUEST,
             )
