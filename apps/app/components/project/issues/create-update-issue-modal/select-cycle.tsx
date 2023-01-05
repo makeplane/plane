@@ -17,19 +17,22 @@ import { ArrowPathIcon } from "@heroicons/react/24/outline";
 // types
 import type { IIssue } from "types";
 import type { Control } from "react-hook-form";
+import { useRouter } from "next/router";
 
 type Props = {
   control: Control<IIssue, any>;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  activeProject: string;
 };
 
-const SelectCycle: React.FC<Props> = ({ control, setIsOpen }) => {
-  const { activeWorkspace, activeProject } = useUser();
+const SelectCycle: React.FC<Props> = ({ control, setIsOpen, activeProject }) => {
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
 
   const { data: cycles } = useSWR(
-    activeWorkspace && activeProject ? CYCLE_LIST(activeProject.id) : null,
-    activeWorkspace && activeProject
-      ? () => cycleServices.getCycles(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && activeProject ? CYCLE_LIST(activeProject) : null,
+    workspaceSlug && activeProject
+      ? () => cycleServices.getCycles(workspaceSlug as string, activeProject)
       : null
   );
 

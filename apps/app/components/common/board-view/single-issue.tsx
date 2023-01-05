@@ -83,8 +83,6 @@ const SingleBoardIssue: React.FC<Props> = ({
 
   const totalChildren = issues?.results.filter((i) => i.parent === issue.id).length;
 
-  console.log(projectDetails);
-
   return (
     <div
       className={`rounded border bg-white shadow-sm ${

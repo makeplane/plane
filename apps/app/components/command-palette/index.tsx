@@ -6,13 +6,13 @@ import { useRouter } from "next/router";
 // swr
 import useSWR from "swr";
 // hooks
-import useUser from "lib/hooks/useUser";
 import useTheme from "lib/hooks/useTheme";
 import useToast from "lib/hooks/useToast";
 // constants
-import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import { PROJECT_DETAILS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // services
 import issuesServices from "lib/services/issues.service";
+import projectService from "lib/services/project.service";
 // components
 import ShortcutsModal from "components/command-palette/shortcuts";
 import { CreateProjectModal } from "components/project";
@@ -47,21 +47,25 @@ const CommandPalette: React.FC = () => {
   const [isCreateModuleModalOpen, setIsCreateModuleModalOpen] = useState(false);
   const [isBulkDeleteIssuesModalOpen, setIsBulkDeleteIssuesModalOpen] = useState(false);
 
-  const { activeProject, activeWorkspace } = useUser();
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
 
   const { data: issues } = useSWR(
-    activeWorkspace && activeProject
-      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId
+      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
       : null,
-    activeWorkspace && activeProject
-      ? () => issuesServices.getIssues(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId
+      ? () => issuesServices.getIssues(workspaceSlug as string, projectId as string)
       : null
   );
 
-  const router = useRouter();
-  const {
-    query: { workspaceSlug },
-  } = router;
+  const { data: projectDetails } = useSWR(
+    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
+      : null
+  );
+
   const { toggleCollapsed } = useTheme();
 
   const { setToastAlert } = useToast();
@@ -155,24 +159,24 @@ const CommandPalette: React.FC = () => {
     <>
       <ShortcutsModal isOpen={isShortcutsModalOpen} setIsOpen={setIsShortcutsModalOpen} />
       <CreateProjectModal isOpen={isProjectModalOpen} setIsOpen={setIsProjectModalOpen} />
-      {activeProject && (
+      {projectId && (
         <>
           <CreateUpdateCycleModal
             isOpen={isCreateCycleModalOpen}
             setIsOpen={setIsCreateCycleModalOpen}
-            projectId={activeProject.id}
+            projectId={projectId as string}
           />
           <CreateUpdateModuleModal
             isOpen={isCreateModuleModalOpen}
             setIsOpen={setIsCreateModuleModalOpen}
-            projectId={activeProject.id}
+            projectId={projectId as string}
           />
         </>
       )}
       <CreateUpdateIssuesModal
         isOpen={isIssueModalOpen}
         setIsOpen={setIsIssueModalOpen}
-        projectId={activeProject?.id}
+        projectId={projectId as string}
       />
       <BulkDeleteIssuesModal
         isOpen={isBulkDeleteIssuesModalOpen}
@@ -266,7 +270,7 @@ const CommandPalette: React.FC = () => {
                                         }}
                                       />
                                       <span className="flex-shrink-0 text-xs text-gray-500">
-                                        {activeProject?.identifier}-{issue.sequence_id}
+                                        {projectDetails?.identifier}-{issue.sequence_id}
                                       </span>
                                       <span>{issue.name}</span>
                                     </div>

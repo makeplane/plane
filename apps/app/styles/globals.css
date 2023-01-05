@@ -44,7 +44,7 @@
   background: #908f8f;
 }
 
-textarea::-webkit-scrollbar {
+.no-scrollbar::-webkit-scrollbar {
   display: none;
 }
 /* End scrollbar style */

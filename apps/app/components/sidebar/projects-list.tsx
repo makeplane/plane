@@ -51,7 +51,7 @@ const ProjectsList: React.FC<Props> = ({ navigation, sidebarCollapse }) => {
     <>
       <CreateProjectModal isOpen={isCreateProjectModal} setIsOpen={setCreateProjectModal} />
       <div
-        className={`mt-3 flex h-full flex-col space-y-2 overflow-y-auto bg-primary px-2 pt-5 pb-3 ${
+        className={`no-scrollbar mt-3 flex h-full flex-col space-y-2 overflow-y-auto bg-primary px-2 pt-5 pb-3 ${
           sidebarCollapse ? "rounded-xl" : "rounded-t-3xl"
         }`}
       >
