@@ -181,6 +181,8 @@ const WorkspaceSettings = () => {
                   </div>
                 </div>
               </div>
+            </div>
+            <div className="col-span-5 space-y-16">
               <div>
                 <h4 className="text-md mb-1 leading-6 text-gray-900">URL</h4>
                 <p className="mb-3 text-sm text-gray-500">Give a name to your workspace.</p>
@@ -217,6 +219,8 @@ const WorkspaceSettings = () => {
                   size="lg"
                 />
               </div>
+            </div>
+            <div className="col-span-5 space-y-16">
               <div>
                 <h4 className="text-md mb-1 leading-6 text-gray-900">Company Size</h4>
                 <p className="mb-3 text-sm text-gray-500">How big is your company?</p>

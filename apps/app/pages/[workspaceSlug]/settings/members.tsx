@@ -2,6 +2,7 @@
 import { useState } from "react";
 // next
 import Image from "next/image";
+import { useRouter } from "next/router";
 // swr
 import useSWR from "swr";
 // services
@@ -29,7 +30,8 @@ import {
 import workspaceService from "lib/services/workspace.service";
 import ConfirmWorkspaceMemberRemove from "components/workspace/ConfirmWorkspaceMemberRemove";
 import SendWorkspaceInvitationModal from "components/workspace/SendWorkspaceInvitationModal";
-import { useRouter } from "next/router";
+// hoc
+import withAuth from "lib/hoc/withAuthWrapper";
 
 const ROLE = {
   5: "Guest",
@@ -141,10 +143,19 @@ const MembersSettings = () => {
         members={members}
       />
       <SettingsLayout
+        memberType={{
+          isGuest: true,
+          isMember: true,
+          isOwner: true,
+          isViewer: true,
+        }}
         type="workspace"
         breadcrumbs={
           <Breadcrumbs>
-            <BreadcrumbItem title={`${activeWorkspace?.name ?? "Workspace"}`} link={`/workspace`} />
+            <BreadcrumbItem
+              title={`${activeWorkspace?.name ?? "Workspace"}`}
+              link={`/${workspaceSlug}`}
+            />
             <BreadcrumbItem title="Members Settings" />
           </Breadcrumbs>
         }
@@ -289,4 +300,4 @@ const MembersSettings = () => {
   );
 };
 
-export default MembersSettings;
+export default withAuth(MembersSettings);

@@ -1,13 +1,15 @@
 // react
 import React, { useState } from "react";
+// next
+import { useRouter } from "next/router";
 // swr
 import useSWR, { mutate } from "swr";
 // react hook form
 import { SubmitHandler, useForm } from "react-hook-form";
 // services
 import issuesServices from "lib/services/issues.service";
+import projectService from "lib/services/project.service";
 // hooks
-import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
@@ -18,7 +20,7 @@ import { FolderIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 // types
 import { IIssue, IssueResponse } from "types";
 // fetch keys
-import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import { PROJECT_ISSUES_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
 // common
 import { classNames } from "constants/common";
 
@@ -35,26 +37,37 @@ type Props = {
 const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
   const [query, setQuery] = useState("");
 
-  const { activeWorkspace, activeProject } = useUser();
+  const router = useRouter();
+
+  const {
+    query: { workspaceSlug, projectId },
+  } = router;
 
   const { data: issues } = useSWR(
-    activeWorkspace && activeProject
-      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId
+      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
       : null,
-    activeWorkspace && activeProject
-      ? () => issuesServices.getIssues(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId
+      ? () => issuesServices.getIssues(workspaceSlug as string, projectId as string)
+      : null
+  );
+
+  const { data: projectDetails } = useSWR(
+    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
       : null
   );
 
   const { setToastAlert } = useToast();
+
+  const { register, handleSubmit, reset } = useForm<FormInput>();
 
   const filteredIssues: IIssue[] =
     query === ""
       ? issues?.results ?? []
       : issues?.results.filter((issue) => issue.name.toLowerCase().includes(query.toLowerCase())) ??
         [];
-
-  const { register, handleSubmit, reset } = useForm<FormInput>();
 
   const handleClose = () => {
     setIsOpen(false);
@@ -72,9 +85,9 @@ const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
       return;
     }
 
-    if (activeWorkspace && activeProject) {
+    if (workspaceSlug && projectId) {
       issuesServices
-        .bulkDeleteIssues(activeWorkspace.slug, activeProject.id, data)
+        .bulkDeleteIssues(workspaceSlug as string, projectId as string, data)
         .then((res) => {
           setToastAlert({
             title: "Success",
@@ -82,7 +95,7 @@ const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
             message: res.message,
           });
           mutate<IssueResponse>(
-            PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id),
+            PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
             (prevData) => {
               return {
                 ...(prevData as IssueResponse),
@@ -164,7 +177,7 @@ const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                                   htmlFor={`issue-${issue.id}`}
                                   value={{
                                     name: issue.name,
-                                    url: `/projects/${issue.project}/issues/${issue.id}`,
+                                    url: `/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`,
                                   }}
                                   className={({ active }) =>
                                     classNames(
@@ -189,7 +202,7 @@ const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                                           }}
                                         />
                                         <span className="flex-shrink-0 text-xs text-gray-500">
-                                          {activeProject?.identifier}-{issue.sequence_id}
+                                          {projectDetails?.identifier}-{issue.sequence_id}
                                         </span>
                                         <span>{issue.name}</span>
                                       </div>

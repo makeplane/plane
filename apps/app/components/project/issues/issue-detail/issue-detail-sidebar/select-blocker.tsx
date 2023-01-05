@@ -1,18 +1,18 @@
-// react
 import React, { useState } from "react";
-// next
+
 import Link from "next/link";
-// swr
+import { useRouter } from "next/router";
+
 import useSWR from "swr";
-// react-hook-form
+
 import { SubmitHandler, useForm, UseFormWatch } from "react-hook-form";
 // constants
-import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import { PROJECT_ISSUES_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
+// hooks
+import useToast from "lib/hooks/useToast";
 // services
 import issuesServices from "lib/services/issues.service";
-// hooks
-import useUser from "lib/hooks/useUser";
-import useToast from "lib/hooks/useToast";
+import projectService from "lib/services/project.service";
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // ui
@@ -39,15 +39,24 @@ const SelectBlocker: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
   const [query, setQuery] = useState("");
   const [isBlockerModalOpen, setIsBlockerModalOpen] = useState(false);
 
-  const { activeProject, activeWorkspace } = useUser();
   const { setToastAlert } = useToast();
 
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
+
   const { data: issues } = useSWR(
-    activeWorkspace && activeProject
-      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId
+      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
       : null,
-    activeWorkspace && activeProject
-      ? () => issuesServices.getIssues(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId
+      ? () => issuesServices.getIssues(workspaceSlug as string, projectId as string)
+      : null
+  );
+
+  const { data: projectDetails } = useSWR(
+    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -90,13 +99,13 @@ const SelectBlocker: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
                   className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-white px-1.5 py-0.5 text-xs text-yellow-500 duration-300 hover:border-yellow-500 hover:bg-yellow-50"
                 >
                   <Link
-                    href={`/projects/${activeProject?.id}/issues/${
+                    href={`/${workspaceSlug}/projects/${projectDetails?.id}/issues/${
                       issues?.results.find((i) => i.id === issue)?.id
                     }`}
                   >
                     <a className="flex items-center gap-1">
                       <BlockerIcon height={10} width={10} />
-                      {`${activeProject?.identifier}-${
+                      {`${projectDetails?.identifier}-${
                         issues?.results.find((i) => i.id === issue)?.sequence_id
                       }`}
                     </a>
@@ -187,7 +196,7 @@ const SelectBlocker: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
                                         htmlFor={`issue-${issue.id}`}
                                         value={{
                                           name: issue.name,
-                                          url: `/projects/${issue.project}/issues/${issue.id}`,
+                                          url: `/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`,
                                         }}
                                         className={({ active }) =>
                                           classNames(
@@ -212,7 +221,7 @@ const SelectBlocker: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
                                                 }}
                                               />
                                               <span className="flex-shrink-0 text-xs text-gray-500">
-                                                {activeProject?.identifier}-{issue.sequence_id}
+                                                {projectDetails?.identifier}-{issue.sequence_id}
                                               </span>
                                               <span>{issue.name}</span>
                                             </div>

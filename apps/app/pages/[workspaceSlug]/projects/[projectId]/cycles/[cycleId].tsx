@@ -20,7 +20,6 @@ import cycleServices from "lib/services/cycles.service";
 import projectService from "lib/services/project.service";
 import workspaceService from "lib/services/workspace.service";
 // hooks
-import useUser from "lib/hooks/useUser";
 import useIssuesFilter from "lib/hooks/useIssuesFilter";
 import useIssuesProperties from "lib/hooks/useIssuesProperties";
 // headless ui
@@ -55,9 +54,8 @@ const SingleCycle: React.FC = () => {
     (Partial<IIssue> & { actionType: "createIssue" | "edit" | "delete" }) | undefined
   >(undefined);
 
-  const {
-    query: { workspaceSlug, projectId, cycleId },
-  } = useRouter();
+  const router = useRouter();
+  const { workspaceSlug, projectId, cycleId } = router.query;
 
   const { data: activeWorkspace } = useSWR(
     workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
@@ -212,7 +210,7 @@ const SingleCycle: React.FC = () => {
           <Breadcrumbs>
             <BreadcrumbItem
               title={`${activeProject?.name ?? "Project"} Cycles`}
-              link={`/projects/${activeProject?.id}/cycles`}
+              link={`/${workspaceSlug}/projects/${activeProject?.id}/cycles`}
             />
           </Breadcrumbs>
         }

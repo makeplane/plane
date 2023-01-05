@@ -34,16 +34,14 @@ const IssueCommentSection: React.FC = () => {
 
   const router = useRouter();
 
-  let { issueId, projectId } = router.query;
-
-  const { activeWorkspace } = useUser();
+  let { workspaceSlug, projectId, issueId } = router.query;
 
   const { data: comments, mutate } = useSWR<IIssueComment[]>(
-    activeWorkspace && projectId && issueId ? PROJECT_ISSUES_COMMENTS(issueId as string) : null,
-    activeWorkspace && projectId && issueId
+    workspaceSlug && projectId && issueId ? PROJECT_ISSUES_COMMENTS(issueId as string) : null,
+    workspaceSlug && projectId && issueId
       ? () =>
           issuesServices.getIssueComments(
-            activeWorkspace.slug,
+            workspaceSlug as string,
             projectId as string,
             issueId as string
           )
@@ -51,9 +49,9 @@ const IssueCommentSection: React.FC = () => {
   );
 
   const onSubmit = async (formData: IIssueComment) => {
-    if (!activeWorkspace || !projectId || !issueId || isSubmitting) return;
+    if (!workspaceSlug || !projectId || !issueId || isSubmitting) return;
     await issuesServices
-      .createIssueComment(activeWorkspace.slug, projectId as string, issueId as string, formData)
+      .createIssueComment(workspaceSlug as string, projectId as string, issueId as string, formData)
       .then((response) => {
         console.log(response);
         mutate((prevData) => [response, ...(prevData ?? [])]);
@@ -65,10 +63,10 @@ const IssueCommentSection: React.FC = () => {
   };
 
   const onCommentUpdate = async (comment: IIssueComment) => {
-    if (!activeWorkspace || !projectId || !issueId || isSubmitting) return;
+    if (!workspaceSlug || !projectId || !issueId || isSubmitting) return;
     await issuesServices
       .patchIssueComment(
-        activeWorkspace.slug,
+        workspaceSlug as string,
         projectId as string,
         issueId as string,
         comment.id,
@@ -88,9 +86,14 @@ const IssueCommentSection: React.FC = () => {
   };
 
   const onCommentDelete = async (commentId: string) => {
-    if (!activeWorkspace || !projectId || !issueId || isSubmitting) return;
+    if (!workspaceSlug || !projectId || !issueId || isSubmitting) return;
     await issuesServices
-      .deleteIssueComment(activeWorkspace.slug, projectId as string, issueId as string, commentId)
+      .deleteIssueComment(
+        workspaceSlug as string,
+        projectId as string,
+        issueId as string,
+        commentId
+      )
       .then((response) => {
         mutate((prevData) => (prevData ?? []).filter((c) => c.id !== commentId));
         console.log(response);

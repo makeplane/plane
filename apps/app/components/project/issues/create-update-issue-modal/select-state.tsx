@@ -1,4 +1,7 @@
+// react
 import React from "react";
+// next
+import { useRouter } from "next/router";
 // swr
 import useSWR from "swr";
 // react hook form
@@ -7,8 +10,6 @@ import { Controller } from "react-hook-form";
 import stateService from "lib/services/state.service";
 // constants
 import { STATE_LIST } from "constants/fetch-keys";
-// hooks
-import useUser from "lib/hooks/useUser";
 // icons
 import { PlusIcon } from "@heroicons/react/20/solid";
 // ui
@@ -25,12 +26,13 @@ type Props = {
 };
 
 const SelectState: React.FC<Props> = ({ control, setIsOpen }) => {
-  const { activeWorkspace, activeProject } = useUser();
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
 
   const { data: states } = useSWR(
-    activeWorkspace && activeProject ? STATE_LIST(activeProject.id) : null,
-    activeWorkspace && activeProject
-      ? () => stateService.getStates(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
       : null
   );
 

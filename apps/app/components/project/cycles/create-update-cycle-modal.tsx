@@ -1,4 +1,6 @@
 import React, { useEffect } from "react";
+// next
+import { useRouter } from "next/router";
 // swr
 import { mutate } from "swr";
 // react hook form
@@ -39,7 +41,11 @@ const CreateUpdateCycleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, proj
     }, 500);
   };
 
-  const { activeWorkspace } = useUser();
+  const router = useRouter();
+
+  const {
+    query: { workspaceSlug },
+  } = router;
 
   const {
     register,
@@ -52,7 +58,7 @@ const CreateUpdateCycleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, proj
   });
 
   const onSubmit = async (formData: ICycle) => {
-    if (!activeWorkspace) return;
+    if (!workspaceSlug) return;
     const payload = {
       ...formData,
       start_date: formData.start_date ? renderDateFormat(formData.start_date) : null,
@@ -60,7 +66,7 @@ const CreateUpdateCycleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, proj
     };
     if (!data) {
       await cycleService
-        .createCycle(activeWorkspace.slug, projectId, payload)
+        .createCycle(workspaceSlug as string, projectId, payload)
         .then((res) => {
           mutate<ICycle[]>(CYCLE_LIST(projectId), (prevData) => [res, ...(prevData ?? [])], false);
           handleClose();
@@ -74,7 +80,7 @@ const CreateUpdateCycleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, proj
         });
     } else {
       await cycleService
-        .updateCycle(activeWorkspace.slug, projectId, data.id, payload)
+        .updateCycle(workspaceSlug as string, projectId, data.id, payload)
         .then((res) => {
           mutate<ICycle[]>(
             CYCLE_LIST(projectId),

@@ -123,11 +123,11 @@ const SingleModule = () => {
 
   const { data: moduleDetail } = useSWR<IModule>(
     MODULE_DETAIL,
-    activeWorkspace && activeProject
+    workspaceSlug && projectId
       ? () =>
           modulesService.getModuleDetails(
-            activeWorkspace?.slug,
-            activeProject?.id,
+            workspaceSlug as string,
+            projectId as string,
             moduleId as string
           )
       : null
@@ -260,7 +260,7 @@ const SingleModule = () => {
           <Breadcrumbs>
             <BreadcrumbItem
               title={`${activeProject?.name ?? "Project"} Modules`}
-              link={`/projects/${activeProject?.id}/cycles`}
+              link={`/${workspaceSlug}/projects/${activeProject?.id}/cycles`}
             />
           </Breadcrumbs>
         }
@@ -279,7 +279,7 @@ const SingleModule = () => {
               <CustomMenu.MenuItem
                 key={module.id}
                 renderAs="a"
-                href={`/projects/${activeProject?.id}/modules/${module.id}`}
+                href={`/${workspaceSlug}/projects/${activeProject?.id}/modules/${module.id}`}
               >
                 {module.name}
               </CustomMenu.MenuItem>
@@ -504,7 +504,7 @@ const SingleModule = () => {
           </div>
         )}
         <ModuleDetailSidebar
-          module={moduleDetail}
+          module={modules?.find((m) => m.id === moduleId)}
           isOpen={moduleSidebar}
           moduleIssues={moduleIssues}
           handleDeleteModule={handleDeleteModule}

@@ -15,6 +15,10 @@ import { MagnifyingGlassIcon, RectangleStackIcon } from "@heroicons/react/24/out
 import { IIssue, IssueResponse } from "types";
 // common
 import { classNames } from "constants/common";
+import { useRouter } from "next/router";
+import useSWR from "swr";
+import { PROJECT_DETAILS } from "constants/fetch-keys";
+import projectService from "lib/services/project.service";
 
 type FormInput = {
   issues: string[];
@@ -37,7 +41,15 @@ const ExistingIssuesListModal: React.FC<Props> = ({
 }) => {
   const [query, setQuery] = useState("");
 
-  const { activeProject } = useUser();
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
+
+  const { data: projectDetails } = useSWR(
+    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
+      : null
+  );
 
   const { setToastAlert } = useToast();
 
@@ -116,7 +128,7 @@ const ExistingIssuesListModal: React.FC<Props> = ({
                             aria-hidden="true"
                           />
                           <Combobox.Input
-                            className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm outline-none"
+                            className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder-gray-500 outline-none focus:ring-0 sm:text-sm"
                             placeholder="Search..."
                             onChange={(e) => setQuery(e.target.value)}
                           />
@@ -147,7 +159,7 @@ const ExistingIssuesListModal: React.FC<Props> = ({
                                         value={issue.id}
                                         className={({ active }) =>
                                           classNames(
-                                            "flex items-center gap-2 cursor-pointer select-none w-full rounded-md px-3 py-2",
+                                            "flex w-full cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2",
                                             active ? "bg-gray-900 bg-opacity-5 text-gray-900" : ""
                                           )
                                         }
@@ -156,13 +168,13 @@ const ExistingIssuesListModal: React.FC<Props> = ({
                                           <>
                                             <input type="checkbox" checked={selected} readOnly />
                                             <span
-                                              className="flex-shrink-0 h-1.5 w-1.5 block rounded-full"
+                                              className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
                                               style={{
                                                 backgroundColor: issue.state_detail.color,
                                               }}
                                             />
                                             <span className="flex-shrink-0 text-xs text-gray-500">
-                                              {activeProject?.identifier}-{issue.sequence_id}
+                                              {projectDetails?.identifier}-{issue.sequence_id}
                                             </span>
                                             {issue.name}
                                           </>
@@ -189,7 +201,7 @@ const ExistingIssuesListModal: React.FC<Props> = ({
                       </Combobox>
                     )}
                   />
-                  <div className="flex justify-end items-center gap-2 p-3">
+                  <div className="flex items-center justify-end gap-2 p-3">
                     <Button type="button" theme="danger" size="sm" onClick={handleClose}>
                       Cancel
                     </Button>

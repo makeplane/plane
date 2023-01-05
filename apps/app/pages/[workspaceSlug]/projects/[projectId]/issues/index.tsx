@@ -64,18 +64,18 @@ const ProjectIssues: NextPage = () => {
   );
 
   const { data: activeProject } = useSWR(
-    activeWorkspace && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    activeWorkspace && projectId
-      ? () => projectService.getProject(activeWorkspace.slug, projectId as string)
+    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
       : null
   );
 
   const { data: projectIssues } = useSWR(
     activeWorkspace && activeProject
-      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
+      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
       : null,
     activeWorkspace && activeProject
-      ? () => issuesServices.getIssues(activeWorkspace.slug, activeProject.id)
+      ? () => issuesServices.getIssues(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -147,7 +147,7 @@ const ProjectIssues: NextPage = () => {
     <AppLayout
       breadcrumbs={
         <Breadcrumbs>
-          <BreadcrumbItem title="Projects" link="/projects" />
+          <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
           <BreadcrumbItem title={`${activeProject?.name ?? "Project"} Issues`} />
         </Breadcrumbs>
       }

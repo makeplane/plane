@@ -1,15 +1,13 @@
-// react
 import React, { useState } from "react";
-// headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // ui
 import { Button } from "ui";
 // icons
 import { MagnifyingGlassIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
+// constants
+import { classNames } from "constants/common";
 // types
 import { IIssue } from "types";
-import { classNames } from "constants/common";
-import useUser from "lib/hooks/useUser";
 
 type Props = {
   isOpen: boolean;
@@ -34,8 +32,6 @@ const IssuesListModal: React.FC<Props> = ({
 }) => {
   const [query, setQuery] = useState("");
   const [values, setValues] = useState<string[]>([]);
-
-  const { activeProject } = useUser();
 
   const handleClose = () => {
     onClose();
@@ -77,21 +73,14 @@ const IssuesListModal: React.FC<Props> = ({
               <Dialog.Panel className="relative mx-auto max-w-2xl transform divide-y divide-gray-500 divide-opacity-10 rounded-xl bg-white bg-opacity-80 shadow-2xl ring-1 ring-black ring-opacity-5 backdrop-blur backdrop-filter transition-all">
                 {multiple ? (
                   <>
-                    <Combobox
-                      value={value}
-                      onChange={(val) => {
-                        // setValues(val);
-                        console.log(val);
-                      }}
-                      multiple
-                    >
+                    <Combobox value={value} onChange={(val) => {}} multiple>
                       <div className="relative m-1">
                         <MagnifyingGlassIcon
                           className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-gray-900 text-opacity-40"
                           aria-hidden="true"
                         />
                         <Combobox.Input
-                          className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm outline-none"
+                          className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder-gray-500 outline-none focus:ring-0 sm:text-sm"
                           placeholder="Search..."
                           onChange={(e) => setQuery(e.target.value)}
                           displayValue={() => ""}
@@ -116,7 +105,7 @@ const IssuesListModal: React.FC<Props> = ({
                                   value={issue.id}
                                   className={({ active }) =>
                                     classNames(
-                                      "flex items-center gap-2 cursor-pointer select-none rounded-md px-3 py-2",
+                                      "flex cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2",
                                       active ? "bg-gray-900 bg-opacity-5 text-gray-900" : ""
                                     )
                                   }
@@ -125,13 +114,13 @@ const IssuesListModal: React.FC<Props> = ({
                                     <>
                                       <input type="checkbox" checked={selected} readOnly />
                                       <span
-                                        className="flex-shrink-0 h-1.5 w-1.5 block rounded-full"
+                                        className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
                                         style={{
                                           backgroundColor: issue.state_detail.color,
                                         }}
                                       />
                                       <span className="flex-shrink-0 text-xs text-gray-500">
-                                        {activeProject?.identifier}-{issue.sequence_id}
+                                        {issue.project_detail?.identifier}-{issue.sequence_id}
                                       </span>{" "}
                                       {issue.id}
                                     </>
@@ -155,7 +144,7 @@ const IssuesListModal: React.FC<Props> = ({
                         </div>
                       )}
                     </Combobox>
-                    <div className="flex justify-end items-center gap-2 p-3">
+                    <div className="flex items-center justify-end gap-2 p-3">
                       <Button type="button" theme="danger" size="sm" onClick={handleClose}>
                         Cancel
                       </Button>
@@ -172,7 +161,7 @@ const IssuesListModal: React.FC<Props> = ({
                         aria-hidden="true"
                       />
                       <Combobox.Input
-                        className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm outline-none"
+                        className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder-gray-500 outline-none focus:ring-0 sm:text-sm"
                         placeholder="Search..."
                         onChange={(e) => setQuery(e.target.value)}
                         displayValue={() => ""}
@@ -197,26 +186,24 @@ const IssuesListModal: React.FC<Props> = ({
                                 value={issue.id}
                                 className={({ active }) =>
                                   classNames(
-                                    "flex items-center gap-2 cursor-pointer select-none rounded-md px-3 py-2",
+                                    "flex cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2",
                                     active ? "bg-gray-900 bg-opacity-5 text-gray-900" : ""
                                   )
                                 }
                                 onClick={() => handleClose()}
                               >
-                                {({ selected }) => (
-                                  <>
-                                    <span
-                                      className="flex-shrink-0 h-1.5 w-1.5 block rounded-full"
-                                      style={{
-                                        backgroundColor: issue.state_detail.color,
-                                      }}
-                                    />
-                                    <span className="flex-shrink-0 text-xs text-gray-500">
-                                      {activeProject?.identifier}-{issue.sequence_id}
-                                    </span>{" "}
-                                    {issue.name}
-                                  </>
-                                )}
+                                <>
+                                  <span
+                                    className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                                    style={{
+                                      backgroundColor: issue.state_detail.color,
+                                    }}
+                                  />
+                                  <span className="flex-shrink-0 text-xs text-gray-500">
+                                    {issue.project_detail?.identifier}-{issue.sequence_id}
+                                  </span>{" "}
+                                  {issue.name}
+                                </>
                               </Combobox.Option>
                             ))}
                           </ul>

@@ -10,8 +10,6 @@ import projectService from "lib/services/project.service";
 import workspaceService from "lib/services/workspace.service";
 // constants
 import { WORKSPACE_DETAILS, PROJECTS_LIST } from "constants/fetch-keys";
-// hooks
-import useUser from "lib/hooks/useUser";
 // layouts
 import AppLayout from "layouts/app-layout";
 // components

@@ -6,13 +6,12 @@ import { useRouter } from "next/router";
 // swr
 import useSWR from "swr";
 // hooks
-import useUser from "lib/hooks/useUser";
 import useTheme from "lib/hooks/useTheme";
 import useToast from "lib/hooks/useToast";
-// constants
-import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // services
 import issuesServices from "lib/services/issues.service";
+import projectServices from "lib/services/project.service";
+import userService from "lib/services/user.service";
 // components
 import ShortcutsModal from "components/command-palette/shortcuts";
 import { CreateProjectModal } from "components/project";
@@ -22,6 +21,8 @@ import CreateUpdateModuleModal from "components/project/modules/create-update-mo
 import BulkDeleteIssuesModal from "components/common/bulk-delete-issues-modal";
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
+// constants
+import { PROJECTS_LIST, PROJECT_ISSUES_LIST, USER_ISSUE } from "constants/fetch-keys";
 // ui
 import { Button } from "ui";
 // icons
@@ -47,26 +48,39 @@ const CommandPalette: React.FC = () => {
   const [isCreateModuleModalOpen, setIsCreateModuleModalOpen] = useState(false);
   const [isBulkDeleteIssuesModalOpen, setIsBulkDeleteIssuesModalOpen] = useState(false);
 
-  const { activeProject, activeWorkspace } = useUser();
+  const router = useRouter();
+
+  const { workspaceSlug, projectId } = router.query;
+
+  const { setToastAlert } = useToast();
+  const { toggleCollapsed } = useTheme();
 
   const { data: issues } = useSWR(
-    activeWorkspace && activeProject
-      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId
+      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
       : null,
-    activeWorkspace && activeProject
-      ? () => issuesServices.getIssues(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId
+      ? () => issuesServices.getIssues(workspaceSlug as string, projectId as string)
       : null
   );
 
-  const router = useRouter();
+  const { data: myIssues } = useSWR<IIssue[]>(
+    workspaceSlug ? USER_ISSUE(workspaceSlug as string) : null,
+    workspaceSlug ? () => userService.userIssues(workspaceSlug as string) : null
+  );
 
-  const { toggleCollapsed } = useTheme();
+  const { data: projects } = useSWR(
+    workspaceSlug ? PROJECTS_LIST(workspaceSlug as string) : null,
+    workspaceSlug ? () => projectServices.getProjects(workspaceSlug as string) : null
+  );
 
-  const { setToastAlert } = useToast();
+  const activeProject = !projectId
+    ? projects?.[0]
+    : projects?.find((project) => project.id === projectId);
 
   const filteredIssues: IIssue[] =
     query === ""
-      ? issues?.results ?? []
+      ? issues?.results ?? myIssues ?? []
       : issues?.results.filter((issue) => issue.name.toLowerCase().includes(query.toLowerCase())) ??
         [];
 
@@ -165,13 +179,13 @@ const CommandPalette: React.FC = () => {
             setIsOpen={setIsCreateModuleModalOpen}
             projectId={activeProject.id}
           />
+          <CreateUpdateIssuesModal
+            isOpen={isIssueModalOpen}
+            setIsOpen={setIsIssueModalOpen}
+            projectId={activeProject.id}
+          />
         </>
       )}
-      <CreateUpdateIssuesModal
-        isOpen={isIssueModalOpen}
-        setIsOpen={setIsIssueModalOpen}
-        projectId={activeProject?.id}
-      />
       <BulkDeleteIssuesModal
         isOpen={isBulkDeleteIssuesModalOpen}
         setIsOpen={setIsBulkDeleteIssuesModalOpen}
@@ -245,7 +259,7 @@ const CommandPalette: React.FC = () => {
                                 htmlFor={`issue-${issue.id}`}
                                 value={{
                                   name: issue.name,
-                                  url: `/projects/${issue.project}/issues/${issue.id}`,
+                                  url: `/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`,
                                 }}
                                 className={({ active }) =>
                                   classNames(

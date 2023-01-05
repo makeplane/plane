@@ -158,7 +158,7 @@ const GeneralSettings: NextPage<TGeneralSettingsProps> = (props) => {
         <Breadcrumbs>
           <BreadcrumbItem
             title={`${activeProject?.name ?? "Project"}`}
-            link={`/projects/${activeProject?.id}/issues`}
+            link={`/${workspaceSlug}/projects/${activeProject?.id}/issues`}
           />
           <BreadcrumbItem title="General Settings" />
         </Breadcrumbs>
@@ -217,6 +217,29 @@ const GeneralSettings: NextPage<TGeneralSettingsProps> = (props) => {
                   )}
                 </div>
               </div>
+            </div>
+            <div className="col-span-5 space-y-16">
+              <div>
+                <h4 className="text-md mb-1 leading-6 text-gray-900">Description</h4>
+                <p className="mb-3 text-sm text-gray-500">Give a description to the project.</p>
+                {projectDetails ? (
+                  <TextArea
+                    id="description"
+                    name="description"
+                    error={errors.description}
+                    register={register}
+                    placeholder="Enter project description"
+                    validations={{}}
+                    className="min-h-[46px]"
+                  />
+                ) : (
+                  <Loader className="w-full">
+                    <Loader.Item height="46px" width="full" light />
+                  </Loader>
+                )}
+              </div>
+            </div>
+            <div className="col-span-5 space-y-16">
               <div>
                 <h4 className="text-md mb-1 leading-6 text-gray-900">Identifier</h4>
                 <p className="mb-3 text-sm text-gray-500">
@@ -255,25 +278,6 @@ const GeneralSettings: NextPage<TGeneralSettingsProps> = (props) => {
               </div>
             </div>
             <div className="col-span-5 space-y-16">
-              <div>
-                <h4 className="text-md mb-1 leading-6 text-gray-900">Description</h4>
-                <p className="mb-3 text-sm text-gray-500">Give a description to the project.</p>
-                {projectDetails ? (
-                  <TextArea
-                    id="description"
-                    name="description"
-                    error={errors.description}
-                    register={register}
-                    placeholder="Enter project description"
-                    validations={{}}
-                    className="min-h-[46px]"
-                  />
-                ) : (
-                  <Loader className="w-full">
-                    <Loader.Item height="46px" width="full" light />
-                  </Loader>
-                )}
-              </div>
               <div>
                 <h4 className="text-md mb-1 leading-6 text-gray-900">Network</h4>
                 <p className="mb-3 text-sm text-gray-500">Select privacy type for the project.</p>

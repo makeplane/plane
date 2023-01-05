@@ -42,15 +42,12 @@ const SingleStat: React.FC<TSingleStatProps> = (props) => {
   const { cycle, handleEditCycle, handleDeleteCycle } = props;
 
   const router = useRouter();
-  const { workspaceSlug } = router.query;
-
-  const { activeWorkspace, activeProject } = useUser();
+  const { workspaceSlug, projectId } = router.query;
 
   const { data: cycleIssues } = useSWR<CycleIssueResponse[]>(
-    activeWorkspace && activeProject && cycle.id ? CYCLE_ISSUES(cycle.id as string) : null,
-    activeWorkspace && activeProject && cycle.id
-      ? () =>
-          cyclesService.getCycleIssues(activeWorkspace?.slug, activeProject?.id, cycle.id as string)
+    workspaceSlug && projectId && cycle.id ? CYCLE_ISSUES(cycle.id as string) : null,
+    workspaceSlug && projectId && cycle.id
+      ? () => cyclesService.getCycleIssues(workspaceSlug as string, projectId as string, cycle.id)
       : null
   );
 
@@ -72,7 +69,7 @@ const SingleStat: React.FC<TSingleStatProps> = (props) => {
         <div className="grid grid-cols-9 gap-2 divide-x">
           <div className="col-span-3 flex flex-col space-y-3">
             <div className="flex items-center justify-between gap-2">
-              <Link href={`/${workspaceSlug}/projects/${activeProject?.id}/cycles/${cycle.id}`}>
+              <Link href={`/${workspaceSlug}/projects/${projectId as string}/cycles/${cycle.id}`}>
                 <a>
                   <h2 className="font-medium">{cycle.name}</h2>
                 </a>
@@ -117,7 +114,9 @@ const SingleStat: React.FC<TSingleStatProps> = (props) => {
               <Button
                 theme="secondary"
                 className="flex items-center gap-2"
-                onClick={() => router.push(`/projects/${activeProject?.id}/cycles/${cycle.id}`)}
+                onClick={() =>
+                  router.push(`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`)
+                }
               >
                 <ArrowPathIcon className="h-3 w-3" />
                 Open Cycle
@@ -157,7 +156,6 @@ const SingleStat: React.FC<TSingleStatProps> = (props) => {
               })}
             </div>
           </div>
-          <div className="col-span-4"></div>
         </div>
       </div>
     </>

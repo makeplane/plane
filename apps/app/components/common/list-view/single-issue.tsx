@@ -1,9 +1,8 @@
 // next
 import Link from "next/link";
+import { useRouter } from "next/router";
 // swr
 import useSWR from "swr";
-// hooks
-import useUser from "lib/hooks/useUser";
 // services
 import issuesService from "lib/services/issues.service";
 // ui
@@ -38,14 +37,15 @@ const SingleListIssue: React.FC<Props> = ({
   handleDeleteIssue,
   removeIssue,
 }) => {
-  const { activeWorkspace, activeProject } = useUser();
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
 
   const { data: issues } = useSWR<IssueResponse>(
-    activeWorkspace && activeProject
-      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId
+      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
       : null,
-    activeWorkspace && activeProject
-      ? () => issuesService.getIssues(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId
+      ? () => issuesService.getIssues(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -63,18 +63,14 @@ const SingleListIssue: React.FC<Props> = ({
             backgroundColor: issue.state_detail.color,
           }}
         />
-        <Link href={`/projects/${activeProject?.id}/issues/${issue.id}`}>
+        <Link href={`/projects/${issue.project_detail.id}/issues/${issue.id}`}>
           <a className="group relative flex items-center gap-2">
             {properties.key && (
               <span className="flex-shrink-0 text-xs text-gray-500">
-                {activeProject?.identifier}-{issue.sequence_id}
+                {issue.project_detail?.identifier}-{issue.sequence_id}
               </span>
             )}
             <span>{issue.name}</span>
-            {/* <div className="absolute bottom-full left-0 mb-2 z-10 hidden group-hover:block p-2 bg-white shadow-md rounded-md max-w-sm whitespace-nowrap">
-    <h5 className="font-medium mb-1">Name</h5>
-    <div>{issue.name}</div>
-  </div> */}
           </a>
         </Link>
       </div>
@@ -156,7 +152,7 @@ const SingleListIssue: React.FC<Props> = ({
             </div>
           </div>
         )}
-        {properties.sub_issue_count && (
+        {properties.sub_issue_count && projectId && (
           <div className="flex flex-shrink-0 items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
             {totalChildren} {totalChildren === 1 ? "sub-issue" : "sub-issues"}
           </div>

@@ -84,29 +84,22 @@ const IssueDetail: NextPage = () => {
   );
 
   const { data: activeProject } = useSWR(
-    activeWorkspace && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    activeWorkspace && projectId
-      ? () => projectService.getProject(activeWorkspace.slug, projectId as string)
+    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
       : null
   );
 
   const { data: issues, mutate: mutateIssues } = useSWR(
-    activeWorkspace && activeProject
-      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId
+      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
       : null,
-    activeWorkspace && activeProject
-      ? () => issuesServices.getIssues(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId
+      ? () => issuesServices.getIssues(workspaceSlug as string, projectId as string)
       : null
   );
 
-  const {
-    register,
-    formState: { errors },
-    handleSubmit,
-    reset,
-    control,
-    watch,
-  } = useForm<IIssue>({
+  const { register, handleSubmit, reset, control, watch } = useForm<IIssue>({
     defaultValues,
   });
 
@@ -143,9 +136,8 @@ const IssueDetail: NextPage = () => {
         (prevData) => ({
           ...(prevData as IssueResponse),
           results: (prevData?.results ?? []).map((issue) => {
-            if (issue.id === issueId) {
-              return { ...issue, ...formData };
-            }
+            if (issue.id === issueId) return { ...issue, ...formData };
+
             return issue;
           }),
         }),
@@ -206,7 +198,7 @@ const IssueDetail: NextPage = () => {
         <Breadcrumbs>
           <Breadcrumbs.BreadcrumbItem
             title={`${activeProject?.name ?? "Project"} Issues`}
-            link={`/projects/${activeProject?.id}/issues`}
+            link={`/${workspaceSlug}/projects/${activeProject?.id}/issues`}
           />
           <Breadcrumbs.BreadcrumbItem
             title={`Issue ${activeProject?.identifier ?? "Project"}-${
@@ -223,7 +215,7 @@ const IssueDetail: NextPage = () => {
             className={!prevIssue ? "cursor-not-allowed opacity-70" : ""}
             onClick={() => {
               if (!prevIssue) return;
-              router.push(`/projects/${prevIssue.project}/issues/${prevIssue.id}`);
+              router.push(`/${workspaceSlug}/projects/${prevIssue.project}/issues/${prevIssue.id}`);
             }}
           />
           <HeaderButton
@@ -233,7 +225,9 @@ const IssueDetail: NextPage = () => {
             className={!nextIssue ? "cursor-not-allowed opacity-70" : ""}
             onClick={() => {
               if (!nextIssue) return;
-              router.push(`/projects/${nextIssue.project}/issues/${nextIssue?.id}`);
+              router.push(
+                `/${workspaceSlug}/projects/${nextIssue.project}/issues/${nextIssue?.id}`
+              );
             }}
             position="reverse"
           />
@@ -258,13 +252,14 @@ const IssueDetail: NextPage = () => {
         />
       )}
       {issueDetail && activeProject ? (
-        <div className="flex h-full gap-5">
+        <div className="flex h-full">
           <div className="basis-2/3 space-y-5 p-5">
-            <div className="mb-5"></div>
             <div className="rounded-lg">
               {issueDetail.parent !== null && issueDetail.parent !== "" ? (
                 <div className="mb-5 flex w-min items-center gap-2 whitespace-nowrap rounded bg-gray-100 p-2 text-xs">
-                  <Link href={`/projects/${activeProject.id}/issues/${issueDetail.parent}`}>
+                  <Link
+                    href={`/${workspaceSlug}/projects/${activeProject.id}/issues/${issueDetail.parent}`}
+                  >
                     <a className="flex items-center gap-2">
                       <span
                         className="block h-1.5 w-1.5 rounded-full"
@@ -302,7 +297,9 @@ const IssueDetail: NextPage = () => {
                           {siblingIssues && siblingIssues.length > 0 ? (
                             siblingIssues.map((issue) => (
                               <Menu.Item as="div" key={issue.id}>
-                                <Link href={`/projects/${activeProject.id}/issues/${issue.id}`}>
+                                <Link
+                                  href={`/${workspaceSlug}/projects/${activeProject.id}/issues/${issue.id}`}
+                                >
                                   <a className="flex items-center gap-2 whitespace-nowrap rounded-md p-2 text-left text-xs text-gray-900 hover:bg-theme hover:text-white">
                                     {activeProject.identifier}-{issue.sequence_id}
                                   </a>
@@ -423,7 +420,9 @@ const IssueDetail: NextPage = () => {
                                 key={subIssue.id}
                                 className="group flex items-center justify-between gap-2 rounded p-2 hover:bg-gray-100"
                               >
-                                <Link href={`/projects/${activeProject.id}/issues/${subIssue.id}`}>
+                                <Link
+                                  href={`/${workspaceSlug}/projects/${activeProject.id}/issues/${subIssue.id}`}
+                                >
                                   <a className="flex items-center gap-2 rounded text-xs">
                                     <span
                                       className={`block h-1.5 w-1.5 rounded-full`}

@@ -1,17 +1,17 @@
-// react
 import React, { useState } from "react";
-// next
+
 import Link from "next/link";
-// swr
+import { useRouter } from "next/router";
+
 import useSWR from "swr";
-// react-hook-form
+
 import { SubmitHandler, useForm, UseFormWatch } from "react-hook-form";
 // services
 import issuesService from "lib/services/issues.service";
+import projectService from "lib/services/project.service";
 // constants
-import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import { PROJECT_DETAILS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // hooks
-import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
@@ -36,23 +36,25 @@ type Props = {
   watch: UseFormWatch<IIssue>;
 };
 
-const SelectBlocked: React.FC<Props> = ({ submitChanges, issueDetail, issuesList, watch }) => {
+const SelectBlocked: React.FC<Props> = ({ submitChanges, issuesList, watch }) => {
   const [query, setQuery] = useState("");
   const [isBlockedModalOpen, setIsBlockedModalOpen] = useState(false);
 
-  const { activeWorkspace, activeProject } = useUser();
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
+
   const { setToastAlert } = useToast();
 
   const { data: issues, mutate: mutateIssues } = useSWR(
-    activeWorkspace && activeProject
-      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId
+      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
       : null,
-    activeWorkspace && activeProject
-      ? () => issuesService.getIssues(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId
+      ? () => issuesService.getIssues(workspaceSlug as string, projectId as string)
       : null
   );
 
-  const { register, handleSubmit, reset, watch: watchIssues } = useForm<FormInput>();
+  const { register, handleSubmit, reset } = useForm<FormInput>();
 
   const handleClose = () => {
     setIsBlockedModalOpen(false);
@@ -99,15 +101,15 @@ const SelectBlocked: React.FC<Props> = ({ submitChanges, issueDetail, issuesList
                   }}
                 >
                   <Link
-                    href={`/projects/${activeProject?.id}/issues/${
+                    href={`/${workspaceSlug}/projects/${projectId}/issues/${
                       issues?.results.find((i) => i.id === issue)?.id
                     }`}
                   >
                     <a className="flex items-center gap-1">
                       <BlockedIcon height={10} width={10} />
-                      {`${activeProject?.identifier}-${
-                        issues?.results.find((i) => i.id === issue)?.sequence_id
-                      }`}
+                      {`${
+                        issues?.results.find((i) => i.id === issue)?.project_detail?.identifier
+                      }-${issues?.results.find((i) => i.id === issue)?.sequence_id}`}
                     </a>
                   </Link>
                   <span className="opacity-0 duration-300 group-hover:opacity-100">
@@ -186,7 +188,7 @@ const SelectBlocked: React.FC<Props> = ({ submitChanges, issueDetail, issuesList
                                         htmlFor={`issue-${issue.id}`}
                                         value={{
                                           name: issue.name,
-                                          url: `/projects/${issue.project}/issues/${issue.id}`,
+                                          url: `/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`,
                                         }}
                                         className={({ active }) =>
                                           classNames(
@@ -195,28 +197,28 @@ const SelectBlocked: React.FC<Props> = ({ submitChanges, issueDetail, issuesList
                                           )
                                         }
                                       >
-                                        {({ active }) => (
-                                          <>
-                                            <div className="flex items-center gap-2">
-                                              <input
-                                                type="checkbox"
-                                                {...register("issue_ids")}
-                                                id={`issue-${issue.id}`}
-                                                value={issue.id}
-                                              />
-                                              <span
-                                                className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                                                style={{
-                                                  backgroundColor: issue.state_detail.color,
-                                                }}
-                                              />
-                                              <span className="flex-shrink-0 text-xs text-gray-500">
-                                                {activeProject?.identifier}-{issue.sequence_id}
-                                              </span>
-                                              <span>{issue.name}</span>
-                                            </div>
-                                          </>
-                                        )}
+                                        <div className="flex items-center gap-2">
+                                          <input
+                                            type="checkbox"
+                                            {...register("issue_ids")}
+                                            id={`issue-${issue.id}`}
+                                            value={issue.id}
+                                          />
+                                          <span
+                                            className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                                            style={{
+                                              backgroundColor: issue.state_detail.color,
+                                            }}
+                                          />
+                                          <span className="flex-shrink-0 text-xs text-gray-500">
+                                            {
+                                              issues?.results.find((i) => i.id === issue.id)
+                                                ?.project_detail?.identifier
+                                            }
+                                            -{issue.sequence_id}
+                                          </span>
+                                          <span>{issue.name}</span>
+                                        </div>
                                       </Combobox.Option>
                                     );
                                   }

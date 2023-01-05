@@ -1,10 +1,11 @@
+// react
 import React from "react";
-// swr
+
+import { useRouter } from "next/router";
+
 import useSWR, { mutate } from "swr";
-// react-hook-form
+
 import { Control, Controller, UseFormWatch } from "react-hook-form";
-// hooks
-import useUser from "lib/hooks/useUser";
 // constants
 import { CYCLE_ISSUES, CYCLE_LIST, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // services
@@ -13,7 +14,7 @@ import cyclesService from "lib/services/cycles.service";
 // ui
 import { Spinner, CustomSelect } from "ui";
 // icons
-import { ArrowPathIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { ArrowPathIcon } from "@heroicons/react/24/outline";
 // types
 import { CycleIssueResponse, ICycle, IIssue } from "types";
 // common
@@ -26,35 +27,35 @@ type Props = {
   watch: UseFormWatch<IIssue>;
 };
 
-const SelectCycle: React.FC<Props> = ({ issueDetail, control, handleCycleChange, watch }) => {
-  const { activeWorkspace, activeProject } = useUser();
+const SelectCycle: React.FC<Props> = ({ issueDetail, control, handleCycleChange }) => {
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
 
   const { data: cycles } = useSWR(
-    activeWorkspace && activeProject ? CYCLE_LIST(activeProject.id) : null,
-    activeWorkspace && activeProject
-      ? () => cyclesService.getCycles(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId ? CYCLE_LIST(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => cyclesService.getCycles(workspaceSlug as string, projectId as string)
       : null
   );
 
   const removeIssueFromCycle = (bridgeId: string, cycleId: string) => {
-    if (!activeWorkspace || !activeProject) return;
-
-    mutate<CycleIssueResponse[]>(
-      CYCLE_ISSUES(cycleId),
-      (prevData) => prevData?.filter((p) => p.id !== bridgeId),
-      false
-    );
-
-    mutate(
-      activeWorkspace && activeProject
-        ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
-        : null
-    );
+    if (!workspaceSlug || !projectId) return;
 
     issuesService
-      .removeIssueFromCycle(activeWorkspace.slug, activeProject.id, cycleId, bridgeId)
+      .removeIssueFromCycle(workspaceSlug as string, projectId as string, cycleId, bridgeId)
       .then((res) => {
         console.log(res);
+        mutate<CycleIssueResponse[]>(
+          CYCLE_ISSUES(cycleId),
+          (prevData) => prevData?.filter((p) => p.id !== bridgeId),
+          false
+        );
+
+        mutate(
+          workspaceSlug && projectId
+            ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
+            : null
+        );
       })
       .catch((e) => {
         console.log(e);
@@ -68,23 +69,6 @@ const SelectCycle: React.FC<Props> = ({ issueDetail, control, handleCycleChange,
         <p>Cycle</p>
       </div>
       <div className="space-y-1 sm:basis-1/2">
-        {issueDetail?.issue_cycle && watch("issue_cycle") && (
-          <div className="flex flex-wrap gap-1">
-            <span
-              className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-white px-1.5 py-0.5 text-xs text-red-500 duration-300 hover:border-red-500 hover:bg-yellow-50"
-              onClick={() =>
-                removeIssueFromCycle(
-                  issueDetail.issue_cycle?.id ?? "",
-                  issueDetail.issue_cycle?.cycle ?? ""
-                )
-              }
-            >
-              <ArrowPathIcon className="h-3 w-3" />
-              {watch("issue_cycle")?.cycle_detail.name}
-              <XMarkIcon className="h-2 w-2 opacity-0 duration-300 group-hover:text-red-500 group-hover:opacity-100" />
-            </span>
-          </div>
-        )}
         <Controller
           control={control}
           name="issue_cycle"
@@ -103,16 +87,26 @@ const SelectCycle: React.FC<Props> = ({ issueDetail, control, handleCycleChange,
                 }
                 value={value}
                 onChange={(value: any) => {
-                  handleCycleChange(cycles?.find((c) => c.id === value) as any);
+                  value === null
+                    ? removeIssueFromCycle(
+                        issueDetail?.issue_cycle?.id ?? "",
+                        issueDetail?.issue_cycle?.cycle ?? ""
+                      )
+                    : handleCycleChange(cycles?.find((c) => c.id === value) as any);
                 }}
               >
                 {cycles ? (
                   cycles.length > 0 ? (
-                    cycles.map((option) => (
-                      <CustomSelect.Option key={option.id} value={option.id}>
-                        {option.name}
+                    <>
+                      <CustomSelect.Option value={null} className="capitalize">
+                        <>None</>
                       </CustomSelect.Option>
-                    ))
+                      {cycles.map((option) => (
+                        <CustomSelect.Option key={option.id} value={option.id}>
+                          {option.name}
+                        </CustomSelect.Option>
+                      ))}
+                    </>
                   ) : (
                     <div className="text-center">No cycles found</div>
                   )

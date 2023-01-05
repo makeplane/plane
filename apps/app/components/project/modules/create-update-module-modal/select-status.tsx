@@ -22,9 +22,9 @@ const SelectStatus: React.FC<Props> = ({ control }) => {
       name="status"
       render={({ field: { value, onChange } }) => (
         <CustomListbox
-          title="State"
+          title="Status"
           options={MODULE_STATUS.map((status) => {
-            return { value: status.value, display: status.label };
+            return { value: status.value, display: status.label, color: status.color };
           })}
           value={value}
           optionsFontsize="sm"

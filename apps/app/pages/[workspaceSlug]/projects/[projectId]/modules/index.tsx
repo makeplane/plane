@@ -24,9 +24,8 @@ import { IModule } from "types/modules";
 import { MODULE_LIST, PROJECT_DETAILS, WORKSPACE_DETAILS } from "constants/fetch-keys";
 
 const ProjectModules: NextPage = () => {
-  const {
-    query: { workspaceSlug, projectId },
-  } = useRouter();
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
 
   const { data: activeWorkspace } = useSWR(
     workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
@@ -54,7 +53,7 @@ const ProjectModules: NextPage = () => {
       }}
       breadcrumbs={
         <Breadcrumbs>
-          <BreadcrumbItem title="Projects" link="/projects" />
+          <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
           <BreadcrumbItem title={`${activeProject?.name ?? "Project"} Modules`} />
         </Breadcrumbs>
       }

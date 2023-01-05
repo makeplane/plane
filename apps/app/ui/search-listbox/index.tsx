@@ -1,13 +1,11 @@
-// react
 import React, { useState } from "react";
-// next
+
 import Image from "next/image";
-// swr
+import { useRouter } from "next/router";
+
 import useSWR from "swr";
 // services
 import workspaceService from "lib/services/workspace.service";
-// hooks
-import useUser from "lib/hooks/useUser";
 // headless ui
 import { Transition, Combobox } from "@headlessui/react";
 // types
@@ -32,7 +30,8 @@ const SearchListbox: React.FC<Props> = ({
 }) => {
   const [query, setQuery] = useState("");
 
-  const { activeWorkspace } = useUser();
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
 
   const filteredOptions =
     query === ""
@@ -53,8 +52,8 @@ const SearchListbox: React.FC<Props> = ({
   }
 
   const { data: people } = useSWR(
-    activeWorkspace ? WORKSPACE_MEMBERS(activeWorkspace.slug) : null,
-    activeWorkspace ? () => workspaceService.workspaceMembers(activeWorkspace.slug) : null
+    workspaceSlug ? WORKSPACE_MEMBERS(workspaceSlug as string) : null,
+    workspaceSlug ? () => workspaceService.workspaceMembers(workspaceSlug as string) : null
   );
 
   const userAvatar = (userId: string) => {
@@ -76,7 +75,7 @@ const SearchListbox: React.FC<Props> = ({
       );
     } else
       return (
-        <div className="flex-shrink-0 h-4 w-4 bg-gray-700 text-white grid place-items-center capitalize rounded-full">
+        <div className="grid h-4 w-4 flex-shrink-0 place-items-center rounded-full bg-gray-700 capitalize text-white">
           {user.member.first_name && user.member.first_name !== ""
             ? user.member.first_name.charAt(0)
             : user.member.email.charAt(0)}
@@ -90,7 +89,7 @@ const SearchListbox: React.FC<Props> = ({
         <>
           <Combobox.Label className="sr-only">{title}</Combobox.Label>
           <Combobox.Button
-            className={`flex items-center gap-1 hover:bg-gray-100 border rounded-md shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300 ${
+            className={`flex cursor-pointer items-center gap-1 rounded-md border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
               buttonClassName || ""
             }`}
           >
@@ -117,7 +116,7 @@ const SearchListbox: React.FC<Props> = ({
             leaveTo="opacity-0"
           >
             <Combobox.Options
-              className={`absolute z-10 mt-1 bg-white shadow-lg rounded-md py-1 ring-1 ring-black ring-opacity-5 focus:outline-none max-h-32 overflow-auto ${
+              className={`absolute z-10 mt-1 max-h-32 overflow-auto rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ${
                 width === "xs"
                   ? "w-20"
                   : width === "sm"
@@ -146,7 +145,7 @@ const SearchListbox: React.FC<Props> = ({
               } ${optionsClassName || ""}`}
             >
               <Combobox.Input
-                className="w-full bg-transparent border-b p-2 focus:outline-none text-xs"
+                className="w-full border-b bg-transparent p-2 text-xs focus:outline-none"
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Search"
                 displayValue={(assigned: any) => assigned?.name}
@@ -160,7 +159,7 @@ const SearchListbox: React.FC<Props> = ({
                         className={({ active }) =>
                           `${
                             active ? "bg-indigo-50" : ""
-                          } flex items-center gap-2 cursor-pointer select-none truncate text-gray-900 p-2`
+                          } flex cursor-pointer select-none items-center gap-2 truncate p-2 text-gray-900`
                         }
                         value={option.value}
                       >

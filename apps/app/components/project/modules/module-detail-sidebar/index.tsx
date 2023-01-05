@@ -1,15 +1,14 @@
-// react
-import { useEffect, useState } from "react";
-// next
+import React, { useEffect, useState } from "react";
+
 import Link from "next/link";
-// swr
+import { useRouter } from "next/router";
+
 import { mutate } from "swr";
-// react-hook-form
+
 import { Controller, useForm } from "react-hook-form";
 // services
 import modulesService from "lib/services/modules.service";
 // hooks
-import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
 // components
 import SelectMembers from "components/project/modules/module-detail-sidebar/select-members";
@@ -21,7 +20,6 @@ import { Loader } from "ui";
 import {
   CalendarDaysIcon,
   ChartPieIcon,
-  ClipboardDocumentIcon,
   LinkIcon,
   PlusIcon,
   TrashIcon,
@@ -56,13 +54,26 @@ const ModuleDetailSidebar: React.FC<Props> = ({
 }) => {
   const [moduleLinkModal, setModuleLinkModal] = useState(false);
 
-  const { activeWorkspace, activeProject } = useUser();
+  const router = useRouter();
+  const {
+    query: { workspaceSlug, projectId },
+  } = router;
 
   const { setToastAlert } = useToast();
 
   const { reset, watch, control } = useForm({
     defaultValues,
   });
+
+  // console.log(module);
+
+  useEffect(() => {
+    if (module)
+      reset({
+        ...module,
+        members_list: module.members_list ?? module.members_detail?.map((m) => m.id),
+      });
+  }, [module, reset]);
 
   const groupedIssues = {
     backlog: [],
@@ -74,10 +85,10 @@ const ModuleDetailSidebar: React.FC<Props> = ({
   };
 
   const submitChanges = (data: Partial<IModule>) => {
-    if (!activeWorkspace || !activeProject || !module) return;
+    if (!workspaceSlug || !projectId || !module) return;
 
     modulesService
-      .patchModule(activeWorkspace.slug, activeProject.id, module.id, data)
+      .patchModule(workspaceSlug as string, projectId as string, module.id, data)
       .then((res) => {
         console.log(res);
         mutate(MODULE_DETAIL);
@@ -86,14 +97,6 @@ const ModuleDetailSidebar: React.FC<Props> = ({
         console.log(e);
       });
   };
-
-  useEffect(() => {
-    if (module)
-      reset({
-        ...module,
-        members_list: module.members_list ?? module.members_detail?.map((m) => m.id),
-      });
-  }, [module, reset]);
 
   return (
     <>
@@ -117,7 +120,7 @@ const ModuleDetailSidebar: React.FC<Props> = ({
                   className="rounded-md border p-2 shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                   onClick={() =>
                     copyTextToClipboard(
-                      `https://app.plane.so/projects/${activeProject?.id}/modules/${module.id}`
+                      `https://app.plane.so/${workspaceSlug}/projects/${projectId}/modules/${module.id}`
                     )
                       .then(() => {
                         setToastAlert({
@@ -152,12 +155,12 @@ const ModuleDetailSidebar: React.FC<Props> = ({
                     <p>Lead</p>
                   </div>
                   <div className="sm:basis-1/2">
-                    {module.lead_detail.first_name !== "" ? (
+                    {module?.lead_detail?.first_name !== "" ? (
                       <>
-                        {module.lead_detail.first_name} {module.lead_detail.last_name}
+                        {module?.lead_detail?.first_name} {module?.lead_detail?.last_name}
                       </>
                     ) : (
-                      module.lead_detail.email
+                      module?.lead_detail?.email
                     )}
                   </div>
                 </div>
@@ -190,7 +193,10 @@ const ModuleDetailSidebar: React.FC<Props> = ({
                           type="date"
                           id="moduleStartDate"
                           value={value ?? ""}
-                          onChange={onChange}
+                          onChange={(e: any) => {
+                            submitChanges({ start_date: e.target.value });
+                            onChange(e.target.value);
+                          }}
                           className="w-full cursor-pointer rounded-md border bg-transparent px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                         />
                       )}

@@ -345,7 +345,7 @@ img.ProseMirror-separator {
 }
 
 .ProseMirror {
-  padding: 4px 8px 4px 14px;
+  padding: 8px 8px 4px 14px;
   line-height: 1.2;
   outline: none;
 }
@@ -356,6 +356,10 @@ img.ProseMirror-separator {
 
 .remirror-editor-wrapper {
   min-height: 150px;
+}
+
+.remirror-editor-wrapper {
+  padding-top: 8px;
 }
 
 /* heading styling */

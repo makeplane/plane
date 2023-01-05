@@ -1,5 +1,7 @@
 // react
 import { useEffect } from "react";
+// next
+import { useRouter } from "next/router";
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // hooks
@@ -35,11 +37,14 @@ const defaultValues: Partial<ICycle> = {
 };
 
 const CycleDetailSidebar: React.FC<Props> = ({ cycle, cycleIssues }) => {
-  const { activeWorkspace, activeProject } = useUser();
+  const router = useRouter();
+  const {
+    query: { workspaceSlug, projectId },
+  } = router;
 
   const { setToastAlert } = useToast();
 
-  const { reset, watch, control } = useForm({
+  const { reset, control } = useForm({
     defaultValues,
   });
 
@@ -53,10 +58,10 @@ const CycleDetailSidebar: React.FC<Props> = ({ cycle, cycleIssues }) => {
   };
 
   const submitChanges = (data: Partial<ICycle>) => {
-    if (!activeWorkspace || !activeProject || !module) return;
+    if (!workspaceSlug || !projectId || !module) return;
 
     cyclesService
-      .patchCycle(activeWorkspace.slug, activeProject.id, cycle?.id ?? "", data)
+      .patchCycle(workspaceSlug as string, projectId as string, cycle?.id ?? "", data)
       .then((res) => {
         console.log(res);
         mutate(CYCLE_DETAIL);
@@ -65,8 +70,6 @@ const CycleDetailSidebar: React.FC<Props> = ({ cycle, cycleIssues }) => {
         console.log(e);
       });
   };
-
-  const handleDeleteCycle = () => {};
 
   useEffect(() => {
     if (cycle)
@@ -87,7 +90,7 @@ const CycleDetailSidebar: React.FC<Props> = ({ cycle, cycleIssues }) => {
                 className="rounded-md border p-2 shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                 onClick={() =>
                   copyTextToClipboard(
-                    `https://app.plane.so/projects/${activeProject?.id}/cycles/${cycle.id}`
+                    `https://app.plane.so/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`
                   )
                     .then(() => {
                       setToastAlert({
@@ -105,13 +108,6 @@ const CycleDetailSidebar: React.FC<Props> = ({ cycle, cycleIssues }) => {
               >
                 <LinkIcon className="h-3.5 w-3.5" />
               </button>
-              {/* <button
-                type="button"
-                className="rounded-md border border-red-500 p-2 text-red-500 shadow-sm duration-300 hover:bg-red-50 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                onClick={() => handleDeleteCycle()}
-              >
-                <TrashIcon className="h-3.5 w-3.5" />
-              </button> */}
             </div>
           </div>
           <div className="divide-y-2 divide-gray-100 text-xs">

@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
+// next
+import { useRouter } from "next/router";
 // swr
 import { mutate } from "swr";
 // headless ui
@@ -23,11 +25,14 @@ type Props = {
 };
 
 const ConfirmCycleDeletion: React.FC<Props> = ({ isOpen, setIsOpen, data }) => {
+  const cancelButtonRef = useRef(null);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
-  const { activeWorkspace } = useUser();
+  const router = useRouter();
 
-  const cancelButtonRef = useRef(null);
+  const {
+    query: { workspaceSlug },
+  } = router;
 
   const handleClose = () => {
     setIsOpen(false);
@@ -36,9 +41,9 @@ const ConfirmCycleDeletion: React.FC<Props> = ({ isOpen, setIsOpen, data }) => {
 
   const handleDeletion = async () => {
     setIsDeleteLoading(true);
-    if (!data || !activeWorkspace) return;
+    if (!data || !workspaceSlug) return;
     await cycleService
-      .deleteCycle(activeWorkspace.slug, data.project, data.id)
+      .deleteCycle(workspaceSlug as string, data.project, data.id)
       .then(() => {
         mutate<ICycle[]>(
           CYCLE_LIST(data.project),

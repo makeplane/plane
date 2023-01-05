@@ -8,7 +8,6 @@ import Image from "next/image";
 import useUser from "lib/hooks/useUser";
 // services
 import authenticationService from "lib/services/authentication.service";
-import workspaceService from "lib/services/workspace.service";
 // layouts
 import DefaultLayout from "layouts/DefaultLayout";
 // social button
@@ -16,7 +15,7 @@ import { GoogleLoginButton } from "components/socialbuttons/google-login";
 import EmailCodeForm from "components/forms/EmailCodeForm";
 import EmailPasswordForm from "components/forms/EmailPasswordForm";
 // logos
-import Logo from "public/logo.png";
+import Logo from "public/logo-with-text.png";
 import GitHubLogo from "public/logos/github.png";
 import { KeyIcon } from "@heroicons/react/24/outline";
 import type { IUser } from "types";
@@ -34,7 +33,7 @@ const SignIn: NextPage = () => {
   const [useCode, setUseCode] = useState(true);
   const router = useRouter();
 
-  const { mutateUser, mutateWorkspaces } = useUser();
+  const { mutateUser } = useUser();
 
   const [githubToken, setGithubToken] = useState(undefined);
   const [loginCallBackURL, setLoginCallBackURL] = useState(undefined);
@@ -44,17 +43,13 @@ const SignIn: NextPage = () => {
   const onSignInSuccess = useCallback(
     async (res: IUser) => {
       await mutateUser();
-      await mutateWorkspaces();
+      // TODO: add mutate workspaces
       const nextLocation = router.asPath.split("?next=")[1];
 
-      if (nextLocation) {
-        router.push(nextLocation as string);
-      } else {
-        if (res.user.is_onboarded && res.user.workspace) router.push(`/${res.user.workspace.slug}`);
-        else router.push("/invitations");
-      }
+      if (nextLocation) router.push(nextLocation as string);
+      else router.push("/");
     },
-    [mutateUser, mutateWorkspaces, router]
+    [mutateUser, router]
   );
 
   const githubTokenMemo = React.useMemo(() => {
@@ -85,7 +80,7 @@ const SignIn: NextPage = () => {
           console.log(err);
         });
     }
-  }, [githubToken, mutateUser, mutateWorkspaces, router, onSignInSuccess]);
+  }, [githubToken, mutateUser, router, onSignInSuccess]);
 
   useEffect(() => {
     const origin =
