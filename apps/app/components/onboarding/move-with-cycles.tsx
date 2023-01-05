@@ -22,7 +22,7 @@ const MoveWithCycles = () => {
         />
       </div>
       <div className="mx-auto h-1/2 space-y-4 lg:w-2/3">
-        <h2 className="mb-4 text-2xl font-medium">Move with Cycles</h2>
+        <h2 className="text-2xl font-medium">Move with Cycles</h2>
         <p className="text-sm text-gray-400">
           Cycles help you and your team to progress faster, similar to the sprints commonly used in
           agile development.

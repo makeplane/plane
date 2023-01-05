@@ -65,6 +65,8 @@ const ModuleDetailSidebar: React.FC<Props> = ({
     defaultValues,
   });
 
+  // console.log(module);
+
   useEffect(() => {
     if (module)
       reset({
@@ -153,12 +155,12 @@ const ModuleDetailSidebar: React.FC<Props> = ({
                     <p>Lead</p>
                   </div>
                   <div className="sm:basis-1/2">
-                    {module.lead_detail.first_name !== "" ? (
+                    {module?.lead_detail?.first_name !== "" ? (
                       <>
-                        {module.lead_detail.first_name} {module.lead_detail.last_name}
+                        {module?.lead_detail?.first_name} {module?.lead_detail?.last_name}
                       </>
                     ) : (
-                      module.lead_detail.email
+                      module?.lead_detail?.email
                     )}
                   </div>
                 </div>

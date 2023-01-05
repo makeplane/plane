@@ -8,7 +8,6 @@ import Image from "next/image";
 import useUser from "lib/hooks/useUser";
 // services
 import authenticationService from "lib/services/authentication.service";
-import workspaceService from "lib/services/workspace.service";
 // layouts
 import DefaultLayout from "layouts/DefaultLayout";
 // social button
@@ -16,7 +15,7 @@ import { GoogleLoginButton } from "components/socialbuttons/google-login";
 import EmailCodeForm from "components/forms/EmailCodeForm";
 import EmailPasswordForm from "components/forms/EmailPasswordForm";
 // logos
-import Logo from "public/logo.png";
+import Logo from "public/logo-with-text.png";
 import GitHubLogo from "public/logos/github.png";
 import { KeyIcon } from "@heroicons/react/24/outline";
 import type { IUser } from "types";
@@ -47,12 +46,8 @@ const SignIn: NextPage = () => {
       // TODO: add mutate workspaces
       const nextLocation = router.asPath.split("?next=")[1];
 
-      if (nextLocation) {
-        router.push(nextLocation as string);
-      } else {
-        if (!res.user.is_onboarded) router.push("/invitations");
-        else router.push("/");
-      }
+      if (nextLocation) router.push(nextLocation as string);
+      else router.push("/");
     },
     [mutateUser, router]
   );

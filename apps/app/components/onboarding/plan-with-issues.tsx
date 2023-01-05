@@ -22,7 +22,7 @@ const PlanWithIssues = () => {
         />
       </div>
       <div className="mx-auto h-1/2 space-y-4 lg:w-2/3">
-        <h2 className="mb-4 text-2xl font-medium">Plan with Issues</h2>
+        <h2 className="text-2xl font-medium">Plan with Issues</h2>
         <p className="text-sm text-gray-400">
           The issue is the building block of the Plane. Most concepts in Plane are either associated
           with issues and their properties.

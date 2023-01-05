@@ -22,7 +22,7 @@ const BreakIntoModules = () => {
         />
       </div>
       <div className="mx-auto h-1/2 space-y-4 lg:w-1/2">
-        <h2 className="mb-4 text-2xl font-medium">Break into Modules</h2>
+        <h2 className="text-2xl font-medium">Break into Modules</h2>
         <p className="text-sm text-gray-400">
           Modules break your big think into Projects or Features, to help you organize better.
         </p>
