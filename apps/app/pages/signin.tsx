@@ -51,7 +51,7 @@ const SignIn: NextPage = () => {
         router.push(nextLocation as string);
       } else {
         if (!res.user.is_onboarded) router.push("/invitations");
-        else router.push("/home");
+        else router.push("/");
       }
     },
     [mutateUser, router]

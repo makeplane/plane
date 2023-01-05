@@ -1,21 +1,17 @@
 import React, { useEffect } from "react";
-// next
-import type { NextPage } from "next";
-import { useRouter } from "next/router";
-// hooks
-import useUser from "lib/hooks/useUser";
+
+import type { NextPage, NextPageContext } from "next";
+
+// lib
+import { homePageRedirect } from "lib/auth";
 
 const Home: NextPage = () => {
-  const router = useRouter();
+  return null;
+};
 
-  const { user, isUserLoading } = useUser();
-
-  useEffect(() => {
-    if (!isUserLoading && (!user || user === null)) router.push("/signin");
-    else router.push("/home");
-  }, [isUserLoading, user, router]);
-
-  return <></>;
+export const getServerSideProps = (ctx: NextPageContext) => {
+  const cookies = ctx.req?.headers.cookie;
+  return homePageRedirect(cookies);
 };
 
 export default Home;

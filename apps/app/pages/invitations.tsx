@@ -31,16 +31,12 @@ const OnBoard: NextPage = () => {
   const { user } = useUser();
 
   const router = useRouter();
-  const { workspaceSlug } = router.query;
 
   const { data: invitations, mutate } = useSWR(USER_WORKSPACE_INVITATIONS, () =>
     workspaceService.userWorkspaceInvitations()
   );
 
-  const { data: workspaces } = useSWR(
-    workspaceSlug ? USER_WORKSPACES : null,
-    workspaceSlug ? () => workspaceService.userWorkspaces() : null
-  );
+  const { data: workspaces } = useSWR(USER_WORKSPACES, () => workspaceService.userWorkspaces());
 
   const handleInvitation = (
     workspace_invitation: IWorkspaceMemberInvitation,
@@ -57,8 +53,8 @@ const OnBoard: NextPage = () => {
     }
   };
 
-  const submitInvitations = () => {
-    userService.updateUserOnBoard().then((response) => {});
+  const submitInvitations = async () => {
+    await userService.updateUserOnBoard().then((response) => {});
     workspaceService
       .joinWorkspaces({ invitations: invitationsRespond })
       .then(async (res: any) => {
@@ -108,7 +104,7 @@ const OnBoard: NextPage = () => {
                   ))}
                 </ul>
                 <div className="mt-6 flex items-center gap-2">
-                  <Button className="w-full" theme="secondary" onClick={() => router.push("/home")}>
+                  <Button className="w-full" theme="secondary" onClick={() => router.push("/")}>
                     Skip
                   </Button>
                   <Button className="w-full" onClick={submitInvitations}>
@@ -135,7 +131,7 @@ const OnBoard: NextPage = () => {
                     </div>
                   </div>
                 ))}
-                <Link href="/home">
+                <Link href="/">
                   <Button type="button">Go to workspaces</Button>
                 </Link>
               </div>
