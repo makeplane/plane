@@ -41,12 +41,6 @@ const SingleListIssue: React.FC<Props> = ({
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const router = useRouter();
-
-  const {
-    query: { workspaceSlug },
-  } = router;
-
   const { data: issues } = useSWR<IssueResponse>(
     workspaceSlug && projectId
       ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
@@ -77,11 +71,7 @@ const SingleListIssue: React.FC<Props> = ({
             backgroundColor: issue.state_detail.color,
           }}
         />
-<<<<<<< Updated upstream
-        <Link href={`/${workspaceSlug}/projects/${activeProject?.id}/issues/${issue.id}`}>
-=======
         <Link href={`/projects/${projectId}/issues/${issue.id}`}>
->>>>>>> Stashed changes
           <a className="group relative flex items-center gap-2">
             {properties.key && (
               <span className="flex-shrink-0 text-xs text-gray-500">
