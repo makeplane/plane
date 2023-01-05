@@ -5,16 +5,21 @@ import SingleStat from "components/project/cycles/stats-view/single-stat";
 import ConfirmCycleDeletion from "components/project/cycles/confirm-cycle-deletion";
 // types
 import { ICycle, SelectSprintType } from "types";
+import { CyclesIcon } from "ui/icons";
 
 type TCycleStatsViewProps = {
   cycles: ICycle[];
   setCreateUpdateCycleModal: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedCycle: React.Dispatch<React.SetStateAction<SelectSprintType>>;
+  type: "current" | "upcoming" | "completed";
 };
 
-const CycleStatsView: React.FC<TCycleStatsViewProps> = (props) => {
-  const { cycles, setCreateUpdateCycleModal, setSelectedCycle } = props;
-
+const CycleStatsView: React.FC<TCycleStatsViewProps> = ({
+  cycles,
+  setCreateUpdateCycleModal,
+  setSelectedCycle,
+  type,
+}) => {
   const [cycleDeleteModal, setCycleDeleteModal] = useState(false);
   const [selectedCycleForDelete, setSelectedCycleForDelete] = useState<SelectSprintType>();
 
@@ -39,14 +44,23 @@ const CycleStatsView: React.FC<TCycleStatsViewProps> = (props) => {
         setIsOpen={setCycleDeleteModal}
         data={selectedCycleForDelete}
       />
-      {cycles.map((cycle) => (
-        <SingleStat
-          key={cycle.id}
-          cycle={cycle}
-          handleDeleteCycle={() => handleDeleteCycle(cycle)}
-          handleEditCycle={() => handleEditCycle(cycle)}
-        />
-      ))}
+      {cycles.length > 0 ? (
+        cycles.map((cycle) => (
+          <SingleStat
+            key={cycle.id}
+            cycle={cycle}
+            handleDeleteCycle={() => handleDeleteCycle(cycle)}
+            handleEditCycle={() => handleEditCycle(cycle)}
+          />
+        ))
+      ) : (
+        <div className="flex flex-col items-center justify-center gap-4 text-center">
+          <CyclesIcon className="h-20 w-20" color="gray" />
+          <h3>
+            Your {type} {type === "current" ? "cycle" : "cycles"} will be represented here
+          </h3>
+        </div>
+      )}
     </>
   );
 };

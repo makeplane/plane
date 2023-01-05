@@ -46,7 +46,7 @@ const SelectPriority: React.FC<Props> = ({ control, submitChanges, watch }) => {
                       : "None",
                     "text-sm"
                   )}
-                  {watch("priority") && watch("priority") !== "" ? watch("priority") : null}
+                  {watch("priority") && watch("priority") !== "" ? watch("priority") : "None"}
                 </span>
               }
               value={value}
@@ -58,7 +58,7 @@ const SelectPriority: React.FC<Props> = ({ control, submitChanges, watch }) => {
                 <CustomSelect.Option key={option} value={option} className="capitalize">
                   <>
                     {getPriorityIcon(option, "text-sm")}
-                    {option}
+                    {option ?? "None"}
                   </>
                 </CustomSelect.Option>
               ))}

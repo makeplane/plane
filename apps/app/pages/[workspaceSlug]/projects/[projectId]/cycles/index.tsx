@@ -119,6 +119,7 @@ const ProjectSprints: NextPage = () => {
               cycles={currentCycles ?? []}
               setCreateUpdateCycleModal={setCreateUpdateCycleModal}
               setSelectedCycle={setSelectedCycle}
+              type="current"
             />
             <div className="space-y-5">
               <Tab.Group>
@@ -144,6 +145,7 @@ const ProjectSprints: NextPage = () => {
                       cycles={upcomingCycles ?? []}
                       setCreateUpdateCycleModal={setCreateUpdateCycleModal}
                       setSelectedCycle={setSelectedCycle}
+                      type="upcoming"
                     />
                   </Tab.Panel>
                   <Tab.Panel>
@@ -151,6 +153,7 @@ const ProjectSprints: NextPage = () => {
                       cycles={completedCycles ?? []}
                       setCreateUpdateCycleModal={setCreateUpdateCycleModal}
                       setSelectedCycle={setSelectedCycle}
+                      type="completed"
                     />
                   </Tab.Panel>
                 </Tab.Panels>

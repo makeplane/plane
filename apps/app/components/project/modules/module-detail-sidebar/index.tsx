@@ -195,7 +195,10 @@ const ModuleDetailSidebar: React.FC<Props> = ({
                           type="date"
                           id="moduleStartDate"
                           value={value ?? ""}
-                          onChange={onChange}
+                          onChange={(e: any) => {
+                            submitChanges({ start_date: e.target.value });
+                            onChange(e.target.value);
+                          }}
                           className="w-full cursor-pointer rounded-md border bg-transparent px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                         />
                       )}

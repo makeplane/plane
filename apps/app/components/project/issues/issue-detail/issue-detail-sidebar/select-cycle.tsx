@@ -1,4 +1,7 @@
+// react
 import React from "react";
+// next
+import { useRouter } from "next/router";
 // swr
 import useSWR, { mutate } from "swr";
 // react-hook-form
@@ -27,20 +30,21 @@ type Props = {
 };
 
 const SelectCycle: React.FC<Props> = ({ issueDetail, control, handleCycleChange, watch }) => {
-  const { activeWorkspace, activeProject } = useUser();
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
 
   const { data: cycles } = useSWR(
-    activeWorkspace && activeProject ? CYCLE_LIST(activeProject.id) : null,
-    activeWorkspace && activeProject
-      ? () => cyclesService.getCycles(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId ? CYCLE_LIST(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => cyclesService.getCycles(workspaceSlug as string, projectId as string)
       : null
   );
 
   const removeIssueFromCycle = (bridgeId: string, cycleId: string) => {
-    if (!activeWorkspace || !activeProject) return;
+    if (!workspaceSlug || !projectId) return;
 
     issuesService
-      .removeIssueFromCycle(activeWorkspace.slug, activeProject.id, cycleId, bridgeId)
+      .removeIssueFromCycle(workspaceSlug as string, projectId as string, cycleId, bridgeId)
       .then((res) => {
         console.log(res);
         mutate<CycleIssueResponse[]>(
@@ -50,8 +54,8 @@ const SelectCycle: React.FC<Props> = ({ issueDetail, control, handleCycleChange,
         );
 
         mutate(
-          activeWorkspace && activeProject
-            ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
+          workspaceSlug && projectId
+            ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
             : null
         );
       })

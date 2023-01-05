@@ -9,8 +9,8 @@ import { useForm, Controller, UseFormWatch } from "react-hook-form";
 import { TwitterPicker } from "react-color";
 // services
 import issuesServices from "lib/services/issues.service";
+import projectService from "lib/services/project.service";
 // hooks
-import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
 // components
 import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
@@ -39,7 +39,7 @@ import {
 import type { Control } from "react-hook-form";
 import type { ICycle, IIssue, IIssueLabels } from "types";
 // fetch-keys
-import { PROJECT_ISSUE_LABELS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import { PROJECT_ISSUE_LABELS, PROJECT_ISSUES_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
 // common
 import { copyTextToClipboard } from "constants/common";
 
@@ -63,29 +63,31 @@ const IssueDetailSidebar: React.FC<Props> = ({
 }) => {
   const [createLabelForm, setCreateLabelForm] = useState(false);
 
-  const { activeWorkspace, activeProject } = useUser();
-
   const router = useRouter();
-
-  const {
-    query: { workspaceSlug },
-  } = router;
+  const { workspaceSlug, projectId } = router.query;
 
   const { setToastAlert } = useToast();
 
   const { data: issues } = useSWR(
-    activeWorkspace && activeProject
-      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId
+      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
       : null,
-    activeWorkspace && activeProject
-      ? () => issuesServices.getIssues(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId
+      ? () => issuesServices.getIssues(workspaceSlug as string, projectId as string)
       : null
   );
 
   const { data: issueLabels, mutate: issueLabelMutate } = useSWR<IIssueLabels[]>(
-    activeProject && activeWorkspace ? PROJECT_ISSUE_LABELS(activeProject.id) : null,
-    activeProject && activeWorkspace
-      ? () => issuesServices.getIssueLabels(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => issuesServices.getIssueLabels(workspaceSlug as string, projectId as string)
+      : null
+  );
+
+  const { data: projectDetails } = useSWR(
+    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -103,9 +105,9 @@ const IssueDetailSidebar: React.FC<Props> = ({
   });
 
   const handleNewLabel = (formData: any) => {
-    if (!activeWorkspace || !activeProject || isSubmitting) return;
+    if (!workspaceSlug || !projectId || isSubmitting) return;
     issuesServices
-      .createIssueLabel(activeWorkspace.slug, activeProject.id, formData)
+      .createIssueLabel(workspaceSlug as string, projectId as string, formData)
       .then((res) => {
         console.log(res);
         reset(defaultValues);
@@ -116,11 +118,11 @@ const IssueDetailSidebar: React.FC<Props> = ({
   };
 
   const handleCycleChange = (cycleDetail: ICycle) => {
-    if (!activeWorkspace || !activeProject || !issueDetail) return;
+    if (!workspaceSlug || !projectId || !issueDetail) return;
 
     submitChanges({ cycle: cycleDetail.id, cycle_detail: cycleDetail });
     issuesServices
-      .addIssueToCycle(activeWorkspace.slug, activeProject.id, cycleDetail.id, {
+      .addIssueToCycle(workspaceSlug as string, projectId as string, cycleDetail.id, {
         issues: [issueDetail.id],
       })
       .then(() => {
@@ -138,7 +140,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
       <div className="h-full w-full divide-y-2 divide-gray-100">
         <div className="flex items-center justify-between pb-3">
           <h4 className="text-sm font-medium">
-            {activeProject?.identifier}-{issueDetail?.sequence_id}
+            {projectDetails?.identifier}-{issueDetail?.sequence_id}
           </h4>
           <div className="flex flex-wrap items-center gap-2">
             <button
@@ -146,7 +148,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
               className="rounded-md border p-2 shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
               onClick={() =>
                 copyTextToClipboard(
-                  `https://app.plane.so/${workspaceSlug}/projects/${activeProject?.id}/issues/${issueDetail?.id}`
+                  `https://app.plane.so/${workspaceSlug}/projects/${projectId}/issues/${issueDetail?.id}`
                 )
                   .then(() => {
                     setToastAlert({

@@ -99,14 +99,7 @@ const IssueDetail: NextPage = () => {
       : null
   );
 
-  const {
-    register,
-    formState: { errors },
-    handleSubmit,
-    reset,
-    control,
-    watch,
-  } = useForm<IIssue>({
+  const { register, handleSubmit, reset, control, watch } = useForm<IIssue>({
     defaultValues,
   });
 
@@ -143,9 +136,8 @@ const IssueDetail: NextPage = () => {
         (prevData) => ({
           ...(prevData as IssueResponse),
           results: (prevData?.results ?? []).map((issue) => {
-            if (issue.id === issueId) {
-              return { ...issue, ...formData };
-            }
+            if (issue.id === issueId) return { ...issue, ...formData };
+
             return issue;
           }),
         }),
@@ -260,9 +252,8 @@ const IssueDetail: NextPage = () => {
         />
       )}
       {issueDetail && activeProject ? (
-        <div className="flex h-full gap-5">
+        <div className="flex h-full">
           <div className="basis-2/3 space-y-5 p-5">
-            <div className="mb-5"></div>
             <div className="rounded-lg">
               {issueDetail.parent !== null && issueDetail.parent !== "" ? (
                 <div className="mb-5 flex w-min items-center gap-2 whitespace-nowrap rounded bg-gray-100 p-2 text-xs">

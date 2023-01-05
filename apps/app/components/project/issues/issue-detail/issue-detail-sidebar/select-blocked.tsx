@@ -9,10 +9,10 @@ import useSWR from "swr";
 import { SubmitHandler, useForm, UseFormWatch } from "react-hook-form";
 // services
 import issuesService from "lib/services/issues.service";
+import projectService from "lib/services/project.service";
 // constants
-import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import { PROJECT_DETAILS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // hooks
-import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
@@ -42,19 +42,23 @@ const SelectBlocked: React.FC<Props> = ({ submitChanges, issueDetail, issuesList
   const [isBlockedModalOpen, setIsBlockedModalOpen] = useState(false);
 
   const router = useRouter();
-  const {
-    query: { workspaceSlug },
-  } = router;
+  const { workspaceSlug, projectId } = router.query;
 
-  const { activeWorkspace, activeProject } = useUser();
   const { setToastAlert } = useToast();
 
   const { data: issues, mutate: mutateIssues } = useSWR(
-    activeWorkspace && activeProject
-      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId
+      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
       : null,
-    activeWorkspace && activeProject
-      ? () => issuesService.getIssues(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId
+      ? () => issuesService.getIssues(workspaceSlug as string, projectId as string)
+      : null
+  );
+
+  const { data: projectDetails } = useSWR(
+    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -105,13 +109,13 @@ const SelectBlocked: React.FC<Props> = ({ submitChanges, issueDetail, issuesList
                   }}
                 >
                   <Link
-                    href={`/${workspaceSlug}/projects/${activeProject?.id}/issues/${
+                    href={`/${workspaceSlug}/projects/${projectId}/issues/${
                       issues?.results.find((i) => i.id === issue)?.id
                     }`}
                   >
                     <a className="flex items-center gap-1">
                       <BlockedIcon height={10} width={10} />
-                      {`${activeProject?.identifier}-${
+                      {`${projectDetails?.identifier}-${
                         issues?.results.find((i) => i.id === issue)?.sequence_id
                       }`}
                     </a>
@@ -217,7 +221,7 @@ const SelectBlocked: React.FC<Props> = ({ submitChanges, issueDetail, issuesList
                                                 }}
                                               />
                                               <span className="flex-shrink-0 text-xs text-gray-500">
-                                                {activeProject?.identifier}-{issue.sequence_id}
+                                                {projectDetails?.identifier}-{issue.sequence_id}
                                               </span>
                                               <span>{issue.name}</span>
                                             </div>

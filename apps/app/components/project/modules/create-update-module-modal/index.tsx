@@ -203,7 +203,7 @@ const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, pro
                           />
                         </div>
                       </div>
-                      <div className="flex items-center flex-wrap gap-2">
+                      <div className="flex flex-wrap items-center gap-2">
                         <SelectStatus control={control} />
                         <SelectLead control={control} />
                         <SelectMembers control={control} />

@@ -6,8 +6,6 @@ import useSWR, { mutate } from "swr";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // services
 import issuesServices from "lib/services/issues.service";
-// hooks
-import useUser from "lib/hooks/useUser";
 // icons
 import { RectangleStackIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 // commons
@@ -16,6 +14,7 @@ import { classNames } from "constants/common";
 import { IIssue, IssueResponse } from "types";
 // constants
 import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import { useRouter } from "next/router";
 
 type Props = {
   isOpen: boolean;
@@ -26,14 +25,15 @@ type Props = {
 const AddAsSubIssue: React.FC<Props> = ({ isOpen, setIsOpen, parent }) => {
   const [query, setQuery] = useState("");
 
-  const { activeWorkspace, activeProject } = useUser();
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
 
   const { data: issues } = useSWR(
-    activeWorkspace && activeProject
-      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId
+      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
       : null,
-    activeWorkspace && activeProject
-      ? () => issuesServices.getIssues(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId
+      ? () => issuesServices.getIssues(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -49,12 +49,12 @@ const AddAsSubIssue: React.FC<Props> = ({ isOpen, setIsOpen, parent }) => {
   };
 
   const addAsSubIssue = (issueId: string) => {
-    if (activeWorkspace && activeProject) {
+    if (workspaceSlug && projectId) {
       issuesServices
-        .patchIssue(activeWorkspace.slug, activeProject.id, issueId, { parent: parent?.id })
+        .patchIssue(workspaceSlug as string, projectId as string, issueId, { parent: parent?.id })
         .then((res) => {
           mutate<IssueResponse>(
-            PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id),
+            PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
             (prevData) => ({
               ...(prevData as IssueResponse),
               results: (prevData?.results ?? []).map((p) =>

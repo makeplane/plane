@@ -11,7 +11,7 @@ const Home: NextPage = () => {
   const { user, isUserLoading, activeWorkspace, workspaces, slug } = useUser();
 
   useEffect(() => {
-    if (!isUserLoading && (!user || user === null)) router.push("/signin");
+    if (!isUserLoading && !user) router.push("/signin");
   }, [isUserLoading, user, router]);
 
   useEffect(() => {
