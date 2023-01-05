@@ -6,8 +6,6 @@ import { useRouter } from "next/router";
 import { mutate } from "swr";
 // services
 import modulesService from "lib/services/modules.service";
-// hooks
-import useUser from "lib/hooks/useUser";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // ui
@@ -28,8 +26,6 @@ type Props = {
 const ConfirmModuleDeletion: React.FC<Props> = ({ isOpen, setIsOpen, data }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
-  const { activeWorkspace } = useUser();
-
   const router = useRouter();
   const {
     query: { workspaceSlug },
@@ -45,9 +41,9 @@ const ConfirmModuleDeletion: React.FC<Props> = ({ isOpen, setIsOpen, data }) => 
   const handleDeletion = async () => {
     setIsDeleteLoading(true);
 
-    if (!activeWorkspace || !data) return;
+    if (!workspaceSlug || !data) return;
     await modulesService
-      .deleteModule(activeWorkspace.slug, data.project, data.id)
+      .deleteModule(workspaceSlug as string, data.project, data.id)
       .then(() => {
         mutate(MODULE_LIST(data.project));
         router.push(`/${workspaceSlug}/projects/${data.project}/modules`);

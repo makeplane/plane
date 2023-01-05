@@ -1,6 +1,7 @@
-// react
 import React from "react";
-// swr
+
+import { useRouter } from "next/router";
+
 import useSWR from "swr";
 // hooks
 import useUser from "lib/hooks/useUser";
@@ -25,11 +26,12 @@ type Props = {
 };
 
 const ChangeStateDropdown: React.FC<Props> = ({ issue, updateIssues }) => {
-  const { activeWorkspace } = useUser();
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
 
   const { data: states } = useSWR<IState[]>(
-    activeWorkspace ? STATE_LIST(issue.project) : null,
-    activeWorkspace ? () => stateServices.getStates(activeWorkspace.slug, issue.project) : null
+    workspaceSlug ? STATE_LIST(issue.project) : null,
+    workspaceSlug ? () => stateServices.getStates(workspaceSlug as string, issue.project) : null
   );
 
   return (
@@ -38,8 +40,8 @@ const ChangeStateDropdown: React.FC<Props> = ({ issue, updateIssues }) => {
         as="div"
         value={issue.state}
         onChange={(data: string) => {
-          if (!activeWorkspace) return;
-          updateIssues(activeWorkspace.slug, issue.project, issue.id, {
+          if (!workspaceSlug) return;
+          updateIssues(workspaceSlug as string, issue.project, issue.id, {
             state: data,
             state_detail: states?.find((state) => state.id === data),
           });
@@ -50,7 +52,7 @@ const ChangeStateDropdown: React.FC<Props> = ({ issue, updateIssues }) => {
           <>
             <div>
               <Listbox.Button
-                className="inline-flex items-center whitespace-nowrap rounded-full bg-gray-50 px-2 py-1 text-xs font-medium text-gray-500 hover:bg-gray-100 border"
+                className="inline-flex items-center whitespace-nowrap rounded-full border bg-gray-50 px-2 py-1 text-xs font-medium text-gray-500 hover:bg-gray-100"
                 style={{
                   border: `2px solid ${issue.state_detail.color}`,
                   backgroundColor: `${issue.state_detail.color}20`,
@@ -59,7 +61,7 @@ const ChangeStateDropdown: React.FC<Props> = ({ issue, updateIssues }) => {
                 <span
                   className={classNames(
                     issue.state ? "" : "text-gray-900",
-                    "hidden capitalize sm:block w-16"
+                    "hidden w-16 capitalize sm:block"
                   )}
                 >
                   {addSpaceIfCamelCase(issue.state_detail.name)}
@@ -73,7 +75,7 @@ const ChangeStateDropdown: React.FC<Props> = ({ issue, updateIssues }) => {
                 leaveFrom="opacity-100"
                 leaveTo="opacity-0"
               >
-                <Listbox.Options className="fixed z-10 mt-1 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
+                <Listbox.Options className="fixed z-10 mt-1 max-h-28 overflow-auto rounded-md bg-white py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                   {states?.map((state) => (
                     <Listbox.Option
                       key={state.id}

@@ -1,10 +1,10 @@
 import React from "react";
-// swr
+
+import { useRouter } from "next/router";
+
 import useSWR from "swr";
-// react-hook-form
+
 import { Control, Controller } from "react-hook-form";
-// hooks
-import useUser from "lib/hooks/useUser";
 // constants
 import { MODULE_LIST } from "constants/fetch-keys";
 // services
@@ -24,12 +24,13 @@ type Props = {
 };
 
 const SelectModule: React.FC<Props> = ({ control, handleModuleChange }) => {
-  const { activeWorkspace, activeProject } = useUser();
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
 
   const { data: modules } = useSWR(
-    activeWorkspace && activeProject ? MODULE_LIST(activeProject.id) : null,
-    activeWorkspace && activeProject
-      ? () => modulesService.getModules(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId ? MODULE_LIST(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => modulesService.getModules(workspaceSlug as string, projectId as string)
       : null
   );
 

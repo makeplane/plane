@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
+// next
+import { useRouter } from "next/router";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
@@ -21,15 +23,17 @@ type Props = {
 
 const ConfirmProjectDeletion: React.FC<Props> = ({ isOpen, data, onClose }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
-
-  const [selectedProject, setSelectedProject] = useState<IProject | null>(null);
-
   const [confirmProjectName, setConfirmProjectName] = useState("");
   const [confirmDeleteMyProject, setConfirmDeleteMyProject] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<IProject | null>(null);
 
   const canDelete = confirmProjectName === data?.name && confirmDeleteMyProject;
 
-  const { activeWorkspace, mutateProjects } = useUser();
+  const router = useRouter();
+
+  const {
+    query: { workspaceSlug },
+  } = router;
 
   const { setToastAlert } = useToast();
 
@@ -47,12 +51,12 @@ const ConfirmProjectDeletion: React.FC<Props> = ({ isOpen, data, onClose }) => {
 
   const handleDeletion = async () => {
     setIsDeleteLoading(true);
-    if (!data || !activeWorkspace || !canDelete) return;
+    if (!data || !workspaceSlug || !canDelete) return;
     await projectService
-      .deleteProject(activeWorkspace.slug, data.id)
+      .deleteProject(workspaceSlug as string, data.id)
       .then(() => {
         handleClose();
-        mutateProjects((prevData) => (prevData ?? []).filter((item) => item.id !== data.id), false);
+        // TODO: add project mutation here
         setToastAlert({
           title: "Success",
           type: "success",
@@ -127,7 +131,7 @@ const ConfirmProjectDeletion: React.FC<Props> = ({ isOpen, data, onClose }) => {
                           removed. This action cannot be undone.
                         </p>
                       </div>
-                      <div className="h-0.5 bg-gray-200 my-3" />
+                      <div className="my-3 h-0.5 bg-gray-200" />
                       <div className="mt-3">
                         <p className="text-sm">
                           Enter the project name{" "}

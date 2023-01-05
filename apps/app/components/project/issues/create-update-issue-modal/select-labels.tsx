@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-// swr
+
+import { useRouter } from "next/router";
+
 import useSWR from "swr";
-// react hook form
+
 import { useForm, Controller } from "react-hook-form";
 import type { Control } from "react-hook-form";
 // services
 import issuesServices from "lib/services/issues.service";
-// hooks
-import useUser from "lib/hooks/useUser";
 // fetching keys
 import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 // icons
@@ -28,21 +28,22 @@ const defaultValues: Partial<IIssueLabels> = {
 };
 
 const SelectLabels: React.FC<Props> = ({ control }) => {
-  const { activeWorkspace, activeProject } = useUser();
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
 
   const [isOpen, setIsOpen] = useState(false);
 
   const { data: issueLabels, mutate: issueLabelsMutate } = useSWR<IIssueLabels[]>(
-    activeProject && activeWorkspace ? PROJECT_ISSUE_LABELS(activeProject.id) : null,
-    activeProject && activeWorkspace
-      ? () => issuesServices.getIssueLabels(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(workspaceSlug as string) : null,
+    workspaceSlug && projectId
+      ? () => issuesServices.getIssueLabels(workspaceSlug as string, projectId as string)
       : null
   );
 
   const onSubmit = async (data: IIssueLabels) => {
-    if (!activeProject || !activeWorkspace || isSubmitting) return;
+    if (!projectId || !workspaceSlug || isSubmitting) return;
     await issuesServices
-      .createIssueLabel(activeWorkspace.slug, activeProject.id, data)
+      .createIssueLabel(workspaceSlug as string, projectId as string, data)
       .then((response) => {
         issueLabelsMutate((prevData) => [...(prevData ?? []), response], false);
         setIsOpen(false);

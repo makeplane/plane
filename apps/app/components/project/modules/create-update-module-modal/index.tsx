@@ -1,9 +1,11 @@
 import React, { useEffect } from "react";
-// swr
+
+import { useRouter } from "next/router";
+
 import { mutate } from "swr";
-// react hook form
+
 import { useForm } from "react-hook-form";
-// headless
+
 import { Dialog, Transition } from "@headlessui/react";
 // ui
 import { Button, Input, TextArea, Select } from "ui";
@@ -37,15 +39,8 @@ const defaultValues: Partial<IModule> = {
 };
 
 const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, projectId }) => {
-  const handleClose = () => {
-    setIsOpen(false);
-    const timeout = setTimeout(() => {
-      reset(defaultValues);
-      clearTimeout(timeout);
-    }, 500);
-  };
-
-  const { activeWorkspace } = useUser();
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
 
   const {
     register,
@@ -58,8 +53,17 @@ const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, pro
     defaultValues,
   });
 
+  useEffect(() => {
+    if (data) {
+      setIsOpen(true);
+      reset(data);
+    } else {
+      reset(defaultValues);
+    }
+  }, [data, setIsOpen, reset]);
+
   const onSubmit = async (formData: IModule) => {
-    if (!activeWorkspace) return;
+    if (!workspaceSlug) return;
     const payload = {
       ...formData,
       start_date: formData.start_date ? renderDateFormat(formData.start_date) : null,
@@ -67,7 +71,7 @@ const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, pro
     };
     if (!data) {
       await modulesService
-        .createModule(activeWorkspace.slug, projectId, payload)
+        .createModule(workspaceSlug as string, projectId, payload)
         .then((res) => {
           mutate<IModule[]>(
             MODULE_LIST(projectId),
@@ -85,7 +89,7 @@ const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, pro
         });
     } else {
       await modulesService
-        .updateModule(activeWorkspace.slug, projectId, data.id, payload)
+        .updateModule(workspaceSlug as string, projectId, data.id, payload)
         .then((res) => {
           mutate<IModule[]>(
             MODULE_LIST(projectId),
@@ -112,14 +116,13 @@ const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, pro
     }
   };
 
-  useEffect(() => {
-    if (data) {
-      setIsOpen(true);
-      reset(data);
-    } else {
+  const handleClose = () => {
+    setIsOpen(false);
+    const timeout = setTimeout(() => {
       reset(defaultValues);
-    }
-  }, [data, setIsOpen, reset]);
+      clearTimeout(timeout);
+    }, 500);
+  };
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
@@ -203,7 +206,7 @@ const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, pro
                           />
                         </div>
                       </div>
-                      <div className="flex items-center flex-wrap gap-2">
+                      <div className="flex flex-wrap items-center gap-2">
                         <SelectStatus control={control} />
                         <SelectLead control={control} />
                         <SelectMembers control={control} />

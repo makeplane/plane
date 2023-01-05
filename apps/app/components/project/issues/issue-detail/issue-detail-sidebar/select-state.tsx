@@ -1,14 +1,14 @@
 import React from "react";
-// swr
+
+import { useRouter } from "next/router";
+
 import useSWR from "swr";
-// react-hook-form
+
 import { Control, Controller } from "react-hook-form";
 // services
 import stateService from "lib/services/state.service";
 // icons
 import { Squares2X2Icon } from "@heroicons/react/24/outline";
-// hooks
-import useUser from "lib/hooks/useUser";
 // constants
 import { classNames } from "constants/common";
 import { STATE_LIST } from "constants/fetch-keys";
@@ -23,12 +23,13 @@ type Props = {
 };
 
 const SelectState: React.FC<Props> = ({ control, submitChanges }) => {
-  const { activeWorkspace, activeProject } = useUser();
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
 
   const { data: states } = useSWR(
-    activeWorkspace && activeProject ? STATE_LIST(activeProject.id) : null,
-    activeWorkspace && activeProject
-      ? () => stateService.getStates(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
       : null
   );
 

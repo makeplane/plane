@@ -1,14 +1,14 @@
-// react
 import React from "react";
-// swr
+
+import { useRouter } from "next/router";
+
 import useSWR from "swr";
 // services
 import workspaceService from "lib/services/workspace.service";
 import stateService from "lib/services/state.service";
 // common
 import { addSpaceIfCamelCase } from "constants/common";
-// hooks
-import useUser from "lib/hooks/useUser";
+
 // components
 import SingleListIssue from "components/common/list-view/single-issue";
 // headless ui
@@ -52,17 +52,18 @@ const ModulesListView: React.FC<Props> = ({
   handleDeleteIssue,
   setPreloadedData,
 }) => {
-  const { activeWorkspace, activeProject } = useUser();
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
 
   const { data: people } = useSWR<IWorkspaceMember[]>(
-    activeWorkspace ? WORKSPACE_MEMBERS : null,
-    activeWorkspace ? () => workspaceService.workspaceMembers(activeWorkspace.slug) : null
+    workspaceSlug ? WORKSPACE_MEMBERS : null,
+    workspaceSlug ? () => workspaceService.workspaceMembers(workspaceSlug as string) : null
   );
 
   const { data: states } = useSWR(
-    activeWorkspace && activeProject ? STATE_LIST(activeProject.id) : null,
-    activeWorkspace && activeProject
-      ? () => stateService.getStates(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
       : null
   );
 

@@ -1,17 +1,18 @@
 import React, { useState } from "react";
-// next
+
 import Link from "next/link";
 import { useRouter } from "next/router";
 import type { NextPage, NextPageContext } from "next";
-// swr
+
 import useSWR from "swr";
 // services
-import workspaceService from "lib/services/workspace.service";
 import userService from "lib/services/user.service";
+import workspaceService from "lib/services/workspace.service";
 // hooks
 import useUser from "lib/hooks/useUser";
 // constants
 import { requiredAuth } from "lib/auth";
+import { USER_WORKSPACES } from "constants/fetch-keys";
 import { USER_WORKSPACE_INVITATIONS } from "constants/api-routes";
 // layouts
 import DefaultLayout from "layouts/DefaultLayout";
@@ -27,13 +28,15 @@ import type { IWorkspaceMemberInvitation } from "types";
 const OnBoard: NextPage = () => {
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
 
-  const { workspaces, mutateWorkspaces, user, slug } = useUser();
+  const { user } = useUser();
 
   const router = useRouter();
 
   const { data: invitations, mutate } = useSWR(USER_WORKSPACE_INVITATIONS, () =>
     workspaceService.userWorkspaceInvitations()
   );
+
+  const { data: workspaces } = useSWR(USER_WORKSPACES, () => workspaceService.userWorkspaces());
 
   const handleInvitation = (
     workspace_invitation: IWorkspaceMemberInvitation,
@@ -50,17 +53,14 @@ const OnBoard: NextPage = () => {
     }
   };
 
-  const submitInvitations = () => {
-    userService.updateUserOnBoard().then((response) => {
-      console.log(response);
-    });
+  const submitInvitations = async () => {
+    await userService.updateUserOnBoard().then((response) => {});
     workspaceService
       .joinWorkspaces({ invitations: invitationsRespond })
       .then(async (res: any) => {
         console.log(res);
         await mutate();
-        await mutateWorkspaces();
-        router.push(slug || "");
+        // TODO: add workspace mutations
       })
       .catch((err) => {
         console.log(err);
@@ -104,11 +104,7 @@ const OnBoard: NextPage = () => {
                   ))}
                 </ul>
                 <div className="mt-6 flex items-center gap-2">
-                  <Button
-                    className="w-full"
-                    theme="secondary"
-                    onClick={() => router.push(`/${slug}` || "/create-workspace")}
-                  >
+                  <Button className="w-full" theme="secondary" onClick={() => router.push("/")}>
                     Skip
                   </Button>
                   <Button className="w-full" onClick={submitInvitations}>
@@ -135,7 +131,7 @@ const OnBoard: NextPage = () => {
                     </div>
                   </div>
                 ))}
-                <Link href={`/${slug || ""}`}>
+                <Link href="/">
                   <Button type="button">Go to workspaces</Button>
                 </Link>
               </div>

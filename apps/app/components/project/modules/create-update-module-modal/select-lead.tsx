@@ -1,14 +1,13 @@
-// react
 import React from "react";
-// swr
+
+import { useRouter } from "next/router";
+
 import useSWR from "swr";
-// react hook form
+
 import { Controller } from "react-hook-form";
 import type { Control } from "react-hook-form";
 // service
 import projectServices from "lib/services/project.service";
-// hooks
-import useUser from "lib/hooks/useUser";
 // ui
 import { SearchListbox } from "ui";
 // icons
@@ -23,12 +22,13 @@ type Props = {
 };
 
 const SelectLead: React.FC<Props> = ({ control }) => {
-  const { activeWorkspace, activeProject } = useUser();
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
 
   const { data: people } = useSWR(
-    activeWorkspace && activeProject ? PROJECT_MEMBERS(activeProject.id) : null,
-    activeWorkspace && activeProject
-      ? () => projectServices.projectMembers(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => projectServices.projectMembers(workspaceSlug as string, projectId as string)
       : null
   );
 
