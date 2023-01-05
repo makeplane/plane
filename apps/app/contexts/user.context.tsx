@@ -20,19 +20,15 @@ export const UserContext = createContext<IUserContextProps>({} as IUserContextPr
 
 export const UserProvider = ({ children }: { children: ReactElement }) => {
   // API to fetch user information
-  const {
-    data: user,
-    error,
-    mutate,
-  } = useSWR<IUser>(CURRENT_USER, () => userService.currentUser(), {
+  const { data, error, mutate } = useSWR<IUser>(CURRENT_USER, () => userService.currentUser(), {
     shouldRetryOnError: false,
   });
 
   return (
     <UserContext.Provider
       value={{
-        user: error ? undefined : user,
-        isUserLoading: Boolean(user === undefined && error === undefined),
+        user: error ? undefined : data?.user,
+        isUserLoading: Boolean(data?.user === undefined && error === undefined),
         mutateUser: mutate,
       }}
     >

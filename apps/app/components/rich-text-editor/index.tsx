@@ -132,9 +132,9 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = ({
     onError,
   });
 
-  useEffect(() => {
-    manager.view.updateState(manager.createState({ content: value }));
-  }, [manager, value]);
+  // useEffect(() => {
+  //   manager.view.updateState(manager.createState({ content: value }));
+  // }, [manager, value]);
 
   return (
     <div className="mt-2 mb-4">

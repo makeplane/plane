@@ -5,7 +5,6 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 // services
 import issuesService from "lib/services/issues.service";
-import projectService from "lib/services/project.service";
 // ui
 import { CustomMenu } from "ui";
 // icons
@@ -13,7 +12,7 @@ import { CalendarDaysIcon } from "@heroicons/react/24/outline";
 // types
 import { IIssue, IssueResponse, Properties } from "types";
 // fetch-keys
-import { PROJECT_DETAILS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // common
 import {
   addSpaceIfCamelCase,
@@ -50,13 +49,6 @@ const SingleListIssue: React.FC<Props> = ({
       : null
   );
 
-  const { data: projectDetails } = useSWR(
-    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
-      : null
-  );
-
   const totalChildren = issues?.results.filter((i) => i.parent === issue.id).length;
 
   return (
@@ -71,11 +63,11 @@ const SingleListIssue: React.FC<Props> = ({
             backgroundColor: issue.state_detail.color,
           }}
         />
-        <Link href={`/projects/${projectId}/issues/${issue.id}`}>
+        <Link href={`/projects/${issue.project_detail.id}/issues/${issue.id}`}>
           <a className="group relative flex items-center gap-2">
             {properties.key && (
               <span className="flex-shrink-0 text-xs text-gray-500">
-                {projectDetails?.identifier}-{issue.sequence_id}
+                {issue.project_detail?.identifier}-{issue.sequence_id}
               </span>
             )}
             <span>{issue.name}</span>
@@ -160,7 +152,7 @@ const SingleListIssue: React.FC<Props> = ({
             </div>
           </div>
         )}
-        {properties.sub_issue_count && (
+        {properties.sub_issue_count && projectId && (
           <div className="flex flex-shrink-0 items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
             {totalChildren} {totalChildren === 1 ? "sub-issue" : "sub-issues"}
           </div>

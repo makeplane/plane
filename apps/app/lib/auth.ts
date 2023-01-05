@@ -32,7 +32,7 @@ export const requiredAuth = async (cookie?: string) => {
       .then((res) => res.json())
       .then((data) => data);
 
-    user = data;
+    user = data.user;
   } catch (err) {
     console.error(err);
     user = null;

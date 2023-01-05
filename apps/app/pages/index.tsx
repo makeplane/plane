@@ -1,5 +1,3 @@
-import React, { useEffect } from "react";
-
 import type { NextPage, NextPageContext } from "next";
 
 // lib

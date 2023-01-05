@@ -123,11 +123,11 @@ const SingleModule = () => {
 
   const { data: moduleDetail } = useSWR<IModule>(
     MODULE_DETAIL,
-    activeWorkspace && activeProject
+    workspaceSlug && projectId
       ? () =>
           modulesService.getModuleDetails(
-            activeWorkspace?.slug,
-            activeProject?.id,
+            workspaceSlug as string,
+            projectId as string,
             moduleId as string
           )
       : null
@@ -504,7 +504,7 @@ const SingleModule = () => {
           </div>
         )}
         <ModuleDetailSidebar
-          module={moduleDetail}
+          module={modules?.find((m) => m.id === moduleId)}
           isOpen={moduleSidebar}
           moduleIssues={moduleIssues}
           handleDeleteModule={handleDeleteModule}

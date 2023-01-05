@@ -89,7 +89,7 @@ const Workspace: NextPage = () => {
               : hours >= 12 && hours < 17
               ? "Afternoon"
               : "Evening"}
-            , {user.user.first_name}!
+            , {user.first_name}!
           </div>
         ) : (
           <Loader>
