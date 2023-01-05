@@ -85,7 +85,7 @@ const ProjectsList: React.FC<Props> = ({ navigation, sidebarCollapse }) => {
                             <CustomMenu.MenuItem
                               onClick={() =>
                                 copyTextToClipboard(
-                                  `https://app.plane.so/projects/${project?.id}/issues/`
+                                  `https://app.plane.so/${workspaceSlug}/projects/${project?.id}/issues/`
                                 ).then(() => {
                                   setToastAlert({
                                     title: "Link Copied",

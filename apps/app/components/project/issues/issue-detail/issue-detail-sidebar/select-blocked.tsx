@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 // next
 import Link from "next/link";
+import { useRouter } from "next/router";
 // swr
 import useSWR from "swr";
 // react-hook-form
@@ -39,6 +40,11 @@ type Props = {
 const SelectBlocked: React.FC<Props> = ({ submitChanges, issueDetail, issuesList, watch }) => {
   const [query, setQuery] = useState("");
   const [isBlockedModalOpen, setIsBlockedModalOpen] = useState(false);
+
+  const router = useRouter();
+  const {
+    query: { workspaceSlug },
+  } = router;
 
   const { activeWorkspace, activeProject } = useUser();
   const { setToastAlert } = useToast();
@@ -99,7 +105,7 @@ const SelectBlocked: React.FC<Props> = ({ submitChanges, issueDetail, issuesList
                   }}
                 >
                   <Link
-                    href={`/projects/${activeProject?.id}/issues/${
+                    href={`/${workspaceSlug}/projects/${activeProject?.id}/issues/${
                       issues?.results.find((i) => i.id === issue)?.id
                     }`}
                   >
@@ -186,7 +192,7 @@ const SelectBlocked: React.FC<Props> = ({ submitChanges, issueDetail, issuesList
                                         htmlFor={`issue-${issue.id}`}
                                         value={{
                                           name: issue.name,
-                                          url: `/projects/${issue.project}/issues/${issue.id}`,
+                                          url: `/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`,
                                         }}
                                         className={({ active }) =>
                                           classNames(

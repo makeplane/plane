@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 // next
 import Link from "next/link";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/router";
 // swr
 import useSWR, { mutate } from "swr";
 // react hook form
@@ -74,6 +75,12 @@ const CreateUpdateIssuesModal: React.FC<Props> = (props) => {
   const [isStateModalOpen, setIsStateModalOpen] = useState(false);
   const [parentIssueListModalOpen, setParentIssueListModalOpen] = useState(false);
   const [mostSimilarIssue, setMostSimilarIssue] = useState<string | undefined>();
+
+  const router = useRouter();
+
+  const {
+    query: { workspaceSlug },
+  } = router;
 
   const { setToastAlert } = useToast();
   const { activeWorkspace, activeProject, user } = useUser();
@@ -321,7 +328,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = (props) => {
                               <div className="flex items-center gap-x-2">
                                 <p className="text-sm text-gray-500">
                                   <Link
-                                    href={`/projects/${activeProject?.id}/issues/${mostSimilarIssue}`}
+                                    href={`/${workspaceSlug}/projects/${activeProject?.id}/issues/${mostSimilarIssue}`}
                                   >
                                     <a target="_blank" type="button" className="inline text-left">
                                       <span>Did you mean </span>

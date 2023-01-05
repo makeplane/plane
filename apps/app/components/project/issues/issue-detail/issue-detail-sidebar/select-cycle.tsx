@@ -39,22 +39,21 @@ const SelectCycle: React.FC<Props> = ({ issueDetail, control, handleCycleChange,
   const removeIssueFromCycle = (bridgeId: string, cycleId: string) => {
     if (!activeWorkspace || !activeProject) return;
 
-    mutate<CycleIssueResponse[]>(
-      CYCLE_ISSUES(cycleId),
-      (prevData) => prevData?.filter((p) => p.id !== bridgeId),
-      false
-    );
-
-    mutate(
-      activeWorkspace && activeProject
-        ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
-        : null
-    );
-
     issuesService
       .removeIssueFromCycle(activeWorkspace.slug, activeProject.id, cycleId, bridgeId)
       .then((res) => {
         console.log(res);
+        mutate<CycleIssueResponse[]>(
+          CYCLE_ISSUES(cycleId),
+          (prevData) => prevData?.filter((p) => p.id !== bridgeId),
+          false
+        );
+
+        mutate(
+          activeWorkspace && activeProject
+            ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
+            : null
+        );
       })
       .catch((e) => {
         console.log(e);
@@ -68,23 +67,6 @@ const SelectCycle: React.FC<Props> = ({ issueDetail, control, handleCycleChange,
         <p>Cycle</p>
       </div>
       <div className="space-y-1 sm:basis-1/2">
-        {issueDetail?.issue_cycle && watch("issue_cycle") && (
-          <div className="flex flex-wrap gap-1">
-            <span
-              className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-white px-1.5 py-0.5 text-xs text-red-500 duration-300 hover:border-red-500 hover:bg-yellow-50"
-              onClick={() =>
-                removeIssueFromCycle(
-                  issueDetail.issue_cycle?.id ?? "",
-                  issueDetail.issue_cycle?.cycle ?? ""
-                )
-              }
-            >
-              <ArrowPathIcon className="h-3 w-3" />
-              {watch("issue_cycle")?.cycle_detail.name}
-              <XMarkIcon className="h-2 w-2 opacity-0 duration-300 group-hover:text-red-500 group-hover:opacity-100" />
-            </span>
-          </div>
-        )}
         <Controller
           control={control}
           name="issue_cycle"
@@ -103,16 +85,26 @@ const SelectCycle: React.FC<Props> = ({ issueDetail, control, handleCycleChange,
                 }
                 value={value}
                 onChange={(value: any) => {
-                  handleCycleChange(cycles?.find((c) => c.id === value) as any);
+                  value === null
+                    ? removeIssueFromCycle(
+                        issueDetail?.issue_cycle?.id ?? "",
+                        issueDetail?.issue_cycle?.cycle ?? ""
+                      )
+                    : handleCycleChange(cycles?.find((c) => c.id === value) as any);
                 }}
               >
                 {cycles ? (
                   cycles.length > 0 ? (
-                    cycles.map((option) => (
-                      <CustomSelect.Option key={option.id} value={option.id}>
-                        {option.name}
+                    <>
+                      <CustomSelect.Option value={null} className="capitalize">
+                        <>None</>
                       </CustomSelect.Option>
-                    ))
+                      {cycles.map((option) => (
+                        <CustomSelect.Option key={option.id} value={option.id}>
+                          {option.name}
+                        </CustomSelect.Option>
+                      ))}
+                    </>
                   ) : (
                     <div className="text-center">No cycles found</div>
                   )

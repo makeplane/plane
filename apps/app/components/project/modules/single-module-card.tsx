@@ -1,6 +1,7 @@
 // next
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 // icons
 import User from "public/user.png";
 // types
@@ -14,9 +15,14 @@ type Props = {
 };
 
 const SingleModuleCard: React.FC<Props> = ({ module }) => {
+  const router = useRouter();
+
+  const {
+    query: { workspaceSlug },
+  } = router;
   return (
     <div key={module.id} className="border bg-white p-3 rounded-md">
-      <Link href={`/projects/${module.project}/modules/${module.id}`}>
+      <Link href={`/${workspaceSlug}/projects/${module.project}/modules/${module.id}`}>
         <a>{module.name}</a>
       </Link>
       <div className="grid grid-cols-4 gap-2 text-xs mt-4">

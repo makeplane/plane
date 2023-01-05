@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 // next
 import Link from "next/link";
+import { useRouter } from "next/router";
 // swr
 import { mutate } from "swr";
 // react-hook-form
@@ -54,6 +55,10 @@ const ModuleDetailSidebar: React.FC<Props> = ({
   moduleIssues,
   handleDeleteModule,
 }) => {
+  const router = useRouter();
+  const {
+    query: { workspaceSlug },
+  } = router;
   const [moduleLinkModal, setModuleLinkModal] = useState(false);
 
   const { activeWorkspace, activeProject } = useUser();
@@ -117,7 +122,7 @@ const ModuleDetailSidebar: React.FC<Props> = ({
                   className="rounded-md border p-2 shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                   onClick={() =>
                     copyTextToClipboard(
-                      `https://app.plane.so/projects/${activeProject?.id}/modules/${module.id}`
+                      `https://app.plane.so/${workspaceSlug}/projects/${activeProject?.id}/modules/${module.id}`
                     )
                       .then(() => {
                         setToastAlert({

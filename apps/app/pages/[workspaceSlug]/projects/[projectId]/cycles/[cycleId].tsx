@@ -212,7 +212,7 @@ const SingleCycle: React.FC = () => {
           <Breadcrumbs>
             <BreadcrumbItem
               title={`${activeProject?.name ?? "Project"} Cycles`}
-              link={`/projects/${activeProject?.id}/cycles`}
+              link={`/${workspaceSlug}/projects/${activeProject?.id}/cycles`}
             />
           </Breadcrumbs>
         }

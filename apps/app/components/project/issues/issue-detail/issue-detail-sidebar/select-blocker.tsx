@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 // next
 import Link from "next/link";
+import { useRouter } from "next/router";
 // swr
 import useSWR from "swr";
 // react-hook-form
@@ -41,6 +42,11 @@ const SelectBlocker: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
 
   const { activeProject, activeWorkspace } = useUser();
   const { setToastAlert } = useToast();
+
+  const router = useRouter();
+  const {
+    query: { workspaceSlug },
+  } = router;
 
   const { data: issues } = useSWR(
     activeWorkspace && activeProject
@@ -90,7 +96,7 @@ const SelectBlocker: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
                   className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-white px-1.5 py-0.5 text-xs text-yellow-500 duration-300 hover:border-yellow-500 hover:bg-yellow-50"
                 >
                   <Link
-                    href={`/projects/${activeProject?.id}/issues/${
+                    href={`/${workspaceSlug}/projects/${activeProject?.id}/issues/${
                       issues?.results.find((i) => i.id === issue)?.id
                     }`}
                   >
@@ -187,7 +193,7 @@ const SelectBlocker: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
                                         htmlFor={`issue-${issue.id}`}
                                         value={{
                                           name: issue.name,
-                                          url: `/projects/${issue.project}/issues/${issue.id}`,
+                                          url: `/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`,
                                         }}
                                         className={({ active }) =>
                                           classNames(

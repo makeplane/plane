@@ -27,7 +27,7 @@ import type { IWorkspaceMemberInvitation } from "types";
 const OnBoard: NextPage = () => {
   const router = useRouter();
 
-  const { workspaces, mutateWorkspaces, user } = useUser();
+  const { workspaces, mutateWorkspaces, user, slug } = useUser();
 
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
 
@@ -60,7 +60,7 @@ const OnBoard: NextPage = () => {
         console.log(res);
         await mutate();
         await mutateWorkspaces();
-        router.push("/workspace");
+        router.push(slug || "");
       })
       .catch((err) => {
         console.log(err);
@@ -107,7 +107,7 @@ const OnBoard: NextPage = () => {
                   <Button
                     className="w-full"
                     theme="secondary"
-                    onClick={() => router.push("/workspace")}
+                    onClick={() => router.push(`/${slug}` || "/create-workspace")}
                   >
                     Skip
                   </Button>
@@ -126,7 +126,7 @@ const OnBoard: NextPage = () => {
                   >
                     <div className="flex items-center gap-x-2">
                       <CubeIcon className="h-5 w-5 text-gray-400" />
-                      <Link href={"/workspace"}>
+                      <Link href={workspace.slug}>
                         <a>{workspace.name}</a>
                       </Link>
                     </div>
@@ -135,7 +135,7 @@ const OnBoard: NextPage = () => {
                     </div>
                   </div>
                 ))}
-                <Link href={"/workspace"}>
+                <Link href={`/${slug || ""}`}>
                   <Button type="button">Go to workspaces</Button>
                 </Link>
               </div>

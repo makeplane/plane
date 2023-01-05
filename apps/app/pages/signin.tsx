@@ -34,7 +34,7 @@ const SignIn: NextPage = () => {
   const [useCode, setUseCode] = useState(true);
   const router = useRouter();
 
-  const { mutateUser, mutateWorkspaces } = useUser();
+  const { mutateUser, mutateWorkspaces, slug } = useUser();
 
   const [githubToken, setGithubToken] = useState(undefined);
   const [loginCallBackURL, setLoginCallBackURL] = useState(undefined);
@@ -50,8 +50,7 @@ const SignIn: NextPage = () => {
       if (nextLocation) {
         router.push(nextLocation as string);
       } else {
-        if (res.user.is_onboarded && res.user.workspace) router.push(`/${res.user.workspace.slug}`);
-        else router.push("/invitations");
+        if (!res.user.is_onboarded) router.push("/invitations");
       }
     },
     [mutateUser, mutateWorkspaces, router]
@@ -94,6 +93,10 @@ const SignIn: NextPage = () => {
 
     return () => setIsGoogleAuthenticationLoading(false);
   }, []);
+
+  if (slug) {
+    router.push(`/${slug}`);
+  }
 
   return (
     <DefaultLayout

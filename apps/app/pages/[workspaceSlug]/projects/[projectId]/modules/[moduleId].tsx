@@ -260,7 +260,7 @@ const SingleModule = () => {
           <Breadcrumbs>
             <BreadcrumbItem
               title={`${activeProject?.name ?? "Project"} Modules`}
-              link={`/projects/${activeProject?.id}/cycles`}
+              link={`/${workspaceSlug}/projects/${activeProject?.id}/cycles`}
             />
           </Breadcrumbs>
         }
@@ -279,7 +279,7 @@ const SingleModule = () => {
               <CustomMenu.MenuItem
                 key={module.id}
                 renderAs="a"
-                href={`/projects/${activeProject?.id}/modules/${module.id}`}
+                href={`/${workspaceSlug}/projects/${activeProject?.id}/modules/${module.id}`}
               >
                 {module.name}
               </CustomMenu.MenuItem>

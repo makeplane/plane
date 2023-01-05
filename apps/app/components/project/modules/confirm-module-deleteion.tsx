@@ -31,6 +31,9 @@ const ConfirmModuleDeletion: React.FC<Props> = ({ isOpen, setIsOpen, data }) => 
   const { activeWorkspace } = useUser();
 
   const router = useRouter();
+  const {
+    query: { workspaceSlug },
+  } = router;
 
   const cancelButtonRef = useRef(null);
 
@@ -47,7 +50,7 @@ const ConfirmModuleDeletion: React.FC<Props> = ({ isOpen, setIsOpen, data }) => 
       .deleteModule(activeWorkspace.slug, data.project, data.id)
       .then(() => {
         mutate(MODULE_LIST(data.project));
-        router.push(`/projects/${data.project}/modules`);
+        router.push(`/${workspaceSlug}/projects/${data.project}/modules`);
         handleClose();
       })
       .catch((error) => {

@@ -102,7 +102,7 @@ const SettingsLayout: React.FC<Props> = (props) => {
         actionButton={
           (isViewer || isGuest) && (
             <Button size="sm">
-              <Link href={`/projects/${projectId}/issues`}>
+              <Link href={`/${workspaceSlug}/projects/${projectId}/issues`}>
                 <a>Go to Issues</a>
               </Link>
             </Button>

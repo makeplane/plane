@@ -86,7 +86,7 @@ const StatesSettings: NextPage<TStateSettingsProps> = (props) => {
           <Breadcrumbs>
             <BreadcrumbItem
               title={`${activeProject?.name ?? "Project"}`}
-              link={`/projects/${activeProject?.id}/issues`}
+              link={`/${workspaceSlug}/projects/${activeProject?.id}/issues`}
             />
             <BreadcrumbItem title="States Settings" />
           </Breadcrumbs>

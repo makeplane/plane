@@ -1,5 +1,7 @@
 // react
 import React, { useState } from "react";
+// next
+import { useRouter } from "next/router";
 // swr
 import useSWR, { mutate } from "swr";
 // react hook form
@@ -34,6 +36,12 @@ type Props = {
 
 const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
   const [query, setQuery] = useState("");
+
+  const router = useRouter();
+
+  const {
+    query: { workspaceSlug },
+  } = router;
 
   const { activeWorkspace, activeProject } = useUser();
 
@@ -164,7 +172,7 @@ const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                                   htmlFor={`issue-${issue.id}`}
                                   value={{
                                     name: issue.name,
-                                    url: `/projects/${issue.project}/issues/${issue.id}`,
+                                    url: `/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`,
                                   }}
                                   className={({ active }) =>
                                     classNames(

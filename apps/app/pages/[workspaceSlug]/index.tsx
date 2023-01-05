@@ -115,7 +115,9 @@ const Workspace: NextPage = () => {
                                   backgroundColor: issue.state_detail.color,
                                 }}
                               />
-                              <Link href={`/projects/${issue.project}/issues/${issue.id}`}>
+                              <Link
+                                href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}
+                              >
                                 <a className="group relative flex items-center gap-2">
                                   {/* {properties.key && (
                                           <span className="flex-shrink-0 text-xs text-gray-500">
@@ -210,7 +212,10 @@ const Workspace: NextPage = () => {
                       .map(
                         (project, index) =>
                           index < 3 && (
-                            <Link href={`/projects/${project.id}/issues`} key={project.id}>
+                            <Link
+                              href={`/${workspaceSlug}/projects/${project.id}/issues`}
+                              key={project.id}
+                            >
                               <a className="flex justify-between">
                                 <div>
                                   <h3>{project.name}</h3>

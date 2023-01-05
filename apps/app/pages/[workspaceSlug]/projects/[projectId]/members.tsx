@@ -104,7 +104,7 @@ const ProjectMembers: NextPage = () => {
     <AppLayout
       breadcrumbs={
         <Breadcrumbs>
-          <BreadcrumbItem title="Projects" link="/projects" />
+          <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
           <BreadcrumbItem title={`${activeProject?.name ?? "Project"} Members`} />
         </Breadcrumbs>
       }

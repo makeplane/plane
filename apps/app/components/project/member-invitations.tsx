@@ -42,6 +42,9 @@ const ProjectMemberInvitations: React.FC<TProjectCardProps> = (props) => {
 
   const { user } = useUser();
   const router = useRouter();
+  const {
+    query: { workspaceSlug },
+  } = router;
 
   const { data: members } = useSWR(PROJECT_MEMBERS(project.id), () =>
     projectService.projectMembers(slug, project.id)
@@ -91,7 +94,7 @@ const ProjectMemberInvitations: React.FC<TProjectCardProps> = (props) => {
                 type="checkbox"
               />
             ) : null}
-            <Link href={`/projects/${project.id}/issues`}>
+            <Link href={`/${workspaceSlug}/projects/${project.id}/issues`}>
               <a className="flex items-center gap-x-3">
                 {project.icon && (
                   <span className="text-base">{String.fromCodePoint(parseInt(project.icon))}</span>
@@ -104,7 +107,7 @@ const ProjectMemberInvitations: React.FC<TProjectCardProps> = (props) => {
           {isMember ? (
             <div className="flex">
               {canEdit && (
-                <Link href={`/projects/${project.id}/settings`}>
+                <Link href={`/${workspaceSlug}/projects/${project.id}/settings`}>
                   <a className="grid h-7 w-7 cursor-pointer place-items-center rounded p-1 duration-300 hover:bg-gray-100">
                     <PencilIcon className="h-4 w-4" />
                   </a>
@@ -153,7 +156,7 @@ const ProjectMemberInvitations: React.FC<TProjectCardProps> = (props) => {
             <Button
               theme="secondary"
               className="flex items-center gap-1"
-              onClick={() => router.push(`/projects/${project.id}/issues`)}
+              onClick={() => router.push(`/${workspaceSlug}/projects/${project.id}/issues`)}
             >
               <ClipboardDocumentListIcon className="h-3 w-3" />
               Open Project
