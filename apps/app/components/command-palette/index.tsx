@@ -8,11 +8,10 @@ import useSWR from "swr";
 // hooks
 import useTheme from "lib/hooks/useTheme";
 import useToast from "lib/hooks/useToast";
-// constants
-import { PROJECT_DETAILS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // services
 import issuesServices from "lib/services/issues.service";
-import projectService from "lib/services/project.service";
+import projectServices from "lib/services/project.service";
+import userService from "lib/services/user.service";
 // components
 import ShortcutsModal from "components/command-palette/shortcuts";
 import { CreateProjectModal } from "components/project";
@@ -22,6 +21,8 @@ import CreateUpdateModuleModal from "components/project/modules/create-update-mo
 import BulkDeleteIssuesModal from "components/common/bulk-delete-issues-modal";
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
+// constants
+import { PROJECTS_LIST, PROJECT_ISSUES_LIST, USER_ISSUE } from "constants/fetch-keys";
 // ui
 import { Button } from "ui";
 // icons
@@ -48,7 +49,11 @@ const CommandPalette: React.FC = () => {
   const [isBulkDeleteIssuesModalOpen, setIsBulkDeleteIssuesModalOpen] = useState(false);
 
   const router = useRouter();
+
   const { workspaceSlug, projectId } = router.query;
+
+  const { setToastAlert } = useToast();
+  const { toggleCollapsed } = useTheme();
 
   const { data: issues } = useSWR(
     workspaceSlug && projectId
@@ -59,20 +64,23 @@ const CommandPalette: React.FC = () => {
       : null
   );
 
-  const { data: projectDetails } = useSWR(
-    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
-      : null
+  const { data: myIssues } = useSWR<IIssue[]>(
+    workspaceSlug ? USER_ISSUE(workspaceSlug as string) : null,
+    workspaceSlug ? () => userService.userIssues(workspaceSlug as string) : null
   );
 
-  const { toggleCollapsed } = useTheme();
+  const { data: projects } = useSWR(
+    workspaceSlug ? PROJECTS_LIST(workspaceSlug as string) : null,
+    workspaceSlug ? () => projectServices.getProjects(workspaceSlug as string) : null
+  );
 
-  const { setToastAlert } = useToast();
+  const activeProject = !projectId
+    ? projects?.[0]
+    : projects?.find((project) => project.id === projectId);
 
   const filteredIssues: IIssue[] =
     query === ""
-      ? issues?.results ?? []
+      ? issues?.results ?? myIssues ?? []
       : issues?.results.filter((issue) => issue.name.toLowerCase().includes(query.toLowerCase())) ??
         [];
 
@@ -159,25 +167,25 @@ const CommandPalette: React.FC = () => {
     <>
       <ShortcutsModal isOpen={isShortcutsModalOpen} setIsOpen={setIsShortcutsModalOpen} />
       <CreateProjectModal isOpen={isProjectModalOpen} setIsOpen={setIsProjectModalOpen} />
-      {projectId && (
+      {activeProject && (
         <>
           <CreateUpdateCycleModal
             isOpen={isCreateCycleModalOpen}
             setIsOpen={setIsCreateCycleModalOpen}
-            projectId={projectId as string}
+            projectId={activeProject.id}
           />
           <CreateUpdateModuleModal
             isOpen={isCreateModuleModalOpen}
             setIsOpen={setIsCreateModuleModalOpen}
-            projectId={projectId as string}
+            projectId={activeProject.id}
+          />
+          <CreateUpdateIssuesModal
+            isOpen={isIssueModalOpen}
+            setIsOpen={setIsIssueModalOpen}
+            projectId={activeProject.id}
           />
         </>
       )}
-      <CreateUpdateIssuesModal
-        isOpen={isIssueModalOpen}
-        setIsOpen={setIsIssueModalOpen}
-        projectId={projectId as string}
-      />
       <BulkDeleteIssuesModal
         isOpen={isBulkDeleteIssuesModalOpen}
         setIsOpen={setIsBulkDeleteIssuesModalOpen}
@@ -270,7 +278,7 @@ const CommandPalette: React.FC = () => {
                                         }}
                                       />
                                       <span className="flex-shrink-0 text-xs text-gray-500">
-                                        {projectDetails?.identifier}-{issue.sequence_id}
+                                        {activeProject?.identifier}-{issue.sequence_id}
                                       </span>
                                       <span>{issue.name}</span>
                                     </div>

@@ -1,8 +1,9 @@
-// react
 import React, { useState } from "react";
-// swr
+
+import { useRouter } from "next/router";
+
 import useSWR from "swr";
-// react-beautiful-dnd
+
 import { Draggable } from "react-beautiful-dnd";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 // services
@@ -63,7 +64,8 @@ const SingleBoard: React.FC<Props> = ({
   // Collapse/Expand
   const [show, setShow] = useState(true);
 
-  const { activeWorkspace } = useUser();
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
 
   if (selectedGroup === "priority")
     groupTitle === "high"
@@ -75,8 +77,8 @@ const SingleBoard: React.FC<Props> = ({
       : (bgColor = "#ff0000");
 
   const { data: people } = useSWR<IWorkspaceMember[]>(
-    activeWorkspace ? WORKSPACE_MEMBERS : null,
-    activeWorkspace ? () => workspaceService.workspaceMembers(activeWorkspace.slug) : null
+    workspaceSlug ? WORKSPACE_MEMBERS : null,
+    workspaceSlug ? () => workspaceService.workspaceMembers(workspaceSlug as string) : null
   );
 
   return (

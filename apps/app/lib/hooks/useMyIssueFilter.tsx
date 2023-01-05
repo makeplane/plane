@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
-// swr
+
+import { useRouter } from "next/router";
+
 import useSWR from "swr";
 // constants
 import { STATE_LIST } from "constants/fetch-keys";
@@ -30,12 +32,16 @@ const useMyIssuesProperties = (issues?: IIssue[]) => {
   const [properties, setProperties] = useState<Properties>(initialValues);
   const [groupByProperty, setGroupByProperty] = useState<NestedKeyOf<IIssue> | null>(null);
 
-  const { activeWorkspace, activeProject, user } = useUser();
+  // FIXME: where this hook is used we may not have project id in the url
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
+
+  const { user } = useUser();
 
   const { data: states } = useSWR(
-    activeWorkspace && activeProject ? STATE_LIST(activeProject.id) : null,
-    activeWorkspace && activeProject
-      ? () => stateService.getStates(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
       : null
   );
 

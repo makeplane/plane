@@ -1,13 +1,14 @@
 import React from "react";
-// next
-import { useRouter } from "next/router";
+
 import Image from "next/image";
+import { useRouter } from "next/router";
+
+import useSWR from "swr";
+
 // fetch-keys
 import { PROJECT_ISSUES_ACTIVITY, STATE_LIST, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // common
 import { addSpaceIfCamelCase, timeAgo } from "constants/common";
-// swr
-import useSWR from "swr";
 // services
 import stateService from "lib/services/state.service";
 import issuesServices from "lib/services/issues.service";
@@ -38,25 +39,23 @@ const activityIcons: {
 const IssueActivitySection: React.FC = () => {
   const router = useRouter();
 
-  const { issueId, projectId } = router.query;
-
-  const { activeWorkspace, activeProject } = useUser();
+  const { workspaceSlug, projectId, issueId } = router.query;
 
   const { data: issues } = useSWR(
-    activeWorkspace && activeProject
-      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId
+      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
       : null,
-    activeWorkspace && activeProject
-      ? () => issuesServices.getIssues(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId
+      ? () => issuesServices.getIssues(workspaceSlug as string, projectId as string)
       : null
   );
 
   const { data: issueActivities } = useSWR<any[]>(
-    activeWorkspace && projectId && issueId ? PROJECT_ISSUES_ACTIVITY : null,
-    activeWorkspace && projectId && issueId
+    workspaceSlug && projectId && issueId ? PROJECT_ISSUES_ACTIVITY : null,
+    workspaceSlug && projectId && issueId
       ? () =>
           issuesServices.getIssueActivities(
-            activeWorkspace.slug,
+            workspaceSlug as string,
             projectId as string,
             issueId as string
           )
@@ -64,9 +63,9 @@ const IssueActivitySection: React.FC = () => {
   );
 
   const { data: states } = useSWR(
-    activeWorkspace && activeProject ? STATE_LIST(activeProject.id) : null,
-    activeWorkspace && activeProject
-      ? () => stateService.getStates(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
       : null
   );
 

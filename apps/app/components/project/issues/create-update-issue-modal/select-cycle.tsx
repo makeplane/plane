@@ -3,8 +3,6 @@ import React from "react";
 import useSWR from "swr";
 // react hook form
 import { Controller } from "react-hook-form";
-// hooks
-import useUser from "lib/hooks/useUser";
 // services
 import cycleServices from "lib/services/cycles.service";
 // constants

@@ -1,23 +1,13 @@
-// react
 import React, { useState } from "react";
-// next
-import { useRouter } from "next/router";
-// swr
-import useSWR from "swr";
-// services
-import projectService from "lib/services/project.service";
-// headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // ui
 import { Button } from "ui";
 // icons
 import { MagnifyingGlassIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
-// fetch-keys
-import { PROJECT_DETAILS } from "constants/fetch-keys";
+// constants
+import { classNames } from "constants/common";
 // types
 import { IIssue } from "types";
-// common
-import { classNames } from "constants/common";
 
 type Props = {
   isOpen: boolean;
@@ -42,16 +32,6 @@ const IssuesListModal: React.FC<Props> = ({
 }) => {
   const [query, setQuery] = useState("");
   const [values, setValues] = useState<string[]>([]);
-
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
-
-  const { data: projectDetails } = useSWR(
-    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
-      : null
-  );
 
   const handleClose = () => {
     onClose();
@@ -93,14 +73,7 @@ const IssuesListModal: React.FC<Props> = ({
               <Dialog.Panel className="relative mx-auto max-w-2xl transform divide-y divide-gray-500 divide-opacity-10 rounded-xl bg-white bg-opacity-80 shadow-2xl ring-1 ring-black ring-opacity-5 backdrop-blur backdrop-filter transition-all">
                 {multiple ? (
                   <>
-                    <Combobox
-                      value={value}
-                      onChange={(val) => {
-                        // setValues(val);
-                        console.log(val);
-                      }}
-                      multiple
-                    >
+                    <Combobox value={value} onChange={(val) => {}} multiple>
                       <div className="relative m-1">
                         <MagnifyingGlassIcon
                           className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-gray-900 text-opacity-40"
@@ -147,7 +120,7 @@ const IssuesListModal: React.FC<Props> = ({
                                         }}
                                       />
                                       <span className="flex-shrink-0 text-xs text-gray-500">
-                                        {projectDetails?.identifier}-{issue.sequence_id}
+                                        {issue.project_detail?.identifier}-{issue.sequence_id}
                                       </span>{" "}
                                       {issue.id}
                                     </>
@@ -219,20 +192,18 @@ const IssuesListModal: React.FC<Props> = ({
                                 }
                                 onClick={() => handleClose()}
                               >
-                                {({ selected }) => (
-                                  <>
-                                    <span
-                                      className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                                      style={{
-                                        backgroundColor: issue.state_detail.color,
-                                      }}
-                                    />
-                                    <span className="flex-shrink-0 text-xs text-gray-500">
-                                      {projectDetails?.identifier}-{issue.sequence_id}
-                                    </span>{" "}
-                                    {issue.name}
-                                  </>
-                                )}
+                                <>
+                                  <span
+                                    className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                                    style={{
+                                      backgroundColor: issue.state_detail.color,
+                                    }}
+                                  />
+                                  <span className="flex-shrink-0 text-xs text-gray-500">
+                                    {issue.project_detail?.identifier}-{issue.sequence_id}
+                                  </span>{" "}
+                                  {issue.name}
+                                </>
                               </Combobox.Option>
                             ))}
                           </ul>

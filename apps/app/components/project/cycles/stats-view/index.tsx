@@ -55,7 +55,7 @@ const CycleStatsView: React.FC<TCycleStatsViewProps> = ({
         ))
       ) : (
         <div className="flex flex-col items-center justify-center gap-4 text-center">
-          <CyclesIcon className="h-20 w-20" color="gray" />
+          <CyclesIcon className="h-14 w-14" color="gray" />
           <h3>
             Your {type} {type === "current" ? "cycle" : "cycles"} will be represented here
           </h3>

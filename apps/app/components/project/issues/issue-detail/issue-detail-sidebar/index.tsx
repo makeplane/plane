@@ -62,6 +62,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
   watch: watchIssue,
 }) => {
   const [createLabelForm, setCreateLabelForm] = useState(false);
+  const [deleteIssueModal, setDeleteIssueModal] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -83,15 +84,6 @@ const IssueDetailSidebar: React.FC<Props> = ({
       ? () => issuesServices.getIssueLabels(workspaceSlug as string, projectId as string)
       : null
   );
-
-  const { data: projectDetails } = useSWR(
-    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
-      : null
-  );
-
-  const [deleteIssueModal, setDeleteIssueModal] = useState(false);
 
   const {
     register,
@@ -140,7 +132,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
       <div className="h-full w-full divide-y-2 divide-gray-100">
         <div className="flex items-center justify-between pb-3">
           <h4 className="text-sm font-medium">
-            {projectDetails?.identifier}-{issueDetail?.sequence_id}
+            {issueDetail?.project_detail?.identifier}-{issueDetail?.sequence_id}
           </h4>
           <div className="flex flex-wrap items-center gap-2">
             <button
@@ -148,7 +140,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
               className="rounded-md border p-2 shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
               onClick={() =>
                 copyTextToClipboard(
-                  `https://app.plane.so/${workspaceSlug}/projects/${projectId}/issues/${issueDetail?.id}`
+                  `https://app.plane.so/${workspaceSlug}/projects/${issueDetail?.project_detail?.id}/issues/${issueDetail?.id}`
                 )
                   .then(() => {
                     setToastAlert({

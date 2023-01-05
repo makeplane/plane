@@ -1,10 +1,9 @@
-// react
 import React from "react";
-// next
+
 import { useRouter } from "next/router";
-// swr
+
 import useSWR from "swr";
-// react hook form
+
 import { Controller } from "react-hook-form";
 import type { Control } from "react-hook-form";
 // service

@@ -1,8 +1,9 @@
-// react
 import React, { useState } from "react";
-// swr
+
+import { useRouter } from "next/router";
+
 import useSWR, { mutate } from "swr";
-// headless ui
+
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // services
 import issuesServices from "lib/services/issues.service";
@@ -14,7 +15,6 @@ import { classNames } from "constants/common";
 import { IIssue, IssueResponse } from "types";
 // constants
 import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
-import { useRouter } from "next/router";
 
 type Props = {
   isOpen: boolean;

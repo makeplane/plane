@@ -1,11 +1,10 @@
-// react
 import React, { useState } from "react";
-// next
+
 import Link from "next/link";
 import { useRouter } from "next/router";
-// swr
+
 import useSWR from "swr";
-// react-hook-form
+
 import { SubmitHandler, useForm, UseFormWatch } from "react-hook-form";
 // services
 import issuesService from "lib/services/issues.service";
@@ -37,7 +36,7 @@ type Props = {
   watch: UseFormWatch<IIssue>;
 };
 
-const SelectBlocked: React.FC<Props> = ({ submitChanges, issueDetail, issuesList, watch }) => {
+const SelectBlocked: React.FC<Props> = ({ submitChanges, issuesList, watch }) => {
   const [query, setQuery] = useState("");
   const [isBlockedModalOpen, setIsBlockedModalOpen] = useState(false);
 
@@ -55,14 +54,7 @@ const SelectBlocked: React.FC<Props> = ({ submitChanges, issueDetail, issuesList
       : null
   );
 
-  const { data: projectDetails } = useSWR(
-    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
-      : null
-  );
-
-  const { register, handleSubmit, reset, watch: watchIssues } = useForm<FormInput>();
+  const { register, handleSubmit, reset } = useForm<FormInput>();
 
   const handleClose = () => {
     setIsBlockedModalOpen(false);
@@ -115,9 +107,9 @@ const SelectBlocked: React.FC<Props> = ({ submitChanges, issueDetail, issuesList
                   >
                     <a className="flex items-center gap-1">
                       <BlockedIcon height={10} width={10} />
-                      {`${projectDetails?.identifier}-${
-                        issues?.results.find((i) => i.id === issue)?.sequence_id
-                      }`}
+                      {`${
+                        issues?.results.find((i) => i.id === issue)?.project_detail?.identifier
+                      }-${issues?.results.find((i) => i.id === issue)?.sequence_id}`}
                     </a>
                   </Link>
                   <span className="opacity-0 duration-300 group-hover:opacity-100">
@@ -205,28 +197,28 @@ const SelectBlocked: React.FC<Props> = ({ submitChanges, issueDetail, issuesList
                                           )
                                         }
                                       >
-                                        {({ active }) => (
-                                          <>
-                                            <div className="flex items-center gap-2">
-                                              <input
-                                                type="checkbox"
-                                                {...register("issue_ids")}
-                                                id={`issue-${issue.id}`}
-                                                value={issue.id}
-                                              />
-                                              <span
-                                                className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                                                style={{
-                                                  backgroundColor: issue.state_detail.color,
-                                                }}
-                                              />
-                                              <span className="flex-shrink-0 text-xs text-gray-500">
-                                                {projectDetails?.identifier}-{issue.sequence_id}
-                                              </span>
-                                              <span>{issue.name}</span>
-                                            </div>
-                                          </>
-                                        )}
+                                        <div className="flex items-center gap-2">
+                                          <input
+                                            type="checkbox"
+                                            {...register("issue_ids")}
+                                            id={`issue-${issue.id}`}
+                                            value={issue.id}
+                                          />
+                                          <span
+                                            className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                                            style={{
+                                              backgroundColor: issue.state_detail.color,
+                                            }}
+                                          />
+                                          <span className="flex-shrink-0 text-xs text-gray-500">
+                                            {
+                                              issues?.results.find((i) => i.id === issue.id)
+                                                ?.project_detail?.identifier
+                                            }
+                                            -{issue.sequence_id}
+                                          </span>
+                                          <span>{issue.name}</span>
+                                        </div>
                                       </Combobox.Option>
                                     );
                                   }

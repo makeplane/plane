@@ -1,10 +1,11 @@
-// react
-import React, { useEffect } from "react";
-// swr
+import React from "react";
+
+import { useRouter } from "next/router";
+
 import { mutate } from "swr";
-// react hook form
+
 import { useForm } from "react-hook-form";
-// headless
+
 import { Dialog, Transition } from "@headlessui/react";
 // services
 import modulesService from "lib/services/modules.service";
@@ -29,15 +30,8 @@ const defaultValues: ModuleLink = {
 };
 
 const ModuleLinkModal: React.FC<Props> = ({ isOpen, module, handleClose }) => {
-  const { activeWorkspace, activeProject } = useUser();
-
-  const onClose = () => {
-    handleClose();
-    const timeout = setTimeout(() => {
-      reset(defaultValues);
-      clearTimeout(timeout);
-    }, 500);
-  };
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
 
   const {
     register,
@@ -50,7 +44,7 @@ const ModuleLinkModal: React.FC<Props> = ({ isOpen, module, handleClose }) => {
   });
 
   const onSubmit = async (formData: ModuleLink) => {
-    if (!activeWorkspace || !activeProject || !module) return;
+    if (!workspaceSlug || !projectId || !module) return;
 
     const previousLinks = module.link_module.map((l) => {
       return { title: l.title, url: l.url };
@@ -61,7 +55,7 @@ const ModuleLinkModal: React.FC<Props> = ({ isOpen, module, handleClose }) => {
     };
 
     await modulesService
-      .patchModule(activeWorkspace.slug, activeProject.id, module.id, payload)
+      .patchModule(workspaceSlug as string, projectId as string, module.id, payload)
       .then((res) => {
         mutate(MODULE_DETAIL);
         onClose();
@@ -73,6 +67,14 @@ const ModuleLinkModal: React.FC<Props> = ({ isOpen, module, handleClose }) => {
           });
         });
       });
+  };
+
+  const onClose = () => {
+    handleClose();
+    const timeout = setTimeout(() => {
+      reset(defaultValues);
+      clearTimeout(timeout);
+    }, 500);
   };
 
   return (

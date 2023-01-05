@@ -1,7 +1,9 @@
 import React from "react";
-// swr
+
+import { useRouter } from "next/router";
+
 import useSWR from "swr";
-// react-hook-form
+
 import { Control, Controller } from "react-hook-form";
 // services
 import stateService from "lib/services/state.service";
@@ -14,7 +16,6 @@ import { STATE_LIST } from "constants/fetch-keys";
 import { IIssue } from "types";
 // ui
 import { Spinner, CustomSelect } from "ui";
-import { useRouter } from "next/router";
 
 type Props = {
   control: Control<IIssue, any>;

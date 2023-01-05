@@ -1,14 +1,13 @@
-// react
 import React, { useState } from "react";
-// next
+
 import Link from "next/link";
 import { useRouter } from "next/router";
-// swr
+
 import useSWR from "swr";
-// react-hook-form
+
 import { SubmitHandler, useForm, UseFormWatch } from "react-hook-form";
 // constants
-import { PROJECT_DETAILS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import { PROJECT_ISSUES_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
 // hooks
 import useToast from "lib/hooks/useToast";
 // services
@@ -100,7 +99,7 @@ const SelectBlocker: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
                   className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-white px-1.5 py-0.5 text-xs text-yellow-500 duration-300 hover:border-yellow-500 hover:bg-yellow-50"
                 >
                   <Link
-                    href={`/${workspaceSlug}/projects/${projectId}/issues/${
+                    href={`/${workspaceSlug}/projects/${projectDetails?.id}/issues/${
                       issues?.results.find((i) => i.id === issue)?.id
                     }`}
                   >

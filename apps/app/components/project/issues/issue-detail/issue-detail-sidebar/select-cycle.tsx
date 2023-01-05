@@ -1,13 +1,11 @@
 // react
 import React from "react";
-// next
+
 import { useRouter } from "next/router";
-// swr
+
 import useSWR, { mutate } from "swr";
-// react-hook-form
+
 import { Control, Controller, UseFormWatch } from "react-hook-form";
-// hooks
-import useUser from "lib/hooks/useUser";
 // constants
 import { CYCLE_ISSUES, CYCLE_LIST, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // services
@@ -16,7 +14,7 @@ import cyclesService from "lib/services/cycles.service";
 // ui
 import { Spinner, CustomSelect } from "ui";
 // icons
-import { ArrowPathIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { ArrowPathIcon } from "@heroicons/react/24/outline";
 // types
 import { CycleIssueResponse, ICycle, IIssue } from "types";
 // common
@@ -29,7 +27,7 @@ type Props = {
   watch: UseFormWatch<IIssue>;
 };
 
-const SelectCycle: React.FC<Props> = ({ issueDetail, control, handleCycleChange, watch }) => {
+const SelectCycle: React.FC<Props> = ({ issueDetail, control, handleCycleChange }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 

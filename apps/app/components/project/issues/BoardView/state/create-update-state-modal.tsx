@@ -1,11 +1,13 @@
 import React, { useEffect } from "react";
-// swr
+
+import { useRouter } from "next/router";
+
 import { mutate } from "swr";
-// react hook form
+
 import { Controller, useForm } from "react-hook-form";
-// react color
+
 import { TwitterPicker } from "react-color";
-// headless
+
 import { Dialog, Popover, Transition } from "@headlessui/react";
 // services
 import stateService from "lib/services/state.service";
@@ -45,7 +47,8 @@ const CreateUpdateStateModal: React.FC<Props> = ({ isOpen, data, projectId, hand
     }, 500);
   };
 
-  const { activeWorkspace } = useUser();
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
 
   const {
     register,
@@ -60,13 +63,13 @@ const CreateUpdateStateModal: React.FC<Props> = ({ isOpen, data, projectId, hand
   });
 
   const onSubmit = async (formData: IState) => {
-    if (!activeWorkspace) return;
+    if (!workspaceSlug) return;
     const payload: IState = {
       ...formData,
     };
     if (!data) {
       await stateService
-        .createState(activeWorkspace.slug, projectId, payload)
+        .createState(workspaceSlug as string, projectId, payload)
         .then((res) => {
           mutate<IState[]>(STATE_LIST(projectId), (prevData) => [...(prevData ?? []), res], false);
           onClose();
@@ -80,7 +83,7 @@ const CreateUpdateStateModal: React.FC<Props> = ({ isOpen, data, projectId, hand
         });
     } else {
       await stateService
-        .updateState(activeWorkspace.slug, projectId, data.id, payload)
+        .updateState(workspaceSlug as string, projectId, data.id, payload)
         .then((res) => {
           mutate<IState[]>(
             STATE_LIST(projectId),
@@ -185,14 +188,14 @@ const CreateUpdateStateModal: React.FC<Props> = ({ isOpen, data, projectId, hand
                             {({ open }) => (
                               <>
                                 <Popover.Button
-                                  className={`group bg-white rounded-md inline-flex items-center text-base font-medium hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
+                                  className={`group inline-flex items-center rounded-md bg-white text-base font-medium hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
                                     open ? "text-gray-900" : "text-gray-500"
                                   }`}
                                 >
                                   <span>Color</span>
                                   {watch("color") && watch("color") !== "" && (
                                     <span
-                                      className="w-4 h-4 ml-2 rounded"
+                                      className="ml-2 h-4 w-4 rounded"
                                       style={{
                                         backgroundColor: watch("color") ?? "green",
                                       }}
@@ -215,7 +218,7 @@ const CreateUpdateStateModal: React.FC<Props> = ({ isOpen, data, projectId, hand
                                   leaveFrom="opacity-100 translate-y-0"
                                   leaveTo="opacity-0 translate-y-1"
                                 >
-                                  <Popover.Panel className="fixed z-50 transform left-5 mt-3 px-2 w-screen max-w-xs sm:px-0">
+                                  <Popover.Panel className="fixed left-5 z-50 mt-3 w-screen max-w-xs transform px-2 sm:px-0">
                                     <Controller
                                       name="color"
                                       control={control}

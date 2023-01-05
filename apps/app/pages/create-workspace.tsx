@@ -31,14 +31,14 @@ const CreateWorkspace: NextPage = () => {
 
   const router = useRouter();
 
-  const { mutateWorkspaces, user } = useUser();
+  const { user } = useUser();
 
   const onSubmit = async (formData: IWorkspace) => {
     await workspaceService
       .createWorkspace(formData)
       .then((res) => {
         console.log(res);
-        mutateWorkspaces((prevData) => [...(prevData ?? []), res], false);
+        // TODO: add workspace mutations
         router.push("/");
       })
       .catch((err) => {
