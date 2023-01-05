@@ -11,6 +11,7 @@ import { Controller, useForm } from "react-hook-form";
 import { Dialog, Menu, Transition } from "@headlessui/react";
 // services
 import issuesServices from "lib/services/issues.service";
+import fileService from "lib/services/file.service";
 // hooks
 import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
@@ -126,7 +127,8 @@ const CreateUpdateIssuesModal: React.FC<Props> = (props) => {
   }, [data, setIsOpen]);
 
   useEffect(() => {
-    setActiveProject(projects?.find((p) => p.id === projectId)?.id ?? projects?.[0].id ?? null);
+    if (projects && projects.length > 0)
+      setActiveProject(projects?.find((p) => p.id === projectId)?.id ?? projects?.[0].id ?? null);
   }, [projectId, projects]);
 
   useEffect(() => {

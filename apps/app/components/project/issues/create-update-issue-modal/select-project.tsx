@@ -26,7 +26,7 @@ type Props = {
   setActiveProject: React.Dispatch<React.SetStateAction<string | null>>;
 };
 
-const SelectProject: React.FC<Props> = ({ control, activeProject, setActiveProject }) => {
+const SelectProject: React.FC<Props> = ({ control, setActiveProject }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 

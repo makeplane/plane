@@ -33,6 +33,7 @@ import { tableControllerPluginKey, TableExtension } from "@remirror/extension-re
 // components`
 import { RichTextToolbar } from "./toolbar";
 import { MentionAutoComplete } from "./mention-autocomplete";
+import fileService from "lib/services/file.service";
 
 type SetProgress = (progress: number) => void;
 interface FileWithProgress {
@@ -66,6 +67,34 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = ({
     []
   );
 
+  const uploadImageHandler = (value: any): any => {
+    try {
+      const formData = new FormData();
+      formData.append("asset", value[0].file);
+      formData.append("attributes", JSON.stringify({}));
+
+      return [
+        () => {
+          return new Promise(async (resolve, reject) => {
+            const imageUrl = await fileService.uploadFile(formData).then((response) => {
+              return response.asset;
+            });
+
+            resolve({
+              align: "left",
+              alt: "Not Found",
+              height: "100%",
+              width: "100%",
+              src: imageUrl,
+            });
+          });
+        },
+      ];
+    } catch {
+      return [];
+    }
+  };
+
   // remirror manager
   const { manager, state } = useRemirror({
     extensions: () => [
@@ -85,6 +114,7 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = ({
       new LinkExtension({ autoLink: true }),
       new ImageExtension({
         enableResizing: true,
+        uploadHandler: uploadImageHandler,
       }),
       new DropCursorExtension(),
       new StrikeExtension(),

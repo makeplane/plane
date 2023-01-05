@@ -9,6 +9,7 @@ import { useForm, Controller, UseFormWatch } from "react-hook-form";
 import { TwitterPicker } from "react-color";
 // services
 import issuesServices from "lib/services/issues.service";
+import projectService from "lib/services/project.service";
 // hooks
 import useToast from "lib/hooks/useToast";
 // components

@@ -1,3 +1,4 @@
+// react
 import React from "react";
 
 import { useRouter } from "next/router";
@@ -5,8 +6,6 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 
 import { Control, Controller, UseFormWatch } from "react-hook-form";
-// hooks
-import useUser from "lib/hooks/useUser";
 // constants
 import { CYCLE_ISSUES, CYCLE_LIST, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // services
@@ -15,7 +14,7 @@ import cyclesService from "lib/services/cycles.service";
 // ui
 import { Spinner, CustomSelect } from "ui";
 // icons
-import { ArrowPathIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { ArrowPathIcon } from "@heroicons/react/24/outline";
 // types
 import { CycleIssueResponse, ICycle, IIssue } from "types";
 // common

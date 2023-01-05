@@ -7,8 +7,6 @@ import useSWR, { mutate } from "swr";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // services
 import issuesServices from "lib/services/issues.service";
-// hooks
-import useUser from "lib/hooks/useUser";
 // icons
 import { RectangleStackIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 // commons

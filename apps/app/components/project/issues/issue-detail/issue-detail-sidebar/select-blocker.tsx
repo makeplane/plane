@@ -8,11 +8,11 @@ import useSWR from "swr";
 import { SubmitHandler, useForm, UseFormWatch } from "react-hook-form";
 // constants
 import { PROJECT_ISSUES_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
+// hooks
+import useToast from "lib/hooks/useToast";
 // services
 import issuesServices from "lib/services/issues.service";
 import projectService from "lib/services/project.service";
-// hooks
-import useToast from "lib/hooks/useToast";
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // ui
@@ -42,9 +42,7 @@ const SelectBlocker: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
   const { setToastAlert } = useToast();
 
   const router = useRouter();
-  const {
-    query: { projectId, workspaceSlug },
-  } = router;
+  const { workspaceSlug, projectId } = router.query;
 
   const { data: issues } = useSWR(
     workspaceSlug && projectId

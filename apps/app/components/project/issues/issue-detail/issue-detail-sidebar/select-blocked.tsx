@@ -8,8 +8,9 @@ import useSWR from "swr";
 import { SubmitHandler, useForm, UseFormWatch } from "react-hook-form";
 // services
 import issuesService from "lib/services/issues.service";
+import projectService from "lib/services/project.service";
 // constants
-import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import { PROJECT_DETAILS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // hooks
 import useToast from "lib/hooks/useToast";
 // headless ui
@@ -40,13 +41,11 @@ const SelectBlocked: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
   const [isBlockedModalOpen, setIsBlockedModalOpen] = useState(false);
 
   const router = useRouter();
-  const {
-    query: { workspaceSlug, projectId },
-  } = router;
+  const { workspaceSlug, projectId } = router.query;
 
   const { setToastAlert } = useToast();
 
-  const { data: issues } = useSWR(
+  const { data: issues, mutate: mutateIssues } = useSWR(
     workspaceSlug && projectId
       ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
       : null,
