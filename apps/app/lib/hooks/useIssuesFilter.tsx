@@ -13,6 +13,7 @@ import { groupBy, orderArrayBy } from "constants/common";
 import { PRIORITIES } from "constants/";
 // types
 import type { IIssue } from "types";
+import { useRouter } from "next/router";
 
 const useIssuesFilter = (projectIssues: IIssue[]) => {
   const {
@@ -29,12 +30,13 @@ const useIssuesFilter = (projectIssues: IIssue[]) => {
     setIssueViewToList,
   } = useTheme();
 
-  const { activeWorkspace, activeProject } = useUser();
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
 
   const { data: states } = useSWR(
-    activeWorkspace && activeProject ? STATE_LIST(activeProject.id) : null,
-    activeWorkspace && activeProject
-      ? () => stateService.getStates(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
       : null
   );
 

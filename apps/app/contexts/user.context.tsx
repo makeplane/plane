@@ -32,15 +32,19 @@ interface IUserContextProps {
 export const UserContext = createContext<IUserContextProps>({} as IUserContextProps);
 
 export const UserProvider = ({ children }: { children: ReactElement }) => {
+  const [activeWorkspace, setActiveWorkspace] = useState<IWorkspace | undefined>();
+  const [activeProject, setActiveProject] = useState<IProject | undefined>();
+
   const router = useRouter();
 
   const { projectId } = router.query;
 
-  const [activeWorkspace, setActiveWorkspace] = useState<IWorkspace | undefined>();
-  const [activeProject, setActiveProject] = useState<IProject | undefined>();
-
   // API to fetch user information
-  const { data, error, mutate } = useSWR<any>(CURRENT_USER, () => userService.currentUser(), {
+  const {
+    data: user,
+    error,
+    mutate,
+  } = useSWR<IUser>(CURRENT_USER, () => userService.currentUser(), {
     shouldRetryOnError: false,
   });
 
@@ -49,8 +53,8 @@ export const UserProvider = ({ children }: { children: ReactElement }) => {
     error: workspaceError,
     mutate: mutateWorkspaces,
   } = useSWR<IWorkspace[]>(
-    data ? USER_WORKSPACES : null,
-    data ? () => workspaceService.userWorkspaces() : null,
+    user ? USER_WORKSPACES : null,
+    user ? () => workspaceService.userWorkspaces() : null,
     {
       shouldRetryOnError: false,
     }
@@ -68,8 +72,8 @@ export const UserProvider = ({ children }: { children: ReactElement }) => {
   }, [projectId, projects]);
 
   useEffect(() => {
-    if (data?.user?.last_workspace_id) {
-      const workspace = workspaces?.find((item) => item.id === data?.user?.last_workspace_id);
+    if (user?.last_workspace_id) {
+      const workspace = workspaces?.find((item) => item.id === user?.last_workspace_id);
       if (workspace) {
         setActiveWorkspace(workspace);
       } else {
@@ -77,12 +81,12 @@ export const UserProvider = ({ children }: { children: ReactElement }) => {
         setActiveWorkspace(workspace);
         userService.updateUser({ last_workspace_id: workspace?.id });
       }
-    } else if (data) {
+    } else if (user) {
       const workspace = workspaces?.[0];
       setActiveWorkspace(workspace);
       userService.updateUser({ last_workspace_id: workspace?.id });
     }
-  }, [data, workspaces]);
+  }, [user, workspaces]);
 
   useEffect(() => {
     if (!workspaces) return;
@@ -92,8 +96,8 @@ export const UserProvider = ({ children }: { children: ReactElement }) => {
   return (
     <UserContext.Provider
       value={{
-        user: error ? undefined : data?.user,
-        isUserLoading: Boolean(data === undefined && error === undefined),
+        user: error ? undefined : user,
+        isUserLoading: Boolean(user === undefined && error === undefined),
         mutateUser: mutate,
         activeWorkspace: workspaceError ? undefined : activeWorkspace,
         mutateWorkspaces: mutateWorkspaces,
@@ -102,7 +106,7 @@ export const UserProvider = ({ children }: { children: ReactElement }) => {
         mutateProjects: mutateProjects,
         activeProject,
         setActiveProject,
-        slug: error ? undefined : data?.slug,
+        slug: error ? undefined : user?.slug,
       }}
     >
       {children}

@@ -22,7 +22,12 @@ import {
 } from "constants/common";
 import { PRIORITIES } from "constants/";
 import { getPriorityIcon } from "constants/global";
-import { PROJECT_ISSUES_LIST, STATE_LIST, WORKSPACE_MEMBERS } from "constants/fetch-keys";
+import {
+  PROJECT_DETAILS,
+  PROJECT_ISSUES_LIST,
+  STATE_LIST,
+  WORKSPACE_MEMBERS,
+} from "constants/fetch-keys";
 // ui
 import { CustomMenu, Spinner } from "ui";
 // icons
@@ -31,7 +36,8 @@ import { ChevronDownIcon, PlusIcon, CalendarDaysIcon } from "@heroicons/react/24
 // components
 import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
 // types
-import { IIssue, IssueResponse, IWorkspaceMember, NestedKeyOf, Properties } from "types";
+import { IIssue, IProject, IssueResponse, IWorkspaceMember, NestedKeyOf, Properties } from "types";
+import projectService from "lib/services/project.service";
 
 // types
 type Props = {
@@ -55,34 +61,36 @@ const ListView: React.FC<Props> = ({
   const [preloadedData, setPreloadedData] = useState<
     (Partial<IIssue> & { actionType: "createIssue" | "edit" | "delete" }) | undefined
   >(undefined);
-  
+
   const router = useRouter();
-
-  const {
-    query: { workspaceSlug },
-  } = router;
-
-  const { activeWorkspace, activeProject } = useUser();
+  const { workspaceSlug, projectId } = router.query;
 
   const { data: issues } = useSWR<IssueResponse>(
-    activeWorkspace && activeProject
-      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId
+      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
       : null,
-    activeWorkspace && activeProject
-      ? () => issuesService.getIssues(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId
+      ? () => issuesService.getIssues(workspaceSlug as string, projectId as string)
       : null
   );
 
   const { data: states } = useSWR(
-    activeWorkspace && activeProject ? STATE_LIST(activeProject.id) : null,
-    activeWorkspace && activeProject
-      ? () => stateService.getStates(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
       : null
   );
 
   const { data: people } = useSWR<IWorkspaceMember[]>(
-    activeWorkspace ? WORKSPACE_MEMBERS : null,
-    activeWorkspace ? () => workspaceService.workspaceMembers(activeWorkspace.slug) : null
+    workspaceSlug ? WORKSPACE_MEMBERS : null,
+    workspaceSlug ? () => workspaceService.workspaceMembers(workspaceSlug as string) : null
+  );
+
+  const { data: projectDetails } = useSWR<IProject>(
+    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
+      : null
   );
 
   return (
@@ -93,7 +101,7 @@ const ListView: React.FC<Props> = ({
         prePopulateData={{
           ...preloadedData,
         }}
-        projectId={activeProject?.id as string}
+        projectId={projectId as string}
       />
       <div className="flex flex-col space-y-5">
         {Object.keys(groupedByIssues).map((singleGroup) => (
@@ -171,11 +179,13 @@ const ListView: React.FC<Props> = ({
                                       backgroundColor: issue.state_detail.color,
                                     }}
                                   />
-                                  <Link href={`/${workspaceSlug}/projects/${activeProject?.id}/issues/${issue.id}`}>
+                                  <Link
+                                    href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}
+                                  >
                                     <a className="group relative flex items-center gap-2">
                                       {properties.key && (
                                         <span className="flex-shrink-0 text-xs text-gray-500">
-                                          {activeProject?.identifier}-{issue.sequence_id}
+                                          {projectDetails?.identifier}-{issue.sequence_id}
                                         </span>
                                       )}
                                       <span>{issue.name}</span>

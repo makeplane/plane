@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 // swr
 import useSWR from "swr";
 // services
@@ -13,6 +13,9 @@ import SingleBoard from "components/project/modules/board-view/single-board";
 import { Spinner } from "ui";
 // types
 import { IIssue, IProjectMember, NestedKeyOf, Properties } from "types";
+import { useRouter } from "next/router";
+import { DragDropContext, DropResult } from "react-beautiful-dnd";
+import issuesService from "lib/services/issues.service";
 
 type Props = {
   groupedByIssues: {
@@ -48,56 +51,104 @@ const ModulesBoardView: React.FC<Props> = ({
   handleDeleteIssue,
   setPreloadedData,
 }) => {
-  const { activeWorkspace, activeProject } = useUser();
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
 
   const { data: states } = useSWR(
-    activeWorkspace && activeProject ? STATE_LIST(activeProject.id) : null,
-    activeWorkspace && activeProject
-      ? () => stateService.getStates(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
       : null
+  );
+
+  const handleOnDragEnd = useCallback(
+    (result: DropResult) => {
+      if (!result.destination) return;
+      const { source, destination } = result;
+
+      if (source.droppableId !== destination.droppableId) {
+        const sourceGroup = source.droppableId; // source group id
+        const destinationGroup = destination.droppableId; // destination group id
+        if (!sourceGroup || !destinationGroup) return;
+
+        // removed/dragged item
+        const removedItem = groupedByIssues[source.droppableId][source.index];
+
+        if (selectedGroup === "priority") {
+          // update the removed item for mutation
+          removedItem.priority = destinationGroup;
+
+          // patch request
+          issuesService.patchIssue(workspaceSlug as string, projectId as string, removedItem.id, {
+            priority: destinationGroup,
+          });
+        } else if (selectedGroup === "state_detail.name") {
+          const destinationState = states?.find((s) => s.name === destinationGroup);
+          const destinationStateId = destinationState?.id;
+
+          // update the removed item for mutation
+          if (!destinationStateId || !destinationState) return;
+          removedItem.state = destinationStateId;
+          removedItem.state_detail = destinationState;
+
+          // patch request
+          issuesService.patchIssue(workspaceSlug as string, projectId as string, removedItem.id, {
+            state: destinationStateId,
+          });
+        }
+
+        // remove item from the source group
+        groupedByIssues[source.droppableId].splice(source.index, 1);
+        // add item to the destination group
+        groupedByIssues[destination.droppableId].splice(destination.index, 0, removedItem);
+      }
+    },
+    [workspaceSlug, groupedByIssues, projectId, selectedGroup, states]
   );
 
   return (
     <>
       {groupedByIssues ? (
         <div className="h-full w-full">
-          <div className="h-full w-full overflow-hidden">
-            <div className="h-full w-full">
-              <div className="flex h-full gap-x-4 overflow-x-auto overflow-y-hidden pb-3">
-                {Object.keys(groupedByIssues).map((singleGroup) => (
-                  <SingleBoard
-                    key={singleGroup}
-                    selectedGroup={selectedGroup}
-                    groupTitle={singleGroup}
-                    createdBy={
-                      selectedGroup === "created_by"
-                        ? members?.find((m) => m.member.id === singleGroup)?.member.first_name ??
-                          "loading..."
-                        : null
-                    }
-                    groupedByIssues={groupedByIssues}
-                    bgColor={
-                      selectedGroup === "state_detail.name"
-                        ? states?.find((s) => s.name === singleGroup)?.color
-                        : undefined
-                    }
-                    properties={properties}
-                    removeIssueFromModule={removeIssueFromModule}
-                    openIssuesListModal={openIssuesListModal}
-                    openCreateIssueModal={openCreateIssueModal}
-                    partialUpdateIssue={partialUpdateIssue}
-                    handleDeleteIssue={handleDeleteIssue}
-                    setPreloadedData={setPreloadedData}
-                    stateId={
-                      selectedGroup === "state_detail.name"
-                        ? states?.find((s) => s.name === singleGroup)?.id ?? null
-                        : null
-                    }
-                  />
-                ))}
+          <DragDropContext onDragEnd={handleOnDragEnd}>
+            <div className="h-full w-full overflow-hidden">
+              <div className="h-full w-full">
+                <div className="flex h-full gap-x-4 overflow-x-auto overflow-y-hidden pb-3">
+                  {Object.keys(groupedByIssues).map((singleGroup) => (
+                    <SingleBoard
+                      key={singleGroup}
+                      selectedGroup={selectedGroup}
+                      groupTitle={singleGroup}
+                      createdBy={
+                        selectedGroup === "created_by"
+                          ? members?.find((m) => m.member.id === singleGroup)?.member.first_name ??
+                            "loading..."
+                          : null
+                      }
+                      groupedByIssues={groupedByIssues}
+                      bgColor={
+                        selectedGroup === "state_detail.name"
+                          ? states?.find((s) => s.name === singleGroup)?.color
+                          : undefined
+                      }
+                      properties={properties}
+                      removeIssueFromModule={removeIssueFromModule}
+                      openIssuesListModal={openIssuesListModal}
+                      openCreateIssueModal={openCreateIssueModal}
+                      partialUpdateIssue={partialUpdateIssue}
+                      handleDeleteIssue={handleDeleteIssue}
+                      setPreloadedData={setPreloadedData}
+                      stateId={
+                        selectedGroup === "state_detail.name"
+                          ? states?.find((s) => s.name === singleGroup)?.id ?? null
+                          : null
+                      }
+                    />
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
+          </DragDropContext>
         </div>
       ) : (
         <div className="flex h-full w-full items-center justify-center">

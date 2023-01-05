@@ -83,32 +83,32 @@ const SingleBoard: React.FC<Props> = ({
     <Draggable draggableId={groupTitle} index={index}>
       {(provided, snapshot) => (
         <div
-          className={`rounded flex-shrink-0 h-full ${
+          className={`h-full flex-shrink-0 rounded ${
             snapshot.isDragging ? "border-theme shadow-lg" : ""
-          } ${!show ? "" : "w-80 bg-gray-50 border"}`}
+          } ${!show ? "" : "w-80 border bg-gray-50"}`}
           ref={provided.innerRef}
           {...provided.draggableProps}
         >
-          <div className={`${!show ? "" : "h-full space-y-3 overflow-y-auto flex flex-col"}`}>
+          <div className={`${!show ? "" : "flex h-full flex-col space-y-3 overflow-y-auto"}`}>
             <div
               className={`flex justify-between p-3 pb-0 ${
-                !show ? "flex-col bg-gray-50 rounded-md border" : ""
+                !show ? "flex-col rounded-md border bg-gray-50" : ""
               }`}
             >
               <div className={`flex items-center ${!show ? "flex-col gap-2" : "gap-1"}`}>
                 <button
                   type="button"
                   {...provided.dragHandleProps}
-                  className={`h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-200 duration-300 outline-none ${
+                  className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200 ${
                     !show ? "" : "rotate-90"
                   } ${selectedGroup !== "state_detail.name" ? "hidden" : ""}`}
                 >
                   <EllipsisHorizontalIcon className="h-4 w-4 text-gray-600" />
-                  <EllipsisHorizontalIcon className="h-4 w-4 text-gray-600 mt-[-0.7rem]" />
+                  <EllipsisHorizontalIcon className="mt-[-0.7rem] h-4 w-4 text-gray-600" />
                 </button>
                 <div
-                  className={`flex items-center gap-x-1 px-2 bg-slate-900 rounded-md cursor-pointer ${
-                    !show ? "py-2 mb-2 flex-col gap-y-2" : ""
+                  className={`flex cursor-pointer items-center gap-x-1 rounded-md bg-slate-900 px-2 ${
+                    !show ? "mb-2 flex-col gap-y-2 py-2" : ""
                   }`}
                   style={{
                     border: `2px solid ${bgColor}`,
@@ -127,7 +127,7 @@ const SingleBoard: React.FC<Props> = ({
                       ? createdBy
                       : addSpaceIfCamelCase(groupTitle)}
                   </h2>
-                  <span className="text-gray-500 text-sm ml-0.5">
+                  <span className="ml-0.5 text-sm text-gray-500">
                     {groupedByIssues[groupTitle].length}
                   </span>
                 </div>
@@ -136,7 +136,7 @@ const SingleBoard: React.FC<Props> = ({
               <div className={`flex items-center ${!show ? "flex-col pb-2" : ""}`}>
                 <button
                   type="button"
-                  className="h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-200 duration-300 outline-none"
+                  className="grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200"
                   onClick={() => {
                     setShow(!show);
                   }}
@@ -149,7 +149,7 @@ const SingleBoard: React.FC<Props> = ({
                 </button>
                 <button
                   type="button"
-                  className="h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-200 duration-300 outline-none"
+                  className="grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200"
                   onClick={() => {
                     setIsIssueOpen(true);
                     if (selectedGroup !== null)
@@ -167,7 +167,7 @@ const SingleBoard: React.FC<Props> = ({
             <StrictModeDroppable key={groupTitle} droppableId={groupTitle}>
               {(provided, snapshot) => (
                 <div
-                  className={`mt-3 space-y-3 h-full overflow-y-auto px-3 pb-3 ${
+                  className={`mt-3 h-full space-y-3 overflow-y-auto px-3 pb-3 ${
                     snapshot.isDraggingOver ? "bg-indigo-50 bg-opacity-50" : ""
                   } ${!show ? "hidden" : "block"}`}
                   {...provided.droppableProps}
@@ -212,7 +212,7 @@ const SingleBoard: React.FC<Props> = ({
                   {provided.placeholder}
                   <button
                     type="button"
-                    className="flex items-center text-xs font-medium hover:bg-gray-100 p-2 rounded duration-300 outline-none"
+                    className="flex items-center rounded p-2 text-xs font-medium outline-none duration-300 hover:bg-gray-100"
                     onClick={() => {
                       setIsIssueOpen(true);
                       if (selectedGroup !== null) {
@@ -224,7 +224,7 @@ const SingleBoard: React.FC<Props> = ({
                       }
                     }}
                   >
-                    <PlusIcon className="h-3 w-3 mr-1" />
+                    <PlusIcon className="mr-1 h-3 w-3" />
                     Create
                   </button>
                 </div>

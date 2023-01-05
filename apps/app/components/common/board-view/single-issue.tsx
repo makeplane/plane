@@ -16,8 +16,7 @@ import { getPriorityIcon } from "constants/global";
 // services
 import issuesService from "lib/services/issues.service";
 import stateService from "lib/services/state.service";
-// hooks
-import useUser from "lib/hooks/useUser";
+import projectService from "lib/services/project.service";
 // icons
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { CalendarDaysIcon } from "@heroicons/react/20/solid";
@@ -31,6 +30,7 @@ import {
   findHowManyDaysLeft,
   renderShortNumericDateFormat,
 } from "constants/common";
+import { PROJECT_DETAILS } from "constants/fetch-keys";
 
 type Props = {
   issue: IIssue;
@@ -55,29 +55,35 @@ const SingleBoardIssue: React.FC<Props> = ({
   handleDeleteIssue,
   partialUpdateIssue,
 }) => {
-  const { activeProject, activeWorkspace } = useUser();
   const router = useRouter();
-  const {
-    query: { workspaceSlug },
-  } = router;
+  const { workspaceSlug, projectId } = router.query;
 
   const { data: issues } = useSWR<IssueResponse>(
-    activeWorkspace && activeProject
-      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId
+      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
       : null,
-    activeWorkspace && activeProject
-      ? () => issuesService.getIssues(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId
+      ? () => issuesService.getIssues(workspaceSlug as string, projectId as string)
       : null
   );
 
   const { data: states } = useSWR(
-    activeWorkspace && activeProject ? STATE_LIST(activeProject.id) : null,
-    activeWorkspace && activeProject
-      ? () => stateService.getStates(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
+      : null
+  );
+
+  const { data: projectDetails } = useSWR(
+    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
       : null
   );
 
   const totalChildren = issues?.results.filter((i) => i.parent === issue.id).length;
+
+  console.log(projectDetails);
 
   return (
     <div
@@ -101,7 +107,7 @@ const SingleBoardIssue: React.FC<Props> = ({
           <a>
             {properties.key && (
               <div className="mb-2 text-xs font-medium text-gray-500">
-                {activeProject?.identifier}-{issue.sequence_id}
+                {projectDetails?.identifier}-{issue.sequence_id}
               </div>
             )}
             <h5
