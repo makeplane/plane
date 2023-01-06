@@ -230,7 +230,7 @@ const SingleModule = () => {
       <CreateUpdateIssuesModal
         isOpen={createUpdateIssueModal && selectedIssues?.actionType !== "delete"}
         data={selectedIssues}
-        prePopulateData={{ sprints: moduleId as string, ...preloadedData }}
+        prePopulateData={{ cycle: moduleId as string, ...preloadedData }}
         setIsOpen={setCreateUpdateIssueModal}
         projectId={activeProject?.id}
       />

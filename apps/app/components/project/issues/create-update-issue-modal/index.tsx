@@ -1,22 +1,21 @@
 import React, { useEffect, useState } from "react";
-// next
+
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-// swr
+
 import useSWR, { mutate } from "swr";
-// react hook form
+
 import { Controller, useForm } from "react-hook-form";
-// headless
+
 import { Dialog, Menu, Transition } from "@headlessui/react";
 // services
 import issuesServices from "lib/services/issues.service";
-import fileService from "lib/services/file.service";
 // hooks
 import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
 // ui
-import { Button, TextArea } from "ui";
+import { Button, Loader, TextArea } from "ui";
 // icons
 import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
 // components
@@ -37,14 +36,20 @@ import {
   PROJECT_ISSUES_LIST,
   CYCLE_ISSUES,
   USER_ISSUE,
-  PROJECT_DETAILS,
   PROJECTS_LIST,
 } from "constants/fetch-keys";
 // common
 import { renderDateFormat, cosineSimilarity } from "constants/common";
 import projectService from "lib/services/project.service";
 
-const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), { ssr: false });
+const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
+  ssr: false,
+  loading: () => (
+    <Loader>
+      <Loader.Item height="12rem" width="100%"></Loader.Item>
+    </Loader>
+  ),
+});
 
 type Props = {
   isOpen: boolean;
@@ -60,7 +65,7 @@ const defaultValues: Partial<IIssue> = {
   name: "",
   description: "",
   state: "",
-  sprints: null,
+  cycle: null,
   priority: null,
   labels_list: [],
 };
@@ -75,17 +80,18 @@ const CreateUpdateIssuesModal: React.FC<Props> = (props) => {
     isUpdatingSingleIssue = false,
   } = props;
 
+  const [createMore, setCreateMore] = useState(false);
   const [isCycleModalOpen, setIsCycleModalOpen] = useState(false);
   const [isStateModalOpen, setIsStateModalOpen] = useState(false);
+  const [activeProject, setActiveProject] = useState<string | null>(null);
   const [parentIssueListModalOpen, setParentIssueListModalOpen] = useState(false);
   const [mostSimilarIssue, setMostSimilarIssue] = useState<string | undefined>();
-  const [createMore, setCreateMore] = useState(true);
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const { setToastAlert } = useToast();
   const { user } = useUser();
+  const { setToastAlert } = useToast();
 
   const { data: issues } = useSWR(
     workspaceSlug && projectId ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId) : null,
@@ -98,17 +104,6 @@ const CreateUpdateIssuesModal: React.FC<Props> = (props) => {
     workspaceSlug ? PROJECTS_LIST(workspaceSlug as string) : null,
     workspaceSlug ? () => projectService.getProjects(workspaceSlug as string) : null
   );
-
-  const { data: projectDetails } = useSWR(
-    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
-      : null
-  );
-
-  const [activeProject, setActiveProject] = useState<string | null>(null);
-  // console.log("Projects", projects, "Pid", projectId, "Ap", activeProject, projects[0].id);
-  // console.log(projectId ? projects?.find((p) => p.id === projectId)?.id : projects?.[0].id);
 
   const {
     register,
@@ -205,17 +200,13 @@ const CreateUpdateIssuesModal: React.FC<Props> = (props) => {
       ...formData,
       target_date: formData.target_date ? renderDateFormat(formData.target_date ?? "") : null,
     };
-    console.log(true);
-
     if (!data) {
       await issuesServices
         .createIssues(workspaceSlug as string, projectId, payload)
-        .then(async (res) => {
-          console.log(res);
+        .then((res) => {
           mutate<IssueResponse>(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId));
-
-          if (formData.sprints && formData.sprints !== null) {
-            await addIssueToCycle(res.id, formData.sprints);
+          if (formData.cycle && formData.cycle !== null) {
+            addIssueToCycle(res.id, formData.cycle);
           }
           resetForm();
           if (!createMore) handleClose();
@@ -236,8 +227,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = (props) => {
     } else {
       await issuesServices
         .updateIssue(workspaceSlug as string, projectId, data.id, payload)
-        .then(async (res) => {
-          console.log(res);
+        .then((res) => {
           if (isUpdatingSingleIssue) {
             mutate<IIssue>(PROJECT_ISSUES_DETAILS, (prevData) => ({ ...prevData, ...res }), false);
           } else
@@ -251,11 +241,10 @@ const CreateUpdateIssuesModal: React.FC<Props> = (props) => {
                     return issue;
                   }),
                 };
-              },
-              false
+              }
             );
-          if (formData.sprints && formData.sprints !== null) {
-            await addIssueToCycle(res.id, formData.sprints);
+          if (formData.cycle && formData.cycle !== null) {
+            addIssueToCycle(res.id, formData.cycle);
           }
           resetForm();
           if (!createMore) handleClose();
@@ -392,6 +381,9 @@ const CreateUpdateIssuesModal: React.FC<Props> = (props) => {
                             )}
                           </div>
                           <div>
+                            <label htmlFor={"description"} className="mb-2 text-gray-500">
+                              Description
+                            </label>
                             <Controller
                               name="description"
                               control={control}
@@ -456,7 +448,10 @@ const CreateUpdateIssuesModal: React.FC<Props> = (props) => {
                                         onClick={() => setParentIssueListModalOpen(true)}
                                       >
                                         {watch("parent") && watch("parent") !== ""
-                                          ? `${projectDetails?.identifier}-${
+                                          ? `${
+                                              issues?.results.find((i) => i.id === watch("parent"))
+                                                ?.project_detail?.identifier
+                                            }-${
                                               issues?.results.find((i) => i.id === watch("parent"))
                                                 ?.sequence_id
                                             }`

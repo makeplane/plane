@@ -15,8 +15,6 @@ import stateService from "lib/services/state.service";
 import { STATE_LIST } from "constants/fetch-keys";
 // constants
 import { GROUP_CHOICES } from "constants/";
-// hooks
-import useUser from "lib/hooks/useUser";
 // ui
 import { Button, Input, Select, TextArea } from "ui";
 // icons
@@ -39,14 +37,6 @@ const defaultValues: Partial<IState> = {
 };
 
 const CreateUpdateStateModal: React.FC<Props> = ({ isOpen, data, projectId, handleClose }) => {
-  const onClose = () => {
-    handleClose();
-    const timeout = setTimeout(() => {
-      reset(defaultValues);
-      clearTimeout(timeout);
-    }, 500);
-  };
-
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -61,6 +51,19 @@ const CreateUpdateStateModal: React.FC<Props> = ({ isOpen, data, projectId, hand
   } = useForm<IState>({
     defaultValues,
   });
+
+  useEffect(() => {
+    if (data) {
+      reset(data);
+    } else {
+      reset(defaultValues);
+    }
+  }, [data, reset]);
+
+  const onClose = () => {
+    handleClose();
+    reset(defaultValues);
+  };
 
   const onSubmit = async (formData: IState) => {
     if (!workspaceSlug) return;
@@ -110,17 +113,9 @@ const CreateUpdateStateModal: React.FC<Props> = ({ isOpen, data, projectId, hand
     }
   };
 
-  useEffect(() => {
-    if (data) {
-      reset(data);
-    } else {
-      reset(defaultValues);
-    }
-  }, [data, reset]);
-
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={onClose}>
+      <Dialog as="div" className="relative z-30" onClose={onClose}>
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"

@@ -11,8 +11,6 @@ import { Dialog, Transition } from "@headlessui/react";
 import cycleService from "lib/services/cycles.service";
 // fetch keys
 import { CYCLE_LIST } from "constants/fetch-keys";
-// hooks
-import useUser from "lib/hooks/useUser";
 // common
 import { renderDateFormat } from "constants/common";
 // ui
@@ -33,19 +31,8 @@ const defaultValues: Partial<ICycle> = {
 };
 
 const CreateUpdateCycleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, projectId }) => {
-  const handleClose = () => {
-    setIsOpen(false);
-    const timeout = setTimeout(() => {
-      reset(defaultValues);
-      clearTimeout(timeout);
-    }, 500);
-  };
-
   const router = useRouter();
-
-  const {
-    query: { workspaceSlug },
-  } = router;
+  const { workspaceSlug } = router.query;
 
   const {
     register,
@@ -56,6 +43,15 @@ const CreateUpdateCycleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, proj
   } = useForm<ICycle>({
     defaultValues,
   });
+
+  useEffect(() => {
+    if (data) {
+      setIsOpen(true);
+      reset(data);
+    } else {
+      reset(defaultValues);
+    }
+  }, [data, setIsOpen, reset]);
 
   const onSubmit = async (formData: ICycle) => {
     if (!workspaceSlug) return;
@@ -107,18 +103,14 @@ const CreateUpdateCycleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, proj
     }
   };
 
-  useEffect(() => {
-    if (data) {
-      setIsOpen(true);
-      reset(data);
-    } else {
-      reset(defaultValues);
-    }
-  }, [data, setIsOpen, reset]);
+  const handleClose = () => {
+    setIsOpen(false);
+    reset(defaultValues);
+  };
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={handleClose}>
+      <Dialog as="div" className="relative z-30" onClose={handleClose}>
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"

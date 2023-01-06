@@ -189,7 +189,7 @@ const SingleCycle: React.FC = () => {
       <CreateUpdateIssuesModal
         isOpen={isIssueModalOpen && selectedIssues?.actionType !== "delete"}
         data={selectedIssues}
-        prePopulateData={{ sprints: cycleId as string, ...preloadedData }}
+        prePopulateData={{ cycle: cycleId as string, ...preloadedData }}
         setIsOpen={setIsIssueModalOpen}
         projectId={activeProject?.id}
       />
