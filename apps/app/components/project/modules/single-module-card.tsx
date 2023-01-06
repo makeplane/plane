@@ -1,6 +1,5 @@
-// next
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/router";
 // icons
 import User from "public/user.png";

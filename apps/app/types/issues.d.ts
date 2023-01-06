@@ -24,6 +24,32 @@ export interface IIssueCycle {
   cycle: string;
 }
 
+export interface IIssueModule {
+  created_at: Date;
+  created_by: string;
+  id: string;
+  issue: string;
+  module: string;
+  module_detail: IModule;
+  project: string;
+  updated_at: Date;
+  updated_by: string;
+  workspace: string;
+}
+
+export interface IIssueCycle {
+  created_at: Date;
+  created_by: string;
+  cycle: string;
+  cycle_detail: ICycle;
+  id: string;
+  issue: string;
+  project: string;
+  updated_at: Date;
+  updated_by: string;
+  workspace: string;
+}
+
 export interface IIssue {
   id: string;
   state_detail: IState;
@@ -39,30 +65,8 @@ export interface IIssue {
   created_at: Date;
   updated_at: Date;
   name: string;
-  issue_cycle: {
-    created_at: Date;
-    created_by: string;
-    cycle: string;
-    cycle_detail: ICycle;
-    id: string;
-    issue: string;
-    project: string;
-    updated_at: Date;
-    updated_by: string;
-    workspace: string;
-  } | null;
-  issue_module: {
-    created_at: Date;
-    created_by: string;
-    id: string;
-    issue: string;
-    module: string;
-    module_detail: IModule;
-    project: string;
-    updated_at: Date;
-    updated_by: string;
-    workspace: string;
-  } | null;
+  issue_cycle: IIssueCycle | null;
+  issue_module: IIssueModule | null;
   description: any;
   priority: string | null;
   start_date: string | null;
@@ -84,8 +88,6 @@ export interface IIssue {
   blocked_issue_details: any[];
   cycle: string | null;
   cycle_detail: ICycle | null;
-
-  issue_cycle: IIssueCycle;
 }
 
 export interface BlockeIssue {

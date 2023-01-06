@@ -1,14 +1,12 @@
-// react
 import React, { useState } from "react";
-// next
+
 import { useRouter } from "next/router";
-// swr
+
 import useSWR, { mutate } from "swr";
 // services
 import modulesService from "lib/services/modules.service";
 import projectService from "lib/services/project.service";
 import issuesService from "lib/services/issues.service";
-import workspaceService from "lib/services/workspace.service";
 // hooks
 import useIssuesFilter from "lib/hooks/useIssuesFilter";
 import useIssuesProperties from "lib/hooks/useIssuesProperties";
@@ -50,10 +48,8 @@ import {
   MODULE_DETAIL,
   MODULE_ISSUES,
   MODULE_LIST,
-  PROJECT_DETAILS,
   PROJECT_ISSUES_LIST,
   PROJECT_MEMBERS,
-  WORKSPACE_DETAILS,
 } from "constants/fetch-keys";
 // common
 import { classNames, replaceUnderscoreIfSnakeCase } from "constants/common";
@@ -76,46 +72,34 @@ const SingleModule = () => {
     query: { workspaceSlug, projectId, moduleId },
   } = useRouter();
 
-  const { data: activeWorkspace } = useSWR(
-    workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
-    () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null)
-  );
-
-  const { data: activeProject } = useSWR(
-    activeWorkspace && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    activeWorkspace && projectId
-      ? () => projectService.getProject(activeWorkspace.slug, projectId as string)
-      : null
-  );
-
   const { data: issues } = useSWR(
-    activeWorkspace && activeProject
-      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId
+      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
       : null,
-    activeWorkspace && activeProject
-      ? () => issuesService.getIssues(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId
+      ? () => issuesService.getIssues(workspaceSlug as string, projectId as string)
       : null
   );
 
   const [properties, setProperties] = useIssuesProperties(
-    activeWorkspace?.slug,
-    activeProject?.id as string
+    workspaceSlug as string,
+    projectId as string
   );
 
   const { data: modules } = useSWR(
-    activeWorkspace && activeProject ? MODULE_LIST(activeProject.id) : null,
-    activeWorkspace && activeProject
-      ? () => modulesService.getModules(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId ? MODULE_LIST(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => modulesService.getModules(workspaceSlug as string, projectId as string)
       : null
   );
 
   const { data: moduleIssues } = useSWR<ModuleIssueResponse[]>(
-    activeWorkspace && activeProject && moduleId ? MODULE_ISSUES(moduleId as string) : null,
-    activeWorkspace && activeProject && moduleId
+    workspaceSlug && projectId && moduleId ? MODULE_ISSUES(moduleId as string) : null,
+    workspaceSlug && projectId && moduleId
       ? () =>
           modulesService.getModuleIssues(
-            activeWorkspace?.slug,
-            activeProject?.id,
+            workspaceSlug as string,
+            projectId as string,
             moduleId as string
           )
       : null
@@ -134,9 +118,9 @@ const SingleModule = () => {
   );
 
   const { data: members } = useSWR(
-    activeWorkspace && activeProject ? PROJECT_MEMBERS(activeProject.id) : null,
-    activeWorkspace && activeProject
-      ? () => projectService.projectMembers(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
       : null,
     {
       onErrorRetry(err, _, __, revalidate, revalidateOpts) {
@@ -164,9 +148,9 @@ const SingleModule = () => {
   } = useIssuesFilter(moduleIssuesArray ?? []);
 
   const handleAddIssuesToModule = (data: { issues: string[] }) => {
-    if (activeWorkspace && activeProject) {
+    if (workspaceSlug && projectId) {
       modulesService
-        .addIssuesToModule(activeWorkspace.slug, activeProject.id, moduleId as string, data)
+        .addIssuesToModule(workspaceSlug as string, projectId as string, moduleId as string, data)
         .then((res) => {
           console.log(res);
           mutate(MODULE_ISSUES(moduleId as string));
@@ -176,10 +160,10 @@ const SingleModule = () => {
   };
 
   const partialUpdateIssue = (formData: Partial<IIssue>, issueId: string) => {
-    if (!activeWorkspace || !activeProject) return;
+    if (!workspaceSlug || !projectId) return;
     issuesService
-      .patchIssue(activeWorkspace.slug, activeProject.id, issueId, formData)
-      .then((response) => {
+      .patchIssue(workspaceSlug as string, projectId as string, issueId, formData)
+      .then(() => {
         mutate(MODULE_ISSUES(moduleId as string));
       })
       .catch((error) => {
@@ -200,7 +184,7 @@ const SingleModule = () => {
   };
 
   const removeIssueFromModule = (issueId: string) => {
-    if (!activeWorkspace || !activeProject) return;
+    if (!workspaceSlug || !projectId) return;
 
     mutate<ModuleIssueResponse[]>(
       MODULE_ISSUES(moduleId as string),
@@ -209,7 +193,12 @@ const SingleModule = () => {
     );
 
     modulesService
-      .removeIssueFromModule(activeWorkspace.slug, activeProject.id, moduleId as string, issueId)
+      .removeIssueFromModule(
+        workspaceSlug as string,
+        projectId as string,
+        moduleId as string,
+        issueId
+      )
       .then((res) => {
         console.log(res);
       })
@@ -232,7 +221,7 @@ const SingleModule = () => {
         data={selectedIssues}
         prePopulateData={{ cycle: moduleId as string, ...preloadedData }}
         setIsOpen={setCreateUpdateIssueModal}
-        projectId={activeProject?.id}
+        projectId={projectId as string}
       />
       <ExistingIssuesListModal
         isOpen={moduleIssuesListModal}
@@ -259,8 +248,8 @@ const SingleModule = () => {
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem
-              title={`${activeProject?.name ?? "Project"} Modules`}
-              link={`/${workspaceSlug}/projects/${activeProject?.id}/cycles`}
+              title={`${moduleDetail?.project_detail.name ?? "Project"} Modules`}
+              link={`/${workspaceSlug}/projects/${projectId}/cycles`}
             />
           </Breadcrumbs>
         }
@@ -279,7 +268,7 @@ const SingleModule = () => {
               <CustomMenu.MenuItem
                 key={module.id}
                 renderAs="a"
-                href={`/${workspaceSlug}/projects/${activeProject?.id}/modules/${module.id}`}
+                href={`/${workspaceSlug}/projects/${projectId}/modules/${module.id}`}
               >
                 {module.name}
               </CustomMenu.MenuItem>

@@ -9,8 +9,6 @@ import { Dialog, Transition } from "@headlessui/react";
 import cycleService from "lib/services/cycles.service";
 // fetch api
 import { CYCLE_LIST } from "constants/fetch-keys";
-// hooks
-import useUser from "lib/hooks/useUser";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
@@ -18,21 +16,24 @@ import { Button } from "ui";
 
 // types
 import type { ICycle } from "types";
-type Props = {
+type TConfirmCycleDeletionProps = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   data?: ICycle;
 };
 
-const ConfirmCycleDeletion: React.FC<Props> = ({ isOpen, setIsOpen, data }) => {
+const ConfirmCycleDeletion: React.FC<TConfirmCycleDeletionProps> = (props) => {
+  const { isOpen, setIsOpen, data } = props;
+
   const cancelButtonRef = useRef(null);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const router = useRouter();
+  const { workspaceSlug } = router.query;
 
-  const {
-    query: { workspaceSlug },
-  } = router;
+  useEffect(() => {
+    data && setIsOpen(true);
+  }, [data, setIsOpen]);
 
   const handleClose = () => {
     setIsOpen(false);
@@ -57,10 +58,6 @@ const ConfirmCycleDeletion: React.FC<Props> = ({ isOpen, setIsOpen, data }) => {
         setIsDeleteLoading(false);
       });
   };
-
-  useEffect(() => {
-    data && setIsOpen(true);
-  }, [data, setIsOpen]);
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
