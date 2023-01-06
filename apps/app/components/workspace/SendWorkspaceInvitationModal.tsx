@@ -33,7 +33,6 @@ const ROLE = {
 const defaultValues: Partial<IWorkspaceMemberInvitation> = {
   email: "",
   role: 5,
-  message: "",
 };
 
 const SendWorkspaceInvitationModal: React.FC<Props> = ({
@@ -65,7 +64,7 @@ const SendWorkspaceInvitationModal: React.FC<Props> = ({
 
   const onSubmit = async (formData: any) => {
     await workspaceService
-      .inviteWorkspace(workspace_slug, formData)
+      .inviteWorkspace(workspace_slug, { emails: [formData] })
       .then((res) => {
         console.log(res);
         setIsOpen(false);
@@ -156,7 +155,7 @@ const SendWorkspaceInvitationModal: React.FC<Props> = ({
                           }))}
                         />
                       </div>
-                      <div>
+                      {/* <div>
                         <TextArea
                           id="message"
                           name="message"
@@ -165,7 +164,7 @@ const SendWorkspaceInvitationModal: React.FC<Props> = ({
                           error={errors.message}
                           register={register}
                         />
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                   <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">

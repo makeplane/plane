@@ -56,7 +56,7 @@ const OnBoard: NextPage = () => {
   };
 
   const submitInvitations = () => {
-    userService.updateUserOnBoard();
+    // userService.updateUserOnBoard();
 
     workspaceService
       .joinWorkspaces({ invitations: invitationsRespond })

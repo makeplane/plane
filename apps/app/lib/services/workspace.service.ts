@@ -13,6 +13,7 @@ import {
   USER_WORKSPACE_INVITATIONS,
   LAST_ACTIVE_WORKSPACE_AND_PROJECTS,
   WORKSPACE_MEMBER_ME,
+  WORKSPACE_NAME_CHECK,
 } from "constants/api-routes";
 // services
 import APIService from "lib/services/api.service";
@@ -213,6 +214,16 @@ class WorkspaceService extends APIService {
 
   async deleteWorkspaceInvitations(workspaceSlug: string, invitationId: string): Promise<any> {
     return this.delete(WORKSPACE_INVITATION_DETAIL(workspaceSlug, invitationId))
+      .then((response) => {
+        return response?.data;
+      })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async workspaceNameCheck(name: string): Promise<any> {
+    return this.get(WORKSPACE_NAME_CHECK(name))
       .then((response) => {
         return response?.data;
       })

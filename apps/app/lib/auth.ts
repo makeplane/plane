@@ -121,7 +121,7 @@ export const homePageRedirect = async (cookie?: string) => {
   if (!user.is_onboarded)
     return {
       redirect: {
-        destination: "/invitations",
+        destination: "/onboarding",
         permanent: false,
       },
     };

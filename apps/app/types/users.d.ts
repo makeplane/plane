@@ -16,6 +16,7 @@ export interface IUser {
   created_location: readonly string;
   is_email_verified: boolean;
   token: string;
+  role: string;
 
   my_issues_prop?: {
     properties: Properties;
