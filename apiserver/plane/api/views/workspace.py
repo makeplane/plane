@@ -133,7 +133,6 @@ class UserWorkSpacesEndpoint(BaseAPIView):
 
 
 class WorkSpaceAvailabilityCheckEndpoint(BaseAPIView):
-
     def get(self, request):
         try:
             name = request.GET.get("name", False)
@@ -217,8 +216,7 @@ class InviteWorkspaceEndpoint(BaseAPIView):
                         status=status.HTTP_400_BAD_REQUEST,
                     )
             WorkspaceMemberInvite.objects.bulk_create(
-                workspace_invitations,
-                batch_size=10,
+                workspace_invitations, batch_size=10, ignore_conflicts=True
             )
 
             workspace_invitations = WorkspaceMemberInvite.objects.filter(
@@ -237,9 +235,6 @@ class InviteWorkspaceEndpoint(BaseAPIView):
             return Response(
                 {
                     "message": "Emails sent successfully",
-                    "invitations": WorkSpaceMemberInviteSerializer(
-                        workspace_invitations, many=True
-                    ).data,
                 },
                 status=status.HTTP_200_OK,
             )
