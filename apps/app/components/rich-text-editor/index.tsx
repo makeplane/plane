@@ -1,4 +1,4 @@
-import { useCallback, FC, useEffect } from "react";
+import { useCallback, FC, useEffect, useState } from "react";
 import { InvalidContentHandler } from "remirror";
 import {
   BoldExtension,
@@ -34,6 +34,7 @@ import { tableControllerPluginKey, TableExtension } from "@remirror/extension-re
 import { RichTextToolbar } from "./toolbar";
 import { MentionAutoComplete } from "./mention-autocomplete";
 import fileService from "lib/services/file.service";
+import { Spinner } from "ui";
 
 type SetProgress = (progress: number) => void;
 interface FileWithProgress {
@@ -58,6 +59,8 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = ({
   value = "",
   showToolbar = true,
 }) => {
+  const [imageLoader, setImageLoader] = useState(false);
+
   // remirror error handler
   const onError: InvalidContentHandler = useCallback(
     ({ json, invalidContent, transformers }: any) => {
@@ -68,10 +71,14 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = ({
   );
 
   const uploadImageHandler = (value: any): any => {
+    setImageLoader(true);
+
     try {
       const formData = new FormData();
       formData.append("asset", value[0].file);
       formData.append("attributes", JSON.stringify({}));
+
+      setImageLoader(true);
 
       return [
         () => {
@@ -87,6 +94,8 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = ({
               width: "100%",
               src: imageUrl,
             });
+
+            setImageLoader(false);
           });
         },
       ];
@@ -146,6 +155,11 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = ({
             </div>
           )}
           <EditorComponent />
+          {imageLoader && (
+            <div className="p-4">
+              <Spinner />
+            </div>
+          )}
           {/* <TableComponents /> */}
           <MentionAutoComplete mentions={mentions} tags={tags} />
           <OnChangeJSON onChange={onChange} />

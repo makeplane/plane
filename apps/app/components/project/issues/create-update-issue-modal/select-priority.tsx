@@ -12,6 +12,7 @@ import { CustomListbox } from "ui";
 // types
 import type { IIssue } from "types";
 import type { Control } from "react-hook-form";
+import { getPriorityIcon } from "constants/global";
 
 type Props = {
   control: Control<IIssue, any>;
@@ -31,7 +32,7 @@ const SelectPriority: React.FC<Props> = ({ control }) => {
           value={value}
           optionsFontsize="sm"
           onChange={onChange}
-          icon={<ChartBarIcon className="h-3 w-3 text-gray-500" />}
+          icon={getPriorityIcon(value)}
         />
       )}
     />

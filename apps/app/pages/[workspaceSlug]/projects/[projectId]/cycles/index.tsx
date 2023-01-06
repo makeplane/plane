@@ -140,7 +140,7 @@ const ProjectSprints: NextPage = () => {
                   </Tab>
                 </Tab.List>
                 <Tab.Panels>
-                  <Tab.Panel>
+                  <Tab.Panel as="div" className="space-y-5">
                     <CycleStatsView
                       cycles={upcomingCycles ?? []}
                       setCreateUpdateCycleModal={setCreateUpdateCycleModal}
@@ -148,7 +148,7 @@ const ProjectSprints: NextPage = () => {
                       type="upcoming"
                     />
                   </Tab.Panel>
-                  <Tab.Panel>
+                  <Tab.Panel as="div" className="space-y-5">
                     <CycleStatsView
                       cycles={completedCycles ?? []}
                       setCreateUpdateCycleModal={setCreateUpdateCycleModal}

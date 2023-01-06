@@ -25,10 +25,15 @@ import useIssuesProperties from "lib/hooks/useIssuesProperties";
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
 // ui
-import { BreadcrumbItem, Breadcrumbs, CustomMenu } from "ui";
+import { BreadcrumbItem, Breadcrumbs, CustomMenu, EmptySpace, EmptySpaceItem, Spinner } from "ui";
 // icons
 import { Squares2X2Icon } from "@heroicons/react/20/solid";
-import { ArrowPathIcon, ChevronDownIcon, ListBulletIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowPathIcon,
+  ChevronDownIcon,
+  ListBulletIcon,
+  PlusIcon,
+} from "@heroicons/react/24/outline";
 // types
 import { CycleIssueResponse, IIssue, Properties, SelectIssue } from "types";
 // fetch-keys
@@ -97,6 +102,7 @@ const SingleCycle: React.FC = () => {
           cycleServices.getCycleIssues(activeWorkspace?.slug, activeProject?.id, cycleId as string)
       : null
   );
+  console.log(cycleIssues);
   const cycleIssuesArray = cycleIssues?.map((issue) => {
     return { bridge: issue.id, ...issue.issue_detail };
   });
@@ -371,41 +377,82 @@ const SingleCycle: React.FC = () => {
         }
         noPadding
       >
-        <div className="flex h-full gap-5 pl-5">
-          <div className="h-full w-[calc(100vw-24rem)] min-w-0 flex-grow-0 py-5">
-            {issueView === "list" ? (
-              <CyclesListView
-                groupedByIssues={groupedByIssues}
-                selectedGroup={groupByProperty}
-                properties={properties}
-                openCreateIssueModal={openCreateIssueModal}
-                openIssuesListModal={openIssuesListModal}
-                removeIssueFromCycle={removeIssueFromCycle}
-                handleDeleteIssue={setDeleteIssue}
-                setPreloadedData={setPreloadedData}
-              />
-            ) : (
-              <CyclesBoardView
-                groupedByIssues={groupedByIssues}
-                properties={properties}
-                removeIssueFromCycle={removeIssueFromCycle}
-                selectedGroup={groupByProperty}
-                members={members}
-                openCreateIssueModal={openCreateIssueModal}
-                openIssuesListModal={openIssuesListModal}
-                handleDeleteIssue={setDeleteIssue}
-                partialUpdateIssue={partialUpdateIssue}
-                setPreloadedData={setPreloadedData}
-              />
-            )}
+        {Object.keys(groupedByIssues) ? (
+          Object.keys(groupedByIssues).length > 0 ? (
+            <div className="flex h-full gap-5 pl-5">
+              <div className="h-full w-[calc(100vw-24rem)] min-w-0 flex-grow-0 py-5">
+                {issueView === "list" ? (
+                  <CyclesListView
+                    groupedByIssues={groupedByIssues}
+                    selectedGroup={groupByProperty}
+                    properties={properties}
+                    openCreateIssueModal={openCreateIssueModal}
+                    openIssuesListModal={openIssuesListModal}
+                    removeIssueFromCycle={removeIssueFromCycle}
+                    handleDeleteIssue={setDeleteIssue}
+                    setPreloadedData={setPreloadedData}
+                  />
+                ) : (
+                  <CyclesBoardView
+                    groupedByIssues={groupedByIssues}
+                    properties={properties}
+                    removeIssueFromCycle={removeIssueFromCycle}
+                    selectedGroup={groupByProperty}
+                    members={members}
+                    openCreateIssueModal={openCreateIssueModal}
+                    openIssuesListModal={openIssuesListModal}
+                    handleDeleteIssue={setDeleteIssue}
+                    partialUpdateIssue={partialUpdateIssue}
+                    setPreloadedData={setPreloadedData}
+                  />
+                )}
+              </div>
+              <div className="w-[24rem] flex-shrink-0">
+                <CycleDetailSidebar
+                  cycle={cycles?.find((c) => c.id === (cycleId as string))}
+                  cycleIssues={cycleIssues ?? []}
+                />
+              </div>
+            </div>
+          ) : (
+            <div className="flex h-full flex-col items-center justify-center px-4">
+              <EmptySpace
+                title="You don't have any issue yet."
+                description="A cycle is a fixed time period where a team commits to a set number of issues from their backlog. Cycles are usually one, two, or four weeks long."
+                Icon={ArrowPathIcon}
+              >
+                <EmptySpaceItem
+                  title="Create a new issue"
+                  description={
+                    <span>
+                      Use{" "}
+                      <pre className="inline rounded bg-gray-100 px-2 py-1">Ctrl/Command + I</pre>{" "}
+                      shortcut to create a new issue
+                    </span>
+                  }
+                  Icon={PlusIcon}
+                  action={() => {
+                    const e = new KeyboardEvent("keydown", {
+                      ctrlKey: true,
+                      key: "i",
+                    });
+                    document.dispatchEvent(e);
+                  }}
+                />
+                <EmptySpaceItem
+                  title="Add an existing issue"
+                  description={<span>Open list</span>}
+                  Icon={ListBulletIcon}
+                  action={() => openIssuesListModal()}
+                />
+              </EmptySpace>
+            </div>
+          )
+        ) : (
+          <div className="flex h-full w-full items-center justify-center">
+            <Spinner />
           </div>
-          <div className="w-[24rem] flex-shrink-0">
-            <CycleDetailSidebar
-              cycle={cycles?.find((c) => c.id === (cycleId as string))}
-              cycleIssues={cycleIssues ?? []}
-            />
-          </div>
-        </div>
+        )}
       </AppLayout>
     </>
   );

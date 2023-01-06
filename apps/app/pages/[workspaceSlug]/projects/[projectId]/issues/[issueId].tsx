@@ -21,17 +21,13 @@ import AddAsSubIssue from "components/project/issues/issue-detail/add-as-sub-iss
 import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
 import IssueDetailSidebar from "components/project/issues/issue-detail/issue-detail-sidebar";
 import IssueCommentSection from "components/project/issues/issue-detail/comment/issue-comment-section";
+import IssueActivitySection from "components/project/issues/issue-detail/activity";
 // headless ui
-import { Disclosure, Menu, Tab, Transition } from "@headlessui/react";
+import { Disclosure, Transition } from "@headlessui/react";
 // ui
-import { Loader, TextArea, HeaderButton, Breadcrumbs } from "ui";
+import { Loader, TextArea, HeaderButton, Breadcrumbs, CustomMenu } from "ui";
 // icons
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  EllipsisHorizontalIcon,
-  PlusIcon,
-} from "@heroicons/react/24/outline";
+import { ChevronLeftIcon, ChevronRightIcon, PlusIcon } from "@heroicons/react/24/outline";
 // types
 import { IIssue, IssueResponse } from "types";
 // fetch-keys
@@ -40,20 +36,6 @@ import { PROJECT_DETAILS, PROJECT_ISSUES_LIST, WORKSPACE_DETAILS } from "constan
 import { debounce } from "constants/common";
 
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), { ssr: false });
-const IssueActivitySection = dynamic(
-  () => import("components/project/issues/issue-detail/activity"),
-  {
-    loading: () => (
-      <Loader>
-        <div className="space-y-2">
-          <Loader.Item height="30px" width="40%"></Loader.Item>
-          <Loader.Item height="15px" width="60%"></Loader.Item>
-        </div>
-      </Loader>
-    ),
-    ssr: false,
-  }
-);
 
 const defaultValues = {
   name: "",
@@ -278,46 +260,26 @@ const IssueDetail: NextPage = () => {
                       </span>
                     </a>
                   </Link>
-                  <Menu as="div" className="relative inline-block">
-                    <Menu.Button className="relative grid place-items-center rounded p-1 hover:bg-gray-200 focus:outline-none">
-                      <EllipsisHorizontalIcon className="h-4 w-4" />
-                    </Menu.Button>
 
-                    <Transition
-                      as={React.Fragment}
-                      enter="transition ease-out duration-100"
-                      enterFrom="transform opacity-0 scale-95"
-                      enterTo="transform opacity-100 scale-100"
-                      leave="transition ease-in duration-75"
-                      leaveFrom="transform opacity-100 scale-100"
-                      leaveTo="transform opacity-0 scale-95"
-                    >
-                      <Menu.Items className="absolute left-0 z-50 mt-1 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                        <div className="p-1">
-                          {siblingIssues && siblingIssues.length > 0 ? (
-                            siblingIssues.map((issue) => (
-                              <Menu.Item as="div" key={issue.id}>
-                                <Link
-                                  href={`/${workspaceSlug}/projects/${activeProject.id}/issues/${issue.id}`}
-                                >
-                                  <a className="flex items-center gap-2 whitespace-nowrap rounded-md p-2 text-left text-xs text-gray-900 hover:bg-theme hover:text-white">
-                                    {activeProject.identifier}-{issue.sequence_id}
-                                  </a>
-                                </Link>
-                              </Menu.Item>
-                            ))
-                          ) : (
-                            <Menu.Item
-                              as="div"
-                              className="flex items-center gap-2 whitespace-nowrap p-2 text-left text-xs text-gray-900"
-                            >
-                              No other sub-issues
-                            </Menu.Item>
-                          )}
-                        </div>
-                      </Menu.Items>
-                    </Transition>
-                  </Menu>
+                  <CustomMenu ellipsis optionsPosition="left">
+                    {siblingIssues && siblingIssues.length > 0 ? (
+                      siblingIssues.map((issue) => (
+                        <CustomMenu.MenuItem key={issue.id}>
+                          <Link
+                            href={`/${workspaceSlug}/projects/${activeProject.id}/issues/${issue.id}`}
+                          >
+                            <a>
+                              {activeProject.identifier}-{issue.sequence_id}
+                            </a>
+                          </Link>
+                        </CustomMenu.MenuItem>
+                      ))
+                    ) : (
+                      <CustomMenu.MenuItem className="flex items-center gap-2 whitespace-nowrap p-2 text-left text-xs text-gray-900">
+                        No other sibling issues
+                      </CustomMenu.MenuItem>
+                    )}
+                  </CustomMenu>
                 </div>
               ) : null}
               <div>
@@ -340,7 +302,12 @@ const IssueDetail: NextPage = () => {
                   render={({ field: { value, onChange } }) => (
                     <RemirrorRichTextEditor
                       value={value}
-                      onChange={onChange}
+                      onChange={(val) => {
+                        onChange(val);
+                        debounce(() => {
+                          handleSubmit(submitChanges)();
+                        }, 5000)();
+                      }}
                       placeholder="Enter Your Text..."
                     />
                   )}
@@ -374,35 +341,11 @@ const IssueDetail: NextPage = () => {
                                 Create new
                               </button>
 
-                              <Menu as="div" className="relative inline-block">
-                                <Menu.Button className="relative grid place-items-center rounded p-1 hover:bg-gray-100 focus:outline-none">
-                                  <EllipsisHorizontalIcon className="h-4 w-4" />
-                                </Menu.Button>
-
-                                <Transition
-                                  as={React.Fragment}
-                                  enter="transition ease-out duration-100"
-                                  enterFrom="transform opacity-0 scale-95"
-                                  enterTo="transform opacity-100 scale-100"
-                                  leave="transition ease-in duration-75"
-                                  leaveFrom="transform opacity-100 scale-100"
-                                  leaveTo="transform opacity-0 scale-95"
-                                >
-                                  <Menu.Items className="absolute right-0 z-50 mt-2 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                    <div className="p-1">
-                                      <Menu.Item as="div">
-                                        <button
-                                          type="button"
-                                          className="flex items-center gap-2 whitespace-nowrap rounded-md p-2 text-left text-xs text-gray-900 hover:bg-theme hover:text-white"
-                                          onClick={() => setIsAddAsSubIssueOpen(true)}
-                                        >
-                                          Add an existing issue
-                                        </button>
-                                      </Menu.Item>
-                                    </div>
-                                  </Menu.Items>
-                                </Transition>
-                              </Menu>
+                              <CustomMenu ellipsis>
+                                <CustomMenu.MenuItem onClick={() => setIsAddAsSubIssueOpen(true)}>
+                                  Add an existing issue
+                                </CustomMenu.MenuItem>
+                              </CustomMenu>
                             </div>
                           ) : null}
                         </div>
@@ -439,34 +382,13 @@ const IssueDetail: NextPage = () => {
                                   </a>
                                 </Link>
                                 <div className="opacity-0 group-hover:opacity-100">
-                                  <Menu as="div" className="relative inline-block">
-                                    <Menu.Button className="relative grid place-items-center p-1 hover:bg-gray-200 focus:outline-none">
-                                      <EllipsisHorizontalIcon className="h-4 w-4" />
-                                    </Menu.Button>
-
-                                    <Transition
-                                      as={React.Fragment}
-                                      enter="transition ease-out duration-100"
-                                      enterFrom="transform opacity-0 scale-95"
-                                      enterTo="transform opacity-100 scale-100"
-                                      leave="transition ease-in duration-75"
-                                      leaveFrom="transform opacity-100 scale-100"
-                                      leaveTo="transform opacity-0 scale-95"
+                                  <CustomMenu ellipsis>
+                                    <CustomMenu.MenuItem
+                                      onClick={() => handleSubIssueRemove(subIssue.id)}
                                     >
-                                      <Menu.Items className="absolute right-0 z-50 mt-2 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                        <div className="p-1">
-                                          <Menu.Item as="div">
-                                            <button
-                                              className="flex items-center gap-2 whitespace-nowrap rounded-md p-2 text-left text-xs text-gray-900 hover:bg-theme hover:text-white"
-                                              onClick={() => handleSubIssueRemove(subIssue.id)}
-                                            >
-                                              Remove as sub-issue
-                                            </button>
-                                          </Menu.Item>
-                                        </div>
-                                      </Menu.Items>
-                                    </Transition>
-                                  </Menu>
+                                      Remove as sub-issue
+                                    </CustomMenu.MenuItem>
+                                  </CustomMenu>
                                 </div>
                               </div>
                             ))}
@@ -476,85 +398,52 @@ const IssueDetail: NextPage = () => {
                     )}
                   </Disclosure>
                 ) : (
-                  <Menu as="div" className="relative inline-block">
-                    <Menu.Button className="flex items-center gap-1 rounded px-2 py-1 text-xs font-medium hover:bg-gray-100">
-                      <PlusIcon className="h-3 w-3" />
-                      Add sub-issue
-                    </Menu.Button>
-
-                    <Transition
-                      as={React.Fragment}
-                      enter="transition ease-out duration-100"
-                      enterFrom="transform opacity-0 scale-95"
-                      enterTo="transform opacity-100 scale-100"
-                      leave="transition ease-in duration-75"
-                      leaveFrom="transform opacity-100 scale-100"
-                      leaveTo="transform opacity-0 scale-95"
+                  <CustomMenu
+                    label={
+                      <>
+                        <PlusIcon className="h-3 w-3" />
+                        Add sub-issue
+                      </>
+                    }
+                    optionsPosition="left"
+                    noBorder
+                  >
+                    <CustomMenu.MenuItem
+                      onClick={() => {
+                        setIsOpen(true);
+                        setPreloadedData({
+                          parent: issueDetail.id,
+                          actionType: "createIssue",
+                        });
+                      }}
                     >
-                      <Menu.Items className="absolute left-0 z-10 mt-1 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                        <div className="py-1">
-                          <Menu.Item as="div">
-                            <button
-                              type="button"
-                              className="w-full whitespace-nowrap p-2 text-left text-xs text-gray-900 hover:bg-indigo-50"
-                              onClick={() => {
-                                setIsOpen(true);
-                                setPreloadedData({
-                                  parent: issueDetail.id,
-                                  actionType: "createIssue",
-                                });
-                              }}
-                            >
-                              Create new
-                            </button>
-                          </Menu.Item>
-                          <Menu.Item as="div">
-                            <button
-                              type="button"
-                              className="whitespace-nowrap p-2 text-left text-xs text-gray-900 hover:bg-indigo-50"
-                              onClick={() => {
-                                setIsAddAsSubIssueOpen(true);
-                                setPreloadedData({
-                                  parent: issueDetail.id,
-                                  actionType: "createIssue",
-                                });
-                              }}
-                            >
-                              Add an existing issue
-                            </button>
-                          </Menu.Item>
-                        </div>
-                      </Menu.Items>
-                    </Transition>
-                  </Menu>
+                      Create new
+                    </CustomMenu.MenuItem>
+                    <CustomMenu.MenuItem
+                      onClick={() => {
+                        setIsAddAsSubIssueOpen(true);
+                        setPreloadedData({
+                          parent: issueDetail.id,
+                          actionType: "createIssue",
+                        });
+                      }}
+                    >
+                      Add an existing issue
+                    </CustomMenu.MenuItem>
+                  </CustomMenu>
+                  // <Menu as="div" className="relative inline-block">
+                  //   <Menu.Button className="flex items-center gap-1 rounded px-2 py-1 text-xs font-medium hover:bg-gray-100">
+                  //     <PlusIcon className="h-3 w-3" />
+                  //     Add sub-issue
+                  //   </Menu.Button>
+                  // </Menu>
                 )}
               </div>
             </div>
             <div className="space-y-5 rounded-lg bg-secondary">
-              <Tab.Group>
-                <Tab.List className="flex gap-x-3">
-                  {["Comments", "Activity"].map((item) => (
-                    <Tab
-                      key={item}
-                      className={({ selected }) =>
-                        `rounded-md border-2 border-gray-700 px-3 py-1 text-sm ${
-                          selected ? "bg-gray-700 text-white" : ""
-                        }`
-                      }
-                    >
-                      {item}
-                    </Tab>
-                  ))}
-                </Tab.List>
-                <Tab.Panels>
-                  <Tab.Panel>
-                    <IssueCommentSection />
-                  </Tab.Panel>
-                  <Tab.Panel>
-                    <IssueActivitySection />
-                  </Tab.Panel>
-                </Tab.Panels>
-              </Tab.Group>
+              <h3 className="text-lg">Comments/Activity</h3>
+              <IssueCommentSection />
+              <IssueActivitySection />
             </div>
           </div>
           <div className="h-full basis-1/3 space-y-5 border-l p-5">

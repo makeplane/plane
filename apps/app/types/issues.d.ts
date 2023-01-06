@@ -86,6 +86,8 @@ export interface IIssue {
   labels_list: string[];
   blockers: any[];
   blocked_issue_details: any[];
+  sprints: string | null;
+  module: string | null;
   cycle: string | null;
   cycle_detail: ICycle | null;
 }

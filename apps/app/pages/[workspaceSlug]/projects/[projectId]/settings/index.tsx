@@ -31,6 +31,7 @@ import {
   Select,
   TextArea,
   Loader,
+  CustomSelect,
 } from "ui";
 // types
 import { IProject, IWorkspace } from "types";
@@ -282,19 +283,28 @@ const GeneralSettings: NextPage<TGeneralSettingsProps> = (props) => {
                 <h4 className="text-md mb-1 leading-6 text-gray-900">Network</h4>
                 <p className="mb-3 text-sm text-gray-500">Select privacy type for the project.</p>
                 {projectDetails ? (
-                  <Select
+                  <Controller
                     name="network"
-                    id="network"
-                    options={Object.keys(NETWORK_CHOICES).map((key) => ({
-                      value: key,
-                      label: NETWORK_CHOICES[key as keyof typeof NETWORK_CHOICES],
-                    }))}
-                    size="lg"
-                    register={register}
-                    validations={{
-                      required: "Network is required",
-                    }}
-                    className="w-40"
+                    control={control}
+                    render={({ field }) => (
+                      <CustomSelect
+                        {...field}
+                        label={
+                          Object.keys(NETWORK_CHOICES).find((k) => k === field.value.toString())
+                            ? NETWORK_CHOICES[
+                                field.value.toString() as keyof typeof NETWORK_CHOICES
+                              ]
+                            : "Select network"
+                        }
+                        input
+                      >
+                        {Object.keys(NETWORK_CHOICES).map((key) => (
+                          <CustomSelect.Option key={key} value={key}>
+                            {NETWORK_CHOICES[key as keyof typeof NETWORK_CHOICES]}
+                          </CustomSelect.Option>
+                        ))}
+                      </CustomSelect>
+                    )}
                   />
                 ) : (
                   <Loader className="w-full">

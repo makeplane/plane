@@ -1,4 +1,6 @@
 import React from "react";
+// commons
+import { classNames } from "constants/common";
 
 type Props = {
   onClick?: () => void;
@@ -10,10 +12,7 @@ type Props = {
   disabled?: boolean;
 };
 
-// commons
-import { classNames } from "constants/common";
-
-const Button = React.forwardRef<HTMLButtonElement, Props>(
+const OutlineButton = React.forwardRef<HTMLButtonElement, Props>(
   (
     {
       children,
@@ -28,9 +27,9 @@ const Button = React.forwardRef<HTMLButtonElement, Props>(
   ) => {
     return (
       <button
+        type={type}
         ref={ref}
         onClick={onClick}
-        type={type}
         disabled={disabled}
         className={classNames(
           className,
@@ -38,16 +37,16 @@ const Button = React.forwardRef<HTMLButtonElement, Props>(
           theme === "primary"
             ? `${
                 disabled ? "opacity-70" : ""
-              } border border-transparent bg-gray-200 shadow-sm hover:bg-gray-300 focus:outline-none`
+              } border border-theme text-white shadow-sm hover:bg-theme focus:outline-none`
             : theme === "secondary"
-            ? "border border-gray-300 bg-transparent hover:bg-gray-200"
+            ? "border bg-transparent hover:bg-gray-100"
             : theme === "success"
             ? `${
                 disabled ? "opacity-70" : ""
               } border border-transparent bg-green-500 text-white shadow-sm hover:bg-green-600 focus:outline-none  focus:ring-2 focus:ring-green-500`
             : `${
                 disabled ? "opacity-70" : ""
-              } border border-transparent bg-red-500 text-white shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500`,
+              } border border-red-500 text-red-500 shadow-sm hover:bg-red-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-red-500`,
           size === "sm"
             ? "p-2 text-xs"
             : size === "md"
@@ -63,6 +62,6 @@ const Button = React.forwardRef<HTMLButtonElement, Props>(
   }
 );
 
-Button.displayName = "Button";
+OutlineButton.displayName = "Button";
 
-export default Button;
+export default OutlineButton;

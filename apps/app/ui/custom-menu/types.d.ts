@@ -5,7 +5,7 @@ export type Props = {
   ellipsis?: boolean;
   width?: "sm" | "md" | "lg" | "xl" | "auto";
   textAlignment?: "left" | "center" | "right";
-  withoutBorder?: boolean;
+  noBorder?: boolean;
   optionsPosition?: "left" | "right";
 };
 

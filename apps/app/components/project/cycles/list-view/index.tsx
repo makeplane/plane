@@ -164,7 +164,7 @@ const CyclesListView: React.FC<Props> = ({
                       </span>
                     }
                     optionsPosition="left"
-                    withoutBorder
+                    noBorder
                   >
                     <CustomMenu.MenuItem
                       onClick={() => {

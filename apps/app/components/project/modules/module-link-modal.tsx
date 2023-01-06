@@ -16,7 +16,7 @@ import { Button, Input } from "ui";
 // types
 import type { IModule, ModuleLink } from "types";
 // fetch-keys
-import { MODULE_DETAIL } from "constants/fetch-keys";
+import { MODULE_DETAIL, MODULE_LIST } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
@@ -31,7 +31,7 @@ const defaultValues: ModuleLink = {
 
 const ModuleLinkModal: React.FC<Props> = ({ isOpen, module, handleClose }) => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, moduleId } = router.query;
 
   const {
     register,
@@ -57,7 +57,12 @@ const ModuleLinkModal: React.FC<Props> = ({ isOpen, module, handleClose }) => {
     await modulesService
       .patchModule(workspaceSlug as string, projectId as string, module.id, payload)
       .then((res) => {
-        mutate(MODULE_DETAIL);
+        mutate<IModule[]>(projectId && MODULE_LIST(projectId as string), (prevData) =>
+          (prevData ?? []).map((module) => {
+            if (module.id === moduleId) return { ...module, ...payload };
+            return module;
+          })
+        );
         onClose();
       })
       .catch((err) => {

@@ -219,7 +219,7 @@ const SingleModule = () => {
       <CreateUpdateIssuesModal
         isOpen={createUpdateIssueModal && selectedIssues?.actionType !== "delete"}
         data={selectedIssues}
-        prePopulateData={{ cycle: moduleId as string, ...preloadedData }}
+        prePopulateData={{ module: moduleId as string, ...preloadedData }}
         setIsOpen={setCreateUpdateIssueModal}
         projectId={projectId as string}
       />
@@ -233,7 +233,7 @@ const SingleModule = () => {
       <ConfirmIssueDeletion
         handleClose={() => setDeleteIssue(undefined)}
         isOpen={!!deleteIssue}
-        data={issues?.results.find((issue) => issue.id === deleteIssue)}
+        data={moduleIssuesArray?.find((issue) => issue.id === deleteIssue)}
       />
       <ConfirmModuleDeletion
         isOpen={
@@ -466,7 +466,7 @@ const SingleModule = () => {
                     <span>
                       Use{" "}
                       <pre className="inline rounded bg-gray-100 px-2 py-1">Ctrl/Command + I</pre>{" "}
-                      shortcut to create a new cycle
+                      shortcut to create a new issue
                     </span>
                   }
                   Icon={PlusIcon}

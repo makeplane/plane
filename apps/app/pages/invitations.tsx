@@ -55,8 +55,9 @@ const OnBoard: NextPage = () => {
     }
   };
 
-  const submitInvitations = async () => {
+  const submitInvitations = () => {
     userService.updateUserOnBoard();
+
     workspaceService
       .joinWorkspaces({ invitations: invitationsRespond })
       .then(() => {
@@ -133,7 +134,9 @@ const OnBoard: NextPage = () => {
                   </div>
                 ))}
                 <Link href="/">
-                  <Button type="button">Go to workspaces</Button>
+                  <a>
+                    <Button type="button">Go to workspaces</Button>
+                  </a>
                 </Link>
               </div>
             ) : (

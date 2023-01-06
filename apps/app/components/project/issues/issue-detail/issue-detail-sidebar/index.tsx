@@ -2,7 +2,7 @@ import React, { useState } from "react";
 // next
 import { useRouter } from "next/router";
 // swr
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 // react hook form
 import { useForm, Controller, UseFormWatch } from "react-hook-form";
 // react-color
@@ -37,7 +37,7 @@ import {
 } from "@heroicons/react/24/outline";
 // types
 import type { Control } from "react-hook-form";
-import type { ICycle, IIssue, IIssueLabels } from "types";
+import type { ICycle, IIssue, IIssueLabels, IssueResponse } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS, PROJECT_ISSUES_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
 // common
@@ -65,7 +65,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, issueId } = router.query;
 
   const { setToastAlert } = useToast();
 
@@ -112,13 +112,14 @@ const IssueDetailSidebar: React.FC<Props> = ({
   const handleCycleChange = (cycleDetail: ICycle) => {
     if (!workspaceSlug || !projectId || !issueDetail) return;
 
-    submitChanges({ cycle: cycleDetail.id, cycle_detail: cycleDetail });
+    mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
+
     issuesServices
       .addIssueToCycle(workspaceSlug as string, projectId as string, cycleDetail.id, {
         issues: [issueDetail.id],
       })
-      .then(() => {
-        submitChanges({});
+      .then((res) => {
+        console.log(res);
       });
   };
 
@@ -210,7 +211,6 @@ const IssueDetailSidebar: React.FC<Props> = ({
             />
             <SelectBlocked
               submitChanges={submitChanges}
-              issueDetail={issueDetail}
               issuesList={issues?.results.filter((i) => i.id !== issueDetail?.id) ?? []}
               watch={watchIssue}
             />

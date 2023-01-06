@@ -29,9 +29,10 @@ import { classNames, replaceUnderscoreIfSnakeCase } from "constants/common";
 import SingleListIssue from "components/common/list-view/single-issue";
 
 const MyIssues: NextPage = () => {
+  const router = useRouter();
   const {
     query: { workspaceSlug },
-  } = useRouter();
+  } = router;
 
   const { user } = useUser();
 
@@ -39,6 +40,8 @@ const MyIssues: NextPage = () => {
     user && workspaceSlug ? USER_ISSUE(workspaceSlug as string) : null,
     user && workspaceSlug ? () => userService.userIssues(workspaceSlug as string) : null
   );
+
+  console.log(myIssues);
 
   const { data: people } = useSWR<IWorkspaceMember[]>(
     workspaceSlug ? WORKSPACE_MEMBERS : null,
@@ -166,7 +169,6 @@ const MyIssues: NextPage = () => {
                                 issue={issue}
                                 properties={properties}
                                 removeIssue={() => {}}
-                                type="cycle"
                               />
                             ))}
                           </div>

@@ -129,7 +129,7 @@ const CyclesBoardView: React.FC<Props> = ({
                       bgColor={
                         selectedGroup === "state_detail.name"
                           ? states?.find((s) => s.name === singleGroup)?.color
-                          : undefined
+                          : "#000000"
                       }
                       properties={properties}
                       removeIssueFromCycle={removeIssueFromCycle}

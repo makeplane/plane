@@ -25,6 +25,9 @@
 
 /* Scrollbar style */
 ::-webkit-scrollbar {
+  display: none;
+}
+/* ::-webkit-scrollbar {
   height: 10px;
   width: 5px;
   border-radius: 10px;
@@ -42,7 +45,7 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: #908f8f;
-}
+} */
 
 .no-scrollbar::-webkit-scrollbar {
   display: none;
