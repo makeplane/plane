@@ -59,6 +59,7 @@ from plane.api.views import (
     UserWorkSpaceIssues,
     ProjectMemberUserEndpoint,
     WorkspaceMemberUserEndpoint,
+    WorkspaceMemberUserViewsEndpoint,
 )
 
 from plane.api.views.project import AddTeamToProjectEndpoint
@@ -238,6 +239,11 @@ urlpatterns = [
     path(
         "workspaces/<str:slug>/workspace-members/me/",
         WorkspaceMemberUserEndpoint.as_view(),
+        name="workspace-member-details",
+    ),
+    path(
+        "workspaces/<str:slug>/workspace-views/",
+        WorkspaceMemberUserViewsEndpoint.as_view(),
         name="workspace-member-details",
     ),
     ## End Workspaces ##
