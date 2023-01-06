@@ -657,7 +657,7 @@ class ProjectMemberUserEndpoint(BaseAPIView):
         except ProjectMember.DoesNotExist:
             return Response(
                 {"error": "User not a member of the project"},
-                status=status.HTTP_404_NOT_FOUND,
+                status=status.HTTP_403_FORBIDDEN,
             )
         except Exception as e:
             capture_exception(e)
