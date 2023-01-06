@@ -67,6 +67,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     token_updated_at = models.DateTimeField(null=True)
     last_workspace_id = models.UUIDField(null=True)
     my_issues_prop = models.JSONField(null=True)
+    role = models.CharField(max_length=300, null=True, blank=True)
 
     USERNAME_FIELD = "email"
 
