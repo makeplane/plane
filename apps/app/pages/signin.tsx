@@ -1,9 +1,14 @@
 import React, { useCallback, useState, useEffect } from "react";
-// next
+
 import type { NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Image from "next/image";
+
+import { mutate } from "swr";
+
+// constants
+import { USER_WORKSPACES } from "constants/fetch-keys";
 // hooks
 import useUser from "lib/hooks/useUser";
 // services
@@ -18,7 +23,6 @@ import EmailPasswordForm from "components/forms/EmailPasswordForm";
 import Logo from "public/logo-with-text.png";
 import GitHubLogo from "public/logos/github.png";
 import { KeyIcon } from "@heroicons/react/24/outline";
-import type { IUser } from "types";
 
 // types
 type SignIn = {
@@ -40,17 +44,14 @@ const SignIn: NextPage = () => {
 
   const [isGoogleAuthenticationLoading, setIsGoogleAuthenticationLoading] = useState(false);
 
-  const onSignInSuccess = useCallback(
-    async (res: IUser) => {
-      await mutateUser();
-      // TODO: add mutate workspaces
-      const nextLocation = router.asPath.split("?next=")[1];
+  const onSignInSuccess = useCallback(async () => {
+    await mutateUser();
+    mutate(USER_WORKSPACES);
+    const nextLocation = router.asPath.split("?next=")[1];
 
-      if (nextLocation) router.push(nextLocation as string);
-      else router.push("/");
-    },
-    [mutateUser, router]
-  );
+    if (nextLocation) router.push(nextLocation as string);
+    else router.push("/");
+  }, [mutateUser, router]);
 
   const githubTokenMemo = React.useMemo(() => {
     return githubToken;
@@ -74,7 +75,7 @@ const SignIn: NextPage = () => {
           clientId: process.env.NEXT_PUBLIC_GITHUB_ID,
         })
         .then(async (response) => {
-          await onSignInSuccess(response);
+          await onSignInSuccess();
         })
         .catch((err) => {
           console.log(err);
@@ -146,7 +147,7 @@ const SignIn: NextPage = () => {
                           clientId,
                         })
                         .then(async (response) => {
-                          await onSignInSuccess(response);
+                          await onSignInSuccess();
                         })
                         .catch((err) => {
                           console.log(err);

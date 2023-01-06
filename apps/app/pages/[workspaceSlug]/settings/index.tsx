@@ -2,11 +2,15 @@ import React, { useEffect, useState } from "react";
 
 import Image from "next/image";
 import { useRouter } from "next/router";
-// swr
-import useSWR from "swr";
+
+import useSWR, { mutate } from "swr";
+
 import { useForm } from "react-hook-form";
 
 import Dropzone from "react-dropzone";
+
+// constants
+import { WORKSPACE_DETAILS, USER_WORKSPACES } from "constants/fetch-keys";
 // services
 import workspaceService from "lib/services/workspace.service";
 import fileServices from "lib/services/file.service";
@@ -15,7 +19,6 @@ import withAuth from "lib/hoc/withAuthWrapper";
 // layouts
 import SettingsLayout from "layouts/settings-layout";
 // hooks
-import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
 // components
 import ConfirmWorkspaceDeletion from "components/workspace/confirm-workspace-deletion";
@@ -23,7 +26,6 @@ import ConfirmWorkspaceDeletion from "components/workspace/confirm-workspace-del
 import { Spinner, Button, Input, Select, BreadcrumbItem, Breadcrumbs } from "ui";
 // types
 import type { IWorkspace } from "types";
-import { WORKSPACE_DETAILS } from "constants/fetch-keys";
 
 const defaultValues: Partial<IWorkspace> = {
   name: "",
@@ -68,15 +70,17 @@ const WorkspaceSettings = () => {
     };
     await workspaceService
       .updateWorkspace(activeWorkspace.slug, payload)
-      .then(async (res) => {
-        // TODO: mutate workspaces list
+      .then((res) => {
+        mutate<IWorkspace[]>(USER_WORKSPACES, (prevData) =>
+          prevData?.map((workspace) => (workspace.id === res.id ? res : workspace))
+        );
         setToastAlert({
           title: "Success",
           type: "success",
           message: "Workspace updated successfully",
         });
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.error(err));
   };
 
   return (

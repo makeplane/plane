@@ -2,7 +2,11 @@ import React, { useEffect, useRef, useState } from "react";
 
 import { useRouter } from "next/router";
 
+import { mutate } from "swr";
+
 import { Dialog, Transition } from "@headlessui/react";
+// constants
+import { USER_WORKSPACES } from "constants/fetch-keys";
 // services
 import workspaceService from "lib/services/workspace.service";
 // hooks
@@ -54,13 +58,15 @@ const ConfirmWorkspaceDeletion: React.FC<Props> = ({ isOpen, data, onClose }) =>
       .deleteWorkspace(data.slug)
       .then(() => {
         handleClose();
-        // TODO: add workspace mutation
+        router.push("/");
+        mutate<IWorkspace[]>(USER_WORKSPACES, (prevData) =>
+          prevData?.filter((workspace) => workspace.id !== data.id)
+        );
         setToastAlert({
           type: "success",
           message: "Workspace deleted successfully",
           title: "Success",
         });
-        router.push("/");
       })
       .catch((error) => {
         console.log(error);

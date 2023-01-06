@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from "react";
-// next
+
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
+
+import { mutate } from "swr";
+
 // services
 import authenticationService from "lib/services/authentication.service";
+// constants
+import { USER_WORKSPACES } from "constants/fetch-keys";
 // hooks
 import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
@@ -31,7 +36,7 @@ const MagicSignIn: NextPage = () => {
       .then(async (res) => {
         setIsSigningIn(false);
         await mutateUser();
-        // TODO: add workspace mutations
+        mutate(USER_WORKSPACES);
         if (res.user.is_onboarded) router.push("/");
         else router.push("/invitations");
       })

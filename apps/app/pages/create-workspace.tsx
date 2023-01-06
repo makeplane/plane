@@ -1,8 +1,10 @@
 import React from "react";
-// next
+
 import type { NextPage, NextPageContext } from "next";
 import { useRouter } from "next/router";
-// react hook form
+
+import { mutate } from "swr";
+
 import { useForm } from "react-hook-form";
 // services
 import workspaceService from "lib/services/workspace.service";
@@ -10,6 +12,7 @@ import workspaceService from "lib/services/workspace.service";
 import useUser from "lib/hooks/useUser";
 // constants
 import { requiredAuth } from "lib/auth";
+import { USER_WORKSPACES } from "constants/fetch-keys";
 // layouts
 import DefaultLayout from "layouts/DefaultLayout";
 // ui
@@ -37,13 +40,13 @@ const CreateWorkspace: NextPage = () => {
     await workspaceService
       .createWorkspace(formData)
       .then((res) => {
-        console.log(res);
-        // TODO: add workspace mutations
         router.push("/");
+        mutate<IWorkspace[]>(USER_WORKSPACES, (prevData) => [res, ...(prevData ?? [])]);
       })
       .catch((err) => {
         Object.keys(err).map((key) => {
-          const errorMessage = err[key];
+          const errorMessage = err?.[key];
+          if (!errorMessage) return;
           setError(key as keyof IWorkspace, {
             message: Array.isArray(errorMessage) ? errorMessage.join(", ") : errorMessage,
           });
