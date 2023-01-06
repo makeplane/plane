@@ -7,6 +7,7 @@ from django.dispatch import receiver
 
 # Module imports
 from . import ProjectBaseModel
+from plane.utils.html_processor import strip_tags
 
 # TODO: Handle identifiers for Bulk Inserts - nk
 class Issue(ProjectBaseModel):
@@ -31,7 +32,9 @@ class Issue(ProjectBaseModel):
         related_name="state_issue",
     )
     name = models.CharField(max_length=255, verbose_name="Issue Name")
-    description = models.JSONField(verbose_name="Issue Description", blank=True)
+    description = models.JSONField(blank=True)
+    description_html = models.TextField(blank=True)
+    description_stripped = models.TextField(blank=True)
     priority = models.CharField(
         max_length=30,
         choices=PRIORITY_CHOICES,
@@ -81,6 +84,11 @@ class Issue(ProjectBaseModel):
                 )
             except ImportError:
                 pass
+        
+        # Strip the html tags using html parser
+        self.description_stripped = (
+            strip_tags(self.description_html) if self.description_html != "" else ""
+        )
         super(Issue, self).save(*args, **kwargs)
 
     def __str__(self):
