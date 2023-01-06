@@ -144,8 +144,7 @@ class WorkSpaceAvailabilityCheckEndpoint(BaseAPIView):
                 )
 
             workspace = Workspace.objects.filter(name=name).exists()
-
-            return Response({"status": workspace}, status=status.HTTP_200_OK)
+            return Response({"status": not workspace}, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)
             return Response(
