@@ -29,7 +29,7 @@ import {
   WORKSPACE_MEMBERS,
 } from "constants/fetch-keys";
 // ui
-import { CustomMenu, Spinner } from "ui";
+import { CustomMenu, CustomSelect, Spinner } from "ui";
 // icons
 import User from "public/user.png";
 import { ChevronDownIcon, PlusIcon, CalendarDaysIcon } from "@heroicons/react/24/outline";
@@ -228,9 +228,6 @@ const ListView: React.FC<Props> = ({
                                                   : "None",
                                                 "text-sm"
                                               )}
-                                              {issue.priority && issue.priority !== ""
-                                                ? issue.priority
-                                                : null}
                                             </Listbox.Button>
 
                                             <Transition
@@ -253,7 +250,7 @@ const ListView: React.FC<Props> = ({
                                                     value={priority}
                                                   >
                                                     {getPriorityIcon(priority, "text-sm")}
-                                                    {priority}
+                                                    {priority ?? "None"}
                                                   </Listbox.Option>
                                                 ))}
                                               </Listbox.Options>
@@ -284,59 +281,39 @@ const ListView: React.FC<Props> = ({
                                     </Listbox>
                                   )}
                                   {properties.state && (
-                                    <Listbox
-                                      as="div"
+                                    <CustomSelect
+                                      label={
+                                        <>
+                                          <span
+                                            className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                                            style={{
+                                              backgroundColor: issue.state_detail.color,
+                                            }}
+                                          ></span>
+                                          {addSpaceIfCamelCase(issue.state_detail.name)}
+                                        </>
+                                      }
                                       value={issue.state}
                                       onChange={(data: string) => {
                                         partialUpdateIssue({ state: data }, issue.id);
                                       }}
-                                      className="group relative flex-shrink-0"
+                                      maxHeight="md"
+                                      noChevron
                                     >
-                                      {({ open }) => (
-                                        <>
-                                          <div>
-                                            <Listbox.Button className="flex cursor-pointer items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
-                                              <span
-                                                className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                                                style={{
-                                                  backgroundColor: issue.state_detail.color,
-                                                }}
-                                              ></span>
-                                              {addSpaceIfCamelCase(issue.state_detail.name)}
-                                            </Listbox.Button>
-
-                                            <Transition
-                                              show={open}
-                                              as={React.Fragment}
-                                              leave="transition ease-in duration-100"
-                                              leaveFrom="opacity-100"
-                                              leaveTo="opacity-0"
-                                            >
-                                              <Listbox.Options className="absolute z-10 mt-1 max-h-28 overflow-auto rounded-md bg-white py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                                {states?.map((state) => (
-                                                  <Listbox.Option
-                                                    key={state.id}
-                                                    className={({ active }) =>
-                                                      classNames(
-                                                        active ? "bg-indigo-50" : "bg-white",
-                                                        "cursor-pointer select-none px-3 py-2"
-                                                      )
-                                                    }
-                                                    value={state.id}
-                                                  >
-                                                    {addSpaceIfCamelCase(state.name)}
-                                                  </Listbox.Option>
-                                                ))}
-                                              </Listbox.Options>
-                                            </Transition>
-                                          </div>
-                                          <div className="absolute bottom-full right-0 z-10 mb-2 hidden whitespace-nowrap rounded-md bg-white p-2 shadow-md group-hover:block">
-                                            <h5 className="mb-1 font-medium">State</h5>
-                                            <div>{issue.state_detail.name}</div>
-                                          </div>
-                                        </>
-                                      )}
-                                    </Listbox>
+                                      {states?.map((state) => (
+                                        <CustomSelect.Option key={state.id} value={state.id}>
+                                          <>
+                                            <span
+                                              className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                                              style={{
+                                                backgroundColor: state.color,
+                                              }}
+                                            ></span>
+                                            {addSpaceIfCamelCase(state.name)}
+                                          </>
+                                        </CustomSelect.Option>
+                                      ))}
+                                    </CustomSelect>
                                   )}
                                   {properties.due_date && (
                                     <div
@@ -449,7 +426,7 @@ const ListView: React.FC<Props> = ({
                                               leaveFrom="opacity-100"
                                               leaveTo="opacity-0"
                                             >
-                                              <Listbox.Options className="absolute right-0 z-10 mt-1 max-h-28 overflow-auto rounded-md bg-white py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                              <Listbox.Options className="absolute right-0 z-10 mt-1 max-h-48 overflow-auto rounded-md bg-white py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                                                 {people?.map((person) => (
                                                   <Listbox.Option
                                                     key={person.id}

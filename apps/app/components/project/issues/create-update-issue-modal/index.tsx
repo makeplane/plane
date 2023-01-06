@@ -37,10 +37,12 @@ import {
   CYCLE_ISSUES,
   USER_ISSUE,
   PROJECTS_LIST,
+  MODULE_ISSUES,
 } from "constants/fetch-keys";
 // common
 import { renderDateFormat, cosineSimilarity } from "constants/common";
 import projectService from "lib/services/project.service";
+import modulesService from "lib/services/modules.service";
 
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
   ssr: false,
@@ -156,6 +158,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = (props) => {
 
   const addIssueToCycle = async (issueId: string, cycleId: string) => {
     if (!workspaceSlug || !projectId) return;
+
     await issuesServices
       .addIssueToCycle(workspaceSlug as string, projectId, cycleId, {
         issues: [issueId],
@@ -193,6 +196,20 @@ const CreateUpdateIssuesModal: React.FC<Props> = (props) => {
       });
   };
 
+  const addIssueToModule = async (issueId: string, moduleId: string) => {
+    if (!workspaceSlug || !projectId) return;
+
+    modulesService
+      .addIssuesToModule(workspaceSlug as string, projectId, moduleId as string, {
+        issues: [issueId],
+      })
+      .then((res) => {
+        console.log(res);
+        mutate(MODULE_ISSUES(moduleId as string));
+      })
+      .catch((e) => console.log(e));
+  };
+
   const onSubmit = async (formData: IIssue) => {
     if (!workspaceSlug || !projectId) return;
 
@@ -208,6 +225,11 @@ const CreateUpdateIssuesModal: React.FC<Props> = (props) => {
           if (formData.cycle && formData.cycle !== null) {
             addIssueToCycle(res.id, formData.cycle);
           }
+
+          if (formData.module && formData.module !== null) {
+            addIssueToModule(res.id, formData.module);
+          }
+
           resetForm();
           if (!createMore) handleClose();
           setToastAlert({

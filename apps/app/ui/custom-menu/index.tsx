@@ -17,7 +17,7 @@ const CustomMenu = ({
   ellipsis = false,
   width = "auto",
   textAlignment,
-  withoutBorder = false,
+  noBorder = false,
   optionsPosition = "right",
 }: Props) => {
   return (
@@ -36,7 +36,7 @@ const CustomMenu = ({
                 ? "text-center"
                 : "text-left"
             } ${
-              withoutBorder
+              noBorder
                 ? "rounded"
                 : "rounded-md border shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
             } ${
@@ -52,7 +52,7 @@ const CustomMenu = ({
             }`}
           >
             {label}
-            {!withoutBorder && <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />}
+            {!noBorder && <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />}
           </Menu.Button>
         )}
       </div>

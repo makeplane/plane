@@ -16,7 +16,7 @@ import { Spinner, CustomSelect } from "ui";
 // icons
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 // types
-import { CycleIssueResponse, ICycle, IIssue } from "types";
+import { CycleIssueResponse, ICycle, IIssue, IssueResponse } from "types";
 // common
 import { classNames } from "constants/common";
 
@@ -29,7 +29,7 @@ type Props = {
 
 const SelectCycle: React.FC<Props> = ({ issueDetail, control, handleCycleChange }) => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, issueId } = router.query;
 
   const { data: cycles } = useSWR(
     workspaceSlug && projectId ? CYCLE_LIST(projectId as string) : null,
@@ -41,21 +41,14 @@ const SelectCycle: React.FC<Props> = ({ issueDetail, control, handleCycleChange 
   const removeIssueFromCycle = (bridgeId: string, cycleId: string) => {
     if (!workspaceSlug || !projectId) return;
 
+    mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
+
     issuesService
       .removeIssueFromCycle(workspaceSlug as string, projectId as string, cycleId, bridgeId)
       .then((res) => {
         console.log(res);
-        mutate<CycleIssueResponse[]>(
-          CYCLE_ISSUES(cycleId),
-          (prevData) => prevData?.filter((p) => p.id !== bridgeId),
-          false
-        );
 
-        mutate(
-          workspaceSlug && projectId
-            ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
-            : null
-        );
+        mutate(CYCLE_ISSUES(cycleId));
       })
       .catch((e) => {
         console.log(e);
@@ -82,7 +75,7 @@ const SelectCycle: React.FC<Props> = ({ issueDetail, control, handleCycleChange 
                       "hidden truncate text-left sm:block"
                     )}
                   >
-                    {value ? cycles?.find((c) => c.id === value.cycle_detail.id)?.name : "None"}
+                    {value ? value?.cycle_detail?.name : "None"}
                   </span>
                 }
                 value={value}

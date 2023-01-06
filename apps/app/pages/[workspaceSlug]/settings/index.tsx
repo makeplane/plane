@@ -2,11 +2,9 @@ import React, { useEffect, useState } from "react";
 
 import Image from "next/image";
 import { useRouter } from "next/router";
-import type { GetServerSideProps, NextPage } from "next";
-
+// swr
 import useSWR, { mutate } from "swr";
-
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
 import Dropzone from "react-dropzone";
 
@@ -24,9 +22,11 @@ import useToast from "lib/hooks/useToast";
 // components
 import ConfirmWorkspaceDeletion from "components/workspace/confirm-workspace-deletion";
 // ui
-import { Spinner, Button, Input, Select, BreadcrumbItem, Breadcrumbs } from "ui";
+import { Spinner, Button, Input, BreadcrumbItem, Breadcrumbs, CustomSelect } from "ui";
 // types
 import type { IWorkspace } from "types";
+import OutlineButton from "ui/outline-button";
+import { GetServerSideProps, NextPage } from "next";
 
 const defaultValues: Partial<IWorkspace> = {
   name: "",
@@ -59,6 +59,7 @@ const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
   const {
     register,
     handleSubmit,
+    control,
     reset,
     watch,
     setValue,
@@ -205,7 +206,6 @@ const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
                   }}
                   className="w-full"
                   value={`app.plane.so/${activeWorkspace.slug}`}
-                  size="lg"
                 />
               </div>
             </div>
@@ -224,7 +224,6 @@ const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
                     required: "Name is required",
                   }}
                   className="w-full"
-                  size="lg"
                 />
               </div>
             </div>
@@ -232,45 +231,51 @@ const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
               <div>
                 <h4 className="text-md mb-1 leading-6 text-gray-900">Company Size</h4>
                 <p className="mb-3 text-sm text-gray-500">How big is your company?</p>
-                <Select
-                  id="company_size"
+                <Controller
                   name="company_size"
-                  options={[
-                    { value: 5, label: "5" },
-                    { value: 10, label: "10" },
-                    { value: 25, label: "25" },
-                    { value: 50, label: "50" },
-                  ]}
-                  size="lg"
-                  className="w-full"
+                  control={control}
+                  render={({ field }) => (
+                    <CustomSelect
+                      {...field}
+                      label={field.value ? field.value.toString() : "Select company size"}
+                      input
+                    >
+                      {[
+                        { value: 5, label: "5" },
+                        { value: 10, label: "10" },
+                        { value: 25, label: "25" },
+                        { value: 50, label: "50" },
+                      ]?.map((item) => (
+                        <CustomSelect.Option key={item.value} value={item.value}>
+                          {item.label}
+                        </CustomSelect.Option>
+                      ))}
+                    </CustomSelect>
+                  )}
                 />
               </div>
             </div>
-            {isOwner && (
-              <>
-                <div className="col-span-full">
-                  <Button onClick={handleSubmit(onSubmit)} disabled={isSubmitting}>
-                    {isSubmitting ? "Updating..." : "Update Workspace"}
-                  </Button>
-                </div>
-                <div className="col-span-10 space-y-8">
-                  <div>
-                    <h4 className="text-md mb-1 leading-6 text-gray-900">Danger Zone</h4>
-                    <p className="mb-3 text-sm text-gray-500">
-                      The danger zone of the workspace delete page is a critical area that requires
-                      careful consideration and attention. When deleting a workspace, all of the
-                      data and resources within that workspace will be permanently removed and
-                      cannot be recovered.
-                    </p>
-                  </div>
-                  <div>
-                    <Button theme="danger" onClick={() => setIsOpen(true)}>
-                      Delete the workspace
-                    </Button>
-                  </div>
-                </div>
-              </>
-            )}
+            <div className="col-span-full">
+              <Button onClick={handleSubmit(onSubmit)} theme="secondary" disabled={isSubmitting}>
+                {isSubmitting ? "Updating..." : "Update Workspace"}
+              </Button>
+            </div>
+            <div className="col-span-10 space-y-8">
+              <div>
+                <h4 className="text-md mb-1 leading-6 text-gray-900">Danger Zone</h4>
+                <p className="mb-3 text-sm text-gray-500">
+                  The danger zone of the workspace delete page is a critical area that requires
+                  careful consideration and attention. When deleting a workspace, all of the data
+                  and resources within that workspace will be permanently removed and cannot be
+                  recovered.
+                </p>
+              </div>
+              <div>
+                <OutlineButton theme="danger" onClick={() => setIsOpen(true)}>
+                  Delete the workspace
+                </OutlineButton>
+              </div>
+            </div>
           </div>
         </div>
       ) : (

@@ -8,9 +8,8 @@ import useSWR from "swr";
 import { SubmitHandler, useForm, UseFormWatch } from "react-hook-form";
 // services
 import issuesService from "lib/services/issues.service";
-import projectService from "lib/services/project.service";
 // constants
-import { PROJECT_DETAILS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // hooks
 import useToast from "lib/hooks/useToast";
 // headless ui
@@ -31,7 +30,6 @@ type FormInput = {
 
 type Props = {
   submitChanges: (formData: Partial<IIssue>) => void;
-  issueDetail: IIssue | undefined;
   issuesList: IIssue[];
   watch: UseFormWatch<IIssue>;
 };
@@ -45,7 +43,7 @@ const SelectBlocked: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
 
   const { setToastAlert } = useToast();
 
-  const { data: issues, mutate: mutateIssues } = useSWR(
+  const { data: issues } = useSWR(
     workspaceSlug && projectId
       ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
       : null,
@@ -54,7 +52,7 @@ const SelectBlocked: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
       : null
   );
 
-  const { register, handleSubmit, reset } = useForm<FormInput>();
+  const { register, handleSubmit, reset, watch: watchBlocked } = useForm<FormInput>();
 
   const handleClose = () => {
     setIsBlockedModalOpen(false);
@@ -77,6 +75,8 @@ const SelectBlocked: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
     submitChanges({ blocks_list: newBlocked });
     handleClose();
   };
+
+  console.log(watchBlocked("issue_ids"));
 
   return (
     <div className="flex flex-wrap items-start py-2">
@@ -185,7 +185,7 @@ const SelectBlocked: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
                                       <Combobox.Option
                                         key={issue.id}
                                         as="label"
-                                        htmlFor={`issue-${issue.id}`}
+                                        htmlFor={`blocked-issue-${issue.id}`}
                                         value={{
                                           name: issue.name,
                                           url: `/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`,
@@ -201,7 +201,7 @@ const SelectBlocked: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
                                           <input
                                             type="checkbox"
                                             {...register("issue_ids")}
-                                            id={`issue-${issue.id}`}
+                                            id={`blocked-issue-${issue.id}`}
                                             value={issue.id}
                                           />
                                           <span

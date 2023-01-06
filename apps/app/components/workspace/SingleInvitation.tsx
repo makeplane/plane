@@ -22,13 +22,13 @@ const SingleInvitation: React.FC<Props> = ({
     <>
       <li>
         <label
-          className={`group relative flex border-2 border-transparent items-start space-x-3 cursor-pointer px-4 py-4 ${
-            isChecked ? "border-theme rounded-lg" : ""
+          className={`group relative flex cursor-pointer items-start space-x-3 border-2 border-transparent px-4 py-4 ${
+            isChecked ? "rounded-lg border-theme" : ""
           }`}
           htmlFor={invitation.id}
         >
           <div className="flex-shrink-0">
-            <span className="inline-flex items-center justify-center h-10 w-10 rounded-lg">
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg">
               {invitation.workspace.logo && invitation.workspace.logo !== "" ? (
                 <Image
                   src={invitation.workspace.logo}
@@ -38,7 +38,7 @@ const SingleInvitation: React.FC<Props> = ({
                   alt={invitation.workspace.name}
                 />
               ) : (
-                <span className="h-full w-full p-4 flex items-center justify-center bg-gray-500 text-white rounded uppercase">
+                <span className="flex h-full w-full items-center justify-center rounded bg-gray-500 p-4 uppercase text-white">
                   {invitation.workspace.name.charAt(0)}
                 </span>
               )}

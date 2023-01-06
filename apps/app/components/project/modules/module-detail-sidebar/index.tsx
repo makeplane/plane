@@ -28,7 +28,7 @@ import {
 // types
 import { IModule, ModuleIssueResponse } from "types";
 // fetch-keys
-import { MODULE_DETAIL } from "constants/fetch-keys";
+import { MODULE_LIST } from "constants/fetch-keys";
 // common
 import { copyTextToClipboard, groupBy } from "constants/common";
 
@@ -55,9 +55,7 @@ const ModuleDetailSidebar: React.FC<Props> = ({
   const [moduleLinkModal, setModuleLinkModal] = useState(false);
 
   const router = useRouter();
-  const {
-    query: { workspaceSlug, projectId },
-  } = router;
+  const { workspaceSlug, projectId, moduleId } = router.query;
 
   const { setToastAlert } = useToast();
 
@@ -91,7 +89,12 @@ const ModuleDetailSidebar: React.FC<Props> = ({
       .patchModule(workspaceSlug as string, projectId as string, module.id, data)
       .then((res) => {
         console.log(res);
-        mutate(MODULE_DETAIL);
+        mutate<IModule[]>(projectId && MODULE_LIST(projectId as string), (prevData) =>
+          (prevData ?? []).map((module) => {
+            if (module.id === moduleId) return { ...module, ...data };
+            return module;
+          })
+        );
       })
       .catch((e) => {
         console.log(e);
@@ -215,7 +218,7 @@ const ModuleDetailSidebar: React.FC<Props> = ({
                       render={({ field: { value, onChange } }) => (
                         <input
                           type="date"
-                          is="moduleTargetDate"
+                          id="moduleTargetDate"
                           value={value ?? ""}
                           onChange={(e: any) => {
                             submitChanges({ target_date: e.target.value });

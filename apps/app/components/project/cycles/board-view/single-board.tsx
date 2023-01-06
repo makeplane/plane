@@ -197,7 +197,7 @@ const SingleModuleBoard: React.FC<Props> = ({
                 }
                 className="mt-1"
                 optionsPosition="left"
-                withoutBorder
+                noBorder
               >
                 <CustomMenu.MenuItem
                   onClick={() => {

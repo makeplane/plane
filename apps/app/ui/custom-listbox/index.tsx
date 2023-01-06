@@ -85,55 +85,31 @@ const CustomListbox: React.FC<Props> = ({
                     options.map((option) => (
                       <Listbox.Option
                         key={option.value}
-                        className={({ active }) =>
+                        className={({ selected, active }) =>
                           `${
+                            selected ||
+                            (Array.isArray(value)
+                              ? value.includes(option.value)
+                              : value === option.value)
+                              ? "bg-indigo-50 font-medium"
+                              : ""
+                          } ${
                             active ? "bg-indigo-50" : ""
                           } relative cursor-pointer select-none p-2 text-gray-900`
                         }
                         value={option.value}
                       >
-                        {({ selected, active }) => (
-                          <>
+                        <span className={` flex items-center gap-2 truncate`}>
+                          {option.color && (
                             <span
-                              className={`${
-                                selected ||
-                                (Array.isArray(value)
-                                  ? value.includes(option.value)
-                                  : value === option.value)
-                                  ? "font-semibold"
-                                  : "font-normal"
-                              } flex items-center gap-2 truncate`}
-                            >
-                              {option.color && (
-                                <span
-                                  className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                                  style={{
-                                    backgroundColor: option.color,
-                                  }}
-                                ></span>
-                              )}
-                              {option.display}
-                            </span>
-
-                            {selected ||
-                            (Array.isArray(value)
-                              ? value.includes(option.value)
-                              : value === option.value) ? (
-                              <span
-                                className={`absolute inset-y-0 right-0 flex items-center pr-4 ${
-                                  active ||
-                                  (Array.isArray(value)
-                                    ? value.includes(option.value)
-                                    : value === option.value)
-                                    ? "text-white"
-                                    : "text-theme"
-                                }`}
-                              >
-                                <CheckIcon className="h-5 w-5" aria-hidden="true" />
-                              </span>
-                            ) : null}
-                          </>
-                        )}
+                              className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                              style={{
+                                backgroundColor: option.color,
+                              }}
+                            ></span>
+                          )}
+                          {option.display}
+                        </span>
                       </Listbox.Option>
                     ))
                   ) : (

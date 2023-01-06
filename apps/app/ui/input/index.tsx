@@ -23,7 +23,7 @@ const Input: React.FC<Props> = ({
   return (
     <>
       {label && (
-        <label htmlFor={id} className="text-gray-500 mb-2">
+        <label htmlFor={id} className="mb-2 text-gray-500">
           {label}
         </label>
       )}
@@ -37,10 +37,10 @@ const Input: React.FC<Props> = ({
           onChange && onChange(e);
         }}
         className={classNames(
-          "block text-base focus:outline-none sm:text-sm rounded-md bg-transparent",
-          mode === "primary" ? "border border-gray-300 rounded-md" : "",
+          "block rounded-md bg-transparent text-sm focus:outline-none",
+          mode === "primary" ? "rounded-md border border-gray-300" : "",
           mode === "transparent"
-            ? "bg-transparent border-none transition-all ring-0 focus:ring-1 focus:ring-indigo-500 rounded"
+            ? "rounded border-none bg-transparent ring-0 transition-all focus:ring-1 focus:ring-indigo-500"
             : "",
           error ? "border-red-500" : "",
           error && mode === "primary" ? "bg-red-100" : "",
@@ -50,7 +50,7 @@ const Input: React.FC<Props> = ({
         )}
         {...rest}
       />
-      {error?.message && <div className="text-red-500 text-sm">{error.message}</div>}
+      {error?.message && <div className="text-sm text-red-500">{error.message}</div>}
     </>
   );
 };

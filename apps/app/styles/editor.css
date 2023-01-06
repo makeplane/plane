@@ -354,7 +354,7 @@ img.ProseMirror-separator {
   margin-bottom: 1em;
 }
 
-.remirror-editor-wrapper {
+.remirror-editor-wrapper .remirror-editor {
   min-height: 150px;
 }
 

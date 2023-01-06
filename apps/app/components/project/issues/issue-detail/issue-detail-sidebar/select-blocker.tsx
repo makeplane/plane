@@ -7,12 +7,11 @@ import useSWR from "swr";
 
 import { SubmitHandler, useForm, UseFormWatch } from "react-hook-form";
 // constants
-import { PROJECT_ISSUES_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
+import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // hooks
 import useToast from "lib/hooks/useToast";
 // services
 import issuesServices from "lib/services/issues.service";
-import projectService from "lib/services/project.service";
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // ui
@@ -50,13 +49,6 @@ const SelectBlocker: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
       : null,
     workspaceSlug && projectId
       ? () => issuesServices.getIssues(workspaceSlug as string, projectId as string)
-      : null
-  );
-
-  const { data: projectDetails } = useSWR(
-    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -99,15 +91,15 @@ const SelectBlocker: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
                   className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-white px-1.5 py-0.5 text-xs text-yellow-500 duration-300 hover:border-yellow-500 hover:bg-yellow-50"
                 >
                   <Link
-                    href={`/${workspaceSlug}/projects/${projectDetails?.id}/issues/${
+                    href={`/${workspaceSlug}/projects/${projectId}/issues/${
                       issues?.results.find((i) => i.id === issue)?.id
                     }`}
                   >
                     <a className="flex items-center gap-1">
                       <BlockerIcon height={10} width={10} />
-                      {`${projectDetails?.identifier}-${
-                        issues?.results.find((i) => i.id === issue)?.sequence_id
-                      }`}
+                      {`${
+                        issues?.results.find((i) => i.id === issue)?.project_detail?.identifier
+                      }-${issues?.results.find((i) => i.id === issue)?.sequence_id}`}
                     </a>
                   </Link>
                   <span
@@ -193,7 +185,7 @@ const SelectBlocker: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
                                       <Combobox.Option
                                         key={issue.id}
                                         as="label"
-                                        htmlFor={`issue-${issue.id}`}
+                                        htmlFor={`blocker-issue-${issue.id}`}
                                         value={{
                                           name: issue.name,
                                           url: `/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`,
@@ -211,7 +203,7 @@ const SelectBlocker: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
                                               <input
                                                 type="checkbox"
                                                 {...register("issue_ids")}
-                                                id={`issue-${issue.id}`}
+                                                id={`blocker-issue-${issue.id}`}
                                                 value={issue.id}
                                               />
                                               <span
@@ -221,7 +213,11 @@ const SelectBlocker: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
                                                 }}
                                               />
                                               <span className="flex-shrink-0 text-xs text-gray-500">
-                                                {projectDetails?.identifier}-{issue.sequence_id}
+                                                {
+                                                  issues?.results.find((i) => i.id === issue.id)
+                                                    ?.project_detail?.identifier
+                                                }
+                                                -{issue.sequence_id}
                                               </span>
                                               <span>{issue.name}</span>
                                             </div>

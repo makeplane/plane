@@ -9,8 +9,6 @@ import { DragDropContext } from "react-beautiful-dnd";
 // services
 import stateServices from "lib/services/state.service";
 import issuesServices from "lib/services/issues.service";
-// hooks
-import useUser from "lib/hooks/useUser";
 // fetching keys
 import { STATE_LIST } from "constants/fetch-keys";
 // components
@@ -221,7 +219,7 @@ const BoardView: React.FC<Props> = ({
                           bgColor={
                             selectedGroup === "state_detail.name"
                               ? states?.find((s) => s.name === singleGroup)?.color
-                              : undefined
+                              : "#000000"
                           }
                           handleDeleteIssue={handleDeleteIssue}
                           partialUpdateIssue={partialUpdateIssue}
