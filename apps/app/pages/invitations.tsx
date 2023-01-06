@@ -32,11 +32,13 @@ const OnBoard: NextPage = () => {
 
   const router = useRouter();
 
-  const { data: invitations, mutate } = useSWR(USER_WORKSPACE_INVITATIONS, () =>
+  const { data: invitations, mutate: mutateInvitations } = useSWR(USER_WORKSPACE_INVITATIONS, () =>
     workspaceService.userWorkspaceInvitations()
   );
 
-  const { data: workspaces } = useSWR(USER_WORKSPACES, () => workspaceService.userWorkspaces());
+  const { data: workspaces, mutate: mutateWorkspaces } = useSWR(USER_WORKSPACES, () =>
+    workspaceService.userWorkspaces()
+  );
 
   const handleInvitation = (
     workspace_invitation: IWorkspaceMemberInvitation,
@@ -54,13 +56,12 @@ const OnBoard: NextPage = () => {
   };
 
   const submitInvitations = async () => {
-    await userService.updateUserOnBoard().then((response) => {});
+    userService.updateUserOnBoard();
     workspaceService
       .joinWorkspaces({ invitations: invitationsRespond })
-      .then(async (res: any) => {
-        console.log(res);
-        await mutate();
-        // TODO: add workspace mutations
+      .then(() => {
+        mutateInvitations();
+        mutateWorkspaces();
       })
       .catch((err) => {
         console.log(err);

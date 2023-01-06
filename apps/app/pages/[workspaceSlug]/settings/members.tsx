@@ -1,46 +1,38 @@
-// react
 import { useState } from "react";
-// next
+
 import Image from "next/image";
 import { useRouter } from "next/router";
-// swr
+import type { GetServerSideProps, NextPage } from "next";
+
 import useSWR from "swr";
-// services
-import projectService from "lib/services/project.service";
+// lib
+import { requiredWorkspaceAdmin } from "lib/auth";
 // hooks
-import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
+// services
+import workspaceService from "lib/services/workspace.service";
+// constants
+import { ROLE } from "constants/";
 // layouts
 import SettingsLayout from "layouts/settings-layout";
 // components
-import ConfirmProjectMemberRemove from "components/project/confirm-project-member-remove";
-import SendProjectInvitationModal from "components/project/send-project-invitation-modal";
+import ConfirmWorkspaceMemberRemove from "components/workspace/ConfirmWorkspaceMemberRemove";
+import SendWorkspaceInvitationModal from "components/workspace/SendWorkspaceInvitationModal";
 // ui
 import { BreadcrumbItem, Breadcrumbs, Button, CustomListbox, CustomMenu, Loader } from "ui";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 // fetch-keys
-import {
-  PROJECT_INVITATIONS,
-  PROJECT_MEMBERS,
-  WORKSPACE_DETAILS,
-  WORKSPACE_INVITATIONS,
-  WORKSPACE_MEMBERS,
-} from "constants/fetch-keys";
-import workspaceService from "lib/services/workspace.service";
-import ConfirmWorkspaceMemberRemove from "components/workspace/ConfirmWorkspaceMemberRemove";
-import SendWorkspaceInvitationModal from "components/workspace/SendWorkspaceInvitationModal";
-// hoc
-import withAuth from "lib/hoc/withAuthWrapper";
+import { WORKSPACE_DETAILS, WORKSPACE_INVITATIONS, WORKSPACE_MEMBERS } from "constants/fetch-keys";
 
-const ROLE = {
-  5: "Guest",
-  10: "Viewer",
-  15: "Member",
-  20: "Admin",
+type TMembersSettingsProps = {
+  isOwner: boolean;
+  isMember: boolean;
+  isViewer: boolean;
+  isGuest: boolean;
 };
 
-const MembersSettings = () => {
+const MembersSettings: NextPage<TMembersSettingsProps> = (props) => {
   const [selectedMember, setSelectedMember] = useState<string | null>(null);
   const [selectedRemoveMember, setSelectedRemoveMember] = useState<string | null>(null);
   const [selectedInviteRemoveMember, setSelectedInviteRemoveMember] = useState<string | null>(null);
@@ -144,10 +136,7 @@ const MembersSettings = () => {
       />
       <SettingsLayout
         memberType={{
-          isGuest: true,
-          isMember: true,
-          isOwner: true,
-          isViewer: true,
+          ...props,
         }}
         type="workspace"
         breadcrumbs={
@@ -300,4 +289,28 @@ const MembersSettings = () => {
   );
 };
 
-export default withAuth(MembersSettings);
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const workspaceSlug = ctx.params?.workspaceSlug as string;
+
+  const memberDetail = await requiredWorkspaceAdmin(workspaceSlug, ctx.req.headers.cookie);
+
+  if (memberDetail === null) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      isOwner: memberDetail?.role === 20,
+      isMember: memberDetail?.role === 15,
+      isViewer: memberDetail?.role === 10,
+      isGuest: memberDetail?.role === 5,
+    },
+  };
+};
+
+export default MembersSettings;

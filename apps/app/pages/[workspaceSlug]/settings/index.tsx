@@ -2,20 +2,24 @@ import React, { useEffect, useState } from "react";
 
 import Image from "next/image";
 import { useRouter } from "next/router";
-// swr
-import useSWR from "swr";
+import type { GetServerSideProps, NextPage } from "next";
+
+import useSWR, { mutate } from "swr";
+
 import { useForm } from "react-hook-form";
 
 import Dropzone from "react-dropzone";
+
+// lib
+import { requiredWorkspaceAdmin } from "lib/auth";
+// constants
+import { WORKSPACE_DETAILS, USER_WORKSPACES } from "constants/fetch-keys";
 // services
 import workspaceService from "lib/services/workspace.service";
 import fileServices from "lib/services/file.service";
-// hoc
-import withAuth from "lib/hoc/withAuthWrapper";
 // layouts
 import SettingsLayout from "layouts/settings-layout";
 // hooks
-import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
 // components
 import ConfirmWorkspaceDeletion from "components/workspace/confirm-workspace-deletion";
@@ -23,13 +27,21 @@ import ConfirmWorkspaceDeletion from "components/workspace/confirm-workspace-del
 import { Spinner, Button, Input, Select, BreadcrumbItem, Breadcrumbs } from "ui";
 // types
 import type { IWorkspace } from "types";
-import { WORKSPACE_DETAILS } from "constants/fetch-keys";
 
 const defaultValues: Partial<IWorkspace> = {
   name: "",
 };
 
-const WorkspaceSettings = () => {
+type TWorkspaceSettingsProps = {
+  isOwner: boolean;
+  isMember: boolean;
+  isViewer: boolean;
+  isGuest: boolean;
+};
+
+const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
+  const { isOwner } = props;
+
   const [isOpen, setIsOpen] = useState(false);
   const [image, setImage] = useState<File | null>(null);
   const [isImageUploading, setIsImageUploading] = useState(false);
@@ -68,25 +80,22 @@ const WorkspaceSettings = () => {
     };
     await workspaceService
       .updateWorkspace(activeWorkspace.slug, payload)
-      .then(async (res) => {
-        // TODO: mutate workspaces list
+      .then((res) => {
+        mutate<IWorkspace[]>(USER_WORKSPACES, (prevData) =>
+          prevData?.map((workspace) => (workspace.id === res.id ? res : workspace))
+        );
         setToastAlert({
           title: "Success",
           type: "success",
           message: "Workspace updated successfully",
         });
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.error(err));
   };
 
   return (
     <SettingsLayout
-      memberType={{
-        isGuest: true,
-        isMember: true,
-        isOwner: true,
-        isViewer: true,
-      }}
+      memberType={{ ...props }}
       type="workspace"
       meta={{
         title: "Plane - Workspace Settings",
@@ -116,7 +125,6 @@ const WorkspaceSettings = () => {
             <div className="col-span-5 space-y-16">
               <div>
                 <h4 className="text-md mb-1 leading-6 text-gray-900">Logo</h4>
-                {/* <p className="text-sm text-gray-500 mb-3">Upload a logo for the workspace.</p> */}
                 <div className="flex w-full gap-2">
                   <Dropzone
                     multiple={false}
@@ -238,27 +246,31 @@ const WorkspaceSettings = () => {
                 />
               </div>
             </div>
-            <div className="col-span-full">
-              <Button onClick={handleSubmit(onSubmit)} disabled={isSubmitting}>
-                {isSubmitting ? "Updating..." : "Update Workspace"}
-              </Button>
-            </div>
-            <div className="col-span-10 space-y-8">
-              <div>
-                <h4 className="text-md mb-1 leading-6 text-gray-900">Danger Zone</h4>
-                <p className="mb-3 text-sm text-gray-500">
-                  The danger zone of the workspace delete page is a critical area that requires
-                  careful consideration and attention. When deleting a workspace, all of the data
-                  and resources within that workspace will be permanently removed and cannot be
-                  recovered.
-                </p>
-              </div>
-              <div>
-                <Button theme="danger" onClick={() => setIsOpen(true)}>
-                  Delete the workspace
-                </Button>
-              </div>
-            </div>
+            {isOwner && (
+              <>
+                <div className="col-span-full">
+                  <Button onClick={handleSubmit(onSubmit)} disabled={isSubmitting}>
+                    {isSubmitting ? "Updating..." : "Update Workspace"}
+                  </Button>
+                </div>
+                <div className="col-span-10 space-y-8">
+                  <div>
+                    <h4 className="text-md mb-1 leading-6 text-gray-900">Danger Zone</h4>
+                    <p className="mb-3 text-sm text-gray-500">
+                      The danger zone of the workspace delete page is a critical area that requires
+                      careful consideration and attention. When deleting a workspace, all of the
+                      data and resources within that workspace will be permanently removed and
+                      cannot be recovered.
+                    </p>
+                  </div>
+                  <div>
+                    <Button theme="danger" onClick={() => setIsOpen(true)}>
+                      Delete the workspace
+                    </Button>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       ) : (
@@ -270,4 +282,28 @@ const WorkspaceSettings = () => {
   );
 };
 
-export default withAuth(WorkspaceSettings);
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const workspaceSlug = ctx.params?.workspaceSlug as string;
+
+  const memberDetail = await requiredWorkspaceAdmin(workspaceSlug, ctx.req.headers.cookie);
+
+  if (memberDetail === null) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      isOwner: memberDetail?.role === 20,
+      isMember: memberDetail?.role === 15,
+      isViewer: memberDetail?.role === 10,
+      isGuest: memberDetail?.role === 5,
+    },
+  };
+};
+
+export default WorkspaceSettings;

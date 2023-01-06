@@ -157,34 +157,18 @@ const MyIssues: NextPage = () => {
                       >
                         <Disclosure.Panel>
                           <div className="divide-y-2">
-                            {myIssues.map((issue: IIssue) => {
-                              const assignees = [
-                                ...(issue?.assignees_list ?? []),
-                                ...(issue?.assignees ?? []),
-                              ]?.map((assignee) => {
-                                const tempPerson = people?.find(
-                                  (p) => p.member.id === assignee
-                                )?.member;
-
-                                return {
-                                  avatar: tempPerson?.avatar,
-                                  first_name: tempPerson?.first_name,
-                                  email: tempPerson?.email,
-                                };
-                              });
-
-                              return (
-                                <SingleListIssue
-                                  key={issue.id}
-                                  editIssue={() => {}}
-                                  handleDeleteIssue={() => {}}
-                                  issue={issue}
-                                  properties={properties}
-                                  removeIssue={() => {}}
-                                  type="cycle"
-                                />
-                              );
-                            })}
+                            {myIssues.map((issue: IIssue) => (
+                              // FIXME: add all functionalities
+                              <SingleListIssue
+                                key={issue.id}
+                                editIssue={() => {}}
+                                handleDeleteIssue={() => {}}
+                                issue={issue}
+                                properties={properties}
+                                removeIssue={() => {}}
+                                type="cycle"
+                              />
+                            ))}
                           </div>
                         </Disclosure.Panel>
                       </Transition>

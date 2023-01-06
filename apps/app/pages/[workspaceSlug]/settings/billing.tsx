@@ -1,12 +1,12 @@
 import React from "react";
 
 import { useRouter } from "next/router";
-import type { NextPage } from "next";
+import type { NextPage, GetServerSideProps } from "next";
 
 import useSWR from "swr";
 
-// hoc
-import withAuth from "lib/hoc/withAuthWrapper";
+// lib
+import { requiredWorkspaceAdmin } from "lib/auth";
 // constants
 import { WORKSPACE_DETAILS } from "constants/fetch-keys";
 // services
@@ -16,7 +16,14 @@ import SettingsLayout from "layouts/settings-layout";
 // ui
 import { BreadcrumbItem, Breadcrumbs, Button } from "ui";
 
-const BillingSettings: NextPage = () => {
+type TBillingSettingsProps = {
+  isOwner: boolean;
+  isMember: boolean;
+  isViewer: boolean;
+  isGuest: boolean;
+};
+
+const BillingSettings: NextPage<TBillingSettingsProps> = (props) => {
   const {
     query: { workspaceSlug },
   } = useRouter();
@@ -29,12 +36,7 @@ const BillingSettings: NextPage = () => {
   return (
     <>
       <SettingsLayout
-        memberType={{
-          isGuest: true,
-          isMember: true,
-          isOwner: true,
-          isViewer: true,
-        }}
+        memberType={{ ...props }}
         type="workspace"
         breadcrumbs={
           <Breadcrumbs>
@@ -78,4 +80,28 @@ const BillingSettings: NextPage = () => {
   );
 };
 
-export default withAuth(BillingSettings);
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const workspaceSlug = ctx.params?.workspaceSlug as string;
+
+  const memberDetail = await requiredWorkspaceAdmin(workspaceSlug, ctx.req.headers.cookie);
+
+  if (memberDetail === null) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      isOwner: memberDetail?.role === 20,
+      isMember: memberDetail?.role === 15,
+      isViewer: memberDetail?.role === 10,
+      isGuest: memberDetail?.role === 5,
+    },
+  };
+};
+
+export default BillingSettings;

@@ -1,19 +1,21 @@
 import React, { useEffect, useRef, useState } from "react";
-// next
-import { useRouter } from "next/router";
-// headless ui
+
+import { mutate } from "swr";
+
 import { Dialog, Transition } from "@headlessui/react";
+
 // services
 import projectService from "lib/services/project.service";
+// constants
+import { PROJECTS_LIST } from "constants/fetch-keys";
 // hooks
-import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
 import { Button, Input } from "ui";
 // types
-import type { IProject } from "types";
+import type { IProject, IWorkspace } from "types";
 
 type Props = {
   isOpen: boolean;
@@ -22,22 +24,28 @@ type Props = {
 };
 
 const ConfirmProjectDeletion: React.FC<Props> = ({ isOpen, data, onClose }) => {
+  const cancelButtonRef = useRef(null);
+
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const [confirmProjectName, setConfirmProjectName] = useState("");
   const [confirmDeleteMyProject, setConfirmDeleteMyProject] = useState(false);
   const [selectedProject, setSelectedProject] = useState<IProject | null>(null);
 
-  const canDelete = confirmProjectName === data?.name && confirmDeleteMyProject;
-
-  const router = useRouter();
-
-  const {
-    query: { workspaceSlug },
-  } = router;
+  const workspaceSlug = (data?.workspace as IWorkspace)?.slug;
 
   const { setToastAlert } = useToast();
 
-  const cancelButtonRef = useRef(null);
+  const canDelete = confirmProjectName === data?.name && confirmDeleteMyProject;
+
+  useEffect(() => {
+    if (data) setSelectedProject(data);
+    else {
+      const timer = setTimeout(() => {
+        setSelectedProject(null);
+        clearTimeout(timer);
+      }, 300);
+    }
+  }, [data]);
 
   const handleClose = () => {
     setIsDeleteLoading(false);
@@ -53,10 +61,12 @@ const ConfirmProjectDeletion: React.FC<Props> = ({ isOpen, data, onClose }) => {
     setIsDeleteLoading(true);
     if (!data || !workspaceSlug || !canDelete) return;
     await projectService
-      .deleteProject(workspaceSlug as string, data.id)
+      .deleteProject(workspaceSlug, data.id)
       .then(() => {
         handleClose();
-        // TODO: add project mutation here
+        mutate<IProject[]>(PROJECTS_LIST(workspaceSlug), (prevData) =>
+          prevData?.filter((project: IProject) => project.id !== data.id)
+        );
         setToastAlert({
           title: "Success",
           type: "success",
@@ -68,16 +78,6 @@ const ConfirmProjectDeletion: React.FC<Props> = ({ isOpen, data, onClose }) => {
         setIsDeleteLoading(false);
       });
   };
-
-  useEffect(() => {
-    if (data) setSelectedProject(data);
-    else {
-      const timer = setTimeout(() => {
-        setSelectedProject(null);
-        clearTimeout(timer);
-      }, 300);
-    }
-  }, [data]);
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>

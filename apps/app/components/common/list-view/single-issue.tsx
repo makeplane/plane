@@ -1,7 +1,6 @@
-// next
 import Link from "next/link";
 import { useRouter } from "next/router";
-// swr
+
 import useSWR from "swr";
 // services
 import issuesService from "lib/services/issues.service";
@@ -10,7 +9,7 @@ import { CustomMenu } from "ui";
 // icons
 import { CalendarDaysIcon } from "@heroicons/react/24/outline";
 // types
-import { IIssue, IssueResponse, Properties } from "types";
+import { IIssue, IssueResponse, IWorkspace, Properties } from "types";
 // fetch-keys
 import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // common
@@ -63,7 +62,7 @@ const SingleListIssue: React.FC<Props> = ({
             backgroundColor: issue.state_detail.color,
           }}
         />
-        <Link href={`/projects/${issue.project_detail.id}/issues/${issue.id}`}>
+        <Link href={`/${workspaceSlug}/projects/${issue.project_detail.id}/issues/${issue.id}`}>
           <a className="group relative flex items-center gap-2">
             {properties.key && (
               <span className="flex-shrink-0 text-xs text-gray-500">
@@ -89,7 +88,6 @@ const SingleListIssue: React.FC<Props> = ({
                 : "bg-gray-100"
             }`}
           >
-            {/* {getPriorityIcon(issue.priority ?? "")} */}
             {issue.priority ?? "None"}
             <div className="absolute bottom-full right-0 z-10 mb-2 hidden whitespace-nowrap rounded-md bg-white p-2 shadow-md group-hover:block">
               <h5 className="mb-1 font-medium text-gray-900">Priority</h5>

@@ -5,6 +5,7 @@ import Sidebar from "layouts/navbar/main-siderbar";
 import Header from "layouts/navbar/header";
 // components
 import { CreateProjectModal } from "components/project";
+import CommandPalette from "components/command-palette";
 // types
 import type { Props } from "./types";
 
@@ -22,6 +23,7 @@ const AppLayout: React.FC<Props> = ({
 
   return (
     <Container meta={meta}>
+      <CommandPalette />
       <CreateProjectModal isOpen={isOpen} setIsOpen={setIsOpen} />
       <div className="flex h-screen w-full overflow-x-hidden">
         <Sidebar />
