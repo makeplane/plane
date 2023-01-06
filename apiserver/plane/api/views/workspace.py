@@ -529,7 +529,6 @@ class UserLastProjectWithWorkspaceEndpoint(BaseAPIView):
 
 
 class WorkspaceMemberUserEndpoint(BaseAPIView):
-
     def get(self, request, slug):
         try:
             workspace_member = WorkspaceMember.objects.get(
@@ -544,4 +543,28 @@ class WorkspaceMemberUserEndpoint(BaseAPIView):
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+
+class WorkspaceMemberUserViewsEndpoint(BaseAPIView):
+    def post(self, request, slug):
+        try:
+
+            workspace_member = WorkspaceMember.objects.get(
+                workspace__slug=slug, member=request.user
+            )
+            workspace_member.view_props = request.data.get("view_props", {})
+            workspace_member.save()
+
+            return Response(status=status.HTTP_200_OK)
+        except WorkspaceMember.DoesNotExist:
+            return Response(
+                {"error": "User not a member of workspace"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
