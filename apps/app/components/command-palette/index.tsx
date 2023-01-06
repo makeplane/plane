@@ -8,6 +8,7 @@ import useSWR from "swr";
 // hooks
 import useTheme from "lib/hooks/useTheme";
 import useToast from "lib/hooks/useToast";
+import useUser from "lib/hooks/useUser";
 // services
 import userService from "lib/services/user.service";
 // components
@@ -49,6 +50,7 @@ const CommandPalette: React.FC = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
+  const { user } = useUser();
   const { setToastAlert } = useToast();
   const { toggleCollapsed } = useTheme();
 
@@ -149,10 +151,14 @@ const CommandPalette: React.FC = () => {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
 
+  if (!user) return null;
+
   return (
     <>
       <ShortcutsModal isOpen={isShortcutsModalOpen} setIsOpen={setIsShortcutsModalOpen} />
-      <CreateProjectModal isOpen={isProjectModalOpen} setIsOpen={setIsProjectModalOpen} />
+      {workspaceSlug && (
+        <CreateProjectModal isOpen={isProjectModalOpen} setIsOpen={setIsProjectModalOpen} />
+      )}
       {projectId && (
         <>
           <CreateUpdateCycleModal

@@ -1,7 +1,7 @@
 import { convertCookieStringToObject } from "./cookie";
 
 // types
-import type { IProjectMember, IUser, IWorkspace } from "types";
+import type { IProjectMember, IUser, IWorkspace, IWorkspaceMember } from "types";
 // constants
 import {
   BASE_STAGING,
@@ -9,6 +9,7 @@ import {
   USER_ENDPOINT,
   USER_WORKSPACES,
   USER_WORKSPACE_INVITATIONS,
+  WORKSPACE_MEMBER_ME,
 } from "constants/api-routes";
 
 export const requiredAuth = async (cookie?: string) => {
@@ -55,6 +56,37 @@ export const requiredAdmin = async (workspaceSlug: string, projectId: string, co
 
   try {
     const data = await fetch(`${baseUrl}${PROJECT_MEMBER_ME(workspaceSlug, projectId)}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => data);
+
+    memberDetail = data;
+  } catch (err) {
+    console.error(err);
+    memberDetail = null;
+  }
+
+  return memberDetail || null;
+};
+
+export const requiredWorkspaceAdmin = async (workspaceSlug: string, cookie?: string) => {
+  const user = await requiredAuth(cookie);
+
+  if (!user) return null;
+
+  const cookies = convertCookieStringToObject(cookie);
+  const token = cookies?.accessToken;
+
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || BASE_STAGING;
+
+  let memberDetail: IWorkspaceMember | null = null;
+
+  try {
+    const data = await fetch(`${baseUrl}${WORKSPACE_MEMBER_ME(workspaceSlug)}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,

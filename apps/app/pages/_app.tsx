@@ -7,14 +7,11 @@ import { UserProvider } from "contexts/user.context";
 import { ToastContextProvider } from "contexts/toast.context";
 import { ThemeContextProvider } from "contexts/theme.context";
 
-import CommandPalette from "components/command-palette";
-
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <UserProvider>
       <ToastContextProvider>
         <ThemeContextProvider>
-          <CommandPalette />
           <Component {...pageProps} />
         </ThemeContextProvider>
       </ToastContextProvider>
