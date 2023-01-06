@@ -163,7 +163,6 @@ class InviteWorkspaceEndpoint(BaseAPIView):
         try:
 
             emails = request.data.get("emails", False)
-
             # Check if email is provided
             if not emails or not len(emails):
                 return Response(
@@ -174,7 +173,8 @@ class InviteWorkspaceEndpoint(BaseAPIView):
 
             # Check if user is already a member of workspace
             workspace_members = WorkspaceMember.objects.filter(
-                workspace_id=workspace.id, member__email__in=emails
+                workspace_id=workspace.id,
+                member__email__in=[email.get("email") for email in emails],
             )
 
             if len(workspace_members):
@@ -191,7 +191,7 @@ class InviteWorkspaceEndpoint(BaseAPIView):
             workspace_invitations = []
             for email in emails:
                 try:
-                    validate_email(email)
+                    validate_email(email.get("email"))
                     workspace_invitations.append(
                         WorkspaceMemberInvite(
                             email=email.strip().lower(),
@@ -204,7 +204,7 @@ class InviteWorkspaceEndpoint(BaseAPIView):
                                 settings.SECRET_KEY,
                                 algorithm="HS256",
                             ),
-                            role=request.data.get("role", 10),
+                            role=email.get("role", 10),
                         )
                     )
                 except ValidationError:
@@ -219,7 +219,7 @@ class InviteWorkspaceEndpoint(BaseAPIView):
             )
 
             workspace_invitations = WorkspaceMemberInvite.objects.filter(
-                email__in=emails
+                email__in=[email.get("email") for email in emails]
             ).select_related("workspace")
 
             for invitation in workspace_invitations:
