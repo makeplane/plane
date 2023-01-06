@@ -147,6 +147,12 @@ export const homePageRedirect = async (cookie?: string) => {
     workspaces = data;
   } catch (e) {
     console.error(e);
+    return {
+      redirect: {
+        destination: "/error",
+        permanent: false,
+      },
+    };
   }
 
   const lastActiveWorkspace = workspaces.find(
@@ -177,7 +183,16 @@ export const homePageRedirect = async (cookie?: string) => {
     },
   })
     .then((res) => res.json())
-    .then((data) => data);
+    .then((data) => data)
+    .catch((e) => {
+      console.error(e);
+      return {
+        redirect: {
+          destination: "/error",
+          permanent: false,
+        },
+      };
+    });
 
   if (invitations.length > 0)
     return {

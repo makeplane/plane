@@ -100,12 +100,20 @@ const SettingsLayout: React.FC<Props> = (props) => {
     return (
       <NotAuthorizedView
         actionButton={
-          (isViewer || isGuest) && (
-            <Button size="sm">
-              <Link href={`/${workspaceSlug}/projects/${projectId}/issues`}>
-                <a>Go to Issues</a>
+          (isViewer || isGuest) && projectId ? (
+            <Link href={`/${workspaceSlug}/projects/${projectId}/issues`}>
+              <Button size="sm" theme="secondary">
+                Go to Issues
+              </Button>
+            </Link>
+          ) : (
+            workspaceSlug && (
+              <Link href={`/${workspaceSlug}`}>
+                <Button size="sm" theme="secondary">
+                  Go to workspace
+                </Button>
               </Link>
-            </Button>
+            )
           )
         }
       />

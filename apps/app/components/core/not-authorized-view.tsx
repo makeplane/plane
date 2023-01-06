@@ -6,6 +6,8 @@ import { useRouter } from "next/router";
 import DefaultLayout from "layouts/DefaultLayout";
 // hooks
 import useUser from "lib/hooks/useUser";
+// icons
+import { LockIcon } from "ui/icons";
 
 type TNotAuthorizedViewProps = {
   actionButton?: React.ReactNode;
@@ -24,25 +26,33 @@ export const NotAuthorizedView: React.FC<TNotAuthorizedViewProps> = (props) => {
         description: "You are not authorized to view this page",
       }}
     >
-      <div className="flex h-full w-full items-center justify-center">
-        <div className="m-auto space-y-4">
-          <h1 className="text-2xl font-bold text-gray-900">
-            You are not authorized to view this page
-          </h1>
-          <div className="space-x-3">
-            {actionButton}
-            <Link href={`/signin?next=${currentPath}`}>
-              <a>Sign in with an account with access</a>
-            </Link>
-          </div>
-          {user && (
-            <div>
-              <p className="text-sm text-gray-500">
-                You are currently signed in as <span className="font-bold">{user.email}</span>
-              </p>
-            </div>
+      <div className="flex h-full w-full flex-col items-center justify-center gap-y-5 text-center">
+        <LockIcon className="h-16 w-16 text-gray-400" />
+        <h1 className="text-xl font-medium text-gray-900">
+          Oops! You are not authorized to view this page
+        </h1>
+
+        <div className="w-full md:w-1/3">
+          {user ? (
+            <p className="text-base font-light">
+              You have signed in as <span className="font-medium">{user.email}</span>.{" "}
+              <Link href={`/signin?next=${currentPath}`}>
+                <a className="font-medium">Sign in</a>
+              </Link>{" "}
+              with different account that has access to this page.
+            </p>
+          ) : (
+            <p className="text-base font-light">
+              You need to{" "}
+              <Link href={`/signin?next=${currentPath}`}>
+                <a className="font-medium">Sign in</a>
+              </Link>{" "}
+              with an account that has access to this page.
+            </p>
           )}
         </div>
+
+        {actionButton}
       </div>
     </DefaultLayout>
   );
