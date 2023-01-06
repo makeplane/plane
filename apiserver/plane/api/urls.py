@@ -60,6 +60,7 @@ from plane.api.views import (
     ProjectMemberUserEndpoint,
     WorkspaceMemberUserEndpoint,
     WorkspaceMemberUserViewsEndpoint,
+    WorkSpaceAvailabilityCheckEndpoint,
 )
 
 from plane.api.views.project import AddTeamToProjectEndpoint
@@ -245,6 +246,11 @@ urlpatterns = [
         "workspaces/<str:slug>/workspace-views/",
         WorkspaceMemberUserViewsEndpoint.as_view(),
         name="workspace-member-details",
+    ),
+    path(
+        "workspaces/available/",
+        WorkSpaceAvailabilityCheckEndpoint.as_view(),
+        name="workspace-availability",
     ),
     ## End Workspaces ##
     # Projects
