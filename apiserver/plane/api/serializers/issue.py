@@ -47,6 +47,7 @@ class IssueFlatSerializer(BaseSerializer):
 class IssueStateSerializer(BaseSerializer):
 
     state_detail = StateSerializer(read_only=True, source="state")
+    project_detail = ProjectSerializer(read_only=True, source="project")
 
     class Meta:
         model = Issue
