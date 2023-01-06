@@ -21,9 +21,10 @@ import { IWorkspace, IWorkspaceMemberInvitation } from "types";
 
 type Props = {
   setStep: React.Dispatch<React.SetStateAction<number>>;
+  setWorkspace: React.Dispatch<React.SetStateAction<any>>;
 };
 
-const Workspace: React.FC<Props> = ({ setStep }) => {
+const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
 
   const { setToastAlert } = useToast();
@@ -35,8 +36,10 @@ const Workspace: React.FC<Props> = ({ setStep }) => {
   const {
     register,
     handleSubmit,
+    watch,
     control,
     reset,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<IWorkspace>();
 
@@ -44,14 +47,26 @@ const Workspace: React.FC<Props> = ({ setStep }) => {
     console.log(formData);
 
     workspaceService
-      .createWorkspace(formData)
+      .workspaceNameCheck(formData.name)
       .then((res) => {
-        console.log(res);
-        setToastAlert({
-          type: "success",
-          title: "Workspace created successfully!",
-        });
-        setStep(3);
+        if (res.status === true) {
+          workspaceService
+            .createWorkspace(formData)
+            .then((res) => {
+              console.log(res);
+              setToastAlert({
+                type: "success",
+                title: "Workspace created successfully!",
+              });
+              setWorkspace(res);
+              setStep(3);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        } else {
+          setError("name", { message: "Workspace name is already taken!" });
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -89,6 +104,8 @@ const Workspace: React.FC<Props> = ({ setStep }) => {
   useEffect(() => {
     reset({
       name: "",
+      slug: "",
+      company_size: null,
     });
   }, [reset]);
 
@@ -133,17 +150,21 @@ const Workspace: React.FC<Props> = ({ setStep }) => {
                       error={errors.name}
                     />
                   </div>
-                  <div>
-                    <Input
-                      label="Workspace URL"
-                      name="url"
-                      placeholder="Enter URL"
+                  <div className="flex items-center border rounded-md px-3">
+                    <span className="text-sm text-slate-600">{"https://app.plane.so/"}</span>
+                    <input
+                      type="text"
+                      value={
+                        watch("name")
+                          ? `${watch("name").toLocaleLowerCase().replace(" ", "-")}`
+                          : ""
+                      }
                       autoComplete="off"
-                      register={register}
-                      validations={{
-                        required: "Workspace URL is required",
-                      }}
-                      // error={errors.url}
+                      {...(register &&
+                        register("slug", {
+                          required: "Workspace URL is required",
+                        }))}
+                      className="block rounded-md bg-transparent text-sm focus:outline-none rounded-md w-full  py-2"
                     />
                   </div>
                   <div>

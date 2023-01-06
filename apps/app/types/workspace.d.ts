@@ -10,7 +10,7 @@ export interface IWorkspace {
   readonly slug: string;
   readonly created_by: string;
   readonly updated_by: string;
-  company_size: number;
+  company_size: number | null;
 }
 
 export interface IWorkspaceMemberInvitation {

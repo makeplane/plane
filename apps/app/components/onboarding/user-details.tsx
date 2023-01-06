@@ -43,17 +43,17 @@ const UserDetails: React.FC<Props> = ({ user, setStep }) => {
     reset({
       first_name: user && user.first_name,
       last_name: user && user.last_name,
+      role: user && user.role,
     });
   }, [user, reset]);
 
   return (
     <form className="grid w-full place-items-center space-y-8" onSubmit={handleSubmit(onSubmit)}>
       <div className="w-full space-y-4 rounded-lg bg-white p-8 md:w-2/5">
-        <h2 className="text-2xl font-medium">User Details</h2>
         <div className="grid grid-cols-2 gap-4">
           <div>
             <Input
-              label="First name"
+              label="First Name"
               name="first_name"
               placeholder="Enter first name"
               autoComplete="off"
@@ -66,7 +66,7 @@ const UserDetails: React.FC<Props> = ({ user, setStep }) => {
           </div>
           <div>
             <Input
-              label="Last name"
+              label="Last Name"
               name="last_name"
               placeholder="Enter last name"
               autoComplete="off"
@@ -78,14 +78,16 @@ const UserDetails: React.FC<Props> = ({ user, setStep }) => {
             />
           </div>
           <div className="col-span-2">
-            <Controller
+            <Input
+              label="Role"
               name="role"
-              control={control}
-              render={({ field }) => (
-                <CustomSelect {...field} label="What is your role?" input>
-                  <CustomSelect.Option value="SDE">SDE</CustomSelect.Option>
-                </CustomSelect>
-              )}
+              placeholder="What is your role?"
+              autoComplete="off"
+              register={register}
+              validations={{
+                required: "Role is required",
+              }}
+              error={errors.role}
             />
           </div>
         </div>

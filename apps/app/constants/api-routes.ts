@@ -37,6 +37,7 @@ export const JOIN_PROJECT = (workspaceSlug: string) =>
 // workspaces
 export const WORKSPACES_ENDPOINT = "/api/workspaces/";
 export const WORKSPACE_DETAIL = (workspaceSlug: string) => `/api/workspaces/${workspaceSlug}/`;
+export const WORKSPACE_NAME_CHECK = (name: string) => `/api/workspace-name-check/?name=${name}`;
 
 export const INVITE_WORKSPACE = (workspaceSlug: string) =>
   `/api/workspaces/${workspaceSlug}/invite/`;

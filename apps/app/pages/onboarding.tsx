@@ -18,9 +18,12 @@ import InviteMembers from "components/onboarding/invite-members";
 import CommandMenu from "components/onboarding/command-menu";
 // images
 import Logo from "public/onboarding/logo.svg";
+import userService from "lib/services/user.service";
 
 const Onboarding = () => {
   const [step, setStep] = useState(1);
+
+  const [workspace, setWorkspace] = useState();
 
   const router = useRouter();
 
@@ -37,9 +40,9 @@ const Onboarding = () => {
             {step === 1 ? (
               <UserDetails user={user} setStep={setStep} />
             ) : step === 2 ? (
-              <Workspace setStep={setStep} />
+              <Workspace setStep={setStep} setWorkspace={setWorkspace} />
             ) : (
-              <InviteMembers setStep={setStep} />
+              <InviteMembers setStep={setStep} workspace={workspace} />
             )}
           </div>
         ) : (
@@ -62,8 +65,16 @@ const Onboarding = () => {
                 type="button"
                 className="w-full rounded-md bg-gray-200 px-4 py-2 text-sm"
                 onClick={() => {
-                  if (step === 8) router.push("/");
-                  else setStep((prevData) => prevData + 1);
+                  if (step === 8) {
+                    userService
+                      .updateUserOnBoard()
+                      .then(() => {
+                        router.push("/");
+                      })
+                      .catch((err) => {
+                        console.log(err);
+                      });
+                  } else setStep((prevData) => prevData + 1);
                 }}
               >
                 {step === 4 || step === 8 ? "Get Started" : "Next"}

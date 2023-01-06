@@ -1,39 +1,66 @@
 // types
 import useToast from "lib/hooks/useToast";
+import workspaceService from "lib/services/workspace.service";
 import { useForm } from "react-hook-form";
 import { IUser } from "types";
-import { Input } from "ui";
+import MultiInput from "ui/multi-input";
 
 type Props = {
   setStep: React.Dispatch<React.SetStateAction<number>>;
+  workspace: any;
 };
 
-const InviteMembers: React.FC<Props> = ({ setStep }) => {
+const InviteMembers: React.FC<Props> = ({ setStep, workspace }) => {
   const { setToastAlert } = useToast();
 
   const {
-    register,
+    setValue,
+    watch,
     handleSubmit,
-    control,
-    reset,
     formState: { errors, isSubmitting },
   } = useForm<IUser>();
 
   const onSubmit = (formData: IUser) => {
     console.log(formData);
+    workspaceService
+      .inviteWorkspace(workspace.slug, formData)
+      .then((res) => {
+        console.log(res);
+        setToastAlert({
+          type: "success",
+          title: "Invitations sent!",
+        });
+        setStep(4);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const validateEmail = (email: string) => {
+    var re = /\S+@\S+\.\S+/;
+    return re.test(email);
   };
 
   return (
-    <form className="grid w-full place-items-center space-y-8" onSubmit={handleSubmit(onSubmit)}>
+    <form
+      className="grid w-full place-items-center space-y-8"
+      onSubmit={handleSubmit(onSubmit)}
+      onKeyDown={(e) => {
+        if (e.code === "Enter") e.preventDefault();
+      }}
+    >
       <div className="w-full space-y-4 rounded-lg bg-white p-8 md:w-2/5">
         <h2 className="text-2xl font-medium">Invite co-workers to your team</h2>
         <div className="space-y-4">
           <div className="col-span-2 space-y-2">
-            <Input
+            <MultiInput
               label="Enter e-mails to invite"
-              name="email_ids"
-              placeholder="dummy@plane.so,dummy@gmail.com"
-              register={register}
+              name="emails"
+              placeholder="dummy@plane.so"
+              watch={watch}
+              setValue={setValue}
+              validateInput={validateEmail}
             />
           </div>
         </div>
@@ -42,7 +69,6 @@ const InviteMembers: React.FC<Props> = ({ setStep }) => {
         <button
           type="submit"
           className="w-full rounded-md bg-gray-200 px-4 py-2 text-sm"
-          onClick={() => setStep(4)}
           disabled={isSubmitting}
         >
           {isSubmitting ? "Inviting..." : "Invite"}

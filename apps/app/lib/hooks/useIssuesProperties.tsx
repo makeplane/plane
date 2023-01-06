@@ -53,29 +53,31 @@ const useIssuesProperties = (workspaceSlug?: string, projectId?: string) => {
 
   const updateIssueProperties = useCallback(
     (key: keyof Properties) => {
-      if (!workspaceSlug || !projectId || !issueProperties || !user) return;
+      if (!workspaceSlug || !user) return;
       setProperties((prev) => ({ ...prev, [key]: !prev[key] }));
-      mutateIssueProperties(
-        (prev) =>
-          ({
-            ...prev,
-            properties: { ...prev?.properties, [key]: !prev?.properties?.[key] },
-          } as IssuePriorities),
-        false
-      );
-      if (Object.keys(issueProperties).length > 0) {
-        issueServices.patchIssueProperties(workspaceSlug, projectId, issueProperties.id, {
-          properties: {
-            ...issueProperties.properties,
-            [key]: !issueProperties.properties[key],
-          },
-          user: user.id,
-        });
-      } else {
-        issueServices.createIssueProperties(workspaceSlug, projectId, {
-          properties: { ...initialValues },
-          user: user.id,
-        });
+      if (issueProperties && projectId) {
+        mutateIssueProperties(
+          (prev) =>
+            ({
+              ...prev,
+              properties: { ...prev?.properties, [key]: !prev?.properties?.[key] },
+            } as IssuePriorities),
+          false
+        );
+        if (Object.keys(issueProperties).length > 0) {
+          issueServices.patchIssueProperties(workspaceSlug, projectId, issueProperties.id, {
+            properties: {
+              ...issueProperties.properties,
+              [key]: !issueProperties.properties[key],
+            },
+            user: user.id,
+          });
+        } else {
+          issueServices.createIssueProperties(workspaceSlug, projectId, {
+            properties: { ...initialValues },
+            user: user.id,
+          });
+        }
       }
     },
     [workspaceSlug, projectId, issueProperties, user, mutateIssueProperties]

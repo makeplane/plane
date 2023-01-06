@@ -56,10 +56,10 @@ const workspaceLinks = (workspaceSlug: string) => [
   },
 ];
 
-const userLinks = [
+const userLinks = (workspaceSlug: string) => [
   {
     name: "My Profile",
-    href: "/me/profile",
+    href: `/${workspaceSlug}/me/profile`,
   },
   {
     name: "Workspace Invites",
@@ -216,7 +216,7 @@ const WorkspaceOptions: React.FC<Props> = ({ sidebarCollapse }) => {
                   )}
                 </div>
                 <div className="space-y-1 pt-2 text-xs">
-                  {userLinks.map((link, index) => (
+                  {userLinks(workspaceSlug as string).map((link, index) => (
                     <Menu.Item key={index} as="div">
                       <Link href={link.href}>
                         <a className="block rounded px-2 py-1 text-left hover:bg-gray-100">

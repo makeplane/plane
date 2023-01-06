@@ -51,7 +51,7 @@ const MyIssues: NextPage = () => {
   // FIXME: remove this hard-coded value
   const [properties, setProperties] = useIssuesProperties(
     workspaceSlug ? (workspaceSlug as string) : undefined,
-    "21b5fab2-cb0c-4875-9496-619134bf1f32"
+    undefined
   );
 
   return (
