@@ -6,18 +6,17 @@ import { mutate } from "swr";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // fetching keys
-import { CYCLE_ISSUES, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import { CYCLE_ISSUES, PROJECT_ISSUES_LIST, MODULE_ISSUES } from "constants/fetch-keys";
 // services
 import issueServices from "lib/services/issues.service";
 // hooks
-import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
 import { Button } from "ui";
 // types
-import type { IIssue, IssueResponse } from "types";
+import type { CycleIssueResponse, IIssue, IssueResponse, ModuleIssueResponse } from "types";
 
 type Props = {
   isOpen: boolean;
@@ -25,7 +24,10 @@ type Props = {
   data?: IIssue;
 };
 
-const ConfirmIssueDeletion: React.FC<Props> = ({ isOpen, handleClose, data }) => {
+const ConfirmIssueDeletion: React.FC<Props> = (props) => {
+  const { isOpen, handleClose, data } = props;
+
+  const cancelButtonRef = useRef(null);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const router = useRouter();
@@ -33,7 +35,9 @@ const ConfirmIssueDeletion: React.FC<Props> = ({ isOpen, handleClose, data }) =>
 
   const { setToastAlert } = useToast();
 
-  const cancelButtonRef = useRef(null);
+  useEffect(() => {
+    setIsDeleteLoading(false);
+  }, [isOpen]);
 
   const onClose = () => {
     setIsDeleteLoading(false);
@@ -58,7 +62,25 @@ const ConfirmIssueDeletion: React.FC<Props> = ({ isOpen, handleClose, data }) =>
           },
           false
         );
-        mutate(CYCLE_ISSUES(data.issue_cycle?.id ?? ""));
+
+        const moduleId = data.issue_module?.module;
+        const cycleId = data.issue_cycle?.cycle;
+
+        if (moduleId) {
+          mutate<ModuleIssueResponse[]>(
+            MODULE_ISSUES(moduleId),
+            (prevData) => prevData?.filter((i) => i.issue !== data.id),
+            false
+          );
+        }
+        if (cycleId) {
+          mutate<CycleIssueResponse[]>(
+            CYCLE_ISSUES(cycleId),
+            (prevData) => prevData?.filter((i) => i.issue !== data.id),
+            false
+          );
+        }
+
         setToastAlert({
           title: "Success",
           type: "success",
@@ -71,10 +93,6 @@ const ConfirmIssueDeletion: React.FC<Props> = ({ isOpen, handleClose, data }) =>
         setIsDeleteLoading(false);
       });
   };
-
-  useEffect(() => {
-    setIsDeleteLoading(false);
-  }, [isOpen]);
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>

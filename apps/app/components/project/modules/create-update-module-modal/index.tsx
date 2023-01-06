@@ -118,10 +118,7 @@ const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, pro
 
   const handleClose = () => {
     setIsOpen(false);
-    const timeout = setTimeout(() => {
-      reset(defaultValues);
-      clearTimeout(timeout);
-    }, 500);
+    reset(defaultValues);
   };
 
   return (
@@ -207,7 +204,7 @@ const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, pro
                         </div>
                       </div>
                       <div className="flex flex-wrap items-center gap-2">
-                        <SelectStatus control={control} />
+                        <SelectStatus control={control} error={errors.status} />
                         <SelectLead control={control} />
                         <SelectMembers control={control} />
                       </div>

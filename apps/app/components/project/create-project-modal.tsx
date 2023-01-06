@@ -15,7 +15,7 @@ import { createSimilarString, getRandomEmoji } from "constants/common";
 // constants
 import { NETWORK_CHOICES } from "constants/";
 // fetch keys
-import { PROJECTS_LIST, WORKSPACE_DETAILS, WORKSPACE_MEMBERS_ME } from "constants/fetch-keys";
+import { PROJECTS_LIST, WORKSPACE_MEMBERS_ME } from "constants/fetch-keys";
 // hooks
 import useToast from "lib/hooks/useToast";
 // ui
@@ -64,11 +64,6 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
   const {
     query: { workspaceSlug },
   } = useRouter();
-
-  const { data: activeWorkspace } = useSWR(
-    workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
-    () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null)
-  );
 
   const { data: myWorkspaceMembership } = useSWR(
     workspaceSlug ? WORKSPACE_MEMBERS_ME(workspaceSlug as string) : null,
@@ -125,13 +120,12 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
   };
 
   const onSubmit = async (formData: IProject) => {
-    if (!activeWorkspace) return;
+    if (!workspaceSlug) return;
     await projectServices
-      .createProject(activeWorkspace.slug, formData)
+      .createProject(workspaceSlug as string, formData)
       .then((res) => {
-        console.log(res);
         mutate<IProject[]>(
-          PROJECTS_LIST(activeWorkspace.slug),
+          PROJECTS_LIST(workspaceSlug as string),
           (prevData) => [res, ...(prevData ?? [])],
           false
         );

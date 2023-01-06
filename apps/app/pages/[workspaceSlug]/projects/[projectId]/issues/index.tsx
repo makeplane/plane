@@ -58,12 +58,7 @@ const ProjectIssues: NextPage = () => {
     query: { workspaceSlug, projectId },
   } = useRouter();
 
-  const { data: activeWorkspace } = useSWR(
-    workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
-    () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null)
-  );
-
-  const { data: activeProject } = useSWR(
+  const { data: projectDetails } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
     workspaceSlug && projectId
       ? () => projectService.getProject(workspaceSlug as string, projectId as string)
@@ -71,20 +66,20 @@ const ProjectIssues: NextPage = () => {
   );
 
   const { data: projectIssues } = useSWR(
-    activeWorkspace && activeProject
+    workspaceSlug && projectId
       ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
       : null,
-    activeWorkspace && activeProject
+    workspaceSlug && projectId
       ? () => issuesServices.getIssues(workspaceSlug as string, projectId as string)
       : null
   );
 
   const { data: members } = useSWR(
-    activeWorkspace && activeProject
-      ? PROJECT_MEMBERS(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId
+      ? PROJECT_MEMBERS(workspaceSlug as string, projectId as string)
       : null,
-    activeWorkspace && activeProject
-      ? () => projectService.projectMembers(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId
+      ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
       : null,
     {
       onErrorRetry(err, _, __, revalidate, revalidateOpts) {
@@ -95,7 +90,7 @@ const ProjectIssues: NextPage = () => {
   );
 
   const [properties, setProperties] = useIssuesProperties(
-    activeWorkspace?.slug,
+    workspaceSlug as string,
     projectId as string
   );
 
@@ -124,12 +119,12 @@ const ProjectIssues: NextPage = () => {
   }, [isOpen]);
 
   const partialUpdateIssue = (formData: Partial<IIssue>, issueId: string) => {
-    if (!activeWorkspace || !activeProject) return;
+    if (!workspaceSlug || !projectId) return;
     issuesServices
-      .patchIssue(activeWorkspace.slug, activeProject.id, issueId, formData)
+      .patchIssue(workspaceSlug as string, projectId as string, issueId, formData)
       .then((response) => {
         mutate<IssueResponse>(
-          PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id),
+          PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
           (prevData) => ({
             ...(prevData as IssueResponse),
             results:
@@ -148,7 +143,7 @@ const ProjectIssues: NextPage = () => {
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
-          <BreadcrumbItem title={`${activeProject?.name ?? "Project"} Issues`} />
+          <BreadcrumbItem title={`${projectDetails?.name ?? "Project"} Issues`} />
         </Breadcrumbs>
       }
       right={

@@ -25,7 +25,7 @@ type Props = {
 
 const SelectCycle: React.FC<Props> = ({ control, setIsOpen, activeProject }) => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug } = router.query;
 
   const { data: cycles } = useSWR(
     workspaceSlug && activeProject ? CYCLE_LIST(activeProject) : null,
@@ -37,7 +37,7 @@ const SelectCycle: React.FC<Props> = ({ control, setIsOpen, activeProject }) => 
   return (
     <Controller
       control={control}
-      name="sprints"
+      name="cycle"
       render={({ field: { value, onChange } }) => (
         <CustomListbox
           title={cycles?.find((i) => i.id.toString() === value?.toString())?.name ?? "Cycle"}
