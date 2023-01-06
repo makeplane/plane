@@ -9,8 +9,6 @@ import useSWR from "swr";
 import useTheme from "lib/hooks/useTheme";
 import useToast from "lib/hooks/useToast";
 // services
-import issuesServices from "lib/services/issues.service";
-import projectServices from "lib/services/project.service";
 import userService from "lib/services/user.service";
 // components
 import ShortcutsModal from "components/command-palette/shortcuts";
@@ -22,7 +20,7 @@ import BulkDeleteIssuesModal from "components/common/bulk-delete-issues-modal";
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // constants
-import { PROJECTS_LIST, PROJECT_ISSUES_LIST, USER_ISSUE } from "constants/fetch-keys";
+import { USER_ISSUE } from "constants/fetch-keys";
 // ui
 import { Button } from "ui";
 // icons
@@ -49,45 +47,32 @@ const CommandPalette: React.FC = () => {
   const [isBulkDeleteIssuesModalOpen, setIsBulkDeleteIssuesModalOpen] = useState(false);
 
   const router = useRouter();
-
   const { workspaceSlug, projectId } = router.query;
 
   const { setToastAlert } = useToast();
   const { toggleCollapsed } = useTheme();
-
-  const { data: issues } = useSWR(
-    workspaceSlug && projectId
-      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
-      : null,
-    workspaceSlug && projectId
-      ? () => issuesServices.getIssues(workspaceSlug as string, projectId as string)
-      : null
-  );
 
   const { data: myIssues } = useSWR<IIssue[]>(
     workspaceSlug ? USER_ISSUE(workspaceSlug as string) : null,
     workspaceSlug ? () => userService.userIssues(workspaceSlug as string) : null
   );
 
-  const { data: projects } = useSWR(
-    workspaceSlug ? PROJECTS_LIST(workspaceSlug as string) : null,
-    workspaceSlug ? () => projectServices.getProjects(workspaceSlug as string) : null
-  );
-
-  const activeProject = !projectId
-    ? projects?.[0]
-    : projects?.find((project) => project.id === projectId);
-
   const filteredIssues: IIssue[] =
     query === ""
-      ? issues?.results ?? myIssues ?? []
-      : issues?.results.filter((issue) => issue.name.toLowerCase().includes(query.toLowerCase())) ??
-        [];
+      ? myIssues ?? []
+      : myIssues?.filter(
+          (issue) =>
+            issue.name.toLowerCase().includes(query.toLowerCase()) ||
+            `${issue.project_detail.identifier}-${issue.sequence_id}`
+              .toLowerCase()
+              .includes(query.toLowerCase())
+        ) ?? [];
 
   const quickActions = [
     {
       name: "Add new issue...",
       icon: RectangleStackIcon,
+      hide: !projectId,
       shortcut: "I",
       onClick: () => {
         setIsIssueModalOpen(true);
@@ -96,6 +81,7 @@ const CommandPalette: React.FC = () => {
     {
       name: "Add new project...",
       icon: ClipboardDocumentListIcon,
+      hide: !workspaceSlug,
       shortcut: "P",
       onClick: () => {
         setIsProjectModalOpen(true);
@@ -167,22 +153,22 @@ const CommandPalette: React.FC = () => {
     <>
       <ShortcutsModal isOpen={isShortcutsModalOpen} setIsOpen={setIsShortcutsModalOpen} />
       <CreateProjectModal isOpen={isProjectModalOpen} setIsOpen={setIsProjectModalOpen} />
-      {activeProject && (
+      {projectId && (
         <>
           <CreateUpdateCycleModal
             isOpen={isCreateCycleModalOpen}
             setIsOpen={setIsCreateCycleModalOpen}
-            projectId={activeProject.id}
+            projectId={projectId as string}
           />
           <CreateUpdateModuleModal
             isOpen={isCreateModuleModalOpen}
             setIsOpen={setIsCreateModuleModalOpen}
-            projectId={activeProject.id}
+            projectId={projectId as string}
           />
           <CreateUpdateIssuesModal
             isOpen={isIssueModalOpen}
             setIsOpen={setIsIssueModalOpen}
-            projectId={activeProject.id}
+            projectId={projectId as string}
           />
         </>
       )}
@@ -222,7 +208,8 @@ const CommandPalette: React.FC = () => {
               <Dialog.Panel className="relative mx-auto max-w-2xl transform divide-y divide-gray-500 divide-opacity-10 rounded-xl bg-white bg-opacity-80 shadow-2xl ring-1 ring-black ring-opacity-5 backdrop-blur backdrop-filter transition-all">
                 <Combobox
                   onChange={(value: any) => {
-                    router.push(value.url);
+                    if (value?.url) router.push(value.url);
+                    else if (value?.onClick) value.onClick();
                     handleCommandPaletteClose();
                   }}
                 >
@@ -278,7 +265,7 @@ const CommandPalette: React.FC = () => {
                                         }}
                                       />
                                       <span className="flex-shrink-0 text-xs text-gray-500">
-                                        {activeProject?.identifier}-{issue.sequence_id}
+                                        {issue.project_detail?.identifier}-{issue.sequence_id}
                                       </span>
                                       <span>{issue.name}</span>
                                     </div>
@@ -304,38 +291,41 @@ const CommandPalette: React.FC = () => {
                       <li className="p-2">
                         <h2 className="sr-only">Quick actions</h2>
                         <ul className="text-sm text-gray-700">
-                          {quickActions.map((action) => (
-                            <Combobox.Option
-                              key={action.shortcut}
-                              value={{
-                                name: action.name,
-                                onClick: action.onClick,
-                              }}
-                              className={({ active }) =>
-                                classNames(
-                                  "flex cursor-default select-none items-center rounded-md px-3 py-2",
-                                  active ? "bg-gray-500 bg-opacity-5 text-gray-900" : ""
-                                )
-                              }
-                            >
-                              {({ active }) => (
-                                <>
-                                  <action.icon
-                                    className={classNames(
-                                      "h-6 w-6 flex-none text-gray-900 text-opacity-40",
-                                      active ? "text-opacity-100" : ""
-                                    )}
-                                    aria-hidden="true"
-                                  />
-                                  <span className="ml-3 flex-auto truncate">{action.name}</span>
-                                  <span className="ml-3 flex-none text-xs font-semibold text-gray-500">
-                                    <kbd className="font-sans">⌘</kbd>
-                                    <kbd className="font-sans">{action.shortcut}</kbd>
-                                  </span>
-                                </>
-                              )}
-                            </Combobox.Option>
-                          ))}
+                          {quickActions.map(
+                            (action) =>
+                              !action.hide && (
+                                <Combobox.Option
+                                  key={action.shortcut}
+                                  value={{
+                                    name: action.name,
+                                    onClick: action.onClick,
+                                  }}
+                                  className={({ active }) =>
+                                    classNames(
+                                      "flex cursor-default select-none items-center rounded-md px-3 py-2",
+                                      active ? "bg-gray-500 bg-opacity-5 text-gray-900" : ""
+                                    )
+                                  }
+                                >
+                                  {({ active }) => (
+                                    <>
+                                      <action.icon
+                                        className={classNames(
+                                          "h-6 w-6 flex-none text-gray-900 text-opacity-40",
+                                          active ? "text-opacity-100" : ""
+                                        )}
+                                        aria-hidden="true"
+                                      />
+                                      <span className="ml-3 flex-auto truncate">{action.name}</span>
+                                      <span className="ml-3 flex-none text-xs font-semibold text-gray-500">
+                                        <kbd className="font-sans">⌘</kbd>
+                                        <kbd className="font-sans">{action.shortcut}</kbd>
+                                      </span>
+                                    </>
+                                  )}
+                                </Combobox.Option>
+                              )
+                          )}
                         </ul>
                       </li>
                     )}
