@@ -194,7 +194,7 @@ class InviteWorkspaceEndpoint(BaseAPIView):
                     validate_email(email.get("email"))
                     workspace_invitations.append(
                         WorkspaceMemberInvite(
-                            email=email.strip().lower(),
+                            email=email.get("email").strip().lower(),
                             workspace_id=workspace.id,
                             token=jwt.encode(
                                 {
