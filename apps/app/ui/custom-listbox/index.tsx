@@ -1,8 +1,6 @@
 import React from "react";
 // headless ui
 import { Listbox, Transition } from "@headlessui/react";
-// icons
-import { CheckIcon } from "@heroicons/react/20/solid";
 
 import { Props } from "./types";
 

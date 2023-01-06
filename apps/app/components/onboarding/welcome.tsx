@@ -7,7 +7,7 @@ const Welcome = () => {
   return (
     <div className="h-full">
       <div className="h-1/2">
-        <Image src={Logo} height={150} width={150} alt="Plane Logo" />
+        <Image src={Logo} height={130} width={130} alt="Plane Logo" />
       </div>
       <div className="mx-auto h-1/2 space-y-4 lg:w-2/3">
         <h2 className="text-2xl font-medium">Welcome to Plane</h2>
