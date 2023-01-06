@@ -151,6 +151,11 @@ urlpatterns = [
     ),
     ## Workspaces ##
     path(
+        "workspace-name-check/",
+        WorkSpaceAvailabilityCheckEndpoint.as_view(),
+        name="workspace-availability",
+    ),
+    path(
         "workspaces/",
         WorkSpaceViewSet.as_view(
             {
@@ -246,11 +251,6 @@ urlpatterns = [
         "workspaces/<str:slug>/workspace-views/",
         WorkspaceMemberUserViewsEndpoint.as_view(),
         name="workspace-member-details",
-    ),
-    path(
-        "workspaces/available/",
-        WorkSpaceAvailabilityCheckEndpoint.as_view(),
-        name="workspace-availability",
     ),
     ## End Workspaces ##
     # Projects

@@ -134,10 +134,6 @@ class UserWorkSpacesEndpoint(BaseAPIView):
 
 class WorkSpaceAvailabilityCheckEndpoint(BaseAPIView):
 
-    permission_classes = [
-        AllowAny,
-    ]
-
     def get(self, request):
         try:
             name = request.GET.get("name", False)
@@ -229,11 +225,11 @@ class InviteWorkspaceEndpoint(BaseAPIView):
                 email__in=emails
             ).select_related("workspace")
 
-            for workspace_invitation in workspace_invitations:
+            for invitation in workspace_invitations:
                 workspace_invitation.delay(
-                    workspace_invitation.email,
+                    invitation.email,
                     workspace.id,
-                    workspace_invitation.token,
+                    invitation.token,
                     settings.WEB_URL,
                     request.user.email,
                 )
