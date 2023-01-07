@@ -133,11 +133,6 @@ class UserWorkSpacesEndpoint(BaseAPIView):
 
 
 class WorkSpaceAvailabilityCheckEndpoint(BaseAPIView):
-
-    permission_classes = [
-        AllowAny,
-    ]
-
     def get(self, request):
         try:
             name = request.GET.get("name", False)
@@ -149,8 +144,7 @@ class WorkSpaceAvailabilityCheckEndpoint(BaseAPIView):
                 )
 
             workspace = Workspace.objects.filter(name=name).exists()
-
-            return Response({"status": workspace}, status=status.HTTP_200_OK)
+            return Response({"status": not workspace}, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)
             return Response(
@@ -169,7 +163,6 @@ class InviteWorkspaceEndpoint(BaseAPIView):
         try:
 
             emails = request.data.get("emails", False)
-
             # Check if email is provided
             if not emails or not len(emails):
                 return Response(
@@ -180,7 +173,8 @@ class InviteWorkspaceEndpoint(BaseAPIView):
 
             # Check if user is already a member of workspace
             workspace_members = WorkspaceMember.objects.filter(
-                workspace_id=workspace.id, member__email__in=emails
+                workspace_id=workspace.id,
+                member__email__in=[email.get("email") for email in emails],
             )
 
             if len(workspace_members):
@@ -197,10 +191,10 @@ class InviteWorkspaceEndpoint(BaseAPIView):
             workspace_invitations = []
             for email in emails:
                 try:
-                    validate_email(email)
+                    validate_email(email.get("email"))
                     workspace_invitations.append(
                         WorkspaceMemberInvite(
-                            email=email.strip().lower(),
+                            email=email.get("email").strip().lower(),
                             workspace_id=workspace.id,
                             token=jwt.encode(
                                 {
@@ -210,7 +204,7 @@ class InviteWorkspaceEndpoint(BaseAPIView):
                                 settings.SECRET_KEY,
                                 algorithm="HS256",
                             ),
-                            role=request.data.get("role", 10),
+                            role=email.get("role", 10),
                         )
                     )
                 except ValidationError:
@@ -221,19 +215,18 @@ class InviteWorkspaceEndpoint(BaseAPIView):
                         status=status.HTTP_400_BAD_REQUEST,
                     )
             WorkspaceMemberInvite.objects.bulk_create(
-                workspace_invitations,
-                batch_size=10,
+                workspace_invitations, batch_size=10, ignore_conflicts=True
             )
 
             workspace_invitations = WorkspaceMemberInvite.objects.filter(
-                email__in=emails
+                email__in=[email.get("email") for email in emails]
             ).select_related("workspace")
 
-            for workspace_invitation in workspace_invitations:
+            for invitation in workspace_invitations:
                 workspace_invitation.delay(
-                    workspace_invitation.email,
+                    invitation.email,
                     workspace.id,
-                    workspace_invitation.token,
+                    invitation.token,
                     settings.WEB_URL,
                     request.user.email,
                 )
@@ -241,9 +234,6 @@ class InviteWorkspaceEndpoint(BaseAPIView):
             return Response(
                 {
                     "message": "Emails sent successfully",
-                    "invitations": WorkSpaceMemberInviteSerializer(
-                        workspace_invitations, many=True
-                    ).data,
                 },
                 status=status.HTTP_200_OK,
             )

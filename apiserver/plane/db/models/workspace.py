@@ -79,6 +79,7 @@ class WorkspaceMemberInvite(BaseModel):
     role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=10)
 
     class Meta:
+        unique_together = ["email", "workspace"]
         verbose_name = "Workspace Member Invite"
         verbose_name_plural = "Workspace Member Invites"
         db_table = "workspace_member_invites"
