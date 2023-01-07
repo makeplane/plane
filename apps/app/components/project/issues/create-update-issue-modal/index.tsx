@@ -17,7 +17,7 @@ import useToast from "lib/hooks/useToast";
 // ui
 import { Button, Loader, TextArea } from "ui";
 // icons
-import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
+import { EllipsisHorizontalIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // components
 import SelectState from "components/project/issues/create-update-issue-modal/select-state";
 import SelectCycles from "components/project/issues/create-update-issue-modal/select-cycle";
@@ -324,7 +324,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                 leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                 leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               >
-                <Dialog.Panel className="relative transform rounded-lg bg-white px-5 py-8 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
+                <Dialog.Panel className="relative transform rounded-lg bg-white p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
                   <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="space-y-5">
                       <div className="flex items-center gap-x-2">
@@ -337,6 +337,33 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                           {data ? "Update" : "Create"} Issue
                         </h3>
                       </div>
+                      {watch("parent") && watch("parent") !== "" ? (
+                        <div className="flex w-min items-center gap-2 whitespace-nowrap rounded bg-gray-100 p-2 text-xs">
+                          <div className="flex items-center gap-2">
+                            <span
+                              className="block h-1.5 w-1.5 rounded-full"
+                              style={{
+                                backgroundColor: issues?.results.find(
+                                  (i) => i.id === watch("parent")
+                                )?.state_detail.color,
+                              }}
+                            />
+                            <span className="flex-shrink-0 text-gray-600">
+                              {projects?.find((p) => p.id === activeProject)?.identifier}-
+                              {issues?.results.find((i) => i.id === watch("parent"))?.sequence_id}
+                            </span>
+                            <span className="truncate font-medium">
+                              {issues?.results
+                                .find((i) => i.id === watch("parent"))
+                                ?.name.substring(0, 50)}
+                            </span>
+                            <XMarkIcon
+                              className="h-3 w-3 cursor-pointer"
+                              onClick={() => reset({ parent: null })}
+                            />
+                          </div>
+                        </div>
+                      ) : null}
                       <div className="space-y-3">
                         <div className="mt-2 space-y-3">
                           <div>
@@ -462,23 +489,38 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                               >
                                 <Menu.Items className="absolute right-0 z-50 mt-2 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                                   <div className="py-1">
-                                    <Menu.Item as="div">
-                                      <button
-                                        type="button"
-                                        className="whitespace-nowrap p-2 text-left text-xs text-gray-900 hover:bg-indigo-50"
-                                        onClick={() => setParentIssueListModalOpen(true)}
-                                      >
-                                        {watch("parent") && watch("parent") !== ""
-                                          ? `${
-                                              issues?.results.find((i) => i.id === watch("parent"))
-                                                ?.project_detail?.identifier
-                                            }-${
-                                              issues?.results.find((i) => i.id === watch("parent"))
-                                                ?.sequence_id
-                                            }`
-                                          : "Select Parent Issue"}
-                                      </button>
-                                    </Menu.Item>
+                                    {watch("parent") && watch("parent") !== "" ? (
+                                      <>
+                                        <Menu.Item as="div">
+                                          <button
+                                            type="button"
+                                            className="whitespace-nowrap p-2 text-left text-xs text-gray-900 hover:bg-indigo-50"
+                                            onClick={() => setParentIssueListModalOpen(true)}
+                                          >
+                                            Change parent issue
+                                          </button>
+                                        </Menu.Item>
+                                        <Menu.Item as="div">
+                                          <button
+                                            type="button"
+                                            className="whitespace-nowrap p-2 text-left text-xs text-gray-900 hover:bg-indigo-50"
+                                            onClick={() => reset({ parent: null })}
+                                          >
+                                            Remove parent issue
+                                          </button>
+                                        </Menu.Item>
+                                      </>
+                                    ) : (
+                                      <Menu.Item as="div">
+                                        <button
+                                          type="button"
+                                          className="whitespace-nowrap p-2 text-left text-xs text-gray-900 hover:bg-indigo-50"
+                                          onClick={() => setParentIssueListModalOpen(true)}
+                                        >
+                                          Select Parent Issue
+                                        </button>
+                                      </Menu.Item>
+                                    )}
                                   </div>
                                 </Menu.Items>
                               </Transition>
@@ -487,7 +529,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                         </div>
                       </div>
                     </div>
-                    <div className="mt-5 flex items-center justify-end gap-2">
+                    <div className="mt-5 flex items-center justify-between gap-2">
                       <div
                         className="flex cursor-pointer items-center gap-1"
                         onClick={() => setCreateMore((prevData) => !prevData)}
@@ -510,24 +552,26 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                           ></span>
                         </button>
                       </div>
-                      <Button
-                        theme="secondary"
-                        onClick={() => {
-                          handleClose();
-                          resetForm();
-                        }}
-                      >
-                        Discard
-                      </Button>
-                      <Button type="submit" disabled={isSubmitting}>
-                        {data
-                          ? isSubmitting
-                            ? "Updating Issue..."
-                            : "Update Issue"
-                          : isSubmitting
-                          ? "Creating Issue..."
-                          : "Create Issue"}
-                      </Button>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          theme="secondary"
+                          onClick={() => {
+                            handleClose();
+                            resetForm();
+                          }}
+                        >
+                          Discard
+                        </Button>
+                        <Button type="submit" disabled={isSubmitting}>
+                          {data
+                            ? isSubmitting
+                              ? "Updating Issue..."
+                              : "Update Issue"
+                            : isSubmitting
+                            ? "Creating Issue..."
+                            : "Create Issue"}
+                        </Button>
+                      </div>
                     </div>
                   </form>
                 </Dialog.Panel>

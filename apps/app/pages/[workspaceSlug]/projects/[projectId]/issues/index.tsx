@@ -11,7 +11,6 @@ import { requiredAuth } from "lib/auth";
 // services
 import issuesServices from "lib/services/issues.service";
 import projectService from "lib/services/project.service";
-import workspaceService from "lib/services/workspace.service";
 // hooks
 import useIssuesProperties from "lib/hooks/useIssuesProperties";
 // api routes
@@ -45,7 +44,7 @@ import { PlusIcon, Squares2X2Icon } from "@heroicons/react/20/solid";
 // types
 import type { IIssue, Properties, IssueResponse } from "types";
 // fetch-keys
-import { PROJECT_DETAILS, PROJECT_ISSUES_LIST, WORKSPACE_DETAILS } from "constants/fetch-keys";
+import { PROJECT_DETAILS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 
 const ProjectIssues: NextPage = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -191,69 +190,86 @@ const ProjectIssues: NextPage = () => {
                   leaveTo="opacity-0 translate-y-1"
                 >
                   <Popover.Panel className="absolute right-1/2 z-20 mr-5 mt-1 w-screen max-w-xs translate-x-1/2 transform overflow-hidden rounded-lg bg-white p-3 shadow-lg">
-                    <div className="relative flex flex-col gap-1 gap-y-4">
-                      <div className="flex items-center justify-between">
-                        <h4 className="text-sm text-gray-600">Group by</h4>
-                        <CustomMenu
-                          label={
-                            groupByOptions.find((option) => option.key === groupByProperty)?.name ??
-                            "Select"
-                          }
-                          width="lg"
-                        >
-                          {groupByOptions.map((option) => (
-                            <CustomMenu.MenuItem
-                              key={option.key}
-                              onClick={() => setGroupByProperty(option.key)}
-                            >
-                              {option.name}
-                            </CustomMenu.MenuItem>
-                          ))}
-                        </CustomMenu>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <h4 className="text-sm text-gray-600">Order by</h4>
-                        <CustomMenu
-                          label={
-                            orderByOptions.find((option) => option.key === orderBy)?.name ??
-                            "Select"
-                          }
-                          width="lg"
-                        >
-                          {orderByOptions.map((option) =>
-                            groupByProperty === "priority" && option.key === "priority" ? null : (
+                    <div className="relative divide-y-2">
+                      <div className="space-y-4 pb-3">
+                        <div className="flex items-center justify-between">
+                          <h4 className="text-sm text-gray-600">Group by</h4>
+                          <CustomMenu
+                            label={
+                              groupByOptions.find((option) => option.key === groupByProperty)
+                                ?.name ?? "Select"
+                            }
+                            width="lg"
+                          >
+                            {groupByOptions.map((option) => (
                               <CustomMenu.MenuItem
                                 key={option.key}
-                                onClick={() => setOrderBy(option.key)}
+                                onClick={() => setGroupByProperty(option.key)}
                               >
                                 {option.name}
                               </CustomMenu.MenuItem>
-                            )
-                          )}
-                        </CustomMenu>
+                            ))}
+                          </CustomMenu>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <h4 className="text-sm text-gray-600">Order by</h4>
+                          <CustomMenu
+                            label={
+                              orderByOptions.find((option) => option.key === orderBy)?.name ??
+                              "Select"
+                            }
+                            width="lg"
+                          >
+                            {orderByOptions.map((option) =>
+                              groupByProperty === "priority" && option.key === "priority" ? null : (
+                                <CustomMenu.MenuItem
+                                  key={option.key}
+                                  onClick={() => setOrderBy(option.key)}
+                                >
+                                  {option.name}
+                                </CustomMenu.MenuItem>
+                              )
+                            )}
+                          </CustomMenu>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <h4 className="text-sm text-gray-600">Issue type</h4>
+                          <CustomMenu
+                            label={
+                              filterIssueOptions.find((option) => option.key === filterIssue)
+                                ?.name ?? "Select"
+                            }
+                            width="lg"
+                          >
+                            {filterIssueOptions.map((option) => (
+                              <CustomMenu.MenuItem
+                                key={option.key}
+                                onClick={() => setFilterIssue(option.key)}
+                              >
+                                {option.name}
+                              </CustomMenu.MenuItem>
+                            ))}
+                          </CustomMenu>
+                        </div>
+                        <div className="relative flex justify-end gap-x-3">
+                          <button
+                            type="button"
+                            className="text-xs"
+                            onClick={() => resetFilterToDefault()}
+                          >
+                            Reset to default
+                          </button>
+                          <button
+                            type="button"
+                            className="text-xs font-medium text-theme"
+                            onClick={() => setNewFilterDefaultView()}
+                          >
+                            Set as default
+                          </button>
+                        </div>
                       </div>
-                      <div className="flex items-center justify-between">
-                        <h4 className="text-sm text-gray-600">Issue type</h4>
-                        <CustomMenu
-                          label={
-                            filterIssueOptions.find((option) => option.key === filterIssue)?.name ??
-                            "Select"
-                          }
-                          width="lg"
-                        >
-                          {filterIssueOptions.map((option) => (
-                            <CustomMenu.MenuItem
-                              key={option.key}
-                              onClick={() => setFilterIssue(option.key)}
-                            >
-                              {option.name}
-                            </CustomMenu.MenuItem>
-                          ))}
-                        </CustomMenu>
-                      </div>
-                      <div className="border-b-2"></div>
-                      <div className="relative flex flex-col gap-1">
-                        <h4 className="text-base text-gray-600">Properties</h4>
+                      <div className="space-y-2 py-3">
+                        <h4 className="text-sm text-gray-600">Display Properties</h4>
                         <div className="flex flex-wrap items-center gap-2">
                           {Object.keys(properties).map((key) => (
                             <button
@@ -270,23 +286,6 @@ const ProjectIssues: NextPage = () => {
                             </button>
                           ))}
                         </div>
-                      </div>
-                      <div className="border-b-2"></div>
-                      <div className="relative flex justify-end gap-x-3">
-                        <button
-                          type="button"
-                          className="text-xs"
-                          onClick={() => resetFilterToDefault()}
-                        >
-                          Reset to default
-                        </button>
-                        <button
-                          type="button"
-                          className="text-xs font-medium text-theme"
-                          onClick={() => setNewFilterDefaultView()}
-                        >
-                          Set as default
-                        </button>
                       </div>
                     </div>
                   </Popover.Panel>

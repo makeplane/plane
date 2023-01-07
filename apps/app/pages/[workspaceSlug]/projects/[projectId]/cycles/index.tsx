@@ -113,37 +113,39 @@ const ProjectSprints: NextPage = () => {
       />
       {cycles ? (
         cycles.length > 0 ? (
-          <div className="space-y-5">
-            <h3 className="text-2xl font-medium leading-6 text-gray-900">Current Cycle</h3>
-            <CycleStatsView
-              cycles={currentCycles ?? []}
-              setCreateUpdateCycleModal={setCreateUpdateCycleModal}
-              setSelectedCycle={setSelectedCycle}
-              type="current"
-            />
+          <div className="space-y-8">
+            <h3 className="text-xl font-medium leading-6 text-gray-900">Current Cycle</h3>
+            <div className="space-y-5">
+              <CycleStatsView
+                cycles={currentCycles ?? []}
+                setCreateUpdateCycleModal={setCreateUpdateCycleModal}
+                setSelectedCycle={setSelectedCycle}
+                type="current"
+              />
+            </div>
             <div className="space-y-5">
               <Tab.Group>
                 <Tab.List
                   as="div"
-                  className="grid grid-cols-2 items-center gap-2 rounded bg-gray-100 p-2 text-sm"
+                  className="grid grid-cols-2 items-center gap-2 rounded-lg bg-gray-100 p-2 text-sm"
                 >
                   <Tab
                     className={({ selected }) =>
-                      `rounded border px-6 py-2 ${selected ? "bg-gray-200" : "hover:bg-gray-100"}`
+                      `rounded-lg px-6 py-2 ${selected ? "bg-gray-300" : "hover:bg-gray-200"}`
                     }
                   >
                     Upcoming
                   </Tab>
                   <Tab
                     className={({ selected }) =>
-                      `rounded border px-6 py-2 ${selected ? "bg-gray-200" : "hover:bg-gray-100"}`
+                      `rounded-lg px-6 py-2 ${selected ? "bg-gray-300" : "hover:bg-gray-200"}`
                     }
                   >
                     Completed
                   </Tab>
                 </Tab.List>
                 <Tab.Panels>
-                  <Tab.Panel as="div" className="space-y-5">
+                  <Tab.Panel as="div" className="mt-8 space-y-5">
                     <CycleStatsView
                       cycles={upcomingCycles ?? []}
                       setCreateUpdateCycleModal={setCreateUpdateCycleModal}
@@ -151,7 +153,7 @@ const ProjectSprints: NextPage = () => {
                       type="upcoming"
                     />
                   </Tab.Panel>
-                  <Tab.Panel as="div" className="space-y-5">
+                  <Tab.Panel as="div" className="mt-8 space-y-5">
                     <CycleStatsView
                       cycles={completedCycles ?? []}
                       setCreateUpdateCycleModal={setCreateUpdateCycleModal}

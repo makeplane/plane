@@ -5,7 +5,7 @@ import SingleStat from "components/project/cycles/stats-view/single-stat";
 import ConfirmCycleDeletion from "components/project/cycles/confirm-cycle-deletion";
 // types
 import { ICycle, SelectSprintType } from "types";
-import { CyclesIcon } from "ui/icons";
+import { CompletedCycleIcon, CurrentCycleIcon, UpcomingCycleIcon } from "ui/icons";
 
 type TCycleStatsViewProps = {
   cycles: ICycle[];
@@ -55,7 +55,13 @@ const CycleStatsView: React.FC<TCycleStatsViewProps> = ({
         ))
       ) : (
         <div className="flex flex-col items-center justify-center gap-4 text-center">
-          <CyclesIcon className="h-14 w-14" color="gray" />
+          {type === "upcoming" ? (
+            <UpcomingCycleIcon height="56" width="56" />
+          ) : type === "completed" ? (
+            <CompletedCycleIcon height="56" width="56" />
+          ) : (
+            <CurrentCycleIcon height="56" width="56" />
+          )}
           <h3>
             Your {type} {type === "current" ? "cycle" : "cycles"} will be represented here
           </h3>
