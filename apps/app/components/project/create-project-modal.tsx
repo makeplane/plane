@@ -11,7 +11,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import projectServices from "lib/services/project.service";
 import workspaceService from "lib/services/workspace.service";
 // common
-import { createSimilarString, getRandomEmoji } from "constants/common";
+import { getRandomEmoji } from "constants/common";
 // constants
 import { NETWORK_CHOICES } from "constants/";
 // fetch keys
@@ -56,7 +56,6 @@ const IsGuestCondition: React.FC<{
 export const CreateProjectModal: React.FC<Props> = (props) => {
   const { isOpen, setIsOpen } = props;
 
-  const [recommendedIdentifier, setRecommendedIdentifier] = useState<string[]>([]);
   const [isChangeIdentifierRequired, setIsChangeIdentifierRequired] = useState(true);
 
   const { setToastAlert } = useToast();
@@ -79,12 +78,13 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
     handleSubmit,
     reset,
     setError,
-    clearErrors,
     control,
     watch,
     setValue,
   } = useForm<IProject>({
     defaultValues,
+    mode: "all",
+    reValidateMode: "onChange",
   });
 
   const projectName = watch("name") ?? "";
@@ -95,20 +95,6 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
       setValue("identifier", projectName.replace(/ /g, "").toUpperCase().substring(0, 3));
     }
   }, [projectName, projectIdentifier, setValue, isChangeIdentifierRequired]);
-
-  useEffect(() => {
-    if (!projectName) return;
-    const suggestedIdentifier = createSimilarString(
-      projectName.replace(/ /g, "").toUpperCase().substring(0, 3)
-    );
-
-    setRecommendedIdentifier([
-      suggestedIdentifier + Math.floor(Math.random() * 101),
-      suggestedIdentifier + Math.floor(Math.random() * 101),
-      projectIdentifier.toUpperCase().substring(0, 3) + Math.floor(Math.random() * 101),
-      projectIdentifier.toUpperCase().substring(0, 3) + Math.floor(Math.random() * 101),
-    ]);
-  }, [errors.identifier, projectIdentifier, projectName]);
 
   useEffect(() => {
     return () => setIsChangeIdentifierRequired(true);
@@ -266,6 +252,8 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                           onChange={() => setIsChangeIdentifierRequired(false)}
                           validations={{
                             required: "Identifier is required",
+                            validate: (value) =>
+                              /^[A-Z]+$/.test(value) || "Identifier must be uppercase text.",
                             minLength: {
                               value: 1,
                               message: "Identifier must at least be of 1 character",
@@ -276,27 +264,6 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                             },
                           }}
                         />
-                        {errors.identifier && (
-                          <div className="mt-2">
-                            <p>Ops! Identifier is already taken. Try one of the following:</p>
-                            <div className="flex gap-x-2">
-                              {recommendedIdentifier.map((identifier) => (
-                                <button
-                                  key={identifier}
-                                  type="button"
-                                  className="rounded border p-2 py-0.5 text-sm text-gray-500 hover:text-gray-700"
-                                  onClick={() => {
-                                    clearErrors("identifier");
-                                    setValue("identifier", identifier);
-                                    setIsChangeIdentifierRequired(false);
-                                  }}
-                                >
-                                  {identifier}
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-                        )}
                       </div>
                     </div>
                   </div>
