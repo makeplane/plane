@@ -1,4 +1,4 @@
-import type { IState, IUser, IProject, ICycle, IModule } from "./";
+import type { IState, IUser, IProject, ICycle, IModule, IUserLite } from "./";
 
 export interface IssueResponse {
   next_cursor: string;
@@ -162,4 +162,26 @@ export interface IIssueLabels {
   project: string;
   workspace: string;
   parent: string | null;
+}
+
+export interface IIssueActivity {
+  id: string;
+  actor_detail: IUser;
+  created_at: Date;
+  updated_at: Date;
+  verb: string;
+  field: string | null;
+  old_value: string | null;
+  new_value: string | null;
+  comment: string;
+  attachments: any[];
+  old_identifier: string | null;
+  new_identifier: string | null;
+  created_by: string;
+  updated_by: string;
+  project: string;
+  workspace: string;
+  issue: string;
+  issue_comment: string | null;
+  actor: string;
 }

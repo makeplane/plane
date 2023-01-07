@@ -3,7 +3,7 @@ import React from "react";
 // next
 import { useRouter } from "next/router";
 // swr
-import useSWR from "swr";
+import { KeyedMutator } from "swr";
 // react-hook-form
 import { useForm } from "react-hook-form";
 // services
@@ -23,7 +23,10 @@ const defaultValues: Partial<IIssueComment> = {
   comment: "",
 };
 
-const IssueCommentSection: React.FC = () => {
+const IssueCommentSection: React.FC<{
+  comments: IIssueComment[];
+  mutate: KeyedMutator<IIssueComment[]>;
+}> = ({ comments, mutate }) => {
   const {
     register,
     handleSubmit,
@@ -35,18 +38,6 @@ const IssueCommentSection: React.FC = () => {
   const router = useRouter();
 
   let { workspaceSlug, projectId, issueId } = router.query;
-
-  const { data: comments, mutate } = useSWR<IIssueComment[]>(
-    workspaceSlug && projectId && issueId ? PROJECT_ISSUES_COMMENTS(issueId as string) : null,
-    workspaceSlug && projectId && issueId
-      ? () =>
-          issuesServices.getIssueComments(
-            workspaceSlug as string,
-            projectId as string,
-            issueId as string
-          )
-      : null
-  );
 
   const onSubmit = async (formData: IIssueComment) => {
     if (!workspaceSlug || !projectId || !issueId || isSubmitting) return;
