@@ -108,7 +108,7 @@ const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentDeletion
                 </form>
               ) : (
                 <>
-                  {comment.comment.split("\n").map((item, index) => (
+                  {comment?.comment?.split("\n").map((item, index) => (
                     <p key={index} className="text-sm">
                       {item}
                     </p>

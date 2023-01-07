@@ -16,15 +16,14 @@ import useUser from "lib/hooks/useUser";
 import { Spinner, Breadcrumbs, BreadcrumbItem, EmptySpace, EmptySpaceItem, HeaderButton } from "ui";
 // services
 import userService from "lib/services/user.service";
-import workspaceService from "lib/services/workspace.service";
 // hooks
 import useIssuesProperties from "lib/hooks/useIssuesProperties";
 // types
-import { IIssue, IWorkspaceMember, Properties } from "types";
+import { IIssue, Properties } from "types";
 // lib
 import { requiredAuth } from "lib/auth";
 // constants
-import { USER_ISSUE, WORKSPACE_MEMBERS } from "constants/fetch-keys";
+import { USER_ISSUE } from "constants/fetch-keys";
 import { classNames, replaceUnderscoreIfSnakeCase } from "constants/common";
 import SingleListIssue from "components/common/list-view/single-issue";
 
@@ -39,13 +38,6 @@ const MyIssues: NextPage = () => {
   const { data: myIssues } = useSWR<IIssue[]>(
     user && workspaceSlug ? USER_ISSUE(workspaceSlug as string) : null,
     user && workspaceSlug ? () => userService.userIssues(workspaceSlug as string) : null
-  );
-
-  console.log(myIssues);
-
-  const { data: people } = useSWR<IWorkspaceMember[]>(
-    workspaceSlug ? WORKSPACE_MEMBERS : null,
-    workspaceSlug ? () => workspaceService.workspaceMembers(workspaceSlug as string) : null
   );
 
   // FIXME: remove this hard-coded value

@@ -15,7 +15,7 @@ import issuesServices from "lib/services/issues.service";
 import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
 // ui
-import { Button, Loader, TextArea } from "ui";
+import { Button, Input, Loader, TextArea } from "ui";
 // icons
 import { EllipsisHorizontalIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // components
@@ -66,6 +66,7 @@ const defaultValues: Partial<IIssue> = {
   project: "",
   name: "",
   description: "",
+  description_html: "<p></p>",
   state: "",
   cycle: null,
   priority: null,
@@ -113,15 +114,38 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
     setError,
     control,
     watch,
+    setValue,
   } = useForm<IIssue>({
     defaultValues,
+    mode: "all",
+    reValidateMode: "onChange",
   });
 
+  useEffect(() => {
+    if (data) setIsOpen(true);
+  }, [data, setIsOpen]);
+
+  useEffect(() => {
+    if (projects && projects.length > 0)
+      setActiveProject(projects?.find((p) => p.id === projectId)?.id ?? projects?.[0].id ?? null);
+  }, [projectId, projects]);
+
+  useEffect(() => {
+    reset({
+      ...defaultValues,
+      ...watch(),
+      ...data,
+      project: activeProject ?? "",
+      ...prePopulateData,
+    });
+  }, [data, prePopulateData, reset, activeProject, isOpen, watch]);
+
+  useEffect(() => {
+    return () => setMostSimilarIssue(undefined);
+  }, []);
+
   const resetForm = () => {
-    const timeout = setTimeout(() => {
-      reset(defaultValues);
-      clearTimeout(timeout);
-    }, 500);
+    reset({ ...defaultValues, project: activeProject ?? undefined });
   };
 
   const handleClose = () => {
@@ -267,29 +291,6 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
     }
   };
 
-  useEffect(() => {
-    if (data) setIsOpen(true);
-  }, [data, setIsOpen]);
-
-  useEffect(() => {
-    if (projects && projects.length > 0)
-      setActiveProject(projects?.find((p) => p.id === projectId)?.id ?? projects?.[0].id ?? null);
-  }, [projectId, projects]);
-
-  useEffect(() => {
-    reset({
-      ...defaultValues,
-      ...watch(),
-      ...data,
-      project: activeProject ?? "",
-      ...prePopulateData,
-    });
-  }, [data, prePopulateData, reset, activeProject, isOpen, watch]);
-
-  useEffect(() => {
-    return () => setMostSimilarIssue(undefined);
-  }, []);
-
   return (
     <>
       {projectId && (
@@ -366,7 +367,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                             </span>
                             <XMarkIcon
                               className="h-3 w-3 cursor-pointer"
-                              onClick={() => reset({ parent: null })}
+                              onClick={() => setValue("parent", null)}
                             />
                           </div>
                         </div>
@@ -374,11 +375,10 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                       <div className="space-y-3">
                         <div className="mt-2 space-y-3">
                           <div>
-                            <TextArea
+                            <Input
                               id="name"
-                              label="Name"
+                              label="Title"
                               name="name"
-                              rows={1}
                               onChange={(e) => {
                                 const value = e.target.value;
                                 const similarIssue = issues?.results.find(
@@ -387,12 +387,16 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                                 setMostSimilarIssue(similarIssue?.id);
                               }}
                               className="resize-none"
-                              placeholder="Enter name"
+                              placeholder="Enter title"
                               autoComplete="off"
                               error={errors.name}
                               register={register}
                               validations={{
                                 required: "Name is required",
+                                maxLength: {
+                                  value: 255,
+                                  message: "Name should be less than 255 characters",
+                                },
                               }}
                             />
                             {mostSimilarIssue && (
@@ -445,6 +449,9 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                               render={({ field }) => (
                                 <RemirrorRichTextEditor
                                   {...field}
+                                  onChangeHTML={(val) => {
+                                    setValue("description_html", val);
+                                  }}
                                   placeholder="Enter Your Text..."
                                 />
                               )}
@@ -511,7 +518,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                                           <button
                                             type="button"
                                             className="whitespace-nowrap p-2 text-left text-xs text-gray-900 hover:bg-indigo-50"
-                                            onClick={() => reset({ parent: null })}
+                                            onClick={() => setValue("parent", null)}
                                           >
                                             Remove parent issue
                                           </button>

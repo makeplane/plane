@@ -1,6 +1,5 @@
 # Django imports
 from django.db import models
-from django.template.defaultfilters import slugify
 from django.conf import settings
 
 # Module imports
@@ -31,15 +30,11 @@ class Workspace(BaseModel):
         return self.name
 
     class Meta:
-        unique_together = ["name", "owner"]
         verbose_name = "Workspace"
         verbose_name_plural = "Workspaces"
         db_table = "workspaces"
         ordering = ("-created_at",)
 
-    def save(self, *args, **kwargs):
-        self.slug = slugify(self.name)
-        return super().save(*args, **kwargs)
 
 
 class WorkspaceMember(BaseModel):

@@ -43,14 +43,6 @@ const SendWorkspaceInvitationModal: React.FC<Props> = ({
 }) => {
   const { setToastAlert } = useToast();
 
-  const handleClose = () => {
-    setIsOpen(false);
-    const timeout = setTimeout(() => {
-      reset(defaultValues);
-      clearTimeout(timeout);
-    }, 500);
-  };
-
   const {
     register,
     formState: { errors, isSubmitting },
@@ -62,6 +54,11 @@ const SendWorkspaceInvitationModal: React.FC<Props> = ({
     mode: "all",
   });
 
+  const handleClose = () => {
+    setIsOpen(false);
+    reset(defaultValues);
+  };
+
   const onSubmit = async (formData: IWorkspaceMemberInvitation) => {
     await workspaceService
       .inviteWorkspace(workspace_slug, { emails: [formData] })
@@ -69,11 +66,10 @@ const SendWorkspaceInvitationModal: React.FC<Props> = ({
         console.log(res);
         setIsOpen(false);
         handleClose();
-        mutate(
-          WORKSPACE_INVITATIONS,
-          (prevData: any) => [{ ...res, ...formData }, ...(prevData ?? [])],
-          false
-        );
+        mutate(WORKSPACE_INVITATIONS, (prevData: any) => [
+          { ...res, ...formData },
+          ...(prevData ?? []),
+        ]);
         setToastAlert({
           title: "Success",
           type: "success",

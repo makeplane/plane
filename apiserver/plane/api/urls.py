@@ -151,7 +151,7 @@ urlpatterns = [
     ),
     ## Workspaces ##
     path(
-        "workspace-name-check/",
+        "workspace-slug-check/",
         WorkSpaceAvailabilityCheckEndpoint.as_view(),
         name="workspace-availability",
     ),

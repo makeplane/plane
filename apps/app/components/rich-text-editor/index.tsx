@@ -26,6 +26,7 @@ import {
   EditorComponent,
   OnChangeJSON,
   TableComponents,
+  OnChangeHTML,
 } from "@remirror/react";
 import { tableControllerPluginKey, TableExtension } from "@remirror/extension-react-tables";
 // components`
@@ -33,12 +34,14 @@ import { RichTextToolbar } from "./toolbar";
 import { MentionAutoComplete } from "./mention-autocomplete";
 import fileService from "lib/services/file.service";
 import { Spinner } from "ui";
+import { useRouter } from "next/router";
 
 export interface IRemirrorRichTextEditor {
   placeholder?: string;
   mentions?: any[];
   tags?: any[];
   onChange: (value: any) => void;
+  onChangeHTML: (value: any) => void;
   value?: any;
   showToolbar?: boolean;
 }
@@ -48,10 +51,14 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = ({
   mentions = [],
   tags = [],
   onChange,
+  onChangeHTML,
   value = "",
   showToolbar = true,
 }) => {
   const [imageLoader, setImageLoader] = useState(false);
+
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
 
   // remirror error handler
   const onError: InvalidContentHandler = useCallback(
@@ -75,9 +82,11 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = ({
       return [
         () => {
           return new Promise(async (resolve, reject) => {
-            const imageUrl = await fileService.uploadFile(formData).then((response) => {
-              return response.asset;
-            });
+            const imageUrl = await fileService
+              .uploadFile(workspaceSlug as string, formData)
+              .then((response) => {
+                return response.asset;
+              });
 
             resolve({
               align: "left",
@@ -155,6 +164,7 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = ({
           {/* <TableComponents /> */}
           <MentionAutoComplete mentions={mentions} tags={tags} />
           <OnChangeJSON onChange={onChange} />
+          <OnChangeHTML onChange={onChangeHTML} />
         </div>
       </Remirror>
     </div>

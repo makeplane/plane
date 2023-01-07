@@ -109,6 +109,7 @@ const EmojiIconPicker: React.FC<Props> = ({ label, value, onChange }) => {
                           onClick={() => {
                             onChange(emoji);
                             saveRecentEmoji(emoji);
+                            setIsOpen(false);
                           }}
                         >
                           {String.fromCodePoint(parseInt(emoji))}

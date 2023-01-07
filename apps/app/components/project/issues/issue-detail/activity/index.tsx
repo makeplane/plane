@@ -55,7 +55,7 @@ const activityDetails: {
     icon: <ChatBubbleBottomCenterTextIcon className="h-4 w-4" />,
   },
   description: {
-    message: "updated the description of the issue.",
+    message: "updated the description.",
     icon: <ChatBubbleBottomCenterTextIcon className="h-4 w-4" />,
   },
   target_date: {
@@ -138,7 +138,7 @@ const IssueActivitySection: React.FC<{
                       <span className="font-medium">
                         {activity.verb === "created" ? (
                           <span className="text-gray-600">created this issue.</span>
-                        ) : activity.field === "state" ? (
+                        ) : activity.field === "description" ? null : activity.field === "state" ? (
                           activity.new_value ? (
                             addSpaceIfCamelCase(activity.new_value)
                           ) : (

@@ -1,17 +1,20 @@
-import React, { useEffect } from "react";
-// hooks
-import useUser from "lib/hooks/useUser";
+import React from "react";
+
+import Link from "next/link";
+import { useRouter } from "next/router";
+
 // layouts
 import Container from "layouts/container";
 import Header from "layouts/navbar/header";
 import Sidebar from "layouts/navbar/main-siderbar";
 import SettingsSidebar from "layouts/navbar/settings-sidebar";
+// components
+import { NotAuthorizedView } from "components/core";
+import CommandPalette from "components/command-palette";
+// ui
+import { Button } from "ui";
 // types
 import { Meta } from "./types";
-import { useRouter } from "next/router";
-import { NotAuthorizedView } from "components/core";
-import Link from "next/link";
-import { Button } from "ui";
 
 type Props = {
   meta?: Meta;
@@ -96,50 +99,57 @@ const SettingsLayout: React.FC<Props> = (props) => {
     query: { workspaceSlug, projectId },
   } = useRouter();
 
-  if (!isMember && !isOwner)
-    return (
-      <NotAuthorizedView
-        actionButton={
-          (isViewer || isGuest) && projectId ? (
-            <Link href={`/${workspaceSlug}/projects/${projectId}/issues`}>
-              <Button size="sm" theme="secondary">
-                Go to Issues
-              </Button>
-            </Link>
-          ) : (
-            workspaceSlug && (
-              <Link href={`/${workspaceSlug}`}>
-                <Button size="sm" theme="secondary">
-                  Go to workspace
-                </Button>
-              </Link>
-            )
-          )
-        }
-      />
-    );
-
   return (
     <Container meta={meta}>
       <div className="flex h-screen w-full overflow-x-hidden">
         <Sidebar />
-        <SettingsSidebar
-          links={
-            type === "workspace"
-              ? workspaceLinks(workspaceSlug as string)
-              : sidebarLinks(workspaceSlug as string, projectId as string)
-          }
-        />
-        <main className="flex h-screen w-full min-w-0 flex-col overflow-y-auto">
-          {noHeader ? null : <Header breadcrumbs={breadcrumbs} left={left} right={right} />}
-          <div
-            className={`w-full flex-grow ${noPadding ? "" : "px-16 pt-10 pb-5"} ${
-              bg === "primary" ? "bg-primary" : bg === "secondary" ? "bg-secondary" : "bg-primary"
-            }`}
-          >
-            {children}
-          </div>
-        </main>
+        <CommandPalette />
+        {isMember || isOwner ? (
+          <>
+            <SettingsSidebar
+              links={
+                type === "workspace"
+                  ? workspaceLinks(workspaceSlug as string)
+                  : sidebarLinks(workspaceSlug as string, projectId as string)
+              }
+            />
+            <main className="flex h-screen w-full min-w-0 flex-col overflow-y-auto">
+              {noHeader ? null : <Header breadcrumbs={breadcrumbs} left={left} right={right} />}
+              <div
+                className={`w-full flex-grow ${noPadding ? "" : "px-16 pt-10 pb-5"} ${
+                  bg === "primary"
+                    ? "bg-primary"
+                    : bg === "secondary"
+                    ? "bg-secondary"
+                    : "bg-primary"
+                }`}
+              >
+                {children}
+              </div>
+            </main>
+          </>
+        ) : (
+          <NotAuthorizedView
+            actionButton={
+              (isViewer || isGuest) && projectId ? (
+                <Link href={`/${workspaceSlug}/projects/${projectId}/issues`}>
+                  <Button size="sm" theme="secondary">
+                    Go to Issues
+                  </Button>
+                </Link>
+              ) : (
+                (isViewer || isGuest) &&
+                workspaceSlug && (
+                  <Link href={`/${workspaceSlug}`}>
+                    <Button size="sm" theme="secondary">
+                      Go to workspace
+                    </Button>
+                  </Link>
+                )
+              )
+            }
+          />
+        )}
       </div>
     </Container>
   );
