@@ -43,7 +43,7 @@ const ControlSettings: NextPage<TControlSettingsProps> = (props) => {
     query: { workspaceSlug, projectId },
   } = useRouter();
 
-  const { data: projectDetails, mutate: mutateProjectDetails } = useSWR<IProject>(
+  const { data: projectDetails } = useSWR<IProject>(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
     workspaceSlug && projectId
       ? () => projectService.getProject(workspaceSlug as string, projectId as string)
@@ -66,8 +66,8 @@ const ControlSettings: NextPage<TControlSettingsProps> = (props) => {
     if (projectDetails)
       reset({
         ...projectDetails,
-        default_assignee: projectDetails.default_assignee?.id,
-        project_lead: projectDetails.project_lead?.id,
+        default_assignee: projectDetails.default_assignee?.id ?? projectDetails.default_assignee,
+        project_lead: projectDetails.project_lead?.id ?? projectDetails.project_lead,
         workspace: (projectDetails.workspace as IWorkspace).id,
       });
   }, [projectDetails, reset]);
@@ -104,7 +104,6 @@ const ControlSettings: NextPage<TControlSettingsProps> = (props) => {
           },
           false
         );
-        mutateProjectDetails((prevData) => ({ ...prevData, ...res }));
         setToastAlert({
           title: "Success",
           type: "success",

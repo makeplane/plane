@@ -115,6 +115,8 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
     watch,
   } = useForm<IIssue>({
     defaultValues,
+    mode: "all",
+    reValidateMode: "onChange",
   });
 
   useEffect(() => {
@@ -366,7 +368,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                           <div>
                             <Input
                               id="name"
-                              label="Name"
+                              label="Title"
                               name="name"
                               onChange={(e) => {
                                 const value = e.target.value;
@@ -376,12 +378,16 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                                 setMostSimilarIssue(similarIssue?.id);
                               }}
                               className="resize-none"
-                              placeholder="Enter name"
+                              placeholder="Enter title"
                               autoComplete="off"
                               error={errors.name}
                               register={register}
                               validations={{
                                 required: "Name is required",
+                                maxLength: {
+                                  value: 255,
+                                  message: "Name should be less than 255 characters",
+                                },
                               }}
                             />
                             {mostSimilarIssue && (

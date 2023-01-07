@@ -243,14 +243,14 @@ const SelectBlocked: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
                     </Combobox>
 
                     <div className="flex items-center justify-end gap-2 p-3">
-                      <Button onClick={handleSubmit(onSubmit)} size="sm">
-                        Add selected issues
-                      </Button>
                       <div>
-                        <Button type="button" theme="danger" size="sm" onClick={handleClose}>
+                        <Button type="button" theme="secondary" size="sm" onClick={handleClose}>
                           Close
                         </Button>
                       </div>
+                      <Button onClick={handleSubmit(onSubmit)} size="sm">
+                        Add selected issues
+                      </Button>
                     </div>
                   </form>
                 </Dialog.Panel>

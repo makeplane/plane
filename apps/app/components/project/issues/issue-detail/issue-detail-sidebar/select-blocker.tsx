@@ -197,32 +197,28 @@ const SelectBlocker: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
                                           )
                                         }
                                       >
-                                        {({ active }) => (
-                                          <>
-                                            <div className="flex items-center gap-2">
-                                              <input
-                                                type="checkbox"
-                                                {...register("issue_ids")}
-                                                id={`blocker-issue-${issue.id}`}
-                                                value={issue.id}
-                                              />
-                                              <span
-                                                className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                                                style={{
-                                                  backgroundColor: issue.state_detail.color,
-                                                }}
-                                              />
-                                              <span className="flex-shrink-0 text-xs text-gray-500">
-                                                {
-                                                  issues?.results.find((i) => i.id === issue.id)
-                                                    ?.project_detail?.identifier
-                                                }
-                                                -{issue.sequence_id}
-                                              </span>
-                                              <span>{issue.name}</span>
-                                            </div>
-                                          </>
-                                        )}
+                                        <div className="flex items-center gap-2">
+                                          <input
+                                            type="checkbox"
+                                            {...register("issue_ids")}
+                                            id={`blocker-issue-${issue.id}`}
+                                            value={issue.id}
+                                          />
+                                          <span
+                                            className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                                            style={{
+                                              backgroundColor: issue.state_detail.color,
+                                            }}
+                                          />
+                                          <span className="flex-shrink-0 text-xs text-gray-500">
+                                            {
+                                              issues?.results.find((i) => i.id === issue.id)
+                                                ?.project_detail?.identifier
+                                            }
+                                            -{issue.sequence_id}
+                                          </span>
+                                          <span>{issue.name}</span>
+                                        </div>
                                       </Combobox.Option>
                                     );
                                   }
@@ -247,14 +243,14 @@ const SelectBlocker: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
                     </Combobox>
 
                     <div className="flex items-center justify-end gap-2 p-3">
-                      <Button onClick={handleSubmit(onSubmit)} size="sm">
-                        Add selected issues
-                      </Button>
                       <div>
-                        <Button type="button" theme="danger" size="sm" onClick={handleClose}>
+                        <Button type="button" theme="secondary" size="sm" onClick={handleClose}>
                           Close
                         </Button>
                       </div>
+                      <Button onClick={handleSubmit(onSubmit)} size="sm">
+                        Add selected issues
+                      </Button>
                     </div>
                   </form>
                 </Dialog.Panel>
