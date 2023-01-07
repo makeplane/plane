@@ -34,6 +34,7 @@ import { IIssue, IssueResponse } from "types";
 import { PROJECT_DETAILS, PROJECT_ISSUES_LIST, WORKSPACE_DETAILS } from "constants/fetch-keys";
 // common
 import { debounce } from "constants/common";
+import { useRemirror } from "@remirror/react";
 
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), { ssr: false });
 

@@ -72,16 +72,14 @@ const defaultValues: Partial<IIssue> = {
   labels_list: [],
 };
 
-const CreateUpdateIssuesModal: React.FC<Props> = (props) => {
-  const {
-    isOpen,
-    setIsOpen,
-    data,
-    projectId,
-    prePopulateData,
-    isUpdatingSingleIssue = false,
-  } = props;
-
+const CreateUpdateIssuesModal: React.FC<Props> = ({
+  isOpen,
+  setIsOpen,
+  data,
+  projectId,
+  prePopulateData,
+  isUpdatingSingleIssue = false,
+}) => {
   const [createMore, setCreateMore] = useState(false);
   const [isCycleModalOpen, setIsCycleModalOpen] = useState(false);
   const [isStateModalOpen, setIsStateModalOpen] = useState(false);
@@ -118,29 +116,6 @@ const CreateUpdateIssuesModal: React.FC<Props> = (props) => {
   } = useForm<IIssue>({
     defaultValues,
   });
-
-  useEffect(() => {
-    if (data) setIsOpen(true);
-  }, [data, setIsOpen]);
-
-  useEffect(() => {
-    if (projects && projects.length > 0)
-      setActiveProject(projects?.find((p) => p.id === projectId)?.id ?? projects?.[0].id ?? null);
-  }, [projectId, projects]);
-
-  useEffect(() => {
-    reset({
-      ...defaultValues,
-      ...watch(),
-      ...data,
-      project: activeProject ?? "",
-      ...prePopulateData,
-    });
-  }, [data, prePopulateData, reset, activeProject, isOpen, watch]);
-
-  useEffect(() => {
-    return () => setMostSimilarIssue(undefined);
-  }, []);
 
   const resetForm = () => {
     const timeout = setTimeout(() => {
@@ -185,11 +160,6 @@ const CreateUpdateIssuesModal: React.FC<Props> = (props) => {
             },
             false
           );
-        setToastAlert({
-          title: "Success",
-          type: "success",
-          message: "Issue added to cycle successfully",
-        });
       })
       .catch((err) => {
         console.log(err);
@@ -199,7 +169,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = (props) => {
   const addIssueToModule = async (issueId: string, moduleId: string) => {
     if (!workspaceSlug || !projectId) return;
 
-    modulesService
+    await modulesService
       .addIssuesToModule(workspaceSlug as string, projectId, moduleId as string, {
         issues: [issueId],
       })
@@ -217,6 +187,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = (props) => {
       ...formData,
       target_date: formData.target_date ? renderDateFormat(formData.target_date ?? "") : null,
     };
+
     if (!data) {
       await issuesServices
         .createIssues(workspaceSlug as string, projectId, payload)
@@ -243,7 +214,12 @@ const CreateUpdateIssuesModal: React.FC<Props> = (props) => {
         })
         .catch((err) => {
           Object.keys(err).map((key) => {
-            setError(key as keyof IIssue, { message: err[key].join(", ") });
+            const message = err[key];
+            if (!message) return;
+
+            setError(key as keyof IIssue, {
+              message: Array.isArray(message) ? message.join(", ") : message,
+            });
           });
         });
     } else {
@@ -283,6 +259,29 @@ const CreateUpdateIssuesModal: React.FC<Props> = (props) => {
         });
     }
   };
+
+  useEffect(() => {
+    if (data) setIsOpen(true);
+  }, [data, setIsOpen]);
+
+  useEffect(() => {
+    if (projects && projects.length > 0)
+      setActiveProject(projects?.find((p) => p.id === projectId)?.id ?? projects?.[0].id ?? null);
+  }, [projectId, projects]);
+
+  useEffect(() => {
+    reset({
+      ...defaultValues,
+      ...watch(),
+      ...data,
+      project: activeProject ?? "",
+      ...prePopulateData,
+    });
+  }, [data, prePopulateData, reset, activeProject, isOpen, watch]);
+
+  useEffect(() => {
+    return () => setMostSimilarIssue(undefined);
+  }, []);
 
   return (
     <>

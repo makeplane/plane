@@ -21,7 +21,7 @@ import Logo from "public/onboarding/logo.svg";
 import userService from "lib/services/user.service";
 
 const Onboarding = () => {
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(3);
 
   const [workspace, setWorkspace] = useState();
 

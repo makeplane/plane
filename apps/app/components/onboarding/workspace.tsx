@@ -150,13 +150,13 @@ const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
                       error={errors.name}
                     />
                   </div>
-                  <div className="flex items-center border rounded-md px-3">
+                  <div className="flex items-center rounded-md border px-3">
                     <span className="text-sm text-slate-600">{"https://app.plane.so/"}</span>
                     <input
                       type="text"
                       value={
                         watch("name")
-                          ? `${watch("name").toLocaleLowerCase().replace(" ", "-")}`
+                          ? `${watch("name").toLocaleLowerCase().replace(/ /g, "-")}`
                           : ""
                       }
                       autoComplete="off"
@@ -164,7 +164,7 @@ const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
                         register("slug", {
                           required: "Workspace URL is required",
                         }))}
-                      className="block rounded-md bg-transparent text-sm focus:outline-none rounded-md w-full  py-2"
+                      className="block w-full rounded-md bg-transparent py-2 text-sm  focus:outline-none"
                     />
                   </div>
                   <div>
@@ -207,61 +207,63 @@ const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
           <Tab.Panel>
             <div className="space-y-8 p-8">
               <div className="divide-y">
-                {invitations && invitations.length > 0
-                  ? invitations.map((invitation) => (
-                      <div key={invitation.id}>
-                        <label
-                          className={`group relative flex cursor-pointer items-start space-x-3 border-2 border-transparent py-4`}
-                          htmlFor={invitation.id}
-                        >
-                          <div className="flex-shrink-0">
-                            <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg">
-                              {invitation.workspace.logo && invitation.workspace.logo !== "" ? (
-                                <Image
-                                  src={invitation.workspace.logo}
-                                  height="100%"
-                                  width="100%"
-                                  className="rounded"
-                                  alt={invitation.workspace.name}
-                                />
-                              ) : (
-                                <span className="flex h-full w-full items-center justify-center rounded bg-gray-500 p-4 uppercase text-white">
-                                  {invitation.workspace.name.charAt(0)}
-                                </span>
-                              )}
-                            </span>
+                {invitations && invitations.length > 0 ? (
+                  invitations.map((invitation) => (
+                    <div key={invitation.id}>
+                      <label
+                        className={`group relative flex cursor-pointer items-start space-x-3 border-2 border-transparent py-4`}
+                        htmlFor={invitation.id}
+                      >
+                        <div className="flex-shrink-0">
+                          <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg">
+                            {invitation.workspace.logo && invitation.workspace.logo !== "" ? (
+                              <Image
+                                src={invitation.workspace.logo}
+                                height="100%"
+                                width="100%"
+                                className="rounded"
+                                alt={invitation.workspace.name}
+                              />
+                            ) : (
+                              <span className="flex h-full w-full items-center justify-center rounded bg-gray-500 p-4 uppercase text-white">
+                                {invitation.workspace.name.charAt(0)}
+                              </span>
+                            )}
+                          </span>
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="text-sm font-medium text-gray-900">
+                            {invitation.workspace.name}
                           </div>
-                          <div className="min-w-0 flex-1">
-                            <div className="text-sm font-medium text-gray-900">
-                              {invitation.workspace.name}
-                            </div>
-                            <p className="text-sm text-gray-500">
-                              Invited by {invitation.workspace.owner.first_name}
-                            </p>
-                          </div>
-                          <div className="flex-shrink-0 self-center">
-                            <input
-                              id={invitation.id}
-                              aria-describedby="workspaces"
-                              name={invitation.id}
-                              checked={invitationsRespond.includes(invitation.id)}
-                              value={invitation.workspace.name}
-                              onChange={(e) => {
-                                handleInvitation(
-                                  invitation,
-                                  invitationsRespond.includes(invitation.id)
-                                    ? "withdraw"
-                                    : "accepted"
-                                );
-                              }}
-                              type="checkbox"
-                              className="h-4 w-4 rounded border-gray-300 text-theme focus:ring-indigo-500"
-                            />
-                          </div>
-                        </label>
-                      </div>
-                    ))
-                  : "No invitations"}
+                          <p className="text-sm text-gray-500">
+                            Invited by {invitation.workspace.owner.first_name}
+                          </p>
+                        </div>
+                        <div className="flex-shrink-0 self-center">
+                          <input
+                            id={invitation.id}
+                            aria-describedby="workspaces"
+                            name={invitation.id}
+                            checked={invitationsRespond.includes(invitation.id)}
+                            value={invitation.workspace.name}
+                            onChange={(e) => {
+                              handleInvitation(
+                                invitation,
+                                invitationsRespond.includes(invitation.id) ? "withdraw" : "accepted"
+                              );
+                            }}
+                            type="checkbox"
+                            className="h-4 w-4 rounded border-gray-300 text-theme focus:ring-indigo-500"
+                          />
+                        </div>
+                      </label>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center">
+                    <h3 className="text-gray-400">You have no invitations</h3>
+                  </div>
+                )}
               </div>
 
               <div className="mx-auto h-1/4 lg:w-1/2">
