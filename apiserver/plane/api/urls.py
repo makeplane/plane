@@ -603,7 +603,7 @@ urlpatterns = [
     ## IssueProperty Ebd
     ## File Assets
     path(
-        "file-assets/",
+        "workspaces/<str:slug>/file-assets/",
         FileAssetEndpoint.as_view(),
         name="File Assets",
     ),
