@@ -1,17 +1,20 @@
-import React, { useEffect } from "react";
-// hooks
-import useUser from "lib/hooks/useUser";
+import React from "react";
+
+import Link from "next/link";
+import { useRouter } from "next/router";
+
 // layouts
 import Container from "layouts/container";
 import Header from "layouts/navbar/header";
 import Sidebar from "layouts/navbar/main-siderbar";
 import SettingsSidebar from "layouts/navbar/settings-sidebar";
+// components
+import { NotAuthorizedView } from "components/core";
+import CommandPalette from "components/command-palette";
+// ui
+import { Button } from "ui";
 // types
 import { Meta } from "./types";
-import { useRouter } from "next/router";
-import { NotAuthorizedView } from "components/core";
-import Link from "next/link";
-import { Button } from "ui";
 
 type Props = {
   meta?: Meta;
@@ -123,6 +126,7 @@ const SettingsLayout: React.FC<Props> = (props) => {
     <Container meta={meta}>
       <div className="flex h-screen w-full overflow-x-hidden">
         <Sidebar />
+        <CommandPalette />
         <SettingsSidebar
           links={
             type === "workspace"
