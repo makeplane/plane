@@ -8,16 +8,12 @@ import { KeyedMutator } from "swr";
 import { useForm } from "react-hook-form";
 // services
 import issuesServices from "lib/services/issues.service";
-// hooks
-import useUser from "lib/hooks/useUser";
 // components
 import CommentCard from "components/project/issues/issue-detail/comment/issue-comment-card";
 // ui
-import { TextArea, Button, Spinner } from "ui";
+import { TextArea, Spinner } from "ui";
 // types
 import type { IIssueComment } from "types";
-// fetch-keys
-import { PROJECT_ISSUES_COMMENTS } from "constants/fetch-keys";
 
 const defaultValues: Partial<IIssueComment> = {
   comment: "",
@@ -106,7 +102,7 @@ const IssueCommentSection: React.FC<{
             ))}
           </div>
         ) : (
-          <p className="text-sm">No comments yet. Be the first to comment.</p>
+          <p className="text-xs text-gray-400">No comments yet.</p>
         )
       ) : (
         <div className="flex w-full justify-center">

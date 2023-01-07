@@ -122,8 +122,16 @@ const IssueActivitySection: React.FC<{
                         {" "}
                         {activity.field === "labels"
                           ? activity.new_value !== ""
-                            ? "add a new label"
+                            ? "added a new label"
                             : "removed the label"
+                          : activity.field === "blocking"
+                          ? activity.new_value !== ""
+                            ? "marked this issue is blocking"
+                            : "removed the issue from blocking"
+                          : activity.field === "blocks"
+                          ? activity.new_value !== ""
+                            ? "marked this issue being blocked by"
+                            : "removed blocker"
                           : activityDetails[activity.field as keyof typeof activityDetails]
                               ?.message}{" "}
                       </span>
@@ -136,7 +144,9 @@ const IssueActivitySection: React.FC<{
                           ) : (
                             "None"
                           )
-                        ) : activity.field === "labels" ? (
+                        ) : activity.field === "labels" ||
+                          activity.field === "blocking" ||
+                          activity.field === "blocks" ? (
                           activity.new_value !== "" ? (
                             activity.new_value
                           ) : (

@@ -61,11 +61,10 @@ const BoardView: React.FC<Props> = ({
     (result: DropResult) => {
       if (!result.destination) return;
       const { source, destination, type } = result;
+      const draggedItem = groupedByIssues[source.droppableId][source.index];
 
       if (destination.droppableId === "trashBox") {
-        const removedItem = groupedByIssues[source.droppableId][source.index];
-
-        setIssueDeletionData(removedItem);
+        setIssueDeletionData(draggedItem);
         setIsIssueDeletionOpen(true);
       } else {
         if (type === "state") {
@@ -107,20 +106,18 @@ const BoardView: React.FC<Props> = ({
           if (source.droppableId !== destination.droppableId) {
             const sourceGroup = source.droppableId; // source group id
             const destinationGroup = destination.droppableId; // destination group id
-            if (!sourceGroup || !destinationGroup) return;
 
-            // removed/dragged item
-            const removedItem = groupedByIssues[source.droppableId][source.index];
+            if (!sourceGroup || !destinationGroup) return;
 
             if (selectedGroup === "priority") {
               // update the removed item for mutation
-              removedItem.priority = destinationGroup;
+              draggedItem.priority = destinationGroup;
 
               // patch request
               issuesServices.patchIssue(
                 workspaceSlug as string,
                 projectId as string,
-                removedItem.id,
+                draggedItem.id,
                 {
                   priority: destinationGroup,
                 }
@@ -131,14 +128,14 @@ const BoardView: React.FC<Props> = ({
 
               // update the removed item for mutation
               if (!destinationStateId || !destinationState) return;
-              removedItem.state = destinationStateId;
-              removedItem.state_detail = destinationState;
+              draggedItem.state = destinationStateId;
+              draggedItem.state_detail = destinationState;
 
               // patch request
               issuesServices.patchIssue(
                 workspaceSlug as string,
                 projectId as string,
-                removedItem.id,
+                draggedItem.id,
                 {
                   state: destinationStateId,
                 }
@@ -150,16 +147,18 @@ const BoardView: React.FC<Props> = ({
                 PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
                 (prevData) => {
                   if (!prevData) return prevData;
+
                   const updatedIssues = prevData.results.map((issue) => {
-                    if (issue.id === removedItem.id) {
+                    if (issue.id === draggedItem.id)
                       return {
-                        ...removedItem,
+                        ...draggedItem,
                         state_detail: destinationState,
                         state: destinationStateId,
                       };
-                    }
+
                     return issue;
                   });
+
                   return {
                     ...prevData,
                     results: updatedIssues,
@@ -168,11 +167,6 @@ const BoardView: React.FC<Props> = ({
                 false
               );
             }
-
-            // remove item from the source group
-            groupedByIssues[source.droppableId].splice(source.index, 1);
-            // add item to the destination group
-            groupedByIssues[destination.droppableId].splice(destination.index, 0, removedItem);
           }
         }
       }
