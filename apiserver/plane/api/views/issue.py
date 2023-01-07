@@ -264,7 +264,7 @@ class IssueActivityEndpoint(BaseAPIView):
 
             result_list = sorted(
                 chain(issue_activities, issue_comments),
-                key=lambda instance: instance.created_at,
+                key=lambda instance: instance["created_at"],
             )
 
             serializer = IssueActivitySerializer(result_list, many=True)
