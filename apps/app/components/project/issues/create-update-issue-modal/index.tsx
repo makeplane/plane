@@ -66,6 +66,7 @@ const defaultValues: Partial<IIssue> = {
   project: "",
   name: "",
   description: "",
+  description_html: "<p></p>",
   state: "",
   cycle: null,
   priority: null,
@@ -113,6 +114,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
     setError,
     control,
     watch,
+    setValue,
   } = useForm<IIssue>({
     defaultValues,
     mode: "all",
@@ -358,7 +360,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                             </span>
                             <XMarkIcon
                               className="h-3 w-3 cursor-pointer"
-                              onClick={() => reset({ parent: null })}
+                              onClick={() => setValue("parent", null)}
                             />
                           </div>
                         </div>
@@ -440,6 +442,9 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                               render={({ field }) => (
                                 <RemirrorRichTextEditor
                                   {...field}
+                                  onChangeHTML={(val) => {
+                                    setValue("description_html", val);
+                                  }}
                                   placeholder="Enter Your Text..."
                                 />
                               )}
@@ -506,7 +511,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                                           <button
                                             type="button"
                                             className="whitespace-nowrap p-2 text-left text-xs text-gray-900 hover:bg-indigo-50"
-                                            onClick={() => reset({ parent: null })}
+                                            onClick={() => setValue("parent", null)}
                                           >
                                             Remove parent issue
                                           </button>

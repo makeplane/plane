@@ -20,7 +20,7 @@ export const USER_ISSUES_ENDPOINT = (workspaceSlug: string) =>
 export const USER_WORKSPACES = "/api/users/me/workspaces";
 
 // s3 file url
-export const S3_URL = `/api/file-assets/`;
+export const S3_URL = (workspaceSlug: string) => `/api/workspaces/${workspaceSlug}/file-assets/`;
 
 // LIST USER INVITATIONS ---- RESPOND INVITATIONS IN BULK
 export const USER_WORKSPACE_INVITATIONS = "/api/users/me/invitations/workspaces/";
@@ -37,7 +37,7 @@ export const JOIN_PROJECT = (workspaceSlug: string) =>
 // workspaces
 export const WORKSPACES_ENDPOINT = "/api/workspaces/";
 export const WORKSPACE_DETAIL = (workspaceSlug: string) => `/api/workspaces/${workspaceSlug}/`;
-export const WORKSPACE_NAME_CHECK = (name: string) => `/api/workspace-name-check/?name=${name}`;
+export const WORKSPACE_SLUG_CHECK = (slug: string) => `/api/workspace-slug-check/?slug=${slug}`;
 
 export const INVITE_WORKSPACE = (workspaceSlug: string) =>
   `/api/workspaces/${workspaceSlug}/invite/`;

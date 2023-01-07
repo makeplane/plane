@@ -40,7 +40,6 @@ import {
 } from "constants/fetch-keys";
 // common
 import { debounce } from "constants/common";
-import { useRemirror } from "@remirror/react";
 
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), { ssr: false });
 
@@ -341,6 +340,11 @@ const IssueDetail: NextPage = () => {
                           handleSubmit(submitChanges)();
                         }, 5000)();
                       }}
+                      onChangeHTML={(val) => {
+                        debounce(() => {
+                          submitChanges({ description_html: val });
+                        }, 5000)();
+                      }}
                       placeholder="Enter Your Text..."
                     />
                   )}
@@ -464,16 +468,10 @@ const IssueDetail: NextPage = () => {
                       Add an existing issue
                     </CustomMenu.MenuItem>
                   </CustomMenu>
-                  // <Menu as="div" className="relative inline-block">
-                  //   <Menu.Button className="flex items-center gap-1 rounded px-2 py-1 text-xs font-medium hover:bg-gray-100">
-                  //     <PlusIcon className="h-3 w-3" />
-                  //     Add sub-issue
-                  //   </Menu.Button>
-                  // </Menu>
                 )}
               </div>
             </div>
-            <div className="space-y-5 rounded-lg bg-secondary pt-3">
+            <div className="space-y-5 bg-secondary pt-3">
               <h3 className="text-lg">Comments/Activity</h3>
               <IssueCommentSection comments={comments || []} mutate={mutateIssueComments} />
               <IssueActivitySection issueActivities={issueActivities || []} />

@@ -170,7 +170,7 @@ const ListView: React.FC<Props> = ({
                             return (
                               <div
                                 key={issue.id}
-                                className="flex items-center justify-between gap-2 rounded px-4 py-3 text-sm"
+                                className="flex items-center justify-between gap-2 px-4 py-3 text-sm"
                               >
                                 <div className="flex items-center gap-2">
                                   <span

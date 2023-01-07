@@ -13,7 +13,7 @@ import {
   USER_WORKSPACE_INVITATIONS,
   LAST_ACTIVE_WORKSPACE_AND_PROJECTS,
   WORKSPACE_MEMBER_ME,
-  WORKSPACE_NAME_CHECK,
+  WORKSPACE_SLUG_CHECK,
 } from "constants/api-routes";
 // services
 import APIService from "lib/services/api.service";
@@ -222,8 +222,8 @@ class WorkspaceService extends APIService {
       });
   }
 
-  async workspaceNameCheck(name: string): Promise<any> {
-    return this.get(WORKSPACE_NAME_CHECK(name))
+  async workspaceSlugCheck(slug: string): Promise<any> {
+    return this.get(WORKSPACE_SLUG_CHECK(slug))
       .then((response) => {
         return response?.data;
       })
