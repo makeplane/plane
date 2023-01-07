@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 // next
 import Link from "next/link";
 import dynamic from "next/dynamic";
@@ -125,7 +125,9 @@ const IssueDetail: NextPage = () => {
     issues?.results.filter((i) => i.parent === issueDetail.parent && i.id !== issueId);
 
   useEffect(() => {
-    if (issueDetail)
+    if (issueDetail) {
+      mutateIssueActivities();
+      mutateIssueComments();
       reset({
         ...issueDetail,
         blockers_list:
@@ -139,7 +141,8 @@ const IssueDetail: NextPage = () => {
         labels_list: issueDetail.labels_list ?? issueDetail.labels,
         labels: issueDetail.labels_list ?? issueDetail.labels,
       });
-  }, [issueDetail, reset]);
+    }
+  }, [issueDetail, reset, mutateIssueActivities, mutateIssueComments]);
 
   const submitChanges = useCallback(
     (formData: Partial<IIssue>) => {
@@ -204,6 +207,14 @@ const IssueDetail: NextPage = () => {
         });
     }
   };
+
+  const updateState = useMemo(
+    () =>
+      debounce(() => {
+        handleSubmit(submitChanges)();
+      }, 5000),
+    [handleSubmit, submitChanges]
+  );
 
   return (
     <AppLayout
@@ -337,9 +348,7 @@ const IssueDetail: NextPage = () => {
                       value={value}
                       onChange={(val) => {
                         onChange(val);
-                        debounce(() => {
-                          handleSubmit(submitChanges)();
-                        }, 5000)();
+                        updateState();
                       }}
                       placeholder="Enter Your Text..."
                     />

@@ -55,7 +55,7 @@ const activityDetails: {
     icon: <ChatBubbleBottomCenterTextIcon className="h-4 w-4" />,
   },
   description: {
-    message: "set the description to",
+    message: "updated the description of the issue.",
     icon: <ChatBubbleBottomCenterTextIcon className="h-4 w-4" />,
   },
   target_date: {
@@ -146,6 +146,8 @@ const IssueActivitySection: React.FC<{
                           activity.old_value
                         ) : activity.field === "target_date" ? (
                           renderShortNumericDateFormat(activity.new_value as string)
+                        ) : activity.field === "description" ? (
+                          ""
                         ) : (
                           activity.new_value ?? "None"
                         )}
