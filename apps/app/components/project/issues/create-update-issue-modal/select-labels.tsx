@@ -74,7 +74,7 @@ const SelectLabels: React.FC<Props> = ({ control }) => {
         <CustomListbox
           title="Labels"
           options={issueLabels?.map((label) => {
-            return { value: label.id, display: label.name };
+            return { value: label.id, display: label.name, color: label.colour };
           })}
           value={value}
           optionsFontsize="sm"

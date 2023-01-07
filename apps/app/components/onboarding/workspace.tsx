@@ -111,22 +111,21 @@ const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
 
   return (
     <div className="grid w-full place-items-center">
-      <Tab.Group as="div" className="w-full rounded-lg bg-white md:w-2/5">
-        <Tab.List as="div" className="grid grid-cols-2">
+      <Tab.Group as="div" className="w-full rounded-lg bg-white p-8 md:w-2/5">
+        <Tab.List
+          as="div"
+          className="grid grid-cols-2 items-center gap-2 rounded-lg bg-gray-100 p-2 text-sm"
+        >
           <Tab
-            as="button"
-            type="button"
             className={({ selected }) =>
-              `${selected ? "border-b-2 border-gray-900 text-gray-900" : "text-gray-500"} py-4`
+              `rounded-lg px-6 py-2 ${selected ? "bg-gray-300" : "hover:bg-gray-200"}`
             }
           >
             New workspace
           </Tab>
           <Tab
-            as="button"
-            type="button"
             className={({ selected }) =>
-              `${selected ? "border-b-2 border-gray-900 text-gray-900" : "text-gray-400"} py-4`
+              `rounded-lg px-6 py-2 ${selected ? "bg-gray-300" : "hover:bg-gray-200"}`
             }
           >
             Invited workspaces
@@ -134,8 +133,8 @@ const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
         </Tab.List>
         <Tab.Panels>
           <Tab.Panel>
-            <form className="space-y-8" onSubmit={handleSubmit(handleCreateWorkspace)}>
-              <div className="w-full space-y-4 bg-white p-8">
+            <form className="mt-4 space-y-8" onSubmit={handleSubmit(handleCreateWorkspace)}>
+              <div className="w-full space-y-4 bg-white">
                 <div className="grid grid-cols-1 gap-4">
                   <div>
                     <Input
@@ -205,7 +204,7 @@ const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
             </form>
           </Tab.Panel>
           <Tab.Panel>
-            <div className="space-y-8 p-8">
+            <div className="mt-4 space-y-8">
               <div className="divide-y">
                 {invitations && invitations.length > 0 ? (
                   invitations.map((invitation) => (

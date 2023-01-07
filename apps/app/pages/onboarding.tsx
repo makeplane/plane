@@ -21,7 +21,7 @@ import Logo from "public/onboarding/logo.svg";
 import userService from "lib/services/user.service";
 
 const Onboarding = () => {
-  const [step, setStep] = useState(3);
+  const [step, setStep] = useState(1);
 
   const [workspace, setWorkspace] = useState();
 
@@ -46,7 +46,7 @@ const Onboarding = () => {
             )}
           </div>
         ) : (
-          <div className="h-3/4 w-full space-y-4 rounded-lg bg-white p-8 text-center md:w-1/2">
+          <div className="h-3/5 w-full rounded-lg bg-white px-8 py-10 text-center md:w-1/2">
             <div className="h-3/4 w-full">
               {step === 4 ? (
                 <Welcome />
@@ -60,7 +60,7 @@ const Onboarding = () => {
                 <CommandMenu />
               )}
             </div>
-            <div className="mx-auto h-1/4 lg:w-1/2">
+            <div className="mx-auto flex h-1/4 items-end lg:w-1/2">
               <button
                 type="button"
                 className="w-full rounded-md bg-gray-200 px-4 py-2 text-sm"
