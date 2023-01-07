@@ -29,9 +29,15 @@ import { Loader, TextArea, HeaderButton, Breadcrumbs, CustomMenu } from "ui";
 // icons
 import { ChevronLeftIcon, ChevronRightIcon, PlusIcon } from "@heroicons/react/24/outline";
 // types
-import { IIssue, IssueResponse } from "types";
+import { IIssue, IssueResponse, IIssueComment, IIssueActivity } from "types";
 // fetch-keys
-import { PROJECT_DETAILS, PROJECT_ISSUES_LIST, WORKSPACE_DETAILS } from "constants/fetch-keys";
+import {
+  PROJECT_DETAILS,
+  PROJECT_ISSUES_LIST,
+  WORKSPACE_DETAILS,
+  PROJECT_ISSUES_ACTIVITY,
+  PROJECT_ISSUES_COMMENTS,
+} from "constants/fetch-keys";
 // common
 import { debounce } from "constants/common";
 import { useRemirror } from "@remirror/react";
@@ -79,6 +85,30 @@ const IssueDetail: NextPage = () => {
       : null,
     workspaceSlug && projectId
       ? () => issuesServices.getIssues(workspaceSlug as string, projectId as string)
+      : null
+  );
+
+  const { data: issueActivities, mutate: mutateIssueActivities } = useSWR<IIssueActivity[]>(
+    workspaceSlug && projectId && issueId ? PROJECT_ISSUES_ACTIVITY : null,
+    workspaceSlug && projectId && issueId
+      ? () =>
+          issuesServices.getIssueActivities(
+            workspaceSlug as string,
+            projectId as string,
+            issueId as string
+          )
+      : null
+  );
+
+  const { data: comments, mutate: mutateIssueComments } = useSWR<IIssueComment[]>(
+    workspaceSlug && projectId && issueId ? PROJECT_ISSUES_COMMENTS(issueId as string) : null,
+    workspaceSlug && projectId && issueId
+      ? () =>
+          issuesServices.getIssueComments(
+            workspaceSlug as string,
+            projectId as string,
+            issueId as string
+          )
       : null
   );
 
@@ -143,12 +173,13 @@ const IssueDetail: NextPage = () => {
               return issue;
             }),
           }));
+          mutateIssueActivities();
         })
         .catch((error) => {
           console.error(error);
         });
     },
-    [activeProject, activeWorkspace, issueId, projectId, mutateIssues]
+    [activeProject, activeWorkspace, issueId, projectId, mutateIssues, mutateIssueActivities]
   );
 
   const handleSubIssueRemove = (issueId: string) => {
@@ -166,6 +197,7 @@ const IssueDetail: NextPage = () => {
             }),
             false
           );
+          mutateIssueActivities();
         })
         .catch((e) => {
           console.error(e);
@@ -443,8 +475,8 @@ const IssueDetail: NextPage = () => {
             </div>
             <div className="space-y-5 rounded-lg bg-secondary">
               <h3 className="text-lg">Comments/Activity</h3>
-              <IssueCommentSection />
-              <IssueActivitySection />
+              <IssueCommentSection comments={comments || []} mutate={mutateIssueComments} />
+              <IssueActivitySection issueActivities={issueActivities || []} />
             </div>
           </div>
           <div className="h-full basis-1/3 space-y-5 border-l p-5">

@@ -1,16 +1,9 @@
 import React from "react";
 
 import Image from "next/image";
-import { useRouter } from "next/router";
 
-import useSWR from "swr";
-
-// fetch-keys
-import { PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 // common
 import { addSpaceIfCamelCase, renderShortNumericDateFormat, timeAgo } from "constants/common";
-// services
-import issuesServices from "lib/services/issues.service";
 // ui
 import { Loader } from "ui";
 // icons
@@ -22,6 +15,7 @@ import {
   UserIcon,
 } from "@heroicons/react/24/outline";
 import { BlockedIcon, BlockerIcon, TagIcon, UserGroupIcon } from "ui/icons";
+import { IIssueActivity } from "types";
 
 const activityDetails: {
   [key: string]: {
@@ -74,23 +68,9 @@ const activityDetails: {
   },
 };
 
-const IssueActivitySection: React.FC = () => {
-  const router = useRouter();
-
-  const { workspaceSlug, projectId, issueId } = router.query;
-
-  const { data: issueActivities } = useSWR<any[]>(
-    workspaceSlug && projectId && issueId ? PROJECT_ISSUES_ACTIVITY : null,
-    workspaceSlug && projectId && issueId
-      ? () =>
-          issuesServices.getIssueActivities(
-            workspaceSlug as string,
-            projectId as string,
-            issueId as string
-          )
-      : null
-  );
-
+const IssueActivitySection: React.FC<{
+  issueActivities: IIssueActivity[];
+}> = ({ issueActivities }) => {
   return (
     <>
       {issueActivities ? (
@@ -148,19 +128,27 @@ const IssueActivitySection: React.FC = () => {
                               ?.message}{" "}
                       </span>
                       <span className="font-medium">
-                        {activity.field === "state"
-                          ? activity.new_value
-                            ? addSpaceIfCamelCase(activity.new_value)
-                            : "None"
-                          : activity.field === "labels"
-                          ? activity.new_value !== ""
-                            ? activity.new_value
-                            : activity.old_value
-                          : activity.field === "assignee"
-                          ? activity.old_value
-                          : activity.field === "target_date"
-                          ? renderShortNumericDateFormat(activity.new_value)
-                          : activity.new_value ?? "None"}
+                        {activity.verb === "created" ? (
+                          <span className="text-gray-600">created this issue.</span>
+                        ) : activity.field === "state" ? (
+                          activity.new_value ? (
+                            addSpaceIfCamelCase(activity.new_value)
+                          ) : (
+                            "None"
+                          )
+                        ) : activity.field === "labels" ? (
+                          activity.new_value !== "" ? (
+                            activity.new_value
+                          ) : (
+                            activity.old_value
+                          )
+                        ) : activity.field === "assignee" ? (
+                          activity.old_value
+                        ) : activity.field === "target_date" ? (
+                          renderShortNumericDateFormat(activity.new_value as string)
+                        ) : (
+                          activity.new_value ?? "None"
+                        )}
                       </span>
                       <span className="ml-2 text-gray-500">{timeAgo(activity.created_at)}</span>
                     </p>
