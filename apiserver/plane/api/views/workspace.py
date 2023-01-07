@@ -86,7 +86,7 @@ class WorkSpaceViewSet(BaseViewSet):
         except IntegrityError as e:
             if "already exists" in str(e):
                 return Response(
-                    {"name": "The workspace with the name already exists"},
+                    {"slug": "The workspace with the slug already exists"},
                     status=status.HTTP_410_GONE,
                 )
         except Exception as e:
@@ -135,15 +135,15 @@ class UserWorkSpacesEndpoint(BaseAPIView):
 class WorkSpaceAvailabilityCheckEndpoint(BaseAPIView):
     def get(self, request):
         try:
-            name = request.GET.get("name", False)
+            slug = request.GET.get("slug", False)
 
-            if not name:
+            if not slug or slug == "":
                 return Response(
-                    {"error": "Workspace Name is required"},
+                    {"error": "Workspace Slug is required"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            workspace = Workspace.objects.filter(name=name).exists()
+            workspace = Workspace.objects.filter(slug=slug).exists()
             return Response({"status": not workspace}, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)
