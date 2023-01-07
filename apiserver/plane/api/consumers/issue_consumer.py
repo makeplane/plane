@@ -165,19 +165,19 @@ class IssueConsumer(SyncConsumer):
         actor,
         issue_activities,
     ):
-        if current_instance.get("description") != requested_data.get("description"):
+        if current_instance.get("description_html") != requested_data.get("description_html"):
 
             issue_activities.append(
                 IssueActivity(
                     issue_id=issue_id,
                     actor=actor,
                     verb="updated",
-                    old_value=current_instance.get("description"),
-                    new_value=requested_data.get("description"),
+                    old_value=current_instance.get("description_html"),
+                    new_value=requested_data.get("description_html"),
                     field="description",
                     project=project,
                     workspace=project.workspace,
-                    comment=f"{actor.email} updated the description to {requested_data.get('description')}",
+                    comment=f"{actor.email} updated the description to {requested_data.get('description_html')}",
                 )
             )
 
