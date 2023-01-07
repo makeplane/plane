@@ -1,6 +1,6 @@
 # Python imports
 import json
-from itertools import groupby
+from itertools import groupby, chain
 
 # Django imports
 from django.db.models import Prefetch
@@ -253,8 +253,21 @@ class IssueActivityEndpoint(BaseAPIView):
                 IssueActivity.objects.filter(issue_id=issue_id)
                 .filter(project__project_projectmember__member=self.request.user)
                 .select_related("actor")
+            ).order_by("created_by")
+            issue_comments = (
+                IssueComment.objects.filter(issue_id=issue_id)
+                .filter(project__project_projectmember__member=self.request.user)
+                .order_by("created_at")
             )
-            serializer = IssueActivitySerializer(issue_activities, many=True)
+            issue_activities = IssueActivitySerializer(issue_activities, many=True).data
+            issue_comments = IssueCommentSerializer(issue_comments, many=True).data
+
+            result_list = sorted(
+                chain(issue_activities, issue_comments),
+                key=lambda instance: instance.created_at,
+            )
+
+            serializer = IssueActivitySerializer(result_list, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)
