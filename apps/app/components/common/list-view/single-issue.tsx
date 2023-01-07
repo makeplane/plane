@@ -1,5 +1,3 @@
-// react
-import { useState } from "react";
 // next
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -12,7 +10,7 @@ import { CustomMenu } from "ui";
 // icons
 import { CalendarDaysIcon } from "@heroicons/react/24/outline";
 // types
-import { IIssue, IssueResponse, IWorkspace, Properties } from "types";
+import { IIssue, IssueResponse, Properties } from "types";
 // fetch-keys
 import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // common
@@ -55,10 +53,7 @@ const SingleListIssue: React.FC<Props> = ({
 
   return (
     <>
-      <div
-        key={issue.id}
-        className="flex items-center justify-between gap-2 rounded px-4 py-3 text-sm"
-      >
+      <div key={issue.id} className="flex items-center justify-between gap-2 px-4 py-3 text-sm">
         <div className="flex items-center gap-2">
           <span
             className={`block h-1.5 w-1.5 flex-shrink-0 rounded-full`}

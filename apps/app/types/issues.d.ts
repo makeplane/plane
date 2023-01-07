@@ -68,6 +68,7 @@ export interface IIssue {
   issue_cycle: IIssueCycle | null;
   issue_module: IIssueModule | null;
   description: any;
+  description_html: any;
   priority: string | null;
   start_date: string | null;
   target_date: string | null;

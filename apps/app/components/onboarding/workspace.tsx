@@ -26,6 +26,7 @@ type Props = {
 
 const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
+  const [slugError, setSlugError] = useState(false);
 
   const { setToastAlert } = useToast();
 
@@ -40,6 +41,7 @@ const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
     control,
     reset,
     setError,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<IWorkspace>();
 
@@ -47,7 +49,7 @@ const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
     console.log(formData);
 
     workspaceService
-      .workspaceNameCheck(formData.name)
+      .workspaceSlugCheck(formData.slug)
       .then((res) => {
         if (res.status === true) {
           workspaceService
@@ -64,9 +66,7 @@ const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
             .catch((err) => {
               console.log(err);
             });
-        } else {
-          setError("name", { message: "Workspace name is already taken!" });
-        }
+        } else setSlugError(true);
       })
       .catch((err) => {
         console.log(err);
@@ -143,6 +143,9 @@ const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
                       placeholder="Enter name"
                       autoComplete="off"
                       register={register}
+                      onChange={(e) =>
+                        setValue("slug", e.target.value.toLocaleLowerCase().replace(/ /g, "-"))
+                      }
                       validations={{
                         required: "Workspace name is required",
                       }}
@@ -151,21 +154,19 @@ const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
                   </div>
                   <div className="flex items-center rounded-md border px-3">
                     <span className="text-sm text-slate-600">{"https://app.plane.so/"}</span>
-                    <input
-                      type="text"
-                      value={
-                        watch("name")
-                          ? `${watch("name").toLocaleLowerCase().replace(/ /g, "-")}`
-                          : ""
-                      }
+                    <Input
+                      name="slug"
+                      mode="transparent"
                       autoComplete="off"
-                      {...(register &&
-                        register("slug", {
-                          required: "Workspace URL is required",
-                        }))}
-                      className="block w-full rounded-md bg-transparent py-2 text-sm  focus:outline-none"
+                      register={register}
+                      className="block w-full rounded-md bg-transparent py-2 px-0 text-sm  focus:outline-none focus:ring-0"
                     />
                   </div>
+                  {slugError && (
+                    <span className="-mt-3 text-sm text-red-500">
+                      Workspace URL is already taken!
+                    </span>
+                  )}
                   <div>
                     <Controller
                       name="company_size"

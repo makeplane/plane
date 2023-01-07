@@ -209,7 +209,7 @@ const Profile: NextPage = () => {
                               formData.append("asset", image);
                               formData.append("attributes", JSON.stringify({}));
                               fileServices
-                                .uploadFile(formData)
+                                .uploadFile(workspaceSlug as string, formData)
                                 .then((response) => {
                                   const imageUrl = response.asset;
                                   setValue("avatar", imageUrl);
