@@ -30,7 +30,6 @@ class Workspace(BaseModel):
         return self.name
 
     class Meta:
-        unique_together = ["name", "owner"]
         verbose_name = "Workspace"
         verbose_name_plural = "Workspaces"
         db_table = "workspaces"
