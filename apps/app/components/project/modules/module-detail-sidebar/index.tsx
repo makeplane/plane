@@ -64,8 +64,6 @@ const ModuleDetailSidebar: React.FC<Props> = ({
     defaultValues,
   });
 
-  // console.log(module);
-
   useEffect(() => {
     if (module)
       reset({

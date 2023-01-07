@@ -6,18 +6,10 @@ import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 // hooks
 import useToast from "lib/hooks/useToast";
-import useUser from "lib/hooks/useUser";
 // ui
 import { Loader } from "ui";
 // icons
-import {
-  CalendarDaysIcon,
-  ChartPieIcon,
-  ClipboardDocumentIcon,
-  LinkIcon,
-  TrashIcon,
-  UserIcon,
-} from "@heroicons/react/24/outline";
+import { CalendarDaysIcon, ChartPieIcon, LinkIcon, UserIcon } from "@heroicons/react/24/outline";
 // types
 import { CycleIssueResponse, ICycle } from "types";
 // common
@@ -28,6 +20,7 @@ import { CYCLE_DETAIL } from "constants/api-routes";
 
 type Props = {
   cycle: ICycle | undefined;
+  isOpen: boolean;
   cycleIssues: CycleIssueResponse[];
 };
 
@@ -36,7 +29,7 @@ const defaultValues: Partial<ICycle> = {
   end_date: new Date().toString(),
 };
 
-const CycleDetailSidebar: React.FC<Props> = ({ cycle, cycleIssues }) => {
+const CycleDetailSidebar: React.FC<Props> = ({ cycle, isOpen, cycleIssues }) => {
   const router = useRouter();
   const {
     query: { workspaceSlug, projectId },
@@ -79,7 +72,11 @@ const CycleDetailSidebar: React.FC<Props> = ({ cycle, cycleIssues }) => {
   }, [cycle, reset]);
 
   return (
-    <div className="h-full w-full border-l bg-white p-5">
+    <div
+      className={`fixed top-0 ${
+        isOpen ? "right-0" : "-right-[24rem]"
+      } z-20 h-full w-[24rem] overflow-y-auto border-l bg-gray-50 p-5 duration-300`}
+    >
       {cycle ? (
         <>
           <div className="flex items-center justify-between pb-3">

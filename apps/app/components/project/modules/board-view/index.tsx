@@ -1,21 +1,22 @@
 import React, { useCallback } from "react";
-// swr
-import useSWR from "swr";
+
+import { useRouter } from "next/router";
+
+import useSWR, { mutate } from "swr";
+
+import { DragDropContext, DropResult } from "react-beautiful-dnd";
+
 // services
 import stateService from "lib/services/state.service";
+import issuesService from "lib/services/issues.service";
 // constants
-import { STATE_LIST } from "constants/fetch-keys";
-// hooks
-import useUser from "lib/hooks/useUser";
+import { STATE_LIST, MODULE_ISSUES } from "constants/fetch-keys";
 // components
 import SingleBoard from "components/project/modules/board-view/single-board";
 // ui
 import { Spinner } from "ui";
 // types
-import { IIssue, IProjectMember, NestedKeyOf, Properties } from "types";
-import { useRouter } from "next/router";
-import { DragDropContext, DropResult } from "react-beautiful-dnd";
-import issuesService from "lib/services/issues.service";
+import { IIssue, IProjectMember, ModuleIssueResponse, NestedKeyOf, Properties } from "types";
 
 type Props = {
   groupedByIssues: {
@@ -52,7 +53,7 @@ const ModulesBoardView: React.FC<Props> = ({
   setPreloadedData,
 }) => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, moduleId } = router.query;
 
   const { data: states } = useSWR(
     workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
@@ -95,6 +96,25 @@ const ModulesBoardView: React.FC<Props> = ({
           issuesService.patchIssue(workspaceSlug as string, projectId as string, removedItem.id, {
             state: destinationStateId,
           });
+
+          if (!moduleId) return;
+          mutate<ModuleIssueResponse[]>(
+            MODULE_ISSUES(moduleId as string),
+            (prevData) => {
+              if (!prevData) return prevData;
+              const updatedIssues = prevData.map((issue) => {
+                if (issue.issue_detail.id === removedItem.id) {
+                  return {
+                    ...issue,
+                    issue_detail: removedItem,
+                  };
+                }
+                return issue;
+              });
+              return [...updatedIssues];
+            },
+            false
+          );
         }
 
         // remove item from the source group
@@ -103,7 +123,7 @@ const ModulesBoardView: React.FC<Props> = ({
         groupedByIssues[destination.droppableId].splice(destination.index, 0, removedItem);
       }
     },
-    [workspaceSlug, groupedByIssues, projectId, selectedGroup, states]
+    [workspaceSlug, groupedByIssues, projectId, selectedGroup, states, moduleId]
   );
 
   return (

@@ -60,8 +60,8 @@ const SingleModuleBoard: React.FC<Props> = ({
   setPreloadedData,
   stateId,
 }) => {
-  // Collapse/Expand
-  const [show, setState] = useState(true);
+  // TODO: will use this to collapse/expand the board
+  const [isCollapsed, setIsCollapsed] = useState(true);
 
   const router = useRouter();
 
@@ -82,21 +82,21 @@ const SingleModuleBoard: React.FC<Props> = ({
   );
 
   return (
-    <div className={`h-full flex-shrink-0 rounded ${!show ? "" : "w-80 border bg-gray-50"}`}>
-      <div className={`${!show ? "" : "flex h-full flex-col space-y-3 overflow-y-auto"}`}>
+    <div className={`h-full flex-shrink-0 rounded ${!isCollapsed ? "" : "w-80 border bg-gray-50"}`}>
+      <div className={`${!isCollapsed ? "" : "flex h-full flex-col space-y-3 overflow-y-auto"}`}>
         <div
           className={`flex justify-between p-3 pb-0 ${
-            !show ? "flex-col rounded-md border bg-gray-50" : ""
+            !isCollapsed ? "flex-col rounded-md border bg-gray-50" : ""
           }`}
         >
           <div
             className={`flex w-full items-center justify-between ${
-              !show ? "flex-col gap-2" : "gap-1"
+              !isCollapsed ? "flex-col gap-2" : "gap-1"
             }`}
           >
             <div
               className={`flex cursor-pointer items-center gap-x-1 rounded-md bg-slate-900 px-2 ${
-                !show ? "mb-2 flex-col gap-y-2 py-2" : ""
+                !isCollapsed ? "mb-2 flex-col gap-y-2 py-2" : ""
               }`}
               style={{
                 border: `2px solid ${bgColor}`,
@@ -106,7 +106,7 @@ const SingleModuleBoard: React.FC<Props> = ({
               <h2
                 className={`text-[0.9rem] font-medium capitalize`}
                 style={{
-                  writingMode: !show ? "vertical-rl" : "horizontal-tb",
+                  writingMode: !isCollapsed ? "vertical-rl" : "horizontal-tb",
                 }}
               >
                 {groupTitle === null || groupTitle === "null"
@@ -147,7 +147,7 @@ const SingleModuleBoard: React.FC<Props> = ({
             <div
               className={`mt-3 h-full space-y-3 overflow-y-auto px-3 pb-3 ${
                 snapshot.isDraggingOver ? "bg-indigo-50 bg-opacity-50" : ""
-              } ${!show ? "hidden" : "block"}`}
+              } ${!isCollapsed ? "hidden" : "block"}`}
               {...provided.droppableProps}
               ref={provided.innerRef}
             >

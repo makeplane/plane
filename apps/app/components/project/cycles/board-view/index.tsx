@@ -1,18 +1,16 @@
 import React, { useCallback } from "react";
 // swr
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 // services
 import stateService from "lib/services/state.service";
 // constants
-import { STATE_LIST } from "constants/fetch-keys";
-// hooks
-import useUser from "lib/hooks/useUser";
+import { STATE_LIST, CYCLE_ISSUES } from "constants/fetch-keys";
 // components
 import SingleBoard from "components/project/cycles/board-view/single-board";
 // ui
 import { Spinner } from "ui";
 // types
-import { IIssue, IProjectMember, NestedKeyOf, Properties } from "types";
+import { CycleIssueResponse, IIssue, IProjectMember, NestedKeyOf, Properties } from "types";
 import { useRouter } from "next/router";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import issuesService from "lib/services/issues.service";
@@ -39,20 +37,22 @@ type Props = {
   >;
 };
 
-const CyclesBoardView: React.FC<Props> = ({
-  groupedByIssues,
-  properties,
-  selectedGroup,
-  members,
-  openCreateIssueModal,
-  openIssuesListModal,
-  removeIssueFromCycle,
-  partialUpdateIssue,
-  handleDeleteIssue,
-  setPreloadedData,
-}) => {
+const CyclesBoardView: React.FC<Props> = (props) => {
+  const {
+    groupedByIssues,
+    properties,
+    selectedGroup,
+    members,
+    openCreateIssueModal,
+    openIssuesListModal,
+    removeIssueFromCycle,
+    partialUpdateIssue,
+    handleDeleteIssue,
+    setPreloadedData,
+  } = props;
+
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, cycleId } = router.query;
 
   const { data: states } = useSWR(
     workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
@@ -95,6 +95,25 @@ const CyclesBoardView: React.FC<Props> = ({
           issuesService.patchIssue(workspaceSlug as string, projectId as string, removedItem.id, {
             state: destinationStateId,
           });
+
+          if (!cycleId) return;
+          mutate<CycleIssueResponse[]>(
+            CYCLE_ISSUES(cycleId as string),
+            (prevData) => {
+              if (!prevData) return prevData;
+              const updatedIssues = prevData.map((issue) => {
+                if (issue.issue_detail.id === removedItem.id) {
+                  return {
+                    ...issue,
+                    issue_detail: removedItem,
+                  };
+                }
+                return issue;
+              });
+              return [...updatedIssues];
+            },
+            false
+          );
         }
 
         // remove item from the source group
@@ -103,7 +122,7 @@ const CyclesBoardView: React.FC<Props> = ({
         groupedByIssues[destination.droppableId].splice(destination.index, 0, removedItem);
       }
     },
-    [workspaceSlug, groupedByIssues, projectId, selectedGroup, states]
+    [workspaceSlug, groupedByIssues, projectId, selectedGroup, states, cycleId]
   );
 
   return (

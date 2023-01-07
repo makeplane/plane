@@ -170,8 +170,6 @@ const SingleModule = () => {
       });
   };
 
-  console.log(moduleDetail);
-
   const openCreateIssueModal = (
     issue?: IIssue,
     actionType: "create" | "edit" | "delete" = "create"
