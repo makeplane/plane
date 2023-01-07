@@ -197,7 +197,9 @@ class TimelineIssue(ProjectBaseModel):
 
 
 class IssueComment(ProjectBaseModel):
-    comment = models.TextField(verbose_name="Comment", blank=True)
+    comment_stripped = models.TextField(verbose_name="Comment", blank=True)
+    comment_json = models.JSONField(blank=True, null=True)
+    comment_html = models.TextField(blank=True)
     attachments = ArrayField(models.URLField(), size=10, blank=True, default=list)
     issue = models.ForeignKey(Issue, on_delete=models.CASCADE)
     # System can also create comment
@@ -207,6 +209,11 @@ class IssueComment(ProjectBaseModel):
         related_name="comments",
         null=True,
     )
+
+    def save(self, *args, **kwargs):
+        self.comment_stripped = strip_tags(self.comment_html) if self.comment_html != "" else ""
+        return super(IssueComment, self).save(*args, **kwargs)
+
 
     class Meta:
         verbose_name = "Issue Comment"
