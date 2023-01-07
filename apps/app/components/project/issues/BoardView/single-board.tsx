@@ -8,8 +8,6 @@ import { Draggable } from "react-beautiful-dnd";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 // services
 import workspaceService from "lib/services/workspace.service";
-// hooks
-import useUser from "lib/hooks/useUser";
 // icons
 import {
   ArrowsPointingInIcon,

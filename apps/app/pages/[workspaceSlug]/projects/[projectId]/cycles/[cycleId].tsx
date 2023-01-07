@@ -102,7 +102,6 @@ const SingleCycle: React.FC = () => {
           cycleServices.getCycleIssues(activeWorkspace?.slug, activeProject?.id, cycleId as string)
       : null
   );
-  console.log(cycleIssues);
   const cycleIssuesArray = cycleIssues?.map((issue) => {
     return { bridge: issue.id, ...issue.issue_detail };
   });
@@ -431,13 +430,7 @@ const SingleCycle: React.FC = () => {
                     </span>
                   }
                   Icon={PlusIcon}
-                  action={() => {
-                    const e = new KeyboardEvent("keydown", {
-                      ctrlKey: true,
-                      key: "i",
-                    });
-                    document.dispatchEvent(e);
-                  }}
+                  action={() => openCreateIssueModal()}
                 />
                 <EmptySpaceItem
                   title="Add an existing issue"
