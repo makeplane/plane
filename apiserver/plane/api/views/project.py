@@ -143,7 +143,7 @@ class ProjectViewSet(BaseViewSet):
         except IntegrityError as e:
             if "already exists" in str(e):
                 return Response(
-                    {"identifier": "The project identifier is already taken"},
+                    {"name": "The project name is already taken"},
                     status=status.HTTP_410_GONE,
                 )
         except Workspace.DoesNotExist as e:

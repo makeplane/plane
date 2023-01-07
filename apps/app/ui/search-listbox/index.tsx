@@ -116,21 +116,7 @@ const SearchListbox: React.FC<Props> = ({
             leaveTo="opacity-0"
           >
             <Combobox.Options
-              className={`absolute z-10 mt-1 max-h-32 overflow-auto rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ${
-                width === "xs"
-                  ? "w-20"
-                  : width === "sm"
-                  ? "w-32"
-                  : width === "md"
-                  ? "w-48"
-                  : width === "lg"
-                  ? "w-64"
-                  : width === "xl"
-                  ? "w-80"
-                  : width === "2xl"
-                  ? "w-96"
-                  : ""
-              }} ${
+              className={`absolute z-10 mt-1 max-h-32 min-w-[8rem] overflow-auto rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none  ${
                 optionsFontsize === "sm"
                   ? "text-xs"
                   : optionsFontsize === "md"

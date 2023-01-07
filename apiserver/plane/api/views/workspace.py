@@ -289,6 +289,9 @@ class JoinWorkspaceEndpoint(BaseAPIView):
                             role=workspace_invite.role,
                         )
 
+                        user.last_workspace_id = workspace_invite.workspace.id
+                        user.save()
+
                         # Delete the invitation
                         workspace_invite.delete()
 

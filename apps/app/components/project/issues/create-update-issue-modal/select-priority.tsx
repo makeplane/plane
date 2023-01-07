@@ -27,7 +27,11 @@ const SelectPriority: React.FC<Props> = ({ control }) => {
         <CustomListbox
           title="State"
           options={PRIORITIES?.map((priority) => {
-            return { value: priority, display: capitalizeFirstLetter(priority ?? "none") };
+            return {
+              value: priority,
+              display: capitalizeFirstLetter(priority ?? "none"),
+              icon: getPriorityIcon(priority),
+            };
           })}
           value={value}
           optionsFontsize="sm"

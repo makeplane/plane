@@ -5,8 +5,6 @@ import type { NextPageContext, NextPage } from "next";
 
 import useSWR, { mutate } from "swr";
 
-import { Listbox, Transition } from "@headlessui/react";
-
 import { Controller, useForm } from "react-hook-form";
 // lib
 import { requiredAdmin } from "lib/auth";
@@ -18,24 +16,22 @@ import workspaceService from "lib/services/workspace.service";
 // hooks
 import useToast from "lib/hooks/useToast";
 // ui
-import { BreadcrumbItem, Breadcrumbs, Button, CustomSelect } from "ui";
-// icons
-import { CheckIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
+import { BreadcrumbItem, Breadcrumbs, Button, CustomSelect, Loader } from "ui";
 // types
 import { IProject, IWorkspace } from "types";
 // fetch-keys
-import {
-  PROJECTS_LIST,
-  PROJECT_DETAILS,
-  WORKSPACE_DETAILS,
-  WORKSPACE_MEMBERS,
-} from "constants/fetch-keys";
+import { PROJECTS_LIST, PROJECT_DETAILS, WORKSPACE_MEMBERS } from "constants/fetch-keys";
 
 type TControlSettingsProps = {
   isMember: boolean;
   isOwner: boolean;
   isViewer: boolean;
   isGuest: boolean;
+};
+
+const defaultValues: Partial<IProject> = {
+  project_lead: null,
+  default_assignee: null,
 };
 
 const ControlSettings: NextPage<TControlSettingsProps> = (props) => {
@@ -47,28 +43,16 @@ const ControlSettings: NextPage<TControlSettingsProps> = (props) => {
     query: { workspaceSlug, projectId },
   } = useRouter();
 
-  const { data: activeWorkspace } = useSWR(
-    workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
-    () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null)
-  );
-
-  const { data: activeProject } = useSWR(
-    activeWorkspace && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    activeWorkspace && projectId
-      ? () => projectService.getProject(activeWorkspace.slug, projectId as string)
-      : null
-  );
-
-  const { data: projectDetails } = useSWR<IProject>(
-    activeWorkspace && activeProject ? PROJECT_DETAILS(activeProject.id) : null,
-    activeWorkspace && activeProject
-      ? () => projectService.getProject(activeWorkspace.slug, activeProject.id)
+  const { data: projectDetails, mutate: mutateProjectDetails } = useSWR<IProject>(
+    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
       : null
   );
 
   const { data: people } = useSWR(
-    activeWorkspace ? WORKSPACE_MEMBERS : null,
-    activeWorkspace ? () => workspaceService.workspaceMembers(activeWorkspace.slug) : null
+    workspaceSlug ? WORKSPACE_MEMBERS : null,
+    workspaceSlug ? () => workspaceService.workspaceMembers(workspaceSlug as string) : null
   );
 
   const {
@@ -76,10 +60,10 @@ const ControlSettings: NextPage<TControlSettingsProps> = (props) => {
     reset,
     control,
     formState: { isSubmitting },
-  } = useForm<IProject>({});
+  } = useForm<IProject>({ defaultValues });
 
   useEffect(() => {
-    projectDetails &&
+    if (projectDetails)
       reset({
         ...projectDetails,
         default_assignee: projectDetails.default_assignee?.id,
@@ -89,7 +73,7 @@ const ControlSettings: NextPage<TControlSettingsProps> = (props) => {
   }, [projectDetails, reset]);
 
   const onSubmit = async (formData: IProject) => {
-    if (!activeWorkspace || !activeProject) return;
+    if (!workspaceSlug || !projectId) return;
     const payload: Partial<IProject> = {
       name: formData.name,
       network: formData.network,
@@ -100,15 +84,15 @@ const ControlSettings: NextPage<TControlSettingsProps> = (props) => {
       icon: formData.icon,
     };
     await projectService
-      .updateProject(activeWorkspace.slug, activeProject.id, payload)
+      .updateProject(workspaceSlug as string, projectId as string, payload)
       .then((res) => {
         mutate<IProject>(
-          PROJECT_DETAILS(activeProject.id),
+          PROJECT_DETAILS(projectId as string),
           (prevData) => ({ ...prevData, ...res }),
           false
         );
         mutate<IProject[]>(
-          PROJECTS_LIST(activeWorkspace.slug),
+          PROJECTS_LIST(workspaceSlug as string),
           (prevData) => {
             const newData = prevData?.map((item) => {
               if (item.id === res.id) {
@@ -120,6 +104,7 @@ const ControlSettings: NextPage<TControlSettingsProps> = (props) => {
           },
           false
         );
+        mutateProjectDetails((prevData) => ({ ...prevData, ...res }));
         setToastAlert({
           title: "Success",
           type: "success",
@@ -138,8 +123,8 @@ const ControlSettings: NextPage<TControlSettingsProps> = (props) => {
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem
-            title={`${activeProject?.name ?? "Project"}`}
-            link={`/${workspaceSlug}/projects/${activeProject?.id}/issues`}
+            title={`${projectDetails?.name ?? "Project"}`}
+            link={`/${workspaceSlug}/projects/${projectId}/issues`}
           />
           <BreadcrumbItem title="Control Settings" />
         </Breadcrumbs>
@@ -156,28 +141,34 @@ const ControlSettings: NextPage<TControlSettingsProps> = (props) => {
               <div>
                 <h4 className="text-md mb-1 leading-6 text-gray-900">Project Lead</h4>
                 <p className="mb-3 text-sm text-gray-500">Select the project leader.</p>
-                <Controller
-                  name="project_lead"
-                  control={control}
-                  render={({ field }) => (
-                    <CustomSelect
-                      {...field}
-                      label={
-                        people?.find((person) => person.member.id === field.value)?.member
-                          .first_name ?? "Select Lead"
-                      }
-                      input
-                    >
-                      {people?.map((person) => (
-                        <CustomSelect.Option key={person.id} value={person.member.id}>
-                          {person.member.first_name !== ""
-                            ? person.member.first_name
-                            : person.member.email}
-                        </CustomSelect.Option>
-                      ))}
-                    </CustomSelect>
-                  )}
-                />
+                {projectDetails ? (
+                  <Controller
+                    name="project_lead"
+                    control={control}
+                    render={({ field }) => (
+                      <CustomSelect
+                        {...field}
+                        label={
+                          people?.find((person) => person.member.id === field.value)?.member
+                            .first_name ?? "Select Lead"
+                        }
+                        input
+                      >
+                        {people?.map((person) => (
+                          <CustomSelect.Option key={person.id} value={person.member.id}>
+                            {person.member.first_name !== ""
+                              ? person.member.first_name
+                              : person.member.email}
+                          </CustomSelect.Option>
+                        ))}
+                      </CustomSelect>
+                    )}
+                  />
+                ) : (
+                  <Loader className="h-9 w-full">
+                    <Loader.Item width="100%" height="100%" />
+                  </Loader>
+                )}
               </div>
             </div>
             <div className="col-span-5 space-y-16">
@@ -186,28 +177,34 @@ const ControlSettings: NextPage<TControlSettingsProps> = (props) => {
                 <p className="mb-3 text-sm text-gray-500">
                   Select the default assignee for the project.
                 </p>
-                <Controller
-                  name="default_assignee"
-                  control={control}
-                  render={({ field }) => (
-                    <CustomSelect
-                      {...field}
-                      label={
-                        people?.find((p) => p.member.id === field.value)?.member.first_name ??
-                        "Select Default Assignee"
-                      }
-                      input
-                    >
-                      {people?.map((person) => (
-                        <CustomSelect.Option key={person.id} value={person.member.id}>
-                          {person.member.first_name !== ""
-                            ? person.member.first_name
-                            : person.member.email}
-                        </CustomSelect.Option>
-                      ))}
-                    </CustomSelect>
-                  )}
-                />
+                {projectDetails ? (
+                  <Controller
+                    name="default_assignee"
+                    control={control}
+                    render={({ field }) => (
+                      <CustomSelect
+                        {...field}
+                        label={
+                          people?.find((p) => p.member.id === field.value)?.member.first_name ??
+                          "Select Default Assignee"
+                        }
+                        input
+                      >
+                        {people?.map((person) => (
+                          <CustomSelect.Option key={person.id} value={person.member.id}>
+                            {person.member.first_name !== ""
+                              ? person.member.first_name
+                              : person.member.email}
+                          </CustomSelect.Option>
+                        ))}
+                      </CustomSelect>
+                    )}
+                  />
+                ) : (
+                  <Loader className="h-9 w-full">
+                    <Loader.Item width="100%" height="100%" />
+                  </Loader>
+                )}
               </div>
             </div>
           </div>

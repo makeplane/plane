@@ -47,23 +47,7 @@ const CustomListbox: React.FC<Props> = ({
             leaveTo="opacity-0"
           >
             <Listbox.Options
-              className={`absolute mt-1 max-h-32 overflow-y-auto whitespace-nowrap bg-white shadow-lg ${
-                width === "xs"
-                  ? "w-20"
-                  : width === "sm"
-                  ? "w-32"
-                  : width === "md"
-                  ? "w-48"
-                  : width === "lg"
-                  ? "w-64"
-                  : width === "xl"
-                  ? "w-80"
-                  : width === "2xl"
-                  ? "w-96"
-                  : width === "w-full"
-                  ? "w-full"
-                  : "min-w-full"
-              } ${
+              className={`absolute mt-1 max-h-32 min-w-[8rem] overflow-y-auto whitespace-nowrap bg-white shadow-lg ${
                 optionsFontsize === "sm"
                   ? "text-xs"
                   : optionsFontsize === "md"
@@ -98,6 +82,7 @@ const CustomListbox: React.FC<Props> = ({
                         value={option.value}
                       >
                         <span className={` flex items-center gap-2 truncate`}>
+                          {option.icon}
                           {option.color && (
                             <span
                               className="h-1.5 w-1.5 flex-shrink-0 rounded-full"

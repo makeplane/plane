@@ -8,6 +8,7 @@ import { IModule } from "types";
 // common
 import { renderShortNumericDateFormat } from "constants/common";
 import { CalendarDaysIcon } from "@heroicons/react/24/outline";
+import { MODULE_STATUS } from "constants/";
 
 type Props = {
   module: IModule;
@@ -96,7 +97,15 @@ const SingleModuleCard: React.FC<Props> = ({ module }) => {
           </div>
           <div className="space-y-2">
             <h6 className="text-gray-500">STATUS</h6>
-            <div className="capitalize">{module.status}</div>
+            <div className="flex items-center gap-2 capitalize">
+              <span
+                className="h-2 w-2 flex-shrink-0 rounded-full"
+                style={{
+                  backgroundColor: MODULE_STATUS.find((s) => s.value === module.status)?.color,
+                }}
+              ></span>
+              {module.status}
+            </div>
           </div>
         </div>
       </a>

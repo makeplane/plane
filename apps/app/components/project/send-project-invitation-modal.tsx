@@ -71,6 +71,11 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
     defaultValues,
   });
 
+  const uninvitedPeople = people?.filter((person) => {
+    const isInvited = members?.find((member) => member.email === person.member.email);
+    return !isInvited;
+  });
+
   const onSubmit = async (formData: ProjectMember) => {
     if (!workspaceSlug || !projectId || isSubmitting) return;
     await projectService
@@ -187,49 +192,50 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
                                       leaveTo="opacity-0"
                                     >
                                       <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                                        {people?.map(
-                                          (person) =>
-                                            !members.some(
-                                              (m: any) => m.email === person.member.email
-                                            ) && (
-                                              <Listbox.Option
-                                                key={person.member.id}
-                                                className={({ active }) =>
-                                                  `${
-                                                    active ? "bg-theme text-white" : "text-gray-900"
-                                                  } relative cursor-default select-none py-2 pl-3 pr-9 text-left`
-                                                }
-                                                value={{
-                                                  id: person.member.id,
-                                                  email: person.member.email,
-                                                }}
-                                              >
-                                                {({ selected, active }) => (
-                                                  <>
-                                                    <span
-                                                      className={`${
-                                                        selected ? "font-semibold" : "font-normal"
-                                                      } block truncate`}
-                                                    >
-                                                      {person.member.email}
-                                                    </span>
+                                        {uninvitedPeople?.length === 0 ? (
+                                          <div className="relative cursor-default select-none py-2 pl-3 pr-9 text-left text-gray-600">
+                                            Invite to workspace to add members
+                                          </div>
+                                        ) : (
+                                          uninvitedPeople?.map((person) => (
+                                            <Listbox.Option
+                                              key={person.member.id}
+                                              className={({ active }) =>
+                                                `${
+                                                  active ? "bg-theme text-white" : "text-gray-900"
+                                                } relative cursor-default select-none py-2 pl-3 pr-9 text-left`
+                                              }
+                                              value={{
+                                                id: person.member.id,
+                                                email: person.member.email,
+                                              }}
+                                            >
+                                              {({ selected, active }) => (
+                                                <>
+                                                  <span
+                                                    className={`${
+                                                      selected ? "font-semibold" : "font-normal"
+                                                    } block truncate`}
+                                                  >
+                                                    {person.member.email}
+                                                  </span>
 
-                                                    {selected ? (
-                                                      <span
-                                                        className={`absolute inset-y-0 right-0 flex items-center pr-4 ${
-                                                          active ? "text-white" : "text-theme"
-                                                        }`}
-                                                      >
-                                                        <CheckIcon
-                                                          className="h-5 w-5"
-                                                          aria-hidden="true"
-                                                        />
-                                                      </span>
-                                                    ) : null}
-                                                  </>
-                                                )}
-                                              </Listbox.Option>
-                                            )
+                                                  {selected ? (
+                                                    <span
+                                                      className={`absolute inset-y-0 right-0 flex items-center pr-4 ${
+                                                        active ? "text-white" : "text-theme"
+                                                      }`}
+                                                    >
+                                                      <CheckIcon
+                                                        className="h-5 w-5"
+                                                        aria-hidden="true"
+                                                      />
+                                                    </span>
+                                                  ) : null}
+                                                </>
+                                              )}
+                                            </Listbox.Option>
+                                          ))
                                         )}
                                       </Listbox.Options>
                                     </Transition>
