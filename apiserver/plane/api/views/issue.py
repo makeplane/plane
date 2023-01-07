@@ -267,8 +267,7 @@ class IssueActivityEndpoint(BaseAPIView):
                 key=lambda instance: instance["created_at"],
             )
 
-            serializer = IssueActivitySerializer(result_list, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(result_list, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)
             return Response(
