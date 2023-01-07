@@ -58,16 +58,16 @@ const MembersSettings: NextPage<TMemberSettingsProps> = (props) => {
   );
 
   const { data: activeProject } = useSWR(
-    activeWorkspace && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    activeWorkspace && projectId
-      ? () => projectService.getProject(activeWorkspace.slug, projectId as string)
+    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
       : null
   );
 
   const { data: projectMembers, mutate: mutateMembers } = useSWR(
-    activeWorkspace && activeProject ? PROJECT_MEMBERS(activeProject.id) : null,
-    activeWorkspace && activeProject
-      ? () => projectService.projectMembers(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
       : null,
     {
       onErrorRetry(err, _, __, revalidate, revalidateOpts) {
@@ -78,9 +78,9 @@ const MembersSettings: NextPage<TMemberSettingsProps> = (props) => {
   );
 
   const { data: projectInvitations, mutate: mutateInvitations } = useSWR(
-    activeWorkspace && activeProject ? PROJECT_INVITATIONS : null,
-    activeWorkspace && activeProject
-      ? () => projectService.projectInvitations(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId ? PROJECT_INVITATIONS : null,
+    workspaceSlug && projectId
+      ? () => projectService.projectInvitations(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -214,11 +214,16 @@ const MembersSettings: NextPage<TMemberSettingsProps> = (props) => {
                           </div>
                           <div>
                             <h4 className="text-sm">
-                              {member.first_name} {member.last_name}
+                              {member.first_name} {member.last_name}{" "}
                             </h4>
                             <p className="text-xs text-gray-500">{member.email}</p>
                           </div>
                         </div>
+                        {!member.member && (
+                          <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">
+                            Request Pending
+                          </span>
+                        )}
                         <div className="flex items-center gap-2 text-xs">
                           {selectedMember === member.id ? (
                             <CustomListbox
@@ -262,7 +267,7 @@ const MembersSettings: NextPage<TMemberSettingsProps> = (props) => {
                               }}
                             />
                           ) : (
-                            ROLE[member.role as keyof typeof ROLE] ?? "None"
+                            <p>{ROLE[member.role as keyof typeof ROLE] ?? "None"}</p>
                           )}
                           <CustomMenu ellipsis>
                             <CustomMenu.MenuItem
