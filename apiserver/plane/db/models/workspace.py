@@ -1,6 +1,5 @@
 # Django imports
 from django.db import models
-from django.template.defaultfilters import slugify
 from django.conf import settings
 
 # Module imports
@@ -37,9 +36,6 @@ class Workspace(BaseModel):
         db_table = "workspaces"
         ordering = ("-created_at",)
 
-    def save(self, *args, **kwargs):
-        self.slug = slugify(self.name)
-        return super().save(*args, **kwargs)
 
 
 class WorkspaceMember(BaseModel):
