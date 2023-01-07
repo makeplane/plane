@@ -27,9 +27,12 @@ class FileAssetEndpoint(BaseAPIView):
         try:
             serializer = FileAssetSerializer(data=request.data)
             if serializer.is_valid():
-                
+
                 if request.user.last_workspace_id is None:
-                    return Response({"error": "Workspace id is required"}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response(
+                        {"error": "Workspace id is required"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
 
                 serializer.save(workspace_id=request.user.last_workspace_id)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -38,5 +41,5 @@ class FileAssetEndpoint(BaseAPIView):
             capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                status=status.HTTP_400_BAD_REQUEST,
             )
