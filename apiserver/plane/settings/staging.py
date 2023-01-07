@@ -11,7 +11,6 @@ import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
 
-from plane.settings.local import WEB_URL
 from .common import *  # noqa
 
 # Database
@@ -217,7 +216,7 @@ ssl_context.check_hostname = False
 
 CHANNEL_LAYERS = {
     'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'BACKEND': 'channels_redis.pubsub.RedisPubSubChannelLayer',
         'CONFIG': {
             'hosts': [
                     {
