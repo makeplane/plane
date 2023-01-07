@@ -32,7 +32,7 @@ const defaultValues: Partial<IProject> = {
   name: "",
   identifier: "",
   description: "",
-  network: 0,
+  network: 2,
   icon: getRandomEmoji(),
 };
 

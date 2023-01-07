@@ -42,7 +42,6 @@ import {
   CYCLE_LIST,
   PROJECT_ISSUES_LIST,
   PROJECT_MEMBERS,
-  WORKSPACE_DETAILS,
   PROJECT_DETAILS,
 } from "constants/fetch-keys";
 // common
@@ -62,55 +61,54 @@ const SingleCycle: React.FC = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
 
-  const { data: activeWorkspace } = useSWR(
-    workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
-    () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null)
-  );
-
   const { data: activeProject } = useSWR(
-    activeWorkspace && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    activeWorkspace && projectId
-      ? () => projectService.getProject(activeWorkspace.slug, projectId as string)
+    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
       : null
   );
 
   const { data: issues } = useSWR(
-    activeWorkspace && projectId
-      ? PROJECT_ISSUES_LIST(activeWorkspace.slug, projectId as string)
+    workspaceSlug && projectId
+      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
       : null,
-    activeWorkspace && projectId
-      ? () => issuesServices.getIssues(activeWorkspace.slug, projectId as string)
+    workspaceSlug && projectId
+      ? () => issuesServices.getIssues(workspaceSlug as string, projectId as string)
       : null
   );
 
   const [properties, setProperties] = useIssuesProperties(
-    activeWorkspace?.slug,
-    activeProject?.id as string
+    workspaceSlug as string,
+    projectId as string
   );
 
   const { data: cycles } = useSWR(
-    activeWorkspace && activeProject ? CYCLE_LIST(activeProject.id) : null,
-    activeWorkspace && activeProject
-      ? () => cycleServices.getCycles(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId ? CYCLE_LIST(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => cycleServices.getCycles(workspaceSlug as string, projectId as string)
       : null
   );
 
   const { data: cycleIssues } = useSWR<CycleIssueResponse[]>(
-    activeWorkspace && activeProject && cycleId ? CYCLE_ISSUES(cycleId as string) : null,
-    activeWorkspace && activeProject && cycleId
+    workspaceSlug && projectId && cycleId ? CYCLE_ISSUES(cycleId as string) : null,
+    workspaceSlug && projectId && cycleId
       ? () =>
-          cycleServices.getCycleIssues(activeWorkspace?.slug, activeProject?.id, cycleId as string)
+          cycleServices.getCycleIssues(
+            workspaceSlug as string,
+            projectId as string,
+            cycleId as string
+          )
       : null
   );
-  console.log(cycleIssues);
+
   const cycleIssuesArray = cycleIssues?.map((issue) => {
     return { bridge: issue.id, ...issue.issue_detail };
   });
 
   const { data: members } = useSWR(
-    activeWorkspace && activeProject ? PROJECT_MEMBERS(activeProject.id) : null,
-    activeWorkspace && activeProject
-      ? () => projectService.projectMembers(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId ? PROJECT_MEMBERS(workspaceSlug as string) : null,
+    workspaceSlug && projectId
+      ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
       : null,
     {
       onErrorRetry(err, _, __, revalidate, revalidateOpts) {
@@ -121,10 +119,10 @@ const SingleCycle: React.FC = () => {
   );
 
   const partialUpdateIssue = (formData: Partial<IIssue>, issueId: string) => {
-    if (!activeWorkspace || !activeProject) return;
+    if (!workspaceSlug || !projectId) return;
     issuesServices
-      .patchIssue(activeWorkspace.slug, activeProject.id, issueId, formData)
-      .then((response) => {
+      .patchIssue(workspaceSlug as string, projectId as string, issueId, formData)
+      .then(() => {
         mutate(CYCLE_ISSUES(cycleId as string));
       })
       .catch((error) => {
@@ -158,9 +156,9 @@ const SingleCycle: React.FC = () => {
   };
 
   const handleAddIssuesToCycle = (data: { issues: string[] }) => {
-    if (activeWorkspace && activeProject) {
+    if (workspaceSlug && projectId) {
       issuesServices
-        .addIssueToCycle(activeWorkspace.slug, activeProject.id, cycleId as string, data)
+        .addIssueToCycle(workspaceSlug as string, projectId as string, cycleId as string, data)
         .then((res) => {
           console.log(res);
           mutate(CYCLE_ISSUES(cycleId as string));
@@ -172,7 +170,7 @@ const SingleCycle: React.FC = () => {
   };
 
   const removeIssueFromCycle = (bridgeId: string) => {
-    if (!activeWorkspace || !activeProject) return;
+    if (!workspaceSlug || !projectId) return;
 
     mutate<CycleIssueResponse[]>(
       CYCLE_ISSUES(cycleId as string),
@@ -181,7 +179,12 @@ const SingleCycle: React.FC = () => {
     );
 
     issuesServices
-      .removeIssueFromCycle(activeWorkspace.slug, activeProject.id, cycleId as string, bridgeId)
+      .removeIssueFromCycle(
+        workspaceSlug as string,
+        projectId as string,
+        cycleId as string,
+        bridgeId
+      )
       .then((res) => {
         console.log(res);
       })
@@ -197,7 +200,7 @@ const SingleCycle: React.FC = () => {
         data={selectedIssues}
         prePopulateData={{ cycle: cycleId as string, ...preloadedData }}
         setIsOpen={setIsIssueModalOpen}
-        projectId={activeProject?.id}
+        projectId={projectId as string}
       />
       <ExistingIssuesListModal
         isOpen={cycleIssuesListModal}

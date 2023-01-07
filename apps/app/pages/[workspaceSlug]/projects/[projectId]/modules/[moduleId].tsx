@@ -219,7 +219,7 @@ const SingleModule = () => {
       <CreateUpdateIssuesModal
         isOpen={createUpdateIssueModal && selectedIssues?.actionType !== "delete"}
         data={selectedIssues}
-        prePopulateData={{ module: moduleId as string, ...preloadedData }}
+        prePopulateData={{ ...preloadedData, module: moduleId as string }}
         setIsOpen={setCreateUpdateIssueModal}
         projectId={projectId as string}
       />
