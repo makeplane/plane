@@ -1,4 +1,4 @@
-import { useCallback, FC, useEffect, useState } from "react";
+import { useCallback, FC, useState } from "react";
 import { InvalidContentHandler } from "remirror";
 import {
   BoldExtension,
@@ -26,8 +26,6 @@ import {
   EditorComponent,
   OnChangeJSON,
   TableComponents,
-  useRemirrorContext,
-  ReactComponentExtension,
 } from "@remirror/react";
 import { tableControllerPluginKey, TableExtension } from "@remirror/extension-react-tables";
 // components`
@@ -35,12 +33,6 @@ import { RichTextToolbar } from "./toolbar";
 import { MentionAutoComplete } from "./mention-autocomplete";
 import fileService from "lib/services/file.service";
 import { Spinner } from "ui";
-
-type SetProgress = (progress: number) => void;
-interface FileWithProgress {
-  file: File;
-  progress: SetProgress;
-}
 
 export interface IRemirrorRichTextEditor {
   placeholder?: string;

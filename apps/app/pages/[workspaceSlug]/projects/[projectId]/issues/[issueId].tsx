@@ -40,6 +40,7 @@ import {
 } from "constants/fetch-keys";
 // common
 import { debounce } from "constants/common";
+import { useRemirror } from "@remirror/react";
 
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), { ssr: false });
 

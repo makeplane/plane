@@ -62,7 +62,7 @@ const SendWorkspaceInvitationModal: React.FC<Props> = ({
     mode: "all",
   });
 
-  const onSubmit = async (formData: any) => {
+  const onSubmit = async (formData: IWorkspaceMemberInvitation) => {
     await workspaceService
       .inviteWorkspace(workspace_slug, { emails: [formData] })
       .then((res) => {

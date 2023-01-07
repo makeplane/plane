@@ -8,11 +8,9 @@ import { useForm } from "react-hook-form";
 
 import { Dialog, Transition } from "@headlessui/react";
 // ui
-import { Button, Input, TextArea, Select } from "ui";
+import { Button, Input, TextArea } from "ui";
 // services
 import modulesService from "lib/services/modules.service";
-// hooks
-import useUser from "lib/hooks/useUser";
 // types
 import type { IModule } from "types";
 // common
@@ -189,6 +187,9 @@ const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, pro
                             placeholder="Enter start date"
                             error={errors.start_date}
                             register={register}
+                            validations={{
+                              required: "Start date is required",
+                            }}
                           />
                         </div>
                         <div className="w-full">
@@ -200,6 +201,9 @@ const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, pro
                             placeholder="Enter target date"
                             error={errors.target_date}
                             register={register}
+                            validations={{
+                              required: "Target date is required",
+                            }}
                           />
                         </div>
                       </div>

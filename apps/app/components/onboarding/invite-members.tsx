@@ -4,6 +4,7 @@ import workspaceService from "lib/services/workspace.service";
 import { useForm } from "react-hook-form";
 import { IUser } from "types";
 import MultiInput from "ui/multi-input";
+import OutlineButton from "ui/outline-button";
 
 type Props = {
   setStep: React.Dispatch<React.SetStateAction<number>>;
@@ -65,7 +66,7 @@ const InviteMembers: React.FC<Props> = ({ setStep, workspace }) => {
           </div>
         </div>
       </div>
-      <div className="mx-auto h-1/4 lg:w-1/4">
+      <div className="mx-auto h-1/4 space-y-4 lg:w-1/4">
         <button
           type="submit"
           className="w-full rounded-md bg-gray-200 px-4 py-2 text-sm"
@@ -73,6 +74,9 @@ const InviteMembers: React.FC<Props> = ({ setStep, workspace }) => {
         >
           {isSubmitting ? "Inviting..." : "Invite"}
         </button>
+        <OutlineButton theme="secondary" className="w-full" onClick={() => setStep(4)}>
+          Skip
+        </OutlineButton>
       </div>
     </form>
   );

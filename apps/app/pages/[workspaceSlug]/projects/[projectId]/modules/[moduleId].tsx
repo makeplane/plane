@@ -68,9 +68,8 @@ const SingleModule = () => {
     (Partial<IIssue> & { actionType: "createIssue" | "edit" | "delete" }) | undefined
   >(undefined);
 
-  const {
-    query: { workspaceSlug, projectId, moduleId },
-  } = useRouter();
+  const router = useRouter();
+  const { workspaceSlug, projectId, moduleId } = router.query;
 
   const { data: issues } = useSWR(
     workspaceSlug && projectId
@@ -216,13 +215,15 @@ const SingleModule = () => {
 
   return (
     <>
-      <CreateUpdateIssuesModal
-        isOpen={createUpdateIssueModal && selectedIssues?.actionType !== "delete"}
-        data={selectedIssues}
-        prePopulateData={{ module: moduleId as string, ...preloadedData }}
-        setIsOpen={setCreateUpdateIssueModal}
-        projectId={projectId as string}
-      />
+      {moduleId && (
+        <CreateUpdateIssuesModal
+          isOpen={createUpdateIssueModal && selectedIssues?.actionType !== "delete"}
+          data={selectedIssues}
+          prePopulateData={{ ...preloadedData, module: moduleId as string }}
+          setIsOpen={setCreateUpdateIssueModal}
+          projectId={projectId as string}
+        />
+      )}
       <ExistingIssuesListModal
         isOpen={moduleIssuesListModal}
         handleClose={() => setModuleIssuesListModal(false)}
@@ -249,7 +250,7 @@ const SingleModule = () => {
           <Breadcrumbs>
             <BreadcrumbItem
               title={`${moduleDetail?.project_detail.name ?? "Project"} Modules`}
-              link={`/${workspaceSlug}/projects/${projectId}/cycles`}
+              link={`/${workspaceSlug}/projects/${projectId}/modules`}
             />
           </Breadcrumbs>
         }
@@ -470,13 +471,7 @@ const SingleModule = () => {
                     </span>
                   }
                   Icon={PlusIcon}
-                  action={() => {
-                    const e = new KeyboardEvent("keydown", {
-                      ctrlKey: true,
-                      key: "i",
-                    });
-                    document.dispatchEvent(e);
-                  }}
+                  action={() => openCreateIssueModal()}
                 />
                 <EmptySpaceItem
                   title="Add an existing issue"

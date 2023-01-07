@@ -123,7 +123,10 @@ const ProjectSprints: NextPage = () => {
             />
             <div className="space-y-5">
               <Tab.Group>
-                <Tab.List as="div" className="flex items-center gap-4 text-sm">
+                <Tab.List
+                  as="div"
+                  className="grid grid-cols-2 items-center gap-2 rounded bg-gray-100 p-2 text-sm"
+                >
                   <Tab
                     className={({ selected }) =>
                       `rounded border px-6 py-2 ${selected ? "bg-gray-200" : "hover:bg-gray-100"}`

@@ -11,6 +11,7 @@ import modulesService from "lib/services/modules.service";
 // hooks
 import useToast from "lib/hooks/useToast";
 // components
+import SelectLead from "components/project/modules/module-detail-sidebar/select-lead";
 import SelectMembers from "components/project/modules/module-detail-sidebar/select-members";
 import SelectStatus from "components/project/modules/module-detail-sidebar/select-status";
 import ModuleLinkModal from "components/project/modules/module-link-modal";
@@ -62,8 +63,6 @@ const ModuleDetailSidebar: React.FC<Props> = ({
   const { reset, watch, control } = useForm({
     defaultValues,
   });
-
-  // console.log(module);
 
   useEffect(() => {
     if (module)
@@ -152,21 +151,7 @@ const ModuleDetailSidebar: React.FC<Props> = ({
             </div>
             <div className="divide-y-2 divide-gray-100 text-xs">
               <div className="py-1">
-                <div className="flex flex-wrap items-center py-2">
-                  <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
-                    <UserIcon className="h-4 w-4 flex-shrink-0" />
-                    <p>Lead</p>
-                  </div>
-                  <div className="sm:basis-1/2">
-                    {module?.lead_detail?.first_name !== "" ? (
-                      <>
-                        {module?.lead_detail?.first_name} {module?.lead_detail?.last_name}
-                      </>
-                    ) : (
-                      module?.lead_detail?.email
-                    )}
-                  </div>
-                </div>
+                <SelectLead control={control} submitChanges={submitChanges} />
                 <SelectMembers control={control} submitChanges={submitChanges} />
                 <div className="flex flex-wrap items-center py-2">
                   <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">

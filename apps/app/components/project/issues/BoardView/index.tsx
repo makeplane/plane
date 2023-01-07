@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 // next
 import { useRouter } from "next/router";
 // swr
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 // react beautiful dnd
 import type { DropResult } from "react-beautiful-dnd";
 import { DragDropContext } from "react-beautiful-dnd";
@@ -10,16 +10,16 @@ import { DragDropContext } from "react-beautiful-dnd";
 import stateServices from "lib/services/state.service";
 import issuesServices from "lib/services/issues.service";
 // fetching keys
-import { STATE_LIST } from "constants/fetch-keys";
+import { STATE_LIST, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // components
 import SingleBoard from "components/project/issues/BoardView/single-board";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
+import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
 // ui
 import { Spinner } from "ui";
 // types
-import type { IState, IIssue, Properties, NestedKeyOf, IProjectMember } from "types";
-import ConfirmIssueDeletion from "../confirm-issue-deletion";
+import type { IState, IIssue, Properties, NestedKeyOf, IProjectMember, IssueResponse } from "types";
 
 type Props = {
   properties: Properties;
@@ -40,18 +40,14 @@ const BoardView: React.FC<Props> = ({
   handleDeleteIssue,
   partialUpdateIssue,
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
   const [isIssueOpen, setIsIssueOpen] = useState(false);
   const [isIssueDeletionOpen, setIsIssueDeletionOpen] = useState(false);
   const [issueDeletionData, setIssueDeletionData] = useState<IIssue | undefined>();
-
   const [preloadedData, setPreloadedData] = useState<
     (Partial<IIssue> & { actionType: "createIssue" | "edit" | "delete" }) | undefined
   >(undefined);
 
   const router = useRouter();
-
   const { workspaceSlug, projectId } = router.query;
 
   const { data: states, mutate: mutateState } = useSWR<IState[]>(
@@ -147,6 +143,30 @@ const BoardView: React.FC<Props> = ({
                   state: destinationStateId,
                 }
               );
+
+              // mutate the issues
+              if (!workspaceSlug || !projectId) return;
+              mutate<IssueResponse>(
+                PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
+                (prevData) => {
+                  if (!prevData) return prevData;
+                  const updatedIssues = prevData.results.map((issue) => {
+                    if (issue.id === removedItem.id) {
+                      return {
+                        ...removedItem,
+                        state_detail: destinationState,
+                        state: destinationStateId,
+                      };
+                    }
+                    return issue;
+                  });
+                  return {
+                    ...prevData,
+                    results: updatedIssues,
+                  };
+                },
+                false
+              );
             }
 
             // remove item from the source group
@@ -159,14 +179,6 @@ const BoardView: React.FC<Props> = ({
     },
     [workspaceSlug, mutateState, groupedByIssues, projectId, selectedGroup, states]
   );
-
-  useEffect(() => {
-    if (isOpen) return;
-    const timer = setTimeout(() => {
-      setPreloadedData(undefined);
-      clearTimeout(timer);
-    }, 500);
-  }, [isOpen]);
 
   return (
     <>
