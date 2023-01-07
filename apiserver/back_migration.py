@@ -14,7 +14,9 @@ def update_description():
             issue.description_stripped = issue.description
             updated_issues.append(issue)
 
-        Issue.objects.bulk_update(issue, updated_issues, batch_size=100)
+        Issue.objects.bulk_update(
+            updated_issues, ["description_html", "description_stripped"], batch_size=100
+        )
         print("Success")
     except Exception as e:
         print(e)
