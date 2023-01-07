@@ -268,7 +268,7 @@ const IssueDetail: NextPage = () => {
       )}
       {issueDetail && activeProject ? (
         <div className="flex h-full">
-          <div className="basis-2/3 space-y-5 p-5">
+          <div className="basis-2/3 space-y-5 divide-y-2 p-5">
             <div className="rounded-lg">
               {issueDetail.parent !== null && issueDetail.parent !== "" ? (
                 <div className="mb-5 flex w-min items-center gap-2 whitespace-nowrap rounded bg-gray-100 p-2 text-xs">
@@ -473,7 +473,7 @@ const IssueDetail: NextPage = () => {
                 )}
               </div>
             </div>
-            <div className="space-y-5 rounded-lg bg-secondary">
+            <div className="space-y-5 rounded-lg bg-secondary pt-3">
               <h3 className="text-lg">Comments/Activity</h3>
               <IssueCommentSection comments={comments || []} mutate={mutateIssueComments} />
               <IssueActivitySection issueActivities={issueActivities || []} />

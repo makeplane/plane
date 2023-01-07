@@ -63,7 +63,8 @@ const CycleStatsView: React.FC<TCycleStatsViewProps> = ({
             <CurrentCycleIcon height="56" width="56" />
           )}
           <h3>
-            Your {type} {type === "current" ? "cycle" : "cycles"} will be represented here
+            No {type} {type === "current" ? "cycle" : "cycles"} yet. Create with{" "}
+            <pre className="inline rounded bg-gray-100 px-2 py-1">Ctrl/Command + Q</pre>.
           </h3>
         </div>
       )}
