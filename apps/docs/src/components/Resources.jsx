@@ -10,8 +10,8 @@ import { UsersIcon } from '@/components/icons/UsersIcon'
 
 const resources = [
   {
-    href: '/get-started',
-    name: 'Get Started',
+    href: '/quick-start',
+    name: 'Quick Start',
     description:
       'Learn how to use Plane and follow the best practices of taking-off.',
     icon: UserIcon,
@@ -26,8 +26,7 @@ const resources = [
   {
     href: '/self-host',
     name: 'Self-host Plane',
-    description:
-      'Run Plane on your computer or development machine.',
+    description: 'Run Plane on your computer or development machine.',
     icon: ChatBubbleIcon,
     pattern: {
       y: -6,
@@ -54,8 +53,7 @@ const resources = [
   {
     href: '/',
     name: 'Community',
-    description:
-      'Hang out with truly exceptional devs & designers on Discord.',
+    description: 'Hang out with truly exceptional devs & designers on Discord.',
     icon: UsersIcon,
     pattern: {
       y: 22,
