@@ -84,24 +84,14 @@ const defaultValues: Partial<IIssueComment> = {
 
 const IssueActivitySection: React.FC<{
   issueActivities: IIssueActivity[];
-  comments: IIssueComment[];
-  mutate: KeyedMutator<IIssueComment[]>;
-}> = ({ issueActivities, comments, mutate }) => {
-  const {
-    register,
-    handleSubmit,
-    control,
-    setValue,
-    formState: { errors, isSubmitting },
-    reset,
-  } = useForm<IIssueComment>({ defaultValues });
-
+  mutate: KeyedMutator<IIssueActivity[]>;
+}> = ({ issueActivities, mutate }) => {
   const router = useRouter();
 
   let { workspaceSlug, projectId, issueId } = router.query;
 
   const onCommentUpdate = async (comment: IIssueComment) => {
-    if (!workspaceSlug || !projectId || !issueId || isSubmitting) return;
+    if (!workspaceSlug || !projectId || !issueId) return;
     await issuesServices
       .patchIssueComment(
         workspaceSlug as string,
@@ -111,20 +101,12 @@ const IssueActivitySection: React.FC<{
         comment
       )
       .then((response) => {
-        mutate((prevData) => {
-          const updatedComments = prevData?.map((c) => {
-            if (c.id === comment.id) {
-              return comment;
-            }
-            return c;
-          });
-          return updatedComments;
-        });
+        mutate();
       });
   };
 
   const onCommentDelete = async (commentId: string) => {
-    if (!workspaceSlug || !projectId || !issueId || isSubmitting) return;
+    if (!workspaceSlug || !projectId || !issueId) return;
     await issuesServices
       .deleteIssueComment(
         workspaceSlug as string,
@@ -133,12 +115,11 @@ const IssueActivitySection: React.FC<{
         commentId
       )
       .then((response) => {
-        mutate((prevData) => (prevData ?? []).filter((c) => c.id !== commentId));
+        mutate();
         console.log(response);
       });
   };
 
-  console.log(issueActivities);
   return (
     <>
       {issueActivities ? (

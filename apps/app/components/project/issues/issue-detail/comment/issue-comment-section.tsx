@@ -10,12 +10,8 @@ import { KeyedMutator } from "swr";
 import { useForm, Controller } from "react-hook-form";
 // services
 import issuesServices from "lib/services/issues.service";
-// components
-import CommentCard from "components/project/issues/issue-detail/comment/issue-comment-card";
-// ui
-import { Spinner } from "ui";
 // types
-import type { IIssueComment } from "types";
+import type { IIssueActivity, IIssueComment } from "types";
 // common
 import { debounce } from "constants/common";
 
@@ -26,15 +22,13 @@ const defaultValues: Partial<IIssueComment> = {
   comment_json: "",
 };
 const IssueCommentSection: React.FC<{
-  comments: IIssueComment[];
-  mutate: KeyedMutator<IIssueComment[]>;
-}> = ({ comments, mutate }) => {
+  mutate: KeyedMutator<IIssueActivity[]>;
+}> = ({ mutate }) => {
   const {
-    register,
     handleSubmit,
     control,
     setValue,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
     reset,
   } = useForm<IIssueComment>({ defaultValues });
 
@@ -48,7 +42,7 @@ const IssueCommentSection: React.FC<{
       .createIssueComment(workspaceSlug as string, projectId as string, issueId as string, formData)
       .then((response) => {
         console.log(response);
-        mutate((prevData) => [response, ...(prevData ?? [])]);
+        mutate();
         reset(defaultValues);
       })
       .catch((error) => {
