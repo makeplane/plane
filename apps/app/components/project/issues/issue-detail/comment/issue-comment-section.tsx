@@ -37,7 +37,15 @@ const IssueCommentSection: React.FC<{
   let { workspaceSlug, projectId, issueId } = router.query;
 
   const onSubmit = async (formData: IIssueComment) => {
-    if (!workspaceSlug || !projectId || !issueId || isSubmitting) return;
+    if (
+      !workspaceSlug ||
+      !projectId ||
+      !issueId ||
+      isSubmitting ||
+      !formData.comment_html ||
+      !formData.comment_json
+    )
+      return;
     await issuesServices
       .createIssueComment(workspaceSlug as string, projectId as string, issueId as string, formData)
       .then((response) => {
@@ -54,7 +62,7 @@ const IssueCommentSection: React.FC<{
     () =>
       debounce((key: any, val: any) => {
         setValue(key, val);
-      }, 3000),
+      }, 1000),
     [setValue]
   );
 
@@ -62,7 +70,7 @@ const IssueCommentSection: React.FC<{
     () =>
       debounce((key: any, val: any) => {
         setValue(key, val);
-      }, 3000),
+      }, 1000),
     [setValue]
   );
 
