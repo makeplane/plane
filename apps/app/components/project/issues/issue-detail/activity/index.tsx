@@ -263,38 +263,6 @@ const IssueActivitySection: React.FC<{
           </div>
         </Loader>
       )}
-
-      {/* {comments ? (
-        comments.length > 0 ? (
-          <div className="space-y-5">
-            {comments.map((comment) => (
-              <CommentCard
-                key={comment.id}
-                comment={comment}
-                onSubmit={onCommentUpdate}
-                handleCommentDeletion={onCommentDelete}
-              />
-            ))}
-          </div>
-        ) : (
-          <p className="text-xs text-gray-400">No comments yet.</p>
-        )
-      ) : (
-        <Loader className="space-y-4">
-          <div className="space-y-2">
-            <Loader.Item height="30px" width="40%"></Loader.Item>
-            <Loader.Item height="15px" width="60%"></Loader.Item>
-          </div>
-          <div className="space-y-2">
-            <Loader.Item height="30px" width="40%"></Loader.Item>
-            <Loader.Item height="15px" width="60%"></Loader.Item>
-          </div>
-          <div className="space-y-2">
-            <Loader.Item height="30px" width="40%"></Loader.Item>
-            <Loader.Item height="15px" width="60%"></Loader.Item>
-          </div>
-        </Loader>
-      )} */}
     </>
   );
 };
