@@ -163,7 +163,7 @@ const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
                   </Dropzone>
                   <div>
                     <p className="mb-2 text-sm text-gray-500">
-                      Max file size is 500kb. Supported file types are .jpg and .png.
+                      Max file size is 5MB. Supported file types are .jpg and .png.
                     </p>
                     <Button
                       onClick={() => {

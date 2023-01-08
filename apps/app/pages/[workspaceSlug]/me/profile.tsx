@@ -194,7 +194,7 @@ const Profile: NextPage = () => {
                           </span>
                         </div>
                         <p className="text-sm text-gray-500">
-                          Max file size is 500kb.
+                          Max file size is 5MB.
                           <br />
                           Supported file types are .jpg and .png.
                         </p>
