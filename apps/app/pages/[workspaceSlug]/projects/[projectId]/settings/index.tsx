@@ -205,7 +205,6 @@ const GeneralSettings: NextPage<TGeneralSettingsProps> = (props) => {
                       error={errors.name}
                       register={register}
                       placeholder="Project Name"
-                      size="lg"
                       className="w-auto"
                       validations={{
                         required: "Name is required",
@@ -254,7 +253,6 @@ const GeneralSettings: NextPage<TGeneralSettingsProps> = (props) => {
                     register={register}
                     placeholder="Enter identifier"
                     className="w-40"
-                    size="lg"
                     onChange={(e: any) => {
                       if (!activeWorkspace || !e.target.value) return;
                       checkIdentifierAvailability(activeWorkspace.slug, e.target.value);
