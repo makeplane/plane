@@ -449,8 +449,9 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                               render={({ field }) => (
                                 <RemirrorRichTextEditor
                                   {...field}
-                                  onChangeHTML={(val) => {
-                                    setValue("description_html", val);
+                                  onBlur={(jsonValue, htmlValue) => {
+                                    setValue("description", jsonValue);
+                                    setValue("description_html", htmlValue);
                                   }}
                                   placeholder="Enter Your Text..."
                                 />

@@ -208,31 +208,6 @@ const IssueDetail: NextPage = () => {
     }
   };
 
-  const updateState = useMemo(
-    () =>
-      debounce(() => {
-        handleSubmit(submitChanges)();
-      }, 5000),
-    [handleSubmit, submitChanges]
-  );
-
-  const updateDescription = useMemo(
-    () =>
-      debounce((key: any, val: any) => {
-        setValue(key, val);
-      }, 3000),
-    [setValue]
-  );
-
-  const updateDescriptionHTML = useMemo(
-    () =>
-      debounce((key: any, val: any) => {
-        setValue(key, val);
-        updateState();
-      }, 3000),
-    [setValue, updateState]
-  );
-
   return (
     <AppLayout
       noPadding={true}
@@ -360,16 +335,15 @@ const IssueDetail: NextPage = () => {
                 <Controller
                   name="description"
                   control={control}
-                  render={({ field: { value, onChange } }) => (
+                  render={({ field: { value } }) => (
                     <RemirrorRichTextEditor
                       value={value}
-                      onChange={(val) => {
-                        updateDescription("description", val);
-                      }}
-                      onChangeHTML={(val) => {
-                        updateDescriptionHTML("description_html", val);
-                      }}
                       placeholder="Enter Your Text..."
+                      onBlur={(jsonValue, htmlValue) => {
+                        setValue("description", jsonValue);
+                        setValue("description_html", htmlValue);
+                        handleSubmit(submitChanges)();
+                      }}
                     />
                   )}
                 />
