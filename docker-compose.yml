@@ -47,6 +47,7 @@ services:
     ports:
       - 8000:8000
     environment:
+      DJANGO_SETTINGS_MODULE: 'plane.settings.production'
       DATABASE_URL: 'postgres://plane:plane@db:5432/plane'
       SENTRY_DSN: $SENTRY_DSN
       WEB_URL: $WEB_URL
