@@ -1,19 +1,25 @@
 // react
-import React from "react";
+import React, { useMemo } from "react";
 // next
 import { useRouter } from "next/router";
+import dynamic from "next/dynamic";
+
 // swr
 import { KeyedMutator } from "swr";
 // react-hook-form
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 // services
 import issuesServices from "lib/services/issues.service";
 // components
 import CommentCard from "components/project/issues/issue-detail/comment/issue-comment-card";
 // ui
-import { TextArea, Spinner } from "ui";
+import { Spinner } from "ui";
 // types
 import type { IIssueComment } from "types";
+// common
+import { debounce } from "constants/common";
+
+const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), { ssr: false });
 
 const defaultValues: Partial<IIssueComment> = {
   comment: "",
@@ -26,6 +32,7 @@ const IssueCommentSection: React.FC<{
   const {
     register,
     handleSubmit,
+    control,
     setValue,
     formState: { errors, isSubmitting },
     reset,
@@ -87,6 +94,22 @@ const IssueCommentSection: React.FC<{
       });
   };
 
+  const updateDescription = useMemo(
+    () =>
+      debounce((key: any, val: any) => {
+        setValue(key, val);
+      }, 3000),
+    [setValue]
+  );
+
+  const updateDescriptionHTML = useMemo(
+    () =>
+      debounce((key: any, val: any) => {
+        setValue(key, val);
+      }, 3000),
+    [setValue]
+  );
+
   return (
     <div className="space-y-5">
       {comments ? (
@@ -110,30 +133,24 @@ const IssueCommentSection: React.FC<{
         </div>
       )}
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex items-start gap-2 rounded-md border p-2 pt-3">
-          <TextArea
-            id="comment"
-            name="comment"
-            register={register}
-            validations={{
-              required: true,
-            }}
-            mode="transparent"
-            error={errors.comment}
-            placeholder="Enter your comment"
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && e.shiftKey) {
-                e.preventDefault();
-                const value = e.currentTarget.value;
-                const start = e.currentTarget.selectionStart;
-                const end = e.currentTarget.selectionEnd;
-                setValue("comment", `${value.substring(0, start)}\r ${value.substring(end)}`);
-              } else if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                isSubmitting || handleSubmit(onSubmit)();
-              }
-            }}
+        <div className="rounded-md p-2 pt-3">
+          <Controller
+            name="comment_html"
+            control={control}
+            render={({ field: { value, onChange } }) => (
+              <RemirrorRichTextEditor
+                value={value}
+                onChange={(val) => {
+                  updateDescription("comment_json", val);
+                }}
+                onChangeHTML={(val) => {
+                  updateDescriptionHTML("comment_html", val);
+                }}
+                placeholder="Enter Your comment..."
+              />
+            )}
           />
+
           <button
             type="submit"
             disabled={isSubmitting}

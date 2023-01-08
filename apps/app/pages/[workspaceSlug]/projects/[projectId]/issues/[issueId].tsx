@@ -46,6 +46,7 @@ const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor
 const defaultValues = {
   name: "",
   description: "",
+  description_html: "",
   state: "",
   assignees_list: [],
   priority: "low",
@@ -111,7 +112,7 @@ const IssueDetail: NextPage = () => {
       : null
   );
 
-  const { register, handleSubmit, reset, control, watch } = useForm<IIssue>({
+  const { register, handleSubmit, reset, control, watch, setValue } = useForm<IIssue>({
     defaultValues,
   });
 
@@ -213,6 +214,23 @@ const IssueDetail: NextPage = () => {
         handleSubmit(submitChanges)();
       }, 5000),
     [handleSubmit, submitChanges]
+  );
+
+  const updateDescription = useMemo(
+    () =>
+      debounce((key: any, val: any) => {
+        setValue(key, val);
+      }, 3000),
+    [setValue]
+  );
+
+  const updateDescriptionHTML = useMemo(
+    () =>
+      debounce((key: any, val: any) => {
+        setValue(key, val);
+        updateState();
+      }, 3000),
+    [setValue, updateState]
   );
 
   return (
@@ -346,13 +364,10 @@ const IssueDetail: NextPage = () => {
                     <RemirrorRichTextEditor
                       value={value}
                       onChange={(val) => {
-                        onChange(val);
-                        updateState();
+                        updateDescription("description", val);
                       }}
                       onChangeHTML={(val) => {
-                        debounce(() => {
-                          submitChanges({ description_html: val });
-                        }, 5000)();
+                        updateDescriptionHTML("description_html", val);
                       }}
                       placeholder="Enter Your Text..."
                     />

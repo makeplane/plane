@@ -1,4 +1,4 @@
-import { useCallback, FC, useState } from "react";
+import { useCallback, FC, useState, useEffect } from "react";
 import { InvalidContentHandler } from "remirror";
 import {
   BoldExtension,
@@ -142,9 +142,18 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = ({
     onError,
   });
 
-  // useEffect(() => {
-  //   manager.view.updateState(manager.createState({ content: value }));
-  // }, [manager, value]);
+  const updateState = useCallback(
+    (value: any) => {
+      // Clear out old state when setting data from outside
+      // This prevents e.g. the user from using CTRL-Z to go back to the old state
+      manager.view.updateState(manager.createState({ content: value }));
+    },
+    [manager]
+  );
+
+  useEffect(() => {
+    updateState(value);
+  }, [updateState, value]);
 
   return (
     <div className="mt-2 mb-4">
