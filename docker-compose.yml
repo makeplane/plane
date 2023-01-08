@@ -47,6 +47,7 @@ services:
     ports:
       - 8000:8000
     environment:
+      DATABASE_URL: 'postgres://plane:plane@db:5432/plane'
       SENTRY_DSN: $SENTRY_DSN
       WEB_URL: $WEB_URL
       PGUSER: plane
@@ -84,6 +85,7 @@ services:
         - redis:redis
         - db:db
     environment:
+      DATABASE_URL: 'postgres://plane:plane@db:5432/plane'
       SENTRY_DSN: $SENTRY_DSN
       WEB_URL: $WEB_URL
       PGUSER: plane
@@ -101,6 +103,36 @@ services:
       EMAIL_HOST_USER: $EMAIL_HOST_USER
       EMAIL_HOST_PASSWORD: $EMAIL_HOST_PASSWORD
 
+  plane-channel-worker:
+    image: plane-api
+    container_name: plane-channel-worker
+    restart: always
+    depends_on:
+        - redis
+        - db
+        - plane-api
+    command: ./bin/channel-worker
+    links:
+        - redis:redis
+        - db:db
+    environment:
+      SENTRY_DSN: $SENTRY_DSN
+      WEB_URL: $WEB_URL
+      PGUSER: plane
+      PGPASSWORD: plane
+      PGHOST: db
+      DATABASE_URL: 'postgres://plane:plane@db:5432/plane'
+      REDIS_URL: 'redis://redis:6379/'
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      SECRET_KEY: $SECRET_KEY
+      AWS_REGION: $AWS_REGION
+      AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+      AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+      AWS_S3_BUCKET_NAME: $AWS_S3_BUCKET_NAME
+      EMAIL_HOST: $EMAIL_HOST
+      EMAIL_HOST_USER: $EMAIL_HOST_USER
+      EMAIL_HOST_PASSWORD: $EMAIL_HOST_PASSWORD
 
 volumes:
   pgdata:

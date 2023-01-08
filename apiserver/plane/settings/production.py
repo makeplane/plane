@@ -19,9 +19,9 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
         "NAME": "plane",
-        "USER": os.environ.get('PGUSER'),
-        "PASSWORD": os.environ.get('PGPASSWORD'),
-        "HOST": os.environ.get('PGHOST'),
+        "USER": os.environ.get("PGUSER"),
+        "PASSWORD": os.environ.get("PGPASSWORD"),
+        "HOST": os.environ.get("PGHOST"),
     }
 }
 
@@ -195,10 +195,9 @@ class CustomSSLConnection(Connection):
         super().__init__(**kwargs)
         self.ssl_context = RedisSSLContext(ssl_context)
 
+
 class RedisSSLContext:
-    __slots__ = (
-        "context",
-    )
+    __slots__ = ("context",)
 
     def __init__(
         self,
@@ -212,25 +211,39 @@ class RedisSSLContext:
 
 url = urlparse(os.environ.get("REDIS_URL"))
 
-ssl_context = ssl.SSLContext()
-ssl_context.check_hostname = False
+DYNO = os.environ.get("DYNO", False)
 
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            'hosts': [
+if DYNO:
+
+    ssl_context = ssl.SSLContext()
+    ssl_context.check_hostname = False
+
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels_redis.core.RedisChannelLayer",
+            "CONFIG": {
+                "hosts": [
                     {
-                        'host': url.hostname,
-                        'port': url.port,
-                        'username': url.username,
-                        'password': url.password,
-                        'connection_class': CustomSSLConnection,
-                        'ssl_context': ssl_context,
+                        "host": url.hostname,
+                        "port": url.port,
+                        "username": url.username,
+                        "password": url.password,
+                        "connection_class": CustomSSLConnection,
+                        "ssl_context": ssl_context,
                     }
                 ],
-        }
+            },
+        },
+    }
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [(os.environ.get("REDIS_URL"))],
+        },
     },
 }
+
 
 WEB_URL = os.environ.get("WEB_URL")
