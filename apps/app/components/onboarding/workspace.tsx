@@ -17,11 +17,17 @@ import { CustomSelect, Input } from "ui";
 // fetch-keys
 import { USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 // types
-import { IWorkspace, IWorkspaceMemberInvitation } from "types";
+import { IUser, IWorkspace, IWorkspaceMemberInvitation } from "types";
 
 type Props = {
   setStep: React.Dispatch<React.SetStateAction<number>>;
   setWorkspace: React.Dispatch<React.SetStateAction<any>>;
+};
+
+const defaultValues: Partial<IWorkspace> = {
+  name: "",
+  slug: "",
+  company_size: null,
 };
 
 const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
@@ -37,13 +43,11 @@ const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
   const {
     register,
     handleSubmit,
-    watch,
     control,
     reset,
-    setError,
     setValue,
     formState: { errors, isSubmitting },
-  } = useForm<IWorkspace>();
+  } = useForm<IWorkspace>({ defaultValues });
 
   const handleCreateWorkspace = (formData: IWorkspace) => {
     console.log(formData);

@@ -6,7 +6,6 @@ import type { NextPage, NextPageContext } from "next";
 
 import useSWR from "swr";
 // services
-import userService from "lib/services/user.service";
 import workspaceService from "lib/services/workspace.service";
 // hooks
 import useUser from "lib/hooks/useUser";

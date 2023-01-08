@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 
 import { useRouter } from "next/router";
 import type { NextPageContext, NextPage } from "next";
+import Image from "next/image";
 
 import useSWR, { mutate } from "swr";
 
@@ -154,10 +155,33 @@ const ControlSettings: NextPage<TControlSettingsProps> = (props) => {
                         input
                       >
                         {people?.map((person) => (
-                          <CustomSelect.Option key={person.id} value={person.member.id}>
-                            {person.member.first_name !== ""
-                              ? person.member.first_name
-                              : person.member.email}
+                          <CustomSelect.Option
+                            key={person.id}
+                            value={person.member.id}
+                            className="flex items-center gap-2"
+                          >
+                            <>
+                              {person.member.avatar && person.member.avatar !== "" ? (
+                                <div className="relative h-4 w-4">
+                                  <Image
+                                    src={person.member.avatar}
+                                    alt="avatar"
+                                    className="rounded-full"
+                                    layout="fill"
+                                    objectFit="cover"
+                                  />
+                                </div>
+                              ) : (
+                                <div className="grid h-4 w-4 flex-shrink-0 place-items-center rounded-full bg-gray-700 capitalize text-white">
+                                  {person.member.first_name && person.member.first_name !== ""
+                                    ? person.member.first_name.charAt(0)
+                                    : person.member.email.charAt(0)}
+                                </div>
+                              )}
+                              {person.member.first_name !== ""
+                                ? person.member.first_name
+                                : person.member.email}
+                            </>
                           </CustomSelect.Option>
                         ))}
                       </CustomSelect>
@@ -190,10 +214,33 @@ const ControlSettings: NextPage<TControlSettingsProps> = (props) => {
                         input
                       >
                         {people?.map((person) => (
-                          <CustomSelect.Option key={person.id} value={person.member.id}>
-                            {person.member.first_name !== ""
-                              ? person.member.first_name
-                              : person.member.email}
+                          <CustomSelect.Option
+                            key={person.id}
+                            value={person.member.id}
+                            className="flex items-center gap-2"
+                          >
+                            <>
+                              {person.member.avatar && person.member.avatar !== "" ? (
+                                <div className="relative h-4 w-4">
+                                  <Image
+                                    src={person.member.avatar}
+                                    alt="avatar"
+                                    className="rounded-full"
+                                    layout="fill"
+                                    objectFit="cover"
+                                  />
+                                </div>
+                              ) : (
+                                <div className="grid h-4 w-4 flex-shrink-0 place-items-center rounded-full bg-gray-700 capitalize text-white">
+                                  {person.member.first_name && person.member.first_name !== ""
+                                    ? person.member.first_name.charAt(0)
+                                    : person.member.email.charAt(0)}
+                                </div>
+                              )}
+                              {person.member.first_name !== ""
+                                ? person.member.first_name
+                                : person.member.email}
+                            </>
                           </CustomSelect.Option>
                         ))}
                       </CustomSelect>
