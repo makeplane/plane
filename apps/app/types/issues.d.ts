@@ -123,6 +123,8 @@ export interface IIssueComment {
   created_at: Date;
   updated_at: Date;
   comment: string;
+  comment_html: string;
+  comment_json: any;
   attachments: any[];
   created_by: string;
   updated_by: string;

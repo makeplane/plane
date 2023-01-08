@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 // next
 import Link from "next/link";
 import dynamic from "next/dynamic";
@@ -46,6 +46,7 @@ const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor
 const defaultValues = {
   name: "",
   description: "",
+  description_html: "",
   state: "",
   assignees_list: [],
   priority: "low",
@@ -111,7 +112,7 @@ const IssueDetail: NextPage = () => {
       : null
   );
 
-  const { register, handleSubmit, reset, control, watch } = useForm<IIssue>({
+  const { register, handleSubmit, reset, control, watch, setValue } = useForm<IIssue>({
     defaultValues,
   });
 
@@ -124,7 +125,9 @@ const IssueDetail: NextPage = () => {
     issues?.results.filter((i) => i.parent === issueDetail.parent && i.id !== issueId);
 
   useEffect(() => {
-    if (issueDetail)
+    if (issueDetail) {
+      mutateIssueActivities();
+      mutateIssueComments();
       reset({
         ...issueDetail,
         blockers_list:
@@ -138,7 +141,8 @@ const IssueDetail: NextPage = () => {
         labels_list: issueDetail.labels_list ?? issueDetail.labels,
         labels: issueDetail.labels_list ?? issueDetail.labels,
       });
-  }, [issueDetail, reset]);
+    }
+  }, [issueDetail, reset, mutateIssueActivities, mutateIssueComments]);
 
   const submitChanges = useCallback(
     (formData: Partial<IIssue>) => {
@@ -203,6 +207,31 @@ const IssueDetail: NextPage = () => {
         });
     }
   };
+
+  const updateState = useMemo(
+    () =>
+      debounce(() => {
+        handleSubmit(submitChanges)();
+      }, 5000),
+    [handleSubmit, submitChanges]
+  );
+
+  const updateDescription = useMemo(
+    () =>
+      debounce((key: any, val: any) => {
+        setValue(key, val);
+      }, 3000),
+    [setValue]
+  );
+
+  const updateDescriptionHTML = useMemo(
+    () =>
+      debounce((key: any, val: any) => {
+        setValue(key, val);
+        updateState();
+      }, 3000),
+    [setValue, updateState]
+  );
 
   return (
     <AppLayout
@@ -335,15 +364,10 @@ const IssueDetail: NextPage = () => {
                     <RemirrorRichTextEditor
                       value={value}
                       onChange={(val) => {
-                        onChange(val);
-                        debounce(() => {
-                          handleSubmit(submitChanges)();
-                        }, 5000)();
+                        updateDescription("description", val);
                       }}
                       onChangeHTML={(val) => {
-                        debounce(() => {
-                          submitChanges({ description_html: val });
-                        }, 5000)();
+                        updateDescriptionHTML("description_html", val);
                       }}
                       placeholder="Enter Your Text..."
                     />
@@ -473,8 +497,12 @@ const IssueDetail: NextPage = () => {
             </div>
             <div className="space-y-5 bg-secondary pt-3">
               <h3 className="text-lg">Comments/Activity</h3>
+              <IssueActivitySection
+                issueActivities={issueActivities || []}
+                comments={comments || []}
+                mutate={mutateIssueComments}
+              />
               <IssueCommentSection comments={comments || []} mutate={mutateIssueComments} />
-              <IssueActivitySection issueActivities={issueActivities || []} />
             </div>
           </div>
           <div className="h-full basis-1/3 space-y-5 border-l p-5">

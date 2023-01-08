@@ -1,4 +1,4 @@
-import { useCallback, FC, useState } from "react";
+import { useCallback, FC, useState, useEffect } from "react";
 import { InvalidContentHandler } from "remirror";
 import {
   BoldExtension,
@@ -40,10 +40,11 @@ export interface IRemirrorRichTextEditor {
   placeholder?: string;
   mentions?: any[];
   tags?: any[];
-  onChange: (value: any) => void;
-  onChangeHTML: (value: any) => void;
+  onChange?: (value: any) => void;
+  onChangeHTML?: (value: any) => void;
   value?: any;
   showToolbar?: boolean;
+  editable?: boolean;
 }
 
 const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = ({
@@ -54,6 +55,7 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = ({
   onChangeHTML,
   value = "",
   showToolbar = true,
+  editable = true,
 }) => {
   const [imageLoader, setImageLoader] = useState(false);
 
@@ -142,15 +144,29 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = ({
     onError,
   });
 
-  // useEffect(() => {
-  //   manager.view.updateState(manager.createState({ content: value }));
-  // }, [manager, value]);
+  const updateState = useCallback(
+    (value: any) => {
+      // Clear out old state when setting data from outside
+      // This prevents e.g. the user from using CTRL-Z to go back to the old state
+      manager.view.updateState(manager.createState({ content: value }));
+    },
+    [manager]
+  );
+
+  useEffect(() => {
+    updateState(value);
+  }, [updateState, value]);
 
   return (
     <div className="mt-2 mb-4">
-      <Remirror manager={manager} initialContent={state} classNames={["p-4 focus:outline-none"]}>
+      <Remirror
+        manager={manager}
+        initialContent={state}
+        classNames={["p-4 focus:outline-none"]}
+        editable={editable}
+      >
         <div className="rounded-md border">
-          {showToolbar && (
+          {showToolbar && editable && (
             <div className="box-border w-full border-b py-2">
               <RichTextToolbar />
             </div>
@@ -163,8 +179,8 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = ({
           )}
           {/* <TableComponents /> */}
           <MentionAutoComplete mentions={mentions} tags={tags} />
-          <OnChangeJSON onChange={onChange} />
-          <OnChangeHTML onChange={onChangeHTML} />
+          {onChange && <OnChangeJSON onChange={onChange} />}
+          {onChangeHTML && <OnChangeHTML onChange={onChangeHTML} />}
         </div>
       </Remirror>
     </div>

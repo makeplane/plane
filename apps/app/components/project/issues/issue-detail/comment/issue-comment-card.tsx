@@ -1,7 +1,8 @@
 // react
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 // next
 import Image from "next/image";
+import dynamic from "next/dynamic";
 // react-hook-form
 import { useForm } from "react-hook-form";
 // hooks
@@ -15,7 +16,9 @@ import { CheckIcon, EllipsisHorizontalIcon, XMarkIcon } from "@heroicons/react/2
 // types
 import type { IIssueComment } from "types";
 // common
-import { timeAgo } from "constants/common";
+import { timeAgo, debounce } from "constants/common";
+
+const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), { ssr: false });
 
 type Props = {
   comment: IIssueComment;
@@ -33,6 +36,7 @@ const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentDeletion
     formState: { isSubmitting },
     handleSubmit,
     setFocus,
+    setValue,
   } = useForm<IIssueComment>({
     defaultValues: comment,
   });
@@ -46,6 +50,22 @@ const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentDeletion
   useEffect(() => {
     isEditing && setFocus("comment");
   }, [isEditing, setFocus]);
+
+  const updateDescription = useMemo(
+    () =>
+      debounce((key: any, val: any) => {
+        setValue(key, val);
+      }, 1000),
+    [setValue]
+  );
+
+  const updateDescriptionHTML = useMemo(
+    () =>
+      debounce((key: any, val: any) => {
+        setValue(key, val);
+      }, 1000),
+    [setValue]
+  );
 
   return (
     <div key={comment.id}>
@@ -78,16 +98,15 @@ const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentDeletion
             <div>
               {isEditing ? (
                 <form className="flex flex-col gap-2" onSubmit={handleSubmit(onEnter)}>
-                  <TextArea
-                    id="comment"
-                    name="comment"
-                    register={register}
-                    validations={{
-                      required: true,
+                  <RemirrorRichTextEditor
+                    value={comment.comment_html}
+                    onChange={(val) => {
+                      updateDescription("comment_json", val);
                     }}
-                    autoComplete="off"
-                    mode="transparent"
-                    className="w-full"
+                    onChangeHTML={(val) => {
+                      updateDescriptionHTML("comment_html", val);
+                    }}
+                    placeholder="Enter Your comment..."
                   />
                   <div className="flex gap-1 self-end">
                     <button
@@ -108,11 +127,7 @@ const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentDeletion
                 </form>
               ) : (
                 <>
-                  {comment.comment.split("\n").map((item, index) => (
-                    <p key={index} className="text-sm">
-                      {item}
-                    </p>
-                  ))}
+                  <RemirrorRichTextEditor value={comment.comment_html} editable={false} />
                 </>
               )}
             </div>

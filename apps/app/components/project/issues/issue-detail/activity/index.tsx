@@ -1,6 +1,9 @@
 import React from "react";
-
+// next
+import { useRouter } from "next/router";
 import Image from "next/image";
+// swr
+import { KeyedMutator } from "swr";
 
 // common
 import { addSpaceIfCamelCase, renderShortNumericDateFormat, timeAgo } from "constants/common";
@@ -15,7 +18,13 @@ import {
   UserIcon,
 } from "@heroicons/react/24/outline";
 import { BlockedIcon, BlockerIcon, TagIcon, UserGroupIcon } from "ui/icons";
-import { IIssueActivity } from "types";
+import { IIssueActivity, IIssueComment } from "types";
+// components
+import CommentCard from "components/project/issues/issue-detail/comment/issue-comment-card";
+// react-hook-form
+import { useForm, Controller } from "react-hook-form";
+// services
+import issuesServices from "lib/services/issues.service";
 
 const activityDetails: {
   [key: string]: {
@@ -55,7 +64,7 @@ const activityDetails: {
     icon: <ChatBubbleBottomCenterTextIcon className="h-4 w-4" />,
   },
   description: {
-    message: "updated the description",
+    message: "updated the description.",
     icon: <ChatBubbleBottomCenterTextIcon className="h-4 w-4" />,
   },
   target_date: {
@@ -68,15 +77,74 @@ const activityDetails: {
   },
 };
 
+const defaultValues: Partial<IIssueComment> = {
+  comment_html: "",
+  comment_json: "",
+};
+
 const IssueActivitySection: React.FC<{
   issueActivities: IIssueActivity[];
-}> = ({ issueActivities }) => {
+  comments: IIssueComment[];
+  mutate: KeyedMutator<IIssueComment[]>;
+}> = ({ issueActivities, comments, mutate }) => {
+  const {
+    register,
+    handleSubmit,
+    control,
+    setValue,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm<IIssueComment>({ defaultValues });
+
+  const router = useRouter();
+
+  let { workspaceSlug, projectId, issueId } = router.query;
+
+  const onCommentUpdate = async (comment: IIssueComment) => {
+    if (!workspaceSlug || !projectId || !issueId || isSubmitting) return;
+    await issuesServices
+      .patchIssueComment(
+        workspaceSlug as string,
+        projectId as string,
+        issueId as string,
+        comment.id,
+        comment
+      )
+      .then((response) => {
+        mutate((prevData) => {
+          const updatedComments = prevData?.map((c) => {
+            if (c.id === comment.id) {
+              return comment;
+            }
+            return c;
+          });
+          return updatedComments;
+        });
+      });
+  };
+
+  const onCommentDelete = async (commentId: string) => {
+    if (!workspaceSlug || !projectId || !issueId || isSubmitting) return;
+    await issuesServices
+      .deleteIssueComment(
+        workspaceSlug as string,
+        projectId as string,
+        issueId as string,
+        commentId
+      )
+      .then((response) => {
+        mutate((prevData) => (prevData ?? []).filter((c) => c.id !== commentId));
+        console.log(response);
+      });
+  };
+
+  console.log(issueActivities);
   return (
     <>
       {issueActivities ? (
         <div className="space-y-4">
           {issueActivities.map((activity, index) => {
-            if (activity.field !== "updated_by")
+            if ("field" in activity && activity.field !== "updated_by") {
               return (
                 <div key={activity.id} className="relative flex w-full items-center gap-x-2">
                   {issueActivities.length > 1 && index !== issueActivities.length - 1 ? (
@@ -156,6 +224,8 @@ const IssueActivitySection: React.FC<{
                           activity.old_value
                         ) : activity.field === "target_date" ? (
                           renderShortNumericDateFormat(activity.new_value as string)
+                        ) : activity.field === "description" ? (
+                          ""
                         ) : (
                           activity.new_value ?? "None"
                         )}
@@ -165,6 +235,16 @@ const IssueActivitySection: React.FC<{
                   </div>
                 </div>
               );
+            } else if ("comment_json" in activity) {
+              return (
+                <CommentCard
+                  key={activity.id}
+                  comment={activity as any}
+                  onSubmit={onCommentUpdate}
+                  handleCommentDeletion={onCommentDelete}
+                />
+              );
+            }
           })}
         </div>
       ) : (

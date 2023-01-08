@@ -237,6 +237,13 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
           }
         })
         .catch((err) => {
+          if (err.detail) {
+            setToastAlert({
+              title: "Join the project.",
+              type: "error",
+              message: "Click select to join from projects page to start making changes",
+            });
+          }
           Object.keys(err).map((key) => {
             const message = err[key];
             if (!message) return;
