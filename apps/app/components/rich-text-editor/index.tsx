@@ -40,10 +40,11 @@ export interface IRemirrorRichTextEditor {
   placeholder?: string;
   mentions?: any[];
   tags?: any[];
-  onChange: (value: any) => void;
-  onChangeHTML: (value: any) => void;
+  onChange?: (value: any) => void;
+  onChangeHTML?: (value: any) => void;
   value?: any;
   showToolbar?: boolean;
+  editable?: boolean;
 }
 
 const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = ({
@@ -54,6 +55,7 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = ({
   onChangeHTML,
   value = "",
   showToolbar = true,
+  editable = true,
 }) => {
   const [imageLoader, setImageLoader] = useState(false);
 
@@ -157,9 +159,14 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = ({
 
   return (
     <div className="mt-2 mb-4">
-      <Remirror manager={manager} initialContent={state} classNames={["p-4 focus:outline-none"]}>
+      <Remirror
+        manager={manager}
+        initialContent={state}
+        classNames={["p-4 focus:outline-none"]}
+        editable={editable}
+      >
         <div className="rounded-md border">
-          {showToolbar && (
+          {showToolbar && editable && (
             <div className="box-border w-full border-b py-2">
               <RichTextToolbar />
             </div>
@@ -172,8 +179,8 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = ({
           )}
           {/* <TableComponents /> */}
           <MentionAutoComplete mentions={mentions} tags={tags} />
-          <OnChangeJSON onChange={onChange} />
-          <OnChangeHTML onChange={onChangeHTML} />
+          {onChange && <OnChangeJSON onChange={onChange} />}
+          {onChangeHTML && <OnChangeHTML onChange={onChangeHTML} />}
         </div>
       </Remirror>
     </div>

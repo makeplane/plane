@@ -22,9 +22,9 @@ import { debounce } from "constants/common";
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), { ssr: false });
 
 const defaultValues: Partial<IIssueComment> = {
-  comment: "",
+  comment_html: "",
+  comment_json: "",
 };
-
 const IssueCommentSection: React.FC<{
   comments: IIssueComment[];
   mutate: KeyedMutator<IIssueComment[]>;
@@ -56,44 +56,6 @@ const IssueCommentSection: React.FC<{
       });
   };
 
-  const onCommentUpdate = async (comment: IIssueComment) => {
-    if (!workspaceSlug || !projectId || !issueId || isSubmitting) return;
-    await issuesServices
-      .patchIssueComment(
-        workspaceSlug as string,
-        projectId as string,
-        issueId as string,
-        comment.id,
-        comment
-      )
-      .then((response) => {
-        mutate((prevData) => {
-          const updatedComments = prevData?.map((c) => {
-            if (c.id === comment.id) {
-              return comment;
-            }
-            return c;
-          });
-          return updatedComments;
-        });
-      });
-  };
-
-  const onCommentDelete = async (commentId: string) => {
-    if (!workspaceSlug || !projectId || !issueId || isSubmitting) return;
-    await issuesServices
-      .deleteIssueComment(
-        workspaceSlug as string,
-        projectId as string,
-        issueId as string,
-        commentId
-      )
-      .then((response) => {
-        mutate((prevData) => (prevData ?? []).filter((c) => c.id !== commentId));
-        console.log(response);
-      });
-  };
-
   const updateDescription = useMemo(
     () =>
       debounce((key: any, val: any) => {
@@ -112,26 +74,6 @@ const IssueCommentSection: React.FC<{
 
   return (
     <div className="space-y-5">
-      {comments ? (
-        comments.length > 0 ? (
-          <div className="space-y-5">
-            {comments.map((comment) => (
-              <CommentCard
-                key={comment.id}
-                comment={comment}
-                onSubmit={onCommentUpdate}
-                handleCommentDeletion={onCommentDelete}
-              />
-            ))}
-          </div>
-        ) : (
-          <p className="text-xs text-gray-400">No comments yet.</p>
-        )
-      ) : (
-        <div className="flex w-full justify-center">
-          <Spinner />
-        </div>
-      )}
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="rounded-md p-2 pt-3">
           <Controller

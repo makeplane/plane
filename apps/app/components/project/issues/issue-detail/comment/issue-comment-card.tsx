@@ -127,10 +127,7 @@ const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentDeletion
                 </form>
               ) : (
                 <>
-                  <div
-                    className="text-sm"
-                    dangerouslySetInnerHTML={{ __html: comment.comment_html }}
-                  ></div>
+                  <RemirrorRichTextEditor value={comment.comment_html} editable={false} />
                 </>
               )}
             </div>

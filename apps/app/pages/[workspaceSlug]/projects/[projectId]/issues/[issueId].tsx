@@ -497,8 +497,12 @@ const IssueDetail: NextPage = () => {
             </div>
             <div className="space-y-5 bg-secondary pt-3">
               <h3 className="text-lg">Comments/Activity</h3>
+              <IssueActivitySection
+                issueActivities={issueActivities || []}
+                comments={comments || []}
+                mutate={mutateIssueComments}
+              />
               <IssueCommentSection comments={comments || []} mutate={mutateIssueComments} />
-              <IssueActivitySection issueActivities={issueActivities || []} />
             </div>
           </div>
           <div className="h-full basis-1/3 space-y-5 border-l p-5">
