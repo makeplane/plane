@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 // swr
 import { mutate } from "swr";
 // react hook form
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 // headless
 import { Dialog, Transition } from "@headlessui/react";
 // services
@@ -14,7 +14,7 @@ import { CYCLE_LIST } from "constants/fetch-keys";
 // common
 import { renderDateFormat } from "constants/common";
 // ui
-import { Button, Input, TextArea, Select } from "ui";
+import { Button, Input, TextArea, Select, CustomSelect } from "ui";
 
 // types
 import type { ICycle } from "types";
@@ -28,6 +28,9 @@ type Props = {
 const defaultValues: Partial<ICycle> = {
   name: "",
   description: "",
+  status: "draft",
+  start_date: new Date().toString(),
+  end_date: new Date().toString(),
 };
 
 const CreateUpdateCycleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, projectId }) => {
@@ -38,6 +41,7 @@ const CreateUpdateCycleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, proj
     register,
     formState: { errors, isSubmitting },
     handleSubmit,
+    control,
     reset,
     setError,
   } = useForm<ICycle>({
@@ -167,20 +171,29 @@ const CreateUpdateCycleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, proj
                         />
                       </div>
                       <div>
-                        <Select
-                          id="status"
+                        <h6 className="text-gray-500">Status</h6>
+                        <Controller
                           name="status"
-                          label="Status"
-                          error={errors.status}
-                          register={register}
-                          validations={{
-                            required: "Status is required",
-                          }}
-                          options={[
-                            { label: "Draft", value: "draft" },
-                            { label: "Started", value: "started" },
-                            { label: "Completed", value: "completed" },
-                          ]}
+                          control={control}
+                          render={({ field }) => (
+                            <CustomSelect
+                              {...field}
+                              label={
+                                <span className="capitalize">{field.value ?? "Select Status"}</span>
+                              }
+                              input
+                            >
+                              {[
+                                { label: "Draft", value: "draft" },
+                                { label: "Started", value: "started" },
+                                { label: "Completed", value: "completed" },
+                              ].map((item) => (
+                                <CustomSelect.Option key={item.value} value={item.value}>
+                                  {item.label}
+                                </CustomSelect.Option>
+                              ))}
+                            </CustomSelect>
+                          )}
                         />
                       </div>
                       <div className="flex gap-x-2">

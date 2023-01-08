@@ -12,18 +12,15 @@ import CyclesBoardView from "components/project/cycles/board-view";
 import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
 import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
 import ExistingIssuesListModal from "components/common/existing-issues-list-modal";
-// constants
-import { filterIssueOptions, groupByOptions, orderByOptions } from "constants/";
+import CycleDetailSidebar from "components/project/cycles/cycle-detail-sidebar";
+import View from "components/core/view";
 // services
 import issuesServices from "lib/services/issues.service";
 import cycleServices from "lib/services/cycles.service";
 import projectService from "lib/services/project.service";
-import workspaceService from "lib/services/workspace.service";
 // hooks
 import useIssuesFilter from "lib/hooks/useIssuesFilter";
 import useIssuesProperties from "lib/hooks/useIssuesProperties";
-// headless ui
-import { Popover, Transition } from "@headlessui/react";
 // ui
 import { BreadcrumbItem, Breadcrumbs, CustomMenu, EmptySpace, EmptySpaceItem, Spinner } from "ui";
 // icons
@@ -31,12 +28,11 @@ import { Squares2X2Icon } from "@heroicons/react/20/solid";
 import {
   ArrowLeftIcon,
   ArrowPathIcon,
-  ChevronDownIcon,
   ListBulletIcon,
   PlusIcon,
 } from "@heroicons/react/24/outline";
 // types
-import { CycleIssueResponse, IIssue, Properties, SelectIssue } from "types";
+import { CycleIssueResponse, IIssue, SelectIssue } from "types";
 // fetch-keys
 import {
   CYCLE_ISSUES,
@@ -45,9 +41,6 @@ import {
   PROJECT_MEMBERS,
   PROJECT_DETAILS,
 } from "constants/fetch-keys";
-// common
-import { classNames, replaceUnderscoreIfSnakeCase } from "constants/common";
-import CycleDetailSidebar from "components/project/cycles/cycle-detail-sidebar";
 
 const SingleCycle: React.FC = () => {
   const [isIssueModalOpen, setIsIssueModalOpen] = useState(false);
@@ -79,10 +72,7 @@ const SingleCycle: React.FC = () => {
       : null
   );
 
-  const [properties, setProperties] = useIssuesProperties(
-    workspaceSlug as string,
-    projectId as string
-  );
+  const [properties] = useIssuesProperties(workspaceSlug as string, projectId as string);
 
   const { data: cycles } = useSWR(
     workspaceSlug && projectId ? CYCLE_LIST(projectId as string) : null,
@@ -142,6 +132,8 @@ const SingleCycle: React.FC = () => {
     filterIssue,
     setIssueViewToKanban,
     setIssueViewToList,
+    resetFilterToDefault,
+    setNewFilterDefaultView,
   } = useIssuesFilter(cycleIssuesArray ?? []);
 
   const openCreateIssueModal = (
@@ -270,115 +262,16 @@ const SingleCycle: React.FC = () => {
                 <Squares2X2Icon className="h-4 w-4" />
               </button>
             </div>
-            <Popover className="relative">
-              {({ open }) => (
-                <>
-                  <Popover.Button
-                    className={classNames(
-                      open ? "bg-gray-100 text-gray-900" : "text-gray-500",
-                      "group flex items-center gap-2 rounded-md border bg-transparent p-2 text-xs font-medium hover:bg-gray-100 hover:text-gray-900 focus:outline-none"
-                    )}
-                  >
-                    <span>View</span>
-                    <ChevronDownIcon className="h-4 w-4" aria-hidden="true" />
-                  </Popover.Button>
-
-                  <Transition
-                    as={React.Fragment}
-                    enter="transition ease-out duration-200"
-                    enterFrom="opacity-0 translate-y-1"
-                    enterTo="opacity-100 translate-y-0"
-                    leave="transition ease-in duration-150"
-                    leaveFrom="opacity-100 translate-y-0"
-                    leaveTo="opacity-0 translate-y-1"
-                  >
-                    <Popover.Panel className="absolute right-0 z-20 mt-1 w-screen max-w-xs transform overflow-hidden rounded-lg bg-white p-3 shadow-lg">
-                      <div className="relative flex flex-col gap-1 gap-y-4">
-                        <div className="flex items-center justify-between">
-                          <h4 className="text-sm text-gray-600">Group by</h4>
-                          <CustomMenu
-                            label={
-                              groupByOptions.find((option) => option.key === groupByProperty)
-                                ?.name ?? "Select"
-                            }
-                            width="auto"
-                          >
-                            {groupByOptions.map((option) => (
-                              <CustomMenu.MenuItem
-                                key={option.key}
-                                onClick={() => setGroupByProperty(option.key)}
-                              >
-                                {option.name}
-                              </CustomMenu.MenuItem>
-                            ))}
-                          </CustomMenu>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <h4 className="text-sm text-gray-600">Order by</h4>
-                          <CustomMenu
-                            label={
-                              orderByOptions.find((option) => option.key === orderBy)?.name ??
-                              "Select"
-                            }
-                            width="auto"
-                          >
-                            {orderByOptions.map((option) =>
-                              groupByProperty === "priority" && option.key === "priority" ? null : (
-                                <CustomMenu.MenuItem
-                                  key={option.key}
-                                  onClick={() => setOrderBy(option.key)}
-                                >
-                                  {option.name}
-                                </CustomMenu.MenuItem>
-                              )
-                            )}
-                          </CustomMenu>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <h4 className="text-sm text-gray-600">Issue type</h4>
-                          <CustomMenu
-                            label={
-                              filterIssueOptions.find((option) => option.key === filterIssue)
-                                ?.name ?? "Select"
-                            }
-                            width="auto"
-                          >
-                            {filterIssueOptions.map((option) => (
-                              <CustomMenu.MenuItem
-                                key={option.key}
-                                onClick={() => setFilterIssue(option.key)}
-                              >
-                                {option.name}
-                              </CustomMenu.MenuItem>
-                            ))}
-                          </CustomMenu>
-                        </div>
-                        <div className="border-b-2"></div>
-                        <div className="relative flex flex-col gap-1">
-                          <h4 className="text-base text-gray-600">Properties</h4>
-                          <div className="flex flex-wrap items-center gap-2">
-                            {Object.keys(properties).map((key) => (
-                              <button
-                                key={key}
-                                type="button"
-                                className={`rounded border border-theme px-2 py-1 text-xs capitalize ${
-                                  properties[key as keyof Properties]
-                                    ? "border-theme bg-theme text-white"
-                                    : ""
-                                }`}
-                                onClick={() => setProperties(key as keyof Properties)}
-                              >
-                                {replaceUnderscoreIfSnakeCase(key)}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    </Popover.Panel>
-                  </Transition>
-                </>
-              )}
-            </Popover>
+            <View
+              filterIssue={filterIssue}
+              setFilterIssue={setFilterIssue}
+              groupByProperty={groupByProperty}
+              setGroupByProperty={setGroupByProperty}
+              orderBy={orderBy}
+              setOrderBy={setOrderBy}
+              resetFilterToDefault={resetFilterToDefault}
+              setNewFilterDefaultView={setNewFilterDefaultView}
+            />
             <button
               type="button"
               className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-100 ${

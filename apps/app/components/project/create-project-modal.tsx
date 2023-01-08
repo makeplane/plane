@@ -19,7 +19,7 @@ import { PROJECTS_LIST, WORKSPACE_MEMBERS_ME } from "constants/fetch-keys";
 // hooks
 import useToast from "lib/hooks/useToast";
 // ui
-import { Button, Input, TextArea, Select, EmojiIconPicker } from "ui";
+import { Button, Input, TextArea, Select, EmojiIconPicker, CustomSelect } from "ui";
 // types
 import { IProject } from "types";
 
@@ -185,49 +185,66 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                       </p>
                     </div>
                     <div className="space-y-3">
+                      <div className="flex items-center gap-3">
+                        <div className="flex-shrink-0">
+                          <label htmlFor="icon" className="mb-2 text-gray-500">
+                            Icon
+                          </label>
+                          <Controller
+                            control={control}
+                            name="icon"
+                            render={({ field: { value, onChange } }) => (
+                              <EmojiIconPicker
+                                label={
+                                  value ? String.fromCodePoint(parseInt(value)) : "Select Icon"
+                                }
+                                value={value}
+                                onChange={onChange}
+                              />
+                            )}
+                          />
+                        </div>
+                        <div className="w-full">
+                          <Input
+                            id="name"
+                            label="Name"
+                            name="name"
+                            type="name"
+                            placeholder="Enter name"
+                            error={errors.name}
+                            register={register}
+                            validations={{
+                              required: "Name is required",
+                            }}
+                          />
+                        </div>
+                      </div>
                       <div>
-                        <label htmlFor="icon" className="mb-2 text-gray-500">
-                          Icon
-                        </label>
+                        <h6 className="text-gray-500">Network</h6>
                         <Controller
-                          control={control}
-                          name="icon"
-                          render={({ field: { value, onChange } }) => (
-                            <EmojiIconPicker
-                              label={value ? String.fromCodePoint(parseInt(value)) : "Select Icon"}
-                              value={value}
-                              onChange={onChange}
-                            />
-                          )}
-                        />
-                      </div>
-                      <div>
-                        <Input
-                          id="name"
-                          label="Name"
-                          name="name"
-                          type="name"
-                          placeholder="Enter name"
-                          error={errors.name}
-                          register={register}
-                          validations={{
-                            required: "Name is required",
-                          }}
-                        />
-                      </div>
-                      <div>
-                        <Select
                           name="network"
-                          id="network"
-                          options={Object.keys(NETWORK_CHOICES).map((key) => ({
-                            value: key,
-                            label: NETWORK_CHOICES[key as keyof typeof NETWORK_CHOICES],
-                          }))}
-                          label="Network"
-                          register={register}
-                          validations={{
-                            required: "Network is required",
-                          }}
+                          control={control}
+                          render={({ field }) => (
+                            <CustomSelect
+                              {...field}
+                              label={
+                                Object.keys(NETWORK_CHOICES).find(
+                                  (k) => k === field.value.toString()
+                                )
+                                  ? NETWORK_CHOICES[
+                                      field.value.toString() as keyof typeof NETWORK_CHOICES
+                                    ]
+                                  : "Select network"
+                              }
+                              input
+                            >
+                              {Object.keys(NETWORK_CHOICES).map((key) => (
+                                <CustomSelect.Option key={key} value={key}>
+                                  {NETWORK_CHOICES[key as keyof typeof NETWORK_CHOICES]}
+                                </CustomSelect.Option>
+                              ))}
+                            </CustomSelect>
+                          )}
                         />
                       </div>
                       <div>

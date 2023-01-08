@@ -22,7 +22,7 @@ const SingleModuleCard: React.FC<Props> = ({ module }) => {
     <Link href={`/${workspaceSlug}/projects/${module.project}/modules/${module.id}`}>
       <a className="block cursor-pointer rounded-md border bg-white p-3">
         {module.name}
-        <div className="mt-4 grid grid-cols-4 gap-2 text-xs">
+        <div className="mt-4 grid grid-cols-2 gap-2 text-xs md:grid-cols-4">
           <div className="space-y-2">
             <h6 className="text-gray-500">LEAD</h6>
             <div>
