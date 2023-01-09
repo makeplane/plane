@@ -1,3 +1,5 @@
+// TODO: remove this page
+
 import React, { useState } from "react";
 
 import type { NextPage } from "next";

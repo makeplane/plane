@@ -1,15 +1,14 @@
 import React, { useState } from "react";
-// next
+
 import { useRouter } from "next/router";
-// swr
+
 import useSWR, { mutate } from "swr";
-// react hook form
+
 import { useForm, Controller, UseFormWatch } from "react-hook-form";
-// react-color
+
 import { TwitterPicker } from "react-color";
 // services
 import issuesServices from "lib/services/issues.service";
-import projectService from "lib/services/project.service";
 // hooks
 import useToast from "lib/hooks/useToast";
 // components
@@ -37,9 +36,9 @@ import {
 } from "@heroicons/react/24/outline";
 // types
 import type { Control } from "react-hook-form";
-import type { ICycle, IIssue, IIssueLabels, IssueResponse } from "types";
+import type { ICycle, IIssue, IIssueLabels } from "types";
 // fetch-keys
-import { PROJECT_ISSUE_LABELS, PROJECT_ISSUES_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
+import { PROJECT_ISSUE_LABELS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // common
 import { copyTextToClipboard } from "constants/common";
 
@@ -65,7 +64,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, issueId } = router.query;
+  const { workspaceSlug, projectId } = router.query;
 
   const { setToastAlert } = useToast();
 
@@ -101,7 +100,6 @@ const IssueDetailSidebar: React.FC<Props> = ({
     issuesServices
       .createIssueLabel(workspaceSlug as string, projectId as string, formData)
       .then((res) => {
-        console.log(res);
         reset(defaultValues);
         issueLabelMutate((prevData) => [...(prevData ?? []), res], false);
         submitChanges({ labels_list: [...(issueDetail?.labels ?? []), res.id] });
@@ -114,13 +112,9 @@ const IssueDetailSidebar: React.FC<Props> = ({
 
     mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
 
-    issuesServices
-      .addIssueToCycle(workspaceSlug as string, projectId as string, cycleDetail.id, {
-        issues: [issueDetail.id],
-      })
-      .then((res) => {
-        console.log(res);
-      });
+    issuesServices.addIssueToCycle(workspaceSlug as string, projectId as string, cycleDetail.id, {
+      issues: [issueDetail.id],
+    });
   };
 
   return (

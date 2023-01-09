@@ -60,7 +60,7 @@ const SingleBoard: React.FC<Props> = ({
   partialUpdateIssue,
 }) => {
   // Collapse/Expand
-  const [show, setShow] = useState(true);
+  const [isCollapsed, setIsCollapsed] = useState(true);
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -85,22 +85,24 @@ const SingleBoard: React.FC<Props> = ({
         <div
           className={`h-full flex-shrink-0 rounded ${
             snapshot.isDragging ? "border-theme shadow-lg" : ""
-          } ${!show ? "" : "w-80 border bg-gray-50"}`}
+          } ${!isCollapsed ? "" : "w-80 border bg-gray-50"}`}
           ref={provided.innerRef}
           {...provided.draggableProps}
         >
-          <div className={`${!show ? "" : "flex h-full flex-col space-y-3 overflow-y-auto"}`}>
+          <div
+            className={`${!isCollapsed ? "" : "flex h-full flex-col space-y-3 overflow-y-auto"}`}
+          >
             <div
               className={`flex justify-between p-3 pb-0 ${
-                !show ? "flex-col rounded-md border bg-gray-50" : ""
+                !isCollapsed ? "flex-col rounded-md border bg-gray-50" : ""
               }`}
             >
-              <div className={`flex items-center ${!show ? "flex-col gap-2" : "gap-1"}`}>
+              <div className={`flex items-center ${!isCollapsed ? "flex-col gap-2" : "gap-1"}`}>
                 <button
                   type="button"
                   {...provided.dragHandleProps}
                   className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200 ${
-                    !show ? "" : "rotate-90"
+                    !isCollapsed ? "" : "rotate-90"
                   } ${selectedGroup !== "state_detail.name" ? "hidden" : ""}`}
                 >
                   <EllipsisHorizontalIcon className="h-4 w-4 text-gray-600" />
@@ -108,7 +110,7 @@ const SingleBoard: React.FC<Props> = ({
                 </button>
                 <div
                   className={`flex cursor-pointer items-center gap-x-1 rounded-md bg-slate-900 px-2 ${
-                    !show ? "mb-2 flex-col gap-y-2 py-2" : ""
+                    !isCollapsed ? "mb-2 flex-col gap-y-2 py-2" : ""
                   }`}
                   style={{
                     border: `2px solid ${bgColor}`,
@@ -118,7 +120,7 @@ const SingleBoard: React.FC<Props> = ({
                   <h2
                     className={`text-[0.9rem] font-medium capitalize`}
                     style={{
-                      writingMode: !show ? "vertical-rl" : "horizontal-tb",
+                      writingMode: !isCollapsed ? "vertical-rl" : "horizontal-tb",
                     }}
                   >
                     {groupTitle === null || groupTitle === "null"
@@ -133,15 +135,15 @@ const SingleBoard: React.FC<Props> = ({
                 </div>
               </div>
 
-              <div className={`flex items-center ${!show ? "flex-col pb-2" : ""}`}>
+              <div className={`flex items-center ${!isCollapsed ? "flex-col pb-2" : ""}`}>
                 <button
                   type="button"
                   className="grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200"
                   onClick={() => {
-                    setShow(!show);
+                    setIsCollapsed((prevData) => !prevData);
                   }}
                 >
-                  {show ? (
+                  {isCollapsed ? (
                     <ArrowsPointingInIcon className="h-4 w-4" />
                   ) : (
                     <ArrowsPointingOutIcon className="h-4 w-4" />
@@ -169,7 +171,7 @@ const SingleBoard: React.FC<Props> = ({
                 <div
                   className={`mt-3 h-full space-y-3 overflow-y-auto px-3 pb-3 ${
                     snapshot.isDraggingOver ? "bg-indigo-50 bg-opacity-50" : ""
-                  } ${!show ? "hidden" : "block"}`}
+                  } ${!isCollapsed ? "hidden" : "block"}`}
                   {...provided.droppableProps}
                   ref={provided.innerRef}
                 >

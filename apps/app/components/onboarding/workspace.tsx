@@ -1,23 +1,25 @@
-// react
-import { useEffect, useState } from "react";
-// next
+import { useState } from "react";
+
 import Image from "next/image";
-// swr
+
 import useSWR from "swr";
-// react-hook-form
+
 import { Controller, useForm } from "react-hook-form";
+
+import { Tab } from "@headlessui/react";
+
 // hooks
 import useToast from "lib/hooks/useToast";
 // services
 import workspaceService from "lib/services/workspace.service";
-// headless ui
-import { Tab } from "@headlessui/react";
 // ui
 import { CustomSelect, Input } from "ui";
+// constants
+import { companySize } from "constants/";
 // fetch-keys
 import { USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 // types
-import { IUser, IWorkspace, IWorkspaceMemberInvitation } from "types";
+import { IWorkspace, IWorkspaceMemberInvitation } from "types";
 
 type Props = {
   setStep: React.Dispatch<React.SetStateAction<number>>;
@@ -31,8 +33,9 @@ const defaultValues: Partial<IWorkspace> = {
 };
 
 const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
-  const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
   const [slugError, setSlugError] = useState(false);
+  const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
+  const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
 
   const { setToastAlert } = useToast();
 
@@ -44,15 +47,12 @@ const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
     register,
     handleSubmit,
     control,
-    reset,
     setValue,
     formState: { errors, isSubmitting },
   } = useForm<IWorkspace>({ defaultValues });
 
-  const handleCreateWorkspace = (formData: IWorkspace) => {
-    console.log(formData);
-
-    workspaceService
+  const handleCreateWorkspace = async (formData: IWorkspace) => {
+    await workspaceService
       .workspaceSlugCheck(formData.slug)
       .then((res) => {
         if (res.status === true) {
@@ -68,12 +68,12 @@ const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
               setStep(3);
             })
             .catch((err) => {
-              console.log(err);
+              console.error(err);
             });
         } else setSlugError(true);
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
       });
   };
 
@@ -92,26 +92,21 @@ const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
     }
   };
 
-  const submitInvitations = () => {
-    workspaceService
+  const submitInvitations = async () => {
+    if (invitationsRespond.length <= 0) return;
+    setIsJoiningWorkspaces(true);
+    await workspaceService
       .joinWorkspaces({ invitations: invitationsRespond })
-      .then(async (res: any) => {
-        console.log(res);
+      .then(async () => {
         await mutate();
         setStep(4);
+        setIsJoiningWorkspaces(false);
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
+        setIsJoiningWorkspaces(false);
       });
   };
-
-  useEffect(() => {
-    reset({
-      name: "",
-      slug: "",
-      company_size: null,
-    });
-  }, [reset]);
 
   return (
     <div className="grid w-full place-items-center">
@@ -175,18 +170,15 @@ const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
                     <Controller
                       name="company_size"
                       control={control}
-                      render={({ field }) => (
+                      rules={{ required: "This field is required" }}
+                      render={({ field: { value, onChange } }) => (
                         <CustomSelect
-                          {...field}
-                          label={field.value ? field.value.toString() : "Select company size"}
+                          value={value}
+                          onChange={onChange}
+                          label={value ? value.toString() : "Select company size"}
                           input
                         >
-                          {[
-                            { value: 5, label: "5" },
-                            { value: 10, label: "10" },
-                            { value: 25, label: "25" },
-                            { value: 50, label: "50" },
-                          ]?.map((item) => (
+                          {companySize?.map((item) => (
                             <CustomSelect.Option key={item.value} value={item.value}>
                               {item.label}
                             </CustomSelect.Option>
@@ -194,6 +186,9 @@ const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
                         </CustomSelect>
                       )}
                     />
+                    {errors.company_size && (
+                      <span className="text-sm text-red-500">{errors.company_size.message}</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -203,7 +198,7 @@ const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
                   className="w-full rounded-md bg-gray-200 px-4 py-2 text-sm"
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? "Updating..." : "Continue"}
+                  {isSubmitting ? "Creating..." : "Continue"}
                 </button>
               </div>
             </form>
@@ -273,7 +268,12 @@ const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
               <div className="mx-auto h-1/4 lg:w-1/2">
                 <button
                   type="submit"
-                  className="w-full rounded-md bg-gray-200 px-4 py-2 text-sm"
+                  className={`w-full rounded-md bg-gray-200 px-4 py-2 text-sm ${
+                    isJoiningWorkspaces || invitationsRespond.length === 0
+                      ? "cursor-not-allowed opacity-80"
+                      : ""
+                  }`}
+                  disabled={isJoiningWorkspaces || invitationsRespond.length === 0}
                   onClick={submitInvitations}
                 >
                   Join Workspace

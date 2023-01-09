@@ -1,18 +1,19 @@
 import React, { useState } from "react";
-// next
+
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
-// swr
+
 import useSWR from "swr";
-// headless ui
+
 import { Disclosure, Listbox, Transition } from "@headlessui/react";
 // hooks
-import useUser from "lib/hooks/useUser";
+import useIssuesProperties from "lib/hooks/useIssuesProperties";
 // services
-import workspaceService from "lib/services/workspace.service";
-import issuesService from "lib/services/issues.service";
 import stateService from "lib/services/state.service";
+import issuesService from "lib/services/issues.service";
+import projectService from "lib/services/project.service";
+import workspaceService from "lib/services/workspace.service";
 // constants
 import {
   addSpaceIfCamelCase,
@@ -36,12 +37,10 @@ import { ChevronDownIcon, PlusIcon, CalendarDaysIcon } from "@heroicons/react/24
 // components
 import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
 // types
-import { IIssue, IProject, IssueResponse, IWorkspaceMember, NestedKeyOf, Properties } from "types";
-import projectService from "lib/services/project.service";
+import { IIssue, IProject, IssueResponse, IWorkspaceMember, NestedKeyOf } from "types";
 
 // types
 type Props = {
-  properties: Properties;
   groupedByIssues: any;
   selectedGroup: NestedKeyOf<IIssue> | null;
   setSelectedIssue: any;
@@ -50,7 +49,6 @@ type Props = {
 };
 
 const ListView: React.FC<Props> = ({
-  properties,
   groupedByIssues,
   selectedGroup,
   setSelectedIssue,
@@ -92,6 +90,8 @@ const ListView: React.FC<Props> = ({
       ? () => projectService.getProject(workspaceSlug as string, projectId as string)
       : null
   );
+
+  const [properties] = useIssuesProperties(workspaceSlug as string, projectId as string);
 
   return (
     <>
@@ -189,10 +189,6 @@ const ListView: React.FC<Props> = ({
                                         </span>
                                       )}
                                       <span>{issue.name}</span>
-                                      {/* <div className="absolute bottom-full left-0 mb-2 z-10 hidden group-hover:block p-2 bg-white shadow-md rounded-md max-w-sm whitespace-nowrap">
-                                        <h5 className="font-medium mb-1">Name</h5>
-                                        <div>{issue.name}</div>
-                                      </div> */}
                                     </a>
                                   </Link>
                                 </div>
@@ -394,6 +390,8 @@ const ListView: React.FC<Props> = ({
                                                             width="100%"
                                                             className="rounded-full"
                                                             alt={assignee?.first_name}
+                                                            priority={false}
+                                                            loading="lazy"
                                                           />
                                                         </div>
                                                       ) : (
@@ -413,6 +411,8 @@ const ListView: React.FC<Props> = ({
                                                       width="100%"
                                                       className="rounded-full"
                                                       alt="No user"
+                                                      priority={false}
+                                                      loading="lazy"
                                                     />
                                                   </div>
                                                 )}
@@ -458,6 +458,8 @@ const ListView: React.FC<Props> = ({
                                                             className="rounded-full"
                                                             layout="fill"
                                                             objectFit="cover"
+                                                            priority={false}
+                                                            loading="lazy"
                                                           />
                                                         </div>
                                                       ) : (

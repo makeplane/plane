@@ -3,7 +3,7 @@ import Image from "next/image";
 // icons
 import Logo from "public/logo.png";
 
-const Welcome = () => {
+const Welcome: React.FC = () => {
   return (
     <div className="h-full space-y-4">
       <div className="h-1/2">

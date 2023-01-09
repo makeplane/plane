@@ -49,7 +49,7 @@ class WorkspaceService extends APIService {
         return response?.data;
       })
       .catch((error) => {
-        throw error?.response?.data;
+        throw error?.response;
       });
   }
 

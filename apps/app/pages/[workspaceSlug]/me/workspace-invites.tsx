@@ -1,3 +1,5 @@
+// FIXME: remove this page
+
 import React, { useState } from "react";
 // next
 import Link from "next/link";

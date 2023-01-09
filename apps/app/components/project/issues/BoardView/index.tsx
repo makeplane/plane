@@ -1,16 +1,19 @@
 import React, { useCallback, useState } from "react";
-// next
+
 import { useRouter } from "next/router";
-// swr
+
 import useSWR, { mutate } from "swr";
-// react beautiful dnd
+
 import type { DropResult } from "react-beautiful-dnd";
 import { DragDropContext } from "react-beautiful-dnd";
+// hook
+import useIssuesProperties from "lib/hooks/useIssuesProperties";
 // services
 import stateServices from "lib/services/state.service";
 import issuesServices from "lib/services/issues.service";
+import projectService from "lib/services/project.service";
 // fetching keys
-import { STATE_LIST, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import { STATE_LIST, PROJECT_ISSUES_LIST, PROJECT_MEMBERS } from "constants/fetch-keys";
 // components
 import SingleBoard from "components/project/issues/BoardView/single-board";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
@@ -19,24 +22,20 @@ import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deleti
 // ui
 import { Spinner } from "ui";
 // types
-import type { IState, IIssue, Properties, NestedKeyOf, IProjectMember, IssueResponse } from "types";
+import type { IState, IIssue, NestedKeyOf, IssueResponse } from "types";
 
 type Props = {
-  properties: Properties;
   selectedGroup: NestedKeyOf<IIssue> | null;
   groupedByIssues: {
     [key: string]: IIssue[];
   };
-  members: IProjectMember[] | undefined;
   handleDeleteIssue: React.Dispatch<React.SetStateAction<string | undefined>>;
   partialUpdateIssue: (formData: Partial<IIssue>, issueId: string) => void;
 };
 
 const BoardView: React.FC<Props> = ({
-  properties,
   selectedGroup,
   groupedByIssues,
-  members,
   handleDeleteIssue,
   partialUpdateIssue,
 }) => {
@@ -56,6 +55,21 @@ const BoardView: React.FC<Props> = ({
       ? () => stateServices.getStates(workspaceSlug as string, projectId as string)
       : null
   );
+
+  const { data: members } = useSWR(
+    workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
+      : null,
+    {
+      onErrorRetry(err, _, __, revalidate, revalidateOpts) {
+        if (err?.status === 403) return;
+        setTimeout(() => revalidate(revalidateOpts), 5000);
+      },
+    }
+  );
+
+  const [properties] = useIssuesProperties(workspaceSlug as string, projectId as string);
 
   const handleOnDragEnd = useCallback(
     (result: DropResult) => {

@@ -6,7 +6,6 @@ import stateService from "lib/services/state.service";
 import { STATE_LIST } from "constants/fetch-keys";
 // hooks
 import useTheme from "./useTheme";
-import useUser from "./useUser";
 // commons
 import { groupBy, orderArrayBy } from "constants/common";
 // constants

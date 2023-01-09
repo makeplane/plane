@@ -1,13 +1,24 @@
-// types
-import useToast from "lib/hooks/useToast";
-import userService from "lib/services/user.service";
 import { useEffect } from "react";
-import { Controller, useForm } from "react-hook-form";
+
+import { useForm } from "react-hook-form";
+
+// hooks
+import useToast from "lib/hooks/useToast";
+// services
+import userService from "lib/services/user.service";
+// ui
+import { Input } from "ui";
+// types
 import { IUser } from "types";
-import { CustomSelect, Input } from "ui";
+
+const defaultValues: Partial<IUser> = {
+  first_name: "",
+  last_name: "",
+  role: "",
+};
 
 type Props = {
-  user: IUser | undefined;
+  user?: IUser;
   setStep: React.Dispatch<React.SetStateAction<number>>;
 };
 
@@ -17,17 +28,16 @@ const UserDetails: React.FC<Props> = ({ user, setStep }) => {
   const {
     register,
     handleSubmit,
-    control,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<IUser>();
+  } = useForm<IUser>({
+    defaultValues,
+  });
 
   const onSubmit = (formData: IUser) => {
-    console.log(formData);
-
     userService
       .updateUser(formData)
-      .then((res) => {
+      .then(() => {
         setToastAlert({
           title: "User details updated successfully!",
           type: "success",
@@ -40,11 +50,12 @@ const UserDetails: React.FC<Props> = ({ user, setStep }) => {
   };
 
   useEffect(() => {
-    reset({
-      first_name: user && user.first_name,
-      last_name: user && user.last_name,
-      role: user && user.role,
-    });
+    if (user)
+      reset({
+        first_name: user.first_name,
+        last_name: user.last_name,
+        role: user.role,
+      });
   }, [user, reset]);
 
   return (

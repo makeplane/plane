@@ -1,27 +1,34 @@
-// react
 import React, { useMemo } from "react";
-// next
+
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 
-// swr
-import { KeyedMutator } from "swr";
-// react-hook-form
+import type { KeyedMutator } from "swr";
+
 import { useForm, Controller } from "react-hook-form";
 // services
 import issuesServices from "lib/services/issues.service";
+// ui
+import { Loader } from "ui";
 // types
 import type { IIssueActivity, IIssueComment } from "types";
 // common
 import { debounce } from "constants/common";
 
-const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), { ssr: false });
+const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
+  ssr: false,
+  loading: () => (
+    <Loader>
+      <Loader.Item height="12rem" width="100%" />
+    </Loader>
+  ),
+});
 
 const defaultValues: Partial<IIssueComment> = {
   comment_html: "",
   comment_json: "",
 };
-const IssueCommentSection: React.FC<{
+const AddIssueComment: React.FC<{
   mutate: KeyedMutator<IIssueActivity[]>;
 }> = ({ mutate }) => {
   const {
@@ -48,13 +55,12 @@ const IssueCommentSection: React.FC<{
       return;
     await issuesServices
       .createIssueComment(workspaceSlug as string, projectId as string, issueId as string, formData)
-      .then((response) => {
-        console.log(response);
+      .then(() => {
         mutate();
         reset(defaultValues);
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
       });
   };
 
@@ -81,7 +87,7 @@ const IssueCommentSection: React.FC<{
           <Controller
             name="comment_html"
             control={control}
-            render={({ field: { value, onChange } }) => (
+            render={({ field: { value } }) => (
               <RemirrorRichTextEditor
                 value={value}
                 onBlur={(jsonValue, htmlValue) => {
@@ -106,4 +112,4 @@ const IssueCommentSection: React.FC<{
   );
 };
 
-export default IssueCommentSection;
+export default AddIssueComment;
