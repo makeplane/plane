@@ -97,7 +97,10 @@ const Profile: NextPage = () => {
     userService
       .updateUser(payload)
       .then((response) => {
-        mutateUser(response, false);
+        mutateUser((prevData) => {
+          if (!prevData) return prevData;
+          return { ...prevData, user: { ...payload, ...response } };
+        });
         setIsEditing(false);
         setToastAlert({
           title: "Success",
@@ -139,6 +142,7 @@ const Profile: NextPage = () => {
       meta={{
         title: "Plane - My Profile",
       }}
+      noHeader
     >
       <div className="w-full space-y-5">
         <Breadcrumbs>

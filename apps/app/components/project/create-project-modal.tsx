@@ -19,7 +19,7 @@ import { PROJECTS_LIST, WORKSPACE_MEMBERS_ME } from "constants/fetch-keys";
 // hooks
 import useToast from "lib/hooks/useToast";
 // ui
-import { Button, Input, TextArea, Select, EmojiIconPicker, CustomSelect } from "ui";
+import { Button, Input, TextArea, EmojiIconPicker, CustomSelect } from "ui";
 // types
 import { IProject } from "types";
 
@@ -224,15 +224,14 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                         <Controller
                           name="network"
                           control={control}
-                          render={({ field }) => (
+                          render={({ field: { onChange, value } }) => (
                             <CustomSelect
-                              {...field}
+                              value={value}
+                              onChange={onChange}
                               label={
-                                Object.keys(NETWORK_CHOICES).find(
-                                  (k) => k === field.value.toString()
-                                )
+                                Object.keys(NETWORK_CHOICES).find((k) => k === value.toString())
                                   ? NETWORK_CHOICES[
-                                      field.value.toString() as keyof typeof NETWORK_CHOICES
+                                      value.toString() as keyof typeof NETWORK_CHOICES
                                     ]
                                   : "Select network"
                               }

@@ -76,8 +76,6 @@ const SelectBlocked: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
     handleClose();
   };
 
-  console.log(watchBlocked("issue_ids"));
-
   return (
     <div className="flex flex-wrap items-start py-2">
       <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">

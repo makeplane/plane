@@ -1,18 +1,18 @@
-// react
 import React from "react";
-// next
+
 import Link from "next/link";
-import type { NextPage } from "next";
 import { useRouter } from "next/router";
-// swr
+import type { NextPage, NextPageContext } from "next";
+
 import useSWR from "swr";
 // hooks
 import useUser from "lib/hooks/useUser";
+// lib
+import { requiredAuth } from "lib/auth";
 // services
 import userService from "lib/services/user.service";
 import projectService from "lib/services/project.service";
-// hoc
-import withAuthWrapper from "lib/hoc/withAuthWrapper";
+import workspaceService from "lib/services/workspace.service";
 // layouts
 import AppLayout from "layouts/app-layout";
 // ui
@@ -21,13 +21,12 @@ import { Loader, Spinner } from "ui";
 import {
   ArrowRightIcon,
   CalendarDaysIcon,
-  ClipboardDocumentIcon,
   ClipboardDocumentListIcon,
 } from "@heroicons/react/24/outline";
 // types
 import type { IIssue } from "types";
 // fetch-keys
-import { PROJECTS_LIST, USER_ISSUE } from "constants/fetch-keys";
+import { PROJECTS_LIST, USER_ISSUE, WORKSPACE_DETAILS } from "constants/fetch-keys";
 // common
 import {
   addSpaceIfCamelCase,
@@ -47,6 +46,12 @@ const Workspace: NextPage = () => {
     workspaceSlug ? USER_ISSUE(workspaceSlug as string) : null,
     workspaceSlug ? () => userService.userIssues(workspaceSlug as string) : null
   );
+
+  const { error: workspaceDetailError } = useSWR(
+    workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
+    workspaceSlug ? () => workspaceService.getWorkspace(workspaceSlug as string) : null
+  );
+
   const groupedIssues = {
     backlog: [],
     unstarted: [],
@@ -77,6 +82,14 @@ const Workspace: NextPage = () => {
       number: projects?.length ?? 0,
     },
   ];
+
+  if (workspaceDetailError?.status === 404) {
+    router.push("/404");
+    return null;
+  } else if (workspaceDetailError) {
+    router.push("/error");
+    return null;
+  }
 
   return (
     <AppLayout noHeader={true}>
@@ -136,11 +149,6 @@ const Workspace: NextPage = () => {
                                   href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}
                                 >
                                   <a className="group relative flex items-center gap-2">
-                                    {/* {properties.key && (
-                                          <span className="flex-shrink-0 text-xs text-gray-500">
-                                            {issue.project_detail.identifier}-{issue.sequence_id}
-                                          </span>
-                                        )} */}
                                     <span className="">{issue.name}</span>
                                   </a>
                                 </Link>
@@ -276,4 +284,25 @@ const Workspace: NextPage = () => {
   );
 };
 
-export default withAuthWrapper(Workspace);
+export const getServerSideProps = async (ctx: NextPageContext) => {
+  const user = await requiredAuth(ctx.req?.headers.cookie);
+
+  const redirectAfterSignIn = ctx.req?.url;
+
+  if (!user) {
+    return {
+      redirect: {
+        destination: `/signin?next=${redirectAfterSignIn}`,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      user,
+    },
+  };
+};
+
+export default Workspace;

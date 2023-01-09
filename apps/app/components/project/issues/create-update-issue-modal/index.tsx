@@ -15,7 +15,7 @@ import issuesServices from "lib/services/issues.service";
 import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
 // ui
-import { Button, Input, Loader, TextArea } from "ui";
+import { Button, Input, Loader } from "ui";
 // icons
 import { EllipsisHorizontalIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // components

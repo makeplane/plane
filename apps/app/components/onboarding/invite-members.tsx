@@ -18,12 +18,11 @@ const InviteMembers: React.FC<Props> = ({ setStep, workspace }) => {
     setValue,
     watch,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
   } = useForm<IUser>();
 
-  const onSubmit = (formData: IUser) => {
-    console.log(formData);
-    workspaceService
+  const onSubmit = async (formData: IUser) => {
+    await workspaceService
       .inviteWorkspace(workspace.slug, formData)
       .then((res) => {
         console.log(res);
@@ -36,11 +35,6 @@ const InviteMembers: React.FC<Props> = ({ setStep, workspace }) => {
       .catch((err) => {
         console.log(err);
       });
-  };
-
-  const validateEmail = (email: string) => {
-    var re = /\S+@\S+\.\S+/;
-    return re.test(email);
   };
 
   return (
@@ -62,7 +56,6 @@ const InviteMembers: React.FC<Props> = ({ setStep, workspace }) => {
                 placeholder="dummy@plane.so"
                 watch={watch}
                 setValue={setValue}
-                validateInput={validateEmail}
               />
             </div>
           </div>

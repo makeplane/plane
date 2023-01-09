@@ -3,7 +3,7 @@ import Image from "next/image";
 // images
 import Module from "public/onboarding/module.png";
 
-const BreakIntoModules = () => {
+const BreakIntoModules: React.FC = () => {
   return (
     <div className="h-full space-y-4">
       <div className="relative h-1/2">
@@ -15,7 +15,7 @@ const BreakIntoModules = () => {
         ></div>
         <Image
           src={Module}
-          style={{ height: "100%" }}
+          className="h-full"
           objectFit="contain"
           layout="fill"
           alt="Plane- Modules"

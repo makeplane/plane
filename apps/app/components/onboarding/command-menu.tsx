@@ -3,7 +3,7 @@ import Image from "next/image";
 // images
 import Commands from "public/onboarding/command-menu.png";
 
-const CommandMenu = () => {
+const CommandMenu: React.FC = () => {
   return (
     <div className="h-full space-y-4">
       <div className="h-1/2 space-y-4">

@@ -1,18 +1,14 @@
 import React, { useEffect, useState } from "react";
-// next
+
 import { useRouter } from "next/router";
 import type { NextPage, NextPageContext } from "next";
-// swr
+
 import useSWR, { mutate } from "swr";
 // lib
 import { requiredAuth } from "lib/auth";
 // services
 import issuesServices from "lib/services/issues.service";
 import projectService from "lib/services/project.service";
-// hooks
-import useIssuesProperties from "lib/hooks/useIssuesProperties";
-// api routes
-import { PROJECT_MEMBERS } from "constants/api-routes";
 // layouts
 import AppLayout from "layouts/app-layout";
 // hooks
@@ -44,13 +40,6 @@ const ProjectIssues: NextPage = () => {
     query: { workspaceSlug, projectId },
   } = useRouter();
 
-  const { data: projectDetails } = useSWR(
-    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
-      : null
-  );
-
   const { data: projectIssues } = useSWR(
     workspaceSlug && projectId
       ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
@@ -60,22 +49,12 @@ const ProjectIssues: NextPage = () => {
       : null
   );
 
-  const { data: members } = useSWR(
+  const { data: projectDetails } = useSWR(
+    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
     workspaceSlug && projectId
-      ? PROJECT_MEMBERS(workspaceSlug as string, projectId as string)
-      : null,
-    workspaceSlug && projectId
-      ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
-      : null,
-    {
-      onErrorRetry(err, _, __, revalidate, revalidateOpts) {
-        if (err?.status === 403) return;
-        setTimeout(() => revalidate(revalidateOpts), 5000);
-      },
-    }
+      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
+      : null
   );
-
-  const [properties] = useIssuesProperties(workspaceSlug as string, projectId as string);
 
   const {
     issueView,
@@ -194,7 +173,6 @@ const ProjectIssues: NextPage = () => {
         <>
           {issueView === "list" ? (
             <ListView
-              properties={properties}
               groupedByIssues={groupedByIssues}
               selectedGroup={groupByProperty}
               setSelectedIssue={setSelectedIssue}
@@ -204,10 +182,8 @@ const ProjectIssues: NextPage = () => {
           ) : (
             <div className="h-screen">
               <BoardView
-                properties={properties}
                 selectedGroup={groupByProperty}
                 groupedByIssues={groupedByIssues}
-                members={members}
                 handleDeleteIssue={setDeleteIssue}
                 partialUpdateIssue={partialUpdateIssue}
               />

@@ -62,13 +62,12 @@ const Projects: NextPage = () => {
     if (!workspaceSlug) return;
     projectService
       .joinProject(workspaceSlug as string, { project_ids: invitationsRespond })
-      .then(async (res: any) => {
-        console.log(res);
+      .then(async () => {
         setInvitationsRespond([]);
         await mutateProjects();
       })
       .catch((err: any) => {
-        console.log(err);
+        console.error(err);
       });
   };
 

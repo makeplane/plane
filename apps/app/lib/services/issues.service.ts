@@ -15,7 +15,7 @@ import {
 // services
 import APIService from "lib/services/api.service";
 // type
-import type { IIssue, IIssueComment, IssueResponse } from "types";
+import type { IIssue, IIssueActivity, IIssueComment, IssueResponse } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -58,7 +58,7 @@ class ProjectIssuesServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     issueId: string
-  ): Promise<any> {
+  ): Promise<IIssueActivity[]> {
     return this.get(ISSUE_ACTIVITIES(workspaceSlug, projectId, issueId))
       .then((response) => {
         return response?.data;
