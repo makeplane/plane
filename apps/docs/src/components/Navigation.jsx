@@ -188,27 +188,21 @@ export const navigation = [
     title: 'Guides',
     links: [
       { title: 'Introduction', href: '/' },
-      { title: 'Get Started', href: '/get-started' },
+      { title: 'Quick Start', href: '/quick-start' },
       { title: 'Self Hosting', href: '/self-hosting' },
-      { title: 'Plane Basics', href: '/plane-basics' },
-      // { title: 'Quickstart', href: '/quickstart' },
-      // { title: 'SDKs', href: '/sdks' },
-      // { title: 'Authentication', href: '/authentication' },
-      // { title: 'Pagination', href: '/pagination' },
-      // { title: 'Errors', href: '/errors' },
-      // { title: 'Webhooks', href: '/webhooks' },
+      { title: 'Architecture', href: '/architecture' },
     ],
   },
-  // {
-  //   title: 'Resources',
-  //   links: [
-  //     { title: 'Contacts', href: '/contacts' },
-  //     { title: 'Conversations', href: '/conversations' },
-  //     { title: 'Messages', href: '/messages' },
-  //     { title: 'Groups', href: '/groups' },
-  //     { title: 'Attachments', href: '/attachments' },
-  //   ],
-  // },
+  {
+    title: 'Plane App',
+    links: [
+      { title: 'Workspace', href: '/workspace' },
+      { title: 'Project', href: '/projects' },
+      { title: 'Issues', href: '/issues' },
+      { title: 'Cycles', href: '/cycles' },
+      { title: 'Modules', href: '/modules' },
+    ],
+  },
 ]
 
 export function Navigation(props) {
