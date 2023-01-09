@@ -33,6 +33,7 @@ services:
       NEXT_PUBLIC_GITHUB_ID: $NEXT_PUBLIC_GITHUB_ID
       NEXT_PUBLIC_GOOGLE_CLIENTID: $NEXT_PUBLIC_GOOGLE_CLIENTID
       NEXT_PUBLIC_API_BASE_URL: $NEXT_PUBLIC_API_BASE_URL
+      NEXT_PUBLIC_APP_ENVIRONMENT: $NEXT_PUBLIC_APP_ENVIRONMENT
     ports:
       - 3000:3000
 
@@ -51,12 +52,7 @@ services:
       DATABASE_URL: 'postgres://plane:plane@db:5432/plane'
       SENTRY_DSN: $SENTRY_DSN
       WEB_URL: $WEB_URL
-      PGUSER: plane
-      PGPASSWORD: plane
-      PGHOST: db
       REDIS_URL: 'redis://redis:6379/'
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
       SECRET_KEY: $SECRET_KEY
       AWS_REGION: $AWS_REGION
       AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
@@ -89,12 +85,7 @@ services:
       DATABASE_URL: 'postgres://plane:plane@db:5432/plane'
       SENTRY_DSN: $SENTRY_DSN
       WEB_URL: $WEB_URL
-      PGUSER: plane
-      PGPASSWORD: plane
-      PGHOST: db
       REDIS_URL: 'redis://redis:6379/'
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
       SECRET_KEY: $SECRET_KEY
       AWS_REGION: $AWS_REGION
       AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
@@ -119,13 +110,8 @@ services:
     environment:
       SENTRY_DSN: $SENTRY_DSN
       WEB_URL: $WEB_URL
-      PGUSER: plane
-      PGPASSWORD: plane
-      PGHOST: db
       DATABASE_URL: 'postgres://plane:plane@db:5432/plane'
       REDIS_URL: 'redis://redis:6379/'
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
       SECRET_KEY: $SECRET_KEY
       AWS_REGION: $AWS_REGION
       AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
