@@ -100,11 +100,9 @@ const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentDeletion
                 <form className="flex flex-col gap-2" onSubmit={handleSubmit(onEnter)}>
                   <RemirrorRichTextEditor
                     value={comment.comment_html}
-                    onChange={(val) => {
-                      updateDescription("comment_json", val);
-                    }}
-                    onChangeHTML={(val) => {
-                      updateDescriptionHTML("comment_html", val);
+                    onBlur={(jsonValue, htmlValue) => {
+                      setValue("comment_json", jsonValue);
+                      setValue("comment_html", htmlValue);
                     }}
                     placeholder="Enter Your comment..."
                   />
@@ -127,7 +125,11 @@ const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentDeletion
                 </form>
               ) : (
                 <>
-                  <RemirrorRichTextEditor value={comment.comment_html} editable={false} />
+                  <RemirrorRichTextEditor
+                    value={comment.comment_html}
+                    editable={false}
+                    onBlur={() => {}}
+                  />
                 </>
               )}
             </div>

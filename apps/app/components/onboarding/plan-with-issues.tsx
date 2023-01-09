@@ -3,7 +3,7 @@ import Image from "next/image";
 // images
 import Issue from "public/onboarding/issue.png";
 
-const PlanWithIssues = () => {
+const PlanWithIssues: React.FC = () => {
   return (
     <div className="h-full space-y-4">
       <div className="relative h-1/2">
@@ -15,7 +15,7 @@ const PlanWithIssues = () => {
         ></div>
         <Image
           src={Issue}
-          style={{ height: "100%" }}
+          className="h-full"
           objectFit="contain"
           layout="fill"
           alt="Plane- Issues"

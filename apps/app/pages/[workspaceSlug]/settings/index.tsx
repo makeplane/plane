@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 
 import Image from "next/image";
 import { useRouter } from "next/router";
-// swr
+import type { GetServerSideProps, NextPage } from "next";
+
 import useSWR, { mutate } from "swr";
 import { Controller, useForm } from "react-hook-form";
 
@@ -11,6 +12,7 @@ import Dropzone from "react-dropzone";
 // lib
 import { requiredWorkspaceAdmin } from "lib/auth";
 // constants
+import { companySize } from "constants/";
 import { WORKSPACE_DETAILS, USER_WORKSPACES } from "constants/fetch-keys";
 // services
 import workspaceService from "lib/services/workspace.service";
@@ -26,10 +28,12 @@ import { Spinner, Button, Input, BreadcrumbItem, Breadcrumbs, CustomSelect } fro
 // types
 import type { IWorkspace } from "types";
 import OutlineButton from "ui/outline-button";
-import { GetServerSideProps, NextPage } from "next";
 
 const defaultValues: Partial<IWorkspace> = {
   name: "",
+  url: "",
+  company_size: null,
+  logo: null,
 };
 
 type TWorkspaceSettingsProps = {
@@ -163,7 +167,7 @@ const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
                   </Dropzone>
                   <div>
                     <p className="mb-2 text-sm text-gray-500">
-                      Max file size is 500kb. Supported file types are .jpg and .png.
+                      Max file size is 5MB. Supported file types are .jpg and .png.
                     </p>
                     <Button
                       onClick={() => {
@@ -234,18 +238,14 @@ const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
                 <Controller
                   name="company_size"
                   control={control}
-                  render={({ field }) => (
+                  render={({ field: { value, onChange } }) => (
                     <CustomSelect
-                      {...field}
-                      label={field.value ? field.value.toString() : "Select company size"}
+                      value={value}
+                      onChange={onChange}
+                      label={value ? value.toString() : "Select company size"}
                       input
                     >
-                      {[
-                        { value: 5, label: "5" },
-                        { value: 10, label: "10" },
-                        { value: 25, label: "25" },
-                        { value: 50, label: "50" },
-                      ]?.map((item) => (
+                      {companySize?.map((item) => (
                         <CustomSelect.Option key={item.value} value={item.value}>
                           {item.label}
                         </CustomSelect.Option>

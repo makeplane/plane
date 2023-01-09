@@ -1,10 +1,12 @@
-// react
 import { useState } from "react";
-// next
-import { useRouter } from "next/router";
+
 import Image from "next/image";
+import type { NextPage, NextPageContext } from "next";
+import { useRouter } from "next/router";
 // hooks
 import useUser from "lib/hooks/useUser";
+// lib
+import { requiredAuth } from "lib/auth";
 // layouts
 import DefaultLayout from "layouts/DefaultLayout";
 // components
@@ -20,7 +22,7 @@ import CommandMenu from "components/onboarding/command-menu";
 import Logo from "public/onboarding/logo.svg";
 import userService from "lib/services/user.service";
 
-const Onboarding = () => {
+const Onboarding: NextPage = () => {
   const [step, setStep] = useState(2);
 
   const [workspace, setWorkspace] = useState();
@@ -85,6 +87,27 @@ const Onboarding = () => {
       </div>
     </DefaultLayout>
   );
+};
+
+export const getServerSideProps = async (ctx: NextPageContext) => {
+  const user = await requiredAuth(ctx.req?.headers.cookie);
+
+  const redirectAfterSignIn = ctx.req?.url;
+
+  if (!user) {
+    return {
+      redirect: {
+        destination: `/signin?next=${redirectAfterSignIn}`,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      user,
+    },
+  };
 };
 
 export default Onboarding;

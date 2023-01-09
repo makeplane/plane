@@ -3,7 +3,7 @@ import Image from "next/image";
 // images
 import Cycle from "public/onboarding/cycle.png";
 
-const MoveWithCycles = () => {
+const MoveWithCycles: React.FC = () => {
   return (
     <div className="h-full space-y-4">
       <div className="relative h-1/2">
@@ -15,7 +15,7 @@ const MoveWithCycles = () => {
         ></div>
         <Image
           src={Cycle}
-          style={{ height: "100%" }}
+          className="h-full"
           objectFit="contain"
           layout="fill"
           alt="Plane- Cycles"

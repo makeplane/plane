@@ -1,9 +1,12 @@
 import React from "react";
 
+import Link from "next/link";
 import type { NextPage } from "next";
 
 // layouts
 import DefaultLayout from "layouts/DefaultLayout";
+// ui
+import { Button } from "ui";
 
 const PageNotFound: NextPage = () => {
   return (
@@ -24,6 +27,9 @@ const PageNotFound: NextPage = () => {
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis, impedit ex. Unde, ratione
           odio laudantium molestiae sunt architecto laboriosam ex.
         </p>
+        <div className="z-10 mt-3">
+          <Link href="/">Go Home</Link>
+        </div>
       </div>
     </DefaultLayout>
   );

@@ -291,6 +291,8 @@ const SingleBoardIssue: React.FC<Props> = ({
                                     width="100%"
                                     className="rounded-full"
                                     alt={assignee?.first_name}
+                                    priority={false}
+                                    loading="lazy"
                                   />
                                 </div>
                               ) : (
@@ -310,6 +312,8 @@ const SingleBoardIssue: React.FC<Props> = ({
                               width="100%"
                               className="rounded-full"
                               alt="No user"
+                              priority={false}
+                              loading="lazy"
                             />
                           </div>
                         )}
@@ -354,6 +358,8 @@ const SingleBoardIssue: React.FC<Props> = ({
                                     className="rounded-full"
                                     layout="fill"
                                     objectFit="cover"
+                                    priority={false}
+                                    loading="lazy"
                                   />
                                 </div>
                               ) : (
@@ -374,14 +380,6 @@ const SingleBoardIssue: React.FC<Props> = ({
                       </Listbox.Options>
                     </Transition>
                   </div>
-                  {/* <div className="absolute bottom-full left-0 mb-2 z-10 hidden group-hover:block p-2 bg-white shadow-md rounded-md whitespace-nowrap">
-                    <h5 className="font-medium mb-1">Assigned to</h5>
-                    <div>
-                      {issue.assignee_details?.length > 0
-                        ? issue.assignee_details.map((assignee) => assignee.first_name).join(", ")
-                        : "No one"}
-                    </div>
-                  </div> */}
                 </>
               )}
             </Listbox>

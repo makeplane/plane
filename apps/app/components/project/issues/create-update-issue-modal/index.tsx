@@ -15,7 +15,7 @@ import issuesServices from "lib/services/issues.service";
 import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
 // ui
-import { Button, Input, Loader, TextArea } from "ui";
+import { Button, Input, Loader } from "ui";
 // icons
 import { EllipsisHorizontalIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // components
@@ -449,8 +449,9 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                               render={({ field }) => (
                                 <RemirrorRichTextEditor
                                   {...field}
-                                  onChangeHTML={(val) => {
-                                    setValue("description_html", val);
+                                  onBlur={(jsonValue, htmlValue) => {
+                                    setValue("description", jsonValue);
+                                    setValue("description_html", htmlValue);
                                   }}
                                   placeholder="Enter Your Text..."
                                 />

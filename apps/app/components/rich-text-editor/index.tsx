@@ -40,8 +40,7 @@ export interface IRemirrorRichTextEditor {
   placeholder?: string;
   mentions?: any[];
   tags?: any[];
-  onChange?: (value: any) => void;
-  onChangeHTML?: (value: any) => void;
+  onBlur: (jsonValue: any, htmlValue: any) => void;
   value?: any;
   showToolbar?: boolean;
   editable?: boolean;
@@ -51,13 +50,14 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = ({
   placeholder,
   mentions = [],
   tags = [],
-  onChange,
-  onChangeHTML,
+  onBlur,
   value = "",
   showToolbar = true,
   editable = true,
 }) => {
   const [imageLoader, setImageLoader] = useState(false);
+  const [jsonValue, setJsonValue] = useState<any>();
+  const [htmlValue, setHtmlValue] = useState<any>();
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -164,6 +164,9 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = ({
         initialContent={state}
         classNames={["p-4 focus:outline-none"]}
         editable={editable}
+        onBlur={() => {
+          onBlur(jsonValue, htmlValue);
+        }}
       >
         <div className="rounded-md border">
           {showToolbar && editable && (
@@ -179,8 +182,8 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = ({
           )}
           {/* <TableComponents /> */}
           <MentionAutoComplete mentions={mentions} tags={tags} />
-          {onChange && <OnChangeJSON onChange={onChange} />}
-          {onChangeHTML && <OnChangeHTML onChange={onChangeHTML} />}
+          {<OnChangeJSON onChange={setJsonValue} />}
+          {<OnChangeHTML onChange={setHtmlValue} />}
         </div>
       </Remirror>
     </div>

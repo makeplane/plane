@@ -1,17 +1,19 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-// next
+
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import type { NextPage, NextPageContext } from "next";
 import { useRouter } from "next/router";
-// swr
+
 import useSWR, { mutate } from "swr";
-// react-hook-form
+
 import { Controller, useForm } from "react-hook-form";
+
+import { Disclosure, Transition } from "@headlessui/react";
+
 // services
 import issuesServices from "lib/services/issues.service";
 import projectService from "lib/services/project.service";
-import workspaceService from "lib/services/workspace.service";
 // lib
 import { requiredAuth } from "lib/auth";
 // layouts
@@ -20,28 +22,31 @@ import AppLayout from "layouts/app-layout";
 import AddAsSubIssue from "components/project/issues/issue-detail/add-as-sub-issue";
 import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
 import IssueDetailSidebar from "components/project/issues/issue-detail/issue-detail-sidebar";
-import IssueCommentSection from "components/project/issues/issue-detail/comment/issue-comment-section";
+import AddIssueComment from "components/project/issues/issue-detail/comment/issue-comment-section";
 import IssueActivitySection from "components/project/issues/issue-detail/activity";
-// headless ui
-import { Disclosure, Transition } from "@headlessui/react";
 // ui
 import { Loader, TextArea, HeaderButton, Breadcrumbs, CustomMenu } from "ui";
 // icons
 import { ChevronLeftIcon, ChevronRightIcon, PlusIcon } from "@heroicons/react/24/outline";
 // types
-import { IIssue, IssueResponse, IIssueComment, IIssueActivity } from "types";
+import { IIssue, IssueResponse } from "types";
 // fetch-keys
 import {
   PROJECT_DETAILS,
   PROJECT_ISSUES_LIST,
-  WORKSPACE_DETAILS,
   PROJECT_ISSUES_ACTIVITY,
-  PROJECT_ISSUES_COMMENTS,
 } from "constants/fetch-keys";
 // common
 import { debounce } from "constants/common";
 
-const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), { ssr: false });
+const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
+  ssr: false,
+  loading: () => (
+    <Loader>
+      <Loader.Item height="12rem" width="100%" />
+    </Loader>
+  ),
+});
 
 const defaultValues = {
   name: "",
@@ -67,11 +72,6 @@ const IssueDetail: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
-  const { data: activeWorkspace } = useSWR(
-    workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
-    () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null)
-  );
-
   const { data: activeProject } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
     workspaceSlug && projectId
@@ -88,23 +88,11 @@ const IssueDetail: NextPage = () => {
       : null
   );
 
-  const { data: issueActivities, mutate: mutateIssueActivities } = useSWR<IIssueActivity[]>(
+  const { data: issueActivities, mutate: mutateIssueActivities } = useSWR(
     workspaceSlug && projectId && issueId ? PROJECT_ISSUES_ACTIVITY : null,
     workspaceSlug && projectId && issueId
       ? () =>
           issuesServices.getIssueActivities(
-            workspaceSlug as string,
-            projectId as string,
-            issueId as string
-          )
-      : null
-  );
-
-  const { data: comments, mutate: mutateIssueComments } = useSWR<IIssueComment[]>(
-    workspaceSlug && projectId && issueId ? PROJECT_ISSUES_COMMENTS(issueId as string) : null,
-    workspaceSlug && projectId && issueId
-      ? () =>
-          issuesServices.getIssueComments(
             workspaceSlug as string,
             projectId as string,
             issueId as string
@@ -127,7 +115,6 @@ const IssueDetail: NextPage = () => {
   useEffect(() => {
     if (issueDetail) {
       mutateIssueActivities();
-      mutateIssueComments();
       reset({
         ...issueDetail,
         blockers_list:
@@ -142,11 +129,11 @@ const IssueDetail: NextPage = () => {
         labels: issueDetail.labels_list ?? issueDetail.labels,
       });
     }
-  }, [issueDetail, reset, mutateIssueActivities, mutateIssueComments]);
+  }, [issueDetail, reset, mutateIssueActivities]);
 
   const submitChanges = useCallback(
     (formData: Partial<IIssue>) => {
-      if (!activeWorkspace || !activeProject || !issueId) return;
+      if (!workspaceSlug || !activeProject || !issueId) return;
 
       mutateIssues(
         (prevData) => ({
@@ -165,7 +152,7 @@ const IssueDetail: NextPage = () => {
       };
 
       issuesServices
-        .patchIssue(activeWorkspace.slug, projectId as string, issueId as string, payload)
+        .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload)
         .then((response) => {
           mutateIssues((prevData) => ({
             ...(prevData as IssueResponse),
@@ -182,16 +169,16 @@ const IssueDetail: NextPage = () => {
           console.error(error);
         });
     },
-    [activeProject, activeWorkspace, issueId, projectId, mutateIssues, mutateIssueActivities]
+    [activeProject, workspaceSlug, issueId, projectId, mutateIssues, mutateIssueActivities]
   );
 
   const handleSubIssueRemove = (issueId: string) => {
-    if (activeWorkspace && activeProject) {
+    if (workspaceSlug && activeProject) {
       issuesServices
-        .patchIssue(activeWorkspace.slug, activeProject.id, issueId, { parent: null })
+        .patchIssue(workspaceSlug as string, activeProject.id, issueId, { parent: null })
         .then((res) => {
           mutate<IssueResponse>(
-            PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id),
+            PROJECT_ISSUES_LIST(workspaceSlug as string, activeProject.id),
             (prevData) => ({
               ...(prevData as IssueResponse),
               results: (prevData?.results ?? []).map((p) =>
@@ -207,31 +194,6 @@ const IssueDetail: NextPage = () => {
         });
     }
   };
-
-  const updateState = useMemo(
-    () =>
-      debounce(() => {
-        handleSubmit(submitChanges)();
-      }, 5000),
-    [handleSubmit, submitChanges]
-  );
-
-  const updateDescription = useMemo(
-    () =>
-      debounce((key: any, val: any) => {
-        setValue(key, val);
-      }, 3000),
-    [setValue]
-  );
-
-  const updateDescriptionHTML = useMemo(
-    () =>
-      debounce((key: any, val: any) => {
-        setValue(key, val);
-        updateState();
-      }, 3000),
-    [setValue, updateState]
-  );
 
   return (
     <AppLayout
@@ -360,16 +322,15 @@ const IssueDetail: NextPage = () => {
                 <Controller
                   name="description"
                   control={control}
-                  render={({ field: { value, onChange } }) => (
+                  render={({ field: { value } }) => (
                     <RemirrorRichTextEditor
                       value={value}
-                      onChange={(val) => {
-                        updateDescription("description", val);
-                      }}
-                      onChangeHTML={(val) => {
-                        updateDescriptionHTML("description_html", val);
-                      }}
                       placeholder="Enter Your Text..."
+                      onBlur={(jsonValue, htmlValue) => {
+                        setValue("description", jsonValue);
+                        setValue("description_html", htmlValue);
+                        handleSubmit(submitChanges)();
+                      }}
                     />
                   )}
                 />
@@ -501,7 +462,7 @@ const IssueDetail: NextPage = () => {
                 issueActivities={issueActivities || []}
                 mutate={mutateIssueActivities}
               />
-              <IssueCommentSection mutate={mutateIssueActivities} />
+              <AddIssueComment mutate={mutateIssueActivities} />
             </div>
           </div>
           <div className="h-full basis-1/3 space-y-5 border-l p-5">

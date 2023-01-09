@@ -48,6 +48,9 @@ COPY gunicorn.config.py ./
 USER root
 RUN apk --update --no-cache add "bash~=5.1"
 COPY ./bin ./bin/
+
+RUN chmod +x ./bin/channel-worker ./bin/takeoff ./bin/worker
+
 USER captain
 
 # Expose container port and run entry point script
