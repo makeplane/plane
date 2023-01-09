@@ -197,7 +197,7 @@ export const navigation = [
     title: 'Plane App',
     links: [
       { title: 'Workspace', href: '/workspace' },
-      { title: 'Project', href: '/project' },
+      { title: 'Project', href: '/projects' },
       { title: 'Issues', href: '/issues' },
       { title: 'Cycles', href: '/cycles' },
       { title: 'Modules', href: '/modules' },
