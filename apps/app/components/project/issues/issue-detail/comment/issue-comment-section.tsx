@@ -84,11 +84,9 @@ const IssueCommentSection: React.FC<{
             render={({ field: { value, onChange } }) => (
               <RemirrorRichTextEditor
                 value={value}
-                onChange={(val) => {
-                  updateDescription("comment_json", val);
-                }}
-                onChangeHTML={(val) => {
-                  updateDescriptionHTML("comment_html", val);
+                onBlur={(jsonValue, htmlValue) => {
+                  setValue("comment_json", jsonValue);
+                  setValue("comment_html", htmlValue);
                 }}
                 placeholder="Enter Your comment..."
               />

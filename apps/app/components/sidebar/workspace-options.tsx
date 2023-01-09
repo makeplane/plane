@@ -104,7 +104,7 @@ const WorkspaceOptions: React.FC<Props> = ({ sidebarCollapse }) => {
                       className="rounded"
                     />
                   ) : (
-                    activeWorkspace?.name?.charAt(0) ?? "N"
+                    activeWorkspace?.name?.charAt(0) ?? "..."
                   )}
                 </div>
                 {!sidebarCollapse && (
