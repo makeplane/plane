@@ -70,7 +70,7 @@ export const Header = forwardRef(function Header({ className }, ref) {
           <ul role="list" className="flex items-center gap-8">
             <TopLevelNavItem href="https://plane.so/">Plane Cloud</TopLevelNavItem>
             <TopLevelNavItem href="https://github.com/makeplane/plane">GitHub</TopLevelNavItem>
-            <TopLevelNavItem href="https://discord.com/invite/A92xrEGCge">Support</TopLevelNavItem>
+            <TopLevelNavItem href="https://discord.com/invite/A92xrEGCge">Discord | Support</TopLevelNavItem>
           </ul>
         </nav>
         <div className="hidden md:block md:h-5 md:w-px md:bg-zinc-900/10 md:dark:bg-white/15" />
