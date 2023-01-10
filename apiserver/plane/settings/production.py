@@ -19,9 +19,9 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
         "NAME": "plane",
-        "USER": os.environ.get("PGUSER"),
-        "PASSWORD": os.environ.get("PGPASSWORD"),
-        "HOST": os.environ.get("PGHOST"),
+        "USER": os.environ.get("PGUSER", ""),
+        "PASSWORD": os.environ.get("PGPASSWORD", ""),
+        "HOST": os.environ.get("PGHOST", ""),
     }
 }
 
