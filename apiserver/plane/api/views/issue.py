@@ -162,12 +162,8 @@ class IssueViewSet(BaseViewSet):
 
                 return Response(issue_dict, status=status.HTTP_200_OK)
 
-            return self.paginate(
-                request=request,
-                queryset=issue_queryset,
-                on_results=lambda issues: IssueSerializer(issues, many=True).data,
-            )
-
+            serializer = IssueSerializer(issue_queryset, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)
             return Response(
