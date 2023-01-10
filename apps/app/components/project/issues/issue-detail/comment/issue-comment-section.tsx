@@ -18,7 +18,7 @@ import { debounce } from "constants/common";
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
   ssr: false,
   loading: () => (
-    <Loader>
+    <Loader className="mb-5">
       <Loader.Item height="12rem" width="100%" />
     </Loader>
   ),

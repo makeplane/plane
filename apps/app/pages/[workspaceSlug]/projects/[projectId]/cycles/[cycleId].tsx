@@ -199,7 +199,7 @@ const SingleCycle: React.FC = () => {
         isOpen={cycleIssuesListModal}
         handleClose={() => setCycleIssuesListModal(false)}
         type="cycle"
-        issues={issues?.results ?? []}
+        issues={issues?.results.filter((i) => !i.issue_cycle) ?? []}
         handleOnSubmit={handleAddIssuesToCycle}
       />
       <ConfirmIssueDeletion
@@ -314,7 +314,11 @@ const SingleCycle: React.FC = () => {
               )}
             </div>
           ) : (
-            <div className="flex h-full flex-col items-center justify-center px-4">
+            <div
+              className={`flex h-full flex-col items-center justify-center px-4 ${
+                cycleSidebar ? "mr-[24rem]" : ""
+              } duration-300`}
+            >
               <EmptySpace
                 title="You don't have any issue yet."
                 description="A cycle is a fixed time period where a team commits to a set number of issues from their backlog. Cycles are usually one, two, or four weeks long."
@@ -322,19 +326,13 @@ const SingleCycle: React.FC = () => {
               >
                 <EmptySpaceItem
                   title="Create a new issue"
-                  description={
-                    <span>
-                      Use{" "}
-                      <pre className="inline rounded bg-gray-100 px-2 py-1">Ctrl/Command + I</pre>{" "}
-                      shortcut to create a new issue
-                    </span>
-                  }
+                  description="Click to create a new issue inside the cycle."
                   Icon={PlusIcon}
                   action={() => openCreateIssueModal()}
                 />
                 <EmptySpaceItem
                   title="Add an existing issue"
-                  description={<span>Open list</span>}
+                  description="Open list"
                   Icon={ListBulletIcon}
                   action={() => openIssuesListModal()}
                 />

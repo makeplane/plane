@@ -24,6 +24,7 @@ import { CYCLE_LIST, PROJECT_DETAILS, WORKSPACE_DETAILS } from "constants/fetch-
 // lib
 import { requiredAuth } from "lib/auth";
 import { Tab } from "@headlessui/react";
+import { CyclesIcon } from "ui/icons";
 
 const ProjectSprints: NextPage = () => {
   const [selectedCycle, setSelectedCycle] = useState<SelectSprintType>();
@@ -170,7 +171,7 @@ const ProjectSprints: NextPage = () => {
             <EmptySpace
               title="You don't have any cycle yet."
               description="A cycle is a fixed time period where a team commits to a set number of issues from their backlog. Cycles are usually one, two, or four weeks long."
-              Icon={ArrowPathIcon}
+              Icon={CyclesIcon}
             >
               <EmptySpaceItem
                 title="Create a new cycle"

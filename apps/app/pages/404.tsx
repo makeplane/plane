@@ -2,11 +2,14 @@ import React from "react";
 
 import Link from "next/link";
 import type { NextPage } from "next";
+import Image from "next/image";
 
 // layouts
 import DefaultLayout from "layouts/DefaultLayout";
 // ui
 import { Button } from "ui";
+// images
+import Image404 from "public/404.svg";
 
 const PageNotFound: NextPage = () => {
   return (
@@ -16,19 +19,21 @@ const PageNotFound: NextPage = () => {
         description: "Page Not Found",
       }}
     >
-      <div className="relative flex h-full w-full flex-col items-center justify-center text-center">
-        <div className="absolute top-1/2 left-1/2 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gray-200"></div>
-        <div className="z-10 text-2xl font-medium tracking-widest">Not Found</div>
-        <div className="z-10 text-9xl font-bold">404</div>
-        <div className="z-10 mt-10 text-2xl">
-          Oops! Something went wrong. Sorry, Please recheck the URL and try again.
-        </div>
-        <p className="z-10 mt-3 w-full md:w-1/2">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis, impedit ex. Unde, ratione
-          odio laudantium molestiae sunt architecto laboriosam ex.
-        </p>
-        <div className="z-10 mt-3">
-          <Link href="/">Go Home</Link>
+      <div className="grid h-full place-items-center p-4">
+        <div className="space-y-8 text-center">
+          <div className="relative mx-auto h-60 w-60 lg:h-80 lg:w-80">
+            <Image src={Image404} layout="fill" alt="404- Page not found" />
+          </div>
+          <div className="space-y-2">
+            <h3 className="text-lg font-semibold">Oops! Something went wrong.</h3>
+            <p className="text-sm text-gray-500">
+              Lorem ipsum dolor sit amet consectetur. Fermentum augue ipsum ipsum adipiscing tempus
+              diam.
+            </p>
+          </div>
+          <Button type="button" largePadding>
+            Go to Home
+          </Button>
         </div>
       </div>
     </DefaultLayout>

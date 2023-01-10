@@ -28,6 +28,8 @@ import { Spinner, Button, Input, BreadcrumbItem, Breadcrumbs, CustomSelect } fro
 // types
 import type { IWorkspace } from "types";
 import OutlineButton from "ui/outline-button";
+import { copyTextToClipboard } from "constants/common";
+import { LinkIcon } from "@heroicons/react/24/outline";
 
 const defaultValues: Partial<IWorkspace> = {
   name: "",
@@ -126,141 +128,157 @@ const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
               This information will be displayed to every member of the workspace.
             </p>
           </div>
-          <div className="grid grid-cols-12 gap-x-16 gap-y-8">
-            <div className="col-span-5 space-y-16">
-              <div>
-                <h4 className="text-md mb-1 leading-6 text-gray-900">Logo</h4>
-                <div className="flex w-full gap-2">
-                  <Dropzone
-                    multiple={false}
-                    accept={{
-                      "image/*": [],
-                    }}
-                    onDrop={(files) => {
-                      setImage(files[0]);
-                    }}
-                  >
-                    {({ getRootProps, getInputProps }) => (
+          <div className="grid grid-cols-1 gap-x-16 gap-y-8 lg:grid-cols-12">
+            <div className="col-span lg:col-span-5">
+              <h4 className="text-md mb-1 leading-6 text-gray-900">Logo</h4>
+              <div className="flex w-full gap-2">
+                <Dropzone
+                  multiple={false}
+                  accept={{
+                    "image/*": [],
+                  }}
+                  onDrop={(files) => {
+                    setImage(files[0]);
+                  }}
+                >
+                  {({ getRootProps, getInputProps }) => (
+                    <div>
+                      <input {...getInputProps()} />
                       <div>
-                        <input {...getInputProps()} />
-                        <div>
-                          <div
-                            className="grid w-16 place-items-center rounded-md border p-2"
-                            {...getRootProps()}
-                          >
-                            {((watch("logo") && watch("logo") !== null && watch("logo") !== "") ||
-                              (image && image !== null)) && (
-                              <div className="relative mx-auto flex h-12 w-12">
-                                <Image
-                                  src={image ? URL.createObjectURL(image) : watch("logo") ?? ""}
-                                  alt="Workspace Logo"
-                                  objectFit="cover"
-                                  layout="fill"
-                                  priority
-                                />
-                              </div>
-                            )}
-                          </div>
+                        <div
+                          className="grid w-16 place-items-center rounded-md border p-2"
+                          {...getRootProps()}
+                        >
+                          {((watch("logo") && watch("logo") !== null && watch("logo") !== "") ||
+                            (image && image !== null)) && (
+                            <div className="relative mx-auto flex h-12 w-12">
+                              <Image
+                                src={image ? URL.createObjectURL(image) : watch("logo") ?? ""}
+                                alt="Workspace Logo"
+                                objectFit="cover"
+                                layout="fill"
+                                priority
+                              />
+                            </div>
+                          )}
                         </div>
                       </div>
-                    )}
-                  </Dropzone>
-                  <div>
-                    <p className="mb-2 text-sm text-gray-500">
-                      Max file size is 5MB. Supported file types are .jpg and .png.
-                    </p>
-                    <Button
-                      onClick={() => {
-                        if (image === null) return;
-                        setIsImageUploading(true);
-                        const formData = new FormData();
-                        formData.append("asset", image);
-                        formData.append("attributes", JSON.stringify({}));
-                        fileServices
-                          .uploadFile(workspaceSlug as string, formData)
-                          .then((response) => {
-                            const imageUrl = response.asset;
-                            setValue("logo", imageUrl);
-                            handleSubmit(onSubmit)();
-                            setIsImageUploading(false);
-                          })
-                          .catch((err) => {
-                            setIsImageUploading(false);
-                          });
-                      }}
-                    >
-                      {isImageUploading ? "Uploading..." : "Upload"}
-                    </Button>
-                  </div>
+                    </div>
+                  )}
+                </Dropzone>
+                <div>
+                  <p className="mb-2 text-sm text-gray-500">
+                    Max file size is 5MB. Supported file types are .jpg and .png.
+                  </p>
+                  <Button
+                    onClick={() => {
+                      if (image === null) return;
+                      setIsImageUploading(true);
+                      const formData = new FormData();
+                      formData.append("asset", image);
+                      formData.append("attributes", JSON.stringify({}));
+                      fileServices
+                        .uploadFile(workspaceSlug as string, formData)
+                        .then((response) => {
+                          const imageUrl = response.asset;
+                          setValue("logo", imageUrl);
+                          handleSubmit(onSubmit)();
+                          setIsImageUploading(false);
+                        })
+                        .catch((err) => {
+                          setIsImageUploading(false);
+                        });
+                    }}
+                  >
+                    {isImageUploading ? "Uploading..." : "Upload"}
+                  </Button>
                 </div>
               </div>
             </div>
-            <div className="col-span-5 space-y-16">
-              <div>
-                <h4 className="text-md mb-1 leading-6 text-gray-900">URL</h4>
-                <p className="mb-3 text-sm text-gray-500">Give a name to your workspace.</p>
-                <Input
-                  id="url"
-                  name="url"
-                  autoComplete="off"
-                  register={register}
-                  error={errors.name}
-                  validations={{
-                    required: "Name is required",
-                  }}
-                  className="w-full"
-                  value={`app.plane.so/${activeWorkspace.slug}`}
-                />
+            <div className="lg:col-span-5">
+              <div className="mb-3 flex items-end justify-between gap-2">
+                <div>
+                  <h4 className="text-md mb-1 leading-6 text-gray-900">URL</h4>
+                  <p className="text-sm text-gray-500">Give a name to your workspace.</p>
+                </div>
+                <Button
+                  type="button"
+                  theme="secondary"
+                  className="h-min"
+                  onClick={() =>
+                    copyTextToClipboard(`https://app.plane.so/${activeWorkspace.slug}`)
+                      .then(() => {
+                        setToastAlert({
+                          type: "success",
+                          title: "Workspace link copied to clipboard",
+                        });
+                      })
+                      .catch(() => {
+                        setToastAlert({
+                          type: "error",
+                          title: "Some error occurred",
+                        });
+                      })
+                  }
+                >
+                  <LinkIcon className="h-3.5 w-3.5" />
+                </Button>
               </div>
+              <Input
+                id="url"
+                name="url"
+                autoComplete="off"
+                register={register}
+                error={errors.name}
+                className="w-full"
+                value={`app.plane.so/${activeWorkspace.slug}`}
+                disabled
+              />
             </div>
-            <div className="col-span-5 space-y-16">
-              <div>
-                <h4 className="text-md mb-1 leading-6 text-gray-900">Name</h4>
-                <p className="mb-3 text-sm text-gray-500">Give a name to your workspace.</p>
-                <Input
-                  id="name"
-                  name="name"
-                  placeholder="Name"
-                  autoComplete="off"
-                  register={register}
-                  error={errors.name}
-                  validations={{
-                    required: "Name is required",
-                  }}
-                  className="w-full"
-                />
-              </div>
+            <div className="lg:col-span-5">
+              <h4 className="text-md mb-1 leading-6 text-gray-900">Name</h4>
+              <p className="mb-3 text-sm text-gray-500">Give a name to your workspace.</p>
+              <Input
+                id="name"
+                name="name"
+                placeholder="Name"
+                autoComplete="off"
+                register={register}
+                error={errors.name}
+                validations={{
+                  required: "Name is required",
+                }}
+                className="w-full"
+              />
             </div>
-            <div className="col-span-5 space-y-16">
-              <div>
-                <h4 className="text-md mb-1 leading-6 text-gray-900">Company Size</h4>
-                <p className="mb-3 text-sm text-gray-500">How big is your company?</p>
-                <Controller
-                  name="company_size"
-                  control={control}
-                  render={({ field: { value, onChange } }) => (
-                    <CustomSelect
-                      value={value}
-                      onChange={onChange}
-                      label={value ? value.toString() : "Select company size"}
-                      input
-                    >
-                      {companySize?.map((item) => (
-                        <CustomSelect.Option key={item.value} value={item.value}>
-                          {item.label}
-                        </CustomSelect.Option>
-                      ))}
-                    </CustomSelect>
-                  )}
-                />
-              </div>
+            <div className="lg:col-span-5">
+              <h4 className="text-md mb-1 leading-6 text-gray-900">Company Size</h4>
+              <p className="mb-3 text-sm text-gray-500">How big is your company?</p>
+              <Controller
+                name="company_size"
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <CustomSelect
+                    value={value}
+                    onChange={onChange}
+                    label={value ? value.toString() : "Select company size"}
+                    input
+                  >
+                    {companySize?.map((item) => (
+                      <CustomSelect.Option key={item.value} value={item.value}>
+                        {item.label}
+                      </CustomSelect.Option>
+                    ))}
+                  </CustomSelect>
+                )}
+              />
             </div>
             <div className="col-span-full">
-              <Button onClick={handleSubmit(onSubmit)} theme="secondary" disabled={isSubmitting}>
+              <Button onClick={handleSubmit(onSubmit)} disabled={isSubmitting}>
                 {isSubmitting ? "Updating..." : "Update Workspace"}
               </Button>
             </div>
-            <div className="col-span-10 space-y-8">
+            <div className="space-y-8 lg:col-span-10">
               <div>
                 <h4 className="text-md mb-1 leading-6 text-gray-900">Danger Zone</h4>
                 <p className="mb-3 text-sm text-gray-500">

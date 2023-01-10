@@ -149,7 +149,7 @@ const ModuleLinkModal: React.FC<Props> = ({ isOpen, module, handleClose }) => {
                       </div>
                     </div>
                   </div>
-                  <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
+                  <div className="mt-5 flex justify-end gap-2">
                     <Button theme="secondary" onClick={onClose}>
                       Cancel
                     </Button>

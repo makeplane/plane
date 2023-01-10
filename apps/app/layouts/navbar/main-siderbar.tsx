@@ -11,7 +11,6 @@ import WorkspaceOptions from "components/sidebar/workspace-options";
 import { Transition } from "@headlessui/react";
 // icons
 import {
-  ArrowPathIcon,
   Bars3Icon,
   Cog6ToothIcon,
   RectangleStackIcon,
@@ -20,6 +19,7 @@ import {
   QuestionMarkCircleIcon,
   RectangleGroupIcon,
 } from "@heroicons/react/24/outline";
+import { CyclesIcon } from "ui/icons";
 // common
 import { classNames } from "constants/common";
 
@@ -32,7 +32,7 @@ const navigation = (workspaceSlug: string, projectId: string) => [
   {
     name: "Cycles",
     href: `/${workspaceSlug}/projects/${projectId}/cycles`,
-    icon: ArrowPathIcon,
+    icon: CyclesIcon,
   },
   {
     name: "Modules",

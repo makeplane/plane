@@ -214,7 +214,7 @@ const SingleModule = () => {
         isOpen={moduleIssuesListModal}
         handleClose={() => setModuleIssuesListModal(false)}
         type="module"
-        issues={issues?.results ?? []}
+        issues={issues?.results.filter((i) => !i.issue_module) ?? []}
         handleOnSubmit={handleAddIssuesToModule}
       />
       <ConfirmIssueDeletion
@@ -350,19 +350,13 @@ const SingleModule = () => {
               >
                 <EmptySpaceItem
                   title="Create a new issue"
-                  description={
-                    <span>
-                      Use{" "}
-                      <pre className="inline rounded bg-gray-100 px-2 py-1">Ctrl/Command + I</pre>{" "}
-                      shortcut to create a new issue
-                    </span>
-                  }
+                  description="Click to create a new issue inside the module."
                   Icon={PlusIcon}
                   action={() => openCreateIssueModal()}
                 />
                 <EmptySpaceItem
                   title="Add an existing issue"
-                  description={<span>Open list</span>}
+                  description="Open list"
                   Icon={ListBulletIcon}
                   action={() => openIssuesListModal()}
                 />

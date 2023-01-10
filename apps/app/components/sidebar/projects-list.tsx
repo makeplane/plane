@@ -28,7 +28,7 @@ type Props = {
   ) => Array<{
     name: string;
     href: string;
-    icon: (props: any) => JSX.Element;
+    icon: (props: any) => any;
   }>;
   sidebarCollapse: boolean;
 };

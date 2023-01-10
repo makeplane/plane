@@ -23,7 +23,7 @@ import Logo from "public/onboarding/logo.svg";
 import userService from "lib/services/user.service";
 
 const Onboarding: NextPage = () => {
-  const [step, setStep] = useState(2);
+  const [step, setStep] = useState(1);
 
   const [workspace, setWorkspace] = useState();
 
