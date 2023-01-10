@@ -7,8 +7,6 @@ import type { GetServerSideProps, NextPage } from "next";
 import useSWR, { mutate } from "swr";
 import { Controller, useForm } from "react-hook-form";
 
-import Dropzone from "react-dropzone";
-
 // lib
 import { requiredWorkspaceAdmin } from "lib/auth";
 // constants
@@ -22,14 +20,14 @@ import SettingsLayout from "layouts/settings-layout";
 // hooks
 import useToast from "lib/hooks/useToast";
 // components
+import { ImageUploadModal } from "components/common/image-upload-modal";
 import ConfirmWorkspaceDeletion from "components/workspace/confirm-workspace-deletion";
 // ui
 import { Spinner, Button, Input, BreadcrumbItem, Breadcrumbs, CustomSelect } from "ui";
 // types
 import type { IWorkspace } from "types";
 import OutlineButton from "ui/outline-button";
-import { copyTextToClipboard } from "constants/common";
-import { LinkIcon } from "@heroicons/react/24/outline";
+import { UserCircleIcon } from "ui/icons";
 
 const defaultValues: Partial<IWorkspace> = {
   name: "",
@@ -49,8 +47,7 @@ const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
   const { isOwner } = props;
 
   const [isOpen, setIsOpen] = useState(false);
-  const [image, setImage] = useState<File | null>(null);
-  const [isImageUploading, setIsImageUploading] = useState(false);
+  const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
 
   const {
     query: { workspaceSlug },
@@ -68,14 +65,13 @@ const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
     control,
     reset,
     watch,
-    setValue,
     formState: { errors, isSubmitting },
   } = useForm<IWorkspace>({
     defaultValues: { ...defaultValues, ...activeWorkspace },
   });
 
   useEffect(() => {
-    activeWorkspace && reset({ ...activeWorkspace });
+    if (activeWorkspace) reset({ ...activeWorkspace });
   }, [activeWorkspace, reset]);
 
   const onSubmit = async (formData: IWorkspace) => {
@@ -113,6 +109,15 @@ const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
         </Breadcrumbs>
       }
     >
+      <ImageUploadModal
+        isOpen={isImageUploadModalOpen}
+        onClose={() => setIsImageUploadModalOpen(false)}
+        onSuccess={() => {
+          setIsImageUploadModalOpen(false);
+          handleSubmit(onSubmit)();
+        }}
+        value={watch("logo")}
+      />
       <ConfirmWorkspaceDeletion
         isOpen={isOpen}
         onClose={() => {

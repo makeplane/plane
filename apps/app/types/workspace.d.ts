@@ -7,7 +7,7 @@ export interface IWorkspace {
   readonly updated_at: Date;
   name: string;
   url: string;
-  logo: null;
+  logo: string | null;
   slug: string;
   readonly slug: string;
   readonly created_by: string;

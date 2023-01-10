@@ -17,15 +17,17 @@ import { Button, Input } from "ui";
 // types
 import type { IProject, IWorkspace } from "types";
 
-type Props = {
+type TConfirmProjectDeletionProps = {
   isOpen: boolean;
   onClose: () => void;
+  onSuccess?: () => void;
   data: IProject | null;
 };
 
-const ConfirmProjectDeletion: React.FC<Props> = ({ isOpen, data, onClose }) => {
-  const cancelButtonRef = useRef(null);
+const ConfirmProjectDeletion: React.FC<TConfirmProjectDeletionProps> = (props) => {
+  const { isOpen, data, onClose, onSuccess } = props;
 
+  const cancelButtonRef = useRef(null);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const [confirmProjectName, setConfirmProjectName] = useState("");
   const [confirmDeleteMyProject, setConfirmDeleteMyProject] = useState(false);
@@ -67,6 +69,7 @@ const ConfirmProjectDeletion: React.FC<Props> = ({ isOpen, data, onClose }) => {
         mutate<IProject[]>(PROJECTS_LIST(workspaceSlug), (prevData) =>
           prevData?.filter((project: IProject) => project.id !== data.id)
         );
+        if (onSuccess) onSuccess();
         setToastAlert({
           title: "Success",
           type: "success",

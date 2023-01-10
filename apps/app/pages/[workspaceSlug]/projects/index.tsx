@@ -3,34 +3,27 @@ import React, { useState } from "react";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 
 // services
 import projectService from "lib/services/project.service";
 import workspaceService from "lib/services/workspace.service";
 // constants
-import { WORKSPACE_DETAILS, PROJECTS_LIST } from "constants/fetch-keys";
+import { WORKSPACE_DETAILS, PROJECTS_LIST, PROJECT_MEMBERS } from "constants/fetch-keys";
 // layouts
 import AppLayout from "layouts/app-layout";
 // components
+import { JoinProjectModal } from "components/project/join-project-modal";
 import ProjectMemberInvitations from "components/project/member-invitations";
 import ConfirmProjectDeletion from "components/project/confirm-project-deletion";
 // ui
-import {
-  Button,
-  HeaderButton,
-  Breadcrumbs,
-  BreadcrumbItem,
-  EmptySpace,
-  EmptySpaceItem,
-  Loader,
-} from "ui";
+import { HeaderButton, Breadcrumbs, BreadcrumbItem, EmptySpace, EmptySpaceItem, Loader } from "ui";
 // icons
 import { ClipboardDocumentListIcon, PlusIcon } from "@heroicons/react/24/outline";
 
 const Projects: NextPage = () => {
   const [deleteProject, setDeleteProject] = useState<string | null>(null);
-  const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
+  const [selectedProjectToJoin, setSelectedProjectToJoin] = useState<string | null>(null);
 
   const {
     query: { workspaceSlug },
@@ -41,35 +34,10 @@ const Projects: NextPage = () => {
     () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null)
   );
 
-  const { data: projects, mutate: mutateProjects } = useSWR(
+  const { data: projects } = useSWR(
     workspaceSlug ? PROJECTS_LIST(workspaceSlug as string) : null,
     () => (workspaceSlug ? projectService.getProjects(workspaceSlug as string) : null)
   );
-
-  const handleInvitation = (project_invitation: any, action: "accepted" | "withdraw") => {
-    if (action === "accepted") {
-      setInvitationsRespond((prevData) => {
-        return [...prevData, project_invitation.id];
-      });
-    } else if (action === "withdraw") {
-      setInvitationsRespond((prevData) => {
-        return prevData.filter((item: string) => item !== project_invitation.id);
-      });
-    }
-  };
-
-  const submitInvitations = () => {
-    if (!workspaceSlug) return;
-    projectService
-      .joinProject(workspaceSlug as string, { project_ids: invitationsRespond })
-      .then(async () => {
-        setInvitationsRespond([]);
-        await mutateProjects();
-      })
-      .catch((err: any) => {
-        console.error(err);
-      });
-  };
 
   return (
     <AppLayout
@@ -89,6 +57,25 @@ const Projects: NextPage = () => {
         />
       }
     >
+      <JoinProjectModal
+        data={projects?.find((item) => item.id === selectedProjectToJoin)}
+        onClose={() => setSelectedProjectToJoin(null)}
+        onJoin={async () => {
+          const project = projects?.find((item) => item.id === selectedProjectToJoin);
+          if (!project) return;
+          await projectService
+            .joinProject(workspaceSlug as string, {
+              project_ids: [project.id],
+            })
+            .then(async () => {
+              mutate(PROJECT_MEMBERS(project.id));
+              setSelectedProjectToJoin(null);
+            })
+            .catch(() => {
+              setSelectedProjectToJoin(null);
+            });
+        }}
+      />
       <ConfirmProjectDeletion
         isOpen={!!deleteProject}
         onClose={() => setDeleteProject(null)}
@@ -127,18 +114,12 @@ const Projects: NextPage = () => {
                   <ProjectMemberInvitations
                     key={item.id}
                     project={item}
-                    slug={(activeWorkspace as any)?.slug}
-                    invitationsRespond={invitationsRespond}
-                    handleInvitation={handleInvitation}
+                    workspaceSlug={(activeWorkspace as any)?.slug}
+                    setToJoinProject={setSelectedProjectToJoin}
                     setDeleteProject={setDeleteProject}
                   />
                 ))}
               </div>
-              {invitationsRespond.length > 0 && (
-                <div className="mt-4 flex justify-between">
-                  <Button onClick={submitInvitations}>Submit</Button>
-                </div>
-              )}
             </div>
           )}
         </>

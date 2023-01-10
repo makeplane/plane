@@ -9,8 +9,6 @@ import useSWR from "swr";
 
 import { useForm } from "react-hook-form";
 
-import Dropzone from "react-dropzone";
-
 // hooks
 import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
@@ -26,6 +24,8 @@ import { USER_ISSUE, USER_WORKSPACE_INVITATIONS, PROJECTS_LIST } from "constants
 import userService from "lib/services/user.service";
 import fileServices from "lib/services/file.service";
 import workspaceService from "lib/services/workspace.service";
+// components
+import { ImageUploadModal } from "components/common/image-upload-modal";
 // ui
 import { BreadcrumbItem, Breadcrumbs, Button, Input, Spinner } from "ui";
 // icons
@@ -50,8 +50,7 @@ const defaultValues: Partial<IUser> = {
 
 const Profile: NextPage = () => {
   const [isEditing, setIsEditing] = useState(false);
-  const [image, setImage] = useState<File | null>(null);
-  const [isImageUploading, setIsImageUploading] = useState(false);
+  const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
 
   const {
     query: { workspaceSlug },
@@ -144,6 +143,16 @@ const Profile: NextPage = () => {
       }}
       noHeader
     >
+      <ImageUploadModal
+        isOpen={isImageUploadModalOpen}
+        onClose={() => setIsImageUploadModalOpen(false)}
+        onSuccess={(url) => {
+          setValue("avatar", url);
+          handleSubmit(onSubmit)();
+          setIsImageUploadModalOpen(false);
+        }}
+        value={watch("avatar")}
+      />
       <div className="w-full space-y-5">
         <Breadcrumbs>
           <BreadcrumbItem title="My Profile" />
@@ -164,73 +173,40 @@ const Profile: NextPage = () => {
                   )}
                 </button>
                 <div className="flex-shrink-0">
-                  <Dropzone
-                    multiple={false}
-                    accept={{
-                      "image/*": [],
-                    }}
-                    onDrop={(files) => {
-                      setImage(files[0]);
-                    }}
-                  >
-                    {({ getRootProps, getInputProps, open }) => (
-                      <div className="space-y-4">
-                        <input {...getInputProps()} />
-                        <div className="relative">
-                          <span
-                            className="inline-block h-40 w-40 overflow-hidden rounded bg-gray-100"
-                            {...getRootProps()}
-                          >
-                            {(!watch("avatar") || watch("avatar") === "") &&
-                            (!image || image === null) ? (
-                              <UserIcon className="h-full w-full text-gray-300" />
-                            ) : (
-                              <div className="relative h-40 w-40 overflow-hidden">
-                                <Image
-                                  src={image ? URL.createObjectURL(image) : watch("avatar")}
-                                  alt={myProfile.first_name}
-                                  layout="fill"
-                                  objectFit="cover"
-                                  priority
-                                />
-                              </div>
-                            )}
-                          </span>
-                        </div>
-                        <p className="text-sm text-gray-500">
-                          Max file size is 5MB.
-                          <br />
-                          Supported file types are .jpg and .png.
-                        </p>
-                        <Button
-                          type="button"
-                          className="mt-4"
-                          onClick={() => {
-                            if (image === null) open();
-                            else {
-                              setIsImageUploading(true);
-                              const formData = new FormData();
-                              formData.append("asset", image);
-                              formData.append("attributes", JSON.stringify({}));
-                              fileServices
-                                .uploadFile(workspaceSlug as string, formData)
-                                .then((response) => {
-                                  const imageUrl = response.asset;
-                                  setValue("avatar", imageUrl);
-                                  handleSubmit(onSubmit)();
-                                  setIsImageUploading(false);
-                                })
-                                .catch((err) => {
-                                  setIsImageUploading(false);
-                                });
-                            }
-                          }}
-                        >
-                          {isImageUploading ? "Uploading..." : "Upload"}
-                        </Button>
-                      </div>
-                    )}
-                  </Dropzone>
+                  <div className="space-y-4">
+                    <div className="relative">
+                      <span className="inline-block h-40 w-40 overflow-hidden rounded bg-gray-100">
+                        {!watch("avatar") || watch("avatar") === "" ? (
+                          <UserIcon className="h-full w-full text-gray-300" />
+                        ) : (
+                          <div className="relative h-40 w-40 overflow-hidden">
+                            <Image
+                              src={watch("avatar")}
+                              alt={myProfile.first_name}
+                              layout="fill"
+                              objectFit="cover"
+                              priority
+                              onClick={() => setIsImageUploadModalOpen(true)}
+                            />
+                          </div>
+                        )}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-500">
+                      Max file size is 5MB.
+                      <br />
+                      Supported file types are .jpg and .png.
+                    </p>
+                    <Button
+                      type="button"
+                      className="mt-4"
+                      onClick={() => {
+                        setIsImageUploadModalOpen(true);
+                      }}
+                    >
+                      Upload
+                    </Button>
+                  </div>
                 </div>
                 <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
                   <div className="mt-2 grid grid-cols-2 gap-x-10 gap-y-5">
