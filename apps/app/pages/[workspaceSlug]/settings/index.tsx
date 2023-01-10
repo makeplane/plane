@@ -27,7 +27,9 @@ import { Spinner, Button, Input, BreadcrumbItem, Breadcrumbs, CustomSelect } fro
 // types
 import type { IWorkspace } from "types";
 import OutlineButton from "ui/outline-button";
-import { UserCircleIcon } from "ui/icons";
+import Dropzone from "react-dropzone";
+import { LinkIcon } from "@heroicons/react/24/outline";
+import { copyTextToClipboard } from "constants/common";
 
 const defaultValues: Partial<IWorkspace> = {
   name: "",
@@ -47,6 +49,8 @@ const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
   const { isOwner } = props;
 
   const [isOpen, setIsOpen] = useState(false);
+  const [image, setImage] = useState<File | null>(null);
+  const [isImageUploading, setIsImageUploading] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
 
   const {
@@ -65,6 +69,7 @@ const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
     control,
     reset,
     watch,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<IWorkspace>({
     defaultValues: { ...defaultValues, ...activeWorkspace },

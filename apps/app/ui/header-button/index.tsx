@@ -24,7 +24,7 @@ const HeaderButton = ({
     <>
       <button
         type="button"
-        className={`border hover:bg-gray-100 text-gray-600 hover:text-gray-900 text-xs flex items-center gap-x-1 p-2 rounded-md font-medium whitespace-nowrap outline-none ${
+        className={`whitespace-nowraps flex w-min items-center gap-x-1 whitespace-nowrap rounded-md border p-2 text-xs font-medium text-gray-600 outline-none hover:bg-gray-100 hover:text-gray-900 ${
           position === "reverse" && "flex-row-reverse"
         } ${className}`}
         disabled={disabled}

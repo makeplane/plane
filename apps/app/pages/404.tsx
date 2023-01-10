@@ -5,7 +5,7 @@ import type { NextPage } from "next";
 import Image from "next/image";
 
 // layouts
-import DefaultLayout from "layouts/DefaultLayout";
+import DefaultLayout from "layouts/default-layout";
 // ui
 import { Button } from "ui";
 // images

@@ -219,8 +219,13 @@ const Workspace: NextPage = () => {
                       </div>
                     </div>
                   ) : (
-                    <div className="m-10">
-                      <p className="text-center text-gray-500">No Issues Found</p>
+                    <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
+                      <LayerDiagonalIcon height="56" width="56" />
+                      <h3 className="text-gray-500">
+                        No issues found. Create a new issue with{" "}
+                        <pre className="inline rounded bg-gray-100 px-2 py-1">Ctrl/Command + I</pre>
+                        .
+                      </h3>
                     </div>
                   )
                 ) : (

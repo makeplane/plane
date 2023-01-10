@@ -13,7 +13,7 @@ import { USER_WORKSPACES } from "constants/fetch-keys";
 import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
 // layouts
-import DefaultLayout from "layouts/DefaultLayout";
+import DefaultLayout from "layouts/default-layout";
 
 const MagicSignIn: NextPage = () => {
   const router = useRouter();

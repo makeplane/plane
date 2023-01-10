@@ -6,7 +6,7 @@ import useSWR from "swr";
 
 // layouts
 import Container from "layouts/container";
-import Sidebar from "layouts/navbar/main-siderbar";
+import Sidebar from "layouts/navbar/main-sidebar";
 import Header from "layouts/navbar/header";
 // services
 import projectService from "lib/services/project.service";
@@ -32,6 +32,7 @@ const AppLayout: React.FC<Props> = ({
   right,
 }) => {
   const [isJoiningProject, setIsJoiningProject] = useState(false);
+  const [toggleSidebar, setToggleSidebar] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -52,9 +53,16 @@ const AppLayout: React.FC<Props> = ({
     <Container meta={meta}>
       <CommandPalette />
       <div className="flex h-screen w-full overflow-x-hidden">
-        <Sidebar />
+        <Sidebar toggleSidebar={toggleSidebar} setToggleSidebar={setToggleSidebar} />
         <main className="flex h-screen w-full min-w-0 flex-col overflow-y-auto">
-          {noHeader ? null : <Header breadcrumbs={breadcrumbs} left={left} right={right} />}
+          {noHeader ? null : (
+            <Header
+              breadcrumbs={breadcrumbs}
+              left={left}
+              right={right}
+              setToggleSidebar={setToggleSidebar}
+            />
+          )}
 
           {projectId && !projectMembers ? (
             <div className="flex h-full w-full items-center justify-center">

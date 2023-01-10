@@ -12,7 +12,7 @@ import { WORKSPACE_INVITATION } from "constants/fetch-keys";
 // hooks
 import useUser from "lib/hooks/useUser";
 // layouts
-import DefaultLayout from "layouts/DefaultLayout";
+import DefaultLayout from "layouts/default-layout";
 // ui
 import { Button, Spinner } from "ui";
 // icons
@@ -58,11 +58,11 @@ const WorkspaceInvitation: NextPage = () => {
 
   return (
     <DefaultLayout>
-      <div className="w-full h-full flex flex-col justify-center items-center px-3">
+      <div className="flex h-full w-full flex-col items-center justify-center px-3">
         {invitationDetail ? (
           <>
             {error ? (
-              <div className="bg-gray-50 rounded shadow-2xl border px-4 py-8 w-full md:w-1/3 space-y-4 flex flex-col text-center">
+              <div className="flex w-full flex-col space-y-4 rounded border bg-gray-50 px-4 py-8 text-center shadow-2xl md:w-1/3">
                 <h2 className="text-xl uppercase">INVITATION NOT FOUND</h2>
               </div>
             ) : (
@@ -137,7 +137,7 @@ const WorkspaceInvitation: NextPage = () => {
             />
           </EmptySpace>
         ) : (
-          <div className="w-full h-full flex justify-center items-center">
+          <div className="flex h-full w-full items-center justify-center">
             <Spinner />
           </div>
         )}
