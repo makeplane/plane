@@ -33,7 +33,7 @@ def update_comments():
             issue_comment.comment_html = f"<p>{issue_comment.comment_stripped}</p>"
             updated_issue_comments.append(issue_comment)
 
-        Issue.objects.bulk_update(
+        IssueComment.objects.bulk_update(
             updated_issue_comments, ["comment_html"], batch_size=100
         )
         print("Success")
