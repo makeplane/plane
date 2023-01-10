@@ -1,3 +1,82 @@
 # Self Hosting Plane
 
-Coming soon.
+import { Heading } from '@/components/Heading'
+
+<Note>
+  Plane is still in its early days, not everything will be perfect yet, and
+  hiccups may happen. Please let us know of any suggestions, ideas, or bugs that
+  you encounter on our [Discord](https://discord.com/invite/A92xrEGCge).
+</Note>
+
+<Heading level={2} id="project-requirements">
+  Requirements
+</Heading>
+
+1. Git
+2. Docker
+3. Docker-compose
+
+<Heading level={2} id="project-requirements">
+  Project set-up
+</Heading>
+1. Clone the code
+
+    ```bash
+    git clone --depth 1 https://github.com/makeplane/plane
+    ```
+
+2. Change Directory
+
+   ```bash
+   cd plane
+   ```
+
+3. Move `env.example` to `.env` in the `apiserver` directory and `apps/app`
+
+   ```bash
+   mv.env.example.env
+   ```
+
+4. Add all the variables - (the below are the compulsory variables)
+
+   Frontend - `apps/app/.env`
+
+   ```bash
+   NEXT_PUBLIC_API_BASE_URL = '<-- endpoint goes here -->'
+   NEXT_PUBLIC_GOOGLE_CLIENTID = '<-- google client id goes here -->'
+   NEXT_PUBLIC_GITHUB_ID = '<-- github id goes here -->'
+   NEXT_PUBLIC_APP_ENVIRONMENT = '<-- production | development -->'
+   ```
+
+   Backend - `apiserver/.env`
+
+   ```bash
+   # Backend
+   SECRET_KEY="<-- django secret -->"
+   EMAIL_HOST="<-- email smtp -->"
+   EMAIL_HOST_USER="<-- email host user -->"
+   EMAIL_HOST_PASSWORD="<-- email host password -->"
+
+   AWS_REGION="<-- aws region -->"
+   AWS_ACCESS_KEY_ID="<-- aws access key -->"
+   AWS_SECRET_ACCESS_KEY="<-- aws secret acess key -->"
+   AWS_S3_BUCKET_NAME="<-- aws s3 bucket name -->"
+
+   SENTRY_DSN="<-- sentry dsn -->"
+   WEB_URL="<-- frontend web url -->"
+
+   GITHUB_CLIENT_SECRET="<-- github secret -->"
+
+   DISABLE_COLLECTSTATIC=1
+   DOCKERIZED=1
+   ```
+
+5. Run
+
+   ```bash
+   docker-compose up --build
+   ```
+
+6. Visit
+   1. [http://localhost:3000](http://localhost:3000) - (Frontend)
+   2. [http://localhost:8000](http://localhost:8000) - (Backend)
