@@ -13,7 +13,7 @@ const Breadcrumbs = ({ children }: BreadcrumbsProps) => {
     <>
       <div className="flex items-center">
         <div
-          className="border hover:bg-gray-100 rounded h-8 w-8 text-sm grid place-items-center text-center cursor-pointer"
+          className="grid h-8 w-8 cursor-pointer place-items-center rounded border border-gray-300 text-center text-sm hover:bg-gray-100"
           onClick={() => router.back()}
         >
           <ArrowLeftIcon className="h-3 w-3" />
@@ -35,7 +35,7 @@ const BreadcrumbItem: React.FC<BreadcrumbItemProps> = ({ title, link, icon }) =>
     <>
       {link ? (
         <Link href={link}>
-          <a className="text-sm border-r-2 border-gray-300 px-3">
+          <a className="border-r-2 border-gray-300 px-3 text-sm">
             <p className={`${icon ? "flex items-center gap-2" : ""}`}>
               {icon ?? null}
               {title}
@@ -43,7 +43,7 @@ const BreadcrumbItem: React.FC<BreadcrumbItemProps> = ({ title, link, icon }) =>
           </a>
         </Link>
       ) : (
-        <div className="text-sm px-3">
+        <div className="px-3 text-sm">
           <p className={`${icon ? "flex items-center gap-2" : ""}`}>
             {icon}
             {title}

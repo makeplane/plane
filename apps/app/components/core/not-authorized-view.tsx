@@ -3,7 +3,7 @@ import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 // layouts
-import DefaultLayout from "layouts/DefaultLayout";
+import DefaultLayout from "layouts/default-layout";
 // hooks
 import useUser from "lib/hooks/useUser";
 // icons

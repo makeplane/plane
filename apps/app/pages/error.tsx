@@ -3,7 +3,7 @@ import React from "react";
 import type { NextPage } from "next";
 
 // layouts
-import DefaultLayout from "layouts/DefaultLayout";
+import DefaultLayout from "layouts/default-layout";
 
 const ErrorPage: NextPage = () => {
   return (

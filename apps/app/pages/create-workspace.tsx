@@ -13,7 +13,7 @@ import workspaceService from "lib/services/workspace.service";
 import { requiredAuth } from "lib/auth";
 import { USER_WORKSPACES } from "constants/fetch-keys";
 // layouts
-import DefaultLayout from "layouts/DefaultLayout";
+import DefaultLayout from "layouts/default-layout";
 // ui
 import { CustomSelect, Input } from "ui";
 // images

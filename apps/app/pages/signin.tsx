@@ -14,7 +14,7 @@ import useUser from "lib/hooks/useUser";
 // services
 import authenticationService from "lib/services/authentication.service";
 // layouts
-import DefaultLayout from "layouts/DefaultLayout";
+import DefaultLayout from "layouts/default-layout";
 // social button
 import { GoogleLoginButton } from "components/socialbuttons/google-login";
 import EmailCodeForm from "components/forms/EmailCodeForm";

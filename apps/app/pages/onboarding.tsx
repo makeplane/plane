@@ -8,7 +8,7 @@ import useUser from "lib/hooks/useUser";
 // lib
 import { requiredAuth } from "lib/auth";
 // layouts
-import DefaultLayout from "layouts/DefaultLayout";
+import DefaultLayout from "layouts/default-layout";
 // components
 import Welcome from "components/onboarding/welcome";
 import PlanWithIssues from "components/onboarding/plan-with-issues";

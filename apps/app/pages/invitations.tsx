@@ -14,7 +14,7 @@ import { requiredAuth } from "lib/auth";
 import { USER_WORKSPACES } from "constants/fetch-keys";
 import { USER_WORKSPACE_INVITATIONS } from "constants/api-routes";
 // layouts
-import DefaultLayout from "layouts/DefaultLayout";
+import DefaultLayout from "layouts/default-layout";
 // components
 import SingleInvitation from "components/workspace/SingleInvitation";
 // ui

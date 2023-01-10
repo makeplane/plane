@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 // layouts
 import Container from "layouts/container";
 import Header from "layouts/navbar/header";
-import Sidebar from "layouts/navbar/main-siderbar";
+import Sidebar from "layouts/navbar/main-sidebar";
 import SettingsSidebar from "layouts/navbar/settings-sidebar";
 // components
 import { NotAuthorizedView } from "components/core";
@@ -85,9 +85,19 @@ const sidebarLinks: (
   },
 ];
 
-const SettingsLayout: React.FC<Props> = (props) => {
-  const { meta, children, noPadding, bg, noHeader, breadcrumbs, left, right, type, memberType } =
-    props;
+const SettingsLayout: React.FC<Props> = ({
+  meta,
+  children,
+  noPadding,
+  bg,
+  noHeader,
+  breadcrumbs,
+  left,
+  right,
+  type,
+  memberType,
+}) => {
+  const [toggleSidebar, setToggleSidebar] = useState(false);
   const { isMember, isOwner, isViewer, isGuest } = memberType ?? {
     isMember: false,
     isOwner: false,
@@ -102,7 +112,7 @@ const SettingsLayout: React.FC<Props> = (props) => {
   return (
     <Container meta={meta}>
       <div className="flex h-screen w-full overflow-x-hidden">
-        <Sidebar />
+        <Sidebar toggleSidebar={toggleSidebar} setToggleSidebar={setToggleSidebar} />
         <CommandPalette />
         {isMember || isOwner ? (
           <>
@@ -114,7 +124,14 @@ const SettingsLayout: React.FC<Props> = (props) => {
               }
             />
             <main className="flex h-screen w-full min-w-0 flex-col overflow-y-auto">
-              {noHeader ? null : <Header breadcrumbs={breadcrumbs} left={left} right={right} />}
+              {noHeader ? null : (
+                <Header
+                  breadcrumbs={breadcrumbs}
+                  left={left}
+                  right={right}
+                  setToggleSidebar={setToggleSidebar}
+                />
+              )}
               <div
                 className={`w-full flex-grow ${noPadding ? "" : "p-5 pb-5 lg:px-16 lg:pt-10"} ${
                   bg === "primary"
