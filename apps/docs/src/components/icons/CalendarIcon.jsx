@@ -3,8 +3,8 @@ export function CalendarIcon(props) {
     <svg viewBox="0 0 20 20" aria-hidden="true" {...props}>
       <path
         fill="none"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
         d="M2.5 6.5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-11a2 2 0 0 1-2-2v-9Z"
       />
       <path
