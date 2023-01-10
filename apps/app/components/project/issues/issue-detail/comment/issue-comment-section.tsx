@@ -83,7 +83,7 @@ const AddIssueComment: React.FC<{
   return (
     <div className="space-y-5">
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="rounded-md p-2 pt-3">
+        <div className="issue-comments-section rounded-md p-2 pt-3">
           <Controller
             name="comment_html"
             control={control}

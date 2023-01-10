@@ -47,7 +47,7 @@ const Sidebar: React.FC<Props> = ({ toggleSidebar, setToggleSidebar }) => {
   const { collapsed: sidebarCollapse, toggleCollapsed } = useTheme();
 
   return (
-    <nav className="relative z-40 h-screen">
+    <nav className="relative z-20 h-screen md:z-0">
       <div
         className={`${sidebarCollapse ? "" : "w-auto md:w-60"} fixed inset-y-0 top-0 ${
           toggleSidebar ? "left-0" : "-left-60 md:left-0"
