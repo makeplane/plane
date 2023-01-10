@@ -2,7 +2,6 @@ import redis
 from django.conf import settings
 from urllib.parse import urlparse
 
-
 def redis_instance():
     # Run in local redis url is false
     if not settings.REDIS_URL:
