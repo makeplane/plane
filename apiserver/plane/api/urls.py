@@ -58,6 +58,9 @@ from plane.api.views import (
     UserLastProjectWithWorkspaceEndpoint,
     UserWorkSpaceIssues,
     ProjectMemberUserEndpoint,
+    WorkspaceMemberUserEndpoint,
+    WorkspaceMemberUserViewsEndpoint,
+    WorkSpaceAvailabilityCheckEndpoint,
 )
 
 from plane.api.views.project import AddTeamToProjectEndpoint
@@ -148,6 +151,11 @@ urlpatterns = [
     ),
     ## Workspaces ##
     path(
+        "workspace-slug-check/",
+        WorkSpaceAvailabilityCheckEndpoint.as_view(),
+        name="workspace-availability",
+    ),
+    path(
         "workspaces/",
         WorkSpaceViewSet.as_view(
             {
@@ -233,6 +241,16 @@ urlpatterns = [
         "users/last-visited-workspace/",
         UserLastProjectWithWorkspaceEndpoint.as_view(),
         name="workspace-project-details",
+    ),
+    path(
+        "workspaces/<str:slug>/workspace-members/me/",
+        WorkspaceMemberUserEndpoint.as_view(),
+        name="workspace-member-details",
+    ),
+    path(
+        "workspaces/<str:slug>/workspace-views/",
+        WorkspaceMemberUserViewsEndpoint.as_view(),
+        name="workspace-member-details",
     ),
     ## End Workspaces ##
     # Projects
@@ -585,7 +603,7 @@ urlpatterns = [
     ## IssueProperty Ebd
     ## File Assets
     path(
-        "file-assets/",
+        "workspaces/<str:slug>/file-assets/",
         FileAssetEndpoint.as_view(),
         name="File Assets",
     ),

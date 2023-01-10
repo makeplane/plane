@@ -1,32 +1,34 @@
-// react
 import React, { useState } from "react";
 // next
 import { useRouter } from "next/router";
 import Link from "next/link";
+// swr
+import useSWR from "swr";
 // hooks
 import useToast from "lib/hooks/useToast";
-import useUser from "lib/hooks/useUser";
+// services
+import projectService from "lib/services/project.service";
 // components
-import CreateProjectModal from "components/project/create-project-modal";
+import { CreateProjectModal } from "components/project";
 // headless ui
-import { Disclosure, Menu, Transition } from "@headlessui/react";
+import { Disclosure, Transition } from "@headlessui/react";
 // ui
-import { Spinner } from "ui";
+import { CustomMenu, Loader } from "ui";
 // icons
-import {
-  ChevronDownIcon,
-  ClipboardDocumentIcon,
-  EllipsisHorizontalIcon,
-  PlusIcon,
-} from "@heroicons/react/24/outline";
+import { ChevronDownIcon, PlusIcon } from "@heroicons/react/24/outline";
+// fetch-keys
+import { PROJECTS_LIST } from "constants/fetch-keys";
 // constants
 import { classNames, copyTextToClipboard } from "constants/common";
 
 type Props = {
-  navigation: (projectId: string) => Array<{
+  navigation: (
+    workspaceSlug: string,
+    projectId: string
+  ) => Array<{
     name: string;
     href: string;
-    icon: (props: any) => JSX.Element;
+    icon: (props: any) => any;
   }>;
   sidebarCollapse: boolean;
 };
@@ -34,18 +36,22 @@ type Props = {
 const ProjectsList: React.FC<Props> = ({ navigation, sidebarCollapse }) => {
   const [isCreateProjectModal, setCreateProjectModal] = useState(false);
 
-  const { projects } = useUser();
-  const { setToastAlert } = useToast();
-
   const router = useRouter();
 
-  const { projectId } = router.query;
+  const { workspaceSlug, projectId } = router.query;
+
+  const { setToastAlert } = useToast();
+
+  const { data: projects } = useSWR(
+    workspaceSlug ? PROJECTS_LIST(workspaceSlug as string) : null,
+    () => (workspaceSlug ? projectService.getProjects(workspaceSlug as string) : null)
+  );
 
   return (
     <>
       <CreateProjectModal isOpen={isCreateProjectModal} setIsOpen={setCreateProjectModal} />
       <div
-        className={`h-full flex flex-col px-2 pt-5 pb-3 mt-3 space-y-2 bg-primary overflow-y-auto ${
+        className={`no-scrollbar mt-3 flex h-full flex-col space-y-2 overflow-y-auto bg-primary px-2 pt-5 pb-3 ${
           sidebarCollapse ? "rounded-xl" : "rounded-t-3xl"
         }`}
       >
@@ -58,22 +64,22 @@ const ProjectsList: React.FC<Props> = ({ navigation, sidebarCollapse }) => {
                     <>
                       <div className="flex items-center">
                         <Disclosure.Button
-                          className={`w-full flex items-center text-left gap-2 font-medium rounded-md p-2 text-sm ${
+                          className={`flex w-full items-center gap-2 rounded-md p-2 text-left text-sm font-medium ${
                             sidebarCollapse ? "justify-center" : ""
                           }`}
                         >
                           {project.icon ? (
-                            <span className="text-white rounded h-7 w-7 grid place-items-center uppercase flex-shrink-0">
+                            <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase text-white">
                               {String.fromCodePoint(parseInt(project.icon))}
                             </span>
                           ) : (
-                            <span className="bg-gray-700 text-white rounded h-7 w-7 grid place-items-center uppercase flex-shrink-0">
+                            <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
                               {project?.name.charAt(0)}
                             </span>
                           )}
 
                           {!sidebarCollapse && (
-                            <span className="flex items-center justify-between w-full">
+                            <span className="flex w-full items-center justify-between">
                               {project?.name}
                               <span>
                                 <ChevronDownIcon
@@ -84,47 +90,23 @@ const ProjectsList: React.FC<Props> = ({ navigation, sidebarCollapse }) => {
                           )}
                         </Disclosure.Button>
                         {!sidebarCollapse && (
-                          <Menu as="div" className="relative inline-block">
-                            <Menu.Button className="grid relative place-items-center focus:outline-none">
-                              <EllipsisHorizontalIcon className="h-4 w-4" />
-                            </Menu.Button>
-
-                            <Transition
-                              as={React.Fragment}
-                              enter="transition ease-out duration-100"
-                              enterFrom="transform opacity-0 scale-95"
-                              enterTo="transform opacity-100 scale-100"
-                              leave="transition ease-in duration-75"
-                              leaveFrom="transform opacity-100 scale-100"
-                              leaveTo="transform opacity-0 scale-95"
+                          <CustomMenu ellipsis>
+                            <CustomMenu.MenuItem
+                              onClick={() =>
+                                copyTextToClipboard(
+                                  `https://app.plane.so/${workspaceSlug}/projects/${project?.id}/issues/`
+                                ).then(() => {
+                                  setToastAlert({
+                                    title: "Link Copied",
+                                    message: "Link copied to clipboard",
+                                    type: "success",
+                                  });
+                                })
+                              }
                             >
-                              <Menu.Items className="origin-top-right absolute right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-20">
-                                <div className="p-1">
-                                  <Menu.Item as="div">
-                                    {(active) => (
-                                      <button
-                                        className="flex items-center gap-2 p-2 text-left text-gray-900 hover:bg-theme hover:text-white rounded-md text-xs whitespace-nowrap"
-                                        onClick={() =>
-                                          copyTextToClipboard(
-                                            `https://app.plane.so/projects/${project?.id}/issues/`
-                                          ).then(() => {
-                                            setToastAlert({
-                                              title: "Link Copied",
-                                              message: "Link copied to clipboard",
-                                              type: "success",
-                                            });
-                                          })
-                                        }
-                                      >
-                                        <ClipboardDocumentIcon className="h-3 w-3" />
-                                        Copy Link
-                                      </button>
-                                    )}
-                                  </Menu.Item>
-                                </div>
-                              </Menu.Items>
-                            </Transition>
-                          </Menu>
+                              Copy link
+                            </CustomMenu.MenuItem>
+                          </CustomMenu>
                         )}
                       </div>
                       <Transition
@@ -140,14 +122,14 @@ const ProjectsList: React.FC<Props> = ({ navigation, sidebarCollapse }) => {
                             sidebarCollapse ? "" : "ml-[2.25rem]"
                           } flex flex-col gap-y-1`}
                         >
-                          {navigation(project?.id).map((item) => (
+                          {navigation(workspaceSlug as string, project?.id).map((item) => (
                             <Link key={item.name} href={item.href}>
                               <a
                                 className={classNames(
                                   item.href === router.asPath
                                     ? "bg-gray-200 text-gray-900"
                                     : "text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900",
-                                  "group flex items-center px-2 py-2 text-xs font-medium rounded-md outline-none",
+                                  "group flex items-center rounded-md px-2 py-2 text-xs font-medium outline-none",
                                   sidebarCollapse ? "justify-center" : ""
                                 )}
                               >
@@ -156,7 +138,7 @@ const ProjectsList: React.FC<Props> = ({ navigation, sidebarCollapse }) => {
                                     item.href === router.asPath
                                       ? "text-gray-900"
                                       : "text-gray-500 group-hover:text-gray-900",
-                                    "flex-shrink-0 h-4 w-4",
+                                    "h-4 w-4 flex-shrink-0",
                                     !sidebarCollapse ? "mr-3" : ""
                                   )}
                                   aria-hidden="true"
@@ -172,24 +154,37 @@ const ProjectsList: React.FC<Props> = ({ navigation, sidebarCollapse }) => {
                 </Disclosure>
               ))
             ) : (
-              <div className="text-center space-y-3">
+              <div className="space-y-3 text-center">
                 {!sidebarCollapse && (
-                  <h4 className="text-gray-700 text-sm">You don{"'"}t have any project yet</h4>
+                  <h4 className="text-sm text-gray-700">You don{"'"}t have any project yet</h4>
                 )}
                 <button
                   type="button"
-                  className="group flex justify-center items-center gap-2 w-full rounded-md p-2 text-sm bg-theme text-white"
+                  className="group flex w-full items-center justify-center gap-2 rounded-md bg-gray-200 p-2 text-xs text-gray-900"
                   onClick={() => setCreateProjectModal(true)}
                 >
-                  <PlusIcon className="h-5 w-5" />
+                  <PlusIcon className="h-4 w-4" />
                   {!sidebarCollapse && "Create Project"}
                 </button>
               </div>
             )}
           </>
         ) : (
-          <div className="w-full flex justify-center">
-            <Spinner />
+          <div className="w-full">
+            <Loader className="space-y-5">
+              <div className="space-y-2">
+                <Loader.Item height="30px"></Loader.Item>
+                <Loader.Item height="15px" width="80%" light></Loader.Item>
+                <Loader.Item height="15px" width="80%" light></Loader.Item>
+                <Loader.Item height="15px" width="80%" light></Loader.Item>
+              </div>
+              <div className="space-y-2">
+                <Loader.Item height="30px"></Loader.Item>
+                <Loader.Item height="15px" width="80%" light></Loader.Item>
+                <Loader.Item height="15px" width="80%" light></Loader.Item>
+                <Loader.Item height="15px" width="80%" light></Loader.Item>
+              </div>
+            </Loader>
           </div>
         )}
       </div>

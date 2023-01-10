@@ -1,12 +1,12 @@
 import React from "react";
-// swr
+
+import { useRouter } from "next/router";
+
 import useSWR from "swr";
-// react hook form
+
 import { Controller } from "react-hook-form";
 // service
 import projectServices from "lib/services/project.service";
-// hooks
-import useUser from "lib/hooks/useUser";
 // fetch keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 // types
@@ -21,12 +21,13 @@ type Props = {
 };
 
 const SelectAssignee: React.FC<Props> = ({ control }) => {
-  const { activeWorkspace, activeProject } = useUser();
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
 
   const { data: people } = useSWR(
-    activeWorkspace && activeProject ? PROJECT_MEMBERS(activeProject.id) : null,
-    activeWorkspace && activeProject
-      ? () => projectServices.projectMembers(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => projectServices.projectMembers(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -51,6 +52,7 @@ const SelectAssignee: React.FC<Props> = ({ control }) => {
           value={value}
           onChange={onChange}
           icon={<UserIcon className="h-3 w-3 text-gray-500" />}
+          assignee
         />
       )}
     />

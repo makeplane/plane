@@ -1,95 +1,71 @@
 import React from "react";
+// swr
+import useSWR from "swr";
 // react hook form
 import { Controller } from "react-hook-form";
-// headless ui
-import { Listbox, Transition } from "@headlessui/react";
-// hooks
-import useUser from "lib/hooks/useUser";
-// components
-import CreateUpdateSprintsModal from "components/project/cycles/create-update-cycle-modal";
+// services
+import cycleServices from "lib/services/cycles.service";
+// constants
+import { CYCLE_LIST } from "constants/fetch-keys";
+// ui
+import { CustomListbox } from "ui";
 // icons
-import { CheckIcon, ChevronDownIcon, PlusIcon } from "@heroicons/react/20/solid";
+import { PlusIcon } from "@heroicons/react/20/solid";
+import { ArrowPathIcon } from "@heroicons/react/24/outline";
 // types
 import type { IIssue } from "types";
 import type { Control } from "react-hook-form";
-import { ArrowPathIcon } from "@heroicons/react/24/outline";
+import { useRouter } from "next/router";
 
 type Props = {
   control: Control<IIssue, any>;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  activeProject: string;
 };
 
-const SelectSprint: React.FC<Props> = ({ control, setIsOpen }) => {
-  const { cycles } = useUser();
+const SelectCycle: React.FC<Props> = ({ control, setIsOpen, activeProject }) => {
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
+
+  const { data: cycles } = useSWR(
+    workspaceSlug && activeProject ? CYCLE_LIST(activeProject) : null,
+    workspaceSlug && activeProject
+      ? () => cycleServices.getCycles(workspaceSlug as string, activeProject)
+      : null
+  );
 
   return (
-    <>
-      <Controller
-        control={control}
-        name="sprints"
-        render={({ field: { value, onChange } }) => (
-          <Listbox as="div" value={value} onChange={onChange}>
-            {({ open }) => (
-              <>
-                <div className="relative">
-                  <Listbox.Button className="flex items-center gap-1 hover:bg-gray-100 relative border rounded-md shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm duration-300">
-                    <ArrowPathIcon className="h-3 w-3 text-gray-500" />
-                    <span className="block truncate">
-                      {cycles?.find((i) => i.id.toString() === value?.toString())?.name ?? "Cycle"}
-                    </span>
-                  </Listbox.Button>
-
-                  <Transition
-                    show={open}
-                    as={React.Fragment}
-                    leave="transition ease-in duration-100"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                  >
-                    <Listbox.Options className="absolute z-10 mt-1 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
-                      <div className="py-1">
-                        {cycles?.map((cycle) => (
-                          <Listbox.Option
-                            key={cycle.id}
-                            value={cycle.id}
-                            className={({ active }) =>
-                              `text-gray-900 cursor-pointer select-none p-2 ${
-                                active ? "bg-indigo-50" : ""
-                              }`
-                            }
-                          >
-                            {({ active, selected }) => (
-                              <>
-                                <span className={`block ${selected && "font-semibold"}`}>
-                                  {cycle.name}
-                                </span>
-                              </>
-                            )}
-                          </Listbox.Option>
-                        ))}
-                      </div>
-                      <button
-                        type="button"
-                        className="relative select-none py-2 pl-3 pr-9 flex items-center gap-x-2 text-gray-400 hover:text-gray-500"
-                        onClick={() => setIsOpen(true)}
-                      >
-                        <span>
-                          <PlusIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-                        </span>
-                        <span>
-                          <span className="block truncate">Create cycle</span>
-                        </span>
-                      </button>
-                    </Listbox.Options>
-                  </Transition>
-                </div>
-              </>
-            )}
-          </Listbox>
-        )}
-      />
-    </>
+    <Controller
+      control={control}
+      name="cycle"
+      render={({ field: { value, onChange } }) => (
+        <CustomListbox
+          title={cycles?.find((i) => i.id.toString() === value?.toString())?.name ?? "Cycle"}
+          options={cycles?.map((cycle) => {
+            return { value: cycle.id, display: cycle.name };
+          })}
+          value={value}
+          optionsFontsize="sm"
+          onChange={onChange}
+          icon={<ArrowPathIcon className="h-3 w-3 text-gray-500" />}
+          footerOption={
+            <button
+              type="button"
+              className="relative flex select-none items-center gap-x-2 py-2 pl-3 pr-9 text-gray-400 hover:text-gray-500"
+              onClick={() => setIsOpen(true)}
+            >
+              <span>
+                <PlusIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+              </span>
+              <span>
+                <span className="block truncate">Create cycle</span>
+              </span>
+            </button>
+          }
+        />
+      )}
+    />
   );
 };
 
-export default SelectSprint;
+export default SelectCycle;

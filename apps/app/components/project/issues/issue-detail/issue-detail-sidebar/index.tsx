@@ -1,30 +1,33 @@
 import React, { useState } from "react";
-// swr
-import useSWR from "swr";
-import dynamic from "next/dynamic";
-// headless ui
-import { Listbox, Transition } from "@headlessui/react";
-// react hook form
+
+import { useRouter } from "next/router";
+
+import useSWR, { mutate } from "swr";
+
 import { useForm, Controller, UseFormWatch } from "react-hook-form";
+
+import { TwitterPicker } from "react-color";
 // services
 import issuesServices from "lib/services/issues.service";
 // hooks
-import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
-// fetching keys
-import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
-// commons
-import { copyTextToClipboard } from "constants/common";
 // components
 import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
+import SelectState from "components/project/issues/issue-detail/issue-detail-sidebar/select-state";
+import SelectPriority from "components/project/issues/issue-detail/issue-detail-sidebar/select-priority";
+import SelectParent from "components/project/issues/issue-detail/issue-detail-sidebar/select-parent";
+import SelectCycle from "components/project/issues/issue-detail/issue-detail-sidebar/select-cycle";
+import SelectAssignee from "components/project/issues/issue-detail/issue-detail-sidebar/select-assignee";
+import SelectBlocker from "components/project/issues/issue-detail/issue-detail-sidebar/select-blocker";
+import SelectBlocked from "components/project/issues/issue-detail/issue-detail-sidebar/select-blocked";
+// headless ui
+import { Popover, Listbox, Transition } from "@headlessui/react";
 // ui
 import { Input, Button, Spinner } from "ui";
-import { Popover } from "@headlessui/react";
 // icons
 import {
   TagIcon,
   ChevronDownIcon,
-  ClipboardDocumentIcon,
   LinkIcon,
   CalendarDaysIcon,
   TrashIcon,
@@ -33,16 +36,11 @@ import {
 } from "@heroicons/react/24/outline";
 // types
 import type { Control } from "react-hook-form";
-import type { ICycle, IIssue, IIssueLabels, NestedKeyOf } from "types";
-import { TwitterPicker } from "react-color";
-import { positionEditorElement } from "components/lexical/helpers/editor";
-import SelectState from "./select-state";
-import SelectPriority from "./select-priority";
-import SelectParent from "./select-parent";
-import SelectCycle from "./select-cycle";
-import SelectAssignee from "./select-assignee";
-import SelectBlocker from "./select-blocker";
-import SelectBlocked from "./select-blocked";
+import type { ICycle, IIssue, IIssueLabels } from "types";
+// fetch-keys
+import { PROJECT_ISSUE_LABELS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+// common
+import { copyTextToClipboard } from "constants/common";
 
 type Props = {
   control: Control<IIssue, any>;
@@ -63,19 +61,28 @@ const IssueDetailSidebar: React.FC<Props> = ({
   watch: watchIssue,
 }) => {
   const [createLabelForm, setCreateLabelForm] = useState(false);
+  const [deleteIssueModal, setDeleteIssueModal] = useState(false);
 
-  const { activeWorkspace, activeProject, issues } = useUser();
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
 
   const { setToastAlert } = useToast();
 
-  const { data: issueLabels, mutate: issueLabelMutate } = useSWR<IIssueLabels[]>(
-    activeProject && activeWorkspace ? PROJECT_ISSUE_LABELS(activeProject.id) : null,
-    activeProject && activeWorkspace
-      ? () => issuesServices.getIssueLabels(activeWorkspace.slug, activeProject.id)
+  const { data: issues } = useSWR(
+    workspaceSlug && projectId
+      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
+      : null,
+    workspaceSlug && projectId
+      ? () => issuesServices.getIssues(workspaceSlug as string, projectId as string)
       : null
   );
 
-  const [deleteIssueModal, setDeleteIssueModal] = useState(false);
+  const { data: issueLabels, mutate: issueLabelMutate } = useSWR<IIssueLabels[]>(
+    workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => issuesServices.getIssueLabels(workspaceSlug as string, projectId as string)
+      : null
+  );
 
   const {
     register,
@@ -89,49 +96,51 @@ const IssueDetailSidebar: React.FC<Props> = ({
   });
 
   const handleNewLabel = (formData: any) => {
-    if (!activeWorkspace || !activeProject || isSubmitting) return;
+    if (!workspaceSlug || !projectId || isSubmitting) return;
     issuesServices
-      .createIssueLabel(activeWorkspace.slug, activeProject.id, formData)
+      .createIssueLabel(workspaceSlug as string, projectId as string, formData)
       .then((res) => {
-        console.log(res);
         reset(defaultValues);
         issueLabelMutate((prevData) => [...(prevData ?? []), res], false);
-        submitChanges({ labels_list: [res.id] });
+        submitChanges({ labels_list: [...(issueDetail?.labels ?? []), res.id] });
+        setCreateLabelForm(false);
       });
   };
 
   const handleCycleChange = (cycleDetail: ICycle) => {
-    if (activeWorkspace && activeProject && issueDetail) {
-      submitChanges({ cycle: cycleDetail.id, cycle_detail: cycleDetail });
-      issuesServices
-        .addIssueToCycle(activeWorkspace.slug, activeProject.id, cycleDetail.id, {
-          issues: [issueDetail.id],
-        })
-        .then(() => {
-          submitChanges({});
-        });
-    }
+    if (!workspaceSlug || !projectId || !issueDetail) return;
+
+    mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
+
+    issuesServices.addIssueToCycle(workspaceSlug as string, projectId as string, cycleDetail.id, {
+      issues: [issueDetail.id],
+    });
   };
 
   return (
     <>
+      <ConfirmIssueDeletion
+        handleClose={() => setDeleteIssueModal(false)}
+        isOpen={deleteIssueModal}
+        data={issueDetail}
+      />
       <div className="h-full w-full divide-y-2 divide-gray-100">
-        <div className="flex justify-between items-center pb-3">
+        <div className="flex items-center justify-between pb-3">
           <h4 className="text-sm font-medium">
-            {activeProject?.identifier}-{issueDetail?.sequence_id}
+            {issueDetail?.project_detail?.identifier}-{issueDetail?.sequence_id}
           </h4>
-          <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
-              className="p-2 hover:bg-gray-100 border rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 duration-300"
+              className="rounded-md border p-2 shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
               onClick={() =>
                 copyTextToClipboard(
-                  `https://app.plane.so/projects/${activeProject?.id}/issues/${issueDetail?.id}`
+                  `https://app.plane.so/${workspaceSlug}/projects/${issueDetail?.project_detail?.id}/issues/${issueDetail?.id}`
                 )
                   .then(() => {
                     setToastAlert({
                       type: "success",
-                      title: "Copied to clipboard",
+                      title: "Issue link copied to clipboard",
                     });
                   })
                   .catch(() => {
@@ -146,28 +155,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
             </button>
             <button
               type="button"
-              className="p-2 hover:bg-gray-100 border rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 duration-300"
-              onClick={() =>
-                copyTextToClipboard(issueDetail?.id ?? "")
-                  .then(() => {
-                    setToastAlert({
-                      type: "success",
-                      title: "Copied to clipboard",
-                    });
-                  })
-                  .catch(() => {
-                    setToastAlert({
-                      type: "error",
-                      title: "Some error occurred",
-                    });
-                  })
-              }
-            >
-              <ClipboardDocumentIcon className="h-3.5 w-3.5" />
-            </button>
-            <button
-              type="button"
-              className="p-2 hover:bg-red-50 text-red-500 border border-red-500 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 duration-300"
+              className="rounded-md border border-red-500 p-2 text-red-500 shadow-sm duration-300 hover:bg-red-50 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
               onClick={() => setDeleteIssueModal(true)}
             >
               <TrashIcon className="h-3.5 w-3.5" />
@@ -196,14 +184,14 @@ const IssueDetailSidebar: React.FC<Props> = ({
                 issueDetail?.parent_detail ? (
                   <button
                     type="button"
-                    className="flex items-center gap-2 bg-gray-100 px-3 py-2 text-xs rounded"
+                    className="flex items-center gap-2 rounded bg-gray-100 px-3 py-2 text-xs"
                     onClick={() => submitChanges({ parent: null })}
                   >
                     {issueDetail.parent_detail?.name}
                     <XMarkIcon className="h-3 w-3" />
                   </button>
                 ) : (
-                  <div className="inline-block bg-gray-100 px-3 py-2 text-xs rounded">
+                  <div className="inline-block rounded bg-gray-100 px-3 py-2 text-xs">
                     No parent selected
                   </div>
                 )
@@ -216,13 +204,13 @@ const IssueDetailSidebar: React.FC<Props> = ({
               watch={watchIssue}
             />
             <SelectBlocked
-              issueDetail={issueDetail}
+              submitChanges={submitChanges}
               issuesList={issues?.results.filter((i) => i.id !== issueDetail?.id) ?? []}
               watch={watchIssue}
             />
-            <div className="flex items-center py-2 flex-wrap">
+            <div className="flex flex-wrap items-center py-2">
               <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
-                <CalendarDaysIcon className="flex-shrink-0 h-4 w-4" />
+                <CalendarDaysIcon className="h-4 w-4 flex-shrink-0" />
                 <p>Due date</p>
               </div>
               <div className="sm:basis-1/2">
@@ -238,7 +226,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
                         submitChanges({ target_date: e.target.value });
                         onChange(e.target.value);
                       }}
-                      className="hover:bg-gray-100 border rounded-md shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300 w-full"
+                      className="w-full cursor-pointer rounded-md border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                     />
                   )}
                 />
@@ -246,17 +234,22 @@ const IssueDetailSidebar: React.FC<Props> = ({
             </div>
           </div>
           <div className="py-1">
-            <SelectCycle control={control} handleCycleChange={handleCycleChange} />
+            <SelectCycle
+              issueDetail={issueDetail}
+              control={control}
+              handleCycleChange={handleCycleChange}
+              watch={watchIssue}
+            />
           </div>
         </div>
-        <div className="pt-3 space-y-3">
-          <div className="flex justify-between items-start">
-            <div className="flex items-center gap-x-2 text-sm basis-1/2">
-              <TagIcon className="w-4 h-4" />
+        <div className="space-y-3 pt-3">
+          <div className="flex items-start justify-between">
+            <div className="flex basis-1/2 items-center gap-x-2 text-sm">
+              <TagIcon className="h-4 w-4" />
               <p>Label</p>
             </div>
             <div className="basis-1/2">
-              <div className="flex gap-1 flex-wrap">
+              <div className="flex flex-wrap gap-1">
                 {watchIssue("labels_list")?.map((label) => {
                   const singleLabel = issueLabels?.find((l) => l.id === label);
 
@@ -265,7 +258,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
                   return (
                     <span
                       key={singleLabel.id}
-                      className="group flex items-center gap-1 border rounded-2xl text-xs px-1 py-0.5 hover:bg-red-50 hover:border-red-500 cursor-pointer"
+                      className="group flex cursor-pointer items-center gap-1 rounded-2xl border px-1 py-0.5 text-xs hover:border-red-500 hover:bg-red-50"
                       onClick={() => {
                         const updatedLabels = watchIssue("labels_list")?.filter((l) => l !== label);
                         submitChanges({
@@ -274,7 +267,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
                       }}
                     >
                       <span
-                        className="h-2 w-2 rounded-full flex-shrink-0"
+                        className="h-2 w-2 flex-shrink-0 rounded-full"
                         style={{ backgroundColor: singleLabel.colour ?? "green" }}
                       ></span>
                       {singleLabel.name}
@@ -297,7 +290,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
                         <>
                           <Listbox.Label className="sr-only">Label</Listbox.Label>
                           <div className="relative">
-                            <Listbox.Button className="flex items-center gap-2 border rounded-2xl text-xs px-2 py-0.5 hover:bg-gray-100 cursor-pointer">
+                            <Listbox.Button className="flex cursor-pointer items-center gap-2 rounded-2xl border px-2 py-0.5 text-xs hover:bg-gray-100">
                               Select Label
                             </Listbox.Button>
 
@@ -308,7 +301,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
                               leaveFrom="opacity-100"
                               leaveTo="opacity-0"
                             >
-                              <Listbox.Options className="absolute z-10 right-0 mt-1 w-40 bg-white shadow-lg max-h-28 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
+                              <Listbox.Options className="absolute right-0 z-10 mt-1 max-h-28 w-40 overflow-auto rounded-md bg-white py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                                 <div className="py-1">
                                   {issueLabels ? (
                                     issueLabels.length > 0 ? (
@@ -318,12 +311,12 @@ const IssueDetailSidebar: React.FC<Props> = ({
                                           className={({ active, selected }) =>
                                             `${
                                               active || selected ? "bg-indigo-50" : ""
-                                            } flex items-center gap-2 text-gray-900 cursor-pointer select-none relative p-2 truncate`
+                                            } relative flex cursor-pointer select-none items-center gap-2 truncate p-2 text-gray-900`
                                           }
                                           value={label.id}
                                         >
                                           <span
-                                            className="h-2 w-2 rounded-full flex-shrink-0"
+                                            className="h-2 w-2 flex-shrink-0 rounded-full"
                                             style={{ backgroundColor: label.colour ?? "green" }}
                                           ></span>
                                           {label.name}
@@ -346,7 +339,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
                 />
                 <button
                   type="button"
-                  className="flex items-center gap-1 border rounded-2xl text-xs px-2 py-0.5 hover:bg-gray-100 cursor-pointer"
+                  className="flex cursor-pointer items-center gap-1 rounded-2xl border px-2 py-0.5 text-xs hover:bg-gray-100"
                   onClick={() => setCreateLabelForm((prevData) => !prevData)}
                 >
                   {createLabelForm ? (
@@ -369,11 +362,11 @@ const IssueDetailSidebar: React.FC<Props> = ({
                   {({ open }) => (
                     <>
                       <Popover.Button
-                        className={`bg-white flex items-center gap-1 rounded-md p-1 outline-none focus:ring-2 focus:ring-indigo-500`}
+                        className={`flex items-center gap-1 rounded-md bg-white p-1 outline-none focus:ring-2 focus:ring-indigo-500`}
                       >
                         {watch("colour") && watch("colour") !== "" && (
                           <span
-                            className="w-5 h-5 rounded"
+                            className="h-5 w-5 rounded"
                             style={{
                               backgroundColor: watch("colour") ?? "green",
                             }}
@@ -391,7 +384,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
                         leaveFrom="opacity-100 translate-y-0"
                         leaveTo="opacity-0 translate-y-1"
                       >
-                        <Popover.Panel className="absolute z-10 transform right-0 mt-1 px-2 max-w-xs sm:px-0">
+                        <Popover.Panel className="absolute right-0 bottom-8 z-10 mt-1 max-w-xs transform px-2 sm:px-0">
                           <Controller
                             name="colour"
                             control={controlLabel}
@@ -418,18 +411,16 @@ const IssueDetailSidebar: React.FC<Props> = ({
                 }}
                 autoComplete="off"
               />
+              <Button type="submit" theme="danger" onClick={() => setCreateLabelForm(false)}>
+                <XMarkIcon className="h-4 w-4 text-white" />
+              </Button>
               <Button type="submit" theme="success" disabled={isSubmitting}>
-                +
+                <PlusIcon className="h-4 w-4 text-white" />
               </Button>
             </form>
           )}
         </div>
       </div>
-      <ConfirmIssueDeletion
-        handleClose={() => setDeleteIssueModal(false)}
-        isOpen={deleteIssueModal}
-        data={issueDetail}
-      />
     </>
   );
 };

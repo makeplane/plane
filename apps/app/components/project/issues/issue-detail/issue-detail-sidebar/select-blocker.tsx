@@ -1,16 +1,24 @@
-// react
 import React, { useState } from "react";
-// react-hook-form
+
+import Link from "next/link";
+import { useRouter } from "next/router";
+
+import useSWR from "swr";
+
 import { SubmitHandler, useForm, UseFormWatch } from "react-hook-form";
+// constants
+import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // hooks
-import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
+// services
+import issuesServices from "lib/services/issues.service";
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // ui
 import { Button } from "ui";
 // icons
-import { FlagIcon, FolderIcon, MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { FolderIcon, MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { BlockerIcon, LayerDiagonalIcon } from "ui/icons";
 // types
 import { IIssue } from "types";
 // constants
@@ -30,8 +38,19 @@ const SelectBlocker: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
   const [query, setQuery] = useState("");
   const [isBlockerModalOpen, setIsBlockerModalOpen] = useState(false);
 
-  const { activeProject, issues } = useUser();
   const { setToastAlert } = useToast();
+
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
+
+  const { data: issues } = useSWR(
+    workspaceSlug && projectId
+      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
+      : null,
+    workspaceSlug && projectId
+      ? () => issuesServices.getIssues(workspaceSlug as string, projectId as string)
+      : null
+  );
 
   const { register, handleSubmit, reset } = useForm<FormInput>();
 
@@ -49,36 +68,54 @@ const SelectBlocker: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
       });
       return;
     }
+
+    if (!Array.isArray(data.issue_ids)) data.issue_ids = [data.issue_ids];
+
     const newBlockers = [...watch("blockers_list"), ...data.issue_ids];
     submitChanges({ blockers_list: newBlockers });
     handleClose();
   };
 
   return (
-    <div className="flex items-start py-2 flex-wrap">
+    <div className="flex flex-wrap items-start py-2">
       <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
-        <FlagIcon className="flex-shrink-0 h-4 w-4" />
+        <BlockerIcon height={16} width={16} />
         <p>Blocking</p>
       </div>
-      <div className="sm:basis-1/2 space-y-1">
-        <div className="flex gap-1 flex-wrap">
+      <div className="space-y-1 sm:basis-1/2">
+        <div className="flex flex-wrap gap-1">
           {watch("blockers_list") && watch("blockers_list").length > 0
             ? watch("blockers_list").map((issue) => (
-                <span
+                <div
                   key={issue}
-                  className="group flex items-center gap-1 border rounded-2xl text-xs px-1.5 py-0.5 text-yellow-500 hover:bg-yellow-50 border-yellow-500 cursor-pointer"
-                  onClick={() => {
-                    const updatedBlockers = watch("blockers_list").filter((i) => i !== issue);
-                    submitChanges({
-                      blockers_list: updatedBlockers,
-                    });
-                  }}
+                  className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-white px-1.5 py-0.5 text-xs text-yellow-500 duration-300 hover:border-yellow-500 hover:bg-yellow-50"
                 >
-                  {`${activeProject?.identifier}-${
-                    issues?.results.find((i) => i.id === issue)?.sequence_id
-                  }`}
-                  <XMarkIcon className="h-2 w-2 group-hover:text-red-500" />
-                </span>
+                  <Link
+                    href={`/${workspaceSlug}/projects/${projectId}/issues/${
+                      issues?.results.find((i) => i.id === issue)?.id
+                    }`}
+                  >
+                    <a className="flex items-center gap-1">
+                      <BlockerIcon height={10} width={10} />
+                      {`${
+                        issues?.results.find((i) => i.id === issue)?.project_detail?.identifier
+                      }-${issues?.results.find((i) => i.id === issue)?.sequence_id}`}
+                    </a>
+                  </Link>
+                  <span
+                    className="opacity-0 duration-300 group-hover:opacity-100"
+                    onClick={() => {
+                      const updatedBlockers: string[] = watch("blockers_list").filter(
+                        (i) => i !== issue
+                      );
+                      submitChanges({
+                        blockers_list: updatedBlockers,
+                      });
+                    }}
+                  >
+                    <XMarkIcon className="h-2 w-2" />
+                  </span>
+                </div>
               ))
             : null}
         </div>
@@ -120,7 +157,7 @@ const SelectBlocker: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
                           aria-hidden="true"
                         />
                         <Combobox.Input
-                          className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm outline-none"
+                          className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder-gray-500 outline-none focus:ring-0 sm:text-sm"
                           placeholder="Search..."
                           onChange={(event) => setQuery(event.target.value)}
                         />
@@ -130,65 +167,73 @@ const SelectBlocker: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
                         static
                         className="max-h-80 scroll-py-2 divide-y divide-gray-500 divide-opacity-10 overflow-y-auto"
                       >
-                        {issuesList.length > 0 && (
-                          <>
-                            <li className="p-2">
-                              {query === "" && (
-                                <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-gray-900">
-                                  Select blocker issues
-                                </h2>
-                              )}
-                              <ul className="text-sm text-gray-700">
-                                {issuesList.map((issue) => {
-                                  if (
-                                    !watch("blockers_list").includes(issue.id) &&
-                                    !watch("blocked_list").includes(issue.id)
-                                  ) {
-                                    return (
-                                      <Combobox.Option
-                                        key={issue.id}
-                                        as="label"
-                                        htmlFor={`issue-${issue.id}`}
-                                        value={{
-                                          name: issue.name,
-                                          url: `/projects/${issue.project}/issues/${issue.id}`,
-                                        }}
-                                        className={({ active }) =>
-                                          classNames(
-                                            "flex items-center justify-between cursor-pointer select-none rounded-md px-3 py-2",
-                                            active ? "bg-gray-900 bg-opacity-5 text-gray-900" : ""
-                                          )
-                                        }
-                                      >
-                                        {({ active }) => (
-                                          <>
-                                            <div className="flex items-center gap-2">
-                                              <input
-                                                type="checkbox"
-                                                {...register("issue_ids")}
-                                                id={`issue-${issue.id}`}
-                                                value={issue.id}
-                                              />
-                                              <span
-                                                className="flex-shrink-0 h-1.5 w-1.5 block rounded-full"
-                                                style={{
-                                                  backgroundColor: issue.state_detail.color,
-                                                }}
-                                              />
-                                              <span className="flex-shrink-0 text-xs text-gray-500">
-                                                {activeProject?.identifier}-{issue.sequence_id}
-                                              </span>
-                                              <span>{issue.name}</span>
-                                            </div>
-                                          </>
-                                        )}
-                                      </Combobox.Option>
-                                    );
-                                  }
-                                })}
-                              </ul>
-                            </li>
-                          </>
+                        {issuesList.length > 0 ? (
+                          <li className="p-2">
+                            {query === "" && (
+                              <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-gray-900">
+                                Select blocker issues
+                              </h2>
+                            )}
+                            <ul className="text-sm text-gray-700">
+                              {issuesList.map((issue) => {
+                                if (
+                                  !watch("blockers_list").includes(issue.id) &&
+                                  !watch("blocked_list").includes(issue.id)
+                                )
+                                  return (
+                                    <Combobox.Option
+                                      key={issue.id}
+                                      as="label"
+                                      htmlFor={`blocker-issue-${issue.id}`}
+                                      value={{
+                                        name: issue.name,
+                                        url: `/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`,
+                                      }}
+                                      className={({ active }) =>
+                                        classNames(
+                                          "flex cursor-pointer select-none items-center justify-between rounded-md px-3 py-2",
+                                          active ? "bg-gray-900 bg-opacity-5 text-gray-900" : ""
+                                        )
+                                      }
+                                    >
+                                      <div className="flex items-center gap-2">
+                                        <input
+                                          type="checkbox"
+                                          {...register("issue_ids")}
+                                          id={`blocker-issue-${issue.id}`}
+                                          value={issue.id}
+                                        />
+                                        <span
+                                          className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                                          style={{
+                                            backgroundColor: issue.state_detail.color,
+                                          }}
+                                        />
+                                        <span className="flex-shrink-0 text-xs text-gray-500">
+                                          {
+                                            issues?.results.find((i) => i.id === issue.id)
+                                              ?.project_detail?.identifier
+                                          }
+                                          -{issue.sequence_id}
+                                        </span>
+                                        <span>{issue.name}</span>
+                                      </div>
+                                    </Combobox.Option>
+                                  );
+                              })}
+                            </ul>
+                          </li>
+                        ) : (
+                          <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
+                            <LayerDiagonalIcon height="56" width="56" />
+                            <h3 className="text-gray-500">
+                              No issues found. Create a new issue with{" "}
+                              <pre className="inline rounded bg-gray-100 px-2 py-1">
+                                Ctrl/Command + I
+                              </pre>
+                              .
+                            </h3>
+                          </div>
                         )}
                       </Combobox.Options>
 
@@ -205,15 +250,15 @@ const SelectBlocker: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
                       )}
                     </Combobox>
 
-                    <div className="flex justify-end items-center gap-2 p-3">
-                      <Button onClick={handleSubmit(onSubmit)} size="sm">
-                        Add selected issues
-                      </Button>
+                    <div className="flex items-center justify-end gap-2 p-3">
                       <div>
-                        <Button type="button" theme="danger" size="sm" onClick={handleClose}>
+                        <Button type="button" theme="secondary" size="sm" onClick={handleClose}>
                           Close
                         </Button>
                       </div>
+                      <Button onClick={handleSubmit(onSubmit)} size="sm">
+                        Add selected issues
+                      </Button>
                     </div>
                   </form>
                 </Dialog.Panel>
@@ -223,7 +268,7 @@ const SelectBlocker: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
         </Transition.Root>
         <button
           type="button"
-          className="flex justify-between items-center gap-1 hover:bg-gray-100 border rounded-md shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300 w-full"
+          className="flex w-full cursor-pointer items-center justify-between gap-1 rounded-md border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
           onClick={() => setIsBlockerModalOpen(true)}
         >
           Select issues

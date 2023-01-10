@@ -1,16 +1,24 @@
+// react
 import React from "react";
+// next
+import { useRouter } from "next/router";
+// swr
+import useSWR from "swr";
 // react hook form
 import { Controller } from "react-hook-form";
-// hooks
-import useUser from "lib/hooks/useUser";
+// services
+import stateService from "lib/services/state.service";
+// constants
+import { STATE_LIST } from "constants/fetch-keys";
 // icons
 import { PlusIcon } from "@heroicons/react/20/solid";
 // ui
 import { CustomListbox } from "ui";
+// icons
+import { Squares2X2Icon } from "@heroicons/react/24/outline";
 // types
 import type { Control } from "react-hook-form";
 import type { IIssue } from "types";
-import { Squares2X2Icon } from "@heroicons/react/24/outline";
 
 type Props = {
   control: Control<IIssue, any>;
@@ -18,7 +26,15 @@ type Props = {
 };
 
 const SelectState: React.FC<Props> = ({ control, setIsOpen }) => {
-  const { states } = useUser();
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
+
+  const { data: states } = useSWR(
+    workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
+      : null
+  );
 
   return (
     <Controller
@@ -37,7 +53,7 @@ const SelectState: React.FC<Props> = ({ control, setIsOpen }) => {
           footerOption={
             <button
               type="button"
-              className="select-none relative py-2 pl-3 pr-9 flex items-center gap-x-2 text-gray-400 hover:text-gray-500"
+              className="relative flex select-none items-center gap-x-2 py-2 pl-3 pr-9 text-gray-400 hover:text-gray-500"
               onClick={() => setIsOpen(true)}
             >
               <span>

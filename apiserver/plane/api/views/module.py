@@ -15,7 +15,7 @@ from plane.api.serializers import (
     ModuleIssueSerializer,
 )
 from plane.api.permissions import ProjectEntityPermission
-from plane.db.models import Module, ModuleIssue, Project, Issue
+from plane.db.models import Module, ModuleIssue, Project, Issue, ModuleLink
 
 
 class ModuleViewSet(BaseViewSet):
@@ -48,6 +48,12 @@ class ModuleViewSet(BaseViewSet):
                     queryset=ModuleIssue.objects.select_related("module", "issue"),
                 )
             )
+            .prefetch_related(
+                Prefetch(
+                    "link_module",
+                    queryset=ModuleLink.objects.select_related("module"),
+                )
+            )
         )
 
     def create(self, request, slug, project_id):
@@ -76,7 +82,7 @@ class ModuleViewSet(BaseViewSet):
             capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
 
@@ -130,6 +136,9 @@ class ModuleIssueViewSet(BaseViewSet):
                 pk__in=issues, workspace__slug=slug, project_id=project_id
             )
 
+            # Delete old records in order to maintain the database integrity
+            ModuleIssue.objects.filter(issue_id__in=issues).delete()
+
             ModuleIssue.objects.bulk_create(
                 [
                     ModuleIssue(
@@ -154,5 +163,5 @@ class ModuleIssueViewSet(BaseViewSet):
             capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                status=status.HTTP_400_BAD_REQUEST,
             )

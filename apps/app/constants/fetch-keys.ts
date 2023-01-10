@@ -2,7 +2,11 @@ export const CURRENT_USER = "CURRENT_USER";
 export const USER_WORKSPACE_INVITATIONS = "USER_WORKSPACE_INVITATIONS";
 export const USER_WORKSPACES = "USER_WORKSPACES";
 
+export const WORKSPACE_DETAILS = (workspaceSlug: string) => `WORKSPACE_DETAILS_${workspaceSlug}`;
+
 export const WORKSPACE_MEMBERS = (workspaceSlug: string) => `WORKSPACE_MEMBERS_${workspaceSlug}`;
+export const WORKSPACE_MEMBERS_ME = (workspaceSlug: string) =>
+  `WORKSPACE_MEMBERS_ME${workspaceSlug}`;
 export const WORKSPACE_INVITATIONS = "WORKSPACE_INVITATIONS";
 export const WORKSPACE_INVITATION = "WORKSPACE_INVITATION";
 export const LAST_ACTIVE_WORKSPACE_AND_PROJECTS = "LAST_ACTIVE_WORKSPACE_AND_PROJECTS";

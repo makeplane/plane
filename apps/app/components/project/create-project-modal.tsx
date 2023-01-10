@@ -1,24 +1,25 @@
 import React, { useState, useEffect } from "react";
-// swr
+
+import { useRouter } from "next/router";
+
 import useSWR, { mutate } from "swr";
-// react hook form
+
 import { useForm, Controller } from "react-hook-form";
-// headless
+
 import { Dialog, Transition } from "@headlessui/react";
 // services
 import projectServices from "lib/services/project.service";
 import workspaceService from "lib/services/workspace.service";
 // common
-import { createSimilarString, getRandomEmoji } from "constants/common";
+import { getRandomEmoji } from "constants/common";
 // constants
 import { NETWORK_CHOICES } from "constants/";
 // fetch keys
-import { PROJECTS_LIST, WORKSPACE_MEMBERS } from "constants/fetch-keys";
+import { PROJECTS_LIST, WORKSPACE_MEMBERS_ME } from "constants/fetch-keys";
 // hooks
-import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
 // ui
-import { Button, Input, TextArea, Select, EmojiIconPicker } from "ui";
+import { Button, Input, TextArea, EmojiIconPicker, CustomSelect } from "ui";
 // types
 import { IProject } from "types";
 
@@ -31,7 +32,7 @@ const defaultValues: Partial<IProject> = {
   name: "",
   identifier: "",
   description: "",
-  network: 0,
+  network: 2,
   icon: getRandomEmoji(),
 };
 
@@ -52,30 +53,24 @@ const IsGuestCondition: React.FC<{
   return null;
 };
 
-const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
-  const handleClose = () => {
-    setIsOpen(false);
-    const timeout = setTimeout(() => {
-      reset(defaultValues);
-      clearTimeout(timeout);
-    }, 500);
-  };
+export const CreateProjectModal: React.FC<Props> = (props) => {
+  const { isOpen, setIsOpen } = props;
 
-  const { activeWorkspace, user } = useUser();
+  const [isChangeIdentifierRequired, setIsChangeIdentifierRequired] = useState(true);
 
-  const { data: workspaceMembers } = useSWR(
-    activeWorkspace ? WORKSPACE_MEMBERS(activeWorkspace.slug) : null,
-    activeWorkspace ? () => workspaceService.workspaceMembers(activeWorkspace.slug) : null,
+  const { setToastAlert } = useToast();
+
+  const {
+    query: { workspaceSlug },
+  } = useRouter();
+
+  const { data: myWorkspaceMembership } = useSWR(
+    workspaceSlug ? WORKSPACE_MEMBERS_ME(workspaceSlug as string) : null,
+    workspaceSlug ? () => workspaceService.workspaceMemberMe(workspaceSlug as string) : null,
     {
       shouldRetryOnError: false,
     }
   );
-
-  const [recommendedIdentifier, setRecommendedIdentifier] = useState<string[]>([]);
-
-  const { setToastAlert } = useToast();
-
-  const [isChangeIdentifierRequired, setIsChangeIdentifierRequired] = useState(true);
 
   const {
     register,
@@ -83,22 +78,40 @@ const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
     handleSubmit,
     reset,
     setError,
-    clearErrors,
     control,
     watch,
     setValue,
   } = useForm<IProject>({
     defaultValues,
+    mode: "all",
+    reValidateMode: "onChange",
   });
 
+  const projectName = watch("name") ?? "";
+  const projectIdentifier = watch("identifier") ?? "";
+
+  useEffect(() => {
+    if (projectName && isChangeIdentifierRequired) {
+      setValue("identifier", projectName.replace(/ /g, "").toUpperCase().substring(0, 3));
+    }
+  }, [projectName, projectIdentifier, setValue, isChangeIdentifierRequired]);
+
+  useEffect(() => {
+    return () => setIsChangeIdentifierRequired(true);
+  }, [isOpen]);
+
+  const handleClose = () => {
+    setIsOpen(false);
+    reset(defaultValues);
+  };
+
   const onSubmit = async (formData: IProject) => {
-    if (!activeWorkspace) return;
+    if (!workspaceSlug) return;
     await projectServices
-      .createProject(activeWorkspace.slug, formData)
+      .createProject(workspaceSlug as string, formData)
       .then((res) => {
-        console.log(res);
         mutate<IProject[]>(
-          PROJECTS_LIST(activeWorkspace.slug),
+          PROJECTS_LIST(workspaceSlug as string),
           (prevData) => [res, ...(prevData ?? [])],
           false
         );
@@ -129,45 +142,14 @@ const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
       });
   };
 
-  const projectName = watch("name") ?? "";
-  const projectIdentifier = watch("identifier") ?? "";
-
-  useEffect(() => {
-    if (projectName && isChangeIdentifierRequired) {
-      setValue("identifier", projectName.replace(/ /g, "").toUpperCase().substring(0, 3));
-    }
-  }, [projectName, projectIdentifier, setValue, isChangeIdentifierRequired]);
-
-  useEffect(() => {
-    if (!projectName) return;
-    const suggestedIdentifier = createSimilarString(
-      projectName.replace(/ /g, "").toUpperCase().substring(0, 3)
-    );
-
-    setRecommendedIdentifier([
-      suggestedIdentifier + Math.floor(Math.random() * 101),
-      suggestedIdentifier + Math.floor(Math.random() * 101),
-      projectIdentifier.toUpperCase().substring(0, 3) + Math.floor(Math.random() * 101),
-      projectIdentifier.toUpperCase().substring(0, 3) + Math.floor(Math.random() * 101),
-    ]);
-  }, [errors.identifier, projectIdentifier, projectName]);
-
-  useEffect(() => {
-    return () => setIsChangeIdentifierRequired(true);
-  }, [isOpen]);
-
-  if (workspaceMembers) {
-    const isMember = workspaceMembers.find((member) => member.member.id === user?.id);
-    const isGuest = workspaceMembers.find(
-      (member) => member.member.id === user?.id && member.role === 5
-    );
-
-    if ((!isMember || isGuest) && isOpen) return <IsGuestCondition setIsOpen={setIsOpen} />;
+  // FIXME: remove this and authorize using getServerSideProps
+  if (myWorkspaceMembership && isOpen) {
+    if (myWorkspaceMembership.role <= 10) return <IsGuestCondition setIsOpen={setIsOpen} />;
   }
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={handleClose}>
+      <Dialog as="div" className="relative z-20" onClose={handleClose}>
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
@@ -180,7 +162,7 @@ const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
           <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
         </Transition.Child>
 
-        <div className="fixed inset-0 z-10 overflow-y-auto">
+        <div className="fixed inset-0 z-20 overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
             <Transition.Child
               as={React.Fragment}
@@ -203,49 +185,65 @@ const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                       </p>
                     </div>
                     <div className="space-y-3">
+                      <div className="flex items-center gap-3">
+                        <div className="flex-shrink-0">
+                          <label htmlFor="icon" className="mb-2 text-gray-500">
+                            Icon
+                          </label>
+                          <Controller
+                            control={control}
+                            name="icon"
+                            render={({ field: { value, onChange } }) => (
+                              <EmojiIconPicker
+                                label={
+                                  value ? String.fromCodePoint(parseInt(value)) : "Select Icon"
+                                }
+                                value={value}
+                                onChange={onChange}
+                              />
+                            )}
+                          />
+                        </div>
+                        <div className="w-full">
+                          <Input
+                            id="name"
+                            label="Name"
+                            name="name"
+                            type="name"
+                            placeholder="Enter name"
+                            error={errors.name}
+                            register={register}
+                            validations={{
+                              required: "Name is required",
+                            }}
+                          />
+                        </div>
+                      </div>
                       <div>
-                        <label htmlFor="icon" className="text-gray-500 mb-2">
-                          Icon
-                        </label>
+                        <h6 className="text-gray-500">Network</h6>
                         <Controller
+                          name="network"
                           control={control}
-                          name="icon"
-                          render={({ field: { value, onChange } }) => (
-                            <EmojiIconPicker
-                              label={value ? String.fromCodePoint(parseInt(value)) : "Select Icon"}
+                          render={({ field: { onChange, value } }) => (
+                            <CustomSelect
                               value={value}
                               onChange={onChange}
-                            />
+                              label={
+                                Object.keys(NETWORK_CHOICES).find((k) => k === value.toString())
+                                  ? NETWORK_CHOICES[
+                                      value.toString() as keyof typeof NETWORK_CHOICES
+                                    ]
+                                  : "Select network"
+                              }
+                              input
+                            >
+                              {Object.keys(NETWORK_CHOICES).map((key) => (
+                                <CustomSelect.Option key={key} value={key}>
+                                  {NETWORK_CHOICES[key as keyof typeof NETWORK_CHOICES]}
+                                </CustomSelect.Option>
+                              ))}
+                            </CustomSelect>
                           )}
-                        />
-                      </div>
-                      <div>
-                        <Input
-                          id="name"
-                          label="Name"
-                          name="name"
-                          type="name"
-                          placeholder="Enter name"
-                          error={errors.name}
-                          register={register}
-                          validations={{
-                            required: "Name is required",
-                          }}
-                        />
-                      </div>
-                      <div>
-                        <Select
-                          name="network"
-                          id="network"
-                          options={Object.keys(NETWORK_CHOICES).map((key) => ({
-                            value: key,
-                            label: NETWORK_CHOICES[key as keyof typeof NETWORK_CHOICES],
-                          }))}
-                          label="Network"
-                          register={register}
-                          validations={{
-                            required: "Network is required",
-                          }}
                         />
                       </div>
                       <div>
@@ -270,6 +268,8 @@ const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                           onChange={() => setIsChangeIdentifierRequired(false)}
                           validations={{
                             required: "Identifier is required",
+                            validate: (value) =>
+                              /^[A-Z]+$/.test(value) || "Identifier must be uppercase text.",
                             minLength: {
                               value: 1,
                               message: "Identifier must at least be of 1 character",
@@ -280,31 +280,10 @@ const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                             },
                           }}
                         />
-                        {errors.identifier && (
-                          <div className="mt-2">
-                            <p>Ops! Identifier is already taken. Try one of the following:</p>
-                            <div className="flex gap-x-2">
-                              {recommendedIdentifier.map((identifier) => (
-                                <button
-                                  key={identifier}
-                                  type="button"
-                                  className="text-sm text-gray-500 hover:text-gray-700 border p-2 py-0.5 rounded"
-                                  onClick={() => {
-                                    clearErrors("identifier");
-                                    setValue("identifier", identifier);
-                                    setIsChangeIdentifierRequired(false);
-                                  }}
-                                >
-                                  {identifier}
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-                        )}
                       </div>
                     </div>
                   </div>
-                  <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
+                  <div className="mt-5 flex justify-end gap-2">
                     <Button theme="secondary" onClick={handleClose}>
                       Cancel
                     </Button>
@@ -321,5 +300,3 @@ const CreateProjectModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
     </Transition.Root>
   );
 };
-
-export default CreateProjectModal;

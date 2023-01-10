@@ -1,14 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
-// swr
-import { mutate } from "swr";
-// headless ui
+
+import { useRouter } from "next/router";
+
+import useSWR, { mutate } from "swr";
+
 import { Dialog, Transition } from "@headlessui/react";
 // services
 import stateServices from "lib/services/state.service";
+import issuesServices from "lib/services/issues.service";
 // fetch api
-import { STATE_LIST } from "constants/fetch-keys";
-// hooks
-import useUser from "lib/hooks/useUser";
+import { STATE_LIST, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // common
 import { groupBy } from "constants/common";
 // icons
@@ -26,10 +27,19 @@ type Props = {
 
 const ConfirmStateDeletion: React.FC<Props> = ({ isOpen, onClose, data }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
-
   const [issuesWithThisStateExist, setIssuesWithThisStateExist] = useState(true);
 
-  const { activeWorkspace, issues } = useUser();
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
+
+  const { data: issues } = useSWR(
+    workspaceSlug && projectId
+      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
+      : null,
+    workspaceSlug && projectId
+      ? () => issuesServices.getIssues(workspaceSlug as string, projectId as string)
+      : null
+  );
 
   const cancelButtonRef = useRef(null);
 
@@ -40,9 +50,9 @@ const ConfirmStateDeletion: React.FC<Props> = ({ isOpen, onClose, data }) => {
 
   const handleDeletion = async () => {
     setIsDeleteLoading(true);
-    if (!data || !activeWorkspace || issuesWithThisStateExist) return;
+    if (!data || !workspaceSlug || issuesWithThisStateExist) return;
     await stateServices
-      .deleteState(activeWorkspace.slug, data.project, data.id)
+      .deleteState(workspaceSlug as string, data.project, data.id)
       .then(() => {
         mutate<IState[]>(
           STATE_LIST(data.project),

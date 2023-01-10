@@ -17,7 +17,7 @@ def magic_link(email, key, token, current_site):
 
         from_email_string = f"Team Plane <team@mailer.plane.so>"
 
-        subject = f"Login!"
+        subject = f"Login for Plane"
 
         context = {"magic_url": abs_url, "code": token}
 

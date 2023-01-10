@@ -1,8 +1,9 @@
 // react
-import React, { useState } from "react";
+import React from "react";
 // next
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/router";
 // swr
 import useSWR from "swr";
 // services
@@ -11,16 +12,17 @@ import cyclesService from "lib/services/cycles.service";
 import useUser from "lib/hooks/useUser";
 // ui
 import { Button, CustomMenu } from "ui";
+// icons
+import { CalendarDaysIcon } from "@heroicons/react/20/solid";
+import { ArrowPathIcon, CheckIcon, UserIcon, UserGroupIcon } from "@heroicons/react/24/outline";
 // types
 import { CycleIssueResponse, ICycle } from "types";
 // fetch-keys
 import { CYCLE_ISSUES } from "constants/fetch-keys";
+// common
 import { groupBy, renderShortNumericDateFormat } from "constants/common";
-import { ArrowPathIcon, CheckIcon, UserIcon } from "@heroicons/react/24/outline";
-import { CalendarDaysIcon } from "@heroicons/react/20/solid";
-import { useRouter } from "next/router";
 
-type Props = {
+type TSingleStatProps = {
   cycle: ICycle;
   handleEditCycle: () => void;
   handleDeleteCycle: () => void;
@@ -36,63 +38,48 @@ const stateGroupColours: {
   completed: "#096e8d",
 };
 
-const SingleStat: React.FC<Props> = ({ cycle, handleEditCycle, handleDeleteCycle }) => {
-  const { activeWorkspace, activeProject } = useUser();
+const SingleStat: React.FC<TSingleStatProps> = (props) => {
+  const { cycle, handleEditCycle, handleDeleteCycle } = props;
 
   const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
 
   const { data: cycleIssues } = useSWR<CycleIssueResponse[]>(
-    activeWorkspace && activeProject && cycle.id ? CYCLE_ISSUES(cycle.id as string) : null,
-    activeWorkspace && activeProject && cycle.id
-      ? () =>
-          cyclesService.getCycleIssues(activeWorkspace?.slug, activeProject?.id, cycle.id as string)
+    workspaceSlug && projectId && cycle.id ? CYCLE_ISSUES(cycle.id as string) : null,
+    workspaceSlug && projectId && cycle.id
+      ? () => cyclesService.getCycleIssues(workspaceSlug as string, projectId as string, cycle.id)
       : null
   );
+
+  const endDate = new Date(cycle.end_date ?? "");
+  const startDate = new Date(cycle.start_date ?? "");
+
   const groupedIssues = {
     backlog: [],
     unstarted: [],
     started: [],
     cancelled: [],
     completed: [],
-    ...groupBy(cycleIssues ?? [], "issue_details.state_detail.group"),
+    ...groupBy(cycleIssues ?? [], "issue_detail.state_detail.group"),
   };
-
-  const startDate = new Date(cycle.start_date ?? "");
-  const endDate = new Date(cycle.end_date ?? "");
-  const today = new Date();
 
   return (
     <>
-      <div className="border bg-white p-3 rounded-md">
-        <div className="grid grid-cols-8 gap-2 divide-x">
-          <div className="col-span-3 space-y-3">
-            <div className="flex justify-between items-center gap-2">
-              <Link href={`/projects/${activeProject?.id}/cycles/${cycle.id}`}>
+      <div className="rounded-md border bg-white p-3">
+        <div className="grid grid-cols-9 gap-2 divide-x">
+          <div className="col-span-3 flex flex-col space-y-3">
+            <div className="flex items-center justify-between gap-2">
+              <Link href={`/${workspaceSlug}/projects/${projectId as string}/cycles/${cycle.id}`}>
                 <a>
                   <h2 className="font-medium">{cycle.name}</h2>
                 </a>
               </Link>
-              <div className="flex items-center gap-2">
-                <div className="flex items-center gap-2">
-                  <span
-                    className={`text-xs border px-3 py-0.5 rounded-xl ${
-                      today < startDate
-                        ? "text-orange-500 border-orange-500"
-                        : today > endDate
-                        ? "text-red-500 border-red-500"
-                        : "text-green-500 border-green-500"
-                    }`}
-                  >
-                    {today < startDate ? "Not started" : today > endDate ? "Over" : "Active"}
-                  </span>
-                </div>
-                <CustomMenu width="auto" ellipsis>
-                  <CustomMenu.MenuItem onClick={handleEditCycle}>Edit cycle</CustomMenu.MenuItem>
-                  <CustomMenu.MenuItem onClick={handleDeleteCycle}>
-                    Delete cycle permanently
-                  </CustomMenu.MenuItem>
-                </CustomMenu>
-              </div>
+              <CustomMenu width="auto" ellipsis>
+                <CustomMenu.MenuItem onClick={handleEditCycle}>Edit cycle</CustomMenu.MenuItem>
+                <CustomMenu.MenuItem onClick={handleDeleteCycle}>
+                  Delete cycle permanently
+                </CustomMenu.MenuItem>
+              </CustomMenu>
             </div>
             <div className="grid grid-cols-3 gap-x-2 gap-y-3 text-xs">
               <div className="flex items-center gap-2 text-gray-500">
@@ -116,47 +103,40 @@ const SingleStat: React.FC<Props> = ({ cycle, handleEditCycle, handleDeleteCycle
                     alt={cycle.owned_by.first_name}
                   />
                 ) : (
-                  <span className="h-5 w-5 capitalize bg-gray-700 text-white grid place-items-center rounded-full">
+                  <span className="grid h-5 w-5 place-items-center rounded-full bg-gray-700 capitalize text-white">
                     {cycle.owned_by.first_name.charAt(0)}
                   </span>
                 )}
                 {cycle.owned_by.first_name}
               </div>
-              <div className="flex items-center gap-2 text-gray-500">
-                <CalendarDaysIcon className="h-4 w-4" />
-                Active members
-              </div>
-              <div className="col-span-2"></div>
             </div>
-            <div className="flex items-center gap-2">
-              <Button theme="secondary" className="flex items-center gap-2" disabled>
-                <CheckIcon className="h-3 w-3" />
-                Participating
-              </Button>
+            <div className="flex h-full items-end">
               <Button
                 theme="secondary"
                 className="flex items-center gap-2"
-                onClick={() => router.push(`/projects/${activeProject?.id}/cycles/${cycle.id}`)}
+                onClick={() =>
+                  router.push(`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`)
+                }
               >
                 <ArrowPathIcon className="h-3 w-3" />
                 Open Cycle
               </Button>
             </div>
           </div>
-          <div className="col-span-2 px-5 space-y-3">
+          <div className="col-span-2 space-y-3 px-5">
             <h4 className="text-sm tracking-widest">PROGRESS</h4>
-            <div className="text-xs space-y-3">
+            <div className="space-y-3 text-xs">
               {Object.keys(groupedIssues).map((group) => {
                 return (
                   <div key={group} className="flex items-center gap-2">
-                    <div className="flex items-center gap-2 basis-2/3">
+                    <div className="flex basis-2/3 items-center gap-2">
                       <span
-                        className="h-2 w-2 block rounded-full"
+                        className="block h-2 w-2 rounded-full"
                         style={{
                           backgroundColor: stateGroupColours[group],
                         }}
                       ></span>
-                      <h6 className="capitalize text-xs">{group}</h6>
+                      <h6 className="text-xs capitalize">{group}</h6>
                     </div>
                     <div>
                       <span>
@@ -176,7 +156,6 @@ const SingleStat: React.FC<Props> = ({ cycle, handleEditCycle, handleDeleteCycle
               })}
             </div>
           </div>
-          <div className="col-span-3"></div>
         </div>
       </div>
     </>

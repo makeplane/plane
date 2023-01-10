@@ -5,20 +5,23 @@ import SingleStat from "components/project/cycles/stats-view/single-stat";
 import ConfirmCycleDeletion from "components/project/cycles/confirm-cycle-deletion";
 // types
 import { ICycle, SelectSprintType } from "types";
+import { CompletedCycleIcon, CurrentCycleIcon, UpcomingCycleIcon } from "ui/icons";
 
-type Props = {
+type TCycleStatsViewProps = {
   cycles: ICycle[];
   setCreateUpdateCycleModal: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedCycle: React.Dispatch<React.SetStateAction<SelectSprintType>>;
+  type: "current" | "upcoming" | "completed";
 };
 
-const CycleStatsView: React.FC<Props> = ({
+const CycleStatsView: React.FC<TCycleStatsViewProps> = ({
   cycles,
   setCreateUpdateCycleModal,
   setSelectedCycle,
+  type,
 }) => {
-  const [selectedCycleForDelete, setSelectedCycleForDelete] = useState<SelectSprintType>();
   const [cycleDeleteModal, setCycleDeleteModal] = useState(false);
+  const [selectedCycleForDelete, setSelectedCycleForDelete] = useState<SelectSprintType>();
 
   const handleDeleteCycle = (cycle: ICycle) => {
     setSelectedCycleForDelete({ ...cycle, actionType: "delete" });
@@ -41,14 +44,30 @@ const CycleStatsView: React.FC<Props> = ({
         setIsOpen={setCycleDeleteModal}
         data={selectedCycleForDelete}
       />
-      {cycles.map((cycle) => (
-        <SingleStat
-          key={cycle.id}
-          cycle={cycle}
-          handleDeleteCycle={() => handleDeleteCycle(cycle)}
-          handleEditCycle={() => handleEditCycle(cycle)}
-        />
-      ))}
+      {cycles.length > 0 ? (
+        cycles.map((cycle) => (
+          <SingleStat
+            key={cycle.id}
+            cycle={cycle}
+            handleDeleteCycle={() => handleDeleteCycle(cycle)}
+            handleEditCycle={() => handleEditCycle(cycle)}
+          />
+        ))
+      ) : (
+        <div className="flex flex-col items-center justify-center gap-4 text-center">
+          {type === "upcoming" ? (
+            <UpcomingCycleIcon height="56" width="56" />
+          ) : type === "completed" ? (
+            <CompletedCycleIcon height="56" width="56" />
+          ) : (
+            <CurrentCycleIcon height="56" width="56" />
+          )}
+          <h3 className="text-gray-500">
+            No {type} {type === "current" ? "cycle" : "cycles"} yet. Create with{" "}
+            <pre className="inline rounded bg-gray-100 px-2 py-1">Ctrl/Command + Q</pre>.
+          </h3>
+        </div>
+      )}
     </>
   );
 };

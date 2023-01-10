@@ -1,8 +1,6 @@
 import React from "react";
 // headless ui
 import { Listbox, Transition } from "@headlessui/react";
-// icons
-import { CheckIcon } from "@heroicons/react/20/solid";
 
 import { Props } from "./types";
 
@@ -25,25 +23,11 @@ const CustomListbox: React.FC<Props> = ({
         <>
           {label && (
             <Listbox.Label>
-              <div className="text-gray-500 mb-2">{label}</div>
+              <div className="mb-2 text-gray-500">{label}</div>
             </Listbox.Label>
           )}
           <Listbox.Button
-            className={`flex items-center gap-1 hover:bg-gray-100 border rounded-md shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300 ${
-              width === "sm"
-                ? "w-32"
-                : width === "md"
-                ? "w-48"
-                : width === "lg"
-                ? "w-64"
-                : width === "xl"
-                ? "w-80"
-                : width === "2xl"
-                ? "w-96"
-                : width === "w-full"
-                ? "w-full"
-                : ""
-            }
+            className={`flex cursor-pointer items-center gap-1 rounded-md border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500
               ${className || "px-2 py-1"}`}
           >
             {icon ?? null}
@@ -63,21 +47,7 @@ const CustomListbox: React.FC<Props> = ({
             leaveTo="opacity-0"
           >
             <Listbox.Options
-              className={`absolute mt-1 bg-white shadow-lg max-h-32 overflow-auto ${
-                width === "sm"
-                  ? "w-32"
-                  : width === "md"
-                  ? "w-48"
-                  : width === "lg"
-                  ? "w-64"
-                  : width === "xl"
-                  ? "w-80"
-                  : width === "2xl"
-                  ? "w-96"
-                  : width === "w-full"
-                  ? "w-full"
-                  : ""
-              } ${
+              className={`absolute mt-1 max-h-32 min-w-[8rem] overflow-y-auto whitespace-nowrap bg-white shadow-lg ${
                 optionsFontsize === "sm"
                   ? "text-xs"
                   : optionsFontsize === "md"
@@ -89,7 +59,7 @@ const CustomListbox: React.FC<Props> = ({
                   : optionsFontsize === "2xl"
                   ? "text-2xl"
                   : ""
-              } rounded-md py-1 ring-1 ring-black ring-opacity-5 focus:outline-none z-10`}
+              } z-10 rounded-md py-1 ring-1 ring-black ring-opacity-5 focus:outline-none`}
             >
               <div className="py-1">
                 {options ? (
@@ -97,62 +67,39 @@ const CustomListbox: React.FC<Props> = ({
                     options.map((option) => (
                       <Listbox.Option
                         key={option.value}
-                        className={({ active }) =>
+                        className={({ selected, active }) =>
                           `${
+                            selected ||
+                            (Array.isArray(value)
+                              ? value.includes(option.value)
+                              : value === option.value)
+                              ? "bg-indigo-50 font-medium"
+                              : ""
+                          } ${
                             active ? "bg-indigo-50" : ""
-                          } text-gray-900 cursor-pointer select-none relative p-2`
+                          } relative cursor-pointer select-none p-2 text-gray-900`
                         }
                         value={option.value}
                       >
-                        {({ selected, active }) => (
-                          <>
+                        <span className={` flex items-center gap-2 truncate`}>
+                          {option.icon}
+                          {option.color && (
                             <span
-                              className={`${
-                                selected ||
-                                (Array.isArray(value)
-                                  ? value.includes(option.value)
-                                  : value === option.value)
-                                  ? "font-semibold"
-                                  : "font-normal"
-                              } flex items-center gap-2 truncate`}
-                            >
-                              {option.color && (
-                                <span
-                                  className="flex-shrink-0 h-1.5 w-1.5 rounded-full"
-                                  style={{
-                                    backgroundColor: option.color,
-                                  }}
-                                ></span>
-                              )}
-                              {option.display}
-                            </span>
-
-                            {selected ||
-                            (Array.isArray(value)
-                              ? value.includes(option.value)
-                              : value === option.value) ? (
-                              <span
-                                className={`absolute inset-y-0 right-0 flex items-center pr-4 ${
-                                  active ||
-                                  (Array.isArray(value)
-                                    ? value.includes(option.value)
-                                    : value === option.value)
-                                    ? "text-white"
-                                    : "text-theme"
-                                }`}
-                              >
-                                <CheckIcon className="h-5 w-5" aria-hidden="true" />
-                              </span>
-                            ) : null}
-                          </>
-                        )}
+                              className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                              style={{
+                                backgroundColor: option.color,
+                              }}
+                            ></span>
+                          )}
+                          {option.display}
+                        </span>
                       </Listbox.Option>
                     ))
                   ) : (
-                    <p className="text-sm text-gray-500 text-center">No options</p>
+                    <p className="text-center text-sm text-gray-500">No options</p>
                   )
                 ) : (
-                  <p className="text-sm text-gray-500 text-center">Loading...</p>
+                  <p className="text-center text-sm text-gray-500">Loading...</p>
                 )}
               </div>
               {footerOption ?? null}

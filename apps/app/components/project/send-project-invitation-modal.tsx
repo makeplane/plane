@@ -1,9 +1,11 @@
 import React from "react";
-// swr
+
+import { useRouter } from "next/router";
+
 import useSWR, { mutate } from "swr";
-// react hook form
+
 import { useForm, Controller } from "react-hook-form";
-// headless
+
 import { Dialog, Transition, Listbox } from "@headlessui/react";
 // hooks
 import useUser from "lib/hooks/useUser";
@@ -42,24 +44,17 @@ const defaultValues: Partial<ProjectMember> = {
 };
 
 const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, members }) => {
-  const handleClose = () => {
-    setIsOpen(false);
-    const timeout = setTimeout(() => {
-      reset(defaultValues);
-      clearTimeout(timeout);
-    }, 500);
-  };
-
-  const { activeWorkspace, activeProject } = useUser();
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
 
   const { setToastAlert } = useToast();
 
   const { data: people } = useSWR(
-    activeWorkspace ? WORKSPACE_MEMBERS(activeWorkspace.slug) : null,
-    activeWorkspace ? () => workspaceService.workspaceMembers(activeWorkspace.slug) : null,
+    workspaceSlug ? WORKSPACE_MEMBERS(workspaceSlug as string) : null,
+    workspaceSlug ? () => workspaceService.workspaceMembers(workspaceSlug as string) : null,
     {
       onErrorRetry(err, _, __, revalidate, revalidateOpts) {
-        if (err?.status === 403) return;
+        if (err?.status === 403 || err?.status === 401) return;
         setTimeout(() => revalidate(revalidateOpts), 5000);
       },
     }
@@ -70,19 +65,22 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
     formState: { errors, isSubmitting },
     handleSubmit,
     reset,
-    setError,
     setValue,
     control,
   } = useForm<ProjectMember>({
     defaultValues,
   });
 
+  const uninvitedPeople = people?.filter((person) => {
+    const isInvited = members?.find((member) => member.email === person.member.email);
+    return !isInvited;
+  });
+
   const onSubmit = async (formData: ProjectMember) => {
-    if (!activeWorkspace || !activeProject || isSubmitting) return;
+    if (!workspaceSlug || !projectId || isSubmitting) return;
     await projectService
-      .inviteProject(activeWorkspace.slug, activeProject.id, formData)
+      .inviteProject(workspaceSlug as string, projectId as string, formData)
       .then((response) => {
-        console.log(response);
         setIsOpen(false);
         mutate(
           PROJECT_INVITATIONS,
@@ -100,6 +98,14 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
       .catch((error) => {
         console.log(error);
       });
+  };
+
+  const handleClose = () => {
+    setIsOpen(false);
+    const timeout = setTimeout(() => {
+      reset(defaultValues);
+      clearTimeout(timeout);
+    }, 500);
   };
 
   return (
@@ -156,12 +162,12 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
                             >
                               {({ open }) => (
                                 <>
-                                  <Listbox.Label className="text-gray-500 mb-2">
+                                  <Listbox.Label className="mb-2 text-gray-500">
                                     Email
                                   </Listbox.Label>
                                   <div className="relative">
                                     <Listbox.Button
-                                      className={`bg-white relative w-full border rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ${
+                                      className={`relative w-full cursor-default rounded-md border bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm ${
                                         errors.user_id ? "border-red-500 bg-red-50" : ""
                                       }`}
                                     >
@@ -170,7 +176,7 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
                                           ? people?.find((p) => p.member.id === value)?.member.email
                                           : "Select email"}
                                       </span>
-                                      <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                                      <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                                         <ChevronDownIcon
                                           className="h-5 w-5 text-gray-400"
                                           aria-hidden="true"
@@ -185,50 +191,51 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
                                       leaveFrom="opacity-100"
                                       leaveTo="opacity-0"
                                     >
-                                      <Listbox.Options className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
-                                        {people?.map(
-                                          (person) =>
-                                            !members.some(
-                                              (m: any) => m.email === person.member.email
-                                            ) && (
-                                              <Listbox.Option
-                                                key={person.member.id}
-                                                className={({ active }) =>
-                                                  `${
-                                                    active ? "text-white bg-theme" : "text-gray-900"
-                                                  } cursor-default select-none relative py-2 pl-3 pr-9 text-left`
-                                                }
-                                                value={{
-                                                  id: person.member.id,
-                                                  email: person.member.email,
-                                                }}
-                                              >
-                                                {({ selected, active }) => (
-                                                  <>
-                                                    <span
-                                                      className={`${
-                                                        selected ? "font-semibold" : "font-normal"
-                                                      } block truncate`}
-                                                    >
-                                                      {person.member.email}
-                                                    </span>
+                                      <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                                        {uninvitedPeople?.length === 0 ? (
+                                          <div className="relative cursor-default select-none py-2 pl-3 pr-9 text-left text-gray-600">
+                                            Invite to workspace to add members
+                                          </div>
+                                        ) : (
+                                          uninvitedPeople?.map((person) => (
+                                            <Listbox.Option
+                                              key={person.member.id}
+                                              className={({ active }) =>
+                                                `${
+                                                  active ? "bg-theme text-white" : "text-gray-900"
+                                                } relative cursor-default select-none py-2 pl-3 pr-9 text-left`
+                                              }
+                                              value={{
+                                                id: person.member.id,
+                                                email: person.member.email,
+                                              }}
+                                            >
+                                              {({ selected, active }) => (
+                                                <>
+                                                  <span
+                                                    className={`${
+                                                      selected ? "font-semibold" : "font-normal"
+                                                    } block truncate`}
+                                                  >
+                                                    {person.member.email}
+                                                  </span>
 
-                                                    {selected ? (
-                                                      <span
-                                                        className={`absolute inset-y-0 right-0 flex items-center pr-4 ${
-                                                          active ? "text-white" : "text-theme"
-                                                        }`}
-                                                      >
-                                                        <CheckIcon
-                                                          className="h-5 w-5"
-                                                          aria-hidden="true"
-                                                        />
-                                                      </span>
-                                                    ) : null}
-                                                  </>
-                                                )}
-                                              </Listbox.Option>
-                                            )
+                                                  {selected ? (
+                                                    <span
+                                                      className={`absolute inset-y-0 right-0 flex items-center pr-4 ${
+                                                        active ? "text-white" : "text-theme"
+                                                      }`}
+                                                    >
+                                                      <CheckIcon
+                                                        className="h-5 w-5"
+                                                        aria-hidden="true"
+                                                      />
+                                                    </span>
+                                                  ) : null}
+                                                </>
+                                              )}
+                                            </Listbox.Option>
+                                          ))
                                         )}
                                       </Listbox.Options>
                                     </Transition>

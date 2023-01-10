@@ -1,10 +1,14 @@
-// react
 import React, { useState } from "react";
+
+import { useRouter } from "next/router";
+
+import useSWR from "swr";
 // react-hook-form
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 // hooks
-import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
+// services
+import projectService from "lib/services/project.service";
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // ui
@@ -12,9 +16,12 @@ import { Button } from "ui";
 // icons
 import { MagnifyingGlassIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
 // types
-import { IIssue, IssueResponse } from "types";
+import { IIssue } from "types";
+// fetch-keys
+import { PROJECT_DETAILS } from "constants/fetch-keys";
 // common
 import { classNames } from "constants/common";
+import { LayerDiagonalIcon } from "ui/icons";
 
 type FormInput = {
   issues: string[];
@@ -37,7 +44,15 @@ const ExistingIssuesListModal: React.FC<Props> = ({
 }) => {
   const [query, setQuery] = useState("");
 
-  const { activeProject } = useUser();
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
+
+  const { data: projectDetails } = useSWR(
+    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
+      : null
+  );
 
   const { setToastAlert } = useToast();
 
@@ -80,7 +95,7 @@ const ExistingIssuesListModal: React.FC<Props> = ({
   return (
     <>
       <Transition.Root show={isOpen} as={React.Fragment} afterLeave={() => setQuery("")} appear>
-        <Dialog as="div" className="relative z-10" onClose={handleClose}>
+        <Dialog as="div" className="relative z-20" onClose={handleClose}>
           <Transition.Child
             as={React.Fragment}
             enter="ease-out duration-300"
@@ -116,7 +131,7 @@ const ExistingIssuesListModal: React.FC<Props> = ({
                             aria-hidden="true"
                           />
                           <Combobox.Input
-                            className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm outline-none"
+                            className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder-gray-500 outline-none focus:ring-0 sm:text-sm"
                             placeholder="Search..."
                             onChange={(e) => setQuery(e.target.value)}
                           />
@@ -126,7 +141,7 @@ const ExistingIssuesListModal: React.FC<Props> = ({
                           static
                           className="max-h-80 scroll-py-2 divide-y divide-gray-500 divide-opacity-10 overflow-y-auto"
                         >
-                          {filteredIssues.length > 0 && (
+                          {filteredIssues.length > 0 ? (
                             <li className="p-2">
                               {query === "" && (
                                 <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-gray-900">
@@ -135,40 +150,50 @@ const ExistingIssuesListModal: React.FC<Props> = ({
                               )}
                               <ul className="text-sm text-gray-700">
                                 {filteredIssues.map((issue) => {
-                                  if ((type === "cycle" && !issue.issue_cycle) || type === "module")
-                                    return (
-                                      <Combobox.Option
-                                        key={issue.id}
-                                        as="label"
-                                        htmlFor={`issue-${issue.id}`}
-                                        value={issue.id}
-                                        className={({ active }) =>
-                                          classNames(
-                                            "flex items-center gap-2 cursor-pointer select-none w-full rounded-md px-3 py-2",
-                                            active ? "bg-gray-900 bg-opacity-5 text-gray-900" : ""
-                                          )
-                                        }
-                                      >
-                                        {({ selected }) => (
-                                          <>
-                                            <input type="checkbox" checked={selected} readOnly />
-                                            <span
-                                              className="flex-shrink-0 h-1.5 w-1.5 block rounded-full"
-                                              style={{
-                                                backgroundColor: issue.state_detail.color,
-                                              }}
-                                            />
-                                            <span className="flex-shrink-0 text-xs text-gray-500">
-                                              {activeProject?.identifier}-{issue.sequence_id}
-                                            </span>
-                                            {issue.name}
-                                          </>
-                                        )}
-                                      </Combobox.Option>
-                                    );
+                                  return (
+                                    <Combobox.Option
+                                      key={issue.id}
+                                      as="label"
+                                      htmlFor={`issue-${issue.id}`}
+                                      value={issue.id}
+                                      className={({ active }) =>
+                                        classNames(
+                                          "flex w-full cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2",
+                                          active ? "bg-gray-900 bg-opacity-5 text-gray-900" : ""
+                                        )
+                                      }
+                                    >
+                                      {({ selected }) => (
+                                        <>
+                                          <input type="checkbox" checked={selected} readOnly />
+                                          <span
+                                            className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                                            style={{
+                                              backgroundColor: issue.state_detail.color,
+                                            }}
+                                          />
+                                          <span className="flex-shrink-0 text-xs text-gray-500">
+                                            {projectDetails?.identifier}-{issue.sequence_id}
+                                          </span>
+                                          {issue.name}
+                                        </>
+                                      )}
+                                    </Combobox.Option>
+                                  );
                                 })}
                               </ul>
                             </li>
+                          ) : (
+                            <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
+                              <LayerDiagonalIcon height="56" width="56" />
+                              <h3 className="text-gray-500">
+                                No issues found. Create a new issue with{" "}
+                                <pre className="inline rounded bg-gray-100 px-2 py-1">
+                                  Ctrl/Command + I
+                                </pre>
+                                .
+                              </h3>
+                            </div>
                           )}
                         </Combobox.Options>
 
@@ -186,19 +211,21 @@ const ExistingIssuesListModal: React.FC<Props> = ({
                       </Combobox>
                     )}
                   />
-                  <div className="flex justify-end items-center gap-2 p-3">
-                    <Button type="button" theme="danger" size="sm" onClick={handleClose}>
-                      Cancel
-                    </Button>
-                    <Button
-                      type="button"
-                      size="sm"
-                      onClick={handleSubmit(onSubmit)}
-                      disabled={isSubmitting}
-                    >
-                      {isSubmitting ? "Adding..." : `Add to ${type}`}
-                    </Button>
-                  </div>
+                  {filteredIssues.length > 0 && (
+                    <div className="flex items-center justify-end gap-2 p-3">
+                      <Button type="button" theme="secondary" size="sm" onClick={handleClose}>
+                        Cancel
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        onClick={handleSubmit(onSubmit)}
+                        disabled={isSubmitting}
+                      >
+                        {isSubmitting ? "Adding..." : `Add to ${type}`}
+                      </Button>
+                    </div>
+                  )}
                 </form>
               </Dialog.Panel>
             </Transition.Child>

@@ -1,7 +1,7 @@
 // react
 import React from "react";
 // react hook form
-import { Controller } from "react-hook-form";
+import { Controller, FieldError } from "react-hook-form";
 import type { Control } from "react-hook-form";
 // ui
 import { CustomListbox } from "ui";
@@ -13,24 +13,36 @@ import { MODULE_STATUS } from "constants/";
 
 type Props = {
   control: Control<IModule, any>;
+  error?: FieldError;
 };
 
-const SelectStatus: React.FC<Props> = ({ control }) => {
+const SelectStatus: React.FC<Props> = (props) => {
+  const { control, error } = props;
+
   return (
     <Controller
       control={control}
+      rules={{ required: true }}
       name="status"
       render={({ field: { value, onChange } }) => (
-        <CustomListbox
-          title="State"
-          options={MODULE_STATUS.map((status) => {
-            return { value: status.value, display: status.label };
-          })}
-          value={value}
-          optionsFontsize="sm"
-          onChange={onChange}
-          icon={<Squares2X2Icon className="h-3 w-3 text-gray-400" />}
-        />
+        <div>
+          <CustomListbox
+            className={`${
+              error
+                ? "border-red-300 text-red-900 placeholder-red-300 focus:border-red-500 focus:outline-none focus:ring-red-500"
+                : ""
+            }`}
+            title="Status"
+            options={MODULE_STATUS.map((status) => {
+              return { value: status.value, display: status.label, color: status.color };
+            })}
+            value={value}
+            optionsFontsize="sm"
+            onChange={onChange}
+            icon={<Squares2X2Icon className="h-3 w-3 text-gray-400" />}
+          />
+          {error && <p className="mt-1 text-sm text-red-600">{error.message}</p>}
+        </div>
       )}
     />
   );

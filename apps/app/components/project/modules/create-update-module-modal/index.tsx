@@ -1,16 +1,16 @@
 import React, { useEffect } from "react";
-// swr
+
+import { useRouter } from "next/router";
+
 import { mutate } from "swr";
-// react hook form
+
 import { useForm } from "react-hook-form";
-// headless
+
 import { Dialog, Transition } from "@headlessui/react";
 // ui
-import { Button, Input, TextArea, Select } from "ui";
+import { Button, Input, TextArea } from "ui";
 // services
 import modulesService from "lib/services/modules.service";
-// hooks
-import useUser from "lib/hooks/useUser";
 // types
 import type { IModule } from "types";
 // common
@@ -37,15 +37,8 @@ const defaultValues: Partial<IModule> = {
 };
 
 const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, projectId }) => {
-  const handleClose = () => {
-    setIsOpen(false);
-    const timeout = setTimeout(() => {
-      reset(defaultValues);
-      clearTimeout(timeout);
-    }, 500);
-  };
-
-  const { activeWorkspace } = useUser();
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
 
   const {
     register,
@@ -58,8 +51,17 @@ const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, pro
     defaultValues,
   });
 
+  useEffect(() => {
+    if (data) {
+      setIsOpen(true);
+      reset(data);
+    } else {
+      reset(defaultValues);
+    }
+  }, [data, setIsOpen, reset]);
+
   const onSubmit = async (formData: IModule) => {
-    if (!activeWorkspace) return;
+    if (!workspaceSlug) return;
     const payload = {
       ...formData,
       start_date: formData.start_date ? renderDateFormat(formData.start_date) : null,
@@ -67,7 +69,7 @@ const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, pro
     };
     if (!data) {
       await modulesService
-        .createModule(activeWorkspace.slug, projectId, payload)
+        .createModule(workspaceSlug as string, projectId, payload)
         .then((res) => {
           mutate<IModule[]>(
             MODULE_LIST(projectId),
@@ -85,7 +87,7 @@ const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, pro
         });
     } else {
       await modulesService
-        .updateModule(activeWorkspace.slug, projectId, data.id, payload)
+        .updateModule(workspaceSlug as string, projectId, data.id, payload)
         .then((res) => {
           mutate<IModule[]>(
             MODULE_LIST(projectId),
@@ -112,18 +114,14 @@ const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, pro
     }
   };
 
-  useEffect(() => {
-    if (data) {
-      setIsOpen(true);
-      reset(data);
-    } else {
-      reset(defaultValues);
-    }
-  }, [data, setIsOpen, reset]);
+  const handleClose = () => {
+    setIsOpen(false);
+    reset(defaultValues);
+  };
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={handleClose}>
+      <Dialog as="div" className="relative z-20" onClose={handleClose}>
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
@@ -136,7 +134,7 @@ const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, pro
           <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
         </Transition.Child>
 
-        <div className="fixed inset-0 z-10 overflow-y-auto">
+        <div className="fixed inset-0 z-20 overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
             <Transition.Child
               as={React.Fragment}
@@ -189,6 +187,9 @@ const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, pro
                             placeholder="Enter start date"
                             error={errors.start_date}
                             register={register}
+                            validations={{
+                              required: "Start date is required",
+                            }}
                           />
                         </div>
                         <div className="w-full">
@@ -200,17 +201,20 @@ const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, pro
                             placeholder="Enter target date"
                             error={errors.target_date}
                             register={register}
+                            validations={{
+                              required: "Target date is required",
+                            }}
                           />
                         </div>
                       </div>
-                      <div className="flex items-center flex-wrap gap-2">
-                        <SelectStatus control={control} />
+                      <div className="flex flex-wrap items-center gap-2">
+                        <SelectStatus control={control} error={errors.status} />
                         <SelectLead control={control} />
                         <SelectMembers control={control} />
                       </div>
                     </div>
                   </div>
-                  <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
+                  <div className="mt-5 flex justify-end gap-2">
                     <Button theme="secondary" onClick={handleClose}>
                       Cancel
                     </Button>

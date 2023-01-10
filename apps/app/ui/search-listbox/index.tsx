@@ -1,10 +1,19 @@
 import React, { useState } from "react";
+
+import Image from "next/image";
+import { useRouter } from "next/router";
+
+import useSWR from "swr";
+// services
+import workspaceService from "lib/services/workspace.service";
 // headless ui
 import { Transition, Combobox } from "@headlessui/react";
-// common
-import { classNames } from "constants/common";
 // types
 import type { Props } from "./types";
+// common
+import { classNames } from "constants/common";
+// fetch-keys
+import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 
 const SearchListbox: React.FC<Props> = ({
   title,
@@ -17,8 +26,12 @@ const SearchListbox: React.FC<Props> = ({
   optionsFontsize,
   buttonClassName,
   optionsClassName,
+  assignee = false,
 }) => {
   const [query, setQuery] = useState("");
+
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
 
   const filteredOptions =
     query === ""
@@ -38,13 +51,45 @@ const SearchListbox: React.FC<Props> = ({
     props.multiple = true;
   }
 
+  const { data: people } = useSWR(
+    workspaceSlug ? WORKSPACE_MEMBERS(workspaceSlug as string) : null,
+    workspaceSlug ? () => workspaceService.workspaceMembers(workspaceSlug as string) : null
+  );
+
+  const userAvatar = (userId: string) => {
+    const user = people?.find((p) => p.member.id === userId);
+
+    if (!user) return;
+
+    if (user.member.avatar && user.member.avatar !== "") {
+      return (
+        <div className="relative h-4 w-4">
+          <Image
+            src={user.member.avatar}
+            alt="avatar"
+            className="rounded-full"
+            layout="fill"
+            objectFit="cover"
+          />
+        </div>
+      );
+    } else
+      return (
+        <div className="grid h-4 w-4 flex-shrink-0 place-items-center rounded-full bg-gray-700 capitalize text-white">
+          {user.member.first_name && user.member.first_name !== ""
+            ? user.member.first_name.charAt(0)
+            : user.member.email.charAt(0)}
+        </div>
+      );
+  };
+
   return (
     <Combobox as="div" {...props} className="relative flex-shrink-0">
       {({ open }: any) => (
         <>
           <Combobox.Label className="sr-only">{title}</Combobox.Label>
           <Combobox.Button
-            className={`flex items-center gap-1 hover:bg-gray-100 border rounded-md shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300 ${
+            className={`flex cursor-pointer items-center gap-1 rounded-md border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
               buttonClassName || ""
             }`}
           >
@@ -71,21 +116,7 @@ const SearchListbox: React.FC<Props> = ({
             leaveTo="opacity-0"
           >
             <Combobox.Options
-              className={`absolute z-10 mt-1 bg-white shadow-lg rounded-md py-1 ring-1 ring-black ring-opacity-5 focus:outline-none max-h-32 overflow-auto ${
-                width === "xs"
-                  ? "w-20"
-                  : width === "sm"
-                  ? "w-32"
-                  : width === "md"
-                  ? "w-48"
-                  : width === "lg"
-                  ? "w-64"
-                  : width === "xl"
-                  ? "w-80"
-                  : width === "2xl"
-                  ? "w-96"
-                  : ""
-              }} ${
+              className={`absolute z-10 mt-1 max-h-32 min-w-[8rem] overflow-auto rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none  ${
                 optionsFontsize === "sm"
                   ? "text-xs"
                   : optionsFontsize === "md"
@@ -100,7 +131,7 @@ const SearchListbox: React.FC<Props> = ({
               } ${optionsClassName || ""}`}
             >
               <Combobox.Input
-                className="w-full bg-transparent border-b p-2 focus:outline-none text-xs"
+                className="w-full border-b bg-transparent p-2 text-xs focus:outline-none"
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Search"
                 displayValue={(assigned: any) => assigned?.name}
@@ -114,10 +145,11 @@ const SearchListbox: React.FC<Props> = ({
                         className={({ active }) =>
                           `${
                             active ? "bg-indigo-50" : ""
-                          } cursor-pointer select-none truncate text-gray-900 p-2`
+                          } flex cursor-pointer select-none items-center gap-2 truncate p-2 text-gray-900`
                         }
                         value={option.value}
                       >
+                        {assignee && userAvatar(option.value)}
                         {option.element ?? option.display}
                       </Combobox.Option>
                     ))

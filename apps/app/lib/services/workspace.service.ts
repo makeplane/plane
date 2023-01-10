@@ -12,6 +12,8 @@ import {
   USER_WORKSPACE_INVITATION,
   USER_WORKSPACE_INVITATIONS,
   LAST_ACTIVE_WORKSPACE_AND_PROJECTS,
+  WORKSPACE_MEMBER_ME,
+  WORKSPACE_SLUG_CHECK,
 } from "constants/api-routes";
 // services
 import APIService from "lib/services/api.service";
@@ -38,6 +40,16 @@ class WorkspaceService extends APIService {
       })
       .catch((error) => {
         throw error?.response?.data;
+      });
+  }
+
+  async getWorkspace(workspaceSlug: string): Promise<IWorkspace> {
+    return this.get(WORKSPACE_DETAIL(workspaceSlug))
+      .then((response) => {
+        return response?.data;
+      })
+      .catch((error) => {
+        throw error?.response;
       });
   }
 
@@ -133,6 +145,16 @@ class WorkspaceService extends APIService {
       });
   }
 
+  async workspaceMemberMe(workspaceSlug: string): Promise<IWorkspaceMember> {
+    return this.get(WORKSPACE_MEMBER_ME(workspaceSlug))
+      .then((response) => {
+        return response?.data;
+      })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async updateWorkspaceMember(
     workspaceSlug: string,
     memberId: string,
@@ -192,6 +214,16 @@ class WorkspaceService extends APIService {
 
   async deleteWorkspaceInvitations(workspaceSlug: string, invitationId: string): Promise<any> {
     return this.delete(WORKSPACE_INVITATION_DETAIL(workspaceSlug, invitationId))
+      .then((response) => {
+        return response?.data;
+      })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async workspaceSlugCheck(slug: string): Promise<any> {
+    return this.get(WORKSPACE_SLUG_CHECK(slug))
       .then((response) => {
         return response?.data;
       })

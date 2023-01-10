@@ -1,22 +1,27 @@
 """Production settings and globals."""
-from plane.settings.local import WEB_URL
-from .common import *  # noqa
+import ssl
+from typing import Optional
+from urllib.parse import urlparse
 
 import dj_database_url
 from urllib.parse import urlparse
+from redis.asyncio.connection import Connection, RedisSSLContext
+
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
 
+from .common import *  # noqa
+
 # Database
-DEBUG = True
+DEBUG = False
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
         "NAME": "plane",
-        "USER": os.environ.get('PGUSER'),
-        "PASSWORD": os.environ.get('PGPASSWORD'),
-        "HOST": os.environ.get('PGHOST'),
+        "USER": os.environ.get("PGUSER"),
+        "PASSWORD": os.environ.get("PGPASSWORD"),
+        "HOST": os.environ.get("PGHOST"),
     }
 }
 
@@ -179,5 +184,66 @@ RQ_QUEUES = {
         "USE_REDIS_CACHE": "default",
     }
 }
+
+
+class CustomSSLConnection(Connection):
+    def __init__(
+        self,
+        ssl_context: Optional[str] = None,
+        **kwargs,
+    ):
+        super().__init__(**kwargs)
+        self.ssl_context = RedisSSLContext(ssl_context)
+
+
+class RedisSSLContext:
+    __slots__ = ("context",)
+
+    def __init__(
+        self,
+        ssl_context,
+    ):
+        self.context = ssl_context
+
+    def get(self):
+        return self.context
+
+
+url = urlparse(os.environ.get("REDIS_URL"))
+
+DOCKERIZED = os.environ.get("DOCKERIZED", False) # Set the variable true if running in docker-compose environment
+
+if not DOCKERIZED:
+
+    ssl_context = ssl.SSLContext()
+    ssl_context.check_hostname = False
+
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels_redis.core.RedisChannelLayer",
+            "CONFIG": {
+                "hosts": [
+                    {
+                        "host": url.hostname,
+                        "port": url.port,
+                        "username": url.username,
+                        "password": url.password,
+                        "connection_class": CustomSSLConnection,
+                        "ssl_context": ssl_context,
+                    }
+                ],
+            },
+        },
+    }
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [(os.environ.get("REDIS_URL"))],
+        },
+    },
+}
+
 
 WEB_URL = os.environ.get("WEB_URL")

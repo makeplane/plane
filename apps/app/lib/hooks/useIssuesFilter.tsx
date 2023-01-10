@@ -1,11 +1,18 @@
+// swr
+import useSWR from "swr";
+// services
+import stateService from "lib/services/state.service";
+// constants
+import { STATE_LIST } from "constants/fetch-keys";
+// hooks
 import useTheme from "./useTheme";
-import useUser from "./useUser";
 // commons
 import { groupBy, orderArrayBy } from "constants/common";
 // constants
 import { PRIORITIES } from "constants/";
 // types
 import type { IIssue } from "types";
+import { useRouter } from "next/router";
 
 const useIssuesFilter = (projectIssues: IIssue[]) => {
   const {
@@ -22,7 +29,15 @@ const useIssuesFilter = (projectIssues: IIssue[]) => {
     setIssueViewToList,
   } = useTheme();
 
-  const { states } = useUser();
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
+
+  const { data: states } = useSWR(
+    workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
+      : null
+  );
 
   let groupedByIssues: {
     [key: string]: IIssue[];

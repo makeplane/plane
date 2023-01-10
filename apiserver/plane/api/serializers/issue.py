@@ -47,6 +47,7 @@ class IssueFlatSerializer(BaseSerializer):
 class IssueStateSerializer(BaseSerializer):
 
     state_detail = StateSerializer(read_only=True, source="state")
+    project_detail = ProjectSerializer(read_only=True, source="project")
 
     class Meta:
         model = Issue
@@ -67,6 +68,8 @@ class IssueCreateSerializer(BaseSerializer):
         write_only=True,
         required=False,
     )
+
+    # List of issues that are blocking this issue
     blockers_list = serializers.ListField(
         child=serializers.PrimaryKeyRelatedField(queryset=Issue.objects.all()),
         write_only=True,
@@ -77,6 +80,8 @@ class IssueCreateSerializer(BaseSerializer):
         write_only=True,
         required=False,
     )
+
+    # List of issues that are blocked by this issue
     blocks_list = serializers.ListField(
         child=serializers.PrimaryKeyRelatedField(queryset=Issue.objects.all()),
         write_only=True,
@@ -421,10 +426,12 @@ class IssueSerializer(BaseSerializer):
     parent_detail = IssueFlatSerializer(read_only=True, source="parent")
     label_details = LabelSerializer(read_only=True, source="labels", many=True)
     assignee_details = UserLiteSerializer(read_only=True, source="assignees", many=True)
+    # List of issues blocked by this issue
     blocked_issues = BlockedIssueSerializer(read_only=True, many=True)
+    # List of issues that block this issue
     blocker_issues = BlockerIssueSerializer(read_only=True, many=True)
     issue_cycle = IssueCycleDetailSerializer(read_only=True)
-    issue_module = IssueModuleDetailSerializer(read_only=True, many=True)
+    issue_module = IssueModuleDetailSerializer(read_only=True)
 
     class Meta:
         model = Issue

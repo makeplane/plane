@@ -1,15 +1,12 @@
-// react
 import React, { useState } from "react";
-// swr
-import { mutate } from "swr";
-// react hook form
-import { useForm } from "react-hook-form";
-// headless ui
+
+import { useRouter } from "next/router";
+
+import useSWR, { mutate } from "swr";
+
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // services
 import issuesServices from "lib/services/issues.service";
-// hooks
-import useUser from "lib/hooks/useUser";
 // icons
 import { RectangleStackIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 // commons
@@ -25,15 +22,20 @@ type Props = {
   parent: IIssue | undefined;
 };
 
-type FormInput = {
-  issue_ids: string[];
-  cycleId: string;
-};
-
 const AddAsSubIssue: React.FC<Props> = ({ isOpen, setIsOpen, parent }) => {
   const [query, setQuery] = useState("");
 
-  const { activeWorkspace, activeProject, issues } = useUser();
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
+
+  const { data: issues } = useSWR(
+    workspaceSlug && projectId
+      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
+      : null,
+    workspaceSlug && projectId
+      ? () => issuesServices.getIssues(workspaceSlug as string, projectId as string)
+      : null
+  );
 
   const filteredIssues: IIssue[] =
     query === ""
@@ -41,23 +43,18 @@ const AddAsSubIssue: React.FC<Props> = ({ isOpen, setIsOpen, parent }) => {
       : issues?.results.filter((issue) => issue.name.toLowerCase().includes(query.toLowerCase())) ??
         [];
 
-  const {
-    formState: { errors, isSubmitting },
-    reset,
-  } = useForm<FormInput>();
-
   const handleCommandPaletteClose = () => {
     setIsOpen(false);
     setQuery("");
   };
 
   const addAsSubIssue = (issueId: string) => {
-    if (activeWorkspace && activeProject) {
+    if (workspaceSlug && projectId) {
       issuesServices
-        .patchIssue(activeWorkspace.slug, activeProject.id, issueId, { parent: parent?.id })
+        .patchIssue(workspaceSlug as string, projectId as string, issueId, { parent: parent?.id })
         .then((res) => {
           mutate<IssueResponse>(
-            PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id),
+            PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
             (prevData) => ({
               ...(prevData as IssueResponse),
               results: (prevData?.results ?? []).map((p) =>
@@ -106,7 +103,7 @@ const AddAsSubIssue: React.FC<Props> = ({ isOpen, setIsOpen, parent }) => {
                     aria-hidden="true"
                   />
                   <Combobox.Input
-                    className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm outline-none"
+                    className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder-gray-500 outline-none focus:ring-0 sm:text-sm"
                     placeholder="Search..."
                     onChange={(e) => setQuery(e.target.value)}
                   />
@@ -139,7 +136,7 @@ const AddAsSubIssue: React.FC<Props> = ({ isOpen, setIsOpen, parent }) => {
                                   }}
                                   className={({ active }) =>
                                     classNames(
-                                      "flex items-center gap-2 cursor-pointer select-none rounded-md px-3 py-2",
+                                      "flex cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2",
                                       active ? "bg-gray-900 bg-opacity-5 text-gray-900" : ""
                                     )
                                   }
@@ -149,7 +146,7 @@ const AddAsSubIssue: React.FC<Props> = ({ isOpen, setIsOpen, parent }) => {
                                   }}
                                 >
                                   <span
-                                    className={`h-1.5 w-1.5 block rounded-full`}
+                                    className={`block h-1.5 w-1.5 rounded-full`}
                                     style={{
                                       backgroundColor: issue.state_detail.color,
                                     }}

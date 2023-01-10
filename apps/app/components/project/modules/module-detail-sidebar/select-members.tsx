@@ -1,15 +1,13 @@
-// react
 import React from "react";
-// next
+
 import Image from "next/image";
-// swr
+import { useRouter } from "next/router";
+
 import useSWR from "swr";
-// react-hook-form
+
 import { Control, Controller } from "react-hook-form";
 // services
 import workspaceService from "lib/services/workspace.service";
-// hooks
-import useUser from "lib/hooks/useUser";
 // headless ui
 import { Listbox, Transition } from "@headlessui/react";
 // ui
@@ -29,18 +27,19 @@ type Props = {
 };
 
 const SelectMembers: React.FC<Props> = ({ control, submitChanges }) => {
-  const { activeWorkspace } = useUser();
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
 
   const { data: people } = useSWR(
-    activeWorkspace ? WORKSPACE_MEMBERS(activeWorkspace.slug) : null,
-    activeWorkspace ? () => workspaceService.workspaceMembers(activeWorkspace.slug) : null
+    workspaceSlug ? WORKSPACE_MEMBERS(workspaceSlug as string) : null,
+    workspaceSlug ? () => workspaceService.workspaceMembers(workspaceSlug as string) : null
   );
 
   return (
-    <div className="flex items-center py-2 flex-wrap">
+    <div className="flex flex-wrap items-center py-2">
       <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
-        <UserGroupIcon className="flex-shrink-0 h-4 w-4" />
-        <p>Assignees</p>
+        <UserGroupIcon className="h-4 w-4 flex-shrink-0" />
+        <p>Members</p>
       </div>
       <div className="sm:basis-1/2">
         <Controller
@@ -58,21 +57,19 @@ const SelectMembers: React.FC<Props> = ({ control, submitChanges }) => {
             >
               {({ open }) => (
                 <div className="relative">
-                  <Listbox.Button className="w-full flex items-center gap-1 text-xs cursor-pointer">
+                  <Listbox.Button className="flex w-full cursor-pointer items-center gap-1 text-xs">
                     <span
                       className={classNames(
                         value ? "" : "text-gray-900",
-                        "hidden truncate sm:block text-left"
+                        "hidden truncate text-left sm:block"
                       )}
                     >
-                      <div className="flex items-center gap-1 text-xs cursor-pointer">
+                      <div className="flex cursor-pointer items-center gap-1 text-xs">
                         {value && Array.isArray(value) ? (
                           <>
                             {value.length > 0 ? (
-                              value.map((assignee, index: number) => {
-                                const person = people?.find(
-                                  (p) => p.member.id === assignee
-                                )?.member;
+                              value.map((member, index: number) => {
+                                const person = people?.find((p) => p.member.id === member)?.member;
 
                                 return (
                                   <div
@@ -82,7 +79,7 @@ const SelectMembers: React.FC<Props> = ({ control, submitChanges }) => {
                                     }`}
                                   >
                                     {person && person.avatar && person.avatar !== "" ? (
-                                      <div className="h-5 w-5 border-2 bg-white border-white rounded-full">
+                                      <div className="h-5 w-5 rounded-full border-2 border-white bg-white">
                                         <Image
                                           src={person.avatar}
                                           height="100%"
@@ -93,7 +90,7 @@ const SelectMembers: React.FC<Props> = ({ control, submitChanges }) => {
                                       </div>
                                     ) : (
                                       <div
-                                        className={`h-5 w-5 bg-gray-700 text-white border-2 border-white grid place-items-center rounded-full capitalize`}
+                                        className={`grid h-5 w-5 place-items-center rounded-full border-2 border-white bg-gray-700 capitalize text-white`}
                                       >
                                         {person?.first_name && person.first_name !== ""
                                           ? person.first_name.charAt(0)
@@ -104,7 +101,7 @@ const SelectMembers: React.FC<Props> = ({ control, submitChanges }) => {
                                 );
                               })
                             ) : (
-                              <div className="h-5 w-5 border-2 bg-white border-white rounded-full">
+                              <div className="h-5 w-5 rounded-full border-2 border-white bg-white">
                                 <Image
                                   src={User}
                                   height="100%"
@@ -130,7 +127,7 @@ const SelectMembers: React.FC<Props> = ({ control, submitChanges }) => {
                     leaveFrom="transform opacity-100 scale-100"
                     leaveTo="transform opacity-0 scale-95"
                   >
-                    <Listbox.Options className="absolute z-10 left-0 mt-1 w-auto bg-white shadow-lg max-h-48 rounded-md py-1 text-xs ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
+                    <Listbox.Options className="absolute left-0 z-10 mt-1 max-h-48 w-auto overflow-auto rounded-md bg-white py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                       <div className="py-1">
                         {people ? (
                           people.length > 0 ? (
@@ -140,7 +137,7 @@ const SelectMembers: React.FC<Props> = ({ control, submitChanges }) => {
                                 className={({ active, selected }) =>
                                   `${
                                     active || selected ? "bg-indigo-50" : ""
-                                  } flex items-center gap-2 text-gray-900 cursor-pointer select-none p-2 truncate`
+                                  } flex cursor-pointer select-none items-center gap-2 truncate p-2 text-gray-900`
                                 }
                                 value={option.member.id}
                               >
@@ -155,7 +152,7 @@ const SelectMembers: React.FC<Props> = ({ control, submitChanges }) => {
                                     />
                                   </div>
                                 ) : (
-                                  <div className="flex-shrink-0 h-4 w-4 bg-gray-700 text-white grid place-items-center capitalize rounded-full">
+                                  <div className="grid h-4 w-4 flex-shrink-0 place-items-center rounded-full bg-gray-700 capitalize text-white">
                                     {option.member.first_name && option.member.first_name !== ""
                                       ? option.member.first_name.charAt(0)
                                       : option.member.email.charAt(0)}
@@ -167,7 +164,7 @@ const SelectMembers: React.FC<Props> = ({ control, submitChanges }) => {
                               </Listbox.Option>
                             ))
                           ) : (
-                            <div className="text-center">No assignees found</div>
+                            <div className="text-center">No members found</div>
                           )
                         ) : (
                           <Spinner />

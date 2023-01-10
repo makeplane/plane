@@ -1,9 +1,14 @@
-// react
 import React, { useState } from "react";
-// react-hook-form
+
+import { useRouter } from "next/router";
+
+import useSWR from "swr";
+
 import { Control, Controller, UseFormWatch } from "react-hook-form";
-// hooks
-import useUser from "lib/hooks/useUser";
+// fetch keys
+import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+// services
+import issuesServices from "lib/services/issues.service";
 // components
 import IssuesListModal from "components/project/issues/issues-list-modal";
 // icons
@@ -28,12 +33,22 @@ const SelectParent: React.FC<Props> = ({
 }) => {
   const [isParentModalOpen, setIsParentModalOpen] = useState(false);
 
-  const { activeProject, issues } = useUser();
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
+
+  const { data: issues } = useSWR(
+    workspaceSlug && projectId
+      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
+      : null,
+    workspaceSlug && projectId
+      ? () => issuesServices.getIssues(workspaceSlug as string, projectId as string)
+      : null
+  );
 
   return (
-    <div className="flex items-center py-2 flex-wrap">
+    <div className="flex flex-wrap items-center py-2">
       <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
-        <UserIcon className="flex-shrink-0 h-4 w-4" />
+        <UserIcon className="h-4 w-4 flex-shrink-0" />
         <p>Parent</p>
       </div>
       <div className="sm:basis-1/2">
@@ -57,13 +72,13 @@ const SelectParent: React.FC<Props> = ({
         />
         <button
           type="button"
-          className="flex justify-between items-center gap-1 hover:bg-gray-100 border rounded-md shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300 w-full"
+          className="flex w-full cursor-pointer items-center justify-between gap-1 rounded-md border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
           onClick={() => setIsParentModalOpen(true)}
         >
           {watch("parent") && watch("parent") !== ""
-            ? `${activeProject?.identifier}-${
-                issues?.results.find((i) => i.id === watch("parent"))?.sequence_id
-              }`
+            ? `${
+                issues?.results.find((i) => i.id === watch("parent"))?.project_detail?.identifier
+              }-${issues?.results.find((i) => i.id === watch("parent"))?.sequence_id}`
             : "Select issue"}
         </button>
       </div>

@@ -18,7 +18,7 @@ class Shortcut(ProjectBaseModel):
     class Meta:
         verbose_name = "Shortcut"
         verbose_name_plural = "Shortcuts"
-        db_table = "shortcut"
+        db_table = "shortcuts"
         ordering = ("-created_at",)
 
     def __str__(self):

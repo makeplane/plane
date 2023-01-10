@@ -86,7 +86,7 @@ class WorkSpaceViewSet(BaseViewSet):
         except IntegrityError as e:
             if "already exists" in str(e):
                 return Response(
-                    {"name": "The workspace with the name already exists"},
+                    {"slug": "The workspace with the slug already exists"},
                     status=status.HTTP_410_GONE,
                 )
         except Exception as e:
@@ -96,7 +96,7 @@ class WorkSpaceViewSet(BaseViewSet):
                     "error": "Something went wrong please try again later",
                     "identifier": None,
                 },
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
 
@@ -128,34 +128,28 @@ class UserWorkSpacesEndpoint(BaseAPIView):
             capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
 
 class WorkSpaceAvailabilityCheckEndpoint(BaseAPIView):
-
-    permission_classes = [
-        AllowAny,
-    ]
-
     def get(self, request):
         try:
-            name = request.GET.get("name", False)
+            slug = request.GET.get("slug", False)
 
-            if not name:
+            if not slug or slug == "":
                 return Response(
-                    {"error": "Workspace Name is required"},
+                    {"error": "Workspace Slug is required"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            workspace = Workspace.objects.filter(name=name).exists()
-
-            return Response({"status": workspace}, status=status.HTTP_200_OK)
+            workspace = Workspace.objects.filter(slug=slug).exists()
+            return Response({"status": not workspace}, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
 
@@ -168,70 +162,92 @@ class InviteWorkspaceEndpoint(BaseAPIView):
     def post(self, request, slug):
         try:
 
-            email = request.data.get("email", False)
-
+            emails = request.data.get("emails", False)
             # Check if email is provided
-            if not email:
+            if not emails or not len(emails):
                 return Response(
-                    {"error": "Email is required"}, status=status.HTTP_400_BAD_REQUEST
+                    {"error": "Emails are required"}, status=status.HTTP_400_BAD_REQUEST
                 )
 
-            validate_email(email)
-            # Check if user is already a member of workspace
             workspace = Workspace.objects.get(slug=slug)
 
-            if WorkspaceMember.objects.filter(
-                workspace_id=workspace.id, member__email=email
-            ).exists():
+            # Check if user is already a member of workspace
+            workspace_members = WorkspaceMember.objects.filter(
+                workspace_id=workspace.id,
+                member__email__in=[email.get("email") for email in emails],
+            )
+
+            if len(workspace_members):
                 return Response(
-                    {"error": "User is already member of workspace"},
+                    {
+                        "error": "Some users are already member of workspace",
+                        "workspace_users": WorkSpaceMemberSerializer(
+                            workspace_members, many=True
+                        ).data,
+                    },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            token = jwt.encode(
-                {"email": email, "timestamp": datetime.now().timestamp()},
-                settings.SECRET_KEY,
-                algorithm="HS256",
+            workspace_invitations = []
+            for email in emails:
+                try:
+                    validate_email(email.get("email"))
+                    workspace_invitations.append(
+                        WorkspaceMemberInvite(
+                            email=email.get("email").strip().lower(),
+                            workspace_id=workspace.id,
+                            token=jwt.encode(
+                                {
+                                    "email": email,
+                                    "timestamp": datetime.now().timestamp(),
+                                },
+                                settings.SECRET_KEY,
+                                algorithm="HS256",
+                            ),
+                            role=email.get("role", 10),
+                        )
+                    )
+                except ValidationError:
+                    return Response(
+                        {
+                            "error": f"Invalid email - {email} provided a valid email address is required to send the invite"
+                        },
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+            WorkspaceMemberInvite.objects.bulk_create(
+                workspace_invitations, batch_size=10, ignore_conflicts=True
             )
 
-            workspace_invitation_obj = WorkspaceMemberInvite.objects.create(
-                email=email.strip().lower(),
-                workspace_id=workspace.id,
-                token=token,
-                role=request.data.get("role", 10),
-            )
+            workspace_invitations = WorkspaceMemberInvite.objects.filter(
+                email__in=[email.get("email") for email in emails]
+            ).select_related("workspace")
 
-            domain = settings.WEB_URL
-
-            workspace_invitation.delay(
-                email, workspace.id, token, domain, request.user.email
-            )
+            for invitation in workspace_invitations:
+                workspace_invitation.delay(
+                    invitation.email,
+                    workspace.id,
+                    invitation.token,
+                    settings.WEB_URL,
+                    request.user.email,
+                )
 
             return Response(
                 {
-                    "message": "Email sent successfully",
-                    "id": workspace_invitation_obj.id,
+                    "message": "Emails sent successfully",
                 },
                 status=status.HTTP_200_OK,
             )
-        except ValidationError:
-            return Response(
-                {
-                    "error": "Invalid email address provided a valid email address is required to send the invite"
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+
         except Workspace.DoesNotExist:
             return Response(
                 {"error": "Workspace does not exists"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except Exception as e:
-            print(e)
             capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
 
@@ -261,6 +277,24 @@ class JoinWorkspaceEndpoint(BaseAPIView):
                 workspace_invite.save()
 
                 if workspace_invite.accepted:
+
+                    # Check if the user created account after invitation
+                    user = User.objects.filter(email=email).first()
+
+                    # If the user is present then create the workspace member
+                    if user is not None:
+                        WorkspaceMember.objects.create(
+                            workspace=workspace_invite.workspace,
+                            member=user,
+                            role=workspace_invite.role,
+                        )
+
+                        user.last_workspace_id = workspace_invite.workspace.id
+                        user.save()
+
+                        # Delete the invitation
+                        workspace_invite.delete()
+
                     return Response(
                         {"message": "Workspace Invitation Accepted"},
                         status=status.HTTP_200_OK,
@@ -286,7 +320,7 @@ class JoinWorkspaceEndpoint(BaseAPIView):
             capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
 
@@ -349,7 +383,7 @@ class UserWorkspaceInvitationsEndpoint(BaseViewSet):
             capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
 
@@ -381,6 +415,9 @@ class TeamMemberViewSet(BaseViewSet):
 
     serializer_class = TeamSerializer
     model = Team
+    permission_classes = [
+        WorkSpaceAdminPermission,
+    ]
 
     search_fields = [
         "member__email",
@@ -442,7 +479,7 @@ class TeamMemberViewSet(BaseViewSet):
             capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
 
@@ -506,5 +543,47 @@ class UserLastProjectWithWorkspaceEndpoint(BaseAPIView):
             capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class WorkspaceMemberUserEndpoint(BaseAPIView):
+    def get(self, request, slug):
+        try:
+            workspace_member = WorkspaceMember.objects.get(
+                member=request.user, workspace__slug=slug
+            )
+            serializer = WorkSpaceMemberSerializer(workspace_member)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except (Workspace.DoesNotExist, WorkspaceMember.DoesNotExist):
+            return Response({"error": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class WorkspaceMemberUserViewsEndpoint(BaseAPIView):
+    def post(self, request, slug):
+        try:
+
+            workspace_member = WorkspaceMember.objects.get(
+                workspace__slug=slug, member=request.user
+            )
+            workspace_member.view_props = request.data.get("view_props", {})
+            workspace_member.save()
+
+            return Response(status=status.HTTP_200_OK)
+        except WorkspaceMember.DoesNotExist:
+            return Response(
+                {"error": "User not a member of workspace"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
             )

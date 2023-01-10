@@ -4,8 +4,6 @@ import React, { useState } from "react";
 import useSWR from "swr";
 // services
 import workspaceService from "lib/services/workspace.service";
-// hooks
-import useUser from "lib/hooks/useUser";
 // components
 import SingleIssue from "components/common/board-view/single-issue";
 // ui
@@ -18,6 +16,9 @@ import { IIssue, IWorkspaceMember, NestedKeyOf, Properties } from "types";
 import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 // common
 import { addSpaceIfCamelCase } from "constants/common";
+import { useRouter } from "next/router";
+import StrictModeDroppable from "components/dnd/StrictModeDroppable";
+import { Draggable } from "react-beautiful-dnd";
 
 type Props = {
   properties: Properties;
@@ -59,10 +60,12 @@ const SingleModuleBoard: React.FC<Props> = ({
   setPreloadedData,
   stateId,
 }) => {
-  // Collapse/Expand
-  const [show, setState] = useState(true);
+  // TODO: will use this to collapse/expand the board
+  const [isCollapsed, setIsCollapsed] = useState(true);
 
-  const { activeWorkspace } = useUser();
+  const router = useRouter();
+
+  const { workspaceSlug } = router.query;
 
   if (selectedGroup === "priority")
     groupTitle === "high"
@@ -74,26 +77,26 @@ const SingleModuleBoard: React.FC<Props> = ({
       : (bgColor = "#ff0000");
 
   const { data: people } = useSWR<IWorkspaceMember[]>(
-    activeWorkspace ? WORKSPACE_MEMBERS : null,
-    activeWorkspace ? () => workspaceService.workspaceMembers(activeWorkspace.slug) : null
+    workspaceSlug ? WORKSPACE_MEMBERS : null,
+    workspaceSlug ? () => workspaceService.workspaceMembers(workspaceSlug as string) : null
   );
 
   return (
-    <div className={`rounded flex-shrink-0 h-full ${!show ? "" : "w-80 bg-gray-50 border"}`}>
-      <div className={`${!show ? "" : "h-full space-y-3 overflow-y-auto flex flex-col"}`}>
+    <div className={`h-full flex-shrink-0 rounded ${!isCollapsed ? "" : "w-80 border bg-gray-50"}`}>
+      <div className={`${!isCollapsed ? "" : "flex h-full flex-col space-y-3 overflow-y-auto"}`}>
         <div
           className={`flex justify-between p-3 pb-0 ${
-            !show ? "flex-col bg-gray-50 rounded-md border" : ""
+            !isCollapsed ? "flex-col rounded-md border bg-gray-50" : ""
           }`}
         >
           <div
-            className={`w-full flex justify-between items-center ${
-              !show ? "flex-col gap-2" : "gap-1"
+            className={`flex w-full items-center justify-between ${
+              !isCollapsed ? "flex-col gap-2" : "gap-1"
             }`}
           >
             <div
-              className={`flex items-center gap-x-1 px-2 bg-slate-900 rounded-md cursor-pointer ${
-                !show ? "py-2 mb-2 flex-col gap-y-2" : ""
+              className={`flex cursor-pointer items-center gap-x-1 rounded-md bg-slate-900 px-2 ${
+                !isCollapsed ? "mb-2 flex-col gap-y-2 py-2" : ""
               }`}
               style={{
                 border: `2px solid ${bgColor}`,
@@ -103,7 +106,7 @@ const SingleModuleBoard: React.FC<Props> = ({
               <h2
                 className={`text-[0.9rem] font-medium capitalize`}
                 style={{
-                  writingMode: !show ? "vertical-rl" : "horizontal-tb",
+                  writingMode: !isCollapsed ? "vertical-rl" : "horizontal-tb",
                 }}
               >
                 {groupTitle === null || groupTitle === "null"
@@ -112,7 +115,7 @@ const SingleModuleBoard: React.FC<Props> = ({
                   ? createdBy
                   : addSpaceIfCamelCase(groupTitle)}
               </h2>
-              <span className="text-gray-500 text-sm ml-0.5">
+              <span className="ml-0.5 text-sm text-gray-500">
                 {groupedByIssues[groupTitle].length}
               </span>
             </div>
@@ -138,68 +141,85 @@ const SingleModuleBoard: React.FC<Props> = ({
             </CustomMenu>
           </div>
         </div>
-        <div
-          className={`mt-3 space-y-3 h-full overflow-y-auto px-3 pb-3 ${
-            !show ? "hidden" : "block"
-          }`}
-        >
-          {groupedByIssues[groupTitle].map((childIssue, index: number) => {
-            const assignees = [
-              ...(childIssue?.assignees_list ?? []),
-              ...(childIssue?.assignees ?? []),
-            ]?.map((assignee) => {
-              const tempPerson = people?.find((p) => p.member.id === assignee)?.member;
 
-              return {
-                avatar: tempPerson?.avatar,
-                first_name: tempPerson?.first_name,
-                email: tempPerson?.email,
-              };
-            });
-
-            return (
-              <SingleIssue
-                key={childIssue.id}
-                issue={childIssue}
-                properties={properties}
-                assignees={assignees}
-                people={people}
-                partialUpdateIssue={partialUpdateIssue}
-                handleDeleteIssue={handleDeleteIssue}
-              />
-            );
-          })}
-
-          <CustomMenu
-            label={
-              <span className="flex items-center gap-1">
-                <PlusIcon className="h-3 w-3" />
-                Add issue
-              </span>
-            }
-            className="mt-1"
-            optionsPosition="left"
-            withoutBorder
-          >
-            <CustomMenu.MenuItem
-              onClick={() => {
-                openCreateIssueModal();
-                if (selectedGroup !== null) {
-                  setPreloadedData({
-                    state: stateId !== null ? stateId : undefined,
-                    [selectedGroup]: groupTitle,
-                    actionType: "createIssue",
-                  });
-                }
-              }}
+        <StrictModeDroppable key={groupTitle} droppableId={groupTitle}>
+          {(provided, snapshot) => (
+            <div
+              className={`mt-3 h-full space-y-3 overflow-y-auto px-3 pb-3 ${
+                snapshot.isDraggingOver ? "bg-indigo-50 bg-opacity-50" : ""
+              } ${!isCollapsed ? "hidden" : "block"}`}
+              {...provided.droppableProps}
+              ref={provided.innerRef}
             >
-              Create new
-            </CustomMenu.MenuItem>
-            <CustomMenu.MenuItem onClick={() => openIssuesListModal()}>
-              Add an existing issue
-            </CustomMenu.MenuItem>
-          </CustomMenu>
-        </div>
+              {groupedByIssues[groupTitle].map((childIssue, index: number) => {
+                const assignees = [
+                  ...(childIssue?.assignees_list ?? []),
+                  ...(childIssue?.assignees ?? []),
+                ]?.map((assignee) => {
+                  const tempPerson = people?.find((p) => p.member.id === assignee)?.member;
+
+                  return {
+                    avatar: tempPerson?.avatar,
+                    first_name: tempPerson?.first_name,
+                    email: tempPerson?.email,
+                  };
+                });
+
+                return (
+                  <Draggable key={childIssue.id} draggableId={childIssue.id} index={index}>
+                    {(provided, snapshot) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                      >
+                        <SingleIssue
+                          issue={childIssue}
+                          properties={properties}
+                          snapshot={snapshot}
+                          assignees={assignees}
+                          people={people}
+                          partialUpdateIssue={partialUpdateIssue}
+                          handleDeleteIssue={handleDeleteIssue}
+                        />
+                      </div>
+                    )}
+                  </Draggable>
+                );
+              })}
+              {provided.placeholder}
+              <CustomMenu
+                label={
+                  <span className="flex items-center gap-1">
+                    <PlusIcon className="h-3 w-3" />
+                    Add issue
+                  </span>
+                }
+                className="mt-1"
+                optionsPosition="left"
+                noBorder
+              >
+                <CustomMenu.MenuItem
+                  onClick={() => {
+                    openCreateIssueModal();
+                    if (selectedGroup !== null) {
+                      setPreloadedData({
+                        state: stateId !== null ? stateId : undefined,
+                        [selectedGroup]: groupTitle,
+                        actionType: "createIssue",
+                      });
+                    }
+                  }}
+                >
+                  Create new
+                </CustomMenu.MenuItem>
+                <CustomMenu.MenuItem onClick={() => openIssuesListModal()}>
+                  Add an existing issue
+                </CustomMenu.MenuItem>
+              </CustomMenu>
+            </div>
+          )}
+        </StrictModeDroppable>
       </div>
     </div>
   );

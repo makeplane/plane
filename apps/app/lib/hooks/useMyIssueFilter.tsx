@@ -1,4 +1,12 @@
 import { useEffect, useState } from "react";
+
+import { useRouter } from "next/router";
+
+import useSWR from "swr";
+// constants
+import { STATE_LIST } from "constants/fetch-keys";
+// services
+import stateService from "lib/services/state.service";
 // hooks
 import useUser from "./useUser";
 // types
@@ -15,17 +23,27 @@ const initialValues: Properties = {
   state: true,
   assignee: true,
   priority: false,
-  start_date: false,
   due_date: false,
   cycle: false,
-  children_count: false,
+  sub_issue_count: false,
 };
 
 const useMyIssuesProperties = (issues?: IIssue[]) => {
   const [properties, setProperties] = useState<Properties>(initialValues);
   const [groupByProperty, setGroupByProperty] = useState<NestedKeyOf<IIssue> | null>(null);
 
-  const { states, user } = useUser();
+  // FIXME: where this hook is used we may not have project id in the url
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
+
+  const { user } = useUser();
+
+  const { data: states } = useSWR(
+    workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
+      : null
+  );
 
   useEffect(() => {
     if (!user) return;

@@ -45,7 +45,7 @@ const EmojiIconPicker: React.FC<Props> = ({ label, value, onChange }) => {
   return (
     <Popover className="relative" ref={ref}>
       <Popover.Button
-        className="border border-gray-300 p-3 sm:text-sm rounded-md outline-none"
+        className="rounded-md border border-gray-300 p-2 outline-none sm:text-sm"
         onClick={() => setIsOpen((prev) => !prev)}
       >
         {label}
@@ -59,15 +59,15 @@ const EmojiIconPicker: React.FC<Props> = ({ label, value, onChange }) => {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Popover.Panel className="absolute z-10 w-80 bg-white rounded-md shadow-lg mt-2">
-          <div className="w-80 h-80 p-2 bg-white overflow-auto rounded shadow-2xl border">
-            <Tab.Group as="div" className="w-full h-full flex flex-col">
-              <Tab.List className="-mx-2 flex justify-around p-1 gap-1 border-b rounded flex-0">
+        <Popover.Panel className="absolute z-10 mt-2 w-80 rounded-md bg-white shadow-lg">
+          <div className="h-80 w-80 overflow-auto rounded border bg-white p-2 shadow-2xl">
+            <Tab.Group as="div" className="flex h-full w-full flex-col">
+              <Tab.List className="flex-0 -mx-2 flex justify-around gap-1 rounded border-b p-1">
                 {tabOptions.map((tab) => (
                   <Tab
                     key={tab.key}
                     className={({ selected }) =>
-                      `w-1/2 py-2 transition-colors border-b text-sm font-medium text-center outline-none -my-1 ${
+                      `-my-1 w-1/2 border-b py-2 text-center text-sm font-medium outline-none transition-colors ${
                         selected ? "border-theme" : "border-transparent"
                       }`
                     }
@@ -76,11 +76,11 @@ const EmojiIconPicker: React.FC<Props> = ({ label, value, onChange }) => {
                   </Tab>
                 ))}
               </Tab.List>
-              <Tab.Panels className="w-full h-full flex-1 overflow-y-auto overflow-x-hidden">
-                <Tab.Panel className="w-full h-full">
+              <Tab.Panels className="h-full w-full flex-1 overflow-y-auto overflow-x-hidden">
+                <Tab.Panel className="h-full w-full">
                   {recentEmojis.length > 0 && (
-                    <div className="py-2 w-full">
-                      <h3 className="text-lg mb-2">Recent Emojis</h3>
+                    <div className="w-full py-2">
+                      <h3 className="mb-2 text-lg">Recent Emojis</h3>
                       <div className="grid grid-cols-9 gap-2">
                         {recentEmojis.map((emoji) => (
                           <button
@@ -89,6 +89,7 @@ const EmojiIconPicker: React.FC<Props> = ({ label, value, onChange }) => {
                             key={emoji}
                             onClick={() => {
                               onChange(emoji);
+                              setIsOpen(false);
                             }}
                           >
                             {String.fromCodePoint(parseInt(emoji))}
@@ -98,7 +99,7 @@ const EmojiIconPicker: React.FC<Props> = ({ label, value, onChange }) => {
                     </div>
                   )}
                   <div className="py-3">
-                    <h3 className="text-lg mb-2">All Emojis</h3>
+                    <h3 className="mb-2 text-lg">All Emojis</h3>
                     <div className="grid grid-cols-9 gap-2">
                       {emojis.map((emoji) => (
                         <button
@@ -108,6 +109,7 @@ const EmojiIconPicker: React.FC<Props> = ({ label, value, onChange }) => {
                           onClick={() => {
                             onChange(emoji);
                             saveRecentEmoji(emoji);
+                            setIsOpen(false);
                           }}
                         >
                           {String.fromCodePoint(parseInt(emoji))}
@@ -116,7 +118,7 @@ const EmojiIconPicker: React.FC<Props> = ({ label, value, onChange }) => {
                     </div>
                   </div>
                 </Tab.Panel>
-                <Tab.Panel className="w-full h-full flex flex-col justify-center items-center">
+                <Tab.Panel className="flex h-full w-full flex-col items-center justify-center">
                   <p>Coming Soon...</p>
                 </Tab.Panel>
               </Tab.Panels>

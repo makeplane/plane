@@ -1,6 +1,6 @@
 import type { IIssue, NestedKeyOf } from "types";
 
-export const PRIORITIES = ["urgent", "high", "medium", "low"];
+export const PRIORITIES = ["urgent", "high", "medium", "low", null];
 
 export const ROLE = {
   5: "Guest",
@@ -20,12 +20,12 @@ export const GROUP_CHOICES = {
 };
 
 export const MODULE_STATUS = [
-  { label: "Backlog", value: "backlog" },
-  { label: "Planned", value: "planned" },
-  { label: "In Progress", value: "in-progress" },
-  { label: "Paused", value: "paused" },
-  { label: "Completed", value: "completed" },
-  { label: "Cancelled", value: "cancelled" },
+  { label: "Backlog", value: "backlog", color: "#5e6ad2" },
+  { label: "Planned", value: "planned", color: "#26b5ce" },
+  { label: "In Progress", value: "in-progress", color: "#f2c94c" },
+  { label: "Paused", value: "paused", color: "#ff6900" },
+  { label: "Completed", value: "completed", color: "#4cb782" },
+  { label: "Cancelled", value: "cancelled", color: "#cc1d10" },
 ];
 
 export const groupByOptions: Array<{ name: string; key: NestedKeyOf<IIssue> | null }> = [
@@ -59,4 +59,11 @@ export const filterIssueOptions: Array<{
     name: "Backlog Issues",
     key: "backlogIssue",
   },
+];
+
+export const companySize = [
+  { value: 5, label: "5" },
+  { value: 10, label: "10" },
+  { value: 25, label: "25" },
+  { value: 50, label: "50" },
 ];

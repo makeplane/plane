@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-// next
-import dynamic from "next/dynamic";
+
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-// swr
-import { mutate } from "swr";
-// react hook form
+
+import useSWR, { mutate } from "swr";
+
 import { Controller, useForm } from "react-hook-form";
-// headless
+
 import { Dialog, Menu, Transition } from "@headlessui/react";
 // services
 import issuesServices from "lib/services/issues.service";
@@ -15,9 +15,9 @@ import issuesServices from "lib/services/issues.service";
 import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
 // ui
-import { Button, TextArea } from "ui";
+import { Button, Input, Loader } from "ui";
 // icons
-import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
+import { EllipsisHorizontalIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // components
 import SelectState from "components/project/issues/create-update-issue-modal/select-state";
 import SelectCycles from "components/project/issues/create-update-issue-modal/select-cycle";
@@ -36,12 +36,21 @@ import {
   PROJECT_ISSUES_LIST,
   CYCLE_ISSUES,
   USER_ISSUE,
+  PROJECTS_LIST,
+  MODULE_ISSUES,
 } from "constants/fetch-keys";
 // common
 import { renderDateFormat, cosineSimilarity } from "constants/common";
+import projectService from "lib/services/project.service";
+import modulesService from "lib/services/modules.service";
 
-const RichTextEditor = dynamic(() => import("components/lexical/editor"), {
+const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
   ssr: false,
+  loading: () => (
+    <Loader>
+      <Loader.Item height="12rem" width="100%"></Loader.Item>
+    </Loader>
+  ),
 });
 
 type Props = {
@@ -56,9 +65,10 @@ type Props = {
 const defaultValues: Partial<IIssue> = {
   project: "",
   name: "",
-  // description: "",
+  description: "",
+  description_html: "<p></p>",
   state: "",
-  sprints: null,
+  cycle: null,
   priority: null,
   labels_list: [],
 };
@@ -71,30 +81,30 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
   prePopulateData,
   isUpdatingSingleIssue = false,
 }) => {
+  const [createMore, setCreateMore] = useState(false);
   const [isCycleModalOpen, setIsCycleModalOpen] = useState(false);
   const [isStateModalOpen, setIsStateModalOpen] = useState(false);
+  const [activeProject, setActiveProject] = useState<string | null>(null);
   const [parentIssueListModalOpen, setParentIssueListModalOpen] = useState(false);
-
   const [mostSimilarIssue, setMostSimilarIssue] = useState<string | undefined>();
 
-  // const [issueDescriptionValue, setIssueDescriptionValue] = useState("");
-  // const handleDescriptionChange: any = (value: any) => {
-  //   console.log(value);
-  //   setIssueDescriptionValue(value);
-  // };
-
   const router = useRouter();
+  const { workspaceSlug } = router.query;
 
-  const handleClose = () => {
-    setIsOpen(false);
-    if (data) {
-      resetForm();
-    }
-  };
-
-  const { activeWorkspace, activeProject, user, issues } = useUser();
-
+  const { user } = useUser();
   const { setToastAlert } = useToast();
+
+  const { data: issues } = useSWR(
+    workspaceSlug && projectId ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId) : null,
+    workspaceSlug && projectId
+      ? () => issuesServices.getIssues(workspaceSlug as string, projectId)
+      : null
+  );
+
+  const { data: projects } = useSWR(
+    workspaceSlug ? PROJECTS_LIST(workspaceSlug as string) : null,
+    workspaceSlug ? () => projectService.getProjects(workspaceSlug as string) : null
+  );
 
   const {
     register,
@@ -104,21 +114,52 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
     setError,
     control,
     watch,
+    setValue,
   } = useForm<IIssue>({
     defaultValues,
+    mode: "all",
+    reValidateMode: "onChange",
   });
 
+  useEffect(() => {
+    if (data) setIsOpen(true);
+  }, [data, setIsOpen]);
+
+  useEffect(() => {
+    if (projects && projects.length > 0)
+      setActiveProject(projects?.find((p) => p.id === projectId)?.id ?? projects?.[0].id ?? null);
+  }, [projectId, projects]);
+
+  useEffect(() => {
+    reset({
+      ...defaultValues,
+      ...watch(),
+      ...data,
+      project: activeProject ?? "",
+      ...prePopulateData,
+    });
+  }, [data, prePopulateData, reset, activeProject, isOpen, watch]);
+
+  useEffect(() => {
+    return () => setMostSimilarIssue(undefined);
+  }, []);
+
   const resetForm = () => {
-    const timeout = setTimeout(() => {
-      reset(defaultValues);
-      clearTimeout(timeout);
-    }, 500);
+    reset({ ...defaultValues, project: activeProject ?? undefined });
+  };
+
+  const handleClose = () => {
+    setIsOpen(false);
+    if (data) {
+      resetForm();
+    }
   };
 
   const addIssueToCycle = async (issueId: string, cycleId: string) => {
-    if (!activeWorkspace || !activeProject) return;
+    if (!workspaceSlug || !projectId) return;
+
     await issuesServices
-      .addIssueToCycle(activeWorkspace.slug, activeProject.id, cycleId, {
+      .addIssueToCycle(workspaceSlug as string, projectId, cycleId, {
         issues: [issueId],
       })
       .then((res) => {
@@ -131,7 +172,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
           );
         } else
           mutate<IssueResponse>(
-            PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id),
+            PROJECT_ISSUES_LIST(workspaceSlug as string, projectId),
             (prevData) => {
               return {
                 ...(prevData as IssueResponse),
@@ -143,36 +184,49 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
             },
             false
           );
-        setToastAlert({
-          title: "Success",
-          type: "success",
-          message: "Issue added to cycle successfully",
-        });
       })
       .catch((err) => {
         console.log(err);
       });
   };
 
+  const addIssueToModule = async (issueId: string, moduleId: string) => {
+    if (!workspaceSlug || !projectId) return;
+
+    await modulesService
+      .addIssuesToModule(workspaceSlug as string, projectId, moduleId as string, {
+        issues: [issueId],
+      })
+      .then((res) => {
+        console.log(res);
+        mutate(MODULE_ISSUES(moduleId as string));
+      })
+      .catch((e) => console.log(e));
+  };
+
   const onSubmit = async (formData: IIssue) => {
-    if (!activeWorkspace || !activeProject) return;
+    if (!workspaceSlug || !projectId) return;
+
     const payload: Partial<IIssue> = {
       ...formData,
       target_date: formData.target_date ? renderDateFormat(formData.target_date ?? "") : null,
-      // description: formData.description ? JSON.parse(formData.description) : null,
     };
+
     if (!data) {
       await issuesServices
-        .createIssues(activeWorkspace.slug, activeProject.id, payload)
-        .then(async (res) => {
-          console.log(res);
-          mutate<IssueResponse>(PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id));
-
-          if (formData.sprints && formData.sprints !== null) {
-            await addIssueToCycle(res.id, formData.sprints);
+        .createIssues(workspaceSlug as string, projectId, payload)
+        .then((res) => {
+          mutate<IssueResponse>(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId));
+          if (formData.cycle && formData.cycle !== null) {
+            addIssueToCycle(res.id, formData.cycle);
           }
-          handleClose();
+
+          if (formData.module && formData.module !== null) {
+            addIssueToModule(res.id, formData.module);
+          }
+
           resetForm();
+          if (!createMore) handleClose();
           setToastAlert({
             title: "Success",
             type: "success",
@@ -183,20 +237,31 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
           }
         })
         .catch((err) => {
+          if (err.detail) {
+            setToastAlert({
+              title: "Join the project.",
+              type: "error",
+              message: "Click select to join from projects page to start making changes",
+            });
+          }
           Object.keys(err).map((key) => {
-            setError(key as keyof IIssue, { message: err[key].join(", ") });
+            const message = err[key];
+            if (!message) return;
+
+            setError(key as keyof IIssue, {
+              message: Array.isArray(message) ? message.join(", ") : message,
+            });
           });
         });
     } else {
       await issuesServices
-        .updateIssue(activeWorkspace.slug, activeProject.id, data.id, payload)
-        .then(async (res) => {
-          console.log(res);
+        .updateIssue(workspaceSlug as string, projectId, data.id, payload)
+        .then((res) => {
           if (isUpdatingSingleIssue) {
             mutate<IIssue>(PROJECT_ISSUES_DETAILS, (prevData) => ({ ...prevData, ...res }), false);
           } else
             mutate<IssueResponse>(
-              PROJECT_ISSUES_LIST(activeWorkspace.slug, activeProject.id),
+              PROJECT_ISSUES_LIST(workspaceSlug as string, projectId),
               (prevData) => {
                 return {
                   ...(prevData as IssueResponse),
@@ -205,14 +270,13 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                     return issue;
                   }),
                 };
-              },
-              false
+              }
             );
-          if (formData.sprints && formData.sprints !== null) {
-            await addIssueToCycle(res.id, formData.sprints);
+          if (formData.cycle && formData.cycle !== null) {
+            addIssueToCycle(res.id, formData.cycle);
           }
-          handleClose();
           resetForm();
+          if (!createMore) handleClose();
           setToastAlert({
             title: "Success",
             type: "success",
@@ -227,42 +291,24 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
     }
   };
 
-  useEffect(() => {
-    if (data) setIsOpen(true);
-  }, [data, setIsOpen]);
-
-  useEffect(() => {
-    reset({
-      ...defaultValues,
-      ...watch(),
-      ...data,
-      project: activeProject?.id ?? projectId,
-      ...prePopulateData,
-    });
-  }, [data, prePopulateData, reset, projectId, activeProject, isOpen, watch]);
-
-  useEffect(() => {
-    return () => setMostSimilarIssue(undefined);
-  }, []);
-
   return (
     <>
-      {activeProject && (
+      {projectId && (
         <>
           <CreateUpdateStateModal
             isOpen={isStateModalOpen}
             handleClose={() => setIsStateModalOpen(false)}
-            projectId={activeProject?.id}
+            projectId={projectId}
           />
           <CreateUpdateCycleModal
             isOpen={isCycleModalOpen}
             setIsOpen={setIsCycleModalOpen}
-            projectId={activeProject?.id}
+            projectId={projectId}
           />
         </>
       )}
       <Transition.Root show={isOpen} as={React.Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={handleClose}>
+        <Dialog as="div" className="relative z-20" onClose={handleClose}>
           <Transition.Child
             as={React.Fragment}
             enter="ease-out duration-300"
@@ -286,23 +332,53 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                 leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                 leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               >
-                <Dialog.Panel className="relative transform rounded-lg bg-white px-5 py-8 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
+                <Dialog.Panel className="relative transform rounded-lg bg-white p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
                   <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="space-y-5">
                       <div className="flex items-center gap-x-2">
-                        <SelectProject control={control} />
+                        <SelectProject
+                          control={control}
+                          activeProject={activeProject ?? ""}
+                          setActiveProject={setActiveProject}
+                        />
                         <h3 className="text-lg font-medium leading-6 text-gray-900">
                           {data ? "Update" : "Create"} Issue
                         </h3>
                       </div>
+                      {watch("parent") && watch("parent") !== "" ? (
+                        <div className="flex w-min items-center gap-2 whitespace-nowrap rounded bg-gray-100 p-2 text-xs">
+                          <div className="flex items-center gap-2">
+                            <span
+                              className="block h-1.5 w-1.5 rounded-full"
+                              style={{
+                                backgroundColor: issues?.results.find(
+                                  (i) => i.id === watch("parent")
+                                )?.state_detail.color,
+                              }}
+                            />
+                            <span className="flex-shrink-0 text-gray-600">
+                              {projects?.find((p) => p.id === activeProject)?.identifier}-
+                              {issues?.results.find((i) => i.id === watch("parent"))?.sequence_id}
+                            </span>
+                            <span className="truncate font-medium">
+                              {issues?.results
+                                .find((i) => i.id === watch("parent"))
+                                ?.name.substring(0, 50)}
+                            </span>
+                            <XMarkIcon
+                              className="h-3 w-3 cursor-pointer"
+                              onClick={() => setValue("parent", null)}
+                            />
+                          </div>
+                        </div>
+                      ) : null}
                       <div className="space-y-3">
                         <div className="mt-2 space-y-3">
                           <div>
-                            <TextArea
+                            <Input
                               id="name"
-                              label="Name"
+                              label="Title"
                               name="name"
-                              rows={1}
                               onChange={(e) => {
                                 const value = e.target.value;
                                 const similarIssue = issues?.results.find(
@@ -311,19 +387,23 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                                 setMostSimilarIssue(similarIssue?.id);
                               }}
                               className="resize-none"
-                              placeholder="Enter name"
+                              placeholder="Enter title"
                               autoComplete="off"
                               error={errors.name}
                               register={register}
                               validations={{
                                 required: "Name is required",
+                                maxLength: {
+                                  value: 255,
+                                  message: "Name should be less than 255 characters",
+                                },
                               }}
                             />
                             {mostSimilarIssue && (
                               <div className="flex items-center gap-x-2">
                                 <p className="text-sm text-gray-500">
                                   <Link
-                                    href={`/projects/${activeProject?.id}/issues/${mostSimilarIssue}`}
+                                    href={`/${workspaceSlug}/projects/${projectId}/issues/${mostSimilarIssue}`}
                                   >
                                     <a target="_blank" type="button" className="inline text-left">
                                       <span>Did you mean </span>
@@ -360,37 +440,31 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                             )}
                           </div>
                           <div>
-                            <TextArea
-                              id="description"
-                              name="description"
-                              label="Description"
-                              placeholder="Enter description"
-                              error={errors.description}
-                              register={register}
-                            />
-                            {/* <Controller
+                            <label htmlFor={"description"} className="mb-2 text-gray-500">
+                              Description
+                            </label>
+                            <Controller
                               name="description"
                               control={control}
                               render={({ field }) => (
-                                <RichTextEditor {...field} id="issueDescriptionEditor" />
+                                <RemirrorRichTextEditor
+                                  {...field}
+                                  onBlur={(jsonValue, htmlValue) => {
+                                    setValue("description", jsonValue);
+                                    setValue("description_html", htmlValue);
+                                  }}
+                                  placeholder="Enter Your Text..."
+                                />
                               )}
-                            /> */}
+                            />
                           </div>
-                          <div>
-                            {/* <Input
-                              id="target_date"
-                              label="Target Date"
-                              name="target_date"
-                              type="date"
-                              placeholder="Enter name"
-                              autoComplete="off"
-                              error={errors.target_date}
-                              register={register}
-                            /> */}
-                          </div>
-                          <div className="flex items-center flex-wrap gap-2">
+                          <div className="flex flex-wrap items-center gap-2">
                             <SelectState control={control} setIsOpen={setIsStateModalOpen} />
-                            <SelectCycles control={control} setIsOpen={setIsCycleModalOpen} />
+                            <SelectCycles
+                              control={control}
+                              setIsOpen={setIsCycleModalOpen}
+                              activeProject={activeProject ?? ""}
+                            />
                             <SelectPriority control={control} />
                             <SelectAssignee control={control} />
                             <SelectLabels control={control} />
@@ -404,7 +478,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                                   onChange={(e: any) => {
                                     onChange(e.target.value);
                                   }}
-                                  className="hover:bg-gray-100 border rounded-md shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300"
+                                  className="cursor-pointer rounded-md border px-2 py-[3px] text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                                 />
                               )}
                             />
@@ -415,7 +489,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                               issues={issues?.results ?? []}
                             />
                             <Menu as="div" className="relative inline-block">
-                              <Menu.Button className="grid place-items-center p-1 hover:bg-gray-100 border rounded-md shadow-sm cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm duration-300">
+                              <Menu.Button className="grid cursor-pointer place-items-center rounded-md border p-1 py-0.5 shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm">
                                 <EllipsisHorizontalIcon className="h-5 w-5" />
                               </Menu.Button>
 
@@ -428,22 +502,40 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                                 leaveFrom="transform opacity-100 scale-100"
                                 leaveTo="transform opacity-0 scale-95"
                               >
-                                <Menu.Items className="origin-top-right absolute right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
-                                  <div className="p-1">
-                                    <Menu.Item as="div">
-                                      <button
-                                        type="button"
-                                        className="p-2 text-left text-gray-900 hover:bg-theme hover:text-white rounded-md text-xs whitespace-nowrap "
-                                        onClick={() => setParentIssueListModalOpen(true)}
-                                      >
-                                        {watch("parent") && watch("parent") !== ""
-                                          ? `${activeProject?.identifier}-${
-                                              issues?.results.find((i) => i.id === watch("parent"))
-                                                ?.sequence_id
-                                            }`
-                                          : "Select Parent Issue"}
-                                      </button>
-                                    </Menu.Item>
+                                <Menu.Items className="absolute right-0 z-50 mt-2 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                  <div className="py-1">
+                                    {watch("parent") && watch("parent") !== "" ? (
+                                      <>
+                                        <Menu.Item as="div">
+                                          <button
+                                            type="button"
+                                            className="whitespace-nowrap p-2 text-left text-xs text-gray-900 hover:bg-indigo-50"
+                                            onClick={() => setParentIssueListModalOpen(true)}
+                                          >
+                                            Change parent issue
+                                          </button>
+                                        </Menu.Item>
+                                        <Menu.Item as="div">
+                                          <button
+                                            type="button"
+                                            className="whitespace-nowrap p-2 text-left text-xs text-gray-900 hover:bg-indigo-50"
+                                            onClick={() => setValue("parent", null)}
+                                          >
+                                            Remove parent issue
+                                          </button>
+                                        </Menu.Item>
+                                      </>
+                                    ) : (
+                                      <Menu.Item as="div">
+                                        <button
+                                          type="button"
+                                          className="whitespace-nowrap p-2 text-left text-xs text-gray-900 hover:bg-indigo-50"
+                                          onClick={() => setParentIssueListModalOpen(true)}
+                                        >
+                                          Select Parent Issue
+                                        </button>
+                                      </Menu.Item>
+                                    )}
                                   </div>
                                 </Menu.Items>
                               </Transition>
@@ -452,25 +544,49 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                         </div>
                       </div>
                     </div>
-                    <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
-                      <Button
-                        theme="secondary"
-                        onClick={() => {
-                          handleClose();
-                          resetForm();
-                        }}
+                    <div className="mt-5 flex items-center justify-between gap-2">
+                      <div
+                        className="flex cursor-pointer items-center gap-1"
+                        onClick={() => setCreateMore((prevData) => !prevData)}
                       >
-                        Discard
-                      </Button>
-                      <Button type="submit" disabled={isSubmitting}>
-                        {data
-                          ? isSubmitting
-                            ? "Updating Issue..."
-                            : "Update Issue"
-                          : isSubmitting
-                          ? "Creating Issue..."
-                          : "Create Issue"}
-                      </Button>
+                        <span className="text-xs">Create more</span>
+                        <button
+                          type="button"
+                          className={`pointer-events-none relative inline-flex h-4 w-7 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent ${
+                            createMore ? "bg-theme" : "bg-gray-300"
+                          } transition-colors duration-300 ease-in-out focus:outline-none`}
+                          role="switch"
+                          aria-checked="false"
+                        >
+                          <span className="sr-only">Create more</span>
+                          <span
+                            aria-hidden="true"
+                            className={`pointer-events-none inline-block h-3 w-3 ${
+                              createMore ? "translate-x-3" : "translate-x-0"
+                            } transform rounded-full bg-white shadow ring-0 transition duration-300 ease-in-out`}
+                          ></span>
+                        </button>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          theme="secondary"
+                          onClick={() => {
+                            handleClose();
+                            resetForm();
+                          }}
+                        >
+                          Discard
+                        </Button>
+                        <Button type="submit" disabled={isSubmitting}>
+                          {data
+                            ? isSubmitting
+                              ? "Updating Issue..."
+                              : "Update Issue"
+                            : isSubmitting
+                            ? "Creating Issue..."
+                            : "Create Issue"}
+                        </Button>
+                      </div>
                     </div>
                   </form>
                 </Dialog.Panel>

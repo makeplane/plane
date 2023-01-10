@@ -1,21 +1,22 @@
-import React, { useRef, useState } from "react";
-// swr
+import React, { useEffect, useRef, useState } from "react";
+
+import { useRouter } from "next/router";
+
 import { mutate } from "swr";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // fetching keys
-import { CYCLE_ISSUES, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import { CYCLE_ISSUES, PROJECT_ISSUES_LIST, MODULE_ISSUES } from "constants/fetch-keys";
 // services
 import issueServices from "lib/services/issues.service";
 // hooks
-import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
 import { Button } from "ui";
 // types
-import type { IIssue, IssueResponse } from "types";
+import type { CycleIssueResponse, IIssue, IssueResponse, ModuleIssueResponse } from "types";
 
 type Props = {
   isOpen: boolean;
@@ -23,14 +24,20 @@ type Props = {
   data?: IIssue;
 };
 
-const ConfirmIssueDeletion: React.FC<Props> = ({ isOpen, handleClose, data }) => {
+const ConfirmIssueDeletion: React.FC<Props> = (props) => {
+  const { isOpen, handleClose, data } = props;
+
+  const cancelButtonRef = useRef(null);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
-  const { activeWorkspace, activeProject } = useUser();
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
 
   const { setToastAlert } = useToast();
 
-  const cancelButtonRef = useRef(null);
+  useEffect(() => {
+    setIsDeleteLoading(false);
+  }, [isOpen]);
 
   const onClose = () => {
     setIsDeleteLoading(false);
@@ -39,13 +46,13 @@ const ConfirmIssueDeletion: React.FC<Props> = ({ isOpen, handleClose, data }) =>
 
   const handleDeletion = async () => {
     setIsDeleteLoading(true);
-    if (!data || !activeWorkspace) return;
+    if (!data || !workspaceSlug) return;
     const projectId = data.project;
     await issueServices
-      .deleteIssue(activeWorkspace.slug, projectId, data.id)
+      .deleteIssue(workspaceSlug as string, projectId, data.id)
       .then(() => {
         mutate<IssueResponse>(
-          PROJECT_ISSUES_LIST(activeWorkspace.slug, projectId),
+          PROJECT_ISSUES_LIST(workspaceSlug as string, projectId),
           (prevData) => {
             return {
               ...(prevData as IssueResponse),
@@ -55,7 +62,25 @@ const ConfirmIssueDeletion: React.FC<Props> = ({ isOpen, handleClose, data }) =>
           },
           false
         );
-        mutate(CYCLE_ISSUES(data.issue_cycle?.id ?? ""));
+
+        const moduleId = data.issue_module?.module;
+        const cycleId = data.issue_cycle?.cycle;
+
+        if (moduleId) {
+          mutate<ModuleIssueResponse[]>(
+            MODULE_ISSUES(moduleId),
+            (prevData) => prevData?.filter((i) => i.issue !== data.id),
+            false
+          );
+        }
+        if (cycleId) {
+          mutate<CycleIssueResponse[]>(
+            CYCLE_ISSUES(cycleId),
+            (prevData) => prevData?.filter((i) => i.issue !== data.id),
+            false
+          );
+        }
+
         setToastAlert({
           title: "Success",
           type: "success",
@@ -99,7 +124,7 @@ const ConfirmIssueDeletion: React.FC<Props> = ({ isOpen, handleClose, data }) =>
                 <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                   <div className="sm:flex sm:items-start">
                     <div>
-                      <div className="mx-auto h-16 w-16 grid place-items-center rounded-full bg-red-100">
+                      <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-red-100">
                         <ExclamationTriangleIcon
                           className="h-8 w-8 text-red-600"
                           aria-hidden="true"
@@ -107,10 +132,10 @@ const ConfirmIssueDeletion: React.FC<Props> = ({ isOpen, handleClose, data }) =>
                       </div>
                       <Dialog.Title
                         as="h3"
-                        className="text-lg font-medium leading-6 text-gray-900 mt-3"
+                        className="mt-3 text-lg font-medium leading-6 text-gray-900"
                       >
                         Are you sure you want to delete {`"`}
-                        {activeProject?.identifier}-{data?.sequence_id} - {data?.name}?{`"`}
+                        {data?.project_detail.identifier}-{data?.sequence_id} - {data?.name}?{`"`}
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-gray-500">

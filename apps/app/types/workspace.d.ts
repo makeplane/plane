@@ -6,11 +6,13 @@ export interface IWorkspace {
   readonly created_at: Date;
   readonly updated_at: Date;
   name: string;
-  logo: null;
+  url: string;
+  logo: string | null;
+  slug: string;
   readonly slug: string;
   readonly created_by: string;
   readonly updated_by: string;
-  company_size: number;
+  company_size: number | null;
 }
 
 export interface IWorkspaceMemberInvitation {

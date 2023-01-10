@@ -1,20 +1,20 @@
 import React, { useEffect } from "react";
+// next
+import { useRouter } from "next/router";
 // swr
 import { mutate } from "swr";
 // react hook form
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 // headless
 import { Dialog, Transition } from "@headlessui/react";
 // services
 import cycleService from "lib/services/cycles.service";
 // fetch keys
 import { CYCLE_LIST } from "constants/fetch-keys";
-// hooks
-import useUser from "lib/hooks/useUser";
 // common
 import { renderDateFormat } from "constants/common";
 // ui
-import { Button, Input, TextArea, Select } from "ui";
+import { Button, Input, TextArea, Select, CustomSelect } from "ui";
 
 // types
 import type { ICycle } from "types";
@@ -28,31 +28,37 @@ type Props = {
 const defaultValues: Partial<ICycle> = {
   name: "",
   description: "",
+  status: "draft",
+  start_date: new Date().toString(),
+  end_date: new Date().toString(),
 };
 
 const CreateUpdateCycleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, projectId }) => {
-  const handleClose = () => {
-    setIsOpen(false);
-    const timeout = setTimeout(() => {
-      reset(defaultValues);
-      clearTimeout(timeout);
-    }, 500);
-  };
-
-  const { activeWorkspace } = useUser();
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
 
   const {
     register,
     formState: { errors, isSubmitting },
     handleSubmit,
+    control,
     reset,
     setError,
   } = useForm<ICycle>({
     defaultValues,
   });
 
+  useEffect(() => {
+    if (data) {
+      setIsOpen(true);
+      reset(data);
+    } else {
+      reset(defaultValues);
+    }
+  }, [data, setIsOpen, reset]);
+
   const onSubmit = async (formData: ICycle) => {
-    if (!activeWorkspace) return;
+    if (!workspaceSlug) return;
     const payload = {
       ...formData,
       start_date: formData.start_date ? renderDateFormat(formData.start_date) : null,
@@ -60,7 +66,7 @@ const CreateUpdateCycleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, proj
     };
     if (!data) {
       await cycleService
-        .createCycle(activeWorkspace.slug, projectId, payload)
+        .createCycle(workspaceSlug as string, projectId, payload)
         .then((res) => {
           mutate<ICycle[]>(CYCLE_LIST(projectId), (prevData) => [res, ...(prevData ?? [])], false);
           handleClose();
@@ -74,7 +80,7 @@ const CreateUpdateCycleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, proj
         });
     } else {
       await cycleService
-        .updateCycle(activeWorkspace.slug, projectId, data.id, payload)
+        .updateCycle(workspaceSlug as string, projectId, data.id, payload)
         .then((res) => {
           mutate<ICycle[]>(
             CYCLE_LIST(projectId),
@@ -101,18 +107,14 @@ const CreateUpdateCycleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, proj
     }
   };
 
-  useEffect(() => {
-    if (data) {
-      setIsOpen(true);
-      reset(data);
-    } else {
-      reset(defaultValues);
-    }
-  }, [data, setIsOpen, reset]);
+  const handleClose = () => {
+    setIsOpen(false);
+    reset(defaultValues);
+  };
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={handleClose}>
+      <Dialog as="div" className="relative z-30" onClose={handleClose}>
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
@@ -169,20 +171,29 @@ const CreateUpdateCycleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, proj
                         />
                       </div>
                       <div>
-                        <Select
-                          id="status"
+                        <h6 className="text-gray-500">Status</h6>
+                        <Controller
                           name="status"
-                          label="Status"
-                          error={errors.status}
-                          register={register}
-                          validations={{
-                            required: "Status is required",
-                          }}
-                          options={[
-                            { label: "Draft", value: "draft" },
-                            { label: "Started", value: "started" },
-                            { label: "Completed", value: "completed" },
-                          ]}
+                          control={control}
+                          render={({ field }) => (
+                            <CustomSelect
+                              {...field}
+                              label={
+                                <span className="capitalize">{field.value ?? "Select Status"}</span>
+                              }
+                              input
+                            >
+                              {[
+                                { label: "Draft", value: "draft" },
+                                { label: "Started", value: "started" },
+                                { label: "Completed", value: "completed" },
+                              ].map((item) => (
+                                <CustomSelect.Option key={item.value} value={item.value}>
+                                  {item.label}
+                                </CustomSelect.Option>
+                              ))}
+                            </CustomSelect>
+                          )}
                         />
                       </div>
                       <div className="flex gap-x-2">
@@ -217,7 +228,7 @@ const CreateUpdateCycleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, proj
                       </div>
                     </div>
                   </div>
-                  <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
+                  <div className="mt-5 flex justify-end gap-2">
                     <Button theme="secondary" onClick={handleClose}>
                       Cancel
                     </Button>

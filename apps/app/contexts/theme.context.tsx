@@ -24,6 +24,7 @@ export const themeContext = createContext<ContextType>({} as ContextType);
 
 // types
 import type { IIssue, NestedKeyOf, ProjectViewTheme as Theme } from "types";
+import { useRouter } from "next/router";
 
 type ReducerActionType = {
   type:
@@ -148,12 +149,13 @@ const setNewDefault = async (workspaceSlug: string, projectID: string, state: an
 export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const { activeProject, activeWorkspace } = useUser();
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
 
   const { data: myViewProps, mutate: mutateMyViewProps } = useSWR(
-    activeWorkspace && activeProject ? USER_PROJECT_VIEW(activeProject.id) : null,
-    activeWorkspace && activeProject
-      ? () => projectService.projectMemberMe(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => projectService.projectMemberMe(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -176,13 +178,13 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
         groupByProperty: "state_detail.name",
       },
     });
-    if (!activeWorkspace || !activeProject) return;
-    saveDataToServer(activeWorkspace.slug, activeProject.id, {
+    if (!workspaceSlug || !projectId) return;
+    saveDataToServer(workspaceSlug as string, projectId as string, {
       ...state,
       issueView: "kanban",
       groupByProperty: "state_detail.name",
     });
-  }, [activeWorkspace, activeProject, state]);
+  }, [workspaceSlug, projectId, state]);
 
   const setIssueViewToList = useCallback(() => {
     dispatch({
@@ -197,13 +199,13 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
         groupByProperty: null,
       },
     });
-    if (!activeWorkspace || !activeProject) return;
-    saveDataToServer(activeWorkspace.slug, activeProject.id, {
+    if (!workspaceSlug || !projectId) return;
+    saveDataToServer(workspaceSlug as string, projectId as string, {
       ...state,
       issueView: "list",
       groupByProperty: null,
     });
-  }, [activeWorkspace, activeProject, state]);
+  }, [workspaceSlug, projectId, state]);
 
   const setGroupByProperty = useCallback(
     (property: NestedKeyOf<IIssue> | null) => {
@@ -214,13 +216,13 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
         },
       });
 
-      if (!activeWorkspace || !activeProject) return;
-      saveDataToServer(activeWorkspace.slug, activeProject.id, {
+      if (!workspaceSlug || !projectId) return;
+      saveDataToServer(workspaceSlug as string, projectId as string, {
         ...state,
         groupByProperty: property,
       });
     },
-    [activeProject, activeWorkspace, state]
+    [projectId, workspaceSlug, state]
   );
 
   const setOrderBy = useCallback(
@@ -232,10 +234,10 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
         },
       });
 
-      if (!activeWorkspace || !activeProject) return;
-      saveDataToServer(activeWorkspace.slug, activeProject.id, state);
+      if (!workspaceSlug || !projectId) return;
+      saveDataToServer(workspaceSlug as string, projectId as string, state);
     },
-    [activeProject, activeWorkspace, state]
+    [projectId, workspaceSlug, state]
   );
 
   const setFilterIssue = useCallback(
@@ -247,30 +249,30 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
         },
       });
 
-      if (!activeWorkspace || !activeProject) return;
-      saveDataToServer(activeWorkspace.slug, activeProject.id, {
+      if (!workspaceSlug || !projectId) return;
+      saveDataToServer(workspaceSlug as string, projectId as string, {
         ...state,
         filterIssue: property,
       });
     },
-    [activeProject, activeWorkspace, state]
+    [projectId, workspaceSlug, state]
   );
 
   const setNewDefaultView = useCallback(() => {
-    if (!activeWorkspace || !activeProject) return;
-    setNewDefault(activeWorkspace.slug, activeProject.id, state).then(() => {
+    if (!workspaceSlug || !projectId) return;
+    setNewDefault(workspaceSlug as string, projectId as string, state).then(() => {
       mutateMyViewProps();
     });
-  }, [activeProject, activeWorkspace, state, mutateMyViewProps]);
+  }, [projectId, workspaceSlug, state, mutateMyViewProps]);
 
   const resetToDefault = useCallback(() => {
     dispatch({
       type: RESET_TO_DEFAULT,
       payload: myViewProps?.default_props,
     });
-    if (!activeWorkspace || !activeProject) return;
-    saveDataToServer(activeWorkspace.slug, activeProject.id, myViewProps?.default_props);
-  }, [activeProject, activeWorkspace, myViewProps]);
+    if (!workspaceSlug || !projectId) return;
+    saveDataToServer(workspaceSlug as string, projectId as string, myViewProps?.default_props);
+  }, [projectId, workspaceSlug, myViewProps]);
 
   useEffect(() => {
     dispatch({

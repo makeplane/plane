@@ -1,16 +1,18 @@
-// react
-import React, { useEffect, useState } from "react";
-// next
+import React, { useState } from "react";
+
+import Link from "next/link";
 import { useRouter } from "next/router";
-// hooks
-import useUser from "lib/hooks/useUser";
+
 // layouts
 import Container from "layouts/container";
-import Sidebar from "layouts/navbar/main-siderbar";
-import SettingsSidebar from "layouts/navbar/settings-sidebar";
 import Header from "layouts/navbar/header";
+import Sidebar from "layouts/navbar/main-sidebar";
+import SettingsSidebar from "layouts/navbar/settings-sidebar";
 // components
-import CreateProjectModal from "components/project/create-project-modal";
+import { NotAuthorizedView } from "components/core";
+import CommandPalette from "components/command-palette";
+// ui
+import { Button } from "ui";
 // types
 import { Meta } from "./types";
 
@@ -24,93 +26,147 @@ type Props = {
   left?: JSX.Element;
   right?: JSX.Element;
   type: "workspace" | "project";
+  memberType?: {
+    isMember: boolean;
+    isOwner: boolean;
+    isViewer: boolean;
+    isGuest: boolean;
+  };
 };
+
+const workspaceLinks: (wSlug: string) => Array<{
+  label: string;
+  href: string;
+}> = (workspaceSlug) => [
+  {
+    label: "General",
+    href: `/${workspaceSlug}/settings`,
+  },
+  {
+    label: "Members",
+    href: `/${workspaceSlug}/settings/members`,
+  },
+  {
+    label: "Features",
+    href: `/${workspaceSlug}/settings/features`,
+  },
+  {
+    label: "Billing & Plans",
+    href: `/${workspaceSlug}/settings/billing`,
+  },
+];
+
+const sidebarLinks: (
+  wSlug?: string,
+  pId?: string
+) => Array<{
+  label: string;
+  href: string;
+}> = (workspaceSlug, projectId) => [
+  {
+    label: "General",
+    href: `/${workspaceSlug}/projects/${projectId}/settings`,
+  },
+  {
+    label: "Control",
+    href: `/${workspaceSlug}/projects/${projectId}/settings/control`,
+  },
+  {
+    label: "Members",
+    href: `/${workspaceSlug}/projects/${projectId}/settings/members`,
+  },
+  {
+    label: "States",
+    href: `/${workspaceSlug}/projects/${projectId}/settings/states`,
+  },
+  {
+    label: "Labels",
+    href: `/${workspaceSlug}/projects/${projectId}/settings/labels`,
+  },
+];
 
 const SettingsLayout: React.FC<Props> = ({
   meta,
   children,
-  noPadding = false,
-  bg = "primary",
-  noHeader = false,
+  noPadding,
+  bg,
+  noHeader,
   breadcrumbs,
   left,
   right,
   type,
+  memberType,
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [toggleSidebar, setToggleSidebar] = useState(false);
+  const { isMember, isOwner, isViewer, isGuest } = memberType ?? {
+    isMember: false,
+    isOwner: false,
+    isViewer: false,
+    isGuest: false,
+  };
 
-  const router = useRouter();
-
-  const { activeWorkspace, activeProject, user, isUserLoading } = useUser();
-
-  useEffect(() => {
-    if (!isUserLoading && (!user || user === null)) router.push("/signin");
-  }, [isUserLoading, user, router]);
-
-  const workspaceLinks: {
-    label: string;
-    href: string;
-  }[] = [
-    {
-      label: "General",
-      href: "#",
-    },
-    {
-      label: "Control",
-      href: "#",
-    },
-    {
-      label: "States",
-      href: "#",
-    },
-    {
-      label: "Labels",
-      href: "#",
-    },
-  ];
-
-  const sidebarLinks: {
-    label: string;
-    href: string;
-  }[] = [
-    {
-      label: "General",
-      href: `/projects/${activeProject?.id}/settings`,
-    },
-    {
-      label: "Control",
-      href: `/projects/${activeProject?.id}/settings/control`,
-    },
-    {
-      label: "Members",
-      href: `/projects/${activeProject?.id}/settings/members`,
-    },
-    {
-      label: "States",
-      href: `/projects/${activeProject?.id}/settings/states`,
-    },
-    {
-      label: "Labels",
-      href: `/projects/${activeProject?.id}/settings/labels`,
-    },
-  ];
+  const {
+    query: { workspaceSlug, projectId },
+  } = useRouter();
 
   return (
     <Container meta={meta}>
-      <CreateProjectModal isOpen={isOpen} setIsOpen={setIsOpen} />
-      <div className="h-screen w-full flex overflow-x-hidden">
-        <Sidebar collapse />
-        <SettingsSidebar links={type === "workspace" ? workspaceLinks : sidebarLinks} />
-        <main className="h-screen w-full flex flex-col overflow-y-auto min-w-0">
-          {noHeader ? null : <Header breadcrumbs={breadcrumbs} left={left} right={right} />}
-          <div
-            className={`w-full flex-grow ${noPadding ? "" : "p-5 px-16"} ${
-              bg === "primary" ? "bg-primary" : bg === "secondary" ? "bg-secondary" : "bg-primary"
-            }`}
-          >
-            {children}
-          </div>
-        </main>
+      <div className="flex h-screen w-full overflow-x-hidden">
+        <Sidebar toggleSidebar={toggleSidebar} setToggleSidebar={setToggleSidebar} />
+        <CommandPalette />
+        {isMember || isOwner ? (
+          <>
+            <SettingsSidebar
+              links={
+                type === "workspace"
+                  ? workspaceLinks(workspaceSlug as string)
+                  : sidebarLinks(workspaceSlug as string, projectId as string)
+              }
+            />
+            <main className="flex h-screen w-full min-w-0 flex-col overflow-y-auto">
+              {noHeader ? null : (
+                <Header
+                  breadcrumbs={breadcrumbs}
+                  left={left}
+                  right={right}
+                  setToggleSidebar={setToggleSidebar}
+                />
+              )}
+              <div
+                className={`w-full flex-grow ${noPadding ? "" : "p-5 pb-5 lg:px-16 lg:pt-10"} ${
+                  bg === "primary"
+                    ? "bg-primary"
+                    : bg === "secondary"
+                    ? "bg-secondary"
+                    : "bg-primary"
+                }`}
+              >
+                {children}
+              </div>
+            </main>
+          </>
+        ) : (
+          <NotAuthorizedView
+            actionButton={
+              (isViewer || isGuest) && projectId ? (
+                <Link href={`/${workspaceSlug}/projects/${projectId}/issues`}>
+                  <Button size="sm" theme="secondary">
+                    Go to Issues
+                  </Button>
+                </Link>
+              ) : (
+                (isViewer || isGuest) &&
+                workspaceSlug && (
+                  <Link href={`/${workspaceSlug}`}>
+                    <Button size="sm" theme="secondary">
+                      Go to workspace
+                    </Button>
+                  </Link>
+                )
+              )
+            }
+          />
+        )}
       </div>
     </Container>
   );

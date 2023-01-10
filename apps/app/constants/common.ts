@@ -1,5 +1,3 @@
-import { NestedKeyOf } from "types";
-
 export const classNames = (...classes: string[]) => {
   return classes.filter(Boolean).join(" ");
 };
@@ -236,3 +234,5 @@ export const getRandomEmoji = () => {
 
   return emojis[Math.floor(Math.random() * emojis.length)];
 };
+
+export const capitalizeFirstLetter = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);

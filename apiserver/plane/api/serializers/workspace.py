@@ -18,18 +18,12 @@ class WorkSpaceSerializer(BaseSerializer):
         fields = "__all__"
         read_only_fields = [
             "id",
-            "slug",
             "created_by",
             "updated_by",
             "created_at",
             "updated_at",
             "owner",
         ]
-        extra_kwargs = {
-            "slug": {
-                "required": False,
-            },
-        }
 
 
 class WorkSpaceMemberSerializer(BaseSerializer):

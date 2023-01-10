@@ -1,17 +1,18 @@
 import React from "react";
 // react hook form
 import { Controller } from "react-hook-form";
-// headless ui
-import { Listbox, Transition } from "@headlessui/react";
-// icons
-import { CheckIcon } from "@heroicons/react/20/solid";
 // constants
 import { PRIORITIES } from "constants/";
+import { capitalizeFirstLetter } from "constants/common";
+// icons
+import { ChartBarIcon } from "@heroicons/react/24/outline";
+// ui
+import { CustomListbox } from "ui";
 
 // types
 import type { IIssue } from "types";
 import type { Control } from "react-hook-form";
-import { ChartBarIcon } from "@heroicons/react/24/outline";
+import { getPriorityIcon } from "constants/global";
 
 type Props = {
   control: Control<IIssue, any>;
@@ -23,58 +24,22 @@ const SelectPriority: React.FC<Props> = ({ control }) => {
       control={control}
       name="priority"
       render={({ field: { value, onChange } }) => (
-        <Listbox value={value} onChange={onChange}>
-          {({ open }) => (
-            <>
-              <div className="relative">
-                <Listbox.Button className="flex items-center gap-1 hover:bg-gray-100 relative border rounded-md shadow-sm px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm duration-300">
-                  <ChartBarIcon className="h-3 w-3 text-gray-500" />
-                  <span className="block capitalize">
-                    {value && value !== "" ? value : "Priority"}
-                  </span>
-                </Listbox.Button>
-
-                <Transition
-                  show={open}
-                  as={React.Fragment}
-                  leave="transition ease-in duration-100"
-                  leaveFrom="opacity-100"
-                  leaveTo="opacity-0"
-                >
-                  <Listbox.Options className="absolute z-10 mt-1 w-full w-[5rem] bg-white shadow-lg max-h-28 rounded-md py-1 ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none text-xs">
-                    <div className="py-1">
-                      {PRIORITIES.map((priority) => (
-                        <Listbox.Option
-                          key={priority}
-                          className={({ active }) =>
-                            `${
-                              active ? "bg-indigo-50" : ""
-                            } text-gray-900 cursor-pointer select-none p-2`
-                          }
-                          value={priority}
-                        >
-                          {({ selected, active }) => (
-                            <>
-                              <span
-                                className={`block capitalize ${
-                                  selected ? "font-medium" : "font-normal"
-                                }`}
-                              >
-                                {priority}
-                              </span>
-                            </>
-                          )}
-                        </Listbox.Option>
-                      ))}
-                    </div>
-                  </Listbox.Options>
-                </Transition>
-              </div>
-            </>
-          )}
-        </Listbox>
+        <CustomListbox
+          title="State"
+          options={PRIORITIES?.map((priority) => {
+            return {
+              value: priority,
+              display: capitalizeFirstLetter(priority ?? "none"),
+              icon: getPriorityIcon(priority),
+            };
+          })}
+          value={value}
+          optionsFontsize="sm"
+          onChange={onChange}
+          icon={getPriorityIcon(value)}
+        />
       )}
-    ></Controller>
+    />
   );
 };
 

@@ -15,10 +15,9 @@ const initialValues: Properties = {
   state: true,
   assignee: true,
   priority: false,
-  start_date: false,
   due_date: false,
   cycle: false,
-  children_count: false,
+  sub_issue_count: false,
 };
 
 const useIssuesProperties = (workspaceSlug?: string, projectId?: string) => {
@@ -54,29 +53,31 @@ const useIssuesProperties = (workspaceSlug?: string, projectId?: string) => {
 
   const updateIssueProperties = useCallback(
     (key: keyof Properties) => {
-      if (!workspaceSlug || !projectId || !issueProperties || !user) return;
+      if (!workspaceSlug || !user) return;
       setProperties((prev) => ({ ...prev, [key]: !prev[key] }));
-      mutateIssueProperties(
-        (prev) =>
-          ({
-            ...prev,
-            properties: { ...prev?.properties, [key]: !prev?.properties?.[key] },
-          } as IssuePriorities),
-        false
-      );
-      if (Object.keys(issueProperties).length > 0) {
-        issueServices.patchIssueProperties(workspaceSlug, projectId, issueProperties.id, {
-          properties: {
-            ...issueProperties.properties,
-            [key]: !issueProperties.properties[key],
-          },
-          user: user.id,
-        });
-      } else {
-        issueServices.createIssueProperties(workspaceSlug, projectId, {
-          properties: { ...initialValues },
-          user: user.id,
-        });
+      if (issueProperties && projectId) {
+        mutateIssueProperties(
+          (prev) =>
+            ({
+              ...prev,
+              properties: { ...prev?.properties, [key]: !prev?.properties?.[key] },
+            } as IssuePriorities),
+          false
+        );
+        if (Object.keys(issueProperties).length > 0) {
+          issueServices.patchIssueProperties(workspaceSlug, projectId, issueProperties.id, {
+            properties: {
+              ...issueProperties.properties,
+              [key]: !issueProperties.properties[key],
+            },
+            user: user.id,
+          });
+        } else {
+          issueServices.createIssueProperties(workspaceSlug, projectId, {
+            properties: { ...initialValues },
+            user: user.id,
+          });
+        }
       }
     },
     [workspaceSlug, projectId, issueProperties, user, mutateIssueProperties]
@@ -87,10 +88,9 @@ const useIssuesProperties = (workspaceSlug?: string, projectId?: string) => {
     state: properties.state,
     assignee: properties.assignee,
     priority: properties.priority,
-    start_date: properties.start_date,
     due_date: properties.due_date,
     cycle: properties.cycle,
-    children_count: properties.children_count,
+    sub_issue_count: properties.sub_issue_count,
   };
 
   return [newProperties, updateIssueProperties] as const;

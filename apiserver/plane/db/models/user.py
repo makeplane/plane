@@ -67,6 +67,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     token_updated_at = models.DateTimeField(null=True)
     last_workspace_id = models.UUIDField(null=True)
     my_issues_prop = models.JSONField(null=True)
+    role = models.CharField(max_length=300, null=True, blank=True)
 
     USERNAME_FIELD = "email"
 
@@ -77,7 +78,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     class Meta:
         verbose_name = "User"
         verbose_name_plural = "Users"
-        db_table = "user"
+        db_table = "users"
         ordering = ("-created_at",)
 
     def __str__(self):
@@ -105,7 +106,7 @@ def send_welcome_email(sender, instance, created, **kwargs):
             to_email = instance.email
             from_email_string = f"Team Plane <team@mailer.plane.so>"
 
-            subject = f"Welcome {first_name}!"
+            subject = f"Welcome to Plane ✈️!"
 
             context = {"first_name": first_name, "email": instance.email}
 

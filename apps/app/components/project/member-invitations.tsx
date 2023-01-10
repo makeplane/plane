@@ -14,7 +14,6 @@ import { Button } from "ui";
 import {
   CalendarDaysIcon,
   CheckIcon,
-  EyeIcon,
   MinusIcon,
   PencilIcon,
   PlusIcon,
@@ -28,114 +27,92 @@ import { PROJECT_MEMBERS } from "constants/fetch-keys";
 // common
 import { renderShortNumericDateFormat } from "constants/common";
 
-type Props = {
+type TProjectCardProps = {
+  workspaceSlug: string;
   project: IProject;
-  slug: string;
-  invitationsRespond: string[];
-  handleInvitation: (project_invitation: any, action: "accepted" | "withdraw") => void;
+  setToJoinProject: (id: string | null) => void;
   setDeleteProject: (id: string | null) => void;
 };
 
-const ProjectMemberInvitations: React.FC<Props> = ({
-  project,
-  slug,
-  invitationsRespond,
-  handleInvitation,
-  setDeleteProject,
-}) => {
-  const { user } = useUser();
+const ProjectMemberInvitations: React.FC<TProjectCardProps> = (props) => {
+  const { workspaceSlug, project, setToJoinProject, setDeleteProject } = props;
 
+  const { user } = useUser();
   const router = useRouter();
 
-  const { data: members } = useSWR<any[]>(PROJECT_MEMBERS(project.id), () =>
-    projectService.projectMembers(slug, project.id)
+  const { data: members } = useSWR(PROJECT_MEMBERS(project.id), () =>
+    projectService.projectMembers(workspaceSlug, project.id)
   );
 
   const isMember = members?.some((item: any) => item.member.id === (user as any)?.id);
 
-  const [selected, setSelected] = useState<any>(false);
+  const canEdit = members?.some(
+    (item) => (item.member.id === (user as any)?.id && item.role === 20) || item.role === 15
+  );
+  const canDelete = members?.some(
+    (item) => item.member.id === (user as any)?.id && item.role === 20
+  );
 
   if (!members) {
     return (
-      <div className="w-full h-36 flex flex-col px-4 py-3 rounded-md bg-white">
-        <div className="w-full h-full bg-gray-50 animate-pulse" />
+      <div className="flex h-36 w-full flex-col rounded-md bg-white px-4 py-3">
+        <div className="h-full w-full animate-pulse bg-gray-50" />
       </div>
     );
   }
 
   return (
     <>
-      <div
-        className={`w-full h-full flex flex-col px-4 py-3 rounded-md border bg-white ${
-          selected ? "ring-2 ring-indigo-400" : ""
-        }`}
-      >
-        <div className="flex justify-between items-center">
-          <div className="font-medium text-lg flex gap-2">
-            {!isMember ? (
-              <input
-                id={project.id}
-                className="h-3 w-3 rounded border-gray-300 text-theme focus:ring-indigo-500 mt-2 hidden"
-                aria-describedby="workspaces"
-                name={project.id}
-                checked={invitationsRespond.includes(project.id)}
-                value={project.name}
-                onChange={(e) => {
-                  setSelected(e.target.checked);
-                  handleInvitation(
-                    project,
-                    invitationsRespond.includes(project.id) ? "withdraw" : "accepted"
-                  );
-                }}
-                type="checkbox"
-              />
-            ) : null}
-            <Link href={`/projects/${project.id}/issues`}>
-              <a className="flex flex-col">
-                {project.name}
-                <span className="text-xs">({project.identifier})</span>
+      <div className="flex h-full w-full flex-col rounded-md border bg-white px-4 py-3">
+        <div className="flex items-center justify-between">
+          <div className="flex gap-2 text-lg font-medium">
+            <Link href={`/${workspaceSlug}/projects/${project.id}/issues`}>
+              <a className="flex items-center gap-x-3">
+                {project.icon && (
+                  <span className="text-base">{String.fromCodePoint(parseInt(project.icon))}</span>
+                )}
+                <span>{project.name}</span>
+                <span className="text-xs text-gray-500">{project.identifier}</span>
               </a>
             </Link>
           </div>
           {isMember ? (
             <div className="flex">
-              <Link href={`/projects/${project.id}/settings`}>
-                <a className="h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-100 duration-300 cursor-pointer">
-                  <PencilIcon className="h-4 w-4" />
-                </a>
-              </Link>
-              <button
-                type="button"
-                className="h-7 w-7 p-1 grid place-items-center rounded hover:bg-gray-100 duration-300 outline-none"
-                onClick={() => setDeleteProject(project.id)}
-              >
-                <TrashIcon className="h-4 w-4 text-red-500" />
-              </button>
+              {canEdit && (
+                <Link href={`/${workspaceSlug}/projects/${project.id}/settings`}>
+                  <a className="grid h-7 w-7 cursor-pointer place-items-center rounded p-1 duration-300 hover:bg-gray-100">
+                    <PencilIcon className="h-4 w-4" />
+                  </a>
+                </Link>
+              )}
+              {canDelete && (
+                <button
+                  type="button"
+                  className="grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-100"
+                  onClick={() => setDeleteProject(project.id)}
+                >
+                  <TrashIcon className="h-4 w-4 text-red-500" />
+                </button>
+              )}
             </div>
           ) : null}
         </div>
         <div className="mt-2">
           <p className="text-sm">{project.description}</p>
         </div>
-        <div className="mt-3 h-full flex justify-between items-end">
+        <div className="mt-3 flex h-full items-end justify-between">
           <div className="flex gap-2">
             {!isMember ? (
-              <label
-                htmlFor={project.id}
-                className="flex items-center gap-1 text-xs font-medium border hover:bg-gray-100 p-2 rounded duration-300 cursor-pointer"
+              <button
+                type="button"
+                onClick={() => {
+                  setToJoinProject(project.id);
+                }}
+                className="flex cursor-pointer items-center gap-1 rounded border p-2 text-xs font-medium duration-300 hover:bg-gray-100"
               >
-                {selected ? (
-                  <>
-                    <MinusIcon className="h-3 w-3" />
-                    Remove
-                  </>
-                ) : (
-                  <>
-                    <PlusIcon className="h-3 w-3" />
-                    Select to Join
-                  </>
-                )}
-              </label>
+                <PlusIcon className="h-3 w-3" />
+                <span>Select to Join</span>
+              </button>
             ) : (
               <Button theme="secondary" className="flex items-center gap-1" disabled>
                 <CheckIcon className="h-3 w-3" />
@@ -145,13 +122,13 @@ const ProjectMemberInvitations: React.FC<Props> = ({
             <Button
               theme="secondary"
               className="flex items-center gap-1"
-              onClick={() => router.push(`/projects/${project.id}/issues`)}
+              onClick={() => router.push(`/${workspaceSlug}/projects/${project.id}/issues`)}
             >
               <ClipboardDocumentListIcon className="h-3 w-3" />
               Open Project
             </Button>
           </div>
-          <div className="flex items-center gap-1 text-xs mb-1">
+          <div className="mb-1 flex items-center gap-1 text-xs">
             <CalendarDaysIcon className="h-4 w-4" />
             {renderShortNumericDateFormat(project.created_at)}
           </div>

@@ -3,15 +3,16 @@ export type Props = {
   label?: string | JSX.Element;
   className?: string;
   ellipsis?: boolean;
-  width?: "auto";
+  width?: "sm" | "md" | "lg" | "xl" | "auto";
   textAlignment?: "left" | "center" | "right";
-  withoutBorder?: boolean;
+  noBorder?: boolean;
   optionsPosition?: "left" | "right";
 };
 
 export type MenuItemProps = {
-  children: string;
+  children: JSX.Element | string;
   renderAs?: "button" | "a";
   href?: string;
   onClick?: () => void;
+  className?: string;
 };

@@ -1,20 +1,20 @@
-import React, { useEffect, useState } from "react";
-// next
-import type { NextPage } from "next";
+import React, { useState } from "react";
+
+import Link from "next/link";
 import { useRouter } from "next/router";
-// swr
+import type { NextPage, NextPageContext } from "next";
+
 import useSWR from "swr";
 // services
 import workspaceService from "lib/services/workspace.service";
-import userService from "lib/services/user.service";
 // hooks
 import useUser from "lib/hooks/useUser";
 // constants
+import { requiredAuth } from "lib/auth";
+import { USER_WORKSPACES } from "constants/fetch-keys";
 import { USER_WORKSPACE_INVITATIONS } from "constants/api-routes";
-// hoc
-import withAuth from "lib/hoc/withAuthWrapper";
 // layouts
-import DefaultLayout from "layouts/DefaultLayout";
+import DefaultLayout from "layouts/default-layout";
 // components
 import SingleInvitation from "components/workspace/SingleInvitation";
 // ui
@@ -23,17 +23,20 @@ import { Button, Spinner, EmptySpace, EmptySpaceItem } from "ui";
 import { CubeIcon, PlusIcon } from "@heroicons/react/24/outline";
 // types
 import type { IWorkspaceMemberInvitation } from "types";
-import Link from "next/link";
 
 const OnBoard: NextPage = () => {
-  const router = useRouter();
-
-  const { workspaces, mutateWorkspaces, user } = useUser();
-
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
 
-  const { data: invitations, mutate } = useSWR(USER_WORKSPACE_INVITATIONS, () =>
+  const { user } = useUser();
+
+  const router = useRouter();
+
+  const { data: invitations, mutate: mutateInvitations } = useSWR(USER_WORKSPACE_INVITATIONS, () =>
     workspaceService.userWorkspaceInvitations()
+  );
+
+  const { data: workspaces, mutate: mutateWorkspaces } = useSWR(USER_WORKSPACES, () =>
+    workspaceService.userWorkspaces()
   );
 
   const handleInvitation = (
@@ -52,25 +55,18 @@ const OnBoard: NextPage = () => {
   };
 
   const submitInvitations = () => {
-    userService.updateUserOnBoard().then((response) => {
-      console.log(response);
-    });
+    // userService.updateUserOnBoard();
+
     workspaceService
       .joinWorkspaces({ invitations: invitationsRespond })
-      .then(async (res: any) => {
-        console.log(res);
-        await mutate();
-        await mutateWorkspaces();
-        router.push("/workspace");
+      .then(() => {
+        mutateInvitations();
+        mutateWorkspaces();
       })
       .catch((err) => {
         console.log(err);
       });
   };
-
-  // useEffect(() => {
-  //   if (workspaces && workspaces.length === 0) setCanRedirect(false);
-  // }, [workspaces]);
 
   return (
     <DefaultLayout
@@ -82,12 +78,12 @@ const OnBoard: NextPage = () => {
     >
       <div className="flex min-h-full flex-col items-center justify-center p-4 sm:p-0">
         {user && (
-          <div className="w-96 p-2 rounded-lg bg-indigo-100 text-theme mb-10">
-            <p className="text-sm text-center">logged in as {user.email}</p>
+          <div className="mb-10 w-96 rounded-lg bg-indigo-100 p-2 text-theme">
+            <p className="text-center text-sm">logged in as {user.email}</p>
           </div>
         )}
 
-        <div className="w-full md:w-2/3 lg:w-1/3 p-8 rounded-lg">
+        <div className="w-full rounded-lg p-8 md:w-2/3 lg:w-1/3">
           {invitations && workspaces ? (
             invitations.length > 0 ? (
               <div>
@@ -108,7 +104,10 @@ const OnBoard: NextPage = () => {
                     />
                   ))}
                 </ul>
-                <div className="mt-6">
+                <div className="mt-6 flex items-center gap-2">
+                  <Button className="w-full" theme="secondary" onClick={() => router.push("/")}>
+                    Skip
+                  </Button>
                   <Button className="w-full" onClick={submitInvitations}>
                     Accept and Continue
                   </Button>
@@ -116,15 +115,15 @@ const OnBoard: NextPage = () => {
               </div>
             ) : workspaces && workspaces.length > 0 ? (
               <div className="mt-3 flex flex-col gap-y-3">
-                <h2 className="text-2xl font-medium mb-4">Your workspaces</h2>
+                <h2 className="mb-4 text-2xl font-medium">Your workspaces</h2>
                 {workspaces.map((workspace) => (
                   <div
-                    className="flex items-center justify-between border px-4 py-2 rounded mb-2"
+                    className="mb-2 flex items-center justify-between rounded border px-4 py-2"
                     key={workspace.id}
                   >
                     <div className="flex items-center gap-x-2">
                       <CubeIcon className="h-5 w-5 text-gray-400" />
-                      <Link href={"/workspace"}>
+                      <Link href={workspace.slug}>
                         <a>{workspace.name}</a>
                       </Link>
                     </div>
@@ -133,8 +132,10 @@ const OnBoard: NextPage = () => {
                     </div>
                   </div>
                 ))}
-                <Link href={"/workspace"}>
-                  <Button type="button">Go to workspaces</Button>
+                <Link href="/">
+                  <a>
+                    <Button type="button">Go to workspaces</Button>
+                  </a>
                 </Link>
               </div>
             ) : (
@@ -155,7 +156,7 @@ const OnBoard: NextPage = () => {
               )
             )
           ) : (
-            <div className="w-full h-full flex justify-center items-center">
+            <div className="flex h-full w-full items-center justify-center">
               <Spinner />
             </div>
           )}
@@ -165,4 +166,25 @@ const OnBoard: NextPage = () => {
   );
 };
 
-export default withAuth(OnBoard);
+export const getServerSideProps = async (ctx: NextPageContext) => {
+  const user = await requiredAuth(ctx.req?.headers.cookie);
+
+  const redirectAfterSignIn = ctx.req?.url;
+
+  if (!user) {
+    return {
+      redirect: {
+        destination: `/signin?next=${redirectAfterSignIn}`,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      user,
+    },
+  };
+};
+
+export default OnBoard;

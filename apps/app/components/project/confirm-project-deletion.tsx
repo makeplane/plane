@@ -1,39 +1,53 @@
 import React, { useEffect, useRef, useState } from "react";
-// headless ui
+
+import { mutate } from "swr";
+
 import { Dialog, Transition } from "@headlessui/react";
+
 // services
 import projectService from "lib/services/project.service";
+// constants
+import { PROJECTS_LIST } from "constants/fetch-keys";
 // hooks
-import useUser from "lib/hooks/useUser";
 import useToast from "lib/hooks/useToast";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
 import { Button, Input } from "ui";
 // types
-import type { IProject } from "types";
+import type { IProject, IWorkspace } from "types";
 
-type Props = {
+type TConfirmProjectDeletionProps = {
   isOpen: boolean;
   onClose: () => void;
+  onSuccess?: () => void;
   data: IProject | null;
 };
 
-const ConfirmProjectDeletion: React.FC<Props> = ({ isOpen, data, onClose }) => {
+const ConfirmProjectDeletion: React.FC<TConfirmProjectDeletionProps> = (props) => {
+  const { isOpen, data, onClose, onSuccess } = props;
+
+  const cancelButtonRef = useRef(null);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
-
-  const [selectedProject, setSelectedProject] = useState<IProject | null>(null);
-
   const [confirmProjectName, setConfirmProjectName] = useState("");
   const [confirmDeleteMyProject, setConfirmDeleteMyProject] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<IProject | null>(null);
 
-  const canDelete = confirmProjectName === data?.name && confirmDeleteMyProject;
-
-  const { activeWorkspace, mutateProjects } = useUser();
+  const workspaceSlug = (data?.workspace as IWorkspace)?.slug;
 
   const { setToastAlert } = useToast();
 
-  const cancelButtonRef = useRef(null);
+  const canDelete = confirmProjectName === data?.name && confirmDeleteMyProject;
+
+  useEffect(() => {
+    if (data) setSelectedProject(data);
+    else {
+      const timer = setTimeout(() => {
+        setSelectedProject(null);
+        clearTimeout(timer);
+      }, 300);
+    }
+  }, [data]);
 
   const handleClose = () => {
     setIsDeleteLoading(false);
@@ -47,12 +61,15 @@ const ConfirmProjectDeletion: React.FC<Props> = ({ isOpen, data, onClose }) => {
 
   const handleDeletion = async () => {
     setIsDeleteLoading(true);
-    if (!data || !activeWorkspace || !canDelete) return;
+    if (!data || !workspaceSlug || !canDelete) return;
     await projectService
-      .deleteProject(activeWorkspace.slug, data.id)
+      .deleteProject(workspaceSlug, data.id)
       .then(() => {
         handleClose();
-        mutateProjects((prevData) => (prevData ?? []).filter((item) => item.id !== data.id), false);
+        mutate<IProject[]>(PROJECTS_LIST(workspaceSlug), (prevData) =>
+          prevData?.filter((project: IProject) => project.id !== data.id)
+        );
+        if (onSuccess) onSuccess();
         setToastAlert({
           title: "Success",
           type: "success",
@@ -64,16 +81,6 @@ const ConfirmProjectDeletion: React.FC<Props> = ({ isOpen, data, onClose }) => {
         setIsDeleteLoading(false);
       });
   };
-
-  useEffect(() => {
-    if (data) setSelectedProject(data);
-    else {
-      const timer = setTimeout(() => {
-        setSelectedProject(null);
-        clearTimeout(timer);
-      }, 300);
-    }
-  }, [data]);
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
@@ -127,7 +134,7 @@ const ConfirmProjectDeletion: React.FC<Props> = ({ isOpen, data, onClose }) => {
                           removed. This action cannot be undone.
                         </p>
                       </div>
-                      <div className="h-0.5 bg-gray-200 my-3" />
+                      <div className="my-3 h-0.5 bg-gray-200" />
                       <div className="mt-3">
                         <p className="text-sm">
                           Enter the project name{" "}

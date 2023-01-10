@@ -1,4 +1,4 @@
-import type { IState, IUser, IProject, ICycle } from "./";
+import type { IState, IUser, IProject, ICycle, IModule, IUserLite } from "./";
 
 export interface IssueResponse {
   next_cursor: string;
@@ -24,6 +24,32 @@ export interface IIssueCycle {
   cycle: string;
 }
 
+export interface IIssueModule {
+  created_at: Date;
+  created_by: string;
+  id: string;
+  issue: string;
+  module: string;
+  module_detail: IModule;
+  project: string;
+  updated_at: Date;
+  updated_by: string;
+  workspace: string;
+}
+
+export interface IIssueCycle {
+  created_at: Date;
+  created_by: string;
+  cycle: string;
+  cycle_detail: ICycle;
+  id: string;
+  issue: string;
+  project: string;
+  updated_at: Date;
+  updated_by: string;
+  workspace: string;
+}
+
 export interface IIssue {
   id: string;
   state_detail: IState;
@@ -35,23 +61,14 @@ export interface IIssue {
   blocker_issues: BlockeIssue[];
   blockers_list: string[];
   blocked_list: string[];
+  blocks_list: string[];
   created_at: Date;
   updated_at: Date;
   name: string;
-  // TODO change type of description
-  issue_cycle: {
-    created_at: Date;
-    created_by: string;
-    cycle: string;
-    cycle_detail: ICycle;
-    id: string;
-    issue: string;
-    project: string;
-    updated_at: Date;
-    updated_by: string;
-    workspace: string;
-  } | null;
+  issue_cycle: IIssueCycle | null;
+  issue_module: IIssueModule | null;
   description: any;
+  description_html: any;
   priority: string | null;
   start_date: string | null;
   target_date: string | null;
@@ -71,10 +88,9 @@ export interface IIssue {
   blockers: any[];
   blocked_issue_details: any[];
   sprints: string | null;
+  module: string | null;
   cycle: string | null;
   cycle_detail: ICycle | null;
-
-  issue_cycle: IIssueCycle;
 }
 
 export interface BlockeIssue {
@@ -107,6 +123,8 @@ export interface IIssueComment {
   created_at: Date;
   updated_at: Date;
   comment: string;
+  comment_html: string;
+  comment_json: any;
   attachments: any[];
   created_by: string;
   updated_by: string;
@@ -130,10 +148,9 @@ export type Properties = {
   state: boolean;
   assignee: boolean;
   priority: boolean;
-  start_date: boolean;
   due_date: boolean;
   cycle: boolean;
-  children_count: boolean;
+  sub_issue_count: boolean;
 };
 
 export interface IIssueLabels {
@@ -148,4 +165,26 @@ export interface IIssueLabels {
   project: string;
   workspace: string;
   parent: string | null;
+}
+
+export interface IIssueActivity {
+  id: string;
+  actor_detail: IUser;
+  created_at: Date;
+  updated_at: Date;
+  verb: string;
+  field: string | null;
+  old_value: string | null;
+  new_value: string | null;
+  comment: string;
+  attachments: any[];
+  old_identifier: string | null;
+  new_identifier: string | null;
+  created_by: string;
+  updated_by: string;
+  project: string;
+  workspace: string;
+  issue: string;
+  issue_comment: string | null;
+  actor: string;
 }

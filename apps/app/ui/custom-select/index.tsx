@@ -10,7 +10,10 @@ type CustomSelectProps = {
   children: React.ReactNode;
   label: string | JSX.Element;
   textAlignment?: "left" | "center" | "right";
+  maxHeight?: "sm" | "rg" | "md" | "lg" | "none";
   width?: "auto" | string;
+  input?: boolean;
+  noChevron?: boolean;
 };
 
 const CustomSelect = ({
@@ -19,18 +22,23 @@ const CustomSelect = ({
   textAlignment,
   value,
   onChange,
+  maxHeight = "none",
   width = "auto",
+  input = false,
+  noChevron = false,
 }: CustomSelectProps) => {
   return (
     <Listbox
       as="div"
       value={value}
       onChange={onChange}
-      className="relative text-left flex-shrink-0"
+      className="relative flex-shrink-0 text-left"
     >
       <div>
         <Listbox.Button
-          className={`flex justify-between items-center gap-1 hover:bg-gray-100 border rounded-md shadow-sm px-2 w-full py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-xs duration-300 ${
+          className={`flex w-full cursor-pointer items-center justify-between gap-1 rounded-md border shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
+            input ? "border-gray-300 px-3 py-2 text-sm" : "px-2 py-1 text-xs"
+          } ${
             textAlignment === "right"
               ? "text-right"
               : textAlignment === "center"
@@ -39,7 +47,7 @@ const CustomSelect = ({
           }`}
         >
           {label}
-          <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
+          {!noChevron && <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />}
         </Listbox.Button>
       </div>
 
@@ -53,8 +61,18 @@ const CustomSelect = ({
         leaveTo="transform opacity-0 scale-95"
       >
         <Listbox.Options
-          className={`absolute right-0 z-10 mt-1 origin-top-right rounded-md bg-white text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ${
+          className={`absolute right-0 z-10 mt-1 origin-top-right overflow-y-auto rounded-md bg-white text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ${
             width === "auto" ? "min-w-full whitespace-nowrap" : "w-56"
+          } ${input ? "max-h-48" : ""} ${
+            maxHeight === "lg"
+              ? "max-h-60"
+              : maxHeight === "md"
+              ? "max-h-48"
+              : maxHeight === "rg"
+              ? "max-h-36"
+              : maxHeight === "sm"
+              ? "max-h-28"
+              : ""
           }`}
         >
           <div className="py-1">{children}</div>
@@ -66,7 +84,7 @@ const CustomSelect = ({
 
 type OptionProps = {
   children: string | JSX.Element;
-  value: string;
+  value: any;
   className?: string;
 };
 
@@ -75,9 +93,9 @@ const Option: React.FC<OptionProps> = ({ children, value, className }) => {
     <Listbox.Option
       value={value}
       className={({ active, selected }) =>
-        `${
-          active || selected ? "bg-indigo-50" : ""
-        } flex items-center gap-2 text-gray-900 cursor-pointer select-none relative p-2 truncate ${className}`
+        `${selected ? "bg-indigo-50 font-medium" : ""} ${
+          active ? "bg-indigo-50" : ""
+        } relative flex cursor-pointer select-none items-center gap-2 truncate p-2 text-gray-900 ${className}`
       }
     >
       {children}

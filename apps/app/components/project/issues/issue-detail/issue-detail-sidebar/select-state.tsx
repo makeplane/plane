@@ -1,16 +1,21 @@
-// react-hook-form
+import React from "react";
+
+import { useRouter } from "next/router";
+
+import useSWR from "swr";
+
 import { Control, Controller } from "react-hook-form";
-// hooks
-import useUser from "lib/hooks/useUser";
-// headless ui
-import { Listbox, Transition } from "@headlessui/react";
+// services
+import stateService from "lib/services/state.service";
+// icons
+import { Squares2X2Icon } from "@heroicons/react/24/outline";
+// constants
+import { classNames } from "constants/common";
+import { STATE_LIST } from "constants/fetch-keys";
 // types
 import { IIssue } from "types";
-import { classNames } from "constants/common";
-import { CustomMenu, Spinner } from "ui";
-import React from "react";
-import { ChevronDownIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
-import CustomSelect from "ui/custom-select";
+// ui
+import { Spinner, CustomSelect } from "ui";
 
 type Props = {
   control: Control<IIssue, any>;
@@ -18,12 +23,20 @@ type Props = {
 };
 
 const SelectState: React.FC<Props> = ({ control, submitChanges }) => {
-  const { states } = useUser();
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
+
+  const { data: states } = useSWR(
+    workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
+      : null
+  );
 
   return (
-    <div className="flex items-center py-2 flex-wrap">
+    <div className="flex flex-wrap items-center py-2">
       <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
-        <Squares2X2Icon className="flex-shrink-0 h-4 w-4" />
+        <Squares2X2Icon className="h-4 w-4 flex-shrink-0" />
         <p>State</p>
       </div>
       <div className="sm:basis-1/2">
@@ -42,7 +55,7 @@ const SelectState: React.FC<Props> = ({ control, submitChanges }) => {
                   {value ? (
                     <>
                       <span
-                        className="h-2 w-2 rounded-full flex-shrink-0"
+                        className="h-2 w-2 flex-shrink-0 rounded-full"
                         style={{
                           backgroundColor: states?.find((option) => option.id === value)?.color,
                         }}
@@ -66,7 +79,7 @@ const SelectState: React.FC<Props> = ({ control, submitChanges }) => {
                       <>
                         {option.color && (
                           <span
-                            className="h-2 w-2 rounded-full flex-shrink-0"
+                            className="h-2 w-2 flex-shrink-0 rounded-full"
                             style={{ backgroundColor: option.color }}
                           ></span>
                         )}

@@ -14,7 +14,7 @@ class View(ProjectBaseModel):
     class Meta:
         verbose_name = "View"
         verbose_name_plural = "Views"
-        db_table = "view"
+        db_table = "views"
         ordering = ("-created_at",)
 
     def __str__(self):

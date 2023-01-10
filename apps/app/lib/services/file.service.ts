@@ -10,8 +10,8 @@ class FileServices extends APIService {
     super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
   }
 
-  async uploadFile(file: FormData): Promise<any> {
-    return this.mediaUpload(S3_URL, file)
+  async uploadFile(workspaceSlug: string, file: FormData): Promise<any> {
+    return this.mediaUpload(S3_URL(workspaceSlug), file)
       .then((response) => {
         return response?.data;
       })

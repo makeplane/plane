@@ -6,7 +6,7 @@ from datetime import timedelta
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "taggit",
     "fieldsignals",
     "django_rq",
+    "channels",
 ]
 
 MIDDLEWARE = [
@@ -109,6 +110,7 @@ JWT_AUTH = {
 }
 
 WSGI_APPLICATION = "plane.wsgi.application"
+ASGI_APPLICATION = "plane.asgi.application"
 
 # Django Sites
 
