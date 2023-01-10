@@ -121,7 +121,7 @@ const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, pro
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={handleClose}>
+      <Dialog as="div" className="relative z-20" onClose={handleClose}>
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
@@ -134,7 +134,7 @@ const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, pro
           <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
         </Transition.Child>
 
-        <div className="fixed inset-0 z-10 overflow-y-auto">
+        <div className="fixed inset-0 z-20 overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
             <Transition.Child
               as={React.Fragment}
@@ -214,7 +214,7 @@ const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, pro
                       </div>
                     </div>
                   </div>
-                  <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
+                  <div className="mt-5 flex justify-end gap-2">
                     <Button theme="secondary" onClick={handleClose}>
                       Cancel
                     </Button>

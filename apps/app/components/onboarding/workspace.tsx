@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Image from "next/image";
 
@@ -48,6 +48,7 @@ const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
     handleSubmit,
     control,
     setValue,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<IWorkspace>({ defaultValues });
 
@@ -107,6 +108,10 @@ const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
         setIsJoiningWorkspaces(false);
       });
   };
+
+  useEffect(() => {
+    reset(defaultValues);
+  }, [reset]);
 
   return (
     <div className="grid w-full place-items-center">

@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import type { NextPage, NextPageContext } from "next";
 import { useRouter } from "next/router";
 
 import { mutate } from "swr";
 
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 // services
 import workspaceService from "lib/services/workspace.service";
 // hooks
@@ -16,21 +16,30 @@ import { USER_WORKSPACES } from "constants/fetch-keys";
 // layouts
 import DefaultLayout from "layouts/DefaultLayout";
 // ui
-import { Input, Button, Select } from "ui";
+import { CustomSelect, Input } from "ui";
 // types
 import type { IWorkspace } from "types";
+// constants
+import { companySize } from "constants/";
+
+const defaultValues = {
+  name: "",
+  slug: "",
+  company_size: null,
+};
 
 const CreateWorkspace: NextPage = () => {
+  const [slugError, setSlugError] = useState(false);
+
   const {
     register,
     handleSubmit,
+    control,
     setError,
+    setValue,
+    reset,
     formState: { errors, isSubmitting },
-  } = useForm<IWorkspace>({
-    defaultValues: {
-      name: "",
-    },
-  });
+  } = useForm<IWorkspace>({ defaultValues });
 
   const router = useRouter();
 
@@ -38,10 +47,19 @@ const CreateWorkspace: NextPage = () => {
 
   const onSubmit = async (formData: IWorkspace) => {
     await workspaceService
-      .createWorkspace(formData)
+      .workspaceSlugCheck(formData.slug)
       .then((res) => {
-        router.push("/");
-        mutate<IWorkspace[]>(USER_WORKSPACES, (prevData) => [res, ...(prevData ?? [])]);
+        if (res.status === true) {
+          workspaceService
+            .createWorkspace(formData)
+            .then((res) => {
+              router.push("/");
+              mutate<IWorkspace[]>(USER_WORKSPACES, (prevData) => [res, ...(prevData ?? [])]);
+            })
+            .catch((err) => {
+              console.error(err);
+            });
+        } else setSlugError(true);
       })
       .catch((err) => {
         Object.keys(err).map((key) => {
@@ -54,6 +72,10 @@ const CreateWorkspace: NextPage = () => {
       });
   };
 
+  useEffect(() => {
+    reset(defaultValues);
+  }, [reset]);
+
   return (
     <DefaultLayout>
       <div className="flex h-full w-full flex-col items-center justify-center px-4">
@@ -64,60 +86,74 @@ const CreateWorkspace: NextPage = () => {
         )}
         <div className="flex w-full flex-col justify-between space-y-4 rounded border bg-white p-4 px-6 md:w-2/3 lg:w-1/3">
           <h2 className="mb-4 text-center text-2xl font-medium">Create a new workspace</h2>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="space-y-4">
-              <div>
-                <Input
-                  id="name"
-                  label="Workspace Name"
-                  name="name"
-                  autoComplete="off"
-                  register={register}
-                  validations={{
-                    required: "Name is required",
-                  }}
-                  error={errors.name}
-                  placeholder="Enter workspace name"
-                />
+          <form className="mt-4 space-y-8" onSubmit={handleSubmit(onSubmit)}>
+            <div className="w-full space-y-4 bg-white">
+              <div className="grid grid-cols-1 gap-4">
+                <div>
+                  <Input
+                    label="Workspace name"
+                    name="name"
+                    placeholder="Enter name"
+                    autoComplete="off"
+                    register={register}
+                    onChange={(e) =>
+                      setValue("slug", e.target.value.toLocaleLowerCase().replace(/ /g, "-"))
+                    }
+                    validations={{
+                      required: "Workspace name is required",
+                    }}
+                    error={errors.name}
+                  />
+                </div>
+                <div className="flex items-center rounded-md border px-3">
+                  <span className="text-sm text-slate-600">{"https://app.plane.so/"}</span>
+                  <Input
+                    name="slug"
+                    mode="transparent"
+                    autoComplete="off"
+                    register={register}
+                    className="block w-full rounded-md bg-transparent py-2 px-0 text-sm  focus:outline-none focus:ring-0"
+                  />
+                </div>
+                {slugError && (
+                  <span className="-mt-3 text-sm text-red-500">
+                    Workspace URL is already taken!
+                  </span>
+                )}
+                <div>
+                  <Controller
+                    name="company_size"
+                    control={control}
+                    rules={{ required: "This field is required" }}
+                    render={({ field: { value, onChange } }) => (
+                      <CustomSelect
+                        value={value}
+                        onChange={onChange}
+                        label={value ? value.toString() : "Select company size"}
+                        input
+                      >
+                        {companySize?.map((item) => (
+                          <CustomSelect.Option key={item.value} value={item.value}>
+                            {item.label}
+                          </CustomSelect.Option>
+                        ))}
+                      </CustomSelect>
+                    )}
+                  />
+                  {errors.company_size && (
+                    <span className="text-sm text-red-500">{errors.company_size.message}</span>
+                  )}
+                </div>
               </div>
-              <div>
-                <Input
-                  id="url"
-                  label="Workspace URL"
-                  name="url"
-                  autoComplete="off"
-                  validations={{
-                    required: "URL is required",
-                  }}
-                  placeholder="Enter workspace URL"
-                />
-              </div>
-              <div>
-                <Select
-                  id="size"
-                  name="company_size"
-                  label="How large is your company?"
-                  register={register}
-                  options={[
-                    { value: 5, label: "5" },
-                    { value: 10, label: "10" },
-                    { value: 25, label: "25" },
-                    { value: 50, label: "50" },
-                  ]}
-                />
-              </div>
-              <div>
-                <Input
-                  id="projects"
-                  label="What is your role?"
-                  name="projects"
-                  autoComplete="off"
-                  placeholder="Head of Engineering"
-                />
-              </div>
-              <Button type="submit" className="w-full" disabled={isSubmitting}>
-                {isSubmitting ? "Creating Workspace..." : "Create Workspace"}
-              </Button>
+            </div>
+            <div className="mx-auto h-1/4 lg:w-1/2">
+              <button
+                type="submit"
+                className="w-full rounded-md bg-gray-200 px-4 py-2 text-sm"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Creating..." : "Continue"}
+              </button>
             </div>
           </form>
         </div>

@@ -8,6 +8,7 @@ type Props = {
   theme?: "primary" | "secondary" | "success" | "danger";
   size?: "sm" | "rg" | "md" | "lg";
   disabled?: boolean;
+  largePadding?: boolean;
 };
 
 // commons
@@ -23,6 +24,7 @@ const Button = React.forwardRef<HTMLButtonElement, Props>(
       className = "",
       theme = "primary",
       disabled = false,
+      largePadding,
     },
     ref
   ) => {
@@ -54,7 +56,8 @@ const Button = React.forwardRef<HTMLButtonElement, Props>(
             ? "text-md px-3 py-2"
             : size === "lg"
             ? "text-md px-4 py-2"
-            : "px-2.5 py-2 text-sm"
+            : "px-2.5 py-2 text-sm",
+          largePadding ? "px-8" : ""
         )}
       >
         {children}

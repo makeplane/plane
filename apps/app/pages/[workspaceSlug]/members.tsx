@@ -23,7 +23,7 @@ import withAuthWrapper from "lib/hoc/withAuthWrapper";
 import AppLayout from "layouts/app-layout";
 // components
 import SendWorkspaceInvitationModal from "components/workspace/send-workspace-invitation-modal";
-import ConfirmWorkspaceMemberRemove from "components/workspace/ConfirmWorkspaceMemberRemove";
+import ConfirmWorkspaceMemberRemove from "components/workspace/confirm-workspace-member-remove";
 // ui
 import { Spinner, CustomListbox, BreadcrumbItem, Breadcrumbs, HeaderButton } from "ui";
 // icons
