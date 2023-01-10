@@ -1,6 +1,8 @@
-import { ArrowLeftIcon, HomeIcon } from "@heroicons/react/24/outline";
-import Link from "next/link";
 import { useRouter } from "next/router";
+import Link from "next/link";
+
+// icons
+import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 
 type BreadcrumbsProps = {
   children: any;
