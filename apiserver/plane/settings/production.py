@@ -211,9 +211,9 @@ class RedisSSLContext:
 
 url = urlparse(os.environ.get("REDIS_URL"))
 
-DYNO = os.environ.get("DYNO", False)
+DOCKERIZED = os.environ.get("DOCKERIZED", False) # Set the variable true if running in docker-compose environment
 
-if DYNO:
+if not DOCKERIZED:
 
     ssl_context = ssl.SSLContext()
     ssl_context.check_hostname = False
