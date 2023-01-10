@@ -28,26 +28,20 @@ import { PROJECT_MEMBERS } from "constants/fetch-keys";
 import { renderShortNumericDateFormat } from "constants/common";
 
 type TProjectCardProps = {
-  slug: string;
+  workspaceSlug: string;
   project: IProject;
-  invitationsRespond: string[];
-  handleInvitation: (project_invitation: any, action: "accepted" | "withdraw") => void;
+  setToJoinProject: (id: string | null) => void;
   setDeleteProject: (id: string | null) => void;
 };
 
 const ProjectMemberInvitations: React.FC<TProjectCardProps> = (props) => {
-  const { slug, project, invitationsRespond, handleInvitation, setDeleteProject } = props;
-
-  const [selected, setSelected] = useState<any>(false);
+  const { workspaceSlug, project, setToJoinProject, setDeleteProject } = props;
 
   const { user } = useUser();
   const router = useRouter();
-  const {
-    query: { workspaceSlug },
-  } = router;
 
   const { data: members } = useSWR(PROJECT_MEMBERS(project.id), () =>
-    projectService.projectMembers(slug, project.id)
+    projectService.projectMembers(workspaceSlug, project.id)
   );
 
   const isMember = members?.some((item: any) => item.member.id === (user as any)?.id);
@@ -69,31 +63,9 @@ const ProjectMemberInvitations: React.FC<TProjectCardProps> = (props) => {
 
   return (
     <>
-      <div
-        className={`flex h-full w-full flex-col rounded-md border bg-white px-4 py-3 ${
-          selected ? "ring-2 ring-indigo-400" : ""
-        }`}
-      >
+      <div className="flex h-full w-full flex-col rounded-md border bg-white px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex gap-2 text-lg font-medium">
-            {!isMember ? (
-              <input
-                id={project.id}
-                className="mt-2 hidden h-3 w-3 rounded border-gray-300 text-theme focus:ring-indigo-500"
-                aria-describedby="workspaces"
-                name={project.id}
-                checked={invitationsRespond.includes(project.id)}
-                value={project.name}
-                onChange={(e) => {
-                  setSelected(e.target.checked);
-                  handleInvitation(
-                    project,
-                    invitationsRespond.includes(project.id) ? "withdraw" : "accepted"
-                  );
-                }}
-                type="checkbox"
-              />
-            ) : null}
             <Link href={`/${workspaceSlug}/projects/${project.id}/issues`}>
               <a className="flex items-center gap-x-3">
                 {project.icon && (
@@ -131,22 +103,16 @@ const ProjectMemberInvitations: React.FC<TProjectCardProps> = (props) => {
         <div className="mt-3 flex h-full items-end justify-between">
           <div className="flex gap-2">
             {!isMember ? (
-              <label
-                htmlFor={project.id}
+              <button
+                type="button"
+                onClick={() => {
+                  setToJoinProject(project.id);
+                }}
                 className="flex cursor-pointer items-center gap-1 rounded border p-2 text-xs font-medium duration-300 hover:bg-gray-100"
               >
-                {selected ? (
-                  <>
-                    <MinusIcon className="h-3 w-3" />
-                    Remove
-                  </>
-                ) : (
-                  <>
-                    <PlusIcon className="h-3 w-3" />
-                    Select to Join
-                  </>
-                )}
-              </label>
+                <PlusIcon className="h-3 w-3" />
+                <span>Select to Join</span>
+              </button>
             ) : (
               <Button theme="secondary" className="flex items-center gap-1" disabled>
                 <CheckIcon className="h-3 w-3" />

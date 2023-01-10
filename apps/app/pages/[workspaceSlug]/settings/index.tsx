@@ -7,8 +7,6 @@ import type { GetServerSideProps, NextPage } from "next";
 import useSWR, { mutate } from "swr";
 import { Controller, useForm } from "react-hook-form";
 
-import Dropzone from "react-dropzone";
-
 // lib
 import { requiredWorkspaceAdmin } from "lib/auth";
 // constants
@@ -22,12 +20,14 @@ import SettingsLayout from "layouts/settings-layout";
 // hooks
 import useToast from "lib/hooks/useToast";
 // components
+import { ImageUploadModal } from "components/common/image-upload-modal";
 import ConfirmWorkspaceDeletion from "components/workspace/confirm-workspace-deletion";
 // ui
 import { Spinner, Button, Input, BreadcrumbItem, Breadcrumbs, CustomSelect } from "ui";
 // types
 import type { IWorkspace } from "types";
 import OutlineButton from "ui/outline-button";
+import { UserCircleIcon } from "ui/icons";
 
 const defaultValues: Partial<IWorkspace> = {
   name: "",
@@ -47,8 +47,7 @@ const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
   const { isOwner } = props;
 
   const [isOpen, setIsOpen] = useState(false);
-  const [image, setImage] = useState<File | null>(null);
-  const [isImageUploading, setIsImageUploading] = useState(false);
+  const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
 
   const {
     query: { workspaceSlug },
@@ -66,14 +65,13 @@ const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
     control,
     reset,
     watch,
-    setValue,
     formState: { errors, isSubmitting },
   } = useForm<IWorkspace>({
     defaultValues: { ...defaultValues, ...activeWorkspace },
   });
 
   useEffect(() => {
-    activeWorkspace && reset({ ...activeWorkspace });
+    if (activeWorkspace) reset({ ...activeWorkspace });
   }, [activeWorkspace, reset]);
 
   const onSubmit = async (formData: IWorkspace) => {
@@ -111,6 +109,15 @@ const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
         </Breadcrumbs>
       }
     >
+      <ImageUploadModal
+        isOpen={isImageUploadModalOpen}
+        onClose={() => setIsImageUploadModalOpen(false)}
+        onSuccess={() => {
+          setIsImageUploadModalOpen(false);
+          handleSubmit(onSubmit)();
+        }}
+        value={watch("logo")}
+      />
       <ConfirmWorkspaceDeletion
         isOpen={isOpen}
         onClose={() => {
@@ -131,66 +138,34 @@ const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
               <div>
                 <h4 className="text-md mb-1 leading-6 text-gray-900">Logo</h4>
                 <div className="flex w-full gap-2">
-                  <Dropzone
-                    multiple={false}
-                    accept={{
-                      "image/*": [],
-                    }}
-                    onDrop={(files) => {
-                      setImage(files[0]);
-                    }}
-                  >
-                    {({ getRootProps, getInputProps }) => (
-                      <div>
-                        <input {...getInputProps()} />
-                        <div>
-                          <div
-                            className="grid w-16 place-items-center rounded-md border p-2"
-                            {...getRootProps()}
-                          >
-                            {((watch("logo") && watch("logo") !== null && watch("logo") !== "") ||
-                              (image && image !== null)) && (
-                              <div className="relative mx-auto flex h-12 w-12">
-                                <Image
-                                  src={image ? URL.createObjectURL(image) : watch("logo") ?? ""}
-                                  alt="Workspace Logo"
-                                  objectFit="cover"
-                                  layout="fill"
-                                  priority
-                                />
-                              </div>
-                            )}
-                          </div>
+                  <div>
+                    <div>
+                      <div className="grid w-16 place-items-center rounded-md border p-2">
+                        <div className="relative mx-auto flex h-12 w-12">
+                          {watch("logo") === null || watch("logo") === "" ? (
+                            <button
+                              type="button"
+                              onClick={() => setIsImageUploadModalOpen(true)}
+                              className="h-full w-full border-2 border-dashed"
+                            />
+                          ) : (
+                            <Image
+                              src={watch("logo") as string}
+                              alt="Workspace Logo"
+                              objectFit="cover"
+                              layout="fill"
+                              priority
+                            />
+                          )}
                         </div>
                       </div>
-                    )}
-                  </Dropzone>
+                    </div>
+                  </div>
                   <div>
                     <p className="mb-2 text-sm text-gray-500">
                       Max file size is 5MB. Supported file types are .jpg and .png.
                     </p>
-                    <Button
-                      onClick={() => {
-                        if (image === null) return;
-                        setIsImageUploading(true);
-                        const formData = new FormData();
-                        formData.append("asset", image);
-                        formData.append("attributes", JSON.stringify({}));
-                        fileServices
-                          .uploadFile(workspaceSlug as string, formData)
-                          .then((response) => {
-                            const imageUrl = response.asset;
-                            setValue("logo", imageUrl);
-                            handleSubmit(onSubmit)();
-                            setIsImageUploading(false);
-                          })
-                          .catch((err) => {
-                            setIsImageUploading(false);
-                          });
-                      }}
-                    >
-                      {isImageUploading ? "Uploading..." : "Upload"}
-                    </Button>
+                    <Button onClick={() => setIsImageUploadModalOpen(true)}>Upload</Button>
                   </div>
                 </div>
               </div>

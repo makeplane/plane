@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 import type { NextPage, NextPageContext } from "next";
@@ -19,6 +19,8 @@ import SettingsLayout from "layouts/settings-layout";
 // services
 import projectService from "lib/services/project.service";
 import workspaceService from "lib/services/workspace.service";
+// components
+import ConfirmProjectDeletion from "components/project/confirm-project-deletion";
 // hooks
 import useToast from "lib/hooks/useToast";
 // ui
@@ -33,6 +35,7 @@ import {
   Loader,
   CustomSelect,
 } from "ui";
+import OutlineButton from "ui/outline-button";
 // types
 import { IProject, IWorkspace } from "types";
 
@@ -53,28 +56,22 @@ type TGeneralSettingsProps = {
 const GeneralSettings: NextPage<TGeneralSettingsProps> = (props) => {
   const { isMember, isOwner, isViewer, isGuest } = props;
 
+  const [selectProject, setSelectedProject] = useState<string | null>(null);
+
   const { setToastAlert } = useToast();
 
-  const {
-    query: { workspaceSlug, projectId },
-  } = useRouter();
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
 
   const { data: activeWorkspace } = useSWR(
     workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
     () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null)
   );
 
-  const { data: activeProject } = useSWR(
-    activeWorkspace && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    activeWorkspace && projectId
-      ? () => projectService.getProject(activeWorkspace.slug, projectId as string)
-      : null
-  );
-
   const { data: projectDetails } = useSWR<IProject>(
-    activeWorkspace && activeProject ? PROJECT_DETAILS(activeProject.id) : null,
-    activeWorkspace && activeProject
-      ? () => projectService.getProject(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -99,7 +96,7 @@ const GeneralSettings: NextPage<TGeneralSettingsProps> = (props) => {
   const checkIdentifierAvailability = useCallback(debounce(checkIdentifier, 1500), []);
 
   useEffect(() => {
-    projectDetails &&
+    if (projectDetails)
       reset({
         ...projectDetails,
         default_assignee: projectDetails.default_assignee?.id,
@@ -109,7 +106,7 @@ const GeneralSettings: NextPage<TGeneralSettingsProps> = (props) => {
   }, [projectDetails, reset]);
 
   const onSubmit = async (formData: IProject) => {
-    if (!activeWorkspace || !activeProject) return;
+    if (!activeWorkspace || !projectDetails) return;
     const payload: Partial<IProject> = {
       name: formData.name,
       network: formData.network,
@@ -120,10 +117,10 @@ const GeneralSettings: NextPage<TGeneralSettingsProps> = (props) => {
       icon: formData.icon,
     };
     await projectService
-      .updateProject(activeWorkspace.slug, activeProject.id, payload)
+      .updateProject(activeWorkspace.slug, projectDetails.id, payload)
       .then((res) => {
         mutate<IProject>(
-          PROJECT_DETAILS(activeProject.id),
+          PROJECT_DETAILS(projectDetails.id),
           (prevData) => ({ ...prevData, ...res }),
           false
         );
@@ -158,13 +155,21 @@ const GeneralSettings: NextPage<TGeneralSettingsProps> = (props) => {
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem
-            title={`${activeProject?.name ?? "Project"}`}
-            link={`/${workspaceSlug}/projects/${activeProject?.id}/issues`}
+            title={`${projectDetails?.name ?? "Project"}`}
+            link={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
           />
           <BreadcrumbItem title="General Settings" />
         </Breadcrumbs>
       }
     >
+      <ConfirmProjectDeletion
+        data={projectDetails ?? null}
+        isOpen={Boolean(selectProject)}
+        onClose={() => setSelectedProject(null)}
+        onSuccess={() => {
+          router.push(`/${workspaceSlug}/projects`);
+        }}
+      />
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="space-y-8">
           <div>
@@ -284,14 +289,13 @@ const GeneralSettings: NextPage<TGeneralSettingsProps> = (props) => {
                   <Controller
                     name="network"
                     control={control}
-                    render={({ field }) => (
+                    render={({ field: { value, onChange } }) => (
                       <CustomSelect
-                        {...field}
+                        value={value}
+                        onChange={onChange}
                         label={
-                          Object.keys(NETWORK_CHOICES).find((k) => k === field.value.toString())
-                            ? NETWORK_CHOICES[
-                                field.value.toString() as keyof typeof NETWORK_CHOICES
-                              ]
+                          Object.keys(NETWORK_CHOICES).find((k) => k === value.toString())
+                            ? NETWORK_CHOICES[value.toString() as keyof typeof NETWORK_CHOICES]
                             : "Select network"
                         }
                         input
@@ -313,9 +317,46 @@ const GeneralSettings: NextPage<TGeneralSettingsProps> = (props) => {
             </div>
           </div>
           <div>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Updating Project..." : "Update Project"}
-            </Button>
+            {projectDetails ? (
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Updating Project..." : "Update Project"}
+              </Button>
+            ) : (
+              <Loader className="mt-2 w-full">
+                <Loader.Item height="34px" width="100px" light />
+              </Loader>
+            )}
+          </div>
+          <div className="col-span-12">
+            {projectDetails ? (
+              <div>
+                <h4 className="text-md mb-1 leading-6 text-gray-900">Danger Zone</h4>
+                <p className="mb-3 text-sm text-gray-500">
+                  The danger zone of the project delete page is a critical area that requires
+                  careful consideration and attention. When deleting a project, all of the data and
+                  resources within that project will be permanently removed and cannot be recovered.
+                </p>
+              </div>
+            ) : (
+              <Loader className="w-full space-y-2">
+                <Loader.Item height="22px" width="250px" light />
+                <Loader.Item height="46px" width="100%" light />
+              </Loader>
+            )}
+            {projectDetails ? (
+              <div>
+                <OutlineButton
+                  theme="danger"
+                  onClick={() => setSelectedProject(projectDetails.id ?? null)}
+                >
+                  Delete Project
+                </OutlineButton>
+              </div>
+            ) : (
+              <Loader className="mt-2 w-full">
+                <Loader.Item height="46px" width="100px" light />
+              </Loader>
+            )}
           </div>
         </div>
       </form>
