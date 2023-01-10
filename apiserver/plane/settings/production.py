@@ -235,15 +235,15 @@ if not DOCKERIZED:
             },
         },
     }
-
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [(os.environ.get("REDIS_URL"))],
+else:
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels_redis.core.RedisChannelLayer",
+            "CONFIG": {
+                "hosts": [(os.environ.get("REDIS_URL"))],
+            },
         },
-    },
-}
+    }
 
 
 WEB_URL = os.environ.get("WEB_URL")
