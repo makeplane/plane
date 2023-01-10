@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Image from "next/image";
 
@@ -48,6 +48,7 @@ const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
     handleSubmit,
     control,
     setValue,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<IWorkspace>({ defaultValues });
 
@@ -108,6 +109,10 @@ const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
       });
   };
 
+  useEffect(() => {
+    reset(defaultValues);
+  }, [reset]);
+
   return (
     <div className="grid w-full place-items-center">
       <Tab.Group as="div" className="w-full rounded-lg bg-white p-8 md:w-2/5">
@@ -133,7 +138,7 @@ const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
         <Tab.Panels>
           <Tab.Panel>
             <form className="mt-4 space-y-8" onSubmit={handleSubmit(handleCreateWorkspace)}>
-              <div className="w-full space-y-4 bg-white">
+              <div className="w-full space-y-4">
                 <div className="grid grid-cols-1 gap-4">
                   <div>
                     <Input
@@ -151,21 +156,24 @@ const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
                       error={errors.name}
                     />
                   </div>
-                  <div className="flex items-center rounded-md border px-3">
-                    <span className="text-sm text-slate-600">{"https://app.plane.so/"}</span>
-                    <Input
-                      name="slug"
-                      mode="transparent"
-                      autoComplete="off"
-                      register={register}
-                      className="block w-full rounded-md bg-transparent py-2 px-0 text-sm  focus:outline-none focus:ring-0"
-                    />
+                  <div>
+                    <h6 className="text-gray-500">Workspace slug</h6>
+                    <div className="flex items-center rounded-md border border-gray-300 px-3">
+                      <span className="text-sm text-slate-600">{"https://app.plane.so/"}</span>
+                      <Input
+                        name="slug"
+                        mode="transparent"
+                        autoComplete="off"
+                        register={register}
+                        className="block w-full rounded-md bg-transparent py-2 px-0 text-sm  focus:outline-none focus:ring-0"
+                      />
+                    </div>
+                    {slugError && (
+                      <span className="-mt-3 text-sm text-red-500">
+                        Workspace URL is already taken!
+                      </span>
+                    )}
                   </div>
-                  {slugError && (
-                    <span className="-mt-3 text-sm text-red-500">
-                      Workspace URL is already taken!
-                    </span>
-                  )}
                   <div>
                     <Controller
                       name="company_size"
@@ -264,7 +272,6 @@ const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
                   </div>
                 )}
               </div>
-
               <div className="mx-auto h-1/4 lg:w-1/2">
                 <button
                   type="submit"

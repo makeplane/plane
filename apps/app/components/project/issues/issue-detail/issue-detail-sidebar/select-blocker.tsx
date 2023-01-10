@@ -18,7 +18,7 @@ import { Combobox, Dialog, Transition } from "@headlessui/react";
 import { Button } from "ui";
 // icons
 import { FolderIcon, MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { BlockerIcon } from "ui/icons";
+import { BlockerIcon, LayerDiagonalIcon } from "ui/icons";
 // types
 import { IIssue } from "types";
 // constants
@@ -167,65 +167,73 @@ const SelectBlocker: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
                         static
                         className="max-h-80 scroll-py-2 divide-y divide-gray-500 divide-opacity-10 overflow-y-auto"
                       >
-                        {issuesList.length > 0 && (
-                          <>
-                            <li className="p-2">
-                              {query === "" && (
-                                <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-gray-900">
-                                  Select blocker issues
-                                </h2>
-                              )}
-                              <ul className="text-sm text-gray-700">
-                                {issuesList.map((issue) => {
-                                  if (
-                                    !watch("blockers_list").includes(issue.id) &&
-                                    !watch("blocked_list").includes(issue.id)
-                                  ) {
-                                    return (
-                                      <Combobox.Option
-                                        key={issue.id}
-                                        as="label"
-                                        htmlFor={`blocker-issue-${issue.id}`}
-                                        value={{
-                                          name: issue.name,
-                                          url: `/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`,
-                                        }}
-                                        className={({ active }) =>
-                                          classNames(
-                                            "flex cursor-pointer select-none items-center justify-between rounded-md px-3 py-2",
-                                            active ? "bg-gray-900 bg-opacity-5 text-gray-900" : ""
-                                          )
-                                        }
-                                      >
-                                        <div className="flex items-center gap-2">
-                                          <input
-                                            type="checkbox"
-                                            {...register("issue_ids")}
-                                            id={`blocker-issue-${issue.id}`}
-                                            value={issue.id}
-                                          />
-                                          <span
-                                            className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                                            style={{
-                                              backgroundColor: issue.state_detail.color,
-                                            }}
-                                          />
-                                          <span className="flex-shrink-0 text-xs text-gray-500">
-                                            {
-                                              issues?.results.find((i) => i.id === issue.id)
-                                                ?.project_detail?.identifier
-                                            }
-                                            -{issue.sequence_id}
-                                          </span>
-                                          <span>{issue.name}</span>
-                                        </div>
-                                      </Combobox.Option>
-                                    );
-                                  }
-                                })}
-                              </ul>
-                            </li>
-                          </>
+                        {issuesList.length > 0 ? (
+                          <li className="p-2">
+                            {query === "" && (
+                              <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-gray-900">
+                                Select blocker issues
+                              </h2>
+                            )}
+                            <ul className="text-sm text-gray-700">
+                              {issuesList.map((issue) => {
+                                if (
+                                  !watch("blockers_list").includes(issue.id) &&
+                                  !watch("blocked_list").includes(issue.id)
+                                )
+                                  return (
+                                    <Combobox.Option
+                                      key={issue.id}
+                                      as="label"
+                                      htmlFor={`blocker-issue-${issue.id}`}
+                                      value={{
+                                        name: issue.name,
+                                        url: `/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`,
+                                      }}
+                                      className={({ active }) =>
+                                        classNames(
+                                          "flex cursor-pointer select-none items-center justify-between rounded-md px-3 py-2",
+                                          active ? "bg-gray-900 bg-opacity-5 text-gray-900" : ""
+                                        )
+                                      }
+                                    >
+                                      <div className="flex items-center gap-2">
+                                        <input
+                                          type="checkbox"
+                                          {...register("issue_ids")}
+                                          id={`blocker-issue-${issue.id}`}
+                                          value={issue.id}
+                                        />
+                                        <span
+                                          className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                                          style={{
+                                            backgroundColor: issue.state_detail.color,
+                                          }}
+                                        />
+                                        <span className="flex-shrink-0 text-xs text-gray-500">
+                                          {
+                                            issues?.results.find((i) => i.id === issue.id)
+                                              ?.project_detail?.identifier
+                                          }
+                                          -{issue.sequence_id}
+                                        </span>
+                                        <span>{issue.name}</span>
+                                      </div>
+                                    </Combobox.Option>
+                                  );
+                              })}
+                            </ul>
+                          </li>
+                        ) : (
+                          <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
+                            <LayerDiagonalIcon height="56" width="56" />
+                            <h3 className="text-gray-500">
+                              No issues found. Create a new issue with{" "}
+                              <pre className="inline rounded bg-gray-100 px-2 py-1">
+                                Ctrl/Command + I
+                              </pre>
+                              .
+                            </h3>
+                          </div>
                         )}
                       </Combobox.Options>
 

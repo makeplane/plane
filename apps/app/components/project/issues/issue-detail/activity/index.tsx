@@ -21,8 +21,6 @@ import { BlockedIcon, BlockerIcon, TagIcon, UserGroupIcon } from "ui/icons";
 import { IIssueActivity, IIssueComment } from "types";
 // components
 import CommentCard from "components/project/issues/issue-detail/comment/issue-comment-card";
-// react-hook-form
-import { useForm, Controller } from "react-hook-form";
 // services
 import issuesServices from "lib/services/issues.service";
 
@@ -135,14 +133,14 @@ const IssueActivitySection: React.FC<{
                     />
                   ) : null}
                   {activity.field ? (
-                    <div className="relative z-10 -ml-1.5 flex-shrink-0">
+                    <div className="relative z-10 -ml-1 flex-shrink-0">
                       <div className="grid h-8 w-8 place-items-center bg-white">
                         {activityDetails[activity.field as keyof typeof activityDetails]?.icon}
                       </div>
                     </div>
                   ) : (
                     <div className="relative z-10 -ml-4 flex-shrink-0 rounded-full border-2 border-white">
-                      <div className="grid h-12 w-12 place-items-center ">
+                      <div className="grid h-12 w-12 place-items-center">
                         {activity.actor_detail.avatar && activity.actor_detail.avatar !== "" ? (
                           <Image
                             src={activity.actor_detail.avatar}
@@ -162,7 +160,7 @@ const IssueActivitySection: React.FC<{
                     </div>
                   )}
 
-                  <div className="w-full text-xs">
+                  <div className={`${activity.field ? "ml-1.5" : ""} w-full text-xs`}>
                     <p>
                       <span className="font-medium">
                         {activity.actor_detail.first_name} {activity.actor_detail.last_name}

@@ -59,8 +59,8 @@ const UserDetails: React.FC<Props> = ({ user, setStep }) => {
   }, [user, reset]);
 
   return (
-    <form className="grid w-full place-items-center space-y-8" onSubmit={handleSubmit(onSubmit)}>
-      <div className="w-full space-y-4 rounded-lg bg-white p-8 md:w-2/5">
+    <form className="grid w-full place-items-center" onSubmit={handleSubmit(onSubmit)}>
+      <div className="w-full space-y-8 rounded-lg bg-white p-8 md:w-2/5">
         <div className="grid grid-cols-2 gap-4">
           <div>
             <Input
@@ -102,15 +102,15 @@ const UserDetails: React.FC<Props> = ({ user, setStep }) => {
             />
           </div>
         </div>
-      </div>
-      <div className="mx-auto h-1/4 lg:w-1/4">
-        <button
-          type="submit"
-          className="w-full rounded-md bg-gray-200 px-4 py-2 text-sm"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? "Updating..." : "Continue"}
-        </button>
+        <div className="mx-auto h-1/4 lg:w-1/2">
+          <button
+            type="submit"
+            className="w-full rounded-md bg-gray-200 px-4 py-2 text-sm"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Updating..." : "Continue"}
+          </button>
+        </div>
       </div>
     </form>
   );

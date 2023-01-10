@@ -555,7 +555,7 @@ class WorkspaceMemberUserEndpoint(BaseAPIView):
             )
             serializer = WorkSpaceMemberSerializer(workspace_member)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        except Workspace.DoesNotExist:
+        except (Workspace.DoesNotExist, WorkspaceMember.DoesNotExist):
             return Response({"error": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             capture_exception(e)

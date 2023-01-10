@@ -16,7 +16,7 @@ import { ROLE } from "constants/";
 // layouts
 import SettingsLayout from "layouts/settings-layout";
 // components
-import ConfirmWorkspaceMemberRemove from "components/workspace/ConfirmWorkspaceMemberRemove";
+import ConfirmWorkspaceMemberRemove from "components/workspace/confirm-workspace-member-remove";
 import SendWorkspaceInvitationModal from "components/workspace/send-workspace-invitation-modal";
 // ui
 import { BreadcrumbItem, Breadcrumbs, Button, CustomListbox, CustomMenu, Loader } from "ui";

@@ -261,15 +261,15 @@ const WorkspaceOptions: React.FC<Props> = ({ sidebarCollapse }) => {
               className={`${
                 link.href === router.asPath
                   ? "bg-gray-200 text-gray-900"
-                  : "text-gray-500 hover:bg-gray-100 focus:bg-gray-100"
-              } flex items-center gap-3 rounded-md p-2 text-xs font-medium outline-none ${
+                  : "text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100"
+              } group flex items-center gap-3 rounded-md p-2 text-xs font-medium outline-none ${
                 sidebarCollapse ? "justify-center" : ""
               }`}
             >
               <link.icon
                 className={`${
                   link.href === router.asPath ? "text-gray-900" : "text-gray-500"
-                } h-4 w-4 flex-shrink-0`}
+                } h-4 w-4 flex-shrink-0 group-hover:text-gray-900`}
                 aria-hidden="true"
               />
               {!sidebarCollapse && link.name}

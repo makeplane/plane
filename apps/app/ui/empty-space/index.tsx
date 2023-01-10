@@ -9,7 +9,7 @@ type EmptySpaceProps = {
   title: string;
   description: string;
   children: any;
-  Icon?: (props: any) => JSX.Element;
+  Icon?: (props: any) => any;
   link?: { text: string; href: string };
 };
 
@@ -73,7 +73,7 @@ const EmptySpaceItem: React.FC<EmptySpaceItemProps> = ({
         >
           <div className="flex-shrink-0">
             <span
-              className={`inline-flex items-center justify-center h-10 w-10 rounded-lg bg-theme`}
+              className={`inline-flex h-10 w-10 items-center justify-center rounded-lg bg-theme`}
             >
               <Icon className="h-6 w-6 text-white" aria-hidden="true" />
             </span>

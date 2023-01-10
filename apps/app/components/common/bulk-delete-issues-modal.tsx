@@ -23,6 +23,7 @@ import { IIssue, IssueResponse } from "types";
 import { PROJECT_ISSUES_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
 // common
 import { classNames } from "constants/common";
+import { LayerDiagonalIcon } from "ui/icons";
 
 type FormInput = {
   issue_ids: string[];
@@ -75,7 +76,7 @@ const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
     reset();
   };
 
-  const handleDelete: SubmitHandler<FormInput> = (data) => {
+  const handleDelete: SubmitHandler<FormInput> = async (data) => {
     if (!data.issue_ids || data.issue_ids.length === 0) {
       setToastAlert({
         title: "Error",
@@ -85,8 +86,10 @@ const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
       return;
     }
 
+    if (!Array.isArray(data.issue_ids)) data.issue_ids = [data.issue_ids];
+
     if (workspaceSlug && projectId) {
-      issuesServices
+      await issuesServices
         .bulkDeleteIssues(workspaceSlug as string, projectId as string, data)
         .then((res) => {
           setToastAlert({
@@ -161,58 +164,63 @@ const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                       static
                       className="max-h-80 scroll-py-2 divide-y divide-gray-500 divide-opacity-10 overflow-y-auto"
                     >
-                      {filteredIssues.length > 0 && (
-                        <>
-                          <li className="p-2">
-                            {query === "" && (
-                              <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-gray-900">
-                                Select issues
-                              </h2>
-                            )}
-                            <ul className="text-sm text-gray-700">
-                              {filteredIssues.map((issue) => (
-                                <Combobox.Option
-                                  key={issue.id}
-                                  as="label"
-                                  htmlFor={`issue-${issue.id}`}
-                                  value={{
-                                    name: issue.name,
-                                    url: `/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`,
-                                  }}
-                                  className={({ active }) =>
-                                    classNames(
-                                      "flex cursor-pointer select-none items-center justify-between rounded-md px-3 py-2",
-                                      active ? "bg-gray-900 bg-opacity-5 text-gray-900" : ""
-                                    )
-                                  }
-                                >
-                                  {({ active }) => (
-                                    <>
-                                      <div className="flex items-center gap-2">
-                                        <input
-                                          type="checkbox"
-                                          {...register("issue_ids")}
-                                          id={`issue-${issue.id}`}
-                                          value={issue.id}
-                                        />
-                                        <span
-                                          className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                                          style={{
-                                            backgroundColor: issue.state_detail.color,
-                                          }}
-                                        />
-                                        <span className="flex-shrink-0 text-xs text-gray-500">
-                                          {projectDetails?.identifier}-{issue.sequence_id}
-                                        </span>
-                                        <span>{issue.name}</span>
-                                      </div>
-                                    </>
-                                  )}
-                                </Combobox.Option>
-                              ))}
-                            </ul>
-                          </li>
-                        </>
+                      {filteredIssues.length > 0 ? (
+                        <li className="p-2">
+                          {query === "" && (
+                            <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-gray-900">
+                              Select issues to delete
+                            </h2>
+                          )}
+                          <ul className="text-sm text-gray-700">
+                            {filteredIssues.map((issue) => (
+                              <Combobox.Option
+                                key={issue.id}
+                                as="label"
+                                htmlFor={`issue-${issue.id}`}
+                                value={{
+                                  name: issue.name,
+                                  url: `/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`,
+                                }}
+                                className={({ active }) =>
+                                  classNames(
+                                    "flex cursor-pointer select-none items-center justify-between rounded-md px-3 py-2",
+                                    active ? "bg-gray-900 bg-opacity-5 text-gray-900" : ""
+                                  )
+                                }
+                              >
+                                <div className="flex items-center gap-2">
+                                  <input
+                                    type="checkbox"
+                                    {...register("issue_ids")}
+                                    id={`issue-${issue.id}`}
+                                    value={issue.id}
+                                  />
+                                  <span
+                                    className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                                    style={{
+                                      backgroundColor: issue.state_detail.color,
+                                    }}
+                                  />
+                                  <span className="flex-shrink-0 text-xs text-gray-500">
+                                    {projectDetails?.identifier}-{issue.sequence_id}
+                                  </span>
+                                  <span>{issue.name}</span>
+                                </div>
+                              </Combobox.Option>
+                            ))}
+                          </ul>
+                        </li>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
+                          <LayerDiagonalIcon height="56" width="56" />
+                          <h3 className="text-gray-500">
+                            No issues found. Create a new issue with{" "}
+                            <pre className="inline rounded bg-gray-100 px-2 py-1">
+                              Ctrl/Command + I
+                            </pre>
+                            .
+                          </h3>
+                        </div>
                       )}
                     </Combobox.Options>
 
@@ -229,16 +237,16 @@ const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                     )}
                   </Combobox>
 
-                  <div className="flex items-center justify-end gap-2 p-3">
-                    <Button onClick={handleSubmit(handleDelete)} theme="danger" size="sm">
-                      Delete selected issues
-                    </Button>
-                    <div>
-                      <Button type="button" size="sm" onClick={handleClose}>
+                  {filteredIssues.length > 0 && (
+                    <div className="flex items-center justify-end gap-2 p-3">
+                      <Button type="button" theme="secondary" size="sm" onClick={handleClose}>
                         Close
                       </Button>
+                      <Button onClick={handleSubmit(handleDelete)} theme="danger" size="sm">
+                        Delete selected issues
+                      </Button>
                     </div>
-                  </div>
+                  )}
                 </form>
               </Dialog.Panel>
             </Transition.Child>

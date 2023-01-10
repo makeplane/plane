@@ -8,6 +8,7 @@ import { MagnifyingGlassIcon, RectangleStackIcon } from "@heroicons/react/24/out
 import { classNames } from "constants/common";
 // types
 import { IIssue } from "types";
+import { LayerDiagonalIcon } from "ui/icons";
 
 type Props = {
   isOpen: boolean;
@@ -172,7 +173,7 @@ const IssuesListModal: React.FC<Props> = ({
                       static
                       className="max-h-80 scroll-py-2 divide-y divide-gray-500 divide-opacity-10 overflow-y-auto"
                     >
-                      {filteredIssues.length > 0 && (
+                      {filteredIssues.length > 0 ? (
                         <li className="p-2">
                           {query === "" && (
                             <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-gray-900">
@@ -208,6 +209,17 @@ const IssuesListModal: React.FC<Props> = ({
                             ))}
                           </ul>
                         </li>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center gap-4 px-3 py-8 text-center">
+                          <LayerDiagonalIcon height="56" width="56" />
+                          <h3 className="text-gray-500">
+                            No issues found. Create a new issue with{" "}
+                            <pre className="inline rounded bg-gray-100 px-2 py-1">
+                              Ctrl/Command + I
+                            </pre>
+                            .
+                          </h3>
+                        </div>
                       )}
                     </Combobox.Options>
 
