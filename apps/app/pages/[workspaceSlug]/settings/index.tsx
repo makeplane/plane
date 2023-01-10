@@ -7,6 +7,8 @@ import type { GetServerSideProps, NextPage } from "next";
 import useSWR, { mutate } from "swr";
 import { Controller, useForm } from "react-hook-form";
 
+// react-dropzone
+import Dropzone from "react-dropzone";
 // lib
 import { requiredWorkspaceAdmin } from "lib/auth";
 // constants
@@ -23,12 +25,20 @@ import useToast from "lib/hooks/useToast";
 import { ImageUploadModal } from "components/common/image-upload-modal";
 import ConfirmWorkspaceDeletion from "components/workspace/confirm-workspace-deletion";
 // ui
-import { Spinner, Button, Input, BreadcrumbItem, Breadcrumbs, CustomSelect } from "ui";
+import {
+  Spinner,
+  Button,
+  Input,
+  BreadcrumbItem,
+  Breadcrumbs,
+  CustomSelect,
+  OutlineButton,
+} from "ui";
+// icons
+import { LinkIcon } from "@heroicons/react/24/outline";
 // types
 import type { IWorkspace } from "types";
-import OutlineButton from "ui/outline-button";
-import Dropzone from "react-dropzone";
-import { LinkIcon } from "@heroicons/react/24/outline";
+// common
 import { copyTextToClipboard } from "constants/common";
 
 const defaultValues: Partial<IWorkspace> = {
