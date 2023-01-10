@@ -3,8 +3,8 @@ export function FolderIcon(props) {
     <svg viewBox="0 0 20 20" aria-hidden="true" {...props}>
       <path
         fill="none"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
         d="M17.5 15.5v-8a2 2 0 0 0-2-2h-2.93a2 2 0 0 1-1.664-.89l-.812-1.22A2 2 0 0 0 8.43 2.5H4.5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2Z"
       />
       <path
