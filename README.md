@@ -32,7 +32,7 @@ To see how to Contribute, visit [here](https://github.com/makeplane/plane/blob/m
 ## Status
 
 
-- [x] Early Community Previews: We are open-sourcing and sharing teh development version of Plane
+- [x] Early Community Previews: We are open-sourcing and sharing the development version of Plane
 - [ ] Alpha: We are testing Plane with a closed set of customers
 - [ ] Public Alpha: Anyone can sign up over at [app.plane.so](https://app.plane.so). But go easy on us, there are a few hiccups
 - [ ] Public Beta: Stable enough for most non-enterprise use-cases
