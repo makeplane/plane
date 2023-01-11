@@ -31,12 +31,24 @@ const CustomListbox: React.FC<Props> = ({
               ${className || "px-2 py-1"}`}
           >
             {icon ?? null}
-            <span className="block truncate">
-              {Array.isArray(value)
-                ? value.map((v) => options?.find((o) => o.value === v)?.display).join(", ") ||
-                  `${title}`
-                : options?.find((o) => o.value === value)?.display || `${title}`}
-            </span>
+            <div className="flex items-center gap-2 truncate">
+              {Array.isArray(value) ? (
+                value.map((v) => options?.find((o) => o.value === v)?.display).join(", ") ||
+                `${title}`
+              ) : (
+                <>
+                  {options?.find((o) => o.value === value)?.color && (
+                    <span
+                      className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                      style={{
+                        backgroundColor: options?.find((o) => o.value === value)?.color,
+                      }}
+                    ></span>
+                  )}{" "}
+                  {options?.find((o) => o.value === value)?.display || `${title}`}
+                </>
+              )}
+            </div>
           </Listbox.Button>
 
           <Transition

@@ -30,7 +30,7 @@ export interface CycleIssueResponse {
   cycle: string;
 }
 
-export type SelectSprintType =
+export type SelectCycleType =
   | (ICycle & { actionType: "edit" | "delete" | "create-issue" })
   | undefined;
 
