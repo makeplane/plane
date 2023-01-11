@@ -185,7 +185,9 @@ const WorkspaceOptions: React.FC<Props> = ({ sidebarCollapse }) => {
                                 </div>
                                 <div className="text-left">
                                   <h5 className="text-sm">{workspace.name}</h5>
-                                  <div className="text-xs text-gray-500">1 members</div>
+                                  <div className="text-xs text-gray-500">
+                                    {workspace.total_members} members
+                                  </div>
                                 </div>
                               </button>
                             )}

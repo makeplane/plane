@@ -1,4 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
+
+import Link from "next/link";
+
+import { Transition } from "@headlessui/react";
 
 // hooks
 import useTheme from "lib/hooks/useTheme";
@@ -10,15 +14,45 @@ import {
   Cog6ToothIcon,
   RectangleStackIcon,
   ArrowLongLeftIcon,
-  QuestionMarkCircleIcon,
   RectangleGroupIcon,
 } from "@heroicons/react/24/outline";
-import { CyclesIcon } from "ui/icons";
+import {
+  CyclesIcon,
+  QuestionMarkCircleIcon,
+  BoltIcon,
+  DocumentIcon,
+  DiscordIcon,
+  GithubIcon,
+  CommentIcon,
+} from "ui/icons";
 
 type Props = {
   toggleSidebar: boolean;
   setToggleSidebar: React.Dispatch<React.SetStateAction<boolean>>;
 };
+
+const helpOptions = [
+  {
+    name: "Documentation",
+    href: "https://docs.plane.so/",
+    Icon: DocumentIcon,
+  },
+  {
+    name: "Join our Discord",
+    href: "https://discord.com/invite/A92xrEGCge",
+    Icon: DiscordIcon,
+  },
+  {
+    name: "Report a bug",
+    href: "https://github.com/makeplane/plane/issues/new/choose",
+    Icon: GithubIcon,
+  },
+  {
+    name: "Chat with us",
+    href: "mailto:hello@plane.so",
+    Icon: CommentIcon,
+  },
+];
 
 const navigation = (workspaceSlug: string, projectId: string) => [
   {
@@ -45,6 +79,8 @@ const navigation = (workspaceSlug: string, projectId: string) => [
 
 const Sidebar: React.FC<Props> = ({ toggleSidebar, setToggleSidebar }) => {
   const { collapsed: sidebarCollapse, toggleCollapsed } = useTheme();
+
+  const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
 
   return (
     <nav className="relative z-20 h-screen md:z-0">
@@ -84,7 +120,7 @@ const Sidebar: React.FC<Props> = ({ toggleSidebar, setToggleSidebar }) => {
               </button>
               <button
                 type="button"
-                className={`flex items-center gap-3 rounded-md px-2 py-2 text-xs font-medium text-gray-500 outline-none hover:bg-gray-100 hover:text-gray-900 ${
+                className={`flex items-center gap-x-1 rounded-md px-2 py-2 text-xs font-medium text-gray-500 outline-none hover:bg-gray-100 hover:text-gray-900 ${
                   sidebarCollapse ? "w-full justify-center" : ""
                 }`}
                 onClick={() => {
@@ -96,8 +132,45 @@ const Sidebar: React.FC<Props> = ({ toggleSidebar, setToggleSidebar }) => {
                 }}
                 title="Help"
               >
-                <QuestionMarkCircleIcon className="h-4 w-4 text-gray-500" />
+                <BoltIcon className="h-4 w-4 text-gray-500" />
+                {!sidebarCollapse && <span>Shortcuts</span>}
               </button>
+              <div className="relative">
+                <Transition
+                  show={isNeedHelpOpen}
+                  enter="transition ease-out duration-100"
+                  enterFrom="transform opacity-0 scale-95"
+                  enterTo="transform opacity-100 scale-100"
+                  leave="transition ease-in duration-75"
+                  leaveFrom="transform opacity-100 scale-100"
+                  leaveTo="transform opacity-0 scale-95"
+                >
+                  <div className="absolute bottom-0 left-full space-y-2 rounded-sm bg-white py-3 shadow-md">
+                    {helpOptions.map(({ name, Icon, href }) => (
+                      <Link href={href} key={name}>
+                        <a
+                          target="_blank"
+                          className="mx-3 flex items-center gap-x-2 rounded-md px-2 py-2 text-xs hover:bg-gray-100"
+                        >
+                          <Icon className="h-5 w-5 text-gray-500" />
+                          <span className="text-sm">{name}</span>
+                        </a>
+                      </Link>
+                    ))}
+                  </div>
+                </Transition>
+                <button
+                  type="button"
+                  className={`flex items-center gap-x-1 rounded-md px-2 py-2 text-xs font-medium text-gray-500 outline-none hover:bg-gray-100 hover:text-gray-900 ${
+                    sidebarCollapse ? "w-full justify-center" : ""
+                  }`}
+                  onClick={() => setIsNeedHelpOpen((prev) => !prev)}
+                  title="Help"
+                >
+                  <QuestionMarkCircleIcon className="h-4 w-4 text-gray-500" />
+                  {!sidebarCollapse && <span>Need help?</span>}
+                </button>
+              </div>
             </div>
           </div>
         </div>

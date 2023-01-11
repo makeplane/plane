@@ -9,6 +9,7 @@ export interface IWorkspace {
   url: string;
   logo: string | null;
   slug: string;
+  readonly total_members: number;
   readonly slug: string;
   readonly created_by: string;
   readonly updated_by: string;
