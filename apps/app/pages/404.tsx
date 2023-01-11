@@ -27,13 +27,17 @@ const PageNotFound: NextPage = () => {
           <div className="space-y-2">
             <h3 className="text-lg font-semibold">Oops! Something went wrong.</h3>
             <p className="text-sm text-gray-500">
-              Lorem ipsum dolor sit amet consectetur. Fermentum augue ipsum ipsum adipiscing tempus
-              diam.
+              Sorry, the page you are looking for cannot be found. It may have been removed, had its
+              name changed, or is temporarily unavailable.
             </p>
           </div>
-          <Button type="button" largePadding>
-            Go to Home
-          </Button>
+          <Link href="/">
+            <a className="block">
+              <Button type="button" largePadding>
+                Go to Home
+              </Button>
+            </a>
+          </Link>
         </div>
       </div>
     </DefaultLayout>

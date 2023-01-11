@@ -7,6 +7,10 @@ import { mutate } from "swr";
 import { useForm } from "react-hook-form";
 
 import { Dialog, Transition } from "@headlessui/react";
+// components
+import SelectLead from "components/project/modules/create-update-module-modal/select-lead";
+import SelectMembers from "components/project/modules/create-update-module-modal/select-members";
+import SelectStatus from "components/project/modules/create-update-module-modal/select-status";
 // ui
 import { Button, Input, TextArea } from "ui";
 // services
@@ -17,9 +21,6 @@ import type { IModule } from "types";
 import { renderDateFormat } from "constants/common";
 // fetch keys
 import { MODULE_LIST } from "constants/fetch-keys";
-import SelectLead from "./select-lead";
-import SelectMembers from "./select-members";
-import SelectStatus from "./select-status";
 
 type Props = {
   isOpen: boolean;
@@ -51,15 +52,6 @@ const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, pro
     defaultValues,
   });
 
-  useEffect(() => {
-    if (data) {
-      setIsOpen(true);
-      reset(data);
-    } else {
-      reset(defaultValues);
-    }
-  }, [data, setIsOpen, reset]);
-
   const onSubmit = async (formData: IModule) => {
     if (!workspaceSlug) return;
     const payload = {
@@ -71,11 +63,7 @@ const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, pro
       await modulesService
         .createModule(workspaceSlug as string, projectId, payload)
         .then((res) => {
-          mutate<IModule[]>(
-            MODULE_LIST(projectId),
-            (prevData) => [res, ...(prevData ?? [])],
-            false
-          );
+          mutate(MODULE_LIST(projectId));
           handleClose();
         })
         .catch((err) => {
@@ -118,6 +106,15 @@ const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, pro
     setIsOpen(false);
     reset(defaultValues);
   };
+
+  useEffect(() => {
+    if (data) {
+      setIsOpen(true);
+      reset(data);
+    } else {
+      reset(defaultValues);
+    }
+  }, [data, setIsOpen, reset]);
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>

@@ -4,13 +4,13 @@ import { useState } from "react";
 import SingleStat from "components/project/cycles/stats-view/single-stat";
 import ConfirmCycleDeletion from "components/project/cycles/confirm-cycle-deletion";
 // types
-import { ICycle, SelectSprintType } from "types";
+import { ICycle, SelectCycleType } from "types";
 import { CompletedCycleIcon, CurrentCycleIcon, UpcomingCycleIcon } from "ui/icons";
 
 type TCycleStatsViewProps = {
   cycles: ICycle[];
   setCreateUpdateCycleModal: React.Dispatch<React.SetStateAction<boolean>>;
-  setSelectedCycle: React.Dispatch<React.SetStateAction<SelectSprintType>>;
+  setSelectedCycle: React.Dispatch<React.SetStateAction<SelectCycleType>>;
   type: "current" | "upcoming" | "completed";
 };
 
@@ -21,7 +21,7 @@ const CycleStatsView: React.FC<TCycleStatsViewProps> = ({
   type,
 }) => {
   const [cycleDeleteModal, setCycleDeleteModal] = useState(false);
-  const [selectedCycleForDelete, setSelectedCycleForDelete] = useState<SelectSprintType>();
+  const [selectedCycleForDelete, setSelectedCycleForDelete] = useState<SelectCycleType>();
 
   const handleDeleteCycle = (cycle: ICycle) => {
     setSelectedCycleForDelete({ ...cycle, actionType: "delete" });

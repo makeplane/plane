@@ -5,7 +5,7 @@ import type { NextPage, NextPageContext } from "next";
 
 import useSWR from "swr";
 // services
-import sprintService from "lib/services/cycles.service";
+import cycleService from "lib/services/cycles.service";
 import projectService from "lib/services/project.service";
 import workspaceService from "lib/services/workspace.service";
 // layouts
@@ -16,9 +16,9 @@ import CycleStatsView from "components/project/cycles/stats-view";
 // ui
 import { BreadcrumbItem, Breadcrumbs, HeaderButton, EmptySpace, EmptySpaceItem, Loader } from "ui";
 // icons
-import { ArrowPathIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { PlusIcon } from "@heroicons/react/24/outline";
 // types
-import { ICycle, SelectSprintType } from "types";
+import { ICycle, SelectCycleType } from "types";
 // fetching keys
 import { CYCLE_LIST, PROJECT_DETAILS, WORKSPACE_DETAILS } from "constants/fetch-keys";
 // lib
@@ -26,8 +26,8 @@ import { requiredAuth } from "lib/auth";
 import { Tab } from "@headlessui/react";
 import { CyclesIcon } from "ui/icons";
 
-const ProjectSprints: NextPage = () => {
-  const [selectedCycle, setSelectedCycle] = useState<SelectSprintType>();
+const ProjectCycles: NextPage = () => {
+  const [selectedCycle, setSelectedCycle] = useState<SelectCycleType>();
   const [createUpdateCycleModal, setCreateUpdateCycleModal] = useState(false);
 
   const {
@@ -49,7 +49,7 @@ const ProjectSprints: NextPage = () => {
   const { data: cycles } = useSWR<ICycle[]>(
     activeWorkspace && projectId ? CYCLE_LIST(projectId as string) : null,
     activeWorkspace && projectId
-      ? () => sprintService.getCycles(activeWorkspace.slug, projectId as string)
+      ? () => cycleService.getCycles(activeWorkspace.slug, projectId as string)
       : null
   );
 
@@ -224,4 +224,4 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
   };
 };
 
-export default ProjectSprints;
+export default ProjectCycles;
