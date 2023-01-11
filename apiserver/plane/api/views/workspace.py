@@ -10,7 +10,7 @@ from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.contrib.sites.shortcuts import get_current_site
-from django.db.models import CharField
+from django.db.models import CharField, Count
 from django.db.models.functions import Cast
 
 # Third party modules
@@ -119,7 +119,8 @@ class UserWorkSpacesEndpoint(BaseAPIView):
                     workspace_member__member=request.user,
                 )
                 .select_related("owner")
-            )
+            ).annotate(total_members=Count("workspace_member"))
+
             serializer = WorkSpaceSerializer(self.filter_queryset(workspace), many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
