@@ -12,6 +12,7 @@ from django.core.validators import validate_email
 from django.contrib.sites.shortcuts import get_current_site
 from django.db.models import CharField
 from django.db.models.functions import Cast
+from django.db.models import Count
 
 # Third party modules
 from rest_framework import status
@@ -111,7 +112,7 @@ class UserWorkSpacesEndpoint(BaseAPIView):
 
     def get(self, request):
         try:
-            workspace = (
+            workspaces = (
                 Workspace.objects.prefetch_related(
                     Prefetch("workspace_member", queryset=WorkspaceMember.objects.all())
                 )
@@ -119,8 +120,9 @@ class UserWorkSpacesEndpoint(BaseAPIView):
                     workspace_member__member=request.user,
                 )
                 .select_related("owner")
-            )
-            serializer = WorkSpaceSerializer(self.filter_queryset(workspace), many=True)
+            ).annotate(total_members=Count('workspace_member'))
+
+            serializer = WorkSpaceSerializer(self.filter_queryset(workspaces), many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         except Exception as e:
