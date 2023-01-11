@@ -167,6 +167,7 @@ CSRF_COOKIE_SECURE = True
 
 
 REDIS_URL = os.environ.get("REDIS_URL")
+DOCKERIZED = os.environ.get("DOCKERIZED", False)
 
 CACHES = {
     "default": {
