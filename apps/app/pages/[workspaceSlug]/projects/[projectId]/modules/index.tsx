@@ -78,7 +78,7 @@ const ProjectModules: NextPage = () => {
           <div className="flex h-full w-full flex-col items-center justify-center px-4">
             <EmptySpace
               title="You don't have any module yet."
-              description="A cycle is a fixed time period where a team commits to a set number of issues from their backlog. Cycles are usually one, two, or four weeks long."
+              description="Modules are smaller, focused projects that help you group and organize issues within a specific time frame."
               Icon={RectangleGroupIcon}
             >
               <EmptySpaceItem
