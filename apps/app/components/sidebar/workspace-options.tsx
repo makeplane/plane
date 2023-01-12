@@ -17,17 +17,17 @@ import {
 import { Menu, Transition } from "@headlessui/react";
 
 // services
-import userService from "lib/services/user.service";
-import workspaceService from "lib/services/workspace.service";
-import authenticationService from "lib/services/authentication.service";
+import userService from "services/user.service";
+import workspaceService from "services/workspace.service";
+import authenticationService from "services/authentication.service";
 // hooks
-import useUser from "lib/hooks/useUser";
+import useUser from "hooks/useUser";
 // constants
 import { USER_WORKSPACES } from "constants/fetch-keys";
 // types
 import { IUser } from "types";
 // ui
-import { Loader } from "ui";
+import { Loader } from "components/ui";
 
 type Props = {
   sidebarCollapse: boolean;

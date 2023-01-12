@@ -7,14 +7,14 @@ import useSWR, { mutate } from "swr";
 // react hook form
 import { SubmitHandler, useForm } from "react-hook-form";
 // services
-import issuesServices from "lib/services/issues.service";
-import projectService from "lib/services/project.service";
+import issuesServices from "services/issues.service";
+import projectService from "services/project.service";
 // hooks
-import useToast from "lib/hooks/useToast";
+import useToast from "hooks/useToast";
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // ui
-import { Button } from "ui";
+import { Button } from "components/ui";
 // icons
 import { FolderIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 // types
@@ -23,7 +23,7 @@ import { IIssue, IssueResponse } from "types";
 import { PROJECT_ISSUES_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
 // common
 import { classNames } from "constants/common";
-import { LayerDiagonalIcon } from "ui/icons";
+import { LayerDiagonalIcon } from "components/icons";
 
 type FormInput = {
   issue_ids: string[];

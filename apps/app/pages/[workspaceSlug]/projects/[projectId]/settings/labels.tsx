@@ -9,9 +9,9 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 
 import { TwitterPicker } from "react-color";
 // services
-import projectService from "lib/services/project.service";
-import workspaceService from "lib/services/workspace.service";
-import issuesService from "lib/services/issues.service";
+import projectService from "services/project.service";
+import workspaceService from "services/workspace.service";
+import issuesService from "services/issues.service";
 // layouts
 import SettingsLayout from "layouts/settings-layout";
 // components
@@ -19,7 +19,7 @@ import SingleLabel from "components/project/settings/single-label";
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
 // ui
-import { BreadcrumbItem, Breadcrumbs, Button, Input, Loader } from "ui";
+import { BreadcrumbItem, Breadcrumbs, Button, Input, Loader } from "components/ui";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 // fetch-keys

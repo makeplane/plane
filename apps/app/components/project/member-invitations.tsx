@@ -5,11 +5,11 @@ import Link from "next/link";
 import useSWR from "swr";
 import { useRouter } from "next/router";
 // services
-import projectService from "lib/services/project.service";
+import projectService from "services/project.service";
 // hooks
-import useUser from "lib/hooks/useUser";
+import useUser from "hooks/useUser";
 // ui
-import { Button } from "ui";
+import { Button } from "components/ui";
 // icons
 import {
   CalendarDaysIcon,

@@ -11,13 +11,20 @@ import { Disclosure, Popover, Transition } from "@headlessui/react";
 // layouts
 import AppLayout from "layouts/app-layout";
 // hooks
-import useUser from "lib/hooks/useUser";
+import useUser from "hooks/useUser";
 // ui
-import { Spinner, Breadcrumbs, BreadcrumbItem, EmptySpace, EmptySpaceItem, HeaderButton } from "ui";
+import {
+  Spinner,
+  Breadcrumbs,
+  BreadcrumbItem,
+  EmptySpace,
+  EmptySpaceItem,
+  HeaderButton,
+} from "components/ui";
 // services
-import userService from "lib/services/user.service";
+import userService from "services/user.service";
 // hooks
-import useIssuesProperties from "lib/hooks/useIssuesProperties";
+import useIssuesProperties from "hooks/useIssuesProperties";
 // types
 import { IIssue, Properties } from "types";
 // lib

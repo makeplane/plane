@@ -6,13 +6,13 @@ import Link from "next/link";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 // services
-import workspaceService from "lib/services/workspace.service";
+import workspaceService from "services/workspace.service";
 // hoc
-import withAuthWrapper from "lib/hoc/withAuthWrapper";
+// import withAuthWrapper from "lib/hoc/withAuthWrapper";
 // layouts
 import AppLayout from "layouts/app-layout";
 // ui
-import { Button } from "ui";
+import { Button } from "components/ui";
 // swr
 import useSWR from "swr";
 import { USER_WORKSPACES } from "constants/fetch-keys";
@@ -155,4 +155,4 @@ const MyWorkspacesInvites: NextPage = () => {
   );
 };
 
-export default withAuthWrapper(MyWorkspacesInvites);
+export default MyWorkspacesInvites;

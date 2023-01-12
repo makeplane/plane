@@ -6,12 +6,12 @@ import type { NextPage, NextPageContext } from "next";
 
 import useSWR from "swr";
 // services
-import projectService from "lib/services/project.service";
-import workspaceService from "lib/services/workspace.service";
+import projectService from "services/project.service";
+import workspaceService from "services/workspace.service";
 // lib
 import { requiredAdmin } from "lib/auth";
 // hooks
-import useToast from "lib/hooks/useToast";
+import useToast from "hooks/useToast";
 // constants
 import { ROLE } from "constants/";
 // layouts
@@ -20,7 +20,14 @@ import SettingsLayout from "layouts/settings-layout";
 import ConfirmProjectMemberRemove from "components/project/confirm-project-member-remove";
 import SendProjectInvitationModal from "components/project/send-project-invitation-modal";
 // ui
-import { BreadcrumbItem, Breadcrumbs, Button, CustomListbox, CustomMenu, Loader } from "ui";
+import {
+  BreadcrumbItem,
+  Breadcrumbs,
+  Button,
+  CustomListbox,
+  CustomMenu,
+  Loader,
+} from "components/ui";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 // fetch-keys

@@ -2,11 +2,11 @@ import React from "react";
 
 import { useRouter } from "next/router";
 // hooks
-import useIssuesProperties from "lib/hooks/useIssuesProperties";
+import useIssuesProperties from "hooks/useIssuesProperties";
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
 // ui
-import { CustomMenu } from "ui";
+import { CustomMenu } from "components/ui";
 // icons
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 // types

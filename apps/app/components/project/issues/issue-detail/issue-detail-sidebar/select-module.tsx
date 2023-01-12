@@ -8,9 +8,9 @@ import { Control, Controller } from "react-hook-form";
 // constants
 import { MODULE_LIST } from "constants/fetch-keys";
 // services
-import modulesService from "lib/services/modules.service";
+import modulesService from "services/modules.service";
 // ui
-import { Spinner, CustomSelect } from "ui";
+import { Spinner, CustomSelect } from "components/ui";
 // icons
 import { RectangleGroupIcon } from "@heroicons/react/24/outline";
 // types

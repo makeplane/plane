@@ -8,12 +8,12 @@ import useSWR from "swr";
 
 import { Disclosure, Listbox, Transition } from "@headlessui/react";
 // hooks
-import useIssuesProperties from "lib/hooks/useIssuesProperties";
+import useIssuesProperties from "hooks/useIssuesProperties";
 // services
-import stateService from "lib/services/state.service";
-import issuesService from "lib/services/issues.service";
-import projectService from "lib/services/project.service";
-import workspaceService from "lib/services/workspace.service";
+import stateService from "services/state.service";
+import issuesService from "services/issues.service";
+import projectService from "services/project.service";
+import workspaceService from "services/workspace.service";
 // constants
 import {
   addSpaceIfCamelCase,
@@ -30,7 +30,7 @@ import {
   WORKSPACE_MEMBERS,
 } from "constants/fetch-keys";
 // ui
-import { CustomMenu, CustomSelect, Spinner } from "ui";
+import { CustomMenu, CustomSelect, Spinner } from "components/ui";
 // icons
 import User from "public/user.png";
 import { ChevronDownIcon, PlusIcon, CalendarDaysIcon } from "@heroicons/react/24/outline";

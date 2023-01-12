@@ -6,9 +6,9 @@ import dynamic from "next/dynamic";
 // react-hook-form
 import { useForm } from "react-hook-form";
 // hooks
-import useUser from "lib/hooks/useUser";
+import useUser from "hooks/useUser";
 // ui
-import { CustomMenu } from "ui";
+import { CustomMenu } from "components/ui";
 // icons
 import { CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // types

@@ -10,24 +10,24 @@ import useSWR from "swr";
 import { useForm } from "react-hook-form";
 
 // hooks
-import useUser from "lib/hooks/useUser";
-import useToast from "lib/hooks/useToast";
+import useUser from "hooks/useUser";
+import useToast from "hooks/useToast";
 // lib
 import { requiredAuth } from "lib/auth";
 // services
-import projectService from "lib/services/project.service";
+import projectService from "services/project.service";
 // layouts
 import AppLayout from "layouts/app-layout";
 // constants
 import { USER_ISSUE, USER_WORKSPACE_INVITATIONS, PROJECTS_LIST } from "constants/fetch-keys";
 // services
-import userService from "lib/services/user.service";
-import fileServices from "lib/services/file.service";
-import workspaceService from "lib/services/workspace.service";
+import userService from "services/user.service";
+import fileServices from "services/file.service";
+import workspaceService from "services/workspace.service";
 // components
 import { ImageUploadModal } from "components/common/image-upload-modal";
 // ui
-import { BreadcrumbItem, Breadcrumbs, Button, Input, Spinner } from "ui";
+import { BreadcrumbItem, Breadcrumbs, Button, Input, Spinner } from "components/ui";
 // icons
 import {
   ChevronRightIcon,

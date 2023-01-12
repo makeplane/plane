@@ -10,13 +10,13 @@ import { TwitterPicker } from "react-color";
 
 import { Dialog, Popover, Transition } from "@headlessui/react";
 // services
-import stateService from "lib/services/state.service";
+import stateService from "services/state.service";
 // fetch keys
 import { STATE_LIST } from "constants/fetch-keys";
 // constants
 import { GROUP_CHOICES } from "constants/";
 // ui
-import { Button, Input, Select, TextArea } from "ui";
+import { Button, Input, Select, TextArea } from "components/ui";
 // icons
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 

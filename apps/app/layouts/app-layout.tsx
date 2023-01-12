@@ -9,13 +9,13 @@ import Container from "layouts/container";
 import Sidebar from "layouts/navbar/main-sidebar";
 import Header from "layouts/navbar/header";
 // services
-import projectService from "lib/services/project.service";
+import projectService from "services/project.service";
 // hooks
-import useUser from "lib/hooks/useUser";
+import useUser from "hooks/useUser";
 // fetch keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 // ui
-import { Button, Spinner } from "ui";
+import { Button, Spinner } from "components/ui";
 // components
 import CommandPalette from "components/command-palette";
 // types
