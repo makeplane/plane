@@ -5,9 +5,8 @@ import Link from "next/link";
 import { Transition } from "@headlessui/react";
 
 // hooks
-import useTheme from "lib/hooks/useTheme";
-// hook
-import useOutsideClickDetector from "lib/hooks/useOutsideClickDetector";
+import useTheme from "hooks/useTheme";
+import useOutsideClickDetector from "hooks/useOutsideClickDetector";
 // components
 import ProjectsList from "components/sidebar/projects-list";
 import WorkspaceOptions from "components/sidebar/workspace-options";
@@ -26,7 +25,7 @@ import {
   DiscordIcon,
   GithubIcon,
   CommentIcon,
-} from "ui/icons";
+} from "components/icons";
 
 type Props = {
   toggleSidebar: boolean;

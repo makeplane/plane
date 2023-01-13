@@ -8,13 +8,13 @@ import { Dialog, Transition } from "@headlessui/react";
 // constants
 import { USER_WORKSPACES } from "constants/fetch-keys";
 // services
-import workspaceService from "lib/services/workspace.service";
+import workspaceService from "services/workspace.service";
 // hooks
-import useToast from "lib/hooks/useToast";
+import useToast from "hooks/useToast";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
-import { Button, Input } from "ui";
+import { Button, Input } from "components/ui";
 // types
 import type { IWorkspace } from "types";
 

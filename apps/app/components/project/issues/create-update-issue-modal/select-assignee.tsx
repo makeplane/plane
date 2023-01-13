@@ -6,7 +6,7 @@ import useSWR from "swr";
 
 import { Controller } from "react-hook-form";
 // service
-import projectServices from "lib/services/project.service";
+import projectServices from "services/project.service";
 // fetch keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 // types
@@ -14,7 +14,7 @@ import type { Control } from "react-hook-form";
 import type { IIssue } from "types";
 import { UserIcon } from "@heroicons/react/24/outline";
 
-import { SearchListbox } from "ui";
+import { SearchListbox } from "components/ui";
 
 type Props = {
   control: Control<IIssue, any>;

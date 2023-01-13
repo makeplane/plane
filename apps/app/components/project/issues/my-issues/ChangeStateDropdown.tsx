@@ -4,12 +4,12 @@ import { useRouter } from "next/router";
 
 import useSWR from "swr";
 // hooks
-import useUser from "lib/hooks/useUser";
+import useUser from "hooks/useUser";
 // constants
 import { addSpaceIfCamelCase, classNames } from "constants/common";
 import { STATE_LIST } from "constants/fetch-keys";
 // services
-import stateServices from "lib/services/state.service";
+import stateServices from "services/state.service";
 // ui
 import { Listbox, Transition } from "@headlessui/react";
 // types

@@ -5,11 +5,11 @@ import { useRouter } from "next/router";
 // swr
 import { mutate } from "swr";
 // services
-import modulesService from "lib/services/modules.service";
+import modulesService from "services/modules.service";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // ui
-import { Button } from "ui";
+import { Button } from "components/ui";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // types

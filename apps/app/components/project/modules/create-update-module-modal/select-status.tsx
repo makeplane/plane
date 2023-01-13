@@ -4,7 +4,7 @@ import React from "react";
 import { Controller, FieldError } from "react-hook-form";
 import type { Control } from "react-hook-form";
 // ui
-import { CustomListbox } from "ui";
+import { CustomListbox } from "components/ui";
 // icons
 import { Squares2X2Icon } from "@heroicons/react/24/outline";
 // types

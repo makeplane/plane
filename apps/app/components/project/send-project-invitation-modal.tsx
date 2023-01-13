@@ -8,16 +8,16 @@ import { useForm, Controller } from "react-hook-form";
 
 import { Dialog, Transition, Listbox } from "@headlessui/react";
 // hooks
-import useUser from "lib/hooks/useUser";
-import useToast from "lib/hooks/useToast";
+import useUser from "hooks/useUser";
+import useToast from "hooks/useToast";
 // services
-import projectService from "lib/services/project.service";
-import workspaceService from "lib/services/workspace.service";
+import projectService from "services/project.service";
+import workspaceService from "services/workspace.service";
 // constants
 import { ROLE } from "constants/";
 import { PROJECT_INVITATIONS, WORKSPACE_MEMBERS } from "constants/fetch-keys";
 // ui
-import { Button, Select, TextArea } from "ui";
+import { Button, Select, TextArea } from "components/ui";
 // icons
 import { ChevronDownIcon, CheckIcon } from "@heroicons/react/20/solid";
 

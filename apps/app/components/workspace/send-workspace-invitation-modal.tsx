@@ -8,11 +8,11 @@ import { Dialog, Transition } from "@headlessui/react";
 // fetch keys
 import { WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 // services
-import workspaceService from "lib/services/workspace.service";
+import workspaceService from "services/workspace.service";
 // ui
-import { Button, Input, TextArea, Select } from "ui";
+import { Button, Input, TextArea, Select } from "components/ui";
 // hooks
-import useToast from "lib/hooks/useToast";
+import useToast from "hooks/useToast";
 // types
 import { IWorkspaceMemberInvitation } from "types";
 

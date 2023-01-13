@@ -7,7 +7,7 @@ import useSWR from "swr";
 import { Draggable } from "react-beautiful-dnd";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 // services
-import workspaceService from "lib/services/workspace.service";
+import workspaceService from "services/workspace.service";
 // icons
 import {
   ArrowsPointingInIcon,

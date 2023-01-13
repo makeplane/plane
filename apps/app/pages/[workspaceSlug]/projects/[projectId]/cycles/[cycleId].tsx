@@ -15,14 +15,21 @@ import ExistingIssuesListModal from "components/common/existing-issues-list-moda
 import CycleDetailSidebar from "components/project/cycles/cycle-detail-sidebar";
 import View from "components/core/view";
 // services
-import issuesServices from "lib/services/issues.service";
-import cycleServices from "lib/services/cycles.service";
-import projectService from "lib/services/project.service";
+import issuesServices from "services/issues.service";
+import cycleServices from "services/cycles.service";
+import projectService from "services/project.service";
 // hooks
-import useIssuesFilter from "lib/hooks/useIssuesFilter";
-import useIssuesProperties from "lib/hooks/useIssuesProperties";
+import useIssuesFilter from "hooks/useIssuesFilter";
+import useIssuesProperties from "hooks/useIssuesProperties";
 // ui
-import { BreadcrumbItem, Breadcrumbs, CustomMenu, EmptySpace, EmptySpaceItem, Spinner } from "ui";
+import {
+  BreadcrumbItem,
+  Breadcrumbs,
+  CustomMenu,
+  EmptySpace,
+  EmptySpaceItem,
+  Spinner,
+} from "components/ui";
 // icons
 import { Squares2X2Icon } from "@heroicons/react/20/solid";
 import {

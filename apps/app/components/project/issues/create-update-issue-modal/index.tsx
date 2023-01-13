@@ -10,12 +10,12 @@ import { Controller, useForm } from "react-hook-form";
 
 import { Dialog, Menu, Transition } from "@headlessui/react";
 // services
-import issuesServices from "lib/services/issues.service";
+import issuesServices from "services/issues.service";
 // hooks
-import useUser from "lib/hooks/useUser";
-import useToast from "lib/hooks/useToast";
+import useUser from "hooks/useUser";
+import useToast from "hooks/useToast";
 // ui
-import { Button, Input, Loader } from "ui";
+import { Button, Input, Loader } from "components/ui";
 // icons
 import { EllipsisHorizontalIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // components
@@ -41,8 +41,8 @@ import {
 } from "constants/fetch-keys";
 // common
 import { renderDateFormat, cosineSimilarity } from "constants/common";
-import projectService from "lib/services/project.service";
-import modulesService from "lib/services/modules.service";
+import projectService from "services/project.service";
+import modulesService from "services/modules.service";
 
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
   ssr: false,

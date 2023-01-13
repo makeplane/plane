@@ -7,13 +7,13 @@ import useSWR from "swr";
 
 import { Control, Controller } from "react-hook-form";
 // services
-import workspaceService from "lib/services/workspace.service";
+import workspaceService from "services/workspace.service";
 // hooks
-import useUser from "lib/hooks/useUser";
+import useUser from "hooks/useUser";
 // headless ui
 import { Listbox, Transition } from "@headlessui/react";
 // ui
-import { Spinner } from "ui";
+import { Spinner } from "components/ui";
 // icons
 import { UserGroupIcon } from "@heroicons/react/24/outline";
 import User from "public/user.png";

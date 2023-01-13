@@ -10,22 +10,22 @@ import useSWR from "swr";
 
 import { Menu } from "@headlessui/react";
 // hooks
-import useUser from "lib/hooks/useUser";
-import useToast from "lib/hooks/useToast";
+import useUser from "hooks/useUser";
+import useToast from "hooks/useToast";
 // services
-import workspaceService from "lib/services/workspace.service";
+import workspaceService from "services/workspace.service";
 // constants
 import { ROLE } from "constants/";
 import { WORKSPACE_DETAILS, WORKSPACE_INVITATIONS, WORKSPACE_MEMBERS } from "constants/fetch-keys";
 // hoc
-import withAuthWrapper from "lib/hoc/withAuthWrapper";
+// import withAuthWrapper from "lib/hoc/withAuthWrapper";
 // layouts
 import AppLayout from "layouts/app-layout";
 // components
 import SendWorkspaceInvitationModal from "components/workspace/send-workspace-invitation-modal";
 import ConfirmWorkspaceMemberRemove from "components/workspace/confirm-workspace-member-remove";
 // ui
-import { Spinner, CustomListbox, BreadcrumbItem, Breadcrumbs, HeaderButton } from "ui";
+import { Spinner, CustomListbox, BreadcrumbItem, Breadcrumbs, HeaderButton } from "components/ui";
 // icons
 import { PlusIcon, EllipsisHorizontalIcon } from "@heroicons/react/20/solid";
 
@@ -309,4 +309,4 @@ const WorkspaceInvite: NextPage = () => {
   );
 };
 
-export default withAuthWrapper(WorkspaceInvite);
+export default WorkspaceInvite;
