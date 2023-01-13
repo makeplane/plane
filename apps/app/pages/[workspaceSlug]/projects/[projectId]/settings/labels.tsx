@@ -12,6 +12,8 @@ import { TwitterPicker } from "react-color";
 import projectService from "lib/services/project.service";
 import workspaceService from "lib/services/workspace.service";
 import issuesService from "lib/services/issues.service";
+// lib
+import { requiredAdmin } from "lib/auth";
 // layouts
 import SettingsLayout from "layouts/settings-layout";
 // components
@@ -26,7 +28,6 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 import { PROJECT_DETAILS, PROJECT_ISSUE_LABELS, WORKSPACE_DETAILS } from "constants/fetch-keys";
 // types
 import { IIssueLabels } from "types";
-import { requiredAdmin } from "lib/auth";
 
 const defaultValues: Partial<IIssueLabels> = {
   name: "",
@@ -57,9 +58,9 @@ const LabelsSettings: NextPage<TLabelSettingsProps> = (props) => {
   );
 
   const { data: activeProject } = useSWR(
-    activeWorkspace && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    activeWorkspace && projectId
-      ? () => projectService.getProject(activeWorkspace.slug, projectId as string)
+    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -74,20 +75,21 @@ const LabelsSettings: NextPage<TLabelSettingsProps> = (props) => {
   } = useForm<IIssueLabels>({ defaultValues });
 
   const { data: issueLabels, mutate } = useSWR<IIssueLabels[]>(
-    activeProject && activeWorkspace ? PROJECT_ISSUE_LABELS(activeProject.id) : null,
-    activeProject && activeWorkspace
-      ? () => issuesService.getIssueLabels(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string)
       : null
   );
 
-  const handleNewLabel: SubmitHandler<IIssueLabels> = (formData) => {
+  const handleNewLabel: SubmitHandler<IIssueLabels> = async (formData) => {
     if (!activeWorkspace || !activeProject || isSubmitting) return;
-    issuesService.createIssueLabel(activeWorkspace.slug, activeProject.id, formData).then((res) => {
-      console.log(res);
-      reset(defaultValues);
-      mutate((prevData) => [...(prevData ?? []), res], false);
-      setNewLabelForm(false);
-    });
+    await issuesService
+      .createIssueLabel(activeWorkspace.slug, activeProject.id, formData)
+      .then((res) => {
+        reset(defaultValues);
+        mutate((prevData) => [...(prevData ?? []), res], false);
+        setNewLabelForm(false);
+      });
   };
 
   const editLabel = (label: IIssueLabels) => {
@@ -98,9 +100,9 @@ const LabelsSettings: NextPage<TLabelSettingsProps> = (props) => {
     setLabelIdForUpdate(label.id);
   };
 
-  const handleLabelUpdate: SubmitHandler<IIssueLabels> = (formData) => {
+  const handleLabelUpdate: SubmitHandler<IIssueLabels> = async (formData) => {
     if (!activeWorkspace || !activeProject || isSubmitting) return;
-    issuesService
+    await issuesService
       .patchIssueLabel(activeWorkspace.slug, activeProject.id, labelIdForUpdate ?? "", formData)
       .then((res) => {
         console.log(res);
@@ -215,7 +217,7 @@ const LabelsSettings: NextPage<TLabelSettingsProps> = (props) => {
                 id="labelName"
                 name="name"
                 register={register}
-                placeholder="Lable title"
+                placeholder="Label title"
                 validations={{
                   required: "Label title is required",
                 }}
