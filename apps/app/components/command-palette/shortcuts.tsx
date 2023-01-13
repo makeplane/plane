@@ -4,7 +4,7 @@ import { Dialog, Transition } from "@headlessui/react";
 // icons
 import { XMarkIcon } from "@heroicons/react/20/solid";
 // ui
-import { Input } from "ui";
+import { Input } from "components/ui";
 
 type Props = {
   isOpen: boolean;
@@ -79,10 +79,10 @@ const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
                 <div className="bg-white p-5">
                   <div className="sm:flex sm:items-start">
-                    <div className="flex flex-col gap-y-4 text-center sm:text-left w-full">
+                    <div className="flex w-full flex-col gap-y-4 text-center sm:text-left">
                       <Dialog.Title
                         as="h3"
-                        className="text-lg font-medium leading-6 text-gray-900 flex justify-between"
+                        className="flex justify-between text-lg font-medium leading-6 text-gray-900"
                       >
                         <span>Keyboard Shortcuts</span>
                         <span>
@@ -103,11 +103,11 @@ const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                           onChange={(e) => setQuery(e.target.value)}
                         />
                       </div>
-                      <div className="flex flex-col gap-y-3 w-full">
+                      <div className="flex w-full flex-col gap-y-3">
                         {filteredShortcuts.length > 0 ? (
                           filteredShortcuts.map(({ title, shortcuts }) => (
-                            <div key={title} className="w-full flex flex-col">
-                              <p className="font-medium mb-4">{title}</p>
+                            <div key={title} className="flex w-full flex-col">
+                              <p className="mb-4 font-medium">{title}</p>
                               <div className="flex flex-col gap-y-3">
                                 {shortcuts.map(({ keys, description }, index) => (
                                   <div key={index} className="flex justify-between">
@@ -115,7 +115,7 @@ const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                                     <div className="flex items-center gap-x-1">
                                       {keys.split(",").map((key, index) => (
                                         <span key={index} className="flex items-center gap-1">
-                                          <kbd className="bg-gray-200 text-sm px-1 rounded">
+                                          <kbd className="rounded bg-gray-200 px-1 text-sm">
                                             {key}
                                           </kbd>
                                         </span>

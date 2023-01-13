@@ -2,18 +2,18 @@ import React, { useCallback } from "react";
 // swr
 import useSWR, { mutate } from "swr";
 // services
-import stateService from "lib/services/state.service";
+import stateService from "services/state.service";
 // constants
 import { STATE_LIST, CYCLE_ISSUES } from "constants/fetch-keys";
 // components
 import SingleBoard from "components/project/cycles/board-view/single-board";
 // ui
-import { Spinner } from "ui";
+import { Spinner } from "components/ui";
 // types
 import { CycleIssueResponse, IIssue, IProjectMember, NestedKeyOf, Properties } from "types";
 import { useRouter } from "next/router";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
-import issuesService from "lib/services/issues.service";
+import issuesService from "services/issues.service";
 
 type Props = {
   groupedByIssues: {

@@ -8,13 +8,13 @@ import { Dialog, Transition } from "@headlessui/react";
 // fetching keys
 import { CYCLE_ISSUES, PROJECT_ISSUES_LIST, MODULE_ISSUES } from "constants/fetch-keys";
 // services
-import issueServices from "lib/services/issues.service";
+import issueServices from "services/issues.service";
 // hooks
-import useToast from "lib/hooks/useToast";
+import useToast from "hooks/useToast";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
-import { Button } from "ui";
+import { Button } from "components/ui";
 // types
 import type { CycleIssueResponse, IIssue, IssueResponse, ModuleIssueResponse } from "types";
 

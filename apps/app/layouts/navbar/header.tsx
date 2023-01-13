@@ -1,5 +1,5 @@
 // ui
-import { Button } from "ui";
+import { Button } from "components/ui";
 // icons
 import { Bars3Icon } from "@heroicons/react/24/outline";
 

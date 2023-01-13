@@ -12,12 +12,12 @@ import { requiredAdmin } from "lib/auth";
 // layouts
 import SettingsLayout from "layouts/settings-layout";
 // services
-import projectService from "lib/services/project.service";
-import workspaceService from "lib/services/workspace.service";
+import projectService from "services/project.service";
+import workspaceService from "services/workspace.service";
 // hooks
-import useToast from "lib/hooks/useToast";
+import useToast from "hooks/useToast";
 // ui
-import { BreadcrumbItem, Breadcrumbs, Button, CustomSelect, Loader } from "ui";
+import { BreadcrumbItem, Breadcrumbs, Button, CustomSelect, Loader } from "components/ui";
 // types
 import { IProject, IWorkspace } from "types";
 // fetch-keys

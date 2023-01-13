@@ -8,8 +8,8 @@ import { useForm, Controller } from "react-hook-form";
 
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import projectServices from "lib/services/project.service";
-import workspaceService from "lib/services/workspace.service";
+import projectServices from "services/project.service";
+import workspaceService from "services/workspace.service";
 // common
 import { getRandomEmoji } from "constants/common";
 // constants
@@ -17,9 +17,9 @@ import { NETWORK_CHOICES } from "constants/";
 // fetch keys
 import { PROJECTS_LIST, WORKSPACE_MEMBERS_ME } from "constants/fetch-keys";
 // hooks
-import useToast from "lib/hooks/useToast";
+import useToast from "hooks/useToast";
 // ui
-import { Button, Input, TextArea, EmojiIconPicker, CustomSelect } from "ui";
+import { Button, Input, TextArea, EmojiIconPicker, CustomSelect } from "components/ui";
 // types
 import { IProject } from "types";
 

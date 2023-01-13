@@ -1,29 +1,23 @@
 import React, { useState } from "react";
-
 import { useRouter } from "next/router";
 import type { NextPageContext, NextPage } from "next";
-
 import useSWR from "swr";
-
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-
+import { PlusIcon } from "@heroicons/react/24/outline";
+import { Popover, Transition } from "@headlessui/react";
 import { TwitterPicker } from "react-color";
 // services
-import projectService from "lib/services/project.service";
-import workspaceService from "lib/services/workspace.service";
-import issuesService from "lib/services/issues.service";
+import projectService from "services/project.service";
+import workspaceService from "services/workspace.service";
+import issuesService from "services/issues.service";
 // lib
 import { requiredAdmin } from "lib/auth";
 // layouts
 import SettingsLayout from "layouts/settings-layout";
 // components
 import SingleLabel from "components/project/settings/single-label";
-// headless ui
-import { Popover, Transition } from "@headlessui/react";
 // ui
-import { BreadcrumbItem, Breadcrumbs, Button, Input, Loader } from "ui";
-// icons
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { BreadcrumbItem, Breadcrumbs, Button, Input, Loader } from "components/ui";
 // fetch-keys
 import { PROJECT_DETAILS, PROJECT_ISSUE_LABELS, WORKSPACE_DETAILS } from "constants/fetch-keys";
 // types

@@ -5,7 +5,7 @@ import SingleStat from "components/project/cycles/stats-view/single-stat";
 import ConfirmCycleDeletion from "components/project/cycles/confirm-cycle-deletion";
 // types
 import { ICycle, SelectCycleType } from "types";
-import { CompletedCycleIcon, CurrentCycleIcon, UpcomingCycleIcon } from "ui/icons";
+import { CompletedCycleIcon, CurrentCycleIcon, UpcomingCycleIcon } from "components/icons";
 
 type TCycleStatsViewProps = {
   cycles: ICycle[];

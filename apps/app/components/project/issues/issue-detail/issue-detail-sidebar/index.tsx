@@ -8,9 +8,9 @@ import { useForm, Controller, UseFormWatch } from "react-hook-form";
 
 import { TwitterPicker } from "react-color";
 // services
-import issuesServices from "lib/services/issues.service";
+import issuesServices from "services/issues.service";
 // hooks
-import useToast from "lib/hooks/useToast";
+import useToast from "hooks/useToast";
 // components
 import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
 import SelectState from "components/project/issues/issue-detail/issue-detail-sidebar/select-state";
@@ -23,7 +23,7 @@ import SelectBlocked from "components/project/issues/issue-detail/issue-detail-s
 // headless ui
 import { Popover, Listbox, Transition } from "@headlessui/react";
 // ui
-import { Input, Button, Spinner } from "ui";
+import { Input, Button, Spinner } from "components/ui";
 // icons
 import {
   TagIcon,

@@ -6,7 +6,7 @@ import useSWR from "swr";
 
 import { Control, Controller } from "react-hook-form";
 // services
-import stateService from "lib/services/state.service";
+import stateService from "services/state.service";
 // icons
 import { Squares2X2Icon } from "@heroicons/react/24/outline";
 // constants
@@ -15,7 +15,7 @@ import { STATE_LIST } from "constants/fetch-keys";
 // types
 import { IIssue } from "types";
 // ui
-import { Spinner, CustomSelect } from "ui";
+import { Spinner, CustomSelect } from "components/ui";
 
 type Props = {
   control: Control<IIssue, any>;

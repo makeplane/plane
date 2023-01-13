@@ -7,11 +7,11 @@ import { useRouter } from "next/router";
 // swr
 import useSWR from "swr";
 // services
-import cyclesService from "lib/services/cycles.service";
+import cyclesService from "services/cycles.service";
 // hooks
-import useUser from "lib/hooks/useUser";
+import useUser from "hooks/useUser";
 // ui
-import { Button, CustomMenu } from "ui";
+import { Button, CustomMenu } from "components/ui";
 // icons
 import { CalendarDaysIcon } from "@heroicons/react/20/solid";
 import { ArrowPathIcon, CheckIcon, UserIcon, UserGroupIcon } from "@heroicons/react/24/outline";

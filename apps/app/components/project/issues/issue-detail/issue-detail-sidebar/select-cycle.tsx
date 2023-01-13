@@ -9,10 +9,10 @@ import { Control, Controller, UseFormWatch } from "react-hook-form";
 // constants
 import { CYCLE_ISSUES, CYCLE_LIST, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // services
-import issuesService from "lib/services/issues.service";
-import cyclesService from "lib/services/cycles.service";
+import issuesService from "services/issues.service";
+import cyclesService from "services/cycles.service";
 // ui
-import { Spinner, CustomSelect } from "ui";
+import { Spinner, CustomSelect } from "components/ui";
 // icons
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 // types

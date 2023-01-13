@@ -4,12 +4,12 @@ import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 // services
-import modulesService from "lib/services/modules.service";
-import projectService from "lib/services/project.service";
-import issuesService from "lib/services/issues.service";
+import modulesService from "services/modules.service";
+import projectService from "services/project.service";
+import issuesService from "services/issues.service";
 // hooks
-import useIssuesFilter from "lib/hooks/useIssuesFilter";
-import useIssuesProperties from "lib/hooks/useIssuesProperties";
+import useIssuesFilter from "hooks/useIssuesFilter";
+import useIssuesProperties from "hooks/useIssuesProperties";
 // layouts
 import AppLayout from "layouts/app-layout";
 // components
@@ -22,7 +22,14 @@ import ConfirmModuleDeletion from "components/project/modules/confirm-module-del
 import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
 import View from "components/core/view";
 // ui
-import { BreadcrumbItem, Breadcrumbs, CustomMenu, EmptySpace, EmptySpaceItem, Spinner } from "ui";
+import {
+  BreadcrumbItem,
+  Breadcrumbs,
+  CustomMenu,
+  EmptySpace,
+  EmptySpaceItem,
+  Spinner,
+} from "components/ui";
 // icons
 import {
   ArrowLeftIcon,

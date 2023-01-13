@@ -7,16 +7,16 @@ import { mutate } from "swr";
 
 import { Controller, useForm } from "react-hook-form";
 // services
-import modulesService from "lib/services/modules.service";
+import modulesService from "services/modules.service";
 // hooks
-import useToast from "lib/hooks/useToast";
+import useToast from "hooks/useToast";
 // components
 import SelectLead from "components/project/modules/module-detail-sidebar/select-lead";
 import SelectMembers from "components/project/modules/module-detail-sidebar/select-members";
 import SelectStatus from "components/project/modules/module-detail-sidebar/select-status";
 import ModuleLinkModal from "components/project/modules/module-link-modal";
 // ui
-import { Loader } from "ui";
+import { Loader } from "components/ui";
 // icons
 import {
   CalendarDaysIcon,
