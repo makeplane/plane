@@ -32,6 +32,7 @@ class CycleViewSet(BaseViewSet):
             .filter(project__project_projectmember__member=self.request.user)
             .select_related("project")
             .select_related("workspace")
+            .select_related("owned_by")
             .distinct()
         )
 

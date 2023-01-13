@@ -45,13 +45,15 @@ class ModuleViewSet(BaseViewSet):
             .prefetch_related(
                 Prefetch(
                     "issue_module",
-                    queryset=ModuleIssue.objects.select_related("module", "issue"),
+                    queryset=ModuleIssue.objects.select_related(
+                        "module", "issue", "issue__state"
+                    ),
                 )
             )
             .prefetch_related(
                 Prefetch(
                     "link_module",
-                    queryset=ModuleLink.objects.select_related("module"),
+                    queryset=ModuleLink.objects.select_related("module", "created_by"),
                 )
             )
         )
@@ -117,7 +119,7 @@ class ModuleIssueViewSet(BaseViewSet):
             .select_related("project")
             .select_related("workspace")
             .select_related("module")
-            .select_related("issue")
+            .select_related("issue", "issue__state")
             .distinct()
         )
 
