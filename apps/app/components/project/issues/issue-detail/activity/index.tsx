@@ -8,7 +8,7 @@ import { KeyedMutator } from "swr";
 // common
 import { addSpaceIfCamelCase, renderShortNumericDateFormat, timeAgo } from "constants/common";
 // ui
-import { Loader } from "ui";
+import { Loader } from "components/ui";
 // icons
 import {
   CalendarDaysIcon,
@@ -17,12 +17,12 @@ import {
   Squares2X2Icon,
   UserIcon,
 } from "@heroicons/react/24/outline";
-import { BlockedIcon, BlockerIcon, TagIcon, UserGroupIcon } from "ui/icons";
+import { BlockedIcon, BlockerIcon, TagIcon, UserGroupIcon } from "components/icons";
 import { IIssueActivity, IIssueComment } from "types";
 // components
 import CommentCard from "components/project/issues/issue-detail/comment/issue-comment-card";
 // services
-import issuesServices from "lib/services/issues.service";
+import issuesServices from "services/issues.service";
 
 const activityDetails: {
   [key: string]: {

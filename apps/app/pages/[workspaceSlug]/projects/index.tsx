@@ -6,8 +6,8 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 
 // services
-import projectService from "lib/services/project.service";
-import workspaceService from "lib/services/workspace.service";
+import projectService from "services/project.service";
+import workspaceService from "services/workspace.service";
 // constants
 import { WORKSPACE_DETAILS, PROJECTS_LIST, PROJECT_MEMBERS } from "constants/fetch-keys";
 // layouts
@@ -17,7 +17,14 @@ import { JoinProjectModal } from "components/project/join-project-modal";
 import ProjectMemberInvitations from "components/project/member-invitations";
 import ConfirmProjectDeletion from "components/project/confirm-project-deletion";
 // ui
-import { HeaderButton, Breadcrumbs, BreadcrumbItem, EmptySpace, EmptySpaceItem, Loader } from "ui";
+import {
+  HeaderButton,
+  Breadcrumbs,
+  BreadcrumbItem,
+  EmptySpace,
+  EmptySpaceItem,
+  Loader,
+} from "components/ui";
 // icons
 import { ClipboardDocumentListIcon, PlusIcon } from "@heroicons/react/24/outline";
 

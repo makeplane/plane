@@ -6,17 +6,17 @@ import type { NextPage, NextPageContext } from "next";
 
 import useSWR from "swr";
 // hooks
-import useUser from "lib/hooks/useUser";
+import useUser from "hooks/useUser";
 // lib
 import { requiredAuth } from "lib/auth";
 // services
-import userService from "lib/services/user.service";
-import projectService from "lib/services/project.service";
-import workspaceService from "lib/services/workspace.service";
+import userService from "services/user.service";
+import projectService from "services/project.service";
+import workspaceService from "services/workspace.service";
 // layouts
 import AppLayout from "layouts/app-layout";
 // ui
-import { Loader, Spinner } from "ui";
+import { Loader, Spinner } from "components/ui";
 // icons
 import {
   ArrowRightIcon,
@@ -34,7 +34,7 @@ import {
   groupBy,
   renderShortNumericDateFormat,
 } from "constants/common";
-import { LayerDiagonalIcon } from "ui/icons";
+import { LayerDiagonalIcon } from "components/icons";
 
 const Workspace: NextPage = () => {
   const { user } = useUser();

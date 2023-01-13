@@ -12,8 +12,8 @@ import { Controller, useForm } from "react-hook-form";
 import { Disclosure, Transition } from "@headlessui/react";
 
 // services
-import issuesServices from "lib/services/issues.service";
-import projectService from "lib/services/project.service";
+import issuesServices from "services/issues.service";
+import projectService from "services/project.service";
 // lib
 import { requiredAuth } from "lib/auth";
 // layouts
@@ -25,7 +25,7 @@ import IssueDetailSidebar from "components/project/issues/issue-detail/issue-det
 import AddIssueComment from "components/project/issues/issue-detail/comment/issue-comment-section";
 import IssueActivitySection from "components/project/issues/issue-detail/activity";
 // ui
-import { Loader, TextArea, HeaderButton, Breadcrumbs, CustomMenu } from "ui";
+import { Loader, TextArea, HeaderButton, Breadcrumbs, CustomMenu } from "components/ui";
 // icons
 import { ChevronLeftIcon, ChevronRightIcon, PlusIcon } from "@heroicons/react/24/outline";
 // types

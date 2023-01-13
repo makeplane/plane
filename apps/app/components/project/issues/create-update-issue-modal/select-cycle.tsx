@@ -4,11 +4,11 @@ import useSWR from "swr";
 // react hook form
 import { Controller } from "react-hook-form";
 // services
-import cycleServices from "lib/services/cycles.service";
+import cycleServices from "services/cycles.service";
 // constants
 import { CYCLE_LIST } from "constants/fetch-keys";
 // ui
-import { CustomListbox } from "ui";
+import { CustomListbox } from "components/ui";
 // icons
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";

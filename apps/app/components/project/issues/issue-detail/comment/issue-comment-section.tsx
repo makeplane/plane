@@ -7,9 +7,9 @@ import type { KeyedMutator } from "swr";
 
 import { useForm, Controller } from "react-hook-form";
 // services
-import issuesServices from "lib/services/issues.service";
+import issuesServices from "services/issues.service";
 // ui
-import { Loader } from "ui";
+import { Loader } from "components/ui";
 // types
 import type { IIssueActivity, IIssueComment } from "types";
 // common

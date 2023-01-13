@@ -15,12 +15,12 @@ import { requiredWorkspaceAdmin } from "lib/auth";
 import { companySize } from "constants/";
 import { WORKSPACE_DETAILS, USER_WORKSPACES } from "constants/fetch-keys";
 // services
-import workspaceService from "lib/services/workspace.service";
-import fileServices from "lib/services/file.service";
+import workspaceService from "services/workspace.service";
+import fileServices from "services/file.service";
 // layouts
 import SettingsLayout from "layouts/settings-layout";
 // hooks
-import useToast from "lib/hooks/useToast";
+import useToast from "hooks/useToast";
 // components
 import { ImageUploadModal } from "components/common/image-upload-modal";
 import ConfirmWorkspaceDeletion from "components/workspace/confirm-workspace-deletion";
@@ -33,7 +33,7 @@ import {
   Breadcrumbs,
   CustomSelect,
   OutlineButton,
-} from "ui";
+} from "components/ui";
 // icons
 import { LinkIcon } from "@heroicons/react/24/outline";
 // types

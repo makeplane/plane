@@ -6,18 +6,18 @@ import useSWR from "swr";
 
 import { Disclosure, Transition } from "@headlessui/react";
 // services
-import workspaceService from "lib/services/workspace.service";
+import workspaceService from "services/workspace.service";
 // constants
 import { addSpaceIfCamelCase } from "constants/common";
 import { WORKSPACE_MEMBERS, STATE_LIST } from "constants/fetch-keys";
 // services
-import stateService from "lib/services/state.service";
+import stateService from "services/state.service";
 // hooks
-import useUser from "lib/hooks/useUser";
+import useUser from "hooks/useUser";
 // components
 import SingleListIssue from "components/common/list-view/single-issue";
 // ui
-import { CustomMenu, Spinner } from "ui";
+import { CustomMenu, Spinner } from "components/ui";
 // icons
 import { PlusIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
 // types

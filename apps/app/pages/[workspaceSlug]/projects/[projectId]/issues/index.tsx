@@ -7,12 +7,12 @@ import useSWR, { mutate } from "swr";
 // lib
 import { requiredAuth } from "lib/auth";
 // services
-import issuesServices from "lib/services/issues.service";
-import projectService from "lib/services/project.service";
+import issuesServices from "services/issues.service";
+import projectService from "services/project.service";
 // layouts
 import AppLayout from "layouts/app-layout";
 // hooks
-import useIssuesFilter from "lib/hooks/useIssuesFilter";
+import useIssuesFilter from "hooks/useIssuesFilter";
 // components
 import ListView from "components/project/issues/list-view";
 import BoardView from "components/project/issues/BoardView";
@@ -20,7 +20,14 @@ import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deleti
 import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
 import View from "components/core/view";
 // ui
-import { Spinner, BreadcrumbItem, Breadcrumbs, EmptySpace, EmptySpaceItem, HeaderButton } from "ui";
+import {
+  Spinner,
+  BreadcrumbItem,
+  Breadcrumbs,
+  EmptySpace,
+  EmptySpaceItem,
+  HeaderButton,
+} from "components/ui";
 // icons
 import { ListBulletIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
 import { PlusIcon, Squares2X2Icon } from "@heroicons/react/20/solid";

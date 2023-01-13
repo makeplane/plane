@@ -11,9 +11,9 @@ import { Popover, Transition } from "@headlessui/react";
 import { GROUP_CHOICES } from "constants/";
 import { STATE_LIST } from "constants/fetch-keys";
 // services
-import stateService from "lib/services/state.service";
+import stateService from "services/state.service";
 // ui
-import { Button, Input, Select } from "ui";
+import { Button, Input, Select, Spinner } from "components/ui";
 // types
 import type { IState } from "types";
 

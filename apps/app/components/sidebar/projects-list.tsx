@@ -5,15 +5,15 @@ import Link from "next/link";
 // swr
 import useSWR from "swr";
 // hooks
-import useToast from "lib/hooks/useToast";
+import useToast from "hooks/useToast";
 // services
-import projectService from "lib/services/project.service";
+import projectService from "services/project.service";
 // components
 import { CreateProjectModal } from "components/project";
 // headless ui
 import { Disclosure, Transition } from "@headlessui/react";
 // ui
-import { CustomMenu, Loader } from "ui";
+import { CustomMenu, Loader } from "components/ui";
 // icons
 import { ChevronDownIcon, PlusIcon } from "@heroicons/react/24/outline";
 // fetch-keys

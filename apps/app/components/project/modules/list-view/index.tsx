@@ -4,8 +4,8 @@ import { useRouter } from "next/router";
 
 import useSWR from "swr";
 // services
-import workspaceService from "lib/services/workspace.service";
-import stateService from "lib/services/state.service";
+import workspaceService from "services/workspace.service";
+import stateService from "services/state.service";
 // common
 import { addSpaceIfCamelCase } from "constants/common";
 
@@ -14,7 +14,7 @@ import SingleListIssue from "components/common/list-view/single-issue";
 // headless ui
 import { Disclosure, Transition } from "@headlessui/react";
 // ui
-import { CustomMenu, Spinner } from "ui";
+import { CustomMenu, Spinner } from "components/ui";
 // icons
 import { PlusIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
 // types
