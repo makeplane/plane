@@ -5,7 +5,7 @@ const nextConfig = {
   reactStrictMode: false,
   swcMinify: true,
   images: {
-    domains: ["vinci-web.s3.amazonaws.com"],
+    domains: ["vinci-web.s3.amazonaws.com", "planefs-staging.s3.ap-south-1.amazonaws.com"],
   },
   output: "standalone",
   experimental: {
