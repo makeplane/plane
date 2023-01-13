@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
-// swr
+
 import { mutate } from "swr";
-// react hook form
+
 import { useForm, Controller } from "react-hook-form";
-// react color
+
 import { TwitterPicker } from "react-color";
-// headless
+
 import { Popover, Transition } from "@headlessui/react";
 // constants
 import { GROUP_CHOICES } from "constants/";
@@ -52,6 +52,19 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
     defaultValues,
   });
 
+  useEffect(() => {
+    if (data === null) return;
+    reset(data);
+  }, [data, reset]);
+
+  useEffect(() => {
+    if (!data)
+      reset({
+        ...defaultValues,
+        group: selectedGroup ?? "backlog",
+      });
+  }, [selectedGroup, data, reset]);
+
   const handleClose = () => {
     onClose();
     reset({ name: "", color: "#000000", group: "backlog" });
@@ -66,7 +79,7 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
       await stateService
         .createState(workspaceSlug, projectId, { ...payload })
         .then((res) => {
-          mutate<IState[]>(STATE_LIST(projectId), (prevData) => [...(prevData ?? []), res], false);
+          mutate<IState[]>(STATE_LIST(projectId), (prevData) => [...(prevData ?? []), res]);
           handleClose();
         })
         .catch((err) => {
@@ -82,19 +95,15 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
           ...payload,
         })
         .then((res) => {
-          mutate<IState[]>(
-            STATE_LIST(projectId),
-            (prevData) => {
-              const newData = prevData?.map((item) => {
-                if (item.id === res.id) {
-                  return res;
-                }
-                return item;
-              });
-              return newData;
-            },
-            false
-          );
+          mutate<IState[]>(STATE_LIST(projectId), (prevData) => {
+            const newData = prevData?.map((item) => {
+              if (item.id === res.id) {
+                return res;
+              }
+              return item;
+            });
+            return newData;
+          });
           handleClose();
         })
         .catch((err) => {
@@ -107,21 +116,8 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
     }
   };
 
-  useEffect(() => {
-    if (data === null) return;
-    reset(data);
-  }, [data, reset]);
-
-  useEffect(() => {
-    if (!data)
-      reset({
-        ...defaultValues,
-        group: selectedGroup ?? "backlog",
-      });
-  }, [selectedGroup, data, reset]);
-
   return (
-    <div className="flex items-center gap-x-2 bg-gray-50 p-2">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex items-center gap-x-2 bg-gray-50 p-2">
       <div className="h-8 w-8 flex-shrink-0">
         <Popover className="relative flex h-full w-full items-center justify-center rounded-xl bg-gray-200">
           {({ open }) => (
@@ -168,6 +164,7 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
         id="name"
         name="name"
         register={register}
+        autoFocus
         placeholder="Enter state name"
         validations={{
           required: true,
@@ -201,9 +198,9 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
       <Button theme="secondary" onClick={handleClose}>
         Cancel
       </Button>
-      <Button theme="primary" disabled={isSubmitting} onClick={handleSubmit(onSubmit)}>
+      <Button theme="primary" disabled={isSubmitting} type="submit">
         {isSubmitting ? "Loading..." : data ? "Update" : "Create"}
       </Button>
-    </div>
+    </form>
   );
 };
