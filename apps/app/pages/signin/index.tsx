@@ -10,20 +10,12 @@ import authenticationService from "services/authentication.service";
 import DefaultLayout from "layouts/default-layout";
 // social button
 import { GoogleLoginButton, GithubLoginButton, EmailSignInForm } from "components/account";
+// ui
+import { Spinner } from "components/ui";
 // icons
 import Logo from "public/logo-with-text.png";
-import { Spinner } from "components/ui";
 
 const { NEXT_PUBLIC_GITHUB_ID } = process.env;
-
-// types
-type SignIn = {
-  email: string;
-  password?: string;
-  medium?: string;
-  key?: string;
-  token?: string;
-};
 
 const SignInPage: NextPage = () => {
   // router
