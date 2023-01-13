@@ -12,6 +12,7 @@ import DefaultLayout from "layouts/default-layout";
 import { GoogleLoginButton, GithubLoginButton, EmailSignInForm } from "components/account";
 // icons
 import Logo from "public/logo-with-text.png";
+import { Spinner } from "components/ui";
 
 const { NEXT_PUBLIC_GITHUB_ID } = process.env;
 
@@ -82,8 +83,9 @@ const SignInPage: NextPage = () => {
       }}
     >
       {isLoading && (
-        <div className="absolute top-0 left-0 z-50 flex h-full w-full items-center justify-center bg-white">
-          <h2 className="text-2xl text-gray-900">Signing in with Google. Please wait...</h2>
+        <div className="absolute top-0 left-0 z-50 flex h-full w-full flex-col items-center justify-center gap-y-3 bg-white">
+          <h2 className="text-2xl text-gray-900">Signing in. Please wait...</h2>
+          <Spinner />
         </div>
       )}
       <div className="flex h-screen w-full items-center justify-center overflow-auto bg-gray-50">
