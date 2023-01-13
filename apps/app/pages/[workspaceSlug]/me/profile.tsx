@@ -118,7 +118,7 @@ const Profile: NextPage = () => {
       title: "My Issues",
       number: myIssues?.length ?? 0,
       description: "View the list of issues assigned to you for this workspace.",
-      href: "/me/my-issues",
+      href: `/${workspaceSlug}/me/my-issues`,
     },
     {
       icon: ClipboardDocumentListIcon,
