@@ -215,8 +215,42 @@ class IssueViewSet(BaseViewSet):
 class UserWorkSpaceIssues(BaseAPIView):
     def get(self, request, slug):
         try:
-            issues = Issue.objects.filter(
-                assignees__in=[request.user], workspace__slug=slug
+            issues = (
+                Issue.objects.filter(assignees__in=[request.user], workspace__slug=slug)
+                .select_related("project")
+                .select_related("workspace")
+                .select_related("state")
+                .select_related("parent")
+                .prefetch_related("assignees")
+                .prefetch_related("labels")
+                .prefetch_related(
+                    Prefetch(
+                        "blocked_issues",
+                        queryset=IssueBlocker.objects.select_related(
+                            "blocked_by", "block"
+                        ),
+                    )
+                )
+                .prefetch_related(
+                    Prefetch(
+                        "blocker_issues",
+                        queryset=IssueBlocker.objects.select_related(
+                            "block", "blocked_by"
+                        ),
+                    )
+                )
+                .prefetch_related(
+                    Prefetch(
+                        "issue_cycle",
+                        queryset=CycleIssue.objects.select_related("cycle", "issue"),
+                    ),
+                )
+                .prefetch_related(
+                    Prefetch(
+                        "issue_module",
+                        queryset=ModuleIssue.objects.select_related("module", "issue"),
+                    ),
+                )
             )
             serializer = IssueSerializer(issues, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
