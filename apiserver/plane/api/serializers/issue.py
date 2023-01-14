@@ -41,6 +41,7 @@ class IssueFlatSerializer(BaseSerializer):
             "target_date",
             "sequence_id",
         ]
+        read_only_fields = fields
 
 
 # Issue Serializer with state details
@@ -312,23 +313,7 @@ class LabelSerializer(BaseSerializer):
     class Meta:
         model = Label
         fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-        ]
-
-
-class IssueLabelSerializer(BaseSerializer):
-
-    # label_details = LabelSerializer(read_only=True, source="label")
-
-    class Meta:
-        model = IssueLabel
-        fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-        ]
+        read_only_fields = fields
 
 
 class BlockedIssueSerializer(BaseSerializer):
@@ -338,6 +323,7 @@ class BlockedIssueSerializer(BaseSerializer):
     class Meta:
         model = IssueBlocker
         fields = "__all__"
+        read_only_fields = fields
 
 
 class BlockerIssueSerializer(BaseSerializer):
@@ -347,6 +333,7 @@ class BlockerIssueSerializer(BaseSerializer):
     class Meta:
         model = IssueBlocker
         fields = "__all__"
+        read_only_fields = fields
 
 
 class IssueAssigneeSerializer(BaseSerializer):
@@ -356,20 +343,14 @@ class IssueAssigneeSerializer(BaseSerializer):
     class Meta:
         model = IssueAssignee
         fields = "__all__"
+        read_only_fields = fields
 
 
 class CycleBaseSerializer(BaseSerializer):
     class Meta:
         model = Cycle
         fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-            "created_by",
-            "updated_by",
-            "created_at",
-            "updated_at",
-        ]
+        read_only_fields = fields
 
 
 class IssueCycleDetailSerializer(BaseSerializer):
@@ -379,29 +360,13 @@ class IssueCycleDetailSerializer(BaseSerializer):
     class Meta:
         model = CycleIssue
         fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-            "created_by",
-            "updated_by",
-            "created_at",
-            "updated_at",
-        ]
-
+        read_only_fields = fields
 
 class ModuleBaseSerializer(BaseSerializer):
     class Meta:
         model = Module
         fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-            "created_by",
-            "updated_by",
-            "created_at",
-            "updated_at",
-        ]
-
+        read_only_fields = fields
 
 class IssueModuleDetailSerializer(BaseSerializer):
 
@@ -410,14 +375,7 @@ class IssueModuleDetailSerializer(BaseSerializer):
     class Meta:
         model = ModuleIssue
         fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-            "created_by",
-            "updated_by",
-            "created_at",
-            "updated_at",
-        ]
+        read_only_fields = fields
 
 
 class IssueSerializer(BaseSerializer):
@@ -436,11 +394,4 @@ class IssueSerializer(BaseSerializer):
     class Meta:
         model = Issue
         fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-            "created_by",
-            "updated_by",
-            "created_at",
-            "updated_at",
-        ]
+        read_only_fields = fields
