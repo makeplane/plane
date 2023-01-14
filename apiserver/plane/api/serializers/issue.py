@@ -41,7 +41,6 @@ class IssueFlatSerializer(BaseSerializer):
             "target_date",
             "sequence_id",
         ]
-        read_only_fields = fields
 
 
 # Issue Serializer with state details
@@ -319,6 +318,19 @@ class LabelSerializer(BaseSerializer):
         ]
 
 
+class IssueLabelSerializer(BaseSerializer):
+
+    # label_details = LabelSerializer(read_only=True, source="label")
+
+    class Meta:
+        model = IssueLabel
+        fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "project",
+        ]
+
+
 class BlockedIssueSerializer(BaseSerializer):
 
     blocked_issue_detail = IssueFlatSerializer(source="block", read_only=True)
@@ -350,6 +362,14 @@ class CycleBaseSerializer(BaseSerializer):
     class Meta:
         model = Cycle
         fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "project",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+        ]
 
 
 class IssueCycleDetailSerializer(BaseSerializer):
@@ -359,12 +379,28 @@ class IssueCycleDetailSerializer(BaseSerializer):
     class Meta:
         model = CycleIssue
         fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "project",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+        ]
 
 
 class ModuleBaseSerializer(BaseSerializer):
     class Meta:
         model = Module
         fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "project",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+        ]
 
 
 class IssueModuleDetailSerializer(BaseSerializer):
@@ -374,10 +410,17 @@ class IssueModuleDetailSerializer(BaseSerializer):
     class Meta:
         model = ModuleIssue
         fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "project",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+        ]
 
 
 class IssueSerializer(BaseSerializer):
-
     project_detail = ProjectSerializer(read_only=True, source="project")
     state_detail = StateSerializer(read_only=True, source="state")
     parent_detail = IssueFlatSerializer(read_only=True, source="parent")
@@ -393,3 +436,11 @@ class IssueSerializer(BaseSerializer):
     class Meta:
         model = Issue
         fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "project",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+        ]
