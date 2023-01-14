@@ -313,12 +313,10 @@ class LabelSerializer(BaseSerializer):
     class Meta:
         model = Label
         fields = "__all__"
-
-    def get_fields(self):
-        fields = super().get_fields()
-        for field in fields.values():
-            field.read_only = True
-        return fields
+        read_only_fields = [
+            "workspace",
+            "project",
+        ]
 
 
 class BlockedIssueSerializer(BaseSerializer):
@@ -329,13 +327,6 @@ class BlockedIssueSerializer(BaseSerializer):
         model = IssueBlocker
         fields = "__all__"
 
-    def get_fields(self):
-        fields = super().get_fields()
-        for field in fields.values():
-            field.read_only = True
-        return fields
-
-
 
 class BlockerIssueSerializer(BaseSerializer):
 
@@ -344,13 +335,6 @@ class BlockerIssueSerializer(BaseSerializer):
     class Meta:
         model = IssueBlocker
         fields = "__all__"
-
-    def get_fields(self):
-        fields = super().get_fields()
-        for field in fields.values():
-            field.read_only = True
-        return fields
-
 
 
 class IssueAssigneeSerializer(BaseSerializer):
@@ -361,25 +345,11 @@ class IssueAssigneeSerializer(BaseSerializer):
         model = IssueAssignee
         fields = "__all__"
 
-    def get_fields(self):
-        fields = super().get_fields()
-        for field in fields.values():
-            field.read_only = True
-        return fields
-
-
 
 class CycleBaseSerializer(BaseSerializer):
     class Meta:
         model = Cycle
         fields = "__all__"
-
-    def get_fields(self):
-        fields = super().get_fields()
-        for field in fields.values():
-            field.read_only = True
-        return fields
-
 
 
 class IssueCycleDetailSerializer(BaseSerializer):
@@ -390,23 +360,11 @@ class IssueCycleDetailSerializer(BaseSerializer):
         model = CycleIssue
         fields = "__all__"
 
-    def get_fields(self):
-        fields = super().get_fields()
-        for field in fields.values():
-            field.read_only = True
-        return fields
-
 
 class ModuleBaseSerializer(BaseSerializer):
     class Meta:
         model = Module
         fields = "__all__"
-
-    def get_fields(self):
-        fields = super().get_fields()
-        for field in fields.values():
-            field.read_only = True
-        return fields
 
 
 class IssueModuleDetailSerializer(BaseSerializer):
@@ -417,16 +375,8 @@ class IssueModuleDetailSerializer(BaseSerializer):
         model = ModuleIssue
         fields = "__all__"
 
-    def get_fields(self):
-        fields = super().get_fields()
-        for field in fields.values():
-            field.read_only = True
-        return fields
-
-
 
 class IssueSerializer(BaseSerializer):
-
 
     project_detail = ProjectSerializer(read_only=True, source="project")
     state_detail = StateSerializer(read_only=True, source="state")
@@ -443,9 +393,3 @@ class IssueSerializer(BaseSerializer):
     class Meta:
         model = Issue
         fields = "__all__"
-
-    def get_fields(self):
-        fields = super().get_fields()
-        for field in fields.values():
-            field.read_only = True
-        return fields
