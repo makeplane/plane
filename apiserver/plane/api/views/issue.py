@@ -100,7 +100,7 @@ class IssueViewSet(BaseViewSet):
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(workspace__slug=self.kwargs.get("slug"))
             .select_related("project")
-            .select_related("workspace", "workspace__owner")
+            .select_related("workspace")
             .select_related("state")
             .select_related("parent")
             .prefetch_related("assignees")
@@ -162,10 +162,18 @@ class IssueViewSet(BaseViewSet):
 
                 return Response(issue_dict, status=status.HTTP_200_OK)
 
-            return self.paginate(
-                request=request,
-                queryset=issue_queryset,
-                on_results=lambda issues: IssueSerializer(issues, many=True).data,
+            return Response(
+                {
+                    "next_cursor": str(0),
+                    "prev_cursor": str(0),
+                    "next_page_results": False,
+                    "prev_page_results": False,
+                    "count": issue_queryset.count(),
+                    "total_pages": 1,
+                    "extra_stats": {},
+                    "results": IssueSerializer(issue_queryset, many=True).data,
+                },
+                status=status.HTTP_200_OK,
             )
 
         except Exception as e:
@@ -207,44 +215,9 @@ class IssueViewSet(BaseViewSet):
 class UserWorkSpaceIssues(BaseAPIView):
     def get(self, request, slug):
         try:
-            issues = (
-                Issue.objects.filter(assignees__in=[request.user], workspace__slug=slug)
-                .select_related("project")
-                .select_related("workspace", "workspace__owner")
-                .select_related("state")
-                .select_related("parent")
-                .prefetch_related("assignees")
-                .prefetch_related("labels")
-                .prefetch_related(
-                    Prefetch(
-                        "blocked_issues",
-                        queryset=IssueBlocker.objects.select_related(
-                            "blocked_by", "block"
-                        ),
-                    )
-                )
-                .prefetch_related(
-                    Prefetch(
-                        "blocker_issues",
-                        queryset=IssueBlocker.objects.select_related(
-                            "block", "blocked_by"
-                        ),
-                    )
-                )
-                .prefetch_related(
-                    Prefetch(
-                        "issue_cycle",
-                        queryset=CycleIssue.objects.select_related("cycle", "issue"),
-                    ),
-                )
-                .prefetch_related(
-                    Prefetch(
-                        "issue_module",
-                        queryset=ModuleIssue.objects.select_related("module", "issue"),
-                    ),
-                )
+            issues = Issue.objects.filter(
+                assignees__in=[request.user], workspace__slug=slug
             )
-
             serializer = IssueSerializer(issues, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
@@ -263,45 +236,9 @@ class WorkSpaceIssuesEndpoint(BaseAPIView):
 
     def get(self, request, slug):
         try:
-            issues = (
-                Issue.objects.filter(workspace__slug=slug)
-                .filter(project__project_projectmember__member=self.request.user)
-                .select_related("project")
-                .select_related("workspace", "workspace__owner")
-                .select_related("state")
-                .select_related("parent")
-                .prefetch_related("assignees")
-                .prefetch_related("labels")
-                .prefetch_related(
-                    Prefetch(
-                        "blocked_issues",
-                        queryset=IssueBlocker.objects.select_related(
-                            "blocked_by", "block"
-                        ),
-                    )
-                )
-                .prefetch_related(
-                    Prefetch(
-                        "blocker_issues",
-                        queryset=IssueBlocker.objects.select_related(
-                            "block", "blocked_by"
-                        ),
-                    )
-                )
-                .prefetch_related(
-                    Prefetch(
-                        "issue_cycle",
-                        queryset=CycleIssue.objects.select_related("cycle", "issue"),
-                    ),
-                )
-                .prefetch_related(
-                    Prefetch(
-                        "issue_module",
-                        queryset=ModuleIssue.objects.select_related("module", "issue"),
-                    ),
-                )
+            issues = Issue.objects.filter(workspace__slug=slug).filter(
+                project__project_projectmember__member=self.request.user
             )
-
             serializer = IssueSerializer(issues, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
@@ -320,29 +257,16 @@ class IssueActivityEndpoint(BaseAPIView):
 
     def get(self, request, slug, project_id, issue_id):
         try:
-            # Activities
             issue_activities = (
-                IssueActivity.objects.filter(
-                    issue_id=issue_id, workspace__slug=slug, project_id=project_id
-                )
+                IssueActivity.objects.filter(issue_id=issue_id)
                 .filter(project__project_projectmember__member=self.request.user)
                 .select_related("actor")
             ).order_by("created_by")
-
-            # Comments
             issue_comments = (
-                (
-                    IssueComment.objects.filter(
-                        issue_id=issue_id, workspace__slug=slug, project_id=project_id
-                    )
-                    .filter(project__project_projectmember__member=self.request.user)
-                    .order_by("created_at")
-                )
-                .select_related("actor")
-                .select_related("issue")
-                .select_related("project")
+                IssueComment.objects.filter(issue_id=issue_id)
+                .filter(project__project_projectmember__member=self.request.user)
+                .order_by("created_at")
             )
-
             issue_activities = IssueActivitySerializer(issue_activities, many=True).data
             issue_comments = IssueCommentSerializer(issue_comments, many=True).data
 
@@ -391,7 +315,6 @@ class IssueCommentViewSet(BaseViewSet):
             .select_related("project")
             .select_related("workspace")
             .select_related("issue")
-            .select_related("actor")
             .distinct()
         )
 
