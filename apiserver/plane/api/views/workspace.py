@@ -553,7 +553,7 @@ class WorkspaceMemberUserEndpoint(BaseAPIView):
         try:
             workspace_member = WorkspaceMember.objects.get(
                 member=request.user, workspace__slug=slug
-            )
+            ).select_releated("workspace", "workspace__owner", "member")
             serializer = WorkSpaceMemberSerializer(workspace_member)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except (Workspace.DoesNotExist, WorkspaceMember.DoesNotExist):

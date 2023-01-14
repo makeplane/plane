@@ -658,7 +658,7 @@ class ProjectMemberUserEndpoint(BaseAPIView):
 
             project_member = ProjectMember.objects.get(
                 project_id=project_id, workspace__slug=slug, member=request.user
-            )
+            ).select_related("project", "member", "workspace", "workspace__owner")
             serializer = ProjectMemberSerializer(project_member)
 
             return Response(serializer.data, status=status.HTTP_200_OK)
