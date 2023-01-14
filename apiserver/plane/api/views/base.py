@@ -1,6 +1,7 @@
 # Django imports
 from django.urls import resolve
 from django.conf import settings
+
 # Third part imports
 from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
@@ -39,16 +40,15 @@ class BaseViewSet(ModelViewSet, BasePaginator):
             return self.model.objects.all()
         except Exception as e:
             print(e)
-            raise APIException(
-                "Please check the view", status.HTTP_400_BAD_REQUEST
-            )
+            raise APIException("Please check the view", status.HTTP_400_BAD_REQUEST)
 
     def dispatch(self, request, *args, **kwargs):
         response = super().dispatch(request, *args, **kwargs)
 
         if settings.DEBUG:
             from django.db import connection
-            print(f'# of Queries: {len(connection.queries)}')
+
+            print(f"{request.get_full_path()} of Queries: {len(connection.queries)}")
         return response
 
     @property
@@ -110,7 +110,8 @@ class BaseAPIView(APIView, BasePaginator):
 
         if settings.DEBUG:
             from django.db import connection
-            print(f'# of Queries: {len(connection.queries)}')
+
+            print(f"{request.get_full_path()} of Queries: {len(connection.queries)}")
         return response
 
     @property
