@@ -313,7 +313,12 @@ class LabelSerializer(BaseSerializer):
     class Meta:
         model = Label
         fields = "__all__"
-        read_only_fields = fields
+
+    def get_fields(self):
+        fields = super().get_fields()
+        for field in fields.values():
+            field.read_only = True
+        return fields
 
 
 class BlockedIssueSerializer(BaseSerializer):
@@ -323,7 +328,13 @@ class BlockedIssueSerializer(BaseSerializer):
     class Meta:
         model = IssueBlocker
         fields = "__all__"
-        read_only_fields = fields
+
+    def get_fields(self):
+        fields = super().get_fields()
+        for field in fields.values():
+            field.read_only = True
+        return fields
+
 
 
 class BlockerIssueSerializer(BaseSerializer):
@@ -333,7 +344,13 @@ class BlockerIssueSerializer(BaseSerializer):
     class Meta:
         model = IssueBlocker
         fields = "__all__"
-        read_only_fields = fields
+
+    def get_fields(self):
+        fields = super().get_fields()
+        for field in fields.values():
+            field.read_only = True
+        return fields
+
 
 
 class IssueAssigneeSerializer(BaseSerializer):
@@ -343,14 +360,26 @@ class IssueAssigneeSerializer(BaseSerializer):
     class Meta:
         model = IssueAssignee
         fields = "__all__"
-        read_only_fields = fields
+
+    def get_fields(self):
+        fields = super().get_fields()
+        for field in fields.values():
+            field.read_only = True
+        return fields
+
 
 
 class CycleBaseSerializer(BaseSerializer):
     class Meta:
         model = Cycle
         fields = "__all__"
-        read_only_fields = fields
+
+    def get_fields(self):
+        fields = super().get_fields()
+        for field in fields.values():
+            field.read_only = True
+        return fields
+
 
 
 class IssueCycleDetailSerializer(BaseSerializer):
@@ -360,13 +389,25 @@ class IssueCycleDetailSerializer(BaseSerializer):
     class Meta:
         model = CycleIssue
         fields = "__all__"
-        read_only_fields = fields
+
+    def get_fields(self):
+        fields = super().get_fields()
+        for field in fields.values():
+            field.read_only = True
+        return fields
+
 
 class ModuleBaseSerializer(BaseSerializer):
     class Meta:
         model = Module
         fields = "__all__"
-        read_only_fields = fields
+
+    def get_fields(self):
+        fields = super().get_fields()
+        for field in fields.values():
+            field.read_only = True
+        return fields
+
 
 class IssueModuleDetailSerializer(BaseSerializer):
 
@@ -375,10 +416,18 @@ class IssueModuleDetailSerializer(BaseSerializer):
     class Meta:
         model = ModuleIssue
         fields = "__all__"
-        read_only_fields = fields
+
+    def get_fields(self):
+        fields = super().get_fields()
+        for field in fields.values():
+            field.read_only = True
+        return fields
+
 
 
 class IssueSerializer(BaseSerializer):
+
+
     project_detail = ProjectSerializer(read_only=True, source="project")
     state_detail = StateSerializer(read_only=True, source="state")
     parent_detail = IssueFlatSerializer(read_only=True, source="parent")
@@ -394,4 +443,9 @@ class IssueSerializer(BaseSerializer):
     class Meta:
         model = Issue
         fields = "__all__"
-        read_only_fields = fields
+
+    def get_fields(self):
+        fields = super().get_fields()
+        for field in fields.values():
+            field.read_only = True
+        return fields
