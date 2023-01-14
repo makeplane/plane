@@ -20,7 +20,6 @@ from plane.api.views import (
     ## End Auth Extender
     # User
     UserEndpoint,
-    PeopleEndpoint,
     UpdateUserOnBoardedEndpoint,
     ## End User
     # Workspaces
@@ -115,8 +114,6 @@ urlpatterns = [
         ForgotPasswordEndpoint.as_view(),
         name="forgot-password",
     ),
-    # List Users
-    path("users/", PeopleEndpoint.as_view()),
     # User Profile
     path(
         "users/me/",
