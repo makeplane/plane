@@ -56,16 +56,6 @@ class BaseViewSet(ModelViewSet, BasePaginator):
         return self.kwargs.get("slug", None)
 
     @property
-    def workspace(self):
-        if self.workspace_slug:
-            try:
-                return Workspace.objects.get(slug=self.workspace_slug)
-            except Workspace.DoesNotExist:
-                raise NotFound(detail="Workspace does not exist")
-        else:
-            return None
-
-    @property
     def project_id(self):
         project_id = self.kwargs.get("project_id", None)
         if project_id:
@@ -73,16 +63,6 @@ class BaseViewSet(ModelViewSet, BasePaginator):
 
         if resolve(self.request.path_info).url_name == "project":
             return self.kwargs.get("pk", None)
-
-    @property
-    def project(self):
-        if self.project_id:
-            try:
-                return Project.objects.get(pk=self.project_id)
-            except Project.DoesNotExist:
-                raise NotFound(detail="Project does not exist")
-        else:
-            return None
 
 
 class BaseAPIView(APIView, BasePaginator):
@@ -119,25 +99,5 @@ class BaseAPIView(APIView, BasePaginator):
         return self.kwargs.get("slug", None)
 
     @property
-    def workspace(self):
-        if self.workspace_slug:
-            try:
-                return Workspace.objects.get(slug=self.workspace_slug)
-            except Workspace.DoesNotExist:
-                raise NotFound(detail="Workspace does not exist")
-        else:
-            return None
-
-    @property
     def project_id(self):
         return self.kwargs.get("project_id", None)
-
-    @property
-    def project(self):
-        if self.project_id:
-            try:
-                return Project.objects.get(pk=self.project_id)
-            except Project.DoesNotExist:
-                raise NotFound(detail="Project does not exist")
-        else:
-            return None

@@ -22,13 +22,13 @@ class WorkSpaceBasePermission(BasePermission):
         # allow only admins and owners to update the workspace settings
         if request.method in ["PUT", "PATCH"]:
             return WorkspaceMember.objects.filter(
-                member=request.user, workspace=view.workspace, role__in=[15, 20]
+                member=request.user, workspace__slug=view.workspace_slug, role__in=[15, 20]
             ).exists()
 
         # allow only owner to delete the workspace
         if request.method == "DELETE":
             return WorkspaceMember.objects.filter(
-                member=request.user, workspace=view.workspace, role=20
+                member=request.user, workspace__slug=view.workspace_slug, role=20
             ).exists()
 
 
@@ -39,5 +39,5 @@ class WorkSpaceAdminPermission(BasePermission):
             return False
 
         return WorkspaceMember.objects.filter(
-            member=request.user, workspace=view.workspace, role__in=[15, 20]
+            member=request.user, workspace__slug=view.workspace_slug, role__in=[15, 20]
         ).exists()
