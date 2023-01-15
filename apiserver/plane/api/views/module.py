@@ -47,7 +47,7 @@ class ModuleViewSet(BaseViewSet):
                     "issue_module",
                     queryset=ModuleIssue.objects.select_related(
                         "module", "issue", "issue__state", "issue__project"
-                    ),
+                    ).prefetch_related("issue__assignees", "issue__labels"),
                 )
             )
             .prefetch_related(

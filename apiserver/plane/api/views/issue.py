@@ -126,7 +126,9 @@ class IssueViewSet(BaseViewSet):
             .prefetch_related(
                 Prefetch(
                     "issue_module",
-                    queryset=ModuleIssue.objects.select_related("module", "issue"),
+                    queryset=ModuleIssue.objects.select_related(
+                        "module", "issue"
+                    ).prefetch_related("module__members"),
                 ),
             )
         )
