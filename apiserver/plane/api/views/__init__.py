@@ -13,7 +13,6 @@ from .project import (
     ProjectMemberUserEndpoint,
 )
 from .people import (
-    PeopleEndpoint,
     UserEndpoint,
     UpdateUserOnBoardedEndpoint,
 )
