@@ -120,6 +120,8 @@ class ModuleIssueViewSet(BaseViewSet):
             .select_related("workspace")
             .select_related("module")
             .select_related("issue", "issue__state", "issue__project")
+            .prefetch_related("issue__assignees")
+            .prefetch_related("issue__labels")
             .distinct()
         )
 
