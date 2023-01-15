@@ -64,8 +64,7 @@ class CycleIssueViewSet(BaseViewSet):
             .select_related("workspace")
             .select_related("cycle")
             .select_related("issue", "issue__state", "issue__project")
-            .prefetch_related("issue__assignees")
-            .prefetch_related("issue__labels")
+            .prefetch_related("issue__assignees", "issue__labels")
             .distinct()
         )
 
