@@ -13,7 +13,10 @@ class ProjectBasePermission(BasePermission):
 
         ## Safe Methods -> Handle the filtering logic in queryset
         if request.method in SAFE_METHODS:
-            return True
+            return WorkspaceMember.objects.filter(
+                workspace=view.workspace, member=request.user
+            ).exists()
+
         ## Only workspace owners or admins can create the projects
         if request.method == "POST":
             return WorkspaceMember.objects.filter(
@@ -34,7 +37,9 @@ class ProjectMemberPermission(BasePermission):
 
         ## Safe Methods -> Handle the filtering logic in queryset
         if request.method in SAFE_METHODS:
-            return True
+            return ProjectMember.objects.filter(
+                workspace=view.workspace, member=request.user
+            ).exists()
         ## Only workspace owners or admins can create the projects
         if request.method == "POST":
             return WorkspaceMember.objects.filter(
@@ -52,10 +57,12 @@ class ProjectEntityPermission(BasePermission):
 
         if request.user.is_anonymous:
             return False
-    
+
         ## Safe Methods -> Handle the filtering logic in queryset
         if request.method in SAFE_METHODS:
-            return True
+            return ProjectMember.objects.filter(
+                workspace=view.workspace, member=request.user
+            ).exists()
         ## Only workspace owners or admins can create the projects
 
         return ProjectMember.objects.filter(
