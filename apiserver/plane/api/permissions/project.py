@@ -14,18 +14,23 @@ class ProjectBasePermission(BasePermission):
         ## Safe Methods -> Handle the filtering logic in queryset
         if request.method in SAFE_METHODS:
             return WorkspaceMember.objects.filter(
-                workspace=view.workspace, member=request.user
+                workspace__slug=view.workspace_slug, member=request.user
             ).exists()
 
         ## Only workspace owners or admins can create the projects
         if request.method == "POST":
             return WorkspaceMember.objects.filter(
-                workspace=view.workspace, member=request.user, role__in=[15, 20]
+                workspace__slug=view.workspace_slug,
+                member=request.user,
+                role__in=[15, 20],
             ).exists()
 
         ## Only Project Admins can update project attributes
         return ProjectMember.objects.filter(
-            workspace=view.workspace, member=request.user, role=20
+            workspace__slug=view.workspace_slug,
+            member=request.user,
+            role=20,
+            project_id=view.project_id,
         ).exists()
 
 
@@ -43,12 +48,17 @@ class ProjectMemberPermission(BasePermission):
         ## Only workspace owners or admins can create the projects
         if request.method == "POST":
             return WorkspaceMember.objects.filter(
-                workspace=view.workspace, member=request.user, role__in=[15, 20]
+                workspace__slug=view.workspace_slug,
+                member=request.user,
+                role__in=[15, 20],
             ).exists()
 
         ## Only Project Admins can update project attributes
         return ProjectMember.objects.filter(
-            workspace=view.workspace, member=request.user, role__in=[15, 20]
+            workspace__slug=view.workspace_slug,
+            member=request.user,
+            role__in=[15, 20],
+            project_id=view.project_id,
         ).exists()
 
 
@@ -61,10 +71,15 @@ class ProjectEntityPermission(BasePermission):
         ## Safe Methods -> Handle the filtering logic in queryset
         if request.method in SAFE_METHODS:
             return ProjectMember.objects.filter(
-                workspace=view.workspace, member=request.user
+                workspace=view.workspace,
+                member=request.user,
+                project_id=view.project_id,
             ).exists()
-        ## Only workspace owners or admins can create the projects
 
+        ## Only project members or admins can create and edit the project attributes
         return ProjectMember.objects.filter(
-            workspace=view.workspace, member=request.user, role__in=[15, 20]
+            workspace__slug=view.workspace_slug,
+            member=request.user,
+            role__in=[15, 20],
+            project_id=view.project_id,
         ).exists()
