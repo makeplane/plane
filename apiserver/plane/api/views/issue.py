@@ -4,7 +4,6 @@ from itertools import groupby, chain
 
 # Django imports
 from django.db.models import Prefetch
-from django.db.models import Count, Sum
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Third Party imports
