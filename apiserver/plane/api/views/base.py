@@ -1,6 +1,7 @@
 # Django imports
 from django.urls import resolve
 from django.conf import settings
+
 # Third part imports
 from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
@@ -39,31 +40,22 @@ class BaseViewSet(ModelViewSet, BasePaginator):
             return self.model.objects.all()
         except Exception as e:
             print(e)
-            raise APIException(
-                "Please check the view", status.HTTP_400_BAD_REQUEST
-            )
+            raise APIException("Please check the view", status.HTTP_400_BAD_REQUEST)
 
     def dispatch(self, request, *args, **kwargs):
         response = super().dispatch(request, *args, **kwargs)
 
         if settings.DEBUG:
             from django.db import connection
-            print(f'# of Queries: {len(connection.queries)}')
+
+            print(
+                f"{request.method} - {request.get_full_path()} of Queries: {len(connection.queries)}"
+            )
         return response
 
     @property
     def workspace_slug(self):
         return self.kwargs.get("slug", None)
-
-    @property
-    def workspace(self):
-        if self.workspace_slug:
-            try:
-                return Workspace.objects.get(slug=self.workspace_slug)
-            except Workspace.DoesNotExist:
-                raise NotFound(detail="Workspace does not exist")
-        else:
-            return None
 
     @property
     def project_id(self):
@@ -73,16 +65,6 @@ class BaseViewSet(ModelViewSet, BasePaginator):
 
         if resolve(self.request.path_info).url_name == "project":
             return self.kwargs.get("pk", None)
-
-    @property
-    def project(self):
-        if self.project_id:
-            try:
-                return Project.objects.get(pk=self.project_id)
-            except Project.DoesNotExist:
-                raise NotFound(detail="Project does not exist")
-        else:
-            return None
 
 
 class BaseAPIView(APIView, BasePaginator):
@@ -110,7 +92,10 @@ class BaseAPIView(APIView, BasePaginator):
 
         if settings.DEBUG:
             from django.db import connection
-            print(f'# of Queries: {len(connection.queries)}')
+
+            print(
+                f"{request.method} - {request.get_full_path()} of Queries: {len(connection.queries)}"
+            )
         return response
 
     @property
@@ -118,25 +103,5 @@ class BaseAPIView(APIView, BasePaginator):
         return self.kwargs.get("slug", None)
 
     @property
-    def workspace(self):
-        if self.workspace_slug:
-            try:
-                return Workspace.objects.get(slug=self.workspace_slug)
-            except Workspace.DoesNotExist:
-                raise NotFound(detail="Workspace does not exist")
-        else:
-            return None
-
-    @property
     def project_id(self):
         return self.kwargs.get("project_id", None)
-
-    @property
-    def project(self):
-        if self.project_id:
-            try:
-                return Project.objects.get(pk=self.project_id)
-            except Project.DoesNotExist:
-                raise NotFound(detail="Project does not exist")
-        else:
-            return None

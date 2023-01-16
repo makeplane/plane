@@ -125,7 +125,9 @@ class IssueViewSet(BaseViewSet):
             .prefetch_related(
                 Prefetch(
                     "issue_module",
-                    queryset=ModuleIssue.objects.select_related("module", "issue"),
+                    queryset=ModuleIssue.objects.select_related(
+                        "module", "issue"
+                    ).prefetch_related("module__members"),
                 ),
             )
         )
@@ -161,10 +163,18 @@ class IssueViewSet(BaseViewSet):
 
                 return Response(issue_dict, status=status.HTTP_200_OK)
 
-            return self.paginate(
-                request=request,
-                queryset=issue_queryset,
-                on_results=lambda issues: IssueSerializer(issues, many=True).data,
+            return Response(
+                {
+                    "next_cursor": str(0),
+                    "prev_cursor": str(0),
+                    "next_page_results": False,
+                    "prev_page_results": False,
+                    "count": issue_queryset.count(),
+                    "total_pages": 1,
+                    "extra_stats": {},
+                    "results": IssueSerializer(issue_queryset, many=True).data,
+                },
+                status=status.HTTP_200_OK,
             )
 
         except Exception as e:
@@ -206,8 +216,42 @@ class IssueViewSet(BaseViewSet):
 class UserWorkSpaceIssues(BaseAPIView):
     def get(self, request, slug):
         try:
-            issues = Issue.objects.filter(
-                assignees__in=[request.user], workspace__slug=slug
+            issues = (
+                Issue.objects.filter(assignees__in=[request.user], workspace__slug=slug)
+                .select_related("project")
+                .select_related("workspace")
+                .select_related("state")
+                .select_related("parent")
+                .prefetch_related("assignees")
+                .prefetch_related("labels")
+                .prefetch_related(
+                    Prefetch(
+                        "blocked_issues",
+                        queryset=IssueBlocker.objects.select_related(
+                            "blocked_by", "block"
+                        ),
+                    )
+                )
+                .prefetch_related(
+                    Prefetch(
+                        "blocker_issues",
+                        queryset=IssueBlocker.objects.select_related(
+                            "block", "blocked_by"
+                        ),
+                    )
+                )
+                .prefetch_related(
+                    Prefetch(
+                        "issue_cycle",
+                        queryset=CycleIssue.objects.select_related("cycle", "issue"),
+                    ),
+                )
+                .prefetch_related(
+                    Prefetch(
+                        "issue_module",
+                        queryset=ModuleIssue.objects.select_related("module", "issue"),
+                    ),
+                )
             )
             serializer = IssueSerializer(issues, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
