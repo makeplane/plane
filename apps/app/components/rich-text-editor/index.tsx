@@ -33,7 +33,7 @@ import { tableControllerPluginKey, TableExtension } from "@remirror/extension-re
 import { RichTextToolbar } from "./toolbar";
 import { MentionAutoComplete } from "./mention-autocomplete";
 import fileService from "services/file.service";
-import { Spinner } from "components/ui";
+import { Spinner } from "ui";
 import { useRouter } from "next/router";
 
 export interface IRemirrorRichTextEditor {

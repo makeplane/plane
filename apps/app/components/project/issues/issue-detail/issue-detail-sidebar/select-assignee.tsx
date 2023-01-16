@@ -13,7 +13,7 @@ import useUser from "hooks/useUser";
 // headless ui
 import { Listbox, Transition } from "@headlessui/react";
 // ui
-import { Spinner } from "components/ui";
+import { Spinner } from "ui";
 // icons
 import { UserGroupIcon } from "@heroicons/react/24/outline";
 import User from "public/user.png";

@@ -7,7 +7,7 @@ import { capitalizeFirstLetter } from "constants/common";
 // icons
 import { ChartBarIcon } from "@heroicons/react/24/outline";
 // ui
-import { CustomListbox } from "components/ui";
+import { CustomListbox } from "ui";
 
 // types
 import type { IIssue } from "types";

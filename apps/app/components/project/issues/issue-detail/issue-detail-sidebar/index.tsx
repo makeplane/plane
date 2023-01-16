@@ -23,7 +23,7 @@ import SelectBlocked from "components/project/issues/issue-detail/issue-detail-s
 // headless ui
 import { Popover, Listbox, Transition } from "@headlessui/react";
 // ui
-import { Input, Button, Spinner } from "components/ui";
+import { Input, Button, Spinner } from "ui";
 // icons
 import {
   TagIcon,
@@ -405,7 +405,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
                 id="name"
                 name="name"
                 placeholder="Title"
-                register={register}
+                {...register}
                 validations={{
                   required: "This is required",
                 }}

@@ -14,7 +14,8 @@ import workspaceService from "services/workspace.service";
 // layouts
 import SettingsLayout from "layouts/settings-layout";
 // ui
-import { BreadcrumbItem, Breadcrumbs, Button } from "components/ui";
+import { Button } from "ui";
+import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 
 type TBillingSettingsProps = {
   isOwner: boolean;

@@ -17,7 +17,8 @@ import workspaceService from "services/workspace.service";
 // hooks
 import useToast from "hooks/useToast";
 // ui
-import { BreadcrumbItem, Breadcrumbs, Button, CustomSelect, Loader } from "components/ui";
+import { Button, CustomSelect, Loader } from "ui";
+import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // types
 import { IProject, IWorkspace } from "types";
 // fetch-keys

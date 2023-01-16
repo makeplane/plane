@@ -12,7 +12,7 @@ import { CYCLE_ISSUES, CYCLE_LIST, PROJECT_ISSUES_LIST } from "constants/fetch-k
 import issuesService from "services/issues.service";
 import cyclesService from "services/cycles.service";
 // ui
-import { Spinner, CustomSelect } from "components/ui";
+import { Spinner, CustomSelect } from "ui";
 // icons
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 // types

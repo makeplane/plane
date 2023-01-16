@@ -13,7 +13,7 @@ import { STATE_LIST } from "constants/fetch-keys";
 // icons
 import { PlusIcon } from "@heroicons/react/20/solid";
 // ui
-import { CustomListbox } from "components/ui";
+import { CustomListbox } from "ui";
 // icons
 import { Squares2X2Icon } from "@heroicons/react/24/outline";
 // types

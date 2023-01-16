@@ -12,7 +12,7 @@ import SettingsSidebar from "layouts/navbar/settings-sidebar";
 import { NotAuthorizedView } from "components/core";
 import CommandPalette from "components/command-palette";
 // ui
-import { Button } from "components/ui";
+import { Button } from "ui";
 // types
 import { Meta } from "./types";
 

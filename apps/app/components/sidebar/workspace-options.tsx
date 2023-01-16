@@ -27,7 +27,7 @@ import { USER_WORKSPACES } from "constants/fetch-keys";
 // types
 import { IUser } from "types";
 // ui
-import { Loader } from "components/ui";
+import { Loader } from "ui";
 
 type Props = {
   sidebarCollapse: boolean;

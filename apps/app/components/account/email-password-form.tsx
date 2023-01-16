@@ -4,7 +4,7 @@ import Link from "next/link";
 // react hook form
 import { useForm } from "react-hook-form";
 // ui
-import { Button, Input } from "components/ui";
+import { Button, Input } from "ui";
 import authenticationService from "services/authentication.service";
 
 // types
@@ -57,7 +57,7 @@ export const EmailPasswordForm = ({ onSuccess }: any) => {
             id="email"
             type="email"
             name="email"
-            register={register}
+            {...register}
             validations={{
               required: "Email ID is required",
               validate: (value) =>
@@ -74,7 +74,7 @@ export const EmailPasswordForm = ({ onSuccess }: any) => {
             id="password"
             type="password"
             name="password"
-            register={register}
+            {...register}
             validations={{
               required: "Password is required",
             }}

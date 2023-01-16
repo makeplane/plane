@@ -19,14 +19,8 @@ import SettingsLayout from "layouts/settings-layout";
 import ConfirmWorkspaceMemberRemove from "components/workspace/confirm-workspace-member-remove";
 import SendWorkspaceInvitationModal from "components/workspace/send-workspace-invitation-modal";
 // ui
-import {
-  BreadcrumbItem,
-  Breadcrumbs,
-  Button,
-  CustomListbox,
-  CustomMenu,
-  Loader,
-} from "components/ui";
+import { Button, CustomListbox, CustomMenu, Loader } from "ui";
+import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 // fetch-keys

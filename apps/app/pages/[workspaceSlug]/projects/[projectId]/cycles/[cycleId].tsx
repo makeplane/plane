@@ -22,14 +22,8 @@ import projectService from "services/project.service";
 import useIssuesFilter from "hooks/useIssuesFilter";
 import useIssuesProperties from "hooks/useIssuesProperties";
 // ui
-import {
-  BreadcrumbItem,
-  Breadcrumbs,
-  CustomMenu,
-  EmptySpace,
-  EmptySpaceItem,
-  Spinner,
-} from "components/ui";
+import { CustomMenu, EmptySpace, EmptySpaceItem, Spinner } from "ui";
+import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { Squares2X2Icon } from "@heroicons/react/20/solid";
 import {

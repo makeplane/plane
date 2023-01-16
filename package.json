@@ -3,7 +3,8 @@
   "license": "MIT",
   "private": true,
   "workspaces": [
-    "apps/*"
+    "apps/*",
+    "packages/*"
   ],
   "scripts": {
     "build": "turbo run build",
@@ -13,9 +14,9 @@
     "clean": "turbo run clean"
   },
   "devDependencies": {
-    "eslint": "^8.28.0",
-    "eslint-config-turbo": "latest",
+    "config": "workspace:*",
+    "prettier": "latest",
     "turbo": "latest"
   },
-  "packageManager": "pnpm@7.17.1"
+  "packageManager": "pnpm@7.24.3"
 }

@@ -17,14 +17,8 @@ import { JoinProjectModal } from "components/project/join-project-modal";
 import ProjectMemberInvitations from "components/project/member-invitations";
 import ConfirmProjectDeletion from "components/project/confirm-project-deletion";
 // ui
-import {
-  HeaderButton,
-  Breadcrumbs,
-  BreadcrumbItem,
-  EmptySpace,
-  EmptySpaceItem,
-  Loader,
-} from "components/ui";
+import { HeaderButton, EmptySpace, EmptySpaceItem, Loader } from "ui";
+import { Breadcrumbs, BreadcrumbItem } from "components/breadcrumbs";
 // icons
 import { ClipboardDocumentListIcon, PlusIcon } from "@heroicons/react/24/outline";
 

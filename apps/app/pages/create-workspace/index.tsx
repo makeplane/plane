@@ -15,7 +15,7 @@ import { USER_WORKSPACES } from "constants/fetch-keys";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 // ui
-import { CustomSelect, Input } from "components/ui";
+import { CustomSelect, Input } from "ui";
 // images
 import Logo from "public/onboarding/logo.svg";
 // types
@@ -93,7 +93,7 @@ const CreateWorkspace: NextPage = () => {
                         name="name"
                         placeholder="Enter name"
                         autoComplete="off"
-                        register={register}
+                        {...register}
                         onChange={(e) =>
                           setValue("slug", e.target.value.toLocaleLowerCase().replace(/ /g, "-"))
                         }
@@ -111,7 +111,7 @@ const CreateWorkspace: NextPage = () => {
                           name="slug"
                           mode="transparent"
                           autoComplete="off"
-                          register={register}
+                          {...register}
                           className="block w-full rounded-md bg-transparent py-2 px-0 text-sm  focus:outline-none focus:ring-0"
                         />
                       </div>

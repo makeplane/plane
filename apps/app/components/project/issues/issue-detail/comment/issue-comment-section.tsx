@@ -9,7 +9,7 @@ import { useForm, Controller } from "react-hook-form";
 // services
 import issuesServices from "services/issues.service";
 // ui
-import { Loader } from "components/ui";
+import { Loader } from "ui";
 // types
 import type { IIssueActivity, IIssueComment } from "types";
 // common

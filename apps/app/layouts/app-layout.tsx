@@ -15,7 +15,7 @@ import useUser from "hooks/useUser";
 // fetch keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 // ui
-import { Button, Spinner } from "components/ui";
+import { Button, Spinner } from "ui";
 // components
 import CommandPalette from "components/command-palette";
 // types

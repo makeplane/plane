@@ -9,7 +9,7 @@ import type { Control } from "react-hook-form";
 // service
 import projectServices from "services/project.service";
 // ui
-import { SearchListbox } from "components/ui";
+import SearchListbox from "components/search-listbox";
 // icons
 import { UserIcon } from "@heroicons/react/24/outline";
 // types

@@ -13,14 +13,8 @@ import AppLayout from "layouts/app-layout";
 // hooks
 import useUser from "hooks/useUser";
 // ui
-import {
-  Spinner,
-  Breadcrumbs,
-  BreadcrumbItem,
-  EmptySpace,
-  EmptySpaceItem,
-  HeaderButton,
-} from "components/ui";
+import { Spinner, EmptySpace, EmptySpaceItem, HeaderButton } from "ui";
+import { Breadcrumbs, BreadcrumbItem } from "components/breadcrumbs";
 // services
 import userService from "services/user.service";
 // hooks

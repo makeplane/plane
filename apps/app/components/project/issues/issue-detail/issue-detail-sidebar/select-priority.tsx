@@ -3,7 +3,7 @@ import React from "react";
 // react-hook-form
 import { Control, Controller, UseFormWatch } from "react-hook-form";
 // ui
-import { CustomSelect } from "components/ui";
+import { CustomSelect } from "ui";
 // icons
 import { ChartBarIcon } from "@heroicons/react/24/outline";
 // types

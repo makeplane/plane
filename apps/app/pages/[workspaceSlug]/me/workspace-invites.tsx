@@ -12,7 +12,7 @@ import workspaceService from "services/workspace.service";
 // layouts
 import AppLayout from "layouts/app-layout";
 // ui
-import { Button } from "components/ui";
+import { Button } from "ui";
 // swr
 import useSWR from "swr";
 import { USER_WORKSPACES } from "constants/fetch-keys";

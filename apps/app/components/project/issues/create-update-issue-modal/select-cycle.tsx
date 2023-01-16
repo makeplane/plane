@@ -8,7 +8,7 @@ import cycleServices from "services/cycles.service";
 // constants
 import { CYCLE_LIST } from "constants/fetch-keys";
 // ui
-import { CustomListbox } from "components/ui";
+import { CustomListbox } from "ui";
 // icons
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";

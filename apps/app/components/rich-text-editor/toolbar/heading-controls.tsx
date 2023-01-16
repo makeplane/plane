@@ -1,7 +1,7 @@
 // remirror
 import { useCommands, useActive } from "@remirror/react";
 // ui
-import { CustomMenu } from "components/ui";
+import { CustomMenu } from "ui";
 
 const HeadingControls = () => {
   const { toggleHeading, focus } = useCommands();

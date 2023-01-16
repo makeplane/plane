@@ -16,7 +16,7 @@ import workspaceService from "services/workspace.service";
 // layouts
 import AppLayout from "layouts/app-layout";
 // ui
-import { Loader, Spinner } from "components/ui";
+import { Loader, Spinner } from "ui";
 // icons
 import {
   ArrowRightIcon,

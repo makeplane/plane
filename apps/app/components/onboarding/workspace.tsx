@@ -13,7 +13,7 @@ import useToast from "hooks/useToast";
 // services
 import workspaceService from "services/workspace.service";
 // ui
-import { CustomSelect, Input } from "components/ui";
+import { CustomSelect, Input } from "ui";
 // constants
 import { companySize } from "constants/";
 // fetch-keys
@@ -146,7 +146,7 @@ const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
                       name="name"
                       placeholder="Enter name"
                       autoComplete="off"
-                      register={register}
+                      {...register}
                       onChange={(e) =>
                         setValue("slug", e.target.value.toLocaleLowerCase().replace(/ /g, "-"))
                       }
@@ -164,7 +164,7 @@ const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
                         name="slug"
                         mode="transparent"
                         autoComplete="off"
-                        register={register}
+                        {...register}
                         className="block w-full rounded-md bg-transparent py-2 px-0 text-sm  focus:outline-none focus:ring-0"
                       />
                     </div>

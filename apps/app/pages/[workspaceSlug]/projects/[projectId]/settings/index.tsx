@@ -21,21 +21,14 @@ import projectService from "services/project.service";
 import workspaceService from "services/workspace.service";
 // components
 import ConfirmProjectDeletion from "components/project/confirm-project-deletion";
+import EmojiIconPicker from "components/emoji-icon-picker";
 // hooks
 import useToast from "hooks/useToast";
 // ui
-import {
-  BreadcrumbItem,
-  Breadcrumbs,
-  Button,
-  EmojiIconPicker,
-  Input,
-  Select,
-  TextArea,
-  Loader,
-  CustomSelect,
-} from "components/ui";
-import OutlineButton from "components/ui/outline-button";
+import { Button, Input, Select, TextArea, Loader, CustomSelect } from "ui";
+import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+import OutlineButton from "ui/outline-button";
+
 // types
 import { IProject, IWorkspace } from "types";
 
@@ -208,7 +201,7 @@ const GeneralSettings: NextPage<TGeneralSettingsProps> = (props) => {
                       id="name"
                       name="name"
                       error={errors.name}
-                      register={register}
+                      {...register}
                       placeholder="Project Name"
                       className="w-auto"
                       validations={{
@@ -232,7 +225,7 @@ const GeneralSettings: NextPage<TGeneralSettingsProps> = (props) => {
                     id="description"
                     name="description"
                     error={errors.description}
-                    register={register}
+                    {...register}
                     placeholder="Enter project description"
                     validations={{}}
                     className="min-h-[46px]"
@@ -255,7 +248,7 @@ const GeneralSettings: NextPage<TGeneralSettingsProps> = (props) => {
                     id="identifier"
                     name="identifier"
                     error={errors.identifier}
-                    register={register}
+                    {...register}
                     placeholder="Enter identifier"
                     className="w-40"
                     onChange={(e: any) => {

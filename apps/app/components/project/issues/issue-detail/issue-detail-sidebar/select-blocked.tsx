@@ -15,7 +15,7 @@ import useToast from "hooks/useToast";
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // ui
-import { Button } from "components/ui";
+import { Button } from "ui";
 // icons
 import { FolderIcon, MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { BlockedIcon } from "components/icons";

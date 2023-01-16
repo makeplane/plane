@@ -25,15 +25,9 @@ import useToast from "hooks/useToast";
 import { ImageUploadModal } from "components/common/image-upload-modal";
 import ConfirmWorkspaceDeletion from "components/workspace/confirm-workspace-deletion";
 // ui
-import {
-  Spinner,
-  Button,
-  Input,
-  BreadcrumbItem,
-  Breadcrumbs,
-  CustomSelect,
-  OutlineButton,
-} from "components/ui";
+import { Spinner, Button, Input, CustomSelect } from "ui";
+import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+import OutlineButton from "ui/outline-button";
 // icons
 import { LinkIcon } from "@heroicons/react/24/outline";
 // types
@@ -248,7 +242,7 @@ const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
                 id="url"
                 name="url"
                 autoComplete="off"
-                register={register}
+                {...register}
                 error={errors.name}
                 className="w-full"
                 value={`app.plane.so/${activeWorkspace.slug}`}
@@ -263,7 +257,7 @@ const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
                 name="name"
                 placeholder="Name"
                 autoComplete="off"
-                register={register}
+                {...register}
                 error={errors.name}
                 validations={{
                   required: "Name is required",

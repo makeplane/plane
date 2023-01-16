@@ -16,7 +16,7 @@ import DefaultLayout from "layouts/default-layout";
 // components
 import SingleInvitation from "components/workspace/SingleInvitation";
 // ui
-import { Button, Spinner, EmptySpace, EmptySpaceItem } from "components/ui";
+import { Button, Spinner, EmptySpace, EmptySpaceItem } from "ui";
 // icons
 import { CubeIcon, PlusIcon } from "@heroicons/react/24/outline";
 // types

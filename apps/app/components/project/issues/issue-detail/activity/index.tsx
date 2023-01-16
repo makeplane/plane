@@ -8,7 +8,7 @@ import { KeyedMutator } from "swr";
 // common
 import { addSpaceIfCamelCase, renderShortNumericDateFormat, timeAgo } from "constants/common";
 // ui
-import { Loader } from "components/ui";
+import { Loader } from "ui";
 // icons
 import {
   CalendarDaysIcon,

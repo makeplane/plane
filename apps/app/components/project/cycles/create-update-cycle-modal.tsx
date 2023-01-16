@@ -14,7 +14,7 @@ import { CYCLE_LIST } from "constants/fetch-keys";
 // common
 import { renderDateFormat } from "constants/common";
 // ui
-import { Button, Input, TextArea, Select, CustomSelect } from "components/ui";
+import { Button, Input, TextArea, CustomSelect } from "ui";
 
 // types
 import type { ICycle } from "types";
@@ -154,7 +154,7 @@ const CreateUpdateCycleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, proj
                           placeholder="Enter name"
                           autoComplete="off"
                           error={errors.name}
-                          register={register}
+                          {...register}
                           validations={{
                             required: "Name is required",
                           }}
@@ -167,7 +167,7 @@ const CreateUpdateCycleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, proj
                           label="Description"
                           placeholder="Enter description"
                           error={errors.description}
-                          register={register}
+                          {...register}
                         />
                       </div>
                       <div>
@@ -205,7 +205,7 @@ const CreateUpdateCycleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, proj
                             type="date"
                             placeholder="Enter start date"
                             error={errors.start_date}
-                            register={register}
+                            {...register}
                             validations={{
                               required: "Start date is required",
                             }}
@@ -219,7 +219,7 @@ const CreateUpdateCycleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, proj
                             type="date"
                             placeholder="Enter end date"
                             error={errors.end_date}
-                            register={register}
+                            {...register}
                             validations={{
                               required: "End date is required",
                             }}

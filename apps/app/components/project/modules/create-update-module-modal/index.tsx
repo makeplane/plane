@@ -12,7 +12,7 @@ import SelectLead from "components/project/modules/create-update-module-modal/se
 import SelectMembers from "components/project/modules/create-update-module-modal/select-members";
 import SelectStatus from "components/project/modules/create-update-module-modal/select-status";
 // ui
-import { Button, Input, TextArea } from "components/ui";
+import { Button, Input, TextArea } from "ui";
 // services
 import modulesService from "services/modules.service";
 // types
@@ -158,7 +158,7 @@ const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, pro
                           placeholder="Enter name"
                           autoComplete="off"
                           error={errors.name}
-                          register={register}
+                          {...register}
                           validations={{
                             required: "Name is required",
                           }}
@@ -171,7 +171,7 @@ const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, pro
                           label="Description"
                           placeholder="Enter description"
                           error={errors.description}
-                          register={register}
+                          {...register}
                         />
                       </div>
                       <div className="flex gap-x-2">
@@ -183,7 +183,7 @@ const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, pro
                             type="date"
                             placeholder="Enter start date"
                             error={errors.start_date}
-                            register={register}
+                            {...register}
                             validations={{
                               required: "Start date is required",
                             }}
@@ -197,7 +197,7 @@ const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, pro
                             type="date"
                             placeholder="Enter target date"
                             error={errors.target_date}
-                            register={register}
+                            {...register}
                             validations={{
                               required: "Target date is required",
                             }}

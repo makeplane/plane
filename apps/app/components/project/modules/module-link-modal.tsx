@@ -12,7 +12,7 @@ import modulesService from "services/modules.service";
 // hooks
 import useUser from "hooks/useUser";
 // ui
-import { Button, Input } from "components/ui";
+import { Button, Input } from "ui";
 // types
 import type { IModule, ModuleLink } from "types";
 // fetch-keys
@@ -125,7 +125,7 @@ const ModuleLinkModal: React.FC<Props> = ({ isOpen, module, handleClose }) => {
                             placeholder="Enter title"
                             autoComplete="off"
                             error={errors.title}
-                            register={register}
+                            {...register}
                             validations={{
                               required: "Title is required",
                             }}
@@ -140,7 +140,7 @@ const ModuleLinkModal: React.FC<Props> = ({ isOpen, module, handleClose }) => {
                             placeholder="Enter URL"
                             autoComplete="off"
                             error={errors.url}
-                            register={register}
+                            {...register}
                             validations={{
                               required: "URL is required",
                             }}

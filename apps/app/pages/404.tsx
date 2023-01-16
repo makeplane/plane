@@ -7,7 +7,7 @@ import Image from "next/image";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 // ui
-import { Button } from "components/ui";
+import { Button } from "ui";
 // images
 import Image404 from "public/404.svg";
 

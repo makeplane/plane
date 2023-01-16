@@ -20,7 +20,7 @@ import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
 import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
 // ui
-import { Spinner } from "components/ui";
+import { Spinner } from "ui";
 // types
 import type { IState, IIssue, NestedKeyOf, IssueResponse } from "types";
 

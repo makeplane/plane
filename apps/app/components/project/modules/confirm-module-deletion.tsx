@@ -9,7 +9,7 @@ import modulesService from "services/modules.service";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // ui
-import { Button } from "components/ui";
+import { Button } from "ui";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // types

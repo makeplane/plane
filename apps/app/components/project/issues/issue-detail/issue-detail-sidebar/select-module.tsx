@@ -10,7 +10,7 @@ import { MODULE_LIST } from "constants/fetch-keys";
 // services
 import modulesService from "services/modules.service";
 // ui
-import { Spinner, CustomSelect } from "components/ui";
+import { Spinner, CustomSelect } from "ui";
 // icons
 import { RectangleGroupIcon } from "@heroicons/react/24/outline";
 // types

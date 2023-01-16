@@ -8,7 +8,7 @@ import { STATE_LIST, CYCLE_ISSUES } from "constants/fetch-keys";
 // components
 import SingleBoard from "components/project/cycles/board-view/single-board";
 // ui
-import { Spinner } from "components/ui";
+import { Spinner } from "ui";
 // types
 import { CycleIssueResponse, IIssue, IProjectMember, NestedKeyOf, Properties } from "types";
 import { useRouter } from "next/router";

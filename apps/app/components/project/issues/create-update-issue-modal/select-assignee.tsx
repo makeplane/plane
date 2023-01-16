@@ -14,7 +14,7 @@ import type { Control } from "react-hook-form";
 import type { IIssue } from "types";
 import { UserIcon } from "@heroicons/react/24/outline";
 
-import { SearchListbox } from "components/ui";
+import SearchListbox from "components/search-listbox";
 
 type Props = {
   control: Control<IIssue, any>;

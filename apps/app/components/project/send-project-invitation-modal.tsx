@@ -17,7 +17,7 @@ import workspaceService from "services/workspace.service";
 import { ROLE } from "constants/";
 import { PROJECT_INVITATIONS, WORKSPACE_MEMBERS } from "constants/fetch-keys";
 // ui
-import { Button, Select, TextArea } from "components/ui";
+import { Button, Select, TextArea } from "ui";
 // icons
 import { ChevronDownIcon, CheckIcon } from "@heroicons/react/20/solid";
 
@@ -256,7 +256,7 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
                             label="Role"
                             name="role"
                             error={errors.role}
-                            register={register}
+                            {...register}
                             validations={{
                               required: "Role is required",
                             }}
@@ -274,7 +274,7 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
                           label="Message"
                           placeholder="Enter message"
                           error={errors.message}
-                          register={register}
+                          {...register}
                         />
                       </div>
                     </div>

@@ -17,7 +17,7 @@ import useUser from "hooks/useUser";
 // components
 import SingleListIssue from "components/common/list-view/single-issue";
 // ui
-import { CustomMenu, Spinner } from "components/ui";
+import { CustomMenu, Spinner } from "ui";
 // icons
 import { PlusIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
 // types

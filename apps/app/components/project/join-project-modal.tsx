@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Transition, Dialog } from "@headlessui/react";
 
 // ui
-import { Button } from "components/ui";
+import { Button } from "ui";
 
 // type
 import type { IProject } from "types";

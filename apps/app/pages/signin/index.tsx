@@ -11,7 +11,7 @@ import DefaultLayout from "layouts/default-layout";
 // social button
 import { GoogleLoginButton, GithubLoginButton, EmailSignInForm } from "components/account";
 // ui
-import { Spinner } from "components/ui";
+import { Spinner } from "ui";
 // icons
 import Logo from "public/logo-with-text.png";
 

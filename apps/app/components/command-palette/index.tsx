@@ -23,7 +23,7 @@ import { Combobox, Dialog, Transition } from "@headlessui/react";
 // constants
 import { USER_ISSUE } from "constants/fetch-keys";
 // ui
-import { Button } from "components/ui";
+import { Button } from "ui";
 // icons
 import {
   FolderIcon,

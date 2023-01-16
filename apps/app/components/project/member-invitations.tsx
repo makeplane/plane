@@ -9,7 +9,7 @@ import projectService from "services/project.service";
 // hooks
 import useUser from "hooks/useUser";
 // ui
-import { Button } from "components/ui";
+import { Button } from "ui";
 // icons
 import {
   CalendarDaysIcon,

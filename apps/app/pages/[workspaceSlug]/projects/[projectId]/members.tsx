@@ -22,7 +22,8 @@ import SendProjectInvitationModal from "components/project/send-project-invitati
 // headless ui
 import { Menu } from "@headlessui/react";
 // ui
-import { Spinner, CustomListbox, BreadcrumbItem, Breadcrumbs, HeaderButton } from "components/ui";
+import { Spinner, CustomListbox, HeaderButton } from "ui";
+import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon, EllipsisHorizontalIcon } from "@heroicons/react/20/solid";
 // fetch-keys

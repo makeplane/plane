@@ -14,7 +14,7 @@ import { STATE_LIST, MODULE_ISSUES } from "constants/fetch-keys";
 // components
 import SingleBoard from "components/project/modules/board-view/single-board";
 // ui
-import { Spinner } from "components/ui";
+import { Spinner } from "ui";
 // types
 import { IIssue, IProjectMember, ModuleIssueResponse, NestedKeyOf, Properties } from "types";
 

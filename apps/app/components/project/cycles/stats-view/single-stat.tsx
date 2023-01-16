@@ -11,7 +11,7 @@ import cyclesService from "services/cycles.service";
 // hooks
 import useUser from "hooks/useUser";
 // ui
-import { Button, CustomMenu } from "components/ui";
+import { Button, CustomMenu } from "ui";
 // icons
 import { CalendarDaysIcon } from "@heroicons/react/20/solid";
 import { ArrowPathIcon, CheckIcon, UserIcon, UserGroupIcon } from "@heroicons/react/24/outline";

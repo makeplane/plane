@@ -5,7 +5,7 @@ import { Controller, useForm } from "react-hook-form";
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
 // ui
-import { Button, CustomMenu, Input } from "components/ui";
+import { Button, CustomMenu, Input } from "ui";
 // icons
 import { PencilIcon, RectangleGroupIcon } from "@heroicons/react/24/outline";
 // types
@@ -118,7 +118,7 @@ const SingleLabel: React.FC<Props> = ({ label, issueLabels, editLabel, handleLab
                 type="text"
                 id="labelName"
                 name="name"
-                register={register}
+                {...register}
                 placeholder="Lable title"
                 validations={{
                   required: "Label title is required",

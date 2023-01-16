@@ -36,7 +36,7 @@ const useUser = (options: useUserOptions = {}) => {
     }
   }, [contextData?.user, redirectTo, router]);
 
-  return contextData;
+  return { ...contextData };
 };
 
 export default useUser;

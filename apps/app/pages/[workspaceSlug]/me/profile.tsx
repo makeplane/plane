@@ -27,7 +27,8 @@ import workspaceService from "services/workspace.service";
 // components
 import { ImageUploadModal } from "components/common/image-upload-modal";
 // ui
-import { BreadcrumbItem, Breadcrumbs, Button, Input, Spinner } from "components/ui";
+import { Button, Input, Spinner } from "ui";
+import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import {
   ChevronRightIcon,
@@ -216,7 +217,7 @@ const Profile: NextPage = () => {
                         <Input
                           name="first_name"
                           id="first_name"
-                          register={register}
+                          {...register}
                           error={errors.first_name}
                           placeholder="Enter your first name"
                           autoComplete="off"
@@ -233,7 +234,7 @@ const Profile: NextPage = () => {
                       {isEditing ? (
                         <Input
                           name="last_name"
-                          register={register}
+                          {...register}
                           error={errors.last_name}
                           id="last_name"
                           placeholder="Enter your last name"

@@ -14,14 +14,8 @@ import modulesService from "services/modules.service";
 // components
 import SingleModuleCard from "components/project/modules/single-module-card";
 // ui
-import {
-  BreadcrumbItem,
-  Breadcrumbs,
-  EmptySpace,
-  EmptySpaceItem,
-  HeaderButton,
-  Loader,
-} from "components/ui";
+import { EmptySpace, EmptySpaceItem, HeaderButton, Loader } from "ui";
+import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon, RectangleGroupIcon } from "@heroicons/react/24/outline";
 // types

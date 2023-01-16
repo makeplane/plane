@@ -7,7 +7,7 @@ import useToast from "hooks/useToast";
 // services
 import userService from "services/user.service";
 // ui
-import { Input } from "components/ui";
+import { Input } from "ui";
 // types
 import { IUser } from "types";
 
@@ -68,7 +68,7 @@ const UserDetails: React.FC<Props> = ({ user, setStep }) => {
               name="first_name"
               placeholder="Enter first name"
               autoComplete="off"
-              register={register}
+              {...register}
               validations={{
                 required: "First name is required",
               }}
@@ -81,7 +81,7 @@ const UserDetails: React.FC<Props> = ({ user, setStep }) => {
               name="last_name"
               placeholder="Enter last name"
               autoComplete="off"
-              register={register}
+              {...register}
               validations={{
                 required: "Last name is required",
               }}
@@ -94,7 +94,7 @@ const UserDetails: React.FC<Props> = ({ user, setStep }) => {
               name="role"
               placeholder="What is your role?"
               autoComplete="off"
-              register={register}
+              {...register}
               validations={{
                 required: "Role is required",
               }}
