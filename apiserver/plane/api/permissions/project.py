@@ -4,6 +4,12 @@ from rest_framework.permissions import BasePermission, SAFE_METHODS
 # Module import
 from plane.db.models import WorkspaceMember, ProjectMember
 
+# Permission Mappings
+Admin = 20
+Member = 15
+Viewer = 10
+Guest = 5
+
 
 class ProjectBasePermission(BasePermission):
     def has_permission(self, request, view):
@@ -22,14 +28,14 @@ class ProjectBasePermission(BasePermission):
             return WorkspaceMember.objects.filter(
                 workspace__slug=view.workspace_slug,
                 member=request.user,
-                role__in=[15, 20],
+                role__in=[Admin, Member],
             ).exists()
 
         ## Only Project Admins can update project attributes
         return ProjectMember.objects.filter(
             workspace__slug=view.workspace_slug,
             member=request.user,
-            role=20,
+            role=Admin,
             project_id=view.project_id,
         ).exists()
 
@@ -50,14 +56,14 @@ class ProjectMemberPermission(BasePermission):
             return WorkspaceMember.objects.filter(
                 workspace__slug=view.workspace_slug,
                 member=request.user,
-                role__in=[15, 20],
+                role__in=[Admin, Member],
             ).exists()
 
         ## Only Project Admins can update project attributes
         return ProjectMember.objects.filter(
             workspace__slug=view.workspace_slug,
             member=request.user,
-            role__in=[15, 20],
+            role__in=[Admin, Member],
             project_id=view.project_id,
         ).exists()
 
@@ -80,6 +86,6 @@ class ProjectEntityPermission(BasePermission):
         return ProjectMember.objects.filter(
             workspace__slug=view.workspace_slug,
             member=request.user,
-            role__in=[15, 20],
+            role__in=[Admin, Member],
             project_id=view.project_id,
         ).exists()
