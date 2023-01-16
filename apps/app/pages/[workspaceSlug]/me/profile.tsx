@@ -151,7 +151,7 @@ const Profile: NextPage = () => {
           handleSubmit(onSubmit)();
           setIsImageUploadModalOpen(false);
         }}
-        value={watch("avatar")}
+        value={watch("avatar") !== "" ? watch("avatar") : undefined}
       />
       <div className="w-full space-y-5">
         <Breadcrumbs>
