@@ -1,9 +1,6 @@
 import React, { useRef, useState } from "react";
-
 import Link from "next/link";
-
 import { Transition } from "@headlessui/react";
-
 // hooks
 import useTheme from "hooks/useTheme";
 import useOutsideClickDetector from "hooks/useOutsideClickDetector";

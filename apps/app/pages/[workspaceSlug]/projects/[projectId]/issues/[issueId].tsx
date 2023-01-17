@@ -25,7 +25,7 @@ import IssueDetailSidebar from "components/project/issues/issue-detail/issue-det
 import AddIssueComment from "components/project/issues/issue-detail/comment/issue-comment-section";
 import IssueActivitySection from "components/project/issues/issue-detail/activity";
 // ui
-import { Loader, TextArea, HeaderButton, CustomMenu } from "ui";
+import { Loader, TextArea, HeaderButton, CustomMenu } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { ChevronLeftIcon, ChevronRightIcon, PlusIcon } from "@heroicons/react/24/outline";
@@ -313,7 +313,7 @@ const IssueDetail: NextPage = () => {
                   name="name"
                   autoComplete="off"
                   validations={{ required: true }}
-                  {...register}
+                  register={register}
                   onChange={debounce(() => {
                     handleSubmit(submitChanges)();
                   }, 5000)}

@@ -10,7 +10,7 @@ const nextConfig = {
   output: "standalone",
   experimental: {
     outputFileTracingRoot: path.join(__dirname, "../../"),
-    transpilePackages: ["ui"],
+    transpilePackages: ["components/ui"],
   },
 };
 
@@ -34,6 +34,6 @@ module.exports = nextConfig;
 //   output: "standalone",
 //   experimental: {
 //     outputFileTracingRoot: path.join(__dirname, "../../"),
-//     transpilePackages: ["ui"],
+//     transpilePackages: ["components/ui"],
 //   },
 // });

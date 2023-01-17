@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // ui
-import { Button } from "ui";
+import { Button } from "components/ui";
 // icons
 import { MagnifyingGlassIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
 // constants

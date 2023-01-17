@@ -15,7 +15,7 @@ import issuesServices from "services/issues.service";
 import useUser from "hooks/useUser";
 import useToast from "hooks/useToast";
 // ui
-import { Button, Input, Loader } from "ui";
+import { Button, Input, Loader } from "components/ui";
 // icons
 import { EllipsisHorizontalIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // components
@@ -390,7 +390,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                               placeholder="Enter title"
                               autoComplete="off"
                               error={errors.name}
-                              {...register}
+                              register={register}
                               validations={{
                                 required: "Name is required",
                                 maxLength: {

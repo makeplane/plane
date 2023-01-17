@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 // ui
-import { Button, Input } from "ui";
+import { Button, Input } from "components/ui";
 // services
 import authenticationService from "services/authentication.service";
 // icons
@@ -85,7 +85,7 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
             id="email"
             type="email"
             name="email"
-            {...register}
+            register={register}
             validations={{
               required: "Email ID is required",
               validate: (value) =>
@@ -104,7 +104,7 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
               id="token"
               type="token"
               name="token"
-              {...register}
+              register={register}
               validations={{
                 required: "Code is required",
               }}

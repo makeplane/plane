@@ -25,7 +25,7 @@ import AppLayout from "layouts/app-layout";
 import SendWorkspaceInvitationModal from "components/workspace/send-workspace-invitation-modal";
 import ConfirmWorkspaceMemberRemove from "components/workspace/confirm-workspace-member-remove";
 // ui
-import { Spinner, CustomListbox, HeaderButton } from "ui";
+import { Spinner, CustomListbox, HeaderButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon, EllipsisHorizontalIcon } from "@heroicons/react/20/solid";

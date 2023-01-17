@@ -7,7 +7,7 @@ import { Controller, useForm } from "react-hook-form";
 // hooks
 import useToast from "hooks/useToast";
 // ui
-import { Loader } from "ui";
+import { Loader } from "components/ui";
 // icons
 import { CalendarDaysIcon, ChartPieIcon, LinkIcon, UserIcon } from "@heroicons/react/24/outline";
 // types

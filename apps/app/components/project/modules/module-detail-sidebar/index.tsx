@@ -16,7 +16,7 @@ import SelectMembers from "components/project/modules/module-detail-sidebar/sele
 import SelectStatus from "components/project/modules/module-detail-sidebar/select-status";
 import ModuleLinkModal from "components/project/modules/module-link-modal";
 // ui
-import { Loader } from "ui";
+import { Loader } from "components/ui";
 // icons
 import {
   CalendarDaysIcon,

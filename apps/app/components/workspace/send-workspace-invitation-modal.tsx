@@ -1,20 +1,18 @@
 import React from "react";
-// swr
 import { mutate } from "swr";
-// react hook form
 import { useForm } from "react-hook-form";
 // headless
 import { Dialog, Transition } from "@headlessui/react";
-// fetch keys
-import { WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 // services
 import workspaceService from "services/workspace.service";
 // ui
-import { Button, Input, TextArea, Select } from "ui";
+import { Button, Input, Select } from "components/ui";
 // hooks
 import useToast from "hooks/useToast";
 // types
 import { IWorkspaceMemberInvitation } from "types";
+// fetch keys
+import { WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
@@ -125,7 +123,7 @@ const SendWorkspaceInvitationModal: React.FC<Props> = ({
                           type="email"
                           placeholder="Enter email"
                           error={errors.email}
-                          {...register}
+                          register={register}
                           validations={{
                             required: "Email is required",
                             validate: (value) => {
@@ -141,7 +139,7 @@ const SendWorkspaceInvitationModal: React.FC<Props> = ({
                           label="Role"
                           name="role"
                           error={errors.role}
-                          {...register}
+                          register={register}
                           validations={{
                             required: "Role is required",
                           }}
@@ -158,7 +156,7 @@ const SendWorkspaceInvitationModal: React.FC<Props> = ({
                           label="Message"
                           placeholder="Enter message"
                           error={errors.message}
-                          {...register}
+                          register={register}
                         />
                       </div> */}
                     </div>

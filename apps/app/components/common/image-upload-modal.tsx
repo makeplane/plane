@@ -12,7 +12,7 @@ import fileServices from "services/file.service";
 // icon
 import { UserCircleIcon } from "components/icons";
 // ui
-import { Button } from "ui";
+import { Button } from "components/ui";
 
 type TImageUploadModalProps = {
   value?: string | null;

@@ -14,7 +14,7 @@ import SingleListIssue from "components/common/list-view/single-issue";
 // headless ui
 import { Disclosure, Transition } from "@headlessui/react";
 // ui
-import { CustomMenu, Spinner } from "ui";
+import { CustomMenu, Spinner } from "components/ui";
 // icons
 import { PlusIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
 // types

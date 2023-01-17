@@ -14,7 +14,7 @@ import AppLayout from "layouts/app-layout";
 import CreateUpdateCycleModal from "components/project/cycles/create-update-cycle-modal";
 import CycleStatsView from "components/project/cycles/stats-view";
 // ui
-import { HeaderButton, EmptySpace, EmptySpaceItem, Loader } from "ui";
+import { HeaderButton, EmptySpace, EmptySpaceItem, Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";

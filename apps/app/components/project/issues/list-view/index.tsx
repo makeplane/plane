@@ -30,7 +30,7 @@ import {
   WORKSPACE_MEMBERS,
 } from "constants/fetch-keys";
 // ui
-import { CustomMenu, CustomSelect, Spinner } from "ui";
+import { CustomMenu, CustomSelect, Spinner } from "components/ui";
 // icons
 import User from "public/user.png";
 import { ChevronDownIcon, PlusIcon, CalendarDaysIcon } from "@heroicons/react/24/outline";

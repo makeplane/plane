@@ -23,7 +23,7 @@ import {
   StateGroup,
 } from "components/project/issues/BoardView/state/create-update-state-inline";
 // ui
-import { Loader } from "ui";
+import { Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PencilSquareIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";

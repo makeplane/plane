@@ -13,7 +13,7 @@ import useToast from "hooks/useToast";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
-import { Button, Input } from "ui";
+import { Button, Input } from "components/ui";
 // types
 import type { IProject, IWorkspace } from "types";
 

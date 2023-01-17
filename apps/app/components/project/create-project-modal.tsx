@@ -19,7 +19,7 @@ import { PROJECTS_LIST, WORKSPACE_MEMBERS_ME } from "constants/fetch-keys";
 // hooks
 import useToast from "hooks/useToast";
 // ui
-import { Button, Input, TextArea, CustomSelect } from "ui";
+import { Button, Input, TextArea, CustomSelect } from "components/ui";
 // components
 import EmojiIconPicker from "components/emoji-icon-picker";
 // types
@@ -214,7 +214,7 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                             type="name"
                             placeholder="Enter name"
                             error={errors.name}
-                            {...register}
+                            register={register}
                             validations={{
                               required: "Name is required",
                             }}
@@ -255,7 +255,7 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                           label="Description"
                           placeholder="Enter description"
                           error={errors.description}
-                          {...register}
+                          register={register}
                         />
                       </div>
                       <div>
@@ -266,7 +266,7 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                           type="text"
                           placeholder="Enter Project Identifier"
                           error={errors.identifier}
-                          {...register}
+                          register={register}
                           onChange={() => setIsChangeIdentifierRequired(false)}
                           validations={{
                             required: "Identifier is required",

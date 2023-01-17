@@ -6,7 +6,7 @@ import useSWR from "swr";
 // services
 import issuesService from "services/issues.service";
 // ui
-import { CustomMenu } from "ui";
+import { CustomMenu } from "components/ui";
 // icons
 import { CalendarDaysIcon } from "@heroicons/react/24/outline";
 // types

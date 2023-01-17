@@ -11,7 +11,7 @@ import workspaceService from "services/workspace.service";
 // headless ui
 import { Listbox, Transition } from "@headlessui/react";
 // ui
-import { Spinner } from "ui";
+import { Spinner } from "components/ui";
 // icons
 import { UserGroupIcon, UserIcon } from "@heroicons/react/24/outline";
 import User from "public/user.png";

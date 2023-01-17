@@ -15,7 +15,7 @@ import { groupBy } from "constants/common";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
-import { Button } from "ui";
+import { Button } from "components/ui";
 
 // types
 import type { IState } from "types";

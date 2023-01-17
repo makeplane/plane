@@ -58,8 +58,8 @@ class AuthService extends APIService {
     throw response.response.data;
   }
 
-  async signOut(data = {}) {
-    return this.post("/api/sign-out/", data)
+  async signOut() {
+    return this.post("/api/sign-out/", { refresh_token: this.getRefreshToken() })
       .then((response) => {
         this.purgeAccessToken();
         this.purgeRefreshToken();

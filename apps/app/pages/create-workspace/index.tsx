@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from "react";
-
 import type { NextPage, NextPageContext } from "next";
 import { useRouter } from "next/router";
 import Image from "next/image";
-
 import { mutate } from "swr";
-
 import { Controller, useForm } from "react-hook-form";
 // services
 import workspaceService from "services/workspace.service";
@@ -15,7 +12,7 @@ import { USER_WORKSPACES } from "constants/fetch-keys";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 // ui
-import { CustomSelect, Input } from "ui";
+import { CustomSelect, Input } from "components/ui";
 // images
 import Logo from "public/onboarding/logo.svg";
 // types
@@ -89,11 +86,11 @@ const CreateWorkspace: NextPage = () => {
                   <div className="grid grid-cols-1 gap-4">
                     <div>
                       <Input
-                        label="Workspace name"
                         name="name"
+                        register={register}
+                        label="Workspace name"
                         placeholder="Enter name"
                         autoComplete="off"
-                        {...register}
                         onChange={(e) =>
                           setValue("slug", e.target.value.toLocaleLowerCase().replace(/ /g, "-"))
                         }
@@ -108,10 +105,10 @@ const CreateWorkspace: NextPage = () => {
                       <div className="flex items-center rounded-md border border-gray-300 px-3">
                         <span className="text-sm text-slate-600">{"https://app.plane.so/"}</span>
                         <Input
-                          name="slug"
                           mode="transparent"
                           autoComplete="off"
-                          {...register}
+                          name="slug"
+                          register={register}
                           className="block w-full rounded-md bg-transparent py-2 px-0 text-sm  focus:outline-none focus:ring-0"
                         />
                       </div>

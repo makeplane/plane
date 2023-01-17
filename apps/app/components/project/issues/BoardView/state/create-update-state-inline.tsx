@@ -13,7 +13,7 @@ import { STATE_LIST } from "constants/fetch-keys";
 // services
 import stateService from "services/state.service";
 // ui
-import { Button, Input, Select, Spinner } from "ui";
+import { Button, Input, Select, Spinner } from "components/ui";
 // types
 import type { IState } from "types";
 
@@ -163,7 +163,7 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
       <Input
         id="name"
         name="name"
-        {...register}
+        register={register}
         autoFocus
         placeholder="Enter state name"
         validations={{
@@ -177,7 +177,7 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
           id="group"
           name="group"
           error={errors.group}
-          {...register}
+          register={register}
           validations={{
             required: true,
           }}
@@ -190,7 +190,7 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
       <Input
         id="description"
         name="description"
-        {...register}
+        register={register}
         placeholder="Enter state description"
         error={errors.description}
         autoComplete="off"

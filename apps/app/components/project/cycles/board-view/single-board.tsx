@@ -7,7 +7,7 @@ import workspaceService from "services/workspace.service";
 // components
 import SingleIssue from "components/common/board-view/single-issue";
 // ui
-import { CustomMenu } from "ui";
+import { CustomMenu } from "components/ui";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 // types

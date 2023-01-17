@@ -20,7 +20,7 @@ import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deleti
 import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
 import View from "components/core/view";
 // ui
-import { Spinner, EmptySpace, EmptySpaceItem, HeaderButton } from "ui";
+import { Spinner, EmptySpace, EmptySpaceItem, HeaderButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { ListBulletIcon, RectangleStackIcon } from "@heroicons/react/24/outline";

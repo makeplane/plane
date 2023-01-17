@@ -22,7 +22,7 @@ import ConfirmModuleDeletion from "components/project/modules/confirm-module-del
 import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
 import View from "components/core/view";
 // ui
-import { CustomMenu, EmptySpace, EmptySpaceItem, Spinner } from "ui";
+import { CustomMenu, EmptySpace, EmptySpaceItem, Spinner } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import {

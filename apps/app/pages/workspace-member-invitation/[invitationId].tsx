@@ -14,7 +14,7 @@ import useUser from "hooks/useUser";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 // ui
-import { Button, Spinner } from "ui";
+import { Button, Spinner } from "components/ui";
 // icons
 import {
   ChartBarIcon,
@@ -26,7 +26,7 @@ import {
   UserIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { EmptySpace, EmptySpaceItem } from "ui/empty-space";
+import { EmptySpace, EmptySpaceItem } from "components/ui/empty-space";
 
 const WorkspaceInvitation: NextPage = () => {
   const router = useRouter();

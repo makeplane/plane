@@ -14,7 +14,7 @@ import workspaceService from "services/workspace.service";
 // layouts
 import SettingsLayout from "layouts/settings-layout";
 // ui
-import { Button } from "ui";
+import { Button } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 
 type TFeatureSettingsProps = {

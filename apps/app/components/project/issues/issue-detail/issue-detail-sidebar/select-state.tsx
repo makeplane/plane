@@ -15,7 +15,7 @@ import { STATE_LIST } from "constants/fetch-keys";
 // types
 import { IIssue } from "types";
 // ui
-import { Spinner, CustomSelect } from "ui";
+import { Spinner, CustomSelect } from "components/ui";
 
 type Props = {
   control: Control<IIssue, any>;

@@ -16,7 +16,7 @@ import { STATE_LIST } from "constants/fetch-keys";
 // constants
 import { GROUP_CHOICES } from "constants/";
 // ui
-import { Button, Input, Select, TextArea } from "ui";
+import { Button, Input, Select, TextArea } from "components/ui";
 // icons
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 
@@ -156,7 +156,7 @@ const CreateUpdateStateModal: React.FC<Props> = ({ isOpen, data, projectId, hand
                             placeholder="Enter name"
                             autoComplete="off"
                             error={errors.name}
-                            {...register}
+                            register={register}
                             validations={{
                               required: "Name is required",
                             }}
@@ -168,7 +168,7 @@ const CreateUpdateStateModal: React.FC<Props> = ({ isOpen, data, projectId, hand
                             label="Group"
                             name="group"
                             error={errors.group}
-                            {...register}
+                            register={register}
                             validations={{
                               required: "Group is required",
                             }}
@@ -237,7 +237,7 @@ const CreateUpdateStateModal: React.FC<Props> = ({ isOpen, data, projectId, hand
                             label="Description"
                             placeholder="Enter description"
                             error={errors.description}
-                            {...register}
+                            register={register}
                           />
                         </div>
                       </div>

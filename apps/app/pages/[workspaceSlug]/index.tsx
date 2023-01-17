@@ -16,7 +16,7 @@ import workspaceService from "services/workspace.service";
 // layouts
 import AppLayout from "layouts/app-layout";
 // ui
-import { Loader, Spinner } from "ui";
+import { Loader, Spinner } from "components/ui";
 // icons
 import {
   ArrowRightIcon,
@@ -37,16 +37,16 @@ import {
 import { LayerDiagonalIcon } from "components/icons";
 
 const Workspace: NextPage = () => {
+  // user information
   const { user } = useUser();
-
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
+  // API Fetching
   const { data: myIssues } = useSWR<IIssue[]>(
     workspaceSlug ? USER_ISSUE(workspaceSlug as string) : null,
     workspaceSlug ? () => userService.userIssues(workspaceSlug as string) : null
   );
-
   const { error: workspaceDetailError } = useSWR(
     workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
     workspaceSlug ? () => workspaceService.getWorkspace(workspaceSlug as string) : null

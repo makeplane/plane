@@ -20,7 +20,7 @@ import SettingsLayout from "layouts/settings-layout";
 import ConfirmProjectMemberRemove from "components/project/confirm-project-member-remove";
 import SendProjectInvitationModal from "components/project/send-project-invitation-modal";
 // ui
-import { Button, CustomListbox, CustomMenu, Loader } from "ui";
+import { Button, CustomListbox, CustomMenu, Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";

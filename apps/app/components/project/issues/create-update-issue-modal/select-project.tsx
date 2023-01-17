@@ -14,7 +14,7 @@ import { Listbox, Transition } from "@headlessui/react";
 // icons
 import { ClipboardDocumentListIcon } from "@heroicons/react/24/outline";
 // ui
-import { Spinner } from "ui";
+import { Spinner } from "components/ui";
 // fetch-keys
 import { PROJECTS_LIST } from "constants/fetch-keys";
 // types

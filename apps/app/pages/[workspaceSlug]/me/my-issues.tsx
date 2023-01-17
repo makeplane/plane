@@ -1,19 +1,14 @@
-import React from "react";
-
-import { useRouter } from "next/router";
-import type { NextPage, NextPageContext } from "next";
-
-import useSWR from "swr";
-
-import { ChevronDownIcon, PlusIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
 import { Disclosure, Popover, Transition } from "@headlessui/react";
-
+import { ChevronDownIcon, PlusIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
+import { useRouter } from "next/router";
+import React from "react";
+import useSWR from "swr";
 // layouts
 import AppLayout from "layouts/app-layout";
 // hooks
 import useUser from "hooks/useUser";
 // ui
-import { Spinner, EmptySpace, EmptySpaceItem, HeaderButton } from "ui";
+import { Spinner, EmptySpace, EmptySpaceItem, HeaderButton } from "components/ui";
 import { Breadcrumbs, BreadcrumbItem } from "components/breadcrumbs";
 // services
 import userService from "services/user.service";
@@ -23,10 +18,13 @@ import useIssuesProperties from "hooks/useIssuesProperties";
 import { IIssue, Properties } from "types";
 // lib
 import { requiredAuth } from "lib/auth";
+// components
+import SingleListIssue from "components/common/list-view/single-issue";
+// types
+import type { NextPage, NextPageContext } from "next";
 // constants
 import { USER_ISSUE } from "constants/fetch-keys";
 import { classNames, replaceUnderscoreIfSnakeCase } from "constants/common";
-import SingleListIssue from "components/common/list-view/single-issue";
 
 const MyIssues: NextPage = () => {
   const router = useRouter();
@@ -113,6 +111,7 @@ const MyIssues: NextPage = () => {
                 key: "i",
                 ctrlKey: true,
               });
+
               document.dispatchEvent(e);
             }}
           />

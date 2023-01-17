@@ -17,7 +17,7 @@ import SettingsLayout from "layouts/settings-layout";
 // components
 import SingleLabel from "components/project/settings/single-label";
 // ui
-import { Button, Input, Loader } from "ui";
+import { Button, Input, Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // fetch-keys
 import { PROJECT_DETAILS, PROJECT_ISSUE_LABELS, WORKSPACE_DETAILS } from "constants/fetch-keys";
@@ -211,7 +211,7 @@ const LabelsSettings: NextPage<TLabelSettingsProps> = (props) => {
                 type="text"
                 id="labelName"
                 name="name"
-                {...register}
+                register={register}
                 placeholder="Label title"
                 validations={{
                   required: "Label title is required",

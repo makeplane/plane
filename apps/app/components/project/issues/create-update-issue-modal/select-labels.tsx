@@ -13,7 +13,7 @@ import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 // icons
 import { PlusIcon, XMarkIcon } from "@heroicons/react/20/solid";
 // ui
-import { Input, CustomListbox } from "ui";
+import { Input, CustomListbox } from "components/ui";
 // icons
 import { TagIcon } from "@heroicons/react/24/outline";
 // types
@@ -91,7 +91,7 @@ const SelectLabels: React.FC<Props> = ({ control }) => {
                     placeholder="Title"
                     className="w-full"
                     autoComplete="off"
-                    {...register}
+                    register={register}
                     validations={{
                       required: true,
                     }}

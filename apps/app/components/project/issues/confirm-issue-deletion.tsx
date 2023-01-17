@@ -14,7 +14,7 @@ import useToast from "hooks/useToast";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
-import { Button } from "ui";
+import { Button } from "components/ui";
 // types
 import type { CycleIssueResponse, IIssue, IssueResponse, ModuleIssueResponse } from "types";
 

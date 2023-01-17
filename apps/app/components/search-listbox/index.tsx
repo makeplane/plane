@@ -11,7 +11,7 @@ import { Transition, Combobox } from "@headlessui/react";
 // types
 import type { Props } from "./types";
 // common
-import { classNames } from "ui/helper";
+import { classNames } from "components/ui/helper";
 // fetch-keys
 import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 

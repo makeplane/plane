@@ -17,7 +17,6 @@ function MyApp({ Component, pageProps }: AppProps) {
           </ThemeContextProvider>
         </ToastContextProvider>
       </UserProvider>
-      <script defer data-domain="app.plane.so" src="https://plausible.io/js/script.js"></script>
     </>
   );
 }

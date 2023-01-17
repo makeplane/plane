@@ -12,7 +12,7 @@ import { CYCLE_LIST } from "constants/fetch-keys";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
-import { Button } from "ui";
+import { Button } from "components/ui";
 
 // types
 import type { ICycle } from "types";

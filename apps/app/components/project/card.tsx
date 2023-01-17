@@ -1,15 +1,8 @@
-// React
 import React, { useState } from "react";
-// next
 import Link from "next/link";
-import useSWR from "swr";
 import { useRouter } from "next/router";
-// services
-import projectService from "services/project.service";
-// hooks
-import useUser from "hooks/useUser";
 // ui
-import { Button } from "ui";
+import { Button } from "components/ui";
 // icons
 import {
   CalendarDaysIcon,
@@ -22,36 +15,24 @@ import {
 } from "@heroicons/react/24/outline";
 // types
 import type { IProject } from "types";
-// fetch-keys
-import { PROJECT_MEMBERS } from "constants/fetch-keys";
 // common
 import { renderShortNumericDateFormat } from "constants/common";
+// hooks
+import useProjectMembers from "hooks/useProjectMembers";
 
-type TProjectCardProps = {
+export type ProjectCardProps = {
   workspaceSlug: string;
   project: IProject;
   setToJoinProject: (id: string | null) => void;
   setDeleteProject: (id: string | null) => void;
 };
 
-const ProjectMemberInvitations: React.FC<TProjectCardProps> = (props) => {
+export const ProjectCard: React.FC<ProjectCardProps> = (props) => {
   const { workspaceSlug, project, setToJoinProject, setDeleteProject } = props;
-
-  const { user } = useUser();
+  // router
   const router = useRouter();
-
-  const { data: members } = useSWR(PROJECT_MEMBERS(project.id), () =>
-    projectService.projectMembers(workspaceSlug, project.id)
-  );
-
-  const isMember = members?.some((item: any) => item.member.id === (user as any)?.id);
-
-  const canEdit = members?.some(
-    (item) => (item.member.id === (user as any)?.id && item.role === 20) || item.role === 15
-  );
-  const canDelete = members?.some(
-    (item) => item.member.id === (user as any)?.id && item.role === 20
-  );
+  // fetching project members information
+  const { members, isMember, canDelete, canEdit } = useProjectMembers(workspaceSlug, project.id);
 
   if (!members) {
     return (
@@ -137,5 +118,3 @@ const ProjectMemberInvitations: React.FC<TProjectCardProps> = (props) => {
     </>
   );
 };
-
-export default ProjectMemberInvitations;
