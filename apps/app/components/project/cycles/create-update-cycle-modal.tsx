@@ -7,10 +7,10 @@ import { mutate } from "swr";
 import { Controller, useForm } from "react-hook-form";
 // headless
 import { Dialog, Transition } from "@headlessui/react";
+import type { ICycle } from "types";
 // services
 import cycleService from "services/cycles.service";
 import { Button, Input, TextArea, CustomSelect } from "components/ui";
-import type { ICycle } from "types";
 // fetch keys
 import { CYCLE_LIST } from "constants/fetch-keys";
 // common

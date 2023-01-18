@@ -3,10 +3,10 @@ import React, { useState } from "react";
 import { Transition, Dialog } from "@headlessui/react";
 
 // ui
+import type { IProject } from "types";
 import { Button } from "components/ui";
 
 // type
-import type { IProject } from "types";
 type TJoinProjectModalProps = {
   data?: IProject;
   onClose: () => void;

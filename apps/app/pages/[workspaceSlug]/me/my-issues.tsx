@@ -3,6 +3,7 @@ import { ChevronDownIcon, PlusIcon, RectangleStackIcon } from "@heroicons/react/
 import { useRouter } from "next/router";
 import React from "react";
 // layouts
+import type { NextPage } from "next";
 import AppLayout from "layouts/app-layout";
 // hooks
 import useUser from "hooks/use-user";
@@ -17,7 +18,6 @@ import { IIssue, Properties } from "types";
 // components
 import SingleListIssue from "components/common/list-view/single-issue";
 // types
-import type { NextPage } from "next";
 // constants
 import { classNames, replaceUnderscoreIfSnakeCase } from "constants/common";
 
@@ -146,11 +146,11 @@ const MyIssuesPage: NextPage = () => {
                               // FIXME: add all functionalities
                               <SingleListIssue
                                 key={issue.id}
-                                editIssue={() => {}}
-                                handleDeleteIssue={() => {}}
+                                editIssue={() => ({})}
+                                handleDeleteIssue={() => ({})}
                                 issue={issue}
                                 properties={properties}
-                                removeIssue={() => {}}
+                                removeIssue={() => ({})}
                               />
                             ))}
                           </div>

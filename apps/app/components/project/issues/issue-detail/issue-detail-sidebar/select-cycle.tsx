@@ -7,6 +7,7 @@ import useSWR, { mutate } from "swr";
 
 import { Control, Controller, UseFormWatch } from "react-hook-form";
 // constants
+import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { CYCLE_ISSUES, CYCLE_LIST, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // services
 import issuesService from "services/issues.service";
@@ -14,7 +15,6 @@ import cyclesService from "services/cycles.service";
 // ui
 import { Spinner, CustomSelect } from "components/ui";
 // icons
-import { ArrowPathIcon } from "@heroicons/react/24/outline";
 // types
 import { CycleIssueResponse, ICycle, IIssue, IssueResponse } from "types";
 // common

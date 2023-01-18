@@ -3,9 +3,9 @@ import React from "react";
 // react-hook-form
 import { Control, Controller, UseFormWatch } from "react-hook-form";
 // ui
+import { Squares2X2Icon } from "@heroicons/react/24/outline";
 import { CustomSelect } from "components/ui";
 // icons
-import { Squares2X2Icon } from "@heroicons/react/24/outline";
 // types
 import { IModule } from "types";
 // common
@@ -19,8 +19,7 @@ type Props = {
   watch: UseFormWatch<Partial<IModule>>;
 };
 
-const SelectStatus: React.FC<Props> = ({ control, submitChanges, watch }) => {
-  return (
+const SelectStatus: React.FC<Props> = ({ control, submitChanges, watch }) => (
     <div className="flex flex-wrap items-center py-2">
       <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
         <Squares2X2Icon className="h-4 w-4 flex-shrink-0" />
@@ -45,7 +44,7 @@ const SelectStatus: React.FC<Props> = ({ control, submitChanges, watch }) => {
                       backgroundColor: MODULE_STATUS?.find((option) => option.value === value)
                         ?.color,
                     }}
-                  ></span>
+                   />
                   {watch("status")}
                 </span>
               }
@@ -60,7 +59,7 @@ const SelectStatus: React.FC<Props> = ({ control, submitChanges, watch }) => {
                     <span
                       className="h-2 w-2 flex-shrink-0 rounded-full"
                       style={{ backgroundColor: option.color }}
-                    ></span>
+                     />
                     {option.label}
                   </>
                 </CustomSelect.Option>
@@ -71,6 +70,5 @@ const SelectStatus: React.FC<Props> = ({ control, submitChanges, watch }) => {
       </div>
     </div>
   );
-};
 
 export default SelectStatus;

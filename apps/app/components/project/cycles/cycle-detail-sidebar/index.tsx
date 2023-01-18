@@ -5,16 +5,16 @@ import { useRouter } from "next/router";
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // hooks
+import { CalendarDaysIcon, ChartPieIcon, LinkIcon, UserIcon } from "@heroicons/react/24/outline";
+import { mutate } from "swr";
 import useToast from "hooks/useToast";
 // ui
 import { Loader } from "components/ui";
 // icons
-import { CalendarDaysIcon, ChartPieIcon, LinkIcon, UserIcon } from "@heroicons/react/24/outline";
 // types
 import { CycleIssueResponse, ICycle } from "types";
 // common
 import { copyTextToClipboard, groupBy } from "constants/common";
-import { mutate } from "swr";
 import cyclesService from "services/cycles.service";
 import { CYCLE_DETAIL } from "constants/api-routes";
 
@@ -131,7 +131,7 @@ const CycleDetailSidebar: React.FC<Props> = ({ cycle, isOpen, cycleIssues }) => 
                 </div>
                 <div className="flex items-center gap-2 sm:basis-1/2">
                   <div className="grid flex-shrink-0 place-items-center">
-                    <span className="h-4 w-4 rounded-full border-2 border-gray-300 border-r-blue-500"></span>
+                    <span className="h-4 w-4 rounded-full border-2 border-gray-300 border-r-blue-500" />
                   </div>
                   {groupedIssues.completed.length}/{cycleIssues?.length}
                 </div>
@@ -187,19 +187,19 @@ const CycleDetailSidebar: React.FC<Props> = ({ cycle, isOpen, cycleIssues }) => 
                 </div>
               </div>
             </div>
-            <div className="py-1"></div>
+            <div className="py-1" />
           </div>
         </>
       ) : (
         <Loader>
           <div className="space-y-2">
-            <Loader.Item height="15px" width="50%"></Loader.Item>
-            <Loader.Item height="15px" width="30%"></Loader.Item>
+            <Loader.Item height="15px" width="50%" />
+            <Loader.Item height="15px" width="30%" />
           </div>
           <div className="mt-8 space-y-3">
-            <Loader.Item height="30px"></Loader.Item>
-            <Loader.Item height="30px"></Loader.Item>
-            <Loader.Item height="30px"></Loader.Item>
+            <Loader.Item height="30px" />
+            <Loader.Item height="30px" />
+            <Loader.Item height="30px" />
           </div>
         </Loader>
       )}

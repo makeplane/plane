@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
-import type { NextPage, NextPageContext } from "next";
 
 import useSWR, { mutate } from "swr";
 
 import { Controller, useForm } from "react-hook-form";
+import type { NextPage, NextPageContext } from "next";
 // fetch-keys
 import { PROJECTS_LIST, PROJECT_DETAILS, WORKSPACE_DETAILS } from "constants/fetch-keys";
 // common
@@ -25,7 +25,7 @@ import EmojiIconPicker from "components/emoji-icon-picker";
 // hooks
 import useToast from "hooks/useToast";
 // ui
-import { Button, Input, Select, TextArea, Loader, CustomSelect } from "components/ui";
+import { Button, Input, TextArea, Loader, CustomSelect } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import OutlineButton from "components/ui/outline-button";
 

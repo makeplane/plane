@@ -5,20 +5,20 @@ import { useRouter } from "next/router";
 // swr
 import useSWR from "swr";
 // react hook form
-import { Controller } from "react-hook-form";
+import { Controller, Control } from "react-hook-form";
 // services
-import stateService from "services/state.service";
 // constants
-import { STATE_LIST } from "constants/fetch-keys";
 // icons
 import { PlusIcon } from "@heroicons/react/20/solid";
 // ui
-import { CustomListbox } from "components/ui";
 // icons
 import { Squares2X2Icon } from "@heroicons/react/24/outline";
 // types
-import type { Control } from "react-hook-form";
+// import type { Control } from "react-hook-form";
 import type { IIssue } from "types";
+import { CustomListbox } from "components/ui";
+import { STATE_LIST } from "constants/fetch-keys";
+import stateService from "services/state.service";
 
 type Props = {
   control: Control<IIssue, any>;
@@ -43,9 +43,11 @@ const SelectState: React.FC<Props> = ({ control, setIsOpen }) => {
       render={({ field: { value, onChange } }) => (
         <CustomListbox
           title="State"
-          options={states?.map((state) => {
-            return { value: state.id, display: state.name, color: state.color };
-          })}
+          options={states?.map((state) => ({
+            value: state.id,
+            display: state.name,
+            color: state.color,
+          }))}
           value={value}
           optionsFontsize="sm"
           onChange={onChange}

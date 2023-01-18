@@ -6,6 +6,7 @@ import { Dialog, Transition } from "@headlessui/react";
 
 // services
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import type { IProject, IWorkspace } from "types";
 import projectService from "services/project.service";
 // hooks
 import useToast from "hooks/useToast";
@@ -13,7 +14,6 @@ import useToast from "hooks/useToast";
 // ui
 import { Button, Input } from "components/ui";
 // types
-import type { IProject, IWorkspace } from "types";
 // constants
 import { PROJECTS_LIST } from "constants/fetch-keys";
 

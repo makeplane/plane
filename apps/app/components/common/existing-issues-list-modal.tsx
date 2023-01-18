@@ -31,7 +31,7 @@ type Props = {
   handleClose: () => void;
   type: string;
   issues: IIssue[];
-  handleOnSubmit: (data: FormInput) => void;
+  handleOnSubmit: any;
 };
 
 const ExistingIssuesListModal: React.FC<Props> = ({

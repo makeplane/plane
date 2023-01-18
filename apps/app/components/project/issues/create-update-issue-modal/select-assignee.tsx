@@ -4,15 +4,15 @@ import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
-import { Controller } from "react-hook-form";
+import { Controller, Control } from "react-hook-form";
 // service
+import { UserIcon } from "@heroicons/react/24/outline";
+// import type { Control } from "react-hook-form";
+import type { IIssue } from "types";
 import projectServices from "services/project.service";
 // fetch keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 // types
-import type { Control } from "react-hook-form";
-import type { IIssue } from "types";
-import { UserIcon } from "@heroicons/react/24/outline";
 
 import SearchListbox from "components/search-listbox";
 
@@ -39,15 +39,13 @@ const SelectAssignee: React.FC<Props> = ({ control }) => {
         <SearchListbox
           title="Assignees"
           optionsFontsize="sm"
-          options={people?.map((person) => {
-            return {
-              value: person.member.id,
-              display:
-                person.member.first_name && person.member.first_name !== ""
-                  ? person.member.first_name
-                  : person.member.email,
-            };
-          })}
+          options={people?.map((person) => ({
+            value: person.member.id,
+            display:
+              person.member.first_name && person.member.first_name !== ""
+                ? person.member.first_name
+                : person.member.email,
+          }))}
           multiple={true}
           value={value}
           onChange={onChange}

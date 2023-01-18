@@ -3,6 +3,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 // hooks
+import type { NextPage, NextPageContext } from "next";
 import useUser from "hooks/use-user";
 // lib
 import { requiredAuth } from "lib/auth";
@@ -20,7 +21,6 @@ import CommandMenu from "components/onboarding/command-menu";
 // images
 import Logo from "public/onboarding/logo.svg";
 import userService from "services/user.service";
-import type { NextPage, NextPageContext } from "next";
 
 const Onboarding: NextPage = () => {
   const [step, setStep] = useState(1);

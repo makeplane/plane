@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { mutate } from "swr";
 // services
+import { ClipboardDocumentListIcon, PlusIcon } from "@heroicons/react/24/outline";
+import type { NextPage } from "next";
 import projectService from "services/project.service";
 // layouts
 import AppLayout from "layouts/app-layout";
@@ -13,12 +15,10 @@ import ConfirmProjectDeletion from "components/project/confirm-project-deletion"
 import { HeaderButton, EmptySpace, EmptySpaceItem, Loader } from "components/ui";
 import { Breadcrumbs, BreadcrumbItem } from "components/breadcrumbs";
 // icons
-import { ClipboardDocumentListIcon, PlusIcon } from "@heroicons/react/24/outline";
 // hooks
 import useProjects from "hooks/use-projects";
 import useWorkspaces from "hooks/use-workspaces";
 // types
-import type { NextPage } from "next";
 // constants
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 

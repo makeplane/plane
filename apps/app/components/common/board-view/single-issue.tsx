@@ -42,7 +42,7 @@ type Props = {
   }[];
   people: IWorkspaceMember[] | undefined;
   handleDeleteIssue?: React.Dispatch<React.SetStateAction<string | undefined>>;
-  partialUpdateIssue: (formData: Partial<IIssue>, childIssueId: string) => void;
+  partialUpdateIssue: any;
 };
 
 const SingleBoardIssue: React.FC<Props> = ({

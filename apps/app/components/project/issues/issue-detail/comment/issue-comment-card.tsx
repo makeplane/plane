@@ -6,13 +6,13 @@ import dynamic from "next/dynamic";
 // react-hook-form
 import { useForm } from "react-hook-form";
 // hooks
+import { CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import type { IIssueComment } from "types";
 import useUser from "hooks/use-user";
 // ui
 import { CustomMenu } from "components/ui";
 // icons
-import { CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // types
-import type { IIssueComment } from "types";
 // common
 import { timeAgo } from "constants/common";
 
@@ -108,7 +108,7 @@ const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentDeletion
                 <RemirrorRichTextEditor
                   value={comment.comment_html}
                   editable={false}
-                  onBlur={() => {}}
+                  onBlur={() => ({})}
                 />
               </>
             )}

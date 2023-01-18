@@ -4,6 +4,8 @@ import Image from "next/image";
 import { mutate } from "swr";
 import { Controller, useForm } from "react-hook-form";
 // services
+import type { IWorkspace } from "types";
+import type { NextPage, NextPageContext } from "next";
 import workspaceService from "services/workspace.service";
 // constants
 import { requiredAuth } from "lib/auth";
@@ -13,8 +15,6 @@ import DefaultLayout from "layouts/default-layout";
 import { CustomSelect, Input } from "components/ui";
 // images
 import Logo from "public/onboarding/logo.svg";
-import type { IWorkspace } from "types";
-import type { NextPage, NextPageContext } from "next";
 import { USER_WORKSPACES } from "constants/fetch-keys";
 // types
 // constants

@@ -6,13 +6,13 @@ import useSWR from "swr";
 
 import { Control, Controller, UseFormWatch } from "react-hook-form";
 // fetch keys
+import { UserIcon } from "@heroicons/react/24/outline";
 import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // services
 import issuesServices from "services/issues.service";
 // components
 import IssuesListModal from "components/project/issues/issues-list-modal";
 // icons
-import { UserIcon } from "@heroicons/react/24/outline";
 // types
 import { IIssue } from "types";
 

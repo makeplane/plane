@@ -2,6 +2,7 @@ import { useState, useRef, FC } from "react";
 import { Transition } from "@headlessui/react";
 import Link from "next/link";
 // icons
+import { ArrowLongLeftIcon } from "@heroicons/react/24/outline";
 import {
   QuestionMarkCircleIcon,
   BoltIcon,
@@ -10,7 +11,6 @@ import {
   GithubIcon,
   CommentIcon,
 } from "components/icons";
-import { ArrowLongLeftIcon } from "@heroicons/react/24/outline";
 // hooks
 import useTheme from "hooks/useTheme";
 import useOutsideClickDetector from "hooks/useOutsideClickDetector";
@@ -39,7 +39,7 @@ const helpOptions = [
 ];
 
 export interface WorkspaceHelpSectionProps {
-  setSidebarActive: (value: boolean) => void;
+  setSidebarActive: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const WorkspaceHelpSection: FC<WorkspaceHelpSectionProps> = (props) => {

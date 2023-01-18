@@ -4,6 +4,14 @@ import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 // services
+import {
+  ArrowLeftIcon,
+  ListBulletIcon,
+  PlusIcon,
+  RectangleGroupIcon,
+  RectangleStackIcon,
+} from "@heroicons/react/24/outline";
+import { Squares2X2Icon } from "@heroicons/react/20/solid";
 import modulesService from "services/modules.service";
 import projectService from "services/project.service";
 import issuesService from "services/issues.service";
@@ -25,14 +33,6 @@ import View from "components/core/view";
 import { CustomMenu, EmptySpace, EmptySpaceItem, Spinner } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import {
-  ArrowLeftIcon,
-  ListBulletIcon,
-  PlusIcon,
-  RectangleGroupIcon,
-  RectangleStackIcon,
-} from "@heroicons/react/24/outline";
-import { Squares2X2Icon } from "@heroicons/react/20/solid";
 // types
 import { IIssue, IModule, ModuleIssueResponse, SelectIssue, SelectModuleType } from "types";
 // fetch-keys
@@ -114,9 +114,7 @@ const SingleModule = () => {
     }
   );
 
-  const moduleIssuesArray = moduleIssues?.map((issue) => {
-    return { bridge: issue.id, ...issue.issue_detail };
-  });
+  const moduleIssuesArray = moduleIssues?.map((issue) => ({ bridge: issue.id, ...issue.issue_detail }));
 
   const {
     issueView,

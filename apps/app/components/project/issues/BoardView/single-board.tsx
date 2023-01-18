@@ -5,16 +5,16 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 import { Draggable } from "react-beautiful-dnd";
-import StrictModeDroppable from "components/dnd/StrictModeDroppable";
-// services
-import workspaceService from "services/workspace.service";
-// icons
 import {
   ArrowsPointingInIcon,
   ArrowsPointingOutIcon,
   EllipsisHorizontalIcon,
   PlusIcon,
 } from "@heroicons/react/24/outline";
+import StrictModeDroppable from "components/dnd/StrictModeDroppable";
+// services
+import workspaceService from "services/workspace.service";
+// icons
 import { addSpaceIfCamelCase } from "constants/common";
 import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 // types

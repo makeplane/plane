@@ -6,6 +6,7 @@ import useSWR from "swr";
 import { PlusIcon } from "@heroicons/react/24/outline";
 
 // lib
+import type { GetServerSideProps, NextPage } from "next";
 import { requiredWorkspaceAdmin } from "lib/auth";
 // hooks
 import useToast from "hooks/useToast";
@@ -20,7 +21,6 @@ import SendWorkspaceInvitationModal from "components/workspace/send-workspace-in
 // ui
 import { Button, CustomListbox, CustomMenu, Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-import type { GetServerSideProps, NextPage } from "next";
 import { ROLE } from "constants/";
 // icons
 // fetch-keys

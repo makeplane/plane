@@ -7,15 +7,15 @@ import useSWR from "swr";
 
 import { Control, Controller } from "react-hook-form";
 // services
+import { Listbox, Transition } from "@headlessui/react";
+import { UserGroupIcon } from "@heroicons/react/24/outline";
 import workspaceService from "services/workspace.service";
 // hooks
 import useUser from "hooks/use-user";
 // headless ui
-import { Listbox, Transition } from "@headlessui/react";
 // ui
 import { Spinner } from "components/ui";
 // icons
-import { UserGroupIcon } from "@heroicons/react/24/outline";
 import User from "public/user.png";
 // types
 import { IIssue } from "types";

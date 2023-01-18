@@ -6,9 +6,9 @@ import useSWR from "swr";
 
 import { Control, Controller } from "react-hook-form";
 // services
+import { Squares2X2Icon } from "@heroicons/react/24/outline";
 import stateService from "services/state.service";
 // icons
-import { Squares2X2Icon } from "@heroicons/react/24/outline";
 // constants
 import { classNames } from "constants/common";
 import { STATE_LIST } from "constants/fetch-keys";
@@ -59,7 +59,7 @@ const SelectState: React.FC<Props> = ({ control, submitChanges }) => {
                         style={{
                           backgroundColor: states?.find((option) => option.id === value)?.color,
                         }}
-                      ></span>
+                       />
                       {states?.find((option) => option.id === value)?.name}
                     </>
                   ) : (
@@ -81,7 +81,7 @@ const SelectState: React.FC<Props> = ({ control, submitChanges }) => {
                           <span
                             className="h-2 w-2 flex-shrink-0 rounded-full"
                             style={{ backgroundColor: option.color }}
-                          ></span>
+                           />
                         )}
                         {option.name}
                       </>

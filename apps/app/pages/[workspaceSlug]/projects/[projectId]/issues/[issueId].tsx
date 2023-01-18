@@ -1,15 +1,13 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import type { NextPage, NextPageContext } from "next";
 import { useRouter } from "next/router";
-
 import useSWR, { mutate } from "swr";
-
 import { Controller, useForm } from "react-hook-form";
-
 import { Disclosure, Transition } from "@headlessui/react";
+import { ChevronLeftIcon, ChevronRightIcon, PlusIcon } from "@heroicons/react/24/outline";
+import type { NextPage, NextPageContext } from "next";
 
 // services
 import issuesServices from "services/issues.service";
@@ -26,9 +24,8 @@ import AddIssueComment from "components/project/issues/issue-detail/comment/issu
 import IssueActivitySection from "components/project/issues/issue-detail/activity";
 // ui
 import { Loader, TextArea, HeaderButton, CustomMenu } from "components/ui";
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+import { Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { ChevronLeftIcon, ChevronRightIcon, PlusIcon } from "@heroicons/react/24/outline";
 // types
 import { IIssue, IssueResponse } from "types";
 // fetch-keys
@@ -479,16 +476,16 @@ const IssueDetail: NextPage = () => {
       ) : (
         <Loader className="flex h-full gap-5 p-5">
           <div className="basis-2/3 space-y-2">
-            <Loader.Item height="30px" width="40%"></Loader.Item>
-            <Loader.Item height="15px" width="60%" light></Loader.Item>
-            <Loader.Item height="15px" width="60%" light></Loader.Item>
-            <Loader.Item height="15px" width="40%" light></Loader.Item>
+            <Loader.Item height="30px" width="40%" />
+            <Loader.Item height="15px" width="60%" light />
+            <Loader.Item height="15px" width="60%" light />
+            <Loader.Item height="15px" width="40%" light />
           </div>
           <div className="basis-1/3 space-y-3">
-            <Loader.Item height="30px"></Loader.Item>
-            <Loader.Item height="30px"></Loader.Item>
-            <Loader.Item height="30px"></Loader.Item>
-            <Loader.Item height="30px"></Loader.Item>
+            <Loader.Item height="30px" />
+            <Loader.Item height="30px" />
+            <Loader.Item height="30px" />
+            <Loader.Item height="30px" />
           </div>
         </Loader>
       )}

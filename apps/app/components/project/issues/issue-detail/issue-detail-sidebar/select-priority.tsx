@@ -3,9 +3,9 @@ import React from "react";
 // react-hook-form
 import { Control, Controller, UseFormWatch } from "react-hook-form";
 // ui
+import { ChartBarIcon } from "@heroicons/react/24/outline";
 import { CustomSelect } from "components/ui";
 // icons
-import { ChartBarIcon } from "@heroicons/react/24/outline";
 // types
 import { IIssue } from "types";
 // common
@@ -20,8 +20,7 @@ type Props = {
   watch: UseFormWatch<IIssue>;
 };
 
-const SelectPriority: React.FC<Props> = ({ control, submitChanges, watch }) => {
-  return (
+const SelectPriority: React.FC<Props> = ({ control, submitChanges, watch }) => (
     <div className="flex flex-wrap items-center py-2">
       <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
         <ChartBarIcon className="h-4 w-4 flex-shrink-0" />
@@ -68,6 +67,5 @@ const SelectPriority: React.FC<Props> = ({ control, submitChanges, watch }) => {
       </div>
     </div>
   );
-};
 
 export default SelectPriority;

@@ -5,6 +5,7 @@ import useSWR from "swr";
 import { PencilSquareIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 
 // services
+import type { NextPage, NextPageContext } from "next";
 import stateService from "services/state.service";
 import projectService from "services/project.service";
 // lib
@@ -23,7 +24,6 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 // types
 import { IState } from "types";
-import type { NextPage, NextPageContext } from "next";
 import { PROJECT_DETAILS, STATE_LIST } from "constants/fetch-keys";
 // common
 import { addSpaceIfCamelCase, groupBy } from "constants/common";

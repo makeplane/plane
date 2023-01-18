@@ -4,7 +4,7 @@ import Script from "next/script";
 
 export interface IGoogleLoginButton {
   text?: string;
-  handleSignIn: (res: any) => void;
+  handleSignIn: React.Dispatch<any>;
   styles?: CSSProperties;
 }
 

@@ -1,7 +1,5 @@
 import React from "react";
 // hooks
-import useToast from "hooks/useToast";
-// icons
 import {
   CheckCircleIcon,
   ExclamationTriangleIcon,
@@ -9,6 +7,8 @@ import {
   XCircleIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+import useToast from "hooks/useToast";
+// icons
 
 const ToastAlerts = () => {
   const { alerts, removeAlert } = useToast();

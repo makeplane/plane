@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
 
 import { useRouter } from "next/router";
-import type { NextPageContext, NextPage } from "next";
 import Image from "next/image";
 
 import useSWR, { mutate } from "swr";
 
 import { Controller, useForm } from "react-hook-form";
+import type { NextPageContext, NextPage } from "next";
 // lib
 import { requiredAdmin } from "lib/auth";
 // layouts

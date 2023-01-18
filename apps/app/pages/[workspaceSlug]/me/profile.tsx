@@ -3,13 +3,21 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import useSWR from "swr";
+import { useForm } from "react-hook-form";
+import {
+  ChevronRightIcon,
+  ClipboardDocumentListIcon,
+  PencilIcon,
+  RectangleStackIcon,
+  UserIcon,
+  UserPlusIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
 import type { NextPage, NextPageContext } from "next";
 
-import useSWR from "swr";
-
-import { useForm } from "react-hook-form";
-
 // hooks
+import type { IIssue, IUser } from "types";
 import useUser from "hooks/use-user";
 import useToast from "hooks/useToast";
 // lib
@@ -22,7 +30,6 @@ import AppLayout from "layouts/app-layout";
 import { USER_ISSUE, USER_WORKSPACE_INVITATIONS, PROJECTS_LIST } from "constants/fetch-keys";
 // services
 import userService from "services/user.service";
-import fileServices from "services/file.service";
 import workspaceService from "services/workspace.service";
 // components
 import { ImageUploadModal } from "components/common/image-upload-modal";
@@ -30,17 +37,7 @@ import { ImageUploadModal } from "components/common/image-upload-modal";
 import { Button, Input, Spinner } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import {
-  ChevronRightIcon,
-  ClipboardDocumentListIcon,
-  PencilIcon,
-  RectangleStackIcon,
-  UserIcon,
-  UserPlusIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
 // types
-import type { IIssue, IUser } from "types";
 
 const defaultValues: Partial<IUser> = {
   avatar: "",

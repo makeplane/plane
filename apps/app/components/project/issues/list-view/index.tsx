@@ -8,6 +8,7 @@ import useSWR from "swr";
 
 import { Disclosure, Listbox, Transition } from "@headlessui/react";
 // hooks
+import { ChevronDownIcon, PlusIcon, CalendarDaysIcon } from "@heroicons/react/24/outline";
 import useIssuesProperties from "hooks/useIssuesProperties";
 // services
 import stateService from "services/state.service";
@@ -33,7 +34,6 @@ import {
 import { CustomMenu, CustomSelect, Spinner } from "components/ui";
 // icons
 import User from "public/user.png";
-import { ChevronDownIcon, PlusIcon, CalendarDaysIcon } from "@heroicons/react/24/outline";
 // components
 import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
 // types
@@ -285,7 +285,7 @@ const ListView: React.FC<Props> = ({
                                             style={{
                                               backgroundColor: issue.state_detail.color,
                                             }}
-                                          ></span>
+                                           />
                                           {addSpaceIfCamelCase(issue.state_detail.name)}
                                         </>
                                       }
@@ -304,7 +304,7 @@ const ListView: React.FC<Props> = ({
                                               style={{
                                                 backgroundColor: state.color,
                                               }}
-                                            ></span>
+                                             />
                                             {addSpaceIfCamelCase(state.name)}
                                           </>
                                         </CustomSelect.Option>

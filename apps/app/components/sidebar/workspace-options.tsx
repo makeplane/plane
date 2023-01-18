@@ -2,32 +2,13 @@ import React from "react";
 
 import { useRouter } from "next/router";
 import Link from "next/link";
-import Image from "next/image";
-
-import useSWR from "swr";
 
 import {
-  ChevronDownIcon,
   ClipboardDocumentListIcon,
   Cog6ToothIcon,
   HomeIcon,
-  PlusIcon,
   RectangleStackIcon,
 } from "@heroicons/react/24/outline";
-
-// services
-import userService from "services/user.service";
-import workspaceService from "services/workspace.service";
-import authenticationService from "services/authentication.service";
-// hooks
-import useUser from "hooks/use-user";
-// constants
-import { USER_WORKSPACES } from "constants/fetch-keys";
-// types
-import { IUser } from "types";
-// ui
-import { Loader } from "components/ui";
-import { WorkspaceSidebarDropdown } from "components/workspace";
 
 type Props = {
   sidebarCollapse: boolean;

@@ -6,10 +6,6 @@ import Image from "next/image";
 import { KeyedMutator } from "swr";
 
 // common
-import { addSpaceIfCamelCase, renderShortNumericDateFormat, timeAgo } from "constants/common";
-// ui
-import { Loader } from "components/ui";
-// icons
 import {
   CalendarDaysIcon,
   ChartBarIcon,
@@ -17,6 +13,10 @@ import {
   Squares2X2Icon,
   UserIcon,
 } from "@heroicons/react/24/outline";
+import { addSpaceIfCamelCase, renderShortNumericDateFormat, timeAgo } from "constants/common";
+// ui
+import { Loader } from "components/ui";
+// icons
 import { BlockedIcon, BlockerIcon, TagIcon, UserGroupIcon } from "components/icons";
 import { IIssueActivity, IIssueComment } from "types";
 // components
@@ -86,7 +86,7 @@ const IssueActivitySection: React.FC<{
 }> = ({ issueActivities, mutate }) => {
   const router = useRouter();
 
-  let { workspaceSlug, projectId, issueId } = router.query;
+  const { workspaceSlug, projectId, issueId } = router.query;
 
   const onCommentUpdate = async (comment: IIssueComment) => {
     if (!workspaceSlug || !projectId || !issueId) return;
@@ -229,16 +229,16 @@ const IssueActivitySection: React.FC<{
       ) : (
         <Loader className="space-y-4">
           <div className="space-y-2">
-            <Loader.Item height="30px" width="40%"></Loader.Item>
-            <Loader.Item height="15px" width="60%"></Loader.Item>
+            <Loader.Item height="30px" width="40%" />
+            <Loader.Item height="15px" width="60%" />
           </div>
           <div className="space-y-2">
-            <Loader.Item height="30px" width="40%"></Loader.Item>
-            <Loader.Item height="15px" width="60%"></Loader.Item>
+            <Loader.Item height="30px" width="40%" />
+            <Loader.Item height="15px" width="60%" />
           </div>
           <div className="space-y-2">
-            <Loader.Item height="30px" width="40%"></Loader.Item>
-            <Loader.Item height="15px" width="60%"></Loader.Item>
+            <Loader.Item height="30px" width="40%" />
+            <Loader.Item height="15px" width="60%" />
           </div>
         </Loader>
       )}

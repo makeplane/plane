@@ -8,7 +8,7 @@ import githubImage from "/public/logos/github.png";
 const { NEXT_PUBLIC_GITHUB_ID } = process.env;
 
 export interface GithubLoginButtonProps {
-  handleSignIn: (token: string) => void;
+  handleSignIn: React.Dispatch<string>;
 }
 
 export const GithubLoginButton: FC<GithubLoginButtonProps> = (props) => {

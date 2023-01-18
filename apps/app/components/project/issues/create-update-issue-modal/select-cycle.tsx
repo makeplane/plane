@@ -2,20 +2,20 @@ import React from "react";
 // swr
 import useSWR from "swr";
 // react hook form
-import { Controller } from "react-hook-form";
+import { Controller, Control } from "react-hook-form";
 // services
+import { PlusIcon } from "@heroicons/react/20/solid";
+import { ArrowPathIcon } from "@heroicons/react/24/outline";
+import { useRouter } from "next/router";
+import type { IIssue } from "types";
+// import type { Control } from "react-hook-form";
 import cycleServices from "services/cycles.service";
 // constants
 import { CYCLE_LIST } from "constants/fetch-keys";
 // ui
 import { CustomListbox } from "components/ui";
 // icons
-import { PlusIcon } from "@heroicons/react/20/solid";
-import { ArrowPathIcon } from "@heroicons/react/24/outline";
 // types
-import type { IIssue } from "types";
-import type { Control } from "react-hook-form";
-import { useRouter } from "next/router";
 
 type Props = {
   control: Control<IIssue, any>;
@@ -41,9 +41,7 @@ const SelectCycle: React.FC<Props> = ({ control, setIsOpen, activeProject }) => 
       render={({ field: { value, onChange } }) => (
         <CustomListbox
           title={cycles?.find((i) => i.id.toString() === value?.toString())?.name ?? "Cycle"}
-          options={cycles?.map((cycle) => {
-            return { value: cycle.id, display: cycle.name };
-          })}
+          options={cycles?.map((cycle) => ({ value: cycle.id, display: cycle.name }))}
           value={value}
           optionsFontsize="sm"
           onChange={onChange}

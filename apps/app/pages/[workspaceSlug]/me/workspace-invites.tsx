@@ -3,8 +3,9 @@
 import React, { useState } from "react";
 // next
 import Link from "next/link";
-import type { NextPage } from "next";
 import { useRouter } from "next/router";
+import useSWR from "swr";
+import type { NextPage } from "next";
 // services
 import workspaceService from "services/workspace.service";
 // hoc
@@ -14,7 +15,6 @@ import AppLayout from "layouts/app-layout";
 // ui
 import { Button } from "components/ui";
 // swr
-import useSWR from "swr";
 import { USER_WORKSPACES } from "constants/fetch-keys";
 
 const MyWorkspacesInvites: NextPage = () => {
@@ -33,13 +33,11 @@ const MyWorkspacesInvites: NextPage = () => {
 
   const handleInvitation = (workspace_invitation: any, action: string) => {
     if (action === "accepted") {
-      setInvitationsRespond((prevData: any) => {
-        return [...prevData, workspace_invitation.workspace.id];
-      });
+      setInvitationsRespond((prevData: any) => [...prevData, workspace_invitation.workspace.id]);
     } else if (action === "withdraw") {
-      setInvitationsRespond((prevData: any) => {
-        return prevData.filter((item: string) => item !== workspace_invitation.workspace.id);
-      });
+      setInvitationsRespond((prevData: any) =>
+        prevData.filter((item: string) => item !== workspace_invitation.workspace.id)
+      );
     }
   };
 
@@ -52,7 +50,7 @@ const MyWorkspacesInvites: NextPage = () => {
 
         router.push("/");
       })
-      .catch((err: any) => console.log);
+      .catch((err: any) => console.log(err));
   };
 
   return (

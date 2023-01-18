@@ -4,9 +4,10 @@ import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 
-import type { DropResult } from "react-beautiful-dnd";
-import { DragDropContext } from "react-beautiful-dnd";
+import { DragDropContext, DropResult } from "react-beautiful-dnd";
+// import type { DropResult } from "react-beautiful-dnd";
 // hook
+import type { IState, IIssue, NestedKeyOf, IssueResponse } from "types";
 import useIssuesProperties from "hooks/useIssuesProperties";
 // services
 import stateServices from "services/state.service";
@@ -22,7 +23,6 @@ import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deleti
 // ui
 import { Spinner } from "components/ui";
 // types
-import type { IState, IIssue, NestedKeyOf, IssueResponse } from "types";
 
 type Props = {
   selectedGroup: NestedKeyOf<IIssue> | null;

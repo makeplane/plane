@@ -8,9 +8,9 @@ import { useForm, Controller } from "react-hook-form";
 
 import { Dialog, Transition, Listbox } from "@headlessui/react";
 // ui
+import { ChevronDownIcon, CheckIcon } from "@heroicons/react/20/solid";
 import { Button, Select, TextArea } from "components/ui";
 // hooks
-import { ChevronDownIcon, CheckIcon } from "@heroicons/react/20/solid";
 import useToast from "hooks/useToast";
 // services
 import projectService from "services/project.service";

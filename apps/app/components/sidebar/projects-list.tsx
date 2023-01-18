@@ -5,17 +5,17 @@ import Link from "next/link";
 // swr
 import useSWR from "swr";
 // hooks
+import { Disclosure, Transition } from "@headlessui/react";
+import { ChevronDownIcon, PlusIcon } from "@heroicons/react/24/outline";
 import useToast from "hooks/useToast";
 // services
 import projectService from "services/project.service";
 // components
 import { CreateProjectModal } from "components/project";
 // headless ui
-import { Disclosure, Transition } from "@headlessui/react";
 // ui
 import { CustomMenu, Loader } from "components/ui";
 // icons
-import { ChevronDownIcon, PlusIcon } from "@heroicons/react/24/outline";
 // fetch-keys
 import { PROJECTS_LIST } from "constants/fetch-keys";
 // constants
@@ -28,7 +28,7 @@ type Props = {
   ) => Array<{
     name: string;
     href: string;
-    icon: (props: any) => any;
+    icon: any;
   }>;
   sidebarCollapse: boolean;
 };
@@ -173,16 +173,16 @@ const ProjectsList: React.FC<Props> = ({ navigation, sidebarCollapse }) => {
           <div className="w-full">
             <Loader className="space-y-5">
               <div className="space-y-2">
-                <Loader.Item height="30px"></Loader.Item>
-                <Loader.Item height="15px" width="80%" light></Loader.Item>
-                <Loader.Item height="15px" width="80%" light></Loader.Item>
-                <Loader.Item height="15px" width="80%" light></Loader.Item>
+                <Loader.Item height="30px" />
+                <Loader.Item height="15px" width="80%" light />
+                <Loader.Item height="15px" width="80%" light />
+                <Loader.Item height="15px" width="80%" light />
               </div>
               <div className="space-y-2">
-                <Loader.Item height="30px"></Loader.Item>
-                <Loader.Item height="15px" width="80%" light></Loader.Item>
-                <Loader.Item height="15px" width="80%" light></Loader.Item>
-                <Loader.Item height="15px" width="80%" light></Loader.Item>
+                <Loader.Item height="30px" />
+                <Loader.Item height="15px" width="80%" light />
+                <Loader.Item height="15px" width="80%" light />
+                <Loader.Item height="15px" width="80%" light />
               </div>
             </Loader>
           </div>

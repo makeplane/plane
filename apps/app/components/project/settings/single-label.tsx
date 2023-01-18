@@ -5,12 +5,12 @@ import { Controller, useForm } from "react-hook-form";
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
 // ui
+import { PencilIcon, RectangleGroupIcon } from "@heroicons/react/24/outline";
+import { TwitterPicker } from "react-color";
 import { Button, CustomMenu, Input } from "components/ui";
 // icons
-import { PencilIcon, RectangleGroupIcon } from "@heroicons/react/24/outline";
 // types
 import { IIssueLabels } from "types";
-import { TwitterPicker } from "react-color";
 
 type Props = {
   label: IIssueLabels;
@@ -83,7 +83,7 @@ const SingleLabel: React.FC<Props> = ({ label, issueLabels, editLabel, handleLab
                           style={{
                             backgroundColor: watch("colour") ?? "green",
                           }}
-                        ></span>
+                         />
                       )}
                     </Popover.Button>
 
@@ -143,7 +143,7 @@ const SingleLabel: React.FC<Props> = ({ label, issueLabels, editLabel, handleLab
           <div className="mt-4 pl-5">
             <div className="group flex items-center justify-between rounded p-2 text-sm hover:bg-gray-100">
               <h5 className="flex items-center gap-2">
-                <div className="h-2 w-2 rounded-full bg-red-600"></div>
+                <div className="h-2 w-2 rounded-full bg-red-600" />
                 This is the label title
               </h5>
               <button type="button" className="hidden group-hover:block">

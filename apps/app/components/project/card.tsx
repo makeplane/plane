@@ -11,11 +11,11 @@ import {
   TrashIcon,
   ClipboardDocumentListIcon,
 } from "@heroicons/react/24/outline";
+import type { IProject } from "types";
 import { Button } from "components/ui";
 // hooks
 import useProjectMembers from "hooks/use-project-members";
 // types
-import type { IProject } from "types";
 // common
 import { renderShortNumericDateFormat } from "constants/common";
 

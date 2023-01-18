@@ -6,8 +6,7 @@ type Props = {
   position?: "top" | "bottom" | "left" | "right";
 };
 
-const Tooltip: React.FC<Props> = ({ children, content, position = "top" }) => {
-  return (
+const Tooltip: React.FC<Props> = ({ children, content, position = "top" }) => (
     <div className="relative group">
       <div
         className={`fixed pointer-events-none transition-opacity opacity-0 group-hover:opacity-100 bg-black text-white px-3 py-1 rounded ${
@@ -31,11 +30,10 @@ const Tooltip: React.FC<Props> = ({ children, content, position = "top" }) => {
               ? "left-full top-1/2 transform translate-x-1/2 -translate-y-1/2 rotate-45"
               : "right-full top-1/2 transform translate-x-1/2 -translate-y-1/2 rotate-45"
           }`}
-        ></span>
+         />
       </div>
       {children}
     </div>
   );
-};
 
 export default Tooltip;

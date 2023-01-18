@@ -1,9 +1,10 @@
 import React from "react";
 
 import { useRouter } from "next/router";
+import useSWR from "swr";
+import { PlusIcon, RectangleGroupIcon } from "@heroicons/react/24/outline";
 import type { NextPage, NextPageContext } from "next";
 
-import useSWR from "swr";
 // layouts
 import AppLayout from "layouts/app-layout";
 // lib
@@ -17,7 +18,6 @@ import SingleModuleCard from "components/project/modules/single-module-card";
 import { EmptySpace, EmptySpaceItem, HeaderButton, Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { PlusIcon, RectangleGroupIcon } from "@heroicons/react/24/outline";
 // types
 import { IModule } from "types/modules";
 // fetch-keys
@@ -104,12 +104,12 @@ const ProjectModules: NextPage = () => {
         )
       ) : (
         <Loader className="grid grid-cols-3 gap-4">
-          <Loader.Item height="100px"></Loader.Item>
-          <Loader.Item height="100px"></Loader.Item>
-          <Loader.Item height="100px"></Loader.Item>
-          <Loader.Item height="100px"></Loader.Item>
-          <Loader.Item height="100px"></Loader.Item>
-          <Loader.Item height="100px"></Loader.Item>
+          <Loader.Item height="100px" />
+          <Loader.Item height="100px" />
+          <Loader.Item height="100px" />
+          <Loader.Item height="100px" />
+          <Loader.Item height="100px" />
+          <Loader.Item height="100px" />
         </Loader>
       )}
     </AppLayout>

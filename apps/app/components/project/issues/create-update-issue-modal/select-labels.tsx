@@ -4,20 +4,20 @@ import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
-import { useForm, Controller } from "react-hook-form";
-import type { Control } from "react-hook-form";
+import { useForm, Controller, Control } from "react-hook-form";
+import { PlusIcon, XMarkIcon } from "@heroicons/react/20/solid";
+import { TagIcon } from "@heroicons/react/24/outline";
+// import type { Control } from "react-hook-form";
 // services
+import type { IIssue, IIssueLabels } from "types";
 import issuesServices from "services/issues.service";
 // fetching keys
 import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 // icons
-import { PlusIcon, XMarkIcon } from "@heroicons/react/20/solid";
 // ui
 import { Input, CustomListbox } from "components/ui";
 // icons
-import { TagIcon } from "@heroicons/react/24/outline";
 // types
-import type { IIssue, IIssueLabels } from "types";
 
 type Props = {
   control: Control<IIssue, any>;
@@ -73,9 +73,11 @@ const SelectLabels: React.FC<Props> = ({ control }) => {
       render={({ field: { value, onChange } }) => (
         <CustomListbox
           title="Labels"
-          options={issueLabels?.map((label) => {
-            return { value: label.id, display: label.name, color: label.colour };
-          })}
+          options={issueLabels?.map((label) => ({
+            value: label.id,
+            display: label.name,
+            color: label.colour,
+          }))}
           value={value}
           optionsFontsize="sm"
           onChange={onChange}

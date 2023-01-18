@@ -2,6 +2,7 @@ import React, { useCallback, useState } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 // hooks
+import type { NextPage } from "next";
 import useUser from "hooks/use-user";
 // services
 import authenticationService from "services/authentication.service";
@@ -13,7 +14,6 @@ import { GoogleLoginButton, GithubLoginButton, EmailSignInForm } from "component
 import { Spinner } from "components/ui";
 // icons
 import Logo from "public/logo-with-text.png";
-import type { NextPage } from "next";
 
 const { NEXT_PUBLIC_GITHUB_ID } = process.env;
 

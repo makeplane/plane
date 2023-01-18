@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // lib
+import type { GetServerSideProps, NextPage } from "next";
 import { requiredWorkspaceAdmin } from "lib/auth";
 // constants
 // services
@@ -13,7 +14,6 @@ import SettingsLayout from "layouts/settings-layout";
 // ui
 import { Button } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-import type { GetServerSideProps, NextPage } from "next";
 import { WORKSPACE_DETAILS } from "constants/fetch-keys";
 
 type TFeatureSettingsProps = {

@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { mutate } from "swr";
 
 // services
+import type { NextPage } from "next";
 import authenticationService from "services/authentication.service";
 // constants
 // hooks
@@ -12,7 +13,6 @@ import useUser from "hooks/use-user";
 import useToast from "hooks/useToast";
 // layouts
 import DefaultLayout from "layouts/default-layout";
-import type { NextPage } from "next";
 import { USER_WORKSPACES } from "constants/fetch-keys";
 
 const MagicSignIn: NextPage = () => {

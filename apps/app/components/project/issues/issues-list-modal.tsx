@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // ui
+import { MagnifyingGlassIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
 import { Button } from "components/ui";
 // icons
-import { MagnifyingGlassIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
 // constants
 import { classNames } from "constants/common";
 // types
@@ -74,7 +74,7 @@ const IssuesListModal: React.FC<Props> = ({
               <Dialog.Panel className="relative mx-auto max-w-2xl transform divide-y divide-gray-500 divide-opacity-10 rounded-xl bg-white bg-opacity-80 shadow-2xl ring-1 ring-black ring-opacity-5 backdrop-blur backdrop-filter transition-all">
                 {multiple ? (
                   <>
-                    <Combobox value={value} onChange={(val) => {}} multiple>
+                    <Combobox value={value} onChange={() => ({})} multiple>
                       <div className="relative m-1">
                         <MagnifyingGlassIcon
                           className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-gray-900 text-opacity-40"

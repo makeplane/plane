@@ -5,12 +5,12 @@ import { useRouter } from "next/router";
 import { mutate } from "swr";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
-// services
-import cycleService from "services/cycles.service";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+// services
+import type { ICycle } from "types";
+import cycleService from "services/cycles.service";
 // ui
 import { Button } from "components/ui";
-import type { ICycle } from "types";
 // fetch api
 import { CYCLE_LIST } from "constants/fetch-keys";
 // icons
