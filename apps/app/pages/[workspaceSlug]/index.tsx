@@ -34,7 +34,7 @@ const WorkspacePage: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // API Fetching
-  const { myIssues } = useIssues();
+  const { myIssues } = useIssues(workspaceSlug?.toString());
   const { projects, recentProjects } = useProjects();
   const {} = useWorkspaceDetails();
 
