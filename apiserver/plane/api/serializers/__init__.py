@@ -29,7 +29,6 @@ from .issue import (
     IssueCommentSerializer,
     TimeLineIssueSerializer,
     IssuePropertySerializer,
-    IssueLabelSerializer,
     BlockerIssueSerializer,
     BlockedIssueSerializer,
     IssueAssigneeSerializer,

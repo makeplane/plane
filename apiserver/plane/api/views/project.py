@@ -67,7 +67,9 @@ class ProjectViewSet(BaseViewSet):
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(Q(project_projectmember__member=self.request.user) | Q(network=2))
-            .select_related("workspace", "workspace__owner")
+            .select_related(
+                "workspace", "workspace__owner", "default_assignee", "project_lead"
+            )
             .distinct()
         )
 
@@ -294,7 +296,7 @@ class UserProjectInvitationsViewset(BaseViewSet):
             super()
             .get_queryset()
             .filter(email=self.request.user.email)
-            .select_related("workspace")
+            .select_related("workspace", "workspace__owner", "project")
         )
 
     def create(self, request):
@@ -349,6 +351,7 @@ class ProjectMemberViewSet(BaseViewSet):
             .filter(project_id=self.kwargs.get("project_id"))
             .select_related("project")
             .select_related("member")
+            .select_related("workspace", "workspace__owner")
         )
 
 
@@ -481,6 +484,7 @@ class ProjectMemberInvitationsViewset(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .select_related("project")
+            .select_related("workspace", "workspace__owner")
         )
 
 
@@ -496,7 +500,12 @@ class ProjectMemberInviteDetailViewSet(BaseViewSet):
     ]
 
     def get_queryset(self):
-        return self.filter_queryset(super().get_queryset().select_related("project"))
+        return self.filter_queryset(
+            super()
+            .get_queryset()
+            .select_related("project")
+            .select_related("workspace", "workspace__owner")
+        )
 
 
 class ProjectIdentifierEndpoint(BaseAPIView):
