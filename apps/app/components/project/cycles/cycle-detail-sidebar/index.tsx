@@ -5,9 +5,9 @@ import { useRouter } from "next/router";
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // hooks
-import useToast from "lib/hooks/useToast";
+import useToast from "hooks/useToast";
 // ui
-import { Loader } from "ui";
+import { Loader } from "components/ui";
 // icons
 import { CalendarDaysIcon, ChartPieIcon, LinkIcon, UserIcon } from "@heroicons/react/24/outline";
 // types
@@ -15,7 +15,7 @@ import { CycleIssueResponse, ICycle } from "types";
 // common
 import { copyTextToClipboard, groupBy } from "constants/common";
 import { mutate } from "swr";
-import cyclesService from "lib/services/cycles.service";
+import cyclesService from "services/cycles.service";
 import { CYCLE_DETAIL } from "constants/api-routes";
 
 type Props = {

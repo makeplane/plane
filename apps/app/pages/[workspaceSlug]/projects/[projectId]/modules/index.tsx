@@ -9,12 +9,13 @@ import AppLayout from "layouts/app-layout";
 // lib
 import { requiredAuth } from "lib/auth";
 // services
-import projectService from "lib/services/project.service";
-import modulesService from "lib/services/modules.service";
+import projectService from "services/project.service";
+import modulesService from "services/modules.service";
 // components
 import SingleModuleCard from "components/project/modules/single-module-card";
 // ui
-import { BreadcrumbItem, Breadcrumbs, EmptySpace, EmptySpaceItem, HeaderButton, Loader } from "ui";
+import { EmptySpace, EmptySpaceItem, HeaderButton, Loader } from "components/ui";
+import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon, RectangleGroupIcon } from "@heroicons/react/24/outline";
 // types

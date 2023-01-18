@@ -7,9 +7,9 @@ import useSWR from "swr";
 import { Controller } from "react-hook-form";
 import type { Control } from "react-hook-form";
 // service
-import projectServices from "lib/services/project.service";
+import projectServices from "services/project.service";
 // ui
-import { SearchListbox } from "ui";
+import SearchListbox from "components/search-listbox";
 // icons
 import { UserIcon } from "@heroicons/react/24/outline";
 // types

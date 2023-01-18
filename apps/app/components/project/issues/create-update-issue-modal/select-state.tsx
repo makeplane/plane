@@ -7,13 +7,13 @@ import useSWR from "swr";
 // react hook form
 import { Controller } from "react-hook-form";
 // services
-import stateService from "lib/services/state.service";
+import stateService from "services/state.service";
 // constants
 import { STATE_LIST } from "constants/fetch-keys";
 // icons
 import { PlusIcon } from "@heroicons/react/20/solid";
 // ui
-import { CustomListbox } from "ui";
+import { CustomListbox } from "components/ui";
 // icons
 import { Squares2X2Icon } from "@heroicons/react/24/outline";
 // types

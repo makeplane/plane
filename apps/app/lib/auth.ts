@@ -1,5 +1,4 @@
 import { convertCookieStringToObject } from "./cookie";
-
 // types
 import type { IProjectMember, IUser, IWorkspace, IWorkspaceMember } from "types";
 // constants

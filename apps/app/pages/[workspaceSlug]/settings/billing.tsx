@@ -10,11 +10,12 @@ import { requiredWorkspaceAdmin } from "lib/auth";
 // constants
 import { WORKSPACE_DETAILS } from "constants/fetch-keys";
 // services
-import workspaceService from "lib/services/workspace.service";
+import workspaceService from "services/workspace.service";
 // layouts
 import SettingsLayout from "layouts/settings-layout";
 // ui
-import { BreadcrumbItem, Breadcrumbs, Button } from "ui";
+import { Button } from "components/ui";
+import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 
 type TBillingSettingsProps = {
   isOwner: boolean;

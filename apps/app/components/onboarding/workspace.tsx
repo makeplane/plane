@@ -9,11 +9,11 @@ import { Controller, useForm } from "react-hook-form";
 import { Tab } from "@headlessui/react";
 
 // hooks
-import useToast from "lib/hooks/useToast";
+import useToast from "hooks/useToast";
 // services
-import workspaceService from "lib/services/workspace.service";
+import workspaceService from "services/workspace.service";
 // ui
-import { CustomSelect, Input } from "ui";
+import { CustomSelect, Input } from "components/ui";
 // constants
 import { companySize } from "constants/";
 // fetch-keys

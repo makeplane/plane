@@ -8,11 +8,11 @@ import { useForm } from "react-hook-form";
 
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import modulesService from "lib/services/modules.service";
+import modulesService from "services/modules.service";
 // hooks
-import useUser from "lib/hooks/useUser";
+import useUser from "hooks/useUser";
 // ui
-import { Button, Input } from "ui";
+import { Button, Input } from "components/ui";
 // types
 import type { IModule, ModuleLink } from "types";
 // fetch-keys

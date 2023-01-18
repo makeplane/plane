@@ -9,16 +9,16 @@ import { SubmitHandler, useForm, UseFormWatch } from "react-hook-form";
 // constants
 import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // hooks
-import useToast from "lib/hooks/useToast";
+import useToast from "hooks/useToast";
 // services
-import issuesServices from "lib/services/issues.service";
+import issuesServices from "services/issues.service";
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // ui
-import { Button } from "ui";
+import { Button } from "components/ui";
 // icons
 import { FolderIcon, MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { BlockerIcon, LayerDiagonalIcon } from "ui/icons";
+import { BlockerIcon, LayerDiagonalIcon } from "components/icons";
 // types
 import { IIssue } from "types";
 // constants

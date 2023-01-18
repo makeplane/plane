@@ -5,15 +5,15 @@ import type { NextPage, NextPageContext } from "next";
 
 import useSWR from "swr";
 
-import { PROJECT_DETAILS, STATE_LIST, WORKSPACE_DETAILS } from "constants/fetch-keys";
+import { PROJECT_DETAILS, STATE_LIST } from "constants/fetch-keys";
 // services
-import stateService from "lib/services/state.service";
-import projectService from "lib/services/project.service";
-import workspaceService from "lib/services/workspace.service";
+import stateService from "services/state.service";
+import projectService from "services/project.service";
+import workspaceService from "services/workspace.service";
 // lib
 import { requiredAdmin } from "lib/auth";
 // hooks
-import useUser from "lib/hooks/useUser";
+import useUser from "hooks/useUser";
 // layouts
 import SettingsLayout from "layouts/settings-layout";
 // components
@@ -23,7 +23,8 @@ import {
   StateGroup,
 } from "components/project/issues/BoardView/state/create-update-state-inline";
 // ui
-import { BreadcrumbItem, Breadcrumbs, Loader } from "ui";
+import { Loader } from "components/ui";
+import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PencilSquareIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 // types
@@ -49,22 +50,17 @@ const StatesSettings: NextPage<TStateSettingsProps> = (props) => {
     query: { workspaceSlug, projectId },
   } = useRouter();
 
-  const { data: activeWorkspace } = useSWR(
-    workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
-    () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null)
-  );
-
   const { data: activeProject } = useSWR(
-    activeWorkspace && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    activeWorkspace && projectId
-      ? () => projectService.getProject(activeWorkspace.slug, projectId as string)
+    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
       : null
   );
 
   const { data: states } = useSWR(
-    activeWorkspace && activeProject ? STATE_LIST(activeProject.id) : null,
-    activeWorkspace && activeProject
-      ? () => stateService.getStates(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -113,18 +109,6 @@ const StatesSettings: NextPage<TStateSettingsProps> = (props) => {
                     </button>
                   </div>
                   <div className="space-y-1 rounded-xl border p-1 md:w-2/3">
-                    {key === activeGroup && (
-                      <CreateUpdateStateInline
-                        projectId={activeProject.id}
-                        onClose={() => {
-                          setActiveGroup(null);
-                          setSelectedState(null);
-                        }}
-                        workspaceSlug={activeWorkspace?.slug}
-                        data={null}
-                        selectedGroup={key as keyof StateGroup}
-                      />
-                    )}
                     {groupedStates[key]?.map((state) =>
                       state.id !== selectedState ? (
                         <div
@@ -152,19 +136,31 @@ const StatesSettings: NextPage<TStateSettingsProps> = (props) => {
                           </div>
                         </div>
                       ) : (
-                        <div className={`border-b last:border-b-0`} key={state.id}>
+                        <div className="border-b last:border-b-0" key={state.id}>
                           <CreateUpdateStateInline
                             projectId={activeProject.id}
                             onClose={() => {
                               setActiveGroup(null);
                               setSelectedState(null);
                             }}
-                            workspaceSlug={activeWorkspace?.slug}
+                            workspaceSlug={workspaceSlug as string}
                             data={states?.find((state) => state.id === selectedState) ?? null}
                             selectedGroup={key as keyof StateGroup}
                           />
                         </div>
                       )
+                    )}
+                    {key === activeGroup && (
+                      <CreateUpdateStateInline
+                        projectId={activeProject.id}
+                        onClose={() => {
+                          setActiveGroup(null);
+                          setSelectedState(null);
+                        }}
+                        workspaceSlug={workspaceSlug as string}
+                        data={null}
+                        selectedGroup={key as keyof StateGroup}
+                      />
                     )}
                   </div>
                 </div>

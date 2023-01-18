@@ -6,11 +6,11 @@ import { useRouter } from "next/router";
 // swr
 import useSWR from "swr";
 // hooks
-import useTheme from "lib/hooks/useTheme";
-import useToast from "lib/hooks/useToast";
-import useUser from "lib/hooks/useUser";
+import useTheme from "hooks/useTheme";
+import useToast from "hooks/useToast";
+import useUser from "hooks/useUser";
 // services
-import userService from "lib/services/user.service";
+import userService from "services/user.service";
 // components
 import ShortcutsModal from "components/command-palette/shortcuts";
 import { CreateProjectModal } from "components/project";
@@ -23,7 +23,7 @@ import { Combobox, Dialog, Transition } from "@headlessui/react";
 // constants
 import { USER_ISSUE } from "constants/fetch-keys";
 // ui
-import { Button } from "ui";
+import { Button } from "components/ui";
 // icons
 import {
   FolderIcon,

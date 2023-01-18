@@ -17,25 +17,18 @@ import { requiredAdmin } from "lib/auth";
 // layouts
 import SettingsLayout from "layouts/settings-layout";
 // services
-import projectService from "lib/services/project.service";
-import workspaceService from "lib/services/workspace.service";
+import projectService from "services/project.service";
+import workspaceService from "services/workspace.service";
 // components
 import ConfirmProjectDeletion from "components/project/confirm-project-deletion";
+import EmojiIconPicker from "components/emoji-icon-picker";
 // hooks
-import useToast from "lib/hooks/useToast";
+import useToast from "hooks/useToast";
 // ui
-import {
-  BreadcrumbItem,
-  Breadcrumbs,
-  Button,
-  EmojiIconPicker,
-  Input,
-  Select,
-  TextArea,
-  Loader,
-  CustomSelect,
-} from "ui";
-import OutlineButton from "ui/outline-button";
+import { Button, Input, Select, TextArea, Loader, CustomSelect } from "components/ui";
+import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+import OutlineButton from "components/ui/outline-button";
+
 // types
 import { IProject, IWorkspace } from "types";
 

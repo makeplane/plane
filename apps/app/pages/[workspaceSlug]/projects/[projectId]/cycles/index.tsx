@@ -5,16 +5,17 @@ import type { NextPage, NextPageContext } from "next";
 
 import useSWR from "swr";
 // services
-import cycleService from "lib/services/cycles.service";
-import projectService from "lib/services/project.service";
-import workspaceService from "lib/services/workspace.service";
+import cycleService from "services/cycles.service";
+import projectService from "services/project.service";
+import workspaceService from "services/workspace.service";
 // layouts
 import AppLayout from "layouts/app-layout";
 // components
 import CreateUpdateCycleModal from "components/project/cycles/create-update-cycle-modal";
 import CycleStatsView from "components/project/cycles/stats-view";
 // ui
-import { BreadcrumbItem, Breadcrumbs, HeaderButton, EmptySpace, EmptySpaceItem, Loader } from "ui";
+import { HeaderButton, EmptySpace, EmptySpaceItem, Loader } from "components/ui";
+import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 // types
@@ -24,7 +25,7 @@ import { CYCLE_LIST, PROJECT_DETAILS, WORKSPACE_DETAILS } from "constants/fetch-
 // lib
 import { requiredAuth } from "lib/auth";
 import { Tab } from "@headlessui/react";
-import { CyclesIcon } from "ui/icons";
+import { CyclesIcon } from "components/icons";
 
 const ProjectCycles: NextPage = () => {
   const [selectedCycle, setSelectedCycle] = useState<SelectCycleType>();

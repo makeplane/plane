@@ -12,9 +12,9 @@ import SelectLead from "components/project/modules/create-update-module-modal/se
 import SelectMembers from "components/project/modules/create-update-module-modal/select-members";
 import SelectStatus from "components/project/modules/create-update-module-modal/select-status";
 // ui
-import { Button, Input, TextArea } from "ui";
+import { Button, Input, TextArea } from "components/ui";
 // services
-import modulesService from "lib/services/modules.service";
+import modulesService from "services/modules.service";
 // types
 import type { IModule } from "types";
 // common

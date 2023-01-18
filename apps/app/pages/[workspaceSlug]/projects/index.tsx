@@ -1,43 +1,38 @@
 import React, { useState } from "react";
-
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
-
 import useSWR, { mutate } from "swr";
-
 // services
-import projectService from "lib/services/project.service";
-import workspaceService from "lib/services/workspace.service";
+import projectService from "services/project.service";
 // constants
-import { WORKSPACE_DETAILS, PROJECTS_LIST, PROJECT_MEMBERS } from "constants/fetch-keys";
+import { PROJECT_MEMBERS } from "constants/fetch-keys";
 // layouts
 import AppLayout from "layouts/app-layout";
 // components
 import { JoinProjectModal } from "components/project/join-project-modal";
-import ProjectMemberInvitations from "components/project/member-invitations";
+import { ProjectCard } from "components/project";
 import ConfirmProjectDeletion from "components/project/confirm-project-deletion";
 // ui
-import { HeaderButton, Breadcrumbs, BreadcrumbItem, EmptySpace, EmptySpaceItem, Loader } from "ui";
+import { HeaderButton, EmptySpace, EmptySpaceItem, Loader } from "components/ui";
+import { Breadcrumbs, BreadcrumbItem } from "components/breadcrumbs";
 // icons
 import { ClipboardDocumentListIcon, PlusIcon } from "@heroicons/react/24/outline";
+// hooks
+import useProjects from "hooks/useProjects";
+import useWorkspaces from "hooks/useWorkspaces";
 
 const Projects: NextPage = () => {
+  // router
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
+  // context data
+  const { activeWorkspace } = useWorkspaces();
+  const { projects } = useProjects();
+  // states
   const [deleteProject, setDeleteProject] = useState<string | null>(null);
   const [selectedProjectToJoin, setSelectedProjectToJoin] = useState<string | null>(null);
 
-  const {
-    query: { workspaceSlug },
-  } = useRouter();
-
-  const { data: activeWorkspace } = useSWR(
-    workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
-    () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null)
-  );
-
-  const { data: projects } = useSWR(
-    workspaceSlug ? PROJECTS_LIST(workspaceSlug as string) : null,
-    () => (workspaceSlug ? projectService.getProjects(workspaceSlug as string) : null)
-  );
+  console.log("projects", projects);
 
   return (
     <AppLayout
@@ -111,7 +106,7 @@ const Projects: NextPage = () => {
             <div className="h-full w-full space-y-5">
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {projects.map((item) => (
-                  <ProjectMemberInvitations
+                  <ProjectCard
                     key={item.id}
                     project={item}
                     workspaceSlug={(activeWorkspace as any)?.slug}

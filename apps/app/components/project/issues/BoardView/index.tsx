@@ -7,11 +7,11 @@ import useSWR, { mutate } from "swr";
 import type { DropResult } from "react-beautiful-dnd";
 import { DragDropContext } from "react-beautiful-dnd";
 // hook
-import useIssuesProperties from "lib/hooks/useIssuesProperties";
+import useIssuesProperties from "hooks/useIssuesProperties";
 // services
-import stateServices from "lib/services/state.service";
-import issuesServices from "lib/services/issues.service";
-import projectService from "lib/services/project.service";
+import stateServices from "services/state.service";
+import issuesServices from "services/issues.service";
+import projectService from "services/project.service";
 // fetching keys
 import { STATE_LIST, PROJECT_ISSUES_LIST, PROJECT_MEMBERS } from "constants/fetch-keys";
 // components
@@ -20,7 +20,7 @@ import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
 import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
 // ui
-import { Spinner } from "ui";
+import { Spinner } from "components/ui";
 // types
 import type { IState, IIssue, NestedKeyOf, IssueResponse } from "types";
 

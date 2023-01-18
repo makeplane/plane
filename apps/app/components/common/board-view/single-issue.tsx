@@ -14,9 +14,9 @@ import { PRIORITIES } from "constants/";
 import { PROJECT_ISSUES_LIST, STATE_LIST } from "constants/fetch-keys";
 import { getPriorityIcon } from "constants/global";
 // services
-import issuesService from "lib/services/issues.service";
-import stateService from "lib/services/state.service";
-import projectService from "lib/services/project.service";
+import issuesService from "services/issues.service";
+import stateService from "services/state.service";
+import projectService from "services/project.service";
 // icons
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { CalendarDaysIcon } from "@heroicons/react/20/solid";

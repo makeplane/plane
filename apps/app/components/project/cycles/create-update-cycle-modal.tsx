@@ -8,13 +8,13 @@ import { Controller, useForm } from "react-hook-form";
 // headless
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import cycleService from "lib/services/cycles.service";
+import cycleService from "services/cycles.service";
 // fetch keys
 import { CYCLE_LIST } from "constants/fetch-keys";
 // common
 import { renderDateFormat } from "constants/common";
 // ui
-import { Button, Input, TextArea, Select, CustomSelect } from "ui";
+import { Button, Input, TextArea, CustomSelect } from "components/ui";
 
 // types
 import type { ICycle } from "types";

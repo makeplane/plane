@@ -14,11 +14,11 @@ import {
 // components
 import ToastAlert from "components/toast-alert";
 // hooks
-import useUser from "lib/hooks/useUser";
+import useUser from "hooks/useUser";
 // constants
 import { USER_PROJECT_VIEW } from "constants/fetch-keys";
 // services
-import projectService from "lib/services/project.service";
+import projectService from "services/project.service";
 
 export const themeContext = createContext<ContextType>({} as ContextType);
 

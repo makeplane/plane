@@ -6,10 +6,10 @@ import type { NextPage, NextPageContext } from "next";
 
 import useSWR from "swr";
 // services
-import projectService from "lib/services/project.service";
-import workspaceService from "lib/services/workspace.service";
+import projectService from "services/project.service";
+import workspaceService from "services/workspace.service";
 // hooks
-import useToast from "lib/hooks/useToast";
+import useToast from "hooks/useToast";
 // lib
 import { requiredAuth } from "lib/auth";
 // constants
@@ -22,7 +22,8 @@ import SendProjectInvitationModal from "components/project/send-project-invitati
 // headless ui
 import { Menu } from "@headlessui/react";
 // ui
-import { Spinner, CustomListbox, BreadcrumbItem, Breadcrumbs, HeaderButton } from "ui";
+import { Spinner, CustomListbox, HeaderButton } from "components/ui";
+import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon, EllipsisHorizontalIcon } from "@heroicons/react/20/solid";
 // fetch-keys

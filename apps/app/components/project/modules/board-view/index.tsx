@@ -7,14 +7,14 @@ import useSWR, { mutate } from "swr";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 
 // services
-import stateService from "lib/services/state.service";
-import issuesService from "lib/services/issues.service";
+import stateService from "services/state.service";
+import issuesService from "services/issues.service";
 // constants
 import { STATE_LIST, MODULE_ISSUES } from "constants/fetch-keys";
 // components
 import SingleBoard from "components/project/modules/board-view/single-board";
 // ui
-import { Spinner } from "ui";
+import { Spinner } from "components/ui";
 // types
 import { IIssue, IProjectMember, ModuleIssueResponse, NestedKeyOf, Properties } from "types";
 
