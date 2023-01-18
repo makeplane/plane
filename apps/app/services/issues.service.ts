@@ -69,7 +69,7 @@ class ProjectIssuesServices extends APIService {
   }
 
   async getIssueProperties(workspaceSlug: string, projectId: string): Promise<any> {
-    return this.get(ISSUE_PROPERTIES_ENDPOINT(workspaceSlug, projectId))
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-properties/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

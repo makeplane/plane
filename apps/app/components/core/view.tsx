@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 // hooks
 import { Popover, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
-import useIssuesProperties from "hooks/useIssuesProperties";
+import useIssuesProperties from "hooks/use-issue-properties";
 // headless ui
 // ui
 import { CustomMenu } from "components/ui";

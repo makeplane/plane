@@ -9,7 +9,7 @@ import useSWR from "swr";
 import { Disclosure, Listbox, Transition } from "@headlessui/react";
 // hooks
 import { ChevronDownIcon, PlusIcon, CalendarDaysIcon } from "@heroicons/react/24/outline";
-import useIssuesProperties from "hooks/useIssuesProperties";
+import useIssuesProperties from "hooks/use-issue-properties";
 // services
 import stateService from "services/state.service";
 import issuesService from "services/issues.service";
@@ -285,7 +285,7 @@ const ListView: React.FC<Props> = ({
                                             style={{
                                               backgroundColor: issue.state_detail.color,
                                             }}
-                                           />
+                                          />
                                           {addSpaceIfCamelCase(issue.state_detail.name)}
                                         </>
                                       }
@@ -304,7 +304,7 @@ const ListView: React.FC<Props> = ({
                                               style={{
                                                 backgroundColor: state.color,
                                               }}
-                                             />
+                                            />
                                             {addSpaceIfCamelCase(state.name)}
                                           </>
                                         </CustomSelect.Option>

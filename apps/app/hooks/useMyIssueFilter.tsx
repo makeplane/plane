@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
 // constants
 import { STATE_LIST } from "constants/fetch-keys";
@@ -28,6 +26,7 @@ const initialValues: Properties = {
   sub_issue_count: false,
 };
 
+// TODO: Refactor this logic
 const useMyIssuesProperties = (issues?: IIssue[]) => {
   const [properties, setProperties] = useState<Properties>(initialValues);
   const [groupByProperty, setGroupByProperty] = useState<NestedKeyOf<IIssue> | null>(null);

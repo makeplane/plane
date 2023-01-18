@@ -27,7 +27,7 @@ import cycleServices from "services/cycles.service";
 import projectService from "services/project.service";
 // hooks
 import useIssuesFilter from "hooks/useIssuesFilter";
-import useIssuesProperties from "hooks/useIssuesProperties";
+import useIssuesProperties from "hooks/use-issue-properties";
 // ui
 import { CustomMenu, EmptySpace, EmptySpaceItem, Spinner } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";

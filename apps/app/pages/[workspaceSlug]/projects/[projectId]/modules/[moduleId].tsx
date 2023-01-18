@@ -17,7 +17,7 @@ import projectService from "services/project.service";
 import issuesService from "services/issues.service";
 // hooks
 import useIssuesFilter from "hooks/useIssuesFilter";
-import useIssuesProperties from "hooks/useIssuesProperties";
+import useIssuesProperties from "hooks/use-issue-properties";
 // layouts
 import AppLayout from "layouts/app-layout";
 // components
