@@ -4,7 +4,7 @@ import projectService from "services/project.service";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 // hooks
-import useUser from "./useUser";
+import useUser from "./use-user";
 
 const useProjectMembers = (workspaceSlug: string, projectId: string) => {
   const { user } = useUser();

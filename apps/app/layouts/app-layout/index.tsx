@@ -4,7 +4,7 @@ import useSWR from "swr";
 // services
 import projectService from "services/project.service";
 // hooks
-import useUser from "hooks/useUser";
+import useUser from "hooks/use-user";
 // fetch keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 // ui

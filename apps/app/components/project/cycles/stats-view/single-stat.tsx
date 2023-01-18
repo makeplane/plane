@@ -9,7 +9,7 @@ import useSWR from "swr";
 // services
 import cyclesService from "services/cycles.service";
 // hooks
-import useUser from "hooks/useUser";
+import useUser from "hooks/use-user";
 // ui
 import { Button, CustomMenu } from "components/ui";
 // icons

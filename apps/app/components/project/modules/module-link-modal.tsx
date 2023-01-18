@@ -10,7 +10,7 @@ import { Dialog, Transition } from "@headlessui/react";
 // services
 import modulesService from "services/modules.service";
 // hooks
-import useUser from "hooks/useUser";
+import useUser from "hooks/use-user";
 // ui
 import { Button, Input } from "components/ui";
 // types

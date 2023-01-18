@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 // react hook form
 import { Controller, Control } from "react-hook-form";
 // hooks
-import useUser from "hooks/useUser";
+import useUser from "hooks/use-user";
 // types
 import type { IIssue, IssueResponse } from "types";
 // icons

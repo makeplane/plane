@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 
 import useSWR from "swr";
 // hooks
-import useUser from "hooks/useUser";
+import useUser from "hooks/use-user";
 // constants
 import { addSpaceIfCamelCase, classNames } from "constants/common";
 import { STATE_LIST } from "constants/fetch-keys";

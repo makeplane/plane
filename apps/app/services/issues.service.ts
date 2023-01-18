@@ -1,3 +1,7 @@
+// services
+import APIService from "services/api.service";
+// type
+import type { IIssue, IIssueActivity, IIssueComment, IssueResponse } from "types";
 // api routes
 import {
   ISSUES_ENDPOINT,
@@ -12,10 +16,6 @@ import {
   REMOVE_ISSUE_FROM_CYCLE,
   ISSUE_LABEL_DETAILS,
 } from "constants/api-routes";
-// services
-import APIService from "services/api.service";
-// type
-import type { IIssue, IIssueActivity, IIssueComment, IssueResponse } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -26,19 +26,15 @@ class ProjectIssuesServices extends APIService {
 
   async createIssues(workspaceSlug: string, projectId: string, data: any): Promise<any> {
     return this.post(ISSUES_ENDPOINT(workspaceSlug, projectId), data)
-      .then((response) => {
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
   async getIssues(workspaceSlug: string, projectId: string): Promise<IssueResponse> {
-    return this.get(ISSUES_ENDPOINT(workspaceSlug, projectId))
-      .then((response) => {
-        return response?.data;
-      })
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/`)
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -46,9 +42,7 @@ class ProjectIssuesServices extends APIService {
 
   async getIssue(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
     return this.get(ISSUE_DETAIL(workspaceSlug, projectId, issueId))
-      .then((response) => {
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -60,9 +54,7 @@ class ProjectIssuesServices extends APIService {
     issueId: string
   ): Promise<IIssueActivity[]> {
     return this.get(ISSUE_ACTIVITIES(workspaceSlug, projectId, issueId))
-      .then((response) => {
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -70,9 +62,7 @@ class ProjectIssuesServices extends APIService {
 
   async getIssueComments(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
     return this.get(ISSUE_COMMENTS(workspaceSlug, projectId, issueId))
-      .then((response) => {
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -80,9 +70,7 @@ class ProjectIssuesServices extends APIService {
 
   async getIssueProperties(workspaceSlug: string, projectId: string): Promise<any> {
     return this.get(ISSUE_PROPERTIES_ENDPOINT(workspaceSlug, projectId))
-      .then((response) => {
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -97,9 +85,7 @@ class ProjectIssuesServices extends APIService {
     }
   ) {
     return this.post(CYCLE_DETAIL(workspaceSlug, projectId, cycleId), data)
-      .then((response) => {
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -112,9 +98,7 @@ class ProjectIssuesServices extends APIService {
     bridgeId: string
   ) {
     return this.delete(REMOVE_ISSUE_FROM_CYCLE(workspaceSlug, projectId, cycleId, bridgeId))
-      .then((response) => {
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -122,9 +106,7 @@ class ProjectIssuesServices extends APIService {
 
   async createIssueProperties(workspaceSlug: string, projectId: string, data: any): Promise<any> {
     return this.post(ISSUE_PROPERTIES_ENDPOINT(workspaceSlug, projectId), data)
-      .then((response) => {
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -140,10 +122,7 @@ class ProjectIssuesServices extends APIService {
       ISSUE_PROPERTIES_ENDPOINT(workspaceSlug, projectId) + `${issuePropertyId}/`,
       data
     )
-
-      .then((response) => {
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -156,9 +135,7 @@ class ProjectIssuesServices extends APIService {
     data: any
   ): Promise<any> {
     return this.post(ISSUE_COMMENTS(workspaceSlug, projectId, issueId), data)
-      .then((response) => {
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -172,9 +149,7 @@ class ProjectIssuesServices extends APIService {
     data: IIssueComment
   ): Promise<any> {
     return this.patch(ISSUE_COMMENT_DETAIL(workspaceSlug, projectId, issueId, commentId), data)
-      .then((response) => {
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -187,9 +162,7 @@ class ProjectIssuesServices extends APIService {
     commentId: string
   ): Promise<any> {
     return this.delete(ISSUE_COMMENT_DETAIL(workspaceSlug, projectId, issueId, commentId))
-      .then((response) => {
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -197,9 +170,7 @@ class ProjectIssuesServices extends APIService {
 
   async getIssueLabels(workspaceSlug: string, projectId: string): Promise<any> {
     return this.get(ISSUE_LABELS(workspaceSlug, projectId))
-      .then((response) => {
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -207,9 +178,7 @@ class ProjectIssuesServices extends APIService {
 
   async createIssueLabel(workspaceSlug: string, projectId: string, data: any): Promise<any> {
     return this.post(ISSUE_LABELS(workspaceSlug, projectId), data)
-      .then((response) => {
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -222,9 +191,7 @@ class ProjectIssuesServices extends APIService {
     data: any
   ): Promise<any> {
     return this.patch(ISSUE_LABEL_DETAILS(workspaceSlug, projectId, labelId), data)
-      .then((response) => {
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -232,9 +199,7 @@ class ProjectIssuesServices extends APIService {
 
   async deleteIssueLabel(workspaceSlug: string, projectId: string, labelId: string): Promise<any> {
     return this.delete(ISSUE_LABEL_DETAILS(workspaceSlug, projectId, labelId))
-      .then((response) => {
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -247,9 +212,7 @@ class ProjectIssuesServices extends APIService {
     data: any
   ): Promise<any> {
     return this.put(ISSUE_DETAIL(workspaceSlug, projectId, issueId), data)
-      .then((response) => {
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -262,9 +225,7 @@ class ProjectIssuesServices extends APIService {
     data: Partial<IIssue>
   ): Promise<any> {
     return this.patch(ISSUE_DETAIL(workspaceSlug, projectId, issueId), data)
-      .then((response) => {
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -272,9 +233,7 @@ class ProjectIssuesServices extends APIService {
 
   async deleteIssue(workspaceSlug: string, projectId: string, issuesId: string): Promise<any> {
     return this.delete(ISSUE_DETAIL(workspaceSlug, projectId, issuesId))
-      .then((response) => {
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -282,9 +241,7 @@ class ProjectIssuesServices extends APIService {
 
   async bulkDeleteIssues(workspaceSlug: string, projectId: string, data: any): Promise<any> {
     return this.delete(BULK_DELETE_ISSUES(workspaceSlug, projectId), data)
-      .then((response) => {
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });

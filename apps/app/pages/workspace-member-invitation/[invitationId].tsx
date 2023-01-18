@@ -10,7 +10,7 @@ import workspaceService from "services/workspace.service";
 // constants
 import { WORKSPACE_INVITATION } from "constants/fetch-keys";
 // hooks
-import useUser from "hooks/useUser";
+import useUser from "hooks/use-user";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 // ui

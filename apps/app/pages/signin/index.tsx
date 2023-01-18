@@ -3,7 +3,7 @@ import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import Image from "next/image";
 // hooks
-import useUser from "hooks/useUser";
+import useUser from "hooks/use-user";
 // services
 import authenticationService from "services/authentication.service";
 // layouts

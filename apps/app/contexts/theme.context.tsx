@@ -14,7 +14,7 @@ import {
 // components
 import ToastAlert from "components/toast-alert";
 // hooks
-import useUser from "hooks/useUser";
+import useUser from "hooks/use-user";
 // constants
 import { USER_PROJECT_VIEW } from "constants/fetch-keys";
 // services

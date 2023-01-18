@@ -18,7 +18,7 @@ import type { IProject } from "types";
 // common
 import { renderShortNumericDateFormat } from "constants/common";
 // hooks
-import useProjectMembers from "hooks/useProjectMembers";
+import useProjectMembers from "hooks/use-project-members";
 
 export type ProjectCardProps = {
   workspaceSlug: string;

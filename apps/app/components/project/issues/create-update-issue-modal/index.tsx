@@ -12,7 +12,7 @@ import { Dialog, Menu, Transition } from "@headlessui/react";
 // services
 import issuesServices from "services/issues.service";
 // hooks
-import useUser from "hooks/useUser";
+import useUser from "hooks/use-user";
 import useToast from "hooks/useToast";
 // ui
 import { Button, Input, Loader } from "components/ui";
