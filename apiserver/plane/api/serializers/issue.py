@@ -432,6 +432,12 @@ class IssueSerializer(BaseSerializer):
     blocker_issues = BlockerIssueSerializer(read_only=True, many=True)
     issue_cycle = IssueCycleDetailSerializer(read_only=True)
     issue_module = IssueModuleDetailSerializer(read_only=True)
+    # Sub issues count
+    sub_issues_count = serializers.SerializerMethodField(read_only=True)
+
+    def get_sub_issues_count(self, issue):
+        return Issue.objects.filter(parent=issue).count()
+  
 
     class Meta:
         model = Issue
@@ -443,4 +449,5 @@ class IssueSerializer(BaseSerializer):
             "updated_by",
             "created_at",
             "updated_at",
+            "sub_issues_count",
         ]
