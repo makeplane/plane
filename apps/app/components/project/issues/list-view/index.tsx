@@ -8,7 +8,7 @@ import useSWR from "swr";
 
 import { Disclosure, Listbox, Transition } from "@headlessui/react";
 // hooks
-import useIssuesProperties from "hooks/useIssuesProperties";
+import useIssuesProperties from "hooks/use-issue-properties";
 // services
 import stateService from "services/state.service";
 import issuesService from "services/issues.service";

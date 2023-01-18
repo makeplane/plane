@@ -7,7 +7,7 @@ import useSWR, { mutate } from "swr";
 import type { DropResult } from "react-beautiful-dnd";
 import { DragDropContext } from "react-beautiful-dnd";
 // hook
-import useIssuesProperties from "hooks/useIssuesProperties";
+import useIssuesProperties from "hooks/use-issue-properties";
 // services
 import stateServices from "services/state.service";
 import issuesServices from "services/issues.service";

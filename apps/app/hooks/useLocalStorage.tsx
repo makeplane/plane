@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 
+// TODO: No Use of this
 const useLocalStorage = <T,>(
   key: string,
   initialValue?: T extends Function ? never : T | (() => T)

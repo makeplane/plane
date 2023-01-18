@@ -1,16 +1,11 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import useSWR from "swr";
-// services
-import issuesService from "services/issues.service";
 // ui
 import { CustomMenu } from "components/ui";
 // icons
 import { CalendarDaysIcon } from "@heroicons/react/24/outline";
 // types
-import { IIssue, IssueResponse, Properties } from "types";
-// fetch-keys
-import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import { IIssue, Properties } from "types";
 // common
 import {
   addSpaceIfCamelCase,
@@ -22,27 +17,17 @@ type Props = {
   type?: string;
   issue: IIssue;
   properties: Properties;
-  editIssue: () => void;
-  handleDeleteIssue: () => void;
-  removeIssue: () => void;
+  editIssue?: () => void;
+  handleDeleteIssue?: () => void;
+  removeIssue?: () => void;
 };
 
-const SingleListIssue: React.FC<Props> = (props) => {
-  const { type, issue, properties, editIssue, handleDeleteIssue, removeIssue } = props;
+export const IssueListItem: React.FC<Props> = (props) => {
+  // const { type, issue, properties, editIssue, handleDeleteIssue, removeIssue } = props;
+  const { issue, properties } = props;
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
-  const { data: issues } = useSWR<IssueResponse>(
-    workspaceSlug && projectId
-      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
-      : null,
-    workspaceSlug && projectId
-      ? () => issuesService.getIssues(workspaceSlug as string, projectId as string)
-      : null
-  );
-
-  const totalChildren = issues?.results.filter((i) => i.parent === issue.id).length;
 
   return (
     <>
@@ -56,7 +41,7 @@ const SingleListIssue: React.FC<Props> = (props) => {
           />
           <Link href={`/${workspaceSlug}/projects/${issue?.project_detail?.id}/issues/${issue.id}`}>
             <a className="group relative flex items-center gap-2">
-              {properties.key && (
+              {properties?.key && (
                 <span className="flex-shrink-0 text-xs text-gray-500">
                   {issue.project_detail?.identifier}-{issue.sequence_id}
                 </span>
@@ -66,7 +51,7 @@ const SingleListIssue: React.FC<Props> = (props) => {
           </Link>
         </div>
         <div className="flex flex-shrink-0 flex-wrap items-center gap-x-1 gap-y-2 text-xs">
-          {properties.priority && (
+          {properties?.priority && (
             <div
               className={`group relative flex flex-shrink-0 cursor-pointer items-center gap-1 rounded px-2 py-1 text-xs capitalize shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
                 issue.priority === "urgent"
@@ -102,7 +87,7 @@ const SingleListIssue: React.FC<Props> = (props) => {
               </div>
             </div>
           )}
-          {properties.state && (
+          {properties?.state && (
             <div className="group relative flex flex-shrink-0 cursor-pointer items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
               <span
                 className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
@@ -117,7 +102,7 @@ const SingleListIssue: React.FC<Props> = (props) => {
               </div>
             </div>
           )}
-          {properties.due_date && (
+          {properties?.due_date && (
             <div
               className={`group group relative flex flex-shrink-0 cursor-pointer items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
                 issue.target_date === null
@@ -145,10 +130,11 @@ const SingleListIssue: React.FC<Props> = (props) => {
           )}
           {properties.sub_issue_count && projectId && (
             <div className="flex flex-shrink-0 items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
-              {totalChildren} {totalChildren === 1 ? "sub-issue" : "sub-issues"}
+              {issue?.sub_issues_count} {issue?.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
             </div>
           )}
-          {type && (
+          {/** TODO: FIX this */}
+          {/* {type && (
             <CustomMenu width="auto" ellipsis>
               <CustomMenu.MenuItem onClick={() => editIssue()}>Edit</CustomMenu.MenuItem>
               <CustomMenu.MenuItem onClick={() => removeIssue()}>
@@ -158,11 +144,9 @@ const SingleListIssue: React.FC<Props> = (props) => {
                 Delete permanently
               </CustomMenu.MenuItem>
             </CustomMenu>
-          )}
+          )} */}
         </div>
       </div>
     </>
   );
 };
-
-export default SingleListIssue;

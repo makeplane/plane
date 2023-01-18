@@ -1,15 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 // commons
-import { classNames } from "../helper";
+import { classNames } from "../helper"; // TODO: Replace this with clsx package
 
 // types
 import { Props } from "./types";
 
+// TODO: Remove this Hook from hooks folder and integrate this logic with component.
 // Updates the height of a <textarea> when the value changes.
-const useAutosizeTextArea = (
-  textAreaRef: HTMLTextAreaElement | null,
-  value: any
-) => {
+const useAutosizeTextArea = (textAreaRef: HTMLTextAreaElement | null, value: any) => {
   useEffect(() => {
     if (textAreaRef) {
       // We need to reset the height momentarily to get the correct scrollHeight for the textarea
@@ -82,9 +80,7 @@ export const TextArea: React.FC<Props> = ({
         )}
         {...rest}
       ></textarea>
-      {error?.message && (
-        <div className="text-sm text-red-500">{error.message}</div>
-      )}
+      {error?.message && <div className="text-sm text-red-500">{error.message}</div>}
     </>
   );
 };

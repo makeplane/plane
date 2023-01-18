@@ -1,4 +1,3 @@
-import { useRouter } from "next/router";
 import useSWR from "swr";
 // services
 import userService from "services/user.service";
@@ -7,9 +6,7 @@ import type { IIssue } from "types";
 // fetch-keys
 import { USER_ISSUE } from "constants/fetch-keys";
 
-const useIssues = () => {
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+const useIssues = (workspaceSlug: string | undefined) => {
   // API Fetching
   const { data: myIssues, mutate: mutateMyIssues } = useSWR<IIssue[]>(
     workspaceSlug ? USER_ISSUE(workspaceSlug as string) : null,

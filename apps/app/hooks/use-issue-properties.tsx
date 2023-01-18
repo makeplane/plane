@@ -19,6 +19,7 @@ const initialValues: Properties = {
   sub_issue_count: false,
 };
 
+// TODO: CHECK THIS LOGIC
 const useIssuesProperties = (workspaceSlug?: string, projectId?: string) => {
   const [properties, setProperties] = useState<Properties>(initialValues);
 
@@ -28,10 +29,7 @@ const useIssuesProperties = (workspaceSlug?: string, projectId?: string) => {
     workspaceSlug && projectId ? ISSUE_PROPERTIES_ENDPOINT(workspaceSlug, projectId) : null,
     workspaceSlug && projectId
       ? () => issueServices.getIssueProperties(workspaceSlug, projectId)
-      : null,
-    {
-      shouldRetryOnError: false,
-    }
+      : null
   );
 
   useEffect(() => {

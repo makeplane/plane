@@ -1,6 +1,4 @@
-export const classNames = (...classes: string[]) => {
-  return classes.filter(Boolean).join(" ");
-};
+export const classNames = (...classes: string[]) => classes.filter(Boolean).join(" ");
 
 export const renderDateFormat = (date: string | Date) => {
   var d = new Date(date),
@@ -14,12 +12,11 @@ export const renderDateFormat = (date: string | Date) => {
   return [year, month, day].join("-");
 };
 
-export const renderShortNumericDateFormat = (date: string | Date) => {
-  return new Date(date).toLocaleDateString("en-UK", {
+export const renderShortNumericDateFormat = (date: string | Date) =>
+  new Date(date).toLocaleDateString("en-UK", {
     day: "numeric",
     month: "short",
   });
-};
 
 export const groupBy = (array: any[], key: string) => {
   const innerKey = key.split("."); // split the key by dot
@@ -126,13 +123,9 @@ export const debounce = (func: any, wait: number, immediate: boolean = false) =>
   };
 };
 
-export const addSpaceIfCamelCase = (str: string) => {
-  return str.replace(/([a-z])([A-Z])/g, "$1 $2");
-};
+export const addSpaceIfCamelCase = (str: string) => str.replace(/([a-z])([A-Z])/g, "$1 $2");
 
-export const replaceUnderscoreIfSnakeCase = (str: string) => {
-  return str.replace(/_/g, " ");
-};
+export const replaceUnderscoreIfSnakeCase = (str: string) => str.replace(/_/g, " ");
 
 const fallbackCopyTextToClipboard = (text: string) => {
   var textArea = document.createElement("textarea");

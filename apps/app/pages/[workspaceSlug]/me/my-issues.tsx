@@ -11,11 +11,11 @@ import useIssues from "hooks/use-issues";
 import { Spinner, EmptySpace, EmptySpaceItem, HeaderButton } from "components/ui";
 import { Breadcrumbs, BreadcrumbItem } from "components/breadcrumbs";
 // hooks
-import useIssuesProperties from "hooks/useIssuesProperties";
+import useIssuesProperties from "hooks/use-issue-properties";
 // types
 import { IIssue, Properties } from "types";
 // components
-import SingleListIssue from "components/common/list-view/single-issue";
+import { IssueListItem } from "components/issues";
 // types
 import type { NextPage } from "next";
 // constants
@@ -27,7 +27,7 @@ const MyIssuesPage: NextPage = () => {
   // Fetching user information
   const {} = useUser();
   // fetching user issues
-  const { myIssues } = useIssues();
+  const { myIssues } = useIssues(workspaceSlug?.toString());
 
   // FIXME: remove this hard-coded value
   const [properties, setProperties] = useIssuesProperties(
@@ -143,15 +143,7 @@ const MyIssuesPage: NextPage = () => {
                         <Disclosure.Panel>
                           <div className="divide-y-2">
                             {myIssues.map((issue: IIssue) => (
-                              // FIXME: add all functionalities
-                              <SingleListIssue
-                                key={issue.id}
-                                editIssue={() => {}}
-                                handleDeleteIssue={() => {}}
-                                issue={issue}
-                                properties={properties}
-                                removeIssue={() => {}}
-                              />
+                              <IssueListItem key={issue.id} issue={issue} properties={properties} />
                             ))}
                           </div>
                         </Disclosure.Panel>

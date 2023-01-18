@@ -1,3 +1,4 @@
+// TODO; Delete this file and move these constants to respective contexts
 export const TOGGLE_SIDEBAR = "TOGGLE_SIDEBAR";
 export const REHYDRATE_THEME = "REHYDRATE_THEME";
 export const SET_ISSUE_VIEW = "SET_ISSUE_VIEW";

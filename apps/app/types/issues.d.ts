@@ -91,6 +91,7 @@ export interface IIssue {
   module: string | null;
   cycle: string | null;
   cycle_detail: ICycle | null;
+  sub_issues_count: number;
 }
 
 export interface BlockeIssue {

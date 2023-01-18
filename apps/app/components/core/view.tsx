@@ -2,7 +2,7 @@ import React from "react";
 
 import { useRouter } from "next/router";
 // hooks
-import useIssuesProperties from "hooks/useIssuesProperties";
+import useIssuesProperties from "hooks/use-issue-properties";
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
 // ui

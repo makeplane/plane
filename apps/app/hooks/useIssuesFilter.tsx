@@ -14,13 +14,14 @@ import { PRIORITIES } from "constants/";
 import type { IIssue } from "types";
 import { useRouter } from "next/router";
 
+// TODO: Check this logic
 const useIssuesFilter = (projectIssues: IIssue[]) => {
   const {
     issueView,
     groupByProperty,
     setGroupByProperty,
     orderBy,
-    setOrderBy,
+    setOrderBy, // TODO: Create a new context for handling issue states
     filterIssue,
     setFilterIssue,
     resetFilterToDefault,
