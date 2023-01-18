@@ -8,7 +8,7 @@ import useSWR from "swr";
 // hooks
 import useTheme from "hooks/useTheme";
 import useToast from "hooks/useToast";
-import useUser from "hooks/useUser";
+import useUser from "hooks/use-user";
 // services
 import userService from "services/user.service";
 // components

@@ -9,7 +9,7 @@ import { Control, Controller } from "react-hook-form";
 // services
 import workspaceService from "services/workspace.service";
 // hooks
-import useUser from "hooks/useUser";
+import useUser from "hooks/use-user";
 // headless ui
 import { Listbox, Transition } from "@headlessui/react";
 // ui

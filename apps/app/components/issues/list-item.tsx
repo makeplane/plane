@@ -27,16 +27,11 @@ type Props = {
   removeIssue: () => void;
 };
 
-const SingleListIssue: React.FC<Props> = ({
-  type,
-  issue,
-  properties,
-  editIssue,
-  handleDeleteIssue,
-  removeIssue,
-}) => {
+const SingleListIssue: React.FC<Props> = (props) => {
+  const { type, issue, properties, editIssue, handleDeleteIssue, removeIssue } = props;
+  // router
   const router = useRouter();
-  let { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = router.query;
 
   const { data: issues } = useSWR<IssueResponse>(
     workspaceSlug && projectId

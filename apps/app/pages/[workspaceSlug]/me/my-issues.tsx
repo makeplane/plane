@@ -2,42 +2,32 @@ import { Disclosure, Popover, Transition } from "@headlessui/react";
 import { ChevronDownIcon, PlusIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/router";
 import React from "react";
-import useSWR from "swr";
 // layouts
 import AppLayout from "layouts/app-layout";
 // hooks
-import useUser from "hooks/useUser";
+import useUser from "hooks/use-user";
+import useIssues from "hooks/use-issues";
 // ui
 import { Spinner, EmptySpace, EmptySpaceItem, HeaderButton } from "components/ui";
 import { Breadcrumbs, BreadcrumbItem } from "components/breadcrumbs";
-// services
-import userService from "services/user.service";
 // hooks
 import useIssuesProperties from "hooks/useIssuesProperties";
 // types
 import { IIssue, Properties } from "types";
-// lib
-import { requiredAuth } from "lib/auth";
 // components
 import SingleListIssue from "components/common/list-view/single-issue";
 // types
-import type { NextPage, NextPageContext } from "next";
+import type { NextPage } from "next";
 // constants
-import { USER_ISSUE } from "constants/fetch-keys";
 import { classNames, replaceUnderscoreIfSnakeCase } from "constants/common";
 
-const MyIssues: NextPage = () => {
+const MyIssuesPage: NextPage = () => {
   const router = useRouter();
-  const {
-    query: { workspaceSlug },
-  } = router;
-
-  const { user } = useUser();
-
-  const { data: myIssues } = useSWR<IIssue[]>(
-    user && workspaceSlug ? USER_ISSUE(workspaceSlug as string) : null,
-    user && workspaceSlug ? () => userService.userIssues(workspaceSlug as string) : null
-  );
+  const { workspaceSlug } = router.query;
+  // Fetching user information
+  const {} = useUser();
+  // fetching user issues
+  const { myIssues } = useIssues();
 
   // FIXME: remove this hard-coded value
   const [properties, setProperties] = useIssuesProperties(
@@ -209,25 +199,4 @@ const MyIssues: NextPage = () => {
   );
 };
 
-export const getServerSideProps = async (ctx: NextPageContext) => {
-  const user = await requiredAuth(ctx.req?.headers.cookie);
-
-  const redirectAfterSignIn = ctx.req?.url;
-
-  if (!user) {
-    return {
-      redirect: {
-        destination: `/signin?next=${redirectAfterSignIn}`,
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {
-      user,
-    },
-  };
-};
-
-export default MyIssues;
+export default MyIssuesPage;

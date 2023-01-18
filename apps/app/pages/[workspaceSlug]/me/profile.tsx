@@ -10,7 +10,7 @@ import useSWR from "swr";
 import { useForm } from "react-hook-form";
 
 // hooks
-import useUser from "hooks/useUser";
+import useUser from "hooks/use-user";
 import useToast from "hooks/useToast";
 // lib
 import { requiredAuth } from "lib/auth";

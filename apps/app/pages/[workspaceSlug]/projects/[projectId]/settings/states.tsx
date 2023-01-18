@@ -13,7 +13,7 @@ import workspaceService from "services/workspace.service";
 // lib
 import { requiredAdmin } from "lib/auth";
 // hooks
-import useUser from "hooks/useUser";
+import useUser from "hooks/use-user";
 // layouts
 import SettingsLayout from "layouts/settings-layout";
 // components

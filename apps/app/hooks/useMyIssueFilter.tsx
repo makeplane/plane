@@ -8,7 +8,7 @@ import { STATE_LIST } from "constants/fetch-keys";
 // services
 import stateService from "services/state.service";
 // hooks
-import useUser from "./useUser";
+import useUser from "./use-user";
 // types
 import { Properties, NestedKeyOf, IIssue } from "types";
 // services

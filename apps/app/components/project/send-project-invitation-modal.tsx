@@ -8,7 +8,7 @@ import { useForm, Controller } from "react-hook-form";
 
 import { Dialog, Transition, Listbox } from "@headlessui/react";
 // hooks
-import useUser from "hooks/useUser";
+import useUser from "hooks/use-user";
 import useToast from "hooks/useToast";
 // services
 import projectService from "services/project.service";

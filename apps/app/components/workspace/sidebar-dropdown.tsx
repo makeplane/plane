@@ -5,9 +5,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { ChevronDownIcon, PlusIcon } from "@heroicons/react/24/outline";
 // hooks
-import useUser from "hooks/useUser";
+import useUser from "hooks/use-user";
 import useTheme from "hooks/useTheme";
-import useWorkspaces from "hooks/useWorkspaces";
+import useWorkspaces from "hooks/use-workspaces";
 // services
 import userService from "services/user.service";
 import authenticationService from "services/authentication.service";

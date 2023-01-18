@@ -13,7 +13,7 @@ import { WORKSPACE_MEMBERS, STATE_LIST } from "constants/fetch-keys";
 // services
 import stateService from "services/state.service";
 // hooks
-import useUser from "hooks/useUser";
+import useUser from "hooks/use-user";
 // components
 import SingleListIssue from "components/common/list-view/single-issue";
 // ui

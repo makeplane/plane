@@ -2,10 +2,10 @@ import useSWR from "swr";
 import { useRouter } from "next/router";
 // types
 import { IWorkspace } from "types";
-// constants
-import { USER_WORKSPACES } from "constants/fetch-keys";
 // services
 import workspaceService from "services/workspace.service";
+// constants
+import { USER_WORKSPACES } from "constants/fetch-keys";
 
 const useWorkspaces = () => {
   // router
@@ -22,6 +22,7 @@ const useWorkspaces = () => {
 
   return {
     workspaces: data,
+    error,
     activeWorkspace,
     mutateWorkspaces: mutate,
   };

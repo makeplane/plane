@@ -1,11 +1,8 @@
 import React, { useState } from "react";
-import type { NextPage } from "next";
 import { useRouter } from "next/router";
-import useSWR, { mutate } from "swr";
+import { mutate } from "swr";
 // services
 import projectService from "services/project.service";
-// constants
-import { PROJECT_MEMBERS } from "constants/fetch-keys";
 // layouts
 import AppLayout from "layouts/app-layout";
 // components
@@ -18,10 +15,14 @@ import { Breadcrumbs, BreadcrumbItem } from "components/breadcrumbs";
 // icons
 import { ClipboardDocumentListIcon, PlusIcon } from "@heroicons/react/24/outline";
 // hooks
-import useProjects from "hooks/useProjects";
-import useWorkspaces from "hooks/useWorkspaces";
+import useProjects from "hooks/use-projects";
+import useWorkspaces from "hooks/use-workspaces";
+// types
+import type { NextPage } from "next";
+// constants
+import { PROJECT_MEMBERS } from "constants/fetch-keys";
 
-const Projects: NextPage = () => {
+const ProjectsPage: NextPage = () => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -120,16 +121,16 @@ const Projects: NextPage = () => {
         </>
       ) : (
         <Loader className="grid grid-cols-3 gap-4">
-          <Loader.Item height="100px"></Loader.Item>
-          <Loader.Item height="100px"></Loader.Item>
-          <Loader.Item height="100px"></Loader.Item>
-          <Loader.Item height="100px"></Loader.Item>
-          <Loader.Item height="100px"></Loader.Item>
-          <Loader.Item height="100px"></Loader.Item>
+          <Loader.Item height="100px" />
+          <Loader.Item height="100px" />
+          <Loader.Item height="100px" />
+          <Loader.Item height="100px" />
+          <Loader.Item height="100px" />
+          <Loader.Item height="100px" />
         </Loader>
       )}
     </AppLayout>
   );
 };
 
-export default Projects;
+export default ProjectsPage;

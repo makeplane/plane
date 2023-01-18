@@ -5,7 +5,7 @@ import useSWR from "swr";
 // services
 import workspaceService from "services/workspace.service";
 // hooks
-import useUser from "hooks/useUser";
+import useUser from "hooks/use-user";
 // components
 import SingleIssue from "components/common/board-view/single-issue";
 // ui

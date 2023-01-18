@@ -20,7 +20,7 @@ import userService from "services/user.service";
 import workspaceService from "services/workspace.service";
 import authenticationService from "services/authentication.service";
 // hooks
-import useUser from "hooks/useUser";
+import useUser from "hooks/use-user";
 // constants
 import { USER_WORKSPACES } from "constants/fetch-keys";
 // types

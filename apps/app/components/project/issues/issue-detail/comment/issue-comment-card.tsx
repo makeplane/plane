@@ -6,7 +6,7 @@ import dynamic from "next/dynamic";
 // react-hook-form
 import { useForm } from "react-hook-form";
 // hooks
-import useUser from "hooks/useUser";
+import useUser from "hooks/use-user";
 // ui
 import { CustomMenu } from "components/ui";
 // icons

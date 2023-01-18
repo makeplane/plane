@@ -1,14 +1,13 @@
 import { useState, useEffect, useCallback } from "react";
-// swr
 import useSWR from "swr";
-// api routes
-import { ISSUE_PROPERTIES_ENDPOINT } from "constants/api-routes";
 // services
 import issueServices from "services/issues.service";
 // hooks
-import useUser from "./useUser";
+import useUser from "hooks/use-user";
 // types
 import { IssuePriorities, Properties } from "types";
+// api routes
+import { ISSUE_PROPERTIES_ENDPOINT } from "constants/api-routes";
 
 const initialValues: Properties = {
   key: true,

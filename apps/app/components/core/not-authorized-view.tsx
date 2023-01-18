@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 // hooks
-import useUser from "hooks/useUser";
+import useUser from "hooks/use-user";
 // icons
 import { LockIcon } from "components/icons";
 
