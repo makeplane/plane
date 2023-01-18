@@ -15,7 +15,13 @@ from plane.api.serializers import (
     ModuleIssueSerializer,
 )
 from plane.api.permissions import ProjectEntityPermission
-from plane.db.models import Module, ModuleIssue, Project, Issue, ModuleLink
+from plane.db.models import (
+    Module,
+    ModuleIssue,
+    Project,
+    Issue,
+    ModuleLink,
+)
 
 
 class ModuleViewSet(BaseViewSet):
@@ -45,13 +51,15 @@ class ModuleViewSet(BaseViewSet):
             .prefetch_related(
                 Prefetch(
                     "issue_module",
-                    queryset=ModuleIssue.objects.select_related("module", "issue"),
+                    queryset=ModuleIssue.objects.select_related(
+                        "module", "issue", "issue__state", "issue__project"
+                    ).prefetch_related("issue__assignees", "issue__labels"),
                 )
             )
             .prefetch_related(
                 Prefetch(
                     "link_module",
-                    queryset=ModuleLink.objects.select_related("module"),
+                    queryset=ModuleLink.objects.select_related("module", "created_by"),
                 )
             )
         )
@@ -117,7 +125,9 @@ class ModuleIssueViewSet(BaseViewSet):
             .select_related("project")
             .select_related("workspace")
             .select_related("module")
-            .select_related("issue")
+            .select_related("issue", "issue__state", "issue__project")
+            .prefetch_related("issue__assignees", "issue__labels")
+            .prefetch_related("module__members")
             .distinct()
         )
 

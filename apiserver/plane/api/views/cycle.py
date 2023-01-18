@@ -32,6 +32,7 @@ class CycleViewSet(BaseViewSet):
             .filter(project__project_projectmember__member=self.request.user)
             .select_related("project")
             .select_related("workspace")
+            .select_related("owned_by")
             .distinct()
         )
 
@@ -62,8 +63,8 @@ class CycleIssueViewSet(BaseViewSet):
             .select_related("project")
             .select_related("workspace")
             .select_related("cycle")
-            .select_related("issue")
-            .select_related("issue__state")
+            .select_related("issue", "issue__state", "issue__project")
+            .prefetch_related("issue__assignees", "issue__labels")
             .distinct()
         )
 

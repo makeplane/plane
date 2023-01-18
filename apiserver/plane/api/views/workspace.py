@@ -176,7 +176,7 @@ class InviteWorkspaceEndpoint(BaseAPIView):
             workspace_members = WorkspaceMember.objects.filter(
                 workspace_id=workspace.id,
                 member__email__in=[email.get("email") for email in emails],
-            )
+            ).select_related("member", "worspace", "workspace__owner")
 
             if len(workspace_members):
                 return Response(
@@ -339,7 +339,7 @@ class WorkspaceInvitationsViewset(BaseViewSet):
             super()
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
-            .select_related("workspace")
+            .select_related("workspace", "workspace__owner")
         )
 
 
@@ -353,7 +353,7 @@ class UserWorkspaceInvitationsEndpoint(BaseViewSet):
             super()
             .get_queryset()
             .filter(email=self.request.user.email)
-            .select_related("workspace")
+            .select_related("workspace", "workspace__owner")
         )
 
     def create(self, request):
@@ -524,7 +524,7 @@ class UserLastProjectWithWorkspaceEndpoint(BaseAPIView):
 
             project_member = ProjectMember.objects.filter(
                 workspace_id=last_workspace_id, member=request.user
-            ).select_related("workspace", "project", "member")
+            ).select_related("workspace", "project", "member", "workspace__owner")
 
             project_member_serializer = ProjectMemberSerializer(
                 project_member, many=True

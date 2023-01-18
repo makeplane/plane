@@ -24,7 +24,7 @@ const resources = [
     },
   },
   {
-    href: '/self-host',
+    href: '/self-hosting',
     name: 'Self-host Plane',
     description: 'Run Plane on your computer or development machine.',
     icon: ChatBubbleIcon,
@@ -51,7 +51,7 @@ const resources = [
     },
   },
   {
-    href: '/',
+    href: 'https://discord.com/invite/A92xrEGCge',
     name: 'Community',
     description: 'Hang out with truly exceptional devs & designers on Discord.',
     icon: UsersIcon,

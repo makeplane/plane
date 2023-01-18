@@ -4,66 +4,86 @@ from django.urls import path
 # Create your urls here.
 
 from plane.api.views import (
+    # Authentication
+    SignUpEndpoint,
     SignInEndpoint,
     SignOutEndpoint,
     MagicSignInEndpoint,
     MagicSignInGenerateEndpoint,
+    OauthEndpoint,
+    ## End Authentication
+    # Auth Extended
     ForgotPasswordEndpoint,
-    PeopleEndpoint,
-    UserEndpoint,
     VerifyEmailEndpoint,
     ResetPasswordEndpoint,
     RequestEmailVerificationEndpoint,
-    OauthEndpoint,
     ChangePasswordEndpoint,
-)
-
-from plane.api.views import (
-    UserWorkspaceInvitationsEndpoint,
+    ## End Auth Extender
+    # User
+    UserEndpoint,
+    UpdateUserOnBoardedEndpoint,
+    ## End User
+    # Workspaces
     WorkSpaceViewSet,
+    UserWorkspaceInvitationsEndpoint,
     UserWorkSpacesEndpoint,
     InviteWorkspaceEndpoint,
     JoinWorkspaceEndpoint,
     WorkSpaceMemberViewSet,
     WorkspaceInvitationsViewset,
     UserWorkspaceInvitationsEndpoint,
+    WorkspaceMemberUserEndpoint,
+    WorkspaceMemberUserViewsEndpoint,
+    WorkSpaceAvailabilityCheckEndpoint,
+    TeamMemberViewSet,
+    AddTeamToProjectEndpoint,
+    UserLastProjectWithWorkspaceEndpoint,
+    UserWorkspaceInvitationEndpoint,
+    ## End Workspaces
+    # File Assets
+    FileAssetEndpoint,
+    ## End File Assets
+    # Projects
     ProjectViewSet,
     InviteProjectEndpoint,
     ProjectMemberViewSet,
     ProjectMemberInvitationsViewset,
-    StateViewSet,
-    ShortCutViewSet,
-    ViewViewSet,
-    CycleViewSet,
-    FileAssetEndpoint,
+    ProjectMemberUserEndpoint,
+    AddMemberToProjectEndpoint,
+    ProjectJoinEndpoint,
+    UserProjectInvitationsViewset,
+    ProjectIdentifierEndpoint,
+    ## End Projects
+    # Issues
     IssueViewSet,
     WorkSpaceIssuesEndpoint,
     IssueActivityEndpoint,
     IssueCommentViewSet,
-    TeamMemberViewSet,
-    TimeLineIssueViewSet,
-    CycleIssueViewSet,
-    IssuePropertyViewSet,
-    UpdateUserOnBoardedEndpoint,
-    UserWorkspaceInvitationEndpoint,
-    UserProjectInvitationsViewset,
-    ProjectIdentifierEndpoint,
-    LabelViewSet,
-    AddMemberToProjectEndpoint,
-    ProjectJoinEndpoint,
+    UserWorkSpaceIssues,
     BulkDeleteIssuesEndpoint,
     ProjectUserViewsEndpoint,
+    TimeLineIssueViewSet,
+    IssuePropertyViewSet,
+    LabelViewSet,
+    ## End Issues
+    # States
+    StateViewSet,
+    ## End States
+    # Shortcuts
+    ShortCutViewSet,
+    ## End Shortcuts
+    # Views
+    ViewViewSet,
+    ## End Views
+    # Cycles
+    CycleViewSet,
+    CycleIssueViewSet,
+    ## End Cycles
+    # Modules
     ModuleViewSet,
     ModuleIssueViewSet,
-    UserLastProjectWithWorkspaceEndpoint,
-    UserWorkSpaceIssues,
-    ProjectMemberUserEndpoint,
-    WorkspaceMemberUserEndpoint,
-    WorkspaceMemberUserViewsEndpoint,
-    WorkSpaceAvailabilityCheckEndpoint,
+    ## End Modules
 )
-
-from plane.api.views.project import AddTeamToProjectEndpoint
 
 
 urlpatterns = [
@@ -71,6 +91,7 @@ urlpatterns = [
     path("social-auth/", OauthEndpoint.as_view(), name="oauth"),
     # Auth
     path("sign-in/", SignInEndpoint.as_view(), name="sign-in"),
+    path("sign-up/", SignUpEndpoint.as_view(), name="sign-up"),
     path("sign-out/", SignOutEndpoint.as_view(), name="sign-out"),
     # Magic Sign In/Up
     path(
@@ -95,8 +116,6 @@ urlpatterns = [
         ForgotPasswordEndpoint.as_view(),
         name="forgot-password",
     ),
-    # List Users
-    path("users/", PeopleEndpoint.as_view()),
     # User Profile
     path(
         "users/me/",
@@ -654,9 +673,4 @@ urlpatterns = [
         name="project-module-issues",
     ),
     ## End Modules
-    # path(
-    #     "issues/<int:pk>/all/",
-    #     IssueViewSet.as_view({"get": "list_issue_history_comments"}),
-    #     name="Issue history and comments",
-    # ),
 ]

@@ -6,7 +6,7 @@ from sentry_sdk import capture_exception
 
 # Module imports
 from .base import BaseAPIView
-from plane.db.models import FileAsset, Workspace
+from plane.db.models import FileAsset
 from plane.api.serializers import FileAssetSerializer
 
 
@@ -18,8 +18,8 @@ class FileAssetEndpoint(BaseAPIView):
     A viewset for viewing and editing task instances.
     """
 
-    def get(self, request):
-        files = FileAsset.objects.all()
+    def get(self, request, slug):
+        files = FileAsset.objects.filter(workspace__slug=slug)
         serializer = FileAssetSerializer(files, context={"request": request}, many=True)
         return Response(serializer.data)
 
