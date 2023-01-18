@@ -2,8 +2,7 @@ import React from "react";
 
 import type { Props } from "./types";
 
-export const UserIcon: React.FC<Props> = ({ width = "24", height = "24", className }) => {
-  return (
+export const UserIcon: React.FC<Props> = ({ width = "24", height = "24", className }) => (
     <svg
       width={width}
       height={height}
@@ -18,4 +17,3 @@ export const UserIcon: React.FC<Props> = ({ width = "24", height = "24", classNa
       />
     </svg>
   );
-};

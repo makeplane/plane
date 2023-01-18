@@ -2,8 +2,7 @@ import React from "react";
 
 import type { Props } from "./types";
 
-export const EditIcon: React.FC<Props> = ({ width, height, className }) => {
-  return (
+export const EditIcon: React.FC<Props> = ({ width, height, className }) => (
     <svg
       width={width}
       height={height}
@@ -18,4 +17,3 @@ export const EditIcon: React.FC<Props> = ({ width, height, className }) => {
       />
     </svg>
   );
-};

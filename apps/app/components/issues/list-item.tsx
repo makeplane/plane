@@ -2,11 +2,11 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // services
+import { CalendarDaysIcon } from "@heroicons/react/24/outline";
 import issuesService from "services/issues.service";
 // ui
 import { CustomMenu } from "components/ui";
 // icons
-import { CalendarDaysIcon } from "@heroicons/react/24/outline";
 // types
 import { IIssue, IssueResponse, Properties } from "types";
 // fetch-keys

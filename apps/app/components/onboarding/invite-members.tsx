@@ -1,7 +1,7 @@
 // types
+import { useForm } from "react-hook-form";
 import useToast from "hooks/useToast";
 import workspaceService from "services/workspace.service";
-import { useForm } from "react-hook-form";
 import { IUser } from "types";
 // ui components
 import MultiInput from "components/ui/multi-input";

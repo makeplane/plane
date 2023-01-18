@@ -1,5 +1,4 @@
-import React, { useCallback, useState, useEffect } from "react";
-import type { NextPage } from "next";
+import React, { useCallback, useState } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 // hooks
@@ -14,6 +13,7 @@ import { GoogleLoginButton, GithubLoginButton, EmailSignInForm } from "component
 import { Spinner } from "components/ui";
 // icons
 import Logo from "public/logo-with-text.png";
+import type { NextPage } from "next";
 
 const { NEXT_PUBLIC_GITHUB_ID } = process.env;
 
@@ -41,7 +41,7 @@ const SignInPage: NextPage = () => {
           credential,
           clientId,
         })
-        .then(async (response) => {
+        .then(async () => {
           await onSignInSuccess();
         })
         .catch((err) => {
@@ -59,7 +59,7 @@ const SignInPage: NextPage = () => {
         credential: githubToken,
         clientId: NEXT_PUBLIC_GITHUB_ID,
       })
-      .then(async (response) => {
+      .then(async () => {
         await onSignInSuccess();
       })
       .catch((err) => {

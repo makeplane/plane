@@ -7,15 +7,15 @@ import { mutate } from "swr";
 import { Dialog, Transition } from "@headlessui/react";
 // services
 import cycleService from "services/cycles.service";
-// fetch api
-import { CYCLE_LIST } from "constants/fetch-keys";
-// icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
 import { Button } from "components/ui";
+import type { ICycle } from "types";
+// fetch api
+import { CYCLE_LIST } from "constants/fetch-keys";
+// icons
 
 // types
-import type { ICycle } from "types";
 type TConfirmCycleDeletionProps = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;

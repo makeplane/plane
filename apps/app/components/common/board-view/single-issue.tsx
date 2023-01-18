@@ -10,27 +10,26 @@ import { DraggableStateSnapshot } from "react-beautiful-dnd";
 // headless ui
 import { Listbox, Transition } from "@headlessui/react";
 // constants
-import { PRIORITIES } from "constants/";
-import { PROJECT_ISSUES_LIST, STATE_LIST } from "constants/fetch-keys";
-import { getPriorityIcon } from "constants/global";
+import { TrashIcon } from "@heroicons/react/24/outline";
+import { CalendarDaysIcon } from "@heroicons/react/20/solid";
 // services
 import issuesService from "services/issues.service";
 import stateService from "services/state.service";
 import projectService from "services/project.service";
 // icons
-import { TrashIcon } from "@heroicons/react/24/outline";
-import { CalendarDaysIcon } from "@heroicons/react/20/solid";
 import User from "public/user.png";
 // types
 import { IIssue, IssueResponse, IWorkspaceMember, Properties } from "types";
 // common
+import { PRIORITIES } from "constants/";
+import { PROJECT_ISSUES_LIST, STATE_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
+import { getPriorityIcon } from "constants/global";
 import {
   addSpaceIfCamelCase,
   classNames,
   findHowManyDaysLeft,
   renderShortNumericDateFormat,
 } from "constants/common";
-import { PROJECT_DETAILS } from "constants/fetch-keys";
 
 type Props = {
   issue: IIssue;
@@ -193,7 +192,7 @@ const SingleBoardIssue: React.FC<Props> = ({
                         style={{
                           backgroundColor: issue.state_detail.color,
                         }}
-                      ></span>
+                      />
                       {addSpaceIfCamelCase(issue.state_detail.name)}
                     </Listbox.Button>
 
@@ -221,7 +220,7 @@ const SingleBoardIssue: React.FC<Props> = ({
                               style={{
                                 backgroundColor: state.color,
                               }}
-                            ></span>
+                            />
                             {addSpaceIfCamelCase(state.name)}
                           </Listbox.Option>
                         ))}

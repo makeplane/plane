@@ -2,18 +2,15 @@ import React, { useEffect, useState } from "react";
 
 import Image from "next/image";
 import { useRouter } from "next/router";
-import type { GetServerSideProps, NextPage } from "next";
-
 import useSWR, { mutate } from "swr";
 import { Controller, useForm } from "react-hook-form";
+import Dropzone from "react-dropzone";
+import { LinkIcon } from "@heroicons/react/24/outline";
 
 // react-dropzone
-import Dropzone from "react-dropzone";
 // lib
 import { requiredWorkspaceAdmin } from "lib/auth";
 // constants
-import { companySize } from "constants/";
-import { WORKSPACE_DETAILS, USER_WORKSPACES } from "constants/fetch-keys";
 // services
 import workspaceService from "services/workspace.service";
 import fileServices from "services/file.service";
@@ -28,10 +25,12 @@ import ConfirmWorkspaceDeletion from "components/workspace/confirm-workspace-del
 import { Spinner, Button, Input, CustomSelect } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import OutlineButton from "components/ui/outline-button";
-// icons
-import { LinkIcon } from "@heroicons/react/24/outline";
-// types
 import type { IWorkspace } from "types";
+import type { GetServerSideProps, NextPage } from "next";
+import { WORKSPACE_DETAILS, USER_WORKSPACES } from "constants/fetch-keys";
+import { companySize } from "constants/";
+// icons
+// types
 // common
 import { copyTextToClipboard } from "constants/common";
 

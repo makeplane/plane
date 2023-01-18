@@ -36,8 +36,7 @@ const BreadcrumbItem: React.FC<BreadcrumbItemProps> = ({
   title,
   link,
   icon,
-}) => {
-  return (
+}) => (
     <>
       {link ? (
         <Link href={link}>
@@ -58,7 +57,6 @@ const BreadcrumbItem: React.FC<BreadcrumbItemProps> = ({
       )}
     </>
   );
-};
 
 Breadcrumbs.BreadcrumbItem = BreadcrumbItem;
 

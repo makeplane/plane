@@ -47,7 +47,7 @@ export const GoogleLoginButton: FC<IGoogleLoginButton> = (props) => {
   return (
     <>
       <Script src="https://accounts.google.com/gsi/client" async defer onLoad={loadScript} />
-      <div className="w-full" id="googleSignInButton" ref={googleSignInButton}></div>
+      <div className="w-full" id="googleSignInButton" ref={googleSignInButton} />
     </>
   );
 };

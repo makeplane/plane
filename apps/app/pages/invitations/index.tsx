@@ -1,26 +1,26 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import type { NextPage, NextPageContext } from "next";
 import useSWR from "swr";
+import { CubeIcon, PlusIcon } from "@heroicons/react/24/outline";
 // services
 import workspaceService from "services/workspace.service";
 // hooks
 import useUser from "hooks/use-user";
 // constants
 import { requiredAuth } from "lib/auth";
-import { USER_WORKSPACES } from "constants/fetch-keys";
-import { USER_WORKSPACE_INVITATIONS } from "constants/api-routes";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 // components
 import SingleInvitation from "components/workspace/SingleInvitation";
 // ui
 import { Button, Spinner, EmptySpace, EmptySpaceItem } from "components/ui";
-// icons
-import { CubeIcon, PlusIcon } from "@heroicons/react/24/outline";
-// types
 import type { IWorkspaceMemberInvitation } from "types";
+import type { NextPage, NextPageContext } from "next";
+import { USER_WORKSPACE_INVITATIONS } from "constants/api-routes";
+import { USER_WORKSPACES } from "constants/fetch-keys";
+// icons
+// types
 
 const OnBoard: NextPage = () => {
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
@@ -42,13 +42,11 @@ const OnBoard: NextPage = () => {
     action: "accepted" | "withdraw"
   ) => {
     if (action === "accepted") {
-      setInvitationsRespond((prevData) => {
-        return [...prevData, workspace_invitation.id];
-      });
+      setInvitationsRespond((prevData) => [...prevData, workspace_invitation.id]);
     } else if (action === "withdraw") {
-      setInvitationsRespond((prevData) => {
-        return prevData.filter((item: string) => item !== workspace_invitation.id);
-      });
+      setInvitationsRespond((prevData) =>
+        prevData.filter((item: string) => item !== workspace_invitation.id)
+      );
     }
   };
 

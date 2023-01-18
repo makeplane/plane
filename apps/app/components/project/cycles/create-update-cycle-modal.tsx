@@ -9,15 +9,15 @@ import { Controller, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 // services
 import cycleService from "services/cycles.service";
+import { Button, Input, TextArea, CustomSelect } from "components/ui";
+import type { ICycle } from "types";
 // fetch keys
 import { CYCLE_LIST } from "constants/fetch-keys";
 // common
 import { renderDateFormat } from "constants/common";
 // ui
-import { Button, Input, TextArea, CustomSelect } from "components/ui";
 
 // types
-import type { ICycle } from "types";
 type Props = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;

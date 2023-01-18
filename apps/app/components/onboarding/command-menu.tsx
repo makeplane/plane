@@ -3,8 +3,7 @@ import Image from "next/image";
 // images
 import Commands from "public/onboarding/command-menu.png";
 
-const CommandMenu: React.FC = () => {
-  return (
+const CommandMenu: React.FC = () => (
     <div className="h-full space-y-4">
       <div className="h-1/2 space-y-4">
         <h5 className="text-sm text-gray-500">Open the contextual menu with:</h5>
@@ -21,6 +20,5 @@ const CommandMenu: React.FC = () => {
       </div>
     </div>
   );
-};
 
 export default CommandMenu;
