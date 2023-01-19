@@ -2,12 +2,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
 // icons
+import { CalendarDaysIcon } from "@heroicons/react/24/outline";
 import User from "public/user.png";
 // types
 import { IModule } from "types";
 // common
 import { renderShortNumericDateFormat } from "constants/common";
-import { CalendarDaysIcon } from "@heroicons/react/24/outline";
 import { MODULE_STATUS } from "constants/";
 
 type Props = {
@@ -103,7 +103,7 @@ const SingleModuleCard: React.FC<Props> = ({ module }) => {
                 style={{
                   backgroundColor: MODULE_STATUS.find((s) => s.value === module.status)?.color,
                 }}
-              ></span>
+               />
               {module.status}
             </div>
           </div>

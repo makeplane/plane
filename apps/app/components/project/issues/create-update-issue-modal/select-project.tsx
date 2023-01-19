@@ -5,20 +5,20 @@ import { useRouter } from "next/router";
 // swr
 import useSWR from "swr";
 // react hook form
-import { Controller } from "react-hook-form";
-import type { Control } from "react-hook-form";
+import { Controller, Control } from "react-hook-form";
+import { Listbox, Transition } from "@headlessui/react";
+import { ClipboardDocumentListIcon } from "@heroicons/react/24/outline";
+// import type { Control } from "react-hook-form";
 // services
+import type { IIssue } from "types";
 import projectService from "services/project.service";
 // headless ui
-import { Listbox, Transition } from "@headlessui/react";
 // icons
-import { ClipboardDocumentListIcon } from "@heroicons/react/24/outline";
 // ui
 import { Spinner } from "components/ui";
 // fetch-keys
 import { PROJECTS_LIST } from "constants/fetch-keys";
 // types
-import type { IIssue } from "types";
 
 type Props = {
   control: Control<IIssue, any>;
@@ -108,7 +108,7 @@ const SelectProject: React.FC<Props> = ({ control, setActiveProject }) => {
             )}
           </Listbox>
         )}
-      ></Controller>
+      />
     </>
   );
 };

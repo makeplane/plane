@@ -6,6 +6,8 @@ import useSWR, { mutate } from "swr";
 
 import { Dialog, Transition } from "@headlessui/react";
 // services
+import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import type { IState } from "types";
 import stateServices from "services/state.service";
 import issuesServices from "services/issues.service";
 // fetch api
@@ -13,12 +15,10 @@ import { STATE_LIST, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // common
 import { groupBy } from "constants/common";
 // icons
-import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
 import { Button } from "components/ui";
 
 // types
-import type { IState } from "types";
 type Props = {
   isOpen: boolean;
   onClose: () => void;

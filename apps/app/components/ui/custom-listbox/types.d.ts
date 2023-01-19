@@ -6,7 +6,6 @@ export type Props = {
   value: any;
   onChange: (value: any) => void;
   multiple?: boolean;
-  width?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "w-full";
   optionsFontsize?: "sm" | "md" | "lg" | "xl" | "2xl";
   className?: string;
   footerOption?: JSX.Element;

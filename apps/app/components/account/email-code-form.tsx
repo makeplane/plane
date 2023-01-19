@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 // ui
+import { CheckCircleIcon } from "@heroicons/react/20/solid";
 import { Button, Input } from "components/ui";
 // services
 import authenticationService from "services/authentication.service";
 // icons
-import { CheckCircleIcon } from "@heroicons/react/20/solid";
 
 // types
 type EmailCodeFormValues = {
@@ -21,7 +21,7 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
     handleSubmit,
     setError,
     setValue,
-    formState: { errors, isSubmitting, dirtyFields, isValid, isDirty },
+    formState: { errors, isSubmitting, isValid, isDirty },
   } = useForm<EmailCodeFormValues>({
     defaultValues: {
       email: "",

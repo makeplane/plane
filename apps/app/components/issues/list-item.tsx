@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-// ui
-import { CustomMenu } from "components/ui";
-// icons
+
 import { CalendarDaysIcon } from "@heroicons/react/24/outline";
+
+// icons
 // types
 import { IIssue, Properties } from "types";
 // common

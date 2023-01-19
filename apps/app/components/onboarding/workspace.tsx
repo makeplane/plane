@@ -14,12 +14,12 @@ import useToast from "hooks/useToast";
 import workspaceService from "services/workspace.service";
 // ui
 import { CustomSelect, Input } from "components/ui";
+// types
+import { IWorkspace, IWorkspaceMemberInvitation } from "types";
 // constants
 import { companySize } from "constants/";
 // fetch-keys
 import { USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
-// types
-import { IWorkspace, IWorkspaceMemberInvitation } from "types";
 
 type Props = {
   setStep: React.Dispatch<React.SetStateAction<number>>;
@@ -83,13 +83,11 @@ const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
     action: "accepted" | "withdraw"
   ) => {
     if (action === "accepted") {
-      setInvitationsRespond((prevData) => {
-        return [...prevData, workspace_invitation.id];
-      });
+      setInvitationsRespond((prevData) => [...prevData, workspace_invitation.id]);
     } else if (action === "withdraw") {
-      setInvitationsRespond((prevData) => {
-        return prevData.filter((item: string) => item !== workspace_invitation.id);
-      });
+      setInvitationsRespond((prevData) =>
+        prevData.filter((item: string) => item !== workspace_invitation.id)
+      );
     }
   };
 

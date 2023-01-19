@@ -8,13 +8,13 @@ import { useForm } from "react-hook-form";
 
 import { Dialog, Transition } from "@headlessui/react";
 // services
+import type { IModule, ModuleLink } from "types";
 import modulesService from "services/modules.service";
 // hooks
 import useUser from "hooks/use-user";
 // ui
 import { Button, Input } from "components/ui";
 // types
-import type { IModule, ModuleLink } from "types";
 // fetch-keys
 import { MODULE_DETAIL, MODULE_LIST } from "constants/fetch-keys";
 
@@ -46,9 +46,7 @@ const ModuleLinkModal: React.FC<Props> = ({ isOpen, module, handleClose }) => {
   const onSubmit = async (formData: ModuleLink) => {
     if (!workspaceSlug || !projectId || !module) return;
 
-    const previousLinks = module.link_module.map((l) => {
-      return { title: l.title, url: l.url };
-    });
+    const previousLinks = module.link_module.map((l) => ({ title: l.title, url: l.url }));
 
     const payload: Partial<IModule> = {
       links_list: [...previousLinks, formData],

@@ -30,11 +30,11 @@ import {
 } from "@remirror/react";
 import { tableControllerPluginKey, TableExtension } from "@remirror/extension-react-tables";
 // components`
+import { useRouter } from "next/router";
 import { RichTextToolbar } from "./toolbar";
 import { MentionAutoComplete } from "./mention-autocomplete";
 import fileService from "services/file.service";
 import { Spinner } from "components/ui";
-import { useRouter } from "next/router";
 
 export interface IRemirrorRichTextEditor {
   placeholder?: string;
@@ -64,10 +64,10 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = ({
 
   // remirror error handler
   const onError: InvalidContentHandler = useCallback(
-    ({ json, invalidContent, transformers }: any) => {
+    ({ json, invalidContent, transformers }: any) =>
       // Automatically remove all invalid nodes and marks.
-      return transformers.remove(json, invalidContent);
-    },
+       transformers.remove(json, invalidContent)
+    ,
     []
   );
 
@@ -82,13 +82,10 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = ({
       setImageLoader(true);
 
       return [
-        () => {
-          return new Promise(async (resolve, reject) => {
+        () => new Promise(async (resolve, reject) => {
             const imageUrl = await fileService
               .uploadFile(workspaceSlug as string, formData)
-              .then((response) => {
-                return response.asset;
-              });
+              .then((response) => response.asset);
 
             resolve({
               align: "left",
@@ -99,8 +96,7 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = ({
             });
 
             setImageLoader(false);
-          });
-        },
+          }),
       ];
     } catch {
       return [];

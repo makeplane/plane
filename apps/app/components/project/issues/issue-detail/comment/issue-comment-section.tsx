@@ -3,15 +3,15 @@ import React, { useMemo } from "react";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 
+import { useForm, Controller } from "react-hook-form";
 import type { KeyedMutator } from "swr";
 
-import { useForm, Controller } from "react-hook-form";
 // services
+import type { IIssueActivity, IIssueComment } from "types";
 import issuesServices from "services/issues.service";
 // ui
 import { Loader } from "components/ui";
 // types
-import type { IIssueActivity, IIssueComment } from "types";
 // common
 import { debounce } from "constants/common";
 
@@ -41,7 +41,7 @@ const AddIssueComment: React.FC<{
 
   const router = useRouter();
 
-  let { workspaceSlug, projectId, issueId } = router.query;
+  const { workspaceSlug, projectId, issueId } = router.query;
 
   const onSubmit = async (formData: IIssueComment) => {
     if (

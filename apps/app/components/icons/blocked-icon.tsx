@@ -2,8 +2,7 @@ import React from "react";
 
 import type { Props } from "./types";
 
-export const BlockedIcon: React.FC<Props> = ({ width = "24", height = "24", className }) => {
-  return (
+export const BlockedIcon: React.FC<Props> = ({ width = "24", height = "24", className }) => (
     <svg
       width={width}
       height={height}
@@ -24,4 +23,3 @@ export const BlockedIcon: React.FC<Props> = ({ width = "24", height = "24", clas
       />
     </svg>
   );
-};

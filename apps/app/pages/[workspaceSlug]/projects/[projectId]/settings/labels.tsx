@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-import type { NextPageContext, NextPage } from "next";
 import useSWR from "swr";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { Popover, Transition } from "@headlessui/react";
 import { TwitterPicker } from "react-color";
+import type { NextPageContext, NextPage } from "next";
 // services
 import projectService from "services/project.service";
 import workspaceService from "services/workspace.service";
@@ -176,7 +176,7 @@ const LabelsSettings: NextPage<TLabelSettingsProps> = (props) => {
                           style={{
                             backgroundColor: watch("colour") ?? "green",
                           }}
-                        ></span>
+                         />
                       )}
                     </Popover.Button>
 
@@ -249,10 +249,10 @@ const LabelsSettings: NextPage<TLabelSettingsProps> = (props) => {
               ))
             ) : (
               <Loader className="space-y-5 md:w-2/3">
-                <Loader.Item height="40px"></Loader.Item>
-                <Loader.Item height="40px"></Loader.Item>
-                <Loader.Item height="40px"></Loader.Item>
-                <Loader.Item height="40px"></Loader.Item>
+                <Loader.Item height="40px" />
+                <Loader.Item height="40px" />
+                <Loader.Item height="40px" />
+                <Loader.Item height="40px" />
               </Loader>
             )}
           </>

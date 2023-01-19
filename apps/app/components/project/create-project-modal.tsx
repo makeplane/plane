@@ -10,12 +10,6 @@ import { Dialog, Transition } from "@headlessui/react";
 // services
 import projectServices from "services/project.service";
 import workspaceService from "services/workspace.service";
-// common
-import { getRandomEmoji } from "constants/common";
-// constants
-import { NETWORK_CHOICES } from "constants/";
-// fetch keys
-import { PROJECTS_LIST, WORKSPACE_MEMBERS_ME } from "constants/fetch-keys";
 // hooks
 import useToast from "hooks/useToast";
 // ui
@@ -24,6 +18,12 @@ import { Button, Input, TextArea, CustomSelect } from "components/ui";
 import EmojiIconPicker from "components/emoji-icon-picker";
 // types
 import { IProject } from "types";
+// common
+import { getRandomEmoji } from "constants/common";
+// constants
+import { NETWORK_CHOICES } from "constants/";
+// fetch keys
+import { PROJECTS_LIST, WORKSPACE_MEMBERS_ME } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
@@ -98,9 +98,7 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
     }
   }, [projectName, projectIdentifier, setValue, isChangeIdentifierRequired]);
 
-  useEffect(() => {
-    return () => setIsChangeIdentifierRequired(true);
-  }, [isOpen]);
+  useEffect(() => () => setIsChangeIdentifierRequired(true), [isOpen]);
 
   const handleClose = () => {
     setIsOpen(false);

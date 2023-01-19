@@ -4,10 +4,22 @@ import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 
-import { useForm, Controller, UseFormWatch } from "react-hook-form";
+import { useForm, Controller, UseFormWatch, Control } from "react-hook-form";
 
 import { TwitterPicker } from "react-color";
 // services
+import { Popover, Listbox, Transition } from "@headlessui/react";
+import {
+  TagIcon,
+  ChevronDownIcon,
+  LinkIcon,
+  CalendarDaysIcon,
+  TrashIcon,
+  PlusIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
+// import type { Control } from "react-hook-form";
+import type { ICycle, IIssue, IIssueLabels } from "types";
 import issuesServices from "services/issues.service";
 // hooks
 import useToast from "hooks/useToast";
@@ -21,22 +33,10 @@ import SelectAssignee from "components/project/issues/issue-detail/issue-detail-
 import SelectBlocker from "components/project/issues/issue-detail/issue-detail-sidebar/select-blocker";
 import SelectBlocked from "components/project/issues/issue-detail/issue-detail-sidebar/select-blocked";
 // headless ui
-import { Popover, Listbox, Transition } from "@headlessui/react";
 // ui
 import { Input, Button, Spinner } from "components/ui";
 // icons
-import {
-  TagIcon,
-  ChevronDownIcon,
-  LinkIcon,
-  CalendarDaysIcon,
-  TrashIcon,
-  PlusIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
 // types
-import type { Control } from "react-hook-form";
-import type { ICycle, IIssue, IIssueLabels } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // common
@@ -269,7 +269,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
                       <span
                         className="h-2 w-2 flex-shrink-0 rounded-full"
                         style={{ backgroundColor: singleLabel.colour ?? "green" }}
-                      ></span>
+                      />
                       {singleLabel.name}
                       <XMarkIcon className="h-2 w-2 group-hover:text-red-500" />
                     </span>
@@ -318,7 +318,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
                                           <span
                                             className="h-2 w-2 flex-shrink-0 rounded-full"
                                             style={{ backgroundColor: label.colour ?? "green" }}
-                                          ></span>
+                                          />
                                           {label.name}
                                         </Listbox.Option>
                                       ))
@@ -370,7 +370,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
                             style={{
                               backgroundColor: watch("colour") ?? "green",
                             }}
-                          ></span>
+                          />
                         )}
                         <ChevronDownIcon className="h-3 w-3" />
                       </Popover.Button>

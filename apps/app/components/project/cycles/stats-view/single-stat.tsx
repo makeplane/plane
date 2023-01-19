@@ -7,14 +7,14 @@ import { useRouter } from "next/router";
 // swr
 import useSWR from "swr";
 // services
+import { CalendarDaysIcon } from "@heroicons/react/20/solid";
+import { ArrowPathIcon, CheckIcon, UserIcon, UserGroupIcon } from "@heroicons/react/24/outline";
 import cyclesService from "services/cycles.service";
 // hooks
 import useUser from "hooks/use-user";
 // ui
 import { Button, CustomMenu } from "components/ui";
 // icons
-import { CalendarDaysIcon } from "@heroicons/react/20/solid";
-import { ArrowPathIcon, CheckIcon, UserIcon, UserGroupIcon } from "@heroicons/react/24/outline";
 // types
 import { CycleIssueResponse, ICycle } from "types";
 // fetch-keys
@@ -126,8 +126,7 @@ const SingleStat: React.FC<TSingleStatProps> = (props) => {
           <div className="col-span-2 space-y-3 px-5">
             <h4 className="text-sm tracking-widest">PROGRESS</h4>
             <div className="space-y-3 text-xs">
-              {Object.keys(groupedIssues).map((group) => {
-                return (
+              {Object.keys(groupedIssues).map((group) => (
                   <div key={group} className="flex items-center gap-2">
                     <div className="flex basis-2/3 items-center gap-2">
                       <span
@@ -135,7 +134,7 @@ const SingleStat: React.FC<TSingleStatProps> = (props) => {
                         style={{
                           backgroundColor: stateGroupColours[group],
                         }}
-                      ></span>
+                       />
                       <h6 className="text-xs capitalize">{group}</h6>
                     </div>
                     <div>
@@ -152,8 +151,7 @@ const SingleStat: React.FC<TSingleStatProps> = (props) => {
                       </span>
                     </div>
                   </div>
-                );
-              })}
+                ))}
             </div>
           </div>
         </div>

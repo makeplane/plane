@@ -1,8 +1,8 @@
-import React, { useCallback, useState, useEffect } from "react";
-import type { NextPage } from "next";
+import React, { useCallback, useState } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 // hooks
+import type { NextPage } from "next";
 import useUser from "hooks/use-user";
 // services
 import authenticationService from "services/authentication.service";
@@ -41,7 +41,7 @@ const SignInPage: NextPage = () => {
           credential,
           clientId,
         })
-        .then(async (response) => {
+        .then(async () => {
           await onSignInSuccess();
         })
         .catch((err) => {
@@ -59,7 +59,7 @@ const SignInPage: NextPage = () => {
         credential: githubToken,
         clientId: NEXT_PUBLIC_GITHUB_ID,
       })
-      .then(async (response) => {
+      .then(async () => {
         await onSignInSuccess();
       })
       .catch((err) => {

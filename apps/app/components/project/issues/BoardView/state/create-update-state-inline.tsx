@@ -8,6 +8,7 @@ import { TwitterPicker } from "react-color";
 
 import { Popover, Transition } from "@headlessui/react";
 // constants
+import type { IState } from "types";
 import { GROUP_CHOICES } from "constants/";
 import { STATE_LIST } from "constants/fetch-keys";
 // services
@@ -15,7 +16,6 @@ import stateService from "services/state.service";
 // ui
 import { Button, Input, Select, Spinner } from "components/ui";
 // types
-import type { IState } from "types";
 
 type Props = {
   workspaceSlug?: string;

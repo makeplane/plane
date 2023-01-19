@@ -1,9 +1,5 @@
 import * as React from "react";
-import type {
-  UseFormRegister,
-  RegisterOptions,
-  FieldError,
-} from "react-hook-form";
+import type { UseFormRegister, RegisterOptions } from "react-hook-form";
 
 export interface Props extends React.ComponentPropsWithoutRef<"input"> {
   label?: string;

@@ -1,25 +1,21 @@
 // react
 import React from "react";
 // common
-import { classNames } from "../helper";
+import { classNames } from "components/ui/helper";
 
-const isEmailValid = (email: string) => {
-  return String(email)
+const isEmailValid = (email: string) =>
+  String(email)
     .toLowerCase()
     .match(
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     );
-};
 
 const MultiInput = ({ label, name, placeholder, setValue, watch }: any) => {
   const handleKeyDown = (e: any) => {
     if (e.key !== "Enter") return;
     const value = e.target.value;
     if (!value.trim()) return;
-    if (
-      isEmailValid(value) &&
-      !watch(name)?.find((item: any) => item.email === value)
-    ) {
+    if (isEmailValid(value) && !watch(name)?.find((item: any) => item.email === value)) {
       setValue(name, [...(watch(name) || []), { email: value }]);
       e.target.value = "";
     }
@@ -28,10 +24,7 @@ const MultiInput = ({ label, name, placeholder, setValue, watch }: any) => {
   const handleBlur = (e: React.FocusEvent<HTMLInputElement, Element>) => {
     const value = e.target.value;
     if (!value.trim()) return;
-    if (
-      isEmailValid(value) &&
-      !watch(name)?.find((item: any) => item.email === value)
-    ) {
+    if (isEmailValid(value) && !watch(name)?.find((item: any) => item.email === value)) {
       setValue(name, [...(watch(name) || []), { email: value }]);
       e.target.value = "";
     } else {
@@ -39,16 +32,13 @@ const MultiInput = ({ label, name, placeholder, setValue, watch }: any) => {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: any) => {
     const value = e.target.value.trim();
     if (!value) return;
     if (value.includes(",")) {
       const tags = value.split(",");
       tags.forEach((tag: string) => {
-        if (
-          isEmailValid(tag) &&
-          !watch(name)?.find((item: any) => item.email === tag)
-        ) {
+        if (isEmailValid(tag) && !watch(name)?.find((item: any) => item.email === tag)) {
           setValue(name, [...(watch(name) || []), { email: tag }]);
         }
       });
@@ -68,11 +58,7 @@ const MultiInput = ({ label, name, placeholder, setValue, watch }: any) => {
       {label && <label className="mb-2 text-gray-500">{label}</label>}
       <div className="rounded-md border p-2">
         {watch(name)?.map((tag: any, index: number) => (
-          <button
-            type="button"
-            className="m-1.5 rounded-full bg-slate-300 p-1.5"
-            key={index}
-          >
+          <button type="button" className="m-1.5 rounded-full bg-slate-300 p-1.5" key={index}>
             {tag.email} <span onClick={() => removeTag(index)}>&times;</span>
           </button>
         ))}

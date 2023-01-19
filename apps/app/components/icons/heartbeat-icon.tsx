@@ -2,8 +2,7 @@ import React from "react";
 
 import type { Props } from "./types";
 
-export const HeartbeatIcon: React.FC<Props> = ({ width = "24", height = "24", className }) => {
-  return (
+export const HeartbeatIcon: React.FC<Props> = ({ width = "24", height = "24", className }) => (
     <svg
       width={width}
       height={height}
@@ -21,4 +20,3 @@ export const HeartbeatIcon: React.FC<Props> = ({ width = "24", height = "24", cl
       />
     </svg>
   );
-};

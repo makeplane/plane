@@ -7,8 +7,7 @@ export const CyclesIcon: React.FC<Props> = ({
   height = "24",
   className,
   color = "black",
-}) => {
-  return (
+}) => (
     <svg
       width={width}
       height={height}
@@ -33,4 +32,3 @@ export const CyclesIcon: React.FC<Props> = ({
       />
     </svg>
   );
-};

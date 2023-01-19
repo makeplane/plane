@@ -7,8 +7,7 @@ export const TagIcon: React.FC<Props> = ({
   height = "24",
   className,
   color = "black",
-}) => {
-  return (
+}) => (
     <svg
       width={width}
       height={height}
@@ -23,4 +22,3 @@ export const TagIcon: React.FC<Props> = ({
       />
     </svg>
   );
-};

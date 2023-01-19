@@ -1,24 +1,23 @@
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 // ui
-import { Button } from "components/ui";
 // icons
 import {
   CalendarDaysIcon,
   CheckIcon,
-  MinusIcon,
   PencilIcon,
   PlusIcon,
   TrashIcon,
   ClipboardDocumentListIcon,
 } from "@heroicons/react/24/outline";
-// types
 import type { IProject } from "types";
-// common
-import { renderShortNumericDateFormat } from "constants/common";
+import { Button } from "components/ui";
 // hooks
 import useProjectMembers from "hooks/use-project-members";
+// types
+// common
+import { renderShortNumericDateFormat } from "constants/common";
 
 export type ProjectCardProps = {
   workspaceSlug: string;

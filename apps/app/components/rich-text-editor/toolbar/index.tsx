@@ -15,8 +15,7 @@ import { UnorderedListButton } from "./unordered-list";
 // table
 import { TableControls } from "./table-controls";
 
-export const RichTextToolbar: React.FC = () => {
-  return (
+export const RichTextToolbar: React.FC = () => (
     <div className="flex items-center gap-y-2 divide-x">
       <div className="flex items-center gap-x-1 px-2">
         <UndoButton />
@@ -43,4 +42,3 @@ export const RichTextToolbar: React.FC = () => {
       </div>
     </div>
   );
-};

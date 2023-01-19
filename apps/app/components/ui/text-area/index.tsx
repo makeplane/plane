@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
+import { Props } from "./types";
+import { classNames } from "components/ui/helper"; // TODO: Replace this with clsx package
 // commons
-import { classNames } from "../helper"; // TODO: Replace this with clsx package
 
 // types
-import { Props } from "./types";
 
 // TODO: Remove this Hook from hooks folder and integrate this logic with component.
 // Updates the height of a <textarea> when the value changes.
@@ -79,7 +79,7 @@ export const TextArea: React.FC<Props> = ({
           className ?? ""
         )}
         {...rest}
-      ></textarea>
+      />
       {error?.message && <div className="text-sm text-red-500">{error.message}</div>}
     </>
   );

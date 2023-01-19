@@ -6,9 +6,9 @@ class MyDocument extends Document {
       <Html>
         <Head>
           <link rel="manifest" href="/manifest.json" />
-          <link rel="apple-touch-icon" href="/icon.png"></link>
+          <link rel="apple-touch-icon" href="/icon.png" />
           <meta name="theme-color" content="#fff" />
-          <script defer data-domain="app.plane.so" src="https://plausible.io/js/script.js"></script>
+          <script defer data-domain="app.plane.so" src="https://plausible.io/js/script.js" />
         </Head>
         <body>
           <Main />

@@ -6,6 +6,7 @@ import useSWR from "swr";
 
 import { Disclosure, Transition } from "@headlessui/react";
 // services
+import { PlusIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
 import workspaceService from "services/workspace.service";
 // constants
 import { addSpaceIfCamelCase } from "constants/common";
@@ -19,7 +20,6 @@ import SingleListIssue from "components/common/list-view/single-issue";
 // ui
 import { CustomMenu, Spinner } from "components/ui";
 // icons
-import { PlusIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
 // types
 import { IIssue, IWorkspaceMember, NestedKeyOf, Properties } from "types";
 

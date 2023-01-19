@@ -7,17 +7,17 @@ import { mutate } from "swr";
 import { Controller, useForm } from "react-hook-form";
 // headless
 import { Dialog, Transition } from "@headlessui/react";
+import type { ICycle } from "types";
 // services
 import cycleService from "services/cycles.service";
+import { Button, Input, TextArea, CustomSelect } from "components/ui";
 // fetch keys
 import { CYCLE_LIST } from "constants/fetch-keys";
 // common
 import { renderDateFormat } from "constants/common";
 // ui
-import { Button, Input, TextArea, CustomSelect } from "components/ui";
 
 // types
-import type { ICycle } from "types";
 type Props = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;

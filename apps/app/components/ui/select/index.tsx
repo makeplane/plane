@@ -15,8 +15,7 @@ export const Select: React.FC<Props> = ({
   options,
   size = "rg",
   fullWidth = true,
-}) => {
-  return (
+}) => (
     <>
       {label && (
         <label htmlFor={id} className="text-gray-500 mb-2">
@@ -46,4 +45,3 @@ export const Select: React.FC<Props> = ({
       )}
     </>
   );
-};

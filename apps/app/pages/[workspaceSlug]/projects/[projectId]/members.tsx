@@ -2,9 +2,11 @@ import React, { useState } from "react";
 
 import Image from "next/image";
 import { useRouter } from "next/router";
+import useSWR from "swr";
+import { Menu } from "@headlessui/react";
+import { PlusIcon, EllipsisHorizontalIcon } from "@heroicons/react/20/solid";
 import type { NextPage, NextPageContext } from "next";
 
-import useSWR from "swr";
 // services
 import projectService from "services/project.service";
 import workspaceService from "services/workspace.service";
@@ -20,12 +22,10 @@ import AppLayout from "layouts/app-layout";
 import ConfirmProjectMemberRemove from "components/project/confirm-project-member-remove";
 import SendProjectInvitationModal from "components/project/send-project-invitation-modal";
 // headless ui
-import { Menu } from "@headlessui/react";
 // ui
 import { Spinner, CustomListbox, HeaderButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { PlusIcon, EllipsisHorizontalIcon } from "@heroicons/react/20/solid";
 // fetch-keys
 import {
   PROJECT_MEMBERS,
@@ -80,7 +80,7 @@ const ProjectMembers: NextPage = () => {
       : null
   );
 
-  let members = [
+  const members = [
     ...(projectMembers?.map((item: any) => ({
       id: item.id,
       avatar: item.member?.avatar,
@@ -232,11 +232,9 @@ const ProjectMembers: NextPage = () => {
                                 });
                                 mutateMembers(
                                   (prevData: any) =>
-                                    prevData.map((m: any) => {
-                                      return m.id === selectedMember
+                                    prevData.map((m: any) => m.id === selectedMember
                                         ? { ...m, ...res, role: value }
-                                        : m;
-                                    }),
+                                        : m),
                                   false
                                 );
                                 setSelectedMember(null);

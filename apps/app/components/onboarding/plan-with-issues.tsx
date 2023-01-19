@@ -3,8 +3,7 @@ import Image from "next/image";
 // images
 import Issue from "public/onboarding/issue.png";
 
-const PlanWithIssues: React.FC = () => {
-  return (
+const PlanWithIssues: React.FC = () => (
     <div className="h-full space-y-4">
       <div className="relative h-1/2">
         <div
@@ -12,7 +11,7 @@ const PlanWithIssues: React.FC = () => {
           style={{
             background: "linear-gradient(0deg, #fff 84.2%, rgba(255, 255, 255, 0) 34.35%)",
           }}
-        ></div>
+         />
         <Image
           src={Issue}
           className="h-full"
@@ -31,6 +30,5 @@ const PlanWithIssues: React.FC = () => {
       </div>
     </div>
   );
-};
 
 export default PlanWithIssues;

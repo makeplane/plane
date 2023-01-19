@@ -1,7 +1,14 @@
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+// types
 // lib
+import {
+  ArrowRightIcon,
+  CalendarDaysIcon,
+  ClipboardDocumentListIcon,
+} from "@heroicons/react/24/outline";
+import type { NextPage, NextPageContext } from "next";
 import { requiredAuth } from "lib/auth";
 // layouts
 import AppLayout from "layouts/app-layout";
@@ -9,18 +16,11 @@ import AppLayout from "layouts/app-layout";
 import { Spinner } from "components/ui";
 import { WorkspaceHomeCardsList, WorkspaceHomeGreetings } from "components/workspace";
 // icons
-import {
-  ArrowRightIcon,
-  CalendarDaysIcon,
-  ClipboardDocumentListIcon,
-} from "@heroicons/react/24/outline";
 import { LayerDiagonalIcon } from "components/icons";
 // hooks
 import useProjects from "hooks/use-projects";
 import useWorkspaceDetails from "hooks/use-workspace-details";
 import useIssues from "hooks/use-issues";
-// types
-import type { NextPage, NextPageContext } from "next";
 // common
 import {
   addSpaceIfCamelCase,
@@ -34,7 +34,7 @@ const WorkspacePage: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // API Fetching
-  const { myIssues } = useIssues();
+  const { myIssues } = useIssues(workspaceSlug?.toString());
   const { projects, recentProjects } = useProjects();
   const {} = useWorkspaceDetails();
 

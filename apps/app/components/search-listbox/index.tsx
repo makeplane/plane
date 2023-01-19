@@ -5,11 +5,11 @@ import { useRouter } from "next/router";
 
 import useSWR from "swr";
 // services
-import workspaceService from "services/workspace.service";
 // headless ui
 import { Transition, Combobox } from "@headlessui/react";
 // types
 import type { Props } from "./types";
+import workspaceService from "services/workspace.service";
 // common
 import { classNames } from "components/ui/helper";
 // fetch-keys

@@ -7,23 +7,23 @@ import useSWR, { mutate } from "swr";
 // react hook form
 import { SubmitHandler, useForm } from "react-hook-form";
 // services
+import { Combobox, Dialog, Transition } from "@headlessui/react";
+import { FolderIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import issuesServices from "services/issues.service";
 import projectService from "services/project.service";
 // hooks
 import useToast from "hooks/useToast";
 // headless ui
-import { Combobox, Dialog, Transition } from "@headlessui/react";
 // ui
 import { Button } from "components/ui";
+import { LayerDiagonalIcon } from "components/icons";
 // icons
-import { FolderIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 // types
 import { IIssue, IssueResponse } from "types";
-// fetch keys
-import { PROJECT_ISSUES_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
 // common
 import { classNames } from "constants/common";
-import { LayerDiagonalIcon } from "components/icons";
+// fetch keys
+import { PROJECT_ISSUES_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
 
 type FormInput = {
   issue_ids: string[];
@@ -99,17 +99,15 @@ const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
           });
           mutate<IssueResponse>(
             PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
-            (prevData) => {
-              return {
-                ...(prevData as IssueResponse),
-                count: (prevData?.results ?? []).filter(
-                  (p) => !data.issue_ids.some((id) => p.id === id)
-                ).length,
-                results: (prevData?.results ?? []).filter(
-                  (p) => !data.issue_ids.some((id) => p.id === id)
-                ),
-              };
-            },
+            (prevData) => ({
+              ...(prevData as IssueResponse),
+              count: (prevData?.results ?? []).filter(
+                (p) => !data.issue_ids.some((id) => p.id === id)
+              ).length,
+              results: (prevData?.results ?? []).filter(
+                (p) => !data.issue_ids.some((id) => p.id === id)
+              ),
+            }),
             false
           );
         })

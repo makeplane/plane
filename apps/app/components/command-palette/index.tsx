@@ -6,6 +6,13 @@ import { useRouter } from "next/router";
 // swr
 import useSWR from "swr";
 // hooks
+import { Combobox, Dialog, Transition } from "@headlessui/react";
+import {
+  FolderIcon,
+  RectangleStackIcon,
+  ClipboardDocumentListIcon,
+  MagnifyingGlassIcon,
+} from "@heroicons/react/24/outline";
 import useTheme from "hooks/useTheme";
 import useToast from "hooks/useToast";
 import useUser from "hooks/use-user";
@@ -19,20 +26,13 @@ import CreateUpdateCycleModal from "components/project/cycles/create-update-cycl
 import CreateUpdateModuleModal from "components/project/modules/create-update-module-modal";
 import BulkDeleteIssuesModal from "components/common/bulk-delete-issues-modal";
 // headless ui
-import { Combobox, Dialog, Transition } from "@headlessui/react";
-// constants
-import { USER_ISSUE } from "constants/fetch-keys";
-// ui
-import { Button } from "components/ui";
-// icons
-import {
-  FolderIcon,
-  RectangleStackIcon,
-  ClipboardDocumentListIcon,
-  MagnifyingGlassIcon,
-} from "@heroicons/react/24/outline";
 // types
 import { IIssue } from "types";
+// ui
+import { Button } from "components/ui";
+// constants
+import { USER_ISSUE } from "constants/fetch-keys";
+// icons
 // common
 import { classNames, copyTextToClipboard } from "constants/common";
 

@@ -2,15 +2,15 @@ import React, { useEffect, useState, useRef } from "react";
 // headless ui
 import { Tab, Transition, Popover } from "@headlessui/react";
 // hooks
-import useOutsideClickDetector from "hooks/useOutsideClickDetector";
 // common
-import { getRandomEmoji } from "constants/common";
-// emoji
-import emojis from "./emojis.json";
 // helpers
 import { getRecentEmojis, saveRecentEmoji } from "./helpers";
 // types
 import { Props } from "./types";
+// emoji
+import emojis from "./emojis.json";
+import useOutsideClickDetector from "hooks/useOutsideClickDetector";
+import { getRandomEmoji } from "constants/common";
 
 const tabOptions = [
   {

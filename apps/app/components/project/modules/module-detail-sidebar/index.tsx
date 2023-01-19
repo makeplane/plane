@@ -7,6 +7,14 @@ import { mutate } from "swr";
 
 import { Controller, useForm } from "react-hook-form";
 // services
+import {
+  CalendarDaysIcon,
+  ChartPieIcon,
+  LinkIcon,
+  PlusIcon,
+  TrashIcon,
+  UserIcon,
+} from "@heroicons/react/24/outline";
 import modulesService from "services/modules.service";
 // hooks
 import useToast from "hooks/useToast";
@@ -18,14 +26,6 @@ import ModuleLinkModal from "components/project/modules/module-link-modal";
 // ui
 import { Loader } from "components/ui";
 // icons
-import {
-  CalendarDaysIcon,
-  ChartPieIcon,
-  LinkIcon,
-  PlusIcon,
-  TrashIcon,
-  UserIcon,
-} from "@heroicons/react/24/outline";
 // types
 import { IModule, ModuleIssueResponse } from "types";
 // fetch-keys
@@ -160,7 +160,7 @@ const ModuleDetailSidebar: React.FC<Props> = ({
                   </div>
                   <div className="flex items-center gap-2 sm:basis-1/2">
                     <div className="grid flex-shrink-0 place-items-center">
-                      <span className="h-4 w-4 rounded-full border-2 border-gray-300 border-r-blue-500"></span>
+                      <span className="h-4 w-4 rounded-full border-2 border-gray-300 border-r-blue-500" />
                     </div>
                     {groupedIssues.completed.length}/{moduleIssues?.length}
                   </div>
@@ -271,13 +271,13 @@ const ModuleDetailSidebar: React.FC<Props> = ({
         ) : (
           <Loader>
             <div className="space-y-2">
-              <Loader.Item height="15px" width="50%"></Loader.Item>
-              <Loader.Item height="15px" width="30%"></Loader.Item>
+              <Loader.Item height="15px" width="50%" />
+              <Loader.Item height="15px" width="30%" />
             </div>
             <div className="mt-8 space-y-3">
-              <Loader.Item height="30px"></Loader.Item>
-              <Loader.Item height="30px"></Loader.Item>
-              <Loader.Item height="30px"></Loader.Item>
+              <Loader.Item height="30px" />
+              <Loader.Item height="30px" />
+              <Loader.Item height="30px" />
             </div>
           </Loader>
         )}

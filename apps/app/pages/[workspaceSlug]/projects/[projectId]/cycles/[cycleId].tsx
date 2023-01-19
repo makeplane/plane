@@ -5,6 +5,13 @@ import { useRouter } from "next/router";
 // swr
 import useSWR, { mutate } from "swr";
 // layouots
+import { Squares2X2Icon } from "@heroicons/react/20/solid";
+import {
+  ArrowLeftIcon,
+  ArrowPathIcon,
+  ListBulletIcon,
+  PlusIcon,
+} from "@heroicons/react/24/outline";
 import AppLayout from "layouts/app-layout";
 // components
 import CyclesListView from "components/project/cycles/list-view";
@@ -25,13 +32,6 @@ import useIssuesProperties from "hooks/use-issue-properties";
 import { CustomMenu, EmptySpace, EmptySpaceItem, Spinner } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { Squares2X2Icon } from "@heroicons/react/20/solid";
-import {
-  ArrowLeftIcon,
-  ArrowPathIcon,
-  ListBulletIcon,
-  PlusIcon,
-} from "@heroicons/react/24/outline";
 // types
 import { CycleIssueResponse, IIssue, SelectIssue } from "types";
 // fetch-keys
@@ -93,9 +93,7 @@ const SingleCycle: React.FC = () => {
           )
       : null
   );
-  const cycleIssuesArray = cycleIssues?.map((issue) => {
-    return { bridge: issue.id, ...issue.issue_detail };
-  });
+  const cycleIssuesArray = cycleIssues?.map((issue) => ({ bridge: issue.id, ...issue.issue_detail }));
 
   const { data: members } = useSWR(
     workspaceSlug && projectId ? PROJECT_MEMBERS(workspaceSlug as string) : null,

@@ -1,4 +1,3 @@
-import * as React from "react";
 // components
 export * from "./button";
 export * from "./custom-listbox";

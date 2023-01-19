@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 
 import useSWR from "swr";
 // hooks
+import { Listbox, Transition } from "@headlessui/react";
 import useUser from "hooks/use-user";
 // constants
 import { addSpaceIfCamelCase, classNames } from "constants/common";
@@ -11,7 +12,6 @@ import { STATE_LIST } from "constants/fetch-keys";
 // services
 import stateServices from "services/state.service";
 // ui
-import { Listbox, Transition } from "@headlessui/react";
 // types
 import { IIssue, IState } from "types";
 

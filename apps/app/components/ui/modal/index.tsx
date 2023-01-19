@@ -2,9 +2,9 @@ import { Fragment, ReactNode } from "react";
 // Headless ui imports
 import { Dialog, Transition } from "@headlessui/react";
 // Design components
+import { XMarkIcon } from "@heroicons/react/24/outline";
 import { Button } from "components/ui";
 // Icons
-import { XMarkIcon } from "@heroicons/react/24/outline";
 
 type ModalProps = {
   isModal: boolean;
@@ -22,7 +22,7 @@ type ModalProps = {
 const Modal = (props: ModalProps) => {
   const closeModal = () => {
     props.setModal(false);
-    props.onClose ? props.onClose() : () => {};
+    props.onClose ? props.onClose() : () => ({});
   };
 
   const width: string =

@@ -1,19 +1,15 @@
 import React, { useState } from "react";
 
 import { useRouter } from "next/router";
-import type { NextPage, NextPageContext } from "next";
-
 import useSWR from "swr";
+import { PencilSquareIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 
-import { PROJECT_DETAILS, STATE_LIST } from "constants/fetch-keys";
 // services
+import type { NextPage, NextPageContext } from "next";
 import stateService from "services/state.service";
 import projectService from "services/project.service";
-import workspaceService from "services/workspace.service";
 // lib
 import { requiredAdmin } from "lib/auth";
-// hooks
-import useUser from "hooks/use-user";
 // layouts
 import SettingsLayout from "layouts/settings-layout";
 // components
@@ -26,9 +22,9 @@ import {
 import { Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { PencilSquareIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 // types
 import { IState } from "types";
+import { PROJECT_DETAILS, STATE_LIST } from "constants/fetch-keys";
 // common
 import { addSpaceIfCamelCase, groupBy } from "constants/common";
 
@@ -123,7 +119,7 @@ const StatesSettings: NextPage<TStateSettingsProps> = (props) => {
                               style={{
                                 backgroundColor: state.color,
                               }}
-                            ></div>
+                            />
                             <h6 className="text-sm">{addSpaceIfCamelCase(state.name)}</h6>
                           </div>
                           <div className="flex items-center gap-2">
@@ -167,10 +163,10 @@ const StatesSettings: NextPage<TStateSettingsProps> = (props) => {
               ))
             ) : (
               <Loader className="space-y-5 md:w-2/3">
-                <Loader.Item height="40px"></Loader.Item>
-                <Loader.Item height="40px"></Loader.Item>
-                <Loader.Item height="40px"></Loader.Item>
-                <Loader.Item height="40px"></Loader.Item>
+                <Loader.Item height="40px" />
+                <Loader.Item height="40px" />
+                <Loader.Item height="40px" />
+                <Loader.Item height="40px" />
               </Loader>
             )}
           </div>

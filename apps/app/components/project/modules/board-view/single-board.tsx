@@ -3,6 +3,9 @@ import React, { useState } from "react";
 // swr
 import useSWR from "swr";
 // services
+import { PlusIcon } from "@heroicons/react/24/outline";
+import { useRouter } from "next/router";
+import { Draggable } from "react-beautiful-dnd";
 import workspaceService from "services/workspace.service";
 // hooks
 import useUser from "hooks/use-user";
@@ -11,16 +14,13 @@ import SingleIssue from "components/common/board-view/single-issue";
 // ui
 import { CustomMenu } from "components/ui";
 // icons
-import { PlusIcon } from "@heroicons/react/24/outline";
 // types
 import { IIssue, IWorkspaceMember, NestedKeyOf, Properties } from "types";
 // fetch-keys
 import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 // common
 import { addSpaceIfCamelCase } from "constants/common";
-import { useRouter } from "next/router";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
-import { Draggable } from "react-beautiful-dnd";
 
 type Props = {
   properties: Properties;

@@ -6,9 +6,9 @@ import useSWR, { mutate } from "swr";
 
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // services
+import { RectangleStackIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import issuesServices from "services/issues.service";
 // icons
-import { RectangleStackIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 // commons
 import { classNames } from "constants/common";
 // types

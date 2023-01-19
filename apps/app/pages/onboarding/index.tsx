@@ -1,9 +1,9 @@
 import { useState } from "react";
 
 import Image from "next/image";
-import type { NextPage, NextPageContext } from "next";
 import { useRouter } from "next/router";
 // hooks
+import type { NextPage, NextPageContext } from "next";
 import useUser from "hooks/use-user";
 // lib
 import { requiredAuth } from "lib/auth";

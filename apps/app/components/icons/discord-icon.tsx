@@ -2,8 +2,7 @@ import React from "react";
 
 import type { Props } from "./types";
 
-export const DiscordIcon: React.FC<Props> = ({ width = "24", height = "24", className }) => {
-  return (
+export const DiscordIcon: React.FC<Props> = ({ width = "24", height = "24", className }) => (
     <svg
       width={width}
       height={height}
@@ -22,4 +21,3 @@ export const DiscordIcon: React.FC<Props> = ({ width = "24", height = "24", clas
       </defs>
     </svg>
   );
-};

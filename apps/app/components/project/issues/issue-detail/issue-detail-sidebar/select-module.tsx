@@ -6,13 +6,13 @@ import useSWR from "swr";
 
 import { Control, Controller } from "react-hook-form";
 // constants
+import { RectangleGroupIcon } from "@heroicons/react/24/outline";
 import { MODULE_LIST } from "constants/fetch-keys";
 // services
 import modulesService from "services/modules.service";
 // ui
 import { Spinner, CustomSelect } from "components/ui";
 // icons
-import { RectangleGroupIcon } from "@heroicons/react/24/outline";
 // types
 import { IIssue, IModule } from "types";
 // common

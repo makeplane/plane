@@ -7,17 +7,17 @@ import useSWR from "swr";
 
 import { SubmitHandler, useForm, UseFormWatch } from "react-hook-form";
 // services
+import { Combobox, Dialog, Transition } from "@headlessui/react";
+import { FolderIcon, MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import issuesService from "services/issues.service";
 // constants
 import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // hooks
 import useToast from "hooks/useToast";
 // headless ui
-import { Combobox, Dialog, Transition } from "@headlessui/react";
 // ui
 import { Button } from "components/ui";
 // icons
-import { FolderIcon, MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { BlockedIcon } from "components/icons";
 // types
 import { IIssue } from "types";

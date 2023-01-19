@@ -2,13 +2,13 @@ import React from "react";
 
 import { useRouter } from "next/router";
 // hooks
+import { Popover, Transition } from "@headlessui/react";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import useIssuesProperties from "hooks/use-issue-properties";
 // headless ui
-import { Popover, Transition } from "@headlessui/react";
 // ui
 import { CustomMenu } from "components/ui";
 // icons
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
 // types
 import { IIssue, NestedKeyOf, Properties } from "types";
 // common

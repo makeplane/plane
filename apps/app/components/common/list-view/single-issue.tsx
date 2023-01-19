@@ -2,11 +2,11 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // services
+import { CalendarDaysIcon } from "@heroicons/react/24/outline";
 import issuesService from "services/issues.service";
 // ui
 import { CustomMenu } from "components/ui";
 // icons
-import { CalendarDaysIcon } from "@heroicons/react/24/outline";
 // types
 import { IIssue, IssueResponse, Properties } from "types";
 // fetch-keys
@@ -36,7 +36,7 @@ const SingleListIssue: React.FC<Props> = ({
   removeIssue,
 }) => {
   const router = useRouter();
-  let { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = router.query;
 
   const { data: issues } = useSWR<IssueResponse>(
     workspaceSlug && projectId

@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from "react";
 
-import type { NextPage } from "next";
 import { useRouter } from "next/router";
 
 import { mutate } from "swr";
 
 // services
+import type { NextPage } from "next";
 import authenticationService from "services/authentication.service";
 // constants
-import { USER_WORKSPACES } from "constants/fetch-keys";
 // hooks
 import useUser from "hooks/use-user";
 import useToast from "hooks/useToast";
 // layouts
 import DefaultLayout from "layouts/default-layout";
+import { USER_WORKSPACES } from "constants/fetch-keys";
 
 const MagicSignIn: NextPage = () => {
   const router = useRouter();

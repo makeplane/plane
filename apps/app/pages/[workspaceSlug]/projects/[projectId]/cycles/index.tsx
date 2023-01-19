@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
+import useSWR from "swr";
+import { PlusIcon } from "@heroicons/react/24/outline";
+import { Tab } from "@headlessui/react";
 import type { NextPage, NextPageContext } from "next";
 
-import useSWR from "swr";
 // services
 import cycleService from "services/cycles.service";
 import projectService from "services/project.service";
@@ -17,14 +19,12 @@ import CycleStatsView from "components/project/cycles/stats-view";
 import { HeaderButton, EmptySpace, EmptySpaceItem, Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { PlusIcon } from "@heroicons/react/24/outline";
 // types
 import { ICycle, SelectCycleType } from "types";
 // fetching keys
 import { CYCLE_LIST, PROJECT_DETAILS, WORKSPACE_DETAILS } from "constants/fetch-keys";
 // lib
 import { requiredAuth } from "lib/auth";
-import { Tab } from "@headlessui/react";
 import { CyclesIcon } from "components/icons";
 
 const ProjectCycles: NextPage = () => {
@@ -196,8 +196,8 @@ const ProjectCycles: NextPage = () => {
         )
       ) : (
         <Loader className="space-y-5">
-          <Loader.Item height="150px"></Loader.Item>
-          <Loader.Item height="150px"></Loader.Item>
+          <Loader.Item height="150px" />
+          <Loader.Item height="150px" />
         </Loader>
       )}
     </AppLayout>
