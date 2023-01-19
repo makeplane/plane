@@ -39,3 +39,5 @@ from .issue import (
 )
 
 from .module import ModuleWriteSerializer, ModuleSerializer, ModuleIssueSerializer
+
+from .api_token import APITokenSerializer

@@ -83,6 +83,9 @@ from plane.api.views import (
     ModuleViewSet,
     ModuleIssueViewSet,
     ## End Modules
+    # Api Tokens
+    ApiTokenEndpoint,
+    ## End Api Tokens
 )
 
 
@@ -673,4 +676,7 @@ urlpatterns = [
         name="project-module-issues",
     ),
     ## End Modules
+    # API Tokens
+    path("api-tokens/", ApiTokenEndpoint.as_view(), name="api-token"),
+    ## End API Tokens
 ]
