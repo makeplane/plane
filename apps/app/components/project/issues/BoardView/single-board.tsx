@@ -16,10 +16,10 @@ import SingleIssue from "components/common/board-view/single-issue";
 // services
 import workspaceService from "services/workspace.service";
 // icons
+// helpers
+import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
 import { IIssue, Properties, NestedKeyOf, IWorkspaceMember } from "types";
-// common
-import { addSpaceIfCamelCase } from "constants/common";
 // fetch-keys
 import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 

@@ -4,8 +4,10 @@ import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 
+// react-beautiful-dnd
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
-// import type { DropResult } from "react-beautiful-dnd";
+// types
+import type { IState, IIssue, NestedKeyOf, IssueResponse } from "types";
 // hook
 import useIssuesProperties from "hooks/use-issue-properties";
 // services
@@ -19,8 +21,6 @@ import CreateUpdateIssuesModal from "components/project/issues/create-update-iss
 import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
 // ui
 import { Spinner } from "components/ui";
-// types
-import type { IState, IIssue, NestedKeyOf, IssueResponse } from "types";
 // fetch-keys
 import { STATE_LIST, PROJECT_ISSUES_LIST, PROJECT_MEMBERS } from "constants/fetch-keys";
 

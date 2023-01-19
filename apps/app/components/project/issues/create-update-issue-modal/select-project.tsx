@@ -1,24 +1,19 @@
-// react
 import React from "react";
-// next
 import { useRouter } from "next/router";
-// swr
 import useSWR from "swr";
+
 // react hook form
 import { Controller, Control } from "react-hook-form";
 import { Listbox, Transition } from "@headlessui/react";
 import { ClipboardDocumentListIcon } from "@heroicons/react/24/outline";
-// services
-import projectService from "services/project.service";
-// headless ui
-// icons
-// ui
-import { Spinner } from "components/ui";
 // types
 import type { IIssue } from "types";
+// services
+import projectService from "services/project.service";
+// ui
+import { Spinner } from "components/ui";
 // fetch-keys
 import { PROJECTS_LIST } from "constants/fetch-keys";
-// types
 
 type Props = {
   control: Control<IIssue, any>;

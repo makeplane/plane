@@ -4,21 +4,22 @@ import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 
+// headless ui
 import { Dialog, Transition } from "@headlessui/react";
-// services
+// icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+// types
 import type { IState } from "types";
+// services
 import stateServices from "services/state.service";
 import issuesServices from "services/issues.service";
-// fetch api
-import { STATE_LIST, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
-// common
-import { groupBy } from "constants/common";
-// icons
 // ui
 import { Button } from "components/ui";
+// helpers
+import { groupBy } from "helpers/array.helper";
+// fetch api
+import { STATE_LIST, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 
-// types
 type Props = {
   isOpen: boolean;
   onClose: () => void;

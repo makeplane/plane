@@ -1,31 +1,32 @@
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-// types
-// lib
+
+// icons
 import {
   ArrowRightIcon,
   CalendarDaysIcon,
   ClipboardDocumentListIcon,
 } from "@heroicons/react/24/outline";
+// types
+import type { NextPage, NextPageContext } from "next";
+// lib
 import { requiredAuth } from "lib/auth";
 // layouts
 import AppLayout from "layouts/app-layout";
 // components
 import { Spinner } from "components/ui";
 import { WorkspaceHomeCardsList, WorkspaceHomeGreetings } from "components/workspace";
-// icons
-import { LayerDiagonalIcon } from "components/icons";
 // hooks
 import useProjects from "hooks/use-projects";
 import useWorkspaceDetails from "hooks/use-workspace-details";
 import useIssues from "hooks/use-issues";
+// icons
+import { LayerDiagonalIcon } from "components/icons";
 // helpers
-import { renderShortNumericDateFormat } from "helpers/date.helper";
-// types
-import type { NextPage, NextPageContext } from "next";
-// common
-import { addSpaceIfCamelCase, findHowManyDaysLeft, groupBy } from "constants/common";
+import { renderShortNumericDateFormat, findHowManyDaysLeft } from "helpers/date-time.helper";
+import { addSpaceIfCamelCase } from "helpers/string.helper";
+import { groupBy } from "helpers/array.helper";
 
 const WorkspacePage: NextPage = () => {
   // router

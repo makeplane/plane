@@ -1,8 +1,6 @@
 import React, { createContext, useCallback, useReducer } from "react";
 // uuid
 import { v4 as uuid } from "uuid";
-// constants
-import { SET_TOAST_ALERT, REMOVE_TOAST_ALERT } from "constants/toast.context.constants";
 // components
 import ToastAlert from "components/toast-alert";
 
@@ -17,7 +15,7 @@ type ToastAlert = {
 };
 
 type ReducerActionType = {
-  type: typeof SET_TOAST_ALERT | typeof REMOVE_TOAST_ALERT;
+  type: "SET_TOAST_ALERT" | "REMOVE_TOAST_ALERT";
   payload: ToastAlert;
 };
 
@@ -45,16 +43,18 @@ export const reducer: ReducerFunctionType = (state, action) => {
   const { type, payload } = action;
 
   switch (type) {
-    case SET_TOAST_ALERT:
+    case "SET_TOAST_ALERT":
       return {
         ...state,
         toastAlerts: [...(state.toastAlerts ?? []), payload],
       };
-    case REMOVE_TOAST_ALERT:
+
+    case "REMOVE_TOAST_ALERT":
       return {
         ...state,
         toastAlerts: state.toastAlerts?.filter((toastAlert) => toastAlert.id !== payload.id),
       };
+
     default: {
       return state;
     }
@@ -66,7 +66,7 @@ export const ToastContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
   const removeAlert = useCallback((id: string) => {
     dispatch({
-      type: REMOVE_TOAST_ALERT,
+      type: "REMOVE_TOAST_ALERT",
       payload: { id, title: "", message: "", type: "success" },
     });
   }, []);
@@ -80,7 +80,7 @@ export const ToastContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
       const id = uuid();
       const { title, type, message } = data;
       dispatch({
-        type: SET_TOAST_ALERT,
+        type: "SET_TOAST_ALERT",
         payload: { id, title, message, type: type ?? "success" },
       });
 

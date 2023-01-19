@@ -26,15 +26,15 @@ import CreateUpdateCycleModal from "components/project/cycles/create-update-cycl
 import CreateUpdateModuleModal from "components/project/modules/create-update-module-modal";
 import BulkDeleteIssuesModal from "components/common/bulk-delete-issues-modal";
 // headless ui
+// helpers
+import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import { IIssue } from "types";
 // ui
 import { Button } from "components/ui";
-// constants
-import { USER_ISSUE } from "constants/fetch-keys";
 // icons
-// common
-import { copyTextToClipboard } from "constants/common";
+// fetch-keys
+import { USER_ISSUE } from "constants/fetch-keys";
 
 const CommandPalette: React.FC = () => {
   const [query, setQuery] = useState("");

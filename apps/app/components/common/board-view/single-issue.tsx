@@ -19,14 +19,14 @@ import projectService from "services/project.service";
 // icons
 import User from "public/user.png";
 // helpers
-import { renderShortNumericDateFormat } from "helpers/date.helper";
+import { renderShortNumericDateFormat, findHowManyDaysLeft } from "helpers/date-time.helper";
+import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
 import { IIssue, IssueResponse, IWorkspaceMember, Properties } from "types";
 // common
 import { PRIORITIES } from "constants/";
 import { PROJECT_ISSUES_LIST, STATE_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
 import { getPriorityIcon } from "constants/global";
-import { addSpaceIfCamelCase, findHowManyDaysLeft } from "constants/common";
 
 type Props = {
   issue: IIssue;

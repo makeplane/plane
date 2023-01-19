@@ -2,7 +2,12 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import useSWR from "swr";
+
+// icons
 import { CubeIcon, PlusIcon } from "@heroicons/react/24/outline";
+// types
+import type { NextPage, NextPageContext } from "next";
+import type { IWorkspaceMemberInvitation } from "types";
 // services
 import workspaceService from "services/workspace.service";
 // hooks
@@ -14,10 +19,6 @@ import DefaultLayout from "layouts/default-layout";
 import SingleInvitation from "components/workspace/SingleInvitation";
 // ui
 import { Button, Spinner, EmptySpace, EmptySpaceItem } from "components/ui";
-// icons
-// types
-import type { NextPage, NextPageContext } from "next";
-import type { IWorkspaceMemberInvitation } from "types";
 
 const OnBoard: NextPage = () => {
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);

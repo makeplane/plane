@@ -3,15 +3,16 @@ import React from "react";
 import { useRouter } from "next/router";
 
 import useSWR from "swr";
+
+// headless ui
+import { Listbox, Transition } from "@headlessui/react";
 // services
 import stateServices from "services/state.service";
-// hooks
-import { Listbox, Transition } from "@headlessui/react";
-// ui
+// helpers
+import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
 import { IIssue, IState } from "types";
-// constants
-import { addSpaceIfCamelCase } from "constants/common";
+// fetch-keys
 import { STATE_LIST } from "constants/fetch-keys";
 
 type Props = {

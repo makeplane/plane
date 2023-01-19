@@ -4,8 +4,10 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 import { PencilSquareIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 
-// services
+// types
 import type { NextPage, NextPageContext } from "next";
+import { IState } from "types";
+// services
 import stateService from "services/state.service";
 import projectService from "services/project.service";
 // lib
@@ -21,12 +23,11 @@ import {
 // ui
 import { Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-// icons
-// types
-import { IState } from "types";
+// helpers
+import { addSpaceIfCamelCase } from "helpers/string.helper";
+import { groupBy } from "helpers/array.helper";
+// fetch-keys
 import { PROJECT_DETAILS, STATE_LIST } from "constants/fetch-keys";
-// common
-import { addSpaceIfCamelCase, groupBy } from "constants/common";
 
 type TStateSettingsProps = {
   isMember: boolean;

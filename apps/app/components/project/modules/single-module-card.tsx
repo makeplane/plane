@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { CalendarDaysIcon } from "@heroicons/react/24/outline";
 import User from "public/user.png";
 // helpers
-import { renderShortNumericDateFormat } from "helpers/date.helper";
+import { renderShortNumericDateFormat } from "helpers/date-time.helper";
 // types
 import { IModule } from "types";
 // common

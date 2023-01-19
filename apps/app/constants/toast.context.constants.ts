@@ -1,2 +1,0 @@
-export const SET_TOAST_ALERT = "SET_TOAST_ALERT";
-export const REMOVE_TOAST_ALERT = "REMOVE_TOAST_ALERT";

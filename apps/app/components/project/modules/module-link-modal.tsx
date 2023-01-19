@@ -7,13 +7,13 @@ import { mutate } from "swr";
 import { useForm } from "react-hook-form";
 
 import { Dialog, Transition } from "@headlessui/react";
-// services
-import modulesService from "services/modules.service";
 // hooks
-// ui
-import { Button, Input } from "components/ui";
 // types
 import type { IModule, ModuleLink } from "types";
+// services
+import modulesService from "services/modules.service";
+// ui
+import { Button, Input } from "components/ui";
 // fetch-keys
 import { MODULE_LIST } from "constants/fetch-keys";
 

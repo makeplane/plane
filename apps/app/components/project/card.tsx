@@ -11,14 +11,14 @@ import {
   TrashIcon,
   ClipboardDocumentListIcon,
 } from "@heroicons/react/24/outline";
+// types
+import type { IProject } from "types";
+// ui
 import { Button } from "components/ui";
 // hooks
 import useProjectMembers from "hooks/use-project-members";
 // helpers
-import { renderShortNumericDateFormat } from "helpers/date.helper";
-// types
-import type { IProject } from "types";
-// common
+import { renderShortNumericDateFormat } from "helpers/date-time.helper";
 
 export type ProjectCardProps = {
   workspaceSlug: string;

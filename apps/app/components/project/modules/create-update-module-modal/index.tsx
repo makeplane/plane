@@ -7,6 +7,8 @@ import { mutate } from "swr";
 import { useForm } from "react-hook-form";
 
 import { Dialog, Transition } from "@headlessui/react";
+// types
+import type { IModule } from "types";
 // components
 import SelectLead from "components/project/modules/create-update-module-modal/select-lead";
 import SelectMembers from "components/project/modules/create-update-module-modal/select-members";
@@ -16,9 +18,7 @@ import { Button, Input, TextArea } from "components/ui";
 // services
 import modulesService from "services/modules.service";
 // helpers
-import { renderDateFormat } from "helpers/date.helper";
-// types
-import type { IModule } from "types";
+import { renderDateFormat } from "helpers/date-time.helper";
 // fetch keys
 import { MODULE_LIST } from "constants/fetch-keys";
 

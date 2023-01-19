@@ -3,7 +3,8 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { Disclosure, Transition } from "@headlessui/react";
 import useSWR from "swr";
-// hooks
+
+// icons
 import {
   ChevronDownIcon,
   PlusIcon,
@@ -11,18 +12,19 @@ import {
   RectangleStackIcon,
   RectangleGroupIcon,
 } from "@heroicons/react/24/outline";
+import { CyclesIcon } from "components/icons";
+// hooks
 import useToast from "hooks/useToast";
+import useTheme from "hooks/useTheme";
 // services
 import projectService from "services/project.service";
 // components
 import { CreateProjectModal } from "components/project";
 // ui
 import { CustomMenu, Loader } from "components/ui";
-// icons
-import { CyclesIcon } from "components/icons";
-import useTheme from "hooks/useTheme";
-// constants
-import { copyTextToClipboard } from "constants/common";
+// helpers
+import { copyTextToClipboard } from "helpers/string.helper";
+// fetch-keys
 import { PROJECTS_LIST } from "constants/fetch-keys";
 
 const navigation = (workspaceSlug: string, projectId: string) => [

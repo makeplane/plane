@@ -6,9 +6,14 @@ import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 
+// react-hook-form
 import { Controller, useForm } from "react-hook-form";
-
+// headless ui
 import { Dialog, Menu, Transition } from "@headlessui/react";
+// icons
+import { EllipsisHorizontalIcon, XMarkIcon } from "@heroicons/react/24/outline";
+// types
+import type { IIssue, IssueResponse } from "types";
 // services
 import projectService from "services/project.service";
 import modulesService from "services/modules.service";
@@ -18,8 +23,6 @@ import useUser from "hooks/use-user";
 import useToast from "hooks/useToast";
 // ui
 import { Button, Input, Loader } from "components/ui";
-// icons
-import { EllipsisHorizontalIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // components
 import SelectState from "components/project/issues/create-update-issue-modal/select-state";
 import SelectCycles from "components/project/issues/create-update-issue-modal/select-cycle";
@@ -31,9 +34,8 @@ import SelectParent from "components/project/issues/create-update-issue-modal/se
 import CreateUpdateStateModal from "components/project/issues/BoardView/state/create-update-state-modal";
 import CreateUpdateCycleModal from "components/project/cycles/create-update-cycle-modal";
 // common
-import { renderDateFormat } from "helpers/date.helper";
-// types
-import type { IIssue, IssueResponse } from "types";
+import { renderDateFormat } from "helpers/date-time.helper";
+import { cosineSimilarity } from "helpers/string.helper";
 // fetch keys
 import {
   PROJECT_ISSUES_DETAILS,
@@ -43,8 +45,6 @@ import {
   PROJECTS_LIST,
   MODULE_ISSUES,
 } from "constants/fetch-keys";
-// common
-import { cosineSimilarity } from "constants/common";
 
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
   ssr: false,

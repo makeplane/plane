@@ -25,12 +25,13 @@ import ModuleLinkModal from "components/project/modules/module-link-modal";
 // ui
 import { Loader } from "components/ui";
 // icons
+// helpers
+import { copyTextToClipboard } from "helpers/string.helper";
+import { groupBy } from "helpers/array.helper";
 // types
 import { IModule, ModuleIssueResponse } from "types";
 // fetch-keys
 import { MODULE_LIST } from "constants/fetch-keys";
-// common
-import { copyTextToClipboard, groupBy } from "constants/common";
 
 const defaultValues: Partial<IModule> = {
   members_list: [],

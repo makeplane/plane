@@ -1,12 +1,11 @@
 import React from "react";
+
 // react hook form
 import { Controller, Control } from "react-hook-form";
-// hooks
-// components
-import IssuesListModal from "components/project/issues/issues-list-modal";
 // types
 import type { IIssue } from "types";
-// icons
+// components
+import IssuesListModal from "components/project/issues/issues-list-modal";
 
 type Props = {
   control: Control<IIssue, any>;

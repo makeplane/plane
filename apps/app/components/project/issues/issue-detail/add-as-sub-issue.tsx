@@ -4,11 +4,12 @@ import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 
+// headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
-// services
-import issuesServices from "services/issues.service";
 // icons
 import { RectangleStackIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+// services
+import issuesServices from "services/issues.service";
 // types
 import { IIssue, IssueResponse } from "types";
 // constants

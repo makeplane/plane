@@ -9,13 +9,12 @@ import issuesService from "services/issues.service";
 import { CustomMenu } from "components/ui";
 // icons
 // helpers
-import { renderShortNumericDateFormat } from "helpers/date.helper";
+import { renderShortNumericDateFormat, findHowManyDaysLeft } from "helpers/date-time.helper";
+import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
 import { IIssue, IssueResponse, Properties } from "types";
 // fetch-keys
 import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
-// common
-import { addSpaceIfCamelCase, findHowManyDaysLeft } from "constants/common";
 
 type Props = {
   type?: string;

@@ -1,22 +1,9 @@
 import React from "react";
-// next
 import { useRouter } from "next/router";
 import Image from "next/image";
-// swr
-// services
-import issuesServices from "services/issues.service";
 import { KeyedMutator } from "swr";
-// components
-import CommentCard from "components/project/issues/issue-detail/comment/issue-comment-card";
-// ui
-import { Loader } from "components/ui";
+
 // icons
-import { BlockedIcon, BlockerIcon, TagIcon, UserGroupIcon } from "components/icons";
-// helpers
-import { renderShortNumericDateFormat } from "helpers/date.helper";
-// types
-import { IIssueActivity, IIssueComment } from "types";
-// common
 import {
   CalendarDaysIcon,
   ChartBarIcon,
@@ -24,7 +11,19 @@ import {
   Squares2X2Icon,
   UserIcon,
 } from "@heroicons/react/24/outline";
-import { addSpaceIfCamelCase, timeAgo } from "constants/common";
+// services
+import issuesServices from "services/issues.service";
+// components
+import CommentCard from "components/project/issues/issue-detail/comment/issue-comment-card";
+// ui
+import { Loader } from "components/ui";
+// icons
+import { BlockedIcon, BlockerIcon, TagIcon, UserGroupIcon } from "components/icons";
+// helpers
+import { renderShortNumericDateFormat, timeAgo } from "helpers/date-time.helper";
+import { addSpaceIfCamelCase } from "helpers/string.helper";
+// types
+import { IIssueActivity, IIssueComment } from "types";
 
 const activityDetails: {
   [key: string]: {

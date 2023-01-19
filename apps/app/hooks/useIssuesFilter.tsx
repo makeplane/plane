@@ -1,18 +1,18 @@
+import { useRouter } from "next/router";
 // swr
 import useSWR from "swr";
 // services
 import stateService from "services/state.service";
-// constants
-import { STATE_LIST } from "constants/fetch-keys";
 // hooks
-import useTheme from "./useTheme";
-// commons
-import { groupBy, orderArrayBy } from "constants/common";
-// constants
-import { PRIORITIES } from "constants/";
+import useTheme from "hooks/useTheme";
+// helpers
+import { groupBy, orderArrayBy } from "helpers/array.helper";
 // types
 import type { IIssue } from "types";
-import { useRouter } from "next/router";
+// fetch-keys
+import { STATE_LIST } from "constants/fetch-keys";
+// constants
+import { PRIORITIES } from "constants/";
 
 // TODO: Check this logic
 const useIssuesFilter = (projectIssues: IIssue[]) => {

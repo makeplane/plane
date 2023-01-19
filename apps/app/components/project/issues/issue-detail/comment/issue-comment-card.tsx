@@ -1,20 +1,21 @@
 // react
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 // next
 import Image from "next/image";
 import dynamic from "next/dynamic";
+
 // react-hook-form
 import { useForm } from "react-hook-form";
-// hooks
+// icons
 import { CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
+// types
 import type { IIssueComment } from "types";
+// hooks
 import useUser from "hooks/use-user";
 // ui
 import { CustomMenu } from "components/ui";
-// icons
-// types
-// common
-import { timeAgo } from "constants/common";
+// helpers
+import { timeAgo } from "helpers/date-time.helper";
 
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), { ssr: false });
 

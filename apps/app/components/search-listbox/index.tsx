@@ -4,12 +4,12 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 
 import useSWR from "swr";
-// services
-import workspaceService from "services/workspace.service";
 // headless ui
 import { Transition, Combobox } from "@headlessui/react";
 // types
 import type { Props } from "./types";
+// services
+import workspaceService from "services/workspace.service";
 // fetch-keys
 import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 

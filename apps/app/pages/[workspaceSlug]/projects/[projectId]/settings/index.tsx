@@ -4,14 +4,11 @@ import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 
+// react-hook-form
 import { Controller, useForm } from "react-hook-form";
+// types
 import type { NextPage, NextPageContext } from "next";
-// fetch-keys
-import { PROJECTS_LIST, PROJECT_DETAILS, WORKSPACE_DETAILS } from "constants/fetch-keys";
-// common
-import { debounce } from "constants/common";
-// constants
-import { NETWORK_CHOICES } from "constants/";
+import { IProject, IWorkspace } from "types";
 // lib
 import { requiredAdmin } from "lib/auth";
 // layouts
@@ -28,9 +25,12 @@ import useToast from "hooks/useToast";
 import { Button, Input, TextArea, Loader, CustomSelect } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import OutlineButton from "components/ui/outline-button";
-
-// types
-import { IProject, IWorkspace } from "types";
+// helpers
+import { debounce } from "helpers/functions.helper";
+// fetch-keys
+import { PROJECTS_LIST, PROJECT_DETAILS, WORKSPACE_DETAILS } from "constants/fetch-keys";
+// constants
+import { NETWORK_CHOICES } from "constants/";
 
 const defaultValues: Partial<IProject> = {
   name: "",

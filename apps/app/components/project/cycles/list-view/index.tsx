@@ -4,24 +4,23 @@ import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
+// headless ui
 import { Disclosure, Transition } from "@headlessui/react";
-// services
+// icons
 import { PlusIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
-import workspaceService from "services/workspace.service";
-// constants
-import { addSpaceIfCamelCase } from "constants/common";
-import { WORKSPACE_MEMBERS, STATE_LIST } from "constants/fetch-keys";
 // services
+import workspaceService from "services/workspace.service";
 import stateService from "services/state.service";
-// hooks
-import useUser from "hooks/use-user";
 // components
 import SingleListIssue from "components/common/list-view/single-issue";
 // ui
 import { CustomMenu, Spinner } from "components/ui";
-// icons
+// helpers
+import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
 import { IIssue, IWorkspaceMember, NestedKeyOf, Properties } from "types";
+// fetch-keys
+import { WORKSPACE_MEMBERS, STATE_LIST } from "constants/fetch-keys";
 
 type Props = {
   groupedByIssues: {

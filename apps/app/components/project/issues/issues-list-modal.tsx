@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+
+// headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
-// ui
-import { Button } from "components/ui";
 // icons
 import { MagnifyingGlassIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
+// ui
+import { Button } from "components/ui";
 // types
 import { IIssue } from "types";
 import { LayerDiagonalIcon } from "components/icons";

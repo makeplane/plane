@@ -1,24 +1,21 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-// services
+
+// icons
 import { Disclosure, Transition } from "@headlessui/react";
 import { PlusIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
+// services
 import workspaceService from "services/workspace.service";
 import stateService from "services/state.service";
 // components
 import SingleListIssue from "components/common/list-view/single-issue";
-// headless ui
 // ui
 import { CustomMenu, Spinner } from "components/ui";
+// helpers
+import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
 import { IIssue, IWorkspaceMember, NestedKeyOf, Properties } from "types";
-// common
-import { addSpaceIfCamelCase } from "constants/common";
-
-// icons
 // fetch-keys
 import { STATE_LIST, WORKSPACE_MEMBERS } from "constants/fetch-keys";
 

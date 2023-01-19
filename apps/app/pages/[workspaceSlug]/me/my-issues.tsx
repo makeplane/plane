@@ -1,7 +1,12 @@
-import { Disclosure, Popover, Transition } from "@headlessui/react";
-import { ChevronDownIcon, PlusIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
-import { useRouter } from "next/router";
 import React from "react";
+import { useRouter } from "next/router";
+
+// headless ui
+import { Disclosure, Popover, Transition } from "@headlessui/react";
+// icons
+import { ChevronDownIcon, PlusIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
+// types
+import type { NextPage } from "next";
 // layouts
 import AppLayout from "layouts/app-layout";
 // hooks
@@ -16,10 +21,8 @@ import useIssuesProperties from "hooks/use-issue-properties";
 import { IIssue, Properties } from "types";
 // components
 import { IssueListItem } from "components/issues";
-// types
-import type { NextPage } from "next";
-// constants
-import { replaceUnderscoreIfSnakeCase } from "constants/common";
+// helpers
+import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 
 const MyIssuesPage: NextPage = () => {
   const router = useRouter();

@@ -3,17 +3,17 @@ import React, { useMemo } from "react";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 
+// react-hook-form
 import { useForm, Controller } from "react-hook-form";
-import type { KeyedMutator } from "swr";
-
-// services
+// types
 import type { IIssueActivity, IIssueComment } from "types";
+import type { KeyedMutator } from "swr";
+// services
 import issuesServices from "services/issues.service";
 // ui
 import { Loader } from "components/ui";
-// types
-// common
-import { debounce } from "constants/common";
+// helpers
+import { debounce } from "helpers/functions.helper";
 
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
   ssr: false,

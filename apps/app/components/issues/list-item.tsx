@@ -4,12 +4,11 @@ import { useRouter } from "next/router";
 
 import { CalendarDaysIcon } from "@heroicons/react/24/outline";
 // helpers
-import { renderShortNumericDateFormat } from "helpers/date.helper";
+import { renderShortNumericDateFormat, findHowManyDaysLeft } from "helpers/date-time.helper";
+import { addSpaceIfCamelCase } from "helpers/string.helper";
 // icons
 // types
 import { IIssue, Properties } from "types";
-// common
-import { addSpaceIfCamelCase, findHowManyDaysLeft } from "constants/common";
 
 type Props = {
   type?: string;

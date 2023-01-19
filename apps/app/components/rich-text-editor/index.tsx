@@ -29,11 +29,13 @@ import {
 } from "@remirror/react";
 import { TableExtension } from "@remirror/extension-react-tables";
 // components`
-import fileService from "services/file.service";
-import { Spinner } from "components/ui";
 import { useRouter } from "next/router";
 import { RichTextToolbar } from "./toolbar";
 import { MentionAutoComplete } from "./mention-autocomplete";
+// services
+import fileService from "services/file.service";
+// ui
+import { Spinner } from "components/ui";
 
 export interface IRemirrorRichTextEditor {
   placeholder?: string;

@@ -16,10 +16,10 @@ import { CreateProjectModal } from "components/project";
 // ui
 import { CustomMenu, Loader } from "components/ui";
 // icons
+// helpers
+import { copyTextToClipboard } from "helpers/string.helper";
 // fetch-keys
 import { PROJECTS_LIST } from "constants/fetch-keys";
-// constants
-import { copyTextToClipboard } from "constants/common";
 
 type Props = {
   navigation: (
