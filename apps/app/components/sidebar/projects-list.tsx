@@ -19,17 +19,17 @@ import { CustomMenu, Loader } from "components/ui";
 // fetch-keys
 import { PROJECTS_LIST } from "constants/fetch-keys";
 // constants
-import { classNames, copyTextToClipboard } from "constants/common";
+import { copyTextToClipboard } from "constants/common";
 
 type Props = {
   navigation: (
     workspaceSlug: string,
     projectId: string
-  ) => Array<{
+  ) => {
     name: string;
     href: string;
     icon: any;
-  }>;
+  }[];
   sidebarCollapse: boolean;
 };
 
@@ -125,22 +125,18 @@ const ProjectsList: React.FC<Props> = ({ navigation, sidebarCollapse }) => {
                           {navigation(workspaceSlug as string, project?.id).map((item) => (
                             <Link key={item.name} href={item.href}>
                               <a
-                                className={classNames(
+                                className={`group flex items-center rounded-md px-2 py-2 text-xs font-medium outline-none ${
                                   item.href === router.asPath
                                     ? "bg-gray-200 text-gray-900"
-                                    : "text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900",
-                                  "group flex items-center rounded-md px-2 py-2 text-xs font-medium outline-none",
-                                  sidebarCollapse ? "justify-center" : ""
-                                )}
+                                    : "text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900"
+                                } ${sidebarCollapse ? "justify-center" : ""}`}
                               >
                                 <item.icon
-                                  className={classNames(
+                                  className={`h-4 w-4 flex-shrink-0 ${
                                     item.href === router.asPath
                                       ? "text-gray-900"
-                                      : "text-gray-500 group-hover:text-gray-900",
-                                    "h-4 w-4 flex-shrink-0",
-                                    !sidebarCollapse ? "mr-3" : ""
-                                  )}
+                                      : "text-gray-500 group-hover:text-gray-900"
+                                  } ${!sidebarCollapse ? "mr-3" : ""}`}
                                   aria-hidden="true"
                                 />
                                 {!sidebarCollapse && item.name}

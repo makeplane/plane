@@ -1,6 +1,4 @@
 import React from "react";
-// commons
-import { classNames } from "components/ui/helper";
 
 type Props = {
   onClick?: () => void;
@@ -30,9 +28,7 @@ const OutlineButton = React.forwardRef<HTMLButtonElement, Props>(
       ref={ref}
       onClick={onClick}
       disabled={disabled}
-      className={classNames(
-        className,
-        "inline-flex items-center justify-center rounded font-medium duration-300",
+      className={`inline-flex items-center justify-center rounded font-medium duration-300 ${
         theme === "primary"
           ? `${
               disabled ? "opacity-70" : ""
@@ -45,7 +41,8 @@ const OutlineButton = React.forwardRef<HTMLButtonElement, Props>(
             } border border-transparent bg-green-500 text-white shadow-sm hover:bg-green-600 focus:outline-none  focus:ring-2 focus:ring-green-500`
           : `${
               disabled ? "opacity-70" : ""
-            } border border-red-500 text-red-500 shadow-sm hover:bg-red-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-red-500`,
+            } border border-red-500 text-red-500 shadow-sm hover:bg-red-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-red-500`
+      } ${
         size === "sm"
           ? "p-2 text-xs"
           : size === "md"
@@ -53,7 +50,7 @@ const OutlineButton = React.forwardRef<HTMLButtonElement, Props>(
           : size === "lg"
           ? "text-md px-4 py-2"
           : "px-2.5 py-2 text-sm"
-      )}
+      } ${className}`}
     >
       {children}
     </button>

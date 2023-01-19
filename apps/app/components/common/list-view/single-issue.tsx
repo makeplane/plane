@@ -1,3 +1,4 @@
+import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import useSWR from "swr";
@@ -7,16 +8,14 @@ import issuesService from "services/issues.service";
 // ui
 import { CustomMenu } from "components/ui";
 // icons
+// helpers
+import { renderShortNumericDateFormat } from "helpers/date.helper";
 // types
 import { IIssue, IssueResponse, Properties } from "types";
 // fetch-keys
 import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // common
-import {
-  addSpaceIfCamelCase,
-  findHowManyDaysLeft,
-  renderShortNumericDateFormat,
-} from "constants/common";
+import { addSpaceIfCamelCase, findHowManyDaysLeft } from "constants/common";
 
 type Props = {
   type?: string;

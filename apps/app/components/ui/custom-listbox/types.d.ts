@@ -4,7 +4,7 @@ export type Props = {
   options?: Array<{ display: string; value: any; color?: string; icon?: JSX.Element }>;
   icon?: JSX.Element;
   value: any;
-  onChange: (value: any) => void;
+  onChange: () => void;
   multiple?: boolean;
   optionsFontsize?: "sm" | "md" | "lg" | "xl" | "2xl";
   className?: string;

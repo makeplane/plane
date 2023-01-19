@@ -25,16 +25,15 @@ import {
   useRemirror,
   EditorComponent,
   OnChangeJSON,
-  TableComponents,
   OnChangeHTML,
 } from "@remirror/react";
-import { tableControllerPluginKey, TableExtension } from "@remirror/extension-react-tables";
+import { TableExtension } from "@remirror/extension-react-tables";
 // components`
+import fileService from "services/file.service";
+import { Spinner } from "components/ui";
 import { useRouter } from "next/router";
 import { RichTextToolbar } from "./toolbar";
 import { MentionAutoComplete } from "./mention-autocomplete";
-import fileService from "services/file.service";
-import { Spinner } from "components/ui";
 
 export interface IRemirrorRichTextEditor {
   placeholder?: string;
@@ -66,8 +65,7 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = ({
   const onError: InvalidContentHandler = useCallback(
     ({ json, invalidContent, transformers }: any) =>
       // Automatically remove all invalid nodes and marks.
-       transformers.remove(json, invalidContent)
-    ,
+      transformers.remove(json, invalidContent),
     []
   );
 
@@ -82,7 +80,8 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = ({
       setImageLoader(true);
 
       return [
-        () => new Promise(async (resolve, reject) => {
+        () =>
+          new Promise(async (resolve, reject) => {
             const imageUrl = await fileService
               .uploadFile(workspaceSlug as string, formData)
               .then((response) => response.asset);

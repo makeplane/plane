@@ -8,7 +8,6 @@ import {
   CalendarDaysIcon,
   ClipboardDocumentListIcon,
 } from "@heroicons/react/24/outline";
-import type { NextPage, NextPageContext } from "next";
 import { requiredAuth } from "lib/auth";
 // layouts
 import AppLayout from "layouts/app-layout";
@@ -21,13 +20,12 @@ import { LayerDiagonalIcon } from "components/icons";
 import useProjects from "hooks/use-projects";
 import useWorkspaceDetails from "hooks/use-workspace-details";
 import useIssues from "hooks/use-issues";
+// helpers
+import { renderShortNumericDateFormat } from "helpers/date.helper";
+// types
+import type { NextPage, NextPageContext } from "next";
 // common
-import {
-  addSpaceIfCamelCase,
-  findHowManyDaysLeft,
-  groupBy,
-  renderShortNumericDateFormat,
-} from "constants/common";
+import { addSpaceIfCamelCase, findHowManyDaysLeft, groupBy } from "constants/common";
 
 const WorkspacePage: NextPage = () => {
   // router

@@ -7,14 +7,11 @@ import useSWR, { mutate } from "swr";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 // import type { DropResult } from "react-beautiful-dnd";
 // hook
-import type { IState, IIssue, NestedKeyOf, IssueResponse } from "types";
 import useIssuesProperties from "hooks/use-issue-properties";
 // services
 import stateServices from "services/state.service";
 import issuesServices from "services/issues.service";
 import projectService from "services/project.service";
-// fetching keys
-import { STATE_LIST, PROJECT_ISSUES_LIST, PROJECT_MEMBERS } from "constants/fetch-keys";
 // components
 import SingleBoard from "components/project/issues/BoardView/single-board";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
@@ -23,6 +20,9 @@ import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deleti
 // ui
 import { Spinner } from "components/ui";
 // types
+import type { IState, IIssue, NestedKeyOf, IssueResponse } from "types";
+// fetch-keys
+import { STATE_LIST, PROJECT_ISSUES_LIST, PROJECT_MEMBERS } from "constants/fetch-keys";
 
 type Props = {
   selectedGroup: NestedKeyOf<IIssue> | null;

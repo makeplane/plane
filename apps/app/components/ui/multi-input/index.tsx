@@ -1,7 +1,5 @@
 // react
 import React from "react";
-// common
-import { classNames } from "components/ui/helper";
 
 const isEmailValid = (email: string) =>
   String(email)
@@ -68,9 +66,7 @@ const MultiInput = ({ label, name, placeholder, setValue, watch }: any) => {
           onChange={handleChange}
           type="text"
           placeholder={placeholder}
-          className={classNames(
-            "block w-full rounded-md bg-transparent p-1.5 text-sm focus:outline-none"
-          )}
+          className="block w-full rounded-md bg-transparent p-1.5 text-sm focus:outline-none"
         />
       </div>
     </>

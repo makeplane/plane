@@ -1,17 +1,15 @@
+import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { CalendarDaysIcon } from "@heroicons/react/24/outline";
-
+// helpers
+import { renderShortNumericDateFormat } from "helpers/date.helper";
 // icons
 // types
 import { IIssue, Properties } from "types";
 // common
-import {
-  addSpaceIfCamelCase,
-  findHowManyDaysLeft,
-  renderShortNumericDateFormat,
-} from "constants/common";
+import { addSpaceIfCamelCase, findHowManyDaysLeft } from "constants/common";
 
 type Props = {
   type?: string;

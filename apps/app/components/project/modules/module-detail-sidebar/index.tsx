@@ -13,7 +13,6 @@ import {
   LinkIcon,
   PlusIcon,
   TrashIcon,
-  UserIcon,
 } from "@heroicons/react/24/outline";
 import modulesService from "services/modules.service";
 // hooks

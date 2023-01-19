@@ -6,8 +6,6 @@ import issueServices from "services/issues.service";
 import useUser from "hooks/use-user";
 // types
 import { IssuePriorities, Properties } from "types";
-// api routes
-import { ISSUE_PROPERTIES_ENDPOINT } from "constants/api-routes";
 
 const initialValues: Properties = {
   key: true,
@@ -26,7 +24,9 @@ const useIssuesProperties = (workspaceSlug?: string, projectId?: string) => {
   const { user } = useUser();
 
   const { data: issueProperties, mutate: mutateIssueProperties } = useSWR<IssuePriorities>(
-    workspaceSlug && projectId ? ISSUE_PROPERTIES_ENDPOINT(workspaceSlug, projectId) : null,
+    workspaceSlug && projectId
+      ? `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-properties/`
+      : null,
     workspaceSlug && projectId
       ? () => issueServices.getIssueProperties(workspaceSlug, projectId)
       : null

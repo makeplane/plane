@@ -15,13 +15,18 @@ import stateService from "services/state.service";
 import issuesService from "services/issues.service";
 import projectService from "services/project.service";
 import workspaceService from "services/workspace.service";
+// ui
+import { CustomMenu, CustomSelect, Spinner } from "components/ui";
+// icons
+import User from "public/user.png";
+// components
+import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
+// helpers
+import { renderShortNumericDateFormat } from "helpers/date.helper";
+// types
+import { IIssue, IProject, IssueResponse, IWorkspaceMember, NestedKeyOf } from "types";
 // constants
-import {
-  addSpaceIfCamelCase,
-  classNames,
-  findHowManyDaysLeft,
-  renderShortNumericDateFormat,
-} from "constants/common";
+import { addSpaceIfCamelCase, findHowManyDaysLeft } from "constants/common";
 import { PRIORITIES } from "constants/";
 import { getPriorityIcon } from "constants/global";
 import {
@@ -30,14 +35,6 @@ import {
   STATE_LIST,
   WORKSPACE_MEMBERS,
 } from "constants/fetch-keys";
-// ui
-import { CustomMenu, CustomSelect, Spinner } from "components/ui";
-// icons
-import User from "public/user.png";
-// components
-import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
-// types
-import { IIssue, IProject, IssueResponse, IWorkspaceMember, NestedKeyOf } from "types";
 
 // types
 type Props = {
@@ -238,10 +235,9 @@ const ListView: React.FC<Props> = ({
                                                   <Listbox.Option
                                                     key={priority}
                                                     className={({ active }) =>
-                                                      classNames(
-                                                        active ? "bg-indigo-50" : "bg-white",
-                                                        "flex cursor-pointer select-none items-center gap-x-2 px-3 py-2 capitalize"
-                                                      )
+                                                      `flex cursor-pointer select-none items-center gap-x-2 px-3 py-2 capitalize ${
+                                                        active ? "bg-indigo-50" : "bg-white"
+                                                      }`
                                                     }
                                                     value={priority}
                                                   >
@@ -431,10 +427,9 @@ const ListView: React.FC<Props> = ({
                                                   <Listbox.Option
                                                     key={person.id}
                                                     className={({ active }) =>
-                                                      classNames(
-                                                        active ? "bg-indigo-50" : "bg-white",
-                                                        "cursor-pointer select-none p-2"
-                                                      )
+                                                      `cursor-pointer select-none p-2 ${
+                                                        active ? "bg-indigo-50" : "bg-white"
+                                                      }`
                                                     }
                                                     value={person.member.id}
                                                   >

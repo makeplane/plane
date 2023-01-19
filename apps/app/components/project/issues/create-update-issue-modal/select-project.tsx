@@ -8,14 +8,14 @@ import useSWR from "swr";
 import { Controller, Control } from "react-hook-form";
 import { Listbox, Transition } from "@headlessui/react";
 import { ClipboardDocumentListIcon } from "@heroicons/react/24/outline";
-// import type { Control } from "react-hook-form";
 // services
-import type { IIssue } from "types";
 import projectService from "services/project.service";
 // headless ui
 // icons
 // ui
 import { Spinner } from "components/ui";
+// types
+import type { IIssue } from "types";
 // fetch-keys
 import { PROJECTS_LIST } from "constants/fetch-keys";
 // types
@@ -79,7 +79,7 @@ const SelectProject: React.FC<Props> = ({ control, setActiveProject }) => {
                                 }
                                 value={project.id}
                               >
-                                {({ selected, active }) => (
+                                {({ selected }) => (
                                   <>
                                     <span
                                       className={`${

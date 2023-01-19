@@ -8,19 +8,20 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 // services
 import { CalendarDaysIcon } from "@heroicons/react/20/solid";
-import { ArrowPathIcon, CheckIcon, UserIcon, UserGroupIcon } from "@heroicons/react/24/outline";
+import { ArrowPathIcon, UserIcon } from "@heroicons/react/24/outline";
 import cyclesService from "services/cycles.service";
 // hooks
-import useUser from "hooks/use-user";
 // ui
 import { Button, CustomMenu } from "components/ui";
 // icons
+// helpers
+import { renderShortNumericDateFormat } from "helpers/date.helper";
 // types
 import { CycleIssueResponse, ICycle } from "types";
 // fetch-keys
 import { CYCLE_ISSUES } from "constants/fetch-keys";
 // common
-import { groupBy, renderShortNumericDateFormat } from "constants/common";
+import { groupBy } from "constants/common";
 
 type TSingleStatProps = {
   cycle: ICycle;
@@ -127,31 +128,31 @@ const SingleStat: React.FC<TSingleStatProps> = (props) => {
             <h4 className="text-sm tracking-widest">PROGRESS</h4>
             <div className="space-y-3 text-xs">
               {Object.keys(groupedIssues).map((group) => (
-                  <div key={group} className="flex items-center gap-2">
-                    <div className="flex basis-2/3 items-center gap-2">
-                      <span
-                        className="block h-2 w-2 rounded-full"
-                        style={{
-                          backgroundColor: stateGroupColours[group],
-                        }}
-                       />
-                      <h6 className="text-xs capitalize">{group}</h6>
-                    </div>
-                    <div>
-                      <span>
-                        {groupedIssues[group].length}{" "}
-                        <span className="text-gray-500">
-                          -{" "}
-                          {cycleIssues && cycleIssues.length > 0
-                            ? `${Math.round(
-                                (groupedIssues[group].length / cycleIssues.length) * 100
-                              )}%`
-                            : "0%"}
-                        </span>
-                      </span>
-                    </div>
+                <div key={group} className="flex items-center gap-2">
+                  <div className="flex basis-2/3 items-center gap-2">
+                    <span
+                      className="block h-2 w-2 rounded-full"
+                      style={{
+                        backgroundColor: stateGroupColours[group],
+                      }}
+                    />
+                    <h6 className="text-xs capitalize">{group}</h6>
                   </div>
-                ))}
+                  <div>
+                    <span>
+                      {groupedIssues[group].length}{" "}
+                      <span className="text-gray-500">
+                        -{" "}
+                        {cycleIssues && cycleIssues.length > 0
+                          ? `${Math.round(
+                              (groupedIssues[group].length / cycleIssues.length) * 100
+                            )}%`
+                          : "0%"}
+                      </span>
+                    </span>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>

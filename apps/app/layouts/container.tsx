@@ -1,3 +1,4 @@
+import React from "react";
 // next
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -11,7 +12,7 @@ import {
   TWITTER_USER_NAME,
   SITE_KEYWORDS,
   SITE_TITLE,
-} from "constants/seo/seo-variables";
+} from "constants/seo-variables";
 
 const Container = ({ meta, children }: Props) => {
   const router = useRouter();

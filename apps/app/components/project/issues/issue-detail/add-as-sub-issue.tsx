@@ -6,11 +6,9 @@ import useSWR, { mutate } from "swr";
 
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // services
-import { RectangleStackIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import issuesServices from "services/issues.service";
 // icons
-// commons
-import { classNames } from "constants/common";
+import { RectangleStackIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 // types
 import { IIssue, IssueResponse } from "types";
 // constants
@@ -135,10 +133,9 @@ const AddAsSubIssue: React.FC<Props> = ({ isOpen, setIsOpen, parent }) => {
                                     name: issue.name,
                                   }}
                                   className={({ active }) =>
-                                    classNames(
-                                      "flex cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2",
+                                    `flex cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 ${
                                       active ? "bg-gray-900 bg-opacity-5 text-gray-900" : ""
-                                    )
+                                    }`
                                   }
                                   onClick={() => {
                                     addAsSubIssue(issue.id);

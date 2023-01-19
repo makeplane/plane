@@ -7,7 +7,6 @@ import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon, EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
 // types
 import { MenuItemProps, Props } from "./types";
-import { classNames } from "components/ui/helper";
 // constants
 
 const CustomMenu = ({
@@ -108,11 +107,9 @@ const MenuItem: React.FC<MenuItemProps> = ({
         <button
           type="button"
           onClick={onClick}
-          className={classNames(
-            className,
-            active ? "bg-indigo-50 text-gray-900" : "text-gray-700",
-            "block w-full p-2 text-left"
-          )}
+          className={`block w-full p-2 text-left ${
+            active ? "bg-indigo-50 text-gray-900" : "text-gray-700"
+          } ${className}`}
         >
           {children}
         </button>

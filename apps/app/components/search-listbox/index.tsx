@@ -5,13 +5,11 @@ import { useRouter } from "next/router";
 
 import useSWR from "swr";
 // services
+import workspaceService from "services/workspace.service";
 // headless ui
 import { Transition, Combobox } from "@headlessui/react";
 // types
 import type { Props } from "./types";
-import workspaceService from "services/workspace.service";
-// common
-import { classNames } from "components/ui/helper";
 // fetch-keys
 import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 
@@ -22,7 +20,6 @@ const SearchListbox: React.FC<Props> = ({
   value,
   multiple: canSelectMultiple,
   icon,
-  width = "sm",
   optionsFontsize,
   buttonClassName,
   optionsClassName,
@@ -95,10 +92,9 @@ const SearchListbox: React.FC<Props> = ({
           >
             {icon ?? null}
             <span
-              className={classNames(
-                value === null || value === undefined ? "" : "text-gray-900",
-                "hidden truncate sm:block"
-              )}
+              className={`hidden truncate sm:block ${
+                value === null || value === undefined ? "" : "text-gray-900"
+              }`}
             >
               {Array.isArray(value)
                 ? value

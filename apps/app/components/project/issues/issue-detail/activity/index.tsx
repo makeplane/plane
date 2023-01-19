@@ -3,8 +3,19 @@ import React from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 // swr
+// services
+import issuesServices from "services/issues.service";
 import { KeyedMutator } from "swr";
-
+// components
+import CommentCard from "components/project/issues/issue-detail/comment/issue-comment-card";
+// ui
+import { Loader } from "components/ui";
+// icons
+import { BlockedIcon, BlockerIcon, TagIcon, UserGroupIcon } from "components/icons";
+// helpers
+import { renderShortNumericDateFormat } from "helpers/date.helper";
+// types
+import { IIssueActivity, IIssueComment } from "types";
 // common
 import {
   CalendarDaysIcon,
@@ -13,16 +24,7 @@ import {
   Squares2X2Icon,
   UserIcon,
 } from "@heroicons/react/24/outline";
-import { addSpaceIfCamelCase, renderShortNumericDateFormat, timeAgo } from "constants/common";
-// ui
-import { Loader } from "components/ui";
-// icons
-import { BlockedIcon, BlockerIcon, TagIcon, UserGroupIcon } from "components/icons";
-import { IIssueActivity, IIssueComment } from "types";
-// components
-import CommentCard from "components/project/issues/issue-detail/comment/issue-comment-card";
-// services
-import issuesServices from "services/issues.service";
+import { addSpaceIfCamelCase, timeAgo } from "constants/common";
 
 const activityDetails: {
   [key: string]: {

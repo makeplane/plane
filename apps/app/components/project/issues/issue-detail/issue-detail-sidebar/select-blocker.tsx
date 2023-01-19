@@ -9,7 +9,6 @@ import { SubmitHandler, useForm, UseFormWatch } from "react-hook-form";
 // constants
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 import { FolderIcon, MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // hooks
 import useToast from "hooks/useToast";
 // services
@@ -21,8 +20,7 @@ import { Button } from "components/ui";
 import { BlockerIcon, LayerDiagonalIcon } from "components/icons";
 // types
 import { IIssue } from "types";
-// constants
-import { classNames } from "constants/common";
+import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 
 type FormInput = {
   issue_ids: string[];
@@ -190,10 +188,9 @@ const SelectBlocker: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
                                         url: `/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`,
                                       }}
                                       className={({ active }) =>
-                                        classNames(
-                                          "flex cursor-pointer select-none items-center justify-between rounded-md px-3 py-2",
+                                        `flex cursor-pointer select-none items-center justify-between rounded-md px-3 py-2 ${
                                           active ? "bg-gray-900 bg-opacity-5 text-gray-900" : ""
-                                        )
+                                        }`
                                       }
                                     >
                                       <div className="flex items-center gap-2">

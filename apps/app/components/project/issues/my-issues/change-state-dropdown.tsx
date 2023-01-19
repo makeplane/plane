@@ -3,17 +3,16 @@ import React from "react";
 import { useRouter } from "next/router";
 
 import useSWR from "swr";
-// hooks
-import { Listbox, Transition } from "@headlessui/react";
-import useUser from "hooks/use-user";
-// constants
-import { addSpaceIfCamelCase, classNames } from "constants/common";
-import { STATE_LIST } from "constants/fetch-keys";
 // services
 import stateServices from "services/state.service";
+// hooks
+import { Listbox, Transition } from "@headlessui/react";
 // ui
 // types
 import { IIssue, IState } from "types";
+// constants
+import { addSpaceIfCamelCase } from "constants/common";
+import { STATE_LIST } from "constants/fetch-keys";
 
 type Props = {
   issue: IIssue;
@@ -59,10 +58,9 @@ const ChangeStateDropdown: React.FC<Props> = ({ issue, updateIssues }) => {
                 }}
               >
                 <span
-                  className={classNames(
-                    issue.state ? "" : "text-gray-900",
-                    "hidden w-16 capitalize sm:block"
-                  )}
+                  className={`hidden w-16 capitalize sm:block ${
+                    issue.state ? "" : "text-gray-900"
+                  }`}
                 >
                   {addSpaceIfCamelCase(issue.state_detail.name)}
                 </span>
@@ -80,10 +78,9 @@ const ChangeStateDropdown: React.FC<Props> = ({ issue, updateIssues }) => {
                     <Listbox.Option
                       key={state.id}
                       className={({ active }) =>
-                        classNames(
-                          active ? "bg-indigo-50" : "bg-white",
-                          "cursor-pointer select-none px-3 py-2"
-                        )
+                        `cursor-pointer select-none px-3 py-2 ${
+                          active ? "bg-indigo-50" : "bg-white"
+                        }`
                       }
                       value={state.id}
                     >

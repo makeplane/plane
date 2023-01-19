@@ -4,6 +4,8 @@ import { useEffect } from "react";
 import { useRouter } from "next/router";
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
+// services
+import cyclesService from "services/cycles.service";
 // hooks
 import { CalendarDaysIcon, ChartPieIcon, LinkIcon, UserIcon } from "@heroicons/react/24/outline";
 import { mutate } from "swr";
@@ -15,8 +17,7 @@ import { Loader } from "components/ui";
 import { CycleIssueResponse, ICycle } from "types";
 // common
 import { copyTextToClipboard, groupBy } from "constants/common";
-import cyclesService from "services/cycles.service";
-import { CYCLE_DETAIL } from "constants/api-routes";
+import { CYCLE_DETAIL } from "constants/fetch-keys";
 
 type Props = {
   cycle: ICycle | undefined;

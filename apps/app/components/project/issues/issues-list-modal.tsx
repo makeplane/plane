@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // ui
-import { MagnifyingGlassIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
 import { Button } from "components/ui";
 // icons
-// constants
-import { classNames } from "constants/common";
+import { MagnifyingGlassIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
 // types
 import { IIssue } from "types";
 import { LayerDiagonalIcon } from "components/icons";
@@ -105,10 +103,9 @@ const IssuesListModal: React.FC<Props> = ({
                                   key={issue.id}
                                   value={issue.id}
                                   className={({ active }) =>
-                                    classNames(
-                                      "flex cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2",
+                                    `flex cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 ${
                                       active ? "bg-gray-900 bg-opacity-5 text-gray-900" : ""
-                                    )
+                                    }`
                                   }
                                 >
                                   {({ selected }) => (
@@ -186,10 +183,9 @@ const IssuesListModal: React.FC<Props> = ({
                                 key={issue.id}
                                 value={issue.id}
                                 className={({ active }) =>
-                                  classNames(
-                                    "flex cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2",
+                                  `flex cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 ${
                                     active ? "bg-gray-900 bg-opacity-5 text-gray-900" : ""
-                                  )
+                                  }`
                                 }
                                 onClick={() => handleClose()}
                               >

@@ -1,23 +1,3 @@
-export const classNames = (...classes: string[]) => classes.filter(Boolean).join(" ");
-
-export const renderDateFormat = (date: string | Date) => {
-  var d = new Date(date),
-    month = "" + (d.getMonth() + 1),
-    day = "" + d.getDate(),
-    year = d.getFullYear();
-
-  if (month.length < 2) month = "0" + month;
-  if (day.length < 2) day = "0" + day;
-
-  return [year, month, day].join("-");
-};
-
-export const renderShortNumericDateFormat = (date: string | Date) =>
-  new Date(date).toLocaleDateString("en-UK", {
-    day: "numeric",
-    month: "short",
-  });
-
 export const groupBy = (array: any[], key: string) => {
   const innerKey = key.split("."); // split the key by dot
   return array.reduce((result, currentValue) => {
@@ -83,6 +63,7 @@ export const timeAgo = (time: any) => {
     [5806080000, "Last century", "Next century"], // 60*60*24*7*4*12*100*2
     [58060800000, "centuries", 2903040000], // 60*60*24*7*4*12*100*20, 60*60*24*7*4*12*100
   ];
+
   var seconds = (+new Date() - time) / 1000,
     token = "ago",
     list_choice = 1;

@@ -10,8 +10,8 @@ import { Controller, useForm } from "react-hook-form";
 
 import { Dialog, Menu, Transition } from "@headlessui/react";
 // services
-import { EllipsisHorizontalIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import type { IIssue, IssueResponse } from "types";
+import projectService from "services/project.service";
+import modulesService from "services/modules.service";
 import issuesServices from "services/issues.service";
 // hooks
 import useUser from "hooks/use-user";
@@ -19,6 +19,7 @@ import useToast from "hooks/useToast";
 // ui
 import { Button, Input, Loader } from "components/ui";
 // icons
+import { EllipsisHorizontalIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // components
 import SelectState from "components/project/issues/create-update-issue-modal/select-state";
 import SelectCycles from "components/project/issues/create-update-issue-modal/select-cycle";
@@ -29,7 +30,10 @@ import SelectAssignee from "components/project/issues/create-update-issue-modal/
 import SelectParent from "components/project/issues/create-update-issue-modal/select-parent-issue";
 import CreateUpdateStateModal from "components/project/issues/BoardView/state/create-update-state-modal";
 import CreateUpdateCycleModal from "components/project/cycles/create-update-cycle-modal";
+// common
+import { renderDateFormat } from "helpers/date.helper";
 // types
+import type { IIssue, IssueResponse } from "types";
 // fetch keys
 import {
   PROJECT_ISSUES_DETAILS,
@@ -40,9 +44,7 @@ import {
   MODULE_ISSUES,
 } from "constants/fetch-keys";
 // common
-import { renderDateFormat, cosineSimilarity } from "constants/common";
-import projectService from "services/project.service";
-import modulesService from "services/modules.service";
+import { cosineSimilarity } from "constants/common";
 
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
   ssr: false,
@@ -172,12 +174,12 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
           mutate<IssueResponse>(
             PROJECT_ISSUES_LIST(workspaceSlug as string, projectId),
             (prevData) => ({
-                ...(prevData as IssueResponse),
-                results: (prevData?.results ?? []).map((issue) => {
-                  if (issue.id === res.id) return { ...issue, sprints: cycleId };
-                  return issue;
-                }),
+              ...(prevData as IssueResponse),
+              results: (prevData?.results ?? []).map((issue) => {
+                if (issue.id === res.id) return { ...issue, sprints: cycleId };
+                return issue;
               }),
+            }),
             false
           );
       })
@@ -259,12 +261,12 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
             mutate<IssueResponse>(
               PROJECT_ISSUES_LIST(workspaceSlug as string, projectId),
               (prevData) => ({
-                  ...(prevData as IssueResponse),
-                  results: (prevData?.results ?? []).map((issue) => {
-                    if (issue.id === res.id) return { ...issue, ...res };
-                    return issue;
-                  }),
-                })
+                ...(prevData as IssueResponse),
+                results: (prevData?.results ?? []).map((issue) => {
+                  if (issue.id === res.id) return { ...issue, ...res };
+                  return issue;
+                }),
+              })
             );
           if (formData.cycle && formData.cycle !== null) {
             addIssueToCycle(res.id, formData.cycle);
@@ -558,7 +560,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                             className={`pointer-events-none inline-block h-3 w-3 ${
                               createMore ? "translate-x-3" : "translate-x-0"
                             } transform rounded-full bg-white shadow ring-0 transition duration-300 ease-in-out`}
-                           />
+                          />
                         </button>
                       </div>
                       <div className="flex items-center gap-2">

@@ -1,14 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 // react hook form
 import { Controller, Control } from "react-hook-form";
 // hooks
-import { UserIcon } from "@heroicons/react/24/outline";
-import type { IIssue, IssueResponse } from "types";
-import useUser from "hooks/use-user";
-// types
-// icons
 // components
 import IssuesListModal from "components/project/issues/issues-list-modal";
+// types
+import type { IIssue } from "types";
+// icons
 
 type Props = {
   control: Control<IIssue, any>;
@@ -18,18 +16,18 @@ type Props = {
 };
 
 const SelectParent: React.FC<Props> = ({ control, isOpen, setIsOpen, issues }) => (
-    <Controller
-      control={control}
-      name="parent"
-      render={({ field: { value, onChange } }) => (
-        <IssuesListModal
-          isOpen={isOpen}
-          handleClose={() => setIsOpen(false)}
-          onChange={onChange}
-          issues={issues}
-        />
-      )}
-    />
-  );
+  <Controller
+    control={control}
+    name="parent"
+    render={({ field: { value, onChange } }) => (
+      <IssuesListModal
+        isOpen={isOpen}
+        handleClose={() => setIsOpen(false)}
+        onChange={onChange}
+        issues={issues}
+      />
+    )}
+  />
+);
 
 export default SelectParent;

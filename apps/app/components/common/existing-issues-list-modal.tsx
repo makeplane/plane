@@ -19,8 +19,6 @@ import { LayerDiagonalIcon } from "components/icons";
 import { IIssue } from "types";
 // fetch-keys
 import { PROJECT_DETAILS } from "constants/fetch-keys";
-// common
-import { classNames } from "constants/common";
 
 type FormInput = {
   issues: string[];
@@ -155,10 +153,9 @@ const ExistingIssuesListModal: React.FC<Props> = ({
                                     htmlFor={`issue-${issue.id}`}
                                     value={issue.id}
                                     className={({ active }) =>
-                                      classNames(
-                                        "flex w-full cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2",
+                                      `flex w-full cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 ${
                                         active ? "bg-gray-900 bg-opacity-5 text-gray-900" : ""
-                                      )
+                                      }`
                                     }
                                   >
                                     {({ selected }) => (
