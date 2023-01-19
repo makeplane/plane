@@ -32,9 +32,9 @@ class Issue(ProjectBaseModel):
         related_name="state_issue",
     )
     name = models.CharField(max_length=255, verbose_name="Issue Name")
-    description = models.JSONField(blank=True)
-    description_html = models.TextField(blank=True)
-    description_stripped = models.TextField(blank=True)
+    description = models.JSONField(blank=True, null=True)
+    description_html = models.TextField(blank=True, null=True)
+    description_stripped = models.TextField(blank=True, null=True)
     priority = models.CharField(
         max_length=30,
         choices=PRIORITY_CHOICES,
