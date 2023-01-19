@@ -1,5 +1,3 @@
-// api routes
-import { STATES_ENDPOINT, STATE_DETAIL, ISSUES_BY_STATE } from "constants/api-routes";
 // services
 import APIService from "services/api.service";
 
@@ -13,82 +11,74 @@ class ProjectStateServices extends APIService {
     super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
   }
 
-  async createState(workspace_slug: string, projectId: string, data: any): Promise<any> {
-    return this.post(STATES_ENDPOINT(workspace_slug, projectId), data)
-      .then((response) => {
-        return response?.data;
-      })
+  async createState(workspaceSlug: string, projectId: string, data: any): Promise<any> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/states/`, data)
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async getStates(workspace_slug: string, projectId: string): Promise<IState[]> {
-    return this.get(STATES_ENDPOINT(workspace_slug, projectId))
-      .then((response) => {
-        return response?.data;
-      })
+  async getStates(workspaceSlug: string, projectId: string): Promise<IState[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/states/`)
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async getIssuesByState(workspace_slug: string, projectId: string): Promise<any> {
-    return this.get(ISSUES_BY_STATE(workspace_slug, projectId))
+  async getIssuesByState(workspaceSlug: string, projectId: string): Promise<any> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/?group_by=state`)
 
-      .then((response) => {
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async getState(workspace_slug: string, projectId: string, stateId: string): Promise<any> {
-    return this.get(STATE_DETAIL(workspace_slug, projectId, stateId))
-      .then((response) => {
-        return response?.data;
-      })
+  async getState(workspaceSlug: string, projectId: string, stateId: string): Promise<any> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/states/${stateId}/`)
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
   async updateState(
-    workspace_slug: string,
+    workspaceSlug: string,
     projectId: string,
     stateId: string,
     data: IState
   ): Promise<any> {
-    return this.put(STATE_DETAIL(workspace_slug, projectId, stateId), data)
-      .then((response) => {
-        return response?.data;
-      })
+    return this.put(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/states/${stateId}/`,
+      data
+    )
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
   async patchState(
-    workspace_slug: string,
+    workspaceSlug: string,
     projectId: string,
     stateId: string,
     data: Partial<IState>
   ): Promise<any> {
-    return this.patch(STATE_DETAIL(workspace_slug, projectId, stateId), data)
-      .then((response) => {
-        return response?.data;
-      })
+    return this.patch(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/states/${stateId}/`,
+      data
+    )
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async deleteState(workspace_slug: string, projectId: string, stateId: string): Promise<any> {
-    return this.delete(STATE_DETAIL(workspace_slug, projectId, stateId))
-      .then((response) => {
-        return response?.data;
-      })
+  async deleteState(workspaceSlug: string, projectId: string, stateId: string): Promise<any> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/states/${stateId}/`)
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });

@@ -1,9 +1,13 @@
-import { Disclosure, Popover, Transition } from "@headlessui/react";
-import { ChevronDownIcon, PlusIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
-import { useRouter } from "next/router";
 import React from "react";
-// layouts
+import { useRouter } from "next/router";
+
+// headless ui
+import { Disclosure, Popover, Transition } from "@headlessui/react";
+// icons
+import { ChevronDownIcon, PlusIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
+// types
 import type { NextPage } from "next";
+// layouts
 import AppLayout from "layouts/app-layout";
 // hooks
 import useUser from "hooks/use-user";
@@ -17,9 +21,8 @@ import useIssuesProperties from "hooks/use-issue-properties";
 import { IIssue, Properties } from "types";
 // components
 import { IssueListItem } from "components/issues";
-// types
-// constants
-import { classNames, replaceUnderscoreIfSnakeCase } from "constants/common";
+// helpers
+import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 
 const MyIssuesPage: NextPage = () => {
   const router = useRouter();
@@ -48,10 +51,9 @@ const MyIssuesPage: NextPage = () => {
             {({ open }) => (
               <>
                 <Popover.Button
-                  className={classNames(
-                    open ? "bg-gray-100 text-gray-900" : "text-gray-500",
-                    "group flex items-center gap-2 rounded-md border bg-transparent p-2 text-xs font-medium hover:bg-gray-100 hover:text-gray-900 focus:outline-none"
-                  )}
+                  className={`group flex items-center gap-2 rounded-md border bg-transparent p-2 text-xs font-medium hover:bg-gray-100 hover:text-gray-900 focus:outline-none ${
+                    open ? "bg-gray-100 text-gray-900" : "text-gray-500"
+                  }`}
                 >
                   <span>View</span>
                   <ChevronDownIcon className="h-4 w-4" aria-hidden="true" />

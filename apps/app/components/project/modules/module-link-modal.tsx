@@ -7,16 +7,15 @@ import { mutate } from "swr";
 import { useForm } from "react-hook-form";
 
 import { Dialog, Transition } from "@headlessui/react";
-// services
-import type { IModule, ModuleLink } from "types";
-import modulesService from "services/modules.service";
 // hooks
-import useUser from "hooks/use-user";
+// types
+import type { IModule, ModuleLink } from "types";
+// services
+import modulesService from "services/modules.service";
 // ui
 import { Button, Input } from "components/ui";
-// types
 // fetch-keys
-import { MODULE_DETAIL, MODULE_LIST } from "constants/fetch-keys";
+import { MODULE_LIST } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
@@ -54,7 +53,7 @@ const ModuleLinkModal: React.FC<Props> = ({ isOpen, module, handleClose }) => {
 
     await modulesService
       .patchModule(workspaceSlug as string, projectId as string, module.id, payload)
-      .then((res) => {
+      .then(() => {
         mutate<IModule[]>(projectId && MODULE_LIST(projectId as string), (prevData) =>
           (prevData ?? []).map((module) => {
             if (module.id === moduleId) return { ...module, ...payload };

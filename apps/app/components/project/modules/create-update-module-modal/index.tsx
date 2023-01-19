@@ -7,8 +7,9 @@ import { mutate } from "swr";
 import { useForm } from "react-hook-form";
 
 import { Dialog, Transition } from "@headlessui/react";
-// components
+// types
 import type { IModule } from "types";
+// components
 import SelectLead from "components/project/modules/create-update-module-modal/select-lead";
 import SelectMembers from "components/project/modules/create-update-module-modal/select-members";
 import SelectStatus from "components/project/modules/create-update-module-modal/select-status";
@@ -16,9 +17,8 @@ import SelectStatus from "components/project/modules/create-update-module-modal/
 import { Button, Input, TextArea } from "components/ui";
 // services
 import modulesService from "services/modules.service";
-// types
-// common
-import { renderDateFormat } from "constants/common";
+// helpers
+import { renderDateFormat } from "helpers/date-time.helper";
 // fetch keys
 import { MODULE_LIST } from "constants/fetch-keys";
 
@@ -62,7 +62,7 @@ const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, pro
     if (!data) {
       await modulesService
         .createModule(workspaceSlug as string, projectId, payload)
-        .then((res) => {
+        .then(() => {
           mutate(MODULE_LIST(projectId));
           handleClose();
         })

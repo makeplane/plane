@@ -26,15 +26,15 @@ import CreateUpdateCycleModal from "components/project/cycles/create-update-cycl
 import CreateUpdateModuleModal from "components/project/modules/create-update-module-modal";
 import BulkDeleteIssuesModal from "components/common/bulk-delete-issues-modal";
 // headless ui
+// helpers
+import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import { IIssue } from "types";
 // ui
 import { Button } from "components/ui";
-// constants
-import { USER_ISSUE } from "constants/fetch-keys";
 // icons
-// common
-import { classNames, copyTextToClipboard } from "constants/common";
+// fetch-keys
+import { USER_ISSUE } from "constants/fetch-keys";
 
 const CommandPalette: React.FC = () => {
   const [query, setQuery] = useState("");
@@ -255,10 +255,9 @@ const CommandPalette: React.FC = () => {
                                   url: `/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`,
                                 }}
                                 className={({ active }) =>
-                                  classNames(
-                                    "flex cursor-pointer select-none items-center justify-between rounded-md px-3 py-2",
+                                  `flex cursor-pointer select-none items-center justify-between rounded-md px-3 py-2 ${
                                     active ? "bg-gray-500 bg-opacity-5 text-gray-900" : ""
-                                  )
+                                  }`
                                 }
                               >
                                 {({ active }) => (
@@ -307,19 +306,17 @@ const CommandPalette: React.FC = () => {
                                     onClick: action.onClick,
                                   }}
                                   className={({ active }) =>
-                                    classNames(
-                                      "flex cursor-default select-none items-center rounded-md px-3 py-2",
+                                    `flex cursor-default select-none items-center rounded-md px-3 py-2 ${
                                       active ? "bg-gray-500 bg-opacity-5 text-gray-900" : ""
-                                    )
+                                    }`
                                   }
                                 >
                                   {({ active }) => (
                                     <>
                                       <action.icon
-                                        className={classNames(
-                                          "h-6 w-6 flex-none text-gray-900 text-opacity-40",
+                                        className={`h-6 w-6 flex-none text-gray-900 text-opacity-40 ${
                                           active ? "text-opacity-100" : ""
-                                        )}
+                                        }`}
                                         aria-hidden="true"
                                       />
                                       <span className="ml-3 flex-auto truncate">{action.name}</span>

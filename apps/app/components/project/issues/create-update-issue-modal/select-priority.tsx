@@ -1,17 +1,16 @@
 import React from "react";
+
 // react hook form
 import { Controller, Control } from "react-hook-form";
-// constants
-import type { IIssue } from "types";
-// import type { Control } from "react-hook-form";
-import { PRIORITIES } from "constants/";
-import { capitalizeFirstLetter } from "constants/common";
-// icons
-// ui
-import { CustomListbox } from "components/ui";
-
 // types
+import type { IIssue } from "types";
+// components
+import { CustomListbox } from "components/ui";
+// helpers
+import { capitalizeFirstLetter } from "helpers/string.helper";
+// constants
 import { getPriorityIcon } from "constants/global";
+import { PRIORITIES } from "constants/";
 
 type Props = {
   control: Control<IIssue, any>;

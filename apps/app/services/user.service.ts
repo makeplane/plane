@@ -1,5 +1,4 @@
 // services
-import { USER_ENDPOINT, USER_ISSUES_ENDPOINT, USER_ONBOARD_ENDPOINT } from "constants/api-routes";
 import APIService from "services/api.service";
 import type { IUser } from "types";
 
@@ -18,10 +17,8 @@ class UserService extends APIService {
   }
 
   async userIssues(workspaceSlug: string): Promise<any> {
-    return this.get(USER_ISSUES_ENDPOINT(workspaceSlug))
-      .then((response) => {
-        return response?.data;
-      })
+    return this.get(`/api/workspaces/${workspaceSlug}/my-issues/`)
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -29,10 +26,8 @@ class UserService extends APIService {
 
   async currentUser(): Promise<any> {
     if (!this.getAccessToken()) return null;
-    return this.get(USER_ENDPOINT)
-      .then((response) => {
-        return response?.data;
-      })
+    return this.get("/api/users/me/")
+      .then((response) => response?.data)
       .catch((error) => {
         this.purgeAccessToken();
         throw error?.response?.data;
@@ -40,20 +35,16 @@ class UserService extends APIService {
   }
 
   async updateUser(data: Partial<IUser>): Promise<any> {
-    return this.patch(USER_ENDPOINT, data)
-      .then((response) => {
-        return response?.data;
-      })
+    return this.patch("/api/users/me/", data)
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
   async updateUserOnBoard(): Promise<any> {
-    return this.patch(USER_ONBOARD_ENDPOINT, { is_onboarded: true })
-      .then((response) => {
-        return response?.data;
-      })
+    return this.patch("/api/users/me/onboard/", { is_onboarded: true })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });

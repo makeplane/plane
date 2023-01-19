@@ -1,10 +1,3 @@
-// api routes
-import {
-  MODULES_ENDPOINT,
-  MODULE_DETAIL,
-  MODULE_ISSUES,
-  MODULE_ISSUE_DETAIL,
-} from "constants/api-routes";
 // services
 import APIService from "services/api.service";
 // types
@@ -18,20 +11,16 @@ class ProjectIssuesServices extends APIService {
   }
 
   async getModules(workspaceSlug: string, projectId: string): Promise<IModule[]> {
-    return this.get(MODULES_ENDPOINT(workspaceSlug, projectId))
-      .then((response) => {
-        return response?.data;
-      })
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/`)
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
   async createModule(workspaceSlug: string, projectId: string, data: any): Promise<any> {
-    return this.post(MODULES_ENDPOINT(workspaceSlug, projectId), data)
-      .then((response) => {
-        return response?.data;
-      })
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/`, data)
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -43,20 +32,19 @@ class ProjectIssuesServices extends APIService {
     moduleId: string,
     data: any
   ): Promise<any> {
-    return this.put(MODULE_DETAIL(workspaceSlug, projectId, moduleId), data)
-      .then((response) => {
-        return response?.data;
-      })
+    return this.put(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/`,
+      data
+    )
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
   async getModuleDetails(workspaceSlug: string, projectId: string, moduleId: string): Promise<any> {
-    return this.get(MODULE_DETAIL(workspaceSlug, projectId, moduleId))
-      .then((response) => {
-        return response?.data;
-      })
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/`)
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -68,30 +56,31 @@ class ProjectIssuesServices extends APIService {
     moduleId: string,
     data: any
   ): Promise<any> {
-    return this.patch(MODULE_DETAIL(workspaceSlug, projectId, moduleId), data)
-      .then((response) => {
-        return response?.data;
-      })
+    return this.patch(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/`,
+      data
+    )
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
   async deleteModule(workspaceSlug: string, projectId: string, moduleId: string): Promise<any> {
-    return this.delete(MODULE_DETAIL(workspaceSlug, projectId, moduleId))
-      .then((response) => {
-        return response?.data;
-      })
+    return this.delete(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/`
+    )
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
   async getModuleIssues(workspaceSlug: string, projectId: string, moduleId: string): Promise<any> {
-    return this.get(MODULE_ISSUES(workspaceSlug, projectId, moduleId))
-      .then((response) => {
-        return response?.data;
-      })
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/module-issues/`
+    )
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -103,10 +92,11 @@ class ProjectIssuesServices extends APIService {
     moduleId: string,
     data: { issues: string[] }
   ): Promise<any> {
-    return this.post(MODULE_ISSUES(workspaceSlug, projectId, moduleId), data)
-      .then((response) => {
-        return response?.data;
-      })
+    return this.post(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/module-issues/`,
+      data
+    )
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -118,10 +108,10 @@ class ProjectIssuesServices extends APIService {
     moduleId: string,
     bridgeId: string
   ): Promise<any> {
-    return this.delete(MODULE_ISSUE_DETAIL(workspaceSlug, projectId, moduleId, bridgeId))
-      .then((response) => {
-        return response?.data;
-      })
+    return this.delete(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/module-issues/${bridgeId}/`
+    )
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });

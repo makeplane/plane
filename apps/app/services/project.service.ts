@@ -1,18 +1,3 @@
-// api routes
-import {
-  CHECK_PROJECT_IDENTIFIER,
-  INVITE_PROJECT,
-  JOIN_PROJECT,
-  PROJECTS_ENDPOINT,
-  PROJECT_DETAIL,
-  PROJECT_INVITATIONS,
-  PROJECT_INVITATION_DETAIL,
-  PROJECT_MEMBERS,
-  PROJECT_MEMBER_DETAIL,
-  USER_PROJECT_INVITATIONS,
-  PROJECT_VIEW_ENDPOINT,
-  PROJECT_MEMBER_ME,
-} from "constants/api-routes";
 // services
 import APIService from "services/api.service";
 // types
@@ -25,220 +10,193 @@ class ProjectServices extends APIService {
     super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
   }
 
-  async createProject(workspacSlug: string, data: Partial<IProject>): Promise<IProject> {
-    return this.post(PROJECTS_ENDPOINT(workspacSlug), data)
-      .then((response) => {
-        return response?.data;
-      })
+  async createProject(workspaceSlug: string, data: Partial<IProject>): Promise<IProject> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/`, data)
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
       });
   }
 
   async checkProjectIdentifierAvailability(workspaceSlug: string, data: string): Promise<any> {
-    return this.get(CHECK_PROJECT_IDENTIFIER(workspaceSlug), {
+    return this.get(`/api/workspaces/${workspaceSlug}/project-identifiers`, {
       params: {
         name: data,
       },
     })
-      .then((response) => {
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async getProjects(workspacSlug: string): Promise<IProject[]> {
-    return this.get(PROJECTS_ENDPOINT(workspacSlug))
-      .then((response) => {
-        return response?.data;
-      })
+  async getProjects(workspaceSlug: string): Promise<IProject[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/`)
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async getProject(workspacSlug: string, projectId: string): Promise<IProject> {
-    return this.get(PROJECT_DETAIL(workspacSlug, projectId))
-      .then((response) => {
-        return response?.data;
-      })
+  async getProject(workspaceSlug: string, projectId: string): Promise<IProject> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/`)
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
   async updateProject(
-    workspacSlug: string,
+    workspaceSlug: string,
     projectId: string,
     data: Partial<IProject>
   ): Promise<IProject> {
-    return this.patch(PROJECT_DETAIL(workspacSlug, projectId), data)
-      .then((response) => {
-        return response?.data;
-      })
+    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/`, data)
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async deleteProject(workspacSlug: string, projectId: string): Promise<any> {
-    return this.delete(PROJECT_DETAIL(workspacSlug, projectId))
-      .then((response) => {
-        return response?.data;
-      })
+  async deleteProject(workspaceSlug: string, projectId: string): Promise<any> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/`)
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async inviteProject(workspacSlug: string, projectId: string, data: any): Promise<any> {
-    return this.post(INVITE_PROJECT(workspacSlug, projectId), data)
-      .then((response) => {
-        return response?.data;
-      })
+  async inviteProject(workspaceSlug: string, projectId: string, data: any): Promise<any> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/add/`, data)
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async joinProject(workspacSlug: string, data: any): Promise<any> {
-    return this.post(JOIN_PROJECT(workspacSlug), data)
-      .then((response) => {
-        return response?.data;
-      })
+  async joinProject(workspaceSlug: string, data: any): Promise<any> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/join/`, data)
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
   async joinProjects(data: any): Promise<any> {
-    return this.post(USER_PROJECT_INVITATIONS, data)
-      .then((response) => {
-        return response?.data;
-      })
+    return this.post("/api/users/me/invitations/projects/", data)
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async projectMembers(workspacSlug: string, projectId: string): Promise<IProjectMember[]> {
-    return this.get(PROJECT_MEMBERS(workspacSlug, projectId))
-      .then((response) => {
-        return response?.data;
-      })
+  async projectMembers(workspaceSlug: string, projectId: string): Promise<IProjectMember[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/`)
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async projectMemberMe(workspacSlug: string, projectId: string): Promise<IProjectMember> {
-    return this.get(PROJECT_MEMBER_ME(workspacSlug, projectId))
-      .then((response) => {
-        return response?.data;
-      })
+  async projectMemberMe(workspaceSlug: string, projectId: string): Promise<IProjectMember> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/project-members/me/`)
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
   async getProjectMember(
-    workspacSlug: string,
+    workspaceSlug: string,
     projectId: string,
     memberId: string
   ): Promise<IProjectMember> {
-    return this.get(PROJECT_MEMBER_DETAIL(workspacSlug, projectId, memberId))
-      .then((response) => {
-        return response?.data;
-      })
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/${memberId}/`)
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
   async updateProjectMember(
-    workspacSlug: string,
+    workspaceSlug: string,
     projectId: string,
     memberId: string,
     data: Partial<IProjectMember>
   ): Promise<IProjectMember> {
-    return this.put(PROJECT_MEMBER_DETAIL(workspacSlug, projectId, memberId), data)
-      .then((response) => {
-        return response?.data;
-      })
+    return this.put(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/members/${memberId}/`,
+      data
+    )
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
   async deleteProjectMember(
-    workspacSlug: string,
+    workspaceSlug: string,
     projectId: string,
     memberId: string
   ): Promise<any> {
-    return this.delete(PROJECT_MEMBER_DETAIL(workspacSlug, projectId, memberId))
-      .then((response) => {
-        return response?.data;
-      })
+    return this.delete(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/members/${memberId}/`
+    )
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
   async projectInvitations(
-    workspacSlug: string,
+    workspaceSlug: string,
     projectId: string
   ): Promise<IProjectMemberInvitation[]> {
-    return this.get(PROJECT_INVITATIONS(workspacSlug, projectId))
-      .then((response) => {
-        return response?.data;
-      })
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/invitations/`)
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
   async updateProjectInvitation(
-    workspacSlug: string,
+    workspaceSlug: string,
     projectId: string,
     invitationId: string
   ): Promise<any> {
-    return this.put(PROJECT_INVITATION_DETAIL(workspacSlug, projectId, invitationId))
-      .then((response) => {
-        return response?.data;
-      })
+    return this.put(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/invitations/${invitationId}/`
+    )
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
   async deleteProjectInvitation(
-    workspacSlug: string,
+    workspaceSlug: string,
     projectId: string,
     invitationId: string
   ): Promise<any> {
-    return this.delete(PROJECT_INVITATION_DETAIL(workspacSlug, projectId, invitationId))
-      .then((response) => {
-        return response?.data;
-      })
+    return this.delete(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/invitations/${invitationId}/`
+    )
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
   async setProjectView(
-    workspacSlug: string,
+    workspaceSlug: string,
     projectId: string,
     data: {
       view_props?: ProjectViewTheme;
       default_props?: ProjectViewTheme;
     }
   ): Promise<any> {
-    await this.post(PROJECT_VIEW_ENDPOINT(workspacSlug, projectId), data)
-      .then((response) => {
-        return response?.data;
-      })
+    await this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/project-views/`, data)
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });

@@ -1,19 +1,18 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-// constants
-import { STATE_LIST } from "constants/fetch-keys";
 // services
 import stateService from "services/state.service";
+import userService from "services/user.service";
 // hooks
-import useUser from "./use-user";
+import useUser from "hooks/use-user";
+// helpers
+import { groupBy } from "helpers/array.helper";
 // types
 import { Properties, NestedKeyOf, IIssue } from "types";
-// services
-import userService from "services/user.service";
-// common
-import { groupBy } from "constants/common";
-
+// fetch-keys
+import { STATE_LIST } from "constants/fetch-keys";
+// constants
 import { PRIORITIES } from "constants/";
 
 const initialValues: Properties = {
@@ -50,7 +49,7 @@ const useMyIssuesProperties = (issues?: IIssue[]) => {
     setGroupByProperty(user.my_issues_prop?.groupBy ?? null);
   }, [user]);
 
-  let groupedByIssues: {
+  const groupedByIssues: {
     [key: string]: IIssue[];
   } = {
     ...(groupByProperty === "state_detail.name"

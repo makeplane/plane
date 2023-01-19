@@ -9,11 +9,11 @@ import useIssuesProperties from "hooks/use-issue-properties";
 // ui
 import { CustomMenu } from "components/ui";
 // icons
+// helpers
+import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // types
 import { IIssue, NestedKeyOf, Properties } from "types";
 // common
-import { classNames, replaceUnderscoreIfSnakeCase } from "constants/common";
-// constants
 import { filterIssueOptions, groupByOptions, orderByOptions } from "constants/";
 
 type Props = {
@@ -51,10 +51,9 @@ const View: React.FC<Props> = ({
         {({ open }) => (
           <>
             <Popover.Button
-              className={classNames(
-                open ? "bg-gray-100 text-gray-900" : "text-gray-500",
-                "group flex items-center gap-2 rounded-md border bg-transparent p-2 text-xs font-medium hover:bg-gray-100 hover:text-gray-900 focus:outline-none"
-              )}
+              className={`group flex items-center gap-2 rounded-md border bg-transparent p-2 text-xs font-medium hover:bg-gray-100 hover:text-gray-900 focus:outline-none ${
+                open ? "bg-gray-100 text-gray-900" : "text-gray-500"
+              }`}
             >
               <span>View</span>
               <ChevronDownIcon className="h-4 w-4" aria-hidden="true" />

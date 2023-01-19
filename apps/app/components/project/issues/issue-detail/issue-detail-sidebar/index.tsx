@@ -18,11 +18,12 @@ import {
   PlusIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-// import type { Control } from "react-hook-form";
+// types
 import type { ICycle, IIssue, IIssueLabels } from "types";
-import issuesServices from "services/issues.service";
 // hooks
 import useToast from "hooks/useToast";
+// services
+import issuesServices from "services/issues.service";
 // components
 import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
 import SelectState from "components/project/issues/issue-detail/issue-detail-sidebar/select-state";
@@ -36,11 +37,10 @@ import SelectBlocked from "components/project/issues/issue-detail/issue-detail-s
 // ui
 import { Input, Button, Spinner } from "components/ui";
 // icons
-// types
+// helpers
+import { copyTextToClipboard } from "helpers/string.helper";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
-// common
-import { copyTextToClipboard } from "constants/common";
 
 type Props = {
   control: Control<IIssue, any>;

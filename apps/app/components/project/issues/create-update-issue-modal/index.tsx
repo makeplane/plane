@@ -6,19 +6,23 @@ import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 
+// react-hook-form
 import { Controller, useForm } from "react-hook-form";
-
+// headless ui
 import { Dialog, Menu, Transition } from "@headlessui/react";
-// services
+// icons
 import { EllipsisHorizontalIcon, XMarkIcon } from "@heroicons/react/24/outline";
+// types
 import type { IIssue, IssueResponse } from "types";
+// services
+import projectService from "services/project.service";
+import modulesService from "services/modules.service";
 import issuesServices from "services/issues.service";
 // hooks
 import useUser from "hooks/use-user";
 import useToast from "hooks/useToast";
 // ui
 import { Button, Input, Loader } from "components/ui";
-// icons
 // components
 import SelectState from "components/project/issues/create-update-issue-modal/select-state";
 import SelectCycles from "components/project/issues/create-update-issue-modal/select-cycle";
@@ -29,7 +33,9 @@ import SelectAssignee from "components/project/issues/create-update-issue-modal/
 import SelectParent from "components/project/issues/create-update-issue-modal/select-parent-issue";
 import CreateUpdateStateModal from "components/project/issues/BoardView/state/create-update-state-modal";
 import CreateUpdateCycleModal from "components/project/cycles/create-update-cycle-modal";
-// types
+// common
+import { renderDateFormat } from "helpers/date-time.helper";
+import { cosineSimilarity } from "helpers/string.helper";
 // fetch keys
 import {
   PROJECT_ISSUES_DETAILS,
@@ -39,10 +45,6 @@ import {
   PROJECTS_LIST,
   MODULE_ISSUES,
 } from "constants/fetch-keys";
-// common
-import { renderDateFormat, cosineSimilarity } from "constants/common";
-import projectService from "services/project.service";
-import modulesService from "services/modules.service";
 
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
   ssr: false,
@@ -172,12 +174,12 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
           mutate<IssueResponse>(
             PROJECT_ISSUES_LIST(workspaceSlug as string, projectId),
             (prevData) => ({
-                ...(prevData as IssueResponse),
-                results: (prevData?.results ?? []).map((issue) => {
-                  if (issue.id === res.id) return { ...issue, sprints: cycleId };
-                  return issue;
-                }),
+              ...(prevData as IssueResponse),
+              results: (prevData?.results ?? []).map((issue) => {
+                if (issue.id === res.id) return { ...issue, sprints: cycleId };
+                return issue;
               }),
+            }),
             false
           );
       })
@@ -259,12 +261,12 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
             mutate<IssueResponse>(
               PROJECT_ISSUES_LIST(workspaceSlug as string, projectId),
               (prevData) => ({
-                  ...(prevData as IssueResponse),
-                  results: (prevData?.results ?? []).map((issue) => {
-                    if (issue.id === res.id) return { ...issue, ...res };
-                    return issue;
-                  }),
-                })
+                ...(prevData as IssueResponse),
+                results: (prevData?.results ?? []).map((issue) => {
+                  if (issue.id === res.id) return { ...issue, ...res };
+                  return issue;
+                }),
+              })
             );
           if (formData.cycle && formData.cycle !== null) {
             addIssueToCycle(res.id, formData.cycle);
@@ -558,7 +560,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                             className={`pointer-events-none inline-block h-3 w-3 ${
                               createMore ? "translate-x-3" : "translate-x-0"
                             } transform rounded-full bg-white shadow ring-0 transition duration-300 ease-in-out`}
-                           />
+                          />
                         </button>
                       </div>
                       <div className="flex items-center gap-2">

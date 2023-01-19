@@ -14,7 +14,7 @@ import { STATE_LIST } from "constants/fetch-keys";
 // services
 import stateService from "services/state.service";
 // ui
-import { Button, Input, Select, Spinner } from "components/ui";
+import { Button, Input, Select } from "components/ui";
 // types
 
 type Props = {

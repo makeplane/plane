@@ -7,8 +7,10 @@ import useSWR, { mutate } from "swr";
 import { Controller, useForm } from "react-hook-form";
 import { Disclosure, Transition } from "@headlessui/react";
 import { ChevronLeftIcon, ChevronRightIcon, PlusIcon } from "@heroicons/react/24/outline";
-import type { NextPage, NextPageContext } from "next";
 
+// types
+import type { NextPage, NextPageContext } from "next";
+import { IIssue, IssueResponse } from "types";
 // services
 import issuesServices from "services/issues.service";
 import projectService from "services/project.service";
@@ -26,16 +28,14 @@ import IssueActivitySection from "components/project/issues/issue-detail/activit
 import { Loader, TextArea, HeaderButton, CustomMenu } from "components/ui";
 import { Breadcrumbs } from "components/breadcrumbs";
 // icons
-// types
-import { IIssue, IssueResponse } from "types";
+// helpers
+import { debounce } from "helpers/functions.helper";
 // fetch-keys
 import {
   PROJECT_DETAILS,
   PROJECT_ISSUES_LIST,
   PROJECT_ISSUES_ACTIVITY,
 } from "constants/fetch-keys";
-// common
-import { debounce } from "constants/common";
 
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
   ssr: false,

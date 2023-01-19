@@ -1,40 +1,28 @@
 import React, { createContext, useCallback, useReducer, useEffect } from "react";
+import { useRouter } from "next/router";
 // swr
 import useSWR from "swr";
-// constants
-import {
-  TOGGLE_SIDEBAR,
-  REHYDRATE_THEME,
-  SET_ISSUE_VIEW,
-  SET_GROUP_BY_PROPERTY,
-  SET_ORDER_BY_PROPERTY,
-  SET_FILTER_ISSUES,
-  RESET_TO_DEFAULT,
-} from "constants/theme.context.constants";
 // components
 import ToastAlert from "components/toast-alert";
-// hooks
-import useUser from "hooks/use-user";
-// constants
-import { USER_PROJECT_VIEW } from "constants/fetch-keys";
 // services
 import projectService from "services/project.service";
+// types
+import type { IIssue, NestedKeyOf, ProjectViewTheme as Theme } from "types";
+// fetch-keys
+import { USER_PROJECT_VIEW } from "constants/fetch-keys";
+// constants
 
 export const themeContext = createContext<ContextType>({} as ContextType);
 
-// types
-import type { IIssue, NestedKeyOf, ProjectViewTheme as Theme } from "types";
-import { useRouter } from "next/router";
-
 type ReducerActionType = {
   type:
-    | typeof TOGGLE_SIDEBAR
-    | typeof REHYDRATE_THEME
-    | typeof SET_ISSUE_VIEW
-    | typeof SET_ORDER_BY_PROPERTY
-    | typeof SET_FILTER_ISSUES
-    | typeof SET_GROUP_BY_PROPERTY
-    | typeof RESET_TO_DEFAULT;
+    | "TOGGLE_SIDEBAR"
+    | "REHYDRATE_THEME"
+    | "SET_ISSUE_VIEW"
+    | "SET_ORDER_BY_PROPERTY"
+    | "SET_FILTER_ISSUES"
+    | "SET_GROUP_BY_PROPERTY"
+    | "RESET_TO_DEFAULT";
   payload?: Partial<Theme>;
 };
 
@@ -69,19 +57,21 @@ export const reducer: ReducerFunctionType = (state, action) => {
   const { type, payload } = action;
 
   switch (type) {
-    case TOGGLE_SIDEBAR:
+    case "TOGGLE_SIDEBAR":
       const newState = {
         ...state,
         collapsed: !state.collapsed,
       };
       localStorage.setItem("collapsed", JSON.stringify(newState.collapsed));
       return newState;
-    case REHYDRATE_THEME: {
+
+    case "REHYDRATE_THEME": {
       let collapsed: any = localStorage.getItem("collapsed");
       collapsed = collapsed ? JSON.parse(collapsed) : false;
       return { ...initialState, ...payload, collapsed };
     }
-    case SET_ISSUE_VIEW: {
+
+    case "SET_ISSUE_VIEW": {
       const newState = {
         ...state,
         issueView: payload?.issueView || "list",
@@ -91,7 +81,8 @@ export const reducer: ReducerFunctionType = (state, action) => {
         ...newState,
       };
     }
-    case SET_GROUP_BY_PROPERTY: {
+
+    case "SET_GROUP_BY_PROPERTY": {
       const newState = {
         ...state,
         groupByProperty: payload?.groupByProperty || null,
@@ -101,7 +92,8 @@ export const reducer: ReducerFunctionType = (state, action) => {
         ...newState,
       };
     }
-    case SET_ORDER_BY_PROPERTY: {
+
+    case "SET_ORDER_BY_PROPERTY": {
       const newState = {
         ...state,
         orderBy: payload?.orderBy || null,
@@ -111,7 +103,8 @@ export const reducer: ReducerFunctionType = (state, action) => {
         ...newState,
       };
     }
-    case SET_FILTER_ISSUES: {
+
+    case "SET_FILTER_ISSUES": {
       const newState = {
         ...state,
         filterIssue: payload?.filterIssue || null,
@@ -121,7 +114,8 @@ export const reducer: ReducerFunctionType = (state, action) => {
         ...newState,
       };
     }
-    case RESET_TO_DEFAULT: {
+
+    case "RESET_TO_DEFAULT": {
       return {
         ...initialState,
         ...payload,
@@ -161,19 +155,19 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
   const toggleCollapsed = useCallback(() => {
     dispatch({
-      type: TOGGLE_SIDEBAR,
+      type: "TOGGLE_SIDEBAR",
     });
   }, []);
 
   const setIssueViewToKanban = useCallback(() => {
     dispatch({
-      type: SET_ISSUE_VIEW,
+      type: "SET_ISSUE_VIEW",
       payload: {
         issueView: "kanban",
       },
     });
     dispatch({
-      type: SET_GROUP_BY_PROPERTY,
+      type: "SET_GROUP_BY_PROPERTY",
       payload: {
         groupByProperty: "state_detail.name",
       },
@@ -188,13 +182,13 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
   const setIssueViewToList = useCallback(() => {
     dispatch({
-      type: SET_ISSUE_VIEW,
+      type: "SET_ISSUE_VIEW",
       payload: {
         issueView: "list",
       },
     });
     dispatch({
-      type: SET_GROUP_BY_PROPERTY,
+      type: "SET_GROUP_BY_PROPERTY",
       payload: {
         groupByProperty: null,
       },
@@ -210,7 +204,7 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const setGroupByProperty = useCallback(
     (property: NestedKeyOf<IIssue> | null) => {
       dispatch({
-        type: SET_GROUP_BY_PROPERTY,
+        type: "SET_GROUP_BY_PROPERTY",
         payload: {
           groupByProperty: property,
         },
@@ -228,7 +222,7 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const setOrderBy = useCallback(
     (property: NestedKeyOf<IIssue> | null) => {
       dispatch({
-        type: SET_ORDER_BY_PROPERTY,
+        type: "SET_ORDER_BY_PROPERTY",
         payload: {
           orderBy: property,
         },
@@ -243,7 +237,7 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const setFilterIssue = useCallback(
     (property: "activeIssue" | "backlogIssue" | null) => {
       dispatch({
-        type: SET_FILTER_ISSUES,
+        type: "SET_FILTER_ISSUES",
         payload: {
           filterIssue: property,
         },
@@ -267,7 +261,7 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
   const resetToDefault = useCallback(() => {
     dispatch({
-      type: RESET_TO_DEFAULT,
+      type: "RESET_TO_DEFAULT",
       payload: myViewProps?.default_props,
     });
     if (!workspaceSlug || !projectId) return;
@@ -276,7 +270,7 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
   useEffect(() => {
     dispatch({
-      type: REHYDRATE_THEME,
+      type: "REHYDRATE_THEME",
       payload: myViewProps?.view_props,
     });
   }, [myViewProps]);

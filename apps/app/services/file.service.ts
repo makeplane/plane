@@ -1,5 +1,3 @@
-// api routes
-import { S3_URL } from "constants/api-routes";
 // services
 import APIService from "services/api.service";
 
@@ -11,10 +9,8 @@ class FileServices extends APIService {
   }
 
   async uploadFile(workspaceSlug: string, file: FormData): Promise<any> {
-    return this.mediaUpload(S3_URL(workspaceSlug), file)
-      .then((response) => {
-        return response?.data;
-      })
+    return this.mediaUpload(`/api/workspaces/${workspaceSlug}/file-assets/`, file)
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });

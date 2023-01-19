@@ -1,5 +1,3 @@
-// api routes
-import { CYCLES_ENDPOINT, CYCLE_DETAIL } from "constants/api-routes";
 // services
 import APIService from "services/api.service";
 // types
@@ -13,30 +11,26 @@ class ProjectCycleServices extends APIService {
   }
 
   async createCycle(workspaceSlug: string, projectId: string, data: any): Promise<any> {
-    return this.post(CYCLES_ENDPOINT(workspaceSlug, projectId), data)
-      .then((response) => {
-        return response?.data;
-      })
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/`, data)
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
   async getCycles(workspaceSlug: string, projectId: string): Promise<ICycle[]> {
-    return this.get(CYCLES_ENDPOINT(workspaceSlug, projectId))
-      .then((response) => {
-        return response?.data;
-      })
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/`)
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
   async getCycleIssues(workspaceSlug: string, projectId: string, cycleId: string): Promise<any> {
-    return this.get(CYCLE_DETAIL(workspaceSlug, projectId, cycleId))
-      .then((response) => {
-        return response?.data;
-      })
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-issues/`
+    )
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -49,12 +43,10 @@ class ProjectCycleServices extends APIService {
     data: any
   ): Promise<any> {
     return this.put(
-      CYCLE_DETAIL(workspaceSlug, projectId, cycleId).replace("cycle-issues/", ""),
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/`,
       data
     )
-      .then((response) => {
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -67,22 +59,18 @@ class ProjectCycleServices extends APIService {
     data: any
   ): Promise<any> {
     return this.patch(
-      CYCLE_DETAIL(workspaceSlug, projectId, cycleId).replace("cycle-issues/", ""),
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/`,
       data
     )
-      .then((response) => {
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
   async deleteCycle(workspaceSlug: string, projectId: string, cycleId: string): Promise<any> {
-    return this.delete(CYCLE_DETAIL(workspaceSlug, projectId, cycleId).replace("cycle-issues/", ""))
-      .then((response) => {
-        return response?.data;
-      })
+    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/`)
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });

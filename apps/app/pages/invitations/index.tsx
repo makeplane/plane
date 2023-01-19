@@ -2,14 +2,16 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import useSWR from "swr";
+
+// icons
 import { CubeIcon, PlusIcon } from "@heroicons/react/24/outline";
-// services
-import type { IWorkspaceMemberInvitation } from "types";
+// types
 import type { NextPage, NextPageContext } from "next";
+import type { IWorkspaceMemberInvitation } from "types";
+// services
 import workspaceService from "services/workspace.service";
 // hooks
 import useUser from "hooks/use-user";
-// constants
 import { requiredAuth } from "lib/auth";
 // layouts
 import DefaultLayout from "layouts/default-layout";
@@ -17,10 +19,6 @@ import DefaultLayout from "layouts/default-layout";
 import SingleInvitation from "components/workspace/SingleInvitation";
 // ui
 import { Button, Spinner, EmptySpace, EmptySpaceItem } from "components/ui";
-import { USER_WORKSPACE_INVITATIONS } from "constants/api-routes";
-import { USER_WORKSPACES } from "constants/fetch-keys";
-// icons
-// types
 
 const OnBoard: NextPage = () => {
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
@@ -29,11 +27,12 @@ const OnBoard: NextPage = () => {
 
   const router = useRouter();
 
-  const { data: invitations, mutate: mutateInvitations } = useSWR(USER_WORKSPACE_INVITATIONS, () =>
-    workspaceService.userWorkspaceInvitations()
+  const { data: invitations, mutate: mutateInvitations } = useSWR(
+    "USER_WORKSPACE_INVITATIONS",
+    () => workspaceService.userWorkspaceInvitations()
   );
 
-  const { data: workspaces, mutate: mutateWorkspaces } = useSWR(USER_WORKSPACES, () =>
+  const { data: workspaces, mutate: mutateWorkspaces } = useSWR("USER_WORKSPACES", () =>
     workspaceService.userWorkspaces()
   );
 

@@ -16,14 +16,14 @@ import useToast from "hooks/useToast";
 import { Button, Input, TextArea, CustomSelect } from "components/ui";
 // components
 import EmojiIconPicker from "components/emoji-icon-picker";
+// helpers
+import { getRandomEmoji } from "helpers/functions.helper";
 // types
 import { IProject } from "types";
-// common
-import { getRandomEmoji } from "constants/common";
+// fetch-keys
+import { PROJECTS_LIST, WORKSPACE_MEMBERS_ME } from "constants/fetch-keys";
 // constants
 import { NETWORK_CHOICES } from "constants/";
-// fetch keys
-import { PROJECTS_LIST, WORKSPACE_MEMBERS_ME } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;

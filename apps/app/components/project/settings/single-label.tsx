@@ -29,11 +29,8 @@ const SingleLabel: React.FC<Props> = ({ label, issueLabels, editLabel, handleLab
 
   const {
     register,
-    handleSubmit,
     formState: { errors, isSubmitting },
-    setError,
     watch,
-    reset,
     control,
   } = useForm<IIssueLabels>({ defaultValues });
 
@@ -55,13 +52,7 @@ const SingleLabel: React.FC<Props> = ({ label, issueLabels, editLabel, handleLab
             </div>
             <CustomMenu ellipsis>
               {/* <CustomMenu.MenuItem>Convert to group</CustomMenu.MenuItem> */}
-              <CustomMenu.MenuItem
-                onClick={() => {
-                  editLabel(label);
-                }}
-              >
-                Edit
-              </CustomMenu.MenuItem>
+              <CustomMenu.MenuItem onClick={() => editLabel(label)}>Edit</CustomMenu.MenuItem>
               <CustomMenu.MenuItem onClick={() => handleLabelDelete(label.id)}>
                 Delete
               </CustomMenu.MenuItem>
@@ -83,7 +74,7 @@ const SingleLabel: React.FC<Props> = ({ label, issueLabels, editLabel, handleLab
                           style={{
                             backgroundColor: watch("colour") ?? "green",
                           }}
-                         />
+                        />
                       )}
                     </Popover.Button>
 

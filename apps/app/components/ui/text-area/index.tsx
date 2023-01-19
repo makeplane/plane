@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Props } from "./types";
-import { classNames } from "components/ui/helper"; // TODO: Replace this with clsx package
 // commons
 
 // types
@@ -24,7 +23,7 @@ const useAutosizeTextArea = (textAreaRef: HTMLTextAreaElement | null, value: any
 export const TextArea: React.FC<Props> = ({
   id,
   label,
-  className,
+  className = "",
   value,
   placeholder,
   name,
@@ -68,16 +67,15 @@ export const TextArea: React.FC<Props> = ({
           onChange && onChange(e);
           setTextareaValue(e.target.value);
         }}
-        className={classNames(
-          "no-scrollbar w-full bg-transparent px-3 py-2 outline-none",
-          mode === "primary" ? "rounded-md border border-gray-300" : "",
-          mode === "transparent"
+        className={`no-scrollbar w-full bg-transparent px-3 py-2 outline-none ${
+          mode === "primary"
+            ? "rounded-md border border-gray-300"
+            : mode === "transparent"
             ? "rounded border-none bg-transparent ring-0 transition-all focus:ring-1 focus:ring-theme"
-            : "",
-          error ? "border-red-500" : "",
-          error && mode === "primary" ? "bg-red-100" : "",
-          className ?? ""
-        )}
+            : ""
+        } ${error ? "border-red-500" : ""} ${
+          error && mode === "primary" ? "bg-red-100" : ""
+        } ${className}`}
         {...rest}
       />
       {error?.message && <div className="text-sm text-red-500">{error.message}</div>}

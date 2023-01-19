@@ -8,7 +8,6 @@ import useSWR, { mutate } from "swr";
 import { Control, Controller, UseFormWatch } from "react-hook-form";
 // constants
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
-import { CYCLE_ISSUES, CYCLE_LIST, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 // services
 import issuesService from "services/issues.service";
 import cyclesService from "services/cycles.service";
@@ -16,9 +15,8 @@ import cyclesService from "services/cycles.service";
 import { Spinner, CustomSelect } from "components/ui";
 // icons
 // types
-import { CycleIssueResponse, ICycle, IIssue, IssueResponse } from "types";
-// common
-import { classNames } from "constants/common";
+import { ICycle, IIssue } from "types";
+import { CYCLE_ISSUES, CYCLE_LIST, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 
 type Props = {
   issueDetail: IIssue | undefined;
@@ -29,7 +27,7 @@ type Props = {
 
 const SelectCycle: React.FC<Props> = ({ issueDetail, control, handleCycleChange }) => {
   const router = useRouter();
-  const { workspaceSlug, projectId, issueId } = router.query;
+  const { workspaceSlug, projectId } = router.query;
 
   const { data: cycles } = useSWR(
     workspaceSlug && projectId ? CYCLE_LIST(projectId as string) : null,
@@ -70,10 +68,7 @@ const SelectCycle: React.FC<Props> = ({ issueDetail, control, handleCycleChange 
               <CustomSelect
                 label={
                   <span
-                    className={classNames(
-                      value ? "" : "text-gray-900",
-                      "hidden truncate text-left sm:block"
-                    )}
+                    className={`hidden truncate text-left sm:block ${value ? "" : "text-gray-900"}`}
                   >
                     {value ? value?.cycle_detail?.name : "None"}
                   </span>

@@ -12,14 +12,16 @@ import {
   PlusIcon,
 } from "@heroicons/react/24/outline";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
+import SingleIssue from "components/common/board-view/single-issue";
 // services
 import workspaceService from "services/workspace.service";
 // icons
-import { addSpaceIfCamelCase } from "constants/common";
-import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
+// helpers
+import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
 import { IIssue, Properties, NestedKeyOf, IWorkspaceMember } from "types";
-import SingleIssue from "components/common/board-view/single-issue";
+// fetch-keys
+import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 
 type Props = {
   selectedGroup: NestedKeyOf<IIssue> | null;

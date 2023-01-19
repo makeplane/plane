@@ -1,11 +1,9 @@
 import React from "react";
-// next
 import { useRouter } from "next/router";
 import Image from "next/image";
-// swr
 import { KeyedMutator } from "swr";
 
-// common
+// icons
 import {
   CalendarDaysIcon,
   ChartBarIcon,
@@ -13,16 +11,19 @@ import {
   Squares2X2Icon,
   UserIcon,
 } from "@heroicons/react/24/outline";
-import { addSpaceIfCamelCase, renderShortNumericDateFormat, timeAgo } from "constants/common";
+// services
+import issuesServices from "services/issues.service";
+// components
+import CommentCard from "components/project/issues/issue-detail/comment/issue-comment-card";
 // ui
 import { Loader } from "components/ui";
 // icons
 import { BlockedIcon, BlockerIcon, TagIcon, UserGroupIcon } from "components/icons";
+// helpers
+import { renderShortNumericDateFormat, timeAgo } from "helpers/date-time.helper";
+import { addSpaceIfCamelCase } from "helpers/string.helper";
+// types
 import { IIssueActivity, IIssueComment } from "types";
-// components
-import CommentCard from "components/project/issues/issue-detail/comment/issue-comment-card";
-// services
-import issuesServices from "services/issues.service";
 
 const activityDetails: {
   [key: string]: {

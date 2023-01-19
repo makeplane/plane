@@ -9,16 +9,16 @@ import { Draggable } from "react-beautiful-dnd";
 import workspaceService from "services/workspace.service";
 // components
 import SingleIssue from "components/common/board-view/single-issue";
+import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 // ui
 import { CustomMenu } from "components/ui";
 // icons
+// helpers
+import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
 import { IIssue, IWorkspaceMember, NestedKeyOf, Properties } from "types";
 // fetch-keys
 import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
-// common
-import { addSpaceIfCamelCase } from "constants/common";
-import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 
 type Props = {
   properties: Properties;

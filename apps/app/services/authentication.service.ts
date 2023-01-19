@@ -1,10 +1,3 @@
-// api routes
-import {
-  SIGN_IN_ENDPOINT,
-  SOCIAL_AUTH_ENDPOINT,
-  MAGIC_LINK_GENERATE,
-  MAGIC_LINK_SIGNIN,
-} from "constants/api-routes";
 // services
 import APIService from "services/api.service";
 
@@ -16,7 +9,7 @@ class AuthService extends APIService {
   }
 
   async emailLogin(data: any) {
-    return this.post(SIGN_IN_ENDPOINT, data, { headers: {} })
+    return this.post("/api/sign-in/", data, { headers: {} })
       .then((response) => {
         this.setAccessToken(response?.data?.access_token);
         this.setRefreshToken(response?.data?.refresh_token);
@@ -28,7 +21,7 @@ class AuthService extends APIService {
   }
 
   async socialAuth(data: any) {
-    return this.post(SOCIAL_AUTH_ENDPOINT, data, { headers: {} })
+    return this.post("/api/social-auth/", data, { headers: {} })
       .then((response) => {
         this.setAccessToken(response?.data?.access_token);
         this.setRefreshToken(response?.data?.refresh_token);
@@ -40,16 +33,14 @@ class AuthService extends APIService {
   }
 
   async emailCode(data: any) {
-    return this.post(MAGIC_LINK_GENERATE, data, { headers: {} })
-      .then((response) => {
-        return response?.data;
-      })
+    return this.post("/api/magic-generate/", data, { headers: {} })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
   async magicSignIn(data: any) {
-    const response = await this.post(MAGIC_LINK_SIGNIN, data, { headers: {} });
+    const response = await this.post("/api/magic-sign-in/", data, { headers: {} });
     if (response?.status === 200) {
       this.setAccessToken(response?.data?.access_token);
       this.setRefreshToken(response?.data?.refresh_token);

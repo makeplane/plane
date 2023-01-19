@@ -18,7 +18,6 @@ import User from "public/user.png";
 // types
 import { IModule } from "types";
 // constants
-import { classNames } from "constants/common";
 import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 
 type Props = {
@@ -59,10 +58,9 @@ const SelectMembers: React.FC<Props> = ({ control, submitChanges }) => {
                 <div className="relative">
                   <Listbox.Button className="flex w-full cursor-pointer items-center gap-1 text-xs">
                     <span
-                      className={classNames(
-                        value ? "" : "text-gray-900",
-                        "hidden truncate text-left sm:block"
-                      )}
+                      className={`hidden truncate text-left sm:block ${
+                        value ? "" : "text-gray-900"
+                      }`}
                     >
                       <div className="flex cursor-pointer items-center gap-1 text-xs">
                         {value && Array.isArray(value) ? (
