@@ -37,6 +37,8 @@
     "@types/react-color": "^3.0.6",
     "@types/react-dom": "18.0.6",
     "@types/uuid": "^8.3.4",
+    "@typescript-eslint/eslint-plugin": "^5.48.2",
+    "@typescript-eslint/parser": "^5.48.2",
     "autoprefixer": "^10.4.7",
     "config": "workspace:*",
     "eslint": "^8.31.0",

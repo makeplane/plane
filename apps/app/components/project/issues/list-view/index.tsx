@@ -36,7 +36,6 @@ import {
   STATE_LIST,
   WORKSPACE_MEMBERS,
 } from "constants/fetch-keys";
-components / issues / create - update - issue - modal;
 
 // types
 type Props = {

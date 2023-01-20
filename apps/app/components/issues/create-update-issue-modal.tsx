@@ -14,7 +14,7 @@ import modulesService from "services/modules.service";
 import issuesServices from "services/issues.service";
 // hooks
 import useUser from "hooks/use-user";
-import useToast from "hooks/useToast";
+import useToast from "hooks/use-toast";
 // ui
 import { Button, Input, Loader } from "components/ui";
 // components

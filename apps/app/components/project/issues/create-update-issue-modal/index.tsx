@@ -12,8 +12,7 @@ import { Controller, useForm } from "react-hook-form";
 import { Dialog, Menu, Transition } from "@headlessui/react";
 // icons
 import { EllipsisHorizontalIcon, XMarkIcon } from "@heroicons/react/24/outline";
-// types
-import type { IIssue, IssueResponse } from "types";
+
 // services
 import projectService from "services/project.service";
 import modulesService from "services/modules.service";
@@ -24,18 +23,22 @@ import useToast from "hooks/use-toast";
 // ui
 import { Button, Input, Loader } from "components/ui";
 // components
-import SelectState from "components/project/issues/create-update-issue-modal/select-state";
-import SelectCycles from "components/project/issues/create-update-issue-modal/select-cycle";
-import SelectLabels from "components/project/issues/create-update-issue-modal/select-labels";
-import SelectProject from "components/project/issues/create-update-issue-modal/select-project";
-import SelectPriority from "components/project/issues/create-update-issue-modal/select-priority";
-import SelectAssignee from "components/project/issues/create-update-issue-modal/select-assignee";
-import SelectParent from "components/project/issues/create-update-issue-modal/select-parent-issue";
+import {
+  IssueStateSelect,
+  IssueCycleSelect,
+  IssueLabelSelect,
+  IssueProjectSelect,
+  IssuePrioritySelect,
+  IssueAssigneeSelect,
+  IssueParentSelect,
+} from "components/issues/select";
 import CreateUpdateStateModal from "components/project/issues/BoardView/state/create-update-state-modal";
 import CreateUpdateCycleModal from "components/project/cycles/create-update-cycle-modal";
 // common
 import { renderDateFormat } from "helpers/date-time.helper";
 import { cosineSimilarity } from "helpers/string.helper";
+// types
+import type { IIssue, IssueResponse } from "types";
 // fetch keys
 import {
   PROJECT_ISSUES_DETAILS,
@@ -332,7 +335,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                   <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="space-y-5">
                       <div className="flex items-center gap-x-2">
-                        <SelectProject
+                        <IssueProjectSelect
                           control={control}
                           activeProject={activeProject ?? ""}
                           setActiveProject={setActiveProject}
@@ -455,15 +458,15 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                             />
                           </div>
                           <div className="flex flex-wrap items-center gap-2">
-                            <SelectState control={control} setIsOpen={setIsStateModalOpen} />
-                            <SelectCycles
+                            <IssueStateSelect control={control} setIsOpen={setIsStateModalOpen} />
+                            <IssueCycleSelect
                               control={control}
                               setIsOpen={setIsCycleModalOpen}
                               activeProject={activeProject ?? ""}
                             />
-                            <SelectPriority control={control} />
-                            <SelectAssignee control={control} />
-                            <SelectLabels control={control} />
+                            <IssuePrioritySelect control={control} />
+                            <IssueAssigneeSelect control={control} />
+                            <IssueLabelSelect control={control} />
                             <Controller
                               control={control}
                               name="target_date"
@@ -478,7 +481,7 @@ const CreateUpdateIssuesModal: React.FC<Props> = ({
                                 />
                               )}
                             />
-                            <SelectParent
+                            <IssueParentSelect
                               control={control}
                               isOpen={parentIssueListModalOpen}
                               setIsOpen={setParentIssueListModalOpen}

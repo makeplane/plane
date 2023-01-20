@@ -1,7 +1,7 @@
-import { convertCookieStringToObject } from "./cookie";
 // types
 import type { IProjectMember, IUser, IWorkspace, IWorkspaceMember } from "types";
-// constants
+// cookie
+import { convertCookieStringToObject } from "./cookie";
 
 export const requiredAuth = async (cookie?: string) => {
   const cookies = convertCookieStringToObject(cookie);
