@@ -51,6 +51,7 @@ from .issue import (
     LabelViewSet,
     BulkDeleteIssuesEndpoint,
     UserWorkSpaceIssues,
+    SubIssuesEndpoint,
 )
 
 from .auth_extended import (
