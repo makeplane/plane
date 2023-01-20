@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from "react";
-
 import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 import { ListBulletIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
 import { PlusIcon, Squares2X2Icon } from "@heroicons/react/20/solid";
-import type { NextPage, NextPageContext } from "next";
-
 // lib
-import type { IIssue, IssueResponse } from "types";
 import { requiredAuth } from "lib/auth";
 // services
 import issuesServices from "services/issues.service";
@@ -20,13 +16,14 @@ import useIssuesFilter from "hooks/use-issues-filter";
 import ListView from "components/project/issues/list-view";
 import BoardView from "components/project/issues/BoardView";
 import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
-import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
+import { CreateUpdateIssuesModal } from "components/issues/create-update-issue-modal";
 import View from "components/core/view";
 // ui
 import { Spinner, EmptySpace, EmptySpaceItem, HeaderButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-// icons
 // types
+import type { IIssue, IssueResponse } from "types";
+import type { NextPage, NextPageContext } from "next";
 // fetch-keys
 import { PROJECT_DETAILS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 

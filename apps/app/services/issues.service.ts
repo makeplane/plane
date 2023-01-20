@@ -26,7 +26,7 @@ class ProjectIssuesServices extends APIService {
       });
   }
 
-  async getIssue(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
+  async retrieve(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -261,6 +261,16 @@ class ProjectIssuesServices extends APIService {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/bulk-delete-issues/`,
       data
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async subIssues(workspaceSlug: string, projectId: string, issueId: string) {
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/sub-issues/`
     )
       .then((response) => response?.data)
       .catch((error) => {

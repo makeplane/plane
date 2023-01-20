@@ -1,18 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react";
-
 import Link from "next/link";
-import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
-import { Controller, useForm } from "react-hook-form";
-import { Disclosure, Transition } from "@headlessui/react";
+import { useForm } from "react-hook-form";
 import { ChevronLeftIcon, ChevronRightIcon, PlusIcon } from "@heroicons/react/24/outline";
-
-// types
-import type { NextPage, NextPageContext } from "next";
-import { IIssue, IssueResponse } from "types";
 // services
-import issuesServices from "services/issues.service";
+import issuesService from "services/issues.service";
 import projectService from "services/project.service";
 // lib
 import { requiredAuth } from "lib/auth";
@@ -20,31 +13,25 @@ import { requiredAuth } from "lib/auth";
 import AppLayout from "layouts/app-layout";
 // components
 import AddAsSubIssue from "components/project/issues/issue-detail/add-as-sub-issue";
-import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
+import { CreateUpdateIssuesModal } from "components/issues/create-update-issue-modal";
 import IssueDetailSidebar from "components/project/issues/issue-detail/issue-detail-sidebar";
 import AddIssueComment from "components/project/issues/issue-detail/comment/issue-comment-section";
 import IssueActivitySection from "components/project/issues/issue-detail/activity";
+import { IssueDescriptionForm, IssueDescriptionFormValues, SubIssueList } from "components/issues";
 // ui
-import { Loader, TextArea, HeaderButton, CustomMenu } from "components/ui";
+import { Loader, HeaderButton, CustomMenu } from "components/ui";
 import { Breadcrumbs } from "components/breadcrumbs";
-// icons
-// helpers
-import { debounce } from "helpers/functions.helper";
+// types
+import { IIssue, IssueResponse } from "types";
+import type { NextPage, NextPageContext } from "next";
 // fetch-keys
 import {
   PROJECT_DETAILS,
   PROJECT_ISSUES_LIST,
   PROJECT_ISSUES_ACTIVITY,
+  ISSUE_DETAILS,
+  SUB_ISSUES,
 } from "constants/fetch-keys";
-
-const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
-  ssr: false,
-  loading: () => (
-    <Loader>
-      <Loader.Item height="12rem" width="100%" />
-    </Loader>
-  ),
-});
 
 const defaultValues = {
   name: "",
@@ -60,15 +47,40 @@ const defaultValues = {
   labels_list: [],
 };
 
-const IssueDetail: NextPage = () => {
+const IssueDetailPage: NextPage = () => {
+  const router = useRouter();
+  const { workspaceSlug, projectId, issueId } = router.query;
+  // states
   const [isOpen, setIsOpen] = useState(false);
   const [isAddAsSubIssueOpen, setIsAddAsSubIssueOpen] = useState(false);
   const [preloadedData, setPreloadedData] = useState<
     (Partial<IIssue> & { actionType: "createIssue" | "edit" | "delete" }) | undefined
   >(undefined);
+  // Fetching API information
+  const { data: issueDetails } = useSWR(
+    issueId && workspaceSlug && projectId ? ISSUE_DETAILS(issueId.toString()) : null,
+    issueId && workspaceSlug && projectId
+      ? () =>
+          issuesService.retrieve(
+            workspaceSlug?.toString(),
+            projectId?.toString(),
+            issueId?.toString()
+          )
+      : null
+  );
 
-  const router = useRouter();
-  const { workspaceSlug, projectId, issueId } = router.query;
+  const { data: subIssues } = useSWR(
+    issueId && workspaceSlug && projectId ? SUB_ISSUES(issueId.toString()) : null,
+    issueId && workspaceSlug && projectId
+      ? () =>
+          issuesService.subIssues(
+            workspaceSlug?.toString(),
+            projectId?.toString(),
+            issueId?.toString()
+          )
+      : null
+  );
+  console.log("issues, issues", subIssues);
 
   const { data: activeProject } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
@@ -82,7 +94,7 @@ const IssueDetail: NextPage = () => {
       ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
       : null,
     workspaceSlug && projectId
-      ? () => issuesServices.getIssues(workspaceSlug as string, projectId as string)
+      ? () => issuesService.getIssues(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -90,7 +102,7 @@ const IssueDetail: NextPage = () => {
     workspaceSlug && projectId && issueId ? PROJECT_ISSUES_ACTIVITY : null,
     workspaceSlug && projectId && issueId
       ? () =>
-          issuesServices.getIssueActivities(
+          issuesService.getIssueActivities(
             workspaceSlug as string,
             projectId as string,
             issueId as string
@@ -105,7 +117,7 @@ const IssueDetail: NextPage = () => {
   const issueDetail = issues?.results?.find((issue) => issue.id === issueId);
   const prevIssue = issues?.results[issues?.results.findIndex((issue) => issue.id === issueId) - 1];
   const nextIssue = issues?.results[issues?.results.findIndex((issue) => issue.id === issueId) + 1];
-  const subIssues = (issues && issues.results.filter((i) => i.parent === issueId)) ?? [];
+  // const subIssues = (issues && issues.results.filter((i) => i.parent === issueId)) ?? [];
   const siblingIssues =
     issueDetail &&
     issues?.results.filter((i) => i.parent === issueDetail.parent && i.id !== issueId);
@@ -149,7 +161,7 @@ const IssueDetail: NextPage = () => {
         ...formData,
       };
 
-      issuesServices
+      issuesService
         .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload)
         .then((response) => {
           mutateIssues((prevData) => ({
@@ -172,7 +184,7 @@ const IssueDetail: NextPage = () => {
 
   const handleSubIssueRemove = (issueId: string) => {
     if (workspaceSlug && activeProject) {
-      issuesServices
+      issuesService
         .patchIssue(workspaceSlug as string, activeProject.id, issueId, { parent: null })
         .then((res) => {
           mutate<IssueResponse>(
@@ -190,6 +202,21 @@ const IssueDetail: NextPage = () => {
         .catch((e) => {
           console.error(e);
         });
+    }
+  };
+
+  /**
+   * Handling the debounce submit by updating the issue with name, description and description_html
+   * @param values IssueDescriptionFormValues
+   */
+  const handleDescriptionFormSubmit = (values: IssueDescriptionFormValues) => {
+    if (workspaceSlug && projectId && issueId) {
+      issuesService.updateIssue(
+        workspaceSlug?.toString(),
+        projectId.toString(),
+        issueId.toString(),
+        values
+      );
     }
   };
 
@@ -254,7 +281,7 @@ const IssueDetail: NextPage = () => {
           parent={issueDetail}
         />
       )}
-      {issueDetail && activeProject ? (
+      {issueDetail && issueDetails && activeProject ? (
         <div className="flex h-full">
           <div className="basis-2/3 space-y-5 divide-y-2 p-5">
             <div className="rounded-lg">
@@ -303,120 +330,19 @@ const IssueDetail: NextPage = () => {
                   </CustomMenu>
                 </div>
               ) : null}
-              <div>
-                <TextArea
-                  id="name"
-                  placeholder="Enter issue name"
-                  name="name"
-                  autoComplete="off"
-                  validations={{ required: true }}
-                  register={register}
-                  onChange={debounce(() => {
-                    handleSubmit(submitChanges)();
-                  }, 5000)}
-                  mode="transparent"
-                  className="text-xl font-medium"
-                />
-                <Controller
-                  name="description"
-                  control={control}
-                  render={({ field: { value } }) => (
-                    <RemirrorRichTextEditor
-                      value={value}
-                      placeholder="Enter Your Text..."
-                      onBlur={(jsonValue, htmlValue) => {
-                        setValue("description", jsonValue);
-                        setValue("description_html", htmlValue);
-                        handleSubmit(submitChanges)();
-                      }}
-                    />
-                  )}
-                />
-              </div>
+              <IssueDescriptionForm
+                issue={issueDetails}
+                handleSubmit={handleDescriptionFormSubmit}
+              />
               <div className="mt-2">
-                {subIssues && subIssues.length > 0 ? (
-                  <Disclosure defaultOpen={true}>
-                    {({ open }) => (
-                      <>
-                        <div className="flex items-center justify-between">
-                          <Disclosure.Button className="flex items-center gap-1 rounded px-2 py-1 text-xs font-medium hover:bg-gray-100">
-                            <ChevronRightIcon className={`h-3 w-3 ${open ? "rotate-90" : ""}`} />
-                            Sub-issues{" "}
-                            <span className="ml-1 text-gray-600">{subIssues.length}</span>
-                          </Disclosure.Button>
-                          {open ? (
-                            <div className="flex items-center">
-                              <button
-                                type="button"
-                                className="flex items-center gap-1 rounded px-2 py-1 text-xs font-medium hover:bg-gray-100"
-                                onClick={() => {
-                                  setIsOpen(true);
-                                  setPreloadedData({
-                                    parent: issueDetail.id,
-                                    actionType: "createIssue",
-                                  });
-                                }}
-                              >
-                                <PlusIcon className="h-3 w-3" />
-                                Create new
-                              </button>
-
-                              <CustomMenu ellipsis>
-                                <CustomMenu.MenuItem onClick={() => setIsAddAsSubIssueOpen(true)}>
-                                  Add an existing issue
-                                </CustomMenu.MenuItem>
-                              </CustomMenu>
-                            </div>
-                          ) : null}
-                        </div>
-                        <Transition
-                          enter="transition duration-100 ease-out"
-                          enterFrom="transform scale-95 opacity-0"
-                          enterTo="transform scale-100 opacity-100"
-                          leave="transition duration-75 ease-out"
-                          leaveFrom="transform scale-100 opacity-100"
-                          leaveTo="transform scale-95 opacity-0"
-                        >
-                          <Disclosure.Panel className="mt-3 flex flex-col gap-y-1">
-                            {subIssues.map((subIssue) => (
-                              <div
-                                key={subIssue.id}
-                                className="group flex items-center justify-between gap-2 rounded p-2 hover:bg-gray-100"
-                              >
-                                <Link
-                                  href={`/${workspaceSlug}/projects/${activeProject.id}/issues/${subIssue.id}`}
-                                >
-                                  <a className="flex items-center gap-2 rounded text-xs">
-                                    <span
-                                      className={`block h-1.5 w-1.5 rounded-full`}
-                                      style={{
-                                        backgroundColor: subIssue.state_detail.color,
-                                      }}
-                                    />
-                                    <span className="flex-shrink-0 text-gray-600">
-                                      {activeProject.identifier}-{subIssue.sequence_id}
-                                    </span>
-                                    <span className="max-w-sm break-all font-medium">
-                                      {subIssue.name}
-                                    </span>
-                                  </a>
-                                </Link>
-                                <div className="opacity-0 group-hover:opacity-100">
-                                  <CustomMenu ellipsis>
-                                    <CustomMenu.MenuItem
-                                      onClick={() => handleSubIssueRemove(subIssue.id)}
-                                    >
-                                      Remove as sub-issue
-                                    </CustomMenu.MenuItem>
-                                  </CustomMenu>
-                                </div>
-                              </div>
-                            ))}
-                          </Disclosure.Panel>
-                        </Transition>
-                      </>
-                    )}
-                  </Disclosure>
+                {issueId && workspaceSlug && projectId && subIssues?.length > 0 ? (
+                  <SubIssueList
+                    issues={subIssues}
+                    parentIssue={issueDetails}
+                    projectId={projectId?.toString()}
+                    workspaceSlug={workspaceSlug?.toString()}
+                    handleSubIssueRemove={handleSubIssueRemove}
+                  />
                 ) : (
                   <CustomMenu
                     label={
@@ -514,4 +440,4 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
   };
 };
 
-export default IssueDetail;
+export default IssueDetailPage;

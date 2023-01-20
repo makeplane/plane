@@ -1,31 +1,25 @@
-// react
 import React from "react";
-// next
 import { useRouter } from "next/router";
-// swr
 import useSWR from "swr";
-// react hook form
 import { Controller, Control } from "react-hook-form";
+import { Squares2X2Icon } from "@heroicons/react/24/outline";
 // services
-// constants
+import stateService from "services/state.service";
 // icons
 import { PlusIcon } from "@heroicons/react/20/solid";
 // ui
-// icons
-import { Squares2X2Icon } from "@heroicons/react/24/outline";
-// types
-// import type { Control } from "react-hook-form";
-import type { IIssue } from "types";
 import { CustomListbox } from "components/ui";
+// types
+import type { IIssue } from "types";
+// fetch keys
 import { STATE_LIST } from "constants/fetch-keys";
-import stateService from "services/state.service";
 
 type Props = {
   control: Control<IIssue, any>;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const SelectState: React.FC<Props> = ({ control, setIsOpen }) => {
+export const IssueStateSelect: React.FC<Props> = ({ control, setIsOpen }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -71,5 +65,3 @@ const SelectState: React.FC<Props> = ({ control, setIsOpen }) => {
     />
   );
 };
-
-export default SelectState;

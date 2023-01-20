@@ -17,7 +17,7 @@ import projectService from "services/project.service";
 // components
 import SingleBoard from "components/project/issues/BoardView/single-board";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
-import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
+import { CreateUpdateIssuesModal } from "components/issues/create-update-issue-modal";
 import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
 // ui
 import { Spinner } from "components/ui";

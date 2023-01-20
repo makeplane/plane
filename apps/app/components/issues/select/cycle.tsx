@@ -1,21 +1,17 @@
 import React from "react";
-// swr
 import useSWR from "swr";
-// react hook form
 import { Controller, Control } from "react-hook-form";
-// services
+import { useRouter } from "next/router";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
-import { useRouter } from "next/router";
-import type { IIssue } from "types";
-// import type { Control } from "react-hook-form";
+// services
 import cycleServices from "services/cycles.service";
-// constants
-import { CYCLE_LIST } from "constants/fetch-keys";
 // ui
 import { CustomListbox } from "components/ui";
-// icons
 // types
+import type { IIssue } from "types";
+// constants
+import { CYCLE_LIST } from "constants/fetch-keys";
 
 type Props = {
   control: Control<IIssue, any>;
@@ -23,7 +19,7 @@ type Props = {
   activeProject: string;
 };
 
-const SelectCycle: React.FC<Props> = ({ control, setIsOpen, activeProject }) => {
+export const IssueCycleSelect: React.FC<Props> = ({ control, setIsOpen, activeProject }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -65,5 +61,3 @@ const SelectCycle: React.FC<Props> = ({ control, setIsOpen, activeProject }) => 
     />
   );
 };
-
-export default SelectCycle;

@@ -16,7 +16,7 @@ import AppLayout from "layouts/app-layout";
 // components
 import CyclesListView from "components/project/cycles/list-view";
 import CyclesBoardView from "components/project/cycles/board-view";
-import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
+import { CreateUpdateIssuesModal } from "components/issues/create-update-issue-modal";
 import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
 import ExistingIssuesListModal from "components/common/existing-issues-list-modal";
 import CycleDetailSidebar from "components/project/cycles/cycle-detail-sidebar";

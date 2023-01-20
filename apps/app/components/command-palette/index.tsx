@@ -21,7 +21,7 @@ import userService from "services/user.service";
 // components
 import ShortcutsModal from "components/command-palette/shortcuts";
 import { CreateProjectModal } from "components/project";
-import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
+import { CreateUpdateIssuesModal } from "components/issues/create-update-issue-modal";
 import CreateUpdateCycleModal from "components/project/cycles/create-update-cycle-modal";
 import CreateUpdateModuleModal from "components/project/modules/create-update-module-modal";
 import BulkDeleteIssuesModal from "components/common/bulk-delete-issues-modal";

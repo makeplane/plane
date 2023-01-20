@@ -1,23 +1,17 @@
 import React, { useEffect, useState } from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
 import { useForm, Controller, Control } from "react-hook-form";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { TagIcon } from "@heroicons/react/24/outline";
-// import type { Control } from "react-hook-form";
 // services
-import type { IIssue, IIssueLabels } from "types";
 import issuesServices from "services/issues.service";
-// fetching keys
-import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
-// icons
 // ui
 import { Input, CustomListbox } from "components/ui";
-// icons
 // types
+import type { IIssue, IIssueLabels } from "types";
+// fetching keys
+import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 
 type Props = {
   control: Control<IIssue, any>;
@@ -27,7 +21,7 @@ const defaultValues: Partial<IIssueLabels> = {
   name: "",
 };
 
-const SelectLabels: React.FC<Props> = ({ control }) => {
+export const IssueLabelSelect: React.FC<Props> = ({ control }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -135,5 +129,3 @@ const SelectLabels: React.FC<Props> = ({ control }) => {
     />
   );
 };
-
-export default SelectLabels;

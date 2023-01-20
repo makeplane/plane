@@ -20,7 +20,7 @@ import { CustomMenu, CustomSelect, Spinner } from "components/ui";
 // icons
 import User from "public/user.png";
 // components
-import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
+import { CreateUpdateIssuesModal } from "components/issues/create-update-issue-modal";
 // helpers
 import { renderShortNumericDateFormat, findHowManyDaysLeft } from "helpers/date-time.helper";
 import { addSpaceIfCamelCase } from "helpers/string.helper";
@@ -36,6 +36,7 @@ import {
   STATE_LIST,
   WORKSPACE_MEMBERS,
 } from "constants/fetch-keys";
+components / issues / create - update - issue - modal;
 
 // types
 type Props = {

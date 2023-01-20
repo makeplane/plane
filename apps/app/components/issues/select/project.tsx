@@ -1,17 +1,15 @@
 import React from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-
-// react hook form
 import { Controller, Control } from "react-hook-form";
 import { Listbox, Transition } from "@headlessui/react";
 import { ClipboardDocumentListIcon } from "@heroicons/react/24/outline";
-// types
-import type { IIssue } from "types";
 // services
 import projectService from "services/project.service";
 // ui
 import { Spinner } from "components/ui";
+// types
+import type { IIssue } from "types";
 // fetch-keys
 import { PROJECTS_LIST } from "constants/fetch-keys";
 
@@ -21,7 +19,7 @@ type Props = {
   setActiveProject: React.Dispatch<React.SetStateAction<string | null>>;
 };
 
-const SelectProject: React.FC<Props> = ({ control, setActiveProject }) => {
+export const IssueProjectSelect: React.FC<Props> = ({ control, setActiveProject }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -107,5 +105,3 @@ const SelectProject: React.FC<Props> = ({ control, setActiveProject }) => {
     </>
   );
 };
-
-export default SelectProject;

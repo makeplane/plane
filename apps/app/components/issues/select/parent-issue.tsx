@@ -1,11 +1,9 @@
 import React from "react";
-
-// react hook form
 import { Controller, Control } from "react-hook-form";
-// types
-import type { IIssue } from "types";
 // components
 import IssuesListModal from "components/project/issues/issues-list-modal";
+// types
+import type { IIssue } from "types";
 
 type Props = {
   control: Control<IIssue, any>;
@@ -14,7 +12,7 @@ type Props = {
   issues: IIssue[];
 };
 
-const SelectParent: React.FC<Props> = ({ control, isOpen, setIsOpen, issues }) => (
+export const IssueParentSelect: React.FC<Props> = ({ control, isOpen, setIsOpen, issues }) => (
   <Controller
     control={control}
     name="parent"
@@ -28,5 +26,3 @@ const SelectParent: React.FC<Props> = ({ control, isOpen, setIsOpen, issues }) =
     )}
   />
 );
-
-export default SelectParent;

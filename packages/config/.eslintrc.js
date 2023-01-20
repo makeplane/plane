@@ -11,7 +11,6 @@ module.exports = {
     "prefer-const": "error",
     "no-irregular-whitespace": "error",
     "no-trailing-spaces": "error",
-    "no-empty-function": "error",
     "no-duplicate-imports": "error",
     "arrow-body-style": ["error", "as-needed"],
     "react/self-closing-comp": ["error", { component: true, html: true }],

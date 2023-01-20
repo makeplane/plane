@@ -1,26 +1,22 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
 import { Controller, Control } from "react-hook-form";
-// service
 import { UserIcon } from "@heroicons/react/24/outline";
-// import type { Control } from "react-hook-form";
-import type { IIssue } from "types";
+// service
 import projectServices from "services/project.service";
+// components
+import SearchListbox from "components/search-listbox";
+// types
+import type { IIssue } from "types";
 // fetch keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
-// types
 
-import SearchListbox from "components/search-listbox";
-
-type Props = {
+export type IssueAssigneeSelectProps = {
   control: Control<IIssue, any>;
 };
 
-const SelectAssignee: React.FC<Props> = ({ control }) => {
+export const IssueAssigneeSelect: React.FC<IssueAssigneeSelectProps> = ({ control }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -56,5 +52,3 @@ const SelectAssignee: React.FC<Props> = ({ control }) => {
     />
   );
 };
-
-export default SelectAssignee;

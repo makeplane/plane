@@ -27,7 +27,7 @@ import ModulesListView from "components/project/modules/list-view";
 import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
 import ModuleDetailSidebar from "components/project/modules/module-detail-sidebar";
 import ConfirmModuleDeletion from "components/project/modules/confirm-module-deletion";
-import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
+import { CreateUpdateIssuesModal } from "components/issues/create-update-issue-modal";
 import View from "components/core/view";
 // ui
 import { CustomMenu, EmptySpace, EmptySpaceItem, Spinner } from "components/ui";

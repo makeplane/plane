@@ -1,4 +1,5 @@
 import { useCallback, FC, useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import { InvalidContentHandler } from "remirror";
 import {
   BoldExtension,
@@ -28,34 +29,39 @@ import {
   OnChangeHTML,
 } from "@remirror/react";
 import { TableExtension } from "@remirror/extension-react-tables";
-// components`
-import { useRouter } from "next/router";
-import { RichTextToolbar } from "./toolbar";
-import { MentionAutoComplete } from "./mention-autocomplete";
 // services
 import fileService from "services/file.service";
 // ui
 import { Spinner } from "components/ui";
+// components
+import { RichTextToolbar } from "./toolbar";
+import { MentionAutoComplete } from "./mention-autocomplete";
 
 export interface IRemirrorRichTextEditor {
   placeholder?: string;
   mentions?: any[];
   tags?: any[];
-  onBlur: (jsonValue: any, htmlValue: any) => void;
+  onBlur?: (jsonValue: any, htmlValue: any) => void;
+  onJSONChange?: (jsonValue: any) => void;
+  onHTMLChange?: (htmlValue: any) => void;
   value?: any;
   showToolbar?: boolean;
   editable?: boolean;
 }
 
-const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = ({
-  placeholder,
-  mentions = [],
-  tags = [],
-  onBlur,
-  value = "",
-  showToolbar = true,
-  editable = true,
-}) => {
+const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = (props) => {
+  const {
+    placeholder,
+    mentions = [],
+    tags = [],
+    onBlur = () => {},
+    onJSONChange = () => {},
+    onHTMLChange = () => {},
+    value = "",
+    showToolbar = true,
+    editable = true,
+  } = props;
+
   const [imageLoader, setImageLoader] = useState(false);
   const [jsonValue, setJsonValue] = useState<any>();
   const [htmlValue, setHtmlValue] = useState<any>();
@@ -85,7 +91,7 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = ({
         () =>
           new Promise(async (resolve, reject) => {
             const imageUrl = await fileService
-              .uploadFile(workspaceSlug as string, formData)
+              .uploadFile(workspaceSlug as string, formData) // TODO: verify why workspaceSlug is required for uploading a file
               .then((response) => response.asset);
 
             resolve({
@@ -95,7 +101,6 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = ({
               width: "100%",
               src: imageUrl,
             });
-
             setImageLoader(false);
           }),
       ];
@@ -154,6 +159,15 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = ({
     updateState(value);
   }, [updateState, value]);
 
+  const handleJSONChange = (json: any) => {
+    setJsonValue(json);
+    onJSONChange(json);
+  };
+  const handleHTMLChange = (value: string) => {
+    setHtmlValue(value);
+    onHTMLChange(value);
+  };
+
   return (
     <div className="mt-2 mb-4">
       <Remirror
@@ -179,8 +193,8 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = ({
           )}
           {/* <TableComponents /> */}
           <MentionAutoComplete mentions={mentions} tags={tags} />
-          {<OnChangeJSON onChange={setJsonValue} />}
-          {<OnChangeHTML onChange={setHtmlValue} />}
+          {<OnChangeJSON onChange={handleJSONChange} />}
+          {<OnChangeHTML onChange={handleHTMLChange} />}
         </div>
       </Remirror>
     </div>
