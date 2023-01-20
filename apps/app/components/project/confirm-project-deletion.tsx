@@ -9,7 +9,7 @@ import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import type { IProject, IWorkspace } from "types";
 import projectService from "services/project.service";
 // hooks
-import useToast from "hooks/useToast";
+import useToast from "hooks/use-toast";
 // icons
 // ui
 import { Button, Input } from "components/ui";

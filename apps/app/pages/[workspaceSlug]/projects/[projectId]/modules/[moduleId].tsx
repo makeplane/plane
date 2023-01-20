@@ -16,7 +16,7 @@ import modulesService from "services/modules.service";
 import projectService from "services/project.service";
 import issuesService from "services/issues.service";
 // hooks
-import useIssuesFilter from "hooks/useIssuesFilter";
+import useIssuesFilter from "hooks/use-issues-filter";
 import useIssuesProperties from "hooks/use-issue-properties";
 // layouts
 import AppLayout from "layouts/app-layout";
@@ -114,7 +114,10 @@ const SingleModule = () => {
     }
   );
 
-  const moduleIssuesArray = moduleIssues?.map((issue) => ({ bridge: issue.id, ...issue.issue_detail }));
+  const moduleIssuesArray = moduleIssues?.map((issue) => ({
+    bridge: issue.id,
+    ...issue.issue_detail,
+  }));
 
   const {
     issueView,

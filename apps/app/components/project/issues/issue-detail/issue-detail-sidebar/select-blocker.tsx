@@ -10,7 +10,7 @@ import { SubmitHandler, useForm, UseFormWatch } from "react-hook-form";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 import { FolderIcon, MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // hooks
-import useToast from "hooks/useToast";
+import useToast from "hooks/use-toast";
 // services
 import issuesServices from "services/issues.service";
 // headless ui

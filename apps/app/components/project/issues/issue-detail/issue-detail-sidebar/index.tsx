@@ -21,7 +21,7 @@ import {
 // types
 import type { ICycle, IIssue, IIssueLabels } from "types";
 // hooks
-import useToast from "hooks/useToast";
+import useToast from "hooks/use-toast";
 // services
 import issuesServices from "services/issues.service";
 // components

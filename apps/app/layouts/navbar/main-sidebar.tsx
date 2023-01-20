@@ -2,8 +2,8 @@ import React, { useRef, useState } from "react";
 import Link from "next/link";
 import { Transition } from "@headlessui/react";
 // hooks
-import useTheme from "hooks/useTheme";
-import useOutsideClickDetector from "hooks/useOutsideClickDetector";
+import useTheme from "hooks/use-theme";
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
 import ProjectsList from "components/sidebar/projects-list";
 import WorkspaceOptions from "components/sidebar/workspace-options";

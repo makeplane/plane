@@ -4,7 +4,7 @@ import useSWR from "swr";
 // services
 import stateService from "services/state.service";
 // hooks
-import useTheme from "hooks/useTheme";
+import useIssueView from "hooks/use-issue-view";
 // helpers
 import { groupBy, orderArrayBy } from "helpers/array.helper";
 // types
@@ -21,14 +21,14 @@ const useIssuesFilter = (projectIssues: IIssue[]) => {
     groupByProperty,
     setGroupByProperty,
     orderBy,
-    setOrderBy, // TODO: Create a new context for handling issue states
+    setOrderBy,
     filterIssue,
     setFilterIssue,
     resetFilterToDefault,
     setNewFilterDefaultView,
     setIssueViewToKanban,
     setIssueViewToList,
-  } = useTheme();
+  } = useIssueView();
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;

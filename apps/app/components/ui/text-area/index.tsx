@@ -1,10 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Props } from "./types";
-// commons
 
 // types
+import { Props } from "./types";
 
-// TODO: Remove this Hook from hooks folder and integrate this logic with component.
 // Updates the height of a <textarea> when the value changes.
 const useAutosizeTextArea = (textAreaRef: HTMLTextAreaElement | null, value: any) => {
   useEffect(() => {

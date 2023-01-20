@@ -11,7 +11,7 @@ import { CalendarDaysIcon, ChartPieIcon, LinkIcon, UserIcon } from "@heroicons/r
 // services
 import cyclesService from "services/cycles.service";
 // hooks
-import useToast from "hooks/useToast";
+import useToast from "hooks/use-toast";
 // ui
 import { Loader } from "components/ui";
 // helpers

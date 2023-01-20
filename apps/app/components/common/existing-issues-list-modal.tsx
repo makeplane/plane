@@ -8,7 +8,7 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 // hooks
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 import { MagnifyingGlassIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
-import useToast from "hooks/useToast";
+import useToast from "hooks/use-toast";
 // services
 import projectService from "services/project.service";
 // headless ui

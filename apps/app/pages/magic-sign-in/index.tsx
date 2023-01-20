@@ -10,7 +10,7 @@ import authenticationService from "services/authentication.service";
 // constants
 // hooks
 import useUser from "hooks/use-user";
-import useToast from "hooks/useToast";
+import useToast from "hooks/use-toast";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 import { USER_WORKSPACES } from "constants/fetch-keys";

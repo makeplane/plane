@@ -9,7 +9,7 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 import type { GetServerSideProps, NextPage } from "next";
 import { requiredWorkspaceAdmin } from "lib/auth";
 // hooks
-import useToast from "hooks/useToast";
+import useToast from "hooks/use-toast";
 // services
 import workspaceService from "services/workspace.service";
 // constants

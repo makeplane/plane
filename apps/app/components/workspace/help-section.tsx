@@ -12,8 +12,8 @@ import {
   CommentIcon,
 } from "components/icons";
 // hooks
-import useTheme from "hooks/useTheme";
-import useOutsideClickDetector from "hooks/useOutsideClickDetector";
+import useTheme from "hooks/use-theme";
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
 
 const helpOptions = [
   {

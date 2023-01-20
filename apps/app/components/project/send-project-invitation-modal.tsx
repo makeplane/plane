@@ -11,7 +11,7 @@ import { Dialog, Transition, Listbox } from "@headlessui/react";
 import { ChevronDownIcon, CheckIcon } from "@heroicons/react/20/solid";
 import { Button, Select, TextArea } from "components/ui";
 // hooks
-import useToast from "hooks/useToast";
+import useToast from "hooks/use-toast";
 // services
 import projectService from "services/project.service";
 import workspaceService from "services/workspace.service";

@@ -12,7 +12,7 @@ import { CYCLE_ISSUES, PROJECT_ISSUES_LIST, MODULE_ISSUES } from "constants/fetc
 // services
 import issueServices from "services/issues.service";
 // hooks
-import useToast from "hooks/useToast";
+import useToast from "hooks/use-toast";
 // icons
 // ui
 import { Button } from "components/ui";
@@ -54,10 +54,10 @@ const ConfirmIssueDeletion: React.FC<Props> = (props) => {
         mutate<IssueResponse>(
           PROJECT_ISSUES_LIST(workspaceSlug as string, projectId),
           (prevData) => ({
-              ...(prevData as IssueResponse),
-              results: prevData?.results.filter((i) => i.id !== data.id) ?? [],
-              count: (prevData?.count as number) - 1,
-            }),
+            ...(prevData as IssueResponse),
+            results: prevData?.results.filter((i) => i.id !== data.id) ?? [],
+            count: (prevData?.count as number) - 1,
+          }),
           false
         );
 

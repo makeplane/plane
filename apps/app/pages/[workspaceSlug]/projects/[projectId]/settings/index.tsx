@@ -20,7 +20,7 @@ import workspaceService from "services/workspace.service";
 import ConfirmProjectDeletion from "components/project/confirm-project-deletion";
 import EmojiIconPicker from "components/emoji-icon-picker";
 // hooks
-import useToast from "hooks/useToast";
+import useToast from "hooks/use-toast";
 // ui
 import { Button, Input, TextArea, Loader, CustomSelect } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";

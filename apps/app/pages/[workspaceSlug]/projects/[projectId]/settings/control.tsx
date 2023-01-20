@@ -15,7 +15,7 @@ import SettingsLayout from "layouts/settings-layout";
 import projectService from "services/project.service";
 import workspaceService from "services/workspace.service";
 // hooks
-import useToast from "hooks/useToast";
+import useToast from "hooks/use-toast";
 // ui
 import { Button, CustomSelect, Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
