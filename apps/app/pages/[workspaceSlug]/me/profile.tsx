@@ -19,7 +19,7 @@ import type { NextPage, NextPageContext } from "next";
 // hooks
 import type { IIssue, IUser } from "types";
 import useUser from "hooks/use-user";
-import useToast from "hooks/useToast";
+import useToast from "hooks/use-toast";
 // lib
 import { requiredAuth } from "lib/auth";
 // services

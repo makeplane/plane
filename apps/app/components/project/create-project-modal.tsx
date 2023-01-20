@@ -11,7 +11,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import projectServices from "services/project.service";
 import workspaceService from "services/workspace.service";
 // hooks
-import useToast from "hooks/useToast";
+import useToast from "hooks/use-toast";
 // ui
 import { Button, Input, TextArea, CustomSelect } from "components/ui";
 // components

@@ -12,7 +12,7 @@ import workspaceService from "services/workspace.service";
 // lib
 import { requiredAdmin } from "lib/auth";
 // hooks
-import useToast from "hooks/useToast";
+import useToast from "hooks/use-toast";
 // constants
 import { ROLE } from "constants/";
 // layouts
@@ -253,9 +253,11 @@ const MembersSettings: NextPage<TMemberSettingsProps> = (props) => {
                                     });
                                     mutateMembers(
                                       (prevData: any) =>
-                                        prevData.map((m: any) => m.id === selectedMember
+                                        prevData.map((m: any) =>
+                                          m.id === selectedMember
                                             ? { ...m, ...res, role: value }
-                                            : m),
+                                            : m
+                                        ),
                                       false
                                     );
                                     setSelectedMember(null);

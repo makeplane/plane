@@ -14,8 +14,8 @@ import {
 } from "@heroicons/react/24/outline";
 import { CyclesIcon } from "components/icons";
 // hooks
-import useToast from "hooks/useToast";
-import useTheme from "hooks/useTheme";
+import useToast from "hooks/use-toast";
+import useTheme from "hooks/use-theme";
 // services
 import projectService from "services/project.service";
 // components

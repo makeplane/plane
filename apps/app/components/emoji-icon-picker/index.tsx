@@ -9,7 +9,7 @@ import emojis from "./emojis.json";
 import { getRecentEmojis, saveRecentEmoji } from "./helpers";
 import { getRandomEmoji } from "helpers/functions.helper";
 // hooks
-import useOutsideClickDetector from "hooks/useOutsideClickDetector";
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
 
 const tabOptions = [
   {

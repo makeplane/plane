@@ -15,7 +15,7 @@ import projectService from "services/project.service";
 // layouts
 import AppLayout from "layouts/app-layout";
 // hooks
-import useIssuesFilter from "hooks/useIssuesFilter";
+import useIssuesFilter from "hooks/use-issues-filter";
 // components
 import ListView from "components/project/issues/list-view";
 import BoardView from "components/project/issues/BoardView";

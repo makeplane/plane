@@ -12,7 +12,7 @@ import { FolderIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import issuesServices from "services/issues.service";
 import projectService from "services/project.service";
 // hooks
-import useToast from "hooks/useToast";
+import useToast from "hooks/use-toast";
 // headless ui
 // ui
 import { Button } from "components/ui";

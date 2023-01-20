@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction } from "react";
 // hooks
-import useTheme from "hooks/useTheme";
+import useTheme from "hooks/use-theme";
 // components
 import {
   WorkspaceHelpSection,

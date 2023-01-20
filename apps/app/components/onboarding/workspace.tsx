@@ -9,7 +9,7 @@ import { Controller, useForm } from "react-hook-form";
 import { Tab } from "@headlessui/react";
 
 // hooks
-import useToast from "hooks/useToast";
+import useToast from "hooks/use-toast";
 // services
 import workspaceService from "services/workspace.service";
 // ui

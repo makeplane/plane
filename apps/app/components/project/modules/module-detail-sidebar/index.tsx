@@ -16,7 +16,7 @@ import {
 } from "@heroicons/react/24/outline";
 import modulesService from "services/modules.service";
 // hooks
-import useToast from "hooks/useToast";
+import useToast from "hooks/use-toast";
 // components
 import SelectLead from "components/project/modules/module-detail-sidebar/select-lead";
 import SelectMembers from "components/project/modules/module-detail-sidebar/select-members";

@@ -9,7 +9,7 @@ import {
   RectangleStackIcon,
 } from "@heroicons/react/24/outline";
 // hooks
-import useTheme from "hooks/useTheme";
+import useTheme from "hooks/use-theme";
 
 const workspaceLinks = (workspaceSlug: string) => [
   {

@@ -20,7 +20,7 @@ import fileServices from "services/file.service";
 // layouts
 import SettingsLayout from "layouts/settings-layout";
 // hooks
-import useToast from "hooks/useToast";
+import useToast from "hooks/use-toast";
 // components
 import { ImageUploadModal } from "components/common/image-upload-modal";
 import ConfirmWorkspaceDeletion from "components/workspace/confirm-workspace-deletion";

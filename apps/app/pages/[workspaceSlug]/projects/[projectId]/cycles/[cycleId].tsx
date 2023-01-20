@@ -26,7 +26,7 @@ import issuesServices from "services/issues.service";
 import cycleServices from "services/cycles.service";
 import projectService from "services/project.service";
 // hooks
-import useIssuesFilter from "hooks/useIssuesFilter";
+import useIssuesFilter from "hooks/use-issues-filter";
 import useIssuesProperties from "hooks/use-issue-properties";
 // ui
 import { CustomMenu, EmptySpace, EmptySpaceItem, Spinner } from "components/ui";
@@ -93,7 +93,10 @@ const SingleCycle: React.FC = () => {
           )
       : null
   );
-  const cycleIssuesArray = cycleIssues?.map((issue) => ({ bridge: issue.id, ...issue.issue_detail }));
+  const cycleIssuesArray = cycleIssues?.map((issue) => ({
+    bridge: issue.id,
+    ...issue.issue_detail,
+  }));
 
   const { data: members } = useSWR(
     workspaceSlug && projectId ? PROJECT_MEMBERS(workspaceSlug as string) : null,

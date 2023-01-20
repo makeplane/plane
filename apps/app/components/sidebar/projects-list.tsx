@@ -7,7 +7,7 @@ import useSWR from "swr";
 // hooks
 import { Disclosure, Transition } from "@headlessui/react";
 import { ChevronDownIcon, PlusIcon } from "@heroicons/react/24/outline";
-import useToast from "hooks/useToast";
+import useToast from "hooks/use-toast";
 // services
 import projectService from "services/project.service";
 // components

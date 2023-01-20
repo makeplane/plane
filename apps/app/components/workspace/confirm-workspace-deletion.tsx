@@ -12,7 +12,7 @@ import { USER_WORKSPACES } from "constants/fetch-keys";
 // services
 import workspaceService from "services/workspace.service";
 // hooks
-import useToast from "hooks/useToast";
+import useToast from "hooks/use-toast";
 // icons
 // ui
 import { Button, Input } from "components/ui";

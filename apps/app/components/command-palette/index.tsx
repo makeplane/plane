@@ -13,8 +13,8 @@ import {
   ClipboardDocumentListIcon,
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
-import useTheme from "hooks/useTheme";
-import useToast from "hooks/useToast";
+import useTheme from "hooks/use-theme";
+import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
 // services
 import userService from "services/user.service";

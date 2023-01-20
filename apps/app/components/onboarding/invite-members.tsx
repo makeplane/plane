@@ -1,6 +1,6 @@
 // types
 import { useForm } from "react-hook-form";
-import useToast from "hooks/useToast";
+import useToast from "hooks/use-toast";
 import workspaceService from "services/workspace.service";
 import { IUser } from "types";
 // ui components

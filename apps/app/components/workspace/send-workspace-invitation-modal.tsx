@@ -8,7 +8,7 @@ import workspaceService from "services/workspace.service";
 // ui
 import { Button, Input, Select } from "components/ui";
 // hooks
-import useToast from "hooks/useToast";
+import useToast from "hooks/use-toast";
 // types
 import { IWorkspaceMemberInvitation } from "types";
 // fetch keys
