@@ -678,5 +678,6 @@ urlpatterns = [
     ## End Modules
     # API Tokens
     path("api-tokens/", ApiTokenEndpoint.as_view(), name="api-token"),
+    path("api-tokens/<uuid:pk>/", ApiTokenEndpoint.as_view(), name="api-token"),
     ## End API Tokens
 ]
