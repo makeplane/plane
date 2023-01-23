@@ -63,7 +63,8 @@ const useIssuesFilter = (projectIssues: IIssue[]) => {
     ...groupBy(projectIssues ?? [], groupByProperty ?? ""),
   };
 
-  if (orderBy !== null) {
+  if (orderBy) {
+    console.log("orderBy", orderBy);
     groupedByIssues = Object.fromEntries(
       Object.entries(groupedByIssues).map(([key, value]) => [
         key,

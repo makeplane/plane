@@ -4,7 +4,7 @@ import { Disclosure, Transition } from "@headlessui/react";
 import { ChevronRightIcon, PlusIcon } from "@heroicons/react/24/outline";
 // components
 import { CustomMenu } from "components/ui";
-import { CreateUpdateIssuesModal } from "components/issues";
+import { IssuesModal } from "components/issues";
 import AddAsSubIssue from "components/project/issues/issue-detail/add-as-sub-issue";
 // types
 import { IIssue } from "types";
@@ -149,7 +149,7 @@ export const SubIssueList: FC<SubIssueListProps> = (props) => {
         </CustomMenu>
       )}
 
-      <CreateUpdateIssuesModal
+      {/* <CreateUpdateIssuesModal
         isOpen={isIssueModalActive}
         setIsOpen={setIssueModalActive}
         projectId={projectId as string}
@@ -159,6 +159,12 @@ export const SubIssueList: FC<SubIssueListProps> = (props) => {
             actionType: "createIssue",
           },
         }}
+      /> */}
+      <IssuesModal
+        workspaceSlug={workspaceSlug}
+        projectId={projectId}
+        isOpen={isIssueModalActive}
+        handleClose={closeIssueModal}
       />
       <AddAsSubIssue
         isOpen={isSubIssueModalActive}

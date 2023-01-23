@@ -16,7 +16,6 @@ module.exports = {
   },
   rules: {
     "@next/next/no-html-link-for-pages": "off",
-    "no-unused-vars": "warn",
     "prefer-const": "error",
     "no-irregular-whitespace": "error",
     "no-trailing-spaces": "error",

@@ -1,0 +1,298 @@
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import dynamic from "next/dynamic";
+import { useRouter } from "next/router";
+import useSWR, { mutate } from "swr";
+import { Controller, useForm } from "react-hook-form";
+import { Dialog, Menu, Transition } from "@headlessui/react";
+// services
+import projectService from "services/project.service";
+import modulesService from "services/modules.service";
+import issuesServices from "services/issues.service";
+// hooks
+import useUser from "hooks/use-user";
+import useToast from "hooks/use-toast";
+// components
+import CreateUpdateStateModal from "components/project/issues/BoardView/state/create-update-state-modal";
+import CreateUpdateCycleModal from "components/project/cycles/create-update-cycle-modal";
+import { IssueForm } from "components/issues";
+// common
+import { renderDateFormat } from "helpers/date-time.helper";
+import { cosineSimilarity } from "helpers/string.helper";
+// types
+import type { IIssue, IssueResponse } from "types";
+// fetch keys
+import {
+  PROJECT_ISSUES_DETAILS,
+  PROJECT_ISSUES_LIST,
+  CYCLE_ISSUES,
+  USER_ISSUE,
+  PROJECTS_LIST,
+  MODULE_ISSUES,
+} from "constants/fetch-keys";
+
+const defaultValues: Partial<IIssue> = {
+  project: "",
+  name: "",
+  description: "",
+  description_html: "<p></p>",
+  state: "",
+  cycle: null,
+  priority: null,
+  labels_list: [],
+};
+
+export interface IssuesModalProps {
+  isOpen: boolean;
+  handleClose: () => void;
+  workspaceSlug: string;
+  projectId: string;
+  data?: IIssue;
+  prePopulateData?: Partial<IIssue>;
+  isUpdatingSingleIssue?: boolean;
+}
+
+export const IssuesModal: React.FC<IssuesModalProps> = (props) => {
+  const {
+    isOpen,
+    handleClose,
+    data,
+    workspaceSlug,
+    projectId,
+    prePopulateData,
+    isUpdatingSingleIssue = false,
+  } = props;
+  // states
+  const [createMore, setCreateMore] = useState(false);
+  const [isCycleModalOpen, setIsCycleModalOpen] = useState(false);
+  const [isStateModalOpen, setIsStateModalOpen] = useState(false);
+  const [activeProject, setActiveProject] = useState<string | null>(null);
+  const [parentIssueListModalOpen, setParentIssueListModalOpen] = useState(false);
+  const [mostSimilarIssue, setMostSimilarIssue] = useState<string | undefined>();
+
+  const { user } = useUser();
+  const { setToastAlert } = useToast();
+
+  const { data: issues } = useSWR(
+    workspaceSlug && projectId ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId) : null,
+    workspaceSlug && projectId
+      ? () => issuesServices.getIssues(workspaceSlug as string, projectId)
+      : null
+  );
+
+  const { data: projects } = useSWR(
+    workspaceSlug ? PROJECTS_LIST(workspaceSlug as string) : null,
+    workspaceSlug ? () => projectService.getProjects(workspaceSlug as string) : null
+  );
+
+  useEffect(() => {
+    if (projects && projects.length > 0)
+      setActiveProject(projects?.find((p) => p.id === projectId)?.id ?? projects?.[0].id ?? null);
+  }, [projectId, projects]);
+
+  useEffect(() => {
+    reset({
+      ...defaultValues,
+      ...watch(),
+      ...data,
+      project: activeProject ?? "",
+      ...prePopulateData,
+    });
+  }, [data, prePopulateData, reset, activeProject, isOpen, watch]);
+
+  useEffect(() => () => setMostSimilarIssue(undefined), []);
+
+  const resetForm = () => {
+    reset({ ...defaultValues, project: activeProject ?? undefined });
+  };
+
+  const addIssueToCycle = async (issueId: string, cycleId: string) => {
+    if (!workspaceSlug || !projectId) return;
+
+    await issuesServices
+      .addIssueToCycle(workspaceSlug as string, projectId, cycleId, {
+        issues: [issueId],
+      })
+      .then((res) => {
+        mutate(CYCLE_ISSUES(cycleId));
+        if (isUpdatingSingleIssue) {
+          mutate<IIssue>(
+            PROJECT_ISSUES_DETAILS,
+            (prevData) => ({ ...(prevData as IIssue), sprints: cycleId }),
+            false
+          );
+        } else
+          mutate<IssueResponse>(
+            PROJECT_ISSUES_LIST(workspaceSlug as string, projectId),
+            (prevData) => ({
+              ...(prevData as IssueResponse),
+              results: (prevData?.results ?? []).map((issue) => {
+                if (issue.id === res.id) return { ...issue, sprints: cycleId };
+                return issue;
+              }),
+            }),
+            false
+          );
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const addIssueToModule = async (issueId: string, moduleId: string) => {
+    if (!workspaceSlug || !projectId) return;
+
+    await modulesService
+      .addIssuesToModule(workspaceSlug as string, projectId, moduleId as string, {
+        issues: [issueId],
+      })
+      .then((res) => {
+        console.log(res);
+        mutate(MODULE_ISSUES(moduleId as string));
+      })
+      .catch((e) => console.log(e));
+  };
+
+  const createIssue = (payload: Partial<IIssue>) => {
+    issuesServices
+      .createIssues(workspaceSlug as string, projectId as string, payload)
+      .then((res) => {
+        mutate<IssueResponse>(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
+        if (payload.cycle && payload.cycle !== null) {
+          addIssueToCycle(res.id, payload.cycle);
+        }
+
+        if (payload.module && payload.module !== null) {
+          addIssueToModule(res.id, payload.module);
+        }
+
+        if (!createMore) handleClose();
+        setToastAlert({
+          title: "Success",
+          type: "success",
+          message: `Issue ${data ? "updated" : "created"} successfully`,
+        });
+        if (payload.assignees_list?.some((assignee) => assignee === user?.id)) {
+          mutate<IIssue[]>(USER_ISSUE);
+        }
+      })
+      .catch((err) => {
+        if (err.detail) {
+          setToastAlert({
+            title: "Join the project.",
+            type: "error",
+            message: "Click select to join from projects page to start making changes",
+          });
+        }
+        Object.keys(err).map((key) => {
+          const message = err[key];
+          if (!message) return;
+
+          setError(key as keyof IIssue, {
+            message: Array.isArray(message) ? message.join(", ") : message,
+          });
+        });
+      });
+  };
+
+  const updateIssue = () => {
+    issuesServices
+      .updateIssue(workspaceSlug as string, projectId as string, data.id, payload)
+      .then((res) => {
+        if (isUpdatingSingleIssue) {
+          mutate<IIssue>(PROJECT_ISSUES_DETAILS, (prevData) => ({ ...prevData, ...res }), false);
+        } else
+          mutate<IssueResponse>(
+            PROJECT_ISSUES_LIST(workspaceSlug as string, projectId),
+            (prevData) => ({
+              ...(prevData as IssueResponse),
+              results: (prevData?.results ?? []).map((issue) => {
+                if (issue.id === res.id) return { ...issue, ...res };
+                return issue;
+              }),
+            })
+          );
+        if (formData.cycle && formData.cycle !== null) {
+          addIssueToCycle(res.id, formData.cycle);
+        }
+        resetForm();
+        if (!createMore) handleClose();
+        setToastAlert({
+          title: "Success",
+          type: "success",
+          message: "Issue updated successfully",
+        });
+      })
+      .catch((err) => {
+        Object.keys(err).map((key) => {
+          setError(key as keyof IIssue, { message: err[key].join(", ") });
+        });
+      });
+  };
+
+  const handleFormSubmit = (formData: Partial<IIssue>) => {
+    if (workspaceSlug && projectId) {
+      const payload: Partial<IIssue> = {
+        ...formData,
+        target_date: formData.target_date ? renderDateFormat(formData.target_date ?? "") : null,
+      };
+      if (!data) {
+        createIssue(payload);
+      } else {
+        updateIssue(payload);
+      }
+    }
+  };
+
+  return (
+    <>
+      {projectId && (
+        <>
+          <CreateUpdateStateModal
+            isOpen={isStateModalOpen}
+            handleClose={() => setIsStateModalOpen(false)}
+            projectId={projectId}
+          />
+          <CreateUpdateCycleModal
+            isOpen={isCycleModalOpen}
+            setIsOpen={setIsCycleModalOpen}
+            projectId={projectId}
+          />
+        </>
+      )}
+      <Transition.Root show={isOpen} as={React.Fragment}>
+        <Dialog as="div" className="relative z-20" onClose={handleClose}>
+          <Transition.Child
+            as={React.Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 z-10 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+              <Transition.Child
+                as={React.Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                enterTo="opacity-100 translate-y-0 sm:scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              >
+                <Dialog.Panel className="relative transform rounded-lg bg-white p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
+                  <IssueForm workspaceSlug={workspaceSlug} handleFormSubmit={handleFormSubmit} />
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition.Root>
+    </>
+  );
+};
