@@ -147,12 +147,12 @@ const IssueDetailPage: NextPage = () => {
       const payload = { ...formData };
       issuesService
         .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload)
-        .then((response) => {
+        .then((res) => {
           mutateIssues();
           mutateIssueActivities();
         })
-        .catch((error) => {
-          console.error(error);
+        .catch((e) => {
+          console.error(e);
         });
     },
     [activeProject, workspaceSlug, issueId, projectId, mutateIssues, mutateIssueActivities]
@@ -176,16 +176,19 @@ const IssueDetailPage: NextPage = () => {
    * Handling the debounce submit by updating the issue with name, description and description_html
    * @param values IssueDescriptionFormValues
    */
-  const handleDescriptionFormSubmit = (values: IssueDescriptionFormValues) => {
-    if (workspaceSlug && projectId && issueId) {
-      issuesService.updateIssue(
-        workspaceSlug?.toString(),
-        projectId.toString(),
-        issueId.toString(),
-        values
-      );
-    }
-  };
+  const handleDescriptionFormSubmit = useCallback(
+    (values: IssueDescriptionFormValues) => {
+      if (workspaceSlug && projectId && issueId) {
+        issuesService
+          .updateIssue(workspaceSlug?.toString(), projectId.toString(), issueId.toString(), values)
+          .then((res) => {
+            console.log(res);
+            mutateIssueActivities();
+          });
+      }
+    },
+    [workspaceSlug, projectId, issueId, mutateIssueActivities]
+  );
 
   return (
     <AppLayout
@@ -356,7 +359,7 @@ const IssueDetailPage: NextPage = () => {
               <AddIssueComment mutate={mutateIssueActivities} />
             </div>
           </div>
-          <div className="h-full basis-1/3 space-y-5 border-l p-5">
+          <div className="basis-1/3 space-y-5 border-l p-5">
             {/* TODO add flex-grow, if needed */}
             <IssueDetailSidebar
               control={control}

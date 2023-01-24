@@ -41,7 +41,7 @@ export const IssuePrioritySelect: React.FC<Props> = ({ value, onChange }) => (
                 >
                   <span className="flex items-center gap-2 capitalize">
                     {getPriorityIcon(priority)}
-                    {priority}
+                    {priority ?? "None"}
                   </span>
                 </Listbox.Option>
               ))}

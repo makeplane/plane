@@ -34,17 +34,6 @@ import {
   SUB_ISSUES,
 } from "constants/fetch-keys";
 
-const defaultValues: Partial<IIssue> = {
-  project: "",
-  name: "",
-  description: "",
-  description_html: "<p></p>",
-  state: "",
-  cycle: null,
-  priority: null,
-  labels_list: [],
-};
-
 export interface IssuesModalProps {
   isOpen: boolean;
   handleClose: () => void;
@@ -86,8 +75,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
     workspaceSlug ? () => projectService.getProjects(workspaceSlug as string) : null
   );
 
-  const { reset, setError, watch } = useForm<IIssue>({
-    defaultValues,
+  const { setError } = useForm<IIssue>({
     mode: "all",
     reValidateMode: "onChange",
   });
@@ -96,20 +84,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
     if (projects && projects.length > 0)
       setActiveProject(projects?.find((p) => p.id === projectId)?.id ?? projects?.[0].id ?? null);
   }, [projectId, projects]);
-
-  useEffect(() => {
-    reset({
-      ...defaultValues,
-      ...watch(),
-      ...data,
-      project: activeProject ?? "",
-      ...prePopulateData,
-    });
-  }, [data, prePopulateData, reset, activeProject, isOpen, watch]);
-
-  const resetForm = () => {
-    reset({ ...defaultValues, project: activeProject ?? undefined });
-  };
 
   const addIssueToCycle = async (issueId: string, cycleId: string) => {
     if (!workspaceSlug || !projectId) return;
@@ -164,8 +138,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
       .then((res) => {
         mutate<IssueResponse>(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
 
-        if (payload.cycle && payload.cycle !== null) addIssueToCycle(res.id, payload.cycle);
-        if (payload.module && payload.module !== null) addIssueToModule(res.id, payload.module);
+        if (payload.cycle && payload.cycle !== "") addIssueToCycle(res.id, payload.cycle);
+        if (payload.module && payload.module !== "") addIssueToModule(res.id, payload.module);
 
         if (!createMore) handleClose();
 
@@ -175,8 +149,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
           message: `Issue ${data ? "updated" : "created"} successfully`,
         });
 
-        if (payload.assignees_list?.some((assignee) => assignee === user?.id))
-          mutate<IIssue[]>(USER_ISSUE);
+        if (payload.assignees_list?.some((assignee) => assignee === user?.id)) mutate(USER_ISSUE);
 
         if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
       })
@@ -216,11 +189,11 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
               }),
             })
           );
-        if (payload.cycle && payload.cycle !== null) {
-          addIssueToCycle(res.id, payload.cycle);
-        }
-        resetForm();
+
+        if (payload.cycle && payload.cycle !== "") addIssueToCycle(res.id, payload.cycle);
+
         if (!createMore) handleClose();
+
         setToastAlert({
           title: "Success",
           type: "success",
@@ -295,6 +268,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
                     initialData={prePopulateData}
                     createMore={createMore}
                     setCreateMore={setCreateMore}
+                    handleClose={handleClose}
                   />
                 </Dialog.Panel>
               </Transition.Child>

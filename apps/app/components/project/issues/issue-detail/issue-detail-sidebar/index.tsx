@@ -124,7 +124,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
         isOpen={deleteIssueModal}
         data={issueDetail}
       />
-      <div className="h-full w-full divide-y-2 divide-gray-100">
+      <div className="w-full divide-y-2 divide-gray-100 sticky top-5">
         <div className="flex items-center justify-between pb-3">
           <h4 className="text-sm font-medium">
             {issueDetail?.project_detail?.identifier}-{issueDetail?.sequence_id}

@@ -54,6 +54,7 @@ export interface IssueFormProps {
   issues: IIssue[];
   createMore: boolean;
   setCreateMore: React.Dispatch<React.SetStateAction<boolean>>;
+  handleClose: () => void;
 }
 
 export const IssueForm: FC<IssueFormProps> = ({
@@ -63,6 +64,7 @@ export const IssueForm: FC<IssueFormProps> = ({
   projectId,
   createMore,
   setCreateMore,
+  handleClose,
 }) => {
   // states
   const [mostSimilarIssue, setMostSimilarIssue] = useState<IIssue | undefined>();
@@ -95,6 +97,16 @@ export const IssueForm: FC<IssueFormProps> = ({
 
   const handleDiscard = () => {
     reset({ ...defaultValues, project: projectId });
+    handleClose();
+  };
+
+  const handleCreateUpdateIssue = async (formData: Partial<IIssue>) => {
+    await handleFormSubmit(formData);
+
+    reset({
+      ...defaultValues,
+      project: projectId,
+    });
   };
 
   useEffect(() => {
@@ -122,7 +134,7 @@ export const IssueForm: FC<IssueFormProps> = ({
           />
         </>
       )}
-      <form onSubmit={handleSubmit(handleFormSubmit)}>
+      <form onSubmit={handleSubmit(handleCreateUpdateIssue)}>
         <div className="space-y-5">
           <div className="flex items-center gap-x-2">
             <Controller
@@ -133,7 +145,7 @@ export const IssueForm: FC<IssueFormProps> = ({
               )}
             />
             <h3 className="text-lg font-medium leading-6 text-gray-900">
-              {initialData ? "Update" : "Create"}
+              {initialData ? "Update" : "Create"} Issue
             </h3>
           </div>
           {watch("parent") && watch("parent") !== "" ? (

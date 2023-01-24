@@ -26,8 +26,7 @@ export interface IssueDetailsProps {
   handleSubmit: (value: IssueDescriptionFormValues) => void;
 }
 
-export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
-  const { issue, handleSubmit } = props;
+export const IssueDescriptionForm: FC<IssueDetailsProps> = ({ issue, handleSubmit }) => {
   // states
   // const [issueFormValues, setIssueFormValues] = useState({
   //   name: issue.name,
