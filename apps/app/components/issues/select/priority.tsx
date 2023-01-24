@@ -15,7 +15,7 @@ export const IssuePrioritySelect: React.FC<Props> = ({ value, onChange }) => (
   <Listbox as="div" className="relative" value={value} onChange={onChange}>
     {({ open }) => (
       <>
-        <Listbox.Button className="flex cursor-pointer items-center gap-1 rounded-md border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 px-2 py-1">
+        <Listbox.Button className="flex cursor-pointer items-center gap-1 rounded-md border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
           <span className="text-gray-500 grid place-items-center">{getPriorityIcon(value)}</span>
           <div className="flex items-center gap-2 capitalize">{value ?? "Priority"}</div>
         </Listbox.Button>

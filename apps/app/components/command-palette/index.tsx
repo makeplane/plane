@@ -175,7 +175,6 @@ const CommandPalette: React.FC = () => {
       <CreateUpdateIssueModal
         isOpen={isIssueModalOpen}
         handleClose={() => setIsIssueModalOpen(false)}
-        workspaceSlug={workspaceSlug as string}
         projectId={projectId as string}
       />
       <BulkDeleteIssuesModal

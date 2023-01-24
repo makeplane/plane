@@ -47,7 +47,6 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
   const stringFromValues = JSON.stringify(formValues);
 
   useEffect(() => {
-    console.log("formValues", formValues);
     handleSubmit(formValues);
   }, [formValues, handleSubmit, stringFromValues]);
 

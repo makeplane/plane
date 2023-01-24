@@ -1,12 +1,15 @@
 import { FC, ReactElement, createContext } from "react";
-import useSWR from "swr";
+
 import { useRouter } from "next/router";
+
+import useSWR from "swr";
+
+// services
+import workspaceService from "services/workspace.service";
 // types
 import { IWorkspace } from "types";
 // constants
 import { USER_WORKSPACES } from "constants/fetch-keys";
-// services
-import workspaceService from "services/workspace.service";
 
 export interface WorkspaceProviderProps {
   children: ReactElement;

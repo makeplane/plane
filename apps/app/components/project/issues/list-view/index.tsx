@@ -207,7 +207,7 @@ const ListView: React.FC<Props> = ({
                                         <>
                                           <div>
                                             <Listbox.Button
-                                              className={`flex cursor-pointer items-center gap-x-2 rounded px-2 py-1 capitalize shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
+                                              className={`flex cursor-pointer items-center gap-x-2 rounded px-2 py-0.5 capitalize shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
                                                 issue.priority === "urgent"
                                                   ? "bg-red-100 text-red-600"
                                                   : issue.priority === "high"

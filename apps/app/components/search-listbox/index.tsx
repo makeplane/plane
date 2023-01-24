@@ -1,5 +1,4 @@
-import React = require("react");
-import { useState } from "react";
+import React, { useState } from "react";
 
 import Image from "next/image";
 import { useRouter } from "next/router";

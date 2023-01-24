@@ -5,6 +5,7 @@ import Image from "next/image";
 
 // hooks
 import useUser from "hooks/use-user";
+import useToast from "hooks/use-toast";
 // services
 import authenticationService from "services/authentication.service";
 // layouts
@@ -28,6 +29,8 @@ const SignInPage: NextPage = () => {
   // states
   const [isLoading, setLoading] = useState(false);
 
+  const { setToastAlert } = useToast();
+
   const onSignInSuccess = useCallback(async () => {
     await mutateUser();
     const nextLocation = router.asPath.split("?next=")[1];
@@ -49,6 +52,11 @@ const SignInPage: NextPage = () => {
         })
         .catch((err) => {
           console.log(err);
+          setToastAlert({
+            title: "Error signing in!",
+            type: "error",
+            message: "Something went wrong. Please try again later or contact the support team.",
+          });
           setLoading(false);
         });
     }

@@ -121,7 +121,7 @@ const SelectBlocked: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
           afterLeave={() => setQuery("")}
           appear
         >
-          <Dialog as="div" className="relative z-10" onClose={handleClose}>
+          <Dialog as="div" className="relative z-20" onClose={handleClose}>
             <Transition.Child
               as={React.Fragment}
               enter="ease-out duration-300"
@@ -134,7 +134,7 @@ const SelectBlocked: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
               <div className="fixed inset-0 bg-gray-500 bg-opacity-25 transition-opacity" />
             </Transition.Child>
 
-            <div className="fixed inset-0 z-10 overflow-y-auto p-4 sm:p-6 md:p-20">
+            <div className="fixed inset-0 z-20 overflow-y-auto p-4 sm:p-6 md:p-20">
               <Transition.Child
                 as={React.Fragment}
                 enter="ease-out duration-300"

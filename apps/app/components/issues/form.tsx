@@ -52,6 +52,8 @@ export interface IssueFormProps {
   projectId: string;
   initialData?: Partial<IIssue>;
   issues: IIssue[];
+  createMore: boolean;
+  setCreateMore: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const IssueForm: FC<IssueFormProps> = ({
@@ -59,9 +61,10 @@ export const IssueForm: FC<IssueFormProps> = ({
   initialData,
   issues = [],
   projectId,
+  createMore,
+  setCreateMore,
 }) => {
   // states
-  const [isCreateMoreActive, setCreateMoreActive] = useState(false);
   const [mostSimilarIssue, setMostSimilarIssue] = useState<IIssue | undefined>();
   const [cycleModal, setCycleModal] = useState(false);
   const [stateModal, setStateModal] = useState(false);
@@ -317,13 +320,13 @@ export const IssueForm: FC<IssueFormProps> = ({
         <div className="mt-5 flex items-center justify-between gap-2">
           <div
             className="flex cursor-pointer items-center gap-1"
-            onClick={() => setCreateMoreActive(!isCreateMoreActive)}
+            onClick={() => setCreateMore((prevData) => !prevData)}
           >
             <span className="text-xs">Create more</span>
             <button
               type="button"
               className={`pointer-events-none relative inline-flex h-4 w-7 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent ${
-                isCreateMoreActive ? "bg-theme" : "bg-gray-300"
+                createMore ? "bg-theme" : "bg-gray-300"
               } transition-colors duration-300 ease-in-out focus:outline-none`}
               role="switch"
               aria-checked="false"
@@ -332,7 +335,7 @@ export const IssueForm: FC<IssueFormProps> = ({
               <span
                 aria-hidden="true"
                 className={`pointer-events-none inline-block h-3 w-3 ${
-                  isCreateMoreActive ? "translate-x-3" : "translate-x-0"
+                  createMore ? "translate-x-3" : "translate-x-0"
                 } transform rounded-full bg-white shadow ring-0 transition duration-300 ease-in-out`}
               />
             </button>

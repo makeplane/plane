@@ -1,5 +1,4 @@
-import React = require("react");
-import { useState } from "react";
+import React, { useState } from "react";
 
 import { useRouter } from "next/router";
 
@@ -49,7 +48,7 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange }
     <Combobox
       as="div"
       value={value}
-      onChange={(val) => onChange(val)}
+      onChange={(val: any) => onChange(val)}
       className="relative flex-shrink-0"
     >
       {({ open }: any) => (

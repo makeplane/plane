@@ -31,6 +31,7 @@ import {
   USER_ISSUE,
   PROJECTS_LIST,
   MODULE_ISSUES,
+  SUB_ISSUES,
 } from "constants/fetch-keys";
 
 const defaultValues: Partial<IIssue> = {
@@ -66,8 +67,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   const [isCycleModalOpen, setIsCycleModalOpen] = useState(false);
   const [isStateModalOpen, setIsStateModalOpen] = useState(false);
   const [activeProject, setActiveProject] = useState<string | null>(null);
-  const [parentIssueListModalOpen, setParentIssueListModalOpen] = useState(false);
-  const [mostSimilarIssue, setMostSimilarIssue] = useState<string | undefined>();
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -107,8 +106,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
       ...prePopulateData,
     });
   }, [data, prePopulateData, reset, activeProject, isOpen, watch]);
-
-  useEffect(() => () => setMostSimilarIssue(undefined), []);
 
   const resetForm = () => {
     reset({ ...defaultValues, project: activeProject ?? undefined });
@@ -178,9 +175,10 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
           message: `Issue ${data ? "updated" : "created"} successfully`,
         });
 
-        if (payload.assignees_list?.some((assignee) => assignee === user?.id)) {
+        if (payload.assignees_list?.some((assignee) => assignee === user?.id))
           mutate<IIssue[]>(USER_ISSUE);
-        }
+
+        if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
       })
       .catch((err) => {
         if (err.detail) {
@@ -295,6 +293,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
                     issues={issues?.results ?? []}
                     handleFormSubmit={handleFormSubmit}
                     initialData={prePopulateData}
+                    createMore={createMore}
+                    setCreateMore={setCreateMore}
                   />
                 </Dialog.Panel>
               </Transition.Child>

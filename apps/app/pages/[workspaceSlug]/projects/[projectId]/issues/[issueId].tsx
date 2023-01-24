@@ -74,17 +74,12 @@ const IssueDetailPage: NextPage = () => {
   );
 
   const { data: subIssues } = useSWR(
-    issueId && workspaceSlug && projectId ? SUB_ISSUES(issueId.toString()) : null,
+    issueId && workspaceSlug && projectId ? SUB_ISSUES(issueId as string) : null,
     issueId && workspaceSlug && projectId
       ? () =>
-          issuesService.subIssues(
-            workspaceSlug?.toString(),
-            projectId?.toString(),
-            issueId?.toString()
-          )
+          issuesService.subIssues(workspaceSlug as string, projectId as string, issueId as string)
       : null
   );
-  console.log("issues, issues", subIssues);
 
   const { data: activeProject } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
@@ -114,7 +109,7 @@ const IssueDetailPage: NextPage = () => {
       : null
   );
 
-  const { register, handleSubmit, reset, control, watch, setValue } = useForm<IIssue>({
+  const { reset, control, watch } = useForm<IIssue>({
     defaultValues,
   });
 
@@ -149,34 +144,11 @@ const IssueDetailPage: NextPage = () => {
     (formData: Partial<IIssue>) => {
       if (!workspaceSlug || !activeProject || !issueId) return;
 
-      mutateIssues(
-        (prevData) => ({
-          ...(prevData as IssueResponse),
-          results: (prevData?.results ?? []).map((issue) => {
-            if (issue.id === issueId) return { ...issue, ...formData };
-
-            return issue;
-          }),
-        }),
-        false
-      );
-
-      const payload = {
-        ...formData,
-      };
-
+      const payload = { ...formData };
       issuesService
         .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload)
         .then((response) => {
-          mutateIssues((prevData) => ({
-            ...(prevData as IssueResponse),
-            results: (prevData?.results ?? []).map((issue) => {
-              if (issue.id === issueId) {
-                return { ...issue, ...response };
-              }
-              return issue;
-            }),
-          }));
+          mutateIssues();
           mutateIssueActivities();
         })
         .catch((error) => {
@@ -191,16 +163,7 @@ const IssueDetailPage: NextPage = () => {
       issuesService
         .patchIssue(workspaceSlug as string, activeProject.id, issueId, { parent: null })
         .then((res) => {
-          mutate<IssueResponse>(
-            PROJECT_ISSUES_LIST(workspaceSlug as string, activeProject.id),
-            (prevData) => ({
-              ...(prevData as IssueResponse),
-              results: (prevData?.results ?? []).map((p) =>
-                p.id === issueId ? { ...p, ...res } : p
-              ),
-            }),
-            false
-          );
+          mutate(SUB_ISSUES(issueDetail?.id ?? ""));
           mutateIssueActivities();
         })
         .catch((e) => {

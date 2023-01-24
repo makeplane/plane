@@ -66,7 +66,6 @@ const useIssueView = (projectIssues: IIssue[]) => {
   };
 
   if (orderBy) {
-    console.log("orderBy", orderBy);
     groupedByIssues = Object.fromEntries(
       Object.entries(groupedByIssues).map(([key, value]) => [
         key,
