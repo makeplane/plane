@@ -153,8 +153,8 @@ const SingleListIssue: React.FC<Props> = ({
           )}
           {type && (
             <CustomMenu width="auto" ellipsis>
-              <CustomMenu.MenuItem onClick={() => editIssue()}>Edit</CustomMenu.MenuItem>
-              <CustomMenu.MenuItem onClick={() => removeIssue()}>
+              <CustomMenu.MenuItem onClick={editIssue}>Edit</CustomMenu.MenuItem>
+              <CustomMenu.MenuItem onClick={removeIssue}>
                 <>Remove from {type}</>
               </CustomMenu.MenuItem>
               <CustomMenu.MenuItem onClick={() => handleDeleteIssue()}>

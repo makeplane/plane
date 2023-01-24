@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
-import dynamic from "next/dynamic";
+
 import { useRouter } from "next/router";
+
 import useSWR, { mutate } from "swr";
-import { Controller, useForm } from "react-hook-form";
-import { Dialog, Menu, Transition } from "@headlessui/react";
+
+// react-hook-form
+import { useForm } from "react-hook-form";
+// headless ui
+import { Dialog, Transition } from "@headlessui/react";
 // services
 import projectService from "services/project.service";
 import modulesService from "services/modules.service";
-import issuesServices from "services/issues.service";
+import issuesService from "services/issues.service";
 // hooks
 import useUser from "hooks/use-user";
 import useToast from "hooks/use-toast";
@@ -18,7 +21,6 @@ import CreateUpdateCycleModal from "components/project/cycles/create-update-cycl
 import { IssueForm } from "components/issues";
 // common
 import { renderDateFormat } from "helpers/date-time.helper";
-import { cosineSimilarity } from "helpers/string.helper";
 // types
 import type { IIssue, IssueResponse } from "types";
 // fetch keys
@@ -45,23 +47,20 @@ const defaultValues: Partial<IIssue> = {
 export interface IssuesModalProps {
   isOpen: boolean;
   handleClose: () => void;
-  workspaceSlug: string;
   projectId: string;
-  data?: IIssue;
+  data?: IIssue | null;
   prePopulateData?: Partial<IIssue>;
   isUpdatingSingleIssue?: boolean;
 }
 
-export const IssuesModal: React.FC<IssuesModalProps> = (props) => {
-  const {
-    isOpen,
-    handleClose,
-    data,
-    workspaceSlug,
-    projectId,
-    prePopulateData,
-    isUpdatingSingleIssue = false,
-  } = props;
+export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
+  isOpen,
+  handleClose,
+  data,
+  projectId,
+  prePopulateData,
+  isUpdatingSingleIssue = false,
+}) => {
   // states
   const [createMore, setCreateMore] = useState(false);
   const [isCycleModalOpen, setIsCycleModalOpen] = useState(false);
@@ -70,13 +69,16 @@ export const IssuesModal: React.FC<IssuesModalProps> = (props) => {
   const [parentIssueListModalOpen, setParentIssueListModalOpen] = useState(false);
   const [mostSimilarIssue, setMostSimilarIssue] = useState<string | undefined>();
 
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
+
   const { user } = useUser();
   const { setToastAlert } = useToast();
 
   const { data: issues } = useSWR(
     workspaceSlug && projectId ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId) : null,
     workspaceSlug && projectId
-      ? () => issuesServices.getIssues(workspaceSlug as string, projectId)
+      ? () => issuesService.getIssues(workspaceSlug as string, projectId)
       : null
   );
 
@@ -84,6 +86,12 @@ export const IssuesModal: React.FC<IssuesModalProps> = (props) => {
     workspaceSlug ? PROJECTS_LIST(workspaceSlug as string) : null,
     workspaceSlug ? () => projectService.getProjects(workspaceSlug as string) : null
   );
+
+  const { reset, setError, watch } = useForm<IIssue>({
+    defaultValues,
+    mode: "all",
+    reValidateMode: "onChange",
+  });
 
   useEffect(() => {
     if (projects && projects.length > 0)
@@ -109,7 +117,7 @@ export const IssuesModal: React.FC<IssuesModalProps> = (props) => {
   const addIssueToCycle = async (issueId: string, cycleId: string) => {
     if (!workspaceSlug || !projectId) return;
 
-    await issuesServices
+    await issuesService
       .addIssueToCycle(workspaceSlug as string, projectId, cycleId, {
         issues: [issueId],
       })
@@ -153,25 +161,23 @@ export const IssuesModal: React.FC<IssuesModalProps> = (props) => {
       .catch((e) => console.log(e));
   };
 
-  const createIssue = (payload: Partial<IIssue>) => {
-    issuesServices
+  const createIssue = async (payload: Partial<IIssue>) => {
+    await issuesService
       .createIssues(workspaceSlug as string, projectId as string, payload)
       .then((res) => {
         mutate<IssueResponse>(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
-        if (payload.cycle && payload.cycle !== null) {
-          addIssueToCycle(res.id, payload.cycle);
-        }
 
-        if (payload.module && payload.module !== null) {
-          addIssueToModule(res.id, payload.module);
-        }
+        if (payload.cycle && payload.cycle !== null) addIssueToCycle(res.id, payload.cycle);
+        if (payload.module && payload.module !== null) addIssueToModule(res.id, payload.module);
 
         if (!createMore) handleClose();
+
         setToastAlert({
           title: "Success",
           type: "success",
           message: `Issue ${data ? "updated" : "created"} successfully`,
         });
+
         if (payload.assignees_list?.some((assignee) => assignee === user?.id)) {
           mutate<IIssue[]>(USER_ISSUE);
         }
@@ -195,9 +201,9 @@ export const IssuesModal: React.FC<IssuesModalProps> = (props) => {
       });
   };
 
-  const updateIssue = () => {
-    issuesServices
-      .updateIssue(workspaceSlug as string, projectId as string, data.id, payload)
+  const updateIssue = async (payload: Partial<IIssue>) => {
+    await issuesService
+      .updateIssue(workspaceSlug as string, projectId as string, data?.id ?? "", payload)
       .then((res) => {
         if (isUpdatingSingleIssue) {
           mutate<IIssue>(PROJECT_ISSUES_DETAILS, (prevData) => ({ ...prevData, ...res }), false);
@@ -212,8 +218,8 @@ export const IssuesModal: React.FC<IssuesModalProps> = (props) => {
               }),
             })
           );
-        if (formData.cycle && formData.cycle !== null) {
-          addIssueToCycle(res.id, formData.cycle);
+        if (payload.cycle && payload.cycle !== null) {
+          addIssueToCycle(res.id, payload.cycle);
         }
         resetForm();
         if (!createMore) handleClose();
@@ -230,17 +236,15 @@ export const IssuesModal: React.FC<IssuesModalProps> = (props) => {
       });
   };
 
-  const handleFormSubmit = (formData: Partial<IIssue>) => {
+  const handleFormSubmit = async (formData: Partial<IIssue>) => {
     if (workspaceSlug && projectId) {
       const payload: Partial<IIssue> = {
         ...formData,
         target_date: formData.target_date ? renderDateFormat(formData.target_date ?? "") : null,
       };
-      if (!data) {
-        createIssue(payload);
-      } else {
-        updateIssue(payload);
-      }
+
+      if (!data) await createIssue(payload);
+      else await updateIssue(payload);
     }
   };
 
@@ -286,7 +290,12 @@ export const IssuesModal: React.FC<IssuesModalProps> = (props) => {
                 leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               >
                 <Dialog.Panel className="relative transform rounded-lg bg-white p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
-                  <IssueForm workspaceSlug={workspaceSlug} handleFormSubmit={handleFormSubmit} />
+                  <IssueForm
+                    projectId={projectId}
+                    issues={issues?.results ?? []}
+                    handleFormSubmit={handleFormSubmit}
+                    initialData={prePopulateData}
+                  />
                 </Dialog.Panel>
               </Transition.Child>
             </div>

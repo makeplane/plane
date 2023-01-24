@@ -1,15 +1,17 @@
-import React, { useState } from "react";
+import React = require("react");
+import { useState } from "react";
 
 import Image from "next/image";
 import { useRouter } from "next/router";
 
 import useSWR from "swr";
+
 // headless ui
 import { Transition, Combobox } from "@headlessui/react";
-// types
-import type { Props } from "./types";
 // services
 import workspaceService from "services/workspace.service";
+// types
+import type { Props } from "./types";
 // fetch-keys
 import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 
@@ -150,10 +152,10 @@ const SearchListbox: React.FC<Props> = ({
                       </Combobox.Option>
                     ))
                   ) : (
-                    <p className="text-sm text-gray-500">No {title.toLowerCase()} found</p>
+                    <p className="text-xs text-gray-500 px-2">No {title.toLowerCase()} found</p>
                   )
                 ) : (
-                  <p className="text-sm text-gray-500">Loading...</p>
+                  <p className="text-xs text-gray-500 px-2">Loading...</p>
                 )}
               </div>
             </Combobox.Options>

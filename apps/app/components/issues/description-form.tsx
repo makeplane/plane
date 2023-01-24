@@ -49,9 +49,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
   useEffect(() => {
     console.log("formValues", formValues);
     handleSubmit(formValues);
-  }, [stringFromValues]);
-
-  //   console.log("description", description);
+  }, [formValues, handleSubmit, stringFromValues]);
 
   return (
     <div>

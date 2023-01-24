@@ -13,11 +13,15 @@ import { requiredAuth } from "lib/auth";
 import AppLayout from "layouts/app-layout";
 // components
 import AddAsSubIssue from "components/project/issues/issue-detail/add-as-sub-issue";
-import { CreateUpdateIssuesModal } from "components/issues/create-update-issue-modal";
 import IssueDetailSidebar from "components/project/issues/issue-detail/issue-detail-sidebar";
 import AddIssueComment from "components/project/issues/issue-detail/comment/issue-comment-section";
 import IssueActivitySection from "components/project/issues/issue-detail/activity";
-import { IssueDescriptionForm, IssueDescriptionFormValues, SubIssueList } from "components/issues";
+import {
+  IssueDescriptionForm,
+  IssueDescriptionFormValues,
+  SubIssueList,
+  CreateUpdateIssueModal,
+} from "components/issues";
 // ui
 import { Loader, HeaderButton, CustomMenu } from "components/ui";
 import { Breadcrumbs } from "components/breadcrumbs";
@@ -265,9 +269,9 @@ const IssueDetailPage: NextPage = () => {
       }
     >
       {isOpen && (
-        <CreateUpdateIssuesModal
+        <CreateUpdateIssueModal
           isOpen={isOpen}
-          setIsOpen={setIsOpen}
+          handleClose={() => setIsOpen(false)}
           projectId={projectId as string}
           prePopulateData={{
             ...preloadedData,

@@ -1,44 +1,45 @@
 import React from "react";
 
 import { useRouter } from "next/router";
+
 // hooks
-import { Popover, Transition } from "@headlessui/react";
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import useIssuesProperties from "hooks/use-issue-properties";
+import useIssueView from "hooks/use-issue-view";
 // headless ui
+import { Popover, Transition } from "@headlessui/react";
 // ui
 import { CustomMenu } from "components/ui";
 // icons
+import { ChevronDownIcon, ListBulletIcon } from "@heroicons/react/24/outline";
+import { Squares2X2Icon } from "@heroicons/react/20/solid";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // types
-import { IIssue, NestedKeyOf, Properties } from "types";
+import { IIssue, Properties } from "types";
 // common
 import { filterIssueOptions, groupByOptions, orderByOptions } from "constants/";
 
 type Props = {
-  groupByProperty: NestedKeyOf<IIssue> | null;
-  setGroupByProperty: (property: NestedKeyOf<IIssue> | null) => void;
-  orderBy: NestedKeyOf<IIssue> | null;
-  setOrderBy: (property: NestedKeyOf<IIssue> | null) => void;
-  filterIssue: "activeIssue" | "backlogIssue" | null;
-  setFilterIssue: (property: "activeIssue" | "backlogIssue" | null) => void;
-  resetFilterToDefault: () => void;
-  setNewFilterDefaultView: () => void;
+  issues: IIssue[];
 };
 
-const View: React.FC<Props> = ({
-  groupByProperty,
-  setGroupByProperty,
-  orderBy,
-  setOrderBy,
-  filterIssue,
-  setFilterIssue,
-  resetFilterToDefault,
-  setNewFilterDefaultView,
-}) => {
+const View: React.FC<Props> = ({ issues }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+
+  const {
+    issueView,
+    setIssueViewToList,
+    setIssueViewToKanban,
+    groupByProperty,
+    setGroupByProperty,
+    setOrderBy,
+    setFilterIssue,
+    orderBy,
+    filterIssue,
+    resetFilterToDefault,
+    setNewFilterDefaultView,
+  } = useIssueView(issues);
 
   const [properties, setProperties] = useIssuesProperties(
     workspaceSlug as string,
@@ -46,7 +47,27 @@ const View: React.FC<Props> = ({
   );
 
   return (
-    <>
+    <div className="flex items-center gap-2">
+      <div className="flex items-center gap-x-1">
+        <button
+          type="button"
+          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200 ${
+            issueView === "list" ? "bg-gray-200" : ""
+          }`}
+          onClick={() => setIssueViewToList()}
+        >
+          <ListBulletIcon className="h-4 w-4" />
+        </button>
+        <button
+          type="button"
+          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200 ${
+            issueView === "kanban" ? "bg-gray-200" : ""
+          }`}
+          onClick={() => setIssueViewToKanban()}
+        >
+          <Squares2X2Icon className="h-4 w-4" />
+        </button>
+      </div>
       <Popover className="relative">
         {({ open }) => (
           <>
@@ -171,7 +192,7 @@ const View: React.FC<Props> = ({
           </>
         )}
       </Popover>
-    </>
+    </div>
   );
 };
 

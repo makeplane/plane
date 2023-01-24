@@ -4,22 +4,13 @@ import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 // services
-import {
-  ArrowLeftIcon,
-  ListBulletIcon,
-  PlusIcon,
-  RectangleGroupIcon,
-  RectangleStackIcon,
-} from "@heroicons/react/24/outline";
-import { Squares2X2Icon } from "@heroicons/react/20/solid";
 import modulesService from "services/modules.service";
 import projectService from "services/project.service";
 import issuesService from "services/issues.service";
-// hooks
-import useIssuesFilter from "hooks/use-issues-filter";
-import useIssuesProperties from "hooks/use-issue-properties";
 // layouts
 import AppLayout from "layouts/app-layout";
+// contexts
+import { IssueViewContextProvider } from "contexts/issue-view.context";
 // components
 import ExistingIssuesListModal from "components/common/existing-issues-list-modal";
 import ModulesBoardView from "components/project/modules/board-view";
@@ -27,12 +18,19 @@ import ModulesListView from "components/project/modules/list-view";
 import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
 import ModuleDetailSidebar from "components/project/modules/module-detail-sidebar";
 import ConfirmModuleDeletion from "components/project/modules/confirm-module-deletion";
-import { CreateUpdateIssuesModal } from "components/issues/create-update-issue-modal";
+import { CreateUpdateIssueModal } from "components/issues";
 import View from "components/core/view";
 // ui
 import { CustomMenu, EmptySpace, EmptySpaceItem, Spinner } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
+import {
+  ArrowLeftIcon,
+  ListBulletIcon,
+  PlusIcon,
+  RectangleGroupIcon,
+  RectangleStackIcon,
+} from "@heroicons/react/24/outline";
 // types
 import { IIssue, IModule, ModuleIssueResponse, SelectIssue, SelectModuleType } from "types";
 // fetch-keys
@@ -47,14 +45,14 @@ import {
 const SingleModule = () => {
   const [moduleSidebar, setModuleSidebar] = useState(true);
   const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
-  const [selectedIssues, setSelectedIssues] = useState<SelectIssue>();
+  const [selectedIssues, setSelectedIssues] = useState<SelectIssue>(null);
   const [moduleIssuesListModal, setModuleIssuesListModal] = useState(false);
   const [createUpdateIssueModal, setCreateUpdateIssueModal] = useState(false);
   const [deleteIssue, setDeleteIssue] = useState<string | undefined>(undefined);
   const [selectedModuleForDelete, setSelectedModuleForDelete] = useState<SelectModuleType>();
   const [preloadedData, setPreloadedData] = useState<
-    (Partial<IIssue> & { actionType: "createIssue" | "edit" | "delete" }) | undefined
-  >(undefined);
+    (Partial<IIssue> & { actionType: "createIssue" | "edit" | "delete" }) | null
+  >(null);
 
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query;
@@ -67,8 +65,6 @@ const SingleModule = () => {
       ? () => issuesService.getIssues(workspaceSlug as string, projectId as string)
       : null
   );
-
-  const [properties] = useIssuesProperties(workspaceSlug as string, projectId as string);
 
   const { data: modules } = useSWR(
     workspaceSlug && projectId ? MODULE_LIST(projectId as string) : null,
@@ -115,24 +111,9 @@ const SingleModule = () => {
   );
 
   const moduleIssuesArray = moduleIssues?.map((issue) => ({
-    bridge: issue.id,
     ...issue.issue_detail,
+    bridge: issue.id,
   }));
-
-  const {
-    issueView,
-    groupByProperty,
-    setGroupByProperty,
-    groupedByIssues,
-    setOrderBy,
-    setFilterIssue,
-    orderBy,
-    filterIssue,
-    setIssueViewToKanban,
-    setIssueViewToList,
-    resetFilterToDefault,
-    setNewFilterDefaultView,
-  } = useIssuesFilter(moduleIssuesArray ?? []);
 
   const handleAddIssuesToModule = (data: { issues: string[] }) => {
     if (workspaceSlug && projectId) {
@@ -162,7 +143,11 @@ const SingleModule = () => {
     issue?: IIssue,
     actionType: "create" | "edit" | "delete" = "create"
   ) => {
-    if (issue) setSelectedIssues({ ...issue, actionType });
+    if (issue) {
+      setPreloadedData(null);
+      setSelectedIssues({ ...issue, actionType });
+    } else setSelectedIssues(null);
+
     setCreateUpdateIssueModal(true);
   };
 
@@ -202,13 +187,17 @@ const SingleModule = () => {
   };
 
   return (
-    <>
+    <IssueViewContextProvider>
       {moduleId && (
-        <CreateUpdateIssuesModal
+        <CreateUpdateIssueModal
           isOpen={createUpdateIssueModal && selectedIssues?.actionType !== "delete"}
           data={selectedIssues}
-          prePopulateData={{ ...preloadedData, module: moduleId as string }}
-          setIsOpen={setCreateUpdateIssueModal}
+          prePopulateData={
+            preloadedData
+              ? { module: moduleId as string, ...preloadedData }
+              : { module: moduleId as string, ...selectedIssues }
+          }
+          handleClose={() => setCreateUpdateIssueModal(false)}
           projectId={projectId as string}
         />
       )}
@@ -268,36 +257,7 @@ const SingleModule = () => {
           <div
             className={`flex items-center gap-2 ${moduleSidebar ? "mr-[24rem]" : ""} duration-300`}
           >
-            <div className="flex items-center gap-x-1">
-              <button
-                type="button"
-                className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-100 ${
-                  issueView === "list" ? "bg-gray-100" : ""
-                }`}
-                onClick={() => setIssueViewToList()}
-              >
-                <ListBulletIcon className="h-4 w-4" />
-              </button>
-              <button
-                type="button"
-                className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-100 ${
-                  issueView === "kanban" ? "bg-gray-100" : ""
-                }`}
-                onClick={() => setIssueViewToKanban()}
-              >
-                <Squares2X2Icon className="h-4 w-4" />
-              </button>
-            </div>
-            <View
-              filterIssue={filterIssue}
-              setFilterIssue={setFilterIssue}
-              groupByProperty={groupByProperty}
-              setGroupByProperty={setGroupByProperty}
-              orderBy={orderBy}
-              setOrderBy={setOrderBy}
-              resetFilterToDefault={resetFilterToDefault}
-              setNewFilterDefaultView={setNewFilterDefaultView}
-            />
+            <View issues={moduleIssuesArray ?? []} />
             <button
               type="button"
               className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-100 ${
@@ -310,34 +270,27 @@ const SingleModule = () => {
           </div>
         }
       >
-        {Object.keys(groupedByIssues) ? (
-          Object.keys(groupedByIssues).length > 0 ? (
+        {moduleIssuesArray ? (
+          moduleIssuesArray.length > 0 ? (
             <div className={`h-full ${moduleSidebar ? "mr-[24rem]" : ""} duration-300`}>
-              {issueView === "list" ? (
-                <ModulesListView
-                  groupedByIssues={groupedByIssues}
-                  selectedGroup={groupByProperty}
-                  properties={properties}
-                  openCreateIssueModal={openCreateIssueModal}
-                  openIssuesListModal={openIssuesListModal}
-                  removeIssueFromModule={removeIssueFromModule}
-                  handleDeleteIssue={setDeleteIssue}
-                  setPreloadedData={setPreloadedData}
-                />
-              ) : (
-                <ModulesBoardView
-                  groupedByIssues={groupedByIssues}
-                  properties={properties}
-                  removeIssueFromModule={removeIssueFromModule}
-                  selectedGroup={groupByProperty}
-                  members={members}
-                  openCreateIssueModal={openCreateIssueModal}
-                  openIssuesListModal={openIssuesListModal}
-                  handleDeleteIssue={setDeleteIssue}
-                  partialUpdateIssue={partialUpdateIssue}
-                  setPreloadedData={setPreloadedData}
-                />
-              )}
+              <ModulesListView
+                issues={moduleIssuesArray ?? []}
+                openCreateIssueModal={openCreateIssueModal}
+                openIssuesListModal={openIssuesListModal}
+                removeIssueFromModule={removeIssueFromModule}
+                handleDeleteIssue={setDeleteIssue}
+                setPreloadedData={setPreloadedData}
+              />
+              <ModulesBoardView
+                issues={moduleIssuesArray ?? []}
+                removeIssueFromModule={removeIssueFromModule}
+                members={members}
+                openCreateIssueModal={openCreateIssueModal}
+                openIssuesListModal={openIssuesListModal}
+                handleDeleteIssue={setDeleteIssue}
+                partialUpdateIssue={partialUpdateIssue}
+                setPreloadedData={setPreloadedData}
+              />
             </div>
           ) : (
             <div
@@ -377,7 +330,7 @@ const SingleModule = () => {
           handleDeleteModule={handleDeleteModule}
         />
       </AppLayout>
-    </>
+    </IssueViewContextProvider>
   );
 };
 
