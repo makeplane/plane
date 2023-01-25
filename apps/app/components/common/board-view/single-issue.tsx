@@ -16,13 +16,13 @@ import { CalendarDaysIcon } from "@heroicons/react/20/solid";
 import issuesService from "services/issues.service";
 import stateService from "services/state.service";
 import projectService from "services/project.service";
-// icons
-import User from "public/user.png";
+// components
+import { AssigneesList } from "components/ui/avatar";
 // helpers
 import { renderShortNumericDateFormat, findHowManyDaysLeft } from "helpers/date-time.helper";
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
-import { IIssue, IssueResponse, IWorkspaceMember, Properties } from "types";
+import { IIssue, IssueResponse, IUserLite, IWorkspaceMember, Properties } from "types";
 // common
 import { PRIORITIES } from "constants/";
 import { PROJECT_ISSUES_LIST, STATE_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
@@ -32,11 +32,7 @@ type Props = {
   issue: IIssue;
   properties: Properties;
   snapshot?: DraggableStateSnapshot;
-  assignees: {
-    avatar: string | undefined;
-    first_name: string | undefined;
-    email: string | undefined;
-  }[];
+  assignees: IUserLite[] | (IUserLite | undefined)[];
   people: IWorkspaceMember[] | undefined;
   handleDeleteIssue?: React.Dispatch<React.SetStateAction<string | undefined>>;
   partialUpdateIssue: any;
@@ -255,11 +251,10 @@ const SingleBoardIssue: React.FC<Props> = ({
               value={issue.assignees}
               onChange={(data: any) => {
                 const newData = issue.assignees ?? [];
-                if (newData.includes(data)) {
-                  newData.splice(newData.indexOf(data), 1);
-                } else {
-                  newData.push(data);
-                }
+
+                if (newData.includes(data)) newData.splice(newData.indexOf(data), 1);
+                else newData.push(data);
+
                 partialUpdateIssue({ assignees_list: newData }, issue.id);
               }}
               className="group relative flex-shrink-0"
@@ -269,48 +264,7 @@ const SingleBoardIssue: React.FC<Props> = ({
                   <div>
                     <Listbox.Button>
                       <div className="flex cursor-pointer items-center gap-1 text-xs">
-                        {assignees.length > 0 ? (
-                          assignees.map((assignee, index: number) => (
-                            <div
-                              key={index}
-                              className={`relative z-[1] h-5 w-5 rounded-full ${
-                                index !== 0 ? "-ml-2.5" : ""
-                              }`}
-                            >
-                              {assignee.avatar && assignee.avatar !== "" ? (
-                                <div className="h-5 w-5 rounded-full border-2 border-white bg-white">
-                                  <Image
-                                    src={assignee.avatar}
-                                    height="100%"
-                                    width="100%"
-                                    className="rounded-full"
-                                    alt={assignee?.first_name}
-                                    priority={false}
-                                    loading="lazy"
-                                  />
-                                </div>
-                              ) : (
-                                <div className="grid h-5 w-5 place-items-center rounded-full border-2 border-white bg-gray-700 capitalize text-white">
-                                  {assignee.first_name && assignee.first_name !== ""
-                                    ? assignee.first_name.charAt(0)
-                                    : assignee?.email?.charAt(0)}
-                                </div>
-                              )}
-                            </div>
-                          ))
-                        ) : (
-                          <div className="h-5 w-5 rounded-full border-2 border-white bg-white">
-                            <Image
-                              src={User}
-                              height="100%"
-                              width="100%"
-                              className="rounded-full"
-                              alt="No user"
-                              priority={false}
-                              loading="lazy"
-                            />
-                          </div>
-                        )}
+                        <AssigneesList users={assignees} length={3} />
                       </div>
                     </Listbox.Button>
 
@@ -335,9 +289,11 @@ const SingleBoardIssue: React.FC<Props> = ({
                             <div
                               className={`flex items-center gap-x-1 ${
                                 assignees.includes({
-                                  avatar: person.member.avatar,
+                                  id: person.member.last_name,
                                   first_name: person.member.first_name,
+                                  last_name: person.member.last_name,
                                   email: person.member.email,
+                                  avatar: person.member.avatar,
                                 })
                                   ? "font-medium"
                                   : "font-normal"

@@ -22,6 +22,7 @@ import { CustomMenu, CustomSelect, Spinner } from "components/ui";
 import User from "public/user.png";
 // components
 import { CreateUpdateIssueModal } from "components/issues/modal";
+import { AssigneesList } from "components/ui/avatar";
 // helpers
 import { renderShortNumericDateFormat, findHowManyDaysLeft } from "helpers/date-time.helper";
 import { addSpaceIfCamelCase } from "helpers/string.helper";
@@ -157,11 +158,7 @@ const ListView: React.FC<Props> = ({
                                 (p) => p.member.id === assignee
                               )?.member;
 
-                              return {
-                                avatar: tempPerson?.avatar,
-                                first_name: tempPerson?.first_name,
-                                email: tempPerson?.email,
-                              };
+                              return tempPerson;
                             });
 
                             const totalChildren = issuesList?.results.filter(
@@ -360,11 +357,11 @@ const ListView: React.FC<Props> = ({
                                       value={issue.assignees}
                                       onChange={(data: any) => {
                                         const newData = issue.assignees ?? [];
-                                        if (newData.includes(data)) {
+
+                                        if (newData.includes(data))
                                           newData.splice(newData.indexOf(data), 1);
-                                        } else {
-                                          newData.push(data);
-                                        }
+                                        else newData.push(data);
+
                                         partialUpdateIssue({ assignees_list: newData }, issue.id);
                                       }}
                                       className="group relative flex-shrink-0"
@@ -374,48 +371,7 @@ const ListView: React.FC<Props> = ({
                                           <div>
                                             <Listbox.Button>
                                               <div className="flex cursor-pointer items-center gap-1 text-xs">
-                                                {assignees.length > 0 ? (
-                                                  assignees.map((assignee, index: number) => (
-                                                    <div
-                                                      key={index}
-                                                      className={`relative z-[1] h-5 w-5 rounded-full ${
-                                                        index !== 0 ? "-ml-2.5" : ""
-                                                      }`}
-                                                    >
-                                                      {assignee.avatar && assignee.avatar !== "" ? (
-                                                        <div className="h-5 w-5 rounded-full border-2 border-white bg-white">
-                                                          <Image
-                                                            src={assignee.avatar}
-                                                            height="100%"
-                                                            width="100%"
-                                                            className="rounded-full"
-                                                            alt={assignee?.first_name}
-                                                            priority={false}
-                                                            loading="lazy"
-                                                          />
-                                                        </div>
-                                                      ) : (
-                                                        <div
-                                                          className={`grid h-5 w-5 place-items-center rounded-full border-2 border-white bg-gray-700 text-white`}
-                                                        >
-                                                          {assignee.first_name?.charAt(0)}
-                                                        </div>
-                                                      )}
-                                                    </div>
-                                                  ))
-                                                ) : (
-                                                  <div className="h-5 w-5 rounded-full border-2 border-white bg-white">
-                                                    <Image
-                                                      src={User}
-                                                      height="100%"
-                                                      width="100%"
-                                                      className="rounded-full"
-                                                      alt="No user"
-                                                      priority={false}
-                                                      loading="lazy"
-                                                    />
-                                                  </div>
-                                                )}
+                                                <AssigneesList users={assignees} />
                                               </div>
                                             </Listbox.Button>
 
@@ -440,8 +396,10 @@ const ListView: React.FC<Props> = ({
                                                     <div
                                                       className={`flex items-center gap-x-1 ${
                                                         assignees.includes({
+                                                          id: person.member.id,
                                                           avatar: person.member.avatar,
                                                           first_name: person.member.first_name,
+                                                          last_name: person.member.last_name,
                                                           email: person.member.email,
                                                         })
                                                           ? "font-medium"

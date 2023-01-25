@@ -160,7 +160,9 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
         groupByProperty: "state_detail.name",
       },
     });
+
     if (!workspaceSlug || !projectId) return;
+
     saveDataToServer(workspaceSlug as string, projectId as string, {
       ...state,
       issueView: "kanban",
@@ -181,7 +183,9 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
         groupByProperty: null,
       },
     });
+
     if (!workspaceSlug || !projectId) return;
+
     saveDataToServer(workspaceSlug as string, projectId as string, {
       ...state,
       issueView: "list",

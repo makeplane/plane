@@ -20,7 +20,7 @@ import { IIssue, Properties } from "types";
 import { filterIssueOptions, groupByOptions, orderByOptions } from "constants/";
 
 type Props = {
-  issues: IIssue[];
+  issues?: IIssue[];
 };
 
 const View: React.FC<Props> = ({ issues }) => {
@@ -39,7 +39,7 @@ const View: React.FC<Props> = ({ issues }) => {
     filterIssue,
     resetFilterToDefault,
     setNewFilterDefaultView,
-  } = useIssueView(issues);
+  } = useIssueView(issues ?? []);
 
   const [properties, setProperties] = useIssuesProperties(
     workspaceSlug as string,
@@ -49,24 +49,28 @@ const View: React.FC<Props> = ({ issues }) => {
   return (
     <div className="flex items-center gap-2">
       <div className="flex items-center gap-x-1">
-        <button
-          type="button"
-          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200 ${
-            issueView === "list" ? "bg-gray-200" : ""
-          }`}
-          onClick={() => setIssueViewToList()}
-        >
-          <ListBulletIcon className="h-4 w-4" />
-        </button>
-        <button
-          type="button"
-          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200 ${
-            issueView === "kanban" ? "bg-gray-200" : ""
-          }`}
-          onClick={() => setIssueViewToKanban()}
-        >
-          <Squares2X2Icon className="h-4 w-4" />
-        </button>
+        {issues && (
+          <>
+            <button
+              type="button"
+              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200 ${
+                issueView === "list" ? "bg-gray-200" : ""
+              }`}
+              onClick={() => setIssueViewToList()}
+            >
+              <ListBulletIcon className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200 ${
+                issueView === "kanban" ? "bg-gray-200" : ""
+              }`}
+              onClick={() => setIssueViewToKanban()}
+            >
+              <Squares2X2Icon className="h-4 w-4" />
+            </button>
+          </>
+        )}
       </div>
       <Popover className="relative">
         {({ open }) => (
@@ -91,82 +95,85 @@ const View: React.FC<Props> = ({ issues }) => {
             >
               <Popover.Panel className="absolute right-0 z-20 mt-1 w-screen max-w-xs transform overflow-hidden rounded-lg bg-white p-3 shadow-lg">
                 <div className="relative divide-y-2">
-                  <div className="space-y-4 pb-3">
-                    <div className="flex items-center justify-between">
-                      <h4 className="text-sm text-gray-600">Group by</h4>
-                      <CustomMenu
-                        label={
-                          groupByOptions.find((option) => option.key === groupByProperty)?.name ??
-                          "Select"
-                        }
-                        width="lg"
-                      >
-                        {groupByOptions.map((option) => (
-                          <CustomMenu.MenuItem
-                            key={option.key}
-                            onClick={() => setGroupByProperty(option.key)}
-                          >
-                            {option.name}
-                          </CustomMenu.MenuItem>
-                        ))}
-                      </CustomMenu>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <h4 className="text-sm text-gray-600">Order by</h4>
-                      <CustomMenu
-                        label={
-                          orderByOptions.find((option) => option.key === orderBy)?.name ?? "Select"
-                        }
-                        width="lg"
-                      >
-                        {orderByOptions.map((option) =>
-                          groupByProperty === "priority" && option.key === "priority" ? null : (
+                  {issues && (
+                    <div className="space-y-4 pb-3">
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-sm text-gray-600">Group by</h4>
+                        <CustomMenu
+                          label={
+                            groupByOptions.find((option) => option.key === groupByProperty)?.name ??
+                            "Select"
+                          }
+                          width="lg"
+                        >
+                          {groupByOptions.map((option) => (
                             <CustomMenu.MenuItem
                               key={option.key}
-                              onClick={() => setOrderBy(option.key)}
+                              onClick={() => setGroupByProperty(option.key)}
                             >
                               {option.name}
                             </CustomMenu.MenuItem>
-                          )
-                        )}
-                      </CustomMenu>
+                          ))}
+                        </CustomMenu>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-sm text-gray-600">Order by</h4>
+                        <CustomMenu
+                          label={
+                            orderByOptions.find((option) => option.key === orderBy)?.name ??
+                            "Select"
+                          }
+                          width="lg"
+                        >
+                          {orderByOptions.map((option) =>
+                            groupByProperty === "priority" && option.key === "priority" ? null : (
+                              <CustomMenu.MenuItem
+                                key={option.key}
+                                onClick={() => setOrderBy(option.key)}
+                              >
+                                {option.name}
+                              </CustomMenu.MenuItem>
+                            )
+                          )}
+                        </CustomMenu>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-sm text-gray-600">Issue type</h4>
+                        <CustomMenu
+                          label={
+                            filterIssueOptions.find((option) => option.key === filterIssue)?.name ??
+                            "Select"
+                          }
+                          width="lg"
+                        >
+                          {filterIssueOptions.map((option) => (
+                            <CustomMenu.MenuItem
+                              key={option.key}
+                              onClick={() => setFilterIssue(option.key)}
+                            >
+                              {option.name}
+                            </CustomMenu.MenuItem>
+                          ))}
+                        </CustomMenu>
+                      </div>
+                      <div className="relative flex justify-end gap-x-3">
+                        <button
+                          type="button"
+                          className="text-xs"
+                          onClick={() => resetFilterToDefault()}
+                        >
+                          Reset to default
+                        </button>
+                        <button
+                          type="button"
+                          className="text-xs font-medium text-theme"
+                          onClick={() => setNewFilterDefaultView()}
+                        >
+                          Set as default
+                        </button>
+                      </div>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <h4 className="text-sm text-gray-600">Issue type</h4>
-                      <CustomMenu
-                        label={
-                          filterIssueOptions.find((option) => option.key === filterIssue)?.name ??
-                          "Select"
-                        }
-                        width="lg"
-                      >
-                        {filterIssueOptions.map((option) => (
-                          <CustomMenu.MenuItem
-                            key={option.key}
-                            onClick={() => setFilterIssue(option.key)}
-                          >
-                            {option.name}
-                          </CustomMenu.MenuItem>
-                        ))}
-                      </CustomMenu>
-                    </div>
-                    <div className="relative flex justify-end gap-x-3">
-                      <button
-                        type="button"
-                        className="text-xs"
-                        onClick={() => resetFilterToDefault()}
-                      >
-                        Reset to default
-                      </button>
-                      <button
-                        type="button"
-                        className="text-xs font-medium text-theme"
-                        onClick={() => setNewFilterDefaultView()}
-                      >
-                        Set as default
-                      </button>
-                    </div>
-                  </div>
+                  )}
                   <div className="space-y-2 py-3">
                     <h4 className="text-sm text-gray-600">Display Properties</h4>
                     <div className="flex flex-wrap items-center gap-2">

@@ -128,11 +128,7 @@ const SingleBoard: React.FC<Props> = ({
                     ]?.map((assignee) => {
                       const tempPerson = people?.find((p) => p.member.id === assignee)?.member;
 
-                      return {
-                        avatar: tempPerson?.avatar,
-                        first_name: tempPerson?.first_name,
-                        email: tempPerson?.email,
-                      };
+                      return tempPerson;
                     });
 
                     return (
