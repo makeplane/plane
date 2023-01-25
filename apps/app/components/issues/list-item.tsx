@@ -130,18 +130,6 @@ export const IssueListItem: React.FC<Props> = (props) => {
               {issue?.sub_issues_count} {issue?.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
             </div>
           )}
-          {/** TODO: FIX this */}
-          {/* {type && (
-            <CustomMenu width="auto" ellipsis>
-              <CustomMenu.MenuItem onClick={() => editIssue()}>Edit</CustomMenu.MenuItem>
-              <CustomMenu.MenuItem onClick={() => removeIssue()}>
-                <>Remove from {type}</>
-              </CustomMenu.MenuItem>
-              <CustomMenu.MenuItem onClick={() => handleDeleteIssue()}>
-                Delete permanently
-              </CustomMenu.MenuItem>
-            </CustomMenu>
-          )} */}
         </div>
       </div>
     </>

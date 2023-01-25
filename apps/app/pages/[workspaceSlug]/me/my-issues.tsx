@@ -5,12 +5,9 @@ import { useRouter } from "next/router";
 import { Disclosure, Popover, Transition } from "@headlessui/react";
 // icons
 import { ChevronDownIcon, PlusIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
-// types
-import type { NextPage } from "next";
 // layouts
 import AppLayout from "layouts/app-layout";
 // hooks
-import useUser from "hooks/use-user";
 import useIssues from "hooks/use-issues";
 // ui
 import { Spinner, EmptySpace, EmptySpaceItem, HeaderButton } from "components/ui";
@@ -23,12 +20,13 @@ import { IIssue, Properties } from "types";
 import { IssueListItem } from "components/issues";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
+// types
+import type { NextPage } from "next";
 
 const MyIssuesPage: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // Fetching user information
-  const {} = useUser();
+
   // fetching user issues
   const { myIssues } = useIssues(workspaceSlug?.toString());
 
