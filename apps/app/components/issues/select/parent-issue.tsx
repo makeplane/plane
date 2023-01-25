@@ -16,7 +16,7 @@ export const IssueParentSelect: React.FC<Props> = ({ control, isOpen, setIsOpen,
   <Controller
     control={control}
     name="parent"
-    render={({ field: { value, onChange } }) => (
+    render={({ field: { onChange } }) => (
       <IssuesListModal
         isOpen={isOpen}
         handleClose={() => setIsOpen(false)}

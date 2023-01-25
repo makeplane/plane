@@ -28,22 +28,26 @@ const SingleModuleCard: React.FC<Props> = ({ module }) => {
           <div className="space-y-2">
             <h6 className="text-gray-500">LEAD</h6>
             <div>
-              {module.lead_detail?.avatar && module.lead_detail.avatar !== "" ? (
-                <div className="h-5 w-5 rounded-full border-2 border-white">
-                  <Image
-                    src={module.lead_detail.avatar}
-                    height="100%"
-                    width="100%"
-                    className="rounded-full"
-                    alt={module.lead_detail.first_name}
-                  />
-                </div>
+              {module.lead ? (
+                module.lead_detail?.avatar && module.lead_detail.avatar !== "" ? (
+                  <div className="h-5 w-5 rounded-full border-2 border-white">
+                    <Image
+                      src={module.lead_detail.avatar}
+                      height="100%"
+                      width="100%"
+                      className="rounded-full"
+                      alt={module.lead_detail.first_name}
+                    />
+                  </div>
+                ) : (
+                  <div className="grid h-5 w-5 place-items-center rounded-full border-2 border-white bg-gray-700 capitalize text-white">
+                    {module.lead_detail?.first_name && module.lead_detail.first_name !== ""
+                      ? module.lead_detail.first_name.charAt(0)
+                      : module.lead_detail?.email.charAt(0)}
+                  </div>
+                )
               ) : (
-                <div className="grid h-5 w-5 place-items-center rounded-full border-2 border-white bg-gray-700 capitalize text-white">
-                  {module.lead_detail?.first_name && module.lead_detail.first_name !== ""
-                    ? module.lead_detail.first_name.charAt(0)
-                    : module.lead_detail?.email.charAt(0)}
-                </div>
+                "N/A"
               )}
             </div>
           </div>

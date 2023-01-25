@@ -1,4 +1,5 @@
-import React, { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction } from "react";
+
 // hooks
 import useTheme from "hooks/use-theme";
 // components
@@ -28,7 +29,9 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
       >
         <div className="flex h-full flex-1 flex-col border-r border-gray-200">
           <div className="flex h-full flex-1 flex-col pt-2">
-            <WorkspaceSidebarDropdown />
+            <div className="px-2">
+              <WorkspaceSidebarDropdown />
+            </div>
             <WorkspaceSidebarMenu />
             <ProjectSidebarList />
             <WorkspaceHelpSection setSidebarActive={setSidebarActive} />

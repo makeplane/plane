@@ -11,6 +11,9 @@ import { PlusIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
 // services
 import workspaceService from "services/workspace.service";
 import stateService from "services/state.service";
+// hooks
+import useIssuesProperties from "hooks/use-issue-properties";
+import useIssueView from "hooks/use-issue-view";
 // components
 import SingleListIssue from "components/common/list-view/single-issue";
 // ui
@@ -18,16 +21,12 @@ import { CustomMenu, Spinner } from "components/ui";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
-import { IIssue, IWorkspaceMember, NestedKeyOf, Properties } from "types";
+import { IIssue, IWorkspaceMember } from "types";
 // fetch-keys
 import { WORKSPACE_MEMBERS, STATE_LIST } from "constants/fetch-keys";
 
 type Props = {
-  groupedByIssues: {
-    [key: string]: (IIssue & { bridge?: string })[];
-  };
-  properties: Properties;
-  selectedGroup: NestedKeyOf<IIssue> | null;
+  issues: IIssue[];
   openCreateIssueModal: (issue?: IIssue, actionType?: "create" | "edit" | "delete") => void;
   openIssuesListModal: () => void;
   removeIssueFromCycle: (bridgeId: string) => void;
@@ -37,23 +36,24 @@ type Props = {
       | (Partial<IIssue> & {
           actionType: "createIssue" | "edit" | "delete";
         })
-      | undefined
+      | null
     >
   >;
 };
 
 const CyclesListView: React.FC<Props> = ({
-  groupedByIssues,
-  selectedGroup,
+  issues,
   openCreateIssueModal,
   openIssuesListModal,
-  properties,
   removeIssueFromCycle,
   handleDeleteIssue,
   setPreloadedData,
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+
+  const [properties] = useIssuesProperties(workspaceSlug as string, projectId as string);
+  const { issueView, groupedByIssues, groupByProperty: selectedGroup } = useIssueView(issues);
 
   const { data: people } = useSWR<IWorkspaceMember[]>(
     workspaceSlug ? WORKSPACE_MEMBERS : null,
@@ -66,6 +66,8 @@ const CyclesListView: React.FC<Props> = ({
       ? () => stateService.getStates(workspaceSlug as string, projectId as string)
       : null
   );
+
+  if (issueView !== "list") return <></>;
 
   return (
     <div className="flex flex-col space-y-5">

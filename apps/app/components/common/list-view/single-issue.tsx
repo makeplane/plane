@@ -15,6 +15,8 @@ import { addSpaceIfCamelCase } from "helpers/string.helper";
 import { IIssue, IssueResponse, Properties } from "types";
 // fetch-keys
 import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+// constants
+import { getPriorityIcon } from "constants/global";
 
 type Props = {
   type?: string;
@@ -71,7 +73,7 @@ const SingleListIssue: React.FC<Props> = ({
         <div className="flex flex-shrink-0 flex-wrap items-center gap-x-1 gap-y-2 text-xs">
           {properties.priority && (
             <div
-              className={`group relative flex flex-shrink-0 cursor-pointer items-center gap-1 rounded px-2 py-1 text-xs capitalize shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
+              className={`group relative flex flex-shrink-0 cursor-pointer items-center gap-1 rounded px-2 py-0.5 text-xs capitalize shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
                 issue.priority === "urgent"
                   ? "bg-red-100 text-red-600"
                   : issue.priority === "high"
@@ -83,8 +85,10 @@ const SingleListIssue: React.FC<Props> = ({
                   : "bg-gray-100"
               }`}
             >
-              {/* {getPriorityIcon(issue.priority ?? "")} */}
-              {issue.priority ?? "None"}
+              {getPriorityIcon(
+                issue.priority && issue.priority !== "" ? issue.priority ?? "" : "None",
+                "text-sm"
+              )}
               <div className="absolute bottom-full right-0 z-10 mb-2 hidden whitespace-nowrap rounded-md bg-white p-2 shadow-md group-hover:block">
                 <h5 className="mb-1 font-medium text-gray-900">Priority</h5>
                 <div
@@ -153,8 +157,8 @@ const SingleListIssue: React.FC<Props> = ({
           )}
           {type && (
             <CustomMenu width="auto" ellipsis>
-              <CustomMenu.MenuItem onClick={() => editIssue()}>Edit</CustomMenu.MenuItem>
-              <CustomMenu.MenuItem onClick={() => removeIssue()}>
+              <CustomMenu.MenuItem onClick={editIssue}>Edit</CustomMenu.MenuItem>
+              <CustomMenu.MenuItem onClick={removeIssue}>
                 <>Remove from {type}</>
               </CustomMenu.MenuItem>
               <CustomMenu.MenuItem onClick={() => handleDeleteIssue()}>

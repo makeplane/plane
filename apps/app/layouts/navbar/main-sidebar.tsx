@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { Transition } from "@headlessui/react";
 // hooks

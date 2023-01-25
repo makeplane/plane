@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useReducer, useEffect } from "react";
+import { createContext, useCallback, useReducer, useEffect } from "react";
 import { useRouter } from "next/router";
 // swr
 import useSWR from "swr";

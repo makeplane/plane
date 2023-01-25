@@ -26,8 +26,7 @@ export interface IssueDetailsProps {
   handleSubmit: (value: IssueDescriptionFormValues) => void;
 }
 
-export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
-  const { issue, handleSubmit } = props;
+export const IssueDescriptionForm: FC<IssueDetailsProps> = ({ issue, handleSubmit }) => {
   // states
   // const [issueFormValues, setIssueFormValues] = useState({
   //   name: issue.name,
@@ -47,11 +46,8 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
   const stringFromValues = JSON.stringify(formValues);
 
   useEffect(() => {
-    console.log("formValues", formValues);
     handleSubmit(formValues);
-  }, [stringFromValues]);
-
-  //   console.log("description", description);
+  }, [formValues, handleSubmit, stringFromValues]);
 
   return (
     <div>

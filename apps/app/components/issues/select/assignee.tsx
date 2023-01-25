@@ -1,32 +1,32 @@
 import { useState, FC, Fragment } from "react";
+
 import Image from "next/image";
+import { useRouter } from "next/router";
+
 import useSWR from "swr";
-import { UserIcon } from "@heroicons/react/24/outline";
+
+// headless ui
 import { Transition, Combobox } from "@headlessui/react";
+// icons
+import { UserIcon } from "@heroicons/react/24/outline";
 // service
 import projectServices from "services/project.service";
 // types
-import type { IIssue, IProjectMember } from "types";
+import type { IProjectMember } from "types";
 // fetch keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 
 export type IssueAssigneeSelectProps = {
-  workspaceSlug: string;
   projectId: string;
-  label?: string;
   value: string[];
   onChange: (value: string[]) => void;
 };
 
 type AssigneeAvatarProps = {
-  people: IProjectMember[];
-  userId: string;
+  user: IProjectMember | undefined;
 };
 
-export const AssigneeAvatar: FC<AssigneeAvatarProps> = (props) => {
-  const { people, userId } = props;
-  const user = people?.find((p) => p.member.id === userId);
-
+export const AssigneeAvatar: FC<AssigneeAvatarProps> = ({ user }) => {
   if (!user) return <></>;
 
   if (user.member.avatar && user.member.avatar !== "") {
@@ -51,10 +51,17 @@ export const AssigneeAvatar: FC<AssigneeAvatarProps> = (props) => {
     );
 };
 
-export const IssueAssigneeSelect: FC<IssueAssigneeSelectProps> = (props) => {
-  const { workspaceSlug, projectId, label = "Assignees", value = [], onChange } = props;
+export const IssueAssigneeSelect: FC<IssueAssigneeSelectProps> = ({
+  projectId,
+  value = [],
+  onChange,
+}) => {
   // states
   const [query, setQuery] = useState("");
+
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
+
   // fetching project members
   const { data: people } = useSWR(
     workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
@@ -76,19 +83,17 @@ export const IssueAssigneeSelect: FC<IssueAssigneeSelectProps> = (props) => {
       ? options
       : options?.filter((option) => option.display.toLowerCase().includes(query.toLowerCase()));
 
-  const optionValue = options?.filter((o) => value.includes(o.value));
-
   return (
     <Combobox
       as="div"
-      value={optionValue}
-      onChange={(v) => onChange(v.map((i) => i.value))}
+      value={value}
+      onChange={(val) => onChange(val)}
       className="relative flex-shrink-0"
-      multiple={true}
+      multiple
     >
       {({ open }: any) => (
         <>
-          <Combobox.Label className="sr-only">{label}</Combobox.Label>
+          <Combobox.Label className="sr-only">Assignees</Combobox.Label>
           <Combobox.Button
             className={`flex cursor-pointer items-center gap-1 rounded-md border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500`}
           >
@@ -101,8 +106,8 @@ export const IssueAssigneeSelect: FC<IssueAssigneeSelectProps> = (props) => {
               {Array.isArray(value)
                 ? value
                     .map((v) => options?.find((option) => option.value === v)?.display)
-                    .join(", ") || label
-                : options?.find((option) => option.value === value)?.display || label}
+                    .join(", ") || "Assignees"
+                : options?.find((option) => option.value === value)?.display || "Assignees"}
             </span>
           </Combobox.Button>
 
@@ -128,22 +133,28 @@ export const IssueAssigneeSelect: FC<IssueAssigneeSelectProps> = (props) => {
                     filteredOptions.map((option) => (
                       <Combobox.Option
                         key={option.value}
-                        className={({ active }) =>
-                          `${
-                            active ? "bg-indigo-50" : ""
+                        className={({ active, selected }) =>
+                          `${active ? "bg-indigo-50" : ""} ${
+                            selected ? "bg-indigo-50 font-medium" : ""
                           } flex cursor-pointer select-none items-center gap-2 truncate p-2 text-gray-900`
                         }
                         value={option.value}
                       >
-                        {people && <AssigneeAvatar userId={option.value} people={people} />}
-                        {/* {option.element ?? option.display} */}
+                        {people && (
+                          <>
+                            <AssigneeAvatar
+                              user={people?.find((p) => p.member.id === option.value)}
+                            />
+                            {option.display}
+                          </>
+                        )}
                       </Combobox.Option>
                     ))
                   ) : (
-                    <p className="text-sm text-gray-500">No {label.toLowerCase()} found</p>
+                    <p className="text-xs text-gray-500 px-2">No assignees found</p>
                   )
                 ) : (
-                  <p className="text-sm text-gray-500">Loading...</p>
+                  <p className="text-xs text-gray-500 px-2">Loading...</p>
                 )}
               </div>
             </Combobox.Options>

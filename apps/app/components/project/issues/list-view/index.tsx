@@ -10,6 +10,7 @@ import { Disclosure, Listbox, Transition } from "@headlessui/react";
 // hooks
 import { ChevronDownIcon, PlusIcon, CalendarDaysIcon } from "@heroicons/react/24/outline";
 import useIssuesProperties from "hooks/use-issue-properties";
+import useIssueView from "hooks/use-issue-view";
 // services
 import stateService from "services/state.service";
 import issuesService from "services/issues.service";
@@ -20,12 +21,12 @@ import { CustomMenu, CustomSelect, Spinner } from "components/ui";
 // icons
 import User from "public/user.png";
 // components
-import { CreateUpdateIssuesModal } from "components/issues/create-update-issue-modal";
+import { CreateUpdateIssueModal } from "components/issues/modal";
 // helpers
 import { renderShortNumericDateFormat, findHowManyDaysLeft } from "helpers/date-time.helper";
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
-import { IIssue, IProject, IssueResponse, IWorkspaceMember, NestedKeyOf } from "types";
+import { IIssue, IProject, IssueResponse, IWorkspaceMember } from "types";
 // constants
 import { PRIORITIES } from "constants/";
 import { getPriorityIcon } from "constants/global";
@@ -39,17 +40,15 @@ import {
 
 // types
 type Props = {
-  groupedByIssues: any;
-  selectedGroup: NestedKeyOf<IIssue> | null;
-  setSelectedIssue: any;
+  issues: IIssue[];
+  handleEditIssue: (issue: IIssue) => void;
   handleDeleteIssue: React.Dispatch<React.SetStateAction<string | undefined>>;
   partialUpdateIssue: (formData: Partial<IIssue>, issueId: string) => void;
 };
 
 const ListView: React.FC<Props> = ({
-  groupedByIssues,
-  selectedGroup,
-  setSelectedIssue,
+  issues,
+  handleEditIssue,
   handleDeleteIssue,
   partialUpdateIssue,
 }) => {
@@ -61,7 +60,9 @@ const ListView: React.FC<Props> = ({
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { data: issues } = useSWR<IssueResponse>(
+  const { issueView, groupedByIssues, groupByProperty: selectedGroup } = useIssueView(issues);
+
+  const { data: issuesList } = useSWR<IssueResponse>(
     workspaceSlug && projectId
       ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
       : null,
@@ -91,11 +92,13 @@ const ListView: React.FC<Props> = ({
 
   const [properties] = useIssuesProperties(workspaceSlug as string, projectId as string);
 
+  if (issueView !== "list") return <></>;
+
   return (
     <>
-      <CreateUpdateIssuesModal
+      <CreateUpdateIssueModal
         isOpen={isCreateIssuesModalOpen && preloadedData?.actionType === "createIssue"}
-        setIsOpen={setIsCreateIssuesModalOpen}
+        handleClose={() => setIsCreateIssuesModalOpen(false)}
         prePopulateData={{
           ...preloadedData,
         }}
@@ -161,7 +164,7 @@ const ListView: React.FC<Props> = ({
                               };
                             });
 
-                            const totalChildren = issues?.results.filter(
+                            const totalChildren = issuesList?.results.filter(
                               (i) => i.parent === issue.id
                             ).length;
 
@@ -204,7 +207,7 @@ const ListView: React.FC<Props> = ({
                                         <>
                                           <div>
                                             <Listbox.Button
-                                              className={`flex cursor-pointer items-center gap-x-2 rounded px-2 py-1 capitalize shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
+                                              className={`flex cursor-pointer items-center gap-x-2 rounded px-2 py-0.5 capitalize shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
                                                 issue.priority === "urgent"
                                                   ? "bg-red-100 text-red-600"
                                                   : issue.priority === "high"
@@ -493,14 +496,7 @@ const ListView: React.FC<Props> = ({
                                     </Listbox>
                                   )}
                                   <CustomMenu ellipsis>
-                                    <CustomMenu.MenuItem
-                                      onClick={() => {
-                                        setSelectedIssue({
-                                          ...issue,
-                                          actionType: "edit",
-                                        });
-                                      }}
-                                    >
+                                    <CustomMenu.MenuItem onClick={() => handleEditIssue(issue)}>
                                       Edit
                                     </CustomMenu.MenuItem>
                                     <CustomMenu.MenuItem

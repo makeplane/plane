@@ -13,11 +13,15 @@ import { requiredAuth } from "lib/auth";
 import AppLayout from "layouts/app-layout";
 // components
 import AddAsSubIssue from "components/project/issues/issue-detail/add-as-sub-issue";
-import { CreateUpdateIssuesModal } from "components/issues/create-update-issue-modal";
 import IssueDetailSidebar from "components/project/issues/issue-detail/issue-detail-sidebar";
 import AddIssueComment from "components/project/issues/issue-detail/comment/issue-comment-section";
 import IssueActivitySection from "components/project/issues/issue-detail/activity";
-import { IssueDescriptionForm, IssueDescriptionFormValues, SubIssueList } from "components/issues";
+import {
+  IssueDescriptionForm,
+  IssueDescriptionFormValues,
+  SubIssueList,
+  CreateUpdateIssueModal,
+} from "components/issues";
 // ui
 import { Loader, HeaderButton, CustomMenu } from "components/ui";
 import { Breadcrumbs } from "components/breadcrumbs";
@@ -70,17 +74,12 @@ const IssueDetailPage: NextPage = () => {
   );
 
   const { data: subIssues } = useSWR(
-    issueId && workspaceSlug && projectId ? SUB_ISSUES(issueId.toString()) : null,
+    issueId && workspaceSlug && projectId ? SUB_ISSUES(issueId as string) : null,
     issueId && workspaceSlug && projectId
       ? () =>
-          issuesService.subIssues(
-            workspaceSlug?.toString(),
-            projectId?.toString(),
-            issueId?.toString()
-          )
+          issuesService.subIssues(workspaceSlug as string, projectId as string, issueId as string)
       : null
   );
-  console.log("issues, issues", subIssues);
 
   const { data: activeProject } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
@@ -110,7 +109,7 @@ const IssueDetailPage: NextPage = () => {
       : null
   );
 
-  const { register, handleSubmit, reset, control, watch, setValue } = useForm<IIssue>({
+  const { reset, control, watch } = useForm<IIssue>({
     defaultValues,
   });
 
@@ -145,38 +144,15 @@ const IssueDetailPage: NextPage = () => {
     (formData: Partial<IIssue>) => {
       if (!workspaceSlug || !activeProject || !issueId) return;
 
-      mutateIssues(
-        (prevData) => ({
-          ...(prevData as IssueResponse),
-          results: (prevData?.results ?? []).map((issue) => {
-            if (issue.id === issueId) return { ...issue, ...formData };
-
-            return issue;
-          }),
-        }),
-        false
-      );
-
-      const payload = {
-        ...formData,
-      };
-
+      const payload = { ...formData };
       issuesService
         .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload)
-        .then((response) => {
-          mutateIssues((prevData) => ({
-            ...(prevData as IssueResponse),
-            results: (prevData?.results ?? []).map((issue) => {
-              if (issue.id === issueId) {
-                return { ...issue, ...response };
-              }
-              return issue;
-            }),
-          }));
+        .then((res) => {
+          mutateIssues();
           mutateIssueActivities();
         })
-        .catch((error) => {
-          console.error(error);
+        .catch((e) => {
+          console.error(e);
         });
     },
     [activeProject, workspaceSlug, issueId, projectId, mutateIssues, mutateIssueActivities]
@@ -187,16 +163,7 @@ const IssueDetailPage: NextPage = () => {
       issuesService
         .patchIssue(workspaceSlug as string, activeProject.id, issueId, { parent: null })
         .then((res) => {
-          mutate<IssueResponse>(
-            PROJECT_ISSUES_LIST(workspaceSlug as string, activeProject.id),
-            (prevData) => ({
-              ...(prevData as IssueResponse),
-              results: (prevData?.results ?? []).map((p) =>
-                p.id === issueId ? { ...p, ...res } : p
-              ),
-            }),
-            false
-          );
+          mutate(SUB_ISSUES(issueDetail?.id ?? ""));
           mutateIssueActivities();
         })
         .catch((e) => {
@@ -209,16 +176,19 @@ const IssueDetailPage: NextPage = () => {
    * Handling the debounce submit by updating the issue with name, description and description_html
    * @param values IssueDescriptionFormValues
    */
-  const handleDescriptionFormSubmit = (values: IssueDescriptionFormValues) => {
-    if (workspaceSlug && projectId && issueId) {
-      issuesService.updateIssue(
-        workspaceSlug?.toString(),
-        projectId.toString(),
-        issueId.toString(),
-        values
-      );
-    }
-  };
+  const handleDescriptionFormSubmit = useCallback(
+    (values: IssueDescriptionFormValues) => {
+      if (workspaceSlug && projectId && issueId) {
+        issuesService
+          .updateIssue(workspaceSlug?.toString(), projectId.toString(), issueId.toString(), values)
+          .then((res) => {
+            console.log(res);
+            mutateIssueActivities();
+          });
+      }
+    },
+    [workspaceSlug, projectId, issueId, mutateIssueActivities]
+  );
 
   return (
     <AppLayout
@@ -265,9 +235,9 @@ const IssueDetailPage: NextPage = () => {
       }
     >
       {isOpen && (
-        <CreateUpdateIssuesModal
+        <CreateUpdateIssueModal
           isOpen={isOpen}
-          setIsOpen={setIsOpen}
+          handleClose={() => setIsOpen(false)}
           projectId={projectId as string}
           prePopulateData={{
             ...preloadedData,
@@ -389,7 +359,7 @@ const IssueDetailPage: NextPage = () => {
               <AddIssueComment mutate={mutateIssueActivities} />
             </div>
           </div>
-          <div className="h-full basis-1/3 space-y-5 border-l p-5">
+          <div className="basis-1/3 space-y-5 border-l p-5">
             {/* TODO add flex-grow, if needed */}
             <IssueDetailSidebar
               control={control}
