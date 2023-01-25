@@ -226,6 +226,12 @@ class UserWorkSpaceIssues(BaseAPIView):
         try:
             issues = (
                 Issue.objects.filter(assignees__in=[request.user], workspace__slug=slug)
+                .annotate(
+                    sub_issues_count=Issue.objects.filter(parent=OuterRef("id"))
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
                 .select_related("project")
                 .select_related("workspace")
                 .select_related("state")

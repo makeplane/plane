@@ -1,6 +1,6 @@
 # Django Imports
 from django.db import IntegrityError
-from django.db.models import Prefetch
+from django.db.models import Prefetch, F, OuterRef, Func
 
 # Third party imports
 from rest_framework.response import Response
@@ -118,6 +118,12 @@ class ModuleIssueViewSet(BaseViewSet):
         return self.filter_queryset(
             super()
             .get_queryset()
+            .annotate(
+                sub_issues_count=Issue.objects.filter(parent=OuterRef("issue"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(module_id=self.kwargs.get("module_id"))
