@@ -10,6 +10,7 @@ export interface IModule {
   lead: string | null;
   lead_detail: IUserLite;
   link_module: {
+    created_at: Date
     created_by: string;
     created_by_detail: IUserLite;
     id: string;

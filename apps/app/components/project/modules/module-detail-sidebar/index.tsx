@@ -26,6 +26,7 @@ import ModuleLinkModal from "components/project/modules/module-link-modal";
 import { Loader } from "components/ui";
 // icons
 // helpers
+import { timeAgo } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
 import { groupBy } from "helpers/array.helper";
 // types
@@ -256,7 +257,7 @@ const ModuleDetailSidebar: React.FC<Props> = ({
                               <div>
                                 <h5>{link.title}</h5>
                                 <p className="mt-0.5 text-gray-500">
-                                  Added 2 days ago by {link.created_by_detail.email}
+                                  Added {timeAgo(link.created_at)} ago by {link.created_by_detail.email}
                                 </p>
                               </div>
                             </a>

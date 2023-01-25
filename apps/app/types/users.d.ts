@@ -32,4 +32,5 @@ export interface IUserLite {
   last_name: string;
   email: string;
   avatar: string;
+  created_at: Date;
 }
