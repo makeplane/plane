@@ -26,7 +26,7 @@ import {
 import { Loader, HeaderButton, CustomMenu } from "components/ui";
 import { Breadcrumbs } from "components/breadcrumbs";
 // types
-import { IIssue, IssueResponse } from "types";
+import { IIssue } from "types";
 import type { NextPage, NextPageContext } from "next";
 // fetch-keys
 import {
@@ -51,7 +51,7 @@ const defaultValues = {
   labels_list: [],
 };
 
-const IssueDetailPage: NextPage = () => {
+const IssueDetailsPage: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
   // states
@@ -62,7 +62,7 @@ const IssueDetailPage: NextPage = () => {
   >(undefined);
   // Fetching API information
   const { data: issueDetails } = useSWR(
-    issueId && workspaceSlug && projectId ? ISSUE_DETAILS(issueId.toString()) : null,
+    issueId && workspaceSlug && projectId ? ISSUE_DETAILS(issueId as string) : null,
     issueId && workspaceSlug && projectId
       ? () =>
           issuesService.retrieve(
@@ -116,7 +116,7 @@ const IssueDetailPage: NextPage = () => {
   const issueDetail = issues?.results?.find((issue) => issue.id === issueId);
   const prevIssue = issues?.results[issues?.results.findIndex((issue) => issue.id === issueId) - 1];
   const nextIssue = issues?.results[issues?.results.findIndex((issue) => issue.id === issueId) + 1];
-  // const subIssues = (issues && issues.results.filter((i) => i.parent === issueId)) ?? [];
+
   const siblingIssues =
     issueDetail &&
     issues?.results.filter((i) => i.parent === issueDetail.parent && i.id !== issueId);
@@ -410,4 +410,4 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
   };
 };
 
-export default IssueDetailPage;
+export default IssueDetailsPage;

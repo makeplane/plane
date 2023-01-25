@@ -18,8 +18,6 @@ import {
   PlusIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-// types
-import type { ICycle, IIssue, IIssueLabels } from "types";
 // hooks
 import useToast from "hooks/use-toast";
 // services
@@ -39,8 +37,10 @@ import { Input, Button, Spinner } from "components/ui";
 // icons
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
+// types
+import type { ICycle, IIssue, IIssueLabels, IssueResponse } from "types";
 // fetch-keys
-import { PROJECT_ISSUE_LABELS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import { PROJECT_ISSUE_LABELS, PROJECT_ISSUES_LIST, ISSUE_DETAILS } from "constants/fetch-keys";
 
 type Props = {
   control: Control<IIssue, any>;
@@ -64,7 +64,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, issueId } = router.query;
 
   const { setToastAlert } = useToast();
 
@@ -110,11 +110,31 @@ const IssueDetailSidebar: React.FC<Props> = ({
   const handleCycleChange = (cycleDetail: ICycle) => {
     if (!workspaceSlug || !projectId || !issueDetail) return;
 
-    mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
-
-    issuesServices.addIssueToCycle(workspaceSlug as string, projectId as string, cycleDetail.id, {
-      issues: [issueDetail.id],
-    });
+    issuesServices
+      .addIssueToCycle(workspaceSlug as string, projectId as string, cycleDetail.id, {
+        issues: [issueDetail.id],
+      })
+      .then((res) => {
+        mutate<IssueResponse>(
+          PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
+          (prevData: any) => ({
+            ...prevData,
+            results: (prevData?.results ?? []).map((p: IIssue) => {
+              if (p.id === issueId)
+                return {
+                  ...p,
+                  issue_cycle: {
+                    ...p.issue_cycle,
+                    cycle: cycleDetail.id ?? "",
+                    cycle_detail: cycleDetail,
+                  },
+                };
+              else return p;
+            }),
+          }),
+          false
+        );
+      });
   };
 
   return (
@@ -236,7 +256,6 @@ const IssueDetailSidebar: React.FC<Props> = ({
           <div className="py-1">
             <SelectCycle
               issueDetail={issueDetail}
-              control={control}
               handleCycleChange={handleCycleChange}
               watch={watchIssue}
             />

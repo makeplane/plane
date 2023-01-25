@@ -13,7 +13,7 @@ import { IUser, IUserLite } from "types";
 import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 
 type AvatarProps = {
-  user: IUser | IUserLite | undefined;
+  user: Partial<IUser> | Partial<IUserLite> | undefined;
   index?: number;
 };
 
@@ -44,7 +44,7 @@ export const Avatar: React.FC<AvatarProps> = ({ user, index }) => (
 );
 
 type AsigneesListProps = {
-  users?: IUser[] | (IUserLite | undefined)[] | IUserLite[];
+  users?: Partial<IUser[]> | (Partial<IUserLite> | undefined)[] | Partial<IUserLite>[];
   userIds?: string[];
   length?: number;
 };
