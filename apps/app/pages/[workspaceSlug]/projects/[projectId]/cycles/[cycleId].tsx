@@ -92,6 +92,7 @@ const SingleCycle: React.FC = () => {
   );
   const cycleIssuesArray = cycleIssues?.map((issue) => ({
     ...issue.issue_detail,
+    sub_issues_count: issue.sub_issues_count,
     bridge: issue.id,
   }));
 
@@ -255,7 +256,6 @@ const SingleCycle: React.FC = () => {
                 openCreateIssueModal={openCreateIssueModal}
                 openIssuesListModal={openIssuesListModal}
                 removeIssueFromCycle={removeIssueFromCycle}
-                handleDeleteIssue={setDeleteIssue}
                 setPreloadedData={setPreloadedData}
               />
               <CyclesBoardView

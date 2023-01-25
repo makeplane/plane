@@ -112,6 +112,7 @@ const SingleModule = () => {
 
   const moduleIssuesArray = moduleIssues?.map((issue) => ({
     ...issue.issue_detail,
+    sub_issues_count: issue.sub_issues_count,
     bridge: issue.id,
   }));
 
@@ -278,7 +279,6 @@ const SingleModule = () => {
                 openCreateIssueModal={openCreateIssueModal}
                 openIssuesListModal={openIssuesListModal}
                 removeIssueFromModule={removeIssueFromModule}
-                handleDeleteIssue={setDeleteIssue}
                 setPreloadedData={setPreloadedData}
               />
               <ModulesBoardView

@@ -27,7 +27,6 @@ type Props = {
   openCreateIssueModal: (issue?: IIssue, actionType?: "create" | "edit" | "delete") => void;
   openIssuesListModal: () => void;
   removeIssueFromModule: (issueId: string) => void;
-  handleDeleteIssue: React.Dispatch<React.SetStateAction<string | undefined>>;
   setPreloadedData: React.Dispatch<
     React.SetStateAction<
       | (Partial<IIssue> & {
@@ -43,11 +42,10 @@ const ModulesListView: React.FC<Props> = ({
   openCreateIssueModal,
   openIssuesListModal,
   removeIssueFromModule,
-  handleDeleteIssue,
   setPreloadedData,
 }) => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, moduleId } = router.query;
 
   const [properties] = useIssuesProperties(workspaceSlug as string, projectId as string);
   const { issueView, groupedByIssues, groupByProperty: selectedGroup } = useIssueView(issues);
@@ -134,10 +132,10 @@ const ModulesListView: React.FC<Props> = ({
                               <SingleListIssue
                                 key={issue.id}
                                 type="module"
+                                typeId={moduleId as string}
                                 issue={issue}
                                 properties={properties}
                                 editIssue={() => openCreateIssueModal(issue, "edit")}
-                                handleDeleteIssue={() => handleDeleteIssue(issue.id)}
                                 removeIssue={() => removeIssueFromModule(issue.bridge ?? "")}
                               />
                             );

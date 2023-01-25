@@ -12,3 +12,4 @@ export * from "./select";
 export * from "./spinner";
 export * from "./text-area";
 export * from "./tooltip";
+export * from "./avatar";
