@@ -9,9 +9,6 @@ import { Controller, useForm } from "react-hook-form";
 import Dropzone from "react-dropzone";
 // icons
 import { LinkIcon } from "@heroicons/react/24/outline";
-// types
-import type { IWorkspace } from "types";
-import type { GetServerSideProps, NextPage } from "next";
 // lib
 import { requiredWorkspaceAdmin } from "lib/auth";
 // services
@@ -30,6 +27,9 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import OutlineButton from "components/ui/outline-button";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
+// types
+import type { IWorkspace } from "types";
+import type { GetServerSideProps, NextPage } from "next";
 // fetch-keys
 import { WORKSPACE_DETAILS, USER_WORKSPACES } from "constants/fetch-keys";
 // constants

@@ -28,6 +28,7 @@ export interface CycleIssueResponse {
   workspace: string;
   issue: string;
   cycle: string;
+  sub_issues_count: number;
 }
 
 export type SelectCycleType =

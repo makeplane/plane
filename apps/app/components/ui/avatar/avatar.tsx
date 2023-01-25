@@ -14,13 +14,17 @@ import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 
 type AvatarProps = {
   user: IUser | IUserLite | undefined;
-  index: number;
+  index?: number;
 };
 
 export const Avatar: React.FC<AvatarProps> = ({ user, index }) => (
-  <div className={`relative z-[1] h-5 w-5 rounded-full ${index !== 0 ? "-ml-2.5" : ""}`}>
+  <div className={`relative z-[1] h-5 w-5 rounded-full ${index && index !== 0 ? "-ml-2.5" : ""}`}>
     {user && user.avatar && user.avatar !== "" ? (
-      <div className="h-5 w-5 rounded-full border-2 border-white bg-white">
+      <div
+        className={`h-5 w-5 rounded-full border-2 ${
+          index ? "border-white bg-white" : "border-transparent"
+        }`}
+      >
         <Image
           src={user.avatar}
           height="100%"
@@ -33,7 +37,7 @@ export const Avatar: React.FC<AvatarProps> = ({ user, index }) => (
       <div className="grid h-5 w-5 place-items-center rounded-full border-2 border-white bg-gray-700 text-white capitalize">
         {user?.first_name && user.first_name !== ""
           ? user.first_name.charAt(0)
-          : user?.email.charAt(0)}
+          : user?.email?.charAt(0)}
       </div>
     )}
   </div>

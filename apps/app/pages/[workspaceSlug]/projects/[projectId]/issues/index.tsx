@@ -135,7 +135,6 @@ const ProjectIssues: NextPage = () => {
             <ListView
               issues={projectIssues?.results.filter((p) => p.parent === null) ?? []}
               handleEditIssue={handleEditIssue}
-              handleDeleteIssue={setDeleteIssue}
               partialUpdateIssue={partialUpdateIssue}
             />
             <BoardView

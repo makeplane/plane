@@ -43,6 +43,7 @@ export interface ModuleIssueResponse {
   updated_at: Date;
   updated_by: string;
   workspace: string;
+  sub_issues_count: number;
 }
 
 export type ModuleLink = {

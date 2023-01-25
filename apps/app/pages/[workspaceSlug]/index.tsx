@@ -8,8 +8,6 @@ import {
   CalendarDaysIcon,
   ClipboardDocumentListIcon,
 } from "@heroicons/react/24/outline";
-// types
-import type { NextPage, NextPageContext } from "next";
 // lib
 import { requiredAuth } from "lib/auth";
 // layouts
@@ -27,6 +25,10 @@ import { LayerDiagonalIcon } from "components/icons";
 import { renderShortNumericDateFormat, findHowManyDaysLeft } from "helpers/date-time.helper";
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 import { groupBy } from "helpers/array.helper";
+// types
+import type { NextPage, NextPageContext } from "next";
+// constants
+import { getPriorityIcon } from "constants/global";
 
 const WorkspacePage: NextPage = () => {
   // router
@@ -106,7 +108,7 @@ const WorkspacePage: NextPage = () => {
                                       : "bg-gray-100"
                                   }`}
                                 >
-                                  {issue.priority ?? "None"}
+                                  {getPriorityIcon(issue.priority)}
                                 </div>
 
                                 <div className="flex cursor-pointer items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
