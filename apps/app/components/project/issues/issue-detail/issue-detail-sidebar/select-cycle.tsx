@@ -26,7 +26,7 @@ type Props = {
 
 const SelectCycle: React.FC<Props> = ({ issueDetail, handleCycleChange }) => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, issueId } = router.query;
 
   const { data: cycles } = useSWR(
     workspaceSlug && projectId ? CYCLE_LIST(projectId as string) : null,
@@ -38,13 +38,30 @@ const SelectCycle: React.FC<Props> = ({ issueDetail, handleCycleChange }) => {
   const removeIssueFromCycle = (bridgeId: string, cycleId: string) => {
     if (!workspaceSlug || !projectId) return;
 
-    mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
-
     issuesService
       .removeIssueFromCycle(workspaceSlug as string, projectId as string, cycleId, bridgeId)
       .then((res) => {
         console.log(res);
 
+        mutate(
+          PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
+          (prevData: any) => ({
+            ...prevData,
+            results: (prevData?.results ?? []).map((p: IIssue) => {
+              if (p.id === issueId)
+                return {
+                  ...p,
+                  issue_cycle: {
+                    ...p.issue_cycle,
+                    cycle: null,
+                    cycle_detail: null,
+                  },
+                };
+              else return p;
+            }),
+          }),
+          false
+        );
         mutate(CYCLE_ISSUES(cycleId));
       })
       .catch((e) => {
