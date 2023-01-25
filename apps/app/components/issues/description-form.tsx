@@ -47,7 +47,8 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({ issue, handleSubmi
 
   useEffect(() => {
     handleSubmit(formValues);
-  }, [formValues, handleSubmit, stringFromValues]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [handleSubmit, stringFromValues]);
 
   return (
     <div>
