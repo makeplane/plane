@@ -4,8 +4,10 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { Tab } from "@headlessui/react";
-import type { NextPage, NextPageContext } from "next";
 
+// lib
+import { requiredAuth } from "lib/auth";
+import { CyclesIcon } from "components/icons";
 // services
 import cycleService from "services/cycles.service";
 import projectService from "services/project.service";
@@ -21,11 +23,9 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 // types
 import { ICycle, SelectCycleType } from "types";
+import type { NextPage, NextPageContext } from "next";
 // fetching keys
 import { CYCLE_LIST, PROJECT_DETAILS, WORKSPACE_DETAILS } from "constants/fetch-keys";
-// lib
-import { requiredAuth } from "lib/auth";
-import { CyclesIcon } from "components/icons";
 
 const ProjectCycles: NextPage = () => {
   const [selectedCycle, setSelectedCycle] = useState<SelectCycleType>();

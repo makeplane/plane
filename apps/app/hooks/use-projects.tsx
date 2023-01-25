@@ -21,8 +21,6 @@ const useProjects = () => {
     ?.sort((a, b) => Date.parse(`${a.updated_at}`) - Date.parse(`${b.updated_at}`))
     .filter((_item, index) => index < 3);
 
-  // console.log("recentProjects", recentProjects);
-
   return {
     projects: projects || [],
     recentProjects: recentProjects || [],

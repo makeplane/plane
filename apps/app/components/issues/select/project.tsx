@@ -1,23 +1,27 @@
 import { FC, Fragment } from "react";
+
+import { useRouter } from "next/router";
+
 import useSWR from "swr";
+
+// headless ui
 import { Listbox, Transition } from "@headlessui/react";
+// icons
 import { ClipboardDocumentListIcon } from "@heroicons/react/24/outline";
 // services
 import projectService from "services/project.service";
-// ui
-import { Spinner } from "components/ui";
 // fetch-keys
 import { PROJECTS_LIST } from "constants/fetch-keys";
 
 export interface IssueProjectSelectProps {
-  workspaceSlug: string;
   value: string;
   onChange: (value: string) => void;
 }
 
-export const IssueProjectSelect: FC<IssueProjectSelectProps> = (props) => {
-  // props
-  const { workspaceSlug, value, onChange } = props;
+export const IssueProjectSelect: FC<IssueProjectSelectProps> = ({ value, onChange }) => {
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
+
   // Fetching Projects List
   const { data: projects } = useSWR(
     workspaceSlug ? PROJECTS_LIST(workspaceSlug as string) : null,
@@ -51,9 +55,9 @@ export const IssueProjectSelect: FC<IssueProjectSelectProps> = (props) => {
                         projects.map((project) => (
                           <Listbox.Option
                             key={project.id}
-                            className={({ active }) =>
-                              `${
-                                active ? "bg-indigo-50" : ""
+                            className={({ active, selected }) =>
+                              `${active ? "bg-indigo-50" : ""} ${
+                                selected ? "bg-indigo-50 font-medium" : ""
                               } cursor-pointer select-none p-2 text-gray-900`
                             }
                             value={project.id}
@@ -75,9 +79,7 @@ export const IssueProjectSelect: FC<IssueProjectSelectProps> = (props) => {
                         <p className="text-gray-400">No projects found!</p>
                       )
                     ) : (
-                      <div className="flex justify-center">
-                        <Spinner />
-                      </div>
+                      <div className="text-sm text-gray-500 px-2">Loading...</div>
                     )}
                   </div>
                 </Listbox.Options>

@@ -62,6 +62,7 @@ export interface IIssue {
   blockers_list: string[];
   blocked_list: string[];
   blocks_list: string[];
+  bridge: string;
   created_at: Date;
   updated_at: Date;
   name: string;

@@ -13,7 +13,7 @@ import issuesServices from "services/issues.service";
 // types
 import { IIssue, IssueResponse } from "types";
 // constants
-import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import { PROJECT_ISSUES_LIST, SUB_ISSUES } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
@@ -52,16 +52,7 @@ const AddAsSubIssue: React.FC<Props> = ({ isOpen, setIsOpen, parent }) => {
       issuesServices
         .patchIssue(workspaceSlug as string, projectId as string, issueId, { parent: parent?.id })
         .then((res) => {
-          mutate<IssueResponse>(
-            PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
-            (prevData) => ({
-              ...(prevData as IssueResponse),
-              results: (prevData?.results ?? []).map((p) =>
-                p.id === issueId ? { ...p, ...res } : p
-              ),
-            }),
-            false
-          );
+          mutate(SUB_ISSUES(parent?.id ?? ""));
         })
         .catch((e) => {
           console.log(e);
@@ -71,7 +62,7 @@ const AddAsSubIssue: React.FC<Props> = ({ isOpen, setIsOpen, parent }) => {
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment} afterLeave={() => setQuery("")} appear>
-      <Dialog as="div" className="relative z-10" onClose={handleCommandPaletteClose}>
+      <Dialog as="div" className="relative z-20" onClose={handleCommandPaletteClose}>
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
@@ -84,7 +75,7 @@ const AddAsSubIssue: React.FC<Props> = ({ isOpen, setIsOpen, parent }) => {
           <div className="fixed inset-0 bg-gray-500 bg-opacity-25 transition-opacity" />
         </Transition.Child>
 
-        <div className="fixed inset-0 z-10 overflow-y-auto p-4 sm:p-6 md:p-20">
+        <div className="fixed inset-0 z-20 overflow-y-auto p-4 sm:p-6 md:p-20">
           <Transition.Child
             as={React.Fragment}
             enter="ease-out duration-300"

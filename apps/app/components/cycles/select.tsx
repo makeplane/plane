@@ -1,28 +1,39 @@
 import React, { useState } from "react";
+
+import { useRouter } from "next/router";
+
 import useSWR from "swr";
-import { PlusIcon } from "@heroicons/react/20/solid";
-import { ArrowPathIcon } from "@heroicons/react/24/outline";
+
+// headless ui
 import { Listbox, Transition } from "@headlessui/react";
-// components
-import { CycleModal } from "components/cycles";
+// icons
+import { PlusIcon, ArrowPathIcon } from "@heroicons/react/24/outline";
 // services
 import cycleServices from "services/cycles.service";
-// constants
+// components
+import { CycleModal } from "components/cycles";
+// fetch-keys
 import { CYCLE_LIST } from "constants/fetch-keys";
 
 export type IssueCycleSelectProps = {
-  workspaceSlug: string;
   projectId: string;
   value: any;
   onChange: (value: any) => void;
   multiple?: boolean;
 };
 
-export const CycleSelect: React.FC<IssueCycleSelectProps> = (props) => {
-  const { workspaceSlug, projectId, value, onChange, multiple = false } = props;
+export const CycleSelect: React.FC<IssueCycleSelectProps> = ({
+  projectId,
+  value,
+  onChange,
+  multiple = false,
+}) => {
   // states
   const [isCycleModalActive, setCycleModalActive] = useState(false);
-  // fetching Cycles information
+
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
+
   const { data: cycles } = useSWR(
     workspaceSlug && projectId ? CYCLE_LIST(projectId) : null,
     workspaceSlug && projectId
@@ -46,19 +57,18 @@ export const CycleSelect: React.FC<IssueCycleSelectProps> = (props) => {
         isOpen={isCycleModalActive}
         handleClose={closeCycleModal}
         projectId={projectId}
-        workspaceSlug={workspaceSlug}
+        workspaceSlug={workspaceSlug as string}
       />
       <Listbox as="div" className="relative" value={value} onChange={onChange} multiple={multiple}>
         {({ open }) => (
           <>
-            <Listbox.Label>
-              <div className="mb-2 text-gray-500">Cycles</div>
-            </Listbox.Label>
             <Listbox.Button
               className={`flex cursor-pointer items-center gap-1 rounded-md border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500`}
             >
               <ArrowPathIcon className="h-3 w-3 text-gray-500" />
-              <div className="flex items-center gap-2 truncate">{value.display || "Cycles"}</div>
+              <div className="flex items-center gap-2 truncate">
+                {cycles?.find((c) => c.id === value)?.name ?? "Cycles"}
+              </div>
             </Listbox.Button>
 
             <Transition
@@ -102,19 +112,15 @@ export const CycleSelect: React.FC<IssueCycleSelectProps> = (props) => {
                   ) : (
                     <p className="text-center text-sm text-gray-500">Loading...</p>
                   )}
+                  <button
+                    type="button"
+                    className="relative w-full flex select-none items-center gap-x-2 p-2 text-gray-400 hover:bg-indigo-50 hover:text-gray-900"
+                    onClick={openCycleModal}
+                  >
+                    <PlusIcon className="h-4 w-4 text-gray-400" aria-hidden="true" />
+                    <span>Create cycle</span>
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  className="relative flex select-none items-center gap-x-2 py-2 pl-3 pr-9 text-gray-400 hover:text-gray-500"
-                  onClick={openCycleModal}
-                >
-                  <span>
-                    <PlusIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-                  </span>
-                  <span>
-                    <span className="block truncate">Create cycle</span>
-                  </span>
-                </button>
               </Listbox.Options>
             </Transition>
           </>

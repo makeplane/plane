@@ -34,4 +34,4 @@ export type SelectCycleType =
   | (ICycle & { actionType: "edit" | "delete" | "create-issue" })
   | undefined;
 
-export type SelectIssue = (IIssue & { actionType: "edit" | "delete" | "create" }) | undefined;
+export type SelectIssue = (IIssue & { actionType: "edit" | "delete" | "create" }) | null;

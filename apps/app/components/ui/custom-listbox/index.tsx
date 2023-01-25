@@ -1,7 +1,8 @@
 import React from "react";
+
 // headless ui
 import { Listbox, Transition } from "@headlessui/react";
-
+// types
 import { Props } from "./types";
 
 export const CustomListbox: React.FC<Props> = ({

@@ -70,7 +70,7 @@ const ExistingIssuesListModal: React.FC<Props> = ({
     },
   });
 
-  const onSubmit: SubmitHandler<FormInput> = (data) => {
+  const onSubmit: SubmitHandler<FormInput> = async (data) => {
     if (!data.issues || data.issues.length === 0) {
       setToastAlert({
         title: "Error",
@@ -80,7 +80,7 @@ const ExistingIssuesListModal: React.FC<Props> = ({
       return;
     }
 
-    handleOnSubmit(data);
+    await handleOnSubmit(data);
     handleClose();
   };
 

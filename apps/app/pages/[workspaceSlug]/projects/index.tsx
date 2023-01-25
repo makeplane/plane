@@ -33,8 +33,6 @@ const ProjectsPage: NextPage = () => {
   const [deleteProject, setDeleteProject] = useState<string | null>(null);
   const [selectedProjectToJoin, setSelectedProjectToJoin] = useState<string | null>(null);
 
-  console.log("projects", projects);
-
   return (
     <AppLayout
       breadcrumbs={

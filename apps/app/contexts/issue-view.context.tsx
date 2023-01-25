@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useReducer } from "react";
+import { createContext, useCallback, useReducer } from "react";
 
 import { useRouter } from "next/router";
 
@@ -134,7 +134,7 @@ const setNewDefault = async (workspaceSlug: string, projectID: string, state: an
   });
 };
 
-export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const router = useRouter();

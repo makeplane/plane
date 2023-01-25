@@ -4,7 +4,7 @@ import { Disclosure, Transition } from "@headlessui/react";
 import { ChevronRightIcon, PlusIcon } from "@heroicons/react/24/outline";
 // components
 import { CustomMenu } from "components/ui";
-import { IssuesModal } from "components/issues";
+import { CreateUpdateIssueModal } from "components/issues";
 import AddAsSubIssue from "components/project/issues/issue-detail/add-as-sub-issue";
 // types
 import { IIssue } from "types";
@@ -17,11 +17,17 @@ export interface SubIssueListProps {
   handleSubIssueRemove: (subIssueId: string) => void;
 }
 
-export const SubIssueList: FC<SubIssueListProps> = (props) => {
-  const { issues = [], handleSubIssueRemove, parentIssue, workspaceSlug, projectId } = props;
+export const SubIssueList: FC<SubIssueListProps> = ({
+  issues = [],
+  handleSubIssueRemove,
+  parentIssue,
+  workspaceSlug,
+  projectId,
+}) => {
   // states
   const [isIssueModalActive, setIssueModalActive] = useState(false);
   const [isSubIssueModalActive, setSubIssueModalActive] = useState(false);
+  const [preloadedData, setPreloadedData] = useState<Partial<IIssue> | null>(null);
 
   const openIssueModal = () => {
     setIssueModalActive(true);
@@ -41,6 +47,17 @@ export const SubIssueList: FC<SubIssueListProps> = (props) => {
 
   return (
     <>
+      <CreateUpdateIssueModal
+        projectId={projectId}
+        isOpen={isIssueModalActive}
+        prePopulateData={{ ...preloadedData }}
+        handleClose={closeIssueModal}
+      />
+      <AddAsSubIssue
+        isOpen={isSubIssueModalActive}
+        setIsOpen={setSubIssueModalActive}
+        parent={parentIssue}
+      />
       {parentIssue?.id && workspaceSlug && projectId && issues?.length > 0 ? (
         <Disclosure defaultOpen={true}>
           {({ open }) => (
@@ -57,10 +74,9 @@ export const SubIssueList: FC<SubIssueListProps> = (props) => {
                       className="flex items-center gap-1 rounded px-2 py-1 text-xs font-medium hover:bg-gray-100"
                       onClick={() => {
                         openIssueModal();
-                        // setPreloadedData({
-                        //   parent: parentId,
-                        //   actionType: "createIssue",
-                        // });
+                        setPreloadedData({
+                          parent: parentIssue.id,
+                        });
                       }}
                     >
                       <PlusIcon className="h-3 w-3" />
@@ -70,7 +86,7 @@ export const SubIssueList: FC<SubIssueListProps> = (props) => {
                     <CustomMenu ellipsis>
                       <CustomMenu.MenuItem
                         onClick={() => {
-                          // setIsAddAsSubIssueOpen(true)
+                          setSubIssueModalActive(true);
                         }}
                       >
                         Add an existing issue
@@ -148,29 +164,6 @@ export const SubIssueList: FC<SubIssueListProps> = (props) => {
           </CustomMenu.MenuItem>
         </CustomMenu>
       )}
-
-      {/* <CreateUpdateIssuesModal
-        isOpen={isIssueModalActive}
-        setIsOpen={setIssueModalActive}
-        projectId={projectId as string}
-        prePopulateData={{
-          ...{
-            parent: parentIssue.id,
-            actionType: "createIssue",
-          },
-        }}
-      /> */}
-      <IssuesModal
-        workspaceSlug={workspaceSlug}
-        projectId={projectId}
-        isOpen={isIssueModalActive}
-        handleClose={closeIssueModal}
-      />
-      <AddAsSubIssue
-        isOpen={isSubIssueModalActive}
-        setIsOpen={setSubIssueModalActive}
-        parent={parentIssue}
-      />
     </>
   );
 };
