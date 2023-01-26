@@ -87,7 +87,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
     if (!workspaceSlug || !projectId) return;
 
     await issuesService
-      .addIssueToCycle(workspaceSlug as string, projectId as string, cycleId, {
+      .addIssueToCycle(workspaceSlug as string, activeProject ?? "", cycleId, {
         issues: [issueId],
       })
       .then((res) => {
@@ -100,7 +100,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
           );
         } else
           mutate<IssueResponse>(
-            PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
+            PROJECT_ISSUES_LIST(workspaceSlug as string, activeProject ?? ""),
             (prevData) => ({
               ...(prevData as IssueResponse),
               results: (prevData?.results ?? []).map((issue) => {
@@ -120,7 +120,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
     if (!workspaceSlug || !projectId) return;
 
     await modulesService
-      .addIssuesToModule(workspaceSlug as string, projectId as string, moduleId as string, {
+      .addIssuesToModule(workspaceSlug as string, activeProject ?? "", moduleId as string, {
         issues: [issueId],
       })
       .then((res) => {
@@ -132,9 +132,9 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
 
   const createIssue = async (payload: Partial<IIssue>) => {
     await issuesService
-      .createIssues(workspaceSlug as string, projectId as string, payload)
+      .createIssues(workspaceSlug as string, activeProject ?? "", payload)
       .then((res) => {
-        mutate<IssueResponse>(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
+        mutate<IssueResponse>(PROJECT_ISSUES_LIST(workspaceSlug as string, activeProject ?? ""));
 
         if (payload.cycle && payload.cycle !== "") addIssueToCycle(res.id, payload.cycle);
         if (payload.module && payload.module !== "") addIssueToModule(res.id, payload.module);
@@ -172,13 +172,13 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
 
   const updateIssue = async (payload: Partial<IIssue>) => {
     await issuesService
-      .updateIssue(workspaceSlug as string, projectId as string, data?.id ?? "", payload)
+      .updateIssue(workspaceSlug as string, activeProject ?? "", data?.id ?? "", payload)
       .then((res) => {
         if (isUpdatingSingleIssue) {
           mutate<IIssue>(PROJECT_ISSUES_DETAILS, (prevData) => ({ ...prevData, ...res }), false);
         } else
           mutate<IssueResponse>(
-            PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
+            PROJECT_ISSUES_LIST(workspaceSlug as string, activeProject ?? ""),
             (prevData) => ({
               ...(prevData as IssueResponse),
               results: (prevData?.results ?? []).map((issue) => {
@@ -206,7 +206,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   };
 
   const handleFormSubmit = async (formData: Partial<IIssue>) => {
-    if (workspaceSlug && projectId) {
+    if (workspaceSlug && activeProject) {
       const payload: Partial<IIssue> = {
         ...formData,
         target_date: formData.target_date ? renderDateFormat(formData.target_date ?? "") : null,
