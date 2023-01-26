@@ -1,21 +1,21 @@
 import React, { useEffect } from "react";
-// swr
+
 import { mutate } from "swr";
-// react hook form
+
 import { useForm, Controller } from "react-hook-form";
-// react color
+
 import { TwitterPicker } from "react-color";
-// headless
+
 import { Popover, Transition } from "@headlessui/react";
 // constants
+import type { IState } from "types";
 import { GROUP_CHOICES } from "constants/";
 import { STATE_LIST } from "constants/fetch-keys";
 // services
-import stateService from "lib/services/state.service";
+import stateService from "services/state.service";
 // ui
-import { Button, Input, Select, Spinner } from "ui";
+import { Button, Input, Select } from "components/ui";
 // types
-import type { IState } from "types";
 
 type Props = {
   workspaceSlug?: string;
@@ -52,6 +52,19 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
     defaultValues,
   });
 
+  useEffect(() => {
+    if (data === null) return;
+    reset(data);
+  }, [data, reset]);
+
+  useEffect(() => {
+    if (!data)
+      reset({
+        ...defaultValues,
+        group: selectedGroup ?? "backlog",
+      });
+  }, [selectedGroup, data, reset]);
+
   const handleClose = () => {
     onClose();
     reset({ name: "", color: "#000000", group: "backlog" });
@@ -66,7 +79,7 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
       await stateService
         .createState(workspaceSlug, projectId, { ...payload })
         .then((res) => {
-          mutate<IState[]>(STATE_LIST(projectId), (prevData) => [...(prevData ?? []), res], false);
+          mutate<IState[]>(STATE_LIST(projectId), (prevData) => [...(prevData ?? []), res]);
           handleClose();
         })
         .catch((err) => {
@@ -82,19 +95,15 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
           ...payload,
         })
         .then((res) => {
-          mutate<IState[]>(
-            STATE_LIST(projectId),
-            (prevData) => {
-              const newData = prevData?.map((item) => {
-                if (item.id === res.id) {
-                  return res;
-                }
-                return item;
-              });
-              return newData;
-            },
-            false
-          );
+          mutate<IState[]>(STATE_LIST(projectId), (prevData) => {
+            const newData = prevData?.map((item) => {
+              if (item.id === res.id) {
+                return res;
+              }
+              return item;
+            });
+            return newData;
+          });
           handleClose();
         })
         .catch((err) => {
@@ -107,33 +116,20 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
     }
   };
 
-  useEffect(() => {
-    if (data === null) return;
-    reset(data);
-  }, [data, reset]);
-
-  useEffect(() => {
-    if (!data)
-      reset({
-        ...defaultValues,
-        group: selectedGroup ?? "backlog",
-      });
-  }, [selectedGroup, data, reset]);
-
   return (
-    <div className="flex items-center gap-x-2 p-2 bg-gray-50">
-      <div className="flex-shrink-0 h-8 w-8">
-        <Popover className="relative w-full h-full flex justify-center items-center bg-gray-200 rounded-xl">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex items-center gap-x-2 bg-gray-50 p-2">
+      <div className="h-8 w-8 flex-shrink-0">
+        <Popover className="relative flex h-full w-full items-center justify-center rounded-xl bg-gray-200">
           {({ open }) => (
             <>
               <Popover.Button
-                className={`group inline-flex items-center text-base font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
+                className={`group inline-flex items-center text-base font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
                   open ? "text-gray-900" : "text-gray-500"
                 }`}
               >
                 {watch("color") && watch("color") !== "" && (
                   <span
-                    className="w-4 h-4 rounded"
+                    className="h-4 w-4 rounded"
                     style={{
                       backgroundColor: watch("color") ?? "green",
                     }}
@@ -150,7 +146,7 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
                 leaveFrom="opacity-100 translate-y-0"
                 leaveTo="opacity-0 translate-y-1"
               >
-                <Popover.Panel className="absolute top-full z-20 left-0 mt-3 px-2 w-screen max-w-xs sm:px-0">
+                <Popover.Panel className="absolute top-full left-0 z-20 mt-3 w-screen max-w-xs px-2 sm:px-0">
                   <Controller
                     name="color"
                     control={control}
@@ -168,6 +164,7 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
         id="name"
         name="name"
         register={register}
+        autoFocus
         placeholder="Enter state name"
         validations={{
           required: true,
@@ -201,9 +198,9 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
       <Button theme="secondary" onClick={handleClose}>
         Cancel
       </Button>
-      <Button theme="primary" disabled={isSubmitting} onClick={handleSubmit(onSubmit)}>
+      <Button theme="primary" disabled={isSubmitting} type="submit">
         {isSubmitting ? "Loading..." : data ? "Update" : "Create"}
       </Button>
-    </div>
+    </form>
   );
 };

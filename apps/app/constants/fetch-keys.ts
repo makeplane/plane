@@ -40,3 +40,7 @@ export const USER_PROJECT_VIEW = (projectId: string) => `USER_PROJECT_VIEW_${pro
 export const MODULE_LIST = (projectId: string) => `MODULE_LIST_${projectId}`;
 export const MODULE_ISSUES = (moduleId: string) => `MODULE_ISSUES_${moduleId}`;
 export const MODULE_DETAIL = "MODULE_DETAIL";
+
+// Issues
+export const ISSUE_DETAILS = (issueId: string) => `ISSUE_DETAILS_${issueId}`;
+export const SUB_ISSUES = (issueId: string) => `SUB_ISSUES_${issueId}`;

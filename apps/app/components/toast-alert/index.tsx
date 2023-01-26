@@ -1,7 +1,5 @@
 import React from "react";
 // hooks
-import useToast from "lib/hooks/useToast";
-// icons
 import {
   CheckCircleIcon,
   ExclamationTriangleIcon,
@@ -9,6 +7,8 @@ import {
   XCircleIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+import useToast from "hooks/use-toast";
+// icons
 
 const ToastAlerts = () => {
   const { alerts, removeAlert } = useToast();
@@ -16,13 +16,13 @@ const ToastAlerts = () => {
   if (!alerts) return null;
 
   return (
-    <div className="space-y-5 fixed top-5 right-5 w-80 h-full overflow-hidden pointer-events-none z-50">
+    <div className="pointer-events-none fixed top-5 right-5 z-50 h-full w-80 space-y-5 overflow-hidden">
       {alerts.map((alert) => (
-        <div className="relative text-white rounded-md overflow-hidden" key={alert.id}>
+        <div className="relative overflow-hidden rounded-md text-white" key={alert.id}>
           <div className="absolute top-1 right-1">
             <button
               type="button"
-              className="inline-flex rounded-md p-1.5 focus:outline-none focus:ring-2 focus:ring-offset-2 pointer-events-auto"
+              className="pointer-events-auto inline-flex rounded-md p-1.5 focus:outline-none focus:ring-2 focus:ring-offset-2"
               onClick={() => removeAlert(alert.id)}
             >
               <span className="sr-only">Dismiss</span>
@@ -54,7 +54,7 @@ const ToastAlerts = () => {
               </div>
               <div>
                 <p className="font-semibold">{alert.title}</p>
-                {alert.message && <p className="text-xs mt-1">{alert.message}</p>}
+                {alert.message && <p className="mt-1 text-xs">{alert.message}</p>}
               </div>
             </div>
           </div>

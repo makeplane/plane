@@ -2,7 +2,15 @@
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 # Module imports
-from plane.db.models import WorkspaceMember, ProjectMember
+from plane.db.models import WorkspaceMember
+
+
+
+# Permission Mappings
+Owner = 20
+Admin = 15
+Member = 10
+Guest = 5
 
 
 # TODO: Move the below logic to python match - python v3.10
@@ -22,13 +30,15 @@ class WorkSpaceBasePermission(BasePermission):
         # allow only admins and owners to update the workspace settings
         if request.method in ["PUT", "PATCH"]:
             return WorkspaceMember.objects.filter(
-                member=request.user, workspace=view.workspace, role__in=[15, 20]
+                member=request.user,
+                workspace__slug=view.workspace_slug,
+                role__in=[Owner, Admin],
             ).exists()
 
         # allow only owner to delete the workspace
         if request.method == "DELETE":
             return WorkspaceMember.objects.filter(
-                member=request.user, workspace=view.workspace, role=20
+                member=request.user, workspace__slug=view.workspace_slug, role=Owner
             ).exists()
 
 
@@ -39,5 +49,7 @@ class WorkSpaceAdminPermission(BasePermission):
             return False
 
         return WorkspaceMember.objects.filter(
-            member=request.user, workspace=view.workspace, role__in=[15, 20]
+            member=request.user,
+            workspace__slug=view.workspace_slug,
+            role__in=[Owner, Admin],
         ).exists()

@@ -5,12 +5,12 @@ import { Controller, useForm } from "react-hook-form";
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
 // ui
-import { Button, CustomMenu, Input } from "ui";
-// icons
 import { PencilIcon, RectangleGroupIcon } from "@heroicons/react/24/outline";
+import { TwitterPicker } from "react-color";
+import { Button, CustomMenu, Input } from "components/ui";
+// icons
 // types
 import { IIssueLabels } from "types";
-import { TwitterPicker } from "react-color";
 
 type Props = {
   label: IIssueLabels;
@@ -29,11 +29,8 @@ const SingleLabel: React.FC<Props> = ({ label, issueLabels, editLabel, handleLab
 
   const {
     register,
-    handleSubmit,
     formState: { errors, isSubmitting },
-    setError,
     watch,
-    reset,
     control,
   } = useForm<IIssueLabels>({ defaultValues });
 
@@ -42,11 +39,11 @@ const SingleLabel: React.FC<Props> = ({ label, issueLabels, editLabel, handleLab
   return (
     <>
       {children && children.length === 0 ? (
-        <div className="md:w-2/3 gap-2 border p-3 rounded-md divide-y space-y-3">
-          <div className="flex justify-between items-center">
+        <div className="gap-2 space-y-3 divide-y rounded-md border p-3 md:w-2/3">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span
-                className="flex-shrink-0 h-3 w-3 rounded-full"
+                className="h-3 w-3 flex-shrink-0 rounded-full"
                 style={{
                   backgroundColor: label.colour,
                 }}
@@ -55,35 +52,29 @@ const SingleLabel: React.FC<Props> = ({ label, issueLabels, editLabel, handleLab
             </div>
             <CustomMenu ellipsis>
               {/* <CustomMenu.MenuItem>Convert to group</CustomMenu.MenuItem> */}
-              <CustomMenu.MenuItem
-                onClick={() => {
-                  editLabel(label);
-                }}
-              >
-                Edit
-              </CustomMenu.MenuItem>
+              <CustomMenu.MenuItem onClick={() => editLabel(label)}>Edit</CustomMenu.MenuItem>
               <CustomMenu.MenuItem onClick={() => handleLabelDelete(label.id)}>
                 Delete
               </CustomMenu.MenuItem>
             </CustomMenu>
           </div>
           <div className={`flex items-center gap-2 ${newLabelForm ? "" : "hidden"}`}>
-            <div className="flex-shrink-0 h-8 w-8">
-              <Popover className="relative w-full h-full flex justify-center items-center bg-gray-200 rounded-xl">
+            <div className="h-8 w-8 flex-shrink-0">
+              <Popover className="relative flex h-full w-full items-center justify-center rounded-xl bg-gray-200">
                 {({ open }) => (
                   <>
                     <Popover.Button
-                      className={`group inline-flex items-center text-base font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
+                      className={`group inline-flex items-center text-base font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
                         open ? "text-gray-900" : "text-gray-500"
                       }`}
                     >
                       {watch("colour") && watch("colour") !== "" && (
                         <span
-                          className="w-4 h-4 rounded"
+                          className="h-4 w-4 rounded"
                           style={{
                             backgroundColor: watch("colour") ?? "green",
                           }}
-                        ></span>
+                        />
                       )}
                     </Popover.Button>
 
@@ -96,7 +87,7 @@ const SingleLabel: React.FC<Props> = ({ label, issueLabels, editLabel, handleLab
                       leaveFrom="opacity-100 translate-y-0"
                       leaveTo="opacity-0 translate-y-1"
                     >
-                      <Popover.Panel className="absolute top-full z-20 left-0 mt-3 px-2 w-screen max-w-xs sm:px-0">
+                      <Popover.Panel className="absolute top-full left-0 z-20 mt-3 w-screen max-w-xs px-2 sm:px-0">
                         <Controller
                           name="colour"
                           control={control}
@@ -113,7 +104,7 @@ const SingleLabel: React.FC<Props> = ({ label, issueLabels, editLabel, handleLab
                 )}
               </Popover>
             </div>
-            <div className="w-full flex flex-col justify-center">
+            <div className="flex w-full flex-col justify-center">
               <Input
                 type="text"
                 id="labelName"
@@ -135,15 +126,15 @@ const SingleLabel: React.FC<Props> = ({ label, issueLabels, editLabel, handleLab
           </div>
         </div>
       ) : (
-        <div className="bg-white p-4 text-gray-900 rounded-md">
-          <h3 className="font-medium leading-5 flex items-center gap-2">
+        <div className="rounded-md bg-white p-4 text-gray-900">
+          <h3 className="flex items-center gap-2 font-medium leading-5">
             <RectangleGroupIcon className="h-5 w-5" />
             This is the label group title
           </h3>
-          <div className="pl-5 mt-4">
-            <div className="group text-sm flex justify-between items-center p-2 hover:bg-gray-100 rounded">
+          <div className="mt-4 pl-5">
+            <div className="group flex items-center justify-between rounded p-2 text-sm hover:bg-gray-100">
               <h5 className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-red-600 rounded-full"></div>
+                <div className="h-2 w-2 rounded-full bg-red-600" />
                 This is the label title
               </h5>
               <button type="button" className="hidden group-hover:block">

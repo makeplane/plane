@@ -1,14 +1,14 @@
 // react
 import React from "react";
 // react hook form
-import { Controller, FieldError } from "react-hook-form";
-import type { Control } from "react-hook-form";
-// ui
-import { CustomListbox } from "ui";
-// icons
+import { Controller, FieldError, Control } from "react-hook-form";
 import { Squares2X2Icon } from "@heroicons/react/24/outline";
-// types
+// import type { Control } from "react-hook-form";
+// ui
 import type { IModule } from "types";
+import { CustomListbox } from "components/ui";
+// icons
+// types
 import { MODULE_STATUS } from "constants/";
 
 type Props = {
@@ -33,9 +33,11 @@ const SelectStatus: React.FC<Props> = (props) => {
                 : ""
             }`}
             title="Status"
-            options={MODULE_STATUS.map((status) => {
-              return { value: status.value, display: status.label, color: status.color };
-            })}
+            options={MODULE_STATUS.map((status) => ({
+              value: status.value,
+              display: status.label,
+              color: status.color,
+            }))}
             value={value}
             optionsFontsize="sm"
             onChange={onChange}

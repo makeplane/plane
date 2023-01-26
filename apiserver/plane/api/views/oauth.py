@@ -223,8 +223,8 @@ class OauthEndpoint(BaseAPIView):
                 username=username,
                 email=email,
                 mobile_number=mobile_number,
-                first_name=data["first_name"],
-                last_name=data["last_name"],
+                first_name=data.get("first_name", ""),
+                last_name=data.get("last_name", ""),
                 is_email_verified=email_verified,
                 is_password_autoset=True,
             )

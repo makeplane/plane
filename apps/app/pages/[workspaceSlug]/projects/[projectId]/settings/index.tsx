@@ -1,43 +1,36 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
-import type { NextPage, NextPageContext } from "next";
 
 import useSWR, { mutate } from "swr";
 
+// react-hook-form
 import { Controller, useForm } from "react-hook-form";
-// fetch-keys
-import { PROJECTS_LIST, PROJECT_DETAILS, WORKSPACE_DETAILS } from "constants/fetch-keys";
-// common
-import { debounce } from "constants/common";
-// constants
-import { NETWORK_CHOICES } from "constants/";
+import { IProject, IWorkspace } from "types";
 // lib
 import { requiredAdmin } from "lib/auth";
 // layouts
 import SettingsLayout from "layouts/settings-layout";
 // services
-import projectService from "lib/services/project.service";
-import workspaceService from "lib/services/workspace.service";
+import projectService from "services/project.service";
+import workspaceService from "services/workspace.service";
 // components
 import ConfirmProjectDeletion from "components/project/confirm-project-deletion";
+import EmojiIconPicker from "components/emoji-icon-picker";
 // hooks
-import useToast from "lib/hooks/useToast";
+import useToast from "hooks/use-toast";
 // ui
-import {
-  BreadcrumbItem,
-  Breadcrumbs,
-  Button,
-  EmojiIconPicker,
-  Input,
-  Select,
-  TextArea,
-  Loader,
-  CustomSelect,
-} from "ui";
-import OutlineButton from "ui/outline-button";
+import { Button, Input, TextArea, Loader, CustomSelect } from "components/ui";
+import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+import OutlineButton from "components/ui/outline-button";
+// helpers
+import { debounce } from "helpers/functions.helper";
 // types
-import { IProject, IWorkspace } from "types";
+import type { NextPage, NextPageContext } from "next";
+// fetch-keys
+import { PROJECTS_LIST, PROJECT_DETAILS, WORKSPACE_DETAILS } from "constants/fetch-keys";
+// constants
+import { NETWORK_CHOICES } from "constants/";
 
 const defaultValues: Partial<IProject> = {
   name: "",
@@ -124,19 +117,7 @@ const GeneralSettings: NextPage<TGeneralSettingsProps> = (props) => {
           (prevData) => ({ ...prevData, ...res }),
           false
         );
-        mutate<IProject[]>(
-          PROJECTS_LIST(activeWorkspace.slug),
-          (prevData) => {
-            const newData = prevData?.map((item) => {
-              if (item.id === res.id) {
-                return res;
-              }
-              return item;
-            });
-            return newData;
-          },
-          false
-        );
+        mutate(PROJECTS_LIST(activeWorkspace.slug));
         setToastAlert({
           title: "Success",
           type: "success",

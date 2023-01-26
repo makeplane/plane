@@ -32,9 +32,9 @@ class Issue(ProjectBaseModel):
         related_name="state_issue",
     )
     name = models.CharField(max_length=255, verbose_name="Issue Name")
-    description = models.JSONField(blank=True)
-    description_html = models.TextField(blank=True)
-    description_stripped = models.TextField(blank=True)
+    description = models.JSONField(blank=True, null=True)
+    description_html = models.TextField(blank=True, null=True)
+    description_stripped = models.TextField(blank=True, null=True)
     priority = models.CharField(
         max_length=30,
         choices=PRIORITY_CHOICES,
@@ -84,10 +84,12 @@ class Issue(ProjectBaseModel):
                 )
             except ImportError:
                 pass
-        
+
         # Strip the html tags using html parser
         self.description_stripped = (
-            strip_tags(self.description_html) if self.description_html != "" else ""
+            None
+            if (self.description_html == "" or self.description_html is None)
+            else strip_tags(self.description_html)
         )
         super(Issue, self).save(*args, **kwargs)
 
@@ -211,9 +213,10 @@ class IssueComment(ProjectBaseModel):
     )
 
     def save(self, *args, **kwargs):
-        self.comment_stripped = strip_tags(self.comment_html) if self.comment_html != "" else ""
+        self.comment_stripped = (
+            strip_tags(self.comment_html) if self.comment_html != "" else ""
+        )
         return super(IssueComment, self).save(*args, **kwargs)
-
 
     class Meta:
         verbose_name = "Issue Comment"

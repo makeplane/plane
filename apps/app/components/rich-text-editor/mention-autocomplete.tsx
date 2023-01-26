@@ -1,11 +1,7 @@
 import { useState, useEffect, FC } from "react";
 // remirror imports
 import { cx } from "@remirror/core";
-import {
-  useMentionAtom,
-  MentionAtomNodeAttributes,
-  FloatingWrapper,
-} from "@remirror/react";
+import { useMentionAtom, MentionAtomNodeAttributes, FloatingWrapper } from "@remirror/react";
 
 // export const;
 
@@ -19,10 +15,9 @@ export const MentionAutoComplete: FC<IMentionAutoComplete> = (props) => {
   // states
   const [options, setOptions] = useState<MentionAtomNodeAttributes[]>([]);
 
-  const { state, getMenuProps, getItemProps, indexIsHovered, indexIsSelected } =
-    useMentionAtom({
-      items: options,
-    });
+  const { state, getMenuProps, getItemProps, indexIsHovered, indexIsSelected } = useMentionAtom({
+    items: options,
+  });
 
   useEffect(() => {
     if (!state) {
@@ -32,26 +27,18 @@ export const MentionAutoComplete: FC<IMentionAutoComplete> = (props) => {
     let filteredOptions: MentionAtomNodeAttributes[] = [];
 
     if (state.name === "tag") {
-      filteredOptions = tags.filter((tag) =>
-        tag?.label.toLowerCase().includes(searchTerm)
-      );
+      filteredOptions = tags.filter((tag) => tag?.label.toLowerCase().includes(searchTerm));
     } else if (state.name === "at") {
-      filteredOptions = mentions.filter((user) =>
-        user?.label.toLowerCase().includes(searchTerm)
-      );
+      filteredOptions = mentions.filter((user) => user?.label.toLowerCase().includes(searchTerm));
     }
 
     filteredOptions = filteredOptions.sort().slice(0, 5);
     setOptions(filteredOptions);
-  }, [state]);
+  }, [state, mentions, tags]);
 
   const enabled = Boolean(state);
   return (
-    <FloatingWrapper
-      positioner="cursor"
-      enabled={enabled}
-      placement="bottom-start"
-    >
+    <FloatingWrapper positioner="cursor" enabled={enabled} placement="bottom-start">
       <div {...getMenuProps()} className="suggestions">
         {enabled &&
           options.map((user, index) => {
@@ -61,11 +48,7 @@ export const MentionAutoComplete: FC<IMentionAutoComplete> = (props) => {
             return (
               <div
                 key={user.id}
-                className={cx(
-                  "suggestion",
-                  isHighlighted && "highlighted",
-                  isHovered && "hovered"
-                )}
+                className={cx("suggestion", isHighlighted && "highlighted", isHovered && "hovered")}
                 {...getItemProps({
                   item: user,
                   index,

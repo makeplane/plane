@@ -2,7 +2,7 @@ import React, { createContext, ReactElement } from "react";
 // swr
 import useSWR from "swr";
 // services
-import userService from "lib/services/user.service";
+import userService from "services/user.service";
 // constants
 import { CURRENT_USER } from "constants/fetch-keys";
 

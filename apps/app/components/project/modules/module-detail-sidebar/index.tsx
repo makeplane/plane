@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -7,31 +7,32 @@ import { mutate } from "swr";
 
 import { Controller, useForm } from "react-hook-form";
 // services
-import modulesService from "lib/services/modules.service";
-// hooks
-import useToast from "lib/hooks/useToast";
-// components
-import SelectLead from "components/project/modules/module-detail-sidebar/select-lead";
-import SelectMembers from "components/project/modules/module-detail-sidebar/select-members";
-import SelectStatus from "components/project/modules/module-detail-sidebar/select-status";
-import ModuleLinkModal from "components/project/modules/module-link-modal";
-// ui
-import { Loader } from "ui";
-// icons
 import {
   CalendarDaysIcon,
   ChartPieIcon,
   LinkIcon,
   PlusIcon,
   TrashIcon,
-  UserIcon,
 } from "@heroicons/react/24/outline";
+import modulesService from "services/modules.service";
+// hooks
+import useToast from "hooks/use-toast";
+// components
+import SelectLead from "components/project/modules/module-detail-sidebar/select-lead";
+import SelectMembers from "components/project/modules/module-detail-sidebar/select-members";
+import SelectStatus from "components/project/modules/module-detail-sidebar/select-status";
+import ModuleLinkModal from "components/project/modules/module-link-modal";
+// ui
+import { Loader } from "components/ui";
+// icons
+// helpers
+import { timeAgo } from "helpers/date-time.helper";
+import { copyTextToClipboard } from "helpers/string.helper";
+import { groupBy } from "helpers/array.helper";
 // types
 import { IModule, ModuleIssueResponse } from "types";
 // fetch-keys
 import { MODULE_LIST } from "constants/fetch-keys";
-// common
-import { copyTextToClipboard, groupBy } from "constants/common";
 
 const defaultValues: Partial<IModule> = {
   members_list: [],
@@ -160,7 +161,7 @@ const ModuleDetailSidebar: React.FC<Props> = ({
                   </div>
                   <div className="flex items-center gap-2 sm:basis-1/2">
                     <div className="grid flex-shrink-0 place-items-center">
-                      <span className="h-4 w-4 rounded-full border-2 border-gray-300 border-r-blue-500"></span>
+                      <span className="h-4 w-4 rounded-full border-2 border-gray-300 border-r-blue-500" />
                     </div>
                     {groupedIssues.completed.length}/{moduleIssues?.length}
                   </div>
@@ -256,7 +257,8 @@ const ModuleDetailSidebar: React.FC<Props> = ({
                               <div>
                                 <h5>{link.title}</h5>
                                 <p className="mt-0.5 text-gray-500">
-                                  Added 2 days ago by {link.created_by_detail.email}
+                                  Added {timeAgo(link.created_at)} ago by{" "}
+                                  {link.created_by_detail.email}
                                 </p>
                               </div>
                             </a>
@@ -271,13 +273,13 @@ const ModuleDetailSidebar: React.FC<Props> = ({
         ) : (
           <Loader>
             <div className="space-y-2">
-              <Loader.Item height="15px" width="50%"></Loader.Item>
-              <Loader.Item height="15px" width="30%"></Loader.Item>
+              <Loader.Item height="15px" width="50%" />
+              <Loader.Item height="15px" width="30%" />
             </div>
             <div className="mt-8 space-y-3">
-              <Loader.Item height="30px"></Loader.Item>
-              <Loader.Item height="30px"></Loader.Item>
-              <Loader.Item height="30px"></Loader.Item>
+              <Loader.Item height="30px" />
+              <Loader.Item height="30px" />
+              <Loader.Item height="30px" />
             </div>
           </Loader>
         )}

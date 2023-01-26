@@ -2,26 +2,27 @@ import { useState } from "react";
 
 import Image from "next/image";
 import { useRouter } from "next/router";
-import type { GetServerSideProps, NextPage } from "next";
-
 import useSWR from "swr";
+import { PlusIcon } from "@heroicons/react/24/outline";
+
 // lib
+import type { GetServerSideProps, NextPage } from "next";
 import { requiredWorkspaceAdmin } from "lib/auth";
 // hooks
-import useToast from "lib/hooks/useToast";
+import useToast from "hooks/use-toast";
 // services
-import workspaceService from "lib/services/workspace.service";
+import workspaceService from "services/workspace.service";
 // constants
-import { ROLE } from "constants/";
 // layouts
 import SettingsLayout from "layouts/settings-layout";
 // components
 import ConfirmWorkspaceMemberRemove from "components/workspace/confirm-workspace-member-remove";
 import SendWorkspaceInvitationModal from "components/workspace/send-workspace-invitation-modal";
 // ui
-import { BreadcrumbItem, Breadcrumbs, Button, CustomListbox, CustomMenu, Loader } from "ui";
+import { Button, CustomListbox, CustomMenu, Loader } from "components/ui";
+import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+import { ROLE } from "constants/";
 // icons
-import { PlusIcon } from "@heroicons/react/24/outline";
 // fetch-keys
 import { WORKSPACE_DETAILS, WORKSPACE_INVITATIONS, WORKSPACE_MEMBERS } from "constants/fetch-keys";
 
@@ -156,10 +157,10 @@ const MembersSettings: NextPage<TMembersSettingsProps> = (props) => {
           </div>
           {!workspaceMembers || !workspaceInvitations ? (
             <Loader className="space-y-5 md:w-2/3">
-              <Loader.Item height="40px"></Loader.Item>
-              <Loader.Item height="40px"></Loader.Item>
-              <Loader.Item height="40px"></Loader.Item>
-              <Loader.Item height="40px"></Loader.Item>
+              <Loader.Item height="40px" />
+              <Loader.Item height="40px" />
+              <Loader.Item height="40px" />
+              <Loader.Item height="40px" />
             </Loader>
           ) : (
             <div className="md:w-2/3">
@@ -222,11 +223,9 @@ const MembersSettings: NextPage<TMembersSettingsProps> = (props) => {
                                   .then(() => {
                                     mutateMembers(
                                       (prevData) =>
-                                        prevData?.map((m) => {
-                                          return m.id === selectedMember
-                                            ? { ...m, role: value }
-                                            : m;
-                                        }),
+                                        prevData?.map((m) =>
+                                          m.id === selectedMember ? { ...m, role: value } : m
+                                        ),
                                       false
                                     );
                                     setToastAlert({

@@ -3,8 +3,7 @@ import Image from "next/image";
 // images
 import Module from "public/onboarding/module.png";
 
-const BreakIntoModules: React.FC = () => {
-  return (
+const BreakIntoModules: React.FC = () => (
     <div className="h-full space-y-4">
       <div className="relative h-1/2">
         <div
@@ -12,7 +11,7 @@ const BreakIntoModules: React.FC = () => {
           style={{
             background: "linear-gradient(0deg, #fff 84.2%, rgba(255, 255, 255, 0) 34.35%)",
           }}
-        ></div>
+         />
         <Image
           src={Module}
           className="h-full"
@@ -30,6 +29,5 @@ const BreakIntoModules: React.FC = () => {
       </div>
     </div>
   );
-};
 
 export default BreakIntoModules;

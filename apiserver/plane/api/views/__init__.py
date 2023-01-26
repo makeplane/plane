@@ -13,7 +13,6 @@ from .project import (
     ProjectMemberUserEndpoint,
 )
 from .people import (
-    PeopleEndpoint,
     UserEndpoint,
     UpdateUserOnBoardedEndpoint,
 )
@@ -52,6 +51,7 @@ from .issue import (
     LabelViewSet,
     BulkDeleteIssuesEndpoint,
     UserWorkSpaceIssues,
+    SubIssuesEndpoint,
 )
 
 from .auth_extended import (
@@ -64,6 +64,7 @@ from .auth_extended import (
 
 
 from .authentication import (
+    SignUpEndpoint,
     SignInEndpoint,
     SignOutEndpoint,
     MagicSignInEndpoint,

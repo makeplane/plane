@@ -5,29 +5,26 @@ import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 
-import { Control, Controller, UseFormWatch } from "react-hook-form";
+import { UseFormWatch } from "react-hook-form";
 // constants
-import { CYCLE_ISSUES, CYCLE_LIST, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
-// services
-import issuesService from "lib/services/issues.service";
-import cyclesService from "lib/services/cycles.service";
-// ui
-import { Spinner, CustomSelect } from "ui";
-// icons
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
+// services
+import issuesService from "services/issues.service";
+import cyclesService from "services/cycles.service";
+// ui
+import { Spinner, CustomSelect } from "components/ui";
+// icons
 // types
-import { CycleIssueResponse, ICycle, IIssue, IssueResponse } from "types";
-// common
-import { classNames } from "constants/common";
+import { ICycle, IIssue } from "types";
+import { CYCLE_ISSUES, CYCLE_LIST, ISSUE_DETAILS } from "constants/fetch-keys";
 
 type Props = {
   issueDetail: IIssue | undefined;
-  control: Control<IIssue, any>;
   handleCycleChange: (cycle: ICycle) => void;
   watch: UseFormWatch<IIssue>;
 };
 
-const SelectCycle: React.FC<Props> = ({ issueDetail, control, handleCycleChange }) => {
+const SelectCycle: React.FC<Props> = ({ issueDetail, handleCycleChange }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
@@ -41,12 +38,10 @@ const SelectCycle: React.FC<Props> = ({ issueDetail, control, handleCycleChange 
   const removeIssueFromCycle = (bridgeId: string, cycleId: string) => {
     if (!workspaceSlug || !projectId) return;
 
-    mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
-
     issuesService
       .removeIssueFromCycle(workspaceSlug as string, projectId as string, cycleId, bridgeId)
       .then((res) => {
-        console.log(res);
+        mutate(ISSUE_DETAILS(issueId as string));
 
         mutate(CYCLE_ISSUES(cycleId));
       })
@@ -55,6 +50,8 @@ const SelectCycle: React.FC<Props> = ({ issueDetail, control, handleCycleChange 
       });
   };
 
+  const issueCycle = issueDetail?.issue_cycle;
+
   return (
     <div className="flex flex-wrap items-center py-2">
       <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
@@ -62,54 +59,40 @@ const SelectCycle: React.FC<Props> = ({ issueDetail, control, handleCycleChange 
         <p>Cycle</p>
       </div>
       <div className="space-y-1 sm:basis-1/2">
-        <Controller
-          control={control}
-          name="issue_cycle"
-          render={({ field: { value } }) => (
-            <>
-              <CustomSelect
-                label={
-                  <span
-                    className={classNames(
-                      value ? "" : "text-gray-900",
-                      "hidden truncate text-left sm:block"
-                    )}
-                  >
-                    {value ? value?.cycle_detail?.name : "None"}
-                  </span>
-                }
-                value={value}
-                onChange={(value: any) => {
-                  value === null
-                    ? removeIssueFromCycle(
-                        issueDetail?.issue_cycle?.id ?? "",
-                        issueDetail?.issue_cycle?.cycle ?? ""
-                      )
-                    : handleCycleChange(cycles?.find((c) => c.id === value) as any);
-                }}
-              >
-                {cycles ? (
-                  cycles.length > 0 ? (
-                    <>
-                      <CustomSelect.Option value={null} className="capitalize">
-                        <>None</>
-                      </CustomSelect.Option>
-                      {cycles.map((option) => (
-                        <CustomSelect.Option key={option.id} value={option.id}>
-                          {option.name}
-                        </CustomSelect.Option>
-                      ))}
-                    </>
-                  ) : (
-                    <div className="text-center">No cycles found</div>
-                  )
-                ) : (
-                  <Spinner />
-                )}
-              </CustomSelect>
-            </>
+        <CustomSelect
+          label={
+            <span
+              className={`hidden truncate text-left sm:block ${issueCycle ? "" : "text-gray-900"}`}
+            >
+              {issueCycle ? issueCycle.cycle_detail.name : "None"}
+            </span>
+          }
+          value={issueCycle?.cycle_detail.id}
+          onChange={(value: any) => {
+            value === null
+              ? removeIssueFromCycle(issueCycle?.id ?? "", issueCycle?.cycle ?? "")
+              : handleCycleChange(cycles?.find((c) => c.id === value) as any);
+          }}
+        >
+          {cycles ? (
+            cycles.length > 0 ? (
+              <>
+                <CustomSelect.Option value={null} className="capitalize">
+                  None
+                </CustomSelect.Option>
+                {cycles.map((option) => (
+                  <CustomSelect.Option key={option.id} value={option.id}>
+                    {option.name}
+                  </CustomSelect.Option>
+                ))}
+              </>
+            ) : (
+              <div className="text-center">No cycles found</div>
+            )
+          ) : (
+            <Spinner />
           )}
-        />
+        </CustomSelect>
       </div>
     </div>
   );

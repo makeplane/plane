@@ -432,6 +432,7 @@ class IssueSerializer(BaseSerializer):
     blocker_issues = BlockerIssueSerializer(read_only=True, many=True)
     issue_cycle = IssueCycleDetailSerializer(read_only=True)
     issue_module = IssueModuleDetailSerializer(read_only=True)
+    sub_issues_count = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Issue

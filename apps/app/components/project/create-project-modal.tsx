@@ -8,20 +8,22 @@ import { useForm, Controller } from "react-hook-form";
 
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import projectServices from "lib/services/project.service";
-import workspaceService from "lib/services/workspace.service";
-// common
-import { getRandomEmoji } from "constants/common";
-// constants
-import { NETWORK_CHOICES } from "constants/";
-// fetch keys
-import { PROJECTS_LIST, WORKSPACE_MEMBERS_ME } from "constants/fetch-keys";
+import projectServices from "services/project.service";
+import workspaceService from "services/workspace.service";
 // hooks
-import useToast from "lib/hooks/useToast";
+import useToast from "hooks/use-toast";
 // ui
-import { Button, Input, TextArea, EmojiIconPicker, CustomSelect } from "ui";
+import { Button, Input, TextArea, CustomSelect } from "components/ui";
+// components
+import EmojiIconPicker from "components/emoji-icon-picker";
+// helpers
+import { getRandomEmoji } from "helpers/functions.helper";
 // types
 import { IProject } from "types";
+// fetch-keys
+import { PROJECTS_LIST, WORKSPACE_MEMBERS_ME } from "constants/fetch-keys";
+// constants
+import { NETWORK_CHOICES } from "constants/";
 
 type Props = {
   isOpen: boolean;
@@ -96,9 +98,7 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
     }
   }, [projectName, projectIdentifier, setValue, isChangeIdentifierRequired]);
 
-  useEffect(() => {
-    return () => setIsChangeIdentifierRequired(true);
-  }, [isOpen]);
+  useEffect(() => () => setIsChangeIdentifierRequired(true), [isOpen]);
 
   const handleClose = () => {
     setIsOpen(false);

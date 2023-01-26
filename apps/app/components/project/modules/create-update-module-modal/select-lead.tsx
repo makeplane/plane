@@ -4,16 +4,16 @@ import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
-import { Controller } from "react-hook-form";
-import type { Control } from "react-hook-form";
-// service
-import projectServices from "lib/services/project.service";
-// ui
-import { SearchListbox } from "ui";
-// icons
+import { Controller, Control } from "react-hook-form";
 import { UserIcon } from "@heroicons/react/24/outline";
-// types
+// import type { Control } from "react-hook-form";
+// service
 import type { IModule } from "types";
+import projectServices from "services/project.service";
+// ui
+import SearchListbox from "components/search-listbox";
+// icons
+// types
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 
@@ -40,15 +40,13 @@ const SelectLead: React.FC<Props> = ({ control }) => {
         <SearchListbox
           title="Lead"
           optionsFontsize="sm"
-          options={people?.map((person) => {
-            return {
-              value: person.member.id,
-              display:
-                person.member.first_name && person.member.first_name !== ""
-                  ? person.member.first_name
-                  : person.member.email,
-            };
-          })}
+          options={people?.map((person) => ({
+            value: person.member.id,
+            display:
+              person.member.first_name && person.member.first_name !== ""
+                ? person.member.first_name
+                : person.member.email,
+          }))}
           value={value}
           onChange={onChange}
           icon={<UserIcon className="h-3 w-3 text-gray-500" />}

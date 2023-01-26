@@ -1,3 +1,6 @@
+# Third party imports
+from rest_framework import serializers
+
 # Module imports
 from .base import BaseSerializer
 from .user import UserLiteSerializer
@@ -22,6 +25,7 @@ class CycleSerializer(BaseSerializer):
 class CycleIssueSerializer(BaseSerializer):
 
     issue_detail = IssueStateSerializer(read_only=True, source="issue")
+    sub_issues_count = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = CycleIssue

@@ -1,16 +1,7 @@
+// cookies
 import { convertCookieStringToObject } from "./cookie";
-
 // types
 import type { IProjectMember, IUser, IWorkspace, IWorkspaceMember } from "types";
-// constants
-import {
-  BASE_STAGING,
-  PROJECT_MEMBER_ME,
-  USER_ENDPOINT,
-  USER_WORKSPACES,
-  USER_WORKSPACE_INVITATIONS,
-  WORKSPACE_MEMBER_ME,
-} from "constants/api-routes";
 
 export const requiredAuth = async (cookie?: string) => {
   const cookies = convertCookieStringToObject(cookie);
@@ -18,12 +9,12 @@ export const requiredAuth = async (cookie?: string) => {
 
   if (!token) return null;
 
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || BASE_STAGING;
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.plane.so";
 
   let user: IUser | null = null;
 
   try {
-    const data = await fetch(`${baseUrl}${USER_ENDPOINT}`, {
+    const data = await fetch(`${baseUrl}/api/users/me/`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -50,17 +41,20 @@ export const requiredAdmin = async (workspaceSlug: string, projectId: string, co
   const cookies = convertCookieStringToObject(cookie);
   const token = cookies?.accessToken;
 
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || BASE_STAGING;
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.plane.so";
 
   let memberDetail: IProjectMember | null = null;
 
   try {
-    const data = await fetch(`${baseUrl}${PROJECT_MEMBER_ME(workspaceSlug, projectId)}`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
+    const data = await fetch(
+      `${baseUrl}/api/workspaces/${workspaceSlug}/projects/${projectId}/project-members/me/`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
       .then((res) => res.json())
       .then((data) => data);
 
@@ -81,12 +75,12 @@ export const requiredWorkspaceAdmin = async (workspaceSlug: string, cookie?: str
   const cookies = convertCookieStringToObject(cookie);
   const token = cookies?.accessToken;
 
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || BASE_STAGING;
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.plane.so";
 
   let memberDetail: IWorkspaceMember | null = null;
 
   try {
-    const data = await fetch(`${baseUrl}${WORKSPACE_MEMBER_ME(workspaceSlug)}`, {
+    const data = await fetch(`${baseUrl}/api/workspaces/${workspaceSlug}/workspace-members/me/`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -128,13 +122,13 @@ export const homePageRedirect = async (cookie?: string) => {
 
   let workspaces: IWorkspace[] = [];
 
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || BASE_STAGING;
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.plane.so";
 
   const cookies = convertCookieStringToObject(cookie);
   const token = cookies?.accessToken;
 
   try {
-    const data = await fetch(`${baseUrl}${USER_WORKSPACES}`, {
+    const data = await fetch(`${baseUrl}/api/users/me/workspaces/`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -175,7 +169,7 @@ export const homePageRedirect = async (cookie?: string) => {
     };
   }
 
-  const invitations = await fetch(`${baseUrl}${USER_WORKSPACE_INVITATIONS}`, {
+  const invitations = await fetch(`${baseUrl}/api/users/me/invitations/workspaces/`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

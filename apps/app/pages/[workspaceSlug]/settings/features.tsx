@@ -1,20 +1,20 @@
 import React from "react";
 
 import { useRouter } from "next/router";
-import type { GetServerSideProps, NextPage } from "next";
-
 import useSWR from "swr";
 
 // lib
+import type { GetServerSideProps, NextPage } from "next";
 import { requiredWorkspaceAdmin } from "lib/auth";
 // constants
-import { WORKSPACE_DETAILS } from "constants/fetch-keys";
 // services
-import workspaceService from "lib/services/workspace.service";
+import workspaceService from "services/workspace.service";
 // layouts
 import SettingsLayout from "layouts/settings-layout";
 // ui
-import { BreadcrumbItem, Breadcrumbs, Button } from "ui";
+import { Button } from "components/ui";
+import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+import { WORKSPACE_DETAILS } from "constants/fetch-keys";
 
 type TFeatureSettingsProps = {
   isOwner: boolean;
@@ -75,7 +75,7 @@ const FeaturesSettings: NextPage<TFeatureSettingsProps> = (props) => {
                   <span
                     aria-hidden="true"
                     className="pointer-events-none inline-block h-5 w-5 translate-x-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
-                  ></span>
+                  />
                 </button>
               </div>
             </div>
@@ -99,7 +99,7 @@ const FeaturesSettings: NextPage<TFeatureSettingsProps> = (props) => {
                   <span
                     aria-hidden="true"
                     className="pointer-events-none inline-block h-5 w-5 translate-x-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
-                  ></span>
+                  />
                 </button>
               </div>
             </div>
@@ -123,7 +123,7 @@ const FeaturesSettings: NextPage<TFeatureSettingsProps> = (props) => {
                   <span
                     aria-hidden="true"
                     className="pointer-events-none inline-block h-5 w-5 translate-x-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
-                  ></span>
+                  />
                 </button>
               </div>
             </div>

@@ -1,13 +1,15 @@
+import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
 // icons
+import { CalendarDaysIcon } from "@heroicons/react/24/outline";
 import User from "public/user.png";
+// helpers
+import { renderShortNumericDateFormat } from "helpers/date-time.helper";
 // types
 import { IModule } from "types";
 // common
-import { renderShortNumericDateFormat } from "constants/common";
-import { CalendarDaysIcon } from "@heroicons/react/24/outline";
 import { MODULE_STATUS } from "constants/";
 
 type Props = {
@@ -26,22 +28,26 @@ const SingleModuleCard: React.FC<Props> = ({ module }) => {
           <div className="space-y-2">
             <h6 className="text-gray-500">LEAD</h6>
             <div>
-              {module.lead_detail?.avatar && module.lead_detail.avatar !== "" ? (
-                <div className="h-5 w-5 rounded-full border-2 border-white">
-                  <Image
-                    src={module.lead_detail.avatar}
-                    height="100%"
-                    width="100%"
-                    className="rounded-full"
-                    alt={module.lead_detail.first_name}
-                  />
-                </div>
+              {module.lead ? (
+                module.lead_detail?.avatar && module.lead_detail.avatar !== "" ? (
+                  <div className="h-5 w-5 rounded-full border-2 border-white">
+                    <Image
+                      src={module.lead_detail.avatar}
+                      height="100%"
+                      width="100%"
+                      className="rounded-full"
+                      alt={module.lead_detail.first_name}
+                    />
+                  </div>
+                ) : (
+                  <div className="grid h-5 w-5 place-items-center rounded-full border-2 border-white bg-gray-700 capitalize text-white">
+                    {module.lead_detail?.first_name && module.lead_detail.first_name !== ""
+                      ? module.lead_detail.first_name.charAt(0)
+                      : module.lead_detail?.email.charAt(0)}
+                  </div>
+                )
               ) : (
-                <div className="grid h-5 w-5 place-items-center rounded-full border-2 border-white bg-gray-700 capitalize text-white">
-                  {module.lead_detail?.first_name && module.lead_detail.first_name !== ""
-                    ? module.lead_detail.first_name.charAt(0)
-                    : module.lead_detail?.email.charAt(0)}
-                </div>
+                "N/A"
               )}
             </div>
           </div>
@@ -103,7 +109,7 @@ const SingleModuleCard: React.FC<Props> = ({ module }) => {
                 style={{
                   backgroundColor: MODULE_STATUS.find((s) => s.value === module.status)?.color,
                 }}
-              ></span>
+              />
               {module.status}
             </div>
           </div>

@@ -62,6 +62,7 @@ export interface IIssue {
   blockers_list: string[];
   blocked_list: string[];
   blocks_list: string[];
+  bridge: string;
   created_at: Date;
   updated_at: Date;
   name: string;
@@ -91,6 +92,7 @@ export interface IIssue {
   module: string | null;
   cycle: string | null;
   cycle_detail: ICycle | null;
+  sub_issues_count: number;
 }
 
 export interface BlockeIssue {

@@ -3,11 +3,11 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 // hooks
-import useToast from "lib/hooks/useToast";
+import useToast from "hooks/use-toast";
 // services
-import userService from "lib/services/user.service";
+import userService from "services/user.service";
 // ui
-import { Input } from "ui";
+import { Input } from "components/ui";
 // types
 import { IUser } from "types";
 

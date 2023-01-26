@@ -5,17 +5,17 @@ import { mutate } from "swr";
 import { Dialog, Transition } from "@headlessui/react";
 
 // services
-import projectService from "lib/services/project.service";
+import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import type { IProject, IWorkspace } from "types";
+import projectService from "services/project.service";
+// hooks
+import useToast from "hooks/use-toast";
+// icons
+// ui
+import { Button, Input } from "components/ui";
+// types
 // constants
 import { PROJECTS_LIST } from "constants/fetch-keys";
-// hooks
-import useToast from "lib/hooks/useToast";
-// icons
-import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
-// ui
-import { Button, Input } from "ui";
-// types
-import type { IProject, IWorkspace } from "types";
 
 type TConfirmProjectDeletionProps = {
   isOpen: boolean;

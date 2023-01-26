@@ -1,24 +1,25 @@
-// react
 import React, { useState } from "react";
-// swr
+
+import { useRouter } from "next/router";
+
 import useSWR from "swr";
+
+// react-beautiful-dnd
+import { Draggable } from "react-beautiful-dnd";
 // services
-import workspaceService from "lib/services/workspace.service";
+import workspaceService from "services/workspace.service";
 // components
 import SingleIssue from "components/common/board-view/single-issue";
+import StrictModeDroppable from "components/dnd/StrictModeDroppable";
+import BoardHeader from "components/common/board-view/board-header";
 // ui
-import { CustomMenu } from "ui";
+import { CustomMenu } from "components/ui";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 // types
 import { IIssue, IWorkspaceMember, NestedKeyOf, Properties } from "types";
 // fetch-keys
 import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
-// common
-import { addSpaceIfCamelCase } from "constants/common";
-import { useRouter } from "next/router";
-import StrictModeDroppable from "components/dnd/StrictModeDroppable";
-import { Draggable } from "react-beautiful-dnd";
 
 type Props = {
   properties: Properties;
@@ -39,7 +40,7 @@ type Props = {
       | (Partial<IIssue> & {
           actionType: "createIssue" | "edit" | "delete";
         })
-      | undefined
+      | null
     >
   >;
   stateId: string | null;
@@ -60,7 +61,7 @@ const SingleModuleBoard: React.FC<Props> = ({
   setPreloadedData,
   stateId,
 }) => {
-  // TODO: will use this to collapse/expand the board
+  // collapse/expand
   const [isCollapsed, setIsCollapsed] = useState(true);
 
   const router = useRouter();
@@ -84,64 +85,25 @@ const SingleModuleBoard: React.FC<Props> = ({
   return (
     <div className={`h-full flex-shrink-0 rounded ${!isCollapsed ? "" : "w-80 border bg-gray-50"}`}>
       <div className={`${!isCollapsed ? "" : "flex h-full flex-col space-y-3 overflow-y-auto"}`}>
-        <div
-          className={`flex justify-between p-3 pb-0 ${
-            !isCollapsed ? "flex-col rounded-md border bg-gray-50" : ""
-          }`}
-        >
-          <div
-            className={`flex w-full items-center justify-between ${
-              !isCollapsed ? "flex-col gap-2" : "gap-1"
-            }`}
-          >
-            <div
-              className={`flex cursor-pointer items-center gap-x-1 rounded-md bg-slate-900 px-2 ${
-                !isCollapsed ? "mb-2 flex-col gap-y-2 py-2" : ""
-              }`}
-              style={{
-                border: `2px solid ${bgColor}`,
-                backgroundColor: `${bgColor}20`,
-              }}
-            >
-              <h2
-                className={`text-[0.9rem] font-medium capitalize`}
-                style={{
-                  writingMode: !isCollapsed ? "vertical-rl" : "horizontal-tb",
-                }}
-              >
-                {groupTitle === null || groupTitle === "null"
-                  ? "None"
-                  : createdBy
-                  ? createdBy
-                  : addSpaceIfCamelCase(groupTitle)}
-              </h2>
-              <span className="ml-0.5 text-sm text-gray-500">
-                {groupedByIssues[groupTitle].length}
-              </span>
-            </div>
-
-            <CustomMenu width="auto" ellipsis>
-              <CustomMenu.MenuItem
-                onClick={() => {
-                  openCreateIssueModal();
-                  if (selectedGroup !== null) {
-                    setPreloadedData({
-                      state: stateId !== null ? stateId : undefined,
-                      [selectedGroup]: groupTitle,
-                      actionType: "createIssue",
-                    });
-                  }
-                }}
-              >
-                Create new
-              </CustomMenu.MenuItem>
-              <CustomMenu.MenuItem onClick={() => openIssuesListModal()}>
-                Add an existing issue
-              </CustomMenu.MenuItem>
-            </CustomMenu>
-          </div>
-        </div>
-
+        <BoardHeader
+          addIssueToState={() => {
+            openCreateIssueModal();
+            if (selectedGroup !== null) {
+              setPreloadedData({
+                state: stateId !== null ? stateId : undefined,
+                [selectedGroup]: groupTitle,
+                actionType: "createIssue",
+              });
+            }
+          }}
+          bgColor={bgColor ?? ""}
+          createdBy={createdBy}
+          groupTitle={groupTitle}
+          groupedByIssues={groupedByIssues}
+          isCollapsed={isCollapsed}
+          setIsCollapsed={setIsCollapsed}
+          selectedGroup={selectedGroup}
+        />
         <StrictModeDroppable key={groupTitle} droppableId={groupTitle}>
           {(provided, snapshot) => (
             <div
@@ -158,11 +120,7 @@ const SingleModuleBoard: React.FC<Props> = ({
                 ]?.map((assignee) => {
                   const tempPerson = people?.find((p) => p.member.id === assignee)?.member;
 
-                  return {
-                    avatar: tempPerson?.avatar,
-                    first_name: tempPerson?.first_name,
-                    email: tempPerson?.email,
-                  };
+                  return tempPerson;
                 });
 
                 return (

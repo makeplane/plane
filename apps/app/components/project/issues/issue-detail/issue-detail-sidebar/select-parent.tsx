@@ -6,15 +6,16 @@ import useSWR from "swr";
 
 import { Control, Controller, UseFormWatch } from "react-hook-form";
 // fetch keys
-import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import { UserIcon } from "@heroicons/react/24/outline";
 // services
-import issuesServices from "lib/services/issues.service";
+import issuesServices from "services/issues.service";
 // components
 import IssuesListModal from "components/project/issues/issues-list-modal";
 // icons
-import { UserIcon } from "@heroicons/react/24/outline";
 // types
 import { IIssue } from "types";
+// fetch-keys
+import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 
 type Props = {
   control: Control<IIssue, any>;

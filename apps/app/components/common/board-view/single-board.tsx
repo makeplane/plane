@@ -1,5 +1,3 @@
-const SingleBoard = () => {
-  return <></>;
-};
+const SingleBoard = () => <></>;
 
 export default SingleBoard;

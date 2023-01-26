@@ -4,16 +4,16 @@ import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
-import { Controller } from "react-hook-form";
-import type { Control } from "react-hook-form";
-// service
-import projectServices from "lib/services/project.service";
-// ui
-import { SearchListbox } from "ui";
-// icons
+import { Controller, Control } from "react-hook-form";
 import { UserIcon } from "@heroicons/react/24/outline";
-// types
+// import type { Control } from "react-hook-form";
+// service
 import type { IModule } from "types";
+import projectServices from "services/project.service";
+// ui
+import SearchListbox from "components/search-listbox";
+// icons
+// types
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 
@@ -40,15 +40,13 @@ const SelectMembers: React.FC<Props> = ({ control }) => {
         <SearchListbox
           title="Members"
           optionsFontsize="sm"
-          options={people?.map((person) => {
-            return {
-              value: person.member.id,
-              display:
-                person.member.first_name && person.member.first_name !== ""
-                  ? person.member.first_name
-                  : person.member.email,
-            };
-          })}
+          options={people?.map((person) => ({
+            value: person.member.id,
+            display:
+              person.member.first_name && person.member.first_name !== ""
+                ? person.member.first_name
+                : person.member.email,
+          }))}
           multiple={true}
           value={value}
           onChange={onChange}
