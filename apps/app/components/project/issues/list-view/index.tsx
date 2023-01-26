@@ -66,7 +66,6 @@ const ListView: React.FC<Props> = ({ issues, handleEditIssue }) => {
         prePopulateData={{
           ...preloadedData,
         }}
-        projectId={projectId as string}
       />
       <div className="flex flex-col space-y-5">
         {Object.keys(groupedByIssues).map((singleGroup) => (

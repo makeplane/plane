@@ -37,7 +37,6 @@ import {
 export interface IssuesModalProps {
   isOpen: boolean;
   handleClose: () => void;
-  projectId: string;
   data?: IIssue | null;
   prePopulateData?: Partial<IIssue>;
   isUpdatingSingleIssue?: boolean;
@@ -47,26 +46,25 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   isOpen,
   handleClose,
   data,
-  projectId,
   prePopulateData,
   isUpdatingSingleIssue = false,
 }) => {
   // states
   const [createMore, setCreateMore] = useState(false);
-  const [isCycleModalOpen, setIsCycleModalOpen] = useState(false);
-  const [isStateModalOpen, setIsStateModalOpen] = useState(false);
   const [activeProject, setActiveProject] = useState<string | null>(null);
 
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, projectId } = router.query;
 
   const { user } = useUser();
   const { setToastAlert } = useToast();
 
   const { data: issues } = useSWR(
-    workspaceSlug && projectId ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId) : null,
-    workspaceSlug && projectId
-      ? () => issuesService.getIssues(workspaceSlug as string, projectId)
+    workspaceSlug && activeProject
+      ? PROJECT_ISSUES_LIST(workspaceSlug as string, activeProject ?? "")
+      : null,
+    workspaceSlug && activeProject
+      ? () => issuesService.getIssues(workspaceSlug as string, activeProject ?? "")
       : null
   );
 
@@ -89,7 +87,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
     if (!workspaceSlug || !projectId) return;
 
     await issuesService
-      .addIssueToCycle(workspaceSlug as string, projectId, cycleId, {
+      .addIssueToCycle(workspaceSlug as string, projectId as string, cycleId, {
         issues: [issueId],
       })
       .then((res) => {
@@ -102,7 +100,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
           );
         } else
           mutate<IssueResponse>(
-            PROJECT_ISSUES_LIST(workspaceSlug as string, projectId),
+            PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
             (prevData) => ({
               ...(prevData as IssueResponse),
               results: (prevData?.results ?? []).map((issue) => {
@@ -122,7 +120,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
     if (!workspaceSlug || !projectId) return;
 
     await modulesService
-      .addIssuesToModule(workspaceSlug as string, projectId, moduleId as string, {
+      .addIssuesToModule(workspaceSlug as string, projectId as string, moduleId as string, {
         issues: [issueId],
       })
       .then((res) => {
@@ -180,7 +178,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
           mutate<IIssue>(PROJECT_ISSUES_DETAILS, (prevData) => ({ ...prevData, ...res }), false);
         } else
           mutate<IssueResponse>(
-            PROJECT_ISSUES_LIST(workspaceSlug as string, projectId),
+            PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
             (prevData) => ({
               ...(prevData as IssueResponse),
               results: (prevData?.results ?? []).map((issue) => {
@@ -220,62 +218,47 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   };
 
   return (
-    <>
-      {projectId && (
-        <>
-          <CreateUpdateStateModal
-            isOpen={isStateModalOpen}
-            handleClose={() => setIsStateModalOpen(false)}
-            projectId={projectId}
-          />
-          <CreateUpdateCycleModal
-            isOpen={isCycleModalOpen}
-            setIsOpen={setIsCycleModalOpen}
-            projectId={projectId}
-          />
-        </>
-      )}
-      <Transition.Root show={isOpen} as={React.Fragment}>
-        <Dialog as="div" className="relative z-20" onClose={handleClose}>
-          <Transition.Child
-            as={React.Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-          </Transition.Child>
+    <Transition.Root show={isOpen} as={React.Fragment}>
+      <Dialog as="div" className="relative z-20" onClose={handleClose}>
+        <Transition.Child
+          as={React.Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+        </Transition.Child>
 
-          <div className="fixed inset-0 z-10 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-              <Transition.Child
-                as={React.Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                enterTo="opacity-100 translate-y-0 sm:scale-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              >
-                <Dialog.Panel className="relative transform rounded-lg bg-white p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
-                  <IssueForm
-                    projectId={projectId}
-                    issues={issues?.results ?? []}
-                    handleFormSubmit={handleFormSubmit}
-                    initialData={prePopulateData}
-                    createMore={createMore}
-                    setCreateMore={setCreateMore}
-                    handleClose={handleClose}
-                  />
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
+        <div className="fixed inset-0 z-10 overflow-y-auto">
+          <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+            <Transition.Child
+              as={React.Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              enterTo="opacity-100 translate-y-0 sm:scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            >
+              <Dialog.Panel className="relative transform rounded-lg bg-white p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
+                <IssueForm
+                  issues={issues?.results ?? []}
+                  handleFormSubmit={handleFormSubmit}
+                  initialData={prePopulateData}
+                  createMore={createMore}
+                  setCreateMore={setCreateMore}
+                  handleClose={handleClose}
+                  projectId={activeProject ?? ""}
+                  setActiveProject={setActiveProject}
+                />
+              </Dialog.Panel>
+            </Transition.Child>
           </div>
-        </Dialog>
-      </Transition.Root>
-    </>
+        </div>
+      </Dialog>
+    </Transition.Root>
   );
 };

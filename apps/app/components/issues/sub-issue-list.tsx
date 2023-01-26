@@ -48,7 +48,6 @@ export const SubIssueList: FC<SubIssueListProps> = ({
   return (
     <>
       <CreateUpdateIssueModal
-        projectId={projectId}
         isOpen={isIssueModalActive}
         prePopulateData={{ ...preloadedData }}
         handleClose={closeIssueModal}

@@ -20,25 +20,26 @@ import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 type Props = {
   value: string[];
   onChange: (value: string[]) => void;
+  projectId: string;
 };
 
 const defaultValues: Partial<IIssueLabels> = {
   name: "",
 };
 
-export const IssueLabelSelect: React.FC<Props> = ({ value, onChange }) => {
+export const IssueLabelSelect: React.FC<Props> = ({ value, onChange, projectId }) => {
   // states
   const [query, setQuery] = useState("");
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug } = router.query;
 
   const [isOpen, setIsOpen] = useState(false);
 
   const { data: issueLabels, mutate: issueLabelsMutate } = useSWR<IIssueLabels[]>(
-    workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(workspaceSlug as string) : null,
+    projectId ? PROJECT_ISSUE_LABELS(projectId) : null,
     workspaceSlug && projectId
-      ? () => issuesServices.getIssueLabels(workspaceSlug as string, projectId as string)
+      ? () => issuesServices.getIssueLabels(workspaceSlug as string, projectId)
       : null
   );
 

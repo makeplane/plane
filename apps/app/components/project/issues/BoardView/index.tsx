@@ -198,7 +198,6 @@ const BoardView: React.FC<Props> = ({ issues, handleDeleteIssue, partialUpdateIs
         prePopulateData={{
           ...preloadedData,
         }}
-        projectId={projectId as string}
       />
       {groupedByIssues ? (
         <div className="h-screen w-full">

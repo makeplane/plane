@@ -238,7 +238,6 @@ const IssueDetailsPage: NextPage = () => {
         <CreateUpdateIssueModal
           isOpen={isOpen}
           handleClose={() => setIsOpen(false)}
-          projectId={projectId as string}
           prePopulateData={{
             ...preloadedData,
           }}
