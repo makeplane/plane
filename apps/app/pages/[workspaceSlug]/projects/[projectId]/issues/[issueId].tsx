@@ -60,8 +60,8 @@ const IssueDetailsPage: NextPage = () => {
   const [preloadedData, setPreloadedData] = useState<
     (Partial<IIssue> & { actionType: "createIssue" | "edit" | "delete" }) | undefined
   >(undefined);
-  // Fetching API information
-  const { data: issueDetails } = useSWR(
+
+  const { data: issueDetails, mutate: mutateIssueDetails } = useSWR<IIssue | undefined>(
     issueId && workspaceSlug && projectId ? ISSUE_DETAILS(issueId as string) : null,
     issueId && workspaceSlug && projectId
       ? () =>
@@ -88,7 +88,7 @@ const IssueDetailsPage: NextPage = () => {
       : null
   );
 
-  const { data: issues, mutate: mutateIssues } = useSWR(
+  const { data: issues } = useSWR(
     workspaceSlug && projectId
       ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
       : null,
@@ -113,32 +113,31 @@ const IssueDetailsPage: NextPage = () => {
     defaultValues,
   });
 
-  const issueDetail = issues?.results?.find((issue) => issue.id === issueId);
   const prevIssue = issues?.results[issues?.results.findIndex((issue) => issue.id === issueId) - 1];
   const nextIssue = issues?.results[issues?.results.findIndex((issue) => issue.id === issueId) + 1];
 
   const siblingIssues =
-    issueDetail &&
-    issues?.results.filter((i) => i.parent === issueDetail.parent && i.id !== issueId);
+    issueDetails &&
+    issues?.results.filter((i) => i.parent === issueDetails.parent && i.id !== issueId);
 
   useEffect(() => {
-    if (issueDetail) {
+    if (issueDetails) {
       mutateIssueActivities();
       reset({
-        ...issueDetail,
+        ...issueDetails,
         blockers_list:
-          issueDetail.blockers_list ??
-          issueDetail.blocker_issues?.map((issue) => issue.blocker_issue_detail?.id),
+          issueDetails.blockers_list ??
+          issueDetails.blocker_issues?.map((issue) => issue.blocker_issue_detail?.id),
         blocked_list:
-          issueDetail.blocked_list ??
-          issueDetail.blocked_issues?.map((issue) => issue.blocked_issue_detail?.id),
+          issueDetails.blocked_list ??
+          issueDetails.blocked_issues?.map((issue) => issue.blocked_issue_detail?.id),
         assignees_list:
-          issueDetail.assignees_list ?? issueDetail.assignee_details?.map((user) => user.id),
-        labels_list: issueDetail.labels_list ?? issueDetail.labels,
-        labels: issueDetail.labels_list ?? issueDetail.labels,
+          issueDetails.assignees_list ?? issueDetails.assignee_details?.map((user) => user.id),
+        labels_list: issueDetails.labels_list ?? issueDetails.labels,
+        labels: issueDetails.labels_list ?? issueDetails.labels,
       });
     }
-  }, [issueDetail, reset, mutateIssueActivities]);
+  }, [issueDetails, reset, mutateIssueActivities]);
 
   const submitChanges = useCallback(
     (formData: Partial<IIssue>) => {
@@ -148,14 +147,14 @@ const IssueDetailsPage: NextPage = () => {
       issuesService
         .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload)
         .then((res) => {
-          mutateIssues();
+          mutateIssueDetails();
           mutateIssueActivities();
         })
         .catch((e) => {
           console.error(e);
         });
     },
-    [activeProject, workspaceSlug, issueId, projectId, mutateIssues, mutateIssueActivities]
+    [activeProject, workspaceSlug, issueId, projectId, mutateIssueDetails, mutateIssueActivities]
   );
 
   const handleSubIssueRemove = (issueId: string) => {
@@ -163,7 +162,7 @@ const IssueDetailsPage: NextPage = () => {
       issuesService
         .patchIssue(workspaceSlug as string, activeProject.id, issueId, { parent: null })
         .then((res) => {
-          mutate(SUB_ISSUES(issueDetail?.id ?? ""));
+          mutate(SUB_ISSUES(issueDetails?.id ?? ""));
           mutateIssueActivities();
         })
         .catch((e) => {
@@ -202,7 +201,7 @@ const IssueDetailsPage: NextPage = () => {
           />
           <Breadcrumbs.BreadcrumbItem
             title={`Issue ${activeProject?.identifier ?? "Project"}-${
-              issueDetail?.sequence_id ?? "..."
+              issueDetails?.sequence_id ?? "..."
             } Details`}
           />
         </Breadcrumbs>
@@ -247,32 +246,32 @@ const IssueDetailsPage: NextPage = () => {
         <AddAsSubIssue
           isOpen={isAddAsSubIssueOpen}
           setIsOpen={setIsAddAsSubIssueOpen}
-          parent={issueDetail}
+          parent={issueDetails}
         />
       )}
-      {issueDetail && issueDetails && activeProject ? (
+      {issueDetails && activeProject ? (
         <div className="flex h-full">
           <div className="basis-2/3 space-y-5 divide-y-2 p-5">
             <div className="rounded-lg">
-              {issueDetail.parent !== null && issueDetail.parent !== "" ? (
+              {issueDetails?.parent && issueDetails.parent !== "" ? (
                 <div className="mb-5 flex w-min items-center gap-2 whitespace-nowrap rounded bg-gray-100 p-2 text-xs">
                   <Link
-                    href={`/${workspaceSlug}/projects/${activeProject.id}/issues/${issueDetail.parent}`}
+                    href={`/${workspaceSlug}/projects/${activeProject.id}/issues/${issueDetails.parent}`}
                   >
                     <a className="flex items-center gap-2">
                       <span
                         className="block h-1.5 w-1.5 rounded-full"
                         style={{
-                          backgroundColor: issueDetail.state_detail.color,
+                          backgroundColor: issueDetails?.state_detail?.color,
                         }}
                       />
                       <span className="flex-shrink-0 text-gray-600">
                         {activeProject.identifier}-
-                        {issues?.results.find((i) => i.id === issueDetail.parent)?.sequence_id}
+                        {issues?.results.find((i) => i.id === issueDetails.parent)?.sequence_id}
                       </span>
                       <span className="truncate font-medium">
                         {issues?.results
-                          .find((i) => i.id === issueDetail.parent)
+                          .find((i) => i.id === issueDetails.parent)
                           ?.name.substring(0, 50)}
                       </span>
                     </a>
@@ -327,7 +326,7 @@ const IssueDetailsPage: NextPage = () => {
                       onClick={() => {
                         setIsOpen(true);
                         setPreloadedData({
-                          parent: issueDetail.id,
+                          parent: issueDetails.id,
                           actionType: "createIssue",
                         });
                       }}
@@ -338,7 +337,7 @@ const IssueDetailsPage: NextPage = () => {
                       onClick={() => {
                         setIsAddAsSubIssueOpen(true);
                         setPreloadedData({
-                          parent: issueDetail.id,
+                          parent: issueDetails.id,
                           actionType: "createIssue",
                         });
                       }}
@@ -362,7 +361,7 @@ const IssueDetailsPage: NextPage = () => {
             {/* TODO add flex-grow, if needed */}
             <IssueDetailSidebar
               control={control}
-              issueDetail={issueDetail}
+              issueDetail={issueDetails}
               submitChanges={submitChanges}
               watch={watch}
             />

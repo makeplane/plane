@@ -16,7 +16,7 @@ import { Spinner, CustomSelect } from "components/ui";
 // icons
 // types
 import { ICycle, IIssue } from "types";
-import { CYCLE_ISSUES, CYCLE_LIST, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import { CYCLE_ISSUES, CYCLE_LIST, ISSUE_DETAILS } from "constants/fetch-keys";
 
 type Props = {
   issueDetail: IIssue | undefined;
@@ -41,7 +41,7 @@ const SelectCycle: React.FC<Props> = ({ issueDetail, handleCycleChange }) => {
     issuesService
       .removeIssueFromCycle(workspaceSlug as string, projectId as string, cycleId, bridgeId)
       .then((res) => {
-        mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
+        mutate(ISSUE_DETAILS(issueId as string));
 
         mutate(CYCLE_ISSUES(cycleId));
       })
@@ -77,9 +77,9 @@ const SelectCycle: React.FC<Props> = ({ issueDetail, handleCycleChange }) => {
           {cycles ? (
             cycles.length > 0 ? (
               <>
-                {/* <CustomSelect.Option value={null} className="capitalize">
+                <CustomSelect.Option value={null} className="capitalize">
                   None
-                </CustomSelect.Option> */}
+                </CustomSelect.Option>
                 {cycles.map((option) => (
                   <CustomSelect.Option key={option.id} value={option.id}>
                     {option.name}

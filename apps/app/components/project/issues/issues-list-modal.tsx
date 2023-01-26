@@ -220,18 +220,6 @@ const IssuesListModal: React.FC<Props> = ({
                         </div>
                       )}
                     </Combobox.Options>
-
-                    {query !== "" && filteredIssues.length === 0 && (
-                      <div className="py-14 px-6 text-center sm:px-14">
-                        <RectangleStackIcon
-                          className="mx-auto h-6 w-6 text-gray-900 text-opacity-40"
-                          aria-hidden="true"
-                        />
-                        <p className="mt-4 text-sm text-gray-900">
-                          We couldn{"'"}t find any issue with that term. Please try again.
-                        </p>
-                      </div>
-                    )}
                   </Combobox>
                 )}
               </Dialog.Panel>
