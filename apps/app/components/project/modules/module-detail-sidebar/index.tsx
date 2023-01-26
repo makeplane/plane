@@ -257,7 +257,8 @@ const ModuleDetailSidebar: React.FC<Props> = ({
                               <div>
                                 <h5>{link.title}</h5>
                                 <p className="mt-0.5 text-gray-500">
-                                  Added {timeAgo(link.created_at)} ago by {link.created_by_detail.email}
+                                  Added {timeAgo(link.created_at)} ago by{" "}
+                                  {link.created_by_detail.email}
                                 </p>
                               </div>
                             </a>

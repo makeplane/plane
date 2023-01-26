@@ -32,7 +32,7 @@ type Props = {
   issue: IIssue;
   properties: Properties;
   snapshot?: DraggableStateSnapshot;
-  assignees: IUserLite[] | (IUserLite | undefined)[];
+  assignees: Partial<IUserLite>[] | (Partial<IUserLite> | undefined)[];
   people: IWorkspaceMember[] | undefined;
   handleDeleteIssue?: React.Dispatch<React.SetStateAction<string | undefined>>;
   partialUpdateIssue: any;
