@@ -1,31 +1,29 @@
-import React, { useEffect, useState } from "react";
-
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import type { NextPage, NextPageContext } from "next";
-
 import useSWR, { mutate } from "swr";
+import { RectangleStackIcon } from "@heroicons/react/24/outline";
+import { PlusIcon } from "@heroicons/react/20/solid";
 // lib
 import { requiredAuth } from "lib/auth";
 // services
-import issuesServices from "lib/services/issues.service";
-import projectService from "lib/services/project.service";
+import issuesServices from "services/issues.service";
+import projectService from "services/project.service";
 // layouts
 import AppLayout from "layouts/app-layout";
-// hooks
-import useIssuesFilter from "lib/hooks/useIssuesFilter";
+// contexts
+import { IssueViewContextProvider } from "contexts/issue-view.context";
 // components
 import ListView from "components/project/issues/list-view";
 import BoardView from "components/project/issues/BoardView";
 import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
-import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
+import { CreateUpdateIssueModal } from "components/issues";
 import View from "components/core/view";
 // ui
-import { Spinner, BreadcrumbItem, Breadcrumbs, EmptySpace, EmptySpaceItem, HeaderButton } from "ui";
-// icons
-import { ListBulletIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
-import { PlusIcon, Squares2X2Icon } from "@heroicons/react/20/solid";
+import { Spinner, EmptySpace, EmptySpaceItem, HeaderButton } from "components/ui";
+import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // types
 import type { IIssue, IssueResponse } from "types";
+import type { NextPage, NextPageContext } from "next";
 // fetch-keys
 import { PROJECT_DETAILS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 
@@ -56,21 +54,6 @@ const ProjectIssues: NextPage = () => {
       : null
   );
 
-  const {
-    issueView,
-    groupByProperty,
-    setGroupByProperty,
-    groupedByIssues,
-    setOrderBy,
-    setFilterIssue,
-    orderBy,
-    filterIssue,
-    resetFilterToDefault,
-    setNewFilterDefaultView,
-    setIssueViewToKanban,
-    setIssueViewToList,
-  } = useIssuesFilter(projectIssues?.results.filter((p) => p.parent === null) ?? []);
-
   useEffect(() => {
     if (!isOpen) {
       const timer = setTimeout(() => {
@@ -100,118 +83,88 @@ const ProjectIssues: NextPage = () => {
       });
   };
 
+  const handleEditIssue = (issue: IIssue) => {
+    setIsOpen(true);
+    setSelectedIssue({ ...issue, actionType: "edit" });
+  };
+
   return (
-    <AppLayout
-      breadcrumbs={
-        <Breadcrumbs>
-          <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
-          <BreadcrumbItem title={`${projectDetails?.name ?? "Project"} Issues`} />
-        </Breadcrumbs>
-      }
-      right={
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-x-1">
-            <button
-              type="button"
-              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200 ${
-                issueView === "list" ? "bg-gray-200" : ""
-              }`}
-              onClick={() => setIssueViewToList()}
-            >
-              <ListBulletIcon className="h-4 w-4" />
-            </button>
-            <button
-              type="button"
-              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200 ${
-                issueView === "kanban" ? "bg-gray-200" : ""
-              }`}
-              onClick={() => setIssueViewToKanban()}
-            >
-              <Squares2X2Icon className="h-4 w-4" />
-            </button>
+    <IssueViewContextProvider>
+      <AppLayout
+        breadcrumbs={
+          <Breadcrumbs>
+            <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
+            <BreadcrumbItem title={`${projectDetails?.name ?? "Project"} Issues`} />
+          </Breadcrumbs>
+        }
+        right={
+          <div className="flex items-center gap-2">
+            <View issues={projectIssues?.results.filter((p) => p.parent === null) ?? []} />
+            <HeaderButton
+              Icon={PlusIcon}
+              label="Add Issue"
+              onClick={() => {
+                const e = new KeyboardEvent("keydown", {
+                  key: "i",
+                  ctrlKey: true,
+                });
+                document.dispatchEvent(e);
+              }}
+            />
           </div>
-          <View
-            groupByProperty={groupByProperty}
-            setGroupByProperty={setGroupByProperty}
-            orderBy={orderBy}
-            setOrderBy={setOrderBy}
-            filterIssue={filterIssue}
-            setFilterIssue={setFilterIssue}
-            resetFilterToDefault={resetFilterToDefault}
-            setNewFilterDefaultView={setNewFilterDefaultView}
-          />
-          <HeaderButton
-            Icon={PlusIcon}
-            label="Add Issue"
-            onClick={() => {
-              const e = new KeyboardEvent("keydown", {
-                key: "i",
-                ctrlKey: true,
-              });
-              document.dispatchEvent(e);
-            }}
-          />
-        </div>
-      }
-    >
-      <CreateUpdateIssuesModal
-        isOpen={isOpen && selectedIssue?.actionType !== "delete"}
-        setIsOpen={setIsOpen}
-        projectId={projectId as string}
-        data={selectedIssue}
-      />
-      <ConfirmIssueDeletion
-        handleClose={() => setDeleteIssue(undefined)}
-        isOpen={!!deleteIssue}
-        data={projectIssues?.results.find((issue) => issue.id === deleteIssue)}
-      />
-      {!projectIssues ? (
-        <div className="flex h-full w-full items-center justify-center">
-          <Spinner />
-        </div>
-      ) : projectIssues.count > 0 ? (
-        <>
-          {issueView === "list" ? (
+        }
+      >
+        <CreateUpdateIssueModal
+          isOpen={isOpen && selectedIssue?.actionType !== "delete"}
+          prePopulateData={{ ...selectedIssue }}
+          handleClose={() => setIsOpen(false)}
+          data={selectedIssue}
+        />
+        <ConfirmIssueDeletion
+          handleClose={() => setDeleteIssue(undefined)}
+          isOpen={!!deleteIssue}
+          data={projectIssues?.results.find((issue) => issue.id === deleteIssue)}
+        />
+        {!projectIssues ? (
+          <div className="flex h-full w-full items-center justify-center">
+            <Spinner />
+          </div>
+        ) : projectIssues.count > 0 ? (
+          <>
             <ListView
-              groupedByIssues={groupedByIssues}
-              selectedGroup={groupByProperty}
-              setSelectedIssue={setSelectedIssue}
+              issues={projectIssues?.results.filter((p) => p.parent === null) ?? []}
+              handleEditIssue={handleEditIssue}
+              partialUpdateIssue={partialUpdateIssue}
+            />
+            <BoardView
+              issues={projectIssues?.results.filter((p) => p.parent === null) ?? []}
               handleDeleteIssue={setDeleteIssue}
               partialUpdateIssue={partialUpdateIssue}
             />
-          ) : (
-            <div className="h-screen">
-              <BoardView
-                selectedGroup={groupByProperty}
-                groupedByIssues={groupedByIssues}
-                handleDeleteIssue={setDeleteIssue}
-                partialUpdateIssue={partialUpdateIssue}
+          </>
+        ) : (
+          <div className="grid h-full w-full place-items-center px-4 sm:px-0">
+            <EmptySpace
+              title="You don't have any issue yet."
+              description="Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done."
+              Icon={RectangleStackIcon}
+            >
+              <EmptySpaceItem
+                title="Create a new issue"
+                description={
+                  <span>
+                    Use <pre className="inline rounded bg-gray-100 px-2 py-1">Ctrl/Command + I</pre>{" "}
+                    shortcut to create a new issue
+                  </span>
+                }
+                Icon={PlusIcon}
+                action={() => setIsOpen(true)}
               />
-            </div>
-          )}
-        </>
-      ) : (
-        <div className="grid h-full w-full place-items-center px-4 sm:px-0">
-          <EmptySpace
-            title="You don't have any issue yet."
-            description="Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done."
-            Icon={RectangleStackIcon}
-          >
-            <EmptySpaceItem
-              title="Create a new issue"
-              description={
-                <span>
-                  Use <pre className="inline rounded bg-gray-100 px-2 py-1">Ctrl/Command + I</pre>{" "}
-                  shortcut to create a new issue
-                </span>
-              }
-              Icon={PlusIcon}
-              action={() => setIsOpen(true)}
-            />
-          </EmptySpace>
-        </div>
-      )}
-    </AppLayout>
+            </EmptySpace>
+          </div>
+        )}
+      </AppLayout>
+    </IssueViewContextProvider>
   );
 };
 

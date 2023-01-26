@@ -31,7 +31,6 @@ export const MODULE_STATUS = [
 export const groupByOptions: Array<{ name: string; key: NestedKeyOf<IIssue> | null }> = [
   { name: "State", key: "state_detail.name" },
   { name: "Priority", key: "priority" },
-  // { name: "Cycle", key: "issue_cycle.cycle_detail.name" },
   { name: "Created By", key: "created_by" },
   { name: "None", key: null },
 ];

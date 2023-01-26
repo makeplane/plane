@@ -1,11 +1,12 @@
-import "../styles/globals.css";
+// styles
+import "styles/globals.css";
 import "styles/editor.css";
-import type { AppProps } from "next/app";
-
-// context
+// contexts
 import { UserProvider } from "contexts/user.context";
 import { ToastContextProvider } from "contexts/toast.context";
 import { ThemeContextProvider } from "contexts/theme.context";
+// types
+import type { AppProps } from "next/app";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -17,7 +18,6 @@ function MyApp({ Component, pageProps }: AppProps) {
           </ThemeContextProvider>
         </ToastContextProvider>
       </UserProvider>
-      <script defer data-domain="app.plane.so" src="https://plausible.io/js/script.js"></script>
     </>
   );
 }

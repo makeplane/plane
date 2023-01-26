@@ -5,8 +5,7 @@ import type { NextPage } from "next";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 
-const ErrorPage: NextPage = () => {
-  return (
+const ErrorPage: NextPage = () => (
     <DefaultLayout
       meta={{
         title: "Plane - An error occurred",
@@ -18,6 +17,5 @@ const ErrorPage: NextPage = () => {
       </div>
     </DefaultLayout>
   );
-};
 
 export default ErrorPage;

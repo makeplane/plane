@@ -7,18 +7,16 @@ import useSWR from "swr";
 
 import { Control, Controller } from "react-hook-form";
 // services
-import workspaceService from "lib/services/workspace.service";
-// headless ui
 import { Listbox, Transition } from "@headlessui/react";
+import { UserIcon } from "@heroicons/react/24/outline";
+import workspaceService from "services/workspace.service";
+// headless ui
 // ui
-import { Spinner } from "ui";
+import { Spinner } from "components/ui";
 // icons
-import { UserGroupIcon, UserIcon } from "@heroicons/react/24/outline";
-import User from "public/user.png";
 // types
 import { IModule } from "types";
 // constants
-import { classNames } from "constants/common";
 import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 
 type Props = {
@@ -61,10 +59,9 @@ const SelectLead: React.FC<Props> = ({ control, submitChanges }) => {
                   <div className="relative">
                     <Listbox.Button className="flex w-full cursor-pointer items-center gap-1 text-xs">
                       <span
-                        className={classNames(
-                          value ? "" : "text-gray-900",
-                          "hidden truncate text-left sm:block"
-                        )}
+                        className={`hidden truncate text-left sm:block ${
+                          value ? "" : "text-gray-900"
+                        }`}
                       >
                         <div className="flex cursor-pointer items-center gap-1 text-xs">
                           {person && person.avatar && person.avatar !== "" ? (

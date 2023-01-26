@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 
 import NextImage from "next/image";
 import { useRouter } from "next/router";
@@ -8,11 +8,11 @@ import { useDropzone } from "react-dropzone";
 import { Transition, Dialog } from "@headlessui/react";
 
 // services
-import fileServices from "lib/services/file.service";
+import fileServices from "services/file.service";
 // icon
-import { UserCircleIcon } from "ui/icons";
+import { UserCircleIcon } from "components/icons";
 // ui
-import { Button } from "ui";
+import { Button } from "components/ui";
 
 type TImageUploadModalProps = {
   value?: string | null;
@@ -70,7 +70,7 @@ export const ImageUploadModal: React.FC<TImageUploadModalProps> = (props) => {
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={handleClose}>
+      <Dialog as="div" className="relative z-30" onClose={handleClose}>
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
@@ -83,7 +83,7 @@ export const ImageUploadModal: React.FC<TImageUploadModalProps> = (props) => {
           <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
         </Transition.Child>
 
-        <div className="fixed inset-0 z-10 overflow-y-auto">
+        <div className="fixed inset-0 z-30 overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
             <Transition.Child
               as={React.Fragment}
@@ -103,13 +103,13 @@ export const ImageUploadModal: React.FC<TImageUploadModalProps> = (props) => {
                     <div className="flex items-center gap-3">
                       <div
                         {...getRootProps()}
-                        className={`relative block w-full rounded-lg p-12 text-center focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
+                        className={`relative block h-80 w-full rounded-lg p-12 text-center focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
                           (image === null && isDragActive) || !value
                             ? "border-2 border-dashed border-gray-300 hover:border-gray-400"
                             : ""
                         }`}
                       >
-                        {value && value !== "" ? (
+                        {image !== null || (value && value !== null && value !== "") ? (
                           <>
                             <button
                               type="button"
@@ -121,7 +121,7 @@ export const ImageUploadModal: React.FC<TImageUploadModalProps> = (props) => {
                             <NextImage
                               layout="fill"
                               objectFit="cover"
-                              src={image ? URL.createObjectURL(image) : value}
+                              src={image ? URL.createObjectURL(image) : value ? value : ""}
                               alt="image"
                             />
                           </>

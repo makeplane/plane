@@ -10,6 +10,7 @@ export interface IModule {
   lead: string | null;
   lead_detail: IUserLite;
   link_module: {
+    created_at: Date
     created_by: string;
     created_by_detail: IUserLite;
     id: string;
@@ -43,6 +44,7 @@ export interface ModuleIssueResponse {
   updated_at: Date;
   updated_by: string;
   workspace: string;
+  sub_issues_count: number;
 }
 
 export type ModuleLink = {

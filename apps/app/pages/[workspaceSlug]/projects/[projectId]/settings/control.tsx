@@ -1,23 +1,24 @@
 import React, { useEffect } from "react";
 
 import { useRouter } from "next/router";
-import type { NextPageContext, NextPage } from "next";
 import Image from "next/image";
 
 import useSWR, { mutate } from "swr";
 
 import { Controller, useForm } from "react-hook-form";
+import type { NextPageContext, NextPage } from "next";
 // lib
 import { requiredAdmin } from "lib/auth";
 // layouts
 import SettingsLayout from "layouts/settings-layout";
 // services
-import projectService from "lib/services/project.service";
-import workspaceService from "lib/services/workspace.service";
+import projectService from "services/project.service";
+import workspaceService from "services/workspace.service";
 // hooks
-import useToast from "lib/hooks/useToast";
+import useToast from "hooks/use-toast";
 // ui
-import { BreadcrumbItem, Breadcrumbs, Button, CustomSelect, Loader } from "ui";
+import { Button, CustomSelect, Loader } from "components/ui";
+import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // types
 import { IProject, IWorkspace } from "types";
 // fetch-keys

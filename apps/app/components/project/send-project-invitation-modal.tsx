@@ -7,22 +7,20 @@ import useSWR, { mutate } from "swr";
 import { useForm, Controller } from "react-hook-form";
 
 import { Dialog, Transition, Listbox } from "@headlessui/react";
+// ui
+import { ChevronDownIcon, CheckIcon } from "@heroicons/react/20/solid";
+import { Button, Select, TextArea } from "components/ui";
 // hooks
-import useUser from "lib/hooks/useUser";
-import useToast from "lib/hooks/useToast";
+import useToast from "hooks/use-toast";
 // services
-import projectService from "lib/services/project.service";
-import workspaceService from "lib/services/workspace.service";
+import projectService from "services/project.service";
+import workspaceService from "services/workspace.service";
+// types
+import { IProjectMemberInvitation } from "types";
 // constants
 import { ROLE } from "constants/";
 import { PROJECT_INVITATIONS, WORKSPACE_MEMBERS } from "constants/fetch-keys";
-// ui
-import { Button, Select, TextArea } from "ui";
 // icons
-import { ChevronDownIcon, CheckIcon } from "@heroicons/react/20/solid";
-
-// types
-import { IProjectMemberInvitation } from "types";
 
 type Props = {
   isOpen: boolean;
@@ -84,9 +82,7 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
         setIsOpen(false);
         mutate(
           PROJECT_INVITATIONS,
-          (prevData: any[]) => {
-            return [{ ...formData, ...response }, ...(prevData ?? [])];
-          },
+          (prevData: any[]) => [{ ...formData, ...response }, ...(prevData ?? [])],
           false
         );
         setToastAlert({
@@ -247,7 +243,7 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
                               )}
                             </Listbox>
                           )}
-                        ></Controller>
+                        />
                       </div>
                       <div>
                         <div>

@@ -5,15 +5,12 @@ import { useRouter } from "next/router";
 import { mutate } from "swr";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
-// services
-import cycleService from "lib/services/cycles.service";
-// fetch api
-import { CYCLE_LIST } from "constants/fetch-keys";
-// icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+// services
+import cycleService from "services/cycles.service";
 // ui
-import { Button } from "ui";
-
+import { Button } from "components/ui";
+// icons
 // types
 import type { ICycle } from "types";
 type TConfirmCycleDeletionProps = {
@@ -21,6 +18,8 @@ type TConfirmCycleDeletionProps = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   data?: ICycle;
 };
+// fetch-keys
+import { CYCLE_LIST } from "constants/fetch-keys";
 
 const ConfirmCycleDeletion: React.FC<TConfirmCycleDeletionProps> = (props) => {
   const { isOpen, setIsOpen, data } = props;
@@ -63,7 +62,7 @@ const ConfirmCycleDeletion: React.FC<TConfirmCycleDeletionProps> = (props) => {
     <Transition.Root show={isOpen} as={React.Fragment}>
       <Dialog
         as="div"
-        className="relative z-10"
+        className="relative z-20"
         initialFocus={cancelButtonRef}
         onClose={handleClose}
       >
@@ -79,7 +78,7 @@ const ConfirmCycleDeletion: React.FC<TConfirmCycleDeletionProps> = (props) => {
           <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
         </Transition.Child>
 
-        <div className="fixed inset-0 z-10 overflow-y-auto">
+        <div className="fixed inset-0 z-20 overflow-y-auto">
           <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
             <Transition.Child
               as={React.Fragment}

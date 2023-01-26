@@ -3,32 +3,8 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import type { NextPage, NextPageContext } from "next";
-
 import useSWR from "swr";
-
 import { useForm } from "react-hook-form";
-
-// hooks
-import useUser from "lib/hooks/useUser";
-import useToast from "lib/hooks/useToast";
-// lib
-import { requiredAuth } from "lib/auth";
-// services
-import projectService from "lib/services/project.service";
-// layouts
-import AppLayout from "layouts/app-layout";
-// constants
-import { USER_ISSUE, USER_WORKSPACE_INVITATIONS, PROJECTS_LIST } from "constants/fetch-keys";
-// services
-import userService from "lib/services/user.service";
-import fileServices from "lib/services/file.service";
-import workspaceService from "lib/services/workspace.service";
-// components
-import { ImageUploadModal } from "components/common/image-upload-modal";
-// ui
-import { BreadcrumbItem, Breadcrumbs, Button, Input, Spinner } from "ui";
-// icons
 import {
   ChevronRightIcon,
   ClipboardDocumentListIcon,
@@ -38,8 +14,30 @@ import {
   UserPlusIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-// types
+import type { NextPage, NextPageContext } from "next";
+
+// hooks
 import type { IIssue, IUser } from "types";
+import useUser from "hooks/use-user";
+import useToast from "hooks/use-toast";
+// lib
+import { requiredAuth } from "lib/auth";
+// services
+import projectService from "services/project.service";
+// layouts
+import AppLayout from "layouts/app-layout";
+// constants
+import { USER_ISSUE, USER_WORKSPACE_INVITATIONS, PROJECTS_LIST } from "constants/fetch-keys";
+// services
+import userService from "services/user.service";
+import workspaceService from "services/workspace.service";
+// components
+import { ImageUploadModal } from "components/common/image-upload-modal";
+// ui
+import { Button, Input, Spinner } from "components/ui";
+import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+// icons
+// types
 
 const defaultValues: Partial<IUser> = {
   avatar: "",
@@ -118,7 +116,7 @@ const Profile: NextPage = () => {
       title: "My Issues",
       number: myIssues?.length ?? 0,
       description: "View the list of issues assigned to you for this workspace.",
-      href: "/me/my-issues",
+      href: `/${workspaceSlug}/me/my-issues`,
     },
     {
       icon: ClipboardDocumentListIcon,
@@ -151,7 +149,7 @@ const Profile: NextPage = () => {
           handleSubmit(onSubmit)();
           setIsImageUploadModalOpen(false);
         }}
-        value={watch("avatar")}
+        value={watch("avatar") !== "" ? watch("avatar") : undefined}
       />
       <div className="w-full space-y-5">
         <Breadcrumbs>

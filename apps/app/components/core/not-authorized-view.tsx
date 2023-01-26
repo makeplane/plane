@@ -5,9 +5,9 @@ import { useRouter } from "next/router";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 // hooks
-import useUser from "lib/hooks/useUser";
+import useUser from "hooks/use-user";
 // icons
-import { LockIcon } from "ui/icons";
+import { LockIcon } from "components/icons";
 
 type TNotAuthorizedViewProps = {
   actionButton?: React.ReactNode;

@@ -1,20 +1,18 @@
 import React from "react";
-// swr
 import { mutate } from "swr";
-// react hook form
 import { useForm } from "react-hook-form";
 // headless
 import { Dialog, Transition } from "@headlessui/react";
-// fetch keys
-import { WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 // services
-import workspaceService from "lib/services/workspace.service";
+import workspaceService from "services/workspace.service";
 // ui
-import { Button, Input, TextArea, Select } from "ui";
+import { Button, Input, Select } from "components/ui";
 // hooks
-import useToast from "lib/hooks/useToast";
+import useToast from "hooks/use-toast";
 // types
 import { IWorkspaceMemberInvitation } from "types";
+// fetch keys
+import { WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;

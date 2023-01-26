@@ -5,31 +5,31 @@ import Link from "next/link";
 // swr
 import useSWR from "swr";
 // hooks
-import useToast from "lib/hooks/useToast";
+import { Disclosure, Transition } from "@headlessui/react";
+import { ChevronDownIcon, PlusIcon } from "@heroicons/react/24/outline";
+import useToast from "hooks/use-toast";
 // services
-import projectService from "lib/services/project.service";
+import projectService from "services/project.service";
 // components
 import { CreateProjectModal } from "components/project";
 // headless ui
-import { Disclosure, Transition } from "@headlessui/react";
 // ui
-import { CustomMenu, Loader } from "ui";
+import { CustomMenu, Loader } from "components/ui";
 // icons
-import { ChevronDownIcon, PlusIcon } from "@heroicons/react/24/outline";
+// helpers
+import { copyTextToClipboard } from "helpers/string.helper";
 // fetch-keys
 import { PROJECTS_LIST } from "constants/fetch-keys";
-// constants
-import { classNames, copyTextToClipboard } from "constants/common";
 
 type Props = {
   navigation: (
     workspaceSlug: string,
     projectId: string
-  ) => Array<{
+  ) => {
     name: string;
     href: string;
-    icon: (props: any) => any;
-  }>;
+    icon: any;
+  }[];
   sidebarCollapse: boolean;
 };
 
@@ -125,22 +125,18 @@ const ProjectsList: React.FC<Props> = ({ navigation, sidebarCollapse }) => {
                           {navigation(workspaceSlug as string, project?.id).map((item) => (
                             <Link key={item.name} href={item.href}>
                               <a
-                                className={classNames(
+                                className={`group flex items-center rounded-md px-2 py-2 text-xs font-medium outline-none ${
                                   item.href === router.asPath
                                     ? "bg-gray-200 text-gray-900"
-                                    : "text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900",
-                                  "group flex items-center rounded-md px-2 py-2 text-xs font-medium outline-none",
-                                  sidebarCollapse ? "justify-center" : ""
-                                )}
+                                    : "text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900"
+                                } ${sidebarCollapse ? "justify-center" : ""}`}
                               >
                                 <item.icon
-                                  className={classNames(
+                                  className={`h-4 w-4 flex-shrink-0 ${
                                     item.href === router.asPath
                                       ? "text-gray-900"
-                                      : "text-gray-500 group-hover:text-gray-900",
-                                    "h-4 w-4 flex-shrink-0",
-                                    !sidebarCollapse ? "mr-3" : ""
-                                  )}
+                                      : "text-gray-500 group-hover:text-gray-900"
+                                  } ${!sidebarCollapse ? "mr-3" : ""}`}
                                   aria-hidden="true"
                                 />
                                 {!sidebarCollapse && item.name}
@@ -173,16 +169,16 @@ const ProjectsList: React.FC<Props> = ({ navigation, sidebarCollapse }) => {
           <div className="w-full">
             <Loader className="space-y-5">
               <div className="space-y-2">
-                <Loader.Item height="30px"></Loader.Item>
-                <Loader.Item height="15px" width="80%" light></Loader.Item>
-                <Loader.Item height="15px" width="80%" light></Loader.Item>
-                <Loader.Item height="15px" width="80%" light></Loader.Item>
+                <Loader.Item height="30px" />
+                <Loader.Item height="15px" width="80%" light />
+                <Loader.Item height="15px" width="80%" light />
+                <Loader.Item height="15px" width="80%" light />
               </div>
               <div className="space-y-2">
-                <Loader.Item height="30px"></Loader.Item>
-                <Loader.Item height="15px" width="80%" light></Loader.Item>
-                <Loader.Item height="15px" width="80%" light></Loader.Item>
-                <Loader.Item height="15px" width="80%" light></Loader.Item>
+                <Loader.Item height="30px" />
+                <Loader.Item height="15px" width="80%" light />
+                <Loader.Item height="15px" width="80%" light />
+                <Loader.Item height="15px" width="80%" light />
               </div>
             </Loader>
           </div>
