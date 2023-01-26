@@ -226,7 +226,7 @@ const CommandPalette: React.FC = () => {
                       className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder-gray-500 outline-none focus:ring-0 sm:text-sm"
                       placeholder="Search..."
                       autoComplete="off"
-                      onChange={(event) => setQuery(event.target.value)}
+                      onChange={(e) => setQuery(e.target.value)}
                     />
                   </div>
 

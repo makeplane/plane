@@ -38,7 +38,7 @@ import { Input, Button, Spinner } from "components/ui";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import type { ICycle, IIssue, IIssueLabels, IssueResponse } from "types";
+import type { ICycle, IIssue, IIssueLabels } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS, PROJECT_ISSUES_LIST, ISSUE_DETAILS } from "constants/fetch-keys";
 
@@ -115,26 +115,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
         issues: [issueDetail.id],
       })
       .then((res) => {
-        mutate<IssueResponse>(
-          PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
-          (prevData: any) => ({
-            ...prevData,
-            results: (prevData?.results ?? []).map((p: IIssue) => {
-              if (p.id === issueId)
-                return {
-                  ...p,
-                  issue_cycle: {
-                    ...p.issue_cycle,
-                    id: "",
-                    cycle: cycleDetail.id ?? "",
-                    cycle_detail: cycleDetail,
-                  },
-                };
-              else return p;
-            }),
-          }),
-          false
-        );
+        mutate(ISSUE_DETAILS(issueId as string));
       });
   };
 
