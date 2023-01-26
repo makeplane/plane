@@ -199,7 +199,6 @@ const SingleModule = () => {
               : { module: moduleId as string, ...selectedIssues }
           }
           handleClose={() => setCreateUpdateIssueModal(false)}
-          projectId={projectId as string}
         />
       )}
       <ExistingIssuesListModal

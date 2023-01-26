@@ -175,7 +175,6 @@ const CommandPalette: React.FC = () => {
       <CreateUpdateIssueModal
         isOpen={isIssueModalOpen}
         handleClose={() => setIsIssueModalOpen(false)}
-        projectId={projectId as string}
       />
       <BulkDeleteIssuesModal
         isOpen={isBulkDeleteIssuesModalOpen}

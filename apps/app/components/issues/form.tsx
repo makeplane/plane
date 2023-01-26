@@ -49,12 +49,14 @@ const defaultValues: Partial<IIssue> = {
 
 export interface IssueFormProps {
   handleFormSubmit: (values: Partial<IIssue>) => void;
-  projectId: string;
   initialData?: Partial<IIssue>;
   issues: IIssue[];
+  projectId: string;
+  setActiveProject: React.Dispatch<React.SetStateAction<string | null>>;
   createMore: boolean;
   setCreateMore: React.Dispatch<React.SetStateAction<boolean>>;
   handleClose: () => void;
+  status: boolean;
 }
 
 export const IssueForm: FC<IssueFormProps> = ({
@@ -62,9 +64,11 @@ export const IssueForm: FC<IssueFormProps> = ({
   initialData,
   issues = [],
   projectId,
+  setActiveProject,
   createMore,
   setCreateMore,
   handleClose,
+  status,
 }) => {
   // states
   const [mostSimilarIssue, setMostSimilarIssue] = useState<IIssue | undefined>();
@@ -141,11 +145,15 @@ export const IssueForm: FC<IssueFormProps> = ({
               control={control}
               name="project"
               render={({ field: { value, onChange } }) => (
-                <IssueProjectSelect value={value} onChange={onChange} />
+                <IssueProjectSelect
+                  value={value}
+                  onChange={onChange}
+                  setActiveProject={setActiveProject}
+                />
               )}
             />
             <h3 className="text-lg font-medium leading-6 text-gray-900">
-              {initialData ? "Update" : "Create"} Issue
+              {status ? "Update" : "Create"} Issue
             </h3>
           </div>
           {watch("parent") && watch("parent") !== "" ? (
@@ -245,18 +253,19 @@ export const IssueForm: FC<IssueFormProps> = ({
                   control={control}
                   name="state"
                   render={({ field: { value, onChange } }) => (
-                    <IssueStateSelect setIsOpen={setStateModal} value={value} onChange={onChange} />
+                    <IssueStateSelect
+                      setIsOpen={setStateModal}
+                      value={value}
+                      onChange={onChange}
+                      projectId={projectId}
+                    />
                   )}
                 />
                 <Controller
                   control={control}
                   name="cycle"
                   render={({ field: { value, onChange } }) => (
-                    <IssueCycleSelect
-                      projectId={projectId as string}
-                      value={value}
-                      onChange={onChange}
-                    />
+                    <IssueCycleSelect projectId={projectId} value={value} onChange={onChange} />
                   )}
                 />
                 <Controller
@@ -277,7 +286,7 @@ export const IssueForm: FC<IssueFormProps> = ({
                   control={control}
                   name="labels_list"
                   render={({ field: { value, onChange } }) => (
-                    <IssueLabelSelect value={value} onChange={onChange} />
+                    <IssueLabelSelect value={value} onChange={onChange} projectId={projectId} />
                   )}
                 />
                 <Controller
@@ -357,7 +366,7 @@ export const IssueForm: FC<IssueFormProps> = ({
               Discard
             </Button>
             <Button type="submit" disabled={isSubmitting}>
-              {initialData
+              {status
                 ? isSubmitting
                   ? "Updating Issue..."
                   : "Update Issue"

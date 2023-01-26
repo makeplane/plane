@@ -125,6 +125,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
                   ...p,
                   issue_cycle: {
                     ...p.issue_cycle,
+                    id: "",
                     cycle: cycleDetail.id ?? "",
                     cycle_detail: cycleDetail,
                   },

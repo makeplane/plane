@@ -79,13 +79,12 @@ const SingleBoard: React.FC<Props> = ({
 
   const addIssueToState = () => {
     setIsIssueOpen(true);
-    if (selectedGroup !== null) {
+    if (selectedGroup)
       setPreloadedData({
         state: stateId !== null ? stateId : undefined,
         [selectedGroup]: groupTitle,
         actionType: "createIssue",
       });
-    }
   };
 
   return (

@@ -41,27 +41,8 @@ const SelectCycle: React.FC<Props> = ({ issueDetail, handleCycleChange }) => {
     issuesService
       .removeIssueFromCycle(workspaceSlug as string, projectId as string, cycleId, bridgeId)
       .then((res) => {
-        console.log(res);
+        mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
 
-        mutate(
-          PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
-          (prevData: any) => ({
-            ...prevData,
-            results: (prevData?.results ?? []).map((p: IIssue) => {
-              if (p.id === issueId)
-                return {
-                  ...p,
-                  issue_cycle: {
-                    ...p.issue_cycle,
-                    cycle: null,
-                    cycle_detail: null,
-                  },
-                };
-              else return p;
-            }),
-          }),
-          false
-        );
         mutate(CYCLE_ISSUES(cycleId));
       })
       .catch((e) => {
@@ -69,7 +50,7 @@ const SelectCycle: React.FC<Props> = ({ issueDetail, handleCycleChange }) => {
       });
   };
 
-  const issueCycle = issueDetail?.issue_cycle?.cycle_detail;
+  const issueCycle = issueDetail?.issue_cycle;
 
   return (
     <div className="flex flex-wrap items-center py-2">
@@ -83,25 +64,22 @@ const SelectCycle: React.FC<Props> = ({ issueDetail, handleCycleChange }) => {
             <span
               className={`hidden truncate text-left sm:block ${issueCycle ? "" : "text-gray-900"}`}
             >
-              {issueCycle ? issueCycle?.name : "None"}
+              {issueCycle ? issueCycle.cycle_detail.name : "None"}
             </span>
           }
-          value={issueCycle?.id}
+          value={issueCycle?.cycle_detail.id}
           onChange={(value: any) => {
             value === null
-              ? removeIssueFromCycle(
-                  issueDetail?.issue_cycle?.id ?? "",
-                  issueDetail?.issue_cycle?.cycle ?? ""
-                )
+              ? removeIssueFromCycle(issueCycle?.id ?? "", issueCycle?.cycle ?? "")
               : handleCycleChange(cycles?.find((c) => c.id === value) as any);
           }}
         >
           {cycles ? (
             cycles.length > 0 ? (
               <>
-                <CustomSelect.Option value={null} className="capitalize">
+                {/* <CustomSelect.Option value={null} className="capitalize">
                   None
-                </CustomSelect.Option>
+                </CustomSelect.Option> */}
                 {cycles.map((option) => (
                   <CustomSelect.Option key={option.id} value={option.id}>
                     {option.name}

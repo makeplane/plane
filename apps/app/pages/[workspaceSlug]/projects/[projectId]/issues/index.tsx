@@ -118,7 +118,6 @@ const ProjectIssues: NextPage = () => {
           isOpen={isOpen && selectedIssue?.actionType !== "delete"}
           prePopulateData={{ ...selectedIssue }}
           handleClose={() => setIsOpen(false)}
-          projectId={projectId as string}
           data={selectedIssue}
         />
         <ConfirmIssueDeletion

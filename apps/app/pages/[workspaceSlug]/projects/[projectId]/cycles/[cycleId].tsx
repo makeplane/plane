@@ -186,7 +186,6 @@ const SingleCycle: React.FC = () => {
             : { cycle: cycleId as string, ...selectedIssues }
         }
         handleClose={() => setIsIssueModalOpen(false)}
-        projectId={projectId as string}
       />
       <ExistingIssuesListModal
         isOpen={cycleIssuesListModal}

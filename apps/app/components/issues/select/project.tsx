@@ -16,9 +16,14 @@ import { PROJECTS_LIST } from "constants/fetch-keys";
 export interface IssueProjectSelectProps {
   value: string;
   onChange: (value: string) => void;
+  setActiveProject: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
-export const IssueProjectSelect: FC<IssueProjectSelectProps> = ({ value, onChange }) => {
+export const IssueProjectSelect: FC<IssueProjectSelectProps> = ({
+  value,
+  onChange,
+  setActiveProject,
+}) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -30,7 +35,13 @@ export const IssueProjectSelect: FC<IssueProjectSelectProps> = ({ value, onChang
 
   return (
     <>
-      <Listbox value={value} onChange={onChange}>
+      <Listbox
+        value={value}
+        onChange={(val) => {
+          onChange(val);
+          setActiveProject(val);
+        }}
+      >
         {({ open }) => (
           <>
             <div className="relative">

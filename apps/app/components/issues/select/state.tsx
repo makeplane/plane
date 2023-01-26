@@ -17,19 +17,20 @@ type Props = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   value: string;
   onChange: (value: string) => void;
+  projectId: string;
 };
 
-export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange }) => {
+export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, projectId }) => {
   // states
   const [query, setQuery] = useState("");
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug } = router.query;
 
   const { data: states } = useSWR(
-    workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
+    workspaceSlug && projectId ? STATE_LIST(projectId) : null,
     workspaceSlug && projectId
-      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
+      ? () => stateService.getStates(workspaceSlug as string, projectId)
       : null
   );
 
