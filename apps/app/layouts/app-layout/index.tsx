@@ -5,8 +5,6 @@ import useSWR from "swr";
 import projectService from "services/project.service";
 // hooks
 import useUser from "hooks/use-user";
-// fetch keys
-import { PROJECT_MEMBERS } from "constants/fetch-keys";
 // ui
 import { Spinner } from "components/ui";
 // components
@@ -16,6 +14,8 @@ import { JoinProject } from "components/project";
 import Container from "layouts/container";
 import AppSidebar from "./app-sidebar";
 import AppHeader from "./app-header";
+// fetch-keys
+import { PROJECT_MEMBERS } from "constants/fetch-keys";
 
 export type Meta = {
   title?: string | null;
@@ -35,25 +35,24 @@ export interface AppLayoutProps {
   right?: JSX.Element;
 }
 
-const AppLayout: FC<AppLayoutProps> = (props) => {
-  const {
-    meta,
-    children,
-    noPadding = false,
-    bg = "primary",
-    noHeader = false,
-    breadcrumbs,
-    left,
-    right,
-  } = props;
+const AppLayout: FC<AppLayoutProps> = ({
+  meta,
+  children,
+  noPadding = false,
+  bg = "primary",
+  noHeader = false,
+  breadcrumbs,
+  left,
+  right,
+}) => {
+  // states
+  const [toggleSidebar, setToggleSidebar] = useState(false);
+  const [isJoiningProject, setIsJoiningProject] = useState(false);
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // user info
   const { user } = useUser();
-  // states
-  const [isJoiningProject, setIsJoiningProject] = useState(false);
-  const [isSidebarActive, setSidebarActive] = useState(false);
   // fetching Project Members information
   const { data: projectMembers, mutate: projectMembersMutate } = useSWR(
     workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
@@ -86,14 +85,14 @@ const AppLayout: FC<AppLayoutProps> = (props) => {
     <Container meta={meta}>
       <CommandPalette />
       <div className="flex h-screen w-full overflow-x-hidden">
-        <AppSidebar isSidebarActive={isSidebarActive} setSidebarActive={setSidebarActive} />
+        <AppSidebar toggleSidebar={toggleSidebar} setToggleSidebar={setToggleSidebar} />
         <main className="flex h-screen w-full min-w-0 flex-col overflow-y-auto">
           {!noHeader && (
             <AppHeader
               breadcrumbs={breadcrumbs}
               left={left}
               right={right}
-              setToggleSidebar={setSidebarActive}
+              setToggleSidebar={setToggleSidebar}
             />
           )}
 
