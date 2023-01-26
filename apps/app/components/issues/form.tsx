@@ -56,6 +56,7 @@ export interface IssueFormProps {
   createMore: boolean;
   setCreateMore: React.Dispatch<React.SetStateAction<boolean>>;
   handleClose: () => void;
+  status: boolean;
 }
 
 export const IssueForm: FC<IssueFormProps> = ({
@@ -67,6 +68,7 @@ export const IssueForm: FC<IssueFormProps> = ({
   createMore,
   setCreateMore,
   handleClose,
+  status,
 }) => {
   // states
   const [mostSimilarIssue, setMostSimilarIssue] = useState<IIssue | undefined>();
@@ -151,7 +153,7 @@ export const IssueForm: FC<IssueFormProps> = ({
               )}
             />
             <h3 className="text-lg font-medium leading-6 text-gray-900">
-              {initialData ? "Update" : "Create"} Issue
+              {status ? "Update" : "Create"} Issue
             </h3>
           </div>
           {watch("parent") && watch("parent") !== "" ? (
@@ -364,7 +366,7 @@ export const IssueForm: FC<IssueFormProps> = ({
               Discard
             </Button>
             <Button type="submit" disabled={isSubmitting}>
-              {initialData
+              {status
                 ? isSubmitting
                   ? "Updating Issue..."
                   : "Update Issue"

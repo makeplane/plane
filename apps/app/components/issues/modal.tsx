@@ -253,6 +253,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
                   handleClose={handleClose}
                   projectId={activeProject ?? ""}
                   setActiveProject={setActiveProject}
+                  status={data ? true : false}
                 />
               </Dialog.Panel>
             </Transition.Child>
