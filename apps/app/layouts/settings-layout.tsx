@@ -15,6 +15,7 @@ import CommandPalette from "components/command-palette";
 import { Button } from "components/ui";
 // types
 import { Meta } from "./types";
+import AppSidebar from "./app-layout/app-sidebar";
 
 type Props = {
   meta?: Meta;
@@ -98,6 +99,7 @@ const SettingsLayout: React.FC<Props> = ({
   memberType,
 }) => {
   const [toggleSidebar, setToggleSidebar] = useState(false);
+
   const { isMember, isOwner, isViewer, isGuest } = memberType ?? {
     isMember: false,
     isOwner: false,
@@ -112,7 +114,7 @@ const SettingsLayout: React.FC<Props> = ({
   return (
     <Container meta={meta}>
       <div className="flex h-screen w-full overflow-x-hidden">
-        <Sidebar toggleSidebar={toggleSidebar} setToggleSidebar={setToggleSidebar} />
+        <AppSidebar toggleSidebar={toggleSidebar} setToggleSidebar={setToggleSidebar} />
         <CommandPalette />
         {isMember || isOwner ? (
           <>

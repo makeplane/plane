@@ -6,8 +6,6 @@ import useSWR, { mutate } from "swr";
 
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
-// types
-import type { NextPage, NextPageContext } from "next";
 import { IProject, IWorkspace } from "types";
 // lib
 import { requiredAdmin } from "lib/auth";
@@ -27,6 +25,8 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import OutlineButton from "components/ui/outline-button";
 // helpers
 import { debounce } from "helpers/functions.helper";
+// types
+import type { NextPage, NextPageContext } from "next";
 // fetch-keys
 import { PROJECTS_LIST, PROJECT_DETAILS, WORKSPACE_DETAILS } from "constants/fetch-keys";
 // constants
@@ -117,19 +117,7 @@ const GeneralSettings: NextPage<TGeneralSettingsProps> = (props) => {
           (prevData) => ({ ...prevData, ...res }),
           false
         );
-        mutate<IProject[]>(
-          PROJECTS_LIST(activeWorkspace.slug),
-          (prevData) => {
-            const newData = prevData?.map((item) => {
-              if (item.id === res.id) {
-                return res;
-              }
-              return item;
-            });
-            return newData;
-          },
-          false
-        );
+        mutate(PROJECTS_LIST(activeWorkspace.slug));
         setToastAlert({
           title: "Success",
           type: "success",

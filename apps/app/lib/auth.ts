@@ -1,7 +1,7 @@
+// cookies
+import { convertCookieStringToObject } from "./cookie";
 // types
 import type { IProjectMember, IUser, IWorkspace, IWorkspaceMember } from "types";
-// cookie
-import { convertCookieStringToObject } from "./cookie";
 
 export const requiredAuth = async (cookie?: string) => {
   const cookies = convertCookieStringToObject(cookie);
@@ -47,7 +47,7 @@ export const requiredAdmin = async (workspaceSlug: string, projectId: string, co
 
   try {
     const data = await fetch(
-      `${baseUrl}/api/workspaces/${workspaceSlug}/projects/${projectId}/project-members/me/}`,
+      `${baseUrl}/api/workspaces/${workspaceSlug}/projects/${projectId}/project-members/me/`,
       {
         method: "GET",
         headers: {
@@ -80,7 +80,7 @@ export const requiredWorkspaceAdmin = async (workspaceSlug: string, cookie?: str
   let memberDetail: IWorkspaceMember | null = null;
 
   try {
-    const data = await fetch(`${baseUrl}/api/workspaces/${workspaceSlug}/workspace-members/me/}`, {
+    const data = await fetch(`${baseUrl}/api/workspaces/${workspaceSlug}/workspace-members/me/`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,

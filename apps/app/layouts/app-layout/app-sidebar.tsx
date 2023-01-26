@@ -11,12 +11,11 @@ import {
 import { ProjectSidebarList } from "components/project";
 
 export interface SidebarProps {
-  isSidebarActive: boolean;
-  setSidebarActive: Dispatch<SetStateAction<boolean>>;
+  toggleSidebar: boolean;
+  setToggleSidebar: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Sidebar: React.FC<SidebarProps> = (props) => {
-  const { isSidebarActive, setSidebarActive } = props;
+const Sidebar: React.FC<SidebarProps> = ({ toggleSidebar, setToggleSidebar }) => {
   // theme
   const { collapsed: sidebarCollapse } = useTheme();
 
@@ -24,7 +23,7 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
     <nav className="relative z-20 h-screen">
       <div
         className={`${sidebarCollapse ? "" : "w-auto md:w-60"} fixed inset-y-0 top-0 ${
-          isSidebarActive ? "left-0" : "-left-60 md:left-0"
+          toggleSidebar ? "left-0" : "-left-60 md:left-0"
         } flex h-full flex-col bg-white duration-300 md:relative`}
       >
         <div className="flex h-full flex-1 flex-col border-r border-gray-200">
@@ -34,7 +33,7 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
             </div>
             <WorkspaceSidebarMenu />
             <ProjectSidebarList />
-            <WorkspaceHelpSection setSidebarActive={setSidebarActive} />
+            <WorkspaceHelpSection setSidebarActive={setToggleSidebar} />
           </div>
         </div>
       </div>
