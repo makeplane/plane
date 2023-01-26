@@ -184,7 +184,7 @@ class InviteWorkspaceEndpoint(BaseAPIView):
             workspace_members = WorkspaceMember.objects.filter(
                 workspace_id=workspace.id,
                 member__email__in=[email.get("email") for email in emails],
-            ).select_related("member", "worspace", "workspace__owner")
+            ).select_related("member", "workspace", "workspace__owner")
 
             if len(workspace_members):
                 return Response(
