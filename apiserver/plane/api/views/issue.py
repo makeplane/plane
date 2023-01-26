@@ -3,7 +3,7 @@ import json
 from itertools import groupby, chain
 
 # Django imports
-from django.db.models import Prefetch
+from django.db.models import Prefetch, OuterRef, Func, F
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Third Party imports
@@ -93,9 +93,16 @@ class IssueViewSet(BaseViewSet):
         return super().perform_update(serializer)
 
     def get_queryset(self):
+
         return (
             super()
             .get_queryset()
+            .annotate(
+                sub_issues_count=Issue.objects.filter(parent=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(workspace__slug=self.kwargs.get("slug"))
             .select_related("project")
@@ -178,6 +185,7 @@ class IssueViewSet(BaseViewSet):
             )
 
         except Exception as e:
+            print(e)
             capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
@@ -218,6 +226,12 @@ class UserWorkSpaceIssues(BaseAPIView):
         try:
             issues = (
                 Issue.objects.filter(assignees__in=[request.user], workspace__slug=slug)
+                .annotate(
+                    sub_issues_count=Issue.objects.filter(parent=OuterRef("id"))
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
                 .select_related("project")
                 .select_related("workspace")
                 .select_related("state")

@@ -1,3 +1,6 @@
+# Django imports
+from django.db.models import OuterRef, Func, F
+
 # Third party imports
 from rest_framework.response import Response
 from rest_framework import status
@@ -56,6 +59,12 @@ class CycleIssueViewSet(BaseViewSet):
         return self.filter_queryset(
             super()
             .get_queryset()
+            .annotate(
+                sub_issues_count=Issue.objects.filter(parent=OuterRef("issue_id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(project__project_projectmember__member=self.request.user)
