@@ -525,3 +525,62 @@ class BulkDeleteIssuesEndpoint(BaseAPIView):
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+class SubIssuesEndpoint(BaseAPIView):
+
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+
+    def get(self, request, slug, project_id, issue_id):
+        try:
+
+            sub_issues = (
+                Issue.objects.filter(
+                    parent_id=issue_id, workspace__slug=slug, project_id=project_id
+                )
+                .select_related("project")
+                .select_related("workspace")
+                .select_related("state")
+                .select_related("parent")
+                .prefetch_related("assignees")
+                .prefetch_related("labels")
+                .prefetch_related(
+                    Prefetch(
+                        "blocked_issues",
+                        queryset=IssueBlocker.objects.select_related(
+                            "blocked_by", "block"
+                        ),
+                    )
+                )
+                .prefetch_related(
+                    Prefetch(
+                        "blocker_issues",
+                        queryset=IssueBlocker.objects.select_related(
+                            "block", "blocked_by"
+                        ),
+                    )
+                )
+                .prefetch_related(
+                    Prefetch(
+                        "issue_cycle",
+                        queryset=CycleIssue.objects.select_related("cycle", "issue"),
+                    ),
+                )
+                .prefetch_related(
+                    Prefetch(
+                        "issue_module",
+                        queryset=ModuleIssue.objects.select_related("module", "issue"),
+                    ),
+                )
+            )
+
+            serializer = IssueSerializer(sub_issues, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )

@@ -65,6 +65,7 @@ from plane.api.views import (
     TimeLineIssueViewSet,
     IssuePropertyViewSet,
     LabelViewSet,
+    SubIssuesEndpoint,
     ## End Issues
     # States
     StateViewSet,
@@ -539,6 +540,11 @@ urlpatterns = [
         "workspaces/<str:slug>/my-issues/",
         UserWorkSpaceIssues.as_view(),
         name="workspace-issues",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/sub-issues/",
+        SubIssuesEndpoint.as_view(),
+        name="sub-issues",
     ),
     ## End Issues
     ## Issue Activity
