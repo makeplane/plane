@@ -4,6 +4,8 @@ import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 
+// lib
+import { requiredAdmin, requiredAuth } from "lib/auth";
 // layouts
 import AppLayout from "layouts/app-layout";
 // contexts
@@ -32,7 +34,8 @@ import { CustomMenu, EmptySpace, EmptySpaceItem, Spinner } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 // types
-import { CycleIssueResponse, IIssue, SelectIssue } from "types";
+import { CycleIssueResponse, IIssue, SelectIssue, UserAuth } from "types";
+import { NextPageContext } from "next";
 // fetch-keys
 import {
   CYCLE_ISSUES,
@@ -42,7 +45,7 @@ import {
   PROJECT_DETAILS,
 } from "constants/fetch-keys";
 
-const SingleCycle: React.FC = () => {
+const SingleCycle: React.FC<UserAuth> = (props) => {
   const [isIssueModalOpen, setIsIssueModalOpen] = useState(false);
   const [selectedIssues, setSelectedIssues] = useState<SelectIssue>();
   const [cycleIssuesListModal, setCycleIssuesListModal] = useState(false);
@@ -108,18 +111,6 @@ const SingleCycle: React.FC = () => {
       },
     }
   );
-
-  const partialUpdateIssue = (formData: Partial<IIssue>, issueId: string) => {
-    if (!workspaceSlug || !projectId) return;
-    issuesServices
-      .patchIssue(workspaceSlug as string, projectId as string, issueId, formData)
-      .then(() => {
-        mutate(CYCLE_ISSUES(cycleId as string));
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
 
   const openCreateIssueModal = (
     issue?: IIssue,
@@ -256,16 +247,16 @@ const SingleCycle: React.FC = () => {
                 openIssuesListModal={openIssuesListModal}
                 removeIssueFromCycle={removeIssueFromCycle}
                 setPreloadedData={setPreloadedData}
+                userAuth={props}
               />
               <CyclesBoardView
                 issues={cycleIssuesArray ?? []}
-                removeIssueFromCycle={removeIssueFromCycle}
                 members={members}
                 openCreateIssueModal={openCreateIssueModal}
                 openIssuesListModal={openIssuesListModal}
                 handleDeleteIssue={setDeleteIssue}
-                partialUpdateIssue={partialUpdateIssue}
                 setPreloadedData={setPreloadedData}
+                userAuth={props}
               />
             </div>
           ) : (
@@ -307,6 +298,34 @@ const SingleCycle: React.FC = () => {
       </AppLayout>
     </IssueViewContextProvider>
   );
+};
+
+export const getServerSideProps = async (ctx: NextPageContext) => {
+  const user = await requiredAuth(ctx.req?.headers.cookie);
+  const redirectAfterSignIn = ctx.req?.url;
+
+  if (!user) {
+    return {
+      redirect: {
+        destination: `/signin?next=${redirectAfterSignIn}`,
+        permanent: false,
+      },
+    };
+  }
+
+  const projectId = ctx.query.projectId as string;
+  const workspaceSlug = ctx.query.workspaceSlug as string;
+
+  const memberDetail = await requiredAdmin(workspaceSlug, projectId, ctx.req?.headers.cookie);
+
+  return {
+    props: {
+      isOwner: memberDetail?.role === 20,
+      isMember: memberDetail?.role === 15,
+      isViewer: memberDetail?.role === 10,
+      isGuest: memberDetail?.role === 5,
+    },
+  };
 };
 
 export default SingleCycle;

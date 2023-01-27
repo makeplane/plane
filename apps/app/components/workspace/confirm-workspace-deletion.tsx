@@ -4,19 +4,20 @@ import { useRouter } from "next/router";
 
 import { mutate } from "swr";
 
+// headless ui
 import { Dialog, Transition } from "@headlessui/react";
-// constants
-import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
-import type { IWorkspace } from "types";
-import { USER_WORKSPACES } from "constants/fetch-keys";
 // services
 import workspaceService from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 // icons
+import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
 import { Button, Input } from "components/ui";
 // types
+import type { IWorkspace } from "types";
+// fetch-keys
+import { USER_WORKSPACES } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
@@ -78,7 +79,7 @@ const ConfirmWorkspaceDeletion: React.FC<Props> = ({ isOpen, data, onClose }) =>
     <Transition.Root show={isOpen} as={React.Fragment}>
       <Dialog
         as="div"
-        className="relative z-10"
+        className="relative z-20"
         initialFocus={cancelButtonRef}
         onClose={handleClose}
       >
@@ -94,7 +95,7 @@ const ConfirmWorkspaceDeletion: React.FC<Props> = ({ isOpen, data, onClose }) =>
           <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
         </Transition.Child>
 
-        <div className="fixed inset-0 z-10 overflow-y-auto">
+        <div className="fixed inset-0 z-20 overflow-y-auto">
           <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
             <Transition.Child
               as={React.Fragment}

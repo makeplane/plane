@@ -15,7 +15,7 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 // services
 import workspaceService from "services/workspace.service";
 // types
-import { IIssue, Properties, NestedKeyOf, IWorkspaceMember } from "types";
+import { IIssue, Properties, NestedKeyOf, IWorkspaceMember, UserAuth } from "types";
 // fetch-keys
 import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 
@@ -40,7 +40,7 @@ type Props = {
   stateId: string | null;
   createdBy: string | null;
   handleDeleteIssue: React.Dispatch<React.SetStateAction<string | undefined>>;
-  partialUpdateIssue: (formData: Partial<IIssue>, childIssueId: string) => void;
+  userAuth: UserAuth;
 };
 
 const SingleBoard: React.FC<Props> = ({
@@ -55,7 +55,7 @@ const SingleBoard: React.FC<Props> = ({
   stateId,
   createdBy,
   handleDeleteIssue,
-  partialUpdateIssue,
+  userAuth,
 }) => {
   // Collapse/Expand
   const [isCollapsed, setIsCollapsed] = useState(true);
@@ -145,7 +145,7 @@ const SingleBoard: React.FC<Props> = ({
                               people={people}
                               assignees={assignees}
                               handleDeleteIssue={handleDeleteIssue}
-                              partialUpdateIssue={partialUpdateIssue}
+                              userAuth={userAuth}
                             />
                           </div>
                         )}

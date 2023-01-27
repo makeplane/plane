@@ -6,7 +6,6 @@ import Image from "next/image";
 import useSWR, { mutate } from "swr";
 
 import { Controller, useForm } from "react-hook-form";
-import type { NextPageContext, NextPage } from "next";
 // lib
 import { requiredAdmin } from "lib/auth";
 // layouts
@@ -21,6 +20,7 @@ import { Button, CustomSelect, Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // types
 import { IProject, IWorkspace } from "types";
+import type { NextPageContext, NextPage } from "next";
 // fetch-keys
 import { PROJECTS_LIST, PROJECT_DETAILS, WORKSPACE_MEMBERS } from "constants/fetch-keys";
 
@@ -88,24 +88,9 @@ const ControlSettings: NextPage<TControlSettingsProps> = (props) => {
     await projectService
       .updateProject(workspaceSlug as string, projectId as string, payload)
       .then((res) => {
-        mutate<IProject>(
-          PROJECT_DETAILS(projectId as string),
-          (prevData) => ({ ...prevData, ...res }),
-          false
-        );
-        mutate<IProject[]>(
-          PROJECTS_LIST(workspaceSlug as string),
-          (prevData) => {
-            const newData = prevData?.map((item) => {
-              if (item.id === res.id) {
-                return res;
-              }
-              return item;
-            });
-            return newData;
-          },
-          false
-        );
+        mutate(PROJECT_DETAILS(projectId as string));
+        mutate(PROJECTS_LIST(workspaceSlug as string));
+
         setToastAlert({
           title: "Success",
           type: "success",

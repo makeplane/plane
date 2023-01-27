@@ -21,17 +21,17 @@ import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deleti
 // ui
 import { Spinner } from "components/ui";
 // types
-import type { IState, IIssue, IssueResponse } from "types";
+import type { IState, IIssue, IssueResponse, UserAuth } from "types";
 // fetch-keys
 import { STATE_LIST, PROJECT_ISSUES_LIST, PROJECT_MEMBERS } from "constants/fetch-keys";
 
 type Props = {
   issues: IIssue[];
   handleDeleteIssue: React.Dispatch<React.SetStateAction<string | undefined>>;
-  partialUpdateIssue: (formData: Partial<IIssue>, issueId: string) => void;
+  userAuth: UserAuth;
 };
 
-const BoardView: React.FC<Props> = ({ issues, handleDeleteIssue, partialUpdateIssue }) => {
+const BoardView: React.FC<Props> = ({ issues, handleDeleteIssue, userAuth }) => {
   const [createIssueModal, setCreateIssueModal] = useState(false);
   const [isIssueDeletionOpen, setIsIssueDeletionOpen] = useState(false);
   const [issueDeletionData, setIssueDeletionData] = useState<IIssue | undefined>();
@@ -238,7 +238,7 @@ const BoardView: React.FC<Props> = ({ issues, handleDeleteIssue, partialUpdateIs
                               : "#000000"
                           }
                           handleDeleteIssue={handleDeleteIssue}
-                          partialUpdateIssue={partialUpdateIssue}
+                          userAuth={userAuth}
                         />
                       ))}
                     </div>

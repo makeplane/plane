@@ -20,7 +20,7 @@ import SingleListIssue from "components/common/list-view/single-issue";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
-import { IIssue, IWorkspaceMember } from "types";
+import { IIssue, IWorkspaceMember, UserAuth } from "types";
 // fetch-keys
 import { STATE_LIST, WORKSPACE_MEMBERS } from "constants/fetch-keys";
 
@@ -28,10 +28,10 @@ import { STATE_LIST, WORKSPACE_MEMBERS } from "constants/fetch-keys";
 type Props = {
   issues: IIssue[];
   handleEditIssue: (issue: IIssue) => void;
-  partialUpdateIssue: (formData: Partial<IIssue>, issueId: string) => void;
+  userAuth: UserAuth;
 };
 
-const ListView: React.FC<Props> = ({ issues, handleEditIssue }) => {
+const ListView: React.FC<Props> = ({ issues, handleEditIssue, userAuth }) => {
   const [isCreateIssuesModalOpen, setIsCreateIssuesModalOpen] = useState(false);
   const [preloadedData, setPreloadedData] = useState<
     (Partial<IIssue> & { actionType: "createIssue" | "edit" | "delete" }) | undefined
@@ -130,6 +130,7 @@ const ListView: React.FC<Props> = ({ issues, handleEditIssue }) => {
                                 issue={issue}
                                 properties={properties}
                                 editIssue={() => handleEditIssue(issue)}
+                                userAuth={userAuth}
                               />
                             );
                           })

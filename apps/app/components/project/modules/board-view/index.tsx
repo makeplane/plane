@@ -17,7 +17,7 @@ import SingleBoard from "components/project/modules/board-view/single-board";
 // ui
 import { Spinner } from "components/ui";
 // types
-import { IIssue, IProjectMember, ModuleIssueResponse } from "types";
+import { IIssue, IProjectMember, ModuleIssueResponse, UserAuth } from "types";
 // constants
 import { STATE_LIST, MODULE_ISSUES } from "constants/fetch-keys";
 
@@ -26,8 +26,6 @@ type Props = {
   members: IProjectMember[] | undefined;
   openCreateIssueModal: (issue?: IIssue, actionType?: "create" | "edit" | "delete") => void;
   openIssuesListModal: () => void;
-  removeIssueFromModule: (issueId: string) => void;
-  partialUpdateIssue: (formData: Partial<IIssue>, issueId: string) => void;
   handleDeleteIssue: React.Dispatch<React.SetStateAction<string | undefined>>;
   setPreloadedData: React.Dispatch<
     React.SetStateAction<
@@ -37,6 +35,7 @@ type Props = {
       | null
     >
   >;
+  userAuth: UserAuth;
 };
 
 const ModulesBoardView: React.FC<Props> = ({
@@ -44,10 +43,9 @@ const ModulesBoardView: React.FC<Props> = ({
   members,
   openCreateIssueModal,
   openIssuesListModal,
-  removeIssueFromModule,
-  partialUpdateIssue,
   handleDeleteIssue,
   setPreloadedData,
+  userAuth,
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query;
@@ -154,10 +152,8 @@ const ModulesBoardView: React.FC<Props> = ({
                           : "#000000"
                       }
                       properties={properties}
-                      removeIssueFromModule={removeIssueFromModule}
                       openIssuesListModal={openIssuesListModal}
                       openCreateIssueModal={openCreateIssueModal}
-                      partialUpdateIssue={partialUpdateIssue}
                       handleDeleteIssue={handleDeleteIssue}
                       setPreloadedData={setPreloadedData}
                       stateId={
@@ -165,6 +161,7 @@ const ModulesBoardView: React.FC<Props> = ({
                           ? states?.find((s) => s.name === singleGroup)?.id ?? null
                           : null
                       }
+                      userAuth={userAuth}
                     />
                   ))}
                 </div>
