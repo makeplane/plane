@@ -1,39 +1,73 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-type Props = {
+export type Props = {
+  direction?: "top" | "right" | "bottom" | "left";
+  content: string | React.ReactNode;
+  margin?: string;
   children: React.ReactNode;
-  content: React.ReactNode;
-  position?: "top" | "bottom" | "left" | "right";
+  customStyle?: string;
 };
 
-const Tooltip: React.FC<Props> = ({ children, content, position = "top" }) => (
-    <div className="relative group">
-      <div
-        className={`fixed pointer-events-none transition-opacity opacity-0 group-hover:opacity-100 bg-black text-white px-3 py-1 rounded ${
-          position === "right"
-            ? "left-14"
-            : position === "left"
-            ? "right-14"
-            : position === "top"
-            ? "bottom-14"
-            : "top-14"
-        }`}
-      >
-        <p className="truncate text-xs">{content}</p>
-        <span
-          className={`absolute w-2 h-2 bg-black ${
-            position === "top"
-              ? "top-full left-1/2 transform -translate-y-1/2 -translate-x-1/2 rotate-45"
-              : position === "bottom"
-              ? "bottom-full left-1/2 transform translate-y-1/2 -translate-x-1/2 rotate-45"
-              : position === "left"
-              ? "left-full top-1/2 transform translate-x-1/2 -translate-y-1/2 rotate-45"
-              : "right-full top-1/2 transform translate-x-1/2 -translate-y-1/2 rotate-45"
-          }`}
-         />
-      </div>
+const Tooltip: React.FC<Props> = ({
+  content,
+  direction = "top",
+  children,
+  margin = "24px",
+  customStyle,
+}) => {
+  const [active, setActive] = useState(false);
+  const [styleConfig, setStyleConfig] = useState("top-[calc(-100%-24px)]");
+  let timeout: any;
+
+  const showToolTip = () => {
+    timeout = setTimeout(() => {
+      setActive(true);
+    }, 300);
+  };
+
+  const hideToolTip = () => {
+    clearInterval(timeout);
+    setActive(false);
+  };
+
+  const tooltipStyles = {
+    top: `
+    left-[50%] translate-x-[-50%] before:contents-[""] before:border-solid 
+    before:border-transparent before:h-0 before:w-0 before:absolute before:pointer-events-none 
+    before:border-[6px] before:left-[50%] before:ml-[calc(6px*-1)] before:top-full before:border-t-black`,
+
+    right: `
+    right-[-100%] top-[50%]
+    translate-x-0 translate-y-[-50%] `,
+
+    bottom: `
+    left-[50%] translate-x-[-50%] before:contents-[""] before:border-solid 
+    before:border-transparent before:h-0 before:w-0 before:absolute before:pointer-events-none 
+    before:border-[6px] before:left-[50%] before:ml-[calc(6px*-1)] before:bottom-full before:border-b-black`,
+
+    left: `
+    left-[-100%] top-[50%] 
+    translate-x-0 translate-y-[-50%] `,
+  };
+
+  useEffect(() => {
+    const styleConfig = direction + "-[calc(-100%-" + margin + ")]";
+    setStyleConfig(styleConfig);
+  }, [margin, direction]);
+
+  return (
+    <div className="inline-block relative" onMouseEnter={showToolTip} onMouseLeave={hideToolTip}>
       {children}
+      {active && (
+        <div
+          className={`absolute p-[6px] text-xs z-20 rounded leading-1 text-white bg-black text-center w-max max-w-[300px] 
+          ${tooltipStyles[direction]} ${customStyle ? customStyle : ""} ${styleConfig}`}
+        >
+          {content}
+        </div>
+      )}
     </div>
   );
+};
 
 export default Tooltip;
