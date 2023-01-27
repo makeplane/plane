@@ -91,7 +91,7 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = (props) => {
         () =>
           new Promise(async (resolve, reject) => {
             const imageUrl = await fileService
-              .uploadFile(workspaceSlug as string, formData) // TODO: verify why workspaceSlug is required for uploading a file
+              .uploadFile(workspaceSlug as string, formData)
               .then((response) => response.asset);
 
             resolve({

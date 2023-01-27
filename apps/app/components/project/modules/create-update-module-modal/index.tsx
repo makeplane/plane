@@ -4,11 +4,10 @@ import { useRouter } from "next/router";
 
 import { mutate } from "swr";
 
+// react-hook-form
 import { useForm } from "react-hook-form";
-
+// headless ui
 import { Dialog, Transition } from "@headlessui/react";
-// types
-import type { IModule } from "types";
 // components
 import SelectLead from "components/project/modules/create-update-module-modal/select-lead";
 import SelectMembers from "components/project/modules/create-update-module-modal/select-members";
@@ -17,9 +16,13 @@ import SelectStatus from "components/project/modules/create-update-module-modal/
 import { Button, Input, TextArea } from "components/ui";
 // services
 import modulesService from "services/modules.service";
+// hooks
+import useToast from "hooks/use-toast";
 // helpers
 import { renderDateFormat } from "helpers/date-time.helper";
-// fetch keys
+// types
+import type { IModule } from "types";
+// fetch-keys
 import { MODULE_LIST } from "constants/fetch-keys";
 
 type Props = {
@@ -40,6 +43,8 @@ const defaultValues: Partial<IModule> = {
 const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, projectId }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
+
+  const { setToastAlert } = useToast();
 
   const {
     register,
@@ -65,6 +70,12 @@ const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, pro
         .then(() => {
           mutate(MODULE_LIST(projectId));
           handleClose();
+
+          setToastAlert({
+            title: "Success",
+            type: "success",
+            message: "Module created successfully",
+          });
         })
         .catch((err) => {
           Object.keys(err).map((key) => {
@@ -91,6 +102,12 @@ const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, pro
             false
           );
           handleClose();
+
+          setToastAlert({
+            title: "Success",
+            type: "success",
+            message: "Module updated successfully",
+          });
         })
         .catch((err) => {
           Object.keys(err).map((key) => {

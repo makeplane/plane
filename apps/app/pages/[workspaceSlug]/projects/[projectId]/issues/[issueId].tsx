@@ -1,12 +1,14 @@
 import React, { useCallback, useEffect, useState } from "react";
+
 import Link from "next/link";
 import { useRouter } from "next/router";
+
 import useSWR, { mutate } from "swr";
+
+// react-hook-form
 import { useForm } from "react-hook-form";
-import { ChevronLeftIcon, ChevronRightIcon, PlusIcon } from "@heroicons/react/24/outline";
 // services
 import issuesService from "services/issues.service";
-import projectService from "services/project.service";
 // lib
 import { requiredAuth } from "lib/auth";
 // layouts
@@ -25,12 +27,13 @@ import {
 // ui
 import { Loader, HeaderButton, CustomMenu } from "components/ui";
 import { Breadcrumbs } from "components/breadcrumbs";
+// icons
+import { ChevronLeftIcon, ChevronRightIcon, PlusIcon } from "@heroicons/react/24/outline";
 // types
 import { IIssue } from "types";
 import type { NextPage, NextPageContext } from "next";
 // fetch-keys
 import {
-  PROJECT_DETAILS,
   PROJECT_ISSUES_LIST,
   PROJECT_ISSUES_ACTIVITY,
   ISSUE_DETAILS,
@@ -52,8 +55,6 @@ const defaultValues = {
 };
 
 const IssueDetailsPage: NextPage = () => {
-  const router = useRouter();
-  const { workspaceSlug, projectId, issueId } = router.query;
   // states
   const [isOpen, setIsOpen] = useState(false);
   const [isAddAsSubIssueOpen, setIsAddAsSubIssueOpen] = useState(false);
@@ -61,15 +62,14 @@ const IssueDetailsPage: NextPage = () => {
     (Partial<IIssue> & { actionType: "createIssue" | "edit" | "delete" }) | undefined
   >(undefined);
 
+  const router = useRouter();
+  const { workspaceSlug, projectId, issueId } = router.query;
+
   const { data: issueDetails, mutate: mutateIssueDetails } = useSWR<IIssue | undefined>(
-    issueId && workspaceSlug && projectId ? ISSUE_DETAILS(issueId as string) : null,
-    issueId && workspaceSlug && projectId
+    workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId as string) : null,
+    workspaceSlug && projectId && issueId
       ? () =>
-          issuesService.retrieve(
-            workspaceSlug?.toString(),
-            projectId?.toString(),
-            issueId?.toString()
-          )
+          issuesService.retrieve(workspaceSlug as string, projectId as string, issueId as string)
       : null
   );
 
@@ -78,13 +78,6 @@ const IssueDetailsPage: NextPage = () => {
     issueId && workspaceSlug && projectId
       ? () =>
           issuesService.subIssues(workspaceSlug as string, projectId as string, issueId as string)
-      : null
-  );
-
-  const { data: activeProject } = useSWR(
-    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -98,7 +91,7 @@ const IssueDetailsPage: NextPage = () => {
   );
 
   const { data: issueActivities, mutate: mutateIssueActivities } = useSWR(
-    workspaceSlug && projectId && issueId ? PROJECT_ISSUES_ACTIVITY : null,
+    workspaceSlug && projectId && issueId ? PROJECT_ISSUES_ACTIVITY(issueId as string) : null,
     workspaceSlug && projectId && issueId
       ? () =>
           issuesService.getIssueActivities(
@@ -141,7 +134,16 @@ const IssueDetailsPage: NextPage = () => {
 
   const submitChanges = useCallback(
     (formData: Partial<IIssue>) => {
-      if (!workspaceSlug || !activeProject || !issueId) return;
+      if (!workspaceSlug || !projectId || !issueId) return;
+
+      mutate(
+        ISSUE_DETAILS(issueId as string),
+        (prevData: IIssue) => ({
+          ...prevData,
+          ...formData,
+        }),
+        false
+      );
 
       const payload = { ...formData };
       issuesService
@@ -154,21 +156,21 @@ const IssueDetailsPage: NextPage = () => {
           console.error(e);
         });
     },
-    [activeProject, workspaceSlug, issueId, projectId, mutateIssueDetails, mutateIssueActivities]
+    [workspaceSlug, issueId, projectId, mutateIssueDetails, mutateIssueActivities]
   );
 
   const handleSubIssueRemove = (issueId: string) => {
-    if (workspaceSlug && activeProject) {
-      issuesService
-        .patchIssue(workspaceSlug as string, activeProject.id, issueId, { parent: null })
-        .then((res) => {
-          mutate(SUB_ISSUES(issueDetails?.id ?? ""));
-          mutateIssueActivities();
-        })
-        .catch((e) => {
-          console.error(e);
-        });
-    }
+    if (!workspaceSlug || !projectId) return;
+
+    issuesService
+      .patchIssue(workspaceSlug as string, projectId as string, issueId, { parent: null })
+      .then((res) => {
+        mutate(SUB_ISSUES(issueDetails?.id ?? ""));
+        mutateIssueActivities();
+      })
+      .catch((e) => {
+        console.error(e);
+      });
   };
 
   /**
@@ -177,14 +179,14 @@ const IssueDetailsPage: NextPage = () => {
    */
   const handleDescriptionFormSubmit = useCallback(
     (values: IssueDescriptionFormValues) => {
-      if (workspaceSlug && projectId && issueId) {
-        issuesService
-          .updateIssue(workspaceSlug?.toString(), projectId.toString(), issueId.toString(), values)
-          .then((res) => {
-            console.log(res);
-            mutateIssueActivities();
-          });
-      }
+      if (!workspaceSlug || !projectId || !issueId) return;
+
+      issuesService
+        .updateIssue(workspaceSlug as string, projectId as string, issueId as string, values)
+        .then((res) => {
+          console.log(res);
+          mutateIssueActivities();
+        });
     },
     [workspaceSlug, projectId, issueId, mutateIssueActivities]
   );
@@ -196,11 +198,11 @@ const IssueDetailsPage: NextPage = () => {
       breadcrumbs={
         <Breadcrumbs>
           <Breadcrumbs.BreadcrumbItem
-            title={`${activeProject?.name ?? "Project"} Issues`}
-            link={`/${workspaceSlug}/projects/${activeProject?.id}/issues`}
+            title={`${issueDetails?.project_detail.name ?? "Project"} Issues`}
+            link={`/${workspaceSlug}/projects/${projectId as string}/issues`}
           />
           <Breadcrumbs.BreadcrumbItem
-            title={`Issue ${activeProject?.identifier ?? "Project"}-${
+            title={`Issue ${issueDetails?.project_detail.identifier ?? "Project"}-${
               issueDetails?.sequence_id ?? "..."
             } Details`}
           />
@@ -249,14 +251,16 @@ const IssueDetailsPage: NextPage = () => {
           parent={issueDetails}
         />
       )}
-      {issueDetails && activeProject ? (
+      {issueDetails && projectId ? (
         <div className="flex h-full">
           <div className="basis-2/3 space-y-5 divide-y-2 p-5">
             <div className="rounded-lg">
               {issueDetails?.parent && issueDetails.parent !== "" ? (
                 <div className="mb-5 flex w-min items-center gap-2 whitespace-nowrap rounded bg-gray-100 p-2 text-xs">
                   <Link
-                    href={`/${workspaceSlug}/projects/${activeProject.id}/issues/${issueDetails.parent}`}
+                    href={`/${workspaceSlug}/projects/${projectId as string}/issues/${
+                      issueDetails.parent
+                    }`}
                   >
                     <a className="flex items-center gap-2">
                       <span
@@ -266,7 +270,7 @@ const IssueDetailsPage: NextPage = () => {
                         }}
                       />
                       <span className="flex-shrink-0 text-gray-600">
-                        {activeProject.identifier}-
+                        {issueDetails.project_detail.identifier}-
                         {issues?.results.find((i) => i.id === issueDetails.parent)?.sequence_id}
                       </span>
                       <span className="truncate font-medium">
@@ -282,10 +286,12 @@ const IssueDetailsPage: NextPage = () => {
                       siblingIssues.map((issue) => (
                         <CustomMenu.MenuItem key={issue.id}>
                           <Link
-                            href={`/${workspaceSlug}/projects/${activeProject.id}/issues/${issue.id}`}
+                            href={`/${workspaceSlug}/projects/${projectId as string}/issues/${
+                              issue.id
+                            }`}
                           >
                             <a>
-                              {activeProject.identifier}-{issue.sequence_id}
+                              {issueDetails.project_detail.identifier}-{issue.sequence_id}
                             </a>
                           </Link>
                         </CustomMenu.MenuItem>
@@ -358,7 +364,6 @@ const IssueDetailsPage: NextPage = () => {
             </div>
           </div>
           <div className="basis-1/3 space-y-5 border-l p-5">
-            {/* TODO add flex-grow, if needed */}
             <IssueDetailSidebar
               control={control}
               issueDetail={issueDetails}

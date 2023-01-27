@@ -9,6 +9,8 @@ import { Controller, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 // services
 import cycleService from "services/cycles.service";
+// hooks
+import useToast from "hooks/use-toast";
 // ui
 import { Button, Input, TextArea, CustomSelect } from "components/ui";
 // common
@@ -36,6 +38,8 @@ const defaultValues: Partial<ICycle> = {
 const CreateUpdateCycleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, projectId }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
+
+  const { setToastAlert } = useToast();
 
   const {
     register,
@@ -69,7 +73,13 @@ const CreateUpdateCycleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, proj
         .createCycle(workspaceSlug as string, projectId, payload)
         .then((res) => {
           mutate<ICycle[]>(CYCLE_LIST(projectId), (prevData) => [res, ...(prevData ?? [])], false);
+
           handleClose();
+          setToastAlert({
+            title: "Success",
+            type: "success",
+            message: "Cycle created successfully",
+          });
         })
         .catch((err) => {
           Object.keys(err).map((key) => {
@@ -82,20 +92,14 @@ const CreateUpdateCycleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, proj
       await cycleService
         .updateCycle(workspaceSlug as string, projectId, data.id, payload)
         .then((res) => {
-          mutate<ICycle[]>(
-            CYCLE_LIST(projectId),
-            (prevData) => {
-              const newData = prevData?.map((item) => {
-                if (item.id === res.id) return res;
-
-                return item;
-              });
-
-              return newData;
-            },
-            false
-          );
+          mutate(CYCLE_LIST(projectId));
           handleClose();
+
+          setToastAlert({
+            title: "Success",
+            type: "success",
+            message: "Cycle updated successfully",
+          });
         })
         .catch((err) => {
           Object.keys(err).map((key) => {

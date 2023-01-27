@@ -5,12 +5,14 @@ import { useRouter } from "next/router";
 import { mutate } from "swr";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
-import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // services
 import cycleService from "services/cycles.service";
+// hooks
+import useToast from "hooks/use-toast";
 // ui
 import { Button } from "components/ui";
 // icons
+import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // types
 import type { ICycle } from "types";
 type TConfirmCycleDeletionProps = {
@@ -21,14 +23,18 @@ type TConfirmCycleDeletionProps = {
 // fetch-keys
 import { CYCLE_LIST } from "constants/fetch-keys";
 
-const ConfirmCycleDeletion: React.FC<TConfirmCycleDeletionProps> = (props) => {
-  const { isOpen, setIsOpen, data } = props;
-
+const ConfirmCycleDeletion: React.FC<TConfirmCycleDeletionProps> = ({
+  isOpen,
+  setIsOpen,
+  data,
+}) => {
   const cancelButtonRef = useRef(null);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
+
+  const { setToastAlert } = useToast();
 
   useEffect(() => {
     data && setIsOpen(true);
@@ -51,6 +57,12 @@ const ConfirmCycleDeletion: React.FC<TConfirmCycleDeletionProps> = (props) => {
           false
         );
         handleClose();
+
+        setToastAlert({
+          title: "Success",
+          type: "success",
+          message: "Cycle deleted successfully",
+        });
       })
       .catch((error) => {
         console.log(error);
