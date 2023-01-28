@@ -51,48 +51,48 @@ export interface IIssueCycle {
 }
 
 export interface IIssue {
-  id: string;
-  state_detail: IState;
-  label_details: any[];
+  assignees: any[] | null;
   assignee_details: IUser[];
   assignees_list: string[];
+  attachments: any[];
   blocked_by_issue_details: any[];
+  blocked_issue_details: any[];
   blocked_issues: BlockeIssue[];
-  blocker_issues: BlockeIssue[];
-  blockers_list: string[];
   blocked_list: string[];
+  blocker_issues: BlockeIssue[];
+  blockers: any[];
+  blockers_list: string[];
   blocks_list: string[];
   bridge: string;
   created_at: Date;
-  updated_at: Date;
-  name: string;
-  issue_cycle: IIssueCycle | null;
-  issue_module: IIssueModule | null;
-  description: any;
-  description_html: any;
-  priority: string | null;
-  start_date: string | null;
-  target_date: string | null;
-  sequence_id: number;
-  attachments: any[];
   created_by: string;
-  updated_by: string;
-  project: string;
-  project_detail: IProject;
-  workspace: string;
-  parent: string | null;
-  parent_detail: IProject | null;
-  state: string;
-  assignees: any[] | null;
-  labels: any[];
-  labels_list: string[];
-  blockers: any[];
-  blocked_issue_details: any[];
-  sprints: string | null;
-  module: string | null;
   cycle: string | null;
   cycle_detail: ICycle | null;
+  description: any;
+  description_html: any;
+  id: string;
+  issue_cycle: IIssueCycle | null;
+  issue_module: IIssueModule | null;
+  label_details: any[];
+  module: string | null;
+  name: string;
+  parent: string | null;
+  parent_detail: IProject | null;
+  priority: string | null;
+  project: string;
+  project_detail: IProject;
+  sequence_id: number;
+  sprints: string | null;
+  start_date: string | null;
+  state: string;
+  state_detail: IState;
   sub_issues_count: number;
+  target_date: string | null;
+  updated_at: Date;
+  updated_by: string;
+  workspace: string;
+  labels: any[];
+  labels_list: string[];
 }
 
 export interface BlockeIssue {
@@ -151,7 +151,7 @@ export type Properties = {
   assignee: boolean;
   priority: boolean;
   due_date: boolean;
-  cycle: boolean;
+  // cycle: boolean;
   sub_issue_count: boolean;
 };
 

@@ -249,6 +249,11 @@ const SingleBoardIssue: React.FC<Props> = ({
               )}
             </Listbox>
           )}
+          {/* {properties.cycle && !typeId && (
+            <div className="flex flex-shrink-0 items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+              {issue.issue_cycle ? issue.issue_cycle.cycle_detail.name : "None"}
+            </div>
+          )} */}
           {properties.due_date && (
             <div
               className={`group flex flex-shrink-0 cursor-pointer items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${

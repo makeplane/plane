@@ -13,7 +13,7 @@ const initialValues: Properties = {
   assignee: true,
   priority: false,
   due_date: false,
-  cycle: false,
+  // cycle: false,
   sub_issue_count: false,
 };
 
@@ -86,7 +86,7 @@ const useIssuesProperties = (workspaceSlug?: string, projectId?: string) => {
     assignee: properties.assignee,
     priority: properties.priority,
     due_date: properties.due_date,
-    cycle: properties.cycle,
+    // cycle: properties.cycle,
     sub_issue_count: properties.sub_issue_count,
   };
 
