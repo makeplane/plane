@@ -21,7 +21,7 @@ const initialValues: Properties = {
   assignee: true,
   priority: false,
   due_date: false,
-  cycle: false,
+  // cycle: false,
   sub_issue_count: false,
 };
 
