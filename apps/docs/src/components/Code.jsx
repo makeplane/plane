@@ -44,12 +44,12 @@ function ClipboardIcon(props) {
 }
 
 function CopyButton({ code }) {
-  let [copyCount, setCopyCount] = useState(0)
-  let copied = copyCount > 0
+  const [copyCount, setCopyCount] = useState(0)
+  const copied = copyCount > 0
 
   useEffect(() => {
     if (copyCount > 0) {
-      let timeout = setTimeout(() => setCopyCount(0), 1000)
+      const timeout = setTimeout(() => setCopyCount(0), 1000)
       return () => {
         clearTimeout(timeout)
       }
@@ -117,7 +117,7 @@ function CodePanelHeader({ tag, label }) {
 }
 
 function CodePanel({ tag, label, code, children }) {
-  let child = Children.only(children)
+  const child = Children.only(children)
 
   return (
     <div className="group dark:bg-white/2.5">
@@ -134,7 +134,7 @@ function CodePanel({ tag, label, code, children }) {
 }
 
 function CodeGroupHeader({ title, children, selectedIndex }) {
-  let hasTabs = Children.count(children) > 1
+  const hasTabs = Children.count(children) > 1
 
   if (!title && !hasTabs) {
     return null
@@ -168,7 +168,7 @@ function CodeGroupHeader({ title, children, selectedIndex }) {
 }
 
 function CodeGroupPanels({ children, ...props }) {
-  let hasTabs = Children.count(children) > 1
+  const hasTabs = Children.count(children) > 1
 
   if (hasTabs) {
     return (
@@ -186,24 +186,25 @@ function CodeGroupPanels({ children, ...props }) {
 }
 
 function usePreventLayoutShift() {
-  let positionRef = useRef()
-  let rafRef = useRef()
+  const positionRef = useRef()
+  const rafRef = useRef()
 
-  useEffect(() => {
-    return () => {
+  useEffect(
+    () => () => {
       window.cancelAnimationFrame(rafRef.current)
-    }
-  }, [])
+    },
+    []
+  )
 
   return {
     positionRef,
     preventLayoutShift(callback) {
-      let initialTop = positionRef.current.getBoundingClientRect().top
+      const initialTop = positionRef.current.getBoundingClientRect().top
 
       callback()
 
       rafRef.current = window.requestAnimationFrame(() => {
-        let newTop = positionRef.current.getBoundingClientRect().top
+        const newTop = positionRef.current.getBoundingClientRect().top
         window.scrollBy(0, newTop - initialTop)
       })
     },
@@ -224,18 +225,19 @@ const usePreferredLanguageStore = create((set) => ({
 }))
 
 function useTabGroupProps(availableLanguages) {
-  let { preferredLanguages, addPreferredLanguage } = usePreferredLanguageStore()
-  let [selectedIndex, setSelectedIndex] = useState(0)
-  let activeLanguage = [...availableLanguages].sort(
+  const { preferredLanguages, addPreferredLanguage } =
+    usePreferredLanguageStore()
+  const [selectedIndex, setSelectedIndex] = useState(0)
+  const activeLanguage = [...availableLanguages].sort(
     (a, z) => preferredLanguages.indexOf(z) - preferredLanguages.indexOf(a)
   )[0]
-  let languageIndex = availableLanguages.indexOf(activeLanguage)
-  let newSelectedIndex = languageIndex === -1 ? selectedIndex : languageIndex
+  const languageIndex = availableLanguages.indexOf(activeLanguage)
+  const newSelectedIndex = languageIndex === -1 ? selectedIndex : languageIndex
   if (newSelectedIndex !== selectedIndex) {
     setSelectedIndex(newSelectedIndex)
   }
 
-  let { positionRef, preventLayoutShift } = usePreventLayoutShift()
+  const { positionRef, preventLayoutShift } = usePreventLayoutShift()
 
   return {
     as: 'div',
@@ -252,12 +254,14 @@ function useTabGroupProps(availableLanguages) {
 const CodeGroupContext = createContext(false)
 
 export function CodeGroup({ children, title, ...props }) {
-  let languages = Children.map(children, (child) => getPanelTitle(child.props))
-  let tabGroupProps = useTabGroupProps(languages)
-  let hasTabs = Children.count(children) > 1
-  let Container = hasTabs ? Tab.Group : 'div'
-  let containerProps = hasTabs ? tabGroupProps : {}
-  let headerProps = hasTabs
+  const languages = Children.map(children, (child) =>
+    getPanelTitle(child.props)
+  )
+  const tabGroupProps = useTabGroupProps(languages)
+  const hasTabs = Children.count(children) > 1
+  const Container = hasTabs ? Tab.Group : 'div'
+  const containerProps = hasTabs ? tabGroupProps : {}
+  const headerProps = hasTabs
     ? { selectedIndex: tabGroupProps.selectedIndex }
     : {}
 
@@ -277,7 +281,7 @@ export function CodeGroup({ children, title, ...props }) {
 }
 
 export function Code({ children, ...props }) {
-  let isGrouped = useContext(CodeGroupContext)
+  const isGrouped = useContext(CodeGroupContext)
 
   if (isGrouped) {
     return <code {...props} dangerouslySetInnerHTML={{ __html: children }} />
@@ -287,7 +291,7 @@ export function Code({ children, ...props }) {
 }
 
 export function Pre({ children, ...props }) {
-  let isGrouped = useContext(CodeGroupContext)
+  const isGrouped = useContext(CodeGroupContext)
 
   if (isGrouped) {
     return children

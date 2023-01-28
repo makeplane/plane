@@ -11,7 +11,7 @@ import { Tag } from '@/components/Tag'
 import { remToPx } from '@/lib/remToPx'
 
 function useInitialValue(value, condition = true) {
-  let initialValue = useRef(value).current
+  const initialValue = useRef(value).current
   return condition ? initialValue : value
 }
 
@@ -52,7 +52,7 @@ function NavLink({ href, tag, active, isAnchorLink = false, children }) {
 }
 
 function VisibleSectionHighlight({ group, pathname }) {
-  let [sections, visibleSections] = useInitialValue(
+  const [sections, visibleSections] = useInitialValue(
     [
       useSectionStore((s) => s.sections),
       useSectionStore((s) => s.visibleSections),
@@ -60,18 +60,18 @@ function VisibleSectionHighlight({ group, pathname }) {
     useIsInsideMobileNavigation()
   )
 
-  let isPresent = useIsPresent()
-  let firstVisibleSectionIndex = Math.max(
+  const isPresent = useIsPresent()
+  const firstVisibleSectionIndex = Math.max(
     0,
     [{ id: '_top' }, ...sections].findIndex(
       (section) => section.id === visibleSections[0]
     )
   )
-  let itemHeight = remToPx(2)
-  let height = isPresent
+  const itemHeight = remToPx(2)
+  const height = isPresent
     ? Math.max(1, visibleSections.length) * itemHeight
     : itemHeight
-  let top =
+  const top =
     group.links.findIndex((link) => link.href === pathname) * itemHeight +
     firstVisibleSectionIndex * itemHeight
 
@@ -88,10 +88,12 @@ function VisibleSectionHighlight({ group, pathname }) {
 }
 
 function ActivePageMarker({ group, pathname }) {
-  let itemHeight = remToPx(2)
-  let offset = remToPx(0.25)
-  let activePageIndex = group.links.findIndex((link) => link.href === pathname)
-  let top = offset + activePageIndex * itemHeight
+  const itemHeight = remToPx(2)
+  const offset = remToPx(0.25)
+  const activePageIndex = group.links.findIndex(
+    (link) => link.href === pathname
+  )
+  const top = offset + activePageIndex * itemHeight
 
   return (
     <motion.div
@@ -109,13 +111,13 @@ function NavigationGroup({ group, className }) {
   // If this is the mobile navigation then we always render the initial
   // state, so that the state does not change during the close animation.
   // The state will still update when we re-open (re-render) the navigation.
-  let isInsideMobileNavigation = useIsInsideMobileNavigation()
-  let [router, sections] = useInitialValue(
+  const isInsideMobileNavigation = useIsInsideMobileNavigation()
+  const [router, sections] = useInitialValue(
     [useRouter(), useSectionStore((s) => s.sections)],
     isInsideMobileNavigation
   )
 
-  let isActiveGroup =
+  const isActiveGroup =
     group.links.findIndex((link) => link.href === router.pathname) !== -1
 
   return (

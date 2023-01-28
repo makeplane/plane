@@ -8,7 +8,6 @@ import { Navigation } from '@/components/Navigation'
 import { Prose } from '@/components/Prose'
 import { SectionProvider } from '@/components/SectionProvider'
 
-
 export function Layout({ children, sections = [] }) {
   return (
     <SectionProvider sections={sections}>
@@ -19,11 +18,7 @@ export function Layout({ children, sections = [] }) {
         >
           <div className="hidden lg:flex">
             <Link href="/" aria-label="Home">
-              <Logo  />
-
-              
-
-
+              <Logo />
             </Link>
           </div>
           <Header />

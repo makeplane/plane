@@ -18,7 +18,7 @@ Router.events.on('routeChangeComplete', onRouteChange)
 Router.events.on('routeChangeError', onRouteChange)
 
 export default function App({ Component, pageProps }) {
-  let router = useRouter()
+  const router = useRouter()
 
   return (
     <>
@@ -39,7 +39,7 @@ export default function App({ Component, pageProps }) {
         defer
         data-domain="docs.plane.so"
         src="https://plausible.io/js/script.js"
-      ></script>
+      />
     </>
   )
 }
