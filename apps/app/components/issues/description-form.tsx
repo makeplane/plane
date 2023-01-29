@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 // types
 import { IIssue } from "types";
@@ -33,10 +33,10 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({ issue, handleSubmi
   //   description: issue?.description,
   //   description_html: issue?.description_html,
   // });
-
   const [issueName, setIssueName] = useState(issue?.name);
   const [issueDescription, setIssueDescription] = useState(issue?.description);
   const [issueDescriptionHTML, setIssueDescriptionHTML] = useState(issue?.description_html);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   // hooks
   const formValues = useDebounce(
@@ -50,24 +50,34 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({ issue, handleSubmi
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handleSubmit, stringFromValues]);
 
+  useEffect(() => {
+    if (textareaRef && textareaRef.current) {
+      textareaRef.current.style.height = "0px";
+      const scrollHeight = textareaRef.current.scrollHeight;
+      textareaRef.current.style.height = scrollHeight + "px";
+    }
+  }, [issueName]);
+
   return (
     <div>
-      <Input
+      <textarea
         id="name"
         placeholder="Enter issue name"
         name="name"
-        autoComplete="off"
         value={issueName}
-        onChange={(e) => setIssueName(e.target.value)}
-        mode="transparent"
-        className="text-xl font-medium"
+        ref={textareaRef}
+        rows={1}
+        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setIssueName(e.target.value)}
         required={true}
+        className="no-scrollbar w-full px-3 py-2 outline-none rounded border-none bg-transparent ring-0 transition-all focus:ring-1 focus:ring-theme text-xl font-medium resize-none"
       />
+
       <RemirrorRichTextEditor
         value={issueDescription}
         placeholder="Enter Your Text..."
         onJSONChange={(json) => setIssueDescription(json)}
         onHTMLChange={(html) => setIssueDescriptionHTML(html)}
+        customClassName="min-h-[150px]"
       />
     </div>
   );
