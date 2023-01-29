@@ -72,3 +72,5 @@ from .authentication import (
 )
 
 from .module import ModuleViewSet, ModuleIssueViewSet
+
+from .api_token import ApiTokenEndpoint
