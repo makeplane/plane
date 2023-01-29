@@ -4,8 +4,6 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 import { PencilSquareIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 
-// types
-import type { NextPage, NextPageContext } from "next";
 import { IState } from "types";
 // services
 import stateService from "services/state.service";
@@ -26,6 +24,8 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 import { groupBy } from "helpers/array.helper";
+// types
+import type { NextPage, NextPageContext } from "next";
 // fetch-keys
 import { PROJECT_DETAILS, STATE_LIST } from "constants/fetch-keys";
 
@@ -106,6 +106,18 @@ const StatesSettings: NextPage<TStateSettingsProps> = (props) => {
                     </button>
                   </div>
                   <div className="space-y-1 rounded-xl border p-1 md:w-2/3">
+                    {key === activeGroup && (
+                      <CreateUpdateStateInline
+                        projectId={activeProject.id}
+                        onClose={() => {
+                          setActiveGroup(null);
+                          setSelectedState(null);
+                        }}
+                        workspaceSlug={workspaceSlug as string}
+                        data={null}
+                        selectedGroup={key as keyof StateGroup}
+                      />
+                    )}
                     {groupedStates[key]?.map((state) =>
                       state.id !== selectedState ? (
                         <div
@@ -146,18 +158,6 @@ const StatesSettings: NextPage<TStateSettingsProps> = (props) => {
                           />
                         </div>
                       )
-                    )}
-                    {key === activeGroup && (
-                      <CreateUpdateStateInline
-                        projectId={activeProject.id}
-                        onClose={() => {
-                          setActiveGroup(null);
-                          setSelectedState(null);
-                        }}
-                        workspaceSlug={workspaceSlug as string}
-                        data={null}
-                        selectedGroup={key as keyof StateGroup}
-                      />
                     )}
                   </div>
                 </div>

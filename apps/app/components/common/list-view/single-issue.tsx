@@ -234,9 +234,14 @@ const SingleListIssue: React.FC<Props> = ({
               ))}
             </CustomSelect>
           )}
+          {/* {properties.cycle && !typeId && (
+            <div className="flex flex-shrink-0 items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+              {issue.issue_cycle ? issue.issue_cycle.cycle_detail.name : "None"}
+            </div>
+          )} */}
           {properties.due_date && (
             <div
-              className={`group group relative flex flex-shrink-0 cursor-pointer items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
+              className={`group relative flex flex-shrink-0 cursor-pointer items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
                 issue.target_date === null
                   ? ""
                   : issue.target_date < new Date().toISOString()
@@ -261,7 +266,7 @@ const SingleListIssue: React.FC<Props> = ({
             </div>
           )}
           {properties.sub_issue_count && (
-            <div className="flex flex-shrink-0 items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+            <div className="flex flex-shrink-0 items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm">
               {issue.sub_issues_count} {issue.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
             </div>
           )}

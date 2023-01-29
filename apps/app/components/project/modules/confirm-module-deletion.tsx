@@ -1,19 +1,21 @@
-// react
 import React, { useEffect, useRef, useState } from "react";
-// next
+
 import { useRouter } from "next/router";
-// swr
+
 import { mutate } from "swr";
-// services
+
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
+// services
+import modulesService from "services/modules.service";
+// hooks
+import useToast from "hooks/use-toast";
 // ui
+import { Button } from "components/ui";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // types
 import type { IModule } from "types";
-import { Button } from "components/ui";
-import modulesService from "services/modules.service";
 // fetch-keys
 import { MODULE_LIST } from "constants/fetch-keys";
 
@@ -30,6 +32,8 @@ const ConfirmModuleDeletion: React.FC<Props> = ({ isOpen, setIsOpen, data }) => 
   const {
     query: { workspaceSlug },
   } = router;
+
+  const { setToastAlert } = useToast();
 
   const cancelButtonRef = useRef(null);
 
@@ -48,6 +52,12 @@ const ConfirmModuleDeletion: React.FC<Props> = ({ isOpen, setIsOpen, data }) => 
         mutate(MODULE_LIST(data.project));
         router.push(`/${workspaceSlug}/projects/${data.project}/modules`);
         handleClose();
+
+        setToastAlert({
+          title: "Success",
+          type: "success",
+          message: "Module deleted successfully",
+        });
       })
       .catch((error) => {
         console.log(error);

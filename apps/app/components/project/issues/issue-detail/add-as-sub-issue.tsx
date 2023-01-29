@@ -11,7 +11,7 @@ import { RectangleStackIcon, MagnifyingGlassIcon } from "@heroicons/react/24/out
 // services
 import issuesServices from "services/issues.service";
 // types
-import { IIssue, IssueResponse } from "types";
+import { IIssue } from "types";
 // constants
 import { PROJECT_ISSUES_LIST, SUB_ISSUES } from "constants/fetch-keys";
 
@@ -48,16 +48,16 @@ const AddAsSubIssue: React.FC<Props> = ({ isOpen, setIsOpen, parent }) => {
   };
 
   const addAsSubIssue = (issueId: string) => {
-    if (workspaceSlug && projectId) {
-      issuesServices
-        .patchIssue(workspaceSlug as string, projectId as string, issueId, { parent: parent?.id })
-        .then((res) => {
-          mutate(SUB_ISSUES(parent?.id ?? ""));
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    }
+    if (!workspaceSlug || !projectId) return;
+
+    issuesServices
+      .patchIssue(workspaceSlug as string, projectId as string, issueId, { parent: parent?.id })
+      .then((res) => {
+        mutate(SUB_ISSUES(parent?.id ?? ""));
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   };
 
   return (
@@ -140,6 +140,9 @@ const AddAsSubIssue: React.FC<Props> = ({ isOpen, setIsOpen, parent }) => {
                                       backgroundColor: issue.state_detail.color,
                                     }}
                                   />
+                                  <span className="flex-shrink-0 text-xs text-gray-500">
+                                    {issue.project_detail.identifier}-{issue.sequence_id}
+                                  </span>
                                   {issue.name}
                                 </Combobox.Option>
                               );
