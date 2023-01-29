@@ -173,7 +173,7 @@ const Sidebar: React.FC<Props> = ({ toggleSidebar, setToggleSidebar }) => {
                   title="Help"
                 >
                   <QuestionMarkCircleIcon className="h-4 w-4 text-gray-500" />
-                  {!sidebarCollapse && <span>Need help?</span>}
+                  {!sidebarCollapse && <span>Help ?</span>}
                 </button>
               </div>
             </div>
