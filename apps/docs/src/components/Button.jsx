@@ -33,7 +33,7 @@ export function Button({
   arrow,
   ...props
 }) {
-  let Component = props.href ? Link : 'button'
+  const Component = props.href ? Link : 'button'
 
   className = clsx(
     'inline-flex gap-0.5 justify-center overflow-hidden text-sm font-medium transition',
@@ -41,7 +41,7 @@ export function Button({
     className
   )
 
-  let arrowIcon = (
+  const arrowIcon = (
     <ArrowIcon
       className={clsx(
         'mt-0.5 h-5 w-5',

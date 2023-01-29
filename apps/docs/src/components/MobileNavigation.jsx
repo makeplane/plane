@@ -48,9 +48,9 @@ export const useMobileNavigationStore = create((set) => ({
 }))
 
 export function MobileNavigation() {
-  let isInsideMobileNavigation = useIsInsideMobileNavigation()
-  let { isOpen, toggle, close } = useMobileNavigationStore()
-  let ToggleIcon = isOpen ? XIcon : MenuIcon
+  const isInsideMobileNavigation = useIsInsideMobileNavigation()
+  const { isOpen, toggle, close } = useMobileNavigationStore()
+  const ToggleIcon = isOpen ? XIcon : MenuIcon
 
   return (
     <IsInsideMobileNavigationContext.Provider value={true}>
