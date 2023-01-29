@@ -7,14 +7,14 @@ import { mutate } from "swr";
 import { Controller, useForm } from "react-hook-form";
 // headless
 import { Dialog, Transition } from "@headlessui/react";
-// types
-import type { ICycle } from "types";
 // services
 import cycleService from "services/cycles.service";
-import { Button, Input, TextArea, CustomSelect } from "components/ui";
 // ui
+import { Button, Input, TextArea, CustomSelect } from "components/ui";
 // common
 import { renderDateFormat } from "helpers/date-time.helper";
+// types
+import type { ICycle } from "types";
 // fetch keys
 import { CYCLE_LIST } from "constants/fetch-keys";
 
@@ -86,11 +86,11 @@ const CreateUpdateCycleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, proj
             CYCLE_LIST(projectId),
             (prevData) => {
               const newData = prevData?.map((item) => {
-                if (item.id === res.id) {
-                  return res;
-                }
+                if (item.id === res.id) return res;
+
                 return item;
               });
+
               return newData;
             },
             false

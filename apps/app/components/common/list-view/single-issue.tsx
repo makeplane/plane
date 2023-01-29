@@ -21,7 +21,7 @@ import { CalendarDaysIcon } from "@heroicons/react/24/outline";
 import { renderShortNumericDateFormat, findHowManyDaysLeft } from "helpers/date-time.helper";
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
-import { IIssue, IWorkspaceMember, Properties } from "types";
+import { IIssue, IWorkspaceMember, Properties, UserAuth } from "types";
 // fetch-keys
 import {
   CYCLE_ISSUES,
@@ -41,6 +41,7 @@ type Props = {
   properties: Properties;
   editIssue: () => void;
   removeIssue?: () => void;
+  userAuth: UserAuth;
 };
 
 const SingleListIssue: React.FC<Props> = ({
@@ -50,6 +51,7 @@ const SingleListIssue: React.FC<Props> = ({
   properties,
   editIssue,
   removeIssue,
+  userAuth,
 }) => {
   const [deleteIssue, setDeleteIssue] = useState<IIssue | undefined>();
 
@@ -86,6 +88,8 @@ const SingleListIssue: React.FC<Props> = ({
       });
   };
 
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+
   return (
     <>
       <ConfirmIssueDeletion
@@ -121,12 +125,15 @@ const SingleListIssue: React.FC<Props> = ({
                 partialUpdateIssue({ priority: data });
               }}
               className="group relative flex-shrink-0"
+              disabled={isNotAllowed}
             >
               {({ open }) => (
                 <>
                   <div>
                     <Listbox.Button
-                      className={`flex cursor-pointer items-center gap-x-2 rounded px-2 py-0.5 capitalize shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
+                      className={`flex ${
+                        isNotAllowed ? "cursor-not-allowed" : "cursor-pointer"
+                      } items-center gap-x-2 rounded px-2 py-0.5 capitalize shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
                         issue.priority === "urgent"
                           ? "bg-red-100 text-red-600"
                           : issue.priority === "high"
@@ -210,6 +217,7 @@ const SingleListIssue: React.FC<Props> = ({
               }}
               maxHeight="md"
               noChevron
+              disabled={isNotAllowed}
             >
               {states?.map((state) => (
                 <CustomSelect.Option key={state.id} value={state.id}>
@@ -270,12 +278,17 @@ const SingleListIssue: React.FC<Props> = ({
                 partialUpdateIssue({ assignees_list: newData });
               }}
               className="group relative flex-shrink-0"
+              disabled={isNotAllowed}
             >
               {({ open }) => (
                 <>
                   <div>
                     <Listbox.Button>
-                      <div className="flex cursor-pointer items-center gap-1 text-xs">
+                      <div
+                        className={`flex ${
+                          isNotAllowed ? "cursor-not-allowed" : "cursor-pointer"
+                        } items-center gap-1 text-xs`}
+                      >
                         <AssigneesList userIds={issue.assignees ?? []} />
                       </div>
                     </Listbox.Button>
@@ -325,7 +338,7 @@ const SingleListIssue: React.FC<Props> = ({
               )}
             </Listbox>
           )}
-          {type && (
+          {type && !isNotAllowed && (
             <CustomMenu width="auto" ellipsis>
               <CustomMenu.MenuItem onClick={editIssue}>Edit</CustomMenu.MenuItem>
               {type !== "issue" && (

@@ -5,9 +5,6 @@ import useSWR from "swr";
 
 // icons
 import { CubeIcon, PlusIcon } from "@heroicons/react/24/outline";
-// types
-import type { NextPage, NextPageContext } from "next";
-import type { IWorkspaceMemberInvitation } from "types";
 // services
 import workspaceService from "services/workspace.service";
 // hooks
@@ -16,9 +13,12 @@ import { requiredAuth } from "lib/auth";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 // components
-import SingleInvitation from "components/workspace/SingleInvitation";
+import SingleInvitation from "components/workspace/single-invitation";
 // ui
 import { Button, Spinner, EmptySpace, EmptySpaceItem } from "components/ui";
+// types
+import type { NextPage, NextPageContext } from "next";
+import type { IWorkspaceMemberInvitation } from "types";
 
 const OnBoard: NextPage = () => {
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);

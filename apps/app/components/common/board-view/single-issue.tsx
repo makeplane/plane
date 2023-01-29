@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
 // swr
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 // react-beautiful-dnd
 import { DraggableStateSnapshot } from "react-beautiful-dnd";
 // headless ui
@@ -17,47 +17,48 @@ import issuesService from "services/issues.service";
 import stateService from "services/state.service";
 import projectService from "services/project.service";
 // components
-import { AssigneesList } from "components/ui/avatar";
+import { CustomSelect, AssigneesList } from "components/ui";
 // helpers
 import { renderShortNumericDateFormat, findHowManyDaysLeft } from "helpers/date-time.helper";
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
-import { IIssue, IssueResponse, IUserLite, IWorkspaceMember, Properties } from "types";
+import { IIssue, IUserLite, IWorkspaceMember, Properties, UserAuth } from "types";
 // common
 import { PRIORITIES } from "constants/";
-import { PROJECT_ISSUES_LIST, STATE_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
+import {
+  STATE_LIST,
+  PROJECT_DETAILS,
+  CYCLE_ISSUES,
+  MODULE_ISSUES,
+  PROJECT_ISSUES_LIST,
+} from "constants/fetch-keys";
 import { getPriorityIcon } from "constants/global";
 
 type Props = {
+  type?: string;
+  typeId?: string;
   issue: IIssue;
   properties: Properties;
   snapshot?: DraggableStateSnapshot;
   assignees: Partial<IUserLite>[] | (Partial<IUserLite> | undefined)[];
   people: IWorkspaceMember[] | undefined;
   handleDeleteIssue?: React.Dispatch<React.SetStateAction<string | undefined>>;
-  partialUpdateIssue: any;
+  userAuth: UserAuth;
 };
 
 const SingleBoardIssue: React.FC<Props> = ({
+  type,
+  typeId,
   issue,
   properties,
   snapshot,
   assignees,
   people,
   handleDeleteIssue,
-  partialUpdateIssue,
+  userAuth,
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
-  const { data: issues } = useSWR<IssueResponse>(
-    workspaceSlug && projectId
-      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
-      : null,
-    workspaceSlug && projectId
-      ? () => issuesService.getIssues(workspaceSlug as string, projectId as string)
-      : null
-  );
 
   const { data: states } = useSWR(
     workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
@@ -73,7 +74,25 @@ const SingleBoardIssue: React.FC<Props> = ({
       : null
   );
 
-  const totalChildren = issues?.results.filter((i) => i.parent === issue.id).length;
+  const partialUpdateIssue = (formData: Partial<IIssue>) => {
+    if (!workspaceSlug || !projectId) return;
+
+    issuesService
+      .patchIssue(workspaceSlug as string, projectId as string, issue.id, formData)
+      .then((res) => {
+        if (typeId) {
+          mutate(CYCLE_ISSUES(typeId ?? ""));
+          mutate(MODULE_ISSUES(typeId ?? ""));
+        }
+
+        mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   return (
     <div
@@ -82,7 +101,7 @@ const SingleBoardIssue: React.FC<Props> = ({
       }`}
     >
       <div className="group/card relative select-none p-2">
-        {handleDeleteIssue && (
+        {handleDeleteIssue && !isNotAllowed && (
           <div className="absolute top-1.5 right-1.5 z-10 opacity-0 group-hover/card:opacity-100">
             <button
               type="button"
@@ -114,15 +133,18 @@ const SingleBoardIssue: React.FC<Props> = ({
               as="div"
               value={issue.priority}
               onChange={(data: string) => {
-                partialUpdateIssue({ priority: data }, issue.id);
+                partialUpdateIssue({ priority: data });
               }}
               className="group relative flex-shrink-0"
+              disabled={isNotAllowed}
             >
               {({ open }) => (
                 <>
                   <div>
                     <Listbox.Button
-                      className={`grid cursor-pointer place-items-center rounded px-2 py-1 capitalize shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
+                      className={`grid ${
+                        isNotAllowed ? "cursor-not-allowed" : "cursor-pointer"
+                      } place-items-center rounded px-2 py-1 capitalize shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
                         issue.priority === "urgent"
                           ? "bg-red-100 text-red-600"
                           : issue.priority === "high"
@@ -171,14 +193,19 @@ const SingleBoardIssue: React.FC<Props> = ({
               as="div"
               value={issue.state}
               onChange={(data: string) => {
-                partialUpdateIssue({ state: data }, issue.id);
+                partialUpdateIssue({ state: data });
               }}
               className="group relative flex-shrink-0"
+              disabled={isNotAllowed}
             >
               {({ open }) => (
                 <>
                   <div>
-                    <Listbox.Button className="flex cursor-pointer items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                    <Listbox.Button
+                      className={`flex ${
+                        isNotAllowed ? "cursor-not-allowed" : "cursor-pointer"
+                      } items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500`}
+                    >
                       <span
                         className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
                         style={{
@@ -218,10 +245,6 @@ const SingleBoardIssue: React.FC<Props> = ({
                       </Listbox.Options>
                     </Transition>
                   </div>
-                  {/* <div className="absolute bottom-full right-0 mb-2 z-10 hidden group-hover:block p-2 bg-white shadow-md rounded-md whitespace-nowrap">
-                    <h5 className="font-medium mb-1">State</h5>
-                    <div>{issue.state_detail.name}</div>
-                  </div> */}
                 </>
               )}
             </Listbox>
@@ -242,7 +265,7 @@ const SingleBoardIssue: React.FC<Props> = ({
           )}
           {properties.sub_issue_count && (
             <div className="flex flex-shrink-0 items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
-              {totalChildren} {totalChildren === 1 ? "sub-issue" : "sub-issues"}
+              {issue.sub_issues_count} {issue.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
             </div>
           )}
           {properties.assignee && (
@@ -255,81 +278,82 @@ const SingleBoardIssue: React.FC<Props> = ({
                 if (newData.includes(data)) newData.splice(newData.indexOf(data), 1);
                 else newData.push(data);
 
-                partialUpdateIssue({ assignees_list: newData }, issue.id);
+                partialUpdateIssue({ assignees_list: newData });
               }}
               className="group relative flex-shrink-0"
+              disabled={isNotAllowed}
             >
               {({ open }) => (
-                <>
-                  <div>
-                    <Listbox.Button>
-                      <div className="flex cursor-pointer items-center gap-1 text-xs">
-                        <AssigneesList users={assignees} length={3} />
-                      </div>
-                    </Listbox.Button>
-
-                    <Transition
-                      show={open}
-                      as={React.Fragment}
-                      leave="transition ease-in duration-100"
-                      leaveFrom="opacity-100"
-                      leaveTo="opacity-0"
+                <div>
+                  <Listbox.Button>
+                    <div
+                      className={`flex ${
+                        isNotAllowed ? "cursor-not-allowed" : "cursor-pointer"
+                      } items-center gap-1 text-xs`}
                     >
-                      <Listbox.Options className="absolute left-0 z-20 mt-1 max-h-28 overflow-auto rounded-md bg-white py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                        {people?.map((person) => (
-                          <Listbox.Option
-                            key={person.id}
-                            className={({ active }) =>
-                              `cursor-pointer select-none p-2 ${
-                                active ? "bg-indigo-50" : "bg-white"
-                              }`
-                            }
-                            value={person.member.id}
+                      <AssigneesList users={assignees} length={3} />
+                    </div>
+                  </Listbox.Button>
+
+                  <Transition
+                    show={open}
+                    as={React.Fragment}
+                    leave="transition ease-in duration-100"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                  >
+                    <Listbox.Options className="absolute left-0 z-20 mt-1 max-h-28 overflow-auto rounded-md bg-white py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                      {people?.map((person) => (
+                        <Listbox.Option
+                          key={person.id}
+                          className={({ active }) =>
+                            `cursor-pointer select-none p-2 ${active ? "bg-indigo-50" : "bg-white"}`
+                          }
+                          value={person.member.id}
+                        >
+                          <div
+                            className={`flex items-center gap-x-1 ${
+                              assignees.includes({
+                                id: person.member.last_name,
+                                first_name: person.member.first_name,
+                                last_name: person.member.last_name,
+                                email: person.member.email,
+                                avatar: person.member.avatar,
+                              })
+                                ? "font-medium"
+                                : "font-normal"
+                            }`}
                           >
-                            <div
-                              className={`flex items-center gap-x-1 ${
-                                assignees.includes({
-                                  id: person.member.last_name,
-                                  first_name: person.member.first_name,
-                                  last_name: person.member.last_name,
-                                  email: person.member.email,
-                                  avatar: person.member.avatar,
-                                })
-                                  ? "font-medium"
-                                  : "font-normal"
-                              }`}
-                            >
-                              {person.member.avatar && person.member.avatar !== "" ? (
-                                <div className="relative h-4 w-4">
-                                  <Image
-                                    src={person.member.avatar}
-                                    alt="avatar"
-                                    className="rounded-full"
-                                    layout="fill"
-                                    objectFit="cover"
-                                    priority={false}
-                                    loading="lazy"
-                                  />
-                                </div>
-                              ) : (
-                                <div className="grid h-4 w-4 place-items-center rounded-full bg-gray-700 capitalize text-white">
-                                  {person.member.first_name && person.member.first_name !== ""
-                                    ? person.member.first_name.charAt(0)
-                                    : person.member.email.charAt(0)}
-                                </div>
-                              )}
-                              <p>
+                            {person.member.avatar && person.member.avatar !== "" ? (
+                              <div className="relative h-4 w-4">
+                                <Image
+                                  src={person.member.avatar}
+                                  alt="avatar"
+                                  className="rounded-full"
+                                  layout="fill"
+                                  objectFit="cover"
+                                  priority={false}
+                                  loading="lazy"
+                                />
+                              </div>
+                            ) : (
+                              <div className="grid h-4 w-4 place-items-center rounded-full bg-gray-700 capitalize text-white">
                                 {person.member.first_name && person.member.first_name !== ""
-                                  ? person.member.first_name
-                                  : person.member.email}
-                              </p>
-                            </div>
-                          </Listbox.Option>
-                        ))}
-                      </Listbox.Options>
-                    </Transition>
-                  </div>
-                </>
+                                  ? person.member.first_name.charAt(0)
+                                  : person.member.email.charAt(0)}
+                              </div>
+                            )}
+                            <p>
+                              {person.member.first_name && person.member.first_name !== ""
+                                ? person.member.first_name
+                                : person.member.email}
+                            </p>
+                          </div>
+                        </Listbox.Option>
+                      ))}
+                    </Listbox.Options>
+                  </Transition>
+                </div>
               )}
             </Listbox>
           )}
