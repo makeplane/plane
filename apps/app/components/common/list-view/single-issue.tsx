@@ -5,6 +5,9 @@ import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 
+// react-datepicker
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 // services
 import issuesService from "services/issues.service";
 import workspaceService from "services/workspace.service";
@@ -12,7 +15,7 @@ import stateService from "services/state.service";
 // headless ui
 import { Listbox, Transition } from "@headlessui/react";
 // ui
-import { CustomMenu, CustomSelect, AssigneesList, Avatar } from "components/ui";
+import { CustomMenu, CustomSelect, AssigneesList, Avatar, CustomDatePicker } from "components/ui";
 // components
 import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
 // icons
@@ -241,7 +244,7 @@ const SingleListIssue: React.FC<Props> = ({
           )} */}
           {properties.due_date && (
             <div
-              className={`group relative flex flex-shrink-0 cursor-pointer items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
+              className={`group relative ${
                 issue.target_date === null
                   ? ""
                   : issue.target_date < new Date().toISOString()
@@ -249,8 +252,37 @@ const SingleListIssue: React.FC<Props> = ({
                   : findHowManyDaysLeft(issue.target_date) <= 3 && "text-orange-400"
               }`}
             >
-              <CalendarDaysIcon className="h-4 w-4" />
-              {issue.target_date ? renderShortNumericDateFormat(issue.target_date) : "N/A"}
+              <CustomDatePicker
+                placeholder="N/A"
+                value={issue?.target_date}
+                onChange={(val: Date) => {
+                  partialUpdateIssue({
+                    target_date: val
+                      ? `${val.getFullYear()}-${val.getMonth() + 1}-${val.getDate()}`
+                      : null,
+                  });
+                }}
+                className={issue?.target_date ? "w-[6.5rem]" : "w-[3rem] text-center"}
+              />
+              {/* <DatePicker
+                placeholderText="N/A"
+                value={
+                  issue?.target_date ? `${renderShortNumericDateFormat(issue.target_date)}` : "N/A"
+                }
+                selected={issue?.target_date ? new Date(issue.target_date) : null}
+                onChange={(val: Date) => {
+                  partialUpdateIssue({
+                    target_date: val
+                      ? `${val.getFullYear()}-${val.getMonth() + 1}-${val.getDate()}`
+                      : null,
+                  });
+                }}
+                dateFormat="dd-MM-yyyy"
+                className={`cursor-pointer rounded-md border px-2 py-[3px] text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
+                  issue?.target_date ? "w-[4.5rem]" : "w-[3rem] text-center"
+                }`}
+                isClearable
+              /> */}
               <div className="absolute bottom-full right-0 z-10 mb-2 hidden whitespace-nowrap rounded-md bg-white p-2 shadow-md group-hover:block">
                 <h5 className="mb-1 font-medium text-gray-900">Due date</h5>
                 <div>{renderShortNumericDateFormat(issue.target_date ?? "")}</div>

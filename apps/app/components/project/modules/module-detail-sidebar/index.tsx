@@ -26,7 +26,7 @@ import ModuleLinkModal from "components/project/modules/module-link-modal";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 // ui
-import { Loader } from "components/ui";
+import { CustomDatePicker, Loader } from "components/ui";
 // icons
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
@@ -39,8 +39,8 @@ import { MODULE_LIST } from "constants/fetch-keys";
 
 const defaultValues: Partial<IModule> = {
   members_list: [],
-  start_date: new Date().toString(),
-  target_date: new Date().toString(),
+  start_date: null,
+  target_date: null,
   status: null,
 };
 
@@ -88,16 +88,21 @@ const ModuleDetailSidebar: React.FC<Props> = ({
   const submitChanges = (data: Partial<IModule>) => {
     if (!workspaceSlug || !projectId || !module) return;
 
+    mutate<IModule[]>(
+      projectId && MODULE_LIST(projectId as string),
+      (prevData) =>
+        (prevData ?? []).map((module) => {
+          if (module.id === moduleId) return { ...module, ...data };
+          return module;
+        }),
+      false
+    );
+
     modulesService
       .patchModule(workspaceSlug as string, projectId as string, module.id, data)
       .then((res) => {
         console.log(res);
-        mutate<IModule[]>(projectId && MODULE_LIST(projectId as string), (prevData) =>
-          (prevData ?? []).map((module) => {
-            if (module.id === moduleId) return { ...module, ...data };
-            return module;
-          })
-        );
+        mutate(MODULE_LIST(projectId as string));
       })
       .catch((e) => {
         console.log(e);
@@ -186,16 +191,16 @@ const ModuleDetailSidebar: React.FC<Props> = ({
                     <Controller
                       control={control}
                       name="start_date"
-                      render={({ field: { value, onChange } }) => (
-                        <input
-                          type="date"
-                          id="moduleStartDate"
-                          value={value ?? ""}
-                          onChange={(e: any) => {
-                            submitChanges({ start_date: e.target.value });
-                            onChange(e.target.value);
+                      render={({ field: { value } }) => (
+                        <CustomDatePicker
+                          value={value}
+                          onChange={(val: Date) => {
+                            submitChanges({
+                              start_date: val
+                                ? `${val.getFullYear()}-${val.getMonth() + 1}-${val.getDate()}`
+                                : null,
+                            });
                           }}
-                          className="w-full cursor-pointer rounded-md border bg-transparent px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                         />
                       )}
                     />
@@ -210,16 +215,16 @@ const ModuleDetailSidebar: React.FC<Props> = ({
                     <Controller
                       control={control}
                       name="target_date"
-                      render={({ field: { value, onChange } }) => (
-                        <input
-                          type="date"
-                          id="moduleTargetDate"
-                          value={value ?? ""}
-                          onChange={(e: any) => {
-                            submitChanges({ target_date: e.target.value });
-                            onChange(e.target.value);
+                      render={({ field: { value } }) => (
+                        <CustomDatePicker
+                          value={value}
+                          onChange={(val: Date) => {
+                            submitChanges({
+                              target_date: val
+                                ? `${val.getFullYear()}-${val.getMonth() + 1}-${val.getDate()}`
+                                : null,
+                            });
                           }}
-                          className="w-full cursor-pointer rounded-md border bg-transparent px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                         />
                       )}
                     />

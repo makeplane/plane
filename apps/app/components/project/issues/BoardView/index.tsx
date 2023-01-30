@@ -68,7 +68,8 @@ const BoardView: React.FC<Props> = ({ issues, handleDeleteIssue, userAuth }) => 
 
   const handleOnDragEnd = useCallback(
     (result: DropResult) => {
-      if (!result.destination) return;
+      if (!result.destination || !workspaceSlug || !projectId) return;
+
       const { source, destination, type } = result;
 
       if (destination.droppableId === "trashBox") {
@@ -94,7 +95,7 @@ const BoardView: React.FC<Props> = ({ issues, handleDeleteIssue, userAuth }) => 
           newStates[destination.index].sequence = sequenceNumber;
 
           mutateState(newStates, false);
-          if (!workspaceSlug) return;
+
           stateServices
             .patchState(
               workspaceSlug as string,
@@ -140,18 +141,6 @@ const BoardView: React.FC<Props> = ({ issues, handleDeleteIssue, userAuth }) => 
               draggedItem.state = destinationStateId;
               draggedItem.state_detail = destinationState;
 
-              // patch request
-              issuesServices.patchIssue(
-                workspaceSlug as string,
-                projectId as string,
-                draggedItem.id,
-                {
-                  state: destinationStateId,
-                }
-              );
-
-              // mutate the issues
-              if (!workspaceSlug || !projectId) return;
               mutate<IssueResponse>(
                 PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
                 (prevData) => {
@@ -175,6 +164,15 @@ const BoardView: React.FC<Props> = ({ issues, handleDeleteIssue, userAuth }) => 
                 },
                 false
               );
+
+              // patch request
+              issuesServices
+                .patchIssue(workspaceSlug as string, projectId as string, draggedItem.id, {
+                  state: destinationStateId,
+                })
+                .then((res) => {
+                  mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
+                });
             }
           }
         }

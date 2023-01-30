@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { mutate } from "swr";
 
 // react-hook-form
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // components
@@ -13,7 +13,7 @@ import SelectLead from "components/project/modules/create-update-module-modal/se
 import SelectMembers from "components/project/modules/create-update-module-modal/select-members";
 import SelectStatus from "components/project/modules/create-update-module-modal/select-status";
 // ui
-import { Button, Input, TextArea } from "components/ui";
+import { Button, CustomDatePicker, Input, TextArea } from "components/ui";
 // services
 import modulesService from "services/modules.service";
 // hooks
@@ -193,32 +193,62 @@ const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, pro
                       </div>
                       <div className="flex gap-x-2">
                         <div className="w-full">
-                          <Input
-                            id="start_date"
-                            label="Start Date"
-                            name="start_date"
-                            type="date"
-                            placeholder="Enter start date"
-                            error={errors.start_date}
-                            register={register}
-                            validations={{
-                              required: "Start date is required",
-                            }}
-                          />
+                          <h6 className="text-gray-500">Start Date</h6>
+                          <div className="w-full">
+                            <Controller
+                              control={control}
+                              name="start_date"
+                              rules={{ required: "Start date is required" }}
+                              render={({ field: { value, onChange } }) => (
+                                <CustomDatePicker
+                                  renderAs="input"
+                                  value={value}
+                                  onChange={(val: Date) => {
+                                    onChange(
+                                      val
+                                        ? `${val.getFullYear()}-${
+                                            val.getMonth() + 1
+                                          }-${val.getDate()}`
+                                        : null
+                                    );
+                                  }}
+                                  error={errors.start_date ? true : false}
+                                />
+                              )}
+                            />
+                            {errors.start_date && (
+                              <h6 className="text-sm text-red-500">{errors.start_date.message}</h6>
+                            )}
+                          </div>
                         </div>
                         <div className="w-full">
-                          <Input
-                            id="target_date"
-                            label="Target Date"
-                            name="target_date"
-                            type="date"
-                            placeholder="Enter target date"
-                            error={errors.target_date}
-                            register={register}
-                            validations={{
-                              required: "Target date is required",
-                            }}
-                          />
+                          <h6 className="text-gray-500">Target Date</h6>
+                          <div className="w-full">
+                            <Controller
+                              control={control}
+                              name="target_date"
+                              rules={{ required: "Target date is required" }}
+                              render={({ field: { value, onChange } }) => (
+                                <CustomDatePicker
+                                  renderAs="input"
+                                  value={value}
+                                  onChange={(val: Date) => {
+                                    onChange(
+                                      val
+                                        ? `${val.getFullYear()}-${
+                                            val.getMonth() + 1
+                                          }-${val.getDate()}`
+                                        : null
+                                    );
+                                  }}
+                                  error={errors.target_date ? true : false}
+                                />
+                              )}
+                            />
+                            {errors.target_date && (
+                              <h6 className="text-sm text-red-500">{errors.target_date.message}</h6>
+                            )}
+                          </div>
                         </div>
                       </div>
                       <div className="flex flex-wrap items-center gap-2">
