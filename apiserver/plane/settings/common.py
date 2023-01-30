@@ -34,9 +34,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt.token_blacklist",
     "corsheaders",
     "taggit",
-    "fieldsignals",
     "django_rq",
-    "channels",
 ]
 
 MIDDLEWARE = [

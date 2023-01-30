@@ -68,21 +68,6 @@ services:
     env_file:
       - ./apiserver/.env
 
-  plane-channel-worker:
-    image: plane-api
-    container_name: plane-channel-worker
-    restart: always
-    depends_on:
-      - redis
-      - db
-      - plane-api
-    command: ./bin/channel-worker
-    links:
-      - redis:redis
-      - db:db
-    env_file:
-      - ./apiserver/.env
-
 volumes:
   pgdata:
   redisdata:

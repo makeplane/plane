@@ -10,8 +10,6 @@ from django.core.serializers.json import DjangoJSONEncoder
 from rest_framework.response import Response
 from rest_framework import status
 from sentry_sdk import capture_exception
-from channels.layers import get_channel_layer
-from asgiref.sync import async_to_sync
 
 # Module imports
 from . import BaseViewSet, BaseAPIView
@@ -42,6 +40,7 @@ from plane.db.models import (
     CycleIssue,
     ModuleIssue,
 )
+from plane.bgtasks.issue_activites_task import issue_activity
 
 
 class IssueViewSet(BaseViewSet):
@@ -72,12 +71,12 @@ class IssueViewSet(BaseViewSet):
 
     def perform_update(self, serializer):
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
-        current_instance = Issue.objects.filter(pk=self.kwargs.get("pk", None)).first()
+        current_instance = (
+            self.get_queryset().filter(pk=self.kwargs.get("pk", None)).first()
+        )
         if current_instance is not None:
 
-            channel_layer = get_channel_layer()
-            async_to_sync(channel_layer.send)(
-                "issue-activites",
+            issue_activity.delay(
                 {
                     "type": "issue.activity",
                     "requested_data": requested_data,
