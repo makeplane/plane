@@ -93,7 +93,7 @@ class ModuleWriteSerializer(BaseSerializer):
         links = validated_data.pop("links_list", None)
 
         if members is not None:
-            ModuleIssue.objects.filter(module=instance).delete()
+            ModuleMember.objects.filter(module=instance).delete()
             ModuleMember.objects.bulk_create(
                 [
                     ModuleMember(
