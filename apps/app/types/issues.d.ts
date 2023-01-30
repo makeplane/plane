@@ -50,6 +50,16 @@ export interface IIssueCycle {
   workspace: string;
 }
 
+export interface IIssueParent {
+  description: any;
+  id: string;
+  name: string;
+  priority: string | null;
+  sequence_id: number;
+  start_date: string | null;
+  target_date: string | null;
+}
+
 export interface IIssue {
   assignees: any[] | null;
   assignee_details: IUser[];
@@ -77,7 +87,7 @@ export interface IIssue {
   module: string | null;
   name: string;
   parent: string | null;
-  parent_detail: IProject | null;
+  parent_detail: IIssueParent | null;
   priority: string | null;
   project: string;
   project_detail: IProject;
