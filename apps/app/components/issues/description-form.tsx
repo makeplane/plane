@@ -1,7 +1,11 @@
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useCallback, useEffect, useMemo } from "react";
+
 import dynamic from "next/dynamic";
-// types
-import { IIssue } from "types";
+
+// react-hook-form
+import { useForm } from "react-hook-form";
+// lodash
+import debounce from "lodash.debounce";
 // components
 import { Loader, Input } from "components/ui";
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
@@ -12,8 +16,8 @@ const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor
     </Loader>
   ),
 });
-// hooks
-import useDebounce from "hooks/use-debounce";
+// types
+import { IIssue } from "types";
 
 export interface IssueDescriptionFormValues {
   name: string;
@@ -23,61 +27,73 @@ export interface IssueDescriptionFormValues {
 
 export interface IssueDetailsProps {
   issue: IIssue;
-  handleSubmit: (value: IssueDescriptionFormValues) => void;
+  handleFormSubmit: (value: IssueDescriptionFormValues) => void;
 }
 
-export const IssueDescriptionForm: FC<IssueDetailsProps> = ({ issue, handleSubmit }) => {
-  // states
-  // const [issueFormValues, setIssueFormValues] = useState({
-  //   name: issue.name,
-  //   description: issue?.description,
-  //   description_html: issue?.description_html,
-  // });
-  const [issueName, setIssueName] = useState(issue?.name);
-  const [issueDescription, setIssueDescription] = useState(issue?.description);
-  const [issueDescriptionHTML, setIssueDescriptionHTML] = useState(issue?.description_html);
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+export const IssueDescriptionForm: FC<IssueDetailsProps> = ({ issue, handleFormSubmit }) => {
+  const { handleSubmit, watch, setValue, reset } = useForm<IIssue>({
+    defaultValues: {
+      name: "",
+      description: "",
+      description_html: "",
+    },
+  });
 
-  // hooks
-  const formValues = useDebounce(
-    { name: issueName, description: issueDescription, description_html: issueDescriptionHTML },
-    2000
+  const handleDescriptionFormSubmit = useCallback(
+    (formData: Partial<IIssue>) => {
+      handleFormSubmit({
+        name: formData.name ?? "",
+        description: formData.description,
+        description_html: formData.description_html,
+      });
+    },
+    [handleFormSubmit]
   );
-  const stringFromValues = JSON.stringify(formValues);
 
-  useEffect(() => {
-    handleSubmit(formValues);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [handleSubmit, stringFromValues]);
+  const debounceHandler = useMemo(
+    () => debounce(handleSubmit(handleDescriptionFormSubmit), 2000),
+    [handleSubmit, handleDescriptionFormSubmit]
+  );
 
+  useEffect(
+    () => () => {
+      debounceHandler.cancel();
+    },
+    [debounceHandler]
+  );
+
+  // reset form values
   useEffect(() => {
-    if (textareaRef && textareaRef.current) {
-      textareaRef.current.style.height = "0px";
-      const scrollHeight = textareaRef.current.scrollHeight;
-      textareaRef.current.style.height = scrollHeight + "px";
-    }
-  }, [issueName]);
+    if (!issue) return;
+
+    reset(issue);
+  }, [issue, reset]);
 
   return (
     <div>
-      <textarea
+      <Input
         id="name"
         placeholder="Enter issue name"
         name="name"
-        value={issueName}
-        ref={textareaRef}
-        rows={1}
-        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setIssueName(e.target.value)}
+        value={watch("name")}
+        autoComplete="off"
+        onChange={(e) => {
+          setValue("name", e.target.value);
+          debounceHandler();
+        }}
+        mode="transparent"
+        className="text-xl font-medium"
         required={true}
-        className="no-scrollbar w-full px-3 py-2 outline-none rounded border-none bg-transparent ring-0 transition-all focus:ring-1 focus:ring-theme text-xl font-medium resize-none"
       />
 
       <RemirrorRichTextEditor
-        value={issueDescription}
-        placeholder="Enter Your Text..."
-        onJSONChange={(json) => setIssueDescription(json)}
-        onHTMLChange={(html) => setIssueDescriptionHTML(html)}
-        customClassName="min-h-[150px]"
+        value={watch("description")}
+        placeholder="Describe the issue..."
+        onJSONChange={(json) => {
+          setValue("description", json);
+          debounceHandler();
+        }}
+        onHTMLChange={(html) => setValue("description_html", html)}
       />
     </div>
   );

@@ -149,6 +149,7 @@ const IssueDetailsPage: NextPage = () => {
       issuesService
         .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload)
         .then((res) => {
+          console.log(res);
           mutateIssueDetails();
           mutateIssueActivities();
         })
@@ -172,24 +173,6 @@ const IssueDetailsPage: NextPage = () => {
         console.error(e);
       });
   };
-
-  /**
-   * Handling the debounce submit by updating the issue with name, description and description_html
-   * @param values IssueDescriptionFormValues
-   */
-  const handleDescriptionFormSubmit = useCallback(
-    (values: IssueDescriptionFormValues) => {
-      if (!workspaceSlug || !projectId || !issueId) return;
-
-      issuesService
-        .updateIssue(workspaceSlug as string, projectId as string, issueId as string, values)
-        .then((res) => {
-          console.log(res);
-          mutateIssueActivities();
-        });
-    },
-    [workspaceSlug, projectId, issueId, mutateIssueActivities]
-  );
 
   return (
     <AppLayout
@@ -304,10 +287,7 @@ const IssueDetailsPage: NextPage = () => {
                   </CustomMenu>
                 </div>
               ) : null}
-              <IssueDescriptionForm
-                issue={issueDetails}
-                handleSubmit={handleDescriptionFormSubmit}
-              />
+              <IssueDescriptionForm issue={issueDetails} handleFormSubmit={submitChanges} />
               <div className="mt-2">
                 {issueId && workspaceSlug && projectId && subIssues?.length > 0 ? (
                   <SubIssueList

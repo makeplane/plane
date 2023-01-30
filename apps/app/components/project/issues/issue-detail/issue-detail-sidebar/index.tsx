@@ -34,6 +34,7 @@ import SelectBlocked from "components/project/issues/issue-detail/issue-detail-s
 // headless ui
 // ui
 import { Input, Button, Spinner } from "components/ui";
+import DatePicker from "react-datepicker";
 // icons
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
@@ -41,6 +42,8 @@ import { copyTextToClipboard } from "helpers/string.helper";
 import type { ICycle, IIssue, IIssueLabels } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS, PROJECT_ISSUES_LIST, ISSUE_DETAILS } from "constants/fetch-keys";
+
+import "react-datepicker/dist/react-datepicker.css";
 
 type Props = {
   control: Control<IIssue, any>;
@@ -216,6 +219,24 @@ const IssueDetailSidebar: React.FC<Props> = ({
                 <p>Due date</p>
               </div>
               <div className="sm:basis-1/2">
+                {/* <Controller
+                  control={control}
+                  name="target_date"
+                  render={({ field: { value, onChange } }) => (
+                    <DatePicker
+                      selected={value ? new Date(value) : new Date()}
+                      onChange={(val: Date) => {
+                        submitChanges({
+                          target_date: `${val.getFullYear()}-${
+                            val.getMonth() + 1
+                          }-${val.getDate()}`,
+                        });
+                        onChange(`${val.getFullYear()}-${val.getMonth() + 1}-${val.getDate()}`);
+                      }}
+                      dateFormat="dd-MM-yyyy"
+                    />
+                  )}
+                /> */}
                 <Controller
                   control={control}
                   name="target_date"
