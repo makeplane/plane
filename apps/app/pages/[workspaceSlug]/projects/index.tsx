@@ -88,9 +88,8 @@ const ProjectsPage: NextPage = () => {
                   title="Create a new project"
                   description={
                     <span>
-                      Use{" "}
-                      <pre className="inline rounded bg-gray-100 px-2 py-1">Ctrl/Command + P</pre>{" "}
-                      shortcut to create a new project
+                      Use <pre className="inline rounded bg-gray-100 px-2 py-1">P</pre> shortcut to
+                      create a new project
                     </span>
                   }
                   Icon={PlusIcon}

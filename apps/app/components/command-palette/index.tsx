@@ -97,32 +97,38 @@ const CommandPalette: React.FC = () => {
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === "/") {
-        e.preventDefault();
-        setIsPaletteOpen(true);
-      } else if ((e.ctrlKey || e.metaKey) && e.key === "i") {
-        e.preventDefault();
-        setIsIssueModalOpen(true);
-      } else if ((e.ctrlKey || e.metaKey) && e.key === "p") {
-        e.preventDefault();
-        setIsProjectModalOpen(true);
-      } else if ((e.ctrlKey || e.metaKey) && e.key === "b") {
-        e.preventDefault();
-        toggleCollapsed();
-      } else if ((e.ctrlKey || e.metaKey) && e.key === "h") {
-        e.preventDefault();
-        setIsShortcutsModalOpen(true);
-      } else if ((e.ctrlKey || e.metaKey) && e.key === "q") {
-        e.preventDefault();
-        setIsCreateCycleModalOpen(true);
-      } else if ((e.ctrlKey || e.metaKey) && e.key === "m") {
-        e.preventDefault();
-        setIsCreateModuleModalOpen(true);
-      } else if ((e.ctrlKey || e.metaKey) && e.key === "d") {
-        e.preventDefault();
-        setIsBulkDeleteIssuesModalOpen(true);
-      } else if ((e.ctrlKey || e.metaKey) && e.altKey && e.key === "c") {
-        e.preventDefault();
+      if (
+        !(e.target instanceof HTMLTextAreaElement) &&
+        !(e.target instanceof HTMLInputElement) &&
+        !(e.target as Element).classList?.contains("remirror-editor")
+      ) {
+        if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+          e.preventDefault();
+          setIsPaletteOpen(true);
+        } else if (e.key === "c") {
+          e.preventDefault();
+          setIsIssueModalOpen(true);
+        } else if (e.key === "p") {
+          e.preventDefault();
+          setIsProjectModalOpen(true);
+        } else if ((e.ctrlKey || e.metaKey) && e.key === "b") {
+          e.preventDefault();
+          toggleCollapsed();
+        } else if (e.key === "h") {
+          e.preventDefault();
+          setIsShortcutsModalOpen(true);
+        } else if (e.key === "q") {
+          e.preventDefault();
+          setIsCreateCycleModalOpen(true);
+        } else if (e.key === "m") {
+          e.preventDefault();
+          setIsCreateModuleModalOpen(true);
+        } else if (e.key === "Delete") {
+          e.preventDefault();
+          setIsBulkDeleteIssuesModalOpen(true);
+        } else if ((e.ctrlKey || e.metaKey) && e.altKey && e.key === "c") {
+          e.preventDefault();
+        }
 
         if (!router.query.issueId) return;
 
