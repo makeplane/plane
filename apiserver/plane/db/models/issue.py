@@ -145,12 +145,8 @@ class IssueActivity(ProjectBaseModel):
     field = models.CharField(
         max_length=255, verbose_name="Field Name", blank=True, null=True
     )
-    old_value = models.CharField(
-        max_length=255, verbose_name="Old Value", blank=True, null=True
-    )
-    new_value = models.CharField(
-        max_length=255, verbose_name="New Value", blank=True, null=True
-    )
+    old_value = models.TextField(verbose_name="Old Value", blank=True, null=True)
+    new_value = models.TextField(verbose_name="New Value", blank=True, null=True)
 
     comment = models.TextField(verbose_name="Comment", blank=True)
     attachments = ArrayField(models.URLField(), size=10, blank=True, default=list)
