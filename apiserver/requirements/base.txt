@@ -20,12 +20,9 @@ sentry-sdk==1.13.0
 django-s3-storage==0.13.6
 django-crum==0.7.9
 django-guardian==2.4.0
-django-fieldsignals==0.7.0
 dj_rest_auth==2.2.5
 google-auth==2.9.1
 google-api-python-client==2.55.0
 django-rq==2.5.1
 django-redis==5.2.0
-channels==4.0.0
-channels-redis==4.0.0
 uvicorn==0.20.0

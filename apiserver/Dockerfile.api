@@ -49,7 +49,7 @@ USER root
 RUN apk --update --no-cache add "bash~=5.1"
 COPY ./bin ./bin/
 
-RUN chmod +x ./bin/channel-worker ./bin/takeoff ./bin/worker
+RUN chmod +x ./bin/takeoff ./bin/worker
 
 USER captain
 
