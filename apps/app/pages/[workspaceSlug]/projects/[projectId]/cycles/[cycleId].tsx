@@ -50,7 +50,7 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
   const [selectedIssues, setSelectedIssues] = useState<SelectIssue>();
   const [cycleIssuesListModal, setCycleIssuesListModal] = useState(false);
   const [deleteIssue, setDeleteIssue] = useState<string | undefined>(undefined);
-  const [cycleSidebar, setCycleSidebar] = useState(false);
+  const [cycleSidebar, setCycleSidebar] = useState(true);
 
   const [preloadedData, setPreloadedData] = useState<
     (Partial<IIssue> & { actionType: "createIssue" | "edit" | "delete" }) | null

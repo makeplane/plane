@@ -1,18 +1,19 @@
 import React, { useEffect } from "react";
-// next
+
 import { useRouter } from "next/router";
-// swr
+
 import { mutate } from "swr";
+
 // react hook form
 import { Controller, useForm } from "react-hook-form";
-// headless
+// headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
 import cycleService from "services/cycles.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { Button, Input, TextArea, CustomSelect } from "components/ui";
+import { Button, Input, TextArea, CustomSelect, CustomDatePicker } from "components/ui";
 // common
 import { renderDateFormat } from "helpers/date-time.helper";
 // types
@@ -31,8 +32,8 @@ const defaultValues: Partial<ICycle> = {
   name: "",
   description: "",
   status: "draft",
-  start_date: new Date().toString(),
-  end_date: new Date().toString(),
+  start_date: null,
+  end_date: null,
 };
 
 const CreateUpdateCycleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, projectId }) => {
@@ -202,32 +203,62 @@ const CreateUpdateCycleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, proj
                       </div>
                       <div className="flex gap-x-2">
                         <div className="w-full">
-                          <Input
-                            id="start_date"
-                            label="Start Date"
-                            name="start_date"
-                            type="date"
-                            placeholder="Enter start date"
-                            error={errors.start_date}
-                            register={register}
-                            validations={{
-                              required: "Start date is required",
-                            }}
-                          />
+                          <h6 className="text-gray-500">Start Date</h6>
+                          <div className="w-full">
+                            <Controller
+                              control={control}
+                              name="start_date"
+                              rules={{ required: "Start date is required" }}
+                              render={({ field: { value, onChange } }) => (
+                                <CustomDatePicker
+                                  renderAs="input"
+                                  value={value}
+                                  onChange={(val: Date) => {
+                                    onChange(
+                                      val
+                                        ? `${val.getFullYear()}-${
+                                            val.getMonth() + 1
+                                          }-${val.getDate()}`
+                                        : null
+                                    );
+                                  }}
+                                  error={errors.start_date ? true : false}
+                                />
+                              )}
+                            />
+                            {errors.start_date && (
+                              <h6 className="text-sm text-red-500">{errors.start_date.message}</h6>
+                            )}
+                          </div>
                         </div>
                         <div className="w-full">
-                          <Input
-                            id="end_date"
-                            label="End Date"
-                            name="end_date"
-                            type="date"
-                            placeholder="Enter end date"
-                            error={errors.end_date}
-                            register={register}
-                            validations={{
-                              required: "End date is required",
-                            }}
-                          />
+                          <h6 className="text-gray-500">End Date</h6>
+                          <div className="w-full">
+                            <Controller
+                              control={control}
+                              name="end_date"
+                              rules={{ required: "End date is required" }}
+                              render={({ field: { value, onChange } }) => (
+                                <CustomDatePicker
+                                  renderAs="input"
+                                  value={value}
+                                  onChange={(val: Date) => {
+                                    onChange(
+                                      val
+                                        ? `${val.getFullYear()}-${
+                                            val.getMonth() + 1
+                                          }-${val.getDate()}`
+                                        : null
+                                    );
+                                  }}
+                                  error={errors.end_date ? true : false}
+                                />
+                              )}
+                            />
+                            {errors.end_date && (
+                              <h6 className="text-sm text-red-500">{errors.end_date.message}</h6>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
