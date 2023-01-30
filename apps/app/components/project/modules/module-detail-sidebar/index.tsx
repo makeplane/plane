@@ -22,6 +22,9 @@ import SelectLead from "components/project/modules/module-detail-sidebar/select-
 import SelectMembers from "components/project/modules/module-detail-sidebar/select-members";
 import SelectStatus from "components/project/modules/module-detail-sidebar/select-status";
 import ModuleLinkModal from "components/project/modules/module-link-modal";
+//progress-bar
+import { CircularProgressbar } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
 // ui
 import { Loader } from "components/ui";
 // icons
@@ -161,7 +164,13 @@ const ModuleDetailSidebar: React.FC<Props> = ({
                   </div>
                   <div className="flex items-center gap-2 sm:basis-1/2">
                     <div className="grid flex-shrink-0 place-items-center">
-                      <span className="h-4 w-4 rounded-full border-2 border-gray-300 border-r-blue-500" />
+                      <span className="h-4 w-4">
+                        <CircularProgressbar
+                          value={groupedIssues.completed.length}
+                          maxValue={moduleIssues?.length}
+                          strokeWidth={10}
+                        />
+                      </span>
                     </div>
                     {groupedIssues.completed.length}/{moduleIssues?.length}
                   </div>
