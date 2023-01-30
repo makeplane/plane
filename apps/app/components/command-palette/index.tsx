@@ -100,7 +100,7 @@ const CommandPalette: React.FC = () => {
       if (
         !(e.target instanceof HTMLTextAreaElement) &&
         !(e.target instanceof HTMLInputElement) &&
-        !(e.target as Element).classList.contains("remirror-editor")
+        !(e.target as Element).classList?.contains("remirror-editor")
       ) {
         if ((e.ctrlKey || e.metaKey) && e.key === "k") {
           e.preventDefault();
