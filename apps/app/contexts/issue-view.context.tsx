@@ -1,4 +1,4 @@
-import { createContext, useCallback, useReducer } from "react";
+import { createContext, useCallback, useEffect, useReducer } from "react";
 
 import { useRouter } from "next/router";
 
@@ -24,6 +24,7 @@ type IssueViewProps = {
 
 type ReducerActionType = {
   type:
+    | "REHYDRATE_THEME"
     | "SET_ISSUE_VIEW"
     | "SET_ORDER_BY_PROPERTY"
     | "SET_FILTER_ISSUES"
@@ -65,6 +66,12 @@ export const reducer: ReducerFunctionType = (state, action) => {
   const { type, payload } = action;
 
   switch (type) {
+    case "REHYDRATE_THEME": {
+      let collapsed: any = localStorage.getItem("collapsed");
+      collapsed = collapsed ? JSON.parse(collapsed) : false;
+      return { ...initialState, ...payload, collapsed };
+    }
+
     case "SET_ISSUE_VIEW": {
       const newState = {
         ...state,
@@ -259,6 +266,13 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
     if (!workspaceSlug || !projectId) return;
     saveDataToServer(workspaceSlug as string, projectId as string, myViewProps?.default_props);
   }, [projectId, workspaceSlug, myViewProps]);
+
+  useEffect(() => {
+    dispatch({
+      type: "REHYDRATE_THEME",
+      payload: myViewProps?.view_props,
+    });
+  }, [myViewProps]);
 
   return (
     <issueViewContext.Provider

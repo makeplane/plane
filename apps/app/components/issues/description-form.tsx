@@ -85,6 +85,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({ issue, handleFormS
         className="text-xl font-medium"
         required={true}
       />
+
       <RemirrorRichTextEditor
         value={watch("description")}
         placeholder="Describe the issue..."

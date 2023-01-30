@@ -200,7 +200,7 @@ const BoardView: React.FC<Props> = ({ issues, handleDeleteIssue, userAuth }) => 
         }}
       />
       {groupedByIssues ? (
-        <div className="h-screen w-full">
+        <div className="h-[calc(100vh-157px)] lg:h-[calc(100vh-115px)] w-full">
           <DragDropContext onDragEnd={handleOnDragEnd}>
             <div className="h-full w-full overflow-hidden">
               <StrictModeDroppable droppableId="state" type="state" direction="horizontal">

@@ -212,10 +212,7 @@ const IssuesListModal: React.FC<Props> = ({
                           <LayerDiagonalIcon height="56" width="56" />
                           <h3 className="text-gray-500">
                             No issues found. Create a new issue with{" "}
-                            <pre className="inline rounded bg-gray-100 px-2 py-1">
-                              Ctrl/Command + I
-                            </pre>
-                            .
+                            <pre className="inline rounded bg-gray-100 px-2 py-1">C</pre>.
                           </h3>
                         </div>
                       )}

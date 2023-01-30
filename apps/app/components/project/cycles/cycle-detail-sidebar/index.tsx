@@ -14,6 +14,9 @@ import cyclesService from "services/cycles.service";
 import useToast from "hooks/use-toast";
 // ui
 import { Loader } from "components/ui";
+//progress-bar
+import { CircularProgressbar } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 import { groupBy } from "helpers/array.helper";
@@ -135,7 +138,13 @@ const CycleDetailSidebar: React.FC<Props> = ({ cycle, isOpen, cycleIssues }) => 
                 </div>
                 <div className="flex items-center gap-2 sm:basis-1/2">
                   <div className="grid flex-shrink-0 place-items-center">
-                    <span className="h-4 w-4 rounded-full border-2 border-gray-300 border-r-blue-500" />
+                    <span className="h-4 w-4">
+                      <CircularProgressbar
+                        value={groupedIssues.completed.length}
+                        maxValue={cycleIssues?.length}
+                        strokeWidth={10}
+                      />
+                    </span>
                   </div>
                   {groupedIssues.completed.length}/{cycleIssues?.length}
                 </div>
