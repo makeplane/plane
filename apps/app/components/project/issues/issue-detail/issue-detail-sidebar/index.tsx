@@ -219,7 +219,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
                 <p>Due date</p>
               </div>
               <div className="sm:basis-1/2">
-                <Controller
+                {/* <Controller
                   control={control}
                   name="target_date"
                   render={({ field: { value, onChange } }) => (
@@ -236,7 +236,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
                       dateFormat="dd-MM-yyyy"
                     />
                   )}
-                />
+                /> */}
                 <Controller
                   control={control}
                   name="target_date"
