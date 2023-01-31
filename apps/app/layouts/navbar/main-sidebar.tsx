@@ -84,6 +84,8 @@ const Sidebar: React.FC<Props> = ({ toggleSidebar, setToggleSidebar }) => {
 
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
 
+  const helpOptionMode = sidebarCollapse ? "left-full" : "left-[-75px]";
+
   return (
     <nav className="relative z-20 h-screen">
       <div
@@ -148,14 +150,14 @@ const Sidebar: React.FC<Props> = ({ toggleSidebar, setToggleSidebar }) => {
                   leaveTo="transform opacity-0 scale-95"
                 >
                   <div
-                    className="absolute bottom-0 left-full space-y-2 rounded-sm bg-white py-3 shadow-md"
+                    className={`absolute bottom-2 ${helpOptionMode}  space-y-2 rounded-sm bg-white py-3 shadow-md`}
                     ref={helpOptionsRef}
                   >
                     {helpOptions.map(({ name, Icon, href }) => (
                       <Link href={href} key={name}>
                         <a
                           target="_blank"
-                          className="mx-3 flex items-center gap-x-2 rounded-md px-2 py-2 text-xs hover:bg-gray-100"
+                          className="mx-3 flex items-center gap-x-2 rounded-md whitespace-nowrap px-2 py-2 text-xs hover:bg-gray-100"
                         >
                           <Icon className="h-5 w-5 text-gray-500" />
                           <span className="text-sm">{name}</span>
