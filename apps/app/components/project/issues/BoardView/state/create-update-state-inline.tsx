@@ -13,7 +13,7 @@ import stateService from "services/state.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { Button, Input, Select } from "components/ui";
+import { Button, CustomSelect, Input, Select } from "components/ui";
 // types
 import type { IState } from "types";
 // fetch-keys
@@ -183,18 +183,27 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
         autoComplete="off"
       />
       {data && (
-        <Select
-          id="group"
+        <Controller
           name="group"
-          error={errors.group}
-          register={register}
-          validations={{
-            required: true,
-          }}
-          options={Object.keys(GROUP_CHOICES).map((key) => ({
-            value: key,
-            label: GROUP_CHOICES[key as keyof typeof GROUP_CHOICES],
-          }))}
+          control={control}
+          render={({ field: { value, onChange } }) => (
+            <CustomSelect
+              value={value}
+              onChange={onChange}
+              label={
+                Object.keys(GROUP_CHOICES).find((k) => k === value.toString())
+                  ? GROUP_CHOICES[value.toString() as keyof typeof GROUP_CHOICES]
+                  : "Select group"
+              }
+              input
+            >
+              {Object.keys(GROUP_CHOICES).map((key) => (
+                <CustomSelect.Option key={key} value={key}>
+                  {GROUP_CHOICES[key as keyof typeof GROUP_CHOICES]}
+                </CustomSelect.Option>
+              ))}
+            </CustomSelect>
+          )}
         />
       )}
       <Input
@@ -209,7 +218,7 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
         Cancel
       </Button>
       <Button theme="primary" disabled={isSubmitting} type="submit">
-        {isSubmitting ? "Loading..." : data ? "Update" : "Create"}
+        {isSubmitting ? (data ? "Updating..." : "Creating...") : data ? "Update" : "Create"}
       </Button>
     </form>
   );

@@ -197,7 +197,7 @@ export const IssueForm: FC<IssueFormProps> = ({
                     required: "Title is required",
                     maxLength: {
                       value: 255,
-                      message: "Name should be less than 255 characters",
+                      message: "Title should be less than 255 characters",
                     },
                   }}
                 />
