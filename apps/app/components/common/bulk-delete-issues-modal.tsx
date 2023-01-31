@@ -24,8 +24,7 @@ import { IIssue, IssueResponse } from "types";
 import { PROJECT_ISSUES_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
 
 type FormInput = {
-  issue_ids: string[];
-  cycleId: string;
+  delete_issue_ids: string[];
 };
 
 type Props = {
@@ -61,17 +60,27 @@ const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
   const { setToastAlert } = useToast();
 
   const {
-    register,
     handleSubmit,
+    watch,
     reset,
+    setValue,
     formState: { isSubmitting },
-  } = useForm<FormInput>();
+  } = useForm<FormInput>({
+    defaultValues: {
+      delete_issue_ids: [],
+    },
+  });
 
   const filteredIssues: IIssue[] =
     query === ""
       ? issues?.results ?? []
-      : issues?.results.filter((issue) => issue.name.toLowerCase().includes(query.toLowerCase())) ??
-        [];
+      : issues?.results.filter(
+          (issue) =>
+            issue.name.toLowerCase().includes(query.toLowerCase()) ||
+            `${issue.project_detail.identifier}-${issue.sequence_id}`
+              .toLowerCase()
+              .includes(query.toLowerCase())
+        ) ?? [];
 
   const handleClose = () => {
     setIsOpen(false);
@@ -80,7 +89,7 @@ const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
   };
 
   const handleDelete: SubmitHandler<FormInput> = async (data) => {
-    if (!data.issue_ids || data.issue_ids.length === 0) {
+    if (!data.delete_issue_ids || data.delete_issue_ids.length === 0) {
       setToastAlert({
         title: "Error",
         type: "error",
@@ -89,30 +98,34 @@ const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
       return;
     }
 
-    if (!Array.isArray(data.issue_ids)) data.issue_ids = [data.issue_ids];
+    if (!Array.isArray(data.delete_issue_ids)) data.delete_issue_ids = [data.delete_issue_ids];
 
     if (workspaceSlug && projectId) {
       await issuesServices
-        .bulkDeleteIssues(workspaceSlug as string, projectId as string, data)
+        .bulkDeleteIssues(workspaceSlug as string, projectId as string, {
+          issue_ids: data.delete_issue_ids,
+        })
         .then((res) => {
           setToastAlert({
             title: "Success",
             type: "success",
             message: res.message,
           });
+
           mutate<IssueResponse>(
             PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
             (prevData) => ({
               ...(prevData as IssueResponse),
               count: (prevData?.results ?? []).filter(
-                (p) => !data.issue_ids.some((id) => p.id === id)
+                (p) => !data.delete_issue_ids.some((id) => p.id === id)
               ).length,
               results: (prevData?.results ?? []).filter(
-                (p) => !data.issue_ids.some((id) => p.id === id)
+                (p) => !data.delete_issue_ids.some((id) => p.id === id)
               ),
             }),
             false
           );
+          handleClose();
         })
         .catch((e) => {
           console.log(e);
@@ -123,18 +136,6 @@ const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
   return (
     <Transition.Root show={isOpen} as={React.Fragment} afterLeave={() => setQuery("")} appear>
       <Dialog as="div" className="relative z-20" onClose={handleClose}>
-        <Transition.Child
-          as={React.Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className="fixed inset-0 bg-gray-500 bg-opacity-25 transition-opacity" />
-        </Transition.Child>
-
         <div className="fixed inset-0 z-20 overflow-y-auto p-4 sm:p-6 md:p-20">
           <Transition.Child
             as={React.Fragment}
@@ -145,15 +146,31 @@ const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <Dialog.Panel className="relative mx-auto max-w-2xl transform divide-y divide-gray-500 divide-opacity-10 rounded-xl bg-white bg-opacity-80 shadow-2xl ring-1 ring-black ring-opacity-5 backdrop-blur backdrop-filter transition-all">
+            <Dialog.Panel className="relative mx-auto max-w-2xl transform divide-y divide-gray-500 divide-opacity-10 rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
               <form>
-                <Combobox>
+                <Combobox
+                  onChange={(val: string) => {
+                    const selectedIssues = watch("delete_issue_ids");
+                    if (selectedIssues.includes(val))
+                      setValue(
+                        "delete_issue_ids",
+                        selectedIssues.filter((i) => i !== val)
+                      );
+                    else {
+                      const newToDelete = selectedIssues;
+                      newToDelete.push(val);
+
+                      setValue("delete_issue_ids", newToDelete);
+                    }
+                  }}
+                >
                   <div className="relative m-1">
                     <MagnifyingGlassIcon
                       className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-gray-900 text-opacity-40"
                       aria-hidden="true"
                     />
-                    <Combobox.Input
+                    <input
+                      type="text"
                       className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder-gray-500 outline-none focus:ring-0 sm:text-sm"
                       placeholder="Search..."
                       onChange={(event) => setQuery(event.target.value)}
@@ -175,12 +192,8 @@ const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                           {filteredIssues.map((issue) => (
                             <Combobox.Option
                               key={issue.id}
-                              as="label"
-                              htmlFor={`issue-${issue.id}`}
-                              value={{
-                                name: issue.name,
-                                url: `/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`,
-                              }}
+                              as="div"
+                              value={issue.id}
                               className={({ active }) =>
                                 `flex cursor-pointer select-none items-center justify-between rounded-md px-3 py-2 ${
                                   active ? "bg-gray-900 bg-opacity-5 text-gray-900" : ""
@@ -190,9 +203,8 @@ const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                               <div className="flex items-center gap-2">
                                 <input
                                   type="checkbox"
-                                  {...register("issue_ids")}
-                                  id={`issue-${issue.id}`}
-                                  value={issue.id}
+                                  checked={watch("delete_issue_ids").includes(issue.id)}
+                                  readOnly
                                 />
                                 <span
                                   className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
@@ -219,18 +231,6 @@ const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                       </div>
                     )}
                   </Combobox.Options>
-
-                  {query !== "" && filteredIssues.length === 0 && (
-                    <div className="py-14 px-6 text-center sm:px-14">
-                      <FolderIcon
-                        className="mx-auto h-6 w-6 text-gray-900 text-opacity-40"
-                        aria-hidden="true"
-                      />
-                      <p className="mt-4 text-sm text-gray-900">
-                        We couldn{"'"}t find any issue with that term. Please try again.
-                      </p>
-                    </div>
-                  )}
                 </Combobox>
 
                 {filteredIssues.length > 0 && (

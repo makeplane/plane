@@ -1,5 +1,3 @@
-import { Dispatch, SetStateAction } from "react";
-
 // hooks
 import useTheme from "hooks/use-theme";
 // components

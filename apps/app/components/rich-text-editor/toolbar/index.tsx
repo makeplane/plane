@@ -32,11 +32,8 @@ export const RichTextToolbar: React.FC = () => (
       <OrderedListButton />
       <UnorderedListButton />
     </div>
-    {/* <div className="px-2">
-        <TableControls />
-      </div> */}
-    <div className="flex items-center gap-x-1 px-2">
+    {/* <div className="flex items-center gap-x-1 px-2">
       <LinkButton />
-    </div>
+    </div> */}
   </div>
 );
