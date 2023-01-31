@@ -154,17 +154,6 @@ class WorkspaceService extends APIService {
       });
   }
 
-  async updateWorkspaceInvitation(
-    workspaceSlug: string,
-    invitationId: string
-  ): Promise<IWorkspaceMemberInvitation> {
-    return this.put(`/api/workspaces/${workspaceSlug}/invitations/${invitationId}/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
   async deleteWorkspaceInvitations(workspaceSlug: string, invitationId: string): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/invitations/${invitationId}/`)
       .then((response) => response?.data)

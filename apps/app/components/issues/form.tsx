@@ -19,7 +19,7 @@ import { CycleSelect as IssueCycleSelect } from "components/cycles/select";
 import CreateUpdateStateModal from "components/project/issues/BoardView/state/create-update-state-modal";
 import CreateUpdateCycleModal from "components/project/cycles/create-update-cycle-modal";
 // ui
-import { Button, CustomMenu, Input, Loader } from "components/ui";
+import { Button, CustomDatePicker, CustomMenu, Input, Loader } from "components/ui";
 // icons
 import { XMarkIcon } from "@heroicons/react/24/outline";
 // helpers
@@ -194,10 +194,10 @@ export const IssueForm: FC<IssueFormProps> = ({
                   error={errors.name}
                   register={register}
                   validations={{
-                    required: "Name is required",
+                    required: "Title is required",
                     maxLength: {
                       value: 255,
-                      message: "Name should be less than 255 characters",
+                      message: "Title should be less than 255 characters",
                     },
                   }}
                 />
@@ -289,20 +289,25 @@ export const IssueForm: FC<IssueFormProps> = ({
                     <IssueLabelSelect value={value} onChange={onChange} projectId={projectId} />
                   )}
                 />
-                <Controller
-                  control={control}
-                  name="target_date"
-                  render={({ field: { value, onChange } }) => (
-                    <input
-                      type="date"
-                      value={value ?? ""}
-                      onChange={(e: any) => {
-                        onChange(e.target.value);
-                      }}
-                      className="cursor-pointer rounded-md border px-2 py-[3px] text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                    />
-                  )}
-                />
+                <div>
+                  <Controller
+                    control={control}
+                    name="target_date"
+                    render={({ field: { value, onChange } }) => (
+                      <CustomDatePicker
+                        value={value}
+                        onChange={(val: Date) => {
+                          onChange(
+                            val
+                              ? `${val.getFullYear()}-${val.getMonth() + 1}-${val.getDate()}`
+                              : null
+                          );
+                        }}
+                        className="max-w-[7rem]"
+                      />
+                    )}
+                  />
+                </div>
                 <IssueParentSelect
                   control={control}
                   isOpen={parentIssueListModalOpen}

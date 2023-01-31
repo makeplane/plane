@@ -4,22 +4,25 @@ import { useRouter } from "next/router";
 
 import { mutate } from "swr";
 
-import { useForm } from "react-hook-form";
-
+// react-hook-form
+import { Controller, useForm } from "react-hook-form";
+// headless ui
 import { Dialog, Transition } from "@headlessui/react";
-// types
-import type { IModule } from "types";
 // components
 import SelectLead from "components/project/modules/create-update-module-modal/select-lead";
 import SelectMembers from "components/project/modules/create-update-module-modal/select-members";
 import SelectStatus from "components/project/modules/create-update-module-modal/select-status";
 // ui
-import { Button, Input, TextArea } from "components/ui";
+import { Button, CustomDatePicker, Input, TextArea } from "components/ui";
 // services
 import modulesService from "services/modules.service";
+// hooks
+import useToast from "hooks/use-toast";
 // helpers
 import { renderDateFormat } from "helpers/date-time.helper";
-// fetch keys
+// types
+import type { IModule } from "types";
+// fetch-keys
 import { MODULE_LIST } from "constants/fetch-keys";
 
 type Props = {
@@ -40,6 +43,8 @@ const defaultValues: Partial<IModule> = {
 const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, projectId }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
+
+  const { setToastAlert } = useToast();
 
   const {
     register,
@@ -65,6 +70,12 @@ const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, pro
         .then(() => {
           mutate(MODULE_LIST(projectId));
           handleClose();
+
+          setToastAlert({
+            title: "Success",
+            type: "success",
+            message: "Module created successfully",
+          });
         })
         .catch((err) => {
           Object.keys(err).map((key) => {
@@ -91,6 +102,12 @@ const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, pro
             false
           );
           handleClose();
+
+          setToastAlert({
+            title: "Success",
+            type: "success",
+            message: "Module updated successfully",
+          });
         })
         .catch((err) => {
           Object.keys(err).map((key) => {
@@ -161,6 +178,10 @@ const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, pro
                           register={register}
                           validations={{
                             required: "Name is required",
+                            maxLength: {
+                              value: 255,
+                              message: "Name should be less than 255 characters",
+                            },
                           }}
                         />
                       </div>
@@ -176,32 +197,62 @@ const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, pro
                       </div>
                       <div className="flex gap-x-2">
                         <div className="w-full">
-                          <Input
-                            id="start_date"
-                            label="Start Date"
-                            name="start_date"
-                            type="date"
-                            placeholder="Enter start date"
-                            error={errors.start_date}
-                            register={register}
-                            validations={{
-                              required: "Start date is required",
-                            }}
-                          />
+                          <h6 className="text-gray-500">Start Date</h6>
+                          <div className="w-full">
+                            <Controller
+                              control={control}
+                              name="start_date"
+                              rules={{ required: "Start date is required" }}
+                              render={({ field: { value, onChange } }) => (
+                                <CustomDatePicker
+                                  renderAs="input"
+                                  value={value}
+                                  onChange={(val: Date) => {
+                                    onChange(
+                                      val
+                                        ? `${val.getFullYear()}-${
+                                            val.getMonth() + 1
+                                          }-${val.getDate()}`
+                                        : null
+                                    );
+                                  }}
+                                  error={errors.start_date ? true : false}
+                                />
+                              )}
+                            />
+                            {errors.start_date && (
+                              <h6 className="text-sm text-red-500">{errors.start_date.message}</h6>
+                            )}
+                          </div>
                         </div>
                         <div className="w-full">
-                          <Input
-                            id="target_date"
-                            label="Target Date"
-                            name="target_date"
-                            type="date"
-                            placeholder="Enter target date"
-                            error={errors.target_date}
-                            register={register}
-                            validations={{
-                              required: "Target date is required",
-                            }}
-                          />
+                          <h6 className="text-gray-500">Target Date</h6>
+                          <div className="w-full">
+                            <Controller
+                              control={control}
+                              name="target_date"
+                              rules={{ required: "Target date is required" }}
+                              render={({ field: { value, onChange } }) => (
+                                <CustomDatePicker
+                                  renderAs="input"
+                                  value={value}
+                                  onChange={(val: Date) => {
+                                    onChange(
+                                      val
+                                        ? `${val.getFullYear()}-${
+                                            val.getMonth() + 1
+                                          }-${val.getDate()}`
+                                        : null
+                                    );
+                                  }}
+                                  error={errors.target_date ? true : false}
+                                />
+                              )}
+                            />
+                            {errors.target_date && (
+                              <h6 className="text-sm text-red-500">{errors.target_date.message}</h6>
+                            )}
+                          </div>
                         </div>
                       </div>
                       <div className="flex flex-wrap items-center gap-2">

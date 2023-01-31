@@ -21,7 +21,7 @@ import { CustomMenu, Spinner } from "components/ui";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
-import { IIssue, IWorkspaceMember } from "types";
+import { IIssue, IWorkspaceMember, UserAuth } from "types";
 // fetch-keys
 import { WORKSPACE_MEMBERS, STATE_LIST } from "constants/fetch-keys";
 
@@ -38,6 +38,7 @@ type Props = {
       | null
     >
   >;
+  userAuth: UserAuth;
 };
 
 const CyclesListView: React.FC<Props> = ({
@@ -46,6 +47,7 @@ const CyclesListView: React.FC<Props> = ({
   openIssuesListModal,
   removeIssueFromCycle,
   setPreloadedData,
+  userAuth,
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
@@ -140,6 +142,7 @@ const CyclesListView: React.FC<Props> = ({
                                 properties={properties}
                                 editIssue={() => openCreateIssueModal(issue, "edit")}
                                 removeIssue={() => removeIssueFromCycle(issue.bridge ?? "")}
+                                userAuth={userAuth}
                               />
                             );
                           })

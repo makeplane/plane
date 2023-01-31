@@ -3,20 +3,21 @@ import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 
 import { mutate } from "swr";
+
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
-// fetching keys
-import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
-import type { CycleIssueResponse, IIssue, IssueResponse, ModuleIssueResponse } from "types";
-import { CYCLE_ISSUES, PROJECT_ISSUES_LIST, MODULE_ISSUES } from "constants/fetch-keys";
 // services
 import issueServices from "services/issues.service";
 // hooks
 import useToast from "hooks/use-toast";
 // icons
+import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
 import { Button } from "components/ui";
 // types
+import type { CycleIssueResponse, IIssue, IssueResponse, ModuleIssueResponse } from "types";
+// fetch-keys
+import { CYCLE_ISSUES, PROJECT_ISSUES_LIST, MODULE_ISSUES } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
@@ -79,12 +80,12 @@ const ConfirmIssueDeletion: React.FC<Props> = (props) => {
           );
         }
 
+        handleClose();
         setToastAlert({
           title: "Success",
           type: "success",
           message: "Issue deleted successfully",
         });
-        handleClose();
       })
       .catch((error) => {
         console.log(error);

@@ -76,11 +76,6 @@ const activityDetails: {
   },
 };
 
-const defaultValues: Partial<IIssueComment> = {
-  comment_html: "",
-  comment_json: "",
-};
-
 const IssueActivitySection: React.FC<{
   issueActivities: IIssueActivity[];
   mutate: KeyedMutator<IIssueActivity[]>;
@@ -99,7 +94,7 @@ const IssueActivitySection: React.FC<{
         comment.id,
         comment
       )
-      .then((response) => {
+      .then((res) => {
         mutate();
       });
   };
@@ -180,6 +175,10 @@ const IssueActivitySection: React.FC<{
                           ? activity.new_value !== ""
                             ? "marked this issue being blocked by"
                             : "removed blocker"
+                          : activity.field === "target_date"
+                          ? activity.new_value && activity.new_value !== ""
+                            ? "set the due date to"
+                            : "removed the due date"
                           : activityDetails[activity.field as keyof typeof activityDetails]
                               ?.message}{" "}
                       </span>
@@ -203,7 +202,9 @@ const IssueActivitySection: React.FC<{
                         ) : activity.field === "assignee" ? (
                           activity.old_value
                         ) : activity.field === "target_date" ? (
-                          renderShortNumericDateFormat(activity.new_value as string)
+                          activity.new_value ? (
+                            renderShortNumericDateFormat(activity.new_value as string)
+                          ) : null
                         ) : activity.field === "description" ? (
                           ""
                         ) : (

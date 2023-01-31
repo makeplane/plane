@@ -144,7 +144,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
         setToastAlert({
           title: "Success",
           type: "success",
-          message: `Issue ${data ? "updated" : "created"} successfully`,
+          message: "Issue created successfully",
         });
 
         if (payload.assignees_list?.some((assignee) => assignee === user?.id)) mutate(USER_ISSUE);

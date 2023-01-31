@@ -2,20 +2,24 @@ import React, { useEffect } from "react";
 
 import { mutate } from "swr";
 
+// react-hook-form
 import { useForm, Controller } from "react-hook-form";
-
+// react-color
 import { TwitterPicker } from "react-color";
-
+// headless ui
 import { Popover, Transition } from "@headlessui/react";
-// constants
-import type { IState } from "types";
-import { GROUP_CHOICES } from "constants/";
-import { STATE_LIST } from "constants/fetch-keys";
 // services
 import stateService from "services/state.service";
+// hooks
+import useToast from "hooks/use-toast";
 // ui
-import { Button, Input, Select } from "components/ui";
+import { Button, CustomSelect, Input, Select } from "components/ui";
 // types
+import type { IState } from "types";
+// fetch-keys
+import { STATE_LIST } from "constants/fetch-keys";
+// constants
+import { GROUP_CHOICES } from "constants/";
 
 type Props = {
   workspaceSlug?: string;
@@ -40,6 +44,8 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
   onClose,
   selectedGroup,
 }) => {
+  const { setToastAlert } = useToast();
+
   const {
     register,
     handleSubmit,
@@ -81,6 +87,12 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
         .then((res) => {
           mutate<IState[]>(STATE_LIST(projectId), (prevData) => [...(prevData ?? []), res]);
           handleClose();
+
+          setToastAlert({
+            title: "Success",
+            type: "success",
+            message: "State created successfully",
+          });
         })
         .catch((err) => {
           Object.keys(err).map((key) => {
@@ -95,16 +107,14 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
           ...payload,
         })
         .then((res) => {
-          mutate<IState[]>(STATE_LIST(projectId), (prevData) => {
-            const newData = prevData?.map((item) => {
-              if (item.id === res.id) {
-                return res;
-              }
-              return item;
-            });
-            return newData;
-          });
+          mutate(STATE_LIST(projectId));
           handleClose();
+
+          setToastAlert({
+            title: "Success",
+            type: "success",
+            message: "State updated successfully",
+          });
         })
         .catch((err) => {
           Object.keys(err).map((key) => {
@@ -173,18 +183,27 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
         autoComplete="off"
       />
       {data && (
-        <Select
-          id="group"
+        <Controller
           name="group"
-          error={errors.group}
-          register={register}
-          validations={{
-            required: true,
-          }}
-          options={Object.keys(GROUP_CHOICES).map((key) => ({
-            value: key,
-            label: GROUP_CHOICES[key as keyof typeof GROUP_CHOICES],
-          }))}
+          control={control}
+          render={({ field: { value, onChange } }) => (
+            <CustomSelect
+              value={value}
+              onChange={onChange}
+              label={
+                Object.keys(GROUP_CHOICES).find((k) => k === value.toString())
+                  ? GROUP_CHOICES[value.toString() as keyof typeof GROUP_CHOICES]
+                  : "Select group"
+              }
+              input
+            >
+              {Object.keys(GROUP_CHOICES).map((key) => (
+                <CustomSelect.Option key={key} value={key}>
+                  {GROUP_CHOICES[key as keyof typeof GROUP_CHOICES]}
+                </CustomSelect.Option>
+              ))}
+            </CustomSelect>
+          )}
         />
       )}
       <Input
@@ -199,7 +218,7 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
         Cancel
       </Button>
       <Button theme="primary" disabled={isSubmitting} type="submit">
-        {isSubmitting ? "Loading..." : data ? "Update" : "Create"}
+        {isSubmitting ? (data ? "Updating..." : "Creating...") : data ? "Update" : "Create"}
       </Button>
     </form>
   );

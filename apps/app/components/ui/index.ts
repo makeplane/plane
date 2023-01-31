@@ -13,3 +13,4 @@ export * from "./spinner";
 export * from "./text-area";
 export * from "./tooltip";
 export * from "./avatar";
+export * from "./datepicker";

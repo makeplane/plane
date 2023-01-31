@@ -17,7 +17,7 @@ import { CustomMenu } from "components/ui";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 // types
-import { IIssue, IWorkspaceMember, NestedKeyOf, Properties } from "types";
+import { IIssue, IWorkspaceMember, NestedKeyOf, Properties, UserAuth } from "types";
 // fetch-keys
 import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 
@@ -32,8 +32,6 @@ type Props = {
   bgColor?: string;
   openCreateIssueModal: (issue?: IIssue, actionType?: "create" | "edit" | "delete") => void;
   openIssuesListModal: () => void;
-  removeIssueFromModule: (bridgeId: string) => void;
-  partialUpdateIssue: (formData: Partial<IIssue>, issueId: string) => void;
   handleDeleteIssue: React.Dispatch<React.SetStateAction<string | undefined>>;
   setPreloadedData: React.Dispatch<
     React.SetStateAction<
@@ -44,6 +42,7 @@ type Props = {
     >
   >;
   stateId: string | null;
+  userAuth: UserAuth;
 };
 
 const SingleModuleBoard: React.FC<Props> = ({
@@ -55,17 +54,16 @@ const SingleModuleBoard: React.FC<Props> = ({
   bgColor,
   openCreateIssueModal,
   openIssuesListModal,
-  removeIssueFromModule,
-  partialUpdateIssue,
   handleDeleteIssue,
   setPreloadedData,
   stateId,
+  userAuth,
 }) => {
   // Collapse/Expand
   const [isCollapsed, setIsCollapsed] = useState(true);
 
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, moduleId } = router.query;
 
   if (selectedGroup === "priority")
     groupTitle === "high"
@@ -112,10 +110,10 @@ const SingleModuleBoard: React.FC<Props> = ({
               {...provided.droppableProps}
               ref={provided.innerRef}
             >
-              {groupedByIssues[groupTitle].map((childIssue, index: number) => {
+              {groupedByIssues[groupTitle].map((issue, index: number) => {
                 const assignees = [
-                  ...(childIssue?.assignees_list ?? []),
-                  ...(childIssue?.assignees ?? []),
+                  ...(issue?.assignees_list ?? []),
+                  ...(issue?.assignees ?? []),
                 ]?.map((assignee) => {
                   const tempPerson = people?.find((p) => p.member.id === assignee)?.member;
 
@@ -123,7 +121,7 @@ const SingleModuleBoard: React.FC<Props> = ({
                 });
 
                 return (
-                  <Draggable key={childIssue.id} draggableId={childIssue.id} index={index}>
+                  <Draggable key={issue.id} draggableId={issue.id} index={index}>
                     {(provided, snapshot) => (
                       <div
                         ref={provided.innerRef}
@@ -131,13 +129,15 @@ const SingleModuleBoard: React.FC<Props> = ({
                         {...provided.dragHandleProps}
                       >
                         <SingleIssue
-                          issue={childIssue}
+                          type="module"
+                          typeId={moduleId as string}
+                          issue={issue}
                           properties={properties}
                           snapshot={snapshot}
                           assignees={assignees}
                           people={people}
-                          partialUpdateIssue={partialUpdateIssue}
                           handleDeleteIssue={handleDeleteIssue}
+                          userAuth={userAuth}
                         />
                       </div>
                     )}

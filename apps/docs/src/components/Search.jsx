@@ -12,11 +12,11 @@ const searchClient = algoliasearch(
 )
 
 function useAutocomplete() {
-  let id = useId()
-  let router = useRouter()
-  let [autocompleteState, setAutocompleteState] = useState({})
+  const id = useId()
+  const router = useRouter()
+  const [autocompleteState, setAutocompleteState] = useState({})
 
-  let [autocomplete] = useState(() =>
+  const [autocomplete] = useState(() =>
     createAutocomplete({
       id,
       placeholder: 'Find something...',
@@ -74,13 +74,13 @@ function useAutocomplete() {
 }
 
 function resolveResult(result) {
-  let allLevels = Object.keys(result.hierarchy)
-  let hierarchy = Object.entries(result._highlightResult.hierarchy).filter(
+  const allLevels = Object.keys(result.hierarchy)
+  const hierarchy = Object.entries(result._highlightResult.hierarchy).filter(
     ([, { value }]) => Boolean(value)
   )
-  let levels = hierarchy.map(([level]) => level)
+  const levels = hierarchy.map(([level]) => level)
 
-  let level =
+  const level =
     result.type === 'content'
       ? levels.pop()
       : levels
@@ -123,7 +123,7 @@ function NoResultsIcon(props) {
 }
 
 function LoadingIcon(props) {
-  let id = useId()
+  const id = useId()
 
   return (
     <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" {...props}>
@@ -152,8 +152,8 @@ function LoadingIcon(props) {
 }
 
 function SearchResult({ result, resultIndex, autocomplete, collection }) {
-  let id = useId()
-  let { titleHtml, hierarchyHtml } = resolveResult(result)
+  const id = useId()
+  const { titleHtml, hierarchyHtml } = resolveResult(result)
 
   return (
     <li
@@ -234,7 +234,7 @@ const SearchInput = forwardRef(function SearchInput(
   { autocomplete, autocompleteState, onClose },
   inputRef
 ) {
-  let inputProps = autocomplete.getInputProps({})
+  const inputProps = autocomplete.getInputProps({})
 
   return (
     <div className="group relative flex h-12">
@@ -291,7 +291,7 @@ function AlgoliaLogo(props) {
 }
 
 function SearchButton(props) {
-  let [modifierKey, setModifierKey] = useState()
+  const [modifierKey, setModifierKey] = useState()
 
   useEffect(() => {
     setModifierKey(
@@ -326,11 +326,11 @@ function SearchButton(props) {
 }
 
 function SearchDialog({ open, setOpen, className }) {
-  let router = useRouter()
-  let formRef = useRef()
-  let panelRef = useRef()
-  let inputRef = useRef()
-  let { autocomplete, autocompleteState } = useAutocomplete()
+  const router = useRouter()
+  const formRef = useRef()
+  const panelRef = useRef()
+  const inputRef = useRef()
+  const { autocomplete, autocompleteState } = useAutocomplete()
 
   useEffect(() => {
     if (!open) {
@@ -445,8 +445,8 @@ function SearchDialog({ open, setOpen, className }) {
 }
 
 function useSearchProps() {
-  let buttonRef = useRef()
-  let [open, setOpen] = useState(false)
+  const buttonRef = useRef()
+  const [open, setOpen] = useState(false)
 
   return {
     buttonProps: {
@@ -458,7 +458,7 @@ function useSearchProps() {
     dialogProps: {
       open,
       setOpen(open) {
-        let { width, height } = buttonRef.current.getBoundingClientRect()
+        const { width, height } = buttonRef.current.getBoundingClientRect()
         if (!open || (width !== 0 && height !== 0)) {
           setOpen(open)
         }
@@ -468,8 +468,8 @@ function useSearchProps() {
 }
 
 export function Search() {
-  let [modifierKey, setModifierKey] = useState()
-  let { buttonProps, dialogProps } = useSearchProps()
+  const [modifierKey, setModifierKey] = useState()
+  const { buttonProps, dialogProps } = useSearchProps()
 
   useEffect(() => {
     setModifierKey(
@@ -497,7 +497,7 @@ export function Search() {
 }
 
 export function MobileSearch() {
-  let { buttonProps, dialogProps } = useSearchProps()
+  const { buttonProps, dialogProps } = useSearchProps()
 
   return (
     <div className="contents lg:hidden">

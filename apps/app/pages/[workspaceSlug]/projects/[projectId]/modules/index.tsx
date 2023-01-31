@@ -86,8 +86,8 @@ const ProjectModules: NextPage = () => {
                 title="Create a new module"
                 description={
                   <span>
-                    Use <pre className="inline rounded bg-gray-100 px-2 py-1">Ctrl/Command + M</pre>{" "}
-                    shortcut to create a new module
+                    Use <pre className="inline rounded bg-gray-100 px-2 py-1">M</pre> shortcut to
+                    create a new module
                   </span>
                 }
                 Icon={PlusIcon}

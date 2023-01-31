@@ -4,20 +4,12 @@ import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 
+// react-hook-form
 import { useForm, Controller, UseFormWatch, Control } from "react-hook-form";
-
+// react-color
 import { TwitterPicker } from "react-color";
-// services
+// headless ui
 import { Popover, Listbox, Transition } from "@headlessui/react";
-import {
-  TagIcon,
-  ChevronDownIcon,
-  LinkIcon,
-  CalendarDaysIcon,
-  TrashIcon,
-  PlusIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
 // hooks
 import useToast from "hooks/use-toast";
 // services
@@ -31,16 +23,27 @@ import SelectCycle from "components/project/issues/issue-detail/issue-detail-sid
 import SelectAssignee from "components/project/issues/issue-detail/issue-detail-sidebar/select-assignee";
 import SelectBlocker from "components/project/issues/issue-detail/issue-detail-sidebar/select-blocker";
 import SelectBlocked from "components/project/issues/issue-detail/issue-detail-sidebar/select-blocked";
-// headless ui
 // ui
-import { Input, Button, Spinner } from "components/ui";
+import { Input, Button, Spinner, CustomDatePicker } from "components/ui";
+import DatePicker from "react-datepicker";
 // icons
+import {
+  TagIcon,
+  ChevronDownIcon,
+  LinkIcon,
+  CalendarDaysIcon,
+  TrashIcon,
+  PlusIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import type { ICycle, IIssue, IIssueLabels } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS, PROJECT_ISSUES_LIST, ISSUE_DETAILS } from "constants/fetch-keys";
+
+import "react-datepicker/dist/react-datepicker.css";
 
 type Props = {
   control: Control<IIssue, any>;
@@ -216,19 +219,37 @@ const IssueDetailSidebar: React.FC<Props> = ({
                 <p>Due date</p>
               </div>
               <div className="sm:basis-1/2">
-                <Controller
+                {/* <Controller
                   control={control}
                   name="target_date"
                   render={({ field: { value, onChange } }) => (
-                    <input
-                      type="date"
-                      id="issueDate"
-                      value={value ?? ""}
-                      onChange={(e: any) => {
-                        submitChanges({ target_date: e.target.value });
-                        onChange(e.target.value);
+                    <DatePicker
+                      selected={value ? new Date(value) : new Date()}
+                      onChange={(val: Date) => {
+                        submitChanges({
+                          target_date: `${val.getFullYear()}-${
+                            val.getMonth() + 1
+                          }-${val.getDate()}`,
+                        });
+                        onChange(`${val.getFullYear()}-${val.getMonth() + 1}-${val.getDate()}`);
                       }}
-                      className="w-full cursor-pointer rounded-md border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                      dateFormat="dd-MM-yyyy"
+                    />
+                  )}
+                /> */}
+                <Controller
+                  control={control}
+                  name="target_date"
+                  render={({ field: { value } }) => (
+                    <CustomDatePicker
+                      value={value}
+                      onChange={(val: Date) => {
+                        submitChanges({
+                          target_date: val
+                            ? `${val.getFullYear()}-${val.getMonth() + 1}-${val.getDate()}`
+                            : null,
+                        });
+                      }}
                     />
                   )}
                 />

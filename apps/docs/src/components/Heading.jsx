@@ -65,11 +65,11 @@ export function Heading({
   anchor = true,
   ...props
 }) {
-  let Component = `h${level}`
-  let ref = useRef()
-  let registerHeading = useSectionStore((s) => s.registerHeading)
+  const Component = `h${level}`
+  const ref = useRef()
+  const registerHeading = useSectionStore((s) => s.registerHeading)
 
-  let inView = useInView(ref, {
+  const inView = useInView(ref, {
     margin: `${remToPx(-3.5)}px 0px 0px 0px`,
     amount: 'all',
   })

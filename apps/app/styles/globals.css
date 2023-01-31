@@ -71,3 +71,23 @@
   border: none;
   outline: none;
 }
+
+/* react datepicker styling */
+.react-datepicker-wrapper input::placeholder {
+  color: #000;
+  opacity: 1;
+}
+
+.react-datepicker-wrapper input:-ms-input-placeholder {
+  color: #000;
+}
+
+.react-datepicker-wrapper .react-datepicker__close-icon::after {
+  background: transparent;
+  color: #000;
+}
+
+.react-datepicker-popper {
+  z-index: 30 !important;
+}
+/* end react datepicker styling */

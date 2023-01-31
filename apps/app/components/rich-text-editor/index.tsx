@@ -47,6 +47,7 @@ export interface IRemirrorRichTextEditor {
   value?: any;
   showToolbar?: boolean;
   editable?: boolean;
+  customClassName?: string;
 }
 
 const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = (props) => {
@@ -60,6 +61,7 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = (props) => {
     value = "",
     showToolbar = true,
     editable = true,
+    customClassName,
   } = props;
 
   const [imageLoader, setImageLoader] = useState(false);
@@ -91,7 +93,7 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = (props) => {
         () =>
           new Promise(async (resolve, reject) => {
             const imageUrl = await fileService
-              .uploadFile(workspaceSlug as string, formData) // TODO: verify why workspaceSlug is required for uploading a file
+              .uploadFile(workspaceSlug as string, formData)
               .then((response) => response.asset);
 
             resolve({
@@ -173,7 +175,7 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = (props) => {
       <Remirror
         manager={manager}
         initialContent={state}
-        classNames={["p-4 focus:outline-none"]}
+        classNames={[`p-4 focus:outline-none ${customClassName}`]}
         editable={editable}
         onBlur={() => {
           onBlur(jsonValue, htmlValue);

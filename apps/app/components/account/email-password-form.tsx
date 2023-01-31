@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 // ui
 import { Button, Input } from "components/ui";
 import authenticationService from "services/authentication.service";
+import useToast from "hooks/use-toast";
 
 // types
 type EmailPasswordFormValues = {
@@ -15,6 +16,7 @@ type EmailPasswordFormValues = {
 };
 
 export const EmailPasswordForm = ({ onSuccess }: any) => {
+  const { setToastAlert } = useToast();
   const {
     register,
     handleSubmit,
@@ -38,6 +40,11 @@ export const EmailPasswordForm = ({ onSuccess }: any) => {
       })
       .catch((error) => {
         console.log(error);
+        setToastAlert({
+          title: "Oops!",
+          type: "error",
+          message: "Enter the correct email address and password to sign in",
+        });
         if (!error?.response?.data) return;
         Object.keys(error.response.data).forEach((key) => {
           const err = error.response.data[key];

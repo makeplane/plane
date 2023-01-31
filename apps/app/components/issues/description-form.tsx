@@ -1,7 +1,11 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useMemo } from "react";
+
 import dynamic from "next/dynamic";
-// types
-import { IIssue } from "types";
+
+// react-hook-form
+import { useForm } from "react-hook-form";
+// lodash
+import debounce from "lodash.debounce";
 // components
 import { Loader, Input } from "components/ui";
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
@@ -12,8 +16,9 @@ const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor
     </Loader>
   ),
 });
-// hooks
-import useDebounce from "hooks/use-debounce";
+// types
+import { IIssue } from "types";
+import useToast from "hooks/use-toast";
 
 export interface IssueDescriptionFormValues {
   name: string;
@@ -23,32 +28,74 @@ export interface IssueDescriptionFormValues {
 
 export interface IssueDetailsProps {
   issue: IIssue;
-  handleSubmit: (value: IssueDescriptionFormValues) => void;
+  handleFormSubmit: (value: IssueDescriptionFormValues) => void;
 }
 
-export const IssueDescriptionForm: FC<IssueDetailsProps> = ({ issue, handleSubmit }) => {
-  // states
-  // const [issueFormValues, setIssueFormValues] = useState({
-  //   name: issue.name,
-  //   description: issue?.description,
-  //   description_html: issue?.description_html,
-  // });
+export const IssueDescriptionForm: FC<IssueDetailsProps> = ({ issue, handleFormSubmit }) => {
+  const { setToastAlert } = useToast();
 
-  const [issueName, setIssueName] = useState(issue?.name);
-  const [issueDescription, setIssueDescription] = useState(issue?.description);
-  const [issueDescriptionHTML, setIssueDescriptionHTML] = useState(issue?.description_html);
+  const {
+    handleSubmit,
+    watch,
+    setValue,
+    reset,
+    formState: { errors },
+    setError,
+  } = useForm<IIssue>({
+    defaultValues: {
+      name: "",
+      description: "",
+      description_html: "",
+    },
+  });
 
-  // hooks
-  const formValues = useDebounce(
-    { name: issueName, description: issueDescription, description_html: issueDescriptionHTML },
-    2000
+  const handleDescriptionFormSubmit = useCallback(
+    (formData: Partial<IIssue>) => {
+      if (!formData.name || formData.name === "") {
+        setToastAlert({
+          type: "error",
+          title: "Error in saving!",
+          message: "Title is required.",
+        });
+        return;
+      }
+
+      if (formData.name.length > 255) {
+        setToastAlert({
+          type: "error",
+          title: "Error in saving!",
+          message: "Title cannot have more than 255 characters.",
+        });
+        return;
+      }
+
+      handleFormSubmit({
+        name: formData.name ?? "",
+        description: formData.description,
+        description_html: formData.description_html,
+      });
+    },
+    [handleFormSubmit, setToastAlert]
   );
-  const stringFromValues = JSON.stringify(formValues);
 
+  const debounceHandler = useMemo(
+    () => debounce(handleSubmit(handleDescriptionFormSubmit), 2000),
+    [handleSubmit, handleDescriptionFormSubmit]
+  );
+
+  useEffect(
+    () => () => {
+      debounceHandler.cancel();
+    },
+    [debounceHandler]
+  );
+
+  // reset form values
   useEffect(() => {
-    handleSubmit(formValues);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [handleSubmit, stringFromValues]);
+    if (!issue) return;
+
+    reset(issue);
+  }, [issue, reset]);
 
   return (
     <div>
@@ -56,18 +103,24 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({ issue, handleSubmi
         id="name"
         placeholder="Enter issue name"
         name="name"
+        value={watch("name")}
         autoComplete="off"
-        value={issueName}
-        onChange={(e) => setIssueName(e.target.value)}
+        onChange={(e) => {
+          setValue("name", e.target.value);
+          debounceHandler();
+        }}
         mode="transparent"
         className="text-xl font-medium"
-        required={true}
       />
+      <span>{errors.name ? errors.name.message : null}</span>
       <RemirrorRichTextEditor
-        value={issueDescription}
-        placeholder="Enter Your Text..."
-        onJSONChange={(json) => setIssueDescription(json)}
-        onHTMLChange={(html) => setIssueDescriptionHTML(html)}
+        value={watch("description")}
+        placeholder="Describe the issue..."
+        onJSONChange={(json) => {
+          setValue("description", json);
+          debounceHandler();
+        }}
+        onHTMLChange={(html) => setValue("description_html", html)}
       />
     </div>
   );

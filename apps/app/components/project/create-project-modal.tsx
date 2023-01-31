@@ -93,9 +93,8 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
   const projectIdentifier = watch("identifier") ?? "";
 
   useEffect(() => {
-    if (projectName && isChangeIdentifierRequired) {
+    if (projectName && isChangeIdentifierRequired)
       setValue("identifier", projectName.replace(/ /g, "").toUpperCase().substring(0, 3));
-    }
   }, [projectName, projectIdentifier, setValue, isChangeIdentifierRequired]);
 
   useEffect(() => () => setIsChangeIdentifierRequired(true), [isOpen]);
@@ -185,7 +184,7 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                       </p>
                     </div>
                     <div className="space-y-3">
-                      <div className="flex items-center gap-3">
+                      <div className="flex gap-3">
                         <div className="flex-shrink-0">
                           <label htmlFor="icon" className="mb-2 text-gray-500">
                             Icon
@@ -215,6 +214,10 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                             register={register}
                             validations={{
                               required: "Name is required",
+                              maxLength: {
+                                value: 255,
+                                message: "Name should be less than 255 characters",
+                              },
                             }}
                           />
                         </div>

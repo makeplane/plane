@@ -14,6 +14,7 @@ type CustomSelectProps = {
   width?: "auto" | string;
   input?: boolean;
   noChevron?: boolean;
+  disabled?: boolean;
 };
 
 const CustomSelect = ({
@@ -26,11 +27,20 @@ const CustomSelect = ({
   width = "auto",
   input = false,
   noChevron = false,
+  disabled = false,
 }: CustomSelectProps) => (
-  <Listbox as="div" value={value} onChange={onChange} className="relative flex-shrink-0 text-left">
+  <Listbox
+    as="div"
+    value={value}
+    onChange={onChange}
+    className="relative flex-shrink-0 text-left"
+    disabled={disabled}
+  >
     <div>
       <Listbox.Button
-        className={`flex w-full cursor-pointer items-center justify-between gap-1 rounded-md border shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
+        className={`flex w-full ${
+          disabled ? "cursor-not-allowed" : "cursor-pointer"
+        } items-center justify-between gap-1 rounded-md border shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
           input ? "border-gray-300 px-3 py-2 text-sm" : "px-2 py-1 text-xs"
         } ${
           textAlignment === "right"

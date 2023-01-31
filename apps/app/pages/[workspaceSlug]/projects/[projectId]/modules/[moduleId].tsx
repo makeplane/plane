@@ -3,6 +3,9 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
+
+// lib
+import { requiredAdmin, requiredAuth } from "lib/auth";
 // services
 import modulesService from "services/modules.service";
 import projectService from "services/project.service";
@@ -32,7 +35,15 @@ import {
   RectangleStackIcon,
 } from "@heroicons/react/24/outline";
 // types
-import { IIssue, IModule, ModuleIssueResponse, SelectIssue, SelectModuleType } from "types";
+import {
+  IIssue,
+  IModule,
+  ModuleIssueResponse,
+  SelectIssue,
+  SelectModuleType,
+  UserAuth,
+} from "types";
+import { NextPageContext } from "next";
 // fetch-keys
 import {
   MODULE_DETAIL,
@@ -42,7 +53,7 @@ import {
   PROJECT_MEMBERS,
 } from "constants/fetch-keys";
 
-const SingleModule = () => {
+const SingleModule: React.FC<UserAuth> = (props) => {
   const [moduleSidebar, setModuleSidebar] = useState(true);
   const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
   const [selectedIssues, setSelectedIssues] = useState<SelectIssue>(null);
@@ -126,18 +137,6 @@ const SingleModule = () => {
         })
         .catch((e) => console.log(e));
     }
-  };
-
-  const partialUpdateIssue = (formData: Partial<IIssue>, issueId: string) => {
-    if (!workspaceSlug || !projectId) return;
-    issuesService
-      .patchIssue(workspaceSlug as string, projectId as string, issueId, formData)
-      .then(() => {
-        mutate(MODULE_ISSUES(moduleId as string));
-      })
-      .catch((error) => {
-        console.log(error);
-      });
   };
 
   const openCreateIssueModal = (
@@ -279,16 +278,16 @@ const SingleModule = () => {
                 openIssuesListModal={openIssuesListModal}
                 removeIssueFromModule={removeIssueFromModule}
                 setPreloadedData={setPreloadedData}
+                userAuth={props}
               />
               <ModulesBoardView
                 issues={moduleIssuesArray ?? []}
-                removeIssueFromModule={removeIssueFromModule}
                 members={members}
                 openCreateIssueModal={openCreateIssueModal}
                 openIssuesListModal={openIssuesListModal}
                 handleDeleteIssue={setDeleteIssue}
-                partialUpdateIssue={partialUpdateIssue}
                 setPreloadedData={setPreloadedData}
+                userAuth={props}
               />
             </div>
           ) : (
@@ -331,6 +330,34 @@ const SingleModule = () => {
       </AppLayout>
     </IssueViewContextProvider>
   );
+};
+
+export const getServerSideProps = async (ctx: NextPageContext) => {
+  const user = await requiredAuth(ctx.req?.headers.cookie);
+  const redirectAfterSignIn = ctx.req?.url;
+
+  if (!user) {
+    return {
+      redirect: {
+        destination: `/signin?next=${redirectAfterSignIn}`,
+        permanent: false,
+      },
+    };
+  }
+
+  const projectId = ctx.query.projectId as string;
+  const workspaceSlug = ctx.query.workspaceSlug as string;
+
+  const memberDetail = await requiredAdmin(workspaceSlug, projectId, ctx.req?.headers.cookie);
+
+  return {
+    props: {
+      isOwner: memberDetail?.role === 20,
+      isMember: memberDetail?.role === 15,
+      isViewer: memberDetail?.role === 10,
+      isGuest: memberDetail?.role === 5,
+    },
+  };
 };
 
 export default SingleModule;

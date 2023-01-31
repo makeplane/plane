@@ -38,3 +38,5 @@ from .shortcut import Shortcut
 from .view import View
 
 from .module import Module, ModuleMember, ModuleIssue, ModuleLink 
+
+from .api_token import APIToken

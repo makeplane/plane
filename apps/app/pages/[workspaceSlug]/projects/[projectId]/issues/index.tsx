@@ -4,7 +4,7 @@ import useSWR, { mutate } from "swr";
 import { RectangleStackIcon } from "@heroicons/react/24/outline";
 import { PlusIcon } from "@heroicons/react/20/solid";
 // lib
-import { requiredAuth } from "lib/auth";
+import { requiredAdmin, requiredAuth } from "lib/auth";
 // services
 import issuesServices from "services/issues.service";
 import projectService from "services/project.service";
@@ -22,12 +22,12 @@ import View from "components/core/view";
 import { Spinner, EmptySpace, EmptySpaceItem, HeaderButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // types
-import type { IIssue, IssueResponse } from "types";
+import type { IIssue, IssueResponse, UserAuth } from "types";
 import type { NextPage, NextPageContext } from "next";
 // fetch-keys
 import { PROJECT_DETAILS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 
-const ProjectIssues: NextPage = () => {
+const ProjectIssues: NextPage<UserAuth> = (props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedIssue, setSelectedIssue] = useState<
     (IIssue & { actionType: "edit" | "delete" }) | undefined
@@ -62,26 +62,6 @@ const ProjectIssues: NextPage = () => {
       }, 500);
     }
   }, [isOpen]);
-
-  const partialUpdateIssue = (formData: Partial<IIssue>, issueId: string) => {
-    if (!workspaceSlug || !projectId) return;
-    issuesServices
-      .patchIssue(workspaceSlug as string, projectId as string, issueId, formData)
-      .then((response) => {
-        mutate<IssueResponse>(
-          PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
-          (prevData) => ({
-            ...(prevData as IssueResponse),
-            results:
-              prevData?.results.map((issue) => (issue.id === response.id ? response : issue)) ?? [],
-          }),
-          false
-        );
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
 
   const handleEditIssue = (issue: IIssue) => {
     setIsOpen(true);
@@ -134,12 +114,12 @@ const ProjectIssues: NextPage = () => {
             <ListView
               issues={projectIssues?.results.filter((p) => p.parent === null) ?? []}
               handleEditIssue={handleEditIssue}
-              partialUpdateIssue={partialUpdateIssue}
+              userAuth={props}
             />
             <BoardView
               issues={projectIssues?.results.filter((p) => p.parent === null) ?? []}
               handleDeleteIssue={setDeleteIssue}
-              partialUpdateIssue={partialUpdateIssue}
+              userAuth={props}
             />
           </>
         ) : (
@@ -153,8 +133,8 @@ const ProjectIssues: NextPage = () => {
                 title="Create a new issue"
                 description={
                   <span>
-                    Use <pre className="inline rounded bg-gray-100 px-2 py-1">Ctrl/Command + I</pre>{" "}
-                    shortcut to create a new issue
+                    Use <pre className="inline rounded bg-gray-100 px-2 py-1">C</pre> shortcut to
+                    create a new issue
                   </span>
                 }
                 Icon={PlusIcon}
@@ -170,7 +150,6 @@ const ProjectIssues: NextPage = () => {
 
 export const getServerSideProps = async (ctx: NextPageContext) => {
   const user = await requiredAuth(ctx.req?.headers.cookie);
-
   const redirectAfterSignIn = ctx.req?.url;
 
   if (!user) {
@@ -182,9 +161,17 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
     };
   }
 
+  const projectId = ctx.query.projectId as string;
+  const workspaceSlug = ctx.query.workspaceSlug as string;
+
+  const memberDetail = await requiredAdmin(workspaceSlug, projectId, ctx.req?.headers.cookie);
+
   return {
     props: {
-      user,
+      isOwner: memberDetail?.role === 20,
+      isMember: memberDetail?.role === 15,
+      isViewer: memberDetail?.role === 10,
+      isGuest: memberDetail?.role === 5,
     },
   };
 };

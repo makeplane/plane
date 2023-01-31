@@ -21,17 +21,17 @@ import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deleti
 // ui
 import { Spinner } from "components/ui";
 // types
-import type { IState, IIssue, IssueResponse } from "types";
+import type { IState, IIssue, IssueResponse, UserAuth } from "types";
 // fetch-keys
 import { STATE_LIST, PROJECT_ISSUES_LIST, PROJECT_MEMBERS } from "constants/fetch-keys";
 
 type Props = {
   issues: IIssue[];
   handleDeleteIssue: React.Dispatch<React.SetStateAction<string | undefined>>;
-  partialUpdateIssue: (formData: Partial<IIssue>, issueId: string) => void;
+  userAuth: UserAuth;
 };
 
-const BoardView: React.FC<Props> = ({ issues, handleDeleteIssue, partialUpdateIssue }) => {
+const BoardView: React.FC<Props> = ({ issues, handleDeleteIssue, userAuth }) => {
   const [createIssueModal, setCreateIssueModal] = useState(false);
   const [isIssueDeletionOpen, setIsIssueDeletionOpen] = useState(false);
   const [issueDeletionData, setIssueDeletionData] = useState<IIssue | undefined>();
@@ -68,7 +68,8 @@ const BoardView: React.FC<Props> = ({ issues, handleDeleteIssue, partialUpdateIs
 
   const handleOnDragEnd = useCallback(
     (result: DropResult) => {
-      if (!result.destination) return;
+      if (!result.destination || !workspaceSlug || !projectId) return;
+
       const { source, destination, type } = result;
 
       if (destination.droppableId === "trashBox") {
@@ -94,7 +95,7 @@ const BoardView: React.FC<Props> = ({ issues, handleDeleteIssue, partialUpdateIs
           newStates[destination.index].sequence = sequenceNumber;
 
           mutateState(newStates, false);
-          if (!workspaceSlug) return;
+
           stateServices
             .patchState(
               workspaceSlug as string,
@@ -140,18 +141,6 @@ const BoardView: React.FC<Props> = ({ issues, handleDeleteIssue, partialUpdateIs
               draggedItem.state = destinationStateId;
               draggedItem.state_detail = destinationState;
 
-              // patch request
-              issuesServices.patchIssue(
-                workspaceSlug as string,
-                projectId as string,
-                draggedItem.id,
-                {
-                  state: destinationStateId,
-                }
-              );
-
-              // mutate the issues
-              if (!workspaceSlug || !projectId) return;
               mutate<IssueResponse>(
                 PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
                 (prevData) => {
@@ -175,6 +164,15 @@ const BoardView: React.FC<Props> = ({ issues, handleDeleteIssue, partialUpdateIs
                 },
                 false
               );
+
+              // patch request
+              issuesServices
+                .patchIssue(workspaceSlug as string, projectId as string, draggedItem.id, {
+                  state: destinationStateId,
+                })
+                .then((res) => {
+                  mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
+                });
             }
           }
         }
@@ -200,7 +198,7 @@ const BoardView: React.FC<Props> = ({ issues, handleDeleteIssue, partialUpdateIs
         }}
       />
       {groupedByIssues ? (
-        <div className="h-screen w-full">
+        <div className="h-[calc(100vh-157px)] lg:h-[calc(100vh-115px)] w-full">
           <DragDropContext onDragEnd={handleOnDragEnd}>
             <div className="h-full w-full overflow-hidden">
               <StrictModeDroppable droppableId="state" type="state" direction="horizontal">
@@ -238,7 +236,7 @@ const BoardView: React.FC<Props> = ({ issues, handleDeleteIssue, partialUpdateIs
                               : "#000000"
                           }
                           handleDeleteIssue={handleDeleteIssue}
-                          partialUpdateIssue={partialUpdateIssue}
+                          userAuth={userAuth}
                         />
                       ))}
                     </div>

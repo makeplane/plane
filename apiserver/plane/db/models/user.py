@@ -68,6 +68,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_workspace_id = models.UUIDField(null=True)
     my_issues_prop = models.JSONField(null=True)
     role = models.CharField(max_length=300, null=True, blank=True)
+    is_bot = models.BooleanField(default=False)
 
     USERNAME_FIELD = "email"
 
@@ -101,7 +102,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 @receiver(post_save, sender=User)
 def send_welcome_email(sender, instance, created, **kwargs):
     try:
-        if created:
+        if created and not instance.is_bot:
             first_name = instance.first_name.capitalize()
             to_email = instance.email
             from_email_string = f"Team Plane <team@mailer.plane.so>"

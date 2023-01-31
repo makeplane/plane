@@ -17,7 +17,7 @@ import { CustomMenu } from "components/ui";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 // types
-import { IIssue, IWorkspaceMember, NestedKeyOf, Properties } from "types";
+import { IIssue, IWorkspaceMember, NestedKeyOf, Properties, UserAuth } from "types";
 // fetch-keys
 import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 
@@ -32,8 +32,6 @@ type Props = {
   bgColor?: string;
   openCreateIssueModal: (issue?: IIssue, actionType?: "create" | "edit" | "delete") => void;
   openIssuesListModal: () => void;
-  removeIssueFromCycle: (bridgeId: string) => void;
-  partialUpdateIssue: (formData: Partial<IIssue>, issueId: string) => void;
   handleDeleteIssue: React.Dispatch<React.SetStateAction<string | undefined>>;
   setPreloadedData: React.Dispatch<
     React.SetStateAction<
@@ -44,6 +42,7 @@ type Props = {
     >
   >;
   stateId: string | null;
+  userAuth: UserAuth;
 };
 
 const SingleModuleBoard: React.FC<Props> = ({
@@ -55,18 +54,17 @@ const SingleModuleBoard: React.FC<Props> = ({
   bgColor,
   openCreateIssueModal,
   openIssuesListModal,
-  removeIssueFromCycle,
-  partialUpdateIssue,
   handleDeleteIssue,
   setPreloadedData,
   stateId,
+  userAuth,
 }) => {
   // collapse/expand
   const [isCollapsed, setIsCollapsed] = useState(true);
 
   const router = useRouter();
 
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, cycleId } = router.query;
 
   if (selectedGroup === "priority")
     groupTitle === "high"
@@ -132,13 +130,15 @@ const SingleModuleBoard: React.FC<Props> = ({
                         {...provided.dragHandleProps}
                       >
                         <SingleIssue
+                          type="cycle"
+                          typeId={cycleId as string}
                           issue={childIssue}
                           properties={properties}
                           snapshot={snapshot}
                           assignees={assignees}
                           people={people}
-                          partialUpdateIssue={partialUpdateIssue}
                           handleDeleteIssue={handleDeleteIssue}
+                          userAuth={userAuth}
                         />
                       </div>
                     )}
