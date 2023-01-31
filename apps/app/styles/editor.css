@@ -354,6 +354,10 @@ img.ProseMirror-separator {
   margin-bottom: 1em;
 }
 
+.remirror-editor-wrapper .remirror-editor {
+  min-height: 150px;
+}
+
 .issue-comments-section .remirror-editor-wrapper .remirror-editor {
   min-height: 50px;
 }

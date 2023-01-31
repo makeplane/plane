@@ -5,15 +5,15 @@ import dynamic from "next/dynamic";
 
 // react-hook-form
 import { useForm, Controller } from "react-hook-form";
-// types
-import type { IIssueActivity, IIssueComment } from "types";
-import type { KeyedMutator } from "swr";
 // services
 import issuesServices from "services/issues.service";
 // ui
 import { Loader } from "components/ui";
 // helpers
 import { debounce } from "helpers/functions.helper";
+// types
+import type { IIssueActivity, IIssueComment } from "types";
+import type { KeyedMutator } from "swr";
 
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
   ssr: false,
@@ -83,7 +83,7 @@ const AddIssueComment: React.FC<{
   return (
     <div className="space-y-5">
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="issue-comments-section rounded-md p-2 pt-3">
+        <div className="issue-comments-section">
           <Controller
             name="comment_html"
             control={control}

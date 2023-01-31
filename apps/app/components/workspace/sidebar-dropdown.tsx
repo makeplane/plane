@@ -155,7 +155,8 @@ export const WorkspaceSidebarDropdown = () => {
                               <div className="text-left">
                                 <h5 className="text-sm">{workspace.name}</h5>
                                 <div className="text-xs text-gray-500">
-                                  {workspace.total_members} members
+                                  {workspace.total_members}{" "}
+                                  {workspace.total_members > 1 ? "members" : "member"}
                                 </div>
                               </div>
                             </button>

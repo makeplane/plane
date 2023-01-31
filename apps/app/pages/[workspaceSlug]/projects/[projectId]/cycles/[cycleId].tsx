@@ -10,13 +10,6 @@ import { requiredAdmin, requiredAuth } from "lib/auth";
 import AppLayout from "layouts/app-layout";
 // contexts
 import { IssueViewContextProvider } from "contexts/issue-view.context";
-// icons
-import {
-  ArrowLeftIcon,
-  ArrowPathIcon,
-  ListBulletIcon,
-  PlusIcon,
-} from "@heroicons/react/24/outline";
 // components
 import CyclesListView from "components/project/cycles/list-view";
 import CyclesBoardView from "components/project/cycles/board-view";
@@ -33,6 +26,8 @@ import projectService from "services/project.service";
 import { CustomMenu, EmptySpace, EmptySpaceItem, Spinner } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
+import { ArrowLeftIcon, ListBulletIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { CyclesIcon } from "components/icons";
 // types
 import { CycleIssueResponse, IIssue, SelectIssue, UserAuth } from "types";
 import { NextPageContext } from "next";
@@ -203,7 +198,7 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
           <CustomMenu
             label={
               <>
-                <ArrowPathIcon className="h-3 w-3" />
+                <CyclesIcon className="h-3 w-3" />
                 {cycles?.find((c) => c.id === cycleId)?.name}
               </>
             }
@@ -268,7 +263,7 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
               <EmptySpace
                 title="You don't have any issue yet."
                 description="A cycle is a fixed time period where a team commits to a set number of issues from their backlog. Cycles are usually one, two, or four weeks long."
-                Icon={ArrowPathIcon}
+                Icon={CyclesIcon}
               >
                 <EmptySpaceItem
                   title="Create a new issue"

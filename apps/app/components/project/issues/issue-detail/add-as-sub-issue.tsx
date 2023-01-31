@@ -11,7 +11,7 @@ import { RectangleStackIcon, MagnifyingGlassIcon } from "@heroicons/react/24/out
 // services
 import issuesServices from "services/issues.service";
 // types
-import { IIssue } from "types";
+import { IIssue, IssueResponse } from "types";
 // constants
 import { PROJECT_ISSUES_LIST, SUB_ISSUES } from "constants/fetch-keys";
 
@@ -54,6 +54,22 @@ const AddAsSubIssue: React.FC<Props> = ({ isOpen, setIsOpen, parent }) => {
       .patchIssue(workspaceSlug as string, projectId as string, issueId, { parent: parent?.id })
       .then((res) => {
         mutate(SUB_ISSUES(parent?.id ?? ""));
+        mutate<IssueResponse>(
+          PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
+          (prevData) => ({
+            ...(prevData as IssueResponse),
+            results: (prevData?.results ?? []).map((p) => {
+              if (p.id === res.id)
+                return {
+                  ...p,
+                  ...res,
+                };
+
+              return p;
+            }),
+          }),
+          false
+        );
       })
       .catch((e) => {
         console.log(e);

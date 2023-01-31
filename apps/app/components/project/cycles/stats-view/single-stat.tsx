@@ -1,19 +1,19 @@
-// react
 import React from "react";
-// next
+
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
+
 // swr
 import useSWR from "swr";
 // services
-import { CalendarDaysIcon } from "@heroicons/react/20/solid";
-import { ArrowPathIcon, UserIcon } from "@heroicons/react/24/outline";
 import cyclesService from "services/cycles.service";
-// hooks
 // ui
 import { Button, CustomMenu } from "components/ui";
 // icons
+import { CalendarDaysIcon } from "@heroicons/react/20/solid";
+import { UserIcon } from "@heroicons/react/24/outline";
+import { CyclesIcon } from "components/icons";
 // helpers
 import { renderShortNumericDateFormat } from "helpers/date-time.helper";
 import { groupBy } from "helpers/array.helper";
@@ -120,7 +120,7 @@ const SingleStat: React.FC<TSingleStatProps> = (props) => {
                   router.push(`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`)
                 }
               >
-                <ArrowPathIcon className="h-3 w-3" />
+                <CyclesIcon className="h-3 w-3" />
                 Open Cycle
               </Button>
             </div>
