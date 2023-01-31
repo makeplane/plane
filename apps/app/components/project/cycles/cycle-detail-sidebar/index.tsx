@@ -1,22 +1,29 @@
-// react
 import { useEffect } from "react";
-// next
+
 import { useRouter } from "next/router";
+
+import { mutate } from "swr";
+
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
-// hooks
-import useToast from "lib/hooks/useToast";
-// ui
-import { Loader } from "ui";
 // icons
 import { CalendarDaysIcon, ChartPieIcon, LinkIcon, UserIcon } from "@heroicons/react/24/outline";
+// services
+import cyclesService from "services/cycles.service";
+// hooks
+import useToast from "hooks/use-toast";
+// ui
+import { Loader, CustomDatePicker } from "components/ui";
+//progress-bar
+import { CircularProgressbar } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
+// helpers
+import { copyTextToClipboard } from "helpers/string.helper";
+import { groupBy } from "helpers/array.helper";
 // types
 import { CycleIssueResponse, ICycle } from "types";
-// common
-import { copyTextToClipboard, groupBy } from "constants/common";
-import { mutate } from "swr";
-import cyclesService from "lib/services/cycles.service";
-import { CYCLE_DETAIL } from "constants/api-routes";
+// fetch-keys
+import { CYCLE_LIST } from "constants/fetch-keys";
 
 type Props = {
   cycle: ICycle | undefined;
@@ -31,9 +38,7 @@ const defaultValues: Partial<ICycle> = {
 
 const CycleDetailSidebar: React.FC<Props> = ({ cycle, isOpen, cycleIssues }) => {
   const router = useRouter();
-  const {
-    query: { workspaceSlug, projectId },
-  } = router;
+  const { workspaceSlug, projectId, cycleId } = router.query;
 
   const { setToastAlert } = useToast();
 
@@ -53,11 +58,21 @@ const CycleDetailSidebar: React.FC<Props> = ({ cycle, isOpen, cycleIssues }) => 
   const submitChanges = (data: Partial<ICycle>) => {
     if (!workspaceSlug || !projectId || !module) return;
 
+    mutate<ICycle[]>(
+      projectId && CYCLE_LIST(projectId as string),
+      (prevData) =>
+        (prevData ?? []).map((tempCycle) => {
+          if (tempCycle.id === cycleId) return { ...tempCycle, ...data };
+          return tempCycle;
+        }),
+      false
+    );
+
     cyclesService
       .patchCycle(workspaceSlug as string, projectId as string, cycle?.id ?? "", data)
       .then((res) => {
         console.log(res);
-        mutate(CYCLE_DETAIL);
+        mutate(CYCLE_LIST(projectId as string));
       })
       .catch((e) => {
         console.log(e);
@@ -131,7 +146,13 @@ const CycleDetailSidebar: React.FC<Props> = ({ cycle, isOpen, cycleIssues }) => 
                 </div>
                 <div className="flex items-center gap-2 sm:basis-1/2">
                   <div className="grid flex-shrink-0 place-items-center">
-                    <span className="h-4 w-4 rounded-full border-2 border-gray-300 border-r-blue-500"></span>
+                    <span className="h-4 w-4">
+                      <CircularProgressbar
+                        value={groupedIssues.completed.length}
+                        maxValue={cycleIssues?.length}
+                        strokeWidth={10}
+                      />
+                    </span>
                   </div>
                   {groupedIssues.completed.length}/{cycleIssues?.length}
                 </div>
@@ -147,16 +168,17 @@ const CycleDetailSidebar: React.FC<Props> = ({ cycle, isOpen, cycleIssues }) => 
                   <Controller
                     control={control}
                     name="start_date"
-                    render={({ field: { value, onChange } }) => (
-                      <input
-                        type="date"
-                        id="cycleStartDate"
-                        value={value ?? ""}
-                        onChange={(e: any) => {
-                          submitChanges({ start_date: e.target.value });
-                          onChange(e.target.value);
+                    render={({ field: { value } }) => (
+                      <CustomDatePicker
+                        value={value}
+                        onChange={(val: Date) => {
+                          submitChanges({
+                            start_date: val
+                              ? `${val.getFullYear()}-${val.getMonth() + 1}-${val.getDate()}`
+                              : null,
+                          });
                         }}
-                        className="w-full cursor-pointer rounded-md border bg-transparent px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                        isClearable={false}
                       />
                     )}
                   />
@@ -171,35 +193,36 @@ const CycleDetailSidebar: React.FC<Props> = ({ cycle, isOpen, cycleIssues }) => 
                   <Controller
                     control={control}
                     name="end_date"
-                    render={({ field: { value, onChange } }) => (
-                      <input
-                        type="date"
-                        id="moduleEndDate"
-                        value={value ?? ""}
-                        onChange={(e: any) => {
-                          submitChanges({ end_date: e.target.value });
-                          onChange(e.target.value);
+                    render={({ field: { value } }) => (
+                      <CustomDatePicker
+                        value={value}
+                        onChange={(val: Date) => {
+                          submitChanges({
+                            end_date: val
+                              ? `${val.getFullYear()}-${val.getMonth() + 1}-${val.getDate()}`
+                              : null,
+                          });
                         }}
-                        className="w-full cursor-pointer rounded-md border bg-transparent px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                        isClearable={false}
                       />
                     )}
                   />
                 </div>
               </div>
             </div>
-            <div className="py-1"></div>
+            <div className="py-1" />
           </div>
         </>
       ) : (
         <Loader>
           <div className="space-y-2">
-            <Loader.Item height="15px" width="50%"></Loader.Item>
-            <Loader.Item height="15px" width="30%"></Loader.Item>
+            <Loader.Item height="15px" width="50%" />
+            <Loader.Item height="15px" width="30%" />
           </div>
           <div className="mt-8 space-y-3">
-            <Loader.Item height="30px"></Loader.Item>
-            <Loader.Item height="30px"></Loader.Item>
-            <Loader.Item height="30px"></Loader.Item>
+            <Loader.Item height="30px" />
+            <Loader.Item height="30px" />
+            <Loader.Item height="30px" />
           </div>
         </Loader>
       )}

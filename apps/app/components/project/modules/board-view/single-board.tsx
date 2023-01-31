@@ -1,26 +1,25 @@
-// react
 import React, { useState } from "react";
-// swr
+
+import { useRouter } from "next/router";
+
 import useSWR from "swr";
+
+// react-beautiful-dnd
+import { Draggable } from "react-beautiful-dnd";
 // services
-import workspaceService from "lib/services/workspace.service";
-// hooks
-import useUser from "lib/hooks/useUser";
+import workspaceService from "services/workspace.service";
 // components
 import SingleIssue from "components/common/board-view/single-issue";
+import StrictModeDroppable from "components/dnd/StrictModeDroppable";
+import BoardHeader from "components/common/board-view/board-header";
 // ui
-import { CustomMenu } from "ui";
+import { CustomMenu } from "components/ui";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 // types
-import { IIssue, IWorkspaceMember, NestedKeyOf, Properties } from "types";
+import { IIssue, IWorkspaceMember, NestedKeyOf, Properties, UserAuth } from "types";
 // fetch-keys
 import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
-// common
-import { addSpaceIfCamelCase } from "constants/common";
-import { useRouter } from "next/router";
-import StrictModeDroppable from "components/dnd/StrictModeDroppable";
-import { Draggable } from "react-beautiful-dnd";
 
 type Props = {
   properties: Properties;
@@ -33,21 +32,20 @@ type Props = {
   bgColor?: string;
   openCreateIssueModal: (issue?: IIssue, actionType?: "create" | "edit" | "delete") => void;
   openIssuesListModal: () => void;
-  removeIssueFromModule: (bridgeId: string) => void;
-  partialUpdateIssue: (formData: Partial<IIssue>, issueId: string) => void;
   handleDeleteIssue: React.Dispatch<React.SetStateAction<string | undefined>>;
   setPreloadedData: React.Dispatch<
     React.SetStateAction<
       | (Partial<IIssue> & {
           actionType: "createIssue" | "edit" | "delete";
         })
-      | undefined
+      | null
     >
   >;
   stateId: string | null;
+  userAuth: UserAuth;
 };
 
-const SingleCycleBoard: React.FC<Props> = ({
+const SingleModuleBoard: React.FC<Props> = ({
   properties,
   groupedByIssues,
   selectedGroup,
@@ -56,17 +54,16 @@ const SingleCycleBoard: React.FC<Props> = ({
   bgColor,
   openCreateIssueModal,
   openIssuesListModal,
-  removeIssueFromModule,
-  partialUpdateIssue,
   handleDeleteIssue,
   setPreloadedData,
   stateId,
+  userAuth,
 }) => {
   // Collapse/Expand
-  const [show, setState] = useState(true);
+  const [isCollapsed, setIsCollapsed] = useState(true);
 
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, moduleId } = router.query;
 
   if (selectedGroup === "priority")
     groupTitle === "high"
@@ -83,90 +80,48 @@ const SingleCycleBoard: React.FC<Props> = ({
   );
 
   return (
-    <div className={`h-full flex-shrink-0 rounded ${!show ? "" : "w-80 border bg-gray-50"}`}>
-      <div className={`${!show ? "" : "flex h-full flex-col space-y-3 overflow-y-auto"}`}>
-        <div
-          className={`flex justify-between p-3 pb-0 ${
-            !show ? "flex-col rounded-md border bg-gray-50" : ""
-          }`}
-        >
-          <div
-            className={`flex w-full items-center justify-between ${
-              !show ? "flex-col gap-2" : "gap-1"
-            }`}
-          >
-            <div
-              className={`flex cursor-pointer items-center gap-x-1 rounded-md bg-slate-900 px-2 ${
-                !show ? "mb-2 flex-col gap-y-2 py-2" : ""
-              }`}
-              style={{
-                border: `2px solid ${bgColor}`,
-                backgroundColor: `${bgColor}20`,
-              }}
-            >
-              <h2
-                className={`text-[0.9rem] font-medium capitalize`}
-                style={{
-                  writingMode: !show ? "vertical-rl" : "horizontal-tb",
-                }}
-              >
-                {groupTitle === null || groupTitle === "null"
-                  ? "None"
-                  : createdBy
-                  ? createdBy
-                  : addSpaceIfCamelCase(groupTitle)}
-              </h2>
-              <span className="ml-0.5 text-sm text-gray-500">
-                {groupedByIssues[groupTitle].length}
-              </span>
-            </div>
-
-            <CustomMenu width="auto" ellipsis>
-              <CustomMenu.MenuItem
-                onClick={() => {
-                  openCreateIssueModal();
-                  if (selectedGroup !== null) {
-                    setPreloadedData({
-                      state: stateId !== null ? stateId : undefined,
-                      [selectedGroup]: groupTitle,
-                      actionType: "createIssue",
-                    });
-                  }
-                }}
-              >
-                Create new
-              </CustomMenu.MenuItem>
-              <CustomMenu.MenuItem onClick={() => openIssuesListModal()}>
-                Add an existing issue
-              </CustomMenu.MenuItem>
-            </CustomMenu>
-          </div>
-        </div>
+    <div className={`h-full flex-shrink-0 rounded ${!isCollapsed ? "" : "w-80 border bg-gray-50"}`}>
+      <div className={`${!isCollapsed ? "" : "flex h-full flex-col space-y-3 overflow-y-auto"}`}>
+        <BoardHeader
+          addIssueToState={() => {
+            openCreateIssueModal();
+            if (selectedGroup !== null) {
+              setPreloadedData({
+                state: stateId !== null ? stateId : undefined,
+                [selectedGroup]: groupTitle,
+                actionType: "createIssue",
+              });
+            }
+          }}
+          bgColor={bgColor ?? ""}
+          createdBy={createdBy}
+          groupTitle={groupTitle}
+          groupedByIssues={groupedByIssues}
+          isCollapsed={isCollapsed}
+          setIsCollapsed={setIsCollapsed}
+          selectedGroup={selectedGroup}
+        />
         <StrictModeDroppable key={groupTitle} droppableId={groupTitle}>
           {(provided, snapshot) => (
             <div
               className={`mt-3 h-full space-y-3 overflow-y-auto px-3 pb-3 ${
                 snapshot.isDraggingOver ? "bg-indigo-50 bg-opacity-50" : ""
-              } ${!show ? "hidden" : "block"}`}
+              } ${!isCollapsed ? "hidden" : "block"}`}
               {...provided.droppableProps}
               ref={provided.innerRef}
             >
-              {groupedByIssues[groupTitle].map((childIssue, index: number) => {
+              {groupedByIssues[groupTitle].map((issue, index: number) => {
                 const assignees = [
-                  ...(childIssue?.assignees_list ?? []),
-                  ...(childIssue?.assignees ?? []),
+                  ...(issue?.assignees_list ?? []),
+                  ...(issue?.assignees ?? []),
                 ]?.map((assignee) => {
                   const tempPerson = people?.find((p) => p.member.id === assignee)?.member;
 
-                  return {
-                    avatar: tempPerson?.avatar,
-                    first_name: tempPerson?.first_name,
-                    email: tempPerson?.email,
-                  };
+                  return tempPerson;
                 });
 
                 return (
-                  <Draggable key={childIssue.id} draggableId={childIssue.id} index={index}>
+                  <Draggable key={issue.id} draggableId={issue.id} index={index}>
                     {(provided, snapshot) => (
                       <div
                         ref={provided.innerRef}
@@ -174,13 +129,15 @@ const SingleCycleBoard: React.FC<Props> = ({
                         {...provided.dragHandleProps}
                       >
                         <SingleIssue
-                          issue={childIssue}
+                          type="module"
+                          typeId={moduleId as string}
+                          issue={issue}
                           properties={properties}
                           snapshot={snapshot}
                           assignees={assignees}
                           people={people}
-                          partialUpdateIssue={partialUpdateIssue}
                           handleDeleteIssue={handleDeleteIssue}
+                          userAuth={userAuth}
                         />
                       </div>
                     )}
@@ -225,4 +182,4 @@ const SingleCycleBoard: React.FC<Props> = ({
   );
 };
 
-export default SingleCycleBoard;
+export default SingleModuleBoard;

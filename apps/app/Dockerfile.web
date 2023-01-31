@@ -14,7 +14,7 @@ ENV PATH="${PATH}:./pnpm"
 
 COPY ./apps ./apps
 COPY ./package.json ./package.json
-COPY ./.eslintrc.json ./.eslintrc.json
+COPY ./.eslintrc.js ./.eslintrc.js
 COPY ./turbo.json ./turbo.json
 COPY ./pnpm-workspace.yaml ./pnpm-workspace.yaml
 COPY ./pnpm-lock.yaml ./pnpm-lock.yaml

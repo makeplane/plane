@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 
 import { useRouter } from "next/router";
-import type { NextPageContext, NextPage } from "next";
 import Image from "next/image";
 
 import useSWR, { mutate } from "swr";
@@ -12,14 +11,16 @@ import { requiredAdmin } from "lib/auth";
 // layouts
 import SettingsLayout from "layouts/settings-layout";
 // services
-import projectService from "lib/services/project.service";
-import workspaceService from "lib/services/workspace.service";
+import projectService from "services/project.service";
+import workspaceService from "services/workspace.service";
 // hooks
-import useToast from "lib/hooks/useToast";
+import useToast from "hooks/use-toast";
 // ui
-import { BreadcrumbItem, Breadcrumbs, Button, CustomSelect, Loader } from "ui";
+import { Button, CustomSelect, Loader } from "components/ui";
+import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // types
 import { IProject, IWorkspace } from "types";
+import type { NextPageContext, NextPage } from "next";
 // fetch-keys
 import { PROJECTS_LIST, PROJECT_DETAILS, WORKSPACE_MEMBERS } from "constants/fetch-keys";
 
@@ -87,24 +88,9 @@ const ControlSettings: NextPage<TControlSettingsProps> = (props) => {
     await projectService
       .updateProject(workspaceSlug as string, projectId as string, payload)
       .then((res) => {
-        mutate<IProject>(
-          PROJECT_DETAILS(projectId as string),
-          (prevData) => ({ ...prevData, ...res }),
-          false
-        );
-        mutate<IProject[]>(
-          PROJECTS_LIST(workspaceSlug as string),
-          (prevData) => {
-            const newData = prevData?.map((item) => {
-              if (item.id === res.id) {
-                return res;
-              }
-              return item;
-            });
-            return newData;
-          },
-          false
-        );
+        mutate(PROJECT_DETAILS(projectId as string));
+        mutate(PROJECTS_LIST(workspaceSlug as string));
+
         setToastAlert({
           title: "Success",
           type: "success",

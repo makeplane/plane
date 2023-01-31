@@ -6,22 +6,19 @@ import useSWR from "swr";
 // react-hook-form
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 // hooks
-import useToast from "lib/hooks/useToast";
-// services
-import projectService from "lib/services/project.service";
-// headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
-// ui
-import { Button } from "ui";
-// icons
 import { MagnifyingGlassIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
+import useToast from "hooks/use-toast";
+// services
+import projectService from "services/project.service";
+// headless ui
+// ui
+import { Button } from "components/ui";
+import { LayerDiagonalIcon } from "components/icons";
 // types
 import { IIssue } from "types";
 // fetch-keys
 import { PROJECT_DETAILS } from "constants/fetch-keys";
-// common
-import { classNames } from "constants/common";
-import { LayerDiagonalIcon } from "ui/icons";
 
 type FormInput = {
   issues: string[];
@@ -32,7 +29,7 @@ type Props = {
   handleClose: () => void;
   type: string;
   issues: IIssue[];
-  handleOnSubmit: (data: FormInput) => void;
+  handleOnSubmit: any;
 };
 
 const ExistingIssuesListModal: React.FC<Props> = ({
@@ -73,18 +70,25 @@ const ExistingIssuesListModal: React.FC<Props> = ({
     },
   });
 
-  const onSubmit: SubmitHandler<FormInput> = (data) => {
+  const onSubmit: SubmitHandler<FormInput> = async (data) => {
     if (!data.issues || data.issues.length === 0) {
       setToastAlert({
         title: "Error",
         type: "error",
         message: "Please select atleast one issue",
       });
+
       return;
     }
 
-    handleOnSubmit(data);
+    await handleOnSubmit(data);
     handleClose();
+
+    setToastAlert({
+      title: "Success",
+      type: "success",
+      message: `Issue${data.issues.length > 1 ? "s" : ""} added successfully`,
+    });
   };
 
   const filteredIssues: IIssue[] =
@@ -149,38 +153,35 @@ const ExistingIssuesListModal: React.FC<Props> = ({
                                 </h2>
                               )}
                               <ul className="text-sm text-gray-700">
-                                {filteredIssues.map((issue) => {
-                                  return (
-                                    <Combobox.Option
-                                      key={issue.id}
-                                      as="label"
-                                      htmlFor={`issue-${issue.id}`}
-                                      value={issue.id}
-                                      className={({ active }) =>
-                                        classNames(
-                                          "flex w-full cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2",
-                                          active ? "bg-gray-900 bg-opacity-5 text-gray-900" : ""
-                                        )
-                                      }
-                                    >
-                                      {({ selected }) => (
-                                        <>
-                                          <input type="checkbox" checked={selected} readOnly />
-                                          <span
-                                            className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                                            style={{
-                                              backgroundColor: issue.state_detail.color,
-                                            }}
-                                          />
-                                          <span className="flex-shrink-0 text-xs text-gray-500">
-                                            {projectDetails?.identifier}-{issue.sequence_id}
-                                          </span>
-                                          {issue.name}
-                                        </>
-                                      )}
-                                    </Combobox.Option>
-                                  );
-                                })}
+                                {filteredIssues.map((issue) => (
+                                  <Combobox.Option
+                                    key={issue.id}
+                                    as="label"
+                                    htmlFor={`issue-${issue.id}`}
+                                    value={issue.id}
+                                    className={({ active }) =>
+                                      `flex w-full cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 ${
+                                        active ? "bg-gray-900 bg-opacity-5 text-gray-900" : ""
+                                      }`
+                                    }
+                                  >
+                                    {({ selected }) => (
+                                      <>
+                                        <input type="checkbox" checked={selected} readOnly />
+                                        <span
+                                          className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                                          style={{
+                                            backgroundColor: issue.state_detail.color,
+                                          }}
+                                        />
+                                        <span className="flex-shrink-0 text-xs text-gray-500">
+                                          {projectDetails?.identifier}-{issue.sequence_id}
+                                        </span>
+                                        {issue.name}
+                                      </>
+                                    )}
+                                  </Combobox.Option>
+                                ))}
                               </ul>
                             </li>
                           ) : (
@@ -188,10 +189,7 @@ const ExistingIssuesListModal: React.FC<Props> = ({
                               <LayerDiagonalIcon height="56" width="56" />
                               <h3 className="text-gray-500">
                                 No issues found. Create a new issue with{" "}
-                                <pre className="inline rounded bg-gray-100 px-2 py-1">
-                                  Ctrl/Command + I
-                                </pre>
-                                .
+                                <pre className="inline rounded bg-gray-100 px-2 py-1">C</pre>.
                               </h3>
                             </div>
                           )}

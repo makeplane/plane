@@ -3,8 +3,7 @@ import Image from "next/image";
 // images
 import Cycle from "public/onboarding/cycle.png";
 
-const MoveWithCycles: React.FC = () => {
-  return (
+const MoveWithCycles: React.FC = () => (
     <div className="h-full space-y-4">
       <div className="relative h-1/2">
         <div
@@ -12,7 +11,7 @@ const MoveWithCycles: React.FC = () => {
           style={{
             background: "linear-gradient(0deg, #fff 84.2%, rgba(255, 255, 255, 0) 34.35%)",
           }}
-        ></div>
+         />
         <Image
           src={Cycle}
           className="h-full"
@@ -31,6 +30,5 @@ const MoveWithCycles: React.FC = () => {
       </div>
     </div>
   );
-};
 
 export default MoveWithCycles;

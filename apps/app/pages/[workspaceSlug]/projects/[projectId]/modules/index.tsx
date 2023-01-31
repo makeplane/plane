@@ -1,25 +1,26 @@
 import React from "react";
 
 import { useRouter } from "next/router";
-import type { NextPage, NextPageContext } from "next";
-
 import useSWR from "swr";
+import { PlusIcon, RectangleGroupIcon } from "@heroicons/react/24/outline";
+
 // layouts
 import AppLayout from "layouts/app-layout";
 // lib
 import { requiredAuth } from "lib/auth";
 // services
-import projectService from "lib/services/project.service";
-import modulesService from "lib/services/modules.service";
+import projectService from "services/project.service";
+import modulesService from "services/modules.service";
 // components
 import SingleModuleCard from "components/project/modules/single-module-card";
 // ui
-import { BreadcrumbItem, Breadcrumbs, EmptySpace, EmptySpaceItem, HeaderButton, Loader } from "ui";
+import { EmptySpace, EmptySpaceItem, HeaderButton, Loader } from "components/ui";
+import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { PlusIcon, RectangleGroupIcon } from "@heroicons/react/24/outline";
 // types
 import { IModule } from "types/modules";
 // fetch-keys
+import type { NextPage, NextPageContext } from "next";
 import { MODULE_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
 
 const ProjectModules: NextPage = () => {
@@ -85,8 +86,8 @@ const ProjectModules: NextPage = () => {
                 title="Create a new module"
                 description={
                   <span>
-                    Use <pre className="inline rounded bg-gray-100 px-2 py-1">Ctrl/Command + M</pre>{" "}
-                    shortcut to create a new module
+                    Use <pre className="inline rounded bg-gray-100 px-2 py-1">M</pre> shortcut to
+                    create a new module
                   </span>
                 }
                 Icon={PlusIcon}
@@ -103,12 +104,12 @@ const ProjectModules: NextPage = () => {
         )
       ) : (
         <Loader className="grid grid-cols-3 gap-4">
-          <Loader.Item height="100px"></Loader.Item>
-          <Loader.Item height="100px"></Loader.Item>
-          <Loader.Item height="100px"></Loader.Item>
-          <Loader.Item height="100px"></Loader.Item>
-          <Loader.Item height="100px"></Loader.Item>
-          <Loader.Item height="100px"></Loader.Item>
+          <Loader.Item height="100px" />
+          <Loader.Item height="100px" />
+          <Loader.Item height="100px" />
+          <Loader.Item height="100px" />
+          <Loader.Item height="100px" />
+          <Loader.Item height="100px" />
         </Loader>
       )}
     </AppLayout>

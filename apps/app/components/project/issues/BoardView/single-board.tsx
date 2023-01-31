@@ -4,22 +4,20 @@ import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
+// react-beautiful-dnd
 import { Draggable } from "react-beautiful-dnd";
+// components
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
-// services
-import workspaceService from "lib/services/workspace.service";
-// icons
-import {
-  ArrowsPointingInIcon,
-  ArrowsPointingOutIcon,
-  EllipsisHorizontalIcon,
-  PlusIcon,
-} from "@heroicons/react/24/outline";
-import { addSpaceIfCamelCase } from "constants/common";
-import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
-// types
-import { IIssue, Properties, NestedKeyOf, IWorkspaceMember } from "types";
 import SingleIssue from "components/common/board-view/single-issue";
+import BoardHeader from "components/common/board-view/board-header";
+// icons
+import { PlusIcon } from "@heroicons/react/24/outline";
+// services
+import workspaceService from "services/workspace.service";
+// types
+import { IIssue, Properties, NestedKeyOf, IWorkspaceMember, UserAuth } from "types";
+// fetch-keys
+import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 
 type Props = {
   selectedGroup: NestedKeyOf<IIssue> | null;
@@ -42,7 +40,7 @@ type Props = {
   stateId: string | null;
   createdBy: string | null;
   handleDeleteIssue: React.Dispatch<React.SetStateAction<string | undefined>>;
-  partialUpdateIssue: (formData: Partial<IIssue>, childIssueId: string) => void;
+  userAuth: UserAuth;
 };
 
 const SingleBoard: React.FC<Props> = ({
@@ -57,7 +55,7 @@ const SingleBoard: React.FC<Props> = ({
   stateId,
   createdBy,
   handleDeleteIssue,
-  partialUpdateIssue,
+  userAuth,
 }) => {
   // Collapse/Expand
   const [isCollapsed, setIsCollapsed] = useState(true);
@@ -79,6 +77,16 @@ const SingleBoard: React.FC<Props> = ({
     workspaceSlug ? () => workspaceService.workspaceMembers(workspaceSlug as string) : null
   );
 
+  const addIssueToState = () => {
+    setIsIssueOpen(true);
+    if (selectedGroup)
+      setPreloadedData({
+        state: stateId !== null ? stateId : undefined,
+        [selectedGroup]: groupTitle,
+        actionType: "createIssue",
+      });
+  };
+
   return (
     <Draggable draggableId={groupTitle} index={index}>
       {(provided, snapshot) => (
@@ -92,80 +100,17 @@ const SingleBoard: React.FC<Props> = ({
           <div
             className={`${!isCollapsed ? "" : "flex h-full flex-col space-y-3 overflow-y-auto"}`}
           >
-            <div
-              className={`flex justify-between p-3 pb-0 ${
-                !isCollapsed ? "flex-col rounded-md border bg-gray-50" : ""
-              }`}
-            >
-              <div className={`flex items-center ${!isCollapsed ? "flex-col gap-2" : "gap-1"}`}>
-                <button
-                  type="button"
-                  {...provided.dragHandleProps}
-                  className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200 ${
-                    !isCollapsed ? "" : "rotate-90"
-                  } ${selectedGroup !== "state_detail.name" ? "hidden" : ""}`}
-                >
-                  <EllipsisHorizontalIcon className="h-4 w-4 text-gray-600" />
-                  <EllipsisHorizontalIcon className="mt-[-0.7rem] h-4 w-4 text-gray-600" />
-                </button>
-                <div
-                  className={`flex cursor-pointer items-center gap-x-1 rounded-md bg-slate-900 px-2 ${
-                    !isCollapsed ? "mb-2 flex-col gap-y-2 py-2" : ""
-                  }`}
-                  style={{
-                    border: `2px solid ${bgColor}`,
-                    backgroundColor: `${bgColor}20`,
-                  }}
-                >
-                  <h2
-                    className={`text-[0.9rem] font-medium capitalize`}
-                    style={{
-                      writingMode: !isCollapsed ? "vertical-rl" : "horizontal-tb",
-                    }}
-                  >
-                    {groupTitle === null || groupTitle === "null"
-                      ? "None"
-                      : createdBy
-                      ? createdBy
-                      : addSpaceIfCamelCase(groupTitle)}
-                  </h2>
-                  <span className="ml-0.5 text-sm text-gray-500">
-                    {groupedByIssues[groupTitle].length}
-                  </span>
-                </div>
-              </div>
-
-              <div className={`flex items-center ${!isCollapsed ? "flex-col pb-2" : ""}`}>
-                <button
-                  type="button"
-                  className="grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200"
-                  onClick={() => {
-                    setIsCollapsed((prevData) => !prevData);
-                  }}
-                >
-                  {isCollapsed ? (
-                    <ArrowsPointingInIcon className="h-4 w-4" />
-                  ) : (
-                    <ArrowsPointingOutIcon className="h-4 w-4" />
-                  )}
-                </button>
-                <button
-                  type="button"
-                  className="grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200"
-                  onClick={() => {
-                    setIsIssueOpen(true);
-                    if (selectedGroup !== null)
-                      setPreloadedData({
-                        state: stateId !== null ? stateId : undefined,
-                        [selectedGroup]: groupTitle,
-                        actionType: "createIssue",
-                      });
-                  }}
-                >
-                  <PlusIcon className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
+            <BoardHeader
+              addIssueToState={addIssueToState}
+              bgColor={bgColor}
+              createdBy={createdBy}
+              groupTitle={groupTitle}
+              groupedByIssues={groupedByIssues}
+              isCollapsed={isCollapsed}
+              setIsCollapsed={setIsCollapsed}
+              selectedGroup={selectedGroup}
+              provided={provided}
+            />
             <StrictModeDroppable key={groupTitle} droppableId={groupTitle}>
               {(provided, snapshot) => (
                 <div
@@ -182,11 +127,7 @@ const SingleBoard: React.FC<Props> = ({
                     ]?.map((assignee) => {
                       const tempPerson = people?.find((p) => p.member.id === assignee)?.member;
 
-                      return {
-                        avatar: tempPerson?.avatar,
-                        first_name: tempPerson?.first_name,
-                        email: tempPerson?.email,
-                      };
+                      return tempPerson;
                     });
 
                     return (
@@ -204,7 +145,7 @@ const SingleBoard: React.FC<Props> = ({
                               people={people}
                               assignees={assignees}
                               handleDeleteIssue={handleDeleteIssue}
-                              partialUpdateIssue={partialUpdateIssue}
+                              userAuth={userAuth}
                             />
                           </div>
                         )}
@@ -215,16 +156,7 @@ const SingleBoard: React.FC<Props> = ({
                   <button
                     type="button"
                     className="flex items-center rounded p-2 text-xs font-medium outline-none duration-300 hover:bg-gray-100"
-                    onClick={() => {
-                      setIsIssueOpen(true);
-                      if (selectedGroup !== null) {
-                        setPreloadedData({
-                          state: stateId !== null ? stateId : undefined,
-                          [selectedGroup]: groupTitle,
-                          actionType: "createIssue",
-                        });
-                      }
-                    }}
+                    onClick={addIssueToState}
                   >
                     <PlusIcon className="mr-1 h-3 w-3" />
                     Create

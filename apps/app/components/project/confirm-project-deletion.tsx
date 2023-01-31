@@ -2,20 +2,20 @@ import React, { useEffect, useRef, useState } from "react";
 
 import { mutate } from "swr";
 
+// headless ui
 import { Dialog, Transition } from "@headlessui/react";
-
 // services
-import projectService from "lib/services/project.service";
-// constants
-import { PROJECTS_LIST } from "constants/fetch-keys";
+import projectService from "services/project.service";
 // hooks
-import useToast from "lib/hooks/useToast";
+import useToast from "hooks/use-toast";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
-import { Button, Input } from "ui";
+import { Button, Input } from "components/ui";
 // types
 import type { IProject, IWorkspace } from "types";
+// fetch-keys
+import { PROJECTS_LIST } from "constants/fetch-keys";
 
 type TConfirmProjectDeletionProps = {
   isOpen: boolean;
@@ -86,7 +86,7 @@ const ConfirmProjectDeletion: React.FC<TConfirmProjectDeletionProps> = (props) =
     <Transition.Root show={isOpen} as={React.Fragment}>
       <Dialog
         as="div"
-        className="relative z-10"
+        className="relative z-20"
         initialFocus={cancelButtonRef}
         onClose={handleClose}
       >
@@ -102,7 +102,7 @@ const ConfirmProjectDeletion: React.FC<TConfirmProjectDeletionProps> = (props) =
           <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
         </Transition.Child>
 
-        <div className="fixed inset-0 z-10 overflow-y-auto">
+        <div className="fixed inset-0 z-20 overflow-y-auto">
           <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
             <Transition.Child
               as={React.Fragment}

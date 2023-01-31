@@ -1,0 +1,21 @@
+{
+  "name": "ui",
+  "version": "0.0.0",
+  "main": "./index.tsx",
+  "types": "./index.tsx",
+  "license": "MIT",
+  "scripts": {
+    "lint": "eslint *.ts*"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.17",
+    "@types/react-dom": "^18.0.6",
+    "classnames": "^2.3.2",
+    "config": "workspace:*",
+    "eslint": "^7.32.0",
+    "next": "12.3.2",
+    "react": "^18.2.0",
+    "tsconfig": "workspace:*",
+    "typescript": "4.7.4"
+  }
+}

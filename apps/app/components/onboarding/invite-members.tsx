@@ -1,10 +1,11 @@
 // types
-import useToast from "lib/hooks/useToast";
-import workspaceService from "lib/services/workspace.service";
 import { useForm } from "react-hook-form";
+import useToast from "hooks/use-toast";
+import workspaceService from "services/workspace.service";
 import { IUser } from "types";
-import MultiInput from "ui/multi-input";
-import OutlineButton from "ui/outline-button";
+// ui components
+import MultiInput from "components/ui/multi-input";
+import OutlineButton from "components/ui/outline-button";
 
 type Props = {
   setStep: React.Dispatch<React.SetStateAction<number>>;

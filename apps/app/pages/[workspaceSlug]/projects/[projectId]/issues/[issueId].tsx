@@ -1,52 +1,39 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import Link from "next/link";
-import dynamic from "next/dynamic";
-import type { NextPage, NextPageContext } from "next";
 import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 
-import { Controller, useForm } from "react-hook-form";
-
-import { Disclosure, Transition } from "@headlessui/react";
-
+// react-hook-form
+import { useForm } from "react-hook-form";
 // services
-import issuesServices from "lib/services/issues.service";
-import projectService from "lib/services/project.service";
+import issuesService from "services/issues.service";
 // lib
 import { requiredAuth } from "lib/auth";
 // layouts
 import AppLayout from "layouts/app-layout";
 // components
 import AddAsSubIssue from "components/project/issues/issue-detail/add-as-sub-issue";
-import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
 import IssueDetailSidebar from "components/project/issues/issue-detail/issue-detail-sidebar";
 import AddIssueComment from "components/project/issues/issue-detail/comment/issue-comment-section";
 import IssueActivitySection from "components/project/issues/issue-detail/activity";
+import { IssueDescriptionForm, SubIssueList, CreateUpdateIssueModal } from "components/issues";
 // ui
-import { Loader, TextArea, HeaderButton, Breadcrumbs, CustomMenu } from "ui";
+import { Loader, CustomMenu } from "components/ui";
+import { Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { ChevronLeftIcon, ChevronRightIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { PlusIcon } from "@heroicons/react/24/outline";
 // types
 import { IIssue, IssueResponse } from "types";
+import type { NextPage, NextPageContext } from "next";
 // fetch-keys
 import {
-  PROJECT_DETAILS,
-  PROJECT_ISSUES_LIST,
   PROJECT_ISSUES_ACTIVITY,
+  ISSUE_DETAILS,
+  SUB_ISSUES,
+  PROJECT_ISSUES_LIST,
 } from "constants/fetch-keys";
-// common
-import { debounce } from "constants/common";
-
-const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
-  ssr: false,
-  loading: () => (
-    <Loader>
-      <Loader.Item height="12rem" width="100%" />
-    </Loader>
-  ),
-});
 
 const defaultValues = {
   name: "",
@@ -62,7 +49,8 @@ const defaultValues = {
   labels_list: [],
 };
 
-const IssueDetail: NextPage = () => {
+const IssueDetailsPage: NextPage = () => {
+  // states
   const [isOpen, setIsOpen] = useState(false);
   const [isAddAsSubIssueOpen, setIsAddAsSubIssueOpen] = useState(false);
   const [preloadedData, setPreloadedData] = useState<
@@ -72,27 +60,27 @@ const IssueDetail: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
-  const { data: activeProject } = useSWR(
-    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
+  const { data: issueDetails, mutate: mutateIssueDetails } = useSWR<IIssue | undefined>(
+    workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId as string) : null,
+    workspaceSlug && projectId && issueId
+      ? () =>
+          issuesService.retrieve(workspaceSlug as string, projectId as string, issueId as string)
       : null
   );
 
-  const { data: issues, mutate: mutateIssues } = useSWR(
-    workspaceSlug && projectId
-      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
-      : null,
-    workspaceSlug && projectId
-      ? () => issuesServices.getIssues(workspaceSlug as string, projectId as string)
+  const { data: subIssues } = useSWR(
+    issueId && workspaceSlug && projectId ? SUB_ISSUES(issueId as string) : null,
+    issueId && workspaceSlug && projectId
+      ? () =>
+          issuesService.subIssues(workspaceSlug as string, projectId as string, issueId as string)
       : null
   );
 
   const { data: issueActivities, mutate: mutateIssueActivities } = useSWR(
-    workspaceSlug && projectId && issueId ? PROJECT_ISSUES_ACTIVITY : null,
+    workspaceSlug && projectId && issueId ? PROJECT_ISSUES_ACTIVITY(issueId as string) : null,
     workspaceSlug && projectId && issueId
       ? () =>
-          issuesServices.getIssueActivities(
+          issuesService.getIssueActivities(
             workspaceSlug as string,
             projectId as string,
             issueId as string
@@ -100,99 +88,98 @@ const IssueDetail: NextPage = () => {
       : null
   );
 
-  const { register, handleSubmit, reset, control, watch, setValue } = useForm<IIssue>({
+  const { data: siblingIssues } = useSWR(
+    workspaceSlug && projectId && issueDetails?.parent ? SUB_ISSUES(issueDetails.parent) : null,
+    workspaceSlug && projectId && issueDetails?.parent
+      ? () =>
+          issuesService.subIssues(
+            workspaceSlug as string,
+            projectId as string,
+            issueDetails.parent ?? ""
+          )
+      : null
+  );
+
+  const { reset, control, watch } = useForm<IIssue>({
     defaultValues,
   });
 
-  const issueDetail = issues?.results?.find((issue) => issue.id === issueId);
-  const prevIssue = issues?.results[issues?.results.findIndex((issue) => issue.id === issueId) - 1];
-  const nextIssue = issues?.results[issues?.results.findIndex((issue) => issue.id === issueId) + 1];
-  const subIssues = (issues && issues.results.filter((i) => i.parent === issueId)) ?? [];
-  const siblingIssues =
-    issueDetail &&
-    issues?.results.filter((i) => i.parent === issueDetail.parent && i.id !== issueId);
-
   useEffect(() => {
-    if (issueDetail) {
+    if (issueDetails) {
       mutateIssueActivities();
       reset({
-        ...issueDetail,
+        ...issueDetails,
         blockers_list:
-          issueDetail.blockers_list ??
-          issueDetail.blocker_issues?.map((issue) => issue.blocker_issue_detail?.id),
+          issueDetails.blockers_list ??
+          issueDetails.blocker_issues?.map((issue) => issue.blocker_issue_detail?.id),
         blocked_list:
-          issueDetail.blocked_list ??
-          issueDetail.blocked_issues?.map((issue) => issue.blocked_issue_detail?.id),
+          issueDetails.blocked_list ??
+          issueDetails.blocked_issues?.map((issue) => issue.blocked_issue_detail?.id),
         assignees_list:
-          issueDetail.assignees_list ?? issueDetail.assignee_details?.map((user) => user.id),
-        labels_list: issueDetail.labels_list ?? issueDetail.labels,
-        labels: issueDetail.labels_list ?? issueDetail.labels,
+          issueDetails.assignees_list ?? issueDetails.assignee_details?.map((user) => user.id),
+        labels_list: issueDetails.labels_list ?? issueDetails.labels,
+        labels: issueDetails.labels_list ?? issueDetails.labels,
       });
     }
-  }, [issueDetail, reset, mutateIssueActivities]);
+  }, [issueDetails, reset, mutateIssueActivities]);
 
   const submitChanges = useCallback(
     (formData: Partial<IIssue>) => {
-      if (!workspaceSlug || !activeProject || !issueId) return;
+      if (!workspaceSlug || !projectId || !issueId) return;
 
-      mutateIssues(
-        (prevData) => ({
-          ...(prevData as IssueResponse),
-          results: (prevData?.results ?? []).map((issue) => {
-            if (issue.id === issueId) return { ...issue, ...formData };
-
-            return issue;
-          }),
+      mutate(
+        ISSUE_DETAILS(issueId as string),
+        (prevData: IIssue) => ({
+          ...prevData,
+          ...formData,
         }),
         false
       );
 
-      const payload = {
-        ...formData,
-      };
-
-      issuesServices
+      const payload = { ...formData };
+      issuesService
         .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload)
-        .then((response) => {
-          mutateIssues((prevData) => ({
-            ...(prevData as IssueResponse),
-            results: (prevData?.results ?? []).map((issue) => {
-              if (issue.id === issueId) {
-                return { ...issue, ...response };
-              }
-              return issue;
-            }),
-          }));
-          mutateIssueActivities();
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    },
-    [activeProject, workspaceSlug, issueId, projectId, mutateIssues, mutateIssueActivities]
-  );
-
-  const handleSubIssueRemove = (issueId: string) => {
-    if (workspaceSlug && activeProject) {
-      issuesServices
-        .patchIssue(workspaceSlug as string, activeProject.id, issueId, { parent: null })
         .then((res) => {
-          mutate<IssueResponse>(
-            PROJECT_ISSUES_LIST(workspaceSlug as string, activeProject.id),
-            (prevData) => ({
-              ...(prevData as IssueResponse),
-              results: (prevData?.results ?? []).map((p) =>
-                p.id === issueId ? { ...p, ...res } : p
-              ),
-            }),
-            false
-          );
+          console.log(res);
+          mutateIssueDetails();
           mutateIssueActivities();
         })
         .catch((e) => {
           console.error(e);
         });
-    }
+    },
+    [workspaceSlug, issueId, projectId, mutateIssueDetails, mutateIssueActivities]
+  );
+
+  const handleSubIssueRemove = (issueId: string) => {
+    if (!workspaceSlug || !projectId) return;
+
+    issuesService
+      .patchIssue(workspaceSlug as string, projectId as string, issueId, { parent: null })
+      .then((res) => {
+        mutate(SUB_ISSUES(issueDetails?.id ?? ""));
+        mutateIssueActivities();
+
+        mutate<IssueResponse>(
+          PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
+          (prevData) => ({
+            ...(prevData as IssueResponse),
+            results: (prevData?.results ?? []).map((p) => {
+              if (p.id === res.id)
+                return {
+                  ...p,
+                  ...res,
+                };
+
+              return p;
+            }),
+          }),
+          false
+        );
+      })
+      .catch((e) => {
+        console.error(e);
+      });
   };
 
   return (
@@ -202,48 +189,21 @@ const IssueDetail: NextPage = () => {
       breadcrumbs={
         <Breadcrumbs>
           <Breadcrumbs.BreadcrumbItem
-            title={`${activeProject?.name ?? "Project"} Issues`}
-            link={`/${workspaceSlug}/projects/${activeProject?.id}/issues`}
+            title={`${issueDetails?.project_detail.name ?? "Project"} Issues`}
+            link={`/${workspaceSlug}/projects/${projectId as string}/issues`}
           />
           <Breadcrumbs.BreadcrumbItem
-            title={`Issue ${activeProject?.identifier ?? "Project"}-${
-              issueDetail?.sequence_id ?? "..."
+            title={`Issue ${issueDetails?.project_detail.identifier ?? "Project"}-${
+              issueDetails?.sequence_id ?? "..."
             } Details`}
           />
         </Breadcrumbs>
       }
-      right={
-        <div className="flex items-center gap-2">
-          <HeaderButton
-            Icon={ChevronLeftIcon}
-            label="Previous"
-            className={!prevIssue ? "cursor-not-allowed opacity-70" : ""}
-            onClick={() => {
-              if (!prevIssue) return;
-              router.push(`/${workspaceSlug}/projects/${prevIssue.project}/issues/${prevIssue.id}`);
-            }}
-          />
-          <HeaderButton
-            Icon={ChevronRightIcon}
-            disabled={!nextIssue}
-            label="Next"
-            className={!nextIssue ? "cursor-not-allowed opacity-70" : ""}
-            onClick={() => {
-              if (!nextIssue) return;
-              router.push(
-                `/${workspaceSlug}/projects/${nextIssue.project}/issues/${nextIssue?.id}`
-              );
-            }}
-            position="reverse"
-          />
-        </div>
-      }
     >
       {isOpen && (
-        <CreateUpdateIssuesModal
+        <CreateUpdateIssueModal
           isOpen={isOpen}
-          setIsOpen={setIsOpen}
-          projectId={projectId as string}
+          handleClose={() => setIsOpen(false)}
           prePopulateData={{
             ...preloadedData,
           }}
@@ -253,46 +213,48 @@ const IssueDetail: NextPage = () => {
         <AddAsSubIssue
           isOpen={isAddAsSubIssueOpen}
           setIsOpen={setIsAddAsSubIssueOpen}
-          parent={issueDetail}
+          parent={issueDetails}
         />
       )}
-      {issueDetail && activeProject ? (
+      {issueDetails && projectId ? (
         <div className="flex h-full">
           <div className="basis-2/3 space-y-5 divide-y-2 p-5">
             <div className="rounded-lg">
-              {issueDetail.parent !== null && issueDetail.parent !== "" ? (
+              {issueDetails?.parent && issueDetails.parent !== "" ? (
                 <div className="mb-5 flex w-min items-center gap-2 whitespace-nowrap rounded bg-gray-100 p-2 text-xs">
                   <Link
-                    href={`/${workspaceSlug}/projects/${activeProject.id}/issues/${issueDetail.parent}`}
+                    href={`/${workspaceSlug}/projects/${projectId as string}/issues/${
+                      issueDetails.parent
+                    }`}
                   >
                     <a className="flex items-center gap-2">
                       <span
                         className="block h-1.5 w-1.5 rounded-full"
                         style={{
-                          backgroundColor: issueDetail.state_detail.color,
+                          backgroundColor: issueDetails?.state_detail?.color,
                         }}
                       />
                       <span className="flex-shrink-0 text-gray-600">
-                        {activeProject.identifier}-
-                        {issues?.results.find((i) => i.id === issueDetail.parent)?.sequence_id}
+                        {issueDetails.project_detail.identifier}-
+                        {issueDetails.parent_detail?.sequence_id}
                       </span>
                       <span className="truncate font-medium">
-                        {issues?.results
-                          .find((i) => i.id === issueDetail.parent)
-                          ?.name.substring(0, 50)}
+                        {issueDetails.parent_detail?.name.substring(0, 50)}
                       </span>
                     </a>
                   </Link>
 
                   <CustomMenu ellipsis optionsPosition="left">
                     {siblingIssues && siblingIssues.length > 0 ? (
-                      siblingIssues.map((issue) => (
+                      siblingIssues.map((issue: IIssue) => (
                         <CustomMenu.MenuItem key={issue.id}>
                           <Link
-                            href={`/${workspaceSlug}/projects/${activeProject.id}/issues/${issue.id}`}
+                            href={`/${workspaceSlug}/projects/${projectId as string}/issues/${
+                              issue.id
+                            }`}
                           >
                             <a>
-                              {activeProject.identifier}-{issue.sequence_id}
+                              {issueDetails.project_detail.identifier}-{issue.sequence_id}
                             </a>
                           </Link>
                         </CustomMenu.MenuItem>
@@ -305,120 +267,16 @@ const IssueDetail: NextPage = () => {
                   </CustomMenu>
                 </div>
               ) : null}
-              <div>
-                <TextArea
-                  id="name"
-                  placeholder="Enter issue name"
-                  name="name"
-                  autoComplete="off"
-                  validations={{ required: true }}
-                  register={register}
-                  onChange={debounce(() => {
-                    handleSubmit(submitChanges)();
-                  }, 5000)}
-                  mode="transparent"
-                  className="text-xl font-medium"
-                />
-                <Controller
-                  name="description"
-                  control={control}
-                  render={({ field: { value } }) => (
-                    <RemirrorRichTextEditor
-                      value={value}
-                      placeholder="Enter Your Text..."
-                      onBlur={(jsonValue, htmlValue) => {
-                        setValue("description", jsonValue);
-                        setValue("description_html", htmlValue);
-                        handleSubmit(submitChanges)();
-                      }}
-                    />
-                  )}
-                />
-              </div>
+              <IssueDescriptionForm issue={issueDetails} handleFormSubmit={submitChanges} />
               <div className="mt-2">
-                {subIssues && subIssues.length > 0 ? (
-                  <Disclosure defaultOpen={true}>
-                    {({ open }) => (
-                      <>
-                        <div className="flex items-center justify-between">
-                          <Disclosure.Button className="flex items-center gap-1 rounded px-2 py-1 text-xs font-medium hover:bg-gray-100">
-                            <ChevronRightIcon className={`h-3 w-3 ${open ? "rotate-90" : ""}`} />
-                            Sub-issues{" "}
-                            <span className="ml-1 text-gray-600">{subIssues.length}</span>
-                          </Disclosure.Button>
-                          {open ? (
-                            <div className="flex items-center">
-                              <button
-                                type="button"
-                                className="flex items-center gap-1 rounded px-2 py-1 text-xs font-medium hover:bg-gray-100"
-                                onClick={() => {
-                                  setIsOpen(true);
-                                  setPreloadedData({
-                                    parent: issueDetail.id,
-                                    actionType: "createIssue",
-                                  });
-                                }}
-                              >
-                                <PlusIcon className="h-3 w-3" />
-                                Create new
-                              </button>
-
-                              <CustomMenu ellipsis>
-                                <CustomMenu.MenuItem onClick={() => setIsAddAsSubIssueOpen(true)}>
-                                  Add an existing issue
-                                </CustomMenu.MenuItem>
-                              </CustomMenu>
-                            </div>
-                          ) : null}
-                        </div>
-                        <Transition
-                          enter="transition duration-100 ease-out"
-                          enterFrom="transform scale-95 opacity-0"
-                          enterTo="transform scale-100 opacity-100"
-                          leave="transition duration-75 ease-out"
-                          leaveFrom="transform scale-100 opacity-100"
-                          leaveTo="transform scale-95 opacity-0"
-                        >
-                          <Disclosure.Panel className="mt-3 flex flex-col gap-y-1">
-                            {subIssues.map((subIssue) => (
-                              <div
-                                key={subIssue.id}
-                                className="group flex items-center justify-between gap-2 rounded p-2 hover:bg-gray-100"
-                              >
-                                <Link
-                                  href={`/${workspaceSlug}/projects/${activeProject.id}/issues/${subIssue.id}`}
-                                >
-                                  <a className="flex items-center gap-2 rounded text-xs">
-                                    <span
-                                      className={`block h-1.5 w-1.5 rounded-full`}
-                                      style={{
-                                        backgroundColor: subIssue.state_detail.color,
-                                      }}
-                                    />
-                                    <span className="flex-shrink-0 text-gray-600">
-                                      {activeProject.identifier}-{subIssue.sequence_id}
-                                    </span>
-                                    <span className="max-w-sm break-all font-medium">
-                                      {subIssue.name}
-                                    </span>
-                                  </a>
-                                </Link>
-                                <div className="opacity-0 group-hover:opacity-100">
-                                  <CustomMenu ellipsis>
-                                    <CustomMenu.MenuItem
-                                      onClick={() => handleSubIssueRemove(subIssue.id)}
-                                    >
-                                      Remove as sub-issue
-                                    </CustomMenu.MenuItem>
-                                  </CustomMenu>
-                                </div>
-                              </div>
-                            ))}
-                          </Disclosure.Panel>
-                        </Transition>
-                      </>
-                    )}
-                  </Disclosure>
+                {issueId && workspaceSlug && projectId && subIssues?.length > 0 ? (
+                  <SubIssueList
+                    issues={subIssues}
+                    parentIssue={issueDetails}
+                    projectId={projectId?.toString()}
+                    workspaceSlug={workspaceSlug?.toString()}
+                    handleSubIssueRemove={handleSubIssueRemove}
+                  />
                 ) : (
                   <CustomMenu
                     label={
@@ -434,7 +292,7 @@ const IssueDetail: NextPage = () => {
                       onClick={() => {
                         setIsOpen(true);
                         setPreloadedData({
-                          parent: issueDetail.id,
+                          parent: issueDetails.id,
                           actionType: "createIssue",
                         });
                       }}
@@ -445,7 +303,7 @@ const IssueDetail: NextPage = () => {
                       onClick={() => {
                         setIsAddAsSubIssueOpen(true);
                         setPreloadedData({
-                          parent: issueDetail.id,
+                          parent: issueDetails.id,
                           actionType: "createIssue",
                         });
                       }}
@@ -465,11 +323,10 @@ const IssueDetail: NextPage = () => {
               <AddIssueComment mutate={mutateIssueActivities} />
             </div>
           </div>
-          <div className="h-full basis-1/3 space-y-5 border-l p-5">
-            {/* TODO add flex-grow, if needed */}
+          <div className="basis-1/3 space-y-5 border-l p-5">
             <IssueDetailSidebar
               control={control}
-              issueDetail={issueDetail}
+              issueDetail={issueDetails}
               submitChanges={submitChanges}
               watch={watch}
             />
@@ -478,16 +335,16 @@ const IssueDetail: NextPage = () => {
       ) : (
         <Loader className="flex h-full gap-5 p-5">
           <div className="basis-2/3 space-y-2">
-            <Loader.Item height="30px" width="40%"></Loader.Item>
-            <Loader.Item height="15px" width="60%" light></Loader.Item>
-            <Loader.Item height="15px" width="60%" light></Loader.Item>
-            <Loader.Item height="15px" width="40%" light></Loader.Item>
+            <Loader.Item height="30px" width="40%" />
+            <Loader.Item height="15px" width="60%" light />
+            <Loader.Item height="15px" width="60%" light />
+            <Loader.Item height="15px" width="40%" light />
           </div>
           <div className="basis-1/3 space-y-3">
-            <Loader.Item height="30px"></Loader.Item>
-            <Loader.Item height="30px"></Loader.Item>
-            <Loader.Item height="30px"></Loader.Item>
-            <Loader.Item height="30px"></Loader.Item>
+            <Loader.Item height="30px" />
+            <Loader.Item height="30px" />
+            <Loader.Item height="30px" />
+            <Loader.Item height="30px" />
           </div>
         </Loader>
       )}
@@ -516,4 +373,4 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
   };
 };
 
-export default IssueDetail;
+export default IssueDetailsPage;

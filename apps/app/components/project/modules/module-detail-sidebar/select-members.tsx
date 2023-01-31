@@ -7,18 +7,15 @@ import useSWR from "swr";
 
 import { Control, Controller } from "react-hook-form";
 // services
-import workspaceService from "lib/services/workspace.service";
-// headless ui
 import { Listbox, Transition } from "@headlessui/react";
-// ui
-import { Spinner } from "ui";
-// icons
 import { UserGroupIcon } from "@heroicons/react/24/outline";
-import User from "public/user.png";
+import workspaceService from "services/workspace.service";
+// headless ui
+// ui
+import { AssigneesList, Spinner } from "components/ui";
 // types
 import { IModule } from "types";
 // constants
-import { classNames } from "constants/common";
 import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 
 type Props = {
@@ -59,59 +56,13 @@ const SelectMembers: React.FC<Props> = ({ control, submitChanges }) => {
                 <div className="relative">
                   <Listbox.Button className="flex w-full cursor-pointer items-center gap-1 text-xs">
                     <span
-                      className={classNames(
-                        value ? "" : "text-gray-900",
-                        "hidden truncate text-left sm:block"
-                      )}
+                      className={`hidden truncate text-left sm:block ${
+                        value ? "" : "text-gray-900"
+                      }`}
                     >
                       <div className="flex cursor-pointer items-center gap-1 text-xs">
                         {value && Array.isArray(value) ? (
-                          <>
-                            {value.length > 0 ? (
-                              value.map((member, index: number) => {
-                                const person = people?.find((p) => p.member.id === member)?.member;
-
-                                return (
-                                  <div
-                                    key={index}
-                                    className={`relative z-[1] h-5 w-5 rounded-full ${
-                                      index !== 0 ? "-ml-2.5" : ""
-                                    }`}
-                                  >
-                                    {person && person.avatar && person.avatar !== "" ? (
-                                      <div className="h-5 w-5 rounded-full border-2 border-white bg-white">
-                                        <Image
-                                          src={person.avatar}
-                                          height="100%"
-                                          width="100%"
-                                          className="rounded-full"
-                                          alt={person.first_name}
-                                        />
-                                      </div>
-                                    ) : (
-                                      <div
-                                        className={`grid h-5 w-5 place-items-center rounded-full border-2 border-white bg-gray-700 capitalize text-white`}
-                                      >
-                                        {person?.first_name && person.first_name !== ""
-                                          ? person.first_name.charAt(0)
-                                          : person?.email.charAt(0)}
-                                      </div>
-                                    )}
-                                  </div>
-                                );
-                              })
-                            ) : (
-                              <div className="h-5 w-5 rounded-full border-2 border-white bg-white">
-                                <Image
-                                  src={User}
-                                  height="100%"
-                                  width="100%"
-                                  className="rounded-full"
-                                  alt="No user"
-                                />
-                              </div>
-                            )}
-                          </>
+                          <AssigneesList userIds={value} length={10} />
                         ) : null}
                       </div>
                     </span>

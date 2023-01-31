@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import type { AnyExtension } from "remirror";
 import { TableExtension } from "@remirror/extension-react-tables";
 import {
   EditorComponent,
@@ -12,6 +11,7 @@ import {
   useRemirror,
   useRemirrorContext,
 } from "@remirror/react";
+import type { AnyExtension } from "remirror";
 
 const CommandMenu: React.FC = () => {
   const { createTable, ...commands } = useCommands();
@@ -138,9 +138,7 @@ const Table = ({
   );
 };
 
-const Basic = (): JSX.Element => {
-  return <Table extensions={defaultExtensions} />;
-};
+const Basic = (): JSX.Element => <Table extensions={defaultExtensions} />;
 
 const defaultExtensions = () => [new ReactComponentExtension(), new TableExtension()];
 

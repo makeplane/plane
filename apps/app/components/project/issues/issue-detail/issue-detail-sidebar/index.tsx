@@ -4,13 +4,16 @@ import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 
-import { useForm, Controller, UseFormWatch } from "react-hook-form";
-
+// react-hook-form
+import { useForm, Controller, UseFormWatch, Control } from "react-hook-form";
+// react-color
 import { TwitterPicker } from "react-color";
-// services
-import issuesServices from "lib/services/issues.service";
+// headless ui
+import { Popover, Listbox, Transition } from "@headlessui/react";
 // hooks
-import useToast from "lib/hooks/useToast";
+import useToast from "hooks/use-toast";
+// services
+import issuesServices from "services/issues.service";
 // components
 import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
 import SelectState from "components/project/issues/issue-detail/issue-detail-sidebar/select-state";
@@ -20,10 +23,9 @@ import SelectCycle from "components/project/issues/issue-detail/issue-detail-sid
 import SelectAssignee from "components/project/issues/issue-detail/issue-detail-sidebar/select-assignee";
 import SelectBlocker from "components/project/issues/issue-detail/issue-detail-sidebar/select-blocker";
 import SelectBlocked from "components/project/issues/issue-detail/issue-detail-sidebar/select-blocked";
-// headless ui
-import { Popover, Listbox, Transition } from "@headlessui/react";
 // ui
-import { Input, Button, Spinner } from "ui";
+import { Input, Button, Spinner, CustomDatePicker } from "components/ui";
+import DatePicker from "react-datepicker";
 // icons
 import {
   TagIcon,
@@ -34,13 +36,14 @@ import {
   PlusIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+// helpers
+import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import type { Control } from "react-hook-form";
 import type { ICycle, IIssue, IIssueLabels } from "types";
 // fetch-keys
-import { PROJECT_ISSUE_LABELS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
-// common
-import { copyTextToClipboard } from "constants/common";
+import { PROJECT_ISSUE_LABELS, PROJECT_ISSUES_LIST, ISSUE_DETAILS } from "constants/fetch-keys";
+
+import "react-datepicker/dist/react-datepicker.css";
 
 type Props = {
   control: Control<IIssue, any>;
@@ -64,7 +67,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, issueId } = router.query;
 
   const { setToastAlert } = useToast();
 
@@ -110,11 +113,13 @@ const IssueDetailSidebar: React.FC<Props> = ({
   const handleCycleChange = (cycleDetail: ICycle) => {
     if (!workspaceSlug || !projectId || !issueDetail) return;
 
-    mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
-
-    issuesServices.addIssueToCycle(workspaceSlug as string, projectId as string, cycleDetail.id, {
-      issues: [issueDetail.id],
-    });
+    issuesServices
+      .addIssueToCycle(workspaceSlug as string, projectId as string, cycleDetail.id, {
+        issues: [issueDetail.id],
+      })
+      .then((res) => {
+        mutate(ISSUE_DETAILS(issueId as string));
+      });
   };
 
   return (
@@ -124,7 +129,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
         isOpen={deleteIssueModal}
         data={issueDetail}
       />
-      <div className="h-full w-full divide-y-2 divide-gray-100">
+      <div className="w-full divide-y-2 divide-gray-100 sticky top-5">
         <div className="flex items-center justify-between pb-3">
           <h4 className="text-sm font-medium">
             {issueDetail?.project_detail?.identifier}-{issueDetail?.sequence_id}
@@ -214,19 +219,37 @@ const IssueDetailSidebar: React.FC<Props> = ({
                 <p>Due date</p>
               </div>
               <div className="sm:basis-1/2">
-                <Controller
+                {/* <Controller
                   control={control}
                   name="target_date"
                   render={({ field: { value, onChange } }) => (
-                    <input
-                      type="date"
-                      id="issueDate"
-                      value={value ?? ""}
-                      onChange={(e: any) => {
-                        submitChanges({ target_date: e.target.value });
-                        onChange(e.target.value);
+                    <DatePicker
+                      selected={value ? new Date(value) : new Date()}
+                      onChange={(val: Date) => {
+                        submitChanges({
+                          target_date: `${val.getFullYear()}-${
+                            val.getMonth() + 1
+                          }-${val.getDate()}`,
+                        });
+                        onChange(`${val.getFullYear()}-${val.getMonth() + 1}-${val.getDate()}`);
                       }}
-                      className="w-full cursor-pointer rounded-md border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                      dateFormat="dd-MM-yyyy"
+                    />
+                  )}
+                /> */}
+                <Controller
+                  control={control}
+                  name="target_date"
+                  render={({ field: { value } }) => (
+                    <CustomDatePicker
+                      value={value}
+                      onChange={(val: Date) => {
+                        submitChanges({
+                          target_date: val
+                            ? `${val.getFullYear()}-${val.getMonth() + 1}-${val.getDate()}`
+                            : null,
+                        });
+                      }}
                     />
                   )}
                 />
@@ -236,7 +259,6 @@ const IssueDetailSidebar: React.FC<Props> = ({
           <div className="py-1">
             <SelectCycle
               issueDetail={issueDetail}
-              control={control}
               handleCycleChange={handleCycleChange}
               watch={watchIssue}
             />
@@ -269,7 +291,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
                       <span
                         className="h-2 w-2 flex-shrink-0 rounded-full"
                         style={{ backgroundColor: singleLabel.colour ?? "green" }}
-                      ></span>
+                      />
                       {singleLabel.name}
                       <XMarkIcon className="h-2 w-2 group-hover:text-red-500" />
                     </span>
@@ -318,7 +340,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
                                           <span
                                             className="h-2 w-2 flex-shrink-0 rounded-full"
                                             style={{ backgroundColor: label.colour ?? "green" }}
-                                          ></span>
+                                          />
                                           {label.name}
                                         </Listbox.Option>
                                       ))
@@ -370,7 +392,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
                             style={{
                               backgroundColor: watch("colour") ?? "green",
                             }}
-                          ></span>
+                          />
                         )}
                         <ChevronDownIcon className="h-3 w-3" />
                       </Popover.Button>

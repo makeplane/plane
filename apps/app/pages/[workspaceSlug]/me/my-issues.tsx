@@ -1,44 +1,34 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-import type { NextPage, NextPageContext } from "next";
 
-import useSWR from "swr";
-
-import { ChevronDownIcon, PlusIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
+// headless ui
 import { Disclosure, Popover, Transition } from "@headlessui/react";
-
+// icons
+import { ChevronDownIcon, PlusIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
 // layouts
 import AppLayout from "layouts/app-layout";
 // hooks
-import useUser from "lib/hooks/useUser";
+import useIssues from "hooks/use-issues";
 // ui
-import { Spinner, Breadcrumbs, BreadcrumbItem, EmptySpace, EmptySpaceItem, HeaderButton } from "ui";
-// services
-import userService from "lib/services/user.service";
+import { Spinner, EmptySpace, EmptySpaceItem, HeaderButton } from "components/ui";
+import { Breadcrumbs, BreadcrumbItem } from "components/breadcrumbs";
 // hooks
-import useIssuesProperties from "lib/hooks/useIssuesProperties";
+import useIssuesProperties from "hooks/use-issue-properties";
 // types
 import { IIssue, Properties } from "types";
-// lib
-import { requiredAuth } from "lib/auth";
-// constants
-import { USER_ISSUE } from "constants/fetch-keys";
-import { classNames, replaceUnderscoreIfSnakeCase } from "constants/common";
-import SingleListIssue from "components/common/list-view/single-issue";
+// components
+import { IssueListItem } from "components/issues";
+// helpers
+import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
+// types
+import type { NextPage } from "next";
 
-const MyIssues: NextPage = () => {
+const MyIssuesPage: NextPage = () => {
   const router = useRouter();
-  const {
-    query: { workspaceSlug },
-  } = router;
+  const { workspaceSlug } = router.query;
 
-  const { user } = useUser();
-
-  const { data: myIssues } = useSWR<IIssue[]>(
-    user && workspaceSlug ? USER_ISSUE(workspaceSlug as string) : null,
-    user && workspaceSlug ? () => userService.userIssues(workspaceSlug as string) : null
-  );
+  // fetching user issues
+  const { myIssues } = useIssues(workspaceSlug?.toString());
 
   // FIXME: remove this hard-coded value
   const [properties, setProperties] = useIssuesProperties(
@@ -59,10 +49,9 @@ const MyIssues: NextPage = () => {
             {({ open }) => (
               <>
                 <Popover.Button
-                  className={classNames(
-                    open ? "bg-gray-100 text-gray-900" : "text-gray-500",
-                    "group flex items-center gap-2 rounded-md border bg-transparent p-2 text-xs font-medium hover:bg-gray-100 hover:text-gray-900 focus:outline-none"
-                  )}
+                  className={`group flex items-center gap-2 rounded-md border bg-transparent p-2 text-xs font-medium hover:bg-gray-100 hover:text-gray-900 focus:outline-none ${
+                    open ? "bg-gray-100 text-gray-900" : "text-gray-500"
+                  }`}
                 >
                   <span>View</span>
                   <ChevronDownIcon className="h-4 w-4" aria-hidden="true" />
@@ -112,6 +101,7 @@ const MyIssues: NextPage = () => {
                 key: "i",
                 ctrlKey: true,
               });
+
               document.dispatchEvent(e);
             }}
           />
@@ -153,15 +143,7 @@ const MyIssues: NextPage = () => {
                         <Disclosure.Panel>
                           <div className="divide-y-2">
                             {myIssues.map((issue: IIssue) => (
-                              // FIXME: add all functionalities
-                              <SingleListIssue
-                                key={issue.id}
-                                editIssue={() => {}}
-                                handleDeleteIssue={() => {}}
-                                issue={issue}
-                                properties={properties}
-                                removeIssue={() => {}}
-                              />
+                              <IssueListItem key={issue.id} issue={issue} properties={properties} />
                             ))}
                           </div>
                         </Disclosure.Panel>
@@ -181,9 +163,8 @@ const MyIssues: NextPage = () => {
                     title="Create a new issue"
                     description={
                       <span>
-                        Use{" "}
-                        <pre className="inline rounded bg-gray-100 px-2 py-1">Ctrl/Command + I</pre>{" "}
-                        shortcut to create a new issue
+                        Use <pre className="inline rounded bg-gray-100 px-2 py-1">C</pre> shortcut
+                        to create a new issue
                       </span>
                     }
                     Icon={PlusIcon}
@@ -209,25 +190,4 @@ const MyIssues: NextPage = () => {
   );
 };
 
-export const getServerSideProps = async (ctx: NextPageContext) => {
-  const user = await requiredAuth(ctx.req?.headers.cookie);
-
-  const redirectAfterSignIn = ctx.req?.url;
-
-  if (!user) {
-    return {
-      redirect: {
-        destination: `/signin?next=${redirectAfterSignIn}`,
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {
-      user,
-    },
-  };
-};
-
-export default MyIssues;
+export default MyIssuesPage;

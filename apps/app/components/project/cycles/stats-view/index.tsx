@@ -5,7 +5,7 @@ import SingleStat from "components/project/cycles/stats-view/single-stat";
 import ConfirmCycleDeletion from "components/project/cycles/confirm-cycle-deletion";
 // types
 import { ICycle, SelectCycleType } from "types";
-import { CompletedCycleIcon, CurrentCycleIcon, UpcomingCycleIcon } from "ui/icons";
+import { CompletedCycleIcon, CurrentCycleIcon, UpcomingCycleIcon } from "components/icons";
 
 type TCycleStatsViewProps = {
   cycles: ICycle[];
@@ -64,7 +64,7 @@ const CycleStatsView: React.FC<TCycleStatsViewProps> = ({
           )}
           <h3 className="text-gray-500">
             No {type} {type === "current" ? "cycle" : "cycles"} yet. Create with{" "}
-            <pre className="inline rounded bg-gray-100 px-2 py-1">Ctrl/Command + Q</pre>.
+            <pre className="inline rounded bg-gray-100 px-2 py-1">Q</pre>.
           </h3>
         </div>
       )}

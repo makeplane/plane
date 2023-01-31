@@ -24,7 +24,7 @@ const resources = [
     },
   },
   {
-    href: '/self-host',
+    href: '/self-hosting',
     name: 'Self-host Plane',
     description: 'Run Plane on your computer or development machine.',
     icon: ChatBubbleIcon,
@@ -51,7 +51,7 @@ const resources = [
     },
   },
   {
-    href: '/',
+    href: 'https://discord.com/invite/A92xrEGCge',
     name: 'Community',
     description: 'Hang out with truly exceptional devs & designers on Discord.',
     icon: UsersIcon,
@@ -71,8 +71,8 @@ function ResourceIcon({ icon: Icon }) {
 }
 
 function ResourcePattern({ mouseX, mouseY, ...gridProps }) {
-  let maskImage = useMotionTemplate`radial-gradient(180px at ${mouseX}px ${mouseY}px, white, transparent)`
-  let style = { maskImage, WebkitMaskImage: maskImage }
+  const maskImage = useMotionTemplate`radial-gradient(180px at ${mouseX}px ${mouseY}px, white, transparent)`
+  const style = { maskImage, WebkitMaskImage: maskImage }
 
   return (
     <div className="pointer-events-none">
@@ -106,11 +106,11 @@ function ResourcePattern({ mouseX, mouseY, ...gridProps }) {
 }
 
 function Resource({ resource }) {
-  let mouseX = useMotionValue(0)
-  let mouseY = useMotionValue(0)
+  const mouseX = useMotionValue(0)
+  const mouseY = useMotionValue(0)
 
   function onMouseMove({ currentTarget, clientX, clientY }) {
-    let { left, top } = currentTarget.getBoundingClientRect()
+    const { left, top } = currentTarget.getBoundingClientRect()
     mouseX.set(clientX - left)
     mouseY.set(clientY - top)
   }

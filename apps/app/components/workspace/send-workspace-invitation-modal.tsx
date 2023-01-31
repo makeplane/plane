@@ -1,20 +1,18 @@
 import React from "react";
-// swr
 import { mutate } from "swr";
-// react hook form
 import { useForm } from "react-hook-form";
 // headless
 import { Dialog, Transition } from "@headlessui/react";
-// fetch keys
-import { WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 // services
-import workspaceService from "lib/services/workspace.service";
+import workspaceService from "services/workspace.service";
 // ui
-import { Button, Input, TextArea, Select } from "ui";
+import { Button, Input, Select } from "components/ui";
 // hooks
-import useToast from "lib/hooks/useToast";
+import useToast from "hooks/use-toast";
 // types
 import { IWorkspaceMemberInvitation } from "types";
+// fetch keys
+import { WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
@@ -81,7 +79,7 @@ const SendWorkspaceInvitationModal: React.FC<Props> = ({
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={handleClose}>
+      <Dialog as="div" className="relative z-20" onClose={handleClose}>
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
@@ -94,7 +92,7 @@ const SendWorkspaceInvitationModal: React.FC<Props> = ({
           <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
         </Transition.Child>
 
-        <div className="fixed inset-0 z-10 overflow-y-auto">
+        <div className="fixed inset-0 z-20 overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
             <Transition.Child
               as={React.Fragment}

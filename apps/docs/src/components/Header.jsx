@@ -8,8 +8,8 @@ import { Logo } from '@/components/Logo'
 import {
   MobileNavigation,
   useIsInsideMobileNavigation,
+  useMobileNavigationStore,
 } from '@/components/MobileNavigation'
-import { useMobileNavigationStore } from '@/components/MobileNavigation'
 import { ModeToggle } from '@/components/ModeToggle'
 import { MobileSearch, Search } from '@/components/Search'
 
@@ -27,12 +27,12 @@ function TopLevelNavItem({ href, children }) {
 }
 
 export const Header = forwardRef(function Header({ className }, ref) {
-  let { isOpen: mobileNavIsOpen } = useMobileNavigationStore()
-  let isInsideMobileNavigation = useIsInsideMobileNavigation()
+  const { isOpen: mobileNavIsOpen } = useMobileNavigationStore()
+  const isInsideMobileNavigation = useIsInsideMobileNavigation()
 
-  let { scrollY } = useScroll()
-  let bgOpacityLight = useTransform(scrollY, [0, 72], [0.5, 0.9])
-  let bgOpacityDark = useTransform(scrollY, [0, 72], [0.2, 0.8])
+  const { scrollY } = useScroll()
+  const bgOpacityLight = useTransform(scrollY, [0, 72], [0.5, 0.9])
+  const bgOpacityDark = useTransform(scrollY, [0, 72], [0.2, 0.8])
 
   return (
     <motion.div
@@ -62,15 +62,21 @@ export const Header = forwardRef(function Header({ className }, ref) {
       <div className="flex items-center gap-5 lg:hidden">
         <MobileNavigation />
         <Link href="/" aria-label="Home">
-          <Logo  />
+          <Logo />
         </Link>
       </div>
       <div className="flex items-center gap-5">
         <nav className="hidden md:block">
           <ul role="list" className="flex items-center gap-8">
-            <TopLevelNavItem href="https://plane.so/">Plane Cloud</TopLevelNavItem>
-            <TopLevelNavItem href="https://github.com/makeplane/plane">GitHub</TopLevelNavItem>
-            <TopLevelNavItem href="https://discord.com/invite/A92xrEGCge">Discord | Support</TopLevelNavItem>
+            <TopLevelNavItem href="https://plane.so/">
+              Plane Cloud
+            </TopLevelNavItem>
+            <TopLevelNavItem href="https://github.com/makeplane/plane">
+              GitHub
+            </TopLevelNavItem>
+            <TopLevelNavItem href="https://discord.com/invite/A92xrEGCge">
+              Discord | Support
+            </TopLevelNavItem>
           </ul>
         </nav>
         <div className="hidden md:block md:h-5 md:w-px md:bg-zinc-900/10 md:dark:bg-white/15" />

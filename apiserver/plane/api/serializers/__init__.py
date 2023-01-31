@@ -29,7 +29,6 @@ from .issue import (
     IssueCommentSerializer,
     TimeLineIssueSerializer,
     IssuePropertySerializer,
-    IssueLabelSerializer,
     BlockerIssueSerializer,
     BlockedIssueSerializer,
     IssueAssigneeSerializer,
@@ -40,3 +39,5 @@ from .issue import (
 )
 
 from .module import ModuleWriteSerializer, ModuleSerializer, ModuleIssueSerializer
+
+from .api_token import APITokenSerializer

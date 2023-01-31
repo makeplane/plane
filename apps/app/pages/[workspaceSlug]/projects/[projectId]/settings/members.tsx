@@ -2,16 +2,17 @@ import { useState } from "react";
 
 import Image from "next/image";
 import { useRouter } from "next/router";
+import useSWR from "swr";
+import { PlusIcon } from "@heroicons/react/24/outline";
 import type { NextPage, NextPageContext } from "next";
 
-import useSWR from "swr";
 // services
-import projectService from "lib/services/project.service";
-import workspaceService from "lib/services/workspace.service";
+import projectService from "services/project.service";
+import workspaceService from "services/workspace.service";
 // lib
 import { requiredAdmin } from "lib/auth";
 // hooks
-import useToast from "lib/hooks/useToast";
+import useToast from "hooks/use-toast";
 // constants
 import { ROLE } from "constants/";
 // layouts
@@ -20,9 +21,9 @@ import SettingsLayout from "layouts/settings-layout";
 import ConfirmProjectMemberRemove from "components/project/confirm-project-member-remove";
 import SendProjectInvitationModal from "components/project/send-project-invitation-modal";
 // ui
-import { BreadcrumbItem, Breadcrumbs, Button, CustomListbox, CustomMenu, Loader } from "ui";
+import { Button, CustomListbox, CustomMenu, Loader } from "components/ui";
+import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { PlusIcon } from "@heroicons/react/24/outline";
 // fetch-keys
 import {
   PROJECT_DETAILS,
@@ -84,7 +85,7 @@ const MembersSettings: NextPage<TMemberSettingsProps> = (props) => {
       : null
   );
 
-  let members = [
+  const members = [
     ...(projectMembers?.map((item: any) => ({
       id: item.id,
       avatar: item.member?.avatar,
@@ -174,10 +175,10 @@ const MembersSettings: NextPage<TMemberSettingsProps> = (props) => {
           </div>
           {!projectMembers || !projectInvitations ? (
             <Loader className="space-y-5 md:w-2/3">
-              <Loader.Item height="40px"></Loader.Item>
-              <Loader.Item height="40px"></Loader.Item>
-              <Loader.Item height="40px"></Loader.Item>
-              <Loader.Item height="40px"></Loader.Item>
+              <Loader.Item height="40px" />
+              <Loader.Item height="40px" />
+              <Loader.Item height="40px" />
+              <Loader.Item height="40px" />
             </Loader>
           ) : (
             <div className="md:w-2/3">
@@ -252,11 +253,11 @@ const MembersSettings: NextPage<TMemberSettingsProps> = (props) => {
                                     });
                                     mutateMembers(
                                       (prevData: any) =>
-                                        prevData.map((m: any) => {
-                                          return m.id === selectedMember
+                                        prevData.map((m: any) =>
+                                          m.id === selectedMember
                                             ? { ...m, ...res, role: value }
-                                            : m;
-                                        }),
+                                            : m
+                                        ),
                                       false
                                     );
                                     setSelectedMember(null);

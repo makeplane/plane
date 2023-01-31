@@ -4,17 +4,16 @@ import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 
+// headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
-// services
-import issuesServices from "lib/services/issues.service";
 // icons
 import { RectangleStackIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-// commons
-import { classNames } from "constants/common";
+// services
+import issuesServices from "services/issues.service";
 // types
 import { IIssue, IssueResponse } from "types";
 // constants
-import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import { PROJECT_ISSUES_LIST, SUB_ISSUES } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
@@ -49,30 +48,37 @@ const AddAsSubIssue: React.FC<Props> = ({ isOpen, setIsOpen, parent }) => {
   };
 
   const addAsSubIssue = (issueId: string) => {
-    if (workspaceSlug && projectId) {
-      issuesServices
-        .patchIssue(workspaceSlug as string, projectId as string, issueId, { parent: parent?.id })
-        .then((res) => {
-          mutate<IssueResponse>(
-            PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
-            (prevData) => ({
-              ...(prevData as IssueResponse),
-              results: (prevData?.results ?? []).map((p) =>
-                p.id === issueId ? { ...p, ...res } : p
-              ),
+    if (!workspaceSlug || !projectId) return;
+
+    issuesServices
+      .patchIssue(workspaceSlug as string, projectId as string, issueId, { parent: parent?.id })
+      .then((res) => {
+        mutate(SUB_ISSUES(parent?.id ?? ""));
+        mutate<IssueResponse>(
+          PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
+          (prevData) => ({
+            ...(prevData as IssueResponse),
+            results: (prevData?.results ?? []).map((p) => {
+              if (p.id === res.id)
+                return {
+                  ...p,
+                  ...res,
+                };
+
+              return p;
             }),
-            false
-          );
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    }
+          }),
+          false
+        );
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   };
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment} afterLeave={() => setQuery("")} appear>
-      <Dialog as="div" className="relative z-10" onClose={handleCommandPaletteClose}>
+      <Dialog as="div" className="relative z-20" onClose={handleCommandPaletteClose}>
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
@@ -85,7 +91,7 @@ const AddAsSubIssue: React.FC<Props> = ({ isOpen, setIsOpen, parent }) => {
           <div className="fixed inset-0 bg-gray-500 bg-opacity-25 transition-opacity" />
         </Transition.Child>
 
-        <div className="fixed inset-0 z-10 overflow-y-auto p-4 sm:p-6 md:p-20">
+        <div className="fixed inset-0 z-20 overflow-y-auto p-4 sm:p-6 md:p-20">
           <Transition.Child
             as={React.Fragment}
             enter="ease-out duration-300"
@@ -135,10 +141,9 @@ const AddAsSubIssue: React.FC<Props> = ({ isOpen, setIsOpen, parent }) => {
                                     name: issue.name,
                                   }}
                                   className={({ active }) =>
-                                    classNames(
-                                      "flex cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2",
+                                    `flex cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 ${
                                       active ? "bg-gray-900 bg-opacity-5 text-gray-900" : ""
-                                    )
+                                    }`
                                   }
                                   onClick={() => {
                                     addAsSubIssue(issue.id);
@@ -151,6 +156,9 @@ const AddAsSubIssue: React.FC<Props> = ({ isOpen, setIsOpen, parent }) => {
                                       backgroundColor: issue.state_detail.color,
                                     }}
                                   />
+                                  <span className="flex-shrink-0 text-xs text-gray-500">
+                                    {issue.project_detail.identifier}-{issue.sequence_id}
+                                  </span>
                                   {issue.name}
                                 </Combobox.Option>
                               );

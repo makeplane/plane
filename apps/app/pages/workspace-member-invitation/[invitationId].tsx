@@ -1,32 +1,30 @@
 import React from "react";
 // next
-import type { NextPage } from "next";
-import Link from "next/link";
+
 import { useRouter } from "next/router";
-// swr
 import useSWR from "swr";
-// services
-import workspaceService from "lib/services/workspace.service";
-// constants
-import { WORKSPACE_INVITATION } from "constants/fetch-keys";
-// hooks
-import useUser from "lib/hooks/useUser";
-// layouts
-import DefaultLayout from "layouts/default-layout";
-// ui
-import { Button, Spinner } from "ui";
-// icons
 import {
-  ChartBarIcon,
   CheckIcon,
-  ChevronRightIcon,
   CubeIcon,
   ShareIcon,
   StarIcon,
   UserIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { EmptySpace, EmptySpaceItem } from "ui/empty-space";
+// swr
+// services
+import type { NextPage } from "next";
+import workspaceService from "services/workspace.service";
+// hooks
+import useUser from "hooks/use-user";
+// layouts
+import DefaultLayout from "layouts/default-layout";
+// ui
+import { Spinner } from "components/ui";
+// icons
+import { EmptySpace, EmptySpaceItem } from "components/ui/empty-space";
+// constants
+import { WORKSPACE_INVITATION } from "constants/fetch-keys";
 
 const WorkspaceInvitation: NextPage = () => {
   const router = useRouter();
@@ -46,7 +44,7 @@ const WorkspaceInvitation: NextPage = () => {
         accepted: true,
         email: invitationDetail.email,
       })
-      .then((res) => {
+      .then(() => {
         if (email === user?.email) {
           router.push("/invitations");
         } else {

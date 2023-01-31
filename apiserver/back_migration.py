@@ -1,5 +1,5 @@
 # All the python scripts that are used for back migrations
-
+from plane.db.models import ProjectIdentifier
 from plane.db.models import Issue, IssueComment
 
 # Update description and description html values for old descriptions
@@ -35,6 +35,24 @@ def update_comments():
 
         IssueComment.objects.bulk_update(
             updated_issue_comments, ["comment_html"], batch_size=100
+        )
+        print("Success")
+    except Exception as e:
+        print(e)
+        print("Failed")
+
+
+def update_project_identifiers():
+    try:
+        project_identifiers = ProjectIdentifier.objects.filter(workspace_id=None).select_related("project", "project__workspace")
+        updated_identifiers = []
+    
+        for identifier in project_identifiers:
+            identifier.workspace_id = identifier.project.workspace_id
+            updated_identifiers.append(identifier)
+
+        ProjectIdentifier.objects.bulk_update(
+            updated_identifiers, ["workspace_id"], batch_size=50
         )
         print("Success")
     except Exception as e:

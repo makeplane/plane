@@ -7,22 +7,20 @@ import useSWR, { mutate } from "swr";
 import { useForm, Controller } from "react-hook-form";
 
 import { Dialog, Transition, Listbox } from "@headlessui/react";
+// ui
+import { ChevronDownIcon, CheckIcon } from "@heroicons/react/20/solid";
+import { Button, CustomSelect, Select, TextArea } from "components/ui";
 // hooks
-import useUser from "lib/hooks/useUser";
-import useToast from "lib/hooks/useToast";
+import useToast from "hooks/use-toast";
 // services
-import projectService from "lib/services/project.service";
-import workspaceService from "lib/services/workspace.service";
+import projectService from "services/project.service";
+import workspaceService from "services/workspace.service";
+// types
+import { IProjectMemberInvitation } from "types";
 // constants
 import { ROLE } from "constants/";
 import { PROJECT_INVITATIONS, WORKSPACE_MEMBERS } from "constants/fetch-keys";
-// ui
-import { Button, Select, TextArea } from "ui";
 // icons
-import { ChevronDownIcon, CheckIcon } from "@heroicons/react/20/solid";
-
-// types
-import { IProjectMemberInvitation } from "types";
 
 type Props = {
   isOpen: boolean;
@@ -84,9 +82,7 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
         setIsOpen(false);
         mutate(
           PROJECT_INVITATIONS,
-          (prevData: any[]) => {
-            return [{ ...formData, ...response }, ...(prevData ?? [])];
-          },
+          (prevData: any[]) => [{ ...formData, ...response }, ...(prevData ?? [])],
           false
         );
         setToastAlert({
@@ -110,7 +106,7 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={handleClose}>
+      <Dialog as="div" className="relative z-20" onClose={handleClose}>
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
@@ -123,7 +119,7 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
           <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
         </Transition.Child>
 
-        <div className="fixed inset-0 z-10 overflow-y-auto">
+        <div className="fixed inset-0 z-20 overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
             <Transition.Child
               as={React.Fragment}
@@ -200,40 +196,17 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
                                           uninvitedPeople?.map((person) => (
                                             <Listbox.Option
                                               key={person.member.id}
-                                              className={({ active }) =>
-                                                `${
-                                                  active ? "bg-theme text-white" : "text-gray-900"
-                                                } relative cursor-default select-none py-2 pl-3 pr-9 text-left`
+                                              className={({ active, selected }) =>
+                                                `${active ? "bg-indigo-50" : ""} ${
+                                                  selected ? "bg-indigo-50 font-medium" : ""
+                                                } text-gray-900 cursor-default select-none p-2`
                                               }
                                               value={{
                                                 id: person.member.id,
                                                 email: person.member.email,
                                               }}
                                             >
-                                              {({ selected, active }) => (
-                                                <>
-                                                  <span
-                                                    className={`${
-                                                      selected ? "font-semibold" : "font-normal"
-                                                    } block truncate`}
-                                                  >
-                                                    {person.member.email}
-                                                  </span>
-
-                                                  {selected ? (
-                                                    <span
-                                                      className={`absolute inset-y-0 right-0 flex items-center pr-4 ${
-                                                        active ? "text-white" : "text-theme"
-                                                      }`}
-                                                    >
-                                                      <CheckIcon
-                                                        className="h-5 w-5"
-                                                        aria-hidden="true"
-                                                      />
-                                                    </span>
-                                                  ) : null}
-                                                </>
-                                              )}
+                                              {person.member.email}
                                             </Listbox.Option>
                                           ))
                                         )}
@@ -247,25 +220,31 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
                               )}
                             </Listbox>
                           )}
-                        ></Controller>
+                        />
                       </div>
                       <div>
-                        <div>
-                          <Select
-                            id="role"
-                            label="Role"
-                            name="role"
-                            error={errors.role}
-                            register={register}
-                            validations={{
-                              required: "Role is required",
-                            }}
-                            options={Object.entries(ROLE).map(([key, value]) => ({
-                              value: key,
-                              label: value,
-                            }))}
-                          />
-                        </div>
+                        <h6 className="text-gray-500">Role</h6>
+                        <Controller
+                          name="role"
+                          control={control}
+                          render={({ field }) => (
+                            <CustomSelect
+                              {...field}
+                              label={
+                                <span className="capitalize">
+                                  {field.value ? ROLE[field.value] : "Select role"}
+                                </span>
+                              }
+                              input
+                            >
+                              {Object.entries(ROLE).map(([key, label]) => (
+                                <CustomSelect.Option key={key} value={key}>
+                                  {label}
+                                </CustomSelect.Option>
+                              ))}
+                            </CustomSelect>
+                          )}
+                        />
                       </div>
                       <div>
                         <TextArea

@@ -4,42 +4,35 @@ import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 
-import type { DropResult } from "react-beautiful-dnd";
-import { DragDropContext } from "react-beautiful-dnd";
+// react-beautiful-dnd
+import { DragDropContext, DropResult } from "react-beautiful-dnd";
 // hook
-import useIssuesProperties from "lib/hooks/useIssuesProperties";
+import useIssuesProperties from "hooks/use-issue-properties";
+import useIssueView from "hooks/use-issue-view";
 // services
-import stateServices from "lib/services/state.service";
-import issuesServices from "lib/services/issues.service";
-import projectService from "lib/services/project.service";
-// fetching keys
-import { STATE_LIST, PROJECT_ISSUES_LIST, PROJECT_MEMBERS } from "constants/fetch-keys";
+import stateServices from "services/state.service";
+import issuesServices from "services/issues.service";
+import projectService from "services/project.service";
 // components
 import SingleBoard from "components/project/issues/BoardView/single-board";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
-import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
+import { CreateUpdateIssueModal } from "components/issues/modal";
 import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
 // ui
-import { Spinner } from "ui";
+import { Spinner } from "components/ui";
 // types
-import type { IState, IIssue, NestedKeyOf, IssueResponse } from "types";
+import type { IState, IIssue, IssueResponse, UserAuth } from "types";
+// fetch-keys
+import { STATE_LIST, PROJECT_ISSUES_LIST, PROJECT_MEMBERS } from "constants/fetch-keys";
 
 type Props = {
-  selectedGroup: NestedKeyOf<IIssue> | null;
-  groupedByIssues: {
-    [key: string]: IIssue[];
-  };
+  issues: IIssue[];
   handleDeleteIssue: React.Dispatch<React.SetStateAction<string | undefined>>;
-  partialUpdateIssue: (formData: Partial<IIssue>, issueId: string) => void;
+  userAuth: UserAuth;
 };
 
-const BoardView: React.FC<Props> = ({
-  selectedGroup,
-  groupedByIssues,
-  handleDeleteIssue,
-  partialUpdateIssue,
-}) => {
-  const [isIssueOpen, setIsIssueOpen] = useState(false);
+const BoardView: React.FC<Props> = ({ issues, handleDeleteIssue, userAuth }) => {
+  const [createIssueModal, setCreateIssueModal] = useState(false);
   const [isIssueDeletionOpen, setIsIssueDeletionOpen] = useState(false);
   const [issueDeletionData, setIssueDeletionData] = useState<IIssue | undefined>();
   const [preloadedData, setPreloadedData] = useState<
@@ -48,6 +41,8 @@ const BoardView: React.FC<Props> = ({
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+
+  const { issueView, groupedByIssues, groupByProperty: selectedGroup } = useIssueView(issues);
 
   const { data: states, mutate: mutateState } = useSWR<IState[]>(
     workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
@@ -73,12 +68,12 @@ const BoardView: React.FC<Props> = ({
 
   const handleOnDragEnd = useCallback(
     (result: DropResult) => {
-      if (!result.destination) return;
+      if (!result.destination || !workspaceSlug || !projectId) return;
+
       const { source, destination, type } = result;
-      const draggedItem = groupedByIssues[source.droppableId][source.index];
 
       if (destination.droppableId === "trashBox") {
-        setIssueDeletionData(draggedItem);
+        // setIssueDeletionData(draggedItem);
         setIsIssueDeletionOpen(true);
       } else {
         if (type === "state") {
@@ -100,7 +95,7 @@ const BoardView: React.FC<Props> = ({
           newStates[destination.index].sequence = sequenceNumber;
 
           mutateState(newStates, false);
-          if (!workspaceSlug) return;
+
           stateServices
             .patchState(
               workspaceSlug as string,
@@ -117,6 +112,7 @@ const BoardView: React.FC<Props> = ({
               console.error(err);
             });
         } else {
+          const draggedItem = groupedByIssues[source.droppableId][source.index];
           if (source.droppableId !== destination.droppableId) {
             const sourceGroup = source.droppableId; // source group id
             const destinationGroup = destination.droppableId; // destination group id
@@ -145,18 +141,6 @@ const BoardView: React.FC<Props> = ({
               draggedItem.state = destinationStateId;
               draggedItem.state_detail = destinationState;
 
-              // patch request
-              issuesServices.patchIssue(
-                workspaceSlug as string,
-                projectId as string,
-                draggedItem.id,
-                {
-                  state: destinationStateId,
-                }
-              );
-
-              // mutate the issues
-              if (!workspaceSlug || !projectId) return;
               mutate<IssueResponse>(
                 PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
                 (prevData) => {
@@ -180,6 +164,15 @@ const BoardView: React.FC<Props> = ({
                 },
                 false
               );
+
+              // patch request
+              issuesServices
+                .patchIssue(workspaceSlug as string, projectId as string, draggedItem.id, {
+                  state: destinationStateId,
+                })
+                .then((res) => {
+                  mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
+                });
             }
           }
         }
@@ -188,6 +181,8 @@ const BoardView: React.FC<Props> = ({
     [workspaceSlug, mutateState, groupedByIssues, projectId, selectedGroup, states]
   );
 
+  if (issueView !== "kanban") return <></>;
+
   return (
     <>
       <ConfirmIssueDeletion
@@ -195,16 +190,15 @@ const BoardView: React.FC<Props> = ({
         handleClose={() => setIsIssueDeletionOpen(false)}
         data={issueDeletionData}
       />
-      <CreateUpdateIssuesModal
-        isOpen={isIssueOpen && preloadedData?.actionType === "createIssue"}
-        setIsOpen={setIsIssueOpen}
+      <CreateUpdateIssueModal
+        isOpen={createIssueModal && preloadedData?.actionType === "createIssue"}
+        handleClose={() => setCreateIssueModal(false)}
         prePopulateData={{
           ...preloadedData,
         }}
-        projectId={projectId as string}
       />
       {groupedByIssues ? (
-        <div className="h-full w-full">
+        <div className="h-[calc(100vh-157px)] lg:h-[calc(100vh-115px)] w-full">
           <DragDropContext onDragEnd={handleOnDragEnd}>
             <div className="h-full w-full overflow-hidden">
               <StrictModeDroppable droppableId="state" type="state" direction="horizontal">
@@ -214,7 +208,7 @@ const BoardView: React.FC<Props> = ({
                     {...provided.droppableProps}
                     ref={provided.innerRef}
                   >
-                    <div className="flex h-full gap-x-4 overflow-x-auto overflow-y-hidden pb-3">
+                    <div className="flex h-full gap-x-4 overflow-x-auto overflow-y-hidden">
                       {Object.keys(groupedByIssues).map((singleGroup, index) => (
                         <SingleBoard
                           key={singleGroup}
@@ -228,7 +222,7 @@ const BoardView: React.FC<Props> = ({
                           }
                           groupedByIssues={groupedByIssues}
                           index={index}
-                          setIsIssueOpen={setIsIssueOpen}
+                          setIsIssueOpen={setCreateIssueModal}
                           properties={properties}
                           setPreloadedData={setPreloadedData}
                           stateId={
@@ -242,7 +236,7 @@ const BoardView: React.FC<Props> = ({
                               : "#000000"
                           }
                           handleDeleteIssue={handleDeleteIssue}
-                          partialUpdateIssue={partialUpdateIssue}
+                          userAuth={userAuth}
                         />
                       ))}
                     </div>

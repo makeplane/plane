@@ -2,44 +2,39 @@ import React, { useEffect, useState } from "react";
 
 import Image from "next/image";
 import { useRouter } from "next/router";
-import type { GetServerSideProps, NextPage } from "next";
-
 import useSWR, { mutate } from "swr";
-import { Controller, useForm } from "react-hook-form";
 
+// react-hook-form
+import { Controller, useForm } from "react-hook-form";
 // react-dropzone
 import Dropzone from "react-dropzone";
+// icons
+import { LinkIcon } from "@heroicons/react/24/outline";
 // lib
 import { requiredWorkspaceAdmin } from "lib/auth";
-// constants
-import { companySize } from "constants/";
-import { WORKSPACE_DETAILS, USER_WORKSPACES } from "constants/fetch-keys";
 // services
-import workspaceService from "lib/services/workspace.service";
-import fileServices from "lib/services/file.service";
+import workspaceService from "services/workspace.service";
+import fileServices from "services/file.service";
 // layouts
 import SettingsLayout from "layouts/settings-layout";
 // hooks
-import useToast from "lib/hooks/useToast";
+import useToast from "hooks/use-toast";
 // components
 import { ImageUploadModal } from "components/common/image-upload-modal";
 import ConfirmWorkspaceDeletion from "components/workspace/confirm-workspace-deletion";
 // ui
-import {
-  Spinner,
-  Button,
-  Input,
-  BreadcrumbItem,
-  Breadcrumbs,
-  CustomSelect,
-  OutlineButton,
-} from "ui";
-// icons
-import { LinkIcon } from "@heroicons/react/24/outline";
+import { Spinner, Button, Input, CustomSelect } from "components/ui";
+import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+import OutlineButton from "components/ui/outline-button";
+// helpers
+import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import type { IWorkspace } from "types";
-// common
-import { copyTextToClipboard } from "constants/common";
+import type { GetServerSideProps, NextPage } from "next";
+// fetch-keys
+import { WORKSPACE_DETAILS, USER_WORKSPACES } from "constants/fetch-keys";
+// constants
+import { companySize } from "constants/";
 
 const defaultValues: Partial<IWorkspace> = {
   name: "",
@@ -56,8 +51,6 @@ type TWorkspaceSettingsProps = {
 };
 
 const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
-  const { isOwner } = props;
-
   const [isOpen, setIsOpen] = useState(false);
   const [image, setImage] = useState<File | null>(null);
   const [isImageUploading, setIsImageUploading] = useState(false);
@@ -205,7 +198,7 @@ const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
                           handleSubmit(onSubmit)();
                           setIsImageUploading(false);
                         })
-                        .catch((err) => {
+                        .catch(() => {
                           setIsImageUploading(false);
                         });
                     }}

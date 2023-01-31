@@ -3,20 +3,21 @@ import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 
 import { mutate } from "swr";
+
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
-// fetching keys
-import { CYCLE_ISSUES, PROJECT_ISSUES_LIST, MODULE_ISSUES } from "constants/fetch-keys";
 // services
-import issueServices from "lib/services/issues.service";
+import issueServices from "services/issues.service";
 // hooks
-import useToast from "lib/hooks/useToast";
+import useToast from "hooks/use-toast";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
-import { Button } from "ui";
+import { Button } from "components/ui";
 // types
 import type { CycleIssueResponse, IIssue, IssueResponse, ModuleIssueResponse } from "types";
+// fetch-keys
+import { CYCLE_ISSUES, PROJECT_ISSUES_LIST, MODULE_ISSUES } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
@@ -53,13 +54,11 @@ const ConfirmIssueDeletion: React.FC<Props> = (props) => {
       .then(() => {
         mutate<IssueResponse>(
           PROJECT_ISSUES_LIST(workspaceSlug as string, projectId),
-          (prevData) => {
-            return {
-              ...(prevData as IssueResponse),
-              results: prevData?.results.filter((i) => i.id !== data.id) ?? [],
-              count: (prevData?.count as number) - 1,
-            };
-          },
+          (prevData) => ({
+            ...(prevData as IssueResponse),
+            results: prevData?.results.filter((i) => i.id !== data.id) ?? [],
+            count: (prevData?.count as number) - 1,
+          }),
           false
         );
 
@@ -81,12 +80,12 @@ const ConfirmIssueDeletion: React.FC<Props> = (props) => {
           );
         }
 
+        handleClose();
         setToastAlert({
           title: "Success",
           type: "success",
           message: "Issue deleted successfully",
         });
-        handleClose();
       })
       .catch((error) => {
         console.log(error);

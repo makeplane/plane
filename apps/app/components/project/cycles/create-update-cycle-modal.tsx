@@ -1,23 +1,26 @@
 import React, { useEffect } from "react";
-// next
+
 import { useRouter } from "next/router";
-// swr
+
 import { mutate } from "swr";
+
 // react hook form
 import { Controller, useForm } from "react-hook-form";
-// headless
+// headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import cycleService from "lib/services/cycles.service";
-// fetch keys
-import { CYCLE_LIST } from "constants/fetch-keys";
-// common
-import { renderDateFormat } from "constants/common";
+import cycleService from "services/cycles.service";
+// hooks
+import useToast from "hooks/use-toast";
 // ui
-import { Button, Input, TextArea, Select, CustomSelect } from "ui";
-
+import { Button, Input, TextArea, CustomSelect, CustomDatePicker } from "components/ui";
+// common
+import { renderDateFormat } from "helpers/date-time.helper";
 // types
 import type { ICycle } from "types";
+// fetch keys
+import { CYCLE_LIST } from "constants/fetch-keys";
+
 type Props = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -29,13 +32,15 @@ const defaultValues: Partial<ICycle> = {
   name: "",
   description: "",
   status: "draft",
-  start_date: new Date().toString(),
-  end_date: new Date().toString(),
+  start_date: null,
+  end_date: null,
 };
 
 const CreateUpdateCycleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, projectId }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
+
+  const { setToastAlert } = useToast();
 
   const {
     register,
@@ -69,7 +74,13 @@ const CreateUpdateCycleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, proj
         .createCycle(workspaceSlug as string, projectId, payload)
         .then((res) => {
           mutate<ICycle[]>(CYCLE_LIST(projectId), (prevData) => [res, ...(prevData ?? [])], false);
+
           handleClose();
+          setToastAlert({
+            title: "Success",
+            type: "success",
+            message: "Cycle created successfully",
+          });
         })
         .catch((err) => {
           Object.keys(err).map((key) => {
@@ -82,20 +93,14 @@ const CreateUpdateCycleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, proj
       await cycleService
         .updateCycle(workspaceSlug as string, projectId, data.id, payload)
         .then((res) => {
-          mutate<ICycle[]>(
-            CYCLE_LIST(projectId),
-            (prevData) => {
-              const newData = prevData?.map((item) => {
-                if (item.id === res.id) {
-                  return res;
-                }
-                return item;
-              });
-              return newData;
-            },
-            false
-          );
+          mutate(CYCLE_LIST(projectId));
           handleClose();
+
+          setToastAlert({
+            title: "Success",
+            type: "success",
+            message: "Cycle updated successfully",
+          });
         })
         .catch((err) => {
           Object.keys(err).map((key) => {
@@ -157,6 +162,10 @@ const CreateUpdateCycleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, proj
                           register={register}
                           validations={{
                             required: "Name is required",
+                            maxLength: {
+                              value: 255,
+                              message: "Name should be less than 255 characters",
+                            },
                           }}
                         />
                       </div>
@@ -198,32 +207,62 @@ const CreateUpdateCycleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, proj
                       </div>
                       <div className="flex gap-x-2">
                         <div className="w-full">
-                          <Input
-                            id="start_date"
-                            label="Start Date"
-                            name="start_date"
-                            type="date"
-                            placeholder="Enter start date"
-                            error={errors.start_date}
-                            register={register}
-                            validations={{
-                              required: "Start date is required",
-                            }}
-                          />
+                          <h6 className="text-gray-500">Start Date</h6>
+                          <div className="w-full">
+                            <Controller
+                              control={control}
+                              name="start_date"
+                              rules={{ required: "Start date is required" }}
+                              render={({ field: { value, onChange } }) => (
+                                <CustomDatePicker
+                                  renderAs="input"
+                                  value={value}
+                                  onChange={(val: Date) => {
+                                    onChange(
+                                      val
+                                        ? `${val.getFullYear()}-${
+                                            val.getMonth() + 1
+                                          }-${val.getDate()}`
+                                        : null
+                                    );
+                                  }}
+                                  error={errors.start_date ? true : false}
+                                />
+                              )}
+                            />
+                            {errors.start_date && (
+                              <h6 className="text-sm text-red-500">{errors.start_date.message}</h6>
+                            )}
+                          </div>
                         </div>
                         <div className="w-full">
-                          <Input
-                            id="end_date"
-                            label="End Date"
-                            name="end_date"
-                            type="date"
-                            placeholder="Enter end date"
-                            error={errors.end_date}
-                            register={register}
-                            validations={{
-                              required: "End date is required",
-                            }}
-                          />
+                          <h6 className="text-gray-500">End Date</h6>
+                          <div className="w-full">
+                            <Controller
+                              control={control}
+                              name="end_date"
+                              rules={{ required: "End date is required" }}
+                              render={({ field: { value, onChange } }) => (
+                                <CustomDatePicker
+                                  renderAs="input"
+                                  value={value}
+                                  onChange={(val: Date) => {
+                                    onChange(
+                                      val
+                                        ? `${val.getFullYear()}-${
+                                            val.getMonth() + 1
+                                          }-${val.getDate()}`
+                                        : null
+                                    );
+                                  }}
+                                  error={errors.end_date ? true : false}
+                                />
+                              )}
+                            />
+                            {errors.end_date && (
+                              <h6 className="text-sm text-red-500">{errors.end_date.message}</h6>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>

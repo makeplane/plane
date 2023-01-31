@@ -1,26 +1,26 @@
-// react
 import React from "react";
-// next
+
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
+
 // swr
 import useSWR from "swr";
 // services
-import cyclesService from "lib/services/cycles.service";
-// hooks
-import useUser from "lib/hooks/useUser";
+import cyclesService from "services/cycles.service";
 // ui
-import { Button, CustomMenu } from "ui";
+import { Button, CustomMenu } from "components/ui";
 // icons
 import { CalendarDaysIcon } from "@heroicons/react/20/solid";
-import { ArrowPathIcon, CheckIcon, UserIcon, UserGroupIcon } from "@heroicons/react/24/outline";
+import { UserIcon } from "@heroicons/react/24/outline";
+import { CyclesIcon } from "components/icons";
+// helpers
+import { renderShortNumericDateFormat } from "helpers/date-time.helper";
+import { groupBy } from "helpers/array.helper";
 // types
 import { CycleIssueResponse, ICycle } from "types";
 // fetch-keys
 import { CYCLE_ISSUES } from "constants/fetch-keys";
-// common
-import { groupBy, renderShortNumericDateFormat } from "constants/common";
 
 type TSingleStatProps = {
   cycle: ICycle;
@@ -71,7 +71,9 @@ const SingleStat: React.FC<TSingleStatProps> = (props) => {
             <div className="flex items-center justify-between gap-2">
               <Link href={`/${workspaceSlug}/projects/${projectId as string}/cycles/${cycle.id}`}>
                 <a>
-                  <h2 className="font-medium">{cycle.name}</h2>
+                  <h2 className="font-medium w-full max-w-[175px] lg:max-w-[225px] xl:max-w-[300px]  text-ellipsis overflow-hidden">
+                    {cycle.name}
+                  </h2>
                 </a>
               </Link>
               <CustomMenu width="auto" ellipsis>
@@ -118,7 +120,7 @@ const SingleStat: React.FC<TSingleStatProps> = (props) => {
                   router.push(`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`)
                 }
               >
-                <ArrowPathIcon className="h-3 w-3" />
+                <CyclesIcon className="h-3 w-3" />
                 Open Cycle
               </Button>
             </div>
@@ -126,34 +128,32 @@ const SingleStat: React.FC<TSingleStatProps> = (props) => {
           <div className="col-span-2 space-y-3 px-5">
             <h4 className="text-sm tracking-widest">PROGRESS</h4>
             <div className="space-y-3 text-xs">
-              {Object.keys(groupedIssues).map((group) => {
-                return (
-                  <div key={group} className="flex items-center gap-2">
-                    <div className="flex basis-2/3 items-center gap-2">
-                      <span
-                        className="block h-2 w-2 rounded-full"
-                        style={{
-                          backgroundColor: stateGroupColours[group],
-                        }}
-                      ></span>
-                      <h6 className="text-xs capitalize">{group}</h6>
-                    </div>
-                    <div>
-                      <span>
-                        {groupedIssues[group].length}{" "}
-                        <span className="text-gray-500">
-                          -{" "}
-                          {cycleIssues && cycleIssues.length > 0
-                            ? `${Math.round(
-                                (groupedIssues[group].length / cycleIssues.length) * 100
-                              )}%`
-                            : "0%"}
-                        </span>
-                      </span>
-                    </div>
+              {Object.keys(groupedIssues).map((group) => (
+                <div key={group} className="flex items-center gap-2">
+                  <div className="flex basis-2/3 items-center gap-2">
+                    <span
+                      className="block h-2 w-2 rounded-full"
+                      style={{
+                        backgroundColor: stateGroupColours[group],
+                      }}
+                    />
+                    <h6 className="text-xs capitalize">{group}</h6>
                   </div>
-                );
-              })}
+                  <div>
+                    <span>
+                      {groupedIssues[group].length}{" "}
+                      <span className="text-gray-500">
+                        -{" "}
+                        {cycleIssues && cycleIssues.length > 0
+                          ? `${Math.round(
+                              (groupedIssues[group].length / cycleIssues.length) * 100
+                            )}%`
+                          : "0%"}
+                      </span>
+                    </span>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>

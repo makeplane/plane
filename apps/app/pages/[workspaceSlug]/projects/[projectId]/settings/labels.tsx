@@ -1,32 +1,28 @@
 import React, { useState } from "react";
-
 import { useRouter } from "next/router";
-import type { NextPageContext, NextPage } from "next";
-
 import useSWR from "swr";
-
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-
+import { PlusIcon } from "@heroicons/react/24/outline";
+import { Popover, Transition } from "@headlessui/react";
 import { TwitterPicker } from "react-color";
+import type { NextPageContext, NextPage } from "next";
 // services
-import projectService from "lib/services/project.service";
-import workspaceService from "lib/services/workspace.service";
-import issuesService from "lib/services/issues.service";
+import projectService from "services/project.service";
+import workspaceService from "services/workspace.service";
+import issuesService from "services/issues.service";
+// lib
+import { requiredAdmin } from "lib/auth";
 // layouts
 import SettingsLayout from "layouts/settings-layout";
 // components
 import SingleLabel from "components/project/settings/single-label";
-// headless ui
-import { Popover, Transition } from "@headlessui/react";
 // ui
-import { BreadcrumbItem, Breadcrumbs, Button, Input, Loader } from "ui";
-// icons
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { Button, Input, Loader } from "components/ui";
+import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // fetch-keys
 import { PROJECT_DETAILS, PROJECT_ISSUE_LABELS, WORKSPACE_DETAILS } from "constants/fetch-keys";
 // types
 import { IIssueLabels } from "types";
-import { requiredAdmin } from "lib/auth";
 
 const defaultValues: Partial<IIssueLabels> = {
   name: "",
@@ -57,9 +53,9 @@ const LabelsSettings: NextPage<TLabelSettingsProps> = (props) => {
   );
 
   const { data: activeProject } = useSWR(
-    activeWorkspace && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    activeWorkspace && projectId
-      ? () => projectService.getProject(activeWorkspace.slug, projectId as string)
+    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -74,20 +70,21 @@ const LabelsSettings: NextPage<TLabelSettingsProps> = (props) => {
   } = useForm<IIssueLabels>({ defaultValues });
 
   const { data: issueLabels, mutate } = useSWR<IIssueLabels[]>(
-    activeProject && activeWorkspace ? PROJECT_ISSUE_LABELS(activeProject.id) : null,
-    activeProject && activeWorkspace
-      ? () => issuesService.getIssueLabels(activeWorkspace.slug, activeProject.id)
+    workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string)
       : null
   );
 
-  const handleNewLabel: SubmitHandler<IIssueLabels> = (formData) => {
+  const handleNewLabel: SubmitHandler<IIssueLabels> = async (formData) => {
     if (!activeWorkspace || !activeProject || isSubmitting) return;
-    issuesService.createIssueLabel(activeWorkspace.slug, activeProject.id, formData).then((res) => {
-      console.log(res);
-      reset(defaultValues);
-      mutate((prevData) => [...(prevData ?? []), res], false);
-      setNewLabelForm(false);
-    });
+    await issuesService
+      .createIssueLabel(activeWorkspace.slug, activeProject.id, formData)
+      .then((res) => {
+        reset(defaultValues);
+        mutate((prevData) => [...(prevData ?? []), res], false);
+        setNewLabelForm(false);
+      });
   };
 
   const editLabel = (label: IIssueLabels) => {
@@ -98,9 +95,9 @@ const LabelsSettings: NextPage<TLabelSettingsProps> = (props) => {
     setLabelIdForUpdate(label.id);
   };
 
-  const handleLabelUpdate: SubmitHandler<IIssueLabels> = (formData) => {
+  const handleLabelUpdate: SubmitHandler<IIssueLabels> = async (formData) => {
     if (!activeWorkspace || !activeProject || isSubmitting) return;
-    issuesService
+    await issuesService
       .patchIssueLabel(activeWorkspace.slug, activeProject.id, labelIdForUpdate ?? "", formData)
       .then((res) => {
         console.log(res);
@@ -179,7 +176,7 @@ const LabelsSettings: NextPage<TLabelSettingsProps> = (props) => {
                           style={{
                             backgroundColor: watch("colour") ?? "green",
                           }}
-                        ></span>
+                         />
                       )}
                     </Popover.Button>
 
@@ -215,7 +212,7 @@ const LabelsSettings: NextPage<TLabelSettingsProps> = (props) => {
                 id="labelName"
                 name="name"
                 register={register}
-                placeholder="Lable title"
+                placeholder="Label title"
                 validations={{
                   required: "Label title is required",
                 }}
@@ -252,10 +249,10 @@ const LabelsSettings: NextPage<TLabelSettingsProps> = (props) => {
               ))
             ) : (
               <Loader className="space-y-5 md:w-2/3">
-                <Loader.Item height="40px"></Loader.Item>
-                <Loader.Item height="40px"></Loader.Item>
-                <Loader.Item height="40px"></Loader.Item>
-                <Loader.Item height="40px"></Loader.Item>
+                <Loader.Item height="40px" />
+                <Loader.Item height="40px" />
+                <Loader.Item height="40px" />
+                <Loader.Item height="40px" />
               </Loader>
             )}
           </>

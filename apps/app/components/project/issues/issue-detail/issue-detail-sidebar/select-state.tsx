@@ -6,16 +6,15 @@ import useSWR from "swr";
 
 import { Control, Controller } from "react-hook-form";
 // services
-import stateService from "lib/services/state.service";
-// icons
 import { Squares2X2Icon } from "@heroicons/react/24/outline";
-// constants
-import { classNames } from "constants/common";
-import { STATE_LIST } from "constants/fetch-keys";
+import stateService from "services/state.service";
+// ui
+import { Spinner, CustomSelect } from "components/ui";
+// icons
 // types
 import { IIssue } from "types";
-// ui
-import { Spinner, CustomSelect } from "ui";
+// constants
+import { STATE_LIST } from "constants/fetch-keys";
 
 type Props = {
   control: Control<IIssue, any>;
@@ -47,10 +46,7 @@ const SelectState: React.FC<Props> = ({ control, submitChanges }) => {
             <CustomSelect
               label={
                 <span
-                  className={classNames(
-                    value ? "" : "text-gray-900",
-                    "flex items-center gap-2 text-left"
-                  )}
+                  className={`flex items-center gap-2 text-left ${value ? "" : "text-gray-900"}`}
                 >
                   {value ? (
                     <>
@@ -59,7 +55,7 @@ const SelectState: React.FC<Props> = ({ control, submitChanges }) => {
                         style={{
                           backgroundColor: states?.find((option) => option.id === value)?.color,
                         }}
-                      ></span>
+                      />
                       {states?.find((option) => option.id === value)?.name}
                     </>
                   ) : (
@@ -81,7 +77,7 @@ const SelectState: React.FC<Props> = ({ control, submitChanges }) => {
                           <span
                             className="h-2 w-2 flex-shrink-0 rounded-full"
                             style={{ backgroundColor: option.color }}
-                          ></span>
+                          />
                         )}
                         {option.name}
                       </>

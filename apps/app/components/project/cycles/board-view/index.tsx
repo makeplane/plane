@@ -2,57 +2,53 @@ import React, { useCallback } from "react";
 // swr
 import useSWR, { mutate } from "swr";
 // services
-import stateService from "lib/services/state.service";
-// constants
-import { STATE_LIST, CYCLE_ISSUES } from "constants/fetch-keys";
+import { useRouter } from "next/router";
+import { DragDropContext, DropResult } from "react-beautiful-dnd";
+import stateService from "services/state.service";
+// hooks
+import useIssuesProperties from "hooks/use-issue-properties";
+import useIssueView from "hooks/use-issue-view";
 // components
 import SingleBoard from "components/project/cycles/board-view/single-board";
 // ui
-import { Spinner } from "ui";
+import { Spinner } from "components/ui";
 // types
-import { CycleIssueResponse, IIssue, IProjectMember, NestedKeyOf, Properties } from "types";
-import { useRouter } from "next/router";
-import { DragDropContext, DropResult } from "react-beautiful-dnd";
-import issuesService from "lib/services/issues.service";
+import { CycleIssueResponse, IIssue, IProjectMember, UserAuth } from "types";
+import issuesService from "services/issues.service";
+// constants
+import { STATE_LIST, CYCLE_ISSUES } from "constants/fetch-keys";
 
 type Props = {
-  groupedByIssues: {
-    [key: string]: IIssue[];
-  };
-  properties: Properties;
-  selectedGroup: NestedKeyOf<IIssue> | null;
+  issues: IIssue[];
   members: IProjectMember[] | undefined;
   openCreateIssueModal: (issue?: IIssue, actionType?: "create" | "edit" | "delete") => void;
   openIssuesListModal: () => void;
-  removeIssueFromCycle: (bridgeId: string) => void;
-  partialUpdateIssue: (formData: Partial<IIssue>, issueId: string) => void;
   handleDeleteIssue: React.Dispatch<React.SetStateAction<string | undefined>>;
   setPreloadedData: React.Dispatch<
     React.SetStateAction<
       | (Partial<IIssue> & {
           actionType: "createIssue" | "edit" | "delete";
         })
-      | undefined
+      | null
     >
   >;
+  userAuth: UserAuth;
 };
 
-const CyclesBoardView: React.FC<Props> = (props) => {
-  const {
-    groupedByIssues,
-    properties,
-    selectedGroup,
-    members,
-    openCreateIssueModal,
-    openIssuesListModal,
-    removeIssueFromCycle,
-    partialUpdateIssue,
-    handleDeleteIssue,
-    setPreloadedData,
-  } = props;
-
+const CyclesBoardView: React.FC<Props> = ({
+  issues,
+  members,
+  openCreateIssueModal,
+  openIssuesListModal,
+  handleDeleteIssue,
+  setPreloadedData,
+  userAuth,
+}) => {
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
+
+  const [properties] = useIssuesProperties(workspaceSlug as string, projectId as string);
+  const { issueView, groupedByIssues, groupByProperty: selectedGroup } = useIssueView(issues);
 
   const { data: states } = useSWR(
     workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
@@ -125,14 +121,16 @@ const CyclesBoardView: React.FC<Props> = (props) => {
     [workspaceSlug, groupedByIssues, projectId, selectedGroup, states, cycleId]
   );
 
+  if (issueView !== "kanban") return <></>;
+
   return (
     <>
       {groupedByIssues ? (
-        <div className="h-full w-full">
+        <div className="h-[calc(100vh-157px)] lg:h-[calc(100vh-115px)] w-full">
           <DragDropContext onDragEnd={handleOnDragEnd}>
             <div className="h-full w-full overflow-hidden">
               <div className="h-full w-full">
-                <div className="flex h-full gap-x-4 overflow-x-auto overflow-y-hidden pb-3">
+                <div className="flex h-full gap-x-4 overflow-x-auto overflow-y-hidden">
                   {Object.keys(groupedByIssues).map((singleGroup) => (
                     <SingleBoard
                       key={singleGroup}
@@ -151,10 +149,8 @@ const CyclesBoardView: React.FC<Props> = (props) => {
                           : "#000000"
                       }
                       properties={properties}
-                      removeIssueFromCycle={removeIssueFromCycle}
                       openIssuesListModal={openIssuesListModal}
                       openCreateIssueModal={openCreateIssueModal}
-                      partialUpdateIssue={partialUpdateIssue}
                       handleDeleteIssue={handleDeleteIssue}
                       setPreloadedData={setPreloadedData}
                       stateId={
@@ -162,6 +158,7 @@ const CyclesBoardView: React.FC<Props> = (props) => {
                           ? states?.find((s) => s.name === singleGroup)?.id ?? null
                           : null
                       }
+                      userAuth={userAuth}
                     />
                   ))}
                 </div>

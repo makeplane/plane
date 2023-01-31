@@ -3,17 +3,17 @@ import React, { useMemo } from "react";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 
-import type { KeyedMutator } from "swr";
-
+// react-hook-form
 import { useForm, Controller } from "react-hook-form";
 // services
-import issuesServices from "lib/services/issues.service";
+import issuesServices from "services/issues.service";
 // ui
-import { Loader } from "ui";
+import { Loader } from "components/ui";
+// helpers
+import { debounce } from "helpers/functions.helper";
 // types
 import type { IIssueActivity, IIssueComment } from "types";
-// common
-import { debounce } from "constants/common";
+import type { KeyedMutator } from "swr";
 
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
   ssr: false,
@@ -41,7 +41,7 @@ const AddIssueComment: React.FC<{
 
   const router = useRouter();
 
-  let { workspaceSlug, projectId, issueId } = router.query;
+  const { workspaceSlug, projectId, issueId } = router.query;
 
   const onSubmit = async (formData: IIssueComment) => {
     if (
@@ -83,7 +83,7 @@ const AddIssueComment: React.FC<{
   return (
     <div className="space-y-5">
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="issue-comments-section rounded-md p-2 pt-3">
+        <div className="issue-comments-section">
           <Controller
             name="comment_html"
             control={control}

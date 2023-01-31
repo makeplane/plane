@@ -1,6 +1,6 @@
 # Django Imports
 from django.db import IntegrityError
-from django.db.models import Prefetch
+from django.db.models import Prefetch, F, OuterRef, Func
 
 # Third party imports
 from rest_framework.response import Response
@@ -15,7 +15,13 @@ from plane.api.serializers import (
     ModuleIssueSerializer,
 )
 from plane.api.permissions import ProjectEntityPermission
-from plane.db.models import Module, ModuleIssue, Project, Issue, ModuleLink
+from plane.db.models import (
+    Module,
+    ModuleIssue,
+    Project,
+    Issue,
+    ModuleLink,
+)
 
 
 class ModuleViewSet(BaseViewSet):
@@ -45,13 +51,15 @@ class ModuleViewSet(BaseViewSet):
             .prefetch_related(
                 Prefetch(
                     "issue_module",
-                    queryset=ModuleIssue.objects.select_related("module", "issue"),
+                    queryset=ModuleIssue.objects.select_related(
+                        "module", "issue", "issue__state", "issue__project"
+                    ).prefetch_related("issue__assignees", "issue__labels"),
                 )
             )
             .prefetch_related(
                 Prefetch(
                     "link_module",
-                    queryset=ModuleLink.objects.select_related("module"),
+                    queryset=ModuleLink.objects.select_related("module", "created_by"),
                 )
             )
         )
@@ -110,6 +118,12 @@ class ModuleIssueViewSet(BaseViewSet):
         return self.filter_queryset(
             super()
             .get_queryset()
+            .annotate(
+                sub_issues_count=Issue.objects.filter(parent=OuterRef("issue"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(module_id=self.kwargs.get("module_id"))
@@ -117,7 +131,9 @@ class ModuleIssueViewSet(BaseViewSet):
             .select_related("project")
             .select_related("workspace")
             .select_related("module")
-            .select_related("issue")
+            .select_related("issue", "issue__state", "issue__project")
+            .prefetch_related("issue__assignees", "issue__labels")
+            .prefetch_related("module__members")
             .distinct()
         )
 

@@ -65,7 +65,7 @@ const FeedbackThanks = forwardRef(function FeedbackThanks(_props, ref) {
 })
 
 function Feedback() {
-  let [submitted, setSubmitted] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
 
   function onSubmit(event) {
     event.preventDefault()
@@ -124,9 +124,9 @@ function PageLink({ label, page, previous = false }) {
 }
 
 function PageNavigation() {
-  let router = useRouter()
-  let allPages = navigation.flatMap((group) => group.links)
-  let currentPageIndex = allPages.findIndex(
+  const router = useRouter()
+  const allPages = navigation.flatMap((group) => group.links)
+  const currentPageIndex = allPages.findIndex(
     (page) => page.href === router.pathname
   )
 
@@ -134,8 +134,8 @@ function PageNavigation() {
     return null
   }
 
-  let previousPage = allPages[currentPageIndex - 1]
-  let nextPage = allPages[currentPageIndex + 1]
+  const previousPage = allPages[currentPageIndex - 1]
+  const nextPage = allPages[currentPageIndex + 1]
 
   if (!previousPage && !nextPage) {
     return null
@@ -207,7 +207,10 @@ function SmallPrint() {
         <SocialLink href="https://github.com/makeplane" icon={GitHubIcon}>
           Follow us on GitHub
         </SocialLink>
-        <SocialLink href="https://discord.com/invite/A92xrEGCge" icon={DiscordIcon}>
+        <SocialLink
+          href="https://discord.com/invite/A92xrEGCge"
+          icon={DiscordIcon}
+        >
           Join our Discord server
         </SocialLink>
       </div>
@@ -216,7 +219,7 @@ function SmallPrint() {
 }
 
 export function Footer() {
-  let router = useRouter()
+  const router = useRouter()
 
   return (
     <footer className="mx-auto max-w-2xl space-y-10 pb-16 lg:max-w-5xl">

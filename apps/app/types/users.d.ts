@@ -32,4 +32,12 @@ export interface IUserLite {
   last_name: string;
   email: string;
   avatar: string;
+  created_at: Date;
 }
+
+export type UserAuth = {
+  isMember: boolean;
+  isOwner: boolean;
+  isViewer: boolean;
+  isGuest: boolean;
+};

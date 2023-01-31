@@ -1,59 +1,56 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-// services
-import workspaceService from "lib/services/workspace.service";
-import stateService from "lib/services/state.service";
-// common
-import { addSpaceIfCamelCase } from "constants/common";
 
+// icons
+import { Disclosure, Transition } from "@headlessui/react";
+import { PlusIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
+// services
+import workspaceService from "services/workspace.service";
+import stateService from "services/state.service";
+// hooks
+import useIssuesProperties from "hooks/use-issue-properties";
+import useIssueView from "hooks/use-issue-view";
 // components
 import SingleListIssue from "components/common/list-view/single-issue";
-// headless ui
-import { Disclosure, Transition } from "@headlessui/react";
 // ui
-import { CustomMenu, Spinner } from "ui";
-// icons
-import { PlusIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
+import { CustomMenu, Spinner } from "components/ui";
+// helpers
+import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
-import { IIssue, IWorkspaceMember, NestedKeyOf, Properties } from "types";
+import { IIssue, IWorkspaceMember, UserAuth } from "types";
 // fetch-keys
 import { STATE_LIST, WORKSPACE_MEMBERS } from "constants/fetch-keys";
 
 type Props = {
-  groupedByIssues: {
-    [key: string]: (IIssue & { bridge?: string })[];
-  };
-  properties: Properties;
-  selectedGroup: NestedKeyOf<IIssue> | null;
+  issues: IIssue[];
   openCreateIssueModal: (issue?: IIssue, actionType?: "create" | "edit" | "delete") => void;
   openIssuesListModal: () => void;
   removeIssueFromModule: (issueId: string) => void;
-  handleDeleteIssue: React.Dispatch<React.SetStateAction<string | undefined>>;
   setPreloadedData: React.Dispatch<
     React.SetStateAction<
       | (Partial<IIssue> & {
           actionType: "createIssue" | "edit" | "delete";
         })
-      | undefined
+      | null
     >
   >;
+  userAuth: UserAuth;
 };
 
 const ModulesListView: React.FC<Props> = ({
-  groupedByIssues,
-  selectedGroup,
+  issues,
   openCreateIssueModal,
   openIssuesListModal,
-  properties,
   removeIssueFromModule,
-  handleDeleteIssue,
   setPreloadedData,
+  userAuth,
 }) => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, moduleId } = router.query;
+
+  const [properties] = useIssuesProperties(workspaceSlug as string, projectId as string);
+  const { issueView, groupedByIssues, groupByProperty: selectedGroup } = useIssueView(issues);
 
   const { data: people } = useSWR<IWorkspaceMember[]>(
     workspaceSlug ? WORKSPACE_MEMBERS : null,
@@ -66,6 +63,8 @@ const ModulesListView: React.FC<Props> = ({
       ? () => stateService.getStates(workspaceSlug as string, projectId as string)
       : null
   );
+
+  if (issueView !== "list") return <></>;
 
   return (
     <div className="flex h-full flex-col space-y-5">
@@ -135,11 +134,12 @@ const ModulesListView: React.FC<Props> = ({
                               <SingleListIssue
                                 key={issue.id}
                                 type="module"
+                                typeId={moduleId as string}
                                 issue={issue}
                                 properties={properties}
                                 editIssue={() => openCreateIssueModal(issue, "edit")}
-                                handleDeleteIssue={() => handleDeleteIssue(issue.id)}
                                 removeIssue={() => removeIssueFromModule(issue.bridge ?? "")}
+                                userAuth={userAuth}
                               />
                             );
                           })

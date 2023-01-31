@@ -1,40 +1,39 @@
 // TODO: Refactor this component: into a different file, use this file to export the components
-
 import React, { useState, useCallback, useEffect } from "react";
 // next
 import { useRouter } from "next/router";
 // swr
 import useSWR from "swr";
 // hooks
-import useTheme from "lib/hooks/useTheme";
-import useToast from "lib/hooks/useToast";
-import useUser from "lib/hooks/useUser";
-// services
-import userService from "lib/services/user.service";
-// components
-import ShortcutsModal from "components/command-palette/shortcuts";
-import { CreateProjectModal } from "components/project";
-import CreateUpdateIssuesModal from "components/project/issues/create-update-issue-modal";
-import CreateUpdateCycleModal from "components/project/cycles/create-update-cycle-modal";
-import CreateUpdateModuleModal from "components/project/modules/create-update-module-modal";
-import BulkDeleteIssuesModal from "components/common/bulk-delete-issues-modal";
-// headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
-// constants
-import { USER_ISSUE } from "constants/fetch-keys";
-// ui
-import { Button } from "ui";
-// icons
 import {
   FolderIcon,
   RectangleStackIcon,
   ClipboardDocumentListIcon,
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
+import useTheme from "hooks/use-theme";
+import useToast from "hooks/use-toast";
+import useUser from "hooks/use-user";
+// services
+import userService from "services/user.service";
+// components
+import ShortcutsModal from "components/command-palette/shortcuts";
+import { CreateProjectModal } from "components/project";
+import { CreateUpdateIssueModal } from "components/issues/modal";
+import CreateUpdateCycleModal from "components/project/cycles/create-update-cycle-modal";
+import CreateUpdateModuleModal from "components/project/modules/create-update-module-modal";
+import BulkDeleteIssuesModal from "components/common/bulk-delete-issues-modal";
+// headless ui
+// helpers
+import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import { IIssue } from "types";
-// common
-import { classNames, copyTextToClipboard } from "constants/common";
+// ui
+import { Button } from "components/ui";
+// icons
+// fetch-keys
+import { USER_ISSUE } from "constants/fetch-keys";
 
 const CommandPalette: React.FC = () => {
   const [query, setQuery] = useState("");
@@ -98,49 +97,56 @@ const CommandPalette: React.FC = () => {
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === "/") {
-        e.preventDefault();
-        setIsPaletteOpen(true);
-      } else if ((e.ctrlKey || e.metaKey) && e.key === "i") {
-        e.preventDefault();
-        setIsIssueModalOpen(true);
-      } else if ((e.ctrlKey || e.metaKey) && e.key === "p") {
-        e.preventDefault();
-        setIsProjectModalOpen(true);
-      } else if ((e.ctrlKey || e.metaKey) && e.key === "b") {
-        e.preventDefault();
-        toggleCollapsed();
-      } else if ((e.ctrlKey || e.metaKey) && e.key === "h") {
-        e.preventDefault();
-        setIsShortcutsModalOpen(true);
-      } else if ((e.ctrlKey || e.metaKey) && e.key === "q") {
-        e.preventDefault();
-        setIsCreateCycleModalOpen(true);
-      } else if ((e.ctrlKey || e.metaKey) && e.key === "m") {
-        e.preventDefault();
-        setIsCreateModuleModalOpen(true);
-      } else if ((e.ctrlKey || e.metaKey) && e.key === "d") {
-        e.preventDefault();
-        setIsBulkDeleteIssuesModalOpen(true);
-      } else if ((e.ctrlKey || e.metaKey) && e.altKey && e.key === "c") {
-        e.preventDefault();
+      if (
+        !(e.target instanceof HTMLTextAreaElement) &&
+        !(e.target instanceof HTMLInputElement) &&
+        !(e.target as Element).classList?.contains("remirror-editor")
+      ) {
+        if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+          e.preventDefault();
+          setIsPaletteOpen(true);
+        } else if (e.ctrlKey && e.key === "c") {
+          console.log("Text copied");
+        } else if (e.key === "c") {
+          e.preventDefault();
+          setIsIssueModalOpen(true);
+        } else if (e.key === "p") {
+          e.preventDefault();
+          setIsProjectModalOpen(true);
+        } else if ((e.ctrlKey || e.metaKey) && e.key === "b") {
+          e.preventDefault();
+          toggleCollapsed();
+        } else if (e.key === "h") {
+          e.preventDefault();
+          setIsShortcutsModalOpen(true);
+        } else if (e.key === "q") {
+          e.preventDefault();
+          setIsCreateCycleModalOpen(true);
+        } else if (e.key === "m") {
+          e.preventDefault();
+          setIsCreateModuleModalOpen(true);
+        } else if (e.key === "Delete") {
+          e.preventDefault();
+          setIsBulkDeleteIssuesModalOpen(true);
+        } else if ((e.ctrlKey || e.metaKey) && e.altKey && e.key === "c") {
+          e.preventDefault();
+          if (!router.query.issueId) return;
 
-        if (!router.query.issueId) return;
-
-        const url = new URL(window.location.href);
-        copyTextToClipboard(url.href)
-          .then(() => {
-            setToastAlert({
-              type: "success",
-              title: "Copied to clipboard",
+          const url = new URL(window.location.href);
+          copyTextToClipboard(url.href)
+            .then(() => {
+              setToastAlert({
+                type: "success",
+                title: "Copied to clipboard",
+              });
+            })
+            .catch(() => {
+              setToastAlert({
+                type: "error",
+                title: "Some error occurred",
+              });
             });
-          })
-          .catch(() => {
-            setToastAlert({
-              type: "error",
-              title: "Some error occurred",
-            });
-          });
+        }
       }
     },
     [toggleCollapsed, setToastAlert, router]
@@ -173,10 +179,9 @@ const CommandPalette: React.FC = () => {
           />
         </>
       )}
-      <CreateUpdateIssuesModal
+      <CreateUpdateIssueModal
         isOpen={isIssueModalOpen}
-        setIsOpen={setIsIssueModalOpen}
-        projectId={projectId as string}
+        handleClose={() => setIsIssueModalOpen(false)}
       />
       <BulkDeleteIssuesModal
         isOpen={isBulkDeleteIssuesModalOpen}
@@ -188,7 +193,7 @@ const CommandPalette: React.FC = () => {
         afterLeave={() => setQuery("")}
         appear
       >
-        <Dialog as="div" className="relative z-10" onClose={handleCommandPaletteClose}>
+        <Dialog as="div" className="relative z-20" onClose={handleCommandPaletteClose}>
           <Transition.Child
             as={React.Fragment}
             enter="ease-out duration-300"
@@ -201,7 +206,7 @@ const CommandPalette: React.FC = () => {
             <div className="fixed inset-0 bg-gray-500 bg-opacity-25 transition-opacity" />
           </Transition.Child>
 
-          <div className="fixed inset-0 z-10 overflow-y-auto p-4 sm:p-6 md:p-20">
+          <div className="fixed inset-0 z-20 overflow-y-auto p-4 sm:p-6 md:p-20">
             <Transition.Child
               as={React.Fragment}
               enter="ease-out duration-300"
@@ -228,7 +233,7 @@ const CommandPalette: React.FC = () => {
                       className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder-gray-500 outline-none focus:ring-0 sm:text-sm"
                       placeholder="Search..."
                       autoComplete="off"
-                      onChange={(event) => setQuery(event.target.value)}
+                      onChange={(e) => setQuery(e.target.value)}
                     />
                   </div>
 
@@ -255,10 +260,9 @@ const CommandPalette: React.FC = () => {
                                   url: `/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`,
                                 }}
                                 className={({ active }) =>
-                                  classNames(
-                                    "flex cursor-pointer select-none items-center justify-between rounded-md px-3 py-2",
+                                  `flex cursor-pointer select-none items-center justify-between rounded-md px-3 py-2 ${
                                     active ? "bg-gray-500 bg-opacity-5 text-gray-900" : ""
-                                  )
+                                  }`
                                 }
                               >
                                 {({ active }) => (
@@ -307,19 +311,17 @@ const CommandPalette: React.FC = () => {
                                     onClick: action.onClick,
                                   }}
                                   className={({ active }) =>
-                                    classNames(
-                                      "flex cursor-default select-none items-center rounded-md px-3 py-2",
+                                    `flex cursor-default select-none items-center rounded-md px-3 py-2 ${
                                       active ? "bg-gray-500 bg-opacity-5 text-gray-900" : ""
-                                    )
+                                    }`
                                   }
                                 >
                                   {({ active }) => (
                                     <>
                                       <action.icon
-                                        className={classNames(
-                                          "h-6 w-6 flex-none text-gray-900 text-opacity-40",
+                                        className={`h-6 w-6 flex-none text-gray-900 text-opacity-40 ${
                                           active ? "text-opacity-100" : ""
-                                        )}
+                                        }`}
                                         aria-hidden="true"
                                       />
                                       <span className="ml-3 flex-auto truncate">{action.name}</span>

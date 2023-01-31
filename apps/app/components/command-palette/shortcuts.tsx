@@ -4,7 +4,7 @@ import { Dialog, Transition } from "@headlessui/react";
 // icons
 import { XMarkIcon } from "@heroicons/react/20/solid";
 // ui
-import { Input } from "ui";
+import { Input } from "components/ui";
 
 type Props = {
   isOpen: boolean;
@@ -15,7 +15,7 @@ const shortcuts = [
   {
     title: "Navigation",
     shortcuts: [
-      { keys: "ctrl,/", description: "To open navigator" },
+      { keys: "ctrl,cmd,k", description: "To open navigator" },
       { keys: "↑", description: "Move up" },
       { keys: "↓", description: "Move down" },
       { keys: "←", description: "Move left" },
@@ -27,14 +27,14 @@ const shortcuts = [
   {
     title: "Common",
     shortcuts: [
-      { keys: "ctrl,p", description: "To create project" },
-      { keys: "ctrl,i", description: "To create issue" },
-      { keys: "ctrl,q", description: "To create cycle" },
-      { keys: "ctrl,m", description: "To create module" },
-      { keys: "ctrl,d", description: "To bulk delete issues" },
-      { keys: "ctrl,h", description: "To open shortcuts guide" },
+      { keys: "p", description: "To create project" },
+      { keys: "c", description: "To create issue" },
+      { keys: "q", description: "To create cycle" },
+      { keys: "m", description: "To create module" },
+      { keys: "Delete", description: "To bulk delete issues" },
+      { keys: "h", description: "To open shortcuts guide" },
       {
-        keys: "ctrl,alt,c",
+        keys: "ctrl,cmd,alt,c",
         description: "To copy issue url when on issue detail page.",
       },
     ],
@@ -52,7 +52,7 @@ const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={setIsOpen}>
+      <Dialog as="div" className="relative z-20" onClose={setIsOpen}>
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
@@ -65,7 +65,7 @@ const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
           <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
         </Transition.Child>
 
-        <div className="fixed inset-0 z-10 overflow-y-auto">
+        <div className="fixed inset-0 z-20 overflow-y-auto">
           <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
             <Transition.Child
               as={React.Fragment}
@@ -79,10 +79,10 @@ const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
                 <div className="bg-white p-5">
                   <div className="sm:flex sm:items-start">
-                    <div className="flex flex-col gap-y-4 text-center sm:text-left w-full">
+                    <div className="flex w-full flex-col gap-y-4 text-center sm:text-left">
                       <Dialog.Title
                         as="h3"
-                        className="text-lg font-medium leading-6 text-gray-900 flex justify-between"
+                        className="flex justify-between text-lg font-medium leading-6 text-gray-900"
                       >
                         <span>Keyboard Shortcuts</span>
                         <span>
@@ -103,11 +103,11 @@ const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                           onChange={(e) => setQuery(e.target.value)}
                         />
                       </div>
-                      <div className="flex flex-col gap-y-3 w-full">
+                      <div className="flex w-full flex-col gap-y-3">
                         {filteredShortcuts.length > 0 ? (
                           filteredShortcuts.map(({ title, shortcuts }) => (
-                            <div key={title} className="w-full flex flex-col">
-                              <p className="font-medium mb-4">{title}</p>
+                            <div key={title} className="flex w-full flex-col">
+                              <p className="mb-4 font-medium">{title}</p>
                               <div className="flex flex-col gap-y-3">
                                 {shortcuts.map(({ keys, description }, index) => (
                                   <div key={index} className="flex justify-between">
@@ -115,7 +115,7 @@ const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                                     <div className="flex items-center gap-x-1">
                                       {keys.split(",").map((key, index) => (
                                         <span key={index} className="flex items-center gap-1">
-                                          <kbd className="bg-gray-200 text-sm px-1 rounded">
+                                          <kbd className="rounded bg-gray-200 px-1 text-sm">
                                             {key}
                                           </kbd>
                                         </span>

@@ -8,20 +8,22 @@ import { useForm, Controller } from "react-hook-form";
 
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import projectServices from "lib/services/project.service";
-import workspaceService from "lib/services/workspace.service";
-// common
-import { getRandomEmoji } from "constants/common";
-// constants
-import { NETWORK_CHOICES } from "constants/";
-// fetch keys
-import { PROJECTS_LIST, WORKSPACE_MEMBERS_ME } from "constants/fetch-keys";
+import projectServices from "services/project.service";
+import workspaceService from "services/workspace.service";
 // hooks
-import useToast from "lib/hooks/useToast";
+import useToast from "hooks/use-toast";
 // ui
-import { Button, Input, TextArea, EmojiIconPicker, CustomSelect } from "ui";
+import { Button, Input, TextArea, CustomSelect } from "components/ui";
+// components
+import EmojiIconPicker from "components/emoji-icon-picker";
+// helpers
+import { getRandomEmoji } from "helpers/functions.helper";
 // types
 import { IProject } from "types";
+// fetch-keys
+import { PROJECTS_LIST, WORKSPACE_MEMBERS_ME } from "constants/fetch-keys";
+// constants
+import { NETWORK_CHOICES } from "constants/";
 
 type Props = {
   isOpen: boolean;
@@ -91,14 +93,11 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
   const projectIdentifier = watch("identifier") ?? "";
 
   useEffect(() => {
-    if (projectName && isChangeIdentifierRequired) {
+    if (projectName && isChangeIdentifierRequired)
       setValue("identifier", projectName.replace(/ /g, "").toUpperCase().substring(0, 3));
-    }
   }, [projectName, projectIdentifier, setValue, isChangeIdentifierRequired]);
 
-  useEffect(() => {
-    return () => setIsChangeIdentifierRequired(true);
-  }, [isOpen]);
+  useEffect(() => () => setIsChangeIdentifierRequired(true), [isOpen]);
 
   const handleClose = () => {
     setIsOpen(false);
@@ -185,7 +184,7 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                       </p>
                     </div>
                     <div className="space-y-3">
-                      <div className="flex items-center gap-3">
+                      <div className="flex gap-3">
                         <div className="flex-shrink-0">
                           <label htmlFor="icon" className="mb-2 text-gray-500">
                             Icon
@@ -215,6 +214,10 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                             register={register}
                             validations={{
                               required: "Name is required",
+                              maxLength: {
+                                value: 255,
+                                message: "Name should be less than 255 characters",
+                              },
                             }}
                           />
                         </div>

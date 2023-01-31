@@ -1,30 +1,31 @@
 import React, { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
-import type { NextPage, NextPageContext } from "next";
-
 import useSWR from "swr";
+import { PlusIcon } from "@heroicons/react/24/outline";
+import { Tab } from "@headlessui/react";
+
+// lib
+import { requiredAuth } from "lib/auth";
+import { CyclesIcon } from "components/icons";
 // services
-import cycleService from "lib/services/cycles.service";
-import projectService from "lib/services/project.service";
-import workspaceService from "lib/services/workspace.service";
+import cycleService from "services/cycles.service";
+import projectService from "services/project.service";
+import workspaceService from "services/workspace.service";
 // layouts
 import AppLayout from "layouts/app-layout";
 // components
 import CreateUpdateCycleModal from "components/project/cycles/create-update-cycle-modal";
 import CycleStatsView from "components/project/cycles/stats-view";
 // ui
-import { BreadcrumbItem, Breadcrumbs, HeaderButton, EmptySpace, EmptySpaceItem, Loader } from "ui";
+import { HeaderButton, EmptySpace, EmptySpaceItem, Loader } from "components/ui";
+import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { PlusIcon } from "@heroicons/react/24/outline";
 // types
 import { ICycle, SelectCycleType } from "types";
+import type { NextPage, NextPageContext } from "next";
 // fetching keys
 import { CYCLE_LIST, PROJECT_DETAILS, WORKSPACE_DETAILS } from "constants/fetch-keys";
-// lib
-import { requiredAuth } from "lib/auth";
-import { Tab } from "@headlessui/react";
-import { CyclesIcon } from "ui/icons";
 
 const ProjectCycles: NextPage = () => {
   const [selectedCycle, setSelectedCycle] = useState<SelectCycleType>();
@@ -177,8 +178,8 @@ const ProjectCycles: NextPage = () => {
                 title="Create a new cycle"
                 description={
                   <span>
-                    Use <pre className="inline rounded bg-gray-100 px-2 py-1">Ctrl/Command + Q</pre>{" "}
-                    shortcut to create a new cycle
+                    Use <pre className="inline rounded bg-gray-100 px-2 py-1">Q</pre> shortcut to
+                    create a new cycle
                   </span>
                 }
                 Icon={PlusIcon}
@@ -195,8 +196,8 @@ const ProjectCycles: NextPage = () => {
         )
       ) : (
         <Loader className="space-y-5">
-          <Loader.Item height="150px"></Loader.Item>
-          <Loader.Item height="150px"></Loader.Item>
+          <Loader.Item height="150px" />
+          <Loader.Item height="150px" />
         </Loader>
       )}
     </AppLayout>

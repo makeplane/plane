@@ -1,14 +1,14 @@
 import React, { useState } from "react";
+
+// headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
-// ui
-import { Button } from "ui";
 // icons
 import { MagnifyingGlassIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
-// constants
-import { classNames } from "constants/common";
+// ui
+import { Button } from "components/ui";
 // types
 import { IIssue } from "types";
-import { LayerDiagonalIcon } from "ui/icons";
+import { LayerDiagonalIcon } from "components/icons";
 
 type Props = {
   isOpen: boolean;
@@ -61,7 +61,7 @@ const IssuesListModal: React.FC<Props> = ({
             <div className="fixed inset-0 bg-gray-500 bg-opacity-25 transition-opacity" />
           </Transition.Child>
 
-          <div className="fixed inset-0 z-10 overflow-y-auto p-4 sm:p-6 md:p-20">
+          <div className="fixed inset-0 z-20 overflow-y-auto p-4 sm:p-6 md:p-20">
             <Transition.Child
               as={React.Fragment}
               enter="ease-out duration-300"
@@ -71,10 +71,10 @@ const IssuesListModal: React.FC<Props> = ({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="relative mx-auto max-w-2xl transform divide-y divide-gray-500 divide-opacity-10 rounded-xl bg-white bg-opacity-80 shadow-2xl ring-1 ring-black ring-opacity-5 backdrop-blur backdrop-filter transition-all">
+              <Dialog.Panel className="relative mx-auto max-w-2xl transform divide-y divide-gray-500 divide-opacity-10 rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
                 {multiple ? (
                   <>
-                    <Combobox value={value} onChange={(val) => {}} multiple>
+                    <Combobox value={value} onChange={() => ({})} multiple>
                       <div className="relative m-1">
                         <MagnifyingGlassIcon
                           className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-gray-900 text-opacity-40"
@@ -105,10 +105,9 @@ const IssuesListModal: React.FC<Props> = ({
                                   key={issue.id}
                                   value={issue.id}
                                   className={({ active }) =>
-                                    classNames(
-                                      "flex cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2",
+                                    `flex cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 ${
                                       active ? "bg-gray-900 bg-opacity-5 text-gray-900" : ""
-                                    )
+                                    }`
                                   }
                                 >
                                   {({ selected }) => (
@@ -186,10 +185,9 @@ const IssuesListModal: React.FC<Props> = ({
                                 key={issue.id}
                                 value={issue.id}
                                 className={({ active }) =>
-                                  classNames(
-                                    "flex cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2",
+                                  `flex cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 ${
                                     active ? "bg-gray-900 bg-opacity-5 text-gray-900" : ""
-                                  )
+                                  }`
                                 }
                                 onClick={() => handleClose()}
                               >
@@ -214,26 +212,11 @@ const IssuesListModal: React.FC<Props> = ({
                           <LayerDiagonalIcon height="56" width="56" />
                           <h3 className="text-gray-500">
                             No issues found. Create a new issue with{" "}
-                            <pre className="inline rounded bg-gray-100 px-2 py-1">
-                              Ctrl/Command + I
-                            </pre>
-                            .
+                            <pre className="inline rounded bg-gray-100 px-2 py-1">C</pre>.
                           </h3>
                         </div>
                       )}
                     </Combobox.Options>
-
-                    {query !== "" && filteredIssues.length === 0 && (
-                      <div className="py-14 px-6 text-center sm:px-14">
-                        <RectangleStackIcon
-                          className="mx-auto h-6 w-6 text-gray-900 text-opacity-40"
-                          aria-hidden="true"
-                        />
-                        <p className="mt-4 text-sm text-gray-900">
-                          We couldn{"'"}t find any issue with that term. Please try again.
-                        </p>
-                      </div>
-                    )}
                   </Combobox>
                 )}
               </Dialog.Panel>

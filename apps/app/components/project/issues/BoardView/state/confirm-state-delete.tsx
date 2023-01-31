@@ -4,21 +4,24 @@ import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 
+// headless ui
 import { Dialog, Transition } from "@headlessui/react";
-// services
-import stateServices from "lib/services/state.service";
-import issuesServices from "lib/services/issues.service";
-// fetch api
-import { STATE_LIST, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
-// common
-import { groupBy } from "constants/common";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+// services
+import stateServices from "services/state.service";
+import issuesServices from "services/issues.service";
+// hooks
+import useToast from "hooks/use-toast";
 // ui
-import { Button } from "ui";
-
+import { Button } from "components/ui";
+// helpers
+import { groupBy } from "helpers/array.helper";
 // types
 import type { IState } from "types";
+// fetch-keys
+import { STATE_LIST, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+
 type Props = {
   isOpen: boolean;
   onClose: () => void;
@@ -31,6 +34,8 @@ const ConfirmStateDeletion: React.FC<Props> = ({ isOpen, onClose, data }) => {
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+
+  const { setToastAlert } = useToast();
 
   const { data: issues } = useSWR(
     workspaceSlug && projectId
@@ -60,6 +65,12 @@ const ConfirmStateDeletion: React.FC<Props> = ({ isOpen, onClose, data }) => {
           false
         );
         handleClose();
+
+        setToastAlert({
+          title: "Success",
+          type: "success",
+          message: "State deleted successfully",
+        });
       })
       .catch((error) => {
         console.log(error);
@@ -77,7 +88,7 @@ const ConfirmStateDeletion: React.FC<Props> = ({ isOpen, onClose, data }) => {
     <Transition.Root show={isOpen} as={React.Fragment}>
       <Dialog
         as="div"
-        className="relative z-10"
+        className="relative z-20"
         initialFocus={cancelButtonRef}
         onClose={handleClose}
       >
@@ -93,7 +104,7 @@ const ConfirmStateDeletion: React.FC<Props> = ({ isOpen, onClose, data }) => {
           <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
         </Transition.Child>
 
-        <div className="fixed inset-0 z-10 overflow-y-auto">
+        <div className="fixed inset-0 z-20 overflow-y-auto">
           <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
             <Transition.Child
               as={React.Fragment}

@@ -4,56 +4,54 @@ import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 
+// react-beautiful-dnd
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
-
 // services
-import stateService from "lib/services/state.service";
-import issuesService from "lib/services/issues.service";
-// constants
-import { STATE_LIST, MODULE_ISSUES } from "constants/fetch-keys";
+import stateService from "services/state.service";
+import issuesService from "services/issues.service";
+// hooks
+import useIssuesProperties from "hooks/use-issue-properties";
+import useIssueView from "hooks/use-issue-view";
 // components
 import SingleBoard from "components/project/modules/board-view/single-board";
 // ui
-import { Spinner } from "ui";
+import { Spinner } from "components/ui";
 // types
-import { IIssue, IProjectMember, ModuleIssueResponse, NestedKeyOf, Properties } from "types";
+import { IIssue, IProjectMember, ModuleIssueResponse, UserAuth } from "types";
+// constants
+import { STATE_LIST, MODULE_ISSUES } from "constants/fetch-keys";
 
 type Props = {
-  groupedByIssues: {
-    [key: string]: IIssue[];
-  };
-  properties: Properties;
-  selectedGroup: NestedKeyOf<IIssue> | null;
+  issues: IIssue[];
   members: IProjectMember[] | undefined;
   openCreateIssueModal: (issue?: IIssue, actionType?: "create" | "edit" | "delete") => void;
   openIssuesListModal: () => void;
-  removeIssueFromModule: (issueId: string) => void;
-  partialUpdateIssue: (formData: Partial<IIssue>, issueId: string) => void;
   handleDeleteIssue: React.Dispatch<React.SetStateAction<string | undefined>>;
   setPreloadedData: React.Dispatch<
     React.SetStateAction<
       | (Partial<IIssue> & {
           actionType: "createIssue" | "edit" | "delete";
         })
-      | undefined
+      | null
     >
   >;
+  userAuth: UserAuth;
 };
 
 const ModulesBoardView: React.FC<Props> = ({
-  groupedByIssues,
-  properties,
-  selectedGroup,
+  issues,
   members,
   openCreateIssueModal,
   openIssuesListModal,
-  removeIssueFromModule,
-  partialUpdateIssue,
   handleDeleteIssue,
   setPreloadedData,
+  userAuth,
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query;
+
+  const [properties] = useIssuesProperties(workspaceSlug as string, projectId as string);
+  const { issueView, groupedByIssues, groupByProperty: selectedGroup } = useIssueView(issues);
 
   const { data: states } = useSWR(
     workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
@@ -126,14 +124,16 @@ const ModulesBoardView: React.FC<Props> = ({
     [workspaceSlug, groupedByIssues, projectId, selectedGroup, states, moduleId]
   );
 
+  if (issueView !== "kanban") return <></>;
+
   return (
     <>
       {groupedByIssues ? (
-        <div className="h-full w-full">
+        <div className="h-[calc(100vh-157px)] lg:h-[calc(100vh-115px)] w-full">
           <DragDropContext onDragEnd={handleOnDragEnd}>
             <div className="h-full w-full overflow-hidden">
               <div className="h-full w-full">
-                <div className="flex h-full gap-x-4 overflow-x-auto overflow-y-hidden pb-3">
+                <div className="flex h-full gap-x-4 overflow-x-auto overflow-y-hidden">
                   {Object.keys(groupedByIssues).map((singleGroup) => (
                     <SingleBoard
                       key={singleGroup}
@@ -152,10 +152,8 @@ const ModulesBoardView: React.FC<Props> = ({
                           : "#000000"
                       }
                       properties={properties}
-                      removeIssueFromModule={removeIssueFromModule}
                       openIssuesListModal={openIssuesListModal}
                       openCreateIssueModal={openCreateIssueModal}
-                      partialUpdateIssue={partialUpdateIssue}
                       handleDeleteIssue={handleDeleteIssue}
                       setPreloadedData={setPreloadedData}
                       stateId={
@@ -163,6 +161,7 @@ const ModulesBoardView: React.FC<Props> = ({
                           ? states?.find((s) => s.name === singleGroup)?.id ?? null
                           : null
                       }
+                      userAuth={userAuth}
                     />
                   ))}
                 </div>

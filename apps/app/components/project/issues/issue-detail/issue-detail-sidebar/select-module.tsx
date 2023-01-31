@@ -6,17 +6,15 @@ import useSWR from "swr";
 
 import { Control, Controller } from "react-hook-form";
 // constants
-import { MODULE_LIST } from "constants/fetch-keys";
-// services
-import modulesService from "lib/services/modules.service";
-// ui
-import { Spinner, CustomSelect } from "ui";
-// icons
 import { RectangleGroupIcon } from "@heroicons/react/24/outline";
+// services
+import modulesService from "services/modules.service";
+// ui
+import { Spinner, CustomSelect } from "components/ui";
+// icons
 // types
 import { IIssue, IModule } from "types";
-// common
-import { classNames } from "constants/common";
+import { MODULE_LIST } from "constants/fetch-keys";
 
 type Props = {
   control: Control<IIssue, any>;
@@ -48,10 +46,7 @@ const SelectModule: React.FC<Props> = ({ control, handleModuleChange }) => {
             <CustomSelect
               label={
                 <span
-                  className={classNames(
-                    value ? "" : "text-gray-900",
-                    "hidden truncate text-left sm:block"
-                  )}
+                  className={`hidden truncate text-left sm:block ${value ? "" : "text-gray-900"}`}
                 >
                   {value ? modules?.find((m) => m.id === value?.module_detail.id)?.name : "None"}
                 </span>

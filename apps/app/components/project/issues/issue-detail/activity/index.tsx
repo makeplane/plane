@@ -1,14 +1,8 @@
 import React from "react";
-// next
 import { useRouter } from "next/router";
 import Image from "next/image";
-// swr
 import { KeyedMutator } from "swr";
 
-// common
-import { addSpaceIfCamelCase, renderShortNumericDateFormat, timeAgo } from "constants/common";
-// ui
-import { Loader } from "ui";
 // icons
 import {
   CalendarDaysIcon,
@@ -17,12 +11,19 @@ import {
   Squares2X2Icon,
   UserIcon,
 } from "@heroicons/react/24/outline";
-import { BlockedIcon, BlockerIcon, TagIcon, UserGroupIcon } from "ui/icons";
-import { IIssueActivity, IIssueComment } from "types";
+// services
+import issuesServices from "services/issues.service";
 // components
 import CommentCard from "components/project/issues/issue-detail/comment/issue-comment-card";
-// services
-import issuesServices from "lib/services/issues.service";
+// ui
+import { Loader } from "components/ui";
+// icons
+import { BlockedIcon, BlockerIcon, TagIcon, UserGroupIcon } from "components/icons";
+// helpers
+import { renderShortNumericDateFormat, timeAgo } from "helpers/date-time.helper";
+import { addSpaceIfCamelCase } from "helpers/string.helper";
+// types
+import { IIssueActivity, IIssueComment } from "types";
 
 const activityDetails: {
   [key: string]: {
@@ -75,18 +76,13 @@ const activityDetails: {
   },
 };
 
-const defaultValues: Partial<IIssueComment> = {
-  comment_html: "",
-  comment_json: "",
-};
-
 const IssueActivitySection: React.FC<{
   issueActivities: IIssueActivity[];
   mutate: KeyedMutator<IIssueActivity[]>;
 }> = ({ issueActivities, mutate }) => {
   const router = useRouter();
 
-  let { workspaceSlug, projectId, issueId } = router.query;
+  const { workspaceSlug, projectId, issueId } = router.query;
 
   const onCommentUpdate = async (comment: IIssueComment) => {
     if (!workspaceSlug || !projectId || !issueId) return;
@@ -98,7 +94,7 @@ const IssueActivitySection: React.FC<{
         comment.id,
         comment
       )
-      .then((response) => {
+      .then((res) => {
         mutate();
       });
   };
@@ -179,6 +175,10 @@ const IssueActivitySection: React.FC<{
                           ? activity.new_value !== ""
                             ? "marked this issue being blocked by"
                             : "removed blocker"
+                          : activity.field === "target_date"
+                          ? activity.new_value && activity.new_value !== ""
+                            ? "set the due date to"
+                            : "removed the due date"
                           : activityDetails[activity.field as keyof typeof activityDetails]
                               ?.message}{" "}
                       </span>
@@ -202,7 +202,9 @@ const IssueActivitySection: React.FC<{
                         ) : activity.field === "assignee" ? (
                           activity.old_value
                         ) : activity.field === "target_date" ? (
-                          renderShortNumericDateFormat(activity.new_value as string)
+                          activity.new_value ? (
+                            renderShortNumericDateFormat(activity.new_value as string)
+                          ) : null
                         ) : activity.field === "description" ? (
                           ""
                         ) : (
@@ -229,16 +231,16 @@ const IssueActivitySection: React.FC<{
       ) : (
         <Loader className="space-y-4">
           <div className="space-y-2">
-            <Loader.Item height="30px" width="40%"></Loader.Item>
-            <Loader.Item height="15px" width="60%"></Loader.Item>
+            <Loader.Item height="30px" width="40%" />
+            <Loader.Item height="15px" width="60%" />
           </div>
           <div className="space-y-2">
-            <Loader.Item height="30px" width="40%"></Loader.Item>
-            <Loader.Item height="15px" width="60%"></Loader.Item>
+            <Loader.Item height="30px" width="40%" />
+            <Loader.Item height="15px" width="60%" />
           </div>
           <div className="space-y-2">
-            <Loader.Item height="30px" width="40%"></Loader.Item>
-            <Loader.Item height="15px" width="60%"></Loader.Item>
+            <Loader.Item height="30px" width="40%" />
+            <Loader.Item height="15px" width="60%" />
           </div>
         </Loader>
       )}

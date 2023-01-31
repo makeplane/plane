@@ -93,7 +93,7 @@ class ModuleWriteSerializer(BaseSerializer):
         links = validated_data.pop("links_list", None)
 
         if members is not None:
-            ModuleIssue.objects.filter(module=instance).delete()
+            ModuleMember.objects.filter(module=instance).delete()
             ModuleMember.objects.bulk_create(
                 [
                     ModuleMember(
@@ -150,6 +150,7 @@ class ModuleIssueSerializer(BaseSerializer):
 
     module_detail = ModuleFlatSerializer(read_only=True, source="module")
     issue_detail = IssueStateSerializer(read_only=True, source="issue")
+    sub_issues_count = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = ModuleIssue

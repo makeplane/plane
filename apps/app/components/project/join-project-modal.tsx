@@ -3,10 +3,10 @@ import React, { useState } from "react";
 import { Transition, Dialog } from "@headlessui/react";
 
 // ui
-import { Button } from "ui";
+import type { IProject } from "types";
+import { Button } from "components/ui";
 
 // type
-import type { IProject } from "types";
 type TJoinProjectModalProps = {
   data?: IProject;
   onClose: () => void;
@@ -69,7 +69,7 @@ export const JoinProjectModal: React.FC<TJoinProjectModalProps> = (props) => {
                     Are you sure you want to join{" "}
                     <span className="font-semibold">{data?.name}</span>?
                   </p>
-                  <div className="space-y-3"></div>
+                  <div className="space-y-3" />
                 </div>
                 <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
                   <Button theme="secondary" onClick={handleClose}>
