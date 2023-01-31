@@ -99,11 +99,6 @@ export const IssueForm: FC<IssueFormProps> = ({
     setMostSimilarIssue(similarIssue);
   };
 
-  const handleDiscard = () => {
-    reset({ ...defaultValues, project: projectId });
-    handleClose();
-  };
-
   const handleCreateUpdateIssue = async (formData: Partial<IIssue>) => {
     await handleFormSubmit(formData);
 
@@ -367,7 +362,7 @@ export const IssueForm: FC<IssueFormProps> = ({
             </button>
           </div>
           <div className="flex items-center gap-2">
-            <Button theme="secondary" onClick={handleDiscard}>
+            <Button theme="secondary" onClick={handleClose}>
               Discard
             </Button>
             <Button type="submit" disabled={isSubmitting}>

@@ -30,7 +30,7 @@ import { Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { ChevronLeftIcon, ChevronRightIcon, PlusIcon } from "@heroicons/react/24/outline";
 // types
-import { IIssue } from "types";
+import { IIssue, IssueResponse } from "types";
 import type { NextPage, NextPageContext } from "next";
 // fetch-keys
 import {
@@ -168,6 +168,23 @@ const IssueDetailsPage: NextPage = () => {
       .then((res) => {
         mutate(SUB_ISSUES(issueDetails?.id ?? ""));
         mutateIssueActivities();
+
+        mutate<IssueResponse>(
+          PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
+          (prevData) => ({
+            ...(prevData as IssueResponse),
+            results: (prevData?.results ?? []).map((p) => {
+              if (p.id === res.id)
+                return {
+                  ...p,
+                  ...res,
+                };
+
+              return p;
+            }),
+          }),
+          false
+        );
       })
       .catch((e) => {
         console.error(e);
