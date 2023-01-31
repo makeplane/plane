@@ -32,7 +32,7 @@ export const CustomDatePicker: React.FC<Props> = ({
       renderAs === "input"
         ? "block bg-transparent text-sm focus:outline-none rounded-md border border-gray-300 px-3 py-2 w-full cursor-pointer"
         : renderAs === "button"
-        ? "w-full cursor-pointer rounded-md border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+        ? "w-full rounded-md border px-2 py-1 text-xs shadow-sm hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 duration-300 cursor-pointer"
         : ""
     } ${error ? "border-red-500 bg-red-200" : ""} bg-transparent caret-transparent`}
     isClearable={isClearable}

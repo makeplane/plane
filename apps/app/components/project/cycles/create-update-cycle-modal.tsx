@@ -162,6 +162,10 @@ const CreateUpdateCycleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, proj
                           register={register}
                           validations={{
                             required: "Name is required",
+                            maxLength: {
+                              value: 255,
+                              message: "Name should be less than 255 characters",
+                            },
                           }}
                         />
                       </div>
