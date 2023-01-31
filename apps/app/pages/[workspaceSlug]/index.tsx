@@ -199,7 +199,9 @@ const WorkspacePage: NextPage = () => {
                                 {project?.name.charAt(0)}
                               </span>
                             )}
-                            <h3>{project.name}</h3>
+                            <h3 className="w-[150px] lg:w-[225px] text-ellipsis overflow-hidden">
+                              {project.name}
+                            </h3>
                           </div>
                           <div className="text-gray-400">
                             <ArrowRightIcon className="h-4 w-4" />
