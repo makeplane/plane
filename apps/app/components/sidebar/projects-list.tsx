@@ -79,8 +79,10 @@ const ProjectsList: React.FC<Props> = ({ navigation, sidebarCollapse }) => {
                           )}
 
                           {!sidebarCollapse && (
-                            <span className="flex w-full items-center justify-between">
-                              {project?.name}
+                            <span className="flex w-full items-center justify-between ">
+                              <span className="w-[125px] text-ellipsis overflow-hidden">
+                                {project?.name}
+                              </span>
                               <span>
                                 <ChevronDownIcon
                                   className={`h-4 w-4 duration-300 ${open ? "rotate-180" : ""}`}
