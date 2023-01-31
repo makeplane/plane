@@ -1,6 +1,5 @@
-// react
 import React, { useEffect, useState } from "react";
-// next
+
 import Image from "next/image";
 import dynamic from "next/dynamic";
 
@@ -8,14 +7,14 @@ import dynamic from "next/dynamic";
 import { useForm } from "react-hook-form";
 // icons
 import { CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
-// types
-import type { IIssueComment } from "types";
 // hooks
 import useUser from "hooks/use-user";
 // ui
 import { CustomMenu } from "components/ui";
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
+// types
+import type { IIssueComment } from "types";
 
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), { ssr: false });
 
@@ -76,7 +75,7 @@ const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentDeletion
             </span>
             <span>{timeAgo(comment.created_at)}</span>
           </p>
-          <div>
+          <div className="issue-comments-section">
             {isEditing ? (
               <form className="flex flex-col gap-2" onSubmit={handleSubmit(onEnter)}>
                 <RemirrorRichTextEditor

@@ -18,27 +18,17 @@ import AddAsSubIssue from "components/project/issues/issue-detail/add-as-sub-iss
 import IssueDetailSidebar from "components/project/issues/issue-detail/issue-detail-sidebar";
 import AddIssueComment from "components/project/issues/issue-detail/comment/issue-comment-section";
 import IssueActivitySection from "components/project/issues/issue-detail/activity";
-import {
-  IssueDescriptionForm,
-  IssueDescriptionFormValues,
-  SubIssueList,
-  CreateUpdateIssueModal,
-} from "components/issues";
+import { IssueDescriptionForm, SubIssueList, CreateUpdateIssueModal } from "components/issues";
 // ui
-import { Loader, HeaderButton, CustomMenu } from "components/ui";
+import { Loader, CustomMenu } from "components/ui";
 import { Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { ChevronLeftIcon, ChevronRightIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { PlusIcon } from "@heroicons/react/24/outline";
 // types
-import { IIssue } from "types";
+import { IIssue, IssueResponse } from "types";
 import type { NextPage, NextPageContext } from "next";
 // fetch-keys
-import {
-  PROJECT_ISSUES_LIST,
-  PROJECT_ISSUES_ACTIVITY,
-  ISSUE_DETAILS,
-  SUB_ISSUES,
-} from "constants/fetch-keys";
+import { PROJECT_ISSUES_ACTIVITY, ISSUE_DETAILS, SUB_ISSUES } from "constants/fetch-keys";
 
 const defaultValues = {
   name: "",
@@ -81,15 +71,6 @@ const IssueDetailsPage: NextPage = () => {
       : null
   );
 
-  const { data: issues } = useSWR(
-    workspaceSlug && projectId
-      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
-      : null,
-    workspaceSlug && projectId
-      ? () => issuesService.getIssues(workspaceSlug as string, projectId as string)
-      : null
-  );
-
   const { data: issueActivities, mutate: mutateIssueActivities } = useSWR(
     workspaceSlug && projectId && issueId ? PROJECT_ISSUES_ACTIVITY(issueId as string) : null,
     workspaceSlug && projectId && issueId
@@ -102,16 +83,21 @@ const IssueDetailsPage: NextPage = () => {
       : null
   );
 
+  const { data: siblingIssues } = useSWR(
+    workspaceSlug && projectId && issueDetails?.parent ? SUB_ISSUES(issueDetails.parent) : null,
+    workspaceSlug && projectId && issueDetails?.parent
+      ? () =>
+          issuesService.subIssues(
+            workspaceSlug as string,
+            projectId as string,
+            issueDetails.parent ?? ""
+          )
+      : null
+  );
+
   const { reset, control, watch } = useForm<IIssue>({
     defaultValues,
   });
-
-  const prevIssue = issues?.results[issues?.results.findIndex((issue) => issue.id === issueId) - 1];
-  const nextIssue = issues?.results[issues?.results.findIndex((issue) => issue.id === issueId) + 1];
-
-  const siblingIssues =
-    issueDetails &&
-    issues?.results.filter((i) => i.parent === issueDetails.parent && i.id !== issueId);
 
   useEffect(() => {
     if (issueDetails) {
@@ -168,6 +154,23 @@ const IssueDetailsPage: NextPage = () => {
       .then((res) => {
         mutate(SUB_ISSUES(issueDetails?.id ?? ""));
         mutateIssueActivities();
+
+        mutate<IssueResponse>(
+          PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
+          (prevData) => ({
+            ...(prevData as IssueResponse),
+            results: (prevData?.results ?? []).map((p) => {
+              if (p.id === res.id)
+                return {
+                  ...p,
+                  ...res,
+                };
+
+              return p;
+            }),
+          }),
+          false
+        );
       })
       .catch((e) => {
         console.error(e);
@@ -190,32 +193,6 @@ const IssueDetailsPage: NextPage = () => {
             } Details`}
           />
         </Breadcrumbs>
-      }
-      right={
-        <div className="flex items-center gap-2">
-          <HeaderButton
-            Icon={ChevronLeftIcon}
-            label="Previous"
-            className={!prevIssue ? "cursor-not-allowed opacity-70" : ""}
-            onClick={() => {
-              if (!prevIssue) return;
-              router.push(`/${workspaceSlug}/projects/${prevIssue.project}/issues/${prevIssue.id}`);
-            }}
-          />
-          <HeaderButton
-            Icon={ChevronRightIcon}
-            disabled={!nextIssue}
-            label="Next"
-            className={!nextIssue ? "cursor-not-allowed opacity-70" : ""}
-            onClick={() => {
-              if (!nextIssue) return;
-              router.push(
-                `/${workspaceSlug}/projects/${nextIssue.project}/issues/${nextIssue?.id}`
-              );
-            }}
-            position="reverse"
-          />
-        </div>
       }
     >
       {isOpen && (
@@ -254,19 +231,17 @@ const IssueDetailsPage: NextPage = () => {
                       />
                       <span className="flex-shrink-0 text-gray-600">
                         {issueDetails.project_detail.identifier}-
-                        {issues?.results.find((i) => i.id === issueDetails.parent)?.sequence_id}
+                        {issueDetails.parent_detail?.sequence_id}
                       </span>
                       <span className="truncate font-medium">
-                        {issues?.results
-                          .find((i) => i.id === issueDetails.parent)
-                          ?.name.substring(0, 50)}
+                        {issueDetails.parent_detail?.name.substring(0, 50)}
                       </span>
                     </a>
                   </Link>
 
                   <CustomMenu ellipsis optionsPosition="left">
                     {siblingIssues && siblingIssues.length > 0 ? (
-                      siblingIssues.map((issue) => (
+                      siblingIssues.map((issue: IIssue) => (
                         <CustomMenu.MenuItem key={issue.id}>
                           <Link
                             href={`/${workspaceSlug}/projects/${projectId as string}/issues/${

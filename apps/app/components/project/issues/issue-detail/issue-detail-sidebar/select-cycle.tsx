@@ -1,21 +1,21 @@
-// react
 import React from "react";
 
 import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 
+// react-hook-form
 import { UseFormWatch } from "react-hook-form";
-// constants
-import { ArrowPathIcon } from "@heroicons/react/24/outline";
 // services
 import issuesService from "services/issues.service";
 import cyclesService from "services/cycles.service";
 // ui
 import { Spinner, CustomSelect } from "components/ui";
 // icons
+import { CyclesIcon } from "components/icons";
 // types
 import { ICycle, IIssue } from "types";
+// fetch-keys
 import { CYCLE_ISSUES, CYCLE_LIST, ISSUE_DETAILS } from "constants/fetch-keys";
 
 type Props = {
@@ -55,7 +55,7 @@ const SelectCycle: React.FC<Props> = ({ issueDetail, handleCycleChange }) => {
   return (
     <div className="flex flex-wrap items-center py-2">
       <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
-        <ArrowPathIcon className="h-4 w-4 flex-shrink-0" />
+        <CyclesIcon className="h-4 w-4 flex-shrink-0" />
         <p>Cycle</p>
       </div>
       <div className="space-y-1 sm:basis-1/2">

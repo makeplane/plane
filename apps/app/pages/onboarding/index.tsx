@@ -48,7 +48,7 @@ const Onboarding: NextPage = () => {
             )}
           </div>
         ) : (
-          <div className="h-3/5 w-full rounded-lg bg-white px-8 py-10 text-center md:w-1/2">
+          <div className="h-max min-h-[360px] w-full rounded-lg bg-white px-8 py-10 text-center md:w-1/2">
             <div className="h-3/4 w-full">
               {step === 4 ? (
                 <Welcome />

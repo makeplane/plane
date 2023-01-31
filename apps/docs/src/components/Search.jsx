@@ -41,7 +41,7 @@ function useAutocomplete() {
               return item.query
             },
             getItemUrl({ item }) {
-              let url = new URL(item.url)
+              const url = new URL(item.url)
               return `${url.pathname}${url.hash}`
             },
             onSelect({ itemUrl }) {

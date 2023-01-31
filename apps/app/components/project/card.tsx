@@ -52,7 +52,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = (props) => {
                 {project.icon && (
                   <span className="text-base">{String.fromCodePoint(parseInt(project.icon))}</span>
                 )}
-                <span className="w-3/4 max-w-[225px] md:max-w-[140px] xl:max-w-[225px] text-ellipsis overflow-hidden">
+                <span className=" max-w-[225px] w-[125px] xl:max-w-[225px] text-ellipsis overflow-hidden">
                   {project.name}
                 </span>
                 <span className="text-xs text-gray-500 ">{project.identifier}</span>

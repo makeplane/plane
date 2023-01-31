@@ -7,7 +7,8 @@ import useSWR from "swr";
 // headless ui
 import { Listbox, Transition } from "@headlessui/react";
 // icons
-import { PlusIcon, ArrowPathIcon } from "@heroicons/react/24/outline";
+import { PlusIcon } from "@heroicons/react/24/outline";
+import { CyclesIcon } from "components/icons";
 // services
 import cycleServices from "services/cycles.service";
 // components
@@ -65,7 +66,7 @@ export const CycleSelect: React.FC<IssueCycleSelectProps> = ({
             <Listbox.Button
               className={`flex cursor-pointer items-center gap-1 rounded-md border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500`}
             >
-              <ArrowPathIcon className="h-3 w-3 text-gray-500" />
+              <CyclesIcon className="h-3 w-3 text-gray-500" />
               <div className="flex items-center gap-2 truncate">
                 {cycles?.find((c) => c.id === value)?.name ?? "Cycles"}
               </div>
