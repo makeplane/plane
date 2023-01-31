@@ -75,6 +75,11 @@ const SignInPage: NextPage = () => {
       })
       .catch((err) => {
         console.log(err);
+        setToastAlert({
+          title: "Error signing in!",
+          type: "error",
+          message: "Something went wrong. Please try again later or contact the support team.",
+        });
         setLoading(false);
       });
   };

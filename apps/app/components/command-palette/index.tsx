@@ -105,6 +105,8 @@ const CommandPalette: React.FC = () => {
         if ((e.ctrlKey || e.metaKey) && e.key === "k") {
           e.preventDefault();
           setIsPaletteOpen(true);
+        } else if (e.ctrlKey && e.key === "c") {
+          console.log("Text copied");
         } else if (e.key === "c") {
           e.preventDefault();
           setIsIssueModalOpen(true);
@@ -128,24 +130,23 @@ const CommandPalette: React.FC = () => {
           setIsBulkDeleteIssuesModalOpen(true);
         } else if ((e.ctrlKey || e.metaKey) && e.altKey && e.key === "c") {
           e.preventDefault();
+          if (!router.query.issueId) return;
+
+          const url = new URL(window.location.href);
+          copyTextToClipboard(url.href)
+            .then(() => {
+              setToastAlert({
+                type: "success",
+                title: "Copied to clipboard",
+              });
+            })
+            .catch(() => {
+              setToastAlert({
+                type: "error",
+                title: "Some error occurred",
+              });
+            });
         }
-
-        if (!router.query.issueId) return;
-
-        const url = new URL(window.location.href);
-        copyTextToClipboard(url.href)
-          .then(() => {
-            setToastAlert({
-              type: "success",
-              title: "Copied to clipboard",
-            });
-          })
-          .catch(() => {
-            setToastAlert({
-              type: "error",
-              title: "Some error occurred",
-            });
-          });
       }
     },
     [toggleCollapsed, setToastAlert, router]

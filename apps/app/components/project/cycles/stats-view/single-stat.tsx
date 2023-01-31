@@ -71,7 +71,9 @@ const SingleStat: React.FC<TSingleStatProps> = (props) => {
             <div className="flex items-center justify-between gap-2">
               <Link href={`/${workspaceSlug}/projects/${projectId as string}/cycles/${cycle.id}`}>
                 <a>
-                  <h2 className="font-medium">{cycle.name}</h2>
+                  <h2 className="font-medium w-full max-w-[175px] lg:max-w-[225px] xl:max-w-[300px]  text-ellipsis overflow-hidden">
+                    {cycle.name}
+                  </h2>
                 </a>
               </Link>
               <CustomMenu width="auto" ellipsis>
