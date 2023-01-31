@@ -28,7 +28,12 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 import { IIssue, IssueResponse } from "types";
 import type { NextPage, NextPageContext } from "next";
 // fetch-keys
-import { PROJECT_ISSUES_ACTIVITY, ISSUE_DETAILS, SUB_ISSUES } from "constants/fetch-keys";
+import {
+  PROJECT_ISSUES_ACTIVITY,
+  ISSUE_DETAILS,
+  SUB_ISSUES,
+  PROJECT_ISSUES_LIST,
+} from "constants/fetch-keys";
 
 const defaultValues = {
   name: "",
