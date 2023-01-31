@@ -5,6 +5,7 @@ import { CheckCircleIcon } from "@heroicons/react/20/solid";
 import { Button, Input } from "components/ui";
 // services
 import authenticationService from "services/authentication.service";
+import useToast from "hooks/use-toast";
 // icons
 
 // types
@@ -16,6 +17,7 @@ type EmailCodeFormValues = {
 
 export const EmailCodeForm = ({ onSuccess }: any) => {
   const [codeSent, setCodeSent] = useState(false);
+  const { setToastAlert } = useToast();
   const {
     register,
     handleSubmit,
@@ -53,6 +55,11 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
       })
       .catch((error) => {
         console.log(error);
+        setToastAlert({
+          title: "Oops!",
+          type: "error",
+          message: "Enter the correct code to sign in",
+        });
         setError("token" as keyof EmailCodeFormValues, {
           type: "manual",
           message: error.error,
