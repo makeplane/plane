@@ -98,7 +98,7 @@ const Sidebar: React.FC<Props> = ({ toggleSidebar, setToggleSidebar }) => {
             <WorkspaceOptions sidebarCollapse={sidebarCollapse} />
             <ProjectsList navigation={navigation} sidebarCollapse={sidebarCollapse} />
             <div
-              className={`flex w-full items-center self-baseline bg-primary px-2 py-2 ${
+              className={`flex w-full items-center justify-between self-baseline bg-primary px-2 py-2 ${
                 sidebarCollapse ? "flex-col-reverse" : ""
               }`}
             >
