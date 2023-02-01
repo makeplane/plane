@@ -33,6 +33,10 @@ CORS_ORIGIN_WHITELIST = [
 DATABASES["default"] = dj_database_url.config()
 SITE_ID = 1
 
+DOCKERIZED = os.environ.get(
+    "DOCKERIZED", False
+)  # Set the variable true if running in docker-compose environment
+
 # Enable Connection Pooling (if desired)
 # DATABASES['default']['ENGINE'] = 'django_postgrespool'
 
@@ -152,7 +156,7 @@ if (
 
 else:
     MEDIA_URL = "/static/"
-    MEDIA_ROOT = os.path.join(BASE_DIR, "static")
+    MEDIA_ROOT = "/tmp/static/"
 
 
 # Enable Connection Pooling (if desired)
@@ -176,16 +180,27 @@ CSRF_COOKIE_SECURE = True
 
 REDIS_URL = os.environ.get("REDIS_URL")
 
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": REDIS_URL,
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "CONNECTION_POOL_KWARGS": {"ssl_cert_reqs": False},
-        },
+if DOCKERIZED:
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": REDIS_URL,
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            },
+        }
     }
-}
+else:
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": REDIS_URL,
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+                "CONNECTION_POOL_KWARGS": {"ssl_cert_reqs": False},
+            },
+        }
+    }
 
 RQ_QUEUES = {
     "default": {
@@ -196,8 +211,5 @@ RQ_QUEUES = {
 
 url = urlparse(os.environ.get("REDIS_URL"))
 
-DOCKERIZED = os.environ.get(
-    "DOCKERIZED", False
-)  # Set the variable true if running in docker-compose environment
 
 WEB_URL = os.environ.get("WEB_URL")
