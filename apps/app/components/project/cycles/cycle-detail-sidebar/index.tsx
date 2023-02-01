@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 
 import { useRouter } from "next/router";
+import Image from "next/image";
 
 import { mutate } from "swr";
 
@@ -129,14 +130,28 @@ const CycleDetailSidebar: React.FC<Props> = ({ cycle, isOpen, cycleIssues }) => 
                   <UserIcon className="h-4 w-4 flex-shrink-0" />
                   <p>Owned by</p>
                 </div>
-                <div className="sm:basis-1/2">
-                  {cycle.owned_by.first_name !== "" ? (
-                    <>
-                      {cycle.owned_by.first_name} {cycle.owned_by.last_name}
-                    </>
-                  ) : (
-                    cycle.owned_by.email
-                  )}
+                <div className="sm:basis-1/2 flex items-center gap-1">
+                  {cycle.owned_by &&
+                    (cycle.owned_by.avatar && cycle.owned_by.avatar !== "" ? (
+                      <div className="h-5 w-5 rounded-full border-2 border-transparent">
+                        <Image
+                          src={cycle.owned_by.avatar}
+                          height="100%"
+                          width="100%"
+                          className="rounded-full"
+                          alt={cycle.owned_by?.first_name}
+                        />
+                      </div>
+                    ) : (
+                      <div className="grid h-5 w-5 place-items-center rounded-full border-2 border-white bg-gray-700 capitalize text-white">
+                        {cycle.owned_by?.first_name && cycle.owned_by.first_name !== ""
+                          ? cycle.owned_by.first_name.charAt(0)
+                          : cycle.owned_by?.email.charAt(0)}
+                      </div>
+                    ))}
+                  {cycle.owned_by.first_name !== ""
+                    ? cycle.owned_by.first_name
+                    : cycle.owned_by.email}
                 </div>
               </div>
               <div className="flex flex-wrap items-center py-2">
@@ -171,13 +186,11 @@ const CycleDetailSidebar: React.FC<Props> = ({ cycle, isOpen, cycleIssues }) => 
                     render={({ field: { value } }) => (
                       <CustomDatePicker
                         value={value}
-                        onChange={(val: Date) => {
+                        onChange={(val) =>
                           submitChanges({
-                            start_date: val
-                              ? `${val.getFullYear()}-${val.getMonth() + 1}-${val.getDate()}`
-                              : null,
-                          });
-                        }}
+                            start_date: val,
+                          })
+                        }
                         isClearable={false}
                       />
                     )}
@@ -196,13 +209,11 @@ const CycleDetailSidebar: React.FC<Props> = ({ cycle, isOpen, cycleIssues }) => 
                     render={({ field: { value } }) => (
                       <CustomDatePicker
                         value={value}
-                        onChange={(val: Date) => {
+                        onChange={(val) =>
                           submitChanges({
-                            end_date: val
-                              ? `${val.getFullYear()}-${val.getMonth() + 1}-${val.getDate()}`
-                              : null,
-                          });
-                        }}
+                            end_date: val,
+                          })
+                        }
                         isClearable={false}
                       />
                     )}

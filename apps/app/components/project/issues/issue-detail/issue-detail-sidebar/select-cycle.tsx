@@ -4,8 +4,6 @@ import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 
-// react-hook-form
-import { UseFormWatch } from "react-hook-form";
 // services
 import issuesService from "services/issues.service";
 import cyclesService from "services/cycles.service";
@@ -14,17 +12,17 @@ import { Spinner, CustomSelect } from "components/ui";
 // icons
 import { CyclesIcon } from "components/icons";
 // types
-import { ICycle, IIssue } from "types";
+import { ICycle, IIssue, UserAuth } from "types";
 // fetch-keys
 import { CYCLE_ISSUES, CYCLE_LIST, ISSUE_DETAILS } from "constants/fetch-keys";
 
 type Props = {
   issueDetail: IIssue | undefined;
   handleCycleChange: (cycle: ICycle) => void;
-  watch: UseFormWatch<IIssue>;
+  userAuth: UserAuth;
 };
 
-const SelectCycle: React.FC<Props> = ({ issueDetail, handleCycleChange }) => {
+const SelectCycle: React.FC<Props> = ({ issueDetail, handleCycleChange, userAuth }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
@@ -52,6 +50,8 @@ const SelectCycle: React.FC<Props> = ({ issueDetail, handleCycleChange }) => {
 
   const issueCycle = issueDetail?.issue_cycle;
 
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+
   return (
     <div className="flex flex-wrap items-center py-2">
       <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
@@ -73,6 +73,7 @@ const SelectCycle: React.FC<Props> = ({ issueDetail, handleCycleChange }) => {
               ? removeIssueFromCycle(issueCycle?.id ?? "", issueCycle?.cycle ?? "")
               : handleCycleChange(cycles?.find((c) => c.id === value) as any);
           }}
+          disabled={isNotAllowed}
         >
           {cycles ? (
             cycles.length > 0 ? (

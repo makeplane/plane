@@ -88,7 +88,7 @@ export const ProjectSidebarList: FC = () => {
                           }`}
                         >
                           {project.icon ? (
-                            <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase text-white">
+                            <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
                               {String.fromCodePoint(parseInt(project.icon))}
                             </span>
                           ) : (

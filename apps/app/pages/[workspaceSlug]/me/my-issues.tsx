@@ -98,8 +98,7 @@ const MyIssuesPage: NextPage = () => {
             label="Add Issue"
             onClick={() => {
               const e = new KeyboardEvent("keydown", {
-                key: "i",
-                ctrlKey: true,
+                key: "c",
               });
 
               document.dispatchEvent(e);
@@ -170,8 +169,7 @@ const MyIssuesPage: NextPage = () => {
                     Icon={PlusIcon}
                     action={() => {
                       const e = new KeyboardEvent("keydown", {
-                        key: "i",
-                        ctrlKey: true,
+                        key: "c",
                       });
                       document.dispatchEvent(e);
                     }}

@@ -39,8 +39,8 @@ const CustomSelect = ({
     <div>
       <Listbox.Button
         className={`flex w-full ${
-          disabled ? "cursor-not-allowed" : "cursor-pointer"
-        } items-center justify-between gap-1 rounded-md border shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
+          disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-gray-100"
+        } items-center justify-between gap-1 rounded-md border shadow-sm duration-300 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
           input ? "border-gray-300 px-3 py-2 text-sm" : "px-2 py-1 text-xs"
         } ${
           textAlignment === "right"
@@ -51,7 +51,7 @@ const CustomSelect = ({
         }`}
       >
         {label}
-        {!noChevron && <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />}
+        {!noChevron && !disabled && <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />}
       </Listbox.Button>
     </div>
 

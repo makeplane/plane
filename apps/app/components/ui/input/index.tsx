@@ -39,6 +39,8 @@ export const Input: React.FC<Props> = ({
           ? "rounded-md border border-gray-300"
           : mode === "transparent"
           ? "rounded border-none bg-transparent ring-0 transition-all focus:ring-1 focus:ring-indigo-500"
+          : mode === "trueTransparent"
+          ? "rounded border-none bg-transparent ring-0"
           : ""
       } ${error ? "border-red-500" : ""} ${error && mode === "primary" ? "bg-red-100" : ""} ${
         fullWidth ? "w-full" : ""

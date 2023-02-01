@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 
 import { mutate } from "swr";
 
+// react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // services
 import {
@@ -160,7 +161,11 @@ const ModuleDetailSidebar: React.FC<Props> = ({
             </div>
             <div className="divide-y-2 divide-gray-100 text-xs">
               <div className="py-1">
-                <SelectLead control={control} submitChanges={submitChanges} />
+                <SelectLead
+                  control={control}
+                  submitChanges={submitChanges}
+                  lead={module.lead_detail}
+                />
                 <SelectMembers control={control} submitChanges={submitChanges} />
                 <div className="flex flex-wrap items-center py-2">
                   <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
@@ -194,13 +199,11 @@ const ModuleDetailSidebar: React.FC<Props> = ({
                       render={({ field: { value } }) => (
                         <CustomDatePicker
                           value={value}
-                          onChange={(val: Date) => {
+                          onChange={(val) =>
                             submitChanges({
-                              start_date: val
-                                ? `${val.getFullYear()}-${val.getMonth() + 1}-${val.getDate()}`
-                                : null,
-                            });
-                          }}
+                              start_date: val,
+                            })
+                          }
                         />
                       )}
                     />
@@ -218,13 +221,11 @@ const ModuleDetailSidebar: React.FC<Props> = ({
                       render={({ field: { value } }) => (
                         <CustomDatePicker
                           value={value}
-                          onChange={(val: Date) => {
+                          onChange={(val) =>
                             submitChanges({
-                              target_date: val
-                                ? `${val.getFullYear()}-${val.getMonth() + 1}-${val.getDate()}`
-                                : null,
-                            });
-                          }}
+                              target_date: val,
+                            })
+                          }
                         />
                       )}
                     />

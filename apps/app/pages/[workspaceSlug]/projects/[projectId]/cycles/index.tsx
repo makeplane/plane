@@ -99,7 +99,6 @@ const ProjectCycles: NextPage = () => {
           label="Add Cycle"
           onClick={() => {
             const e = new KeyboardEvent("keydown", {
-              ctrlKey: true,
               key: "q",
             });
             document.dispatchEvent(e);
@@ -185,7 +184,6 @@ const ProjectCycles: NextPage = () => {
                 Icon={PlusIcon}
                 action={() => {
                   const e = new KeyboardEvent("keydown", {
-                    ctrlKey: true,
                     key: "q",
                   });
                   document.dispatchEvent(e);

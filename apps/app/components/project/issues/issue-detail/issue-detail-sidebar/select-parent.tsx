@@ -13,7 +13,7 @@ import issuesServices from "services/issues.service";
 import IssuesListModal from "components/project/issues/issues-list-modal";
 // icons
 // types
-import { IIssue } from "types";
+import { IIssue, UserAuth } from "types";
 // fetch-keys
 import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 
@@ -23,6 +23,7 @@ type Props = {
   issuesList: IIssue[];
   customDisplay: JSX.Element;
   watch: UseFormWatch<IIssue>;
+  userAuth: UserAuth;
 };
 
 const SelectParent: React.FC<Props> = ({
@@ -31,6 +32,7 @@ const SelectParent: React.FC<Props> = ({
   issuesList,
   customDisplay,
   watch,
+  userAuth,
 }) => {
   const [isParentModalOpen, setIsParentModalOpen] = useState(false);
 
@@ -45,6 +47,8 @@ const SelectParent: React.FC<Props> = ({
       ? () => issuesServices.getIssues(workspaceSlug as string, projectId as string)
       : null
   );
+
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   return (
     <div className="flex flex-wrap items-center py-2">
@@ -73,8 +77,11 @@ const SelectParent: React.FC<Props> = ({
         />
         <button
           type="button"
-          className="flex w-full cursor-pointer items-center justify-between gap-1 rounded-md border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          className={`flex w-full ${
+            isNotAllowed ? "cursor-not-allowed" : "cursor-pointer hover:bg-gray-100"
+          } items-center justify-between gap-1 rounded-md border px-2 py-1 text-xs shadow-sm duration-300 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500`}
           onClick={() => setIsParentModalOpen(true)}
+          disabled={isNotAllowed}
         >
           {watch("parent") && watch("parent") !== ""
             ? `${
