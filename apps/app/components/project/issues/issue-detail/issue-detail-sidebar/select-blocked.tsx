@@ -19,7 +19,7 @@ import { Button } from "components/ui";
 import { FolderIcon, MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { BlockedIcon, LayerDiagonalIcon } from "components/icons";
 // types
-import { IIssue } from "types";
+import { IIssue, UserAuth } from "types";
 // fetch-keys
 import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 
@@ -31,9 +31,10 @@ type Props = {
   submitChanges: (formData: Partial<IIssue>) => void;
   issuesList: IIssue[];
   watch: UseFormWatch<IIssue>;
+  userAuth: UserAuth;
 };
 
-const SelectBlocked: React.FC<Props> = ({ submitChanges, issuesList, watch }) => {
+const SelectBlocked: React.FC<Props> = ({ submitChanges, issuesList, watch, userAuth }) => {
   const [query, setQuery] = useState("");
   const [isBlockedModalOpen, setIsBlockedModalOpen] = useState(false);
 
@@ -94,6 +95,8 @@ const SelectBlocked: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
               .toLowerCase()
               .includes(query.toLowerCase())
         );
+
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   return (
     <div className="flex flex-wrap items-start py-2">
@@ -266,16 +269,18 @@ const SelectBlocked: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
                       </Combobox.Options>
                     </Combobox>
 
-                    <div className="flex items-center justify-end gap-2 p-3">
-                      <div>
-                        <Button type="button" theme="secondary" size="sm" onClick={handleClose}>
-                          Close
+                    {filteredIssues.length > 0 && (
+                      <div className="flex items-center justify-end gap-2 p-3">
+                        <div>
+                          <Button type="button" theme="secondary" size="sm" onClick={handleClose}>
+                            Close
+                          </Button>
+                        </div>
+                        <Button onClick={handleSubmit(onSubmit)} size="sm">
+                          Add selected issues
                         </Button>
                       </div>
-                      <Button onClick={handleSubmit(onSubmit)} size="sm">
-                        Add selected issues
-                      </Button>
-                    </div>
+                    )}
                   </form>
                 </Dialog.Panel>
               </Transition.Child>
@@ -284,8 +289,11 @@ const SelectBlocked: React.FC<Props> = ({ submitChanges, issuesList, watch }) =>
         </Transition.Root>
         <button
           type="button"
-          className="flex w-full cursor-pointer items-center justify-between gap-1 rounded-md border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          className={`flex w-full ${
+            isNotAllowed ? "cursor-not-allowed" : "cursor-pointer hover:bg-gray-100"
+          } items-center justify-between gap-1 rounded-md border px-2 py-1 text-xs shadow-sm duration-300 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500`}
           onClick={() => setIsBlockedModalOpen(true)}
+          disabled={isNotAllowed}
         >
           Select issues
         </button>

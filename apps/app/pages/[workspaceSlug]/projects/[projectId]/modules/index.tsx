@@ -58,7 +58,6 @@ const ProjectModules: NextPage = () => {
           label="Add Module"
           onClick={() => {
             const e = new KeyboardEvent("keydown", {
-              ctrlKey: true,
               key: "m",
             });
             document.dispatchEvent(e);
@@ -93,7 +92,6 @@ const ProjectModules: NextPage = () => {
                 Icon={PlusIcon}
                 action={() => {
                   const e = new KeyboardEvent("keydown", {
-                    ctrlKey: true,
                     key: "m",
                   });
                   document.dispatchEvent(e);

@@ -125,18 +125,19 @@ const SingleModule: React.FC<UserAuth> = (props) => {
     ...issue.issue_detail,
     sub_issues_count: issue.sub_issues_count,
     bridge: issue.id,
+    module: moduleId as string,
   }));
 
-  const handleAddIssuesToModule = (data: { issues: string[] }) => {
-    if (workspaceSlug && projectId) {
-      modulesService
-        .addIssuesToModule(workspaceSlug as string, projectId as string, moduleId as string, data)
-        .then((res) => {
-          console.log(res);
-          mutate(MODULE_ISSUES(moduleId as string));
-        })
-        .catch((e) => console.log(e));
-    }
+  const handleAddIssuesToModule = async (data: { issues: string[] }) => {
+    if (!workspaceSlug || !projectId) return;
+
+    await modulesService
+      .addIssuesToModule(workspaceSlug as string, projectId as string, moduleId as string, data)
+      .then((res) => {
+        console.log(res);
+        mutate(MODULE_ISSUES(moduleId as string));
+      })
+      .catch((e) => console.log(e));
   };
 
   const openCreateIssueModal = (

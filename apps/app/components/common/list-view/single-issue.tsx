@@ -5,9 +5,6 @@ import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 
-// react-datepicker
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 // services
 import issuesService from "services/issues.service";
 import workspaceService from "services/workspace.service";
@@ -18,13 +15,19 @@ import { Listbox, Transition } from "@headlessui/react";
 import { CustomMenu, CustomSelect, AssigneesList, Avatar, CustomDatePicker } from "components/ui";
 // components
 import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
-// icons
-import { CalendarDaysIcon } from "@heroicons/react/24/outline";
 // helpers
 import { renderShortNumericDateFormat, findHowManyDaysLeft } from "helpers/date-time.helper";
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
-import { IIssue, IWorkspaceMember, Properties, UserAuth } from "types";
+import {
+  CycleIssueResponse,
+  IIssue,
+  IssueResponse,
+  IWorkspaceMember,
+  ModuleIssueResponse,
+  Properties,
+  UserAuth,
+} from "types";
 // fetch-keys
 import {
   CYCLE_ISSUES,
@@ -75,6 +78,60 @@ const SingleListIssue: React.FC<Props> = ({
 
   const partialUpdateIssue = (formData: Partial<IIssue>) => {
     if (!workspaceSlug || !projectId) return;
+
+    if (typeId) {
+      mutate<CycleIssueResponse[]>(
+        CYCLE_ISSUES(typeId ?? ""),
+        (prevData) => {
+          const updatedIssues = (prevData ?? []).map((p) => {
+            if (p.issue_detail.id === issue.id) {
+              return {
+                ...p,
+                issue_detail: {
+                  ...p.issue_detail,
+                  ...formData,
+                },
+              };
+            }
+            return p;
+          });
+          return [...updatedIssues];
+        },
+        false
+      );
+
+      mutate<ModuleIssueResponse[]>(
+        MODULE_ISSUES(typeId ?? ""),
+        (prevData) => {
+          const updatedIssues = (prevData ?? []).map((p) => {
+            if (p.issue_detail.id === issue.id) {
+              return {
+                ...p,
+                issue_detail: {
+                  ...p.issue_detail,
+                  ...formData,
+                },
+              };
+            }
+            return p;
+          });
+          return [...updatedIssues];
+        },
+        false
+      );
+    }
+
+    mutate<IssueResponse>(
+      PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
+      (prevData) => ({
+        ...(prevData as IssueResponse),
+        results: (prevData?.results ?? []).map((p) => {
+          if (p.id === issue.id) return { ...p, ...formData };
+          return p;
+        }),
+      }),
+      false
+    );
 
     issuesService
       .patchIssue(workspaceSlug as string, projectId as string, issue.id, formData)
@@ -255,44 +312,24 @@ const SingleListIssue: React.FC<Props> = ({
               <CustomDatePicker
                 placeholder="N/A"
                 value={issue?.target_date}
-                onChange={(val: Date) => {
+                onChange={(val) =>
                   partialUpdateIssue({
-                    target_date: val
-                      ? `${val.getFullYear()}-${val.getMonth() + 1}-${val.getDate()}`
-                      : null,
-                  });
-                }}
+                    target_date: val,
+                  })
+                }
                 className={issue?.target_date ? "w-[6.5rem]" : "w-[3rem] text-center"}
               />
-              {/* <DatePicker
-                placeholderText="N/A"
-                value={
-                  issue?.target_date ? `${renderShortNumericDateFormat(issue.target_date)}` : "N/A"
-                }
-                selected={issue?.target_date ? new Date(issue.target_date) : null}
-                onChange={(val: Date) => {
-                  partialUpdateIssue({
-                    target_date: val
-                      ? `${val.getFullYear()}-${val.getMonth() + 1}-${val.getDate()}`
-                      : null,
-                  });
-                }}
-                dateFormat="dd-MM-yyyy"
-                className={`cursor-pointer rounded-md border px-2 py-[3px] text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
-                  issue?.target_date ? "w-[4.5rem]" : "w-[3rem] text-center"
-                }`}
-                isClearable
-              /> */}
               <div className="absolute bottom-full right-0 z-10 mb-2 hidden whitespace-nowrap rounded-md bg-white p-2 shadow-md group-hover:block">
                 <h5 className="mb-1 font-medium text-gray-900">Due date</h5>
                 <div>{renderShortNumericDateFormat(issue.target_date ?? "")}</div>
                 <div>
-                  {issue.target_date &&
-                    (issue.target_date < new Date().toISOString()
+                  {issue.target_date
+                    ? issue.target_date < new Date().toISOString()
                       ? `Due date has passed by ${findHowManyDaysLeft(issue.target_date)} days`
                       : findHowManyDaysLeft(issue.target_date) <= 3
                       ? `Due date is in ${findHowManyDaysLeft(issue.target_date)} days`
-                      : "Due date")}
+                      : "Due date"
+                    : "N/A"}
                 </div>
               </div>
             </div>

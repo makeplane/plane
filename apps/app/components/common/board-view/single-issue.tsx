@@ -25,7 +25,16 @@ import { AssigneesList, CustomDatePicker } from "components/ui";
 import { renderShortNumericDateFormat, findHowManyDaysLeft } from "helpers/date-time.helper";
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
-import { IIssue, IUserLite, IWorkspaceMember, Properties, UserAuth } from "types";
+import {
+  CycleIssueResponse,
+  IIssue,
+  IssueResponse,
+  IUserLite,
+  IWorkspaceMember,
+  ModuleIssueResponse,
+  Properties,
+  UserAuth,
+} from "types";
 // common
 import { PRIORITIES } from "constants/";
 import {
@@ -79,6 +88,60 @@ const SingleBoardIssue: React.FC<Props> = ({
 
   const partialUpdateIssue = (formData: Partial<IIssue>) => {
     if (!workspaceSlug || !projectId) return;
+
+    if (typeId) {
+      mutate<CycleIssueResponse[]>(
+        CYCLE_ISSUES(typeId ?? ""),
+        (prevData) => {
+          const updatedIssues = (prevData ?? []).map((p) => {
+            if (p.issue_detail.id === issue.id) {
+              return {
+                ...p,
+                issue_detail: {
+                  ...p.issue_detail,
+                  ...formData,
+                },
+              };
+            }
+            return p;
+          });
+          return [...updatedIssues];
+        },
+        false
+      );
+
+      mutate<ModuleIssueResponse[]>(
+        MODULE_ISSUES(typeId ?? ""),
+        (prevData) => {
+          const updatedIssues = (prevData ?? []).map((p) => {
+            if (p.issue_detail.id === issue.id) {
+              return {
+                ...p,
+                issue_detail: {
+                  ...p.issue_detail,
+                  ...formData,
+                },
+              };
+            }
+            return p;
+          });
+          return [...updatedIssues];
+        },
+        false
+      );
+    }
+
+    mutate<IssueResponse>(
+      PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
+      (prevData) => ({
+        ...(prevData as IssueResponse),
+        results: (prevData?.results ?? []).map((p) => {
+          if (p.id === issue.id) return { ...p, ...formData };
+          return p;
+        }),
+      }),
+      false
+    );
 
     issuesService
       .patchIssue(workspaceSlug as string, projectId as string, issue.id, formData)
@@ -270,13 +333,11 @@ const SingleBoardIssue: React.FC<Props> = ({
               <CustomDatePicker
                 placeholder="N/A"
                 value={issue?.target_date}
-                onChange={(val: Date) => {
+                onChange={(val) =>
                   partialUpdateIssue({
-                    target_date: val
-                      ? `${val.getFullYear()}-${val.getMonth() + 1}-${val.getDate()}`
-                      : null,
-                  });
-                }}
+                    target_date: val,
+                  })
+                }
                 className={issue?.target_date ? "w-[6.5rem]" : "w-[3rem] text-center"}
               />
               {/* <DatePicker

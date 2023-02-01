@@ -5,29 +5,29 @@ import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
+// react-hook-form
 import { Control, Controller } from "react-hook-form";
-// services
+// headless ui
 import { Listbox, Transition } from "@headlessui/react";
+// services
 import { UserGroupIcon } from "@heroicons/react/24/outline";
 import workspaceService from "services/workspace.service";
 // hooks
-// headless ui
 // ui
 import { AssigneesList } from "components/ui/avatar";
 import { Spinner } from "components/ui";
-// icons
-import User from "public/user.png";
 // types
-import { IIssue } from "types";
+import { IIssue, UserAuth } from "types";
 // constants
 import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 
 type Props = {
   control: Control<IIssue, any>;
   submitChanges: (formData: Partial<IIssue>) => void;
+  userAuth: UserAuth;
 };
 
-const SelectAssignee: React.FC<Props> = ({ control, submitChanges }) => {
+const SelectAssignee: React.FC<Props> = ({ control, submitChanges, userAuth }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -35,6 +35,8 @@ const SelectAssignee: React.FC<Props> = ({ control, submitChanges }) => {
     workspaceSlug ? WORKSPACE_MEMBERS(workspaceSlug as string) : null,
     workspaceSlug ? () => workspaceService.workspaceMembers(workspaceSlug as string) : null
   );
+
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   return (
     <div className="flex flex-wrap items-center py-2">
@@ -55,16 +57,21 @@ const SelectAssignee: React.FC<Props> = ({ control, submitChanges }) => {
                 submitChanges({ assignees_list: value });
               }}
               className="flex-shrink-0"
+              disabled={isNotAllowed}
             >
               {({ open }) => (
                 <div className="relative">
-                  <Listbox.Button className="flex w-full cursor-pointer items-center gap-1 text-xs">
+                  <Listbox.Button
+                    className={`flex w-full ${
+                      isNotAllowed ? "cursor-not-allowed" : "cursor-pointer"
+                    } items-center gap-1 text-xs`}
+                  >
                     <span
                       className={`hidden truncate text-left sm:block ${
                         value ? "" : "text-gray-900"
                       }`}
                     >
-                      <div className="flex cursor-pointer items-center gap-1 text-xs">
+                      <div className="flex items-center gap-1 text-xs">
                         {value && Array.isArray(value) ? (
                           <AssigneesList userIds={value} length={10} />
                         ) : null}
@@ -82,7 +89,7 @@ const SelectAssignee: React.FC<Props> = ({ control, submitChanges }) => {
                     leaveFrom="transform opacity-100 scale-100"
                     leaveTo="transform opacity-0 scale-95"
                   >
-                    <Listbox.Options className="absolute left-0 z-10 mt-1 max-h-48 w-auto overflow-auto rounded-md bg-white py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <Listbox.Options className="absolute left-0 z-10 mt-1 max-h-48 w-full overflow-auto rounded-md bg-white py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                       <div className="py-1">
                         {people ? (
                           people.length > 0 ? (

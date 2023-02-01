@@ -25,9 +25,7 @@ type Props = {
   data?: IIssue;
 };
 
-const ConfirmIssueDeletion: React.FC<Props> = (props) => {
-  const { isOpen, handleClose, data } = props;
-
+const ConfirmIssueDeletion: React.FC<Props> = ({ isOpen, handleClose, data }) => {
   const cancelButtonRef = useRef(null);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
@@ -44,6 +42,8 @@ const ConfirmIssueDeletion: React.FC<Props> = (props) => {
     setIsDeleteLoading(false);
     handleClose();
   };
+
+  console.log(data);
 
   const handleDeletion = async () => {
     setIsDeleteLoading(true);
@@ -62,8 +62,8 @@ const ConfirmIssueDeletion: React.FC<Props> = (props) => {
           false
         );
 
-        const moduleId = data.issue_module?.module;
-        const cycleId = data.issue_cycle?.cycle;
+        const moduleId = data?.module;
+        const cycleId = data?.cycle;
 
         if (moduleId) {
           mutate<ModuleIssueResponse[]>(

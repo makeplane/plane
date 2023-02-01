@@ -291,13 +291,7 @@ export const IssueForm: FC<IssueFormProps> = ({
                     render={({ field: { value, onChange } }) => (
                       <CustomDatePicker
                         value={value}
-                        onChange={(val: Date) => {
-                          onChange(
-                            val
-                              ? `${val.getFullYear()}-${val.getMonth() + 1}-${val.getDate()}`
-                              : null
-                          );
-                        }}
+                        onChange={onChange}
                         className="max-w-[7rem]"
                       />
                     )}

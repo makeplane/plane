@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import Image from "next/image";
 import { useRouter } from "next/router";
+
 import useSWR, { mutate } from "swr";
 
 // react-hook-form
@@ -157,24 +158,24 @@ const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
                   {({ getRootProps, getInputProps }) => (
                     <div>
                       <input {...getInputProps()} />
-                      <div>
-                        <div
-                          className="grid w-16 place-items-center rounded-md border p-2"
-                          {...getRootProps()}
-                        >
-                          {((watch("logo") && watch("logo") !== null && watch("logo") !== "") ||
-                            (image && image !== null)) && (
-                            <div className="relative mx-auto flex h-12 w-12">
-                              <Image
-                                src={image ? URL.createObjectURL(image) : watch("logo") ?? ""}
-                                alt="Workspace Logo"
-                                objectFit="cover"
-                                layout="fill"
-                                priority
-                              />
-                            </div>
-                          )}
-                        </div>
+                      <div {...getRootProps()}>
+                        {(watch("logo") && watch("logo") !== null && watch("logo") !== "") ||
+                        (image && image !== null) ? (
+                          <div className="relative mx-auto flex h-12 w-12">
+                            <Image
+                              src={image ? URL.createObjectURL(image) : watch("logo") ?? ""}
+                              alt="Workspace Logo"
+                              objectFit="cover"
+                              layout="fill"
+                              className="rounded-md"
+                              priority
+                            />
+                          </div>
+                        ) : (
+                          <div className="relative flex h-12 w-12 items-center justify-center rounded bg-gray-700 p-4 uppercase text-white">
+                            {activeWorkspace?.name?.charAt(0) ?? "N"}
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}

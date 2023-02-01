@@ -55,15 +55,17 @@ const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
   const handleCreateWorkspace = async (formData: IWorkspace) => {
     await workspaceService
       .workspaceSlugCheck(formData.slug)
-      .then((res) => {
+      .then(async (res) => {
         if (res.status === true) {
-          workspaceService
+          setSlugError(false);
+          await workspaceService
             .createWorkspace(formData)
             .then((res) => {
               console.log(res);
               setToastAlert({
                 type: "success",
-                title: "Workspace created successfully!",
+                title: "Success!",
+                message: "Workspace created successfully.",
               });
               setWorkspace(res);
               setStep(3);
@@ -160,10 +162,10 @@ const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
                       <span className="text-sm text-slate-600">{"https://app.plane.so/"}</span>
                       <Input
                         name="slug"
-                        mode="transparent"
+                        mode="trueTransparent"
                         autoComplete="off"
                         register={register}
-                        className="block w-full rounded-md bg-transparent py-2 px-0 text-sm  focus:outline-none focus:ring-0"
+                        className="block w-full rounded-md bg-transparent py-2 px-0 text-sm focus:outline-none focus:ring-0"
                       />
                     </div>
                     {slugError && (

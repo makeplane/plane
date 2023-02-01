@@ -12,16 +12,17 @@ import stateService from "services/state.service";
 import { Spinner, CustomSelect } from "components/ui";
 // icons
 // types
-import { IIssue } from "types";
+import { IIssue, UserAuth } from "types";
 // constants
 import { STATE_LIST } from "constants/fetch-keys";
 
 type Props = {
   control: Control<IIssue, any>;
   submitChanges: (formData: Partial<IIssue>) => void;
+  userAuth: UserAuth;
 };
 
-const SelectState: React.FC<Props> = ({ control, submitChanges }) => {
+const SelectState: React.FC<Props> = ({ control, submitChanges, userAuth }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -31,6 +32,8 @@ const SelectState: React.FC<Props> = ({ control, submitChanges }) => {
       ? () => stateService.getStates(workspaceSlug as string, projectId as string)
       : null
   );
+
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   return (
     <div className="flex flex-wrap items-center py-2">
@@ -67,6 +70,7 @@ const SelectState: React.FC<Props> = ({ control, submitChanges }) => {
               onChange={(value: any) => {
                 submitChanges({ state: value });
               }}
+              disabled={isNotAllowed}
             >
               {states ? (
                 states.length > 0 ? (
