@@ -12,7 +12,7 @@ import { UserGroupIcon } from "@heroicons/react/24/outline";
 import workspaceService from "services/workspace.service";
 // headless ui
 // ui
-import { AssigneesList, Spinner } from "components/ui";
+import { AssigneesList } from "components/ui";
 // types
 import { IModule } from "types";
 // constants
@@ -78,7 +78,7 @@ const SelectMembers: React.FC<Props> = ({ control, submitChanges }) => {
                     leaveFrom="transform opacity-100 scale-100"
                     leaveTo="transform opacity-0 scale-95"
                   >
-                    <Listbox.Options className="absolute left-0 z-10 mt-1 max-h-48 w-auto overflow-auto rounded-md bg-white py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <Listbox.Options className="absolute left-0 z-10 mt-1 max-h-48 overflow-auto rounded-md bg-white py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none w-full">
                       <div className="py-1">
                         {people ? (
                           people.length > 0 ? (
@@ -118,7 +118,7 @@ const SelectMembers: React.FC<Props> = ({ control, submitChanges }) => {
                             <div className="text-center">No members found</div>
                           )
                         ) : (
-                          <Spinner />
+                          <p className="text-xs text-gray-500 px-2">Loading...</p>
                         )}
                       </div>
                     </Listbox.Options>

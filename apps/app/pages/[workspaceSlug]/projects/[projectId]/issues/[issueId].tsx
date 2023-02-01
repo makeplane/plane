@@ -10,7 +10,7 @@ import { useForm } from "react-hook-form";
 // services
 import issuesService from "services/issues.service";
 // lib
-import { requiredAuth } from "lib/auth";
+import { requiredAdmin, requiredAuth } from "lib/auth";
 // layouts
 import AppLayout from "layouts/app-layout";
 // components
@@ -25,7 +25,7 @@ import { Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 // types
-import { IIssue, IssueResponse } from "types";
+import { IIssue, IssueResponse, UserAuth } from "types";
 import type { NextPage, NextPageContext } from "next";
 // fetch-keys
 import {
@@ -49,7 +49,7 @@ const defaultValues = {
   labels_list: [],
 };
 
-const IssueDetailsPage: NextPage = () => {
+const IssueDetailsPage: NextPage<UserAuth> = (props) => {
   // states
   const [isOpen, setIsOpen] = useState(false);
   const [isAddAsSubIssueOpen, setIsAddAsSubIssueOpen] = useState(false);
@@ -182,6 +182,8 @@ const IssueDetailsPage: NextPage = () => {
       });
   };
 
+  const isNotAllowed = props.isGuest || props.isViewer;
+
   return (
     <AppLayout
       noPadding={true}
@@ -267,7 +269,11 @@ const IssueDetailsPage: NextPage = () => {
                   </CustomMenu>
                 </div>
               ) : null}
-              <IssueDescriptionForm issue={issueDetails} handleFormSubmit={submitChanges} />
+              <IssueDescriptionForm
+                issue={issueDetails}
+                handleFormSubmit={submitChanges}
+                userAuth={props}
+              />
               <div className="mt-2">
                 {issueId && workspaceSlug && projectId && subIssues?.length > 0 ? (
                   <SubIssueList
@@ -276,41 +282,44 @@ const IssueDetailsPage: NextPage = () => {
                     projectId={projectId?.toString()}
                     workspaceSlug={workspaceSlug?.toString()}
                     handleSubIssueRemove={handleSubIssueRemove}
+                    userAuth={props}
                   />
                 ) : (
-                  <CustomMenu
-                    label={
-                      <>
-                        <PlusIcon className="h-3 w-3" />
-                        Add sub-issue
-                      </>
-                    }
-                    optionsPosition="left"
-                    noBorder
-                  >
-                    <CustomMenu.MenuItem
-                      onClick={() => {
-                        setIsOpen(true);
-                        setPreloadedData({
-                          parent: issueDetails.id,
-                          actionType: "createIssue",
-                        });
-                      }}
+                  !isNotAllowed && (
+                    <CustomMenu
+                      label={
+                        <>
+                          <PlusIcon className="h-3 w-3" />
+                          Add sub-issue
+                        </>
+                      }
+                      optionsPosition="left"
+                      noBorder
                     >
-                      Create new
-                    </CustomMenu.MenuItem>
-                    <CustomMenu.MenuItem
-                      onClick={() => {
-                        setIsAddAsSubIssueOpen(true);
-                        setPreloadedData({
-                          parent: issueDetails.id,
-                          actionType: "createIssue",
-                        });
-                      }}
-                    >
-                      Add an existing issue
-                    </CustomMenu.MenuItem>
-                  </CustomMenu>
+                      <CustomMenu.MenuItem
+                        onClick={() => {
+                          setIsOpen(true);
+                          setPreloadedData({
+                            parent: issueDetails.id,
+                            actionType: "createIssue",
+                          });
+                        }}
+                      >
+                        Create new
+                      </CustomMenu.MenuItem>
+                      <CustomMenu.MenuItem
+                        onClick={() => {
+                          setIsAddAsSubIssueOpen(true);
+                          setPreloadedData({
+                            parent: issueDetails.id,
+                            actionType: "createIssue",
+                          });
+                        }}
+                      >
+                        Add an existing issue
+                      </CustomMenu.MenuItem>
+                    </CustomMenu>
+                  )
                 )}
               </div>
             </div>
@@ -329,6 +338,7 @@ const IssueDetailsPage: NextPage = () => {
               issueDetail={issueDetails}
               submitChanges={submitChanges}
               watch={watch}
+              userAuth={props}
             />
           </div>
         </div>
@@ -366,9 +376,17 @@ export const getServerSideProps = async (ctx: NextPageContext) => {
     };
   }
 
+  const projectId = ctx.query.projectId as string;
+  const workspaceSlug = ctx.query.workspaceSlug as string;
+
+  const memberDetail = await requiredAdmin(workspaceSlug, projectId, ctx.req?.headers.cookie);
+
   return {
     props: {
-      user,
+      isOwner: memberDetail?.role === 20,
+      isMember: memberDetail?.role === 15,
+      isViewer: memberDetail?.role === 10,
+      isGuest: memberDetail?.role === 5,
     },
   };
 };

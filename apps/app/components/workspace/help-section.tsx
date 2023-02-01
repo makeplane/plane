@@ -88,7 +88,6 @@ export const WorkspaceHelpSection: FC<WorkspaceHelpSectionProps> = (props) => {
         }`}
         onClick={() => {
           const e = new KeyboardEvent("keydown", {
-            ctrlKey: true,
             key: "h",
           });
           document.dispatchEvent(e);

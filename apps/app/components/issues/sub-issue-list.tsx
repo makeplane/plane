@@ -7,7 +7,7 @@ import { CustomMenu } from "components/ui";
 import { CreateUpdateIssueModal } from "components/issues";
 import AddAsSubIssue from "components/project/issues/issue-detail/add-as-sub-issue";
 // types
-import { IIssue } from "types";
+import { IIssue, UserAuth } from "types";
 
 export interface SubIssueListProps {
   issues: IIssue[];
@@ -15,6 +15,7 @@ export interface SubIssueListProps {
   workspaceSlug: string;
   parentIssue: IIssue;
   handleSubIssueRemove: (subIssueId: string) => void;
+  userAuth: UserAuth;
 }
 
 export const SubIssueList: FC<SubIssueListProps> = ({
@@ -23,6 +24,7 @@ export const SubIssueList: FC<SubIssueListProps> = ({
   parentIssue,
   workspaceSlug,
   projectId,
+  userAuth,
 }) => {
   // states
   const [isIssueModalActive, setIssueModalActive] = useState(false);
@@ -45,6 +47,8 @@ export const SubIssueList: FC<SubIssueListProps> = ({
     setSubIssueModalActive(false);
   };
 
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+
   return (
     <>
       <CreateUpdateIssueModal
@@ -57,71 +61,71 @@ export const SubIssueList: FC<SubIssueListProps> = ({
         setIsOpen={setSubIssueModalActive}
         parent={parentIssue}
       />
-      {parentIssue?.id && workspaceSlug && projectId && issues?.length > 0 ? (
-        <Disclosure defaultOpen={true}>
-          {({ open }) => (
-            <>
-              <div className="flex items-center justify-between">
-                <Disclosure.Button className="flex items-center gap-1 rounded px-2 py-1 text-xs font-medium hover:bg-gray-100">
-                  <ChevronRightIcon className={`h-3 w-3 ${open ? "rotate-90" : ""}`} />
-                  Sub-issues <span className="ml-1 text-gray-600">{issues.length}</span>
-                </Disclosure.Button>
-                {open ? (
-                  <div className="flex items-center">
-                    <button
-                      type="button"
-                      className="flex items-center gap-1 rounded px-2 py-1 text-xs font-medium hover:bg-gray-100"
+      <Disclosure defaultOpen={true}>
+        {({ open }) => (
+          <>
+            <div className="flex items-center justify-between">
+              <Disclosure.Button className="flex items-center gap-1 rounded px-2 py-1 text-xs font-medium hover:bg-gray-100">
+                <ChevronRightIcon className={`h-3 w-3 ${open ? "rotate-90" : ""}`} />
+                Sub-issues <span className="ml-1 text-gray-600">{issues.length}</span>
+              </Disclosure.Button>
+              {open && !isNotAllowed ? (
+                <div className="flex items-center">
+                  <button
+                    type="button"
+                    className="flex items-center gap-1 rounded px-2 py-1 text-xs font-medium hover:bg-gray-100"
+                    onClick={() => {
+                      openIssueModal();
+                      setPreloadedData({
+                        parent: parentIssue.id,
+                      });
+                    }}
+                  >
+                    <PlusIcon className="h-3 w-3" />
+                    Create new
+                  </button>
+
+                  <CustomMenu ellipsis>
+                    <CustomMenu.MenuItem
                       onClick={() => {
-                        openIssueModal();
-                        setPreloadedData({
-                          parent: parentIssue.id,
-                        });
+                        setSubIssueModalActive(true);
                       }}
                     >
-                      <PlusIcon className="h-3 w-3" />
-                      Create new
-                    </button>
-
-                    <CustomMenu ellipsis>
-                      <CustomMenu.MenuItem
-                        onClick={() => {
-                          setSubIssueModalActive(true);
-                        }}
-                      >
-                        Add an existing issue
-                      </CustomMenu.MenuItem>
-                    </CustomMenu>
-                  </div>
-                ) : null}
-              </div>
-              <Transition
-                enter="transition duration-100 ease-out"
-                enterFrom="transform scale-95 opacity-0"
-                enterTo="transform scale-100 opacity-100"
-                leave="transition duration-75 ease-out"
-                leaveFrom="transform scale-100 opacity-100"
-                leaveTo="transform scale-95 opacity-0"
-              >
-                <Disclosure.Panel className="mt-3 flex flex-col gap-y-1">
-                  {issues.map((issue) => (
-                    <div
-                      key={issue.id}
-                      className="group flex items-center justify-between gap-2 rounded p-2 hover:bg-gray-100"
-                    >
-                      <Link href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}>
-                        <a className="flex items-center gap-2 rounded text-xs">
-                          <span
-                            className={`block h-1.5 w-1.5 rounded-full`}
-                            style={{
-                              backgroundColor: issue.state_detail.color,
-                            }}
-                          />
-                          <span className="flex-shrink-0 text-gray-600">
-                            {issue.project_detail.identifier}-{issue.sequence_id}
-                          </span>
-                          <span className="max-w-sm break-all font-medium">{issue.name}</span>
-                        </a>
-                      </Link>
+                      Add an existing issue
+                    </CustomMenu.MenuItem>
+                  </CustomMenu>
+                </div>
+              ) : null}
+            </div>
+            <Transition
+              enter="transition duration-100 ease-out"
+              enterFrom="transform scale-95 opacity-0"
+              enterTo="transform scale-100 opacity-100"
+              leave="transition duration-75 ease-out"
+              leaveFrom="transform scale-100 opacity-100"
+              leaveTo="transform scale-95 opacity-0"
+            >
+              <Disclosure.Panel className="mt-3 flex flex-col gap-y-1">
+                {issues.map((issue) => (
+                  <div
+                    key={issue.id}
+                    className="group flex items-center justify-between gap-2 rounded p-2 hover:bg-gray-100"
+                  >
+                    <Link href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}>
+                      <a className="flex items-center gap-2 rounded text-xs">
+                        <span
+                          className={`block h-1.5 w-1.5 rounded-full`}
+                          style={{
+                            backgroundColor: issue.state_detail.color,
+                          }}
+                        />
+                        <span className="flex-shrink-0 text-gray-600">
+                          {issue.project_detail.identifier}-{issue.sequence_id}
+                        </span>
+                        <span className="max-w-sm break-all font-medium">{issue.name}</span>
+                      </a>
+                    </Link>
+                    {!isNotAllowed && (
                       <div className="opacity-0 group-hover:opacity-100">
                         <CustomMenu ellipsis>
                           <CustomMenu.MenuItem onClick={() => handleSubIssueRemove(issue.id)}>
@@ -129,40 +133,14 @@ export const SubIssueList: FC<SubIssueListProps> = ({
                           </CustomMenu.MenuItem>
                         </CustomMenu>
                       </div>
-                    </div>
-                  ))}
-                </Disclosure.Panel>
-              </Transition>
-            </>
-          )}
-        </Disclosure>
-      ) : (
-        <CustomMenu
-          label={
-            <>
-              <PlusIcon className="h-3 w-3" />
-              Add sub-issue
-            </>
-          }
-          optionsPosition="left"
-          noBorder
-        >
-          <CustomMenu.MenuItem
-            onClick={() => {
-              openIssueModal();
-            }}
-          >
-            Create new
-          </CustomMenu.MenuItem>
-          <CustomMenu.MenuItem
-            onClick={() => {
-              openSubIssueModal();
-            }}
-          >
-            Add an existing issue
-          </CustomMenu.MenuItem>
-        </CustomMenu>
-      )}
+                    )}
+                  </div>
+                ))}
+              </Disclosure.Panel>
+            </Transition>
+          </>
+        )}
+      </Disclosure>
     </>
   );
 };

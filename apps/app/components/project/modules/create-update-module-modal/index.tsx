@@ -207,15 +207,7 @@ const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, pro
                                 <CustomDatePicker
                                   renderAs="input"
                                   value={value}
-                                  onChange={(val: Date) => {
-                                    onChange(
-                                      val
-                                        ? `${val.getFullYear()}-${
-                                            val.getMonth() + 1
-                                          }-${val.getDate()}`
-                                        : null
-                                    );
-                                  }}
+                                  onChange={onChange}
                                   error={errors.start_date ? true : false}
                                 />
                               )}
@@ -236,15 +228,7 @@ const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, pro
                                 <CustomDatePicker
                                   renderAs="input"
                                   value={value}
-                                  onChange={(val: Date) => {
-                                    onChange(
-                                      val
-                                        ? `${val.getFullYear()}-${
-                                            val.getMonth() + 1
-                                          }-${val.getDate()}`
-                                        : null
-                                    );
-                                  }}
+                                  onChange={onChange}
                                   error={errors.target_date ? true : false}
                                 />
                               )}

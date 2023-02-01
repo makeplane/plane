@@ -217,15 +217,7 @@ const CreateUpdateCycleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, proj
                                 <CustomDatePicker
                                   renderAs="input"
                                   value={value}
-                                  onChange={(val: Date) => {
-                                    onChange(
-                                      val
-                                        ? `${val.getFullYear()}-${
-                                            val.getMonth() + 1
-                                          }-${val.getDate()}`
-                                        : null
-                                    );
-                                  }}
+                                  onChange={onChange}
                                   error={errors.start_date ? true : false}
                                 />
                               )}
@@ -246,15 +238,7 @@ const CreateUpdateCycleModal: React.FC<Props> = ({ isOpen, setIsOpen, data, proj
                                 <CustomDatePicker
                                   renderAs="input"
                                   value={value}
-                                  onChange={(val: Date) => {
-                                    onChange(
-                                      val
-                                        ? `${val.getFullYear()}-${
-                                            val.getMonth() + 1
-                                          }-${val.getDate()}`
-                                        : null
-                                    );
-                                  }}
+                                  onChange={onChange}
                                   error={errors.end_date ? true : false}
                                 />
                               )}

@@ -34,8 +34,8 @@ const UserDetails: React.FC<Props> = ({ user, setStep }) => {
     defaultValues,
   });
 
-  const onSubmit = (formData: IUser) => {
-    userService
+  const onSubmit = async (formData: IUser) => {
+    await userService
       .updateUser(formData)
       .then(() => {
         setToastAlert({

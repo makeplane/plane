@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { mutate } from "swr";
 // services
-import { ClipboardDocumentListIcon, PlusIcon } from "@heroicons/react/24/outline";
-import type { NextPage } from "next";
 import projectService from "services/project.service";
+// hooks
+import useProjects from "hooks/use-projects";
+import useWorkspaces from "hooks/use-workspaces";
 // layouts
 import AppLayout from "layouts/app-layout";
 // components
@@ -15,11 +16,10 @@ import ConfirmProjectDeletion from "components/project/confirm-project-deletion"
 import { HeaderButton, EmptySpace, EmptySpaceItem, Loader } from "components/ui";
 import { Breadcrumbs, BreadcrumbItem } from "components/breadcrumbs";
 // icons
-// hooks
-import useProjects from "hooks/use-projects";
-import useWorkspaces from "hooks/use-workspaces";
+import { ClipboardDocumentListIcon, PlusIcon } from "@heroicons/react/24/outline";
 // types
-// constants
+import type { NextPage } from "next";
+// fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 
 const ProjectsPage: NextPage = () => {
@@ -45,7 +45,7 @@ const ProjectsPage: NextPage = () => {
           Icon={PlusIcon}
           label="Add Project"
           onClick={() => {
-            const e = new KeyboardEvent("keydown", { key: "p", ctrlKey: true });
+            const e = new KeyboardEvent("keydown", { key: "p" });
             document.dispatchEvent(e);
           }}
         />
@@ -94,7 +94,7 @@ const ProjectsPage: NextPage = () => {
                   }
                   Icon={PlusIcon}
                   action={() => {
-                    const e = new KeyboardEvent("keydown", { key: "p", ctrlKey: true });
+                    const e = new KeyboardEvent("keydown", { key: "p" });
                     document.dispatchEvent(e);
                   }}
                 />

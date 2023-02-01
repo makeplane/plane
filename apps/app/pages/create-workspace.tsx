@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from "react";
+
 import { useRouter } from "next/router";
 import Image from "next/image";
+
 import { mutate } from "swr";
+
+// react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // services
-import type { IWorkspace } from "types";
-import type { NextPage, NextPageContext } from "next";
 import workspaceService from "services/workspace.service";
+// hooks
+import useToast from "hooks/use-toast";
 // constants
 import { requiredAuth } from "lib/auth";
 // layouts
@@ -15,8 +19,11 @@ import DefaultLayout from "layouts/default-layout";
 import { CustomSelect, Input } from "components/ui";
 // images
 import Logo from "public/onboarding/logo.svg";
-import { USER_WORKSPACES } from "constants/fetch-keys";
 // types
+import type { IWorkspace } from "types";
+import type { NextPage, NextPageContext } from "next";
+// fetch-keys
+import { USER_WORKSPACES } from "constants/fetch-keys";
 // constants
 import { companySize } from "constants/";
 
@@ -29,6 +36,10 @@ const defaultValues = {
 const CreateWorkspace: NextPage = () => {
   const [slugError, setSlugError] = useState(false);
 
+  const router = useRouter();
+
+  const { setToastAlert } = useToast();
+
   const {
     register,
     handleSubmit,
@@ -39,18 +50,22 @@ const CreateWorkspace: NextPage = () => {
     formState: { errors, isSubmitting },
   } = useForm<IWorkspace>({ defaultValues });
 
-  const router = useRouter();
-
   const onSubmit = async (formData: IWorkspace) => {
     await workspaceService
       .workspaceSlugCheck(formData.slug)
-      .then((res) => {
+      .then(async (res) => {
         if (res.status === true) {
-          workspaceService
+          setSlugError(false);
+          await workspaceService
             .createWorkspace(formData)
             .then((res) => {
-              router.push("/");
+              setToastAlert({
+                type: "success",
+                title: "Success!",
+                message: "Workspace created successfully.",
+              });
               mutate<IWorkspace[]>(USER_WORKSPACES, (prevData) => [res, ...(prevData ?? [])]);
+              router.push(`/${formData.slug}`);
             })
             .catch((err) => {
               console.error(err);
@@ -105,11 +120,11 @@ const CreateWorkspace: NextPage = () => {
                       <div className="flex items-center rounded-md border border-gray-300 px-3">
                         <span className="text-sm text-slate-600">{"https://app.plane.so/"}</span>
                         <Input
-                          mode="transparent"
+                          mode="trueTransparent"
                           autoComplete="off"
                           name="slug"
                           register={register}
-                          className="block w-full rounded-md bg-transparent py-2 px-0 text-sm  focus:outline-none focus:ring-0"
+                          className="block w-full rounded-md bg-transparent py-2 px-0 text-sm"
                         />
                       </div>
                       {slugError && (

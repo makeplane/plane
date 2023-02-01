@@ -129,7 +129,6 @@ const Sidebar: React.FC<Props> = ({ toggleSidebar, setToggleSidebar }) => {
                 }`}
                 onClick={() => {
                   const e = new KeyboardEvent("keydown", {
-                    ctrlKey: true,
                     key: "h",
                   });
                   document.dispatchEvent(e);

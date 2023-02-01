@@ -8,9 +8,9 @@ export interface IModule {
   description_html: any;
   id: string;
   lead: string | null;
-  lead_detail: IUserLite;
+  lead_detail: IUserLite | null;
   link_module: {
-    created_at: Date
+    created_at: Date;
     created_by: string;
     created_by_detail: IUserLite;
     id: string;
