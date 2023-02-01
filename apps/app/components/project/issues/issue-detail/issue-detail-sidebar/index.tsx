@@ -39,7 +39,7 @@ import {
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import type { ICycle, IIssue, IIssueLabels } from "types";
+import type { ICycle, IIssue, IIssueLabels, UserAuth } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS, PROJECT_ISSUES_LIST, ISSUE_DETAILS } from "constants/fetch-keys";
 
@@ -50,6 +50,7 @@ type Props = {
   submitChanges: (formData: Partial<IIssue>) => void;
   issueDetail: IIssue | undefined;
   watch: UseFormWatch<IIssue>;
+  userAuth: UserAuth;
 };
 
 const defaultValues: Partial<IIssueLabels> = {
@@ -62,6 +63,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
   submitChanges,
   issueDetail,
   watch: watchIssue,
+  userAuth,
 }) => {
   const [createLabelForm, setCreateLabelForm] = useState(false);
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
@@ -122,6 +124,8 @@ const IssueDetailSidebar: React.FC<Props> = ({
       });
   };
 
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+
   return (
     <>
       <ConfirmIssueDeletion
@@ -158,20 +162,22 @@ const IssueDetailSidebar: React.FC<Props> = ({
             >
               <LinkIcon className="h-3.5 w-3.5" />
             </button>
-            <button
-              type="button"
-              className="rounded-md border border-red-500 p-2 text-red-500 shadow-sm duration-300 hover:bg-red-50 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-              onClick={() => setDeleteIssueModal(true)}
-            >
-              <TrashIcon className="h-3.5 w-3.5" />
-            </button>
+            {!isNotAllowed && (
+              <button
+                type="button"
+                className="rounded-md border border-red-500 p-2 text-red-500 shadow-sm duration-300 hover:bg-red-50 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                onClick={() => setDeleteIssueModal(true)}
+              >
+                <TrashIcon className="h-3.5 w-3.5" />
+              </button>
+            )}
           </div>
         </div>
         <div className="divide-y-2 divide-gray-100">
           <div className="py-1">
-            <SelectState control={control} submitChanges={submitChanges} />
-            <SelectAssignee control={control} submitChanges={submitChanges} />
-            <SelectPriority control={control} submitChanges={submitChanges} watch={watchIssue} />
+            <SelectState control={control} submitChanges={submitChanges} userAuth={userAuth} />
+            <SelectAssignee control={control} submitChanges={submitChanges} userAuth={userAuth} />
+            <SelectPriority control={control} submitChanges={submitChanges} userAuth={userAuth} />
           </div>
           <div className="py-1">
             <SelectParent
@@ -202,16 +208,19 @@ const IssueDetailSidebar: React.FC<Props> = ({
                 )
               }
               watch={watchIssue}
+              userAuth={userAuth}
             />
             <SelectBlocker
               submitChanges={submitChanges}
               issuesList={issues?.results.filter((i) => i.id !== issueDetail?.id) ?? []}
               watch={watchIssue}
+              userAuth={userAuth}
             />
             <SelectBlocked
               submitChanges={submitChanges}
               issuesList={issues?.results.filter((i) => i.id !== issueDetail?.id) ?? []}
               watch={watchIssue}
+              userAuth={userAuth}
             />
             <div className="flex flex-wrap items-center py-2">
               <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
@@ -219,37 +228,18 @@ const IssueDetailSidebar: React.FC<Props> = ({
                 <p>Due date</p>
               </div>
               <div className="sm:basis-1/2">
-                {/* <Controller
-                  control={control}
-                  name="target_date"
-                  render={({ field: { value, onChange } }) => (
-                    <DatePicker
-                      selected={value ? new Date(value) : new Date()}
-                      onChange={(val: Date) => {
-                        submitChanges({
-                          target_date: `${val.getFullYear()}-${
-                            val.getMonth() + 1
-                          }-${val.getDate()}`,
-                        });
-                        onChange(`${val.getFullYear()}-${val.getMonth() + 1}-${val.getDate()}`);
-                      }}
-                      dateFormat="dd-MM-yyyy"
-                    />
-                  )}
-                /> */}
                 <Controller
                   control={control}
                   name="target_date"
                   render={({ field: { value } }) => (
                     <CustomDatePicker
                       value={value}
-                      onChange={(val: Date) => {
+                      onChange={(val) =>
                         submitChanges({
-                          target_date: val
-                            ? `${val.getFullYear()}-${val.getMonth() + 1}-${val.getDate()}`
-                            : null,
-                        });
-                      }}
+                          target_date: val,
+                        })
+                      }
+                      disabled={isNotAllowed}
                     />
                   )}
                 />
@@ -260,7 +250,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
             <SelectCycle
               issueDetail={issueDetail}
               handleCycleChange={handleCycleChange}
-              watch={watchIssue}
+              userAuth={userAuth}
             />
           </div>
         </div>
@@ -290,7 +280,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
                     >
                       <span
                         className="h-2 w-2 flex-shrink-0 rounded-full"
-                        style={{ backgroundColor: singleLabel.colour ?? "green" }}
+                        style={{ backgroundColor: singleLabel?.colour ?? "green" }}
                       />
                       {singleLabel.name}
                       <XMarkIcon className="h-2 w-2 group-hover:text-red-500" />
@@ -307,12 +297,19 @@ const IssueDetailSidebar: React.FC<Props> = ({
                       onChange={(val: any) => submitChanges({ labels_list: val })}
                       className="flex-shrink-0"
                       multiple
+                      disabled={isNotAllowed}
                     >
                       {({ open }) => (
                         <>
                           <Listbox.Label className="sr-only">Label</Listbox.Label>
                           <div className="relative">
-                            <Listbox.Button className="flex cursor-pointer items-center gap-2 rounded-2xl border px-2 py-0.5 text-xs hover:bg-gray-100">
+                            <Listbox.Button
+                              className={`flex ${
+                                isNotAllowed
+                                  ? "cursor-not-allowed"
+                                  : "cursor-pointer hover:bg-gray-100"
+                              } items-center gap-2 rounded-2xl border px-2 py-0.5 text-xs`}
+                            >
                               Select Label
                             </Listbox.Button>
 
@@ -361,8 +358,11 @@ const IssueDetailSidebar: React.FC<Props> = ({
                 />
                 <button
                   type="button"
-                  className="flex cursor-pointer items-center gap-1 rounded-2xl border px-2 py-0.5 text-xs hover:bg-gray-100"
+                  className={`flex ${
+                    isNotAllowed ? "cursor-not-allowed" : "cursor-pointer hover:bg-gray-100"
+                  } items-center gap-1 rounded-2xl border px-2 py-0.5 text-xs`}
                   onClick={() => setCreateLabelForm((prevData) => !prevData)}
+                  disabled={isNotAllowed}
                 >
                   {createLabelForm ? (
                     <>

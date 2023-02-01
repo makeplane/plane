@@ -22,7 +22,7 @@ import View from "components/core/view";
 import { Spinner, EmptySpace, EmptySpaceItem, HeaderButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // types
-import type { IIssue, IssueResponse, UserAuth } from "types";
+import type { IIssue, UserAuth } from "types";
 import type { NextPage, NextPageContext } from "next";
 // fetch-keys
 import { PROJECT_DETAILS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
@@ -85,8 +85,7 @@ const ProjectIssues: NextPage<UserAuth> = (props) => {
               label="Add Issue"
               onClick={() => {
                 const e = new KeyboardEvent("keydown", {
-                  key: "i",
-                  ctrlKey: true,
+                  key: "c",
                 });
                 document.dispatchEvent(e);
               }}

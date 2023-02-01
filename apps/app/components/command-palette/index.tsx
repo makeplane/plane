@@ -102,50 +102,54 @@ const CommandPalette: React.FC = () => {
         !(e.target instanceof HTMLInputElement) &&
         !(e.target as Element).classList?.contains("remirror-editor")
       ) {
-        if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+        if ((e.ctrlKey || e.metaKey) && (e.key === "k" || e.key === "K")) {
           e.preventDefault();
           setIsPaletteOpen(true);
-        } else if (e.ctrlKey && e.key === "c") {
-          console.log("Text copied");
-        } else if (e.key === "c") {
+        } else if (e.ctrlKey && (e.key === "c" || e.key === "C")) {
+          if (e.altKey) {
+            e.preventDefault();
+            if (!router.query.issueId) return;
+
+            const url = new URL(window.location.href);
+            console.log(url);
+            copyTextToClipboard(url.href)
+              .then(() => {
+                setToastAlert({
+                  type: "success",
+                  title: "Copied to clipboard",
+                });
+              })
+              .catch(() => {
+                setToastAlert({
+                  type: "error",
+                  title: "Some error occurred",
+                });
+              });
+            console.log("URL Copied");
+          } else {
+            console.log("Text copied");
+          }
+        } else if (e.key === "c" || e.key === "C") {
           e.preventDefault();
           setIsIssueModalOpen(true);
-        } else if (e.key === "p") {
+        } else if (e.key === "p" || e.key === "P") {
           e.preventDefault();
           setIsProjectModalOpen(true);
-        } else if ((e.ctrlKey || e.metaKey) && e.key === "b") {
+        } else if ((e.ctrlKey || e.metaKey) && (e.key === "b" || e.key === "B")) {
           e.preventDefault();
           toggleCollapsed();
-        } else if (e.key === "h") {
+        } else if (e.key === "h" || e.key === "H") {
           e.preventDefault();
           setIsShortcutsModalOpen(true);
-        } else if (e.key === "q") {
+        } else if (e.key === "q" || e.key === "Q") {
           e.preventDefault();
           setIsCreateCycleModalOpen(true);
-        } else if (e.key === "m") {
+        } else if (e.key === "m" || e.key === "M") {
           e.preventDefault();
           setIsCreateModuleModalOpen(true);
         } else if (e.key === "Delete") {
           e.preventDefault();
           setIsBulkDeleteIssuesModalOpen(true);
-        } else if ((e.ctrlKey || e.metaKey) && e.altKey && e.key === "c") {
-          e.preventDefault();
-          if (!router.query.issueId) return;
-
-          const url = new URL(window.location.href);
-          copyTextToClipboard(url.href)
-            .then(() => {
-              setToastAlert({
-                type: "success",
-                title: "Copied to clipboard",
-              });
-            })
-            .catch(() => {
-              setToastAlert({
-                type: "error",
-                title: "Some error occurred",
-              });
-            });
         }
       }
     },

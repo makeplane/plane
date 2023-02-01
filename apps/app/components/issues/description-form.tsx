@@ -17,7 +17,7 @@ const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor
   ),
 });
 // types
-import { IIssue } from "types";
+import { IIssue, UserAuth } from "types";
 import useToast from "hooks/use-toast";
 
 export interface IssueDescriptionFormValues {
@@ -29,9 +29,14 @@ export interface IssueDescriptionFormValues {
 export interface IssueDetailsProps {
   issue: IIssue;
   handleFormSubmit: (value: IssueDescriptionFormValues) => void;
+  userAuth: UserAuth;
 }
 
-export const IssueDescriptionForm: FC<IssueDetailsProps> = ({ issue, handleFormSubmit }) => {
+export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
+  issue,
+  handleFormSubmit,
+  userAuth,
+}) => {
   const { setToastAlert } = useToast();
 
   const {
@@ -97,6 +102,8 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({ issue, handleFormS
     reset(issue);
   }, [issue, reset]);
 
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+
   return (
     <div>
       <Input
@@ -111,6 +118,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({ issue, handleFormS
         }}
         mode="transparent"
         className="text-xl font-medium"
+        disabled={isNotAllowed}
       />
       <span>{errors.name ? errors.name.message : null}</span>
       <RemirrorRichTextEditor
@@ -121,6 +129,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({ issue, handleFormS
           debounceHandler();
         }}
         onHTMLChange={(html) => setValue("description_html", html)}
+        editable={!isNotAllowed}
       />
     </div>
   );

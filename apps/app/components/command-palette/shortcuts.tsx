@@ -15,7 +15,7 @@ const shortcuts = [
   {
     title: "Navigation",
     shortcuts: [
-      { keys: "ctrl,cmd,k", description: "To open navigator" },
+      { keys: "Ctrl,Cmd,K", description: "To open navigator" },
       { keys: "↑", description: "Move up" },
       { keys: "↓", description: "Move down" },
       { keys: "←", description: "Move left" },
@@ -27,14 +27,14 @@ const shortcuts = [
   {
     title: "Common",
     shortcuts: [
-      { keys: "p", description: "To create project" },
-      { keys: "c", description: "To create issue" },
-      { keys: "q", description: "To create cycle" },
-      { keys: "m", description: "To create module" },
+      { keys: "P", description: "To create project" },
+      { keys: "C", description: "To create issue" },
+      { keys: "Q", description: "To create cycle" },
+      { keys: "M", description: "To create module" },
       { keys: "Delete", description: "To bulk delete issues" },
-      { keys: "h", description: "To open shortcuts guide" },
+      { keys: "H", description: "To open shortcuts guide" },
       {
-        keys: "ctrl,cmd,alt,c",
+        keys: "Ctrl,Cmd,Alt,C",
         description: "To copy issue url when on issue detail page.",
       },
     ],

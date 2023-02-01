@@ -92,6 +92,7 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
     ...issue.issue_detail,
     sub_issues_count: issue.sub_issues_count,
     bridge: issue.id,
+    cycle: cycleId as string,
   }));
 
   const { data: members } = useSWR(
@@ -124,17 +125,17 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
   };
 
   const handleAddIssuesToCycle = async (data: { issues: string[] }) => {
-    if (workspaceSlug && projectId) {
-      await issuesServices
-        .addIssueToCycle(workspaceSlug as string, projectId as string, cycleId as string, data)
-        .then((res) => {
-          console.log(res);
-          mutate(CYCLE_ISSUES(cycleId as string));
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    }
+    if (!workspaceSlug || !projectId) return;
+
+    await issuesServices
+      .addIssueToCycle(workspaceSlug as string, projectId as string, cycleId as string, data)
+      .then((res) => {
+        console.log(res);
+        mutate(CYCLE_ISSUES(cycleId as string));
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   };
 
   const removeIssueFromCycle = (bridgeId: string) => {
