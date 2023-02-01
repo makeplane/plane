@@ -102,24 +102,40 @@ const CommandPalette: React.FC = () => {
         !(e.target instanceof HTMLInputElement) &&
         !(e.target as Element).classList?.contains("remirror-editor")
       ) {
-        if (
-          ((e.ctrlKey || e.metaKey) && e.key === "k") ||
-          ((e.ctrlKey || e.metaKey) && e.key === "K")
-        ) {
+        if ((e.ctrlKey || e.metaKey) && (e.key === "k" || e.key === "K")) {
           e.preventDefault();
           setIsPaletteOpen(true);
-        } else if ((e.ctrlKey && e.key === "c") || (e.ctrlKey && e.key === "C")) {
-          console.log("Text copied");
+        } else if (e.ctrlKey && (e.key === "c" || e.key === "C")) {
+          if (e.altKey) {
+            e.preventDefault();
+            if (!router.query.issueId) return;
+
+            const url = new URL(window.location.href);
+            console.log(url);
+            copyTextToClipboard(url.href)
+              .then(() => {
+                setToastAlert({
+                  type: "success",
+                  title: "Copied to clipboard",
+                });
+              })
+              .catch(() => {
+                setToastAlert({
+                  type: "error",
+                  title: "Some error occurred",
+                });
+              });
+            console.log("URL Copied");
+          } else {
+            console.log("Text copied");
+          }
         } else if (e.key === "c" || e.key === "C") {
           e.preventDefault();
           setIsIssueModalOpen(true);
         } else if (e.key === "p" || e.key === "P") {
           e.preventDefault();
           setIsProjectModalOpen(true);
-        } else if (
-          ((e.ctrlKey || e.metaKey) && e.key === "b") ||
-          ((e.ctrlKey || e.metaKey) && e.key === "B")
-        ) {
+        } else if ((e.ctrlKey || e.metaKey) && (e.key === "b" || e.key === "B")) {
           e.preventDefault();
           toggleCollapsed();
         } else if (e.key === "h" || e.key === "H") {
@@ -134,27 +150,6 @@ const CommandPalette: React.FC = () => {
         } else if (e.key === "Delete") {
           e.preventDefault();
           setIsBulkDeleteIssuesModalOpen(true);
-        } else if (
-          ((e.ctrlKey || e.metaKey) && e.altKey && e.key === "c") ||
-          ((e.ctrlKey || e.metaKey) && e.altKey && e.key === "C")
-        ) {
-          e.preventDefault();
-          if (!router.query.issueId) return;
-
-          const url = new URL(window.location.href);
-          copyTextToClipboard(url.href)
-            .then(() => {
-              setToastAlert({
-                type: "success",
-                title: "Copied to clipboard",
-              });
-            })
-            .catch(() => {
-              setToastAlert({
-                type: "error",
-                title: "Some error occurred",
-              });
-            });
         }
       }
     },
