@@ -25,7 +25,7 @@ type Props = {
   lead: IUserLite | null;
 };
 
-const SelectLead: React.FC<Props> = ({ control, submitChanges, lead }) => {
+export const SidebarLeadSelect: React.FC<Props> = ({ control, submitChanges, lead }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -164,5 +164,3 @@ const SelectLead: React.FC<Props> = ({ control, submitChanges, lead }) => {
     </div>
   );
 };
-
-export default SelectLead;

@@ -18,7 +18,7 @@ type Props = {
   watch: UseFormWatch<Partial<IModule>>;
 };
 
-const SelectStatus: React.FC<Props> = ({ control, submitChanges, watch }) => (
+export const SidebarStatusSelect: React.FC<Props> = ({ control, submitChanges, watch }) => (
   <div className="flex flex-wrap items-center py-2">
     <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
       <Squares2X2Icon className="h-4 w-4 flex-shrink-0" />
@@ -67,5 +67,3 @@ const SelectStatus: React.FC<Props> = ({ control, submitChanges, watch }) => (
     </div>
   </div>
 );
-
-export default SelectStatus;

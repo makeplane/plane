@@ -38,7 +38,7 @@ type Props = {
   userAuth: UserAuth;
 };
 
-const ModulesListView: React.FC<Props> = ({
+export const ModulesListView: React.FC<Props> = ({
   issues,
   openCreateIssueModal,
   openIssuesListModal,
@@ -192,5 +192,3 @@ const ModulesListView: React.FC<Props> = ({
     </div>
   );
 };
-
-export default ModulesListView;

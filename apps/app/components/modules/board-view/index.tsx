@@ -13,7 +13,7 @@ import issuesService from "services/issues.service";
 import useIssuesProperties from "hooks/use-issue-properties";
 import useIssueView from "hooks/use-issue-view";
 // components
-import SingleBoard from "components/project/modules/board-view/single-board";
+import SingleBoard from "components/modules/board-view/single-board";
 // ui
 import { Spinner } from "components/ui";
 // types

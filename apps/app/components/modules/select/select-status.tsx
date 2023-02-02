@@ -16,7 +16,7 @@ type Props = {
   error?: FieldError;
 };
 
-const SelectStatus: React.FC<Props> = ({ control, error }) => (
+export const ModuleStatusSelect: React.FC<Props> = ({ control, error }) => (
   <Controller
     control={control}
     rules={{ required: true }}
@@ -45,4 +45,3 @@ const SelectStatus: React.FC<Props> = ({ control, error }) => (
     )}
   />
 );
-export default SelectStatus;

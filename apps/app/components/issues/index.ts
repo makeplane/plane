@@ -1,5 +1,6 @@
 export * from "./board-view";
 export * from "./comment";
+export * from "./sidebar-select";
 export * from "./activity";
 export * from "./delete-issue-modal";
 export * from "./description-form";

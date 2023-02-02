@@ -28,7 +28,7 @@ const defaultValues: ModuleLink = {
   url: "",
 };
 
-const ModuleLinkModal: React.FC<Props> = ({ isOpen, module, handleClose }) => {
+export const ModuleLinkModal: React.FC<Props> = ({ isOpen, module, handleClose }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query;
 
@@ -158,5 +158,3 @@ const ModuleLinkModal: React.FC<Props> = ({ isOpen, module, handleClose }) => {
     </Transition.Root>
   );
 };
-
-export default ModuleLinkModal;

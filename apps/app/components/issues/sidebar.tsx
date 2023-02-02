@@ -16,6 +16,7 @@ import useToast from "hooks/use-toast";
 import issuesServices from "services/issues.service";
 // components
 import {
+  DeleteIssueModal,
   SidebarAssigneeSelect,
   SidebarBlockedSelect,
   SidebarBlockerSelect,
@@ -23,8 +24,7 @@ import {
   SidebarParentSelect,
   SidebarPrioritySelect,
   SidebarStateSelect,
-} from "components/issues/sidebar-select";
-import { DeleteIssueModal } from "components/issues";
+} from "components/issues";
 // ui
 import { Input, Button, Spinner, CustomDatePicker } from "components/ui";
 // icons

@@ -16,11 +16,9 @@ import AppLayout from "layouts/app-layout";
 import { IssueViewContextProvider } from "contexts/issue-view.context";
 // components
 import ExistingIssuesListModal from "components/common/existing-issues-list-modal";
-import ModulesBoardView from "components/project/modules/board-view";
-import ModulesListView from "components/project/modules/list-view";
-import ModuleDetailSidebar from "components/project/modules/module-detail-sidebar";
-import ConfirmModuleDeletion from "components/project/modules/confirm-module-deletion";
+import ModulesBoardView from "components/modules/board-view";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
+import { DeleteModuleModal, ModuleDetailsSidebar, ModulesListView } from "components/modules";
 import View from "components/core/view";
 // ui
 import { CustomMenu, EmptySpace, EmptySpaceItem, Spinner } from "components/ui";
@@ -212,7 +210,7 @@ const SingleModule: React.FC<UserAuth> = (props) => {
         isOpen={!!deleteIssue}
         data={moduleIssuesArray?.find((issue) => issue.id === deleteIssue)}
       />
-      <ConfirmModuleDeletion
+      <DeleteModuleModal
         isOpen={
           moduleDeleteModal &&
           !!selectedModuleForDelete &&
@@ -321,7 +319,7 @@ const SingleModule: React.FC<UserAuth> = (props) => {
             <Spinner />
           </div>
         )}
-        <ModuleDetailSidebar
+        <ModuleDetailsSidebar
           module={moduleDetails}
           isOpen={moduleSidebar}
           moduleIssues={moduleIssues}

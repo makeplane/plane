@@ -12,10 +12,12 @@ import modulesService from "services/modules.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components
-import SelectLead from "components/project/modules/module-detail-sidebar/select-lead";
-import SelectMembers from "components/project/modules/module-detail-sidebar/select-members";
-import SelectStatus from "components/project/modules/module-detail-sidebar/select-status";
-import ModuleLinkModal from "components/project/modules/module-link-modal";
+import {
+  ModuleLinkModal,
+  SidebarLeadSelect,
+  SidebarMembersSelect,
+  SidebarStatusSelect,
+} from "components/modules";
 // progress-bar
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
@@ -53,7 +55,7 @@ type Props = {
   handleDeleteModule: () => void;
 };
 
-const ModuleDetailSidebar: React.FC<Props> = ({
+export const ModuleDetailsSidebar: React.FC<Props> = ({
   module,
   isOpen,
   moduleIssues,
@@ -161,12 +163,12 @@ const ModuleDetailSidebar: React.FC<Props> = ({
             </div>
             <div className="divide-y-2 divide-gray-100 text-xs">
               <div className="py-1">
-                <SelectLead
+                <SidebarLeadSelect
                   control={control}
                   submitChanges={submitChanges}
                   lead={module.lead_detail}
                 />
-                <SelectMembers control={control} submitChanges={submitChanges} />
+                <SidebarMembersSelect control={control} submitChanges={submitChanges} />
                 <div className="flex flex-wrap items-center py-2">
                   <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
                     <ChartPieIcon className="h-4 w-4 flex-shrink-0" />
@@ -233,7 +235,11 @@ const ModuleDetailSidebar: React.FC<Props> = ({
                 </div>
               </div>
               <div className="py-1">
-                <SelectStatus control={control} submitChanges={submitChanges} watch={watch} />
+                <SidebarStatusSelect
+                  control={control}
+                  submitChanges={submitChanges}
+                  watch={watch}
+                />
               </div>
               <div className="py-1">
                 <div className="flex items-center justify-between gap-2">
@@ -302,5 +308,3 @@ const ModuleDetailSidebar: React.FC<Props> = ({
     </>
   );
 };
-
-export default ModuleDetailSidebar;

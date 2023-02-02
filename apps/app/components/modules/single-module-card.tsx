@@ -1,10 +1,13 @@
 import React, { useState } from "react";
+
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { CalendarDaysIcon, TrashIcon } from "@heroicons/react/24/outline";
-import ConfirmModuleDeletion from "./confirm-module-deletion";
+
+// components
+import { DeleteModuleModal } from "components/modules";
 // icons
+import { CalendarDaysIcon, TrashIcon } from "@heroicons/react/24/outline";
 import User from "public/user.png";
 // helpers
 import { renderShortNumericDateFormat } from "helpers/date-time.helper";
@@ -17,7 +20,7 @@ type Props = {
   module: IModule;
 };
 
-const SingleModuleCard: React.FC<Props> = ({ module }) => {
+export const SingleModuleCard: React.FC<Props> = ({ module }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
   const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
@@ -40,7 +43,7 @@ const SingleModuleCard: React.FC<Props> = ({ module }) => {
           <TrashIcon className="h-4 w-4" />
         </button>
       </div>
-      <ConfirmModuleDeletion
+      <DeleteModuleModal
         isOpen={
           moduleDeleteModal &&
           !!selectedModuleForDelete &&
@@ -147,5 +150,3 @@ const SingleModuleCard: React.FC<Props> = ({ module }) => {
     </div>
   );
 };
-
-export default SingleModuleCard;

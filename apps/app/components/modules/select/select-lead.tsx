@@ -4,16 +4,16 @@ import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
+// react-hook-form
 import { Controller, Control } from "react-hook-form";
-import { UserIcon } from "@heroicons/react/24/outline";
-// import type { Control } from "react-hook-form";
-// service
-import type { IModule } from "types";
+// services
 import projectServices from "services/project.service";
 // ui
 import SearchListbox from "components/search-listbox";
 // icons
+import { UserIcon } from "@heroicons/react/24/outline";
 // types
+import type { IModule } from "types";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 
@@ -21,7 +21,7 @@ type Props = {
   control: Control<IModule, any>;
 };
 
-const SelectMembers: React.FC<Props> = ({ control }) => {
+export const ModuleLeadSelect: React.FC<Props> = ({ control }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -35,10 +35,10 @@ const SelectMembers: React.FC<Props> = ({ control }) => {
   return (
     <Controller
       control={control}
-      name="members_list"
+      name="lead"
       render={({ field: { value, onChange } }) => (
         <SearchListbox
-          title="Members"
+          title="Lead"
           optionsFontsize="sm"
           options={people?.map((person) => ({
             value: person.member.id,
@@ -47,7 +47,6 @@ const SelectMembers: React.FC<Props> = ({ control }) => {
                 ? person.member.first_name
                 : person.member.email,
           }))}
-          multiple={true}
           value={value}
           onChange={onChange}
           icon={<UserIcon className="h-3 w-3 text-gray-500" />}
@@ -56,5 +55,3 @@ const SelectMembers: React.FC<Props> = ({ control }) => {
     />
   );
 };
-
-export default SelectMembers;

@@ -23,7 +23,7 @@ type Props = {
   submitChanges: (formData: Partial<IModule>) => void;
 };
 
-const SelectMembers: React.FC<Props> = ({ control, submitChanges }) => {
+export const SidebarMembersSelect: React.FC<Props> = ({ control, submitChanges }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -132,5 +132,3 @@ const SelectMembers: React.FC<Props> = ({ control, submitChanges }) => {
     </div>
   );
 };
-
-export default SelectMembers;

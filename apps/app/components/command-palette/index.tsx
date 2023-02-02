@@ -20,9 +20,9 @@ import userService from "services/user.service";
 // components
 import ShortcutsModal from "components/command-palette/shortcuts";
 import { CreateProjectModal } from "components/project";
-import { CreateUpdateIssueModal } from "components/issues/modal";
+import { CreateUpdateIssueModal } from "components/issues";
+import { CreateUpdateModuleModal } from "components/modules";
 import CreateUpdateCycleModal from "components/project/cycles/create-update-cycle-modal";
-import CreateUpdateModuleModal from "components/project/modules/create-update-module-modal";
 import BulkDeleteIssuesModal from "components/common/bulk-delete-issues-modal";
 // headless ui
 // helpers
@@ -179,7 +179,6 @@ const CommandPalette: React.FC = () => {
           <CreateUpdateModuleModal
             isOpen={isCreateModuleModalOpen}
             setIsOpen={setIsCreateModuleModalOpen}
-            projectId={projectId as string}
           />
         </>
       )}

@@ -25,7 +25,7 @@ type Props = {
   data?: IModule;
 };
 
-const ConfirmModuleDeletion: React.FC<Props> = ({ isOpen, setIsOpen, data }) => {
+export const DeleteModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const router = useRouter();
@@ -152,5 +152,3 @@ const ConfirmModuleDeletion: React.FC<Props> = ({ isOpen, setIsOpen, data }) => 
     </Transition.Root>
   );
 };
-
-export default ConfirmModuleDeletion;

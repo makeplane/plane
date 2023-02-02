@@ -16,8 +16,6 @@ import issuesService from "services/issues.service";
 import useUser from "hooks/use-user";
 import useToast from "hooks/use-toast";
 // components
-import { CreateUpdateStateModal } from "components/states";
-import CreateUpdateCycleModal from "components/project/cycles/create-update-cycle-modal";
 import { IssueForm } from "components/issues";
 // common
 import { renderDateFormat } from "helpers/date-time.helper";
@@ -206,15 +204,15 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   };
 
   const handleFormSubmit = async (formData: Partial<IIssue>) => {
-    if (workspaceSlug && activeProject) {
-      const payload: Partial<IIssue> = {
-        ...formData,
-        target_date: formData.target_date ? renderDateFormat(formData.target_date ?? "") : null,
-      };
+    if (!workspaceSlug || !activeProject) return;
 
-      if (!data) await createIssue(payload);
-      else await updateIssue(payload);
-    }
+    const payload: Partial<IIssue> = {
+      ...formData,
+      target_date: formData.target_date ? renderDateFormat(formData.target_date ?? "") : null,
+    };
+
+    if (!data) await createIssue(payload);
+    else await updateIssue(payload);
   };
 
   return (
