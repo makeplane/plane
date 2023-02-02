@@ -69,7 +69,6 @@ if (
     and os.environ.get("AWS_SECRET_ACCESS_KEY", False)
     and os.environ.get("AWS_S3_BUCKET_NAME", False)
 ):
-
     # The AWS region to connect to.
     AWS_REGION = os.environ.get("AWS_REGION", "")
 
@@ -155,8 +154,8 @@ if (
     DEFAULT_FILE_STORAGE = "django_s3_storage.storage.S3Storage"
 
 else:
-    MEDIA_URL = "/static/"
-    MEDIA_ROOT = "/tmp/static/"
+    MEDIA_URL = "/uploads/"
+    MEDIA_ROOT = os.path.join(BASE_DIR, "uploads")
 
 
 # Enable Connection Pooling (if desired)

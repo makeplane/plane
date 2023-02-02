@@ -50,6 +50,7 @@ RUN apk --update --no-cache add "bash~=5.1"
 COPY ./bin ./bin/
 
 RUN chmod +x ./bin/takeoff ./bin/worker
+RUN chmod -R 777 /code
 
 USER captain
 
