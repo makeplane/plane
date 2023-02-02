@@ -208,7 +208,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
 
     const payload: Partial<IIssue> = {
       ...formData,
-      target_date: formData.target_date ? renderDateFormat(formData.target_date ?? "") : null,
     };
 
     if (!data) await createIssue(payload);

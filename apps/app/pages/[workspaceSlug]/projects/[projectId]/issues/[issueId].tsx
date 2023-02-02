@@ -108,25 +108,6 @@ const IssueDetailsPage: NextPage<UserAuth> = (props) => {
     defaultValues,
   });
 
-  useEffect(() => {
-    if (issueDetails) {
-      mutateIssueActivities();
-      reset({
-        ...issueDetails,
-        blockers_list:
-          issueDetails.blockers_list ??
-          issueDetails.blocker_issues?.map((issue) => issue.blocker_issue_detail?.id),
-        blocked_list:
-          issueDetails.blocked_list ??
-          issueDetails.blocked_issues?.map((issue) => issue.blocked_issue_detail?.id),
-        assignees_list:
-          issueDetails.assignees_list ?? issueDetails.assignee_details?.map((user) => user.id),
-        labels_list: issueDetails.labels_list ?? issueDetails.labels,
-        labels: issueDetails.labels_list ?? issueDetails.labels,
-      });
-    }
-  }, [issueDetails, reset, mutateIssueActivities]);
-
   const submitChanges = useCallback(
     (formData: Partial<IIssue>) => {
       if (!workspaceSlug || !projectId || !issueId) return;
@@ -185,6 +166,25 @@ const IssueDetailsPage: NextPage<UserAuth> = (props) => {
         console.error(e);
       });
   };
+
+  useEffect(() => {
+    if (issueDetails) {
+      mutateIssueActivities();
+      reset({
+        ...issueDetails,
+        blockers_list:
+          issueDetails.blockers_list ??
+          issueDetails.blocker_issues?.map((issue) => issue.blocker_issue_detail?.id),
+        blocked_list:
+          issueDetails.blocked_list ??
+          issueDetails.blocked_issues?.map((issue) => issue.blocked_issue_detail?.id),
+        assignees_list:
+          issueDetails.assignees_list ?? issueDetails.assignee_details?.map((user) => user.id),
+        labels_list: issueDetails.labels_list ?? issueDetails.labels,
+        labels: issueDetails.labels_list ?? issueDetails.labels,
+      });
+    }
+  }, [issueDetails, reset, mutateIssueActivities]);
 
   const isNotAllowed = props.isGuest || props.isViewer;
 

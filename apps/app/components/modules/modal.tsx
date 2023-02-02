@@ -111,8 +111,6 @@ export const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, da
 
     const payload: Partial<IModule> = {
       ...formData,
-      start_date: formData.start_date ? renderDateFormat(formData.start_date ?? "") : null,
-      target_date: formData.target_date ? renderDateFormat(formData.target_date ?? "") : null,
     };
 
     if (!data) await createModule(payload);
