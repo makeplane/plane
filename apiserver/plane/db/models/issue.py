@@ -9,6 +9,7 @@ from django.dispatch import receiver
 from . import ProjectBaseModel
 from plane.utils.html_processor import strip_tags
 
+
 # TODO: Handle identifiers for Bulk Inserts - nk
 class Issue(ProjectBaseModel):
     PRIORITY_CHOICES = (
@@ -56,6 +57,7 @@ class Issue(ProjectBaseModel):
     labels = models.ManyToManyField(
         "db.Label", blank=True, related_name="labels", through="IssueLabel"
     )
+    sort_order = models.FloatField(default=65535)
 
     class Meta:
         verbose_name = "Issue"
@@ -246,7 +248,6 @@ class IssueProperty(ProjectBaseModel):
 
 
 class Label(ProjectBaseModel):
-
     parent = models.ForeignKey(
         "self",
         on_delete=models.CASCADE,
@@ -269,7 +270,6 @@ class Label(ProjectBaseModel):
 
 
 class IssueLabel(ProjectBaseModel):
-
     issue = models.ForeignKey(
         "db.Issue", on_delete=models.CASCADE, related_name="label_issue"
     )
@@ -288,7 +288,6 @@ class IssueLabel(ProjectBaseModel):
 
 
 class IssueSequence(ProjectBaseModel):
-
     issue = models.ForeignKey(
         Issue, on_delete=models.SET_NULL, related_name="issue_sequence", null=True
     )
@@ -305,7 +304,6 @@ class IssueSequence(ProjectBaseModel):
 # TODO: Find a better method to save the model
 @receiver(post_save, sender=Issue)
 def create_issue_sequence(sender, instance, created, **kwargs):
-
     if created:
         IssueSequence.objects.create(
             issue=instance, sequence=instance.sequence_id, project=instance.project
