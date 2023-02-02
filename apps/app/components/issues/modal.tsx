@@ -17,8 +17,6 @@ import useUser from "hooks/use-user";
 import useToast from "hooks/use-toast";
 // components
 import { IssueForm } from "components/issues";
-// common
-import { renderDateFormat } from "helpers/date-time.helper";
 // types
 import type { IIssue, IssueResponse } from "types";
 // fetch keys
@@ -52,7 +50,10 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   const [activeProject, setActiveProject] = useState<string | null>(null);
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+
+  if (cycleId) prePopulateData = { ...prePopulateData, cycle: cycleId as string };
+  if (moduleId) prePopulateData = { ...prePopulateData, module: moduleId as string };
 
   const { user } = useUser();
   const { setToastAlert } = useToast();

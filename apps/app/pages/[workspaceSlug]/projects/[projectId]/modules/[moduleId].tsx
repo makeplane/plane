@@ -303,13 +303,13 @@ const SingleModule: React.FC<UserAuth> = (props) => {
                   title="Create a new issue"
                   description="Click to create a new issue inside the module."
                   Icon={PlusIcon}
-                  action={() => openCreateIssueModal()}
+                  action={openCreateIssueModal}
                 />
                 <EmptySpaceItem
                   title="Add an existing issue"
                   description="Open list"
                   Icon={ListBulletIcon}
-                  action={() => openIssuesListModal()}
+                  action={openIssuesListModal}
                 />
               </EmptySpace>
             </div>
