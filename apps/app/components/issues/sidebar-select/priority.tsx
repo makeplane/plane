@@ -19,7 +19,7 @@ type Props = {
   userAuth: UserAuth;
 };
 
-const SelectPriority: React.FC<Props> = ({ control, submitChanges, userAuth }) => {
+export const SidebarPrioritySelect: React.FC<Props> = ({ control, submitChanges, userAuth }) => {
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   return (
@@ -65,5 +65,3 @@ const SelectPriority: React.FC<Props> = ({ control, submitChanges, userAuth }) =
     </div>
   );
 };
-
-export default SelectPriority;

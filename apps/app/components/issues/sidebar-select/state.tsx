@@ -22,7 +22,7 @@ type Props = {
   userAuth: UserAuth;
 };
 
-const SelectState: React.FC<Props> = ({ control, submitChanges, userAuth }) => {
+export const SidebarStateSelect: React.FC<Props> = ({ control, submitChanges, userAuth }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -100,5 +100,3 @@ const SelectState: React.FC<Props> = ({ control, submitChanges, userAuth }) => {
     </div>
   );
 };
-
-export default SelectState;

@@ -10,7 +10,7 @@ import { UserIcon } from "@heroicons/react/24/outline";
 // services
 import issuesServices from "services/issues.service";
 // components
-import IssuesListModal from "components/project/issues/issues-list-modal";
+import { ParentIssuesListModal } from "components/issues";
 // icons
 // types
 import { IIssue, UserAuth } from "types";
@@ -26,7 +26,7 @@ type Props = {
   userAuth: UserAuth;
 };
 
-const SelectParent: React.FC<Props> = ({
+export const SidebarParentSelect: React.FC<Props> = ({
   control,
   submitChanges,
   issuesList,
@@ -61,7 +61,7 @@ const SelectParent: React.FC<Props> = ({
           control={control}
           name="parent"
           render={({ field: { value, onChange } }) => (
-            <IssuesListModal
+            <ParentIssuesListModal
               isOpen={isParentModalOpen}
               handleClose={() => setIsParentModalOpen(false)}
               onChange={(val) => {
@@ -93,5 +93,3 @@ const SelectParent: React.FC<Props> = ({
     </div>
   );
 };
-
-export default SelectParent;

@@ -21,7 +21,7 @@ type Props = {
   customDisplay?: JSX.Element;
 };
 
-const IssuesListModal: React.FC<Props> = ({
+export const ParentIssuesListModal: React.FC<Props> = ({
   isOpen,
   handleClose: onClose,
   value,
@@ -227,5 +227,3 @@ const IssuesListModal: React.FC<Props> = ({
     </>
   );
 };
-
-export default IssuesListModal;

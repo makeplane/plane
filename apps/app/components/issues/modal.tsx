@@ -16,7 +16,7 @@ import issuesService from "services/issues.service";
 import useUser from "hooks/use-user";
 import useToast from "hooks/use-toast";
 // components
-import CreateUpdateStateModal from "components/project/issues/BoardView/state/create-update-state-modal";
+import { CreateUpdateStateModal } from "components/states";
 import CreateUpdateCycleModal from "components/project/cycles/create-update-cycle-modal";
 import { IssueForm } from "components/issues";
 // common

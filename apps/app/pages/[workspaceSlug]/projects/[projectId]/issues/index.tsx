@@ -13,10 +13,8 @@ import AppLayout from "layouts/app-layout";
 // contexts
 import { IssueViewContextProvider } from "contexts/issue-view.context";
 // components
-import ListView from "components/project/issues/list-view";
-import BoardView from "components/project/issues/BoardView";
-import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
-import { CreateUpdateIssueModal } from "components/issues";
+import BoardView from "components/issues/board-view";
+import { CreateUpdateIssueModal, DeleteIssueModal, IssuesListView } from "components/issues";
 import View from "components/core/view";
 // ui
 import { Spinner, EmptySpace, EmptySpaceItem, HeaderButton } from "components/ui";
@@ -99,7 +97,7 @@ const ProjectIssues: NextPage<UserAuth> = (props) => {
           handleClose={() => setIsOpen(false)}
           data={selectedIssue}
         />
-        <ConfirmIssueDeletion
+        <DeleteIssueModal
           handleClose={() => setDeleteIssue(undefined)}
           isOpen={!!deleteIssue}
           data={projectIssues?.results.find((issue) => issue.id === deleteIssue)}
@@ -110,7 +108,7 @@ const ProjectIssues: NextPage<UserAuth> = (props) => {
           </div>
         ) : projectIssues.count > 0 ? (
           <>
-            <ListView
+            <IssuesListView
               issues={projectIssues?.results.filter((p) => p.parent === null) ?? []}
               handleEditIssue={handleEditIssue}
               userAuth={props}

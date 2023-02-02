@@ -4,22 +4,24 @@ import { useRouter } from "next/router";
 
 import { mutate } from "swr";
 
+// react-hook-form
 import { Controller, useForm } from "react-hook-form";
-
+// react-color
 import { TwitterPicker } from "react-color";
-
+// headless ui
 import { Dialog, Popover, Transition } from "@headlessui/react";
 // services
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
-import type { IState } from "types";
 import stateService from "services/state.service";
+// ui
+import { Button, Input, Select, TextArea } from "components/ui";
+// icons
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
+// types
+import type { IState } from "types";
 // fetch keys
 import { STATE_LIST } from "constants/fetch-keys";
 // constants
 import { GROUP_CHOICES } from "constants/";
-// ui
-import { Button, Input, Select, TextArea } from "components/ui";
-// icons
 
 // types
 type Props = {
@@ -36,7 +38,12 @@ const defaultValues: Partial<IState> = {
   group: "backlog",
 };
 
-const CreateUpdateStateModal: React.FC<Props> = ({ isOpen, data, projectId, handleClose }) => {
+export const CreateUpdateStateModal: React.FC<Props> = ({
+  isOpen,
+  data,
+  projectId,
+  handleClose,
+}) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -194,7 +201,7 @@ const CreateUpdateStateModal: React.FC<Props> = ({ isOpen, data, projectId, hand
                                       style={{
                                         backgroundColor: watch("color") ?? "green",
                                       }}
-                                     />
+                                    />
                                   )}
                                   <ChevronDownIcon
                                     className={`ml-2 h-5 w-5 group-hover:text-gray-500 ${
@@ -266,5 +273,3 @@ const CreateUpdateStateModal: React.FC<Props> = ({ isOpen, data, projectId, hand
     </Transition.Root>
   );
 };
-
-export default CreateUpdateStateModal;

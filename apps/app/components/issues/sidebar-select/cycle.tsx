@@ -22,7 +22,11 @@ type Props = {
   userAuth: UserAuth;
 };
 
-const SelectCycle: React.FC<Props> = ({ issueDetail, handleCycleChange, userAuth }) => {
+export const SidebarCycleSelect: React.FC<Props> = ({
+  issueDetail,
+  handleCycleChange,
+  userAuth,
+}) => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
@@ -98,5 +102,3 @@ const SelectCycle: React.FC<Props> = ({ issueDetail, handleCycleChange, userAuth
     </div>
   );
 };
-
-export default SelectCycle;

@@ -13,8 +13,7 @@ import { IssueViewContextProvider } from "contexts/issue-view.context";
 // components
 import CyclesListView from "components/project/cycles/list-view";
 import CyclesBoardView from "components/project/cycles/board-view";
-import { CreateUpdateIssueModal } from "components/issues";
-import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
+import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import ExistingIssuesListModal from "components/common/existing-issues-list-modal";
 import CycleDetailSidebar from "components/project/cycles/cycle-detail-sidebar";
 import View from "components/core/view";
@@ -38,6 +37,7 @@ import {
   PROJECT_ISSUES_LIST,
   PROJECT_MEMBERS,
   PROJECT_DETAILS,
+  CYCLE_DETAILS,
 } from "constants/fetch-keys";
 
 const SingleCycle: React.FC<UserAuth> = (props) => {
@@ -74,6 +74,18 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
     workspaceSlug && projectId ? CYCLE_LIST(projectId as string) : null,
     workspaceSlug && projectId
       ? () => cycleServices.getCycles(workspaceSlug as string, projectId as string)
+      : null
+  );
+
+  const { data: cycleDetails } = useSWR(
+    cycleId ? CYCLE_DETAILS(cycleId as string) : null,
+    workspaceSlug && projectId && cycleId
+      ? () =>
+          cycleServices.getCycleDetails(
+            workspaceSlug as string,
+            projectId as string,
+            cycleId as string
+          )
       : null
   );
 
@@ -181,7 +193,7 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
         issues={issues?.results.filter((i) => !i.issue_cycle) ?? []}
         handleOnSubmit={handleAddIssuesToCycle}
       />
-      <ConfirmIssueDeletion
+      <DeleteIssueModal
         handleClose={() => setDeleteIssue(undefined)}
         isOpen={!!deleteIssue}
         data={issues?.results.find((issue) => issue.id === deleteIssue)}
@@ -200,7 +212,7 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
             label={
               <>
                 <CyclesIcon className="h-3 w-3" />
-                {cycles?.find((c) => c.id === cycleId)?.name}
+                {cycleDetails?.name}
               </>
             }
             className="ml-1.5"
@@ -287,7 +299,7 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
           </div>
         )}
         <CycleDetailSidebar
-          cycle={cycles?.find((c) => c.id === (cycleId as string))}
+          cycle={cycleDetails}
           isOpen={cycleSidebar}
           cycleIssues={cycleIssues ?? []}
         />

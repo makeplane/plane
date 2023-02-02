@@ -14,10 +14,9 @@ import stateServices from "services/state.service";
 import issuesServices from "services/issues.service";
 import projectService from "services/project.service";
 // components
-import SingleBoard from "components/project/issues/BoardView/single-board";
+import SingleBoard from "components/issues/board-view/single-board";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
-import { CreateUpdateIssueModal } from "components/issues/modal";
-import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
+import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 // ui
 import { Spinner } from "components/ui";
 // types
@@ -185,7 +184,7 @@ const BoardView: React.FC<Props> = ({ issues, handleDeleteIssue, userAuth }) => 
 
   return (
     <>
-      <ConfirmIssueDeletion
+      <DeleteIssueModal
         isOpen={isIssueDeletionOpen}
         handleClose={() => setIsIssueDeletionOpen(false)}
         data={issueDeletionData}

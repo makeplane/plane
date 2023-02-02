@@ -15,7 +15,7 @@ import cyclesService from "services/cycles.service";
 import useToast from "hooks/use-toast";
 // ui
 import { Loader, CustomDatePicker } from "components/ui";
-//progress-bar
+// progress-bar
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 // helpers
@@ -24,7 +24,7 @@ import { groupBy } from "helpers/array.helper";
 // types
 import { CycleIssueResponse, ICycle } from "types";
 // fetch-keys
-import { CYCLE_LIST } from "constants/fetch-keys";
+import { CYCLE_DETAILS } from "constants/fetch-keys";
 
 type Props = {
   cycle: ICycle | undefined;
@@ -57,23 +57,19 @@ const CycleDetailSidebar: React.FC<Props> = ({ cycle, isOpen, cycleIssues }) => 
   };
 
   const submitChanges = (data: Partial<ICycle>) => {
-    if (!workspaceSlug || !projectId || !module) return;
+    if (!workspaceSlug || !projectId || !cycleId) return;
 
-    mutate<ICycle[]>(
-      projectId && CYCLE_LIST(projectId as string),
-      (prevData) =>
-        (prevData ?? []).map((tempCycle) => {
-          if (tempCycle.id === cycleId) return { ...tempCycle, ...data };
-          return tempCycle;
-        }),
+    mutate<ICycle>(
+      CYCLE_DETAILS(cycleId as string),
+      (prevData) => ({ ...(prevData as ICycle), ...data }),
       false
     );
 
     cyclesService
-      .patchCycle(workspaceSlug as string, projectId as string, cycle?.id ?? "", data)
+      .patchCycle(workspaceSlug as string, projectId as string, cycleId as string, data)
       .then((res) => {
         console.log(res);
-        mutate(CYCLE_LIST(projectId as string));
+        mutate(CYCLE_DETAILS(cycleId as string));
       })
       .catch((e) => {
         console.log(e);

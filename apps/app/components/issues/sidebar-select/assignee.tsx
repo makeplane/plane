@@ -27,7 +27,7 @@ type Props = {
   userAuth: UserAuth;
 };
 
-const SelectAssignee: React.FC<Props> = ({ control, submitChanges, userAuth }) => {
+export const SidebarAssigneeSelect: React.FC<Props> = ({ control, submitChanges, userAuth }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -143,5 +143,3 @@ const SelectAssignee: React.FC<Props> = ({ control, submitChanges, userAuth }) =
     </div>
   );
 };
-
-export default SelectAssignee;

@@ -21,7 +21,7 @@ type Props = {
   handleModuleChange: (module: IModule) => void;
 };
 
-const SelectModule: React.FC<Props> = ({ control, handleModuleChange }) => {
+export const SidebarModuleSelect: React.FC<Props> = ({ control, handleModuleChange }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -76,5 +76,3 @@ const SelectModule: React.FC<Props> = ({ control, handleModuleChange }) => {
     </div>
   );
 };
-
-export default SelectModule;

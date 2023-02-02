@@ -17,11 +17,11 @@ import { PROJECT_ISSUES_LIST, SUB_ISSUES } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  handleClose: () => void;
   parent: IIssue | undefined;
 };
 
-const AddAsSubIssue: React.FC<Props> = ({ isOpen, setIsOpen, parent }) => {
+export const SubIssuesListModal: React.FC<Props> = ({ isOpen, handleClose, parent }) => {
   const [query, setQuery] = useState("");
 
   const router = useRouter();
@@ -43,7 +43,7 @@ const AddAsSubIssue: React.FC<Props> = ({ isOpen, setIsOpen, parent }) => {
         [];
 
   const handleCommandPaletteClose = () => {
-    setIsOpen(false);
+    handleClose();
     setQuery("");
   };
 
@@ -147,7 +147,7 @@ const AddAsSubIssue: React.FC<Props> = ({ isOpen, setIsOpen, parent }) => {
                                   }
                                   onClick={() => {
                                     addAsSubIssue(issue.id);
-                                    setIsOpen(false);
+                                    handleClose();
                                   }}
                                 >
                                   <span
@@ -188,5 +188,3 @@ const AddAsSubIssue: React.FC<Props> = ({ isOpen, setIsOpen, parent }) => {
     </Transition.Root>
   );
 };
-
-export default AddAsSubIssue;

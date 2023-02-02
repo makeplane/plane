@@ -1,7 +1,7 @@
 import React from "react";
 import { Controller, Control } from "react-hook-form";
 // components
-import IssuesListModal from "components/project/issues/issues-list-modal";
+import { ParentIssuesListModal } from "components/issues";
 // types
 import type { IIssue } from "types";
 
@@ -17,7 +17,7 @@ export const IssueParentSelect: React.FC<Props> = ({ control, isOpen, setIsOpen,
     control={control}
     name="parent"
     render={({ field: { onChange } }) => (
-      <IssuesListModal
+      <ParentIssuesListModal
         isOpen={isOpen}
         handleClose={() => setIsOpen(false)}
         onChange={onChange}

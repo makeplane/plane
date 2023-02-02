@@ -4,18 +4,18 @@ import { useRouter } from "next/router";
 
 import { mutate } from "swr";
 
+// react-hook-form
 import { useForm } from "react-hook-form";
-
+// headless ui
 import { Dialog, Transition } from "@headlessui/react";
-// hooks
-// types
-import type { IModule, ModuleLink } from "types";
 // services
 import modulesService from "services/modules.service";
 // ui
 import { Button, Input } from "components/ui";
+// types
+import type { IModule, ModuleLink } from "types";
 // fetch-keys
-import { MODULE_LIST } from "constants/fetch-keys";
+import { MODULE_DETAILS } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
@@ -43,23 +43,18 @@ const ModuleLinkModal: React.FC<Props> = ({ isOpen, module, handleClose }) => {
   });
 
   const onSubmit = async (formData: ModuleLink) => {
-    if (!workspaceSlug || !projectId || !module) return;
+    if (!workspaceSlug || !projectId || !moduleId) return;
 
-    const previousLinks = module.link_module.map((l) => ({ title: l.title, url: l.url }));
+    const previousLinks = module?.link_module.map((l) => ({ title: l.title, url: l.url }));
 
     const payload: Partial<IModule> = {
-      links_list: [...previousLinks, formData],
+      links_list: [...(previousLinks ?? []), formData],
     };
 
     await modulesService
-      .patchModule(workspaceSlug as string, projectId as string, module.id, payload)
-      .then(() => {
-        mutate<IModule[]>(projectId && MODULE_LIST(projectId as string), (prevData) =>
-          (prevData ?? []).map((module) => {
-            if (module.id === moduleId) return { ...module, ...payload };
-            return module;
-          })
-        );
+      .patchModule(workspaceSlug as string, projectId as string, moduleId as string, payload)
+      .then((res) => {
+        mutate(MODULE_DETAILS(moduleId as string));
         onClose();
       })
       .catch((err) => {

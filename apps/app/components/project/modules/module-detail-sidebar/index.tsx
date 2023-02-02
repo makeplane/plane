@@ -8,13 +8,6 @@ import { mutate } from "swr";
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // services
-import {
-  CalendarDaysIcon,
-  ChartPieIcon,
-  LinkIcon,
-  PlusIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
 import modulesService from "services/modules.service";
 // hooks
 import useToast from "hooks/use-toast";
@@ -23,12 +16,19 @@ import SelectLead from "components/project/modules/module-detail-sidebar/select-
 import SelectMembers from "components/project/modules/module-detail-sidebar/select-members";
 import SelectStatus from "components/project/modules/module-detail-sidebar/select-status";
 import ModuleLinkModal from "components/project/modules/module-link-modal";
-//progress-bar
+// progress-bar
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 // ui
 import { CustomDatePicker, Loader } from "components/ui";
 // icons
+import {
+  CalendarDaysIcon,
+  ChartPieIcon,
+  LinkIcon,
+  PlusIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
@@ -36,9 +36,10 @@ import { groupBy } from "helpers/array.helper";
 // types
 import { IModule, ModuleIssueResponse } from "types";
 // fetch-keys
-import { MODULE_LIST } from "constants/fetch-keys";
+import { MODULE_DETAILS } from "constants/fetch-keys";
 
 const defaultValues: Partial<IModule> = {
+  lead: "",
   members_list: [],
   start_date: null,
   target_date: null,
@@ -69,14 +70,6 @@ const ModuleDetailSidebar: React.FC<Props> = ({
     defaultValues,
   });
 
-  useEffect(() => {
-    if (module)
-      reset({
-        ...module,
-        members_list: module.members_list ?? module.members_detail?.map((m) => m.id),
-      });
-  }, [module, reset]);
-
   const groupedIssues = {
     backlog: [],
     unstarted: [],
@@ -87,28 +80,35 @@ const ModuleDetailSidebar: React.FC<Props> = ({
   };
 
   const submitChanges = (data: Partial<IModule>) => {
-    if (!workspaceSlug || !projectId || !module) return;
+    if (!workspaceSlug || !projectId || !moduleId) return;
 
-    mutate<IModule[]>(
-      projectId && MODULE_LIST(projectId as string),
-      (prevData) =>
-        (prevData ?? []).map((module) => {
-          if (module.id === moduleId) return { ...module, ...data };
-          return module;
-        }),
+    mutate<IModule>(
+      MODULE_DETAILS(moduleId as string),
+      (prevData) => ({
+        ...(prevData as IModule),
+        ...data,
+      }),
       false
     );
 
     modulesService
-      .patchModule(workspaceSlug as string, projectId as string, module.id, data)
+      .patchModule(workspaceSlug as string, projectId as string, moduleId as string, data)
       .then((res) => {
         console.log(res);
-        mutate(MODULE_LIST(projectId as string));
+        mutate(MODULE_DETAILS(moduleId as string));
       })
       .catch((e) => {
         console.log(e);
       });
   };
+
+  useEffect(() => {
+    if (module)
+      reset({
+        ...module,
+        members_list: module.members_list ?? module.members_detail?.map((m) => m.id),
+      });
+  }, [module, reset]);
 
   return (
     <>

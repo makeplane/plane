@@ -16,7 +16,7 @@ import issuesService from "services/issues.service";
 // ui
 import { Button } from "components/ui";
 // icons
-import { FolderIcon, MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { BlockedIcon, LayerDiagonalIcon } from "components/icons";
 // types
 import { IIssue, UserAuth } from "types";
@@ -34,7 +34,12 @@ type Props = {
   userAuth: UserAuth;
 };
 
-const SelectBlocked: React.FC<Props> = ({ submitChanges, issuesList, watch, userAuth }) => {
+export const SidebarBlockedSelect: React.FC<Props> = ({
+  submitChanges,
+  issuesList,
+  watch,
+  userAuth,
+}) => {
   const [query, setQuery] = useState("");
   const [isBlockedModalOpen, setIsBlockedModalOpen] = useState(false);
 
@@ -301,5 +306,3 @@ const SelectBlocked: React.FC<Props> = ({ submitChanges, issuesList, watch, user
     </div>
   );
 };
-
-export default SelectBlocked;

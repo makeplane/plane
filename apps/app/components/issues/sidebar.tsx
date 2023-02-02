@@ -15,17 +15,18 @@ import useToast from "hooks/use-toast";
 // services
 import issuesServices from "services/issues.service";
 // components
-import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
-import SelectState from "components/project/issues/issue-detail/issue-detail-sidebar/select-state";
-import SelectPriority from "components/project/issues/issue-detail/issue-detail-sidebar/select-priority";
-import SelectParent from "components/project/issues/issue-detail/issue-detail-sidebar/select-parent";
-import SelectCycle from "components/project/issues/issue-detail/issue-detail-sidebar/select-cycle";
-import SelectAssignee from "components/project/issues/issue-detail/issue-detail-sidebar/select-assignee";
-import SelectBlocker from "components/project/issues/issue-detail/issue-detail-sidebar/select-blocker";
-import SelectBlocked from "components/project/issues/issue-detail/issue-detail-sidebar/select-blocked";
+import {
+  SidebarAssigneeSelect,
+  SidebarBlockedSelect,
+  SidebarBlockerSelect,
+  SidebarCycleSelect,
+  SidebarParentSelect,
+  SidebarPrioritySelect,
+  SidebarStateSelect,
+} from "components/issues/sidebar-select";
+import { DeleteIssueModal } from "components/issues";
 // ui
 import { Input, Button, Spinner, CustomDatePicker } from "components/ui";
-import DatePicker from "react-datepicker";
 // icons
 import {
   TagIcon,
@@ -43,8 +44,6 @@ import type { ICycle, IIssue, IIssueLabels, UserAuth } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS, PROJECT_ISSUES_LIST, ISSUE_DETAILS } from "constants/fetch-keys";
 
-import "react-datepicker/dist/react-datepicker.css";
-
 type Props = {
   control: Control<IIssue, any>;
   submitChanges: (formData: Partial<IIssue>) => void;
@@ -58,7 +57,7 @@ const defaultValues: Partial<IIssueLabels> = {
   colour: "#ff0000",
 };
 
-const IssueDetailSidebar: React.FC<Props> = ({
+export const IssueDetailsSidebar: React.FC<Props> = ({
   control,
   submitChanges,
   issueDetail,
@@ -128,7 +127,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
 
   return (
     <>
-      <ConfirmIssueDeletion
+      <DeleteIssueModal
         handleClose={() => setDeleteIssueModal(false)}
         isOpen={deleteIssueModal}
         data={issueDetail}
@@ -175,12 +174,24 @@ const IssueDetailSidebar: React.FC<Props> = ({
         </div>
         <div className="divide-y-2 divide-gray-100">
           <div className="py-1">
-            <SelectState control={control} submitChanges={submitChanges} userAuth={userAuth} />
-            <SelectAssignee control={control} submitChanges={submitChanges} userAuth={userAuth} />
-            <SelectPriority control={control} submitChanges={submitChanges} userAuth={userAuth} />
+            <SidebarStateSelect
+              control={control}
+              submitChanges={submitChanges}
+              userAuth={userAuth}
+            />
+            <SidebarAssigneeSelect
+              control={control}
+              submitChanges={submitChanges}
+              userAuth={userAuth}
+            />
+            <SidebarPrioritySelect
+              control={control}
+              submitChanges={submitChanges}
+              userAuth={userAuth}
+            />
           </div>
           <div className="py-1">
-            <SelectParent
+            <SidebarParentSelect
               control={control}
               submitChanges={submitChanges}
               issuesList={
@@ -210,13 +221,13 @@ const IssueDetailSidebar: React.FC<Props> = ({
               watch={watchIssue}
               userAuth={userAuth}
             />
-            <SelectBlocker
+            <SidebarBlockerSelect
               submitChanges={submitChanges}
               issuesList={issues?.results.filter((i) => i.id !== issueDetail?.id) ?? []}
               watch={watchIssue}
               userAuth={userAuth}
             />
-            <SelectBlocked
+            <SidebarBlockedSelect
               submitChanges={submitChanges}
               issuesList={issues?.results.filter((i) => i.id !== issueDetail?.id) ?? []}
               watch={watchIssue}
@@ -247,7 +258,7 @@ const IssueDetailSidebar: React.FC<Props> = ({
             </div>
           </div>
           <div className="py-1">
-            <SelectCycle
+            <SidebarCycleSelect
               issueDetail={issueDetail}
               handleCycleChange={handleCycleChange}
               userAuth={userAuth}
@@ -446,5 +457,3 @@ const IssueDetailSidebar: React.FC<Props> = ({
     </>
   );
 };
-
-export default IssueDetailSidebar;

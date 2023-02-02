@@ -5,16 +5,16 @@ import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 
+// headless ui
+import { Listbox, Transition } from "@headlessui/react";
 // services
 import issuesService from "services/issues.service";
 import workspaceService from "services/workspace.service";
 import stateService from "services/state.service";
-// headless ui
-import { Listbox, Transition } from "@headlessui/react";
+// components
+import { DeleteIssueModal } from "components/issues";
 // ui
 import { CustomMenu, CustomSelect, AssigneesList, Avatar, CustomDatePicker } from "components/ui";
-// components
-import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
 // helpers
 import { renderShortNumericDateFormat, findHowManyDaysLeft } from "helpers/date-time.helper";
 import { addSpaceIfCamelCase } from "helpers/string.helper";
@@ -152,7 +152,7 @@ const SingleListIssue: React.FC<Props> = ({
 
   return (
     <>
-      <ConfirmIssueDeletion
+      <DeleteIssueModal
         handleClose={() => setDeleteIssue(undefined)}
         isOpen={!!deleteIssue}
         data={deleteIssue}

@@ -28,7 +28,8 @@ const defaultValues: Partial<IIssueComment> = {
   comment_html: "",
   comment_json: "",
 };
-const AddIssueComment: React.FC<{
+
+export const AddComment: React.FC<{
   mutate: KeyedMutator<IIssueActivity[]>;
 }> = ({ mutate }) => {
   const {
@@ -111,5 +112,3 @@ const AddIssueComment: React.FC<{
     </div>
   );
 };
-
-export default AddIssueComment;

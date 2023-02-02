@@ -24,10 +24,7 @@ type Props = {
   removeIssue?: () => void;
 };
 
-export const IssueListItem: React.FC<Props> = (props) => {
-  // const { type, issue, properties, editIssue, handleDeleteIssue, removeIssue } = props;
-  const { issue, properties } = props;
-  // router
+export const MyIssuesListItem: React.FC<Props> = ({ issue, properties }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 

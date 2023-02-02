@@ -34,7 +34,12 @@ type Props = {
   userAuth: UserAuth;
 };
 
-const SelectBlocker: React.FC<Props> = ({ submitChanges, issuesList, watch, userAuth }) => {
+export const SidebarBlockerSelect: React.FC<Props> = ({
+  submitChanges,
+  issuesList,
+  watch,
+  userAuth,
+}) => {
   const [query, setQuery] = useState("");
   const [isBlockerModalOpen, setIsBlockerModalOpen] = useState(false);
 
@@ -299,5 +304,3 @@ const SelectBlocker: React.FC<Props> = ({ submitChanges, issuesList, watch, user
     </div>
   );
 };
-
-export default SelectBlocker;

@@ -17,7 +17,7 @@ import useIssuesProperties from "hooks/use-issue-properties";
 // types
 import { IIssue, Properties } from "types";
 // components
-import { IssueListItem } from "components/issues";
+import { MyIssuesListItem } from "components/issues";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // types
@@ -142,7 +142,11 @@ const MyIssuesPage: NextPage = () => {
                         <Disclosure.Panel>
                           <div className="divide-y-2">
                             {myIssues.map((issue: IIssue) => (
-                              <IssueListItem key={issue.id} issue={issue} properties={properties} />
+                              <MyIssuesListItem
+                                key={issue.id}
+                                issue={issue}
+                                properties={properties}
+                              />
                             ))}
                           </div>
                         </Disclosure.Panel>

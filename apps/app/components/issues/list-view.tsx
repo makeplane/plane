@@ -31,7 +31,7 @@ type Props = {
   userAuth: UserAuth;
 };
 
-const ListView: React.FC<Props> = ({ issues, handleEditIssue, userAuth }) => {
+export const IssuesListView: React.FC<Props> = ({ issues, handleEditIssue, userAuth }) => {
   const [isCreateIssuesModalOpen, setIsCreateIssuesModalOpen] = useState(false);
   const [preloadedData, setPreloadedData] = useState<
     (Partial<IIssue> & { actionType: "createIssue" | "edit" | "delete" }) | undefined
@@ -180,5 +180,3 @@ const ListView: React.FC<Props> = ({ issues, handleEditIssue, userAuth }) => {
     </>
   );
 };
-
-export default ListView;

@@ -4,8 +4,7 @@ import { Disclosure, Transition } from "@headlessui/react";
 import { ChevronRightIcon, PlusIcon } from "@heroicons/react/24/outline";
 // components
 import { CustomMenu } from "components/ui";
-import { CreateUpdateIssueModal } from "components/issues";
-import AddAsSubIssue from "components/project/issues/issue-detail/add-as-sub-issue";
+import { CreateUpdateIssueModal, SubIssuesListModal } from "components/issues";
 // types
 import { IIssue, UserAuth } from "types";
 
@@ -18,7 +17,7 @@ export interface SubIssueListProps {
   userAuth: UserAuth;
 }
 
-export const SubIssueList: FC<SubIssueListProps> = ({
+export const SubIssuesList: FC<SubIssueListProps> = ({
   issues = [],
   handleSubIssueRemove,
   parentIssue,
@@ -28,7 +27,7 @@ export const SubIssueList: FC<SubIssueListProps> = ({
 }) => {
   // states
   const [isIssueModalActive, setIssueModalActive] = useState(false);
-  const [isSubIssueModalActive, setSubIssueModalActive] = useState(false);
+  const [subIssuesListModal, setSubIssuesListModal] = useState(false);
   const [preloadedData, setPreloadedData] = useState<Partial<IIssue> | null>(null);
 
   const openIssueModal = () => {
@@ -40,11 +39,11 @@ export const SubIssueList: FC<SubIssueListProps> = ({
   };
 
   const openSubIssueModal = () => {
-    setSubIssueModalActive(true);
+    setSubIssuesListModal(true);
   };
 
   const closeSubIssueModal = () => {
-    setSubIssueModalActive(false);
+    setSubIssuesListModal(false);
   };
 
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
@@ -56,9 +55,9 @@ export const SubIssueList: FC<SubIssueListProps> = ({
         prePopulateData={{ ...preloadedData }}
         handleClose={closeIssueModal}
       />
-      <AddAsSubIssue
-        isOpen={isSubIssueModalActive}
-        setIsOpen={setSubIssueModalActive}
+      <SubIssuesListModal
+        isOpen={subIssuesListModal}
+        handleClose={() => setSubIssuesListModal(false)}
         parent={parentIssue}
       />
       <Disclosure defaultOpen={true}>
@@ -88,7 +87,7 @@ export const SubIssueList: FC<SubIssueListProps> = ({
                   <CustomMenu ellipsis>
                     <CustomMenu.MenuItem
                       onClick={() => {
-                        setSubIssueModalActive(true);
+                        setSubIssuesListModal(true);
                       }}
                     >
                       Add an existing issue

@@ -24,7 +24,7 @@ type Props = {
   handleCommentDeletion: (comment: string) => void;
 };
 
-const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentDeletion }) => {
+export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentDeletion }) => {
   const { user } = useUser();
 
   const [isEditing, setIsEditing] = useState(false);
@@ -130,5 +130,3 @@ const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentDeletion
     </div>
   );
 };
-
-export default CommentCard;

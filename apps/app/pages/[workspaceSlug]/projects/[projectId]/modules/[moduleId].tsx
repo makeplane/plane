@@ -18,10 +18,9 @@ import { IssueViewContextProvider } from "contexts/issue-view.context";
 import ExistingIssuesListModal from "components/common/existing-issues-list-modal";
 import ModulesBoardView from "components/project/modules/board-view";
 import ModulesListView from "components/project/modules/list-view";
-import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
 import ModuleDetailSidebar from "components/project/modules/module-detail-sidebar";
 import ConfirmModuleDeletion from "components/project/modules/confirm-module-deletion";
-import { CreateUpdateIssueModal } from "components/issues";
+import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import View from "components/core/view";
 // ui
 import { CustomMenu, EmptySpace, EmptySpaceItem, Spinner } from "components/ui";
@@ -46,7 +45,7 @@ import {
 import { NextPageContext } from "next";
 // fetch-keys
 import {
-  MODULE_DETAIL,
+  MODULE_DETAILS,
   MODULE_ISSUES,
   MODULE_LIST,
   PROJECT_ISSUES_LIST,
@@ -96,8 +95,8 @@ const SingleModule: React.FC<UserAuth> = (props) => {
       : null
   );
 
-  const { data: moduleDetail } = useSWR<IModule>(
-    MODULE_DETAIL,
+  const { data: moduleDetails } = useSWR<IModule>(
+    moduleId ? MODULE_DETAILS(moduleId as string) : null,
     workspaceSlug && projectId
       ? () =>
           modulesService.getModuleDetails(
@@ -181,9 +180,9 @@ const SingleModule: React.FC<UserAuth> = (props) => {
   };
 
   const handleDeleteModule = () => {
-    if (!moduleDetail) return;
+    if (!moduleDetails) return;
 
-    setSelectedModuleForDelete({ ...moduleDetail, actionType: "delete" });
+    setSelectedModuleForDelete({ ...moduleDetails, actionType: "delete" });
     setModuleDeleteModal(true);
   };
 
@@ -208,7 +207,7 @@ const SingleModule: React.FC<UserAuth> = (props) => {
         issues={issues?.results.filter((i) => !i.issue_module) ?? []}
         handleOnSubmit={handleAddIssuesToModule}
       />
-      <ConfirmIssueDeletion
+      <DeleteIssueModal
         handleClose={() => setDeleteIssue(undefined)}
         isOpen={!!deleteIssue}
         data={moduleIssuesArray?.find((issue) => issue.id === deleteIssue)}
@@ -226,7 +225,7 @@ const SingleModule: React.FC<UserAuth> = (props) => {
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem
-              title={`${moduleDetail?.project_detail.name ?? "Project"} Modules`}
+              title={`${moduleDetails?.project_detail.name ?? "Project"} Modules`}
               link={`/${workspaceSlug}/projects/${projectId}/modules`}
             />
           </Breadcrumbs>
@@ -236,7 +235,7 @@ const SingleModule: React.FC<UserAuth> = (props) => {
             label={
               <>
                 <RectangleGroupIcon className="h-3 w-3" />
-                {modules?.find((c) => c.id === moduleId)?.name}
+                {moduleDetails?.name}
               </>
             }
             className="ml-1.5"
@@ -323,7 +322,7 @@ const SingleModule: React.FC<UserAuth> = (props) => {
           </div>
         )}
         <ModuleDetailSidebar
-          module={modules?.find((m) => m.id === moduleId)}
+          module={moduleDetails}
           isOpen={moduleSidebar}
           moduleIssues={moduleIssues}
           handleDeleteModule={handleDeleteModule}

@@ -14,7 +14,7 @@ import {
 // services
 import issuesServices from "services/issues.service";
 // components
-import CommentCard from "components/project/issues/issue-detail/comment/issue-comment-card";
+import { CommentCard } from "components/issues/comment";
 // ui
 import { Loader } from "components/ui";
 // icons
@@ -76,7 +76,7 @@ const activityDetails: {
   },
 };
 
-const IssueActivitySection: React.FC<{
+export const IssueActivitySection: React.FC<{
   issueActivities: IIssueActivity[];
   mutate: KeyedMutator<IIssueActivity[]>;
 }> = ({ issueActivities, mutate }) => {
@@ -216,7 +216,7 @@ const IssueActivitySection: React.FC<{
                   </div>
                 </div>
               );
-            } else if ("comment_json" in activity) {
+            } else if ("comment_json" in activity)
               return (
                 <CommentCard
                   key={activity.id}
@@ -225,7 +225,6 @@ const IssueActivitySection: React.FC<{
                   handleCommentDeletion={onCommentDelete}
                 />
               );
-            }
           })}
         </div>
       ) : (
@@ -247,5 +246,3 @@ const IssueActivitySection: React.FC<{
     </>
   );
 };
-
-export default IssueActivitySection;
