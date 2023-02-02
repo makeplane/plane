@@ -133,7 +133,7 @@ const Sidebar: React.FC<Props> = ({ toggleSidebar, setToggleSidebar }) => {
                   });
                   document.dispatchEvent(e);
                 }}
-                title="Help"
+                title="Shortcuts"
               >
                 <BoltIcon className="h-4 w-4 text-gray-500" />
                 {!sidebarCollapse && <span>Shortcuts</span>}
@@ -174,7 +174,7 @@ const Sidebar: React.FC<Props> = ({ toggleSidebar, setToggleSidebar }) => {
                   title="Help"
                 >
                   <QuestionMarkCircleIcon className="h-4 w-4 text-gray-500" />
-                  {!sidebarCollapse && <span>Help ?</span>}
+                  {!sidebarCollapse && <span>Help?</span>}
                 </button>
               </div>
             </div>
