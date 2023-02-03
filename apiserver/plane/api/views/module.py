@@ -185,7 +185,10 @@ class ModuleIssueViewSet(BaseViewSet):
                 batch_size=10,
             )
 
-            return Response({"message": "Success"}, status=status.HTTP_200_OK)
+            return Response(
+                ModuleIssueSerializer(self.get_queryset(), many=True).data,
+                status=status.HTTP_200_OK,
+            )
         except Module.DoesNotExist:
             return Response(
                 {"error": "Module Does not exists"}, status=status.HTTP_400_BAD_REQUEST
