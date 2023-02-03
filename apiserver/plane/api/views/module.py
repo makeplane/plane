@@ -25,7 +25,6 @@ from plane.db.models import (
 
 
 class ModuleViewSet(BaseViewSet):
-
     model = Module
     permission_classes = [
         ProjectEntityPermission,
@@ -95,7 +94,6 @@ class ModuleViewSet(BaseViewSet):
 
 
 class ModuleIssueViewSet(BaseViewSet):
-
     serializer_class = ModuleIssueSerializer
     model = ModuleIssue
 
@@ -148,28 +146,45 @@ class ModuleIssueViewSet(BaseViewSet):
                 workspace__slug=slug, project_id=project_id, pk=module_id
             )
 
-            issues = Issue.objects.filter(
-                pk__in=issues, workspace__slug=slug, project_id=project_id
-            )
+            module_issues = list(ModuleIssue.objects.filter(issue_id__in=issues))
 
-            # Delete old records in order to maintain the database integrity
-            ModuleIssue.objects.filter(issue_id__in=issues).delete()
+            records_to_update = []
+            record_to_create = []
+
+            for issue in issues:
+                module_issue = [
+                    module_issue
+                    for module_issue in module_issues
+                    if module_issue.issue_id in issues
+                ]
+
+                if len(module_issue):
+                    module_issue[0].module_id = module_id
+                    records_to_update.append(module_issue[0])
+                else:
+                    record_to_create.append(
+                        ModuleIssue(
+                            module=module,
+                            issue=issue,
+                            project_id=project_id,
+                            workspace=module.workspace,
+                            created_by=request.user,
+                            updated_by=request.user,
+                        )
+                    )
 
             ModuleIssue.objects.bulk_create(
-                [
-                    ModuleIssue(
-                        module=module,
-                        issue=issue,
-                        project_id=project_id,
-                        workspace=module.workspace,
-                        created_by=request.user,
-                        updated_by=request.user,
-                    )
-                    for issue in issues
-                ],
+                record_to_create,
                 batch_size=10,
                 ignore_conflicts=True,
             )
+
+            ModuleIssue.objects.bulk_update(
+                records_to_update,
+                ["module"],
+                batch_size=10,
+            )
+
             return Response({"message": "Success"}, status=status.HTTP_200_OK)
         except Module.DoesNotExist:
             return Response(

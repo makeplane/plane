@@ -14,7 +14,6 @@ from plane.db.models import Cycle, CycleIssue, Issue
 
 
 class CycleViewSet(BaseViewSet):
-
     serializer_class = CycleSerializer
     model = Cycle
     permission_classes = [
@@ -41,7 +40,6 @@ class CycleViewSet(BaseViewSet):
 
 
 class CycleIssueViewSet(BaseViewSet):
-
     serializer_class = CycleIssueSerializer
     model = CycleIssue
 
@@ -79,7 +77,6 @@ class CycleIssueViewSet(BaseViewSet):
 
     def create(self, request, slug, project_id, cycle_id):
         try:
-
             issues = request.data.get("issues", [])
 
             if not len(issues):
@@ -91,29 +88,48 @@ class CycleIssueViewSet(BaseViewSet):
                 workspace__slug=slug, project_id=project_id, pk=cycle_id
             )
 
-            issues = Issue.objects.filter(
-                pk__in=issues, workspace__slug=slug, project_id=project_id
-            )
+            # Get all CycleIssues already created
+            cycle_issues = list(CycleIssue.objects.filter(issue_id__in=issues))
 
-            # Delete old records in order to maintain the database integrity
-            CycleIssue.objects.filter(issue_id__in=issues).delete()
+            records_to_update = []
+            record_to_create = []
+
+            for issue in issues:
+                cycle_issue = [
+                    cycle_issue
+                    for cycle_issue in cycle_issues
+                    if cycle_issue.issue_id in issues
+                ]
+                if len(cycle_issue):
+                    cycle_issue[0].cycle_id = cycle_id
+                    records_to_update.append(cycle_issue[0])
+                else:
+                    record_to_create.append(
+                        CycleIssue(
+                            project_id=project_id,
+                            workspace=cycle.workspace,
+                            created_by=request.user,
+                            updated_by=request.user,
+                            cycle=cycle,
+                            issue_id=issue,
+                        )
+                    )
 
             CycleIssue.objects.bulk_create(
-                [
-                    CycleIssue(
-                        project_id=project_id,
-                        workspace=cycle.workspace,
-                        created_by=request.user,
-                        updated_by=request.user,
-                        cycle=cycle,
-                        issue=issue,
-                    )
-                    for issue in issues
-                ],
+                record_to_create,
                 batch_size=10,
                 ignore_conflicts=True,
             )
-            return Response({"message": "Success"}, status=status.HTTP_200_OK)
+            CycleIssue.objects.bulk_update(
+                records_to_update,
+                ["cycle"],
+                batch_size=10,
+            )
+
+            # Return all Cycle Issues
+            return Response(
+                CycleIssueSerializer(self.get_queryset(), many=True).data, status=status.HTTP_200_OK
+            )
 
         except Cycle.DoesNotExist:
             return Response(
