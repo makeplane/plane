@@ -22,7 +22,7 @@ type Props = {
   selectedGroup: NestedKeyOf<IIssue> | null;
   groupTitle: string;
   createdBy: string | null;
-  bgColor: string;
+  bgColor?: string;
   addIssueToState: () => void;
   provided?: DraggableProvided;
 };

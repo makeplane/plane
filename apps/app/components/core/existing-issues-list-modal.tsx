@@ -32,7 +32,7 @@ type Props = {
   handleOnSubmit: any;
 };
 
-const ExistingIssuesListModal: React.FC<Props> = ({
+export const ExistingIssuesListModal: React.FC<Props> = ({
   isOpen,
   handleClose: onClose,
   issues,
@@ -233,5 +233,3 @@ const ExistingIssuesListModal: React.FC<Props> = ({
     </>
   );
 };
-
-export default ExistingIssuesListModal;

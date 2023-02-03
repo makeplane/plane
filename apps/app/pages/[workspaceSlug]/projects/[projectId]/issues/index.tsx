@@ -13,9 +13,13 @@ import AppLayout from "layouts/app-layout";
 // contexts
 import { IssueViewContextProvider } from "contexts/issue-view.context";
 // components
-import BoardView from "components/issues/board-view";
-import { CreateUpdateIssueModal, DeleteIssueModal, IssuesListView } from "components/issues";
-import View from "components/core/view";
+import {
+  CreateUpdateIssueModal,
+  DeleteIssueModal,
+  IssuesBoardView,
+  IssuesListView,
+} from "components/issues";
+import { IssuesFilterView } from "components/core";
 // ui
 import { Spinner, EmptySpace, EmptySpaceItem, HeaderButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -77,7 +81,9 @@ const ProjectIssues: NextPage<UserAuth> = (props) => {
         }
         right={
           <div className="flex items-center gap-2">
-            <View issues={projectIssues?.results.filter((p) => p.parent === null) ?? []} />
+            <IssuesFilterView
+              issues={projectIssues?.results.filter((p) => p.parent === null) ?? []}
+            />
             <HeaderButton
               Icon={PlusIcon}
               label="Add Issue"
@@ -113,7 +119,7 @@ const ProjectIssues: NextPage<UserAuth> = (props) => {
               handleEditIssue={handleEditIssue}
               userAuth={props}
             />
-            <BoardView
+            <IssuesBoardView
               issues={projectIssues?.results.filter((p) => p.parent === null) ?? []}
               handleDeleteIssue={setDeleteIssue}
               userAuth={props}

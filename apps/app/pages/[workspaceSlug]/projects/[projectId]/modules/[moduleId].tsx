@@ -8,18 +8,20 @@ import useSWR, { mutate } from "swr";
 import { requiredAdmin, requiredAuth } from "lib/auth";
 // services
 import modulesService from "services/modules.service";
-import projectService from "services/project.service";
 import issuesService from "services/issues.service";
 // layouts
 import AppLayout from "layouts/app-layout";
 // contexts
 import { IssueViewContextProvider } from "contexts/issue-view.context";
 // components
-import ExistingIssuesListModal from "components/common/existing-issues-list-modal";
-import ModulesBoardView from "components/modules/board-view";
+import { ExistingIssuesListModal, IssuesFilterView } from "components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
-import { DeleteModuleModal, ModuleDetailsSidebar, ModulesListView } from "components/modules";
-import View from "components/core/view";
+import {
+  DeleteModuleModal,
+  ModuleDetailsSidebar,
+  ModulesListView,
+  ModulesBoardView,
+} from "components/modules";
 // ui
 import { CustomMenu, EmptySpace, EmptySpaceItem, Spinner } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -47,7 +49,6 @@ import {
   MODULE_ISSUES,
   MODULE_LIST,
   PROJECT_ISSUES_LIST,
-  PROJECT_MEMBERS,
 } from "constants/fetch-keys";
 
 const SingleModule: React.FC<UserAuth> = (props) => {
@@ -103,19 +104,6 @@ const SingleModule: React.FC<UserAuth> = (props) => {
             moduleId as string
           )
       : null
-  );
-
-  const { data: members } = useSWR(
-    workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
-      : null,
-    {
-      onErrorRetry(err, _, __, revalidate, revalidateOpts) {
-        if (err?.status === 403) return;
-        setTimeout(() => revalidate(revalidateOpts), 5000);
-      },
-    }
   );
 
   const moduleIssuesArray = moduleIssues?.map((issue) => ({
@@ -254,7 +242,7 @@ const SingleModule: React.FC<UserAuth> = (props) => {
           <div
             className={`flex items-center gap-2 ${moduleSidebar ? "mr-[24rem]" : ""} duration-300`}
           >
-            <View issues={moduleIssuesArray ?? []} />
+            <IssuesFilterView issues={moduleIssuesArray ?? []} />
             <button
               type="button"
               className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-100 ${
@@ -280,7 +268,6 @@ const SingleModule: React.FC<UserAuth> = (props) => {
               />
               <ModulesBoardView
                 issues={moduleIssuesArray ?? []}
-                members={members}
                 openCreateIssueModal={openCreateIssueModal}
                 openIssuesListModal={openIssuesListModal}
                 handleDeleteIssue={setDeleteIssue}

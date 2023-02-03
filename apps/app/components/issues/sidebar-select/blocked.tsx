@@ -177,7 +177,6 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
                   <form>
                     <Combobox
                       onChange={(val: string) => {
-                        console.log("Triggered");
                         const selectedIssues = watchBlocked("blocked_issue_ids");
                         if (selectedIssues.includes(val))
                           setValue(

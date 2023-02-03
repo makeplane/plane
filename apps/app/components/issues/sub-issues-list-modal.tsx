@@ -151,7 +151,7 @@ export const SubIssuesListModal: React.FC<Props> = ({ isOpen, handleClose, paren
                                   }}
                                 >
                                   <span
-                                    className={`block h-1.5 w-1.5 rounded-full`}
+                                    className="block flex-shrink-0 h-1.5 w-1.5 rounded-full"
                                     style={{
                                       backgroundColor: issue.state_detail.color,
                                     }}

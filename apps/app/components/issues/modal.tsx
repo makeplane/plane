@@ -209,6 +209,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
 
     const payload: Partial<IIssue> = {
       ...formData,
+      description: formData.description ? formData.description : "",
+      description_html: formData.description_html ? formData.description_html : "<p></p>",
     };
 
     if (!data) await createIssue(payload);

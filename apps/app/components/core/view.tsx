@@ -23,7 +23,7 @@ type Props = {
   issues?: IIssue[];
 };
 
-const View: React.FC<Props> = ({ issues }) => {
+export const IssuesFilterView: React.FC<Props> = ({ issues }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -203,5 +203,3 @@ const View: React.FC<Props> = ({ issues }) => {
     </>
   );
 };
-
-export default View;

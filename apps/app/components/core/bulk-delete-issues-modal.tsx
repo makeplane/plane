@@ -8,7 +8,7 @@ import useSWR, { mutate } from "swr";
 import { SubmitHandler, useForm } from "react-hook-form";
 // services
 import { Combobox, Dialog, Transition } from "@headlessui/react";
-import { FolderIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import issuesServices from "services/issues.service";
 import projectService from "services/project.service";
 // hooks
@@ -32,7 +32,7 @@ type Props = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
+export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
   const [query, setQuery] = useState("");
 
   const router = useRouter();
@@ -256,5 +256,3 @@ const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
     </Transition.Root>
   );
 };
-
-export default BulkDeleteIssuesModal;

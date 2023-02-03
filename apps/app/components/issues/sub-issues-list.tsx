@@ -113,7 +113,7 @@ export const SubIssuesList: FC<SubIssueListProps> = ({
                     <Link href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}>
                       <a className="flex items-center gap-2 rounded text-xs">
                         <span
-                          className={`block h-1.5 w-1.5 rounded-full`}
+                          className="block flex-shrink-0 h-1.5 w-1.5 rounded-full"
                           style={{
                             backgroundColor: issue.state_detail.color,
                           }}

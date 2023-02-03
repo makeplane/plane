@@ -16,7 +16,7 @@ import workspaceService from "services/workspace.service";
 import { Spinner } from "components/ui";
 // components
 import { CreateUpdateIssueModal } from "components/issues/modal";
-import SingleListIssue from "components/common/list-view/single-issue";
+import SingleListIssue from "components/core/list-view/single-issue";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types

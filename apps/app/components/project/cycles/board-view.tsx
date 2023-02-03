@@ -1,29 +1,24 @@
 import React, { useCallback } from "react";
-
-import { useRouter } from "next/router";
-
+// swr
 import useSWR, { mutate } from "swr";
-
-// react-beautiful-dnd
-import { DragDropContext, DropResult } from "react-beautiful-dnd";
 // services
+import { useRouter } from "next/router";
+import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import stateService from "services/state.service";
-import issuesService from "services/issues.service";
 // hooks
-import useIssuesProperties from "hooks/use-issue-properties";
 import useIssueView from "hooks/use-issue-view";
 // components
-import SingleBoard from "components/modules/board-view/single-board";
+import { CommonSingleBoard } from "components/core/board-view/single-board";
 // ui
 import { Spinner } from "components/ui";
 // types
-import { IIssue, IProjectMember, ModuleIssueResponse, UserAuth } from "types";
+import { CycleIssueResponse, IIssue, UserAuth } from "types";
+import issuesService from "services/issues.service";
 // constants
-import { STATE_LIST, MODULE_ISSUES } from "constants/fetch-keys";
+import { STATE_LIST, CYCLE_ISSUES } from "constants/fetch-keys";
 
 type Props = {
   issues: IIssue[];
-  members: IProjectMember[] | undefined;
   openCreateIssueModal: (issue?: IIssue, actionType?: "create" | "edit" | "delete") => void;
   openIssuesListModal: () => void;
   handleDeleteIssue: React.Dispatch<React.SetStateAction<string | undefined>>;
@@ -38,9 +33,8 @@ type Props = {
   userAuth: UserAuth;
 };
 
-const ModulesBoardView: React.FC<Props> = ({
+const CyclesBoardView: React.FC<Props> = ({
   issues,
-  members,
   openCreateIssueModal,
   openIssuesListModal,
   handleDeleteIssue,
@@ -48,9 +42,8 @@ const ModulesBoardView: React.FC<Props> = ({
   userAuth,
 }) => {
   const router = useRouter();
-  const { workspaceSlug, projectId, moduleId } = router.query;
+  const { workspaceSlug, projectId, cycleId } = router.query;
 
-  const [properties] = useIssuesProperties(workspaceSlug as string, projectId as string);
   const { issueView, groupedByIssues, groupByProperty: selectedGroup } = useIssueView(issues);
 
   const { data: states } = useSWR(
@@ -95,9 +88,9 @@ const ModulesBoardView: React.FC<Props> = ({
             state: destinationStateId,
           });
 
-          if (!moduleId) return;
-          mutate<ModuleIssueResponse[]>(
-            MODULE_ISSUES(moduleId as string),
+          if (!cycleId) return;
+          mutate<CycleIssueResponse[]>(
+            CYCLE_ISSUES(cycleId as string),
             (prevData) => {
               if (!prevData) return prevData;
               const updatedIssues = prevData.map((issue) => {
@@ -121,7 +114,7 @@ const ModulesBoardView: React.FC<Props> = ({
         groupedByIssues[destination.droppableId].splice(destination.index, 0, removedItem);
       }
     },
-    [workspaceSlug, groupedByIssues, projectId, selectedGroup, states, moduleId]
+    [workspaceSlug, groupedByIssues, projectId, selectedGroup, states, cycleId]
   );
 
   if (issueView !== "kanban") return <></>;
@@ -134,36 +127,39 @@ const ModulesBoardView: React.FC<Props> = ({
             <div className="h-full w-full overflow-hidden">
               <div className="h-full w-full">
                 <div className="flex h-full gap-x-4 overflow-x-auto overflow-y-hidden">
-                  {Object.keys(groupedByIssues).map((singleGroup) => (
-                    <SingleBoard
-                      key={singleGroup}
-                      selectedGroup={selectedGroup}
-                      groupTitle={singleGroup}
-                      createdBy={
-                        selectedGroup === "created_by"
-                          ? members?.find((m) => m.member.id === singleGroup)?.member.first_name ??
-                            "loading..."
-                          : null
-                      }
-                      groupedByIssues={groupedByIssues}
-                      bgColor={
-                        selectedGroup === "state_detail.name"
-                          ? states?.find((s) => s.name === singleGroup)?.color
-                          : "#000000"
-                      }
-                      properties={properties}
-                      openIssuesListModal={openIssuesListModal}
-                      openCreateIssueModal={openCreateIssueModal}
-                      handleDeleteIssue={handleDeleteIssue}
-                      setPreloadedData={setPreloadedData}
-                      stateId={
-                        selectedGroup === "state_detail.name"
-                          ? states?.find((s) => s.name === singleGroup)?.id ?? null
-                          : null
-                      }
-                      userAuth={userAuth}
-                    />
-                  ))}
+                  {Object.keys(groupedByIssues).map((singleGroup) => {
+                    const stateId =
+                      selectedGroup === "state_detail.name"
+                        ? states?.find((s) => s.name === singleGroup)?.id ?? null
+                        : null;
+
+                    return (
+                      <CommonSingleBoard
+                        key={singleGroup}
+                        bgColor={
+                          selectedGroup === "state_detail.name"
+                            ? states?.find((s) => s.name === singleGroup)?.color
+                            : "#000000"
+                        }
+                        groupTitle={singleGroup}
+                        groupedByIssues={groupedByIssues}
+                        selectedGroup={selectedGroup}
+                        addIssueToState={() => {
+                          openCreateIssueModal();
+                          if (selectedGroup !== null) {
+                            setPreloadedData({
+                              state: stateId !== null ? stateId : undefined,
+                              [selectedGroup]: singleGroup,
+                              actionType: "createIssue",
+                            });
+                          }
+                        }}
+                        // openIssuesListModal={openIssuesListModal}
+                        handleDeleteIssue={handleDeleteIssue}
+                        userAuth={userAuth}
+                      />
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -178,4 +174,4 @@ const ModulesBoardView: React.FC<Props> = ({
   );
 };
 
-export default ModulesBoardView;
+export default CyclesBoardView;

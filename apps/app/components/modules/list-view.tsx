@@ -12,7 +12,7 @@ import stateService from "services/state.service";
 import useIssuesProperties from "hooks/use-issue-properties";
 import useIssueView from "hooks/use-issue-view";
 // components
-import SingleListIssue from "components/common/list-view/single-issue";
+import SingleListIssue from "components/core/list-view/single-issue";
 // ui
 import { CustomMenu, Spinner } from "components/ui";
 // helpers
