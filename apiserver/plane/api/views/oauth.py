@@ -34,7 +34,6 @@ def get_tokens_for_user(user):
 
 def validate_google_token(token, client_id):
     try:
-
         id_info = id_token.verify_oauth2_token(
             token, google_auth_request.Request(), client_id
         )
@@ -108,6 +107,12 @@ def get_user_data(access_token: str) -> dict:
 
     userData = resp.json()
 
+    req = requests.get(url="https://api.github.com/user/emails", headers=headers)
+    resp = req.json()
+    for item in resp:
+        if item.get("primary") is True:
+            userData["email"] = item.get("email")
+
     return userData
 
 
@@ -116,7 +121,6 @@ class OauthEndpoint(BaseAPIView):
 
     def post(self, request):
         try:
-
             medium = request.data.get("medium", False)
             id_token = request.data.get("credential", False)
             client_id = request.data.get("clientId", False)
@@ -138,7 +142,6 @@ class OauthEndpoint(BaseAPIView):
 
             email = data.get("email", None)
             if email == None:
-
                 return Response(
                     {
                         "error": "Something went wrong. Please try again later or contact the support team."
@@ -153,7 +156,6 @@ class OauthEndpoint(BaseAPIView):
                 mobile_number = uuid.uuid4().hex
                 email_verified = True
             else:
-
                 return Response(
                     {
                         "error": "Something went wrong. Please try again later or contact the support team."
