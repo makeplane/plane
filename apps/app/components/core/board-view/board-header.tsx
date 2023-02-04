@@ -14,6 +14,7 @@ import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
 import { IIssue, NestedKeyOf } from "types";
 type Props = {
+  provided: DraggableProvided;
   isCollapsed: boolean;
   setIsCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
   groupedByIssues: {
@@ -24,7 +25,6 @@ type Props = {
   createdBy: string | null;
   bgColor?: string;
   addIssueToState: () => void;
-  provided?: DraggableProvided;
 };
 
 const BoardHeader: React.FC<Props> = ({
@@ -44,18 +44,16 @@ const BoardHeader: React.FC<Props> = ({
     }`}
   >
     <div className={`flex items-center ${!isCollapsed ? "flex-col gap-2" : "gap-1"}`}>
-      {provided && (
-        <button
-          type="button"
-          {...provided.dragHandleProps}
-          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200 ${
-            !isCollapsed ? "" : "rotate-90"
-          } ${selectedGroup !== "state_detail.name" ? "hidden" : ""}`}
-        >
-          <EllipsisHorizontalIcon className="h-4 w-4 text-gray-600" />
-          <EllipsisHorizontalIcon className="mt-[-0.7rem] h-4 w-4 text-gray-600" />
-        </button>
-      )}
+      <button
+        type="button"
+        {...provided.dragHandleProps}
+        className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200 ${
+          !isCollapsed ? "" : "rotate-90"
+        } ${selectedGroup !== "state_detail.name" ? "hidden" : ""}`}
+      >
+        <EllipsisHorizontalIcon className="h-4 w-4 text-gray-600" />
+        <EllipsisHorizontalIcon className="mt-[-0.7rem] h-4 w-4 text-gray-600" />
+      </button>
       <div
         className={`flex cursor-pointer items-center gap-x-1 rounded-md bg-slate-900 px-2 ${
           !isCollapsed ? "mb-2 flex-col gap-y-2 py-2" : ""

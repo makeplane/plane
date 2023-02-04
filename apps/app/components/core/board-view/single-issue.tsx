@@ -8,9 +8,6 @@ import useSWR, { mutate } from "swr";
 
 // react-beautiful-dnd
 import { DraggableStateSnapshot } from "react-beautiful-dnd";
-// react-datepicker
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 // headless ui
 import { Listbox, Transition } from "@headlessui/react";
 // constants
@@ -51,7 +48,7 @@ type Props = {
   typeId?: string;
   issue: IIssue;
   properties: Properties;
-  snapshot?: DraggableStateSnapshot;
+  snapshot: DraggableStateSnapshot;
   assignees: Partial<IUserLite>[] | (Partial<IUserLite> | undefined)[];
   people: IWorkspaceMember[] | undefined;
   handleDeleteIssue?: React.Dispatch<React.SetStateAction<string | undefined>>;
@@ -163,7 +160,7 @@ const SingleBoardIssue: React.FC<Props> = ({
   return (
     <div
       className={`rounded border bg-white shadow-sm ${
-        snapshot && snapshot.isDragging ? "border-theme bg-indigo-50 shadow-lg" : ""
+        snapshot.isDragging ? "border-theme bg-indigo-50 shadow-lg" : ""
       }`}
     >
       <div className="group/card relative select-none p-2">

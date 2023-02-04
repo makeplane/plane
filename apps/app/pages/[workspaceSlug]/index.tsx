@@ -191,7 +191,7 @@ const WorkspacePage: NextPage = () => {
                         <a className="flex items-center justify-between">
                           <div className="flex items-center gap-2 text-sm">
                             {project.icon ? (
-                              <span className="grid flex-shrink-0 place-items-center rounded uppercase text-white">
+                              <span className="grid flex-shrink-0 place-items-center rounded uppercase">
                                 {String.fromCodePoint(parseInt(project.icon))}
                               </span>
                             ) : (

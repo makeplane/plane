@@ -14,6 +14,8 @@ import useIssuesProperties from "hooks/use-issue-properties";
 // components
 import BoardHeader from "components/core/board-view/board-header";
 import SingleIssue from "components/core/board-view/single-issue";
+// ui
+import { CustomMenu } from "components/ui";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 // types
@@ -22,8 +24,9 @@ import { IIssue, IWorkspaceMember, NestedKeyOf, UserAuth } from "types";
 import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 
 type Props = {
-  provided?: DraggableProvided;
-  snapshot?: DraggableStateSnapshot;
+  type?: "issue" | "cycle" | "module";
+  provided: DraggableProvided;
+  snapshot: DraggableStateSnapshot;
   bgColor?: string;
   groupTitle: string;
   groupedByIssues: {
@@ -32,10 +35,12 @@ type Props = {
   selectedGroup: NestedKeyOf<IIssue> | null;
   addIssueToState: () => void;
   handleDeleteIssue?: Dispatch<SetStateAction<string | undefined>> | undefined;
+  openIssuesListModal?: (() => void) | null;
   userAuth: UserAuth;
 };
 
 export const CommonSingleBoard: React.FC<Props> = ({
+  type = "issue",
   provided,
   snapshot,
   bgColor,
@@ -44,6 +49,7 @@ export const CommonSingleBoard: React.FC<Props> = ({
   selectedGroup,
   addIssueToState,
   handleDeleteIssue,
+  openIssuesListModal,
   userAuth,
 }) => {
   // collapse/expand
@@ -83,6 +89,7 @@ export const CommonSingleBoard: React.FC<Props> = ({
     >
       <div className={`${!isCollapsed ? "" : "flex h-full flex-col space-y-3 overflow-y-auto"}`}>
         <BoardHeader
+          provided={provided}
           addIssueToState={addIssueToState}
           bgColor={bgColor}
           createdBy={createdBy}
@@ -91,7 +98,6 @@ export const CommonSingleBoard: React.FC<Props> = ({
           isCollapsed={isCollapsed}
           setIsCollapsed={setIsCollapsed}
           selectedGroup={selectedGroup}
-          provided={provided}
         />
         <StrictModeDroppable key={groupTitle} droppableId={groupTitle}>
           {(provided, snapshot) => (
@@ -99,8 +105,8 @@ export const CommonSingleBoard: React.FC<Props> = ({
               className={`mt-3 h-full space-y-3 overflow-y-auto px-3 pb-3 ${
                 snapshot.isDraggingOver ? "bg-indigo-50 bg-opacity-50" : ""
               } ${!isCollapsed ? "hidden" : "block"}`}
-              {...provided.droppableProps}
               ref={provided.innerRef}
+              {...provided.droppableProps}
             >
               {groupedByIssues[groupTitle].map((childIssue, index: number) => {
                 const assignees = [
@@ -135,14 +141,35 @@ export const CommonSingleBoard: React.FC<Props> = ({
                 );
               })}
               {provided.placeholder}
-              {/* <button
-                type="button"
-                className="flex items-center rounded p-2 text-xs font-medium outline-none duration-300 hover:bg-gray-100"
-                onClick={addIssueToState}
-              >
-                <PlusIcon className="mr-1 h-3 w-3" />
-                Create
-              </button> */}
+              {type === "issue" ? (
+                <button
+                  type="button"
+                  className="flex items-center rounded p-2 text-xs font-medium outline-none duration-300 hover:bg-gray-100"
+                  onClick={addIssueToState}
+                >
+                  <PlusIcon className="mr-1 h-3 w-3" />
+                  Create
+                </button>
+              ) : (
+                <CustomMenu
+                  label={
+                    <span className="flex items-center gap-1">
+                      <PlusIcon className="h-3 w-3" />
+                      Add issue
+                    </span>
+                  }
+                  className="mt-1"
+                  optionsPosition="left"
+                  noBorder
+                >
+                  <CustomMenu.MenuItem onClick={addIssueToState}>Create new</CustomMenu.MenuItem>
+                  {openIssuesListModal && (
+                    <CustomMenu.MenuItem onClick={openIssuesListModal}>
+                      Add an existing issue
+                    </CustomMenu.MenuItem>
+                  )}
+                </CustomMenu>
+              )}
             </div>
           )}
         </StrictModeDroppable>

@@ -16,12 +16,8 @@ import { IssueViewContextProvider } from "contexts/issue-view.context";
 // components
 import { ExistingIssuesListModal, IssuesFilterView } from "components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
-import {
-  DeleteModuleModal,
-  ModuleDetailsSidebar,
-  ModulesListView,
-  ModulesBoardView,
-} from "components/modules";
+import { AllBoards } from "components/core/board-view/all-boards";
+import { DeleteModuleModal, ModuleDetailsSidebar, ModulesListView } from "components/modules";
 // ui
 import { CustomMenu, EmptySpace, EmptySpaceItem, Spinner } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -266,12 +262,11 @@ const SingleModule: React.FC<UserAuth> = (props) => {
                 setPreloadedData={setPreloadedData}
                 userAuth={props}
               />
-              <ModulesBoardView
+              <AllBoards
+                type="module"
                 issues={moduleIssuesArray ?? []}
-                openCreateIssueModal={openCreateIssueModal}
-                openIssuesListModal={openIssuesListModal}
                 handleDeleteIssue={setDeleteIssue}
-                setPreloadedData={setPreloadedData}
+                openIssuesListModal={openIssuesListModal}
                 userAuth={props}
               />
             </div>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 import { RectangleStackIcon } from "@heroicons/react/24/outline";
 import { PlusIcon } from "@heroicons/react/20/solid";
 // lib
@@ -13,13 +13,9 @@ import AppLayout from "layouts/app-layout";
 // contexts
 import { IssueViewContextProvider } from "contexts/issue-view.context";
 // components
-import {
-  CreateUpdateIssueModal,
-  DeleteIssueModal,
-  IssuesBoardView,
-  IssuesListView,
-} from "components/issues";
 import { IssuesFilterView } from "components/core";
+import { CreateUpdateIssueModal, DeleteIssueModal, IssuesListView } from "components/issues";
+import { AllBoards } from "components/core/board-view/all-boards";
 // ui
 import { Spinner, EmptySpace, EmptySpaceItem, HeaderButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -119,7 +115,7 @@ const ProjectIssues: NextPage<UserAuth> = (props) => {
               handleEditIssue={handleEditIssue}
               userAuth={props}
             />
-            <IssuesBoardView
+            <AllBoards
               issues={projectIssues?.results.filter((p) => p.parent === null) ?? []}
               handleDeleteIssue={setDeleteIssue}
               userAuth={props}

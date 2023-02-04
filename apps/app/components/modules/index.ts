@@ -1,6 +1,5 @@
 export * from "./select";
 export * from "./sidebar-select";
-export * from "./board-view";
 export * from "./delete-module-modal";
 export * from "./form";
 export * from "./list-view";
