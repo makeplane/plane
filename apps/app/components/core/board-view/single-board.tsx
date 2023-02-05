@@ -1,27 +1,20 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 
 import { useRouter } from "next/router";
-
-import useSWR from "swr";
 
 // react-beautiful-dnd
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 import { Draggable, DraggableProvided, DraggableStateSnapshot } from "react-beautiful-dnd";
-// services
-import workspaceService from "services/workspace.service";
 // hooks
 import useIssuesProperties from "hooks/use-issue-properties";
 // components
-import BoardHeader from "components/core/board-view/board-header";
-import SingleIssue from "components/core/board-view/single-issue";
+import { BoardHeader, SingleBoardIssue } from "components/core";
 // ui
 import { CustomMenu } from "components/ui";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 // types
-import { IIssue, IWorkspaceMember, NestedKeyOf, UserAuth } from "types";
-// fetch-keys
-import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
+import { IIssue, IProjectMember, NestedKeyOf, UserAuth } from "types";
 
 type Props = {
   type?: "issue" | "cycle" | "module";
@@ -33,13 +26,14 @@ type Props = {
     [key: string]: IIssue[];
   };
   selectedGroup: NestedKeyOf<IIssue> | null;
+  members: IProjectMember[] | undefined;
   addIssueToState: () => void;
-  handleDeleteIssue?: Dispatch<SetStateAction<string | undefined>> | undefined;
+  handleDeleteIssue: (issue: IIssue) => void;
   openIssuesListModal?: (() => void) | null;
   userAuth: UserAuth;
 };
 
-export const CommonSingleBoard: React.FC<Props> = ({
+export const SingleBoard: React.FC<Props> = ({
   type = "issue",
   provided,
   snapshot,
@@ -47,6 +41,7 @@ export const CommonSingleBoard: React.FC<Props> = ({
   groupTitle,
   groupedByIssues,
   selectedGroup,
+  members,
   addIssueToState,
   handleDeleteIssue,
   openIssuesListModal,
@@ -59,11 +54,6 @@ export const CommonSingleBoard: React.FC<Props> = ({
   const { workspaceSlug, projectId } = router.query;
 
   const [properties] = useIssuesProperties(workspaceSlug as string, projectId as string);
-
-  const { data: members } = useSWR<IWorkspaceMember[]>(
-    workspaceSlug ? WORKSPACE_MEMBERS : null,
-    workspaceSlug ? () => workspaceService.workspaceMembers(workspaceSlug as string) : null
-  );
 
   const createdBy =
     selectedGroup === "created_by"
@@ -126,7 +116,7 @@ export const CommonSingleBoard: React.FC<Props> = ({
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
                       >
-                        <SingleIssue
+                        <SingleBoardIssue
                           issue={childIssue}
                           properties={properties}
                           snapshot={snapshot}

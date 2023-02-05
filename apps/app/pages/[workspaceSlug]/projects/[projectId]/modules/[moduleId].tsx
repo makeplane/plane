@@ -14,10 +14,9 @@ import AppLayout from "layouts/app-layout";
 // contexts
 import { IssueViewContextProvider } from "contexts/issue-view.context";
 // components
-import { ExistingIssuesListModal, IssuesFilterView } from "components/core";
-import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
-import { AllBoards } from "components/core/board-view/all-boards";
-import { DeleteModuleModal, ModuleDetailsSidebar, ModulesListView } from "components/modules";
+import { ExistingIssuesListModal, IssuesFilterView, IssuesView } from "components/core";
+import { CreateUpdateIssueModal } from "components/issues";
+import { DeleteModuleModal, ModuleDetailsSidebar } from "components/modules";
 // ui
 import { CustomMenu, EmptySpace, EmptySpaceItem, Spinner } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -53,7 +52,6 @@ const SingleModule: React.FC<UserAuth> = (props) => {
   const [selectedIssues, setSelectedIssues] = useState<SelectIssue>(null);
   const [moduleIssuesListModal, setModuleIssuesListModal] = useState(false);
   const [createUpdateIssueModal, setCreateUpdateIssueModal] = useState(false);
-  const [deleteIssue, setDeleteIssue] = useState<string | undefined>(undefined);
   const [selectedModuleForDelete, setSelectedModuleForDelete] = useState<SelectModuleType>();
   const [preloadedData, setPreloadedData] = useState<
     (Partial<IIssue> & { actionType: "createIssue" | "edit" | "delete" }) | null
@@ -189,11 +187,6 @@ const SingleModule: React.FC<UserAuth> = (props) => {
         issues={issues?.results.filter((i) => !i.issue_module) ?? []}
         handleOnSubmit={handleAddIssuesToModule}
       />
-      <DeleteIssueModal
-        handleClose={() => setDeleteIssue(undefined)}
-        isOpen={!!deleteIssue}
-        data={moduleIssuesArray?.find((issue) => issue.id === deleteIssue)}
-      />
       <DeleteModuleModal
         isOpen={
           moduleDeleteModal &&
@@ -254,21 +247,15 @@ const SingleModule: React.FC<UserAuth> = (props) => {
         {moduleIssuesArray ? (
           moduleIssuesArray.length > 0 ? (
             <div className={`h-full ${moduleSidebar ? "mr-[24rem]" : ""} duration-300`}>
-              <ModulesListView
+              {/* <ModulesListView
                 issues={moduleIssuesArray ?? []}
                 openCreateIssueModal={openCreateIssueModal}
                 openIssuesListModal={openIssuesListModal}
                 removeIssueFromModule={removeIssueFromModule}
                 setPreloadedData={setPreloadedData}
                 userAuth={props}
-              />
-              <AllBoards
-                type="module"
-                issues={moduleIssuesArray ?? []}
-                handleDeleteIssue={setDeleteIssue}
-                openIssuesListModal={openIssuesListModal}
-                userAuth={props}
-              />
+              /> */}
+              <IssuesView issues={moduleIssuesArray ?? []} userAuth={props} />
             </div>
           ) : (
             <div

@@ -13,9 +13,8 @@ import AppLayout from "layouts/app-layout";
 // contexts
 import { IssueViewContextProvider } from "contexts/issue-view.context";
 // components
-import { IssuesFilterView } from "components/core";
-import { CreateUpdateIssueModal, DeleteIssueModal, IssuesListView } from "components/issues";
-import { AllBoards } from "components/core/board-view/all-boards";
+import { IssuesFilterView, IssuesView } from "components/core";
+import { CreateUpdateIssueModal } from "components/issues";
 // ui
 import { Spinner, EmptySpace, EmptySpaceItem, HeaderButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -30,7 +29,6 @@ const ProjectIssues: NextPage<UserAuth> = (props) => {
   const [selectedIssue, setSelectedIssue] = useState<
     (IIssue & { actionType: "edit" | "delete" }) | undefined
   >(undefined);
-  const [deleteIssue, setDeleteIssue] = useState<string | undefined>(undefined);
 
   const {
     query: { workspaceSlug, projectId },
@@ -61,13 +59,14 @@ const ProjectIssues: NextPage<UserAuth> = (props) => {
     }
   }, [isOpen]);
 
-  const handleEditIssue = (issue: IIssue) => {
-    setIsOpen(true);
-    setSelectedIssue({ ...issue, actionType: "edit" });
-  };
-
   return (
     <IssueViewContextProvider>
+      <CreateUpdateIssueModal
+        isOpen={isOpen && selectedIssue?.actionType !== "delete"}
+        prePopulateData={{ ...selectedIssue }}
+        handleClose={() => setIsOpen(false)}
+        data={selectedIssue}
+      />
       <AppLayout
         breadcrumbs={
           <Breadcrumbs>
@@ -93,34 +92,15 @@ const ProjectIssues: NextPage<UserAuth> = (props) => {
           </div>
         }
       >
-        <CreateUpdateIssueModal
-          isOpen={isOpen && selectedIssue?.actionType !== "delete"}
-          prePopulateData={{ ...selectedIssue }}
-          handleClose={() => setIsOpen(false)}
-          data={selectedIssue}
-        />
-        <DeleteIssueModal
-          handleClose={() => setDeleteIssue(undefined)}
-          isOpen={!!deleteIssue}
-          data={projectIssues?.results.find((issue) => issue.id === deleteIssue)}
-        />
         {!projectIssues ? (
           <div className="flex h-full w-full items-center justify-center">
             <Spinner />
           </div>
         ) : projectIssues.count > 0 ? (
-          <>
-            <IssuesListView
-              issues={projectIssues?.results.filter((p) => p.parent === null) ?? []}
-              handleEditIssue={handleEditIssue}
-              userAuth={props}
-            />
-            <AllBoards
-              issues={projectIssues?.results.filter((p) => p.parent === null) ?? []}
-              handleDeleteIssue={setDeleteIssue}
-              userAuth={props}
-            />
-          </>
+          <IssuesView
+            issues={projectIssues?.results.filter((p) => p.parent === null) ?? []}
+            userAuth={props}
+          />
         ) : (
           <div className="grid h-full w-full place-items-center px-4 sm:px-0">
             <EmptySpace

@@ -130,7 +130,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
       <DeleteIssueModal
         handleClose={() => setDeleteIssueModal(false)}
         isOpen={deleteIssueModal}
-        data={issueDetail}
+        data={issueDetail ?? null}
       />
       <div className="w-full divide-y-2 divide-gray-100 sticky top-5">
         <div className="flex items-center justify-between pb-3">

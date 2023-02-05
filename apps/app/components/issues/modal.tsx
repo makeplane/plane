@@ -175,7 +175,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
       .then((res) => {
         if (isUpdatingSingleIssue) {
           mutate<IIssue>(PROJECT_ISSUES_DETAILS, (prevData) => ({ ...prevData, ...res }), false);
-        } else
+        } else {
           mutate<IssueResponse>(
             PROJECT_ISSUES_LIST(workspaceSlug as string, activeProject ?? ""),
             (prevData) => ({
@@ -186,8 +186,10 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
               }),
             })
           );
+        }
 
         if (payload.cycle && payload.cycle !== "") addIssueToCycle(res.id, payload.cycle);
+        if (payload.module && payload.module !== "") addIssueToModule(res.id, payload.module);
 
         if (!createMore) handleClose();
 

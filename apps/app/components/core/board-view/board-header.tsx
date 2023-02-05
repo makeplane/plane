@@ -27,7 +27,7 @@ type Props = {
   addIssueToState: () => void;
 };
 
-const BoardHeader: React.FC<Props> = ({
+export const BoardHeader: React.FC<Props> = ({
   isCollapsed,
   setIsCollapsed,
   provided,
@@ -103,5 +103,3 @@ const BoardHeader: React.FC<Props> = ({
     </div>
   </div>
 );
-
-export default BoardHeader;

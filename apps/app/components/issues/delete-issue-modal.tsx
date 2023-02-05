@@ -22,7 +22,7 @@ import { CYCLE_ISSUES, PROJECT_ISSUES_LIST, MODULE_ISSUES } from "constants/fetc
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
-  data?: IIssue;
+  data: IIssue | null;
 };
 
 export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data }) => {

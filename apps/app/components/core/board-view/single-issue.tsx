@@ -19,15 +19,15 @@ import projectService from "services/project.service";
 // components
 import { AssigneesList, CustomDatePicker } from "components/ui";
 // helpers
-import { renderShortNumericDateFormat, findHowManyDaysLeft } from "helpers/date-time.helper";
+import { findHowManyDaysLeft } from "helpers/date-time.helper";
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
 import {
   CycleIssueResponse,
   IIssue,
+  IProjectMember,
   IssueResponse,
   IUserLite,
-  IWorkspaceMember,
   ModuleIssueResponse,
   Properties,
   UserAuth,
@@ -50,12 +50,12 @@ type Props = {
   properties: Properties;
   snapshot: DraggableStateSnapshot;
   assignees: Partial<IUserLite>[] | (Partial<IUserLite> | undefined)[];
-  people: IWorkspaceMember[] | undefined;
-  handleDeleteIssue?: React.Dispatch<React.SetStateAction<string | undefined>>;
+  people: IProjectMember[] | undefined;
+  handleDeleteIssue: (issue: IIssue) => void;
   userAuth: UserAuth;
 };
 
-const SingleBoardIssue: React.FC<Props> = ({
+export const SingleBoardIssue: React.FC<Props> = ({
   type,
   typeId,
   issue,
@@ -164,12 +164,12 @@ const SingleBoardIssue: React.FC<Props> = ({
       }`}
     >
       <div className="group/card relative select-none p-2">
-        {handleDeleteIssue && !isNotAllowed && (
+        {!isNotAllowed && (
           <div className="absolute top-1.5 right-1.5 z-10 opacity-0 group-hover/card:opacity-100">
             <button
               type="button"
               className="grid h-7 w-7 place-items-center rounded bg-white p-1 text-red-500 outline-none duration-300 hover:bg-red-50"
-              onClick={() => handleDeleteIssue(issue.id)}
+              onClick={() => handleDeleteIssue(issue)}
             >
               <TrashIcon className="h-4 w-4" />
             </button>
@@ -400,7 +400,7 @@ const SingleBoardIssue: React.FC<Props> = ({
                     <Listbox.Options className="absolute left-0 z-20 mt-1 max-h-28 overflow-auto rounded-md bg-white py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                       {people?.map((person) => (
                         <Listbox.Option
-                          key={person.id}
+                          key={person.member.id}
                           className={({ active }) =>
                             `cursor-pointer select-none p-2 ${active ? "bg-indigo-50" : "bg-white"}`
                           }
@@ -457,5 +457,3 @@ const SingleBoardIssue: React.FC<Props> = ({
     </div>
   );
 };
-
-export default SingleBoardIssue;

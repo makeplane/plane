@@ -11,11 +11,9 @@ import AppLayout from "layouts/app-layout";
 // contexts
 import { IssueViewContextProvider } from "contexts/issue-view.context";
 // components
-import CyclesListView from "components/project/cycles/list-view";
-import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
-import { ExistingIssuesListModal, IssuesFilterView } from "components/core";
+import { CreateUpdateIssueModal } from "components/issues";
+import { ExistingIssuesListModal, IssuesFilterView, IssuesView } from "components/core";
 import CycleDetailSidebar from "components/project/cycles/cycle-detail-sidebar";
-import { AllBoards } from "components/core/board-view/all-boards";
 // services
 import issuesServices from "services/issues.service";
 import cycleServices from "services/cycles.service";
@@ -42,7 +40,6 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
   const [isIssueModalOpen, setIsIssueModalOpen] = useState(false);
   const [selectedIssues, setSelectedIssues] = useState<SelectIssue>();
   const [cycleIssuesListModal, setCycleIssuesListModal] = useState(false);
-  const [deleteIssue, setDeleteIssue] = useState<string | undefined>(undefined);
   const [cycleSidebar, setCycleSidebar] = useState(true);
 
   const [preloadedData, setPreloadedData] = useState<
@@ -178,11 +175,6 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
         issues={issues?.results.filter((i) => !i.issue_cycle) ?? []}
         handleOnSubmit={handleAddIssuesToCycle}
       />
-      <DeleteIssueModal
-        handleClose={() => setDeleteIssue(undefined)}
-        isOpen={!!deleteIssue}
-        data={issues?.results.find((issue) => issue.id === deleteIssue)}
-      />
       <AppLayout
         breadcrumbs={
           <Breadcrumbs>
@@ -234,21 +226,15 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
         {cycleIssuesArray ? (
           cycleIssuesArray.length > 0 ? (
             <div className={`h-full ${cycleSidebar ? "mr-[24rem]" : ""} duration-300`}>
-              <CyclesListView
+              {/* <CyclesListView
                 issues={cycleIssuesArray ?? []}
                 openCreateIssueModal={openCreateIssueModal}
                 openIssuesListModal={openIssuesListModal}
                 removeIssueFromCycle={removeIssueFromCycle}
                 setPreloadedData={setPreloadedData}
                 userAuth={props}
-              />
-              <AllBoards
-                type="cycle"
-                issues={cycleIssuesArray ?? []}
-                handleDeleteIssue={setDeleteIssue}
-                openIssuesListModal={openIssuesListModal}
-                userAuth={props}
-              />
+              /> */}
+              <IssuesView issues={cycleIssuesArray ?? []} userAuth={props} />
             </div>
           ) : (
             <div
