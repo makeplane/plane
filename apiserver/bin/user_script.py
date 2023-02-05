@@ -3,7 +3,7 @@ import uuid
 
 sys.path.append("/code")
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "plane.settings.local")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "plane.settings.production")
 import django
 
 django.setup()
