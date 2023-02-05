@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -11,8 +11,6 @@ import { Listbox, Transition } from "@headlessui/react";
 import issuesService from "services/issues.service";
 import workspaceService from "services/workspace.service";
 import stateService from "services/state.service";
-// components
-import { DeleteIssueModal } from "components/issues";
 // ui
 import { CustomMenu, CustomSelect, AssigneesList, Avatar, CustomDatePicker } from "components/ui";
 // helpers
@@ -42,18 +40,16 @@ import { PRIORITIES } from "constants/";
 
 type Props = {
   type?: string;
-  typeId?: string;
   issue: IIssue;
   properties: Properties;
   editIssue: () => void;
-  removeIssue?: () => void;
+  removeIssue?: (() => void) | null;
   handleDeleteIssue: (issue: IIssue) => void;
   userAuth: UserAuth;
 };
 
 export const SingleListIssue: React.FC<Props> = ({
   type,
-  typeId,
   issue,
   properties,
   editIssue,
@@ -62,7 +58,7 @@ export const SingleListIssue: React.FC<Props> = ({
   userAuth,
 }) => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
   const { data: states } = useSWR(
     workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
@@ -79,9 +75,9 @@ export const SingleListIssue: React.FC<Props> = ({
   const partialUpdateIssue = (formData: Partial<IIssue>) => {
     if (!workspaceSlug || !projectId) return;
 
-    if (typeId) {
+    if (cycleId)
       mutate<CycleIssueResponse[]>(
-        CYCLE_ISSUES(typeId ?? ""),
+        CYCLE_ISSUES(cycleId as string),
         (prevData) => {
           const updatedIssues = (prevData ?? []).map((p) => {
             if (p.issue_detail.id === issue.id) {
@@ -100,8 +96,9 @@ export const SingleListIssue: React.FC<Props> = ({
         false
       );
 
+    if (moduleId)
       mutate<ModuleIssueResponse[]>(
-        MODULE_ISSUES(typeId ?? ""),
+        MODULE_ISSUES(moduleId as string),
         (prevData) => {
           const updatedIssues = (prevData ?? []).map((p) => {
             if (p.issue_detail.id === issue.id) {
@@ -119,7 +116,6 @@ export const SingleListIssue: React.FC<Props> = ({
         },
         false
       );
-    }
 
     mutate<IssueResponse>(
       PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
@@ -136,10 +132,14 @@ export const SingleListIssue: React.FC<Props> = ({
     issuesService
       .patchIssue(workspaceSlug as string, projectId as string, issue.id, formData)
       .then((res) => {
-        if (typeId) {
-          mutate(CYCLE_ISSUES(typeId ?? ""));
-          mutate(MODULE_ISSUES(typeId ?? ""));
-        }
+        mutate(
+          cycleId ? CYCLE_ISSUES(cycleId as string) : CYCLE_ISSUES(issue?.issue_cycle?.cycle ?? "")
+        );
+        mutate(
+          moduleId
+            ? MODULE_ISSUES(moduleId as string)
+            : MODULE_ISSUES(issue?.issue_module?.module ?? "")
+        );
 
         mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
       })
@@ -154,7 +154,7 @@ export const SingleListIssue: React.FC<Props> = ({
     <div className="flex items-center justify-between gap-2 px-4 py-3 text-sm">
       <div className="flex items-center gap-2">
         <span
-          className={`block h-1.5 w-1.5 flex-shrink-0 rounded-full`}
+          className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
           style={{
             backgroundColor: issue.state_detail.color,
           }}
@@ -288,11 +288,6 @@ export const SingleListIssue: React.FC<Props> = ({
             ))}
           </CustomSelect>
         )}
-        {/* {properties.cycle && !typeId && (
-            <div className="flex flex-shrink-0 items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
-              {issue.issue_cycle ? issue.issue_cycle.cycle_detail.name : "None"}
-            </div>
-          )} */}
         {properties.due_date && (
           <div
             className={`group relative ${
@@ -409,7 +404,7 @@ export const SingleListIssue: React.FC<Props> = ({
         {type && !isNotAllowed && (
           <CustomMenu width="auto" ellipsis>
             <CustomMenu.MenuItem onClick={editIssue}>Edit</CustomMenu.MenuItem>
-            {type !== "issue" && (
+            {type !== "issue" && removeIssue && (
               <CustomMenu.MenuItem onClick={removeIssue}>
                 <>Remove from {type}</>
               </CustomMenu.MenuItem>

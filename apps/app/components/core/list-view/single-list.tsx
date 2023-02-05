@@ -12,6 +12,7 @@ import { ChevronDownIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
 import { IIssue, IProjectMember, NestedKeyOf, UserAuth } from "types";
+import { CustomMenu } from "components/ui";
 
 type Props = {
   type?: "issue" | "cycle" | "module";
@@ -25,11 +26,12 @@ type Props = {
   handleEditIssue: (issue: IIssue) => void;
   handleDeleteIssue: (issue: IIssue) => void;
   openIssuesListModal?: (() => void) | null;
+  removeIssue: ((bridgeId: string) => void) | null;
   userAuth: UserAuth;
 };
 
 export const SingleList: React.FC<Props> = ({
-  type = "issue",
+  type,
   groupTitle,
   groupedByIssues,
   selectedGroup,
@@ -38,6 +40,7 @@ export const SingleList: React.FC<Props> = ({
   handleEditIssue,
   handleDeleteIssue,
   openIssuesListModal,
+  removeIssue,
   userAuth,
 }) => {
   const router = useRouter();
@@ -105,11 +108,14 @@ export const SingleList: React.FC<Props> = ({
                       return (
                         <SingleListIssue
                           key={issue.id}
-                          type="issue"
+                          type={type}
                           issue={issue}
                           properties={properties}
                           editIssue={() => handleEditIssue(issue)}
                           handleDeleteIssue={handleDeleteIssue}
+                          removeIssue={() => {
+                            removeIssue && removeIssue(issue.bridge);
+                          }}
                           userAuth={userAuth}
                         />
                       );
@@ -133,7 +139,25 @@ export const SingleList: React.FC<Props> = ({
                 <PlusIcon className="h-3 w-3" />
                 Add issue
               </button>
-            ) : null}
+            ) : (
+              <CustomMenu
+                label={
+                  <span className="flex items-center gap-1">
+                    <PlusIcon className="h-3 w-3" />
+                    Add issue
+                  </span>
+                }
+                optionsPosition="left"
+                noBorder
+              >
+                <CustomMenu.MenuItem onClick={addIssueToState}>Create new</CustomMenu.MenuItem>
+                {openIssuesListModal && (
+                  <CustomMenu.MenuItem onClick={openIssuesListModal}>
+                    Add an existing issue
+                  </CustomMenu.MenuItem>
+                )}
+              </CustomMenu>
+            )}
           </div>
         </div>
       )}

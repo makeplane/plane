@@ -34,7 +34,7 @@ type Props = {
 };
 
 export const SingleBoard: React.FC<Props> = ({
-  type = "issue",
+  type,
   provided,
   snapshot,
   bgColor,
@@ -117,6 +117,7 @@ export const SingleBoard: React.FC<Props> = ({
                         {...provided.dragHandleProps}
                       >
                         <SingleBoardIssue
+                          type={type}
                           issue={childIssue}
                           properties={properties}
                           snapshot={snapshot}

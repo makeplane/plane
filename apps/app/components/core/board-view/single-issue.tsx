@@ -15,7 +15,6 @@ import { TrashIcon } from "@heroicons/react/24/outline";
 // services
 import issuesService from "services/issues.service";
 import stateService from "services/state.service";
-import projectService from "services/project.service";
 // components
 import { AssigneesList, CustomDatePicker } from "components/ui";
 // helpers
@@ -34,18 +33,11 @@ import {
 } from "types";
 // common
 import { PRIORITIES } from "constants/";
-import {
-  STATE_LIST,
-  PROJECT_DETAILS,
-  CYCLE_ISSUES,
-  MODULE_ISSUES,
-  PROJECT_ISSUES_LIST,
-} from "constants/fetch-keys";
+import { STATE_LIST, CYCLE_ISSUES, MODULE_ISSUES, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 import { getPriorityIcon } from "constants/global";
 
 type Props = {
   type?: string;
-  typeId?: string;
   issue: IIssue;
   properties: Properties;
   snapshot: DraggableStateSnapshot;
@@ -57,7 +49,6 @@ type Props = {
 
 export const SingleBoardIssue: React.FC<Props> = ({
   type,
-  typeId,
   issue,
   properties,
   snapshot,
@@ -67,7 +58,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
   userAuth,
 }) => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
   const { data: states } = useSWR(
     workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
@@ -76,19 +67,12 @@ export const SingleBoardIssue: React.FC<Props> = ({
       : null
   );
 
-  const { data: projectDetails } = useSWR(
-    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
-      : null
-  );
-
   const partialUpdateIssue = (formData: Partial<IIssue>) => {
     if (!workspaceSlug || !projectId) return;
 
-    if (typeId) {
+    if (cycleId)
       mutate<CycleIssueResponse[]>(
-        CYCLE_ISSUES(typeId ?? ""),
+        CYCLE_ISSUES(cycleId as string),
         (prevData) => {
           const updatedIssues = (prevData ?? []).map((p) => {
             if (p.issue_detail.id === issue.id) {
@@ -107,8 +91,9 @@ export const SingleBoardIssue: React.FC<Props> = ({
         false
       );
 
+    if (moduleId)
       mutate<ModuleIssueResponse[]>(
-        MODULE_ISSUES(typeId ?? ""),
+        MODULE_ISSUES(moduleId as string),
         (prevData) => {
           const updatedIssues = (prevData ?? []).map((p) => {
             if (p.issue_detail.id === issue.id) {
@@ -126,7 +111,6 @@ export const SingleBoardIssue: React.FC<Props> = ({
         },
         false
       );
-    }
 
     mutate<IssueResponse>(
       PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
@@ -143,10 +127,14 @@ export const SingleBoardIssue: React.FC<Props> = ({
     issuesService
       .patchIssue(workspaceSlug as string, projectId as string, issue.id, formData)
       .then((res) => {
-        if (typeId) {
-          mutate(CYCLE_ISSUES(typeId ?? ""));
-          mutate(MODULE_ISSUES(typeId ?? ""));
-        }
+        mutate(
+          cycleId ? CYCLE_ISSUES(cycleId as string) : CYCLE_ISSUES(issue?.issue_cycle?.cycle ?? "")
+        );
+        mutate(
+          moduleId
+            ? MODULE_ISSUES(moduleId as string)
+            : MODULE_ISSUES(issue?.issue_module?.module ?? "")
+        );
 
         mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
       })
@@ -179,7 +167,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
           <a>
             {properties.key && (
               <div className="mb-2 text-xs font-medium text-gray-500">
-                {projectDetails?.identifier}-{issue.sequence_id}
+                {issue.project_detail.identifier}-{issue.sequence_id}
               </div>
             )}
             <h5
@@ -312,11 +300,6 @@ export const SingleBoardIssue: React.FC<Props> = ({
               )}
             </Listbox>
           )}
-          {/* {properties.cycle && !typeId && (
-            <div className="flex flex-shrink-0 items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
-              {issue.issue_cycle ? issue.issue_cycle.cycle_detail.name : "None"}
-            </div>
-          )} */}
           {properties.due_date && (
             <div
               className={`group relative ${

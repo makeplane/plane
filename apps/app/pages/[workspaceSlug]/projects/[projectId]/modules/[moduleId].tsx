@@ -135,30 +135,6 @@ const SingleModule: React.FC<UserAuth> = (props) => {
     setModuleIssuesListModal(true);
   };
 
-  const removeIssueFromModule = (issueId: string) => {
-    if (!workspaceSlug || !projectId) return;
-
-    mutate<ModuleIssueResponse[]>(
-      MODULE_ISSUES(moduleId as string),
-      (prevData) => prevData?.filter((p) => p.id !== issueId),
-      false
-    );
-
-    modulesService
-      .removeIssueFromModule(
-        workspaceSlug as string,
-        projectId as string,
-        moduleId as string,
-        issueId
-      )
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-
   const handleDeleteModule = () => {
     if (!moduleDetails) return;
 
@@ -247,15 +223,12 @@ const SingleModule: React.FC<UserAuth> = (props) => {
         {moduleIssuesArray ? (
           moduleIssuesArray.length > 0 ? (
             <div className={`h-full ${moduleSidebar ? "mr-[24rem]" : ""} duration-300`}>
-              {/* <ModulesListView
+              <IssuesView
+                type="module"
                 issues={moduleIssuesArray ?? []}
-                openCreateIssueModal={openCreateIssueModal}
-                openIssuesListModal={openIssuesListModal}
-                removeIssueFromModule={removeIssueFromModule}
-                setPreloadedData={setPreloadedData}
                 userAuth={props}
-              /> */}
-              <IssuesView issues={moduleIssuesArray ?? []} userAuth={props} />
+                openIssuesListModal={openIssuesListModal}
+              />
             </div>
           ) : (
             <div

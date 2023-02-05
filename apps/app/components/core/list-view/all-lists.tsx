@@ -12,9 +12,10 @@ type Props = {
   states: IState[] | undefined;
   members: IProjectMember[] | undefined;
   addIssueToState: (groupTitle: string, stateId: string | null) => void;
-  openIssuesListModal?: (() => void) | null;
   handleEditIssue: (issue: IIssue) => void;
   handleDeleteIssue: (issue: IIssue) => void;
+  openIssuesListModal?: (() => void) | null;
+  removeIssue: ((bridgeId: string) => void) | null;
   userAuth: UserAuth;
 };
 
@@ -27,6 +28,7 @@ export const AllLists: React.FC<Props> = ({
   openIssuesListModal,
   handleEditIssue,
   handleDeleteIssue,
+  removeIssue,
   userAuth,
 }) => {
   const { groupedByIssues, groupByProperty: selectedGroup } = useIssueView(issues);
@@ -51,6 +53,7 @@ export const AllLists: React.FC<Props> = ({
             handleEditIssue={handleEditIssue}
             handleDeleteIssue={handleDeleteIssue}
             openIssuesListModal={type !== "issue" ? openIssuesListModal : null}
+            removeIssue={removeIssue}
             userAuth={userAuth}
           />
         );

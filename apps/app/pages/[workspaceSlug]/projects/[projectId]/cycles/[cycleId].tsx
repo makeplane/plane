@@ -132,30 +132,6 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
       });
   };
 
-  const removeIssueFromCycle = (bridgeId: string) => {
-    if (!workspaceSlug || !projectId) return;
-
-    mutate<CycleIssueResponse[]>(
-      CYCLE_ISSUES(cycleId as string),
-      (prevData) => prevData?.filter((p) => p.id !== bridgeId),
-      false
-    );
-
-    issuesServices
-      .removeIssueFromCycle(
-        workspaceSlug as string,
-        projectId as string,
-        cycleId as string,
-        bridgeId
-      )
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-
   return (
     <IssueViewContextProvider>
       <CreateUpdateIssueModal
@@ -226,15 +202,12 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
         {cycleIssuesArray ? (
           cycleIssuesArray.length > 0 ? (
             <div className={`h-full ${cycleSidebar ? "mr-[24rem]" : ""} duration-300`}>
-              {/* <CyclesListView
+              <IssuesView
+                type="cycle"
                 issues={cycleIssuesArray ?? []}
-                openCreateIssueModal={openCreateIssueModal}
-                openIssuesListModal={openIssuesListModal}
-                removeIssueFromCycle={removeIssueFromCycle}
-                setPreloadedData={setPreloadedData}
                 userAuth={props}
-              /> */}
-              <IssuesView issues={cycleIssuesArray ?? []} userAuth={props} />
+                openIssuesListModal={openIssuesListModal}
+              />
             </div>
           ) : (
             <div

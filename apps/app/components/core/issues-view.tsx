@@ -10,10 +10,11 @@ import { DropResult } from "react-beautiful-dnd";
 import issuesService from "services/issues.service";
 import stateService from "services/state.service";
 import projectService from "services/project.service";
+import modulesService from "services/modules.service";
 // hooks
 import useIssueView from "hooks/use-issue-view";
 // components
-import { AllLists, AllBoards } from "components/core";
+import { AllLists, AllBoards, ExistingIssuesListModal } from "components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 // types
 import {
@@ -124,6 +125,7 @@ export const IssuesView: React.FC<Props> = ({
           });
       } else {
         const draggedItem = groupedByIssues[source.droppableId][source.index];
+        console.log(draggedItem);
         if (source.droppableId !== destination.droppableId) {
           const sourceGroup = source.droppableId; // source group id
           const destinationGroup = destination.droppableId; // destination group id
@@ -217,6 +219,7 @@ export const IssuesView: React.FC<Props> = ({
                     ? MODULE_ISSUES(moduleId as string)
                     : MODULE_ISSUES(draggedItem.issue_module?.module ?? "")
                 );
+
                 mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
               });
           } else if (selectedGroup === "state_detail.name") {
@@ -358,6 +361,54 @@ export const IssuesView: React.FC<Props> = ({
     setIssueToDelete(issue);
   };
 
+  const removeIssueFromCycle = (bridgeId: string) => {
+    if (!workspaceSlug || !projectId) return;
+
+    mutate<CycleIssueResponse[]>(
+      CYCLE_ISSUES(cycleId as string),
+      (prevData) => prevData?.filter((p) => p.id !== bridgeId),
+      false
+    );
+
+    issuesService
+      .removeIssueFromCycle(
+        workspaceSlug as string,
+        projectId as string,
+        cycleId as string,
+        bridgeId
+      )
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
+  const removeIssueFromModule = (bridgeId: string) => {
+    if (!workspaceSlug || !projectId) return;
+
+    mutate<ModuleIssueResponse[]>(
+      MODULE_ISSUES(moduleId as string),
+      (prevData) => prevData?.filter((p) => p.id !== bridgeId),
+      false
+    );
+
+    modulesService
+      .removeIssueFromModule(
+        workspaceSlug as string,
+        projectId as string,
+        moduleId as string,
+        bridgeId
+      )
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
   return (
     <>
       <CreateUpdateIssueModal
@@ -385,9 +436,16 @@ export const IssuesView: React.FC<Props> = ({
           states={states}
           members={members}
           addIssueToState={addIssueToState}
-          openIssuesListModal={type !== "issue" ? openIssuesListModal : null}
           handleEditIssue={handleEditIssue}
           handleDeleteIssue={handleDeleteIssue}
+          openIssuesListModal={type !== "issue" ? openIssuesListModal : null}
+          removeIssue={
+            type === "cycle"
+              ? removeIssueFromCycle
+              : type === "module"
+              ? removeIssueFromModule
+              : null
+          }
           userAuth={userAuth}
         />
       ) : (

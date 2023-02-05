@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+
 import useSWR from "swr";
-import { RectangleStackIcon } from "@heroicons/react/24/outline";
-import { PlusIcon } from "@heroicons/react/20/solid";
+
 // lib
 import { requiredAdmin, requiredAuth } from "lib/auth";
 // services
@@ -14,25 +13,20 @@ import AppLayout from "layouts/app-layout";
 import { IssueViewContextProvider } from "contexts/issue-view.context";
 // components
 import { IssuesFilterView, IssuesView } from "components/core";
-import { CreateUpdateIssueModal } from "components/issues";
 // ui
 import { Spinner, EmptySpace, EmptySpaceItem, HeaderButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+// icons
+import { RectangleStackIcon, PlusIcon } from "@heroicons/react/24/outline";
 // types
-import type { IIssue, UserAuth } from "types";
+import type { UserAuth } from "types";
 import type { NextPage, NextPageContext } from "next";
 // fetch-keys
 import { PROJECT_DETAILS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 
 const ProjectIssues: NextPage<UserAuth> = (props) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedIssue, setSelectedIssue] = useState<
-    (IIssue & { actionType: "edit" | "delete" }) | undefined
-  >(undefined);
-
-  const {
-    query: { workspaceSlug, projectId },
-  } = useRouter();
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
 
   const { data: projectIssues } = useSWR(
     workspaceSlug && projectId
@@ -50,23 +44,8 @@ const ProjectIssues: NextPage<UserAuth> = (props) => {
       : null
   );
 
-  useEffect(() => {
-    if (!isOpen) {
-      const timer = setTimeout(() => {
-        setSelectedIssue(undefined);
-        clearTimeout(timer);
-      }, 500);
-    }
-  }, [isOpen]);
-
   return (
     <IssueViewContextProvider>
-      <CreateUpdateIssueModal
-        isOpen={isOpen && selectedIssue?.actionType !== "delete"}
-        prePopulateData={{ ...selectedIssue }}
-        handleClose={() => setIsOpen(false)}
-        data={selectedIssue}
-      />
       <AppLayout
         breadcrumbs={
           <Breadcrumbs>
@@ -92,34 +71,41 @@ const ProjectIssues: NextPage<UserAuth> = (props) => {
           </div>
         }
       >
-        {!projectIssues ? (
+        {projectIssues ? (
+          projectIssues.count > 0 ? (
+            <IssuesView
+              issues={projectIssues?.results.filter((p) => p.parent === null) ?? []}
+              userAuth={props}
+            />
+          ) : (
+            <div className="grid h-full w-full place-items-center px-4 sm:px-0">
+              <EmptySpace
+                title="You don't have any issue yet."
+                description="Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done."
+                Icon={RectangleStackIcon}
+              >
+                <EmptySpaceItem
+                  title="Create a new issue"
+                  description={
+                    <span>
+                      Use <pre className="inline rounded bg-gray-100 px-2 py-1">C</pre> shortcut to
+                      create a new issue
+                    </span>
+                  }
+                  Icon={PlusIcon}
+                  action={() => {
+                    const e = new KeyboardEvent("keydown", {
+                      key: "c",
+                    });
+                    document.dispatchEvent(e);
+                  }}
+                />
+              </EmptySpace>
+            </div>
+          )
+        ) : (
           <div className="flex h-full w-full items-center justify-center">
             <Spinner />
-          </div>
-        ) : projectIssues.count > 0 ? (
-          <IssuesView
-            issues={projectIssues?.results.filter((p) => p.parent === null) ?? []}
-            userAuth={props}
-          />
-        ) : (
-          <div className="grid h-full w-full place-items-center px-4 sm:px-0">
-            <EmptySpace
-              title="You don't have any issue yet."
-              description="Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done."
-              Icon={RectangleStackIcon}
-            >
-              <EmptySpaceItem
-                title="Create a new issue"
-                description={
-                  <span>
-                    Use <pre className="inline rounded bg-gray-100 px-2 py-1">C</pre> shortcut to
-                    create a new issue
-                  </span>
-                }
-                Icon={PlusIcon}
-                action={() => setIsOpen(true)}
-              />
-            </EmptySpace>
           </div>
         )}
       </AppLayout>

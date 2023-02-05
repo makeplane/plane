@@ -1,27 +1,26 @@
-// react
 import React, { useState } from "react";
-// next
+
 import { useRouter } from "next/router";
-// swr
+
 import useSWR, { mutate } from "swr";
+
 // react hook form
 import { SubmitHandler, useForm } from "react-hook-form";
-// services
+// headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+// services
 import issuesServices from "services/issues.service";
-import projectService from "services/project.service";
 // hooks
 import useToast from "hooks/use-toast";
-// headless ui
 // ui
 import { Button } from "components/ui";
 // icons
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { LayerDiagonalIcon } from "components/icons";
 // types
 import { IIssue, IssueResponse } from "types";
 // fetch keys
-import { PROJECT_ISSUES_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
+import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 
 type FormInput = {
   delete_issue_ids: string[];
@@ -47,13 +46,6 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) =>
       : null,
     workspaceSlug && projectId
       ? () => issuesServices.getIssues(workspaceSlug as string, projectId as string)
-      : null
-  );
-
-  const { data: projectDetails } = useSWR(
-    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -213,7 +205,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) =>
                                   }}
                                 />
                                 <span className="flex-shrink-0 text-xs text-gray-500">
-                                  {projectDetails?.identifier}-{issue.sequence_id}
+                                  {issue.project_detail.identifier}-{issue.sequence_id}
                                 </span>
                                 <span>{issue.name}</span>
                               </div>

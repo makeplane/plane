@@ -1,24 +1,17 @@
 import React, { useState } from "react";
 
-import { useRouter } from "next/router";
-
-import useSWR from "swr";
 // react-hook-form
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 // hooks
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 import { MagnifyingGlassIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
 import useToast from "hooks/use-toast";
-// services
-import projectService from "services/project.service";
 // headless ui
 // ui
 import { Button } from "components/ui";
 import { LayerDiagonalIcon } from "components/icons";
 // types
 import { IIssue } from "types";
-// fetch-keys
-import { PROJECT_DETAILS } from "constants/fetch-keys";
 
 type FormInput = {
   issues: string[];
@@ -40,16 +33,6 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
   type,
 }) => {
   const [query, setQuery] = useState("");
-
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
-
-  const { data: projectDetails } = useSWR(
-    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
-      : null
-  );
 
   const { setToastAlert } = useToast();
 
@@ -175,7 +158,7 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                                           }}
                                         />
                                         <span className="flex-shrink-0 text-xs text-gray-500">
-                                          {projectDetails?.identifier}-{issue.sequence_id}
+                                          {issue.project_detail.identifier}-{issue.sequence_id}
                                         </span>
                                         {issue.name}
                                       </>
