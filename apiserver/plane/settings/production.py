@@ -208,7 +208,4 @@ RQ_QUEUES = {
 }
 
 
-url = urlparse(os.environ.get("REDIS_URL"))
-
-
 WEB_URL = os.environ.get("WEB_URL")
