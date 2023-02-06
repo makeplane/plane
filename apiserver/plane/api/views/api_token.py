@@ -15,12 +15,16 @@ from plane.api.serializers import APITokenSerializer
 class ApiTokenEndpoint(BaseAPIView):
     def post(self, request):
         try:
-
             label = request.data.get("label", str(uuid4().hex))
+            workspace = request.data.get("workspace", False)
+
+            if not workspace:
+                return Response(
+                    {"error": "Workspace is required"}, status=status.HTTP_200_OK
+                )
 
             api_token = APIToken.objects.create(
-                label=label,
-                user=request.user,
+                label=label, user=request.user, workspace=workspace
             )
 
             serializer = APITokenSerializer(api_token)

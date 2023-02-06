@@ -17,7 +17,6 @@ def generate_token():
 
 
 class APIToken(BaseModel):
-
     token = models.CharField(max_length=255, unique=True, default=generate_token)
     label = models.CharField(max_length=255, default=generate_label_token)
     user = models.ForeignKey(
@@ -27,6 +26,9 @@ class APIToken(BaseModel):
     )
     user_type = models.PositiveSmallIntegerField(
         choices=((0, "Human"), (1, "Bot")), default=0
+    )
+    workspace = models.ForeignKey(
+        "db.workspace", related_name="api_tokens", on_delete=models.SET_NULL, null=True
     )
 
     class Meta:
