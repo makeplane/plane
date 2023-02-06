@@ -24,7 +24,7 @@ class ApiTokenEndpoint(BaseAPIView):
                 )
 
             api_token = APIToken.objects.create(
-                label=label, user=request.user, workspace=workspace
+                label=label, user=request.user, workspace_id=workspace
             )
 
             serializer = APITokenSerializer(api_token)
