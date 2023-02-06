@@ -1,7 +1,7 @@
-import type { NextPage, NextPageContext } from "next";
-
 // lib
 import { homePageRedirect } from "lib/auth";
+// types
+import type { NextPage, NextPageContext } from "next";
 
 const Home: NextPage = () => null;
 

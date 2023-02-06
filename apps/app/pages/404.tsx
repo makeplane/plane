@@ -4,12 +4,13 @@ import Link from "next/link";
 import Image from "next/image";
 
 // layouts
-import type { NextPage } from "next";
 import DefaultLayout from "layouts/default-layout";
 // ui
 import { Button } from "components/ui";
 // images
 import Image404 from "public/404.svg";
+// types
+import type { NextPage } from "next";
 
 const PageNotFound: NextPage = () => (
   <DefaultLayout
