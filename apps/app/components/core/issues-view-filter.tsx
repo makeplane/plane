@@ -104,14 +104,16 @@ export const IssuesFilterView: React.FC<Props> = ({ issues }) => {
                               }
                               width="lg"
                             >
-                              {groupByOptions.map((option) => (
-                                <CustomMenu.MenuItem
-                                  key={option.key}
-                                  onClick={() => setGroupByProperty(option.key)}
-                                >
-                                  {option.name}
-                                </CustomMenu.MenuItem>
-                              ))}
+                              {groupByOptions.map((option) =>
+                                issueView === "kanban" && option.key === null ? null : (
+                                  <CustomMenu.MenuItem
+                                    key={option.key}
+                                    onClick={() => setGroupByProperty(option.key)}
+                                  >
+                                    {option.name}
+                                  </CustomMenu.MenuItem>
+                                )
+                              )}
                             </CustomMenu>
                           </div>
                           <div className="flex items-center justify-between">

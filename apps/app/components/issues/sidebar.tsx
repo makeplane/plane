@@ -14,6 +14,7 @@ import { Popover, Listbox, Transition } from "@headlessui/react";
 import useToast from "hooks/use-toast";
 // services
 import issuesServices from "services/issues.service";
+import modulesService from "services/modules.service";
 // components
 import {
   DeleteIssueModal,
@@ -21,6 +22,7 @@ import {
   SidebarBlockedSelect,
   SidebarBlockerSelect,
   SidebarCycleSelect,
+  SidebarModuleSelect,
   SidebarParentSelect,
   SidebarPrioritySelect,
   SidebarStateSelect,
@@ -40,7 +42,7 @@ import {
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import type { ICycle, IIssue, IIssueLabels, UserAuth } from "types";
+import type { ICycle, IIssue, IIssueLabels, IModule, UserAuth } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS, PROJECT_ISSUES_LIST, ISSUE_DETAILS } from "constants/fetch-keys";
 
@@ -116,6 +118,18 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
 
     issuesServices
       .addIssueToCycle(workspaceSlug as string, projectId as string, cycleDetail.id, {
+        issues: [issueDetail.id],
+      })
+      .then((res) => {
+        mutate(ISSUE_DETAILS(issueId as string));
+      });
+  };
+
+  const handleModuleChange = (moduleDetail: IModule) => {
+    if (!workspaceSlug || !projectId || !issueDetail) return;
+
+    modulesService
+      .addIssuesToModule(workspaceSlug as string, projectId as string, moduleDetail.id, {
         issues: [issueDetail.id],
       })
       .then((res) => {
@@ -261,6 +275,11 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
             <SidebarCycleSelect
               issueDetail={issueDetail}
               handleCycleChange={handleCycleChange}
+              userAuth={userAuth}
+            />
+            <SidebarModuleSelect
+              issueDetail={issueDetail}
+              handleModuleChange={handleModuleChange}
               userAuth={userAuth}
             />
           </div>

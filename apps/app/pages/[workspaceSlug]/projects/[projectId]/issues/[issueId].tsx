@@ -50,6 +50,7 @@ const defaultValues = {
   blocked_list: [],
   target_date: new Date().toString(),
   issue_cycle: null,
+  issue_module: null,
   labels_list: [],
 };
 

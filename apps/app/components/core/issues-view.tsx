@@ -125,7 +125,6 @@ export const IssuesView: React.FC<Props> = ({
           });
       } else {
         const draggedItem = groupedByIssues[source.droppableId][source.index];
-        console.log(draggedItem);
         if (source.droppableId !== destination.droppableId) {
           const sourceGroup = source.droppableId; // source group id
           const destinationGroup = destination.droppableId; // destination group id

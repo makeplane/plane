@@ -75,7 +75,7 @@ export const SidebarCycleSelect: React.FC<Props> = ({
           onChange={(value: any) => {
             value === null
               ? removeIssueFromCycle(issueCycle?.id ?? "", issueCycle?.cycle ?? "")
-              : handleCycleChange(cycles?.find((c) => c.id === value) as any);
+              : handleCycleChange(cycles?.find((c) => c.id === value) as ICycle);
           }}
           disabled={isNotAllowed}
         >

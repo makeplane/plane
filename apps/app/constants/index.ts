@@ -35,7 +35,8 @@ export const groupByOptions: Array<{ name: string; key: NestedKeyOf<IIssue> | nu
   { name: "None", key: null },
 ];
 
-export const orderByOptions: Array<{ name: string; key: NestedKeyOf<IIssue> | null }> = [
+export const orderByOptions: Array<{ name: string; key: NestedKeyOf<IIssue> | "manual" | null }> = [
+  // { name: "Manual", key: "manual" },
   { name: "Last created", key: "created_at" },
   { name: "Last updated", key: "updated_at" },
   { name: "Priority", key: "priority" },

@@ -17,7 +17,7 @@ import { Button } from "components/ui";
 // types
 import type { CycleIssueResponse, IIssue, IssueResponse, ModuleIssueResponse } from "types";
 // fetch-keys
-import { CYCLE_ISSUES, PROJECT_ISSUES_LIST, MODULE_ISSUES } from "constants/fetch-keys";
+import { CYCLE_ISSUES, PROJECT_ISSUES_LIST, MODULE_ISSUES, USER_ISSUE } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
@@ -30,7 +30,7 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data })
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, projectId: queryProjectId } = router.query;
 
   const { setToastAlert } = useToast();
 
@@ -46,10 +46,37 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data })
   const handleDeletion = async () => {
     setIsDeleteLoading(true);
     if (!data || !workspaceSlug) return;
+
     const projectId = data.project;
     await issueServices
       .deleteIssue(workspaceSlug as string, projectId, data.id)
       .then(() => {
+        const cycleId = data?.cycle;
+        const moduleId = data?.module;
+
+        if (cycleId) {
+          mutate<CycleIssueResponse[]>(
+            CYCLE_ISSUES(cycleId),
+            (prevData) => prevData?.filter((i) => i.issue !== data.id),
+            false
+          );
+        }
+
+        if (moduleId) {
+          mutate<ModuleIssueResponse[]>(
+            MODULE_ISSUES(moduleId),
+            (prevData) => prevData?.filter((i) => i.issue !== data.id),
+            false
+          );
+        }
+
+        if (!queryProjectId)
+          mutate<IIssue[]>(
+            USER_ISSUE(workspaceSlug as string),
+            (prevData) => prevData?.filter((i) => i.id !== data.id),
+            false
+          );
+
         mutate<IssueResponse>(
           PROJECT_ISSUES_LIST(workspaceSlug as string, projectId),
           (prevData) => ({
@@ -59,24 +86,6 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data })
           }),
           false
         );
-
-        const moduleId = data?.module;
-        const cycleId = data?.cycle;
-
-        if (moduleId) {
-          mutate<ModuleIssueResponse[]>(
-            MODULE_ISSUES(moduleId),
-            (prevData) => prevData?.filter((i) => i.issue !== data.id),
-            false
-          );
-        }
-        if (cycleId) {
-          mutate<CycleIssueResponse[]>(
-            CYCLE_ISSUES(cycleId),
-            (prevData) => prevData?.filter((i) => i.issue !== data.id),
-            false
-          );
-        }
 
         handleClose();
         setToastAlert({

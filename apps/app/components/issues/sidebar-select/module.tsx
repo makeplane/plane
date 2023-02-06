@@ -2,28 +2,32 @@ import React from "react";
 
 import { useRouter } from "next/router";
 
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 
-import { Control, Controller } from "react-hook-form";
-// constants
-import { RectangleGroupIcon } from "@heroicons/react/24/outline";
 // services
 import modulesService from "services/modules.service";
 // ui
 import { Spinner, CustomSelect } from "components/ui";
 // icons
+import { RectangleGroupIcon } from "@heroicons/react/24/outline";
 // types
-import { IIssue, IModule } from "types";
-import { MODULE_LIST } from "constants/fetch-keys";
+import { IIssue, IModule, UserAuth } from "types";
+// fetch-keys
+import { ISSUE_DETAILS, MODULE_ISSUES, MODULE_LIST } from "constants/fetch-keys";
 
 type Props = {
-  control: Control<IIssue, any>;
+  issueDetail: IIssue | undefined;
   handleModuleChange: (module: IModule) => void;
+  userAuth: UserAuth;
 };
 
-export const SidebarModuleSelect: React.FC<Props> = ({ control, handleModuleChange }) => {
+export const SidebarModuleSelect: React.FC<Props> = ({
+  issueDetail,
+  handleModuleChange,
+  userAuth,
+}) => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, issueId } = router.query;
 
   const { data: modules } = useSWR(
     workspaceSlug && projectId ? MODULE_LIST(projectId as string) : null,
@@ -32,46 +36,67 @@ export const SidebarModuleSelect: React.FC<Props> = ({ control, handleModuleChan
       : null
   );
 
+  const removeIssueFromModule = (bridgeId: string, moduleId: string) => {
+    if (!workspaceSlug || !projectId) return;
+
+    modulesService
+      .removeIssueFromModule(workspaceSlug as string, projectId as string, moduleId, bridgeId)
+      .then((res) => {
+        mutate(ISSUE_DETAILS(issueId as string));
+
+        mutate(MODULE_ISSUES(moduleId));
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
+  const issueModule = issueDetail?.issue_module;
+
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+
   return (
     <div className="flex flex-wrap items-center py-2">
       <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
         <RectangleGroupIcon className="h-4 w-4 flex-shrink-0" />
         <p>Module</p>
       </div>
-      <div className="sm:basis-1/2">
-        <Controller
-          control={control}
-          name="issue_module"
-          render={({ field: { value } }) => (
-            <CustomSelect
-              label={
-                <span
-                  className={`hidden truncate text-left sm:block ${value ? "" : "text-gray-900"}`}
-                >
-                  {value ? modules?.find((m) => m.id === value?.module_detail.id)?.name : "None"}
-                </span>
-              }
-              value={value}
-              onChange={(value: any) => {
-                handleModuleChange(modules?.find((m) => m.id === value) as any);
-              }}
+      <div className="space-y-1 sm:basis-1/2">
+        <CustomSelect
+          label={
+            <span
+              className={`hidden truncate text-left sm:block ${issueModule ? "" : "text-gray-900"}`}
             >
-              {modules ? (
-                modules.length > 0 ? (
-                  modules.map((option) => (
-                    <CustomSelect.Option key={option.id} value={option.id}>
-                      {option.name}
-                    </CustomSelect.Option>
-                  ))
-                ) : (
-                  <div className="text-center">No cycles found</div>
-                )
-              ) : (
-                <Spinner />
-              )}
-            </CustomSelect>
+              {modules?.find((m) => m.id === issueModule?.module)?.name ?? "None"}
+            </span>
+          }
+          value={issueModule?.module_detail?.id}
+          onChange={(value: any) => {
+            value === null
+              ? removeIssueFromModule(issueModule?.id ?? "", issueModule?.module ?? "")
+              : handleModuleChange(modules?.find((m) => m.id === value) as IModule);
+          }}
+          disabled={isNotAllowed}
+        >
+          {modules ? (
+            modules.length > 0 ? (
+              <>
+                <CustomSelect.Option value={null} className="capitalize">
+                  None
+                </CustomSelect.Option>
+                {modules.map((option) => (
+                  <CustomSelect.Option key={option.id} value={option.id}>
+                    {option.name}
+                  </CustomSelect.Option>
+                ))}
+              </>
+            ) : (
+              <div className="text-center">No modules found</div>
+            )
+          ) : (
+            <Spinner />
           )}
-        />
+        </CustomSelect>
       </div>
     </div>
   );

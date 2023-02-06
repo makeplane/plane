@@ -1,60 +1,57 @@
-import React from "react";
+import React, { useCallback } from "react";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 
 // react-beautiful-dnd
-import { DraggableStateSnapshot } from "react-beautiful-dnd";
-// headless ui
-import { Listbox, Transition } from "@headlessui/react";
+import {
+  Draggable,
+  DraggableStateSnapshot,
+  DraggingStyle,
+  NotDraggingStyle,
+} from "react-beautiful-dnd";
 // constants
 import { TrashIcon } from "@heroicons/react/24/outline";
 // services
 import issuesService from "services/issues.service";
 import stateService from "services/state.service";
 // components
-import { AssigneesList, CustomDatePicker } from "components/ui";
-// helpers
-import { findHowManyDaysLeft } from "helpers/date-time.helper";
-import { addSpaceIfCamelCase } from "helpers/string.helper";
+import { AssigneeSelect, DueDateSelect, PrioritySelect, StateSelect } from "components/core/select";
 // types
 import {
   CycleIssueResponse,
   IIssue,
   IProjectMember,
   IssueResponse,
-  IUserLite,
   ModuleIssueResponse,
+  NestedKeyOf,
   Properties,
   UserAuth,
 } from "types";
-// common
-import { PRIORITIES } from "constants/";
+// fetch-keys
 import { STATE_LIST, CYCLE_ISSUES, MODULE_ISSUES, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
-import { getPriorityIcon } from "constants/global";
 
 type Props = {
+  index: number;
   type?: string;
   issue: IIssue;
   properties: Properties;
-  snapshot: DraggableStateSnapshot;
-  assignees: Partial<IUserLite>[] | (Partial<IUserLite> | undefined)[];
-  people: IProjectMember[] | undefined;
+  members: IProjectMember[] | undefined;
   handleDeleteIssue: (issue: IIssue) => void;
+  orderBy: NestedKeyOf<IIssue> | "manual" | null;
   userAuth: UserAuth;
 };
 
 export const SingleBoardIssue: React.FC<Props> = ({
+  index,
   type,
   issue,
   properties,
-  snapshot,
-  assignees,
-  people,
+  members,
   handleDeleteIssue,
+  orderBy,
   userAuth,
 }) => {
   const router = useRouter();
@@ -67,376 +64,185 @@ export const SingleBoardIssue: React.FC<Props> = ({
       : null
   );
 
-  const partialUpdateIssue = (formData: Partial<IIssue>) => {
-    if (!workspaceSlug || !projectId) return;
+  const partialUpdateIssue = useCallback(
+    (formData: Partial<IIssue>) => {
+      if (!workspaceSlug || !projectId) return;
 
-    if (cycleId)
-      mutate<CycleIssueResponse[]>(
-        CYCLE_ISSUES(cycleId as string),
-        (prevData) => {
-          const updatedIssues = (prevData ?? []).map((p) => {
-            if (p.issue_detail.id === issue.id) {
-              return {
-                ...p,
-                issue_detail: {
-                  ...p.issue_detail,
-                  ...formData,
-                },
-              };
-            }
+      if (cycleId)
+        mutate<CycleIssueResponse[]>(
+          CYCLE_ISSUES(cycleId as string),
+          (prevData) => {
+            const updatedIssues = (prevData ?? []).map((p) => {
+              if (p.issue_detail.id === issue.id) {
+                return {
+                  ...p,
+                  issue_detail: {
+                    ...p.issue_detail,
+                    ...formData,
+                  },
+                };
+              }
+              return p;
+            });
+            return [...updatedIssues];
+          },
+          false
+        );
+
+      if (moduleId)
+        mutate<ModuleIssueResponse[]>(
+          MODULE_ISSUES(moduleId as string),
+          (prevData) => {
+            const updatedIssues = (prevData ?? []).map((p) => {
+              if (p.issue_detail.id === issue.id) {
+                return {
+                  ...p,
+                  issue_detail: {
+                    ...p.issue_detail,
+                    ...formData,
+                  },
+                };
+              }
+              return p;
+            });
+            return [...updatedIssues];
+          },
+          false
+        );
+
+      mutate<IssueResponse>(
+        PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
+        (prevData) => ({
+          ...(prevData as IssueResponse),
+          results: (prevData?.results ?? []).map((p) => {
+            if (p.id === issue.id) return { ...p, ...formData };
             return p;
-          });
-          return [...updatedIssues];
-        },
-        false
-      );
-
-    if (moduleId)
-      mutate<ModuleIssueResponse[]>(
-        MODULE_ISSUES(moduleId as string),
-        (prevData) => {
-          const updatedIssues = (prevData ?? []).map((p) => {
-            if (p.issue_detail.id === issue.id) {
-              return {
-                ...p,
-                issue_detail: {
-                  ...p.issue_detail,
-                  ...formData,
-                },
-              };
-            }
-            return p;
-          });
-          return [...updatedIssues];
-        },
-        false
-      );
-
-    mutate<IssueResponse>(
-      PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
-      (prevData) => ({
-        ...(prevData as IssueResponse),
-        results: (prevData?.results ?? []).map((p) => {
-          if (p.id === issue.id) return { ...p, ...formData };
-          return p;
+          }),
         }),
-      }),
-      false
-    );
+        false
+      );
 
-    issuesService
-      .patchIssue(workspaceSlug as string, projectId as string, issue.id, formData)
-      .then((res) => {
-        mutate(
-          cycleId ? CYCLE_ISSUES(cycleId as string) : CYCLE_ISSUES(issue?.issue_cycle?.cycle ?? "")
-        );
-        mutate(
-          moduleId
-            ? MODULE_ISSUES(moduleId as string)
-            : MODULE_ISSUES(issue?.issue_module?.module ?? "")
-        );
+      issuesService
+        .patchIssue(workspaceSlug as string, projectId as string, issue.id, formData)
+        .then((res) => {
+          mutate(
+            cycleId
+              ? CYCLE_ISSUES(cycleId as string)
+              : CYCLE_ISSUES(issue?.issue_cycle?.cycle ?? "")
+          );
+          mutate(
+            moduleId
+              ? MODULE_ISSUES(moduleId as string)
+              : MODULE_ISSUES(issue?.issue_module?.module ?? "")
+          );
 
-        mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+          mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    [workspaceSlug, projectId, cycleId, moduleId, issue]
+  );
+
+  function getStyle(
+    style: DraggingStyle | NotDraggingStyle | undefined,
+    snapshot: DraggableStateSnapshot
+  ) {
+    if (orderBy === "manual") return style;
+    if (!snapshot.isDragging) return {};
+    if (!snapshot.isDropAnimating) {
+      return style;
+    }
+
+    return {
+      ...style,
+      transitionDuration: `0.001s`,
+    };
+  }
 
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   return (
-    <div
-      className={`rounded border bg-white shadow-sm ${
-        snapshot.isDragging ? "border-theme bg-indigo-50 shadow-lg" : ""
-      }`}
-    >
-      <div className="group/card relative select-none p-2">
-        {!isNotAllowed && (
-          <div className="absolute top-1.5 right-1.5 z-10 opacity-0 group-hover/card:opacity-100">
-            <button
-              type="button"
-              className="grid h-7 w-7 place-items-center rounded bg-white p-1 text-red-500 outline-none duration-300 hover:bg-red-50"
-              onClick={() => handleDeleteIssue(issue)}
-            >
-              <TrashIcon className="h-4 w-4" />
-            </button>
-          </div>
-        )}
-        <Link href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}>
-          <a>
-            {properties.key && (
-              <div className="mb-2 text-xs font-medium text-gray-500">
-                {issue.project_detail.identifier}-{issue.sequence_id}
+    <Draggable key={issue.id} draggableId={issue.id} index={index}>
+      {(provided, snapshot) => (
+        <div
+          className={`rounded border bg-white shadow-sm ${
+            snapshot.isDragging ? "border-theme bg-indigo-50 shadow-lg" : ""
+          }`}
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+          style={getStyle(provided.draggableProps.style, snapshot)}
+        >
+          <div className="group/card relative select-none p-2">
+            {!isNotAllowed && (
+              <div className="absolute top-1.5 right-1.5 z-10 opacity-0 group-hover/card:opacity-100">
+                <button
+                  type="button"
+                  className="grid h-7 w-7 place-items-center rounded bg-white p-1 text-red-500 outline-none duration-300 hover:bg-red-50"
+                  onClick={() => handleDeleteIssue(issue)}
+                >
+                  <TrashIcon className="h-4 w-4" />
+                </button>
               </div>
             )}
-            <h5
-              className="mb-3 text-sm group-hover:text-theme"
-              style={{ lineClamp: 3, WebkitLineClamp: 3 }}
-            >
-              {issue.name}
-            </h5>
-          </a>
-        </Link>
-        <div className="flex flex-wrap items-center gap-x-1 gap-y-2 text-xs">
-          {properties.priority && (
-            <Listbox
-              as="div"
-              value={issue.priority}
-              onChange={(data: string) => {
-                partialUpdateIssue({ priority: data });
-              }}
-              className="group relative flex-shrink-0"
-              disabled={isNotAllowed}
-            >
-              {({ open }) => (
-                <>
-                  <div>
-                    <Listbox.Button
-                      className={`grid ${
-                        isNotAllowed ? "cursor-not-allowed" : "cursor-pointer"
-                      } place-items-center rounded px-2 py-1 capitalize shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
-                        issue.priority === "urgent"
-                          ? "bg-red-100 text-red-600"
-                          : issue.priority === "high"
-                          ? "bg-orange-100 text-orange-500"
-                          : issue.priority === "medium"
-                          ? "bg-yellow-100 text-yellow-500"
-                          : issue.priority === "low"
-                          ? "bg-green-100 text-green-500"
-                          : "bg-gray-100"
-                      }`}
-                    >
-                      {getPriorityIcon(issue?.priority ?? "None")}
-                    </Listbox.Button>
-
-                    <Transition
-                      show={open}
-                      as={React.Fragment}
-                      leave="transition ease-in duration-100"
-                      leaveFrom="opacity-100"
-                      leaveTo="opacity-0"
-                    >
-                      <Listbox.Options className="absolute z-20 mt-1 max-h-28 overflow-auto rounded-md bg-white py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                        {PRIORITIES?.map((priority) => (
-                          <Listbox.Option
-                            key={priority}
-                            className={({ active }) =>
-                              `flex cursor-pointer select-none items-center gap-2 px-3 py-2 capitalize ${
-                                active ? "bg-indigo-50" : "bg-white"
-                              }`
-                            }
-                            value={priority}
-                          >
-                            {getPriorityIcon(priority)}
-                            {priority}
-                          </Listbox.Option>
-                        ))}
-                      </Listbox.Options>
-                    </Transition>
+            <Link href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}>
+              <a>
+                {properties.key && (
+                  <div className="mb-2 text-xs font-medium text-gray-500">
+                    {issue.project_detail.identifier}-{issue.sequence_id}
                   </div>
-                </>
+                )}
+                <h5
+                  className="mb-3 text-sm group-hover:text-theme"
+                  style={{ lineClamp: 3, WebkitLineClamp: 3 }}
+                >
+                  {issue.name}
+                </h5>
+              </a>
+            </Link>
+            <div className="flex flex-wrap items-center gap-x-1 gap-y-2 text-xs">
+              {properties.priority && (
+                <PrioritySelect
+                  issue={issue}
+                  partialUpdateIssue={partialUpdateIssue}
+                  isNotAllowed={isNotAllowed}
+                />
               )}
-            </Listbox>
-          )}
-          {properties.state && (
-            <Listbox
-              as="div"
-              value={issue.state}
-              onChange={(data: string) => {
-                partialUpdateIssue({ state: data });
-              }}
-              className="group relative flex-shrink-0"
-              disabled={isNotAllowed}
-            >
-              {({ open }) => (
-                <>
-                  <div>
-                    <Listbox.Button
-                      className={`flex ${
-                        isNotAllowed ? "cursor-not-allowed" : "cursor-pointer"
-                      } items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500`}
-                    >
-                      <span
-                        className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                        style={{
-                          backgroundColor: issue.state_detail.color,
-                        }}
-                      />
-                      {addSpaceIfCamelCase(issue.state_detail.name)}
-                    </Listbox.Button>
-
-                    <Transition
-                      show={open}
-                      as={React.Fragment}
-                      leave="transition ease-in duration-100"
-                      leaveFrom="opacity-100"
-                      leaveTo="opacity-0"
-                    >
-                      <Listbox.Options className="absolute z-20 mt-1 max-h-28 overflow-auto rounded-md bg-white py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                        {states?.map((state) => (
-                          <Listbox.Option
-                            key={state.id}
-                            className={({ active }) =>
-                              `flex cursor-pointer select-none items-center gap-2 px-3 py-2 ${
-                                active ? "bg-indigo-50" : "bg-white"
-                              }`
-                            }
-                            value={state.id}
-                          >
-                            <span
-                              className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                              style={{
-                                backgroundColor: state.color,
-                              }}
-                            />
-                            {addSpaceIfCamelCase(state.name)}
-                          </Listbox.Option>
-                        ))}
-                      </Listbox.Options>
-                    </Transition>
-                  </div>
-                </>
+              {properties.state && (
+                <StateSelect
+                  issue={issue}
+                  states={states}
+                  partialUpdateIssue={partialUpdateIssue}
+                  isNotAllowed={isNotAllowed}
+                />
               )}
-            </Listbox>
-          )}
-          {properties.due_date && (
-            <div
-              className={`group relative ${
-                issue.target_date === null
-                  ? ""
-                  : issue.target_date < new Date().toISOString()
-                  ? "text-red-600"
-                  : findHowManyDaysLeft(issue.target_date) <= 3 && "text-orange-400"
-              }`}
-            >
-              <CustomDatePicker
-                placeholder="N/A"
-                value={issue?.target_date}
-                onChange={(val) =>
-                  partialUpdateIssue({
-                    target_date: val,
-                  })
-                }
-                className={issue?.target_date ? "w-[6.5rem]" : "w-[3rem] text-center"}
-              />
-              {/* <DatePicker
-                placeholderText="N/A"
-                value={
-                  issue?.target_date ? `${renderShortNumericDateFormat(issue.target_date)}` : "N/A"
-                }
-                selected={issue?.target_date ? new Date(issue.target_date) : null}
-                onChange={(val: Date) => {
-                  partialUpdateIssue({
-                    target_date: val
-                      ? `${val.getFullYear()}-${val.getMonth() + 1}-${val.getDate()}`
-                      : null,
-                  });
-                }}
-                dateFormat="dd-MM-yyyy"
-                className={`cursor-pointer rounded-md border px-2 py-[3px] text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
-                  issue?.target_date ? "w-[4.5rem]" : "w-[3rem] text-center"
-                }`}
-                isClearable
-              /> */}
-            </div>
-          )}
-          {properties.sub_issue_count && (
-            <div className="flex flex-shrink-0 items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
-              {issue.sub_issues_count} {issue.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
-            </div>
-          )}
-          {properties.assignee && (
-            <Listbox
-              as="div"
-              value={issue.assignees}
-              onChange={(data: any) => {
-                const newData = issue.assignees ?? [];
-
-                if (newData.includes(data)) newData.splice(newData.indexOf(data), 1);
-                else newData.push(data);
-
-                partialUpdateIssue({ assignees_list: newData });
-              }}
-              className="group relative flex-shrink-0"
-              disabled={isNotAllowed}
-            >
-              {({ open }) => (
-                <div>
-                  <Listbox.Button>
-                    <div
-                      className={`flex ${
-                        isNotAllowed ? "cursor-not-allowed" : "cursor-pointer"
-                      } items-center gap-1 text-xs`}
-                    >
-                      <AssigneesList users={assignees} length={3} />
-                    </div>
-                  </Listbox.Button>
-
-                  <Transition
-                    show={open}
-                    as={React.Fragment}
-                    leave="transition ease-in duration-100"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                  >
-                    <Listbox.Options className="absolute left-0 z-20 mt-1 max-h-28 overflow-auto rounded-md bg-white py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                      {people?.map((person) => (
-                        <Listbox.Option
-                          key={person.member.id}
-                          className={({ active }) =>
-                            `cursor-pointer select-none p-2 ${active ? "bg-indigo-50" : "bg-white"}`
-                          }
-                          value={person.member.id}
-                        >
-                          <div
-                            className={`flex items-center gap-x-1 ${
-                              assignees.includes({
-                                id: person.member.last_name,
-                                first_name: person.member.first_name,
-                                last_name: person.member.last_name,
-                                email: person.member.email,
-                                avatar: person.member.avatar,
-                              })
-                                ? "font-medium"
-                                : "font-normal"
-                            }`}
-                          >
-                            {person.member.avatar && person.member.avatar !== "" ? (
-                              <div className="relative h-4 w-4">
-                                <Image
-                                  src={person.member.avatar}
-                                  alt="avatar"
-                                  className="rounded-full"
-                                  layout="fill"
-                                  objectFit="cover"
-                                  priority={false}
-                                  loading="lazy"
-                                />
-                              </div>
-                            ) : (
-                              <div className="grid h-4 w-4 place-items-center rounded-full bg-gray-700 capitalize text-white">
-                                {person.member.first_name && person.member.first_name !== ""
-                                  ? person.member.first_name.charAt(0)
-                                  : person.member.email.charAt(0)}
-                              </div>
-                            )}
-                            <p>
-                              {person.member.first_name && person.member.first_name !== ""
-                                ? person.member.first_name
-                                : person.member.email}
-                            </p>
-                          </div>
-                        </Listbox.Option>
-                      ))}
-                    </Listbox.Options>
-                  </Transition>
+              {properties.due_date && (
+                <DueDateSelect
+                  issue={issue}
+                  partialUpdateIssue={partialUpdateIssue}
+                  isNotAllowed={isNotAllowed}
+                />
+              )}
+              {properties.sub_issue_count && (
+                <div className="flex flex-shrink-0 items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                  {issue.sub_issues_count}{" "}
+                  {issue.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
                 </div>
               )}
-            </Listbox>
-          )}
+              {properties.assignee && (
+                <AssigneeSelect
+                  issue={issue}
+                  members={members}
+                  partialUpdateIssue={partialUpdateIssue}
+                  isNotAllowed={isNotAllowed}
+                />
+              )}
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      )}
+    </Draggable>
   );
 };

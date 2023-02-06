@@ -1,5 +1,5 @@
 // react-beautiful-dnd
-import { DragDropContext, Draggable, DropResult } from "react-beautiful-dnd";
+import { DragDropContext, DropResult } from "react-beautiful-dnd";
 // hooks
 import useIssueView from "hooks/use-issue-view";
 // components
@@ -31,7 +31,7 @@ export const AllBoards: React.FC<Props> = ({
   handleOnDragEnd,
   userAuth,
 }) => {
-  const { groupedByIssues, groupByProperty: selectedGroup } = useIssueView(issues);
+  const { groupedByIssues, groupByProperty: selectedGroup, orderBy } = useIssueView(issues);
 
   return (
     <>
@@ -59,24 +59,21 @@ export const AllBoards: React.FC<Props> = ({
                             : "#000000";
 
                         return (
-                          <Draggable key={singleGroup} draggableId={singleGroup} index={index}>
-                            {(provided, snapshot) => (
-                              <SingleBoard
-                                type={type}
-                                provided={provided}
-                                snapshot={snapshot}
-                                bgColor={bgColor}
-                                groupTitle={singleGroup}
-                                groupedByIssues={groupedByIssues}
-                                selectedGroup={selectedGroup}
-                                members={members}
-                                addIssueToState={() => addIssueToState(singleGroup, stateId)}
-                                handleDeleteIssue={handleDeleteIssue}
-                                openIssuesListModal={openIssuesListModal ?? null}
-                                userAuth={userAuth}
-                              />
-                            )}
-                          </Draggable>
+                          <SingleBoard
+                            key={index}
+                            index={index}
+                            type={type}
+                            bgColor={bgColor}
+                            groupTitle={singleGroup}
+                            groupedByIssues={groupedByIssues}
+                            selectedGroup={selectedGroup}
+                            members={members}
+                            addIssueToState={() => addIssueToState(singleGroup, stateId)}
+                            handleDeleteIssue={handleDeleteIssue}
+                            openIssuesListModal={openIssuesListModal ?? null}
+                            orderBy={orderBy}
+                            userAuth={userAuth}
+                          />
                         );
                       })}
                     </div>

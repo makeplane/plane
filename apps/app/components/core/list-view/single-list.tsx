@@ -95,31 +95,21 @@ export const SingleList: React.FC<Props> = ({
               <div className="divide-y-2">
                 {groupedByIssues[groupTitle] ? (
                   groupedByIssues[groupTitle].length > 0 ? (
-                    groupedByIssues[groupTitle].map((issue: IIssue) => {
-                      const assignees = [
-                        ...(issue?.assignees_list ?? []),
-                        ...(issue?.assignees ?? []),
-                      ]?.map((assignee) => {
-                        const tempPerson = members?.find((p) => p.member.id === assignee)?.member;
-
-                        return tempPerson;
-                      });
-
-                      return (
-                        <SingleListIssue
-                          key={issue.id}
-                          type={type}
-                          issue={issue}
-                          properties={properties}
-                          editIssue={() => handleEditIssue(issue)}
-                          handleDeleteIssue={handleDeleteIssue}
-                          removeIssue={() => {
-                            removeIssue && removeIssue(issue.bridge);
-                          }}
-                          userAuth={userAuth}
-                        />
-                      );
-                    })
+                    groupedByIssues[groupTitle].map((issue: IIssue) => (
+                      <SingleListIssue
+                        key={issue.id}
+                        type={type}
+                        issue={issue}
+                        properties={properties}
+                        members={members}
+                        editIssue={() => handleEditIssue(issue)}
+                        handleDeleteIssue={handleDeleteIssue}
+                        removeIssue={() => {
+                          removeIssue && removeIssue(issue.bridge);
+                        }}
+                        userAuth={userAuth}
+                      />
+                    ))
                   ) : (
                     <p className="px-4 py-3 text-sm text-gray-500">No issues.</p>
                   )

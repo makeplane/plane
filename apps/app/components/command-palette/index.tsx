@@ -75,7 +75,7 @@ const CommandPalette: React.FC = () => {
       name: "Add new issue...",
       icon: RectangleStackIcon,
       hide: !projectId,
-      shortcut: "I",
+      shortcut: "C",
       onClick: () => {
         setIsIssueModalOpen(true);
       },
@@ -329,7 +329,6 @@ const CommandPalette: React.FC = () => {
                                       />
                                       <span className="ml-3 flex-auto truncate">{action.name}</span>
                                       <span className="ml-3 flex-none text-xs font-semibold text-gray-500">
-                                        <kbd className="font-sans">⌘</kbd>
                                         <kbd className="font-sans">{action.shortcut}</kbd>
                                       </span>
                                     </>
