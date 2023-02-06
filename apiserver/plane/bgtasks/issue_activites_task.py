@@ -536,10 +536,13 @@ def track_cycles(
         )
 
     for created_record in created_records:
-        cycle = Cycle.objects.filter(pk=created_record.cycle_id).first()
+        cycle = Cycle.objects.filter(
+            pk=created_record.get("fields").get("cycle")
+        ).first()
+
         issue_activities.append(
             IssueActivity(
-                issue_id=created_record.issue_id,
+                issue_id=created_record.get("fields").get("issue"),
                 actor=actor,
                 verb="created",
                 old_value="",
@@ -548,7 +551,6 @@ def track_cycles(
                 project=project,
                 workspace=project.workspace,
                 comment=f"{actor.email} added cycle {cycle.name}",
-                old_identifier="",
                 new_identifier=cycle.id,
             )
         )
@@ -591,10 +593,12 @@ def track_modules(
         )
 
     for created_record in created_records:
-        module = Module.objects.filter(pk=created_record.module_id).first()
+        module = Module.objects.filter(
+            pk=created_record.get("fields").get("module")
+        ).first()
         issue_activities.append(
             IssueActivity(
-                issue_id=created_record.issue_id,
+                issue_id=created_record.get("fields").get("issue"),
                 actor=actor,
                 verb="created",
                 old_value="",
@@ -603,7 +607,6 @@ def track_modules(
                 project=project,
                 workspace=project.workspace,
                 comment=f"{actor.email} added module {module.name}",
-                old_identifier="",
                 new_identifier=module.id,
             )
         )
