@@ -28,7 +28,7 @@ class APIToken(BaseModel):
         choices=((0, "Human"), (1, "Bot")), default=0
     )
     workspace = models.ForeignKey(
-        "db.workspace", related_name="api_tokens", on_delete=models.SET_NULL, null=True
+        "db.Workspace", related_name="api_tokens", on_delete=models.CASCADE, null=True
     )
 
     class Meta:
