@@ -1,6 +1,10 @@
+# Python imports
+import json
+
 # Django Imports
 from django.db import IntegrityError
 from django.db.models import Prefetch, F, OuterRef, Func
+from django.core import serializers
 
 # Third party imports
 from rest_framework.response import Response
@@ -22,6 +26,7 @@ from plane.db.models import (
     Issue,
     ModuleLink,
 )
+from plane.bgtasks.issue_activites_task import issue_activity
 
 
 class ModuleViewSet(BaseViewSet):
@@ -148,6 +153,7 @@ class ModuleIssueViewSet(BaseViewSet):
 
             module_issues = list(ModuleIssue.objects.filter(issue_id__in=issues))
 
+            update_module_issue_activity = []
             records_to_update = []
             record_to_create = []
 
@@ -159,8 +165,16 @@ class ModuleIssueViewSet(BaseViewSet):
                 ]
 
                 if len(module_issue):
-                    module_issue[0].module_id = module_id
-                    records_to_update.append(module_issue[0])
+                    if module_issue[0].cycle_id != module_id:
+                        update_module_issue_activity.append(
+                            {
+                                "old_module_id": str(module_issue[0].cycle_id),
+                                "new_module_id": str(module_id),
+                                "issue_id": str(module_issue[0].issue_id),
+                            }
+                        )
+                        module_issue[0].module_id = module_id
+                        records_to_update.append(module_issue[0])
                 else:
                     record_to_create.append(
                         ModuleIssue(
@@ -183,6 +197,25 @@ class ModuleIssueViewSet(BaseViewSet):
                 records_to_update,
                 ["module"],
                 batch_size=10,
+            )
+
+            # Capture Issue Activity
+            issue_activity.delay(
+                {
+                    "type": "issue.activity",
+                    "requested_data": json.dumps({"cycles_list": issues}),
+                    "actor_id": str(self.request.user.id),
+                    "issue_id": str(self.kwargs.get("pk", None)),
+                    "project_id": str(self.kwargs.get("project_id", None)),
+                    "current_instance": json.dumps(
+                        {
+                            "updated_cycle_issues": update_module_issue_activity,
+                            "created_cycle_issues": serializers.serialize(
+                                "json", record_to_create
+                            ),
+                        }
+                    ),
+                },
             )
 
             return Response(

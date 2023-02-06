@@ -1,5 +1,9 @@
+# Python imports
+import json
+
 # Django imports
 from django.db.models import OuterRef, Func, F
+from django.core import serializers
 
 # Third party imports
 from rest_framework.response import Response
@@ -11,6 +15,7 @@ from . import BaseViewSet
 from plane.api.serializers import CycleSerializer, CycleIssueSerializer
 from plane.api.permissions import ProjectEntityPermission
 from plane.db.models import Cycle, CycleIssue, Issue
+from plane.bgtasks.issue_activites_task import issue_activity
 
 
 class CycleViewSet(BaseViewSet):
@@ -90,19 +95,28 @@ class CycleIssueViewSet(BaseViewSet):
 
             # Get all CycleIssues already created
             cycle_issues = list(CycleIssue.objects.filter(issue_id__in=issues))
-
             records_to_update = []
+            update_cycle_issue_activity = []
             record_to_create = []
 
             for issue in issues:
                 cycle_issue = [
                     cycle_issue
                     for cycle_issue in cycle_issues
-                    if cycle_issue.issue_id in issues
+                    if str(cycle_issue.issue_id) in issues
                 ]
+                # Update only when cycle changes
                 if len(cycle_issue):
-                    cycle_issue[0].cycle_id = cycle_id
-                    records_to_update.append(cycle_issue[0])
+                    if cycle_issue[0].cycle_id != cycle_id:
+                        update_cycle_issue_activity.append(
+                            {
+                                "old_cycle_id": str(cycle_issue[0].cycle_id),
+                                "new_cycle_id": str(cycle_id),
+                                "issue_id": str(cycle_issue[0].issue_id),
+                            }
+                        )
+                        cycle_issue[0].cycle_id = cycle_id
+                        records_to_update.append(cycle_issue[0])
                 else:
                     record_to_create.append(
                         CycleIssue(
@@ -126,9 +140,29 @@ class CycleIssueViewSet(BaseViewSet):
                 batch_size=10,
             )
 
+            # Capture Issue Activity
+            issue_activity.delay(
+                {
+                    "type": "issue.activity",
+                    "requested_data": json.dumps({"cycles_list": issues}),
+                    "actor_id": str(self.request.user.id),
+                    "issue_id": str(self.kwargs.get("pk", None)),
+                    "project_id": str(self.kwargs.get("project_id", None)),
+                    "current_instance": json.dumps(
+                        {
+                            "updated_cycle_issues": update_cycle_issue_activity,
+                            "created_cycle_issues": serializers.serialize(
+                                "json", record_to_create
+                            ),
+                        }
+                    ),
+                },
+            )
+
             # Return all Cycle Issues
             return Response(
-                CycleIssueSerializer(self.get_queryset(), many=True).data, status=status.HTTP_200_OK
+                CycleIssueSerializer(self.get_queryset(), many=True).data,
+                status=status.HTTP_200_OK,
             )
 
         except Cycle.DoesNotExist:

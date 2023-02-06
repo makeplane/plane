@@ -6,7 +6,16 @@ from django_rq import job
 from sentry_sdk import capture_exception
 
 # Module imports
-from plane.db.models import User, Issue, Project, Label, IssueActivity, State
+from plane.db.models import (
+    User,
+    Issue,
+    Project,
+    Label,
+    IssueActivity,
+    State,
+    Cycle,
+    Module,
+)
 
 
 # Track Chnages in name
@@ -44,7 +53,6 @@ def track_parent(
     issue_activities,
 ):
     if current_instance.get("parent") != requested_data.get("parent"):
-
         if requested_data.get("parent") == None:
             old_parent = Issue.objects.get(pk=current_instance.get("parent"))
             issue_activities.append(
@@ -134,7 +142,6 @@ def track_state(
     issue_activities,
 ):
     if current_instance.get("state") != requested_data.get("state"):
-
         new_state = State.objects.get(pk=requested_data.get("state", None))
         old_state = State.objects.get(pk=current_instance.get("state", None))
 
@@ -167,7 +174,6 @@ def track_description(
     if current_instance.get("description_html") != requested_data.get(
         "description_html"
     ):
-
         issue_activities.append(
             IssueActivity(
                 issue_id=issue_id,
@@ -274,7 +280,6 @@ def track_labels(
 ):
     # Label Addition
     if len(requested_data.get("labels_list")) > len(current_instance.get("labels")):
-
         for label in requested_data.get("labels_list"):
             if label not in current_instance.get("labels"):
                 label = Label.objects.get(pk=label)
@@ -296,7 +301,6 @@ def track_labels(
 
     # Label Removal
     if len(requested_data.get("labels_list")) < len(current_instance.get("labels")):
-
         for label in current_instance.get("labels"):
             if label not in requested_data.get("labels_list"):
                 label = Label.objects.get(pk=label)
@@ -326,12 +330,10 @@ def track_assignees(
     actor,
     issue_activities,
 ):
-
     # Assignee Addition
     if len(requested_data.get("assignees_list")) > len(
         current_instance.get("assignees")
     ):
-
         for assignee in requested_data.get("assignees_list"):
             if assignee not in current_instance.get("assignees"):
                 assignee = User.objects.get(pk=assignee)
@@ -354,7 +356,6 @@ def track_assignees(
     if len(requested_data.get("assignees_list")) < len(
         current_instance.get("assignees")
     ):
-
         for assignee in current_instance.get("assignees"):
             if assignee not in requested_data.get("assignees_list"):
                 assignee = User.objects.get(pk=assignee)
@@ -386,7 +387,6 @@ def track_blocks(
     if len(requested_data.get("blocks_list")) > len(
         current_instance.get("blocked_issues")
     ):
-
         for block in requested_data.get("blocks_list"):
             if (
                 len(
@@ -418,7 +418,6 @@ def track_blocks(
     if len(requested_data.get("blocks_list")) < len(
         current_instance.get("blocked_issues")
     ):
-
         for blocked in current_instance.get("blocked_issues"):
             if blocked.get("block") not in requested_data.get("blocks_list"):
                 issue = Issue.objects.get(pk=blocked.get("block"))
@@ -450,7 +449,6 @@ def track_blockings(
     if len(requested_data.get("blockers_list")) > len(
         current_instance.get("blocker_issues")
     ):
-
         for block in requested_data.get("blockers_list"):
             if (
                 len(
@@ -482,7 +480,6 @@ def track_blockings(
     if len(requested_data.get("blockers_list")) < len(
         current_instance.get("blocker_issues")
     ):
-
         for blocked in current_instance.get("blocker_issues"):
             if blocked.get("blocked_by") not in requested_data.get("blockers_list"):
                 issue = Issue.objects.get(pk=blocked.get("blocked_by"))
@@ -502,6 +499,116 @@ def track_blockings(
                 )
 
 
+def track_cycles(
+    requested_data,
+    current_instance,
+    issue_id,
+    project,
+    actor,
+    issue_activities,
+):
+    # Updated Records:
+    updated_records = current_instance.get("updated_cycle_issues", [])
+    created_records = json.loads(current_instance.get("created_cycle_issues", []))
+
+    for updated_record in updated_records:
+        old_cycle = Cycle.objects.filter(
+            pk=updated_record.get("old_cycle_id", None)
+        ).first()
+        new_cycle = Cycle.objects.filter(
+            pk=updated_record.get("new_cycle_id", None)
+        ).first()
+
+        issue_activities.append(
+            IssueActivity(
+                issue_id=updated_record.get("issue_id"),
+                actor=actor,
+                verb="updated",
+                old_value=old_cycle.name,
+                new_value=new_cycle.name,
+                field="cycles",
+                project=project,
+                workspace=project.workspace,
+                comment=f"{actor.email} updated cycle from {old_cycle.name} to {new_cycle.name}",
+                old_identifier=old_cycle.id,
+                new_identifier=new_cycle.id,
+            )
+        )
+
+    for created_record in created_records:
+        cycle = Cycle.objects.filter(pk=created_record.cycle_id).first()
+        issue_activities.append(
+            IssueActivity(
+                issue_id=created_record.issue_id,
+                actor=actor,
+                verb="created",
+                old_value="",
+                new_value=cycle.name,
+                field="cycles",
+                project=project,
+                workspace=project.workspace,
+                comment=f"{actor.email} added cycle {cycle.name}",
+                old_identifier="",
+                new_identifier=cycle.id,
+            )
+        )
+
+
+def track_modules(
+    requested_data,
+    current_instance,
+    issue_id,
+    project,
+    actor,
+    issue_activities,
+):
+    # Updated Records:
+    updated_records = current_instance.get("updated_module_issues", [])
+    created_records = json.loads(current_instance.get("created_module_issues", []))
+
+    for updated_record in updated_records:
+        old_module = Module.objects.filter(
+            pk=updated_record.get("old_module_id", None)
+        ).first()
+        new_module = Module.objects.filter(
+            pk=updated_record.get("new_module_id", None)
+        ).first()
+
+        issue_activities.append(
+            IssueActivity(
+                issue_id=updated_record.get("issue_id"),
+                actor=actor,
+                verb="updated",
+                old_value=old_module.name,
+                new_value=new_module.name,
+                field="modules",
+                project=project,
+                workspace=project.workspace,
+                comment=f"{actor.email} updated module from {old_module.name} to {new_module.name}",
+                old_identifier=old_module.id,
+                new_identifier=new_module.id,
+            )
+        )
+
+    for created_record in created_records:
+        module = Module.objects.filter(pk=created_record.module_id).first()
+        issue_activities.append(
+            IssueActivity(
+                issue_id=created_record.issue_id,
+                actor=actor,
+                verb="created",
+                old_value="",
+                new_value=module.name,
+                field="modules",
+                project=project,
+                workspace=project.workspace,
+                comment=f"{actor.email} added module {module.name}",
+                old_identifier="",
+                new_identifier=module.id,
+            )
+        )
+
+
 # Receive message from room group
 @job("default")
 def issue_activity(event):
@@ -510,7 +617,7 @@ def issue_activity(event):
 
         requested_data = json.loads(event.get("requested_data"))
         current_instance = json.loads(event.get("current_instance"))
-        issue_id = event.get("issue_id")
+        issue_id = event.get("issue_id", None)
         actor_id = event.get("actor_id")
         project_id = event.get("project_id")
 
@@ -530,6 +637,8 @@ def issue_activity(event):
             "assignees_list": track_assignees,
             "blocks_list": track_blocks,
             "blockers_list": track_blockings,
+            "cycles_list": track_cycles,
+            "modules_list": track_modules,
         }
 
         for key in requested_data:
