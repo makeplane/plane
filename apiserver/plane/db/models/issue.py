@@ -57,6 +57,7 @@ class Issue(ProjectBaseModel):
     labels = models.ManyToManyField(
         "db.Label", blank=True, related_name="labels", through="IssueLabel"
     )
+    sort_order = models.FloatField(default=65535)
 
     class Meta:
         verbose_name = "Issue"

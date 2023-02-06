@@ -40,12 +40,12 @@ class IssueFlatSerializer(BaseSerializer):
             "start_date",
             "target_date",
             "sequence_id",
+            "sort_order",
         ]
 
 
 # Issue Serializer with state details
 class IssueStateSerializer(BaseSerializer):
-
     state_detail = StateSerializer(read_only=True, source="state")
     project_detail = ProjectSerializer(read_only=True, source="project")
 
@@ -57,7 +57,6 @@ class IssueStateSerializer(BaseSerializer):
 ##TODO: Find a better way to write this serializer
 ## Find a better approach to save manytomany?
 class IssueCreateSerializer(BaseSerializer):
-
     state_detail = StateSerializer(read_only=True, source="state")
     created_by_detail = UserLiteSerializer(read_only=True, source="created_by")
     project_detail = ProjectSerializer(read_only=True, source="project")
@@ -176,7 +175,6 @@ class IssueCreateSerializer(BaseSerializer):
         return issue
 
     def update(self, instance, validated_data):
-
         blockers = validated_data.pop("blockers_list", None)
         assignees = validated_data.pop("assignees_list", None)
         labels = validated_data.pop("labels_list", None)
@@ -254,7 +252,6 @@ class IssueCreateSerializer(BaseSerializer):
 
 
 class IssueActivitySerializer(BaseSerializer):
-
     actor_detail = UserLiteSerializer(read_only=True, source="actor")
 
     class Meta:
@@ -263,7 +260,6 @@ class IssueActivitySerializer(BaseSerializer):
 
 
 class IssueCommentSerializer(BaseSerializer):
-
     actor_detail = UserLiteSerializer(read_only=True, source="actor")
     issue_detail = IssueFlatSerializer(read_only=True, source="issue")
     project_detail = ProjectSerializer(read_only=True, source="project")
@@ -319,7 +315,6 @@ class LabelSerializer(BaseSerializer):
 
 
 class IssueLabelSerializer(BaseSerializer):
-
     # label_details = LabelSerializer(read_only=True, source="label")
 
     class Meta:
@@ -332,7 +327,6 @@ class IssueLabelSerializer(BaseSerializer):
 
 
 class BlockedIssueSerializer(BaseSerializer):
-
     blocked_issue_detail = IssueFlatSerializer(source="block", read_only=True)
 
     class Meta:
@@ -341,7 +335,6 @@ class BlockedIssueSerializer(BaseSerializer):
 
 
 class BlockerIssueSerializer(BaseSerializer):
-
     blocker_issue_detail = IssueFlatSerializer(source="blocked_by", read_only=True)
 
     class Meta:
@@ -350,7 +343,6 @@ class BlockerIssueSerializer(BaseSerializer):
 
 
 class IssueAssigneeSerializer(BaseSerializer):
-
     assignee_details = UserLiteSerializer(read_only=True, source="assignee")
 
     class Meta:
@@ -373,7 +365,6 @@ class CycleBaseSerializer(BaseSerializer):
 
 
 class IssueCycleDetailSerializer(BaseSerializer):
-
     cycle_detail = CycleBaseSerializer(read_only=True, source="cycle")
 
     class Meta:
@@ -404,7 +395,6 @@ class ModuleBaseSerializer(BaseSerializer):
 
 
 class IssueModuleDetailSerializer(BaseSerializer):
-
     module_detail = ModuleBaseSerializer(read_only=True, source="module")
 
     class Meta:
