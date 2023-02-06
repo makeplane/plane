@@ -10,6 +10,8 @@ import { Combobox, Dialog, Transition } from "@headlessui/react";
 import { RectangleStackIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 // services
 import issuesServices from "services/issues.service";
+// helpers
+import { orderArrayBy } from "helpers/array.helper";
 // types
 import { IIssue, IssueResponse } from "types";
 // constants
@@ -47,11 +49,24 @@ export const SubIssuesListModal: React.FC<Props> = ({ isOpen, handleClose, paren
     setQuery("");
   };
 
-  const addAsSubIssue = (issueId: string) => {
+  const addAsSubIssue = (issue: IIssue) => {
     if (!workspaceSlug || !projectId) return;
 
+    mutate<IIssue[]>(
+      SUB_ISSUES(parent?.id ?? ""),
+      (prevData) => {
+        let newSubIssues = [...(prevData as IIssue[])];
+        newSubIssues.push(issue);
+
+        newSubIssues = orderArrayBy(newSubIssues, "created_at", "descending");
+
+        return newSubIssues;
+      },
+      false
+    );
+
     issuesServices
-      .patchIssue(workspaceSlug as string, projectId as string, issueId, { parent: parent?.id })
+      .patchIssue(workspaceSlug as string, projectId as string, issue.id, { parent: parent?.id })
       .then((res) => {
         mutate(SUB_ISSUES(parent?.id ?? ""));
         mutate<IssueResponse>(
@@ -146,7 +161,7 @@ export const SubIssuesListModal: React.FC<Props> = ({ isOpen, handleClose, paren
                                     }`
                                   }
                                   onClick={() => {
-                                    addAsSubIssue(issue.id);
+                                    addAsSubIssue(issue);
                                     handleClose();
                                   }}
                                 >

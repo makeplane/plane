@@ -4,6 +4,7 @@ import { useCommands } from "@remirror/react";
 
 export const UndoButton = () => {
   const { undo } = useCommands();
+
   return (
     <button
       type="button"
