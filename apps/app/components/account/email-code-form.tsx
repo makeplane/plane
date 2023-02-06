@@ -35,7 +35,6 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
   });
 
   const onSubmit = ({ email }: EmailCodeFormValues) => {
-    console.log(email);
     authenticationService
       .emailCode({ email })
       .then((res) => {

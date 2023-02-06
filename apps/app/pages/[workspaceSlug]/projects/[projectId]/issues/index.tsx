@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import useSWR, { mutate } from "swr";
-import { RectangleStackIcon } from "@heroicons/react/24/outline";
-import { PlusIcon } from "@heroicons/react/20/solid";
+
+import useSWR from "swr";
+
 // lib
 import { requiredAdmin, requiredAuth } from "lib/auth";
 // services
@@ -13,30 +12,21 @@ import AppLayout from "layouts/app-layout";
 // contexts
 import { IssueViewContextProvider } from "contexts/issue-view.context";
 // components
-import ListView from "components/project/issues/list-view";
-import BoardView from "components/project/issues/BoardView";
-import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
-import { CreateUpdateIssueModal } from "components/issues";
-import View from "components/core/view";
+import { IssuesFilterView, IssuesView } from "components/core";
 // ui
 import { Spinner, EmptySpace, EmptySpaceItem, HeaderButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+// icons
+import { RectangleStackIcon, PlusIcon } from "@heroicons/react/24/outline";
 // types
-import type { IIssue, UserAuth } from "types";
+import type { UserAuth } from "types";
 import type { NextPage, NextPageContext } from "next";
 // fetch-keys
 import { PROJECT_DETAILS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 
 const ProjectIssues: NextPage<UserAuth> = (props) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedIssue, setSelectedIssue] = useState<
-    (IIssue & { actionType: "edit" | "delete" }) | undefined
-  >(undefined);
-  const [deleteIssue, setDeleteIssue] = useState<string | undefined>(undefined);
-
-  const {
-    query: { workspaceSlug, projectId },
-  } = useRouter();
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
 
   const { data: projectIssues } = useSWR(
     workspaceSlug && projectId
@@ -54,20 +44,6 @@ const ProjectIssues: NextPage<UserAuth> = (props) => {
       : null
   );
 
-  useEffect(() => {
-    if (!isOpen) {
-      const timer = setTimeout(() => {
-        setSelectedIssue(undefined);
-        clearTimeout(timer);
-      }, 500);
-    }
-  }, [isOpen]);
-
-  const handleEditIssue = (issue: IIssue) => {
-    setIsOpen(true);
-    setSelectedIssue({ ...issue, actionType: "edit" });
-  };
-
   return (
     <IssueViewContextProvider>
       <AppLayout
@@ -79,7 +55,9 @@ const ProjectIssues: NextPage<UserAuth> = (props) => {
         }
         right={
           <div className="flex items-center gap-2">
-            <View issues={projectIssues?.results.filter((p) => p.parent === null) ?? []} />
+            <IssuesFilterView
+              issues={projectIssues?.results.filter((p) => p.parent === null) ?? []}
+            />
             <HeaderButton
               Icon={PlusIcon}
               label="Add Issue"
@@ -93,53 +71,41 @@ const ProjectIssues: NextPage<UserAuth> = (props) => {
           </div>
         }
       >
-        <CreateUpdateIssueModal
-          isOpen={isOpen && selectedIssue?.actionType !== "delete"}
-          prePopulateData={{ ...selectedIssue }}
-          handleClose={() => setIsOpen(false)}
-          data={selectedIssue}
-        />
-        <ConfirmIssueDeletion
-          handleClose={() => setDeleteIssue(undefined)}
-          isOpen={!!deleteIssue}
-          data={projectIssues?.results.find((issue) => issue.id === deleteIssue)}
-        />
-        {!projectIssues ? (
+        {projectIssues ? (
+          projectIssues.count > 0 ? (
+            <IssuesView
+              issues={projectIssues?.results.filter((p) => p.parent === null) ?? []}
+              userAuth={props}
+            />
+          ) : (
+            <div className="grid h-full w-full place-items-center px-4 sm:px-0">
+              <EmptySpace
+                title="You don't have any issue yet."
+                description="Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done."
+                Icon={RectangleStackIcon}
+              >
+                <EmptySpaceItem
+                  title="Create a new issue"
+                  description={
+                    <span>
+                      Use <pre className="inline rounded bg-gray-100 px-2 py-1">C</pre> shortcut to
+                      create a new issue
+                    </span>
+                  }
+                  Icon={PlusIcon}
+                  action={() => {
+                    const e = new KeyboardEvent("keydown", {
+                      key: "c",
+                    });
+                    document.dispatchEvent(e);
+                  }}
+                />
+              </EmptySpace>
+            </div>
+          )
+        ) : (
           <div className="flex h-full w-full items-center justify-center">
             <Spinner />
-          </div>
-        ) : projectIssues.count > 0 ? (
-          <>
-            <ListView
-              issues={projectIssues?.results.filter((p) => p.parent === null) ?? []}
-              handleEditIssue={handleEditIssue}
-              userAuth={props}
-            />
-            <BoardView
-              issues={projectIssues?.results.filter((p) => p.parent === null) ?? []}
-              handleDeleteIssue={setDeleteIssue}
-              userAuth={props}
-            />
-          </>
-        ) : (
-          <div className="grid h-full w-full place-items-center px-4 sm:px-0">
-            <EmptySpace
-              title="You don't have any issue yet."
-              description="Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done."
-              Icon={RectangleStackIcon}
-            >
-              <EmptySpaceItem
-                title="Create a new issue"
-                description={
-                  <span>
-                    Use <pre className="inline rounded bg-gray-100 px-2 py-1">C</pre> shortcut to
-                    create a new issue
-                  </span>
-                }
-                Icon={PlusIcon}
-                action={() => setIsOpen(true)}
-              />
-            </EmptySpace>
           </div>
         )}
       </AppLayout>

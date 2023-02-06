@@ -29,7 +29,7 @@ export const PROJECT_ISSUE_LABELS = (projectId: string) => `PROJECT_ISSUE_LABELS
 
 export const CYCLE_LIST = (projectId: string) => `CYCLE_LIST_${projectId}`;
 export const CYCLE_ISSUES = (cycleId: string) => `CYCLE_ISSUES_${cycleId}`;
-export const CYCLE_DETAIL = "CYCLE_DETAIL";
+export const CYCLE_DETAILS = (cycleId: string) => `CYCLE_DETAIL_${cycleId}`;
 
 export const STATE_LIST = (projectId: string) => `STATE_LIST_${projectId}`;
 export const STATE_DETAIL = "STATE_DETAIL";
@@ -39,7 +39,7 @@ export const USER_PROJECT_VIEW = (projectId: string) => `USER_PROJECT_VIEW_${pro
 
 export const MODULE_LIST = (projectId: string) => `MODULE_LIST_${projectId}`;
 export const MODULE_ISSUES = (moduleId: string) => `MODULE_ISSUES_${moduleId}`;
-export const MODULE_DETAIL = "MODULE_DETAIL";
+export const MODULE_DETAILS = (moduleId: string) => `MODULE_DETAIL_${moduleId}`;
 
 // Issues
 export const ISSUE_DETAILS = (issueId: string) => `ISSUE_DETAILS_${issueId}`;

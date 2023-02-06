@@ -3,8 +3,29 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
+
 import useSWR from "swr";
+
+// react-hook-form
 import { useForm } from "react-hook-form";
+// lib
+import { requiredAuth } from "lib/auth";
+// services
+import projectService from "services/project.service";
+// hooks
+import useUser from "hooks/use-user";
+import useToast from "hooks/use-toast";
+// layouts
+import AppLayout from "layouts/app-layout";
+// services
+import userService from "services/user.service";
+import workspaceService from "services/workspace.service";
+// components
+import { ImageUploadModal } from "components/core";
+// ui
+import { Button, Input, Spinner } from "components/ui";
+import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+// icons
 import {
   ChevronRightIcon,
   ClipboardDocumentListIcon,
@@ -14,30 +35,11 @@ import {
   UserPlusIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import type { NextPage, NextPageContext } from "next";
-
-// hooks
-import type { IIssue, IUser } from "types";
-import useUser from "hooks/use-user";
-import useToast from "hooks/use-toast";
-// lib
-import { requiredAuth } from "lib/auth";
-// services
-import projectService from "services/project.service";
-// layouts
-import AppLayout from "layouts/app-layout";
-// constants
-import { USER_ISSUE, USER_WORKSPACE_INVITATIONS, PROJECTS_LIST } from "constants/fetch-keys";
-// services
-import userService from "services/user.service";
-import workspaceService from "services/workspace.service";
-// components
-import { ImageUploadModal } from "components/common/image-upload-modal";
-// ui
-import { Button, Input, Spinner } from "components/ui";
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-// icons
 // types
+import type { NextPage, NextPageContext } from "next";
+import type { IIssue, IUser } from "types";
+// fetch-keys
+import { USER_ISSUE, USER_WORKSPACE_INVITATIONS, PROJECTS_LIST } from "constants/fetch-keys";
 
 const defaultValues: Partial<IUser> = {
   avatar: "",

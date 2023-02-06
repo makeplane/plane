@@ -21,7 +21,7 @@ import SettingsLayout from "layouts/settings-layout";
 // hooks
 import useToast from "hooks/use-toast";
 // components
-import { ImageUploadModal } from "components/common/image-upload-modal";
+import { ImageUploadModal } from "components/core";
 import ConfirmWorkspaceDeletion from "components/workspace/confirm-workspace-deletion";
 // ui
 import { Spinner, Button, Input, CustomSelect } from "components/ui";
