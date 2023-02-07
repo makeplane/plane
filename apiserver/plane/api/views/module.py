@@ -161,7 +161,7 @@ class ModuleIssueViewSet(BaseViewSet):
                 module_issue = [
                     module_issue
                     for module_issue in module_issues
-                    if module_issue.issue_id in issues
+                    if str(module_issue.issue_id) in issues
                 ]
 
                 if len(module_issue):
