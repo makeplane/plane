@@ -161,14 +161,14 @@ class ModuleIssueViewSet(BaseViewSet):
                 module_issue = [
                     module_issue
                     for module_issue in module_issues
-                    if module_issue.issue_id in issues
+                    if str(module_issue.issue_id) in issues
                 ]
 
                 if len(module_issue):
-                    if module_issue[0].cycle_id != module_id:
+                    if module_issue[0].module_id != module_id:
                         update_module_issue_activity.append(
                             {
-                                "old_module_id": str(module_issue[0].cycle_id),
+                                "old_module_id": str(module_issue[0].module_id),
                                 "new_module_id": str(module_id),
                                 "issue_id": str(module_issue[0].issue_id),
                             }
@@ -179,7 +179,7 @@ class ModuleIssueViewSet(BaseViewSet):
                     record_to_create.append(
                         ModuleIssue(
                             module=module,
-                            issue=issue,
+                            issue_id=issue,
                             project_id=project_id,
                             workspace=module.workspace,
                             created_by=request.user,
@@ -203,14 +203,14 @@ class ModuleIssueViewSet(BaseViewSet):
             issue_activity.delay(
                 {
                     "type": "issue.activity",
-                    "requested_data": json.dumps({"cycles_list": issues}),
+                    "requested_data": json.dumps({"modules_list": issues}),
                     "actor_id": str(self.request.user.id),
                     "issue_id": str(self.kwargs.get("pk", None)),
                     "project_id": str(self.kwargs.get("project_id", None)),
                     "current_instance": json.dumps(
                         {
-                            "updated_cycle_issues": update_module_issue_activity,
-                            "created_cycle_issues": serializers.serialize(
+                            "updated_module_issues": update_module_issue_activity,
+                            "created_module_issues": serializers.serialize(
                                 "json", record_to_create
                             ),
                         }
