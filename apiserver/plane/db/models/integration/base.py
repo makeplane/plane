@@ -43,7 +43,7 @@ class WorkspaceIntegration(BaseModel):
     metadata = models.JSONField(default=dict)
 
     def __str__(self):
-        """Return name of the project"""
+        """Return name of the integration and workspace"""
         return f"{self.workspace.name} <{self.integration.provider}>"
 
     class Meta:
