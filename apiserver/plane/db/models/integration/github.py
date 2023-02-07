@@ -44,7 +44,7 @@ class GithubIssueSync(ProjectBaseModel):
         "db.Issue", related_name="github_syncs", on_delete=models.CASCADE
     )
     repository = models.ForeignKey(
-        "db.Repository", related_name="issue_syncs", on_delete=models.CASCADE
+        "db.GithubRepository", related_name="issue_syncs", on_delete=models.CASCADE
     )
 
     def __str__(self):

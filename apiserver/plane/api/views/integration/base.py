@@ -3,6 +3,7 @@ import uuid
 
 # Django imports
 from django.db import IntegrityError
+from django.contrib.auth.hashers import make_password
 
 # Third party imports
 from rest_framework.response import Response
@@ -85,6 +86,8 @@ class WorkspaceIntegrationViewSet(BaseViewSet):
             bot_user = User.objects.create(
                 email=f"{str(integration.id)-str(workspace.id)}@plane.so",
                 username=uuid.uuid4().hex,
+                password=make_password(uuid.uuid4().hex),
+                is_password_autoset=True,
             )
 
             workspace_integration = WorkspaceIntegration.objects.create(
