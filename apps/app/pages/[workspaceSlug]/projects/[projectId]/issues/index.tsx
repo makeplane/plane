@@ -88,7 +88,7 @@ const ProjectIssues: NextPage<UserAuth> = (props) => {
                   title="Create a new issue"
                   description={
                     <span>
-                      Use <pre className="inline rounded bg-gray-100 px-2 py-1">C</pre> shortcut to
+                      Use <pre className="inline rounded bg-gray-200 px-2 py-1">C</pre> shortcut to
                       create a new issue
                     </span>
                   }
