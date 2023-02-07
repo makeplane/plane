@@ -1,6 +1,6 @@
 # base requirements
 
-Django==3.2.16
+Django==3.2.17
 django-braces==1.15.0
 django-taggit==2.1.0
 psycopg2==2.9.3
