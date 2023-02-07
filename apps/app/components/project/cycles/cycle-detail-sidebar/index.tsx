@@ -9,16 +9,16 @@ import { mutate } from "swr";
 import { Controller, useForm } from "react-hook-form";
 // icons
 import { CalendarDaysIcon, ChartPieIcon, LinkIcon, UserIcon } from "@heroicons/react/24/outline";
-// services
-import cyclesService from "services/cycles.service";
-// hooks
-import useToast from "hooks/use-toast";
-// ui
-import { Loader, CustomDatePicker } from "components/ui";
-import CycleProgressStats from "./cycle-progress-stats";
+
 // progress-bar
 import { CircularProgressbar } from "react-circular-progressbar";
+// ui
+import { Loader, CustomDatePicker } from "components/ui";
 import "react-circular-progressbar/dist/styles.css";
+// hooks
+import useToast from "hooks/use-toast";
+// services
+import cyclesService from "services/cycles.service";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 import { groupBy } from "helpers/array.helper";
@@ -26,6 +26,7 @@ import { groupBy } from "helpers/array.helper";
 import { CycleIssueResponse, ICycle, IIssue, IProjectMember, IIssueLabels } from "types";
 // fetch-keys
 import { CYCLE_DETAILS } from "constants/fetch-keys";
+import SidebarProgressStats from "components/core/sidebar/sidebar-progress-stats";
 
 type Props = {
   issues: IIssue[];
@@ -231,7 +232,7 @@ const CycleDetailSidebar: React.FC<Props> = ({
             <div className="py-1" />
           </div>
           <div className="w-full">
-            <CycleProgressStats issues={issues} members={members} issueLabels={issueLabels} />
+            <SidebarProgressStats issues={issues} members={members} issueLabels={issueLabels} />
           </div>
         </>
       ) : (

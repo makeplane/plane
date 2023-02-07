@@ -3,7 +3,10 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
-
+import { NextPageContext } from "next";
+// icons
+import { ArrowLeftIcon, ListBulletIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { CyclesIcon } from "components/icons";
 // lib
 import { requiredAdmin, requiredAuth } from "lib/auth";
 // layouts
@@ -21,12 +24,8 @@ import projectService from "services/project.service";
 // ui
 import { CustomMenu, EmptySpace, EmptySpaceItem, Spinner } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-// icons
-import { ArrowLeftIcon, ListBulletIcon, PlusIcon } from "@heroicons/react/24/outline";
-import { CyclesIcon } from "components/icons";
 // types
 import { CycleIssueResponse, IIssue, IIssueLabels, SelectIssue, UserAuth } from "types";
-import { NextPageContext } from "next";
 // fetch-keys
 import {
   CYCLE_ISSUES,
