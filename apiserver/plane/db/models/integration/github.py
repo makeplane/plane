@@ -5,7 +5,7 @@ from django.db import models
 from plane.db.models import ProjectBaseModel
 
 
-class Repository(ProjectBaseModel):
+class GithubRepository(ProjectBaseModel):
     name = models.CharField(max_length=500)
     url = models.URLField(null=True)
     config = models.JSONField(default=dict)
@@ -22,7 +22,9 @@ class Repository(ProjectBaseModel):
 
 
 class GithubRepositorySync(ProjectBaseModel):
-    repository_id = models.BigIntegerField()
+    repository = models.ForeignKey(
+        "db.GithubRepository", on_delete=models.CASCADE, related_name="syncss"
+    )
     credentials = models.JSONField(default=dict)
 
     def __str__(self):

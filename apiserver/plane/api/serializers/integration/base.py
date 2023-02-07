@@ -1,0 +1,18 @@
+# Module imports
+from plane.api.serializers import BaseSerializer
+from plane.db.models import Integration, WorkspaceIntegration
+
+
+class IntegrationSerializer(BaseSerializer):
+    class Meta:
+        model = Integration
+        fields = "__all__"
+        read_only_fields = [
+            "verified",
+        ]
+
+
+class WorkspaceIntegrationSerializer(BaseSerializer):
+    class Meta:
+        model = WorkspaceIntegration
+        fields = "__all__"

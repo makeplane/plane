@@ -74,3 +74,11 @@ from .authentication import (
 from .module import ModuleViewSet, ModuleIssueViewSet
 
 from .api_token import ApiTokenEndpoint
+
+from .integration import (
+    WorkspaceIntegrationViewSet,
+    IntegrationViewSet,
+    GithubIssueSyncViewSet,
+    GithubRepositorySyncViewSet,
+    GithubRepoViewSet,
+)

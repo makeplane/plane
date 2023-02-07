@@ -17,6 +17,7 @@ class Integration(AuditModel):
     webhook_secret = models.TextField(blank=True)
     redirect_url = models.TextField(blank=True)
     metadata = models.JSONField(default=dict)
+    verified = models.BooleanField(default=False)
 
     def __str__(self):
         """Return provider of the integration"""
@@ -47,6 +48,7 @@ class WorkspaceIntegration(BaseModel):
         return f"{self.workspace.name} <{self.integration.provider}>"
 
     class Meta:
+        unique_together = ["workspace", "integration"]
         verbose_name = "Workspace Integration"
         verbose_name_plural = "Workspace Integrations"
         db_table = "workspace_integrations"

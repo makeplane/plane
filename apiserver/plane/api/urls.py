@@ -87,6 +87,13 @@ from plane.api.views import (
     # Api Tokens
     ApiTokenEndpoint,
     ## End Api Tokens
+    # Integrations
+    IntegrationViewSet,
+    WorkspaceIntegrationViewSet,
+    GithubRepoViewSet,
+    GithubRepositorySyncViewSet,
+    GithubIssueSyncViewSet,
+    ## End Integrations
 )
 
 
@@ -683,7 +690,50 @@ urlpatterns = [
     ),
     ## End Modules
     # API Tokens
-    path("api-tokens/", ApiTokenEndpoint.as_view(), name="api-token"),
-    path("api-tokens/<uuid:pk>/", ApiTokenEndpoint.as_view(), name="api-token"),
+    path("api-tokens/", ApiTokenEndpoint.as_view(), name="api-tokens"),
+    path("api-tokens/<uuid:pk>/", ApiTokenEndpoint.as_view(), name="api-tokens"),
     ## End API Tokens
+    # Integrations
+    path(
+        "integrations/",
+        IntegrationViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="integrations",
+    ),
+    path(
+        "integrations/<uuid:pk>/",
+        IntegrationViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="integrations",
+    ),
+    path(
+        "workspaces/<str:slug>/workspace-integrations/",
+        WorkspaceIntegrationViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="workspace-integrations",
+    ),
+    path(
+        "workspaces/<str:slug>/workspace-integrations/<uuid:pk>/",
+        WorkspaceIntegrationViewSet.as_view(
+            {
+                "get": "retrieve",
+                "delete": "destroy",
+            }
+        ),
+        name="workspace-integrations",
+    ),
+    ## End Integrations
 ]

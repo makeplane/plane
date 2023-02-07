@@ -50,7 +50,7 @@ from .api_token import APIToken
 from .integration import (
     WorkspaceIntegration,
     Integration,
-    Repository,
+    GithubRepository,
     GithubRepositorySync,
     GithubIssueSync,
 )
