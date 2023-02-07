@@ -1,12 +1,13 @@
 import React from "react";
 import { Tab } from "@headlessui/react";
-
 import { useRouter } from "next/router";
 import useSWR from "swr";
-
+import Image from "next/image";
 // ui
 import SingleProgressStats from "./single-progress-stats";
 import { Avatar } from "components/ui";
+// icons
+import User from "public/user.png";
 // types
 import { IIssue, IIssueLabels } from "types";
 // constants
@@ -78,6 +79,32 @@ const SidebarProgressStats: React.FC<Props> = ({ issues }) => {
                 );
               }
             })}
+            {issues?.filter((i) => i.assignees?.length === 0).length > 0 ? (
+              <SingleProgressStats
+                title={
+                  <>
+                    <div className="h-5 w-5 rounded-full border-2 border-white bg-white">
+                      <Image
+                        src={User}
+                        height="100%"
+                        width="100%"
+                        className="rounded-full"
+                        alt="User"
+                      />
+                    </div>
+                    <span>No assignee</span>
+                  </>
+                }
+                completed={
+                  issues?.filter(
+                    (i) => i.state_detail.group === "completed" && i.assignees?.length === 0
+                  ).length
+                }
+                total={issues?.filter((i) => i.assignees?.length === 0).length}
+              />
+            ) : (
+              ""
+            )}
           </Tab.Panel>
           <Tab.Panel as="div" className="w-full flex flex-col ">
             {issueLabels?.map((issue, index) => {
