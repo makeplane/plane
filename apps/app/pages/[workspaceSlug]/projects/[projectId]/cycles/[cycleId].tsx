@@ -96,19 +96,6 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
           )
       : null
   );
-  const { data: issueLabels } = useSWR<IIssueLabels[]>(
-    workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => issuesServices.getIssueLabels(workspaceSlug as string, projectId as string)
-      : null
-  );
-
-  const { data: members } = useSWR(
-    workspaceSlug && projectId ? PROJECT_MEMBERS(workspaceSlug as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
-      : null
-  );
 
   const cycleIssuesArray = cycleIssues?.map((issue) => ({
     ...issue.issue_detail,
@@ -257,8 +244,6 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
         )}
         <CycleDetailSidebar
           issues={cycleIssuesArray ?? []}
-          members={members}
-          issueLabels={issueLabels}
           cycle={cycleDetails}
           isOpen={cycleSidebar}
           cycleIssues={cycleIssues ?? []}

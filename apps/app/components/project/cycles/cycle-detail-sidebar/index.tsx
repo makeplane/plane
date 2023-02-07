@@ -23,15 +23,13 @@ import cyclesService from "services/cycles.service";
 import { copyTextToClipboard } from "helpers/string.helper";
 import { groupBy } from "helpers/array.helper";
 // types
-import { CycleIssueResponse, ICycle, IIssue, IProjectMember, IIssueLabels } from "types";
+import { CycleIssueResponse, ICycle, IIssue } from "types";
 // fetch-keys
 import { CYCLE_DETAILS } from "constants/fetch-keys";
 import SidebarProgressStats from "components/core/sidebar/sidebar-progress-stats";
 
 type Props = {
   issues: IIssue[];
-  members: IProjectMember[] | undefined;
-  issueLabels: IIssueLabels[] | undefined;
   cycle: ICycle | undefined;
   isOpen: boolean;
   cycleIssues: CycleIssueResponse[];
@@ -42,14 +40,7 @@ const defaultValues: Partial<ICycle> = {
   end_date: new Date().toString(),
 };
 
-const CycleDetailSidebar: React.FC<Props> = ({
-  issues,
-  members,
-  issueLabels,
-  cycle,
-  isOpen,
-  cycleIssues,
-}) => {
+const CycleDetailSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cycleIssues }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
 
@@ -232,7 +223,7 @@ const CycleDetailSidebar: React.FC<Props> = ({
             <div className="py-1" />
           </div>
           <div className="w-full">
-            <SidebarProgressStats issues={issues} members={members} issueLabels={issueLabels} />
+            <SidebarProgressStats issues={issues} />
           </div>
         </>
       ) : (
