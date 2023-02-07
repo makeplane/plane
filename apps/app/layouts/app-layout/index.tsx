@@ -58,10 +58,6 @@ const workspaceLinks: (wSlug: string) => Array<{
     href: `/${workspaceSlug}/settings/members`,
   },
   {
-    label: "Features",
-    href: `/${workspaceSlug}/settings/features`,
-  },
-  {
     label: "Billing & Plans",
     href: `/${workspaceSlug}/settings/billing`,
   },
@@ -85,6 +81,10 @@ const sidebarLinks: (
   {
     label: "Members",
     href: `/${workspaceSlug}/projects/${projectId}/settings/members`,
+  },
+  {
+    label: "Features",
+    href: `/${workspaceSlug}/projects/${projectId}/settings/features`,
   },
   {
     label: "States",

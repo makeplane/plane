@@ -101,7 +101,6 @@ export const SingleList: React.FC<Props> = ({
                         type={type}
                         issue={issue}
                         properties={properties}
-                        members={members}
                         editIssue={() => handleEditIssue(issue)}
                         handleDeleteIssue={handleDeleteIssue}
                         removeIssue={() => {

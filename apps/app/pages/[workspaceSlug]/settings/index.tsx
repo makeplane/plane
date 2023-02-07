@@ -85,11 +85,13 @@ const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
 
   const onSubmit = async (formData: IWorkspace) => {
     if (!activeWorkspace) return;
+
     const payload: Partial<IWorkspace> = {
       logo: formData.logo,
       name: formData.name,
       company_size: formData.company_size,
     };
+
     await workspaceService
       .updateWorkspace(activeWorkspace.slug, payload)
       .then((res) => {

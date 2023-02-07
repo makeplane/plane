@@ -93,6 +93,7 @@ const GeneralSettings: NextPage<UserAuth> = (props) => {
 
   const onSubmit = async (formData: IProject) => {
     if (!activeWorkspace || !projectDetails) return;
+
     const payload: Partial<IProject> = {
       name: formData.name,
       network: formData.network,

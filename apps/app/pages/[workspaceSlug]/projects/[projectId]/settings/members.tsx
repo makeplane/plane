@@ -60,7 +60,7 @@ const MembersSettings: NextPage<TMemberSettingsProps> = (props) => {
     () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null)
   );
 
-  const { data: activeProject } = useSWR(
+  const { data: projectDetails } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
     workspaceSlug && projectId
       ? () => projectService.getProject(workspaceSlug as string, projectId as string)
@@ -122,11 +122,11 @@ const MembersSettings: NextPage<TMemberSettingsProps> = (props) => {
           (item) => item.id === selectedRemoveMember || item.id === selectedInviteRemoveMember
         )}
         handleDelete={async () => {
-          if (!activeWorkspace || !activeProject) return;
+          if (!activeWorkspace || !projectDetails) return;
           if (selectedRemoveMember) {
             await projectService.deleteProjectMember(
               activeWorkspace.slug,
-              activeProject.id,
+              projectDetails.id,
               selectedRemoveMember
             );
             mutateMembers(
@@ -137,7 +137,7 @@ const MembersSettings: NextPage<TMemberSettingsProps> = (props) => {
           if (selectedInviteRemoveMember) {
             await projectService.deleteProjectInvitation(
               activeWorkspace.slug,
-              activeProject.id,
+              projectDetails.id,
               selectedInviteRemoveMember
             );
             mutateInvitations(
@@ -163,8 +163,8 @@ const MembersSettings: NextPage<TMemberSettingsProps> = (props) => {
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem
-              title={`${activeProject?.name ?? "Project"}`}
-              link={`/${workspaceSlug}/projects/${activeProject?.id}/issues`}
+              title={`${projectDetails?.name ?? "Project"}`}
+              link={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
             />
             <BreadcrumbItem title="Members Settings" />
           </Breadcrumbs>
@@ -237,11 +237,11 @@ const MembersSettings: NextPage<TMemberSettingsProps> = (props) => {
                               title={ROLE[member.role as keyof typeof ROLE] ?? "Select Role"}
                               value={member.role}
                               onChange={(value) => {
-                                if (!activeWorkspace || !activeProject) return;
+                                if (!activeWorkspace || !projectDetails) return;
                                 projectService
                                   .updateProjectMember(
                                     activeWorkspace.slug,
-                                    activeProject.id,
+                                    projectDetails.id,
                                     member.id,
                                     {
                                       role: value,

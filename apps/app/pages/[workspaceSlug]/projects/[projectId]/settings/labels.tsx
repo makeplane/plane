@@ -33,7 +33,7 @@ import { PROJECT_DETAILS, PROJECT_ISSUE_LABELS, WORKSPACE_DETAILS } from "consta
 
 const defaultValues: Partial<IIssueLabels> = {
   name: "",
-  colour: "#ff0000",
+  color: "#ff0000",
 };
 
 type TLabelSettingsProps = {
@@ -59,7 +59,7 @@ const LabelsSettings: NextPage<TLabelSettingsProps> = (props) => {
     () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null)
   );
 
-  const { data: activeProject } = useSWR(
+  const { data: projectDetails } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
     workspaceSlug && projectId
       ? () => projectService.getProject(workspaceSlug as string, projectId as string)
@@ -84,9 +84,9 @@ const LabelsSettings: NextPage<TLabelSettingsProps> = (props) => {
   );
 
   const handleNewLabel: SubmitHandler<IIssueLabels> = async (formData) => {
-    if (!activeWorkspace || !activeProject || isSubmitting) return;
+    if (!activeWorkspace || !projectDetails || isSubmitting) return;
     await issuesService
-      .createIssueLabel(activeWorkspace.slug, activeProject.id, formData)
+      .createIssueLabel(activeWorkspace.slug, projectDetails.id, formData)
       .then((res) => {
         reset(defaultValues);
         mutate((prevData) => [...(prevData ?? []), res], false);
@@ -96,16 +96,17 @@ const LabelsSettings: NextPage<TLabelSettingsProps> = (props) => {
 
   const editLabel = (label: IIssueLabels) => {
     setNewLabelForm(true);
-    setValue("colour", label.colour);
+    setValue("color", label.color);
     setValue("name", label.name);
     setIsUpdating(true);
     setLabelIdForUpdate(label.id);
   };
 
   const handleLabelUpdate: SubmitHandler<IIssueLabels> = async (formData) => {
-    if (!activeWorkspace || !activeProject || isSubmitting) return;
+    if (!activeWorkspace || !projectDetails || isSubmitting) return;
+
     await issuesService
-      .patchIssueLabel(activeWorkspace.slug, activeProject.id, labelIdForUpdate ?? "", formData)
+      .patchIssueLabel(activeWorkspace.slug, projectDetails.id, labelIdForUpdate ?? "", formData)
       .then((res) => {
         console.log(res);
         reset(defaultValues);
@@ -119,10 +120,10 @@ const LabelsSettings: NextPage<TLabelSettingsProps> = (props) => {
   };
 
   const handleLabelDelete = (labelId: string) => {
-    if (activeWorkspace && activeProject) {
+    if (activeWorkspace && projectDetails) {
       mutate((prevData) => prevData?.filter((p) => p.id !== labelId), false);
       issuesService
-        .deleteIssueLabel(activeWorkspace.slug, activeProject.id, labelId)
+        .deleteIssueLabel(activeWorkspace.slug, projectDetails.id, labelId)
         .then((res) => {
           console.log(res);
         })
@@ -139,8 +140,8 @@ const LabelsSettings: NextPage<TLabelSettingsProps> = (props) => {
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem
-            title={`${activeProject?.name ?? "Project"}`}
-            link={`/${workspaceSlug}/projects/${activeProject?.id}/issues`}
+            title={`${projectDetails?.name ?? "Project"}`}
+            link={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
           />
           <BreadcrumbItem title="Labels Settings" />
         </Breadcrumbs>
@@ -177,11 +178,11 @@ const LabelsSettings: NextPage<TLabelSettingsProps> = (props) => {
                         open ? "text-gray-900" : "text-gray-500"
                       }`}
                     >
-                      {watch("colour") && watch("colour") !== "" && (
+                      {watch("color") && watch("color") !== "" && (
                         <span
                           className="h-4 w-4 rounded"
                           style={{
-                            backgroundColor: watch("colour") ?? "green",
+                            backgroundColor: watch("color") ?? "green",
                           }}
                         />
                       )}
@@ -198,7 +199,7 @@ const LabelsSettings: NextPage<TLabelSettingsProps> = (props) => {
                     >
                       <Popover.Panel className="absolute top-full left-0 z-20 mt-3 w-screen max-w-xs px-2 sm:px-0">
                         <Controller
-                          name="colour"
+                          name="color"
                           control={control}
                           render={({ field: { value, onChange } }) => (
                             <TwitterPicker

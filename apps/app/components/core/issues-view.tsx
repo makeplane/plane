@@ -68,7 +68,7 @@ export const IssuesView: React.FC<Props> = ({
 
   const { issueView, groupedByIssues, groupByProperty: selectedGroup } = useIssueView(issues);
 
-  const { data: states, mutate: mutateState } = useSWR<IState[]>(
+  const { data: states } = useSWR<IState[]>(
     workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
     workspaceSlug
       ? () => stateService.getStates(workspaceSlug as string, projectId as string)
@@ -86,252 +86,192 @@ export const IssuesView: React.FC<Props> = ({
     (result: DropResult) => {
       if (!result.destination || !workspaceSlug || !projectId) return;
 
-      const { source, destination, type } = result;
+      const { source, destination } = result;
 
-      if (type === "state") {
-        const newStates = Array.from(states ?? []);
-        const [reorderedState] = newStates.splice(source.index, 1);
-        newStates.splice(destination.index, 0, reorderedState);
-        const prevSequenceNumber = newStates[destination.index - 1]?.sequence;
-        const nextSequenceNumber = newStates[destination.index + 1]?.sequence;
+      const draggedItem = groupedByIssues[source.droppableId][source.index];
 
-        const sequenceNumber =
-          prevSequenceNumber && nextSequenceNumber
-            ? (prevSequenceNumber + nextSequenceNumber) / 2
-            : nextSequenceNumber
-            ? nextSequenceNumber - 15000 / 2
-            : prevSequenceNumber
-            ? prevSequenceNumber + 15000 / 2
-            : 15000;
+      if (source.droppableId !== destination.droppableId) {
+        const sourceGroup = source.droppableId; // source group id
+        const destinationGroup = destination.droppableId; // destination group id
 
-        newStates[destination.index].sequence = sequenceNumber;
+        if (!sourceGroup || !destinationGroup) return;
 
-        mutateState(newStates, false);
+        if (selectedGroup === "priority") {
+          // update the removed item for mutation
+          draggedItem.priority = destinationGroup;
 
-        stateService
-          .patchState(
-            workspaceSlug as string,
-            projectId as string,
-            newStates[destination.index].id,
-            {
-              sequence: sequenceNumber,
-            }
-          )
-          .then((response) => {
-            console.log(response);
-          })
-          .catch((err) => {
-            console.error(err);
-          });
-      } else {
-        const draggedItem = groupedByIssues[source.droppableId][source.index];
-        if (source.droppableId !== destination.droppableId) {
-          const sourceGroup = source.droppableId; // source group id
-          const destinationGroup = destination.droppableId; // destination group id
-
-          if (!sourceGroup || !destinationGroup) return;
-
-          if (selectedGroup === "priority") {
-            // update the removed item for mutation
-            draggedItem.priority = destinationGroup;
-
-            if (cycleId)
-              mutate<CycleIssueResponse[]>(
-                CYCLE_ISSUES(cycleId as string),
-                (prevData) => {
-                  if (!prevData) return prevData;
-                  const updatedIssues = prevData.map((issue) => {
-                    if (issue.issue_detail.id === draggedItem.id) {
-                      return {
-                        ...issue,
-                        issue_detail: {
-                          ...draggedItem,
-                          priority: destinationGroup,
-                        },
-                      };
-                    }
-                    return issue;
-                  });
-                  return [...updatedIssues];
-                },
-                false
-              );
-
-            if (moduleId)
-              mutate<ModuleIssueResponse[]>(
-                MODULE_ISSUES(moduleId as string),
-                (prevData) => {
-                  if (!prevData) return prevData;
-                  const updatedIssues = prevData.map((issue) => {
-                    if (issue.issue_detail.id === draggedItem.id) {
-                      return {
-                        ...issue,
-                        issue_detail: {
-                          ...draggedItem,
-                          priority: destinationGroup,
-                        },
-                      };
-                    }
-                    return issue;
-                  });
-                  return [...updatedIssues];
-                },
-                false
-              );
-
-            mutate<IssueResponse>(
-              PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
+          if (cycleId)
+            mutate<CycleIssueResponse[]>(
+              CYCLE_ISSUES(cycleId as string),
               (prevData) => {
                 if (!prevData) return prevData;
-
-                const updatedIssues = prevData.results.map((issue) => {
-                  if (issue.id === draggedItem.id)
+                const updatedIssues = prevData.map((issue) => {
+                  if (issue.issue_detail.id === draggedItem.id) {
                     return {
-                      ...draggedItem,
-                      priority: destinationGroup,
+                      ...issue,
+                      issue_detail: {
+                        ...draggedItem,
+                        priority: destinationGroup,
+                      },
                     };
-
+                  }
                   return issue;
                 });
-
-                return {
-                  ...prevData,
-                  results: updatedIssues,
-                };
+                return [...updatedIssues];
               },
               false
             );
 
-            // patch request
-            issuesService
-              .patchIssue(workspaceSlug as string, projectId as string, draggedItem.id, {
-                priority: destinationGroup,
-              })
-              .then((res) => {
-                mutate(
-                  cycleId
-                    ? CYCLE_ISSUES(cycleId as string)
-                    : CYCLE_ISSUES(draggedItem.issue_cycle?.cycle ?? "")
-                );
-                mutate(
-                  moduleId
-                    ? MODULE_ISSUES(moduleId as string)
-                    : MODULE_ISSUES(draggedItem.issue_module?.module ?? "")
-                );
-
-                mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
-              });
-          } else if (selectedGroup === "state_detail.name") {
-            const destinationState = states?.find((s) => s.name === destinationGroup);
-            const destinationStateId = destinationState?.id;
-
-            // update the removed item for mutation
-            if (!destinationStateId || !destinationState) return;
-            draggedItem.state = destinationStateId;
-            draggedItem.state_detail = destinationState;
-
-            if (cycleId)
-              mutate<CycleIssueResponse[]>(
-                CYCLE_ISSUES(cycleId as string),
-                (prevData) => {
-                  if (!prevData) return prevData;
-                  const updatedIssues = prevData.map((issue) => {
-                    if (issue.issue_detail.id === draggedItem.id) {
-                      return {
-                        ...issue,
-                        issue_detail: {
-                          ...draggedItem,
-                          state_detail: destinationState,
-                          state: destinationStateId,
-                        },
-                      };
-                    }
-                    return issue;
-                  });
-                  return [...updatedIssues];
-                },
-                false
-              );
-
-            if (moduleId)
-              mutate<ModuleIssueResponse[]>(
-                MODULE_ISSUES(moduleId as string),
-                (prevData) => {
-                  if (!prevData) return prevData;
-                  const updatedIssues = prevData.map((issue) => {
-                    if (issue.issue_detail.id === draggedItem.id) {
-                      return {
-                        ...issue,
-                        issue_detail: {
-                          ...draggedItem,
-                          state_detail: destinationState,
-                          state: destinationStateId,
-                        },
-                      };
-                    }
-                    return issue;
-                  });
-                  return [...updatedIssues];
-                },
-                false
-              );
-
-            mutate<IssueResponse>(
-              PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
+          if (moduleId)
+            mutate<ModuleIssueResponse[]>(
+              MODULE_ISSUES(moduleId as string),
               (prevData) => {
                 if (!prevData) return prevData;
-
-                const updatedIssues = prevData.results.map((issue) => {
-                  if (issue.id === draggedItem.id)
+                const updatedIssues = prevData.map((issue) => {
+                  if (issue.issue_detail.id === draggedItem.id) {
                     return {
-                      ...draggedItem,
-                      state_detail: destinationState,
-                      state: destinationStateId,
+                      ...issue,
+                      issue_detail: {
+                        ...draggedItem,
+                        priority: destinationGroup,
+                      },
                     };
-
+                  }
                   return issue;
                 });
-
-                return {
-                  ...prevData,
-                  results: updatedIssues,
-                };
+                return [...updatedIssues];
               },
               false
             );
 
-            // patch request
-            issuesService
-              .patchIssue(workspaceSlug as string, projectId as string, draggedItem.id, {
-                state: destinationStateId,
-              })
-              .then((res) => {
-                mutate(
-                  cycleId
-                    ? CYCLE_ISSUES(cycleId as string)
-                    : CYCLE_ISSUES(draggedItem.issue_cycle?.cycle ?? "")
-                );
-                mutate(
-                  moduleId
-                    ? MODULE_ISSUES(moduleId as string)
-                    : MODULE_ISSUES(draggedItem.issue_module?.module ?? "")
-                );
-                mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
+          mutate<IssueResponse>(
+            PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
+            (prevData) => {
+              if (!prevData) return prevData;
+
+              const updatedIssues = prevData.results.map((issue) => {
+                if (issue.id === draggedItem.id)
+                  return {
+                    ...draggedItem,
+                    priority: destinationGroup,
+                  };
+
+                return issue;
               });
-          }
+
+              return {
+                ...prevData,
+                results: updatedIssues,
+              };
+            },
+            false
+          );
+
+          // patch request
+          issuesService
+            .patchIssue(workspaceSlug as string, projectId as string, draggedItem.id, {
+              priority: destinationGroup,
+            })
+            .then((res) => {
+              if (cycleId) mutate(CYCLE_ISSUES(cycleId as string));
+              if (moduleId) mutate(MODULE_ISSUES(moduleId as string));
+
+              mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
+            });
+        } else if (selectedGroup === "state_detail.name") {
+          const destinationState = states?.find((s) => s.name === destinationGroup);
+          const destinationStateId = destinationState?.id;
+
+          // update the removed item for mutation
+          if (!destinationStateId || !destinationState) return;
+          draggedItem.state = destinationStateId;
+          draggedItem.state_detail = destinationState;
+
+          if (cycleId)
+            mutate<CycleIssueResponse[]>(
+              CYCLE_ISSUES(cycleId as string),
+              (prevData) => {
+                if (!prevData) return prevData;
+                const updatedIssues = prevData.map((issue) => {
+                  if (issue.issue_detail.id === draggedItem.id) {
+                    return {
+                      ...issue,
+                      issue_detail: {
+                        ...draggedItem,
+                        state_detail: destinationState,
+                        state: destinationStateId,
+                      },
+                    };
+                  }
+                  return issue;
+                });
+                return [...updatedIssues];
+              },
+              false
+            );
+
+          if (moduleId)
+            mutate<ModuleIssueResponse[]>(
+              MODULE_ISSUES(moduleId as string),
+              (prevData) => {
+                if (!prevData) return prevData;
+                const updatedIssues = prevData.map((issue) => {
+                  if (issue.issue_detail.id === draggedItem.id) {
+                    return {
+                      ...issue,
+                      issue_detail: {
+                        ...draggedItem,
+                        state_detail: destinationState,
+                        state: destinationStateId,
+                      },
+                    };
+                  }
+                  return issue;
+                });
+                return [...updatedIssues];
+              },
+              false
+            );
+
+          mutate<IssueResponse>(
+            PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
+            (prevData) => {
+              if (!prevData) return prevData;
+
+              const updatedIssues = prevData.results.map((issue) => {
+                if (issue.id === draggedItem.id)
+                  return {
+                    ...draggedItem,
+                    state_detail: destinationState,
+                    state: destinationStateId,
+                  };
+
+                return issue;
+              });
+
+              return {
+                ...prevData,
+                results: updatedIssues,
+              };
+            },
+            false
+          );
+
+          // patch request
+          issuesService
+            .patchIssue(workspaceSlug as string, projectId as string, draggedItem.id, {
+              state: destinationStateId,
+            })
+            .then((res) => {
+              if (cycleId) mutate(CYCLE_ISSUES(cycleId as string));
+              if (moduleId) mutate(MODULE_ISSUES(moduleId as string));
+
+              mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
+            });
         }
       }
     },
-    [
-      workspaceSlug,
-      cycleId,
-      moduleId,
-      mutateState,
-      groupedByIssues,
-      projectId,
-      selectedGroup,
-      states,
-    ]
+    [workspaceSlug, cycleId, moduleId, groupedByIssues, projectId, selectedGroup, states]
   );
 
   const addIssueToState = (groupTitle: string, stateId: string | null) => {
