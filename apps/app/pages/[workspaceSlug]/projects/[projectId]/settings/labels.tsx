@@ -26,7 +26,7 @@ import { IIssueLabels } from "types";
 
 const defaultValues: Partial<IIssueLabels> = {
   name: "",
-  colour: "#ff0000",
+  color: "#ff0000",
 };
 
 type TLabelSettingsProps = {
@@ -89,7 +89,7 @@ const LabelsSettings: NextPage<TLabelSettingsProps> = (props) => {
 
   const editLabel = (label: IIssueLabels) => {
     setNewLabelForm(true);
-    setValue("colour", label.colour);
+    setValue("color", label.color);
     setValue("name", label.name);
     setIsUpdating(true);
     setLabelIdForUpdate(label.id);
@@ -170,13 +170,13 @@ const LabelsSettings: NextPage<TLabelSettingsProps> = (props) => {
                         open ? "text-gray-900" : "text-gray-500"
                       }`}
                     >
-                      {watch("colour") && watch("colour") !== "" && (
+                      {watch("color") && watch("color") !== "" && (
                         <span
                           className="h-4 w-4 rounded"
                           style={{
-                            backgroundColor: watch("colour") ?? "green",
+                            backgroundColor: watch("color") ?? "green",
                           }}
-                         />
+                        />
                       )}
                     </Popover.Button>
 
@@ -191,7 +191,7 @@ const LabelsSettings: NextPage<TLabelSettingsProps> = (props) => {
                     >
                       <Popover.Panel className="absolute top-full left-0 z-20 mt-3 w-screen max-w-xs px-2 sm:px-0">
                         <Controller
-                          name="colour"
+                          name="color"
                           control={control}
                           render={({ field: { value, onChange } }) => (
                             <TwitterPicker
