@@ -15,7 +15,7 @@ import { IIssue } from "types";
 // fetch-keys
 import { STATE_LIST } from "constants/fetch-keys";
 // constants
-import { PRIORITIES } from "constants/";
+import { PRIORITIES } from "constants/project";
 
 const useIssueView = (projectIssues: IIssue[]) => {
   const {

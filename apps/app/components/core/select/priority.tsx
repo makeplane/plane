@@ -2,11 +2,12 @@ import React from "react";
 
 // ui
 import { Listbox, Transition } from "@headlessui/react";
+// icons
+import { getPriorityIcon } from "components/icons/priority-icon";
 // types
-import { IIssue, IState } from "types";
+import { IIssue } from "types";
 // constants
-import { getPriorityIcon } from "constants/global";
-import { PRIORITIES } from "constants/";
+import { PRIORITIES } from "constants/project";
 
 type Props = {
   issue: IIssue;

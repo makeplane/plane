@@ -2,17 +2,15 @@ import { useState } from "react";
 
 import Image from "next/image";
 import { useRouter } from "next/router";
+
 import useSWR from "swr";
-import { PlusIcon } from "@heroicons/react/24/outline";
 
 // lib
-import type { GetServerSideProps, NextPage } from "next";
 import { requiredWorkspaceAdmin } from "lib/auth";
 // hooks
 import useToast from "hooks/use-toast";
 // services
 import workspaceService from "services/workspace.service";
-// constants
 // layouts
 import SettingsLayout from "layouts/settings-layout";
 // components
@@ -21,10 +19,14 @@ import SendWorkspaceInvitationModal from "components/workspace/send-workspace-in
 // ui
 import { Button, CustomListbox, CustomMenu, Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-import { ROLE } from "constants/";
 // icons
+import { PlusIcon } from "@heroicons/react/24/outline";
+// types
+import type { GetServerSideProps, NextPage } from "next";
 // fetch-keys
 import { WORKSPACE_DETAILS, WORKSPACE_INVITATIONS, WORKSPACE_MEMBERS } from "constants/fetch-keys";
+// constants
+import { ROLE } from "constants/workspace";
 
 type TMembersSettingsProps = {
   isOwner: boolean;

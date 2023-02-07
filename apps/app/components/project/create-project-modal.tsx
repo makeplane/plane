@@ -23,7 +23,7 @@ import { IProject } from "types";
 // fetch-keys
 import { PROJECTS_LIST, WORKSPACE_MEMBERS_ME } from "constants/fetch-keys";
 // constants
-import { NETWORK_CHOICES } from "constants/";
+import { NETWORK_CHOICES } from "constants/project";
 
 type Props = {
   isOpen: boolean;

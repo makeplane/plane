@@ -30,7 +30,7 @@ import type { NextPage, NextPageContext } from "next";
 // fetch-keys
 import { PROJECTS_LIST, PROJECT_DETAILS, WORKSPACE_DETAILS } from "constants/fetch-keys";
 // constants
-import { NETWORK_CHOICES } from "constants/";
+import { NETWORK_CHOICES } from "constants/project";
 
 const defaultValues: Partial<IProject> = {
   name: "",
@@ -109,6 +109,7 @@ const GeneralSettings: NextPage<TGeneralSettingsProps> = (props) => {
       project_lead: formData.project_lead,
       icon: formData.icon,
     };
+
     await projectService
       .updateProject(activeWorkspace.slug, projectDetails.id, payload)
       .then((res) => {

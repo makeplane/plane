@@ -2,9 +2,8 @@ import { useState } from "react";
 
 import Image from "next/image";
 import { useRouter } from "next/router";
+
 import useSWR from "swr";
-import { PlusIcon } from "@heroicons/react/24/outline";
-import type { NextPage, NextPageContext } from "next";
 
 // services
 import projectService from "services/project.service";
@@ -13,8 +12,6 @@ import workspaceService from "services/workspace.service";
 import { requiredAdmin } from "lib/auth";
 // hooks
 import useToast from "hooks/use-toast";
-// constants
-import { ROLE } from "constants/";
 // layouts
 import SettingsLayout from "layouts/settings-layout";
 // components
@@ -24,6 +21,9 @@ import SendProjectInvitationModal from "components/project/send-project-invitati
 import { Button, CustomListbox, CustomMenu, Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
+import { PlusIcon } from "@heroicons/react/24/outline";
+// types
+import type { NextPage, NextPageContext } from "next";
 // fetch-keys
 import {
   PROJECT_DETAILS,
@@ -31,6 +31,8 @@ import {
   PROJECT_MEMBERS,
   WORKSPACE_DETAILS,
 } from "constants/fetch-keys";
+// constants
+import { ROLE } from "constants/workspace";
 
 type TMemberSettingsProps = {
   isMember: boolean;

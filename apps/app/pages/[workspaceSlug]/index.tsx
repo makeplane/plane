@@ -1,34 +1,34 @@
 import React from "react";
+
 import Link from "next/link";
 import { useRouter } from "next/router";
 
+// lib
+import { requiredAuth } from "lib/auth";
+// layouts
+import AppLayout from "layouts/app-layout";
+// hooks
+import useProjects from "hooks/use-projects";
+import useWorkspaceDetails from "hooks/use-workspace-details";
+import useIssues from "hooks/use-issues";
+// components
+import { WorkspaceHomeCardsList, WorkspaceHomeGreetings } from "components/workspace";
+// ui
+import { Spinner } from "components/ui";
 // icons
 import {
   ArrowRightIcon,
   CalendarDaysIcon,
   ClipboardDocumentListIcon,
 } from "@heroicons/react/24/outline";
-// lib
-import { requiredAuth } from "lib/auth";
-// layouts
-import AppLayout from "layouts/app-layout";
-// components
-import { Spinner } from "components/ui";
-import { WorkspaceHomeCardsList, WorkspaceHomeGreetings } from "components/workspace";
-// hooks
-import useProjects from "hooks/use-projects";
-import useWorkspaceDetails from "hooks/use-workspace-details";
-import useIssues from "hooks/use-issues";
-// icons
 import { LayerDiagonalIcon } from "components/icons";
+import { getPriorityIcon } from "components/icons/priority-icon";
 // helpers
 import { renderShortNumericDateFormat, findHowManyDaysLeft } from "helpers/date-time.helper";
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 import { groupBy } from "helpers/array.helper";
 // types
 import type { NextPage, NextPageContext } from "next";
-// constants
-import { getPriorityIcon } from "constants/global";
 
 const WorkspacePage: NextPage = () => {
   // router
