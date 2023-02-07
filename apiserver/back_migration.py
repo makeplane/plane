@@ -67,7 +67,6 @@ def update_user_empty_password():
     try:
         users = User.objects.filter(password="")
         updated_users = []
-        print(users)
 
         for user in users:
             user.password = make_password(uuid.uuid4().hex)
