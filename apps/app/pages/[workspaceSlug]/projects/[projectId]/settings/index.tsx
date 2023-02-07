@@ -6,11 +6,11 @@ import useSWR, { mutate } from "swr";
 
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
-import { IProject, IWorkspace } from "types";
+import { IProject, IWorkspace, UserAuth } from "types";
 // lib
 import { requiredAdmin } from "lib/auth";
 // layouts
-import SettingsLayout from "layouts/settings-layout";
+import AppLayout from "layouts/app-layout";
 // services
 import projectService from "services/project.service";
 import workspaceService from "services/workspace.service";
@@ -39,14 +39,7 @@ const defaultValues: Partial<IProject> = {
   network: 0,
 };
 
-type TGeneralSettingsProps = {
-  isMember: boolean;
-  isOwner: boolean;
-  isViewer: boolean;
-  isGuest: boolean;
-};
-
-const GeneralSettings: NextPage<TGeneralSettingsProps> = (props) => {
+const GeneralSettings: NextPage<UserAuth> = (props) => {
   const { isMember, isOwner, isViewer, isGuest } = props;
 
   const [selectProject, setSelectedProject] = useState<string | null>(null);
@@ -131,9 +124,9 @@ const GeneralSettings: NextPage<TGeneralSettingsProps> = (props) => {
   };
 
   return (
-    <SettingsLayout
+    <AppLayout
+      settingsLayout="project"
       memberType={{ isMember, isOwner, isViewer, isGuest }}
-      type="project"
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem
@@ -342,7 +335,7 @@ const GeneralSettings: NextPage<TGeneralSettingsProps> = (props) => {
           </div>
         </div>
       </form>
-    </SettingsLayout>
+    </AppLayout>
   );
 };
 

@@ -13,7 +13,7 @@ import { requiredAdmin } from "lib/auth";
 // hooks
 import useToast from "hooks/use-toast";
 // layouts
-import SettingsLayout from "layouts/settings-layout";
+import AppLayout from "layouts/app-layout";
 // components
 import ConfirmProjectMemberRemove from "components/project/confirm-project-member-remove";
 import SendProjectInvitationModal from "components/project/send-project-invitation-modal";
@@ -157,8 +157,8 @@ const MembersSettings: NextPage<TMemberSettingsProps> = (props) => {
         setIsOpen={setInviteModal}
         members={members}
       />
-      <SettingsLayout
-        type="project"
+      <AppLayout
+        settingsLayout="project"
         memberType={{ isMember, isOwner, isViewer, isGuest }}
         breadcrumbs={
           <Breadcrumbs>
@@ -308,7 +308,7 @@ const MembersSettings: NextPage<TMemberSettingsProps> = (props) => {
             </div>
           )}
         </section>
-      </SettingsLayout>
+      </AppLayout>
     </>
   );
 };

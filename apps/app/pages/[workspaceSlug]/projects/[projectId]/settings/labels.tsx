@@ -1,11 +1,15 @@
 import React, { useState } from "react";
+
 import { useRouter } from "next/router";
+
 import useSWR from "swr";
+
+// react-hook-form
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { PlusIcon } from "@heroicons/react/24/outline";
-import { Popover, Transition } from "@headlessui/react";
+// react-color
 import { TwitterPicker } from "react-color";
-import type { NextPageContext, NextPage } from "next";
+// headless ui
+import { Popover, Transition } from "@headlessui/react";
 // services
 import projectService from "services/project.service";
 import workspaceService from "services/workspace.service";
@@ -13,16 +17,19 @@ import issuesService from "services/issues.service";
 // lib
 import { requiredAdmin } from "lib/auth";
 // layouts
-import SettingsLayout from "layouts/settings-layout";
+import AppLayout from "layouts/app-layout";
 // components
 import SingleLabel from "components/project/settings/single-label";
 // ui
 import { Button, Input, Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-// fetch-keys
-import { PROJECT_DETAILS, PROJECT_ISSUE_LABELS, WORKSPACE_DETAILS } from "constants/fetch-keys";
+// icons
+import { PlusIcon } from "@heroicons/react/24/outline";
 // types
 import { IIssueLabels } from "types";
+import type { NextPageContext, NextPage } from "next";
+// fetch-keys
+import { PROJECT_DETAILS, PROJECT_ISSUE_LABELS, WORKSPACE_DETAILS } from "constants/fetch-keys";
 
 const defaultValues: Partial<IIssueLabels> = {
   name: "",
@@ -126,8 +133,8 @@ const LabelsSettings: NextPage<TLabelSettingsProps> = (props) => {
   };
 
   return (
-    <SettingsLayout
-      type="project"
+    <AppLayout
+      settingsLayout="project"
       memberType={{ isMember, isOwner, isViewer, isGuest }}
       breadcrumbs={
         <Breadcrumbs>
@@ -176,7 +183,7 @@ const LabelsSettings: NextPage<TLabelSettingsProps> = (props) => {
                           style={{
                             backgroundColor: watch("colour") ?? "green",
                           }}
-                         />
+                        />
                       )}
                     </Popover.Button>
 
@@ -258,7 +265,7 @@ const LabelsSettings: NextPage<TLabelSettingsProps> = (props) => {
           </>
         </div>
       </section>
-    </SettingsLayout>
+    </AppLayout>
   );
 };
 

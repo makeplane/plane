@@ -12,7 +12,7 @@ import useToast from "hooks/use-toast";
 // services
 import workspaceService from "services/workspace.service";
 // layouts
-import SettingsLayout from "layouts/settings-layout";
+import AppLayout from "layouts/app-layout";
 // components
 import ConfirmWorkspaceMemberRemove from "components/workspace/confirm-workspace-member-remove";
 import SendWorkspaceInvitationModal from "components/workspace/send-workspace-invitation-modal";
@@ -137,11 +137,9 @@ const MembersSettings: NextPage<TMembersSettingsProps> = (props) => {
         workspace_slug={workspaceSlug as string}
         members={members}
       />
-      <SettingsLayout
-        memberType={{
-          ...props,
-        }}
-        type="workspace"
+      <AppLayout
+        settingsLayout="workspace"
+        memberType={props}
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem
@@ -285,7 +283,7 @@ const MembersSettings: NextPage<TMembersSettingsProps> = (props) => {
             </div>
           )}
         </section>
-      </SettingsLayout>
+      </AppLayout>
     </>
   );
 };

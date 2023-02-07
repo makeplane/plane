@@ -11,7 +11,7 @@ import projectService from "services/project.service";
 // lib
 import { requiredAdmin } from "lib/auth";
 // layouts
-import SettingsLayout from "layouts/settings-layout";
+import AppLayout from "layouts/app-layout";
 // components
 import { CreateUpdateStateInline, DeleteStateModal, StateGroup } from "components/states";
 // ui
@@ -68,8 +68,8 @@ const StatesSettings: NextPage<TStateSettingsProps> = (props) => {
         data={states?.find((state) => state.id === selectDeleteState) ?? null}
         onClose={() => setSelectDeleteState(null)}
       />
-      <SettingsLayout
-        type="project"
+      <AppLayout
+        settingsLayout="project"
         memberType={{ isMember, isOwner, isViewer, isGuest }}
         breadcrumbs={
           <Breadcrumbs>
@@ -168,7 +168,7 @@ const StatesSettings: NextPage<TStateSettingsProps> = (props) => {
             )}
           </div>
         </div>
-      </SettingsLayout>
+      </AppLayout>
     </>
   );
 };

@@ -17,7 +17,7 @@ import { requiredWorkspaceAdmin } from "lib/auth";
 import workspaceService from "services/workspace.service";
 import fileServices from "services/file.service";
 // layouts
-import SettingsLayout from "layouts/settings-layout";
+import AppLayout from "layouts/app-layout";
 // hooks
 import useToast from "hooks/use-toast";
 // components
@@ -106,9 +106,9 @@ const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
   };
 
   return (
-    <SettingsLayout
-      memberType={{ ...props }}
-      type="workspace"
+    <AppLayout
+      settingsLayout="workspace"
+      memberType={props}
       meta={{
         title: "Plane - Workspace Settings",
       }}
@@ -315,7 +315,7 @@ const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
           <Spinner />
         </div>
       )}
-    </SettingsLayout>
+    </AppLayout>
   );
 };
 
