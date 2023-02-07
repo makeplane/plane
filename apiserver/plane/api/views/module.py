@@ -179,7 +179,7 @@ class ModuleIssueViewSet(BaseViewSet):
                     record_to_create.append(
                         ModuleIssue(
                             module=module,
-                            issue=issue,
+                            issue_id=issue,
                             project_id=project_id,
                             workspace=module.workspace,
                             created_by=request.user,
