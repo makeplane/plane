@@ -25,7 +25,7 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import { ArrowLeftIcon, ListBulletIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { CyclesIcon } from "components/icons";
 // types
-import { CycleIssueResponse, IIssue, SelectIssue, UserAuth } from "types";
+import { CycleIssueResponse, IIssue, IIssueLabels, SelectIssue, UserAuth } from "types";
 import { NextPageContext } from "next";
 // fetch-keys
 import {
@@ -33,7 +33,9 @@ import {
   CYCLE_LIST,
   PROJECT_ISSUES_LIST,
   PROJECT_DETAILS,
+  PROJECT_ISSUE_LABELS,
   CYCLE_DETAILS,
+  PROJECT_MEMBERS,
 } from "constants/fetch-keys";
 
 const SingleCycle: React.FC<UserAuth> = (props) => {
@@ -95,6 +97,20 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
           )
       : null
   );
+  const { data: issueLabels } = useSWR<IIssueLabels[]>(
+    workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => issuesServices.getIssueLabels(workspaceSlug as string, projectId as string)
+      : null
+  );
+
+  const { data: members } = useSWR(
+    workspaceSlug && projectId ? PROJECT_MEMBERS(workspaceSlug as string) : null,
+    workspaceSlug && projectId
+      ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
+      : null
+  );
+
   const cycleIssuesArray = cycleIssues?.map((issue) => ({
     ...issue.issue_detail,
     sub_issues_count: issue.sub_issues_count,
@@ -241,6 +257,9 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
           </div>
         )}
         <CycleDetailSidebar
+          issues={cycleIssuesArray ?? []}
+          members={members}
+          issueLabels={issueLabels}
           cycle={cycleDetails}
           isOpen={cycleSidebar}
           cycleIssues={cycleIssues ?? []}

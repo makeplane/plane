@@ -15,6 +15,7 @@ import cyclesService from "services/cycles.service";
 import useToast from "hooks/use-toast";
 // ui
 import { Loader, CustomDatePicker } from "components/ui";
+import CycleProgressStats from "./cycle-progress-stats";
 // progress-bar
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
@@ -22,11 +23,14 @@ import "react-circular-progressbar/dist/styles.css";
 import { copyTextToClipboard } from "helpers/string.helper";
 import { groupBy } from "helpers/array.helper";
 // types
-import { CycleIssueResponse, ICycle } from "types";
+import { CycleIssueResponse, ICycle, IIssue, IProjectMember, IIssueLabels } from "types";
 // fetch-keys
 import { CYCLE_DETAILS } from "constants/fetch-keys";
 
 type Props = {
+  issues: IIssue[];
+  members: IProjectMember[] | undefined;
+  issueLabels: IIssueLabels[] | undefined;
   cycle: ICycle | undefined;
   isOpen: boolean;
   cycleIssues: CycleIssueResponse[];
@@ -37,7 +41,14 @@ const defaultValues: Partial<ICycle> = {
   end_date: new Date().toString(),
 };
 
-const CycleDetailSidebar: React.FC<Props> = ({ cycle, isOpen, cycleIssues }) => {
+const CycleDetailSidebar: React.FC<Props> = ({
+  issues,
+  members,
+  issueLabels,
+  cycle,
+  isOpen,
+  cycleIssues,
+}) => {
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
 
@@ -218,6 +229,9 @@ const CycleDetailSidebar: React.FC<Props> = ({ cycle, isOpen, cycleIssues }) => 
               </div>
             </div>
             <div className="py-1" />
+          </div>
+          <div className="w-full">
+            <CycleProgressStats issues={issues} members={members} issueLabels={issueLabels} />
           </div>
         </>
       ) : (
