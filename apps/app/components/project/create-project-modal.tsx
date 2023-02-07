@@ -17,7 +17,7 @@ import { Button, Input, TextArea, CustomSelect } from "components/ui";
 // components
 import EmojiIconPicker from "components/emoji-icon-picker";
 // helpers
-import { getRandomEmoji } from "helpers/functions.helper";
+import { getRandomEmoji } from "helpers/common.helper";
 // types
 import { IProject } from "types";
 // fetch-keys

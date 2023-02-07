@@ -24,7 +24,7 @@ import { Button, Input, TextArea, Loader, CustomSelect } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import OutlineButton from "components/ui/outline-button";
 // helpers
-import { debounce } from "helpers/functions.helper";
+import { debounce } from "helpers/common.helper";
 // types
 import type { NextPage, NextPageContext } from "next";
 // fetch-keys
