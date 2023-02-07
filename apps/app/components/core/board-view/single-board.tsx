@@ -69,7 +69,7 @@ export const SingleBoard: React.FC<Props> = ({
 
   return (
     <div className={`h-full flex-shrink-0 rounded ${!isCollapsed ? "" : "w-80 border bg-gray-50"}`}>
-      <div className={`${!isCollapsed ? "" : "flex h-full flex-col space-y-3 overflow-y-scroll"}`}>
+      <div className={`${!isCollapsed ? "" : "flex h-full flex-col space-y-3 overflow-y-auto"}`}>
         <BoardHeader
           addIssueToState={addIssueToState}
           bgColor={bgColor}
