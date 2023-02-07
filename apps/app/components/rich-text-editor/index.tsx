@@ -36,6 +36,7 @@ import { Spinner } from "components/ui";
 // components
 import { RichTextToolbar } from "./toolbar";
 import { MentionAutoComplete } from "./mention-autocomplete";
+import { FloatingLinkToolbar } from "./toolbar/link";
 
 export interface IRemirrorRichTextEditor {
   placeholder?: string;
@@ -125,7 +126,7 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = (props) => {
       new CalloutExtension({ defaultType: "warn" }),
       new CodeBlockExtension(),
       new CodeExtension(),
-      new PlaceholderExtension({ placeholder: placeholder || `Enter text...` }),
+      new PlaceholderExtension({ placeholder: placeholder || "Enter text..." }),
       new HistoryExtension(),
       new LinkExtension({ autoLink: true }),
       new ImageExtension({
@@ -165,6 +166,7 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = (props) => {
     setJsonValue(json);
     onJSONChange(json);
   };
+
   const handleHTMLChange = (value: string) => {
     setHtmlValue(value);
     onHTMLChange(value);
@@ -194,6 +196,7 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = (props) => {
             </div>
           )}
           {/* <TableComponents /> */}
+          <FloatingLinkToolbar />
           <MentionAutoComplete mentions={mentions} tags={tags} />
           {<OnChangeJSON onChange={handleJSONChange} />}
           {<OnChangeHTML onChange={handleHTMLChange} />}

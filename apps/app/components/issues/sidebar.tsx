@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 
 import { useRouter } from "next/router";
 
@@ -113,29 +113,35 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
       });
   };
 
-  const handleCycleChange = (cycleDetail: ICycle) => {
-    if (!workspaceSlug || !projectId || !issueDetail) return;
+  const handleCycleChange = useCallback(
+    (cycleDetail: ICycle) => {
+      if (!workspaceSlug || !projectId || !issueDetail) return;
 
-    issuesServices
-      .addIssueToCycle(workspaceSlug as string, projectId as string, cycleDetail.id, {
-        issues: [issueDetail.id],
-      })
-      .then((res) => {
-        mutate(ISSUE_DETAILS(issueId as string));
-      });
-  };
+      issuesServices
+        .addIssueToCycle(workspaceSlug as string, projectId as string, cycleDetail.id, {
+          issues: [issueDetail.id],
+        })
+        .then((res) => {
+          mutate(ISSUE_DETAILS(issueId as string));
+        });
+    },
+    [workspaceSlug, projectId, issueId, issueDetail]
+  );
 
-  const handleModuleChange = (moduleDetail: IModule) => {
-    if (!workspaceSlug || !projectId || !issueDetail) return;
+  const handleModuleChange = useCallback(
+    (moduleDetail: IModule) => {
+      if (!workspaceSlug || !projectId || !issueDetail) return;
 
-    modulesService
-      .addIssuesToModule(workspaceSlug as string, projectId as string, moduleDetail.id, {
-        issues: [issueDetail.id],
-      })
-      .then((res) => {
-        mutate(ISSUE_DETAILS(issueId as string));
-      });
-  };
+      modulesService
+        .addIssuesToModule(workspaceSlug as string, projectId as string, moduleDetail.id, {
+          issues: [issueDetail.id],
+        })
+        .then((res) => {
+          mutate(ISSUE_DETAILS(issueId as string));
+        });
+    },
+    [workspaceSlug, projectId, issueId, issueDetail]
+  );
 
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 

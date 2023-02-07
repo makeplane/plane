@@ -16,7 +16,7 @@ import issuesServices from "services/issues.service";
 // ui
 import { Button } from "components/ui";
 // icons
-import { FolderIcon, MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { BlockerIcon, LayerDiagonalIcon } from "components/icons";
 // types
 import { IIssue, UserAuth } from "types";

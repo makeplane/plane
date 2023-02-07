@@ -73,7 +73,7 @@ const IssueDetailsPage: NextPage<UserAuth> = (props) => {
       : null
   );
 
-  const { data: subIssues } = useSWR(
+  const { data: subIssues } = useSWR<IIssue[] | undefined>(
     issueId && workspaceSlug && projectId ? SUB_ISSUES(issueId as string) : null,
     issueId && workspaceSlug && projectId
       ? () =>
@@ -126,7 +126,6 @@ const IssueDetailsPage: NextPage<UserAuth> = (props) => {
       issuesService
         .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload)
         .then((res) => {
-          console.log(res);
           mutateIssueDetails();
           mutateIssueActivities();
         })
@@ -140,11 +139,16 @@ const IssueDetailsPage: NextPage<UserAuth> = (props) => {
   const handleSubIssueRemove = (issueId: string) => {
     if (!workspaceSlug || !projectId) return;
 
+    mutate<IIssue[]>(
+      SUB_ISSUES(issueDetails?.id ?? ""),
+      (prevData) => prevData?.filter((i) => i.id !== issueId),
+      false
+    );
+
     issuesService
       .patchIssue(workspaceSlug as string, projectId as string, issueId, { parent: null })
       .then((res) => {
         mutate(SUB_ISSUES(issueDetails?.id ?? ""));
-        mutateIssueActivities();
 
         mutate<IssueResponse>(
           PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
@@ -169,22 +173,22 @@ const IssueDetailsPage: NextPage<UserAuth> = (props) => {
   };
 
   useEffect(() => {
-    if (issueDetails) {
-      mutateIssueActivities();
-      reset({
-        ...issueDetails,
-        blockers_list:
-          issueDetails.blockers_list ??
-          issueDetails.blocker_issues?.map((issue) => issue.blocker_issue_detail?.id),
-        blocked_list:
-          issueDetails.blocked_list ??
-          issueDetails.blocked_issues?.map((issue) => issue.blocked_issue_detail?.id),
-        assignees_list:
-          issueDetails.assignees_list ?? issueDetails.assignee_details?.map((user) => user.id),
-        labels_list: issueDetails.labels_list ?? issueDetails.labels,
-        labels: issueDetails.labels_list ?? issueDetails.labels,
-      });
-    }
+    if (!issueDetails) return;
+
+    mutateIssueActivities();
+    reset({
+      ...issueDetails,
+      blockers_list:
+        issueDetails.blockers_list ??
+        issueDetails.blocker_issues?.map((issue) => issue.blocker_issue_detail?.id),
+      blocked_list:
+        issueDetails.blocks_list ??
+        issueDetails.blocked_issues?.map((issue) => issue.blocked_issue_detail?.id),
+      assignees_list:
+        issueDetails.assignees_list ?? issueDetails.assignee_details?.map((user) => user.id),
+      labels_list: issueDetails.labels_list ?? issueDetails.labels,
+      labels: issueDetails.labels_list ?? issueDetails.labels,
+    });
   }, [issueDetails, reset, mutateIssueActivities]);
 
   const isNotAllowed = props.isGuest || props.isViewer;
@@ -280,9 +284,9 @@ const IssueDetailsPage: NextPage<UserAuth> = (props) => {
                 userAuth={props}
               />
               <div className="mt-2">
-                {issueId && workspaceSlug && projectId && subIssues?.length > 0 ? (
+                {issueId && workspaceSlug && projectId && subIssues && subIssues.length > 0 ? (
                   <SubIssuesList
-                    issues={subIssues}
+                    issues={subIssues ?? []}
                     parentIssue={issueDetails}
                     projectId={projectId?.toString()}
                     workspaceSlug={workspaceSlug?.toString()}

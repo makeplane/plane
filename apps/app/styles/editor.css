@@ -401,6 +401,19 @@ img.ProseMirror-separator {
 /* end table styling */
 
 /* link styling */
+.remirror-floating-popover {
+  z-index: 20 !important;
+}
+
+.remirror-floating-popover input {
+  font-size: 0.75rem;
+  border-radius: 5px;
+  padding: 5px;
+  border: 1px solid #a8a6a6;
+  box-shadow: 1px 1px 5px #c0bebe;
+  outline: none;
+}
+
 .remirror-editor-wrapper a {
   color: blue;
   text-decoration: underline;
