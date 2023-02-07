@@ -1,11 +1,13 @@
 # All the python scripts that are used for back migrations
+import uuid
 from plane.db.models import ProjectIdentifier
-from plane.db.models import Issue, IssueComment
+from plane.db.models import Issue, IssueComment, User
+from django.contrib.auth.hashers import make_password
+
 
 # Update description and description html values for old descriptions
 def update_description():
     try:
-
         issues = Issue.objects.all()
         updated_issues = []
 
@@ -25,7 +27,6 @@ def update_description():
 
 def update_comments():
     try:
-
         issue_comments = IssueComment.objects.all()
         updated_issue_comments = []
 
@@ -44,9 +45,11 @@ def update_comments():
 
 def update_project_identifiers():
     try:
-        project_identifiers = ProjectIdentifier.objects.filter(workspace_id=None).select_related("project", "project__workspace")
+        project_identifiers = ProjectIdentifier.objects.filter(
+            workspace_id=None
+        ).select_related("project", "project__workspace")
         updated_identifiers = []
-    
+
         for identifier in project_identifiers:
             identifier.workspace_id = identifier.project.workspace_id
             updated_identifiers.append(identifier)
@@ -55,6 +58,25 @@ def update_project_identifiers():
             updated_identifiers, ["workspace_id"], batch_size=50
         )
         print("Success")
+    except Exception as e:
+        print(e)
+        print("Failed")
+
+
+def update_user_empty_password():
+    try:
+        users = User.objects.filter(password="")
+        updated_users = []
+        print(users)
+
+        for user in users:
+            user.password = make_password(uuid.uuid4().hex)
+            user.is_password_autoset = True
+            updated_users.append(user)
+
+        User.objects.bulk_update(updated_users, ["password"], batch_size=50)
+        print("Success")
+
     except Exception as e:
         print(e)
         print("Failed")
