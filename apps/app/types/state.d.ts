@@ -13,3 +13,7 @@ export interface IState {
   sequence: number;
   group: "backlog" | "unstarted" | "started" | "completed" | "cancelled";
 }
+
+export interface StateResponse {
+  [key: string]: IState[];
+}
