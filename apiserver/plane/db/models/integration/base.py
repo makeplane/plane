@@ -35,7 +35,7 @@ class WorkspaceIntegration(BaseModel):
         "db.Workspace", related_name="workspace_integrations", on_delete=models.CASCADE
     )
     # Bot user
-    user = models.ForeignKey(
+    actor = models.ForeignKey(
         "db.User", related_name="integrations", on_delete=models.CASCADE
     )
     integration = models.ForeignKey(

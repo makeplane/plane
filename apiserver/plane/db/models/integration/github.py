@@ -3,12 +3,14 @@ from django.db import models
 
 # Module imports
 from plane.db.models import ProjectBaseModel
+from plane.db.mixins import AuditModel
 
 
-class GithubRepository(ProjectBaseModel):
+class GithubRepository(AuditModel):
     name = models.CharField(max_length=500)
     url = models.URLField(null=True)
     config = models.JSONField(default=dict)
+    repository_id = models.BigIntegerField()
 
     def __str__(self):
         """Return the repo name"""

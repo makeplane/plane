@@ -736,8 +736,8 @@ urlpatterns = [
         name="workspace-integrations",
     ),
     path(
-        "workspaces/<str:slug>/integrations/<pk:integration_id>/github-repository/",
-        GithubRepositoryViewSet.as_view(
+        "workspaces/<str:slug>/workspace-integrations/<workspace_integration_id:uuid>/github-repository-sync/",
+        GithubRepositorySyncViewSet.as_view(
             {
                 "get": "list",
                 "post": "create",
@@ -745,8 +745,8 @@ urlpatterns = [
         ),
     ),
     path(
-        "workspaces/<str:slug>/integrations/<pk:integration_id>/github-repository/<pk:uuid>/",
-        GithubRepositoryViewSet.as_view(
+        "workspaces/<str:slug>/workspace-integrations/<workspace_integration_id:uuid>/github-repository-sync/<pk:uuid>/",
+        GithubRepositorySyncViewSet.as_view(
             {
                 "get": "retrieve",
                 "delete": "destroy",
