@@ -7,7 +7,7 @@ import { Props } from "./types";
 import emojis from "./emojis.json";
 // helpers
 import { getRecentEmojis, saveRecentEmoji } from "./helpers";
-import { getRandomEmoji } from "helpers/functions.helper";
+import { getRandomEmoji } from "helpers/common.helper";
 // hooks
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 

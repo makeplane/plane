@@ -153,7 +153,7 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = (props) => {
     (value: any) => {
       // Clear out old state when setting data from outside
       // This prevents e.g. the user from using CTRL-Z to go back to the old state
-      manager.view.updateState(manager.createState({ content: value }));
+      manager.view.updateState(manager.createState({ content: value ? value : "" }));
     },
     [manager]
   );

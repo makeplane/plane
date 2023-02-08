@@ -13,13 +13,13 @@ import stateService from "services/state.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { Button, CustomSelect, Input, Select } from "components/ui";
+import { Button, CustomSelect, Input } from "components/ui";
 // types
 import type { IState } from "types";
 // fetch-keys
 import { STATE_LIST } from "constants/fetch-keys";
 // constants
-import { GROUP_CHOICES } from "constants/";
+import { GROUP_CHOICES } from "constants/project";
 
 type Props = {
   workspaceSlug?: string;

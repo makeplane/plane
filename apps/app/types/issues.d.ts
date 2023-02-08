@@ -171,7 +171,7 @@ export interface IIssueLabels {
   updated_at: Date;
   name: string;
   description: string;
-  colour: string;
+  color: string;
   created_by: string;
   updated_by: string;
   project: string;

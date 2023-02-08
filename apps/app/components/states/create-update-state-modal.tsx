@@ -21,7 +21,7 @@ import type { IState } from "types";
 // fetch keys
 import { STATE_LIST } from "constants/fetch-keys";
 // constants
-import { GROUP_CHOICES } from "constants/";
+import { GROUP_CHOICES } from "constants/project";
 
 // types
 type Props = {

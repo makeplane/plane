@@ -39,48 +39,38 @@ export const AllBoards: React.FC<Props> = ({
         <div className="h-[calc(100vh-157px)] lg:h-[calc(100vh-115px)] w-full">
           <DragDropContext onDragEnd={handleOnDragEnd}>
             <div className="h-full w-full overflow-hidden">
-              <StrictModeDroppable droppableId="state" type="state" direction="horizontal">
-                {(provided) => (
-                  <div
-                    className="h-full w-full"
-                    {...provided.droppableProps}
-                    ref={provided.innerRef}
-                  >
-                    <div className="flex h-full gap-x-4 overflow-x-auto overflow-y-hidden">
-                      {Object.keys(groupedByIssues).map((singleGroup, index) => {
-                        const stateId =
-                          selectedGroup === "state_detail.name"
-                            ? states?.find((s) => s.name === singleGroup)?.id ?? null
-                            : null;
+              <div className="h-full w-full">
+                <div className="flex h-full gap-x-4 overflow-x-auto overflow-y-hidden">
+                  {Object.keys(groupedByIssues).map((singleGroup, index) => {
+                    const stateId =
+                      selectedGroup === "state_detail.name"
+                        ? states?.find((s) => s.name === singleGroup)?.id ?? null
+                        : null;
 
-                        const bgColor =
-                          selectedGroup === "state_detail.name"
-                            ? states?.find((s) => s.name === singleGroup)?.color
-                            : "#000000";
+                    const bgColor =
+                      selectedGroup === "state_detail.name"
+                        ? states?.find((s) => s.name === singleGroup)?.color
+                        : "#000000";
 
-                        return (
-                          <SingleBoard
-                            key={index}
-                            index={index}
-                            type={type}
-                            bgColor={bgColor}
-                            groupTitle={singleGroup}
-                            groupedByIssues={groupedByIssues}
-                            selectedGroup={selectedGroup}
-                            members={members}
-                            addIssueToState={() => addIssueToState(singleGroup, stateId)}
-                            handleDeleteIssue={handleDeleteIssue}
-                            openIssuesListModal={openIssuesListModal ?? null}
-                            orderBy={orderBy}
-                            userAuth={userAuth}
-                          />
-                        );
-                      })}
-                    </div>
-                    {provided.placeholder}
-                  </div>
-                )}
-              </StrictModeDroppable>
+                    return (
+                      <SingleBoard
+                        key={index}
+                        type={type}
+                        bgColor={bgColor}
+                        groupTitle={singleGroup}
+                        groupedByIssues={groupedByIssues}
+                        selectedGroup={selectedGroup}
+                        members={members}
+                        addIssueToState={() => addIssueToState(singleGroup, stateId)}
+                        handleDeleteIssue={handleDeleteIssue}
+                        openIssuesListModal={openIssuesListModal ?? null}
+                        orderBy={orderBy}
+                        userAuth={userAuth}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           </DragDropContext>
         </div>

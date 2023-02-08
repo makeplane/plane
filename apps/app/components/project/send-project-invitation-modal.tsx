@@ -8,8 +8,8 @@ import { useForm, Controller } from "react-hook-form";
 
 import { Dialog, Transition, Listbox } from "@headlessui/react";
 // ui
-import { ChevronDownIcon, CheckIcon } from "@heroicons/react/20/solid";
-import { Button, CustomSelect, Select, TextArea } from "components/ui";
+import { ChevronDownIcon } from "@heroicons/react/20/solid";
+import { Button, CustomSelect, TextArea } from "components/ui";
 // hooks
 import useToast from "hooks/use-toast";
 // services
@@ -17,10 +17,10 @@ import projectService from "services/project.service";
 import workspaceService from "services/workspace.service";
 // types
 import { IProjectMemberInvitation } from "types";
-// constants
-import { ROLE } from "constants/";
+// fetch - keys
 import { PROJECT_INVITATIONS, WORKSPACE_MEMBERS } from "constants/fetch-keys";
-// icons
+// constants
+import { ROLE } from "constants/workspace";
 
 type Props = {
   isOpen: boolean;

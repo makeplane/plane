@@ -9,7 +9,7 @@ import { Squares2X2Icon } from "@heroicons/react/24/outline";
 // types
 import type { IModule } from "types";
 // constants
-import { MODULE_STATUS } from "constants/";
+import { MODULE_STATUS } from "constants/module";
 
 type Props = {
   control: Control<IModule, any>;

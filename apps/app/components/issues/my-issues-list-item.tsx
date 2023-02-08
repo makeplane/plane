@@ -3,20 +3,23 @@ import React, { useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import useSWR, { mutate } from "swr";
+import { mutate } from "swr";
 
 // services
-import stateService from "services/state.service";
 import issuesService from "services/issues.service";
 // components
-import { DueDateSelect, PrioritySelect, StateSelect } from "components/core/select";
+import {
+  ViewDueDateSelect,
+  ViewPrioritySelect,
+  ViewStateSelect,
+} from "components/issues/view-select";
 // ui
 import { AssigneesList } from "components/ui/avatar";
 import { CustomMenu } from "components/ui";
 // types
 import { IIssue, Properties } from "types";
 // fetch-keys
-import { STATE_LIST, USER_ISSUE } from "constants/fetch-keys";
+import { USER_ISSUE } from "constants/fetch-keys";
 
 type Props = {
   issue: IIssue;
@@ -33,13 +36,6 @@ export const MyIssuesListItem: React.FC<Props> = ({
 }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
-  const { data: states } = useSWR(
-    workspaceSlug && projectId ? STATE_LIST(projectId) : null,
-    workspaceSlug && projectId
-      ? () => stateService.getStates(workspaceSlug as string, projectId)
-      : null
-  );
 
   const partialUpdateIssue = useCallback(
     (formData: Partial<IIssue>) => {
@@ -92,22 +88,21 @@ export const MyIssuesListItem: React.FC<Props> = ({
       </div>
       <div className="flex flex-shrink-0 flex-wrap items-center gap-x-1 gap-y-2 text-xs">
         {properties.priority && (
-          <PrioritySelect
+          <ViewPrioritySelect
             issue={issue}
             partialUpdateIssue={partialUpdateIssue}
             isNotAllowed={isNotAllowed}
           />
         )}
         {properties.state && (
-          <StateSelect
+          <ViewStateSelect
             issue={issue}
-            states={states}
             partialUpdateIssue={partialUpdateIssue}
             isNotAllowed={isNotAllowed}
           />
         )}
         {properties.due_date && (
-          <DueDateSelect
+          <ViewDueDateSelect
             issue={issue}
             partialUpdateIssue={partialUpdateIssue}
             isNotAllowed={isNotAllowed}

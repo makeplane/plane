@@ -11,7 +11,7 @@ import projectService from "services/project.service";
 // lib
 import { requiredAdmin } from "lib/auth";
 // layouts
-import SettingsLayout from "layouts/settings-layout";
+import AppLayout from "layouts/app-layout";
 // components
 import { CreateUpdateStateInline, DeleteStateModal, StateGroup } from "components/states";
 // ui
@@ -43,7 +43,7 @@ const StatesSettings: NextPage<TStateSettingsProps> = (props) => {
     query: { workspaceSlug, projectId },
   } = useRouter();
 
-  const { data: activeProject } = useSWR(
+  const { data: projectDetails } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
     workspaceSlug && projectId
       ? () => projectService.getProject(workspaceSlug as string, projectId as string)
@@ -68,14 +68,14 @@ const StatesSettings: NextPage<TStateSettingsProps> = (props) => {
         data={states?.find((state) => state.id === selectDeleteState) ?? null}
         onClose={() => setSelectDeleteState(null)}
       />
-      <SettingsLayout
-        type="project"
+      <AppLayout
+        settingsLayout="project"
         memberType={{ isMember, isOwner, isViewer, isGuest }}
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem
-              title={`${activeProject?.name ?? "Project"}`}
-              link={`/${workspaceSlug}/projects/${activeProject?.id}/issues`}
+              title={`${projectDetails?.name ?? "Project"}`}
+              link={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
             />
             <BreadcrumbItem title="States Settings" />
           </Breadcrumbs>
@@ -87,7 +87,7 @@ const StatesSettings: NextPage<TStateSettingsProps> = (props) => {
             <p className="mt-4 text-sm text-gray-500">Manage the state of this project.</p>
           </div>
           <div className="flex flex-col justify-between gap-4">
-            {states && activeProject ? (
+            {states && projectDetails ? (
               Object.keys(groupedStates).map((key) => (
                 <div key={key}>
                   <div className="mb-2 flex w-full justify-between md:w-2/3">
@@ -104,7 +104,7 @@ const StatesSettings: NextPage<TStateSettingsProps> = (props) => {
                   <div className="space-y-1 rounded-xl border p-1 md:w-2/3">
                     {key === activeGroup && (
                       <CreateUpdateStateInline
-                        projectId={activeProject.id}
+                        projectId={projectDetails.id}
                         onClose={() => {
                           setActiveGroup(null);
                           setSelectedState(null);
@@ -143,7 +143,7 @@ const StatesSettings: NextPage<TStateSettingsProps> = (props) => {
                       ) : (
                         <div className="border-b last:border-b-0" key={state.id}>
                           <CreateUpdateStateInline
-                            projectId={activeProject.id}
+                            projectId={projectDetails.id}
                             onClose={() => {
                               setActiveGroup(null);
                               setSelectedState(null);
@@ -168,7 +168,7 @@ const StatesSettings: NextPage<TStateSettingsProps> = (props) => {
             )}
           </div>
         </div>
-      </SettingsLayout>
+      </AppLayout>
     </>
   );
 };
