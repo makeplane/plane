@@ -90,7 +90,6 @@ from plane.api.views import (
     # Integrations
     IntegrationViewSet,
     WorkspaceIntegrationViewSet,
-    GithubRepositoryViewSet,
     GithubRepositorySyncViewSet,
     GithubIssueSyncViewSet,
     ## End Integrations
