@@ -184,12 +184,7 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
                           "blocker_issue_ids",
                           selectedIssues.filter((i) => i !== val)
                         );
-                      else {
-                        const newBlockers = selectedIssues;
-                        newBlockers.push(val);
-
-                        setValue("blocker_issue_ids", newBlockers);
-                      }
+                      else setValue("blocker_issue_ids", [...selectedIssues, val]);
                     }}
                   >
                     <div className="relative m-1">

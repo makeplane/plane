@@ -148,12 +148,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) =>
                         "delete_issue_ids",
                         selectedIssues.filter((i) => i !== val)
                       );
-                    else {
-                      const newToDelete = selectedIssues;
-                      newToDelete.push(val);
-
-                      setValue("delete_issue_ids", newToDelete);
-                    }
+                    else setValue("delete_issue_ids", [...selectedIssues, val]);
                   }}
                 >
                   <div className="relative m-1">
