@@ -3,7 +3,8 @@
   "license": "MIT",
   "private": true,
   "workspaces": [
-    "apps/*",
+    "app",
+    "docs",
     "packages/*"
   ],
   "scripts": {
@@ -14,9 +15,9 @@
     "clean": "turbo run clean"
   },
   "devDependencies": {
-    "config": "workspace:*",
+    "config": "*",
     "prettier": "latest",
     "turbo": "latest"
   },
-  "packageManager": "pnpm@7.24.3"
+  "packageManager": "yarn@1.22.19"
 }
