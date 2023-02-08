@@ -190,3 +190,5 @@ DOCKERIZED = os.environ.get(
 )  # Set the variable true if running in docker-compose environment
 
 WEB_URL = os.environ.get("WEB_URL")
+
+PROXY_BASE_URL = os.environ.get("PROXY_BASE_URL", False)

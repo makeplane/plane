@@ -66,3 +66,4 @@ RQ_QUEUES = {
 
 WEB_URL = "http://localhost:3000"
 
+PROXY_BASE_URL = os.environ.get("PROXY_BASE_URL", False)

@@ -1,5 +1,9 @@
 # Python imports
 import json
+import requests
+
+# Django imports
+from django.conf import settings
 
 # Third Party imports
 from django_rq import job
@@ -16,6 +20,7 @@ from plane.db.models import (
     Cycle,
     Module,
 )
+from plane.api.serializers import IssueActivitySerializer
 
 
 # Track Chnages in name
@@ -644,21 +649,41 @@ def issue_activity(event):
             "modules_list": track_modules,
         }
 
-        for key in requested_data:
-            func = ISSUE_ACTIVITY_MAPPER.get(key, None)
-            if func is not None:
-                func(
-                    requested_data,
-                    current_instance,
-                    issue_id,
-                    project,
-                    actor,
-                    issue_activities,
-                )
+        if current_instance is None:
+            issue_activities.append(
+                issue_id=issue_id,
+                project=project,
+                workspace=project.workspace,
+                comment=f"{actor.email} created the issue",
+                verb="created",
+                actor=actor,
+            )
+        else:
+            for key in requested_data:
+                func = ISSUE_ACTIVITY_MAPPER.get(key, None)
+                if func is not None:
+                    func(
+                        requested_data,
+                        current_instance,
+                        issue_id,
+                        project,
+                        actor,
+                        issue_activities,
+                    )
 
         # Save all the values to database
-        _ = IssueActivity.objects.bulk_create(issue_activities)
+        issue_activities_created = IssueActivity.objects.bulk_create(issue_activities)
 
+        # Post the updates to segway for integrations and webhooks
+        if settings.PROXY_BASE_URL:
+            for issue_activity in issue_activities_created:
+                headers = {"Content-Type": "application/json"}
+                issue_activity_json = IssueActivitySerializer(issue_activity).data
+                _ = requests.post(
+                    f"{settings.PROXY_BASE_URL}/issue-activity-hooks/",
+                    json=issue_activity_json,
+                    headers=headers,
+                )
         return
     except Exception as e:
         capture_exception(e)
