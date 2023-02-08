@@ -15,7 +15,7 @@ import useToast from "hooks/use-toast";
 // ui
 import { Button, CustomSelect, Input } from "components/ui";
 // types
-import type { IState } from "types";
+import type { IState, StateResponse } from "types";
 // fetch-keys
 import { STATE_LIST } from "constants/fetch-keys";
 // constants
@@ -85,7 +85,7 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
       await stateService
         .createState(workspaceSlug, projectId, { ...payload })
         .then((res) => {
-          mutate<IState[]>(STATE_LIST(projectId), (prevData) => [...(prevData ?? []), res]);
+          mutate(STATE_LIST(projectId));
           handleClose();
 
           setToastAlert({
