@@ -1,1 +1,4 @@
-module.exports = require('config/.eslintrc')
+module.exports = {
+  root: true,
+  extends: ['custom'],
+}
