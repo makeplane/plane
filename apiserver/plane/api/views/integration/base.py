@@ -12,7 +12,13 @@ from sentry_sdk import capture_exception
 
 # Module imports
 from plane.api.views import BaseViewSet
-from plane.db.models import Integration, WorkspaceIntegration, Workspace, User
+from plane.db.models import (
+    Integration,
+    WorkspaceIntegration,
+    Workspace,
+    User,
+    WorkspaceMember,
+)
 from plane.api.serializers import IntegrationSerializer, WorkspaceIntegrationSerializer
 
 
@@ -84,7 +90,7 @@ class WorkspaceIntegrationViewSet(BaseViewSet):
 
             # Create a bot user
             bot_user = User.objects.create(
-                email=f"{str(integration.id)-str(workspace.id)}@plane.so",
+                email=f"{str(integration.id)}-{str(workspace.id)}@plane.so",
                 username=uuid.uuid4().hex,
                 password=make_password(uuid.uuid4().hex),
                 is_password_autoset=True,
@@ -96,6 +102,12 @@ class WorkspaceIntegrationViewSet(BaseViewSet):
                 user=bot_user,
             )
 
+            # Add bot user as a member of workspace
+            _ = WorkspaceMember.objects.create(
+                workspace=workspace_integration.workspace,
+                member=bot_user,
+                role=20,
+            )
             return Response(
                 WorkspaceIntegrationSerializer(workspace_integration).data,
                 status=status.HTTP_201_CREATED,

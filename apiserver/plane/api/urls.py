@@ -736,7 +736,7 @@ urlpatterns = [
         name="workspace-integrations",
     ),
     path(
-        "workspaces/<str:slug>/workspace-integrations/<workspace_integration_id:uuid>/github-repository-sync/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/workspace-integrations/<workspace_integration_id:uuid>/github-repository-sync/",
         GithubRepositorySyncViewSet.as_view(
             {
                 "get": "list",
@@ -745,7 +745,7 @@ urlpatterns = [
         ),
     ),
     path(
-        "workspaces/<str:slug>/workspace-integrations/<workspace_integration_id:uuid>/github-repository-sync/<pk:uuid>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/workspace-integrations/<workspace_integration_id:uuid>/github-repository-sync/<pk:uuid>/",
         GithubRepositorySyncViewSet.as_view(
             {
                 "get": "retrieve",
