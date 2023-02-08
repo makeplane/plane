@@ -3,7 +3,6 @@ import { DragDropContext, DropResult } from "react-beautiful-dnd";
 // hooks
 import useIssueView from "hooks/use-issue-view";
 // components
-import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 import { SingleBoard } from "components/core/board-view/single-board";
 // types
 import { IIssue, IProjectMember, IState, UserAuth } from "types";
