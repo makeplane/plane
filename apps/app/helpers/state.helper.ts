@@ -9,10 +9,7 @@ export const orderStateGroups = (unorderedStateGroups: StateResponse) =>
 
 export const getStatesList = (stateGroups: any): IState[] => {
   // order the unordered state groups first
-  const orderedStateGroups = Object.assign(
-    { backlog: [], unstarted: [], started: [], completed: [], cancelled: [] },
-    stateGroups
-  );
+  const orderedStateGroups = orderStateGroups(stateGroups);
 
   // extract states from the groups and return them
   return Object.keys(orderedStateGroups)

@@ -59,11 +59,7 @@ export const DeleteStateModal: React.FC<Props> = ({ isOpen, onClose, data }) => 
     await stateServices
       .deleteState(workspaceSlug as string, data.project, data.id)
       .then(() => {
-        mutate<IState[]>(
-          STATE_LIST(data.project),
-          (prevData) => prevData?.filter((state) => state.id !== data?.id),
-          false
-        );
+        mutate(STATE_LIST(data.project));
         handleClose();
 
         setToastAlert({
