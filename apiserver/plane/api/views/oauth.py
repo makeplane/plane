@@ -105,15 +105,19 @@ def get_user_data(access_token: str) -> dict:
 
     resp = requests.get(url=url, headers=headers)
 
-    userData = resp.json()
+    user_data = resp.json()
 
-    req = requests.get(url="https://api.github.com/user/emails", headers=headers)
-    resp = req.json()
-    for item in resp:
-        if item.get("primary") is True:
-            userData["email"] = item.get("email")
+    response = requests.get(
+        url="https://api.github.com/user/emails", headers=headers
+    ).json()
 
-    return userData
+    [
+        user_data.update({"email": item.get("email")})
+        for item in response
+        if item.get("primary") is True
+    ]
+
+    return user_data
 
 
 class OauthEndpoint(BaseAPIView):
