@@ -4,13 +4,16 @@ import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
+// react-hook-form
 import { Control, Controller } from "react-hook-form";
 // services
-import { Squares2X2Icon } from "@heroicons/react/24/outline";
 import stateService from "services/state.service";
 // ui
 import { Spinner, CustomSelect } from "components/ui";
 // icons
+import { Squares2X2Icon } from "@heroicons/react/24/outline";
+// helpers
+import { getStatesList } from "helpers/state.helper";
 // types
 import { IIssue, UserAuth } from "types";
 // constants
@@ -26,12 +29,13 @@ export const SidebarStateSelect: React.FC<Props> = ({ control, submitChanges, us
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { data: states } = useSWR(
+  const { data: stateGroups } = useSWR(
     workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
     workspaceSlug && projectId
       ? () => stateService.getStates(workspaceSlug as string, projectId as string)
       : null
   );
+  const states = getStatesList(stateGroups ?? {});
 
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 

@@ -8,8 +8,9 @@ import stateService from "services/state.service";
 import { CustomSelect } from "components/ui";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
+import { getStatesList } from "helpers/state.helper";
 // types
-import { IIssue, IState } from "types";
+import { IIssue } from "types";
 // fetch-keys
 import { STATE_LIST } from "constants/fetch-keys";
 
@@ -29,12 +30,11 @@ export const ViewStateSelect: React.FC<Props> = ({
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { data: states } = useSWR<IState[]>(
-    workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
-    workspaceSlug
-      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
-      : null
+  const { data: stateGroups } = useSWR(
+    workspaceSlug && projectId ? STATE_LIST(issue.project) : null,
+    workspaceSlug ? () => stateService.getStates(workspaceSlug as string, issue.project) : null
   );
+  const states = getStatesList(stateGroups ?? {});
 
   return (
     <CustomSelect

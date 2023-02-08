@@ -12,12 +12,10 @@ const nextConfig = {
     ],
   },
   output: "standalone",
-  experimental: {
-    outputFileTracingRoot: path.join(__dirname, "../../"),
-    transpilePackages: ["components/ui", "ui"],
-  },
 };
 
-module.exports = nextConfig;
-
-module.exports = withSentryConfig(module.exports, { silent: true }, { hideSourcemaps: true });
+if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
+  module.exports = withSentryConfig(nextConfig, { silent: true }, { hideSourceMaps: true });
+} else {
+  module.exports = nextConfig;
+}

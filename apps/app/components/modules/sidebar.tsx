@@ -7,6 +7,16 @@ import { mutate } from "swr";
 
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
+// icons
+import {
+  CalendarDaysIcon,
+  ChartPieIcon,
+  LinkIcon,
+  PlusIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
+// progress-bar
+import { CircularProgressbar } from "react-circular-progressbar";
 // services
 import modulesService from "services/modules.service";
 // hooks
@@ -18,27 +28,19 @@ import {
   SidebarMembersSelect,
   SidebarStatusSelect,
 } from "components/modules";
-// progress-bar
-import { CircularProgressbar } from "react-circular-progressbar";
+
 import "react-circular-progressbar/dist/styles.css";
 // ui
 import { CustomDatePicker, Loader } from "components/ui";
-// icons
-import {
-  CalendarDaysIcon,
-  ChartPieIcon,
-  LinkIcon,
-  PlusIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
 import { groupBy } from "helpers/array.helper";
 // types
-import { IModule, ModuleIssueResponse } from "types";
+import { IIssue, IModule, ModuleIssueResponse } from "types";
 // fetch-keys
 import { MODULE_DETAILS } from "constants/fetch-keys";
+import SidebarProgressStats from "components/core/sidebar/sidebar-progress-stats";
 
 const defaultValues: Partial<IModule> = {
   lead: "",
@@ -49,6 +51,7 @@ const defaultValues: Partial<IModule> = {
 };
 
 type Props = {
+  issues: IIssue[];
   module?: IModule;
   isOpen: boolean;
   moduleIssues: ModuleIssueResponse[] | undefined;
@@ -56,6 +59,7 @@ type Props = {
 };
 
 export const ModuleDetailsSidebar: React.FC<Props> = ({
+  issues,
   module,
   isOpen,
   moduleIssues,
@@ -289,6 +293,9 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                     : null}
                 </div>
               </div>
+            </div>
+            <div className="w-full">
+              <SidebarProgressStats issues={issues} groupedIssues={groupedIssues} />
             </div>
           </>
         ) : (

@@ -9,24 +9,27 @@ import { mutate } from "swr";
 import { Controller, useForm } from "react-hook-form";
 // icons
 import { CalendarDaysIcon, ChartPieIcon, LinkIcon, UserIcon } from "@heroicons/react/24/outline";
-// services
-import cyclesService from "services/cycles.service";
-// hooks
-import useToast from "hooks/use-toast";
-// ui
-import { Loader, CustomDatePicker } from "components/ui";
+
 // progress-bar
 import { CircularProgressbar } from "react-circular-progressbar";
+// ui
+import { Loader, CustomDatePicker } from "components/ui";
 import "react-circular-progressbar/dist/styles.css";
+// hooks
+import useToast from "hooks/use-toast";
+// services
+import cyclesService from "services/cycles.service";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 import { groupBy } from "helpers/array.helper";
 // types
-import { CycleIssueResponse, ICycle } from "types";
+import { CycleIssueResponse, ICycle, IIssue } from "types";
 // fetch-keys
 import { CYCLE_DETAILS } from "constants/fetch-keys";
+import SidebarProgressStats from "components/core/sidebar/sidebar-progress-stats";
 
 type Props = {
+  issues: IIssue[];
   cycle: ICycle | undefined;
   isOpen: boolean;
   cycleIssues: CycleIssueResponse[];
@@ -37,7 +40,7 @@ const defaultValues: Partial<ICycle> = {
   end_date: new Date().toString(),
 };
 
-const CycleDetailSidebar: React.FC<Props> = ({ cycle, isOpen, cycleIssues }) => {
+const CycleDetailSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cycleIssues }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
 
@@ -218,6 +221,9 @@ const CycleDetailSidebar: React.FC<Props> = ({ cycle, isOpen, cycleIssues }) => 
               </div>
             </div>
             <div className="py-1" />
+          </div>
+          <div className="w-full">
+            <SidebarProgressStats issues={issues} groupedIssues={groupedIssues} />
           </div>
         </>
       ) : (

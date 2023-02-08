@@ -14,17 +14,12 @@ import modulesService from "services/modules.service";
 // hooks
 import useIssueView from "hooks/use-issue-view";
 // components
-import { AllLists, AllBoards, ExistingIssuesListModal } from "components/core";
+import { AllLists, AllBoards } from "components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
+// helpers
+import { getStatesList } from "helpers/state.helper";
 // types
-import {
-  CycleIssueResponse,
-  IIssue,
-  IssueResponse,
-  IState,
-  ModuleIssueResponse,
-  UserAuth,
-} from "types";
+import { CycleIssueResponse, IIssue, IssueResponse, ModuleIssueResponse, UserAuth } from "types";
 // fetch-keys
 import {
   CYCLE_ISSUES,
@@ -68,12 +63,13 @@ export const IssuesView: React.FC<Props> = ({
 
   const { issueView, groupedByIssues, groupByProperty: selectedGroup } = useIssueView(issues);
 
-  const { data: states } = useSWR<IState[]>(
+  const { data: stateGroups } = useSWR(
     workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
     workspaceSlug
       ? () => stateService.getStates(workspaceSlug as string, projectId as string)
       : null
   );
+  const states = getStatesList(stateGroups ?? {});
 
   const { data: members } = useSWR(
     projectId ? PROJECT_MEMBERS(projectId as string) : null,
