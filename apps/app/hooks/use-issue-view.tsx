@@ -10,6 +10,7 @@ import stateService from "services/state.service";
 import { issueViewContext } from "contexts/issue-view.context";
 // helpers
 import { groupBy, orderArrayBy } from "helpers/array.helper";
+import { getStatesList } from "helpers/state.helper";
 // types
 import { IIssue, IState } from "types";
 // fetch-keys
@@ -35,12 +36,13 @@ const useIssueView = (projectIssues: IIssue[]) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { data: states } = useSWR(
+  const { data: stateGroups } = useSWR(
     workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
     workspaceSlug && projectId
       ? () => stateService.getStates(workspaceSlug as string, projectId as string)
       : null
   );
+  const states = getStatesList(stateGroups ?? {});
 
   let groupedByIssues: {
     [key: string]: IIssue[];

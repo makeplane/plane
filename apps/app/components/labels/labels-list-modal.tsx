@@ -9,85 +9,61 @@ import { Combobox, Dialog, Transition } from "@headlessui/react";
 // icons
 import { RectangleStackIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 // services
-import issuesServices from "services/issues.service";
-// helpers
-import { orderArrayBy } from "helpers/array.helper";
+import issuesService from "services/issues.service";
 // types
-import { IIssue, IssueResponse } from "types";
+import { IIssueLabels } from "types";
 // constants
-import { PROJECT_ISSUES_LIST, SUB_ISSUES } from "constants/fetch-keys";
+import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
-  parent: IIssue | undefined;
+  parent: IIssueLabels | undefined;
 };
 
-export const SubIssuesListModal: React.FC<Props> = ({ isOpen, handleClose, parent }) => {
+export const LabelsListModal: React.FC<Props> = ({ isOpen, handleClose, parent }) => {
   const [query, setQuery] = useState("");
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { data: issues } = useSWR(
+  const { data: issueLabels, mutate } = useSWR<IIssueLabels[]>(
+    workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
     workspaceSlug && projectId
-      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
-      : null,
-    workspaceSlug && projectId
-      ? () => issuesServices.getIssues(workspaceSlug as string, projectId as string)
+      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string)
       : null
   );
 
-  const filteredIssues: IIssue[] =
+  const filteredLabels: IIssueLabels[] =
     query === ""
-      ? issues?.results ?? []
-      : issues?.results.filter((issue) => issue.name.toLowerCase().includes(query.toLowerCase())) ??
-        [];
+      ? issueLabels ?? []
+      : issueLabels?.filter((l) => l.name.toLowerCase().includes(query.toLowerCase())) ?? [];
 
   const handleModalClose = () => {
     handleClose();
     setQuery("");
   };
 
-  const addAsSubIssue = (issue: IIssue) => {
+  const addChildLabel = async (label: IIssueLabels) => {
     if (!workspaceSlug || !projectId) return;
 
-    mutate<IIssue[]>(
-      SUB_ISSUES(parent?.id ?? ""),
-      (prevData) => {
-        let newSubIssues = [...(prevData as IIssue[])];
-        newSubIssues.push(issue);
+    mutate(
+      (prevData) =>
+        prevData?.map((l) => {
+          if (l.id === label.id) return { ...l, parent: parent?.id ?? "" };
 
-        newSubIssues = orderArrayBy(newSubIssues, "created_at", "descending");
-
-        return newSubIssues;
-      },
+          return l;
+        }),
       false
     );
 
-    issuesServices
-      .patchIssue(workspaceSlug as string, projectId as string, issue.id, { parent: parent?.id })
-      .then((res) => {
-        mutate(SUB_ISSUES(parent?.id ?? ""));
-        mutate<IssueResponse>(
-          PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
-          (prevData) => ({
-            ...(prevData as IssueResponse),
-            results: (prevData?.results ?? []).map((p) => {
-              if (p.id === res.id)
-                return {
-                  ...p,
-                  ...res,
-                };
-
-              return p;
-            }),
-          }),
-          false
-        );
+    await issuesService
+      .patchIssueLabel(workspaceSlug as string, projectId as string, label.id, {
+        parent: parent?.id ?? "",
       })
-      .catch((e) => {
-        console.log(e);
+      .then((res) => {
+        console.log(res);
+        mutate();
       });
   };
 
@@ -134,26 +110,28 @@ export const SubIssuesListModal: React.FC<Props> = ({ isOpen, handleClose, paren
                   static
                   className="max-h-80 scroll-py-2 divide-y divide-gray-500 divide-opacity-10 overflow-y-auto"
                 >
-                  {filteredIssues.length > 0 && (
+                  {filteredLabels.length > 0 && (
                     <>
                       <li className="p-2">
                         {query === "" && (
                           <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-gray-900">
-                            Issues
+                            Labels
                           </h2>
                         )}
                         <ul className="text-sm text-gray-700">
-                          {filteredIssues.map((issue) => {
+                          {filteredLabels.map((label) => {
+                            const children = issueLabels?.filter((l) => l.parent === label.id);
+
                             if (
-                              (issue.parent === "" || issue.parent === null) && // issue does not have any other parent
-                              issue.id !== parent?.id && // issue is not itself
-                              issue.id !== parent?.parent // issue is not it's parent
+                              (label.parent === "" || label.parent === null) && // issue does not have any other parent
+                              label.id !== parent?.id && // issue is not itself
+                              children?.length === 0 // issue doesn't have any othe children
                             )
                               return (
                                 <Combobox.Option
-                                  key={issue.id}
+                                  key={label.id}
                                   value={{
-                                    name: issue.name,
+                                    name: label.name,
                                   }}
                                   className={({ active }) =>
                                     `flex cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 ${
@@ -161,20 +139,17 @@ export const SubIssuesListModal: React.FC<Props> = ({ isOpen, handleClose, paren
                                     }`
                                   }
                                   onClick={() => {
-                                    addAsSubIssue(issue);
+                                    addChildLabel(label);
                                     handleClose();
                                   }}
                                 >
                                   <span
                                     className="block flex-shrink-0 h-1.5 w-1.5 rounded-full"
                                     style={{
-                                      backgroundColor: issue.state_detail.color,
+                                      backgroundColor: label.color,
                                     }}
                                   />
-                                  <span className="flex-shrink-0 text-xs text-gray-500">
-                                    {issue.project_detail.identifier}-{issue.sequence_id}
-                                  </span>
-                                  {issue.name}
+                                  {label.name}
                                 </Combobox.Option>
                               );
                           })}
@@ -184,14 +159,14 @@ export const SubIssuesListModal: React.FC<Props> = ({ isOpen, handleClose, paren
                   )}
                 </Combobox.Options>
 
-                {query !== "" && filteredIssues.length === 0 && (
+                {query !== "" && filteredLabels.length === 0 && (
                   <div className="py-14 px-6 text-center sm:px-14">
                     <RectangleStackIcon
                       className="mx-auto h-6 w-6 text-gray-900 text-opacity-40"
                       aria-hidden="true"
                     />
                     <p className="mt-4 text-sm text-gray-900">
-                      We couldn{"'"}t find any issue with that term. Please try again.
+                      We couldn{"'"}t find any label with that term. Please try again.
                     </p>
                   </div>
                 )}

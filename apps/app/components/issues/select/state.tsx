@@ -10,6 +10,8 @@ import stateService from "services/state.service";
 import { Squares2X2Icon, PlusIcon } from "@heroicons/react/24/outline";
 // icons
 import { Combobox, Transition } from "@headlessui/react";
+// helpers
+import { getStatesList } from "helpers/state.helper";
 // fetch keys
 import { STATE_LIST } from "constants/fetch-keys";
 
@@ -27,12 +29,13 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const { data: states } = useSWR(
+  const { data: stateGroups } = useSWR(
     workspaceSlug && projectId ? STATE_LIST(projectId) : null,
     workspaceSlug && projectId
       ? () => stateService.getStates(workspaceSlug as string, projectId)
       : null
   );
+  const states = getStatesList(stateGroups ?? {});
 
   const options = states?.map((state) => ({
     value: state.id,
