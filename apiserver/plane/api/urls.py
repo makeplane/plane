@@ -90,7 +90,6 @@ from plane.api.views import (
     # Integrations
     IntegrationViewSet,
     WorkspaceIntegrationViewSet,
-    GithubRepositoryViewSet,
     GithubRepositorySyncViewSet,
     GithubIssueSyncViewSet,
     ## End Integrations
@@ -736,7 +735,7 @@ urlpatterns = [
         name="workspace-integrations",
     ),
     path(
-        "workspaces/<str:slug>/workspace-integrations/<workspace_integration_id:uuid>/github-repository-sync/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/workspace-integrations/<uuid:workspace_integration_id>/github-repository-sync/",
         GithubRepositorySyncViewSet.as_view(
             {
                 "get": "list",
@@ -745,7 +744,7 @@ urlpatterns = [
         ),
     ),
     path(
-        "workspaces/<str:slug>/workspace-integrations/<workspace_integration_id:uuid>/github-repository-sync/<pk:uuid>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/workspace-integrations/<uuid:workspace_integration_id>/github-repository-sync/<uuid:pk>/",
         GithubRepositorySyncViewSet.as_view(
             {
                 "get": "retrieve",

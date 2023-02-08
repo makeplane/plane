@@ -10,6 +10,7 @@ from plane.db.models import (
     GithubRepositorySync,
     GithubRepository,
     WorkspaceIntegration,
+    ProjectMember,
 )
 from plane.api.serializers import (
     GithubRepositorySerializer,
@@ -25,7 +26,7 @@ class GithubRepositorySyncViewSet(BaseViewSet):
     def perform_create(self, serializer):
         serializer.save(project_id=self.kwargs.get("project_id"))
 
-    def create(self, request, workspace_integration_id):
+    def create(self, request, slug, project_id, workspace_integration_id):
         try:
             name = (request.data.get("name", False),)
             url = (request.data.get("url", False),)
@@ -54,6 +55,13 @@ class GithubRepositorySyncViewSet(BaseViewSet):
                 workspace_integration=workspace_integration,
                 actor=workspace_integration.actor,
                 credetials=request.data.get("credentials", {}),
+                project_id=project_id,
+            )
+
+            # Add bot as a member in the project
+            _ = ProjectMember.objects.create(
+                member=workspace_integration.actor,
+                role=20,
             )
 
             # Return Response
