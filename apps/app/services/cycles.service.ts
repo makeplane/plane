@@ -26,6 +26,18 @@ class ProjectCycleServices extends APIService {
       });
   }
 
+  async getCycleDetails(
+    workspaceSlug: string,
+    projectId: string,
+    cycleId: string
+  ): Promise<ICycle> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/`)
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
   async getCycleIssues(workspaceSlug: string, projectId: string, cycleId: string): Promise<any> {
     return this.get(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-issues/`

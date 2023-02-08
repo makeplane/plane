@@ -13,11 +13,7 @@ import { requiredAdmin } from "lib/auth";
 // layouts
 import SettingsLayout from "layouts/settings-layout";
 // components
-import ConfirmStateDeletion from "components/project/issues/BoardView/state/confirm-state-delete";
-import {
-  CreateUpdateStateInline,
-  StateGroup,
-} from "components/project/issues/BoardView/state/create-update-state-inline";
+import { CreateUpdateStateInline, DeleteStateModal, StateGroup } from "components/states";
 // ui
 import { Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -67,7 +63,7 @@ const StatesSettings: NextPage<TStateSettingsProps> = (props) => {
 
   return (
     <>
-      <ConfirmStateDeletion
+      <DeleteStateModal
         isOpen={!!selectDeleteState}
         data={states?.find((state) => state.id === selectDeleteState) ?? null}
         onClose={() => setSelectDeleteState(null)}

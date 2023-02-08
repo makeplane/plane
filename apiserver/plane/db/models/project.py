@@ -29,7 +29,6 @@ def get_default_props():
 
 
 class Project(BaseModel):
-
     NETWORK_CHOICES = ((0, "Secret"), (2, "Public"))
     name = models.CharField(max_length=255, verbose_name="Project Name")
     description = models.TextField(verbose_name="Project Description", blank=True)
@@ -63,6 +62,8 @@ class Project(BaseModel):
         blank=True,
     )
     icon = models.CharField(max_length=255, null=True, blank=True)
+    module_view = models.BooleanField(default=True)
+    cycle_view = models.BooleanField(default=True)
 
     def __str__(self):
         """Return name of the project"""
@@ -82,7 +83,6 @@ class Project(BaseModel):
 
 
 class ProjectBaseModel(BaseModel):
-
     project = models.ForeignKey(
         Project, on_delete=models.CASCADE, related_name="project_%(class)s"
     )
@@ -117,7 +117,6 @@ class ProjectMemberInvite(ProjectBaseModel):
 
 
 class ProjectMember(ProjectBaseModel):
-
     member = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -141,9 +140,9 @@ class ProjectMember(ProjectBaseModel):
         """Return members of the project"""
         return f"{self.member.email} <{self.project.name}>"
 
+
 # TODO: Remove workspace relation later
 class ProjectIdentifier(AuditModel):
-
     workspace = models.ForeignKey(
         "db.Workspace", models.CASCADE, related_name="project_identifiers", null=True
     )

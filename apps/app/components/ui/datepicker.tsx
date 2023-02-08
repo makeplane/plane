@@ -1,6 +1,8 @@
 // react-datepicker
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+// helpers
+import { renderDateFormat } from "helpers/date-time.helper";
 
 type Props = {
   renderAs?: "input" | "button";
@@ -30,16 +32,7 @@ export const CustomDatePicker: React.FC<Props> = ({
     selected={value ? new Date(value) : null}
     onChange={(val) => {
       if (!val) onChange(null);
-      else {
-        const year = val.getFullYear();
-        let month: number | string = val.getMonth() + 1;
-        let date: number | string = val.getDate();
-
-        if (date < 10) date = `0${date}`;
-        if (month < 10) month = `0${month}`;
-
-        onChange(`${year}-${month}-${date}`);
-      }
+      else onChange(renderDateFormat(val));
     }}
     className={`${className} ${
       renderAs === "input"

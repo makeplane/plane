@@ -1,37 +1,38 @@
 // TODO: Refactor this component: into a different file, use this file to export the components
 import React, { useState, useCallback, useEffect } from "react";
-// next
+
 import { useRouter } from "next/router";
-// swr
+
 import useSWR from "swr";
-// hooks
+
+// headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
+// services
+import userService from "services/user.service";
+// hooks
+import useTheme from "hooks/use-theme";
+import useToast from "hooks/use-toast";
+import useUser from "hooks/use-user";
+// components
+import ShortcutsModal from "components/command-palette/shortcuts";
+import { BulkDeleteIssuesModal } from "components/core";
+import { CreateProjectModal } from "components/project";
+import { CreateUpdateIssueModal } from "components/issues";
+import { CreateUpdateModuleModal } from "components/modules";
+import CreateUpdateCycleModal from "components/project/cycles/create-update-cycle-modal";
+// ui
+import { Button } from "components/ui";
+// icons
 import {
   FolderIcon,
   RectangleStackIcon,
   ClipboardDocumentListIcon,
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
-import useTheme from "hooks/use-theme";
-import useToast from "hooks/use-toast";
-import useUser from "hooks/use-user";
-// services
-import userService from "services/user.service";
-// components
-import ShortcutsModal from "components/command-palette/shortcuts";
-import { CreateProjectModal } from "components/project";
-import { CreateUpdateIssueModal } from "components/issues/modal";
-import CreateUpdateCycleModal from "components/project/cycles/create-update-cycle-modal";
-import CreateUpdateModuleModal from "components/project/modules/create-update-module-modal";
-import BulkDeleteIssuesModal from "components/common/bulk-delete-issues-modal";
-// headless ui
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import { IIssue } from "types";
-// ui
-import { Button } from "components/ui";
-// icons
 // fetch-keys
 import { USER_ISSUE } from "constants/fetch-keys";
 
@@ -74,7 +75,7 @@ const CommandPalette: React.FC = () => {
       name: "Add new issue...",
       icon: RectangleStackIcon,
       hide: !projectId,
-      shortcut: "I",
+      shortcut: "C",
       onClick: () => {
         setIsIssueModalOpen(true);
       },
@@ -111,7 +112,6 @@ const CommandPalette: React.FC = () => {
             if (!router.query.issueId) return;
 
             const url = new URL(window.location.href);
-            console.log(url);
             copyTextToClipboard(url.href)
               .then(() => {
                 setToastAlert({
@@ -179,7 +179,6 @@ const CommandPalette: React.FC = () => {
           <CreateUpdateModuleModal
             isOpen={isCreateModuleModalOpen}
             setIsOpen={setIsCreateModuleModalOpen}
-            projectId={projectId as string}
           />
         </>
       )}
@@ -330,7 +329,6 @@ const CommandPalette: React.FC = () => {
                                       />
                                       <span className="ml-3 flex-auto truncate">{action.name}</span>
                                       <span className="ml-3 flex-none text-xs font-semibold text-gray-500">
-                                        <kbd className="font-sans">⌘</kbd>
                                         <kbd className="font-sans">{action.shortcut}</kbd>
                                       </span>
                                     </>

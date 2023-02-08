@@ -16,11 +16,7 @@ import issuesService from "services/issues.service";
 import useUser from "hooks/use-user";
 import useToast from "hooks/use-toast";
 // components
-import CreateUpdateStateModal from "components/project/issues/BoardView/state/create-update-state-modal";
-import CreateUpdateCycleModal from "components/project/cycles/create-update-cycle-modal";
 import { IssueForm } from "components/issues";
-// common
-import { renderDateFormat } from "helpers/date-time.helper";
 // types
 import type { IIssue, IssueResponse } from "types";
 // fetch keys
@@ -54,7 +50,10 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   const [activeProject, setActiveProject] = useState<string | null>(null);
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+
+  if (cycleId) prePopulateData = { ...prePopulateData, cycle: cycleId as string };
+  if (moduleId) prePopulateData = { ...prePopulateData, module: moduleId as string };
 
   const { user } = useUser();
   const { setToastAlert } = useToast();
@@ -176,7 +175,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
       .then((res) => {
         if (isUpdatingSingleIssue) {
           mutate<IIssue>(PROJECT_ISSUES_DETAILS, (prevData) => ({ ...prevData, ...res }), false);
-        } else
+        } else {
           mutate<IssueResponse>(
             PROJECT_ISSUES_LIST(workspaceSlug as string, activeProject ?? ""),
             (prevData) => ({
@@ -187,8 +186,10 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
               }),
             })
           );
+        }
 
         if (payload.cycle && payload.cycle !== "") addIssueToCycle(res.id, payload.cycle);
+        if (payload.module && payload.module !== "") addIssueToModule(res.id, payload.module);
 
         if (!createMore) handleClose();
 
@@ -206,15 +207,16 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   };
 
   const handleFormSubmit = async (formData: Partial<IIssue>) => {
-    if (workspaceSlug && activeProject) {
-      const payload: Partial<IIssue> = {
-        ...formData,
-        target_date: formData.target_date ? renderDateFormat(formData.target_date ?? "") : null,
-      };
+    if (!workspaceSlug || !activeProject) return;
 
-      if (!data) await createIssue(payload);
-      else await updateIssue(payload);
-    }
+    const payload: Partial<IIssue> = {
+      ...formData,
+      description: formData.description ? formData.description : "",
+      description_html: formData.description_html ? formData.description_html : "<p></p>",
+    };
+
+    if (!data) await createIssue(payload);
+    else await updateIssue(payload);
   };
 
   return (

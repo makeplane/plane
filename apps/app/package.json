@@ -15,6 +15,7 @@
     "@remirror/extension-react-tables": "^2.2.11",
     "@remirror/pm": "^2.0.3",
     "@remirror/react": "^2.0.24",
+    "@sentry/nextjs": "^7.36.0",
     "@types/lodash.debounce": "^4.0.7",
     "@types/react-datepicker": "^4.8.0",
     "axios": "^1.1.3",

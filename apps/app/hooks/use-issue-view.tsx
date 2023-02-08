@@ -65,6 +65,8 @@ const useIssueView = (projectIssues: IIssue[]) => {
     ...groupBy(projectIssues ?? [], groupByProperty ?? ""),
   };
 
+  if (groupByProperty === "priority") delete groupedByIssues.None;
+
   if (orderBy) {
     groupedByIssues = Object.fromEntries(
       Object.entries(groupedByIssues).map(([key, value]) => [
@@ -74,7 +76,7 @@ const useIssueView = (projectIssues: IIssue[]) => {
     );
   }
 
-  if (filterIssue !== null) {
+  if (filterIssue) {
     if (filterIssue === "activeIssue") {
       const filteredStates = states?.filter(
         (state) => state.group === "started" || state.group === "unstarted"
