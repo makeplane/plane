@@ -38,7 +38,7 @@ services:
       context: .
       dockerfile: ./apps/app/Dockerfile.web
     restart: always
-    command: node apps/app/server.js
+    command:  node apps/app/server.js
     env_file:
       - ./apps/app/.env
     ports:

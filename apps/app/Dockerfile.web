@@ -27,7 +27,7 @@ RUN yarn install
 COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
 
-RUN yarn turbo run build --filter=app...
+RUN yarn turbo run build --filter=app
 
 FROM node:18-alpine AS runner
 WORKDIR /app
@@ -43,8 +43,9 @@ COPY --from=installer /app/apps/app/package.json .
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=installer --chown=captain:plane /app/apps/app/.next/standalone ./
+# COPY --from=installer --chown=captain:plane /app/apps/app/.next/standalone/node_modules ./apps/app/node_modules
 COPY --from=installer --chown=captain:plane /app/apps/app/.next/static ./apps/app/.next/static
 
-EXPOSE 3000
+ENV NEXT_TELEMETRY_DISABLED 1
 
-CMD node apps/app/server.js
+EXPOSE 3000
