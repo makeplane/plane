@@ -17,10 +17,21 @@ import issuesServices from "services/issues.service";
 import projectService from "services/project.service";
 
 type Props = {
+  groupedIssues: any;
   issues: IIssue[];
 };
 
-const SidebarProgressStats: React.FC<Props> = ({ issues }) => {
+const stateGroupColours: {
+  [key: string]: string;
+} = {
+  backlog: "#3f76ff",
+  unstarted: "#ff9e9e",
+  started: "#d687ff",
+  cancelled: "#ff5353",
+  completed: "#096e8d",
+};
+
+const SidebarProgressStats: React.FC<Props> = ({ groupedIssues, issues }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   const { data: issueLabels } = useSWR<IIssueLabels[]>(
@@ -56,6 +67,13 @@ const SidebarProgressStats: React.FC<Props> = ({ issues }) => {
             }
           >
             Labels
+          </Tab>
+          <Tab
+            className={({ selected }) =>
+              `w-1/2 rounded py-1 ${selected ? "bg-gray-300 font-semibold" : "hover:bg-gray-200 "}`
+            }
+          >
+            States
           </Tab>
         </Tab.List>
         <Tab.Panels className="flex items-center justify-between  w-full">
@@ -131,6 +149,26 @@ const SidebarProgressStats: React.FC<Props> = ({ issues }) => {
                 );
               }
             })}
+          </Tab.Panel>
+          <Tab.Panel as="div" className="w-full flex flex-col ">
+            {Object.keys(groupedIssues).map((group, index) => (
+              <SingleProgressStats
+                key={index}
+                title={
+                  <>
+                    <span
+                      className="block h-2 w-2 rounded-full "
+                      style={{
+                        backgroundColor: stateGroupColours[group],
+                      }}
+                    />
+                    <span className="text-xs capitalize">{group}</span>
+                  </>
+                }
+                completed={groupedIssues[group].length}
+                total={issues.length}
+              />
+            ))}
           </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>

@@ -295,7 +295,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
               </div>
             </div>
             <div className="w-full">
-              <SidebarProgressStats issues={issues} />
+              <SidebarProgressStats issues={issues} groupedIssues={groupedIssues} />
             </div>
           </>
         ) : (

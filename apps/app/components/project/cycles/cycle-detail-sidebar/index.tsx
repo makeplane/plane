@@ -223,7 +223,7 @@ const CycleDetailSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cycleIssue
             <div className="py-1" />
           </div>
           <div className="w-full">
-            <SidebarProgressStats issues={issues} />
+            <SidebarProgressStats issues={issues} groupedIssues={groupedIssues} />
           </div>
         </>
       ) : (
