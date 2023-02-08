@@ -1,4 +1,6 @@
-export const renderDateFormat = (date: string | Date) => {
+export const renderDateFormat = (date: string | Date | null) => {
+  if (!date) return "N/A";
+
   var d = new Date(date),
     month = "" + (d.getMonth() + 1),
     day = "" + d.getDate(),

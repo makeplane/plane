@@ -62,3 +62,6 @@ yarn-error.log
 *.sln
 package-lock.json
 .vscode
+
+# Sentry
+.sentryclirc

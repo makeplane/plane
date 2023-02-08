@@ -9,6 +9,7 @@ from django.dispatch import receiver
 from . import ProjectBaseModel
 from plane.utils.html_processor import strip_tags
 
+
 # TODO: Handle identifiers for Bulk Inserts - nk
 class Issue(ProjectBaseModel):
     PRIORITY_CHOICES = (
@@ -32,8 +33,8 @@ class Issue(ProjectBaseModel):
         related_name="state_issue",
     )
     name = models.CharField(max_length=255, verbose_name="Issue Name")
-    description = models.JSONField(blank=True, null=True)
-    description_html = models.TextField(blank=True, null=True)
+    description = models.JSONField(blank=True, default=dict)
+    description_html = models.TextField(blank=True, default="<p></p>")
     description_stripped = models.TextField(blank=True, null=True)
     priority = models.CharField(
         max_length=30,
@@ -56,6 +57,7 @@ class Issue(ProjectBaseModel):
     labels = models.ManyToManyField(
         "db.Label", blank=True, related_name="labels", through="IssueLabel"
     )
+    sort_order = models.FloatField(default=65535)
 
     class Meta:
         verbose_name = "Issue"
@@ -196,8 +198,8 @@ class TimelineIssue(ProjectBaseModel):
 
 class IssueComment(ProjectBaseModel):
     comment_stripped = models.TextField(verbose_name="Comment", blank=True)
-    comment_json = models.JSONField(blank=True, null=True)
-    comment_html = models.TextField(blank=True)
+    comment_json = models.JSONField(blank=True, default=dict)
+    comment_html = models.TextField(blank=True, default="<p></p>")
     attachments = ArrayField(models.URLField(), size=10, blank=True, default=list)
     issue = models.ForeignKey(Issue, on_delete=models.CASCADE)
     # System can also create comment
@@ -246,7 +248,6 @@ class IssueProperty(ProjectBaseModel):
 
 
 class Label(ProjectBaseModel):
-
     parent = models.ForeignKey(
         "self",
         on_delete=models.CASCADE,
@@ -256,7 +257,7 @@ class Label(ProjectBaseModel):
     )
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
-    colour = models.CharField(max_length=255, blank=True)
+    color = models.CharField(max_length=255, blank=True)
 
     class Meta:
         verbose_name = "Label"
@@ -269,7 +270,6 @@ class Label(ProjectBaseModel):
 
 
 class IssueLabel(ProjectBaseModel):
-
     issue = models.ForeignKey(
         "db.Issue", on_delete=models.CASCADE, related_name="label_issue"
     )
@@ -288,7 +288,6 @@ class IssueLabel(ProjectBaseModel):
 
 
 class IssueSequence(ProjectBaseModel):
-
     issue = models.ForeignKey(
         Issue, on_delete=models.SET_NULL, related_name="issue_sequence", null=True
     )
@@ -305,7 +304,6 @@ class IssueSequence(ProjectBaseModel):
 # TODO: Find a better method to save the model
 @receiver(post_save, sender=Issue)
 def create_issue_sequence(sender, instance, created, **kwargs):
-
     if created:
         IssueSequence.objects.create(
             issue=instance, sequence=instance.sequence_id, project=instance.project

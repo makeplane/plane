@@ -16,7 +16,7 @@ import {
   IssueStateSelect,
 } from "components/issues/select";
 import { CycleSelect as IssueCycleSelect } from "components/cycles/select";
-import CreateUpdateStateModal from "components/project/issues/BoardView/state/create-update-state-modal";
+import { CreateUpdateStateModal } from "components/states";
 import CreateUpdateCycleModal from "components/project/cycles/create-update-cycle-modal";
 // ui
 import { Button, CustomDatePicker, CustomMenu, Input, Loader } from "components/ui";

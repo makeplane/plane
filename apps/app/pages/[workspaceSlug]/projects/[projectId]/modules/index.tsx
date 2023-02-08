@@ -12,7 +12,7 @@ import { requiredAuth } from "lib/auth";
 import projectService from "services/project.service";
 import modulesService from "services/modules.service";
 // components
-import SingleModuleCard from "components/project/modules/single-module-card";
+import { SingleModuleCard } from "components/modules";
 // ui
 import { EmptySpace, EmptySpaceItem, HeaderButton, Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -85,7 +85,7 @@ const ProjectModules: NextPage = () => {
                 title="Create a new module"
                 description={
                   <span>
-                    Use <pre className="inline rounded bg-gray-100 px-2 py-1">M</pre> shortcut to
+                    Use <pre className="inline rounded bg-gray-200 px-2 py-1">M</pre> shortcut to
                     create a new module
                   </span>
                 }

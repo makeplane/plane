@@ -11,13 +11,9 @@ import AppLayout from "layouts/app-layout";
 // contexts
 import { IssueViewContextProvider } from "contexts/issue-view.context";
 // components
-import CyclesListView from "components/project/cycles/list-view";
-import CyclesBoardView from "components/project/cycles/board-view";
 import { CreateUpdateIssueModal } from "components/issues";
-import ConfirmIssueDeletion from "components/project/issues/confirm-issue-deletion";
-import ExistingIssuesListModal from "components/common/existing-issues-list-modal";
+import { ExistingIssuesListModal, IssuesFilterView, IssuesView } from "components/core";
 import CycleDetailSidebar from "components/project/cycles/cycle-detail-sidebar";
-import View from "components/core/view";
 // services
 import issuesServices from "services/issues.service";
 import cycleServices from "services/cycles.service";
@@ -36,15 +32,14 @@ import {
   CYCLE_ISSUES,
   CYCLE_LIST,
   PROJECT_ISSUES_LIST,
-  PROJECT_MEMBERS,
   PROJECT_DETAILS,
+  CYCLE_DETAILS,
 } from "constants/fetch-keys";
 
 const SingleCycle: React.FC<UserAuth> = (props) => {
   const [isIssueModalOpen, setIsIssueModalOpen] = useState(false);
   const [selectedIssues, setSelectedIssues] = useState<SelectIssue>();
   const [cycleIssuesListModal, setCycleIssuesListModal] = useState(false);
-  const [deleteIssue, setDeleteIssue] = useState<string | undefined>(undefined);
   const [cycleSidebar, setCycleSidebar] = useState(true);
 
   const [preloadedData, setPreloadedData] = useState<
@@ -77,6 +72,18 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
       : null
   );
 
+  const { data: cycleDetails } = useSWR(
+    cycleId ? CYCLE_DETAILS(cycleId as string) : null,
+    workspaceSlug && projectId && cycleId
+      ? () =>
+          cycleServices.getCycleDetails(
+            workspaceSlug as string,
+            projectId as string,
+            cycleId as string
+          )
+      : null
+  );
+
   const { data: cycleIssues } = useSWR<CycleIssueResponse[]>(
     workspaceSlug && projectId && cycleId ? CYCLE_ISSUES(cycleId as string) : null,
     workspaceSlug && projectId && cycleId
@@ -94,19 +101,6 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
     bridge: issue.id,
     cycle: cycleId as string,
   }));
-
-  const { data: members } = useSWR(
-    workspaceSlug && projectId ? PROJECT_MEMBERS(workspaceSlug as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
-      : null,
-    {
-      onErrorRetry(err, _, __, revalidate, revalidateOpts) {
-        if (err?.status === 403) return;
-        setTimeout(() => revalidate(revalidateOpts), 5000);
-      },
-    }
-  );
 
   const openCreateIssueModal = (
     issue?: IIssue,
@@ -138,30 +132,6 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
       });
   };
 
-  const removeIssueFromCycle = (bridgeId: string) => {
-    if (!workspaceSlug || !projectId) return;
-
-    mutate<CycleIssueResponse[]>(
-      CYCLE_ISSUES(cycleId as string),
-      (prevData) => prevData?.filter((p) => p.id !== bridgeId),
-      false
-    );
-
-    issuesServices
-      .removeIssueFromCycle(
-        workspaceSlug as string,
-        projectId as string,
-        cycleId as string,
-        bridgeId
-      )
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-
   return (
     <IssueViewContextProvider>
       <CreateUpdateIssueModal
@@ -181,11 +151,6 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
         issues={issues?.results.filter((i) => !i.issue_cycle) ?? []}
         handleOnSubmit={handleAddIssuesToCycle}
       />
-      <ConfirmIssueDeletion
-        handleClose={() => setDeleteIssue(undefined)}
-        isOpen={!!deleteIssue}
-        data={issues?.results.find((issue) => issue.id === deleteIssue)}
-      />
       <AppLayout
         breadcrumbs={
           <Breadcrumbs>
@@ -200,7 +165,7 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
             label={
               <>
                 <CyclesIcon className="h-3 w-3" />
-                {cycles?.find((c) => c.id === cycleId)?.name}
+                {cycleDetails?.name}
               </>
             }
             className="ml-1.5"
@@ -221,7 +186,7 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
           <div
             className={`flex items-center gap-2 ${cycleSidebar ? "mr-[24rem]" : ""} duration-300`}
           >
-            <View issues={cycleIssuesArray ?? []} />
+            <IssuesFilterView issues={cycleIssuesArray ?? []} />
             <button
               type="button"
               className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-100 ${
@@ -237,22 +202,11 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
         {cycleIssuesArray ? (
           cycleIssuesArray.length > 0 ? (
             <div className={`h-full ${cycleSidebar ? "mr-[24rem]" : ""} duration-300`}>
-              <CyclesListView
+              <IssuesView
+                type="cycle"
                 issues={cycleIssuesArray ?? []}
-                openCreateIssueModal={openCreateIssueModal}
-                openIssuesListModal={openIssuesListModal}
-                removeIssueFromCycle={removeIssueFromCycle}
-                setPreloadedData={setPreloadedData}
                 userAuth={props}
-              />
-              <CyclesBoardView
-                issues={cycleIssuesArray ?? []}
-                members={members}
-                openCreateIssueModal={openCreateIssueModal}
                 openIssuesListModal={openIssuesListModal}
-                handleDeleteIssue={setDeleteIssue}
-                setPreloadedData={setPreloadedData}
-                userAuth={props}
               />
             </div>
           ) : (
@@ -270,13 +224,13 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
                   title="Create a new issue"
                   description="Click to create a new issue inside the cycle."
                   Icon={PlusIcon}
-                  action={() => openCreateIssueModal()}
+                  action={openCreateIssueModal}
                 />
                 <EmptySpaceItem
                   title="Add an existing issue"
                   description="Open list"
                   Icon={ListBulletIcon}
-                  action={() => openIssuesListModal()}
+                  action={openIssuesListModal}
                 />
               </EmptySpace>
             </div>
@@ -287,7 +241,7 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
           </div>
         )}
         <CycleDetailSidebar
-          cycle={cycles?.find((c) => c.id === (cycleId as string))}
+          cycle={cycleDetails}
           isOpen={cycleSidebar}
           cycleIssues={cycleIssues ?? []}
         />

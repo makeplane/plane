@@ -1,19 +1,21 @@
 import React from "react";
 
 import { useRouter } from "next/router";
+
 import useSWR from "swr";
 
 // lib
-import type { NextPage, GetServerSideProps } from "next";
 import { requiredWorkspaceAdmin } from "lib/auth";
-// constants
 // services
 import workspaceService from "services/workspace.service";
 // layouts
-import SettingsLayout from "layouts/settings-layout";
+import AppLayout from "layouts/app-layout";
 // ui
 import { Button } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+// types
+import type { NextPage, GetServerSideProps } from "next";
+// fetch-keys
 import { WORKSPACE_DETAILS } from "constants/fetch-keys";
 
 type TBillingSettingsProps = {
@@ -35,9 +37,9 @@ const BillingSettings: NextPage<TBillingSettingsProps> = (props) => {
 
   return (
     <>
-      <SettingsLayout
-        memberType={{ ...props }}
-        type="workspace"
+      <AppLayout
+        settingsLayout="workspace"
+        memberType={props}
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem
@@ -75,7 +77,7 @@ const BillingSettings: NextPage<TBillingSettingsProps> = (props) => {
             </div>
           </div>
         </section>
-      </SettingsLayout>
+      </AppLayout>
     </>
   );
 };

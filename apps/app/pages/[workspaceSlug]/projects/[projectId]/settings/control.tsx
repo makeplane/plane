@@ -9,7 +9,7 @@ import { Controller, useForm } from "react-hook-form";
 // lib
 import { requiredAdmin } from "lib/auth";
 // layouts
-import SettingsLayout from "layouts/settings-layout";
+import AppLayout from "layouts/app-layout";
 // services
 import projectService from "services/project.service";
 import workspaceService from "services/workspace.service";
@@ -103,8 +103,8 @@ const ControlSettings: NextPage<TControlSettingsProps> = (props) => {
   };
 
   return (
-    <SettingsLayout
-      type="project"
+    <AppLayout
+      settingsLayout="project"
       memberType={{ isMember, isOwner, isViewer, isGuest }}
       breadcrumbs={
         <Breadcrumbs>
@@ -247,7 +247,7 @@ const ControlSettings: NextPage<TControlSettingsProps> = (props) => {
           </div>
         </div>
       </form>
-    </SettingsLayout>
+    </AppLayout>
   );
 };
 

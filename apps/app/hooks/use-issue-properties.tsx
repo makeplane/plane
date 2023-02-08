@@ -51,6 +51,7 @@ const useIssuesProperties = (workspaceSlug?: string, projectId?: string) => {
   const updateIssueProperties = useCallback(
     (key: keyof Properties) => {
       if (!workspaceSlug || !user) return;
+
       setProperties((prev) => ({ ...prev, [key]: !prev[key] }));
       if (issueProperties && projectId) {
         mutateIssueProperties(

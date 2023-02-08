@@ -143,27 +143,34 @@ export const ProjectSidebarList: FC = () => {
                             sidebarCollapse ? "" : "ml-[2.25rem]"
                           } flex flex-col gap-y-1`}
                         >
-                          {navigation(workspaceSlug as string, project?.id).map((item) => (
-                            <Link key={item.name} href={item.href}>
-                              <a
-                                className={`group flex items-center rounded-md px-2 py-2 text-xs font-medium outline-none ${
-                                  item.href === router.asPath
-                                    ? "bg-gray-200 text-gray-900"
-                                    : "text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900"
-                                } ${sidebarCollapse ? "justify-center" : ""}`}
-                              >
-                                <item.icon
-                                  className={`h-4 w-4 flex-shrink-0 ${
+                          {navigation(workspaceSlug as string, project?.id).map((item) => {
+                            const hi = "hi";
+
+                            if (item.name === "Cycles" && !project.cycle_view) return;
+                            if (item.name === "Modules" && !project.module_view) return;
+
+                            return (
+                              <Link key={item.name} href={item.href}>
+                                <a
+                                  className={`group flex items-center rounded-md px-2 py-2 text-xs font-medium outline-none ${
                                     item.href === router.asPath
-                                      ? "text-gray-900"
-                                      : "text-gray-500 group-hover:text-gray-900"
-                                  } ${!sidebarCollapse ? "mr-3" : ""}`}
-                                  aria-hidden="true"
-                                />
-                                {!sidebarCollapse && item.name}
-                              </a>
-                            </Link>
-                          ))}
+                                      ? "bg-gray-200 text-gray-900"
+                                      : "text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900"
+                                  } ${sidebarCollapse ? "justify-center" : ""}`}
+                                >
+                                  <item.icon
+                                    className={`h-4 w-4 flex-shrink-0 ${
+                                      item.href === router.asPath
+                                        ? "text-gray-900"
+                                        : "text-gray-500 group-hover:text-gray-900"
+                                    } ${!sidebarCollapse ? "mr-3" : ""}`}
+                                    aria-hidden="true"
+                                  />
+                                  {!sidebarCollapse && item.name}
+                                </a>
+                              </Link>
+                            );
+                          })}
                         </Disclosure.Panel>
                       </Transition>
                     </>

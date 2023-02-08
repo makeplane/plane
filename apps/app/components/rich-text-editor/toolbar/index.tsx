@@ -6,7 +6,6 @@ import { BoldButton } from "./bold";
 import { ItalicButton } from "./italic";
 import { UnderlineButton } from "./underline";
 import { StrikeButton } from "./strike";
-import { LinkButton } from "./link";
 // headings
 import HeadingControls from "./heading-controls";
 // list

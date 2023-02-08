@@ -2,8 +2,6 @@ import React from "react";
 // next
 import Head from "next/head";
 import { useRouter } from "next/router";
-// types
-import type { Props } from "./types";
 // constants
 import {
   SITE_NAME,
@@ -13,6 +11,24 @@ import {
   SITE_KEYWORDS,
   SITE_TITLE,
 } from "constants/seo-variables";
+
+type Meta = {
+  title?: string | null;
+  description?: string | null;
+  image?: string | null;
+  url?: string | null;
+};
+
+type Props = {
+  meta?: Meta;
+  children: React.ReactNode;
+  noPadding?: boolean;
+  bg?: "primary" | "secondary";
+  noHeader?: boolean;
+  breadcrumbs?: JSX.Element;
+  left?: JSX.Element;
+  right?: JSX.Element;
+};
 
 const Container = ({ meta, children }: Props) => {
   const router = useRouter();

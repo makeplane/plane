@@ -61,9 +61,8 @@ export const CycleModal: React.FC<CycleModalProps> = (props) => {
     if (workspaceSlug && projectId) {
       const payload = {
         ...formValues,
-        start_date: formValues.start_date ? renderDateFormat(formValues.start_date) : null,
-        end_date: formValues.end_date ? renderDateFormat(formValues.end_date) : null,
       };
+
       if (initialData) {
         updateCycle(initialData.id, payload);
       } else {

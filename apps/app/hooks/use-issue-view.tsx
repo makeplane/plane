@@ -11,11 +11,11 @@ import { issueViewContext } from "contexts/issue-view.context";
 // helpers
 import { groupBy, orderArrayBy } from "helpers/array.helper";
 // types
-import { IIssue } from "types";
+import { IIssue, IState } from "types";
 // fetch-keys
 import { STATE_LIST } from "constants/fetch-keys";
 // constants
-import { PRIORITIES } from "constants/";
+import { PRIORITIES } from "constants/project";
 
 const useIssueView = (projectIssues: IIssue[]) => {
   const {
@@ -44,26 +44,52 @@ const useIssueView = (projectIssues: IIssue[]) => {
 
   let groupedByIssues: {
     [key: string]: IIssue[];
-  } = {
+  } = {};
+
+  const groupIssues = (states: IState[], issues: IIssue[]) => ({
     ...(groupByProperty === "state_detail.name"
       ? Object.fromEntries(
           states
             ?.sort((a, b) => a.sequence - b.sequence)
             ?.map((state) => [
               state.name,
-              projectIssues.filter((issue) => issue.state === state.name) ?? [],
+              issues.filter((issue) => issue.state === state.name) ?? [],
             ]) ?? []
         )
       : groupByProperty === "priority"
       ? Object.fromEntries(
           PRIORITIES.map((priority) => [
             priority,
-            projectIssues.filter((issue) => issue.priority === priority) ?? [],
+            issues.filter((issue) => issue.priority === priority) ?? [],
           ])
         )
       : {}),
-    ...groupBy(projectIssues ?? [], groupByProperty ?? ""),
-  };
+    ...groupBy(issues ?? [], groupByProperty ?? ""),
+  });
+
+  groupedByIssues = groupIssues(states ?? [], projectIssues);
+
+  if (filterIssue) {
+    if (filterIssue === "activeIssue") {
+      const filteredStates = states?.filter(
+        (s) => s.group === "started" || s.group === "unstarted"
+      );
+      const filteredIssues = projectIssues.filter(
+        (i) => i.state_detail.group === "started" || i.state_detail.group === "unstarted"
+      );
+
+      groupedByIssues = groupIssues(filteredStates ?? [], filteredIssues);
+    } else if (filterIssue === "backlogIssue") {
+      const filteredStates = states?.filter(
+        (s) => s.group === "backlog" || s.group === "cancelled"
+      );
+      const filteredIssues = projectIssues.filter(
+        (i) => i.state_detail.group === "backlog" || i.state_detail.group === "cancelled"
+      );
+
+      groupedByIssues = groupIssues(filteredStates ?? [], filteredIssues);
+    }
+  }
 
   if (orderBy) {
     groupedByIssues = Object.fromEntries(
@@ -74,36 +100,9 @@ const useIssueView = (projectIssues: IIssue[]) => {
     );
   }
 
-  if (filterIssue !== null) {
-    if (filterIssue === "activeIssue") {
-      const filteredStates = states?.filter(
-        (state) => state.group === "started" || state.group === "unstarted"
-      );
-      groupedByIssues = Object.fromEntries(
-        filteredStates
-          ?.sort((a, b) => a.sequence - b.sequence)
-          ?.map((state) => [
-            state.name,
-            projectIssues.filter((issue) => issue.state === state.id) ?? [],
-          ]) ?? []
-      );
-    } else if (filterIssue === "backlogIssue") {
-      const filteredStates = states?.filter(
-        (state) => state.group === "backlog" || state.group === "cancelled"
-      );
-      groupedByIssues = Object.fromEntries(
-        filteredStates
-          ?.sort((a, b) => a.sequence - b.sequence)
-          ?.map((state) => [
-            state.name,
-            projectIssues.filter((issue) => issue.state === state.id) ?? [],
-          ]) ?? []
-      );
-    }
-  }
-
-  if (groupByProperty === "priority" && orderBy === "priority") {
-    setOrderBy(null);
+  if (groupByProperty === "priority") {
+    delete groupedByIssues.None;
+    if (orderBy === "priority") setOrderBy("created_at");
   }
 
   return {
