@@ -90,7 +90,7 @@ from plane.api.views import (
     # Integrations
     IntegrationViewSet,
     WorkspaceIntegrationViewSet,
-    GithubRepoViewSet,
+    GithubRepositoryViewSet,
     GithubRepositorySyncViewSet,
     GithubIssueSyncViewSet,
     ## End Integrations
@@ -734,6 +734,24 @@ urlpatterns = [
             }
         ),
         name="workspace-integrations",
+    ),
+    path(
+        "workspaces/<str:slug>/integrations/<pk:integration_id>/github-repository/",
+        GithubRepositoryViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+    ),
+    path(
+        "workspaces/<str:slug>/integrations/<pk:integration_id>/github-repository/<pk:uuid>/",
+        GithubRepositoryViewSet.as_view(
+            {
+                "get": "retrieve",
+                "delete": "destroy",
+            }
+        ),
     ),
     ## End Integrations
 ]

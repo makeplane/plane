@@ -11,7 +11,7 @@ from plane.api.serializers import (
 )
 
 
-class GithubRepoViewSet(BaseViewSet):
+class GithubRepositoryViewSet(BaseViewSet):
     serializer_class = GithubRepositorySerializer
     model = GithubRepository
 

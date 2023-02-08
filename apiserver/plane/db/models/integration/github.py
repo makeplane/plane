@@ -26,6 +26,13 @@ class GithubRepositorySync(ProjectBaseModel):
         "db.GithubRepository", on_delete=models.CASCADE, related_name="syncss"
     )
     credentials = models.JSONField(default=dict)
+    # Bot user
+    actor = models.ForeignKey(
+        "db.User", related_name="user_syncs", on_delete=models.CASCADE
+    )
+    workspace_integration = models.ForeignKey(
+        "db.WorkspaceIntegration", related_name="github_syncs", on_delete=models.CASCADE
+    )
 
     def __str__(self):
         """Return the repo sync"""
