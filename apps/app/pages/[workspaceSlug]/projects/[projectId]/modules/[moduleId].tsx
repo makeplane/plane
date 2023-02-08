@@ -245,7 +245,12 @@ const SingleModule: React.FC<UserAuth> = (props) => {
                   title="Create a new issue"
                   description="Click to create a new issue inside the module."
                   Icon={PlusIcon}
-                  action={openCreateIssueModal}
+                  action={() => {
+                    const e = new KeyboardEvent("keydown", {
+                      key: "c",
+                    });
+                    document.dispatchEvent(e);
+                  }}
                 />
                 <EmptySpaceItem
                   title="Add an existing issue"
