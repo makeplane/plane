@@ -148,12 +148,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) =>
                         "delete_issue_ids",
                         selectedIssues.filter((i) => i !== val)
                       );
-                    else {
-                      const newToDelete = selectedIssues;
-                      newToDelete.push(val);
-
-                      setValue("delete_issue_ids", newToDelete);
-                    }
+                    else setValue("delete_issue_ids", [...selectedIssues, val]);
                   }}
                 >
                   <div className="relative m-1">
@@ -218,7 +213,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) =>
                         <LayerDiagonalIcon height="56" width="56" />
                         <h3 className="text-gray-500">
                           No issues found. Create a new issue with{" "}
-                          <pre className="inline rounded bg-gray-100 px-2 py-1">C</pre>.
+                          <pre className="inline rounded bg-gray-200 px-2 py-1">C</pre>.
                         </h3>
                       </div>
                     )}

@@ -33,7 +33,7 @@ class Issue(ProjectBaseModel):
         related_name="state_issue",
     )
     name = models.CharField(max_length=255, verbose_name="Issue Name")
-    description = models.JSONField(blank=True, default="")
+    description = models.JSONField(blank=True, default=dict)
     description_html = models.TextField(blank=True, default="<p></p>")
     description_stripped = models.TextField(blank=True, null=True)
     priority = models.CharField(
@@ -198,7 +198,7 @@ class TimelineIssue(ProjectBaseModel):
 
 class IssueComment(ProjectBaseModel):
     comment_stripped = models.TextField(verbose_name="Comment", blank=True)
-    comment_json = models.JSONField(blank=True, default="")
+    comment_json = models.JSONField(blank=True, default=dict)
     comment_html = models.TextField(blank=True, default="<p></p>")
     attachments = ArrayField(models.URLField(), size=10, blank=True, default=list)
     issue = models.ForeignKey(Issue, on_delete=models.CASCADE)

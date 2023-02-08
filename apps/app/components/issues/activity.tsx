@@ -8,6 +8,7 @@ import {
   CalendarDaysIcon,
   ChartBarIcon,
   ChatBubbleBottomCenterTextIcon,
+  RectangleGroupIcon,
   Squares2X2Icon,
   UserIcon,
 } from "@heroicons/react/24/outline";
@@ -18,7 +19,7 @@ import { CommentCard } from "components/issues/comment";
 // ui
 import { Loader } from "components/ui";
 // icons
-import { BlockedIcon, BlockerIcon, TagIcon, UserGroupIcon } from "components/icons";
+import { BlockedIcon, BlockerIcon, CyclesIcon, TagIcon, UserGroupIcon } from "components/icons";
 // helpers
 import { renderShortNumericDateFormat, timeAgo } from "helpers/date-time.helper";
 import { addSpaceIfCamelCase } from "helpers/string.helper";
@@ -47,8 +48,16 @@ const activityDetails: {
     message: "marked this issue is blocking",
     icon: <BlockerIcon height="16" width="16" />,
   },
+  cycles: {
+    message: "set the cycle to",
+    icon: <CyclesIcon height="16" width="16" />,
+  },
   labels: {
     icon: <TagIcon height="16" width="16" />,
+  },
+  modules: {
+    message: "set the module to",
+    icon: <RectangleGroupIcon className="h-4 w-4" />,
   },
   state: {
     message: "set the state to",
@@ -76,10 +85,12 @@ const activityDetails: {
   },
 };
 
-export const IssueActivitySection: React.FC<{
+type Props = {
   issueActivities: IIssueActivity[];
   mutate: KeyedMutator<IIssueActivity[]>;
-}> = ({ issueActivities, mutate }) => {
+};
+
+export const IssueActivitySection: React.FC<Props> = ({ issueActivities, mutate }) => {
   const router = useRouter();
 
   const { workspaceSlug, projectId, issueId } = router.query;
@@ -183,7 +194,9 @@ export const IssueActivitySection: React.FC<{
                               ?.message}{" "}
                       </span>
                       <span className="font-medium">
-                        {activity.verb === "created" ? (
+                        {activity.verb === "created" &&
+                        activity.field !== "cycles" &&
+                        activity.field !== "modules" ? (
                           <span className="text-gray-600">created this issue.</span>
                         ) : activity.field === "description" ? null : activity.field === "state" ? (
                           activity.new_value ? (

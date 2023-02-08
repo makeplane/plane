@@ -16,7 +16,7 @@ import issuesServices from "services/issues.service";
 // ui
 import { Button } from "components/ui";
 // icons
-import { FolderIcon, MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { BlockerIcon, LayerDiagonalIcon } from "components/icons";
 // types
 import { IIssue, UserAuth } from "types";
@@ -184,12 +184,7 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
                           "blocker_issue_ids",
                           selectedIssues.filter((i) => i !== val)
                         );
-                      else {
-                        const newBlockers = selectedIssues;
-                        newBlockers.push(val);
-
-                        setValue("blocker_issue_ids", newBlockers);
-                      }
+                      else setValue("blocker_issue_ids", [...selectedIssues, val]);
                     }}
                   >
                     <div className="relative m-1">
@@ -266,7 +261,7 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
                           <LayerDiagonalIcon height="56" width="56" />
                           <h3 className="text-gray-500">
                             No issues found. Create a new issue with{" "}
-                            <pre className="inline rounded bg-gray-100 px-2 py-1">C</pre>.
+                            <pre className="inline rounded bg-gray-200 px-2 py-1">C</pre>.
                           </h3>
                         </div>
                       )}

@@ -1,17 +1,16 @@
-// react
 import React from "react";
+
 // react-hook-form
-import { Control, Controller, UseFormWatch } from "react-hook-form";
+import { Control, Controller } from "react-hook-form";
 // ui
-import { ChartBarIcon } from "@heroicons/react/24/outline";
 import { CustomSelect } from "components/ui";
 // icons
+import { ChartBarIcon } from "@heroicons/react/24/outline";
+import { getPriorityIcon } from "components/icons/priority-icon";
 // types
 import { IIssue, UserAuth } from "types";
-// common
 // constants
-import { getPriorityIcon } from "constants/global";
-import { PRIORITIES } from "constants/";
+import { PRIORITIES } from "constants/project";
 
 type Props = {
   control: Control<IIssue, any>;

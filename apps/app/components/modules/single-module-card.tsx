@@ -14,7 +14,7 @@ import { renderShortNumericDateFormat } from "helpers/date-time.helper";
 // types
 import { IModule, SelectModuleType } from "types";
 // common
-import { MODULE_STATUS } from "constants/";
+import { MODULE_STATUS } from "constants/module";
 
 type Props = {
   module: IModule;

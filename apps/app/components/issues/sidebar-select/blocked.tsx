@@ -183,12 +183,7 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
                             "blocked_issue_ids",
                             selectedIssues.filter((i) => i !== val)
                           );
-                        else {
-                          const newBlocked = selectedIssues;
-                          newBlocked.push(val);
-
-                          setValue("blocked_issue_ids", newBlocked);
-                        }
+                        else setValue("blocked_issue_ids", [...selectedIssues, val]);
                       }}
                     >
                       <div className="relative m-1">
@@ -266,7 +261,7 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
                             <LayerDiagonalIcon height="56" width="56" />
                             <h3 className="text-gray-500">
                               No issues found. Create a new issue with{" "}
-                              <pre className="inline rounded bg-gray-100 px-2 py-1">C</pre>.
+                              <pre className="inline rounded bg-gray-200 px-2 py-1">C</pre>.
                             </h3>
                           </div>
                         )}

@@ -1,20 +1,22 @@
 import type { IUserLite, IWorkspace } from "./";
 
 export interface IProject {
-  id: string;
-  workspace: IWorkspace | string;
-  default_assignee: IUser | string | null;
-  project_lead: IUser | string | null;
   created_at: Date;
-  updated_at: Date;
-  name: string;
-  description: string;
-  network: number;
-  identifier: string;
-  slug: string;
   created_by: string;
-  updated_by: string;
+  cycle_view: boolean;
+  default_assignee: IUser | string | null;
+  description: string;
   icon: string;
+  id: string;
+  identifier: string;
+  module_view: boolean;
+  name: string;
+  network: number;
+  project_lead: IUser | string | null;
+  slug: string;
+  updated_at: Date;
+  updated_by: string;
+  workspace: IWorkspace | string;
 }
 
 type ProjectViewTheme = {

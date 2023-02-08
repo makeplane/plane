@@ -10,7 +10,7 @@ import { CustomSelect } from "components/ui";
 import { IModule } from "types";
 // common
 // constants
-import { MODULE_STATUS } from "constants/";
+import { MODULE_STATUS } from "constants/module";
 
 type Props = {
   control: Control<Partial<IModule>, any>;

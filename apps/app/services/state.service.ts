@@ -4,7 +4,7 @@ import APIService from "services/api.service";
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
 // types
-import type { IState } from "types";
+import type { IState, StateResponse } from "types";
 
 class ProjectStateServices extends APIService {
   constructor() {
@@ -19,7 +19,7 @@ class ProjectStateServices extends APIService {
       });
   }
 
-  async getStates(workspaceSlug: string, projectId: string): Promise<IState[]> {
+  async getStates(workspaceSlug: string, projectId: string): Promise<StateResponse> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/states/`)
       .then((response) => response?.data)
       .catch((error) => {

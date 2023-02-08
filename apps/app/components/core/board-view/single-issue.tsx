@@ -16,14 +16,17 @@ import {
 import { TrashIcon } from "@heroicons/react/24/outline";
 // services
 import issuesService from "services/issues.service";
-import stateService from "services/state.service";
 // components
-import { AssigneeSelect, DueDateSelect, PrioritySelect, StateSelect } from "components/core/select";
+import {
+  ViewAssigneeSelect,
+  ViewDueDateSelect,
+  ViewPrioritySelect,
+  ViewStateSelect,
+} from "components/issues/view-select";
 // types
 import {
   CycleIssueResponse,
   IIssue,
-  IProjectMember,
   IssueResponse,
   ModuleIssueResponse,
   NestedKeyOf,
@@ -31,14 +34,14 @@ import {
   UserAuth,
 } from "types";
 // fetch-keys
-import { STATE_LIST, CYCLE_ISSUES, MODULE_ISSUES, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import { CYCLE_ISSUES, MODULE_ISSUES, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 
 type Props = {
   index: number;
   type?: string;
   issue: IIssue;
+  selectedGroup: NestedKeyOf<IIssue> | null;
   properties: Properties;
-  members: IProjectMember[] | undefined;
   handleDeleteIssue: (issue: IIssue) => void;
   orderBy: NestedKeyOf<IIssue> | "manual" | null;
   userAuth: UserAuth;
@@ -48,21 +51,14 @@ export const SingleBoardIssue: React.FC<Props> = ({
   index,
   type,
   issue,
+  selectedGroup,
   properties,
-  members,
   handleDeleteIssue,
   orderBy,
   userAuth,
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
-
-  const { data: states } = useSWR(
-    workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
-      : null
-  );
 
   const partialUpdateIssue = useCallback(
     (formData: Partial<IIssue>) => {
@@ -125,16 +121,8 @@ export const SingleBoardIssue: React.FC<Props> = ({
       issuesService
         .patchIssue(workspaceSlug as string, projectId as string, issue.id, formData)
         .then((res) => {
-          mutate(
-            cycleId
-              ? CYCLE_ISSUES(cycleId as string)
-              : CYCLE_ISSUES(issue?.issue_cycle?.cycle ?? "")
-          );
-          mutate(
-            moduleId
-              ? MODULE_ISSUES(moduleId as string)
-              : MODULE_ISSUES(issue?.issue_module?.module ?? "")
-          );
+          if (cycleId) mutate(CYCLE_ISSUES(cycleId as string));
+          if (moduleId) mutate(MODULE_ISSUES(moduleId as string));
 
           mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
         })
@@ -164,7 +152,12 @@ export const SingleBoardIssue: React.FC<Props> = ({
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   return (
-    <Draggable key={issue.id} draggableId={issue.id} index={index}>
+    <Draggable
+      key={issue.id}
+      draggableId={issue.id}
+      index={index}
+      isDragDisabled={selectedGroup === "created_by"}
+    >
       {(provided, snapshot) => (
         <div
           className={`rounded border bg-white shadow-sm ${
@@ -204,22 +197,22 @@ export const SingleBoardIssue: React.FC<Props> = ({
             </Link>
             <div className="flex flex-wrap items-center gap-x-1 gap-y-2 text-xs">
               {properties.priority && (
-                <PrioritySelect
+                <ViewPrioritySelect
                   issue={issue}
                   partialUpdateIssue={partialUpdateIssue}
                   isNotAllowed={isNotAllowed}
+                  position="left"
                 />
               )}
               {properties.state && (
-                <StateSelect
+                <ViewStateSelect
                   issue={issue}
-                  states={states}
                   partialUpdateIssue={partialUpdateIssue}
                   isNotAllowed={isNotAllowed}
                 />
               )}
               {properties.due_date && (
-                <DueDateSelect
+                <ViewDueDateSelect
                   issue={issue}
                   partialUpdateIssue={partialUpdateIssue}
                   isNotAllowed={isNotAllowed}
@@ -232,9 +225,8 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 </div>
               )}
               {properties.assignee && (
-                <AssigneeSelect
+                <ViewAssigneeSelect
                   issue={issue}
-                  members={members}
                   partialUpdateIssue={partialUpdateIssue}
                   isNotAllowed={isNotAllowed}
                 />

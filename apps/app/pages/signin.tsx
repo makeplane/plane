@@ -62,27 +62,30 @@ const SignInPage: NextPage = () => {
     }
   };
 
-  const handleGithubSignIn = (githubToken: string) => {
-    setLoading(true);
-    authenticationService
-      .socialAuth({
-        medium: "github",
-        credential: githubToken,
-        clientId: NEXT_PUBLIC_GITHUB_ID,
-      })
-      .then(async () => {
-        await onSignInSuccess();
-      })
-      .catch((err) => {
-        console.log(err);
-        setToastAlert({
-          title: "Error signing in!",
-          type: "error",
-          message: "Something went wrong. Please try again later or contact the support team.",
+  const handleGithubSignIn = useCallback(
+    (credential: string) => {
+      setLoading(true);
+      authenticationService
+        .socialAuth({
+          medium: "github",
+          credential,
+          clientId: NEXT_PUBLIC_GITHUB_ID,
+        })
+        .then(async () => {
+          await onSignInSuccess();
+        })
+        .catch((err) => {
+          console.log(err);
+          setToastAlert({
+            title: "Error signing in!",
+            type: "error",
+            message: "Something went wrong. Please try again later or contact the support team.",
+          });
+          setLoading(false);
         });
-        setLoading(false);
-      });
-  };
+    },
+    [onSignInSuccess, setToastAlert]
+  );
 
   return (
     <DefaultLayout

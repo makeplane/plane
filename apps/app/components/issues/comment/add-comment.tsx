@@ -10,7 +10,7 @@ import issuesServices from "services/issues.service";
 // ui
 import { Loader } from "components/ui";
 // helpers
-import { debounce } from "helpers/functions.helper";
+import { debounce } from "helpers/common.helper";
 // types
 import type { IIssueActivity, IIssueComment } from "types";
 import type { KeyedMutator } from "swr";
