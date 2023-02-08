@@ -3,7 +3,10 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
-
+import { NextPageContext } from "next";
+// icons
+import { ArrowLeftIcon, ListBulletIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { CyclesIcon } from "components/icons";
 // lib
 import { requiredAdmin, requiredAuth } from "lib/auth";
 // layouts
@@ -21,19 +24,17 @@ import projectService from "services/project.service";
 // ui
 import { CustomMenu, EmptySpace, EmptySpaceItem, Spinner } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-// icons
-import { ArrowLeftIcon, ListBulletIcon, PlusIcon } from "@heroicons/react/24/outline";
-import { CyclesIcon } from "components/icons";
 // types
-import { CycleIssueResponse, IIssue, SelectIssue, UserAuth } from "types";
-import { NextPageContext } from "next";
+import { CycleIssueResponse, IIssue, IIssueLabels, SelectIssue, UserAuth } from "types";
 // fetch-keys
 import {
   CYCLE_ISSUES,
   CYCLE_LIST,
   PROJECT_ISSUES_LIST,
   PROJECT_DETAILS,
+  PROJECT_ISSUE_LABELS,
   CYCLE_DETAILS,
+  PROJECT_MEMBERS,
 } from "constants/fetch-keys";
 
 const SingleCycle: React.FC<UserAuth> = (props) => {
@@ -95,6 +96,7 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
           )
       : null
   );
+
   const cycleIssuesArray = cycleIssues?.map((issue) => ({
     ...issue.issue_detail,
     sub_issues_count: issue.sub_issues_count,
@@ -241,6 +243,7 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
           </div>
         )}
         <CycleDetailSidebar
+          issues={cycleIssuesArray ?? []}
           cycle={cycleDetails}
           isOpen={cycleSidebar}
           cycleIssues={cycleIssues ?? []}
