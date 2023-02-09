@@ -52,14 +52,13 @@ const StatesSettings: NextPage<UserAuth> = (props) => {
       : null
   );
   const orderedStateGroups = orderStateGroups(states ?? {});
-
-  const statesList = getStatesList(orderStateGroups ?? {});
+  const statesList = getStatesList(orderedStateGroups ?? {});
 
   return (
     <>
       <DeleteStateModal
         isOpen={!!selectDeleteState}
-        data={statesList?.find((state) => state.id === selectDeleteState) ?? null}
+        data={statesList?.find((s) => s.id === selectDeleteState) ?? null}
         onClose={() => setSelectDeleteState(null)}
       />
       <AppLayout
@@ -115,7 +114,7 @@ const StatesSettings: NextPage<UserAuth> = (props) => {
                             <div
                               key={state.id}
                               className={`flex items-center justify-between gap-2 border-b bg-gray-50 p-3 ${
-                                Boolean(activeGroup !== key) ? "last:border-0" : ""
+                                activeGroup !== key ? "last:border-0" : ""
                               }`}
                             >
                               <div className="flex items-center gap-2">

@@ -7,18 +7,19 @@ import { mutate } from "swr";
 
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
-// icons
-import { CalendarDaysIcon, ChartPieIcon, LinkIcon, UserIcon } from "@heroicons/react/24/outline";
-
-// progress-bar
+// react-circular-progressbar
 import { CircularProgressbar } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
 // ui
 import { Loader, CustomDatePicker } from "components/ui";
-import "react-circular-progressbar/dist/styles.css";
 // hooks
 import useToast from "hooks/use-toast";
 // services
 import cyclesService from "services/cycles.service";
+// components
+import SidebarProgressStats from "components/core/sidebar/sidebar-progress-stats";
+// icons
+import { CalendarDaysIcon, ChartPieIcon, LinkIcon, UserIcon } from "@heroicons/react/24/outline";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 import { groupBy } from "helpers/array.helper";
@@ -26,7 +27,6 @@ import { groupBy } from "helpers/array.helper";
 import { CycleIssueResponse, ICycle, IIssue } from "types";
 // fetch-keys
 import { CYCLE_DETAILS } from "constants/fetch-keys";
-import SidebarProgressStats from "components/core/sidebar/sidebar-progress-stats";
 
 type Props = {
   issues: IIssue[];

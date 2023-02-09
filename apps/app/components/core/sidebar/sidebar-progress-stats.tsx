@@ -1,21 +1,26 @@
 import React from "react";
-import { Tab } from "@headlessui/react";
-import { useRouter } from "next/router";
-import useSWR from "swr";
+
 import Image from "next/image";
+import { useRouter } from "next/router";
+
+import useSWR from "swr";
+
+// headless ui
+import { Tab } from "@headlessui/react";
+// services
+import issuesServices from "services/issues.service";
+import projectService from "services/project.service";
+// components
+import SingleProgressStats from "components/core/sidebar/single-progress-stats";
 // ui
-import SingleProgressStats from "./single-progress-stats";
 import { Avatar } from "components/ui";
 // icons
 import User from "public/user.png";
 // types
 import { IIssue, IIssueLabels } from "types";
-// constants
+// fetch-keys
 import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS } from "constants/fetch-keys";
-// services
-import issuesServices from "services/issues.service";
-import projectService from "services/project.service";
-
+// types
 type Props = {
   groupedIssues: any;
   issues: IIssue[];

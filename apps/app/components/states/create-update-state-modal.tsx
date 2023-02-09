@@ -81,7 +81,7 @@ export const CreateUpdateStateModal: React.FC<Props> = ({
       await stateService
         .createState(workspaceSlug as string, projectId, payload)
         .then((res) => {
-          mutate<IState[]>(STATE_LIST(projectId), (prevData) => [...(prevData ?? []), res], false);
+          mutate(STATE_LIST(projectId));
           onClose();
         })
         .catch((err) => {
@@ -95,19 +95,7 @@ export const CreateUpdateStateModal: React.FC<Props> = ({
       await stateService
         .updateState(workspaceSlug as string, projectId, data.id, payload)
         .then((res) => {
-          mutate<IState[]>(
-            STATE_LIST(projectId),
-            (prevData) => {
-              const newData = prevData?.map((item) => {
-                if (item.id === res.id) {
-                  return res;
-                }
-                return item;
-              });
-              return newData;
-            },
-            false
-          );
+          mutate(STATE_LIST(projectId));
           onClose();
         })
         .catch((err) => {
