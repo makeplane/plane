@@ -10,6 +10,8 @@ import { Controller, useForm } from "react-hook-form";
 // react-circular-progressbar
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
+// icons
+import { CalendarDaysIcon, ChartPieIcon, LinkIcon, UserIcon } from "@heroicons/react/24/outline";
 // ui
 import { Loader, CustomDatePicker } from "components/ui";
 // hooks
@@ -18,8 +20,6 @@ import useToast from "hooks/use-toast";
 import cyclesService from "services/cycles.service";
 // components
 import SidebarProgressStats from "components/core/sidebar/sidebar-progress-stats";
-// icons
-import { CalendarDaysIcon, ChartPieIcon, LinkIcon, UserIcon } from "@heroicons/react/24/outline";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 import { groupBy } from "helpers/array.helper";
@@ -28,6 +28,7 @@ import { CycleIssueResponse, ICycle, IIssue } from "types";
 // fetch-keys
 import { CYCLE_DETAILS } from "constants/fetch-keys";
 
+import { renderShortNumericDateFormat } from "helpers/date-time.helper";
 type Props = {
   issues: IIssue[];
   cycle: ICycle | undefined;
@@ -94,6 +95,22 @@ const CycleDetailSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cycleIssue
     >
       {cycle ? (
         <>
+          <div className="flex gap-2 text-sm my-2">
+            <div className="px-2 py-1 rounded bg-gray-200">
+              <span className="capitalize">{cycle.status}</span>
+            </div>
+            <div className="px-2 py-1 rounded bg-gray-200">
+              <span>
+                {renderShortNumericDateFormat(`${cycle.start_date}`)
+                  ? renderShortNumericDateFormat(`${cycle.start_date}`)
+                  : "N/A"}{" "}
+                -{" "}
+                {renderShortNumericDateFormat(`${cycle.end_date}`)
+                  ? renderShortNumericDateFormat(`${cycle.end_date}`)
+                  : "N/A"}
+              </span>
+            </div>
+          </div>
           <div className="flex items-center justify-between pb-3">
             <h4 className="text-sm font-medium">{cycle.name}</h4>
             <div className="flex flex-wrap items-center gap-2">
