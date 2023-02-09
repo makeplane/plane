@@ -12,6 +12,7 @@ import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 // icons
 import { CalendarDaysIcon, ChartPieIcon, LinkIcon, UserIcon } from "@heroicons/react/24/outline";
+import { CycleSidebarStatusSelect } from "components/project/cycles";
 // ui
 import { Loader, CustomDatePicker } from "components/ui";
 // hooks
@@ -29,16 +30,12 @@ import { CycleIssueResponse, ICycle, IIssue } from "types";
 import { CYCLE_DETAILS } from "constants/fetch-keys";
 
 import { renderShortNumericDateFormat } from "helpers/date-time.helper";
+
 type Props = {
   issues: IIssue[];
   cycle: ICycle | undefined;
   isOpen: boolean;
   cycleIssues: CycleIssueResponse[];
-};
-
-const defaultValues: Partial<ICycle> = {
-  start_date: new Date().toString(),
-  end_date: new Date().toString(),
 };
 
 const CycleDetailSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cycleIssues }) => {
@@ -47,9 +44,11 @@ const CycleDetailSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cycleIssue
 
   const { setToastAlert } = useToast();
 
-  const { reset, control } = useForm({
-    defaultValues,
-  });
+  const defaultValues: Partial<ICycle> = {
+    start_date: new Date().toString(),
+    end_date: new Date().toString(),
+    status: cycle?.status,
+  };
 
   const groupedIssues = {
     backlog: [],
@@ -59,6 +58,10 @@ const CycleDetailSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cycleIssue
     completed: [],
     ...groupBy(cycleIssues ?? [], "issue_detail.state_detail.group"),
   };
+
+  const { reset, watch, control } = useForm({
+    defaultValues,
+  });
 
   const submitChanges = (data: Partial<ICycle>) => {
     if (!workspaceSlug || !projectId || !cycleId) return;
@@ -236,6 +239,11 @@ const CycleDetailSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cycleIssue
                   />
                 </div>
               </div>
+              <CycleSidebarStatusSelect
+                control={control}
+                submitChanges={submitChanges}
+                watch={watch}
+              />
             </div>
             <div className="py-1" />
           </div>
