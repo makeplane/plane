@@ -13,7 +13,6 @@ import {
 } from "@heroicons/react/24/outline";
 // swr
 // services
-import type { NextPage } from "next";
 import workspaceService from "services/workspace.service";
 // hooks
 import useUser from "hooks/use-user";
@@ -23,6 +22,8 @@ import DefaultLayout from "layouts/default-layout";
 import { Spinner } from "components/ui";
 // icons
 import { EmptySpace, EmptySpaceItem } from "components/ui/empty-space";
+// types
+import type { NextPage } from "next";
 // constants
 import { WORKSPACE_INVITATION } from "constants/fetch-keys";
 

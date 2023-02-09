@@ -7,45 +7,48 @@ import { mutate } from "swr";
 
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
-// icons
-import { CalendarDaysIcon, ChartPieIcon, LinkIcon, UserIcon } from "@heroicons/react/24/outline";
-// services
-import cyclesService from "services/cycles.service";
-// hooks
-import useToast from "hooks/use-toast";
-// ui
-import { Loader, CustomDatePicker } from "components/ui";
-// progress-bar
+// react-circular-progressbar
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
+// icons
+import { CalendarDaysIcon, ChartPieIcon, LinkIcon, UserIcon } from "@heroicons/react/24/outline";
+import { CycleSidebarStatusSelect } from "components/project/cycles";
+// ui
+import { Loader, CustomDatePicker } from "components/ui";
+// hooks
+import useToast from "hooks/use-toast";
+// services
+import cyclesService from "services/cycles.service";
+// components
+import SidebarProgressStats from "components/core/sidebar/sidebar-progress-stats";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 import { groupBy } from "helpers/array.helper";
 // types
-import { CycleIssueResponse, ICycle } from "types";
+import { CycleIssueResponse, ICycle, IIssue } from "types";
 // fetch-keys
 import { CYCLE_DETAILS } from "constants/fetch-keys";
 
+import { renderShortNumericDateFormat } from "helpers/date-time.helper";
+
 type Props = {
+  issues: IIssue[];
   cycle: ICycle | undefined;
   isOpen: boolean;
   cycleIssues: CycleIssueResponse[];
 };
 
-const defaultValues: Partial<ICycle> = {
-  start_date: new Date().toString(),
-  end_date: new Date().toString(),
-};
-
-const CycleDetailSidebar: React.FC<Props> = ({ cycle, isOpen, cycleIssues }) => {
+const CycleDetailSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cycleIssues }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
 
   const { setToastAlert } = useToast();
 
-  const { reset, control } = useForm({
-    defaultValues,
-  });
+  const defaultValues: Partial<ICycle> = {
+    start_date: new Date().toString(),
+    end_date: new Date().toString(),
+    status: cycle?.status,
+  };
 
   const groupedIssues = {
     backlog: [],
@@ -55,6 +58,10 @@ const CycleDetailSidebar: React.FC<Props> = ({ cycle, isOpen, cycleIssues }) => 
     completed: [],
     ...groupBy(cycleIssues ?? [], "issue_detail.state_detail.group"),
   };
+
+  const { reset, watch, control } = useForm({
+    defaultValues,
+  });
 
   const submitChanges = (data: Partial<ICycle>) => {
     if (!workspaceSlug || !projectId || !cycleId) return;
@@ -91,6 +98,22 @@ const CycleDetailSidebar: React.FC<Props> = ({ cycle, isOpen, cycleIssues }) => 
     >
       {cycle ? (
         <>
+          <div className="flex gap-2 text-sm my-2">
+            <div className="px-2 py-1 rounded bg-gray-200">
+              <span className="capitalize">{cycle.status}</span>
+            </div>
+            <div className="px-2 py-1 rounded bg-gray-200">
+              <span>
+                {renderShortNumericDateFormat(`${cycle.start_date}`)
+                  ? renderShortNumericDateFormat(`${cycle.start_date}`)
+                  : "N/A"}{" "}
+                -{" "}
+                {renderShortNumericDateFormat(`${cycle.end_date}`)
+                  ? renderShortNumericDateFormat(`${cycle.end_date}`)
+                  : "N/A"}
+              </span>
+            </div>
+          </div>
           <div className="flex items-center justify-between pb-3">
             <h4 className="text-sm font-medium">{cycle.name}</h4>
             <div className="flex flex-wrap items-center gap-2">
@@ -216,8 +239,16 @@ const CycleDetailSidebar: React.FC<Props> = ({ cycle, isOpen, cycleIssues }) => 
                   />
                 </div>
               </div>
+              <CycleSidebarStatusSelect
+                control={control}
+                submitChanges={submitChanges}
+                watch={watch}
+              />
             </div>
             <div className="py-1" />
+          </div>
+          <div className="w-full">
+            <SidebarProgressStats issues={issues} groupedIssues={groupedIssues} />
           </div>
         </>
       ) : (

@@ -21,7 +21,7 @@ type Props = {
 
 const defaultValues: Partial<IIssueLabels> = {
   name: "",
-  colour: "#ff0000",
+  color: "#ff0000",
 };
 
 const SingleLabel: React.FC<Props> = ({ label, issueLabels, editLabel, handleLabelDelete }) => {
@@ -45,7 +45,7 @@ const SingleLabel: React.FC<Props> = ({ label, issueLabels, editLabel, handleLab
               <span
                 className="h-3 w-3 flex-shrink-0 rounded-full"
                 style={{
-                  backgroundColor: label.colour,
+                  backgroundColor: label.color,
                 }}
               />
               <h6 className="text-sm">{label.name}</h6>
@@ -68,11 +68,11 @@ const SingleLabel: React.FC<Props> = ({ label, issueLabels, editLabel, handleLab
                         open ? "text-gray-900" : "text-gray-500"
                       }`}
                     >
-                      {watch("colour") && watch("colour") !== "" && (
+                      {watch("color") && watch("color") !== "" && (
                         <span
                           className="h-4 w-4 rounded"
                           style={{
-                            backgroundColor: watch("colour") ?? "green",
+                            backgroundColor: watch("color") ?? "green",
                           }}
                         />
                       )}
@@ -89,7 +89,7 @@ const SingleLabel: React.FC<Props> = ({ label, issueLabels, editLabel, handleLab
                     >
                       <Popover.Panel className="absolute top-full left-0 z-20 mt-3 w-screen max-w-xs px-2 sm:px-0">
                         <Controller
-                          name="colour"
+                          name="color"
                           control={control}
                           render={({ field: { value, onChange } }) => (
                             <TwitterPicker

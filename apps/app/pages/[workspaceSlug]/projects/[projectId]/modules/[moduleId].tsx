@@ -1,9 +1,17 @@
 import React, { useState } from "react";
 
 import { useRouter } from "next/router";
-
+import { NextPageContext } from "next";
 import useSWR, { mutate } from "swr";
 
+// icons
+import {
+  ArrowLeftIcon,
+  ListBulletIcon,
+  PlusIcon,
+  RectangleGroupIcon,
+  RectangleStackIcon,
+} from "@heroicons/react/24/outline";
 // lib
 import { requiredAdmin, requiredAuth } from "lib/auth";
 // services
@@ -20,14 +28,6 @@ import { DeleteModuleModal, ModuleDetailsSidebar } from "components/modules";
 // ui
 import { CustomMenu, EmptySpace, EmptySpaceItem, Spinner } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-// icons
-import {
-  ArrowLeftIcon,
-  ListBulletIcon,
-  PlusIcon,
-  RectangleGroupIcon,
-  RectangleStackIcon,
-} from "@heroicons/react/24/outline";
 // types
 import {
   IIssue,
@@ -37,7 +37,7 @@ import {
   SelectModuleType,
   UserAuth,
 } from "types";
-import { NextPageContext } from "next";
+
 // fetch-keys
 import {
   MODULE_DETAILS,
@@ -245,7 +245,12 @@ const SingleModule: React.FC<UserAuth> = (props) => {
                   title="Create a new issue"
                   description="Click to create a new issue inside the module."
                   Icon={PlusIcon}
-                  action={openCreateIssueModal}
+                  action={() => {
+                    const e = new KeyboardEvent("keydown", {
+                      key: "c",
+                    });
+                    document.dispatchEvent(e);
+                  }}
                 />
                 <EmptySpaceItem
                   title="Add an existing issue"
@@ -262,6 +267,7 @@ const SingleModule: React.FC<UserAuth> = (props) => {
           </div>
         )}
         <ModuleDetailsSidebar
+          issues={moduleIssuesArray ?? []}
           module={moduleDetails}
           isOpen={moduleSidebar}
           moduleIssues={moduleIssues}

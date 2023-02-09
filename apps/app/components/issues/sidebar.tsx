@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 
 import { useRouter } from "next/router";
 
@@ -56,7 +56,7 @@ type Props = {
 
 const defaultValues: Partial<IIssueLabels> = {
   name: "",
-  colour: "#ff0000",
+  color: "#ff0000",
 };
 
 export const IssueDetailsSidebar: React.FC<Props> = ({
@@ -113,29 +113,35 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
       });
   };
 
-  const handleCycleChange = (cycleDetail: ICycle) => {
-    if (!workspaceSlug || !projectId || !issueDetail) return;
+  const handleCycleChange = useCallback(
+    (cycleDetail: ICycle) => {
+      if (!workspaceSlug || !projectId || !issueDetail) return;
 
-    issuesServices
-      .addIssueToCycle(workspaceSlug as string, projectId as string, cycleDetail.id, {
-        issues: [issueDetail.id],
-      })
-      .then((res) => {
-        mutate(ISSUE_DETAILS(issueId as string));
-      });
-  };
+      issuesServices
+        .addIssueToCycle(workspaceSlug as string, projectId as string, cycleDetail.id, {
+          issues: [issueDetail.id],
+        })
+        .then((res) => {
+          mutate(ISSUE_DETAILS(issueId as string));
+        });
+    },
+    [workspaceSlug, projectId, issueId, issueDetail]
+  );
 
-  const handleModuleChange = (moduleDetail: IModule) => {
-    if (!workspaceSlug || !projectId || !issueDetail) return;
+  const handleModuleChange = useCallback(
+    (moduleDetail: IModule) => {
+      if (!workspaceSlug || !projectId || !issueDetail) return;
 
-    modulesService
-      .addIssuesToModule(workspaceSlug as string, projectId as string, moduleDetail.id, {
-        issues: [issueDetail.id],
-      })
-      .then((res) => {
-        mutate(ISSUE_DETAILS(issueId as string));
-      });
-  };
+      modulesService
+        .addIssuesToModule(workspaceSlug as string, projectId as string, moduleDetail.id, {
+          issues: [issueDetail.id],
+        })
+        .then((res) => {
+          mutate(ISSUE_DETAILS(issueId as string));
+        });
+    },
+    [workspaceSlug, projectId, issueId, issueDetail]
+  );
 
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
@@ -310,7 +316,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                     >
                       <span
                         className="h-2 w-2 flex-shrink-0 rounded-full"
-                        style={{ backgroundColor: singleLabel?.colour ?? "green" }}
+                        style={{ backgroundColor: singleLabel?.color ?? "green" }}
                       />
                       {singleLabel.name}
                       <XMarkIcon className="h-2 w-2 group-hover:text-red-500" />
@@ -366,7 +372,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                                         >
                                           <span
                                             className="h-2 w-2 flex-shrink-0 rounded-full"
-                                            style={{ backgroundColor: label.colour ?? "green" }}
+                                            style={{ backgroundColor: label.color ?? "green" }}
                                           />
                                           {label.name}
                                         </Listbox.Option>
@@ -416,11 +422,11 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                       <Popover.Button
                         className={`flex items-center gap-1 rounded-md bg-white p-1 outline-none focus:ring-2 focus:ring-indigo-500`}
                       >
-                        {watch("colour") && watch("colour") !== "" && (
+                        {watch("color") && watch("color") !== "" && (
                           <span
                             className="h-5 w-5 rounded"
                             style={{
-                              backgroundColor: watch("colour") ?? "green",
+                              backgroundColor: watch("color") ?? "green",
                             }}
                           />
                         )}
@@ -438,7 +444,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                       >
                         <Popover.Panel className="absolute right-0 bottom-8 z-10 mt-1 max-w-xs transform px-2 sm:px-0">
                           <Controller
-                            name="colour"
+                            name="color"
                             control={controlLabel}
                             render={({ field: { value, onChange } }) => (
                               <TwitterPicker

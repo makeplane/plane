@@ -72,7 +72,7 @@ export const IssueLabelSelect: React.FC<Props> = ({ value, onChange, projectId }
   const options = issueLabels?.map((label) => ({
     value: label.id,
     display: label.name,
-    color: label.colour,
+    color: label.color,
   }));
 
   const filteredOptions =

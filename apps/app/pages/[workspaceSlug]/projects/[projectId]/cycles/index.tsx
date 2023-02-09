@@ -177,7 +177,7 @@ const ProjectCycles: NextPage = () => {
                 title="Create a new cycle"
                 description={
                   <span>
-                    Use <pre className="inline rounded bg-gray-100 px-2 py-1">Q</pre> shortcut to
+                    Use <pre className="inline rounded bg-gray-200 px-2 py-1">Q</pre> shortcut to
                     create a new cycle
                   </span>
                 }

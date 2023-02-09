@@ -1,11 +1,15 @@
 import React, { useState } from "react";
+
 import { useRouter } from "next/router";
+
 import useSWR from "swr";
+
+// react-hook-form
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { PlusIcon } from "@heroicons/react/24/outline";
-import { Popover, Transition } from "@headlessui/react";
+// react-color
 import { TwitterPicker } from "react-color";
-import type { NextPageContext, NextPage } from "next";
+// headless ui
+import { Popover, Transition } from "@headlessui/react";
 // services
 import projectService from "services/project.service";
 import workspaceService from "services/workspace.service";
@@ -13,49 +17,46 @@ import issuesService from "services/issues.service";
 // lib
 import { requiredAdmin } from "lib/auth";
 // layouts
-import SettingsLayout from "layouts/settings-layout";
+import AppLayout from "layouts/app-layout";
 // components
-import SingleLabel from "components/project/settings/single-label";
+import { SingleLabel } from "components/labels";
 // ui
 import { Button, Input, Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+// icons
+import { PlusIcon } from "@heroicons/react/24/outline";
+// types
+import { IIssueLabels, UserAuth } from "types";
+import type { NextPageContext, NextPage } from "next";
 // fetch-keys
 import { PROJECT_DETAILS, PROJECT_ISSUE_LABELS, WORKSPACE_DETAILS } from "constants/fetch-keys";
-// types
-import { IIssueLabels } from "types";
 
 const defaultValues: Partial<IIssueLabels> = {
   name: "",
-  colour: "#ff0000",
+  color: "#ff0000",
 };
 
-type TLabelSettingsProps = {
-  isMember: boolean;
-  isOwner: boolean;
-  isViewer: boolean;
-  isGuest: boolean;
-};
-
-const LabelsSettings: NextPage<TLabelSettingsProps> = (props) => {
+const LabelsSettings: NextPage<UserAuth> = (props) => {
   const { isMember, isOwner, isViewer, isGuest } = props;
 
-  const [newLabelForm, setNewLabelForm] = useState(false);
+  const [labelForm, setLabelForm] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [labelIdForUpdate, setLabelIdForUpdate] = useState<string | null>(null);
 
-  const {
-    query: { workspaceSlug, projectId },
-  } = useRouter();
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
 
-  const { data: activeWorkspace } = useSWR(
-    workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
-    () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null)
-  );
-
-  const { data: activeProject } = useSWR(
+  const { data: projectDetails } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
     workspaceSlug && projectId
       ? () => projectService.getProject(workspaceSlug as string, projectId as string)
+      : null
+  );
+
+  const { data: issueLabels, mutate } = useSWR<IIssueLabels[]>(
+    workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -69,36 +70,37 @@ const LabelsSettings: NextPage<TLabelSettingsProps> = (props) => {
     watch,
   } = useForm<IIssueLabels>({ defaultValues });
 
-  const { data: issueLabels, mutate } = useSWR<IIssueLabels[]>(
-    workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string)
-      : null
-  );
-
-  const handleNewLabel: SubmitHandler<IIssueLabels> = async (formData) => {
-    if (!activeWorkspace || !activeProject || isSubmitting) return;
-    await issuesService
-      .createIssueLabel(activeWorkspace.slug, activeProject.id, formData)
-      .then((res) => {
-        reset(defaultValues);
-        mutate((prevData) => [...(prevData ?? []), res], false);
-        setNewLabelForm(false);
-      });
+  const newLabel = () => {
+    reset();
+    setIsUpdating(false);
+    setLabelForm(true);
   };
 
   const editLabel = (label: IIssueLabels) => {
-    setNewLabelForm(true);
-    setValue("colour", label.colour);
+    setLabelForm(true);
+    setValue("color", label.color);
     setValue("name", label.name);
     setIsUpdating(true);
     setLabelIdForUpdate(label.id);
   };
 
-  const handleLabelUpdate: SubmitHandler<IIssueLabels> = async (formData) => {
-    if (!activeWorkspace || !activeProject || isSubmitting) return;
+  const handleLabelCreate: SubmitHandler<IIssueLabels> = async (formData) => {
+    if (!workspaceSlug || !projectDetails || isSubmitting) return;
+
     await issuesService
-      .patchIssueLabel(activeWorkspace.slug, activeProject.id, labelIdForUpdate ?? "", formData)
+      .createIssueLabel(workspaceSlug as string, projectDetails.id, formData)
+      .then((res) => {
+        mutate((prevData) => [res, ...(prevData ?? [])], false);
+        reset(defaultValues);
+        setLabelForm(false);
+      });
+  };
+
+  const handleLabelUpdate: SubmitHandler<IIssueLabels> = async (formData) => {
+    if (!workspaceSlug || !projectDetails || isSubmitting) return;
+
+    await issuesService
+      .patchIssueLabel(workspaceSlug as string, projectDetails.id, labelIdForUpdate ?? "", formData)
       .then((res) => {
         console.log(res);
         reset(defaultValues);
@@ -107,15 +109,15 @@ const LabelsSettings: NextPage<TLabelSettingsProps> = (props) => {
             prevData?.map((p) => (p.id === labelIdForUpdate ? { ...p, ...formData } : p)),
           false
         );
-        setNewLabelForm(false);
+        setLabelForm(false);
       });
   };
 
   const handleLabelDelete = (labelId: string) => {
-    if (activeWorkspace && activeProject) {
+    if (workspaceSlug && projectDetails) {
       mutate((prevData) => prevData?.filter((p) => p.id !== labelId), false);
       issuesService
-        .deleteIssueLabel(activeWorkspace.slug, activeProject.id, labelId)
+        .deleteIssueLabel(workspaceSlug as string, projectDetails.id, labelId)
         .then((res) => {
           console.log(res);
         })
@@ -126,14 +128,14 @@ const LabelsSettings: NextPage<TLabelSettingsProps> = (props) => {
   };
 
   return (
-    <SettingsLayout
-      type="project"
+    <AppLayout
+      settingsLayout="project"
       memberType={{ isMember, isOwner, isViewer, isGuest }}
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem
-            title={`${activeProject?.name ?? "Project"}`}
-            link={`/${workspaceSlug}/projects/${activeProject?.id}/issues`}
+            title={`${projectDetails?.name ?? "Project"}`}
+            link={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
           />
           <BreadcrumbItem title="Labels Settings" />
         </Breadcrumbs>
@@ -146,11 +148,7 @@ const LabelsSettings: NextPage<TLabelSettingsProps> = (props) => {
         </div>
         <div className="flex items-center justify-between gap-2 md:w-2/3">
           <h4 className="text-md mb-1 leading-6 text-gray-900">Manage labels</h4>
-          <Button
-            theme="secondary"
-            className="flex items-center gap-x-1"
-            onClick={() => setNewLabelForm(true)}
-          >
+          <Button theme="secondary" className="flex items-center gap-x-1" onClick={newLabel}>
             <PlusIcon className="h-4 w-4" />
             New label
           </Button>
@@ -158,7 +156,7 @@ const LabelsSettings: NextPage<TLabelSettingsProps> = (props) => {
         <div className="space-y-5">
           <div
             className={`flex items-center gap-2 rounded-md border p-3 md:w-2/3 ${
-              newLabelForm ? "" : "hidden"
+              labelForm ? "" : "hidden"
             }`}
           >
             <div className="h-8 w-8 flex-shrink-0">
@@ -170,13 +168,13 @@ const LabelsSettings: NextPage<TLabelSettingsProps> = (props) => {
                         open ? "text-gray-900" : "text-gray-500"
                       }`}
                     >
-                      {watch("colour") && watch("colour") !== "" && (
+                      {watch("color") && watch("color") !== "" && (
                         <span
                           className="h-4 w-4 rounded"
                           style={{
-                            backgroundColor: watch("colour") ?? "green",
+                            backgroundColor: watch("color") ?? "green",
                           }}
-                         />
+                        />
                       )}
                     </Popover.Button>
 
@@ -191,7 +189,7 @@ const LabelsSettings: NextPage<TLabelSettingsProps> = (props) => {
                     >
                       <Popover.Panel className="absolute top-full left-0 z-20 mt-3 w-screen max-w-xs px-2 sm:px-0">
                         <Controller
-                          name="colour"
+                          name="color"
                           control={control}
                           render={({ field: { value, onChange } }) => (
                             <TwitterPicker
@@ -219,7 +217,14 @@ const LabelsSettings: NextPage<TLabelSettingsProps> = (props) => {
                 error={errors.name}
               />
             </div>
-            <Button type="button" theme="secondary" onClick={() => setNewLabelForm(false)}>
+            <Button
+              type="button"
+              theme="secondary"
+              onClick={() => {
+                reset();
+                setLabelForm(false);
+              }}
+            >
               Cancel
             </Button>
             {isUpdating ? (
@@ -231,7 +236,11 @@ const LabelsSettings: NextPage<TLabelSettingsProps> = (props) => {
                 {isSubmitting ? "Updating" : "Update"}
               </Button>
             ) : (
-              <Button type="button" onClick={handleSubmit(handleNewLabel)} disabled={isSubmitting}>
+              <Button
+                type="button"
+                onClick={handleSubmit(handleLabelCreate)}
+                disabled={isSubmitting}
+              >
                 {isSubmitting ? "Adding" : "Add"}
               </Button>
             )}
@@ -258,7 +267,7 @@ const LabelsSettings: NextPage<TLabelSettingsProps> = (props) => {
           </>
         </div>
       </section>
-    </SettingsLayout>
+    </AppLayout>
   );
 };
 

@@ -4,6 +4,7 @@ from django.db import models
 from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils import timezone
 
 # Module imports
 from . import ProjectBaseModel
@@ -33,7 +34,7 @@ class Issue(ProjectBaseModel):
         related_name="state_issue",
     )
     name = models.CharField(max_length=255, verbose_name="Issue Name")
-    description = models.JSONField(blank=True, default="")
+    description = models.JSONField(blank=True, default=dict)
     description_html = models.TextField(blank=True, default="<p></p>")
     description_stripped = models.TextField(blank=True, null=True)
     priority = models.CharField(
@@ -58,6 +59,7 @@ class Issue(ProjectBaseModel):
         "db.Label", blank=True, related_name="labels", through="IssueLabel"
     )
     sort_order = models.FloatField(default=65535)
+    completed_at = models.DateTimeField(null=True)
 
     class Meta:
         verbose_name = "Issue"
@@ -86,7 +88,22 @@ class Issue(ProjectBaseModel):
                 )
             except ImportError:
                 pass
+        else:
+            try:
+                from plane.db.models import State
 
+                # Get the completed states of the project
+                completed_states = State.objects.filter(
+                    group="completed", project=self.project
+                ).values_list("pk", flat=True)
+                # Check if the current issue state and completed state id are same
+                if self.state.id in completed_states:
+                    self.completed_at = timezone.now()
+                else:
+                    self.completed_at = None
+
+            except ImportError:
+                pass
         # Strip the html tags using html parser
         self.description_stripped = (
             None
@@ -198,7 +215,7 @@ class TimelineIssue(ProjectBaseModel):
 
 class IssueComment(ProjectBaseModel):
     comment_stripped = models.TextField(verbose_name="Comment", blank=True)
-    comment_json = models.JSONField(blank=True, default="")
+    comment_json = models.JSONField(blank=True, default=dict)
     comment_html = models.TextField(blank=True, default="<p></p>")
     attachments = ArrayField(models.URLField(), size=10, blank=True, default=list)
     issue = models.ForeignKey(Issue, on_delete=models.CASCADE)

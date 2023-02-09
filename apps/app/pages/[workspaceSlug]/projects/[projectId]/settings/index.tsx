@@ -6,11 +6,11 @@ import useSWR, { mutate } from "swr";
 
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
-import { IProject, IWorkspace } from "types";
+import { IProject, IWorkspace, UserAuth } from "types";
 // lib
 import { requiredAdmin } from "lib/auth";
 // layouts
-import SettingsLayout from "layouts/settings-layout";
+import AppLayout from "layouts/app-layout";
 // services
 import projectService from "services/project.service";
 import workspaceService from "services/workspace.service";
@@ -24,13 +24,13 @@ import { Button, Input, TextArea, Loader, CustomSelect } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import OutlineButton from "components/ui/outline-button";
 // helpers
-import { debounce } from "helpers/functions.helper";
+import { debounce } from "helpers/common.helper";
 // types
 import type { NextPage, NextPageContext } from "next";
 // fetch-keys
 import { PROJECTS_LIST, PROJECT_DETAILS, WORKSPACE_DETAILS } from "constants/fetch-keys";
 // constants
-import { NETWORK_CHOICES } from "constants/";
+import { NETWORK_CHOICES } from "constants/project";
 
 const defaultValues: Partial<IProject> = {
   name: "",
@@ -39,14 +39,7 @@ const defaultValues: Partial<IProject> = {
   network: 0,
 };
 
-type TGeneralSettingsProps = {
-  isMember: boolean;
-  isOwner: boolean;
-  isViewer: boolean;
-  isGuest: boolean;
-};
-
-const GeneralSettings: NextPage<TGeneralSettingsProps> = (props) => {
+const GeneralSettings: NextPage<UserAuth> = (props) => {
   const { isMember, isOwner, isViewer, isGuest } = props;
 
   const [selectProject, setSelectedProject] = useState<string | null>(null);
@@ -100,6 +93,7 @@ const GeneralSettings: NextPage<TGeneralSettingsProps> = (props) => {
 
   const onSubmit = async (formData: IProject) => {
     if (!activeWorkspace || !projectDetails) return;
+
     const payload: Partial<IProject> = {
       name: formData.name,
       network: formData.network,
@@ -109,6 +103,7 @@ const GeneralSettings: NextPage<TGeneralSettingsProps> = (props) => {
       project_lead: formData.project_lead,
       icon: formData.icon,
     };
+
     await projectService
       .updateProject(activeWorkspace.slug, projectDetails.id, payload)
       .then((res) => {
@@ -130,9 +125,9 @@ const GeneralSettings: NextPage<TGeneralSettingsProps> = (props) => {
   };
 
   return (
-    <SettingsLayout
+    <AppLayout
+      settingsLayout="project"
       memberType={{ isMember, isOwner, isViewer, isGuest }}
-      type="project"
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem
@@ -341,7 +336,7 @@ const GeneralSettings: NextPage<TGeneralSettingsProps> = (props) => {
           </div>
         </div>
       </form>
-    </SettingsLayout>
+    </AppLayout>
   );
 };
 

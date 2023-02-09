@@ -34,7 +34,7 @@ export const GithubLoginButton: FC<GithubLoginButtonProps> = (props) => {
 
   return (
     <Link
-      href={`https://github.com/login/oauth/authorize?client_id=${NEXT_PUBLIC_GITHUB_ID}&redirect_uri=${loginCallBackURL}`}
+      href={`https://github.com/login/oauth/authorize?client_id=${NEXT_PUBLIC_GITHUB_ID}&redirect_uri=${loginCallBackURL}&scope=read:user,user:email`}
     >
       <button className="flex w-full items-center rounded bg-black px-3 py-2 text-sm text-white opacity-90 duration-300 hover:opacity-100">
         <Image

@@ -64,7 +64,7 @@ const CycleStatsView: React.FC<TCycleStatsViewProps> = ({
           )}
           <h3 className="text-gray-500">
             No {type} {type === "current" ? "cycle" : "cycles"} yet. Create with{" "}
-            <pre className="inline rounded bg-gray-100 px-2 py-1">Q</pre>.
+            <pre className="inline rounded bg-gray-200 px-2 py-1">Q</pre>.
           </h3>
         </div>
       )}

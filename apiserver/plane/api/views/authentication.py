@@ -9,6 +9,7 @@ from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.conf import settings
+from django.contrib.auth.hashers import make_password
 
 # Third party imports
 from rest_framework.response import Response
@@ -35,12 +36,10 @@ def get_tokens_for_user(user):
 
 
 class SignUpEndpoint(BaseAPIView):
-
     permission_classes = (AllowAny,)
 
     def post(self, request):
         try:
-
             email = request.data.get("email", False)
             password = request.data.get("password", False)
 
@@ -216,14 +215,12 @@ class SignOutEndpoint(BaseAPIView):
 
 
 class MagicSignInGenerateEndpoint(BaseAPIView):
-
     permission_classes = [
         AllowAny,
     ]
 
     def post(self, request):
         try:
-
             email = request.data.get("email", False)
 
             if not email:
@@ -269,7 +266,6 @@ class MagicSignInGenerateEndpoint(BaseAPIView):
                 ri.set(key, json.dumps(value), ex=expiry)
 
             else:
-
                 value = {"current_attempt": 0, "email": email, "token": token}
                 expiry = 600
 
@@ -293,14 +289,12 @@ class MagicSignInGenerateEndpoint(BaseAPIView):
 
 
 class MagicSignInEndpoint(BaseAPIView):
-
     permission_classes = [
         AllowAny,
     ]
 
     def post(self, request):
         try:
-
             user_token = request.data.get("token", "").strip().lower()
             key = request.data.get("key", False)
 
@@ -313,19 +307,20 @@ class MagicSignInEndpoint(BaseAPIView):
             ri = redis_instance()
 
             if ri.exists(key):
-
                 data = json.loads(ri.get(key))
 
                 token = data["token"]
                 email = data["email"]
 
                 if str(token) == str(user_token):
-
                     if User.objects.filter(email=email).exists():
                         user = User.objects.get(email=email)
                     else:
                         user = User.objects.create(
-                            email=email, username=uuid.uuid4().hex
+                            email=email,
+                            username=uuid.uuid4().hex,
+                            password=make_password(uuid.uuid4().hex),
+                            is_password_autoset=True,
                         )
 
                     user.last_active = timezone.now()

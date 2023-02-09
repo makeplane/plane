@@ -3,20 +3,23 @@ import React, { useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import useSWR, { mutate } from "swr";
+import { mutate } from "swr";
 
 // services
 import issuesService from "services/issues.service";
-import stateService from "services/state.service";
 // components
-import { AssigneeSelect, DueDateSelect, PrioritySelect, StateSelect } from "components/core/select";
+import {
+  ViewAssigneeSelect,
+  ViewDueDateSelect,
+  ViewPrioritySelect,
+  ViewStateSelect,
+} from "components/issues/view-select";
 // ui
 import { CustomMenu } from "components/ui";
 // types
 import {
   CycleIssueResponse,
   IIssue,
-  IProjectMember,
   IssueResponse,
   ModuleIssueResponse,
   Properties,
@@ -29,7 +32,6 @@ type Props = {
   type?: string;
   issue: IIssue;
   properties: Properties;
-  members: IProjectMember[] | undefined;
   editIssue: () => void;
   removeIssue?: (() => void) | null;
   handleDeleteIssue: (issue: IIssue) => void;
@@ -40,7 +42,6 @@ export const SingleListIssue: React.FC<Props> = ({
   type,
   issue,
   properties,
-  members,
   editIssue,
   removeIssue,
   handleDeleteIssue,
@@ -48,13 +49,6 @@ export const SingleListIssue: React.FC<Props> = ({
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
-
-  const { data: states } = useSWR(
-    workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
-      : null
-  );
 
   const partialUpdateIssue = useCallback(
     (formData: Partial<IIssue>) => {
@@ -117,16 +111,8 @@ export const SingleListIssue: React.FC<Props> = ({
       issuesService
         .patchIssue(workspaceSlug as string, projectId as string, issue.id, formData)
         .then((res) => {
-          mutate(
-            cycleId
-              ? CYCLE_ISSUES(cycleId as string)
-              : CYCLE_ISSUES(issue?.issue_cycle?.cycle ?? "")
-          );
-          mutate(
-            moduleId
-              ? MODULE_ISSUES(moduleId as string)
-              : MODULE_ISSUES(issue?.issue_module?.module ?? "")
-          );
+          if (cycleId) mutate(CYCLE_ISSUES(cycleId as string));
+          if (moduleId) mutate(MODULE_ISSUES(moduleId as string));
 
           mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
         })
@@ -161,22 +147,21 @@ export const SingleListIssue: React.FC<Props> = ({
       </div>
       <div className="flex flex-shrink-0 flex-wrap items-center gap-x-1 gap-y-2 text-xs">
         {properties.priority && (
-          <PrioritySelect
+          <ViewPrioritySelect
             issue={issue}
             partialUpdateIssue={partialUpdateIssue}
             isNotAllowed={isNotAllowed}
           />
         )}
         {properties.state && (
-          <StateSelect
+          <ViewStateSelect
             issue={issue}
-            states={states}
             partialUpdateIssue={partialUpdateIssue}
             isNotAllowed={isNotAllowed}
           />
         )}
         {properties.due_date && (
-          <DueDateSelect
+          <ViewDueDateSelect
             issue={issue}
             partialUpdateIssue={partialUpdateIssue}
             isNotAllowed={isNotAllowed}
@@ -188,9 +173,8 @@ export const SingleListIssue: React.FC<Props> = ({
           </div>
         )}
         {properties.assignee && (
-          <AssigneeSelect
+          <ViewAssigneeSelect
             issue={issue}
-            members={members}
             partialUpdateIssue={partialUpdateIssue}
             isNotAllowed={isNotAllowed}
           />

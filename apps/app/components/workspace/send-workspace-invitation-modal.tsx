@@ -13,19 +13,14 @@ import useToast from "hooks/use-toast";
 import { IWorkspaceMemberInvitation } from "types";
 // fetch keys
 import { WORKSPACE_INVITATIONS } from "constants/fetch-keys";
+// constants
+import { ROLE } from "constants/workspace";
 
 type Props = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   workspace_slug: string;
   members: any[];
-};
-
-const ROLE = {
-  5: "Guest",
-  10: "Viewer",
-  15: "Member",
-  20: "Admin",
 };
 
 const defaultValues: Partial<IWorkspaceMemberInvitation> = {

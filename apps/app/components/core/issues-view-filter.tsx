@@ -17,7 +17,7 @@ import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // types
 import { IIssue, Properties } from "types";
 // common
-import { filterIssueOptions, groupByOptions, orderByOptions } from "constants/";
+import { GROUP_BY_OPTIONS, ORDER_BY_OPTIONS, FILTER_ISSUE_OPTIONS } from "constants/issue";
 
 type Props = {
   issues?: IIssue[];
@@ -99,12 +99,12 @@ export const IssuesFilterView: React.FC<Props> = ({ issues }) => {
                             <h4 className="text-sm text-gray-600">Group by</h4>
                             <CustomMenu
                               label={
-                                groupByOptions.find((option) => option.key === groupByProperty)
+                                GROUP_BY_OPTIONS.find((option) => option.key === groupByProperty)
                                   ?.name ?? "Select"
                               }
                               width="lg"
                             >
-                              {groupByOptions.map((option) =>
+                              {GROUP_BY_OPTIONS.map((option) =>
                                 issueView === "kanban" && option.key === null ? null : (
                                   <CustomMenu.MenuItem
                                     key={option.key}
@@ -120,12 +120,12 @@ export const IssuesFilterView: React.FC<Props> = ({ issues }) => {
                             <h4 className="text-sm text-gray-600">Order by</h4>
                             <CustomMenu
                               label={
-                                orderByOptions.find((option) => option.key === orderBy)?.name ??
+                                ORDER_BY_OPTIONS.find((option) => option.key === orderBy)?.name ??
                                 "Select"
                               }
                               width="lg"
                             >
-                              {orderByOptions.map((option) =>
+                              {ORDER_BY_OPTIONS.map((option) =>
                                 groupByProperty === "priority" &&
                                 option.key === "priority" ? null : (
                                   <CustomMenu.MenuItem
@@ -142,12 +142,12 @@ export const IssuesFilterView: React.FC<Props> = ({ issues }) => {
                             <h4 className="text-sm text-gray-600">Issue type</h4>
                             <CustomMenu
                               label={
-                                filterIssueOptions.find((option) => option.key === filterIssue)
+                                FILTER_ISSUE_OPTIONS.find((option) => option.key === filterIssue)
                                   ?.name ?? "Select"
                               }
                               width="lg"
                             >
-                              {filterIssueOptions.map((option) => (
+                              {FILTER_ISSUE_OPTIONS.map((option) => (
                                 <CustomMenu.MenuItem
                                   key={option.key}
                                   onClick={() => setFilterIssue(option.key)}
