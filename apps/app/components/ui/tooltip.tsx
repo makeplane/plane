@@ -5,15 +5,17 @@ export type Props = {
   content: string | React.ReactNode;
   margin?: string;
   children: React.ReactNode;
-  customStyle?: string;
+  className?: string;
+  disabled?: boolean;
 };
 
-const Tooltip: React.FC<Props> = ({
+export const Tooltip: React.FC<Props> = ({
   content,
   direction = "top",
   children,
   margin = "24px",
-  customStyle,
+  className = "",
+  disabled = false,
 }) => {
   const [active, setActive] = useState(false);
   const [styleConfig, setStyleConfig] = useState("top-[calc(-100%-24px)]");
@@ -56,12 +58,14 @@ const Tooltip: React.FC<Props> = ({
   }, [margin, direction]);
 
   return (
-    <div className="inline-block relative" onMouseEnter={showToolTip} onMouseLeave={hideToolTip}>
+    <div className="relative inline-block" onMouseEnter={showToolTip} onMouseLeave={hideToolTip}>
       {children}
       {active && (
         <div
-          className={`absolute p-[6px] text-xs z-20 rounded leading-1 text-white bg-black text-center w-max max-w-[300px] 
-          ${tooltipStyles[direction]} ${customStyle ? customStyle : ""} ${styleConfig}`}
+          className={`${className} ${
+            disabled ? "hidden" : ""
+          } absolute p-[6px] text-xs z-20 rounded leading-1 text-white bg-black text-center w-max max-w-[300px] 
+          ${tooltipStyles[direction]} ${styleConfig}`}
         >
           {content}
         </div>
@@ -69,5 +73,3 @@ const Tooltip: React.FC<Props> = ({
     </div>
   );
 };
-
-export default Tooltip;

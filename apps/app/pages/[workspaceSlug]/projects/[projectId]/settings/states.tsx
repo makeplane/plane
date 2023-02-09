@@ -2,19 +2,21 @@ import React, { useState } from "react";
 
 import { useRouter } from "next/router";
 
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 
+// lib
+import { requiredAdmin } from "lib/auth";
 // services
 import stateService from "services/state.service";
 import projectService from "services/project.service";
-// lib
-import { requiredAdmin } from "lib/auth";
+// hooks
+import useToast from "hooks/use-toast";
 // layouts
 import AppLayout from "layouts/app-layout";
 // components
 import { CreateUpdateStateInline, DeleteStateModal, StateGroup } from "components/states";
 // ui
-import { Loader } from "components/ui";
+import { Loader, Tooltip } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PencilSquareIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
@@ -33,10 +35,12 @@ const StatesSettings: NextPage<UserAuth> = (props) => {
   const [activeGroup, setActiveGroup] = useState<StateGroup>(null);
   const [selectedState, setSelectedState] = useState<string | null>(null);
   const [selectDeleteState, setSelectDeleteState] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const {
-    query: { workspaceSlug, projectId },
-  } = useRouter();
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
+
+  const { setToastAlert } = useToast();
 
   const { data: projectDetails } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
@@ -53,6 +57,63 @@ const StatesSettings: NextPage<UserAuth> = (props) => {
   );
   const orderedStateGroups = orderStateGroups(states ?? {});
   const statesList = getStatesList(orderedStateGroups ?? {});
+
+  const handleMakeDefault = (stateId: string) => {
+    setIsSubmitting(true);
+
+    const currentDefaultState = statesList.find((s) => s.default);
+
+    if (currentDefaultState)
+      stateService
+        .patchState(workspaceSlug as string, projectId as string, currentDefaultState?.id ?? "", {
+          default: false,
+        })
+        .then(() => {
+          stateService
+            .patchState(workspaceSlug as string, projectId as string, stateId, {
+              default: true,
+            })
+            .then((res) => {
+              mutate(STATE_LIST(projectId as string));
+              setToastAlert({
+                type: "success",
+                title: "Successful",
+                message: `${res.name} state set to default successfuly.`,
+              });
+              setIsSubmitting(false);
+            })
+            .catch((err) => {
+              setToastAlert({
+                type: "error",
+                title: "Error",
+                message: "Error in setting the state to default.",
+              });
+              setIsSubmitting(false);
+            });
+        });
+    else
+      stateService
+        .patchState(workspaceSlug as string, projectId as string, stateId, {
+          default: true,
+        })
+        .then((res) => {
+          mutate(STATE_LIST(projectId as string));
+          setToastAlert({
+            type: "success",
+            title: "Successful",
+            message: `${res.name} state set to default successfuly.`,
+          });
+          setIsSubmitting(false);
+        })
+        .catch(() => {
+          setToastAlert({
+            type: "error",
+            title: "Error",
+            message: "Error in setting the state to default.",
+          });
+          setIsSubmitting(false);
+        });
+  };
 
   return (
     <>
@@ -113,7 +174,7 @@ const StatesSettings: NextPage<UserAuth> = (props) => {
                           state.id !== selectedState ? (
                             <div
                               key={state.id}
-                              className={`flex items-center justify-between gap-2 border-b bg-gray-50 p-3 ${
+                              className={`group flex items-center justify-between gap-2 border-b bg-gray-50 p-3 ${
                                 activeGroup !== key ? "last:border-0" : ""
                               }`}
                             >
@@ -127,13 +188,38 @@ const StatesSettings: NextPage<UserAuth> = (props) => {
                                 <h6 className="text-sm">{addSpaceIfCamelCase(state.name)}</h6>
                               </div>
                               <div className="flex items-center gap-2">
+                                {state.default ? (
+                                  <span className="text-xs text-gray-400">Default</span>
+                                ) : (
+                                  <button
+                                    type="button"
+                                    className="hidden group-hover:inline-block text-xs text-gray-400 hover:text-gray-500"
+                                    onClick={() => handleMakeDefault(state.id)}
+                                    disabled={isSubmitting}
+                                  >
+                                    Set as default
+                                  </button>
+                                )}
+                                <Tooltip
+                                  content="Cannot delete the default state."
+                                  disabled={!state.default}
+                                >
+                                  <button
+                                    type="button"
+                                    className={`${
+                                      state.default ? "cursor-not-allowed" : ""
+                                    } grid place-items-center`}
+                                    onClick={() => setSelectDeleteState(state.id)}
+                                    disabled={state.default}
+                                  >
+                                    <TrashIcon className="h-4 w-4 text-red-400" />
+                                  </button>
+                                </Tooltip>
                                 <button
                                   type="button"
-                                  onClick={() => setSelectDeleteState(state.id)}
+                                  className="grid place-items-center"
+                                  onClick={() => setSelectedState(state.id)}
                                 >
-                                  <TrashIcon className="h-4 w-4 text-red-400" />
-                                </button>
-                                <button type="button" onClick={() => setSelectedState(state.id)}>
                                   <PencilSquareIcon className="h-4 w-4 text-gray-400" />
                                 </button>
                               </div>

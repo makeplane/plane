@@ -30,6 +30,8 @@ import {
 } from "components/modules";
 
 import "react-circular-progressbar/dist/styles.css";
+// components
+import { SidebarProgressStats } from "components/core";
 // ui
 import { CustomDatePicker, Loader } from "components/ui";
 // helpers
@@ -40,7 +42,6 @@ import { groupBy } from "helpers/array.helper";
 import { IIssue, IModule, ModuleIssueResponse } from "types";
 // fetch-keys
 import { MODULE_DETAILS } from "constants/fetch-keys";
-import SidebarProgressStats from "components/core/sidebar/sidebar-progress-stats";
 
 const defaultValues: Partial<IModule> = {
   lead: "",
