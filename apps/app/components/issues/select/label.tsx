@@ -141,7 +141,7 @@ export const IssueLabelSelect: React.FC<Props> = ({ value, onChange, projectId }
                             );
                         } else
                           return (
-                            <div className="border-y-2">
+                            <div className="bg-gray-50 border-y border-gray-400">
                               <div className="flex select-none font-medium items-center gap-2 truncate p-2 text-gray-900">
                                 <RectangleGroupIcon className="h-3 w-3" /> {label.name}
                               </div>
