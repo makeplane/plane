@@ -84,7 +84,7 @@ class ForgotPasswordEndpoint(BaseAPIView):
             )
 
             return Response(
-                {"messgae": "Check your email to reset your password"},
+                {"message": "Check your email to reset your password"},
                 status=status.HTTP_200_OK,
             )
         return Response(
