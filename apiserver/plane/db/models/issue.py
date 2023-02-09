@@ -83,9 +83,14 @@ class Issue(ProjectBaseModel):
             try:
                 from plane.db.models import State
 
-                self.state, created = State.objects.get_or_create(
-                    project=self.project, name="Backlog"
-                )
+                default_state = State.objects.filter(
+                    project=self.project, default=True
+                ).first()
+                # if there is no default state assign any random state
+                if default_state is None:
+                    self.state = State.objects.filter(project=self.project).first()
+                else:
+                    self.state = default_state
             except ImportError:
                 pass
         else:

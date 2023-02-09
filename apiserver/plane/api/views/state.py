@@ -1,3 +1,7 @@
+# Third party imports
+from rest_framework import status
+from rest_framework.response import Response
+
 # Module imports
 from . import BaseViewSet
 from plane.api.serializers import StateSerializer
@@ -6,7 +10,6 @@ from plane.db.models import State
 
 
 class StateViewSet(BaseViewSet):
-
     serializer_class = StateSerializer
     model = State
     permission_classes = [
@@ -27,3 +30,19 @@ class StateViewSet(BaseViewSet):
             .select_related("workspace")
             .distinct()
         )
+
+    def destroy(self, request, slug, project_id, pk):
+        try:
+            state = State.objects.get(
+                pk=pk, project_id=project_id, workspace__slug=slug
+            )
+
+            if state.default:
+                return Response(
+                    {"error": "Default state cannot be deleted"}, status=False
+                )
+
+            state.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except State.DoesNotExist:
+            return Response({"error": "State does not exists"}, status=status.HTTP_404)
