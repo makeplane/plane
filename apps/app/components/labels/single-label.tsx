@@ -13,7 +13,7 @@ import { LabelsListModal } from "components/labels";
 // ui
 import { CustomMenu } from "components/ui";
 // icons
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon, RectangleGroupIcon } from "@heroicons/react/24/outline";
 // types
 import { IIssueLabels } from "types";
 // fetch-keys
@@ -95,7 +95,11 @@ export const SingleLabel: React.FC<Props> = ({
           </div>
         ) : null
       ) : (
-        <Disclosure as="div" className="relative z-20 rounded-md border p-3 text-gray-900 md:w-2/3">
+        <Disclosure
+          as="div"
+          className="relative z-20 rounded-md border p-3 text-gray-900 md:w-2/3"
+          defaultOpen
+        >
           {({ open }) => (
             <>
               <div className="flex items-center justify-between gap-2 cursor-pointer">
@@ -105,6 +109,9 @@ export const SingleLabel: React.FC<Props> = ({
                       <ChevronDownIcon
                         className={`h-4 w-4 text-gray-500 ${!open ? "-rotate-90 transform" : ""}`}
                       />
+                    </span>
+                    <span>
+                      <RectangleGroupIcon className="h-4 w-4" />
                     </span>
                     <h6 className="text-sm">{label.name}</h6>
                   </div>
