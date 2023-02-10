@@ -419,3 +419,23 @@ img.ProseMirror-separator {
   text-decoration: underline;
 }
 /* end link styling */
+
+/* format buttons styling */
+.MuiButtonBase-root {
+  border: none !important;
+  border-radius: 0.25rem !important;
+  padding: 0.25rem !important;
+}
+
+.MuiButtonBase-root:hover {
+  background-color: rgb(229 231 235);
+}
+
+.MuiButtonBase-root svg {
+  fill: #000 !important;
+}
+
+.MuiButtonBase-root.Mui-selected {
+  background-color: rgb(229 231 235) !important;
+}
+/* end format buttons styling */
