@@ -38,9 +38,12 @@ class StateViewSet(BaseViewSet):
     def list(self, request, slug, project_id):
         try:
             state_dict = dict()
-            issues = StateSerializer(self.get_queryset(), many=True).data
+            states = StateSerializer(self.get_queryset(), many=True).data
 
-            for key, value in groupby(issues, lambda state: state.get("group")):
+            for key, value in groupby(
+                sorted(states, key=lambda state: state["group"]),
+                lambda state: state.get("group"),
+            ):
                 state_dict[str(key)] = list(value)
 
             return Response(state_dict, status=status.HTTP_200_OK)
