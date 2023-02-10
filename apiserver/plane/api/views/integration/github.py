@@ -11,6 +11,7 @@ from plane.db.models import (
     GithubRepository,
     WorkspaceIntegration,
     ProjectMember,
+    Label,
 )
 from plane.api.serializers import (
     GithubRepositorySerializer,
@@ -49,6 +50,14 @@ class GithubRepositorySyncViewSet(BaseViewSet):
                 pk=workspace_integration_id
             )
 
+            # Create a Label for github
+            label = Label.objects.create(
+                name="GitHub",
+                description="Label to sync Plane issues with GitHub issues",
+                color="#003773",
+                project_id=project_id,
+            )
+
             # Create repo sync
             repo_sync = GithubRepositorySync.objects.create(
                 repository=repo,
@@ -56,6 +65,7 @@ class GithubRepositorySyncViewSet(BaseViewSet):
                 actor=workspace_integration.actor,
                 credetials=request.data.get("credentials", {}),
                 project_id=project_id,
+                label=label,
             )
 
             # Add bot as a member in the project

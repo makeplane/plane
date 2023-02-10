@@ -35,6 +35,9 @@ class GithubRepositorySync(ProjectBaseModel):
     workspace_integration = models.ForeignKey(
         "db.WorkspaceIntegration", related_name="github_syncs", on_delete=models.CASCADE
     )
+    label = models.ForeignKey(
+        "db.Label", on_delete=models.SET_NULL, null=True, related_name="repo_syncs"
+    )
 
     def __str__(self):
         """Return the repo sync"""
