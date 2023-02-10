@@ -41,7 +41,7 @@ const shortcuts = [
   },
 ];
 
-const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
+export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
   const [query, setQuery] = useState("");
 
   const filteredShortcuts = shortcuts.filter((shortcut) =>
@@ -150,5 +150,3 @@ const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
     </Transition.Root>
   );
 };
-
-export default ShortcutsModal;

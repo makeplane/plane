@@ -1,12 +1,15 @@
 import { Fragment } from "react";
+
 import { mutate } from "swr";
+
+// headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
 import cycleService from "services/cycles.service";
+// hooks
+import useToast from "hooks/use-toast";
 // components
 import { CycleForm } from "components/cycles";
-// helpers
-import { renderDateFormat } from "helpers/date-time.helper";
 // types
 import type { ICycle } from "types";
 // fetch keys
@@ -20,8 +23,14 @@ export interface CycleModalProps {
   initialData?: ICycle;
 }
 
-export const CycleModal: React.FC<CycleModalProps> = (props) => {
-  const { isOpen, handleClose, initialData, projectId, workspaceSlug } = props;
+export const CycleModal: React.FC<CycleModalProps> = ({
+  isOpen,
+  handleClose,
+  initialData,
+  projectId,
+  workspaceSlug,
+}) => {
+  const { setToastAlert } = useToast();
 
   const createCycle = (payload: Partial<ICycle>) => {
     cycleService
@@ -31,12 +40,11 @@ export const CycleModal: React.FC<CycleModalProps> = (props) => {
         handleClose();
       })
       .catch((err) => {
-        // TODO: Handle this ERROR.
-        // Object.keys(err).map((key) => {
-        //   setError(key as keyof typeof defaultValues, {
-        //     message: err[key].join(", "),
-        //   });
-        // });
+        setToastAlert({
+          type: "error",
+          title: "Error",
+          message: "Error in creating cycle. Please try again!",
+        });
       });
   };
 
@@ -48,12 +56,11 @@ export const CycleModal: React.FC<CycleModalProps> = (props) => {
         handleClose();
       })
       .catch((err) => {
-        // TODO: Handle this ERROR.
-        //   Object.keys(err).map((key) => {
-        //     setError(key as keyof typeof defaultValues, {
-        //       message: err[key].join(", "),
-        //     });
-        //   });
+        setToastAlert({
+          type: "error",
+          title: "Error",
+          message: "Error in updating cycle. Please try again!",
+        });
       });
   };
 

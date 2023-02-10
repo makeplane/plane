@@ -7,14 +7,13 @@ import useSWR from "swr";
 
 // headless ui
 import { Tab } from "@headlessui/react";
-// ui
-import ProgressChart from "./progress-chart";
-import { Avatar } from "components/ui";
-// components
-import SingleProgressStats from "components/core/sidebar/single-progress-stats";
 // services
 import issuesServices from "services/issues.service";
 import projectService from "services/project.service";
+// components
+import { SingleProgressStats } from "components/core";
+// ui
+import { Avatar } from "components/ui";
 // icons
 import User from "public/user.png";
 // types
@@ -37,7 +36,7 @@ const stateGroupColours: {
   completed: "#096e8d",
 };
 
-const SidebarProgressStats: React.FC<Props> = ({ groupedIssues, issues }) => {
+export const SidebarProgressStats: React.FC<Props> = ({ groupedIssues, issues }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   const { data: issueLabels } = useSWR<IIssueLabels[]>(
@@ -179,5 +178,3 @@ const SidebarProgressStats: React.FC<Props> = ({ groupedIssues, issues }) => {
     </Tab.Group>
   );
 };
-
-export default SidebarProgressStats;

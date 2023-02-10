@@ -1,4 +1,3 @@
-// TODO: Refactor this component: into a different file, use this file to export the components
 import React, { useState, useCallback, useEffect } from "react";
 
 import { useRouter } from "next/router";
@@ -14,7 +13,7 @@ import useTheme from "hooks/use-theme";
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
 // components
-import ShortcutsModal from "components/command-palette/shortcuts";
+import { ShortcutsModal } from "components/command-palette";
 import { BulkDeleteIssuesModal } from "components/core";
 import { CreateProjectModal } from "components/project";
 import { CreateUpdateIssueModal } from "components/issues";
@@ -36,7 +35,7 @@ import { IIssue } from "types";
 // fetch-keys
 import { USER_ISSUE } from "constants/fetch-keys";
 
-const CommandPalette: React.FC = () => {
+export const CommandPalette: React.FC = () => {
   const [query, setQuery] = useState("");
 
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
@@ -369,5 +368,3 @@ const CommandPalette: React.FC = () => {
     </>
   );
 };
-
-export default CommandPalette;
