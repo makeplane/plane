@@ -4,6 +4,7 @@ import requests
 
 # Django imports
 from django.conf import settings
+from django.core.serializers.json import DjangoJSONEncoder
 
 # Third Party imports
 from django_rq import job
@@ -673,14 +674,15 @@ def issue_activity(event):
 
         # Save all the values to database
         issue_activities_created = IssueActivity.objects.bulk_create(issue_activities)
-
         # Post the updates to segway for integrations and webhooks
         if settings.PROXY_BASE_URL:
             for issue_activity in issue_activities_created:
                 headers = {"Content-Type": "application/json"}
-                issue_activity_json = IssueActivitySerializer(issue_activity).data
+                issue_activity_json = json.dumps(
+                    IssueActivitySerializer(issue_activity).data, cls=DjangoJSONEncoder
+                )
                 _ = requests.post(
-                    f"{settings.PROXY_BASE_URL}/issue-activity-hooks/",
+                    f"{settings.PROXY_BASE_URL}/hooks/workspaces/{str(issue_activity.workspace_id)}/projects/{str(issue_activity.project_id)}/issues/{str(issue_activity.issue_id)}/issue-activity-hooks/",
                     json=issue_activity_json,
                     headers=headers,
                 )

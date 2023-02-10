@@ -19,7 +19,7 @@ class GithubRepository(AuditModel):
     class Meta:
         verbose_name = "Repository"
         verbose_name_plural = "Repositories"
-        db_table = "repositories"
+        db_table = "github_repositories"
         ordering = ("-created_at",)
 
 
