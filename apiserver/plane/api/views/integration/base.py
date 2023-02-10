@@ -94,12 +94,13 @@ class WorkspaceIntegrationViewSet(BaseViewSet):
                 username=uuid.uuid4().hex,
                 password=make_password(uuid.uuid4().hex),
                 is_password_autoset=True,
+                is_bot=True,
             )
 
             workspace_integration = WorkspaceIntegration.objects.create(
                 workspace=workspace,
                 integration=integration,
-                user=bot_user,
+                actor=bot_user,
             )
 
             # Add bot user as a member of workspace

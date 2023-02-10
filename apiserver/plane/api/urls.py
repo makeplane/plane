@@ -704,7 +704,7 @@ urlpatterns = [
         name="integrations",
     ),
     path(
-        "integrations/<uuid:pk>/",
+        "integrations/<int:pk>/",
         IntegrationViewSet.as_view(
             {
                 "get": "retrieve",
