@@ -623,7 +623,7 @@ def track_modules(
 def issue_activity(event):
     try:
         issue_activities = []
-
+        type = event.get("type")
         requested_data = json.loads(event.get("requested_data"))
         current_instance = json.loads(event.get("current_instance"))
         issue_id = event.get("issue_id", None)
@@ -651,14 +651,15 @@ def issue_activity(event):
         }
 
         if current_instance is None:
-            issue_activities.append(
-                issue_id=issue_id,
-                project=project,
-                workspace=project.workspace,
-                comment=f"{actor.email} created the issue",
-                verb="created",
-                actor=actor,
-            )
+            if type == "issue.activity":
+                issue_activities.append(
+                    issue_id=issue_id,
+                    project=project,
+                    workspace=project.workspace,
+                    comment=f"{actor.email} created the issue",
+                    verb="created",
+                    actor=actor,
+                )
         else:
             for key in requested_data:
                 func = ISSUE_ACTIVITY_MAPPER.get(key, None)
