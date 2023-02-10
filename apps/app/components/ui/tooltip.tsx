@@ -18,7 +18,7 @@ export const Tooltip: React.FC<Props> = ({
   disabled = false,
 }) => {
   const [active, setActive] = useState(false);
-  const [styleConfig, setStyleConfig] = useState("top-[calc(-100%-24px)]");
+  const [styleConfig, setStyleConfig] = useState(`top-[calc(-100%-${margin})]`);
   let timeout: any;
 
   const showToolTip = () => {
@@ -33,27 +33,18 @@ export const Tooltip: React.FC<Props> = ({
   };
 
   const tooltipStyles = {
-    top: `
-    left-[50%] translate-x-[-50%] before:contents-[""] before:border-solid 
-    before:border-transparent before:h-0 before:w-0 before:absolute before:pointer-events-none 
-    before:border-[6px] before:left-[50%] before:ml-[calc(6px*-1)] before:top-full before:border-t-black`,
+    top: "left-[50%] translate-x-[-50%] before:contents-[''] before:border-solid before:border-transparent before:h-0 before:w-0 before:absolute before:pointer-events-none before:border-[6px] before:left-[50%] before:ml-[calc(6px*-1)] before:top-full before:border-t-black",
 
-    right: `
-    right-[-100%] top-[50%]
-    translate-x-0 translate-y-[-50%] `,
+    right: "right-[-100%] top-[50%] translate-x-0 translate-y-[-50%]",
 
-    bottom: `
-    left-[50%] translate-x-[-50%] before:contents-[""] before:border-solid 
-    before:border-transparent before:h-0 before:w-0 before:absolute before:pointer-events-none 
-    before:border-[6px] before:left-[50%] before:ml-[calc(6px*-1)] before:bottom-full before:border-b-black`,
+    bottom:
+      "left-[50%] translate-x-[-50%] before:contents-[''] before:border-solid before:border-transparent before:h-0 before:w-0 before:absolute before:pointer-events-none before:border-[6px] before:left-[50%] before:ml-[calc(6px*-1)] before:bottom-full before:border-b-black",
 
-    left: `
-    left-[-100%] top-[50%] 
-    translate-x-0 translate-y-[-50%] `,
+    left: "left-[-100%] top-[50%] translate-x-0 translate-y-[-50%]",
   };
 
   useEffect(() => {
-    const styleConfig = direction + "-[calc(-100%-" + margin + ")]";
+    const styleConfig = `${direction}-[calc(-100%-${margin})]`;
     setStyleConfig(styleConfig);
   }, [margin, direction]);
 
