@@ -113,7 +113,7 @@ export const SingleState: React.FC<Props> = ({
         });
   };
 
-  const handleMove = (state: IState, index: number, direction: "up" | "down") => {
+  const handleMove = (state: IState, direction: "up" | "down") => {
     let newSequence = 15000;
 
     if (direction === "up") {
@@ -174,7 +174,7 @@ export const SingleState: React.FC<Props> = ({
           <button
             type="button"
             className="hidden group-hover:inline-block text-gray-400 hover:text-gray-900"
-            onClick={() => handleMove(state, index, "up")}
+            onClick={() => handleMove(state, "up")}
           >
             <ArrowUpIcon className="h-4 w-4" />
           </button>
@@ -183,7 +183,7 @@ export const SingleState: React.FC<Props> = ({
           <button
             type="button"
             className="hidden group-hover:inline-block text-gray-400 hover:text-gray-900"
-            onClick={() => handleMove(state, index, "down")}
+            onClick={() => handleMove(state, "down")}
           >
             <ArrowDownIcon className="h-4 w-4" />
           </button>
