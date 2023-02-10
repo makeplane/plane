@@ -53,7 +53,8 @@ export const SingleState: React.FC<Props> = ({
 
   const { setToastAlert } = useToast();
 
-  const groupLength = statesList.filter((s) => s.group === currentGroup).length;
+  const groupStates = statesList.filter((s) => s.group === currentGroup);
+  const groupLength = groupStates.length;
 
   const handleMakeDefault = (stateId: string) => {
     setIsSubmitting(true);
@@ -116,11 +117,11 @@ export const SingleState: React.FC<Props> = ({
     let newSequence = 15000;
 
     if (direction === "up") {
-      if (index === 1) newSequence = statesList[0].sequence - 15000;
-      else newSequence = (statesList[index - 2].sequence + statesList[index - 1].sequence) / 2;
+      if (index === 1) newSequence = groupStates[0].sequence - 15000;
+      else newSequence = (groupStates[index - 2].sequence + groupStates[index - 1].sequence) / 2;
     } else {
-      if (index === groupLength - 2) newSequence = statesList[groupLength - 1].sequence + 15000;
-      else newSequence = (statesList[index + 2].sequence + statesList[index + 1].sequence) / 2;
+      if (index === groupLength - 2) newSequence = groupStates[groupLength - 1].sequence + 15000;
+      else newSequence = (groupStates[index + 2].sequence + groupStates[index + 1].sequence) / 2;
     }
 
     let newStatesList = statesList.map((s) => {
@@ -133,6 +134,7 @@ export const SingleState: React.FC<Props> = ({
       return s;
     });
     newStatesList = orderArrayBy(newStatesList, "sequence", "ascending");
+
     mutate(
       STATE_LIST(projectId as string),
       orderStateGroups(groupBy(newStatesList, "group")),
