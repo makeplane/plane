@@ -1,6 +1,14 @@
 import React from "react";
 
-import { XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area } from "recharts";
+import {
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  ReferenceLine,
+} from "recharts";
 
 //types
 import { IIssue } from "types";
@@ -60,6 +68,14 @@ const ProgressChart: React.FC<Props> = ({ issues, start, end }) => {
               stroke="#8884d8"
               fill="#98d1fb"
               activeDot={{ r: 8 }}
+            />
+            <ReferenceLine
+              stroke="green"
+              strokeDasharray="3 3"
+              segment={[
+                { x: `${renderShortNumericDateFormat(endDate)}`, y: 0 },
+                { x: `${renderShortNumericDateFormat(startDate)}`, y: issues.length },
+              ]}
             />
           </AreaChart>
         </ResponsiveContainer>
