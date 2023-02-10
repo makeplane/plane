@@ -201,7 +201,7 @@ const StatesSettings: NextPage<UserAuth> = (props) => {
                                   </button>
                                 )}
                                 <Tooltip
-                                  content="Cannot delete the default state. Cannot delete the default state. Cannot delete the default state. Cannot delete the default state."
+                                  content="Cannot delete the default state."
                                   disabled={!state.default}
                                 >
                                   <button
