@@ -41,6 +41,7 @@ import { IIssue, IModule, ModuleIssueResponse } from "types";
 // fetch-keys
 import { MODULE_DETAILS } from "constants/fetch-keys";
 import SidebarProgressStats from "components/core/sidebar/sidebar-progress-stats";
+import ProgressChart from "components/core/sidebar/progress-chart";
 
 const defaultValues: Partial<IModule> = {
   lead: "",
@@ -294,7 +295,13 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                 </div>
               </div>
             </div>
-            <div className="w-full">
+            <div className="flex flex-col items-center justify-center w-full gap-2 ">
+              <ProgressChart
+                issues={issues}
+                start={module?.start_date ?? ""}
+                end={module?.target_date ?? ""}
+              />
+
               <SidebarProgressStats issues={issues} groupedIssues={groupedIssues} />
             </div>
           </>
