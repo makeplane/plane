@@ -70,7 +70,7 @@ const ProgressChart: React.FC<Props> = ({ issues, start, end }) => {
               activeDot={{ r: 8 }}
             />
             <ReferenceLine
-              stroke="green"
+              stroke="#16a34a"
               strokeDasharray="3 3"
               segment={[
                 { x: `${renderShortNumericDateFormat(endDate)}`, y: 0 },
@@ -79,6 +79,16 @@ const ProgressChart: React.FC<Props> = ({ issues, start, end }) => {
             />
           </AreaChart>
         </ResponsiveContainer>
+      </div>
+      <div className="z-10 flex flex-col absolute top-2 right-2 justify-center items-start gap-1 text-xs">
+        <div className="flex justify-center items-center gap-2">
+          <span className="h-2 w-2 bg-green-600" />
+          <span>Ideal</span>
+        </div>
+        <div className="flex justify-center items-center gap-2">
+          <span className="h-2 w-2 bg-[#8884d8]" />
+          <span>Current</span>
+        </div>
       </div>
     </div>
   );
