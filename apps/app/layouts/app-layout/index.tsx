@@ -13,7 +13,7 @@ import useUser from "hooks/use-user";
 import { Button, Spinner } from "components/ui";
 // components
 import { NotAuthorizedView } from "components/core";
-import CommandPalette from "components/command-palette";
+import { CommandPalette } from "components/command-palette";
 import { JoinProject } from "components/project";
 // local components
 import Container from "layouts/container";

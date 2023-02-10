@@ -1,5 +1,6 @@
 export * from "./board-view";
 export * from "./list-view";
+export * from "./sidebar";
 export * from "./bulk-delete-issues-modal";
 export * from "./existing-issues-list-modal";
 export * from "./image-upload-modal";
