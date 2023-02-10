@@ -29,6 +29,7 @@ import { renderShortNumericDateFormat } from "helpers/date-time.helper";
 import { CycleIssueResponse, ICycle, IIssue } from "types";
 // fetch-keys
 import { CYCLE_DETAILS } from "constants/fetch-keys";
+import ProgressChart from "components/core/sidebar/progress-chart";
 
 type Props = {
   issues: IIssue[];
@@ -246,7 +247,14 @@ const CycleDetailSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cycleIssue
             </div>
             <div className="py-1" />
           </div>
-          <div className="w-full">
+          <div className="flex flex-col items-center justify-center w-full gap-2 ">
+            <div className="relative h-[200px] w-full ">
+              <ProgressChart
+                issues={issues}
+                start={cycle?.start_date ?? ""}
+                end={cycle?.end_date ?? ""}
+              />
+            </div>
             <SidebarProgressStats issues={issues} groupedIssues={groupedIssues} />
           </div>
         </>
