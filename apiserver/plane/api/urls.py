@@ -745,7 +745,7 @@ urlpatterns = [
         ),
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/github-repository-sync/<uuid:repo_sync_id>/github-sync-issues/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/github-repository-sync/<uuid:repo_sync_id>/github-issue-sync/",
         GithubIssueSyncViewSet.as_view(
             {
                 "post": "create",
@@ -754,7 +754,7 @@ urlpatterns = [
         ),
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/github-repository-sync/<uuid:repo_sync_id>/github-sync-issues/<uuid:pk>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/github-repository-sync/<uuid:repo_sync_id>/github-issue-sync/<uuid:pk>/",
         GithubRepositorySyncViewSet.as_view(
             {
                 "get": "retrieve",

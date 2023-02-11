@@ -11,6 +11,7 @@ class GithubRepository(AuditModel):
     url = models.URLField(null=True)
     config = models.JSONField(default=dict)
     repository_id = models.BigIntegerField()
+    owner = models.CharField(max_length=500)
 
     def __str__(self):
         """Return the repo name"""
@@ -24,8 +25,8 @@ class GithubRepository(AuditModel):
 
 
 class GithubRepositorySync(ProjectBaseModel):
-    repository = models.ForeignKey(
-        "db.GithubRepository", on_delete=models.CASCADE, related_name="syncss"
+    repository = models.OneToOneField(
+        "db.GithubRepository", on_delete=models.CASCADE, related_name="syncs"
     )
     credentials = models.JSONField(default=dict)
     # Bot user
@@ -44,6 +45,7 @@ class GithubRepositorySync(ProjectBaseModel):
         return f"{self.repository.name} <{self.project.name}>"
 
     class Meta:
+        unique_together = ["project", "repository"]
         verbose_name = "Github Repository Sync"
         verbose_name_plural = "Github Repository Syncs"
         db_table = "github_repository_syncs"
@@ -51,12 +53,13 @@ class GithubRepositorySync(ProjectBaseModel):
 
 
 class GithubIssueSync(ProjectBaseModel):
+    repo_issue_id = models.BigIntegerField()
     github_issue_id = models.BigIntegerField()
     issue = models.ForeignKey(
         "db.Issue", related_name="github_syncs", on_delete=models.CASCADE
     )
-    repository = models.ForeignKey(
-        "db.GithubRepository", related_name="issue_syncs", on_delete=models.CASCADE
+    repository_sync = models.ForeignKey(
+        "db.GithubRepositorySync", related_name="issue_syncs", on_delete=models.CASCADE
     )
 
     def __str__(self):
@@ -64,6 +67,7 @@ class GithubIssueSync(ProjectBaseModel):
         return f"{self.repository.name}-{self.project.name}-{self.issue.name}"
 
     class Meta:
+        unique_together = ["repository_sync", "issue"]
         verbose_name = "Github Issue Sync"
         verbose_name_plural = "Github Issue Syncs"
         db_table = "github_issue_syncs"

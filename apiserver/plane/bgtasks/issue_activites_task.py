@@ -625,7 +625,11 @@ def issue_activity(event):
         issue_activities = []
         type = event.get("type")
         requested_data = json.loads(event.get("requested_data"))
-        current_instance = json.loads(event.get("current_instance"))
+        current_instance = (
+            json.loads(event.get("current_instance"))
+            if event.get("current_instance") is not None
+            else None
+        )
         issue_id = event.get("issue_id", None)
         actor_id = event.get("actor_id")
         project_id = event.get("project_id")
@@ -653,12 +657,14 @@ def issue_activity(event):
         if current_instance is None:
             if type == "issue.activity":
                 issue_activities.append(
-                    issue_id=issue_id,
-                    project=project,
-                    workspace=project.workspace,
-                    comment=f"{actor.email} created the issue",
-                    verb="created",
-                    actor=actor,
+                    IssueActivity(
+                        issue_id=issue_id,
+                        project=project,
+                        workspace=project.workspace,
+                        comment=f"{actor.email} created the issue",
+                        verb="created",
+                        actor=actor,
+                    )
                 )
         else:
             for key in requested_data:
