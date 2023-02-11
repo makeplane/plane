@@ -6,8 +6,6 @@ import { mutate } from "swr";
 
 // services
 import stateService from "services/state.service";
-// hooks
-import useToast from "hooks/use-toast";
 // ui
 import { Tooltip } from "components/ui";
 // icons
@@ -29,7 +27,6 @@ import { STATE_LIST } from "constants/fetch-keys";
 
 type Props = {
   index: number;
-  currentGroup: string;
   state: IState;
   statesList: IState[];
   activeGroup: StateGroup;
@@ -39,7 +36,6 @@ type Props = {
 
 export const SingleState: React.FC<Props> = ({
   index,
-  currentGroup,
   state,
   statesList,
   activeGroup,
@@ -51,15 +47,25 @@ export const SingleState: React.FC<Props> = ({
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { setToastAlert } = useToast();
-
-  const groupStates = statesList.filter((s) => s.group === currentGroup);
+  const groupStates = statesList.filter((s) => s.group === state.group);
   const groupLength = groupStates.length;
 
-  const handleMakeDefault = (stateId: string) => {
+  const handleMakeDefault = () => {
     setIsSubmitting(true);
 
     const currentDefaultState = statesList.find((s) => s.default);
+
+    let newStatesList = statesList.map((s) => ({
+      ...s,
+      default: s.id === state.id ? true : s.id === currentDefaultState?.id ? false : s.default,
+    }));
+    newStatesList = orderArrayBy(newStatesList, "sequence", "ascending");
+
+    mutate(
+      STATE_LIST(projectId as string),
+      orderStateGroups(groupBy(newStatesList, "group")),
+      false
+    );
 
     if (currentDefaultState)
       stateService
@@ -68,47 +74,27 @@ export const SingleState: React.FC<Props> = ({
         })
         .then(() => {
           stateService
-            .patchState(workspaceSlug as string, projectId as string, stateId, {
+            .patchState(workspaceSlug as string, projectId as string, state.id, {
               default: true,
             })
-            .then((res) => {
+            .then(() => {
               mutate(STATE_LIST(projectId as string));
-              setToastAlert({
-                type: "success",
-                title: "Successful",
-                message: `${res.name} state set to default successfuly.`,
-              });
               setIsSubmitting(false);
             })
-            .catch((err) => {
-              setToastAlert({
-                type: "error",
-                title: "Error",
-                message: "Error in setting the state to default.",
-              });
+            .catch(() => {
               setIsSubmitting(false);
             });
         });
     else
       stateService
-        .patchState(workspaceSlug as string, projectId as string, stateId, {
+        .patchState(workspaceSlug as string, projectId as string, state.id, {
           default: true,
         })
-        .then((res) => {
+        .then(() => {
           mutate(STATE_LIST(projectId as string));
-          setToastAlert({
-            type: "success",
-            title: "Successful",
-            message: `${res.name} state set to default successfuly.`,
-          });
           setIsSubmitting(false);
         })
         .catch(() => {
-          setToastAlert({
-            type: "error",
-            title: "Error",
-            message: "Error in setting the state to default.",
-          });
           setIsSubmitting(false);
         });
   };
@@ -124,15 +110,10 @@ export const SingleState: React.FC<Props> = ({
       else newSequence = (groupStates[index + 2].sequence + groupStates[index + 1].sequence) / 2;
     }
 
-    let newStatesList = statesList.map((s) => {
-      if (s.id === state.id)
-        return {
-          ...s,
-          sequence: newSequence,
-        };
-
-      return s;
-    });
+    let newStatesList = statesList.map((s) => ({
+      ...s,
+      sequence: s.id === state.id ? newSequence : s.sequence,
+    }));
     newStatesList = orderArrayBy(newStatesList, "sequence", "ascending");
 
     mutate(
@@ -157,7 +138,7 @@ export const SingleState: React.FC<Props> = ({
   return (
     <div
       className={`group flex items-center justify-between gap-2 border-b bg-gray-50 p-3 ${
-        activeGroup !== currentGroup ? "last:border-0" : ""
+        activeGroup !== state.group ? "last:border-0" : ""
       }`}
     >
       <div className="flex items-center gap-2">
@@ -167,7 +148,9 @@ export const SingleState: React.FC<Props> = ({
             backgroundColor: state.color,
           }}
         />
-        <h6 className="text-sm">{addSpaceIfCamelCase(state.name)}</h6>
+        <h6 className="text-sm">
+          {addSpaceIfCamelCase(state.name)} {state.sequence}
+        </h6>
       </div>
       <div className="flex items-center gap-2">
         {index !== 0 && (
@@ -194,7 +177,7 @@ export const SingleState: React.FC<Props> = ({
           <button
             type="button"
             className="hidden group-hover:inline-block text-xs text-gray-400 hover:text-gray-900"
-            onClick={() => handleMakeDefault(state.id)}
+            onClick={handleMakeDefault}
             disabled={isSubmitting}
           >
             Set as default

@@ -115,7 +115,6 @@ const StatesSettings: NextPage<UserAuth> = (props) => {
                             <SingleState
                               key={state.id}
                               index={index}
-                              currentGroup={key}
                               state={state}
                               statesList={statesList}
                               activeGroup={activeGroup}
