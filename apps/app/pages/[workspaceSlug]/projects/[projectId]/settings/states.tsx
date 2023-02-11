@@ -4,22 +4,26 @@ import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
+// lib
+import { requiredAdmin } from "lib/auth";
 // services
 import stateService from "services/state.service";
 import projectService from "services/project.service";
-// lib
-import { requiredAdmin } from "lib/auth";
 // layouts
 import AppLayout from "layouts/app-layout";
 // components
-import { CreateUpdateStateInline, DeleteStateModal, StateGroup } from "components/states";
+import {
+  CreateUpdateStateInline,
+  DeleteStateModal,
+  SingleState,
+  StateGroup,
+} from "components/states";
 // ui
 import { Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { PencilSquareIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { PlusIcon } from "@heroicons/react/24/outline";
 // helpers
-import { addSpaceIfCamelCase } from "helpers/string.helper";
 import { getStatesList, orderStateGroups } from "helpers/state.helper";
 // types
 import { UserAuth } from "types";
@@ -34,9 +38,8 @@ const StatesSettings: NextPage<UserAuth> = (props) => {
   const [selectedState, setSelectedState] = useState<string | null>(null);
   const [selectDeleteState, setSelectDeleteState] = useState<string | null>(null);
 
-  const {
-    query: { workspaceSlug, projectId },
-  } = useRouter();
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
 
   const { data: projectDetails } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
@@ -99,54 +102,33 @@ const StatesSettings: NextPage<UserAuth> = (props) => {
                       <div className="space-y-1 rounded-xl border p-1 md:w-2/3">
                         {key === activeGroup && (
                           <CreateUpdateStateInline
-                            projectId={projectDetails.id}
                             onClose={() => {
                               setActiveGroup(null);
                               setSelectedState(null);
                             }}
-                            workspaceSlug={workspaceSlug as string}
                             data={null}
                             selectedGroup={key as keyof StateGroup}
                           />
                         )}
-                        {orderedStateGroups[key].map((state) =>
+                        {orderedStateGroups[key].map((state, index) =>
                           state.id !== selectedState ? (
-                            <div
+                            <SingleState
                               key={state.id}
-                              className={`flex items-center justify-between gap-2 border-b bg-gray-50 p-3 ${
-                                activeGroup !== key ? "last:border-0" : ""
-                              }`}
-                            >
-                              <div className="flex items-center gap-2">
-                                <div
-                                  className="h-3 w-3 flex-shrink-0 rounded-full"
-                                  style={{
-                                    backgroundColor: state.color,
-                                  }}
-                                />
-                                <h6 className="text-sm">{addSpaceIfCamelCase(state.name)}</h6>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <button
-                                  type="button"
-                                  onClick={() => setSelectDeleteState(state.id)}
-                                >
-                                  <TrashIcon className="h-4 w-4 text-red-400" />
-                                </button>
-                                <button type="button" onClick={() => setSelectedState(state.id)}>
-                                  <PencilSquareIcon className="h-4 w-4 text-gray-400" />
-                                </button>
-                              </div>
-                            </div>
+                              index={index}
+                              currentGroup={key}
+                              state={state}
+                              statesList={statesList}
+                              activeGroup={activeGroup}
+                              handleEditState={() => setSelectedState(state.id)}
+                              handleDeleteState={() => setSelectDeleteState(state.id)}
+                            />
                           ) : (
                             <div className="border-b last:border-b-0" key={state.id}>
                               <CreateUpdateStateInline
-                                projectId={projectDetails.id}
                                 onClose={() => {
                                   setActiveGroup(null);
                                   setSelectedState(null);
                                 }}
-                                workspaceSlug={workspaceSlug as string}
                                 data={
                                   statesList?.find((state) => state.id === selectedState) ?? null
                                 }

@@ -9,7 +9,7 @@ import { useForm } from "react-hook-form";
 // headless ui
 import { Combobox, Transition } from "@headlessui/react";
 // icons
-import { TagIcon } from "@heroicons/react/24/outline";
+import { RectangleGroupIcon, TagIcon } from "@heroicons/react/24/outline";
 // services
 import issuesServices from "services/issues.service";
 // types
@@ -58,8 +58,6 @@ export const IssueLabelSelect: React.FC<Props> = ({ value, onChange, projectId }
   };
 
   const {
-    register,
-    handleSubmit,
     formState: { isSubmitting },
     setFocus,
     reset,
@@ -69,16 +67,10 @@ export const IssueLabelSelect: React.FC<Props> = ({ value, onChange, projectId }
     isOpen && setFocus("name");
   }, [isOpen, setFocus]);
 
-  const options = issueLabels?.map((label) => ({
-    value: label.id,
-    display: label.name,
-    color: label.color,
-  }));
-
   const filteredOptions =
     query === ""
-      ? options
-      : options?.filter((option) => option.display.toLowerCase().includes(query.toLowerCase()));
+      ? issueLabels
+      : issueLabels?.filter((l) => l.name.toLowerCase().includes(query.toLowerCase()));
 
   return (
     <>
@@ -98,10 +90,9 @@ export const IssueLabelSelect: React.FC<Props> = ({ value, onChange, projectId }
               <TagIcon className="h-3 w-3 text-gray-500" />
               <span className={`flex items-center gap-2 ${!value ? "" : "text-gray-900"}`}>
                 {Array.isArray(value)
-                  ? value
-                      .map((v) => options?.find((option) => option.value === v)?.display)
-                      .join(", ") || "Labels"
-                  : options?.find((option) => option.value === value)?.display || "Labels"}
+                  ? value.map((v) => issueLabels?.find((l) => l.id === v)?.name).join(", ") ||
+                    "Labels"
+                  : issueLabels?.find((l) => l.id === value)?.name || "Labels"}
               </span>
             </Combobox.Button>
 
@@ -122,31 +113,62 @@ export const IssueLabelSelect: React.FC<Props> = ({ value, onChange, projectId }
                   displayValue={(assigned: any) => assigned?.name}
                 />
                 <div className="py-1">
-                  {filteredOptions ? (
+                  {issueLabels && filteredOptions ? (
                     filteredOptions.length > 0 ? (
-                      filteredOptions.map((option) => (
-                        <Combobox.Option
-                          key={option.value}
-                          className={({ active, selected }) =>
-                            `${active ? "bg-indigo-50" : ""} ${
-                              selected ? "bg-indigo-50 font-medium" : ""
-                            } flex cursor-pointer select-none items-center gap-2 truncate p-2 text-gray-900`
-                          }
-                          value={option.value}
-                        >
-                          {issueLabels && (
-                            <>
-                              <span
-                                className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                                style={{
-                                  backgroundColor: option.color,
-                                }}
-                              />
-                              {option.display}
-                            </>
-                          )}
-                        </Combobox.Option>
-                      ))
+                      filteredOptions.map((label) => {
+                        const children = issueLabels?.filter((l) => l.parent === label.id);
+
+                        if (children.length === 0) {
+                          if (!label.parent)
+                            return (
+                              <Combobox.Option
+                                key={label.id}
+                                className={({ active, selected }) =>
+                                  `${active ? "bg-indigo-50" : ""} ${
+                                    selected ? "bg-indigo-50 font-medium" : ""
+                                  } flex cursor-pointer select-none items-center gap-2 truncate p-2 text-gray-900`
+                                }
+                                value={label.id}
+                              >
+                                <span
+                                  className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                                  style={{
+                                    backgroundColor: label?.color ?? "green",
+                                  }}
+                                />
+                                {label.name}
+                              </Combobox.Option>
+                            );
+                        } else
+                          return (
+                            <div className="bg-gray-50 border-y border-gray-400">
+                              <div className="flex select-none font-medium items-center gap-2 truncate p-2 text-gray-900">
+                                <RectangleGroupIcon className="h-3 w-3" /> {label.name}
+                              </div>
+                              <div>
+                                {children.map((child) => (
+                                  <Combobox.Option
+                                    key={child.id}
+                                    className={({ active, selected }) =>
+                                      `${active ? "bg-indigo-50" : ""} ${
+                                        selected ? "bg-indigo-50 font-medium" : ""
+                                      } flex cursor-pointer select-none items-center gap-2 truncate p-2 text-gray-900`
+                                    }
+                                    value={child.id}
+                                  >
+                                    <span
+                                      className="h-2 w-2 flex-shrink-0 rounded-full"
+                                      style={{
+                                        backgroundColor: child?.color ?? "green",
+                                      }}
+                                    />
+                                    {child.name}
+                                  </Combobox.Option>
+                                ))}
+                              </div>
+                            </div>
+                          );
+                      })
                     ) : (
                       <p className="text-xs text-gray-500 px-2">No labels found</p>
                     )
