@@ -18,6 +18,7 @@ class Integration(AuditModel):
     redirect_url = models.TextField(blank=True)
     metadata = models.JSONField(default=dict)
     verified = models.BooleanField(default=False)
+    avatar_url = models.URLField(blank=True, null=True)
 
     def __str__(self):
         """Return provider of the integration"""
@@ -40,6 +41,9 @@ class WorkspaceIntegration(BaseModel):
     )
     integration = models.ForeignKey(
         "db.Integration", related_name="integrated_workspaces", on_delete=models.CASCADE
+    )
+    api_token = models.ForeignKey(
+        "db.APIToken", related_name="integrations", on_delete=models.CASCADE
     )
     metadata = models.JSONField(default=dict)
 
