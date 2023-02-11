@@ -3,7 +3,7 @@ import json
 from itertools import groupby, chain
 
 # Django imports
-from django.db.models import Prefetch, OuterRef, Func, F
+from django.db.models import Prefetch, OuterRef, Func, F, Q
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Third Party imports
@@ -77,7 +77,7 @@ class IssueViewSet(BaseViewSet):
         if current_instance is not None:
             issue_activity.delay(
                 {
-                    "type": "issue.activity",
+                    "type": "issue.activity.updated",
                     "requested_data": requested_data,
                     "actor_id": str(self.request.user.id),
                     "issue_id": str(self.kwargs.get("pk", None)),
@@ -202,7 +202,7 @@ class IssueViewSet(BaseViewSet):
                 # Track the issue
                 issue_activity.delay(
                     {
-                        "type": "issue.activity",
+                        "type": "issue.activity.created",
                         "requested_data": json.dumps(
                             self.request.data, cls=DjangoJSONEncoder
                         ),
@@ -306,7 +306,10 @@ class IssueActivityEndpoint(BaseAPIView):
         try:
             issue_activities = (
                 IssueActivity.objects.filter(issue_id=issue_id)
-                .filter(project__project_projectmember__member=self.request.user)
+                .filter(
+                    ~Q(field="comment"),
+                    project__project_projectmember__member=self.request.user,
+                )
                 .select_related("actor")
             ).order_by("created_by")
             issue_comments = (
@@ -349,6 +352,38 @@ class IssueCommentViewSet(BaseViewSet):
             issue_id=self.kwargs.get("issue_id"),
             actor=self.request.user if self.request.user is not None else None,
         )
+        issue_activity.delay(
+            {
+                "type": "comment.activity.created",
+                "requested_data": json.dumps(serializer.data, cls=DjangoJSONEncoder),
+                "actor_id": str(self.request.user.id),
+                "issue_id": str(self.kwargs.get("issue_id")),
+                "project_id": str(self.kwargs.get("project_id")),
+                "current_instance": None,
+            },
+        )
+
+    def perform_update(self, serializer):
+        requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
+        current_instance = (
+            self.get_queryset().filter(pk=self.kwargs.get("pk", None)).first()
+        )
+        if current_instance is not None:
+            issue_activity.delay(
+                {
+                    "type": "comment.activity.updated",
+                    "requested_data": requested_data,
+                    "actor_id": str(self.request.user.id),
+                    "issue_id": str(self.kwargs.get("issue_id", None)),
+                    "project_id": str(self.kwargs.get("project_id", None)),
+                    "current_instance": json.dumps(
+                        IssueCommentSerializer(current_instance).data,
+                        cls=DjangoJSONEncoder,
+                    ),
+                },
+            )
+
+        return super().perform_update(serializer)
 
     def get_queryset(self):
         return self.filter_queryset(
