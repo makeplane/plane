@@ -1,3 +1,6 @@
+# Python imports
+import uuid
+
 # Django imports
 from django.db import models
 
@@ -7,6 +10,9 @@ from plane.db.mixins import AuditModel
 
 
 class GithubRepository(AuditModel):
+    id = models.UUIDField(
+        default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True
+    )
     name = models.CharField(max_length=500)
     url = models.URLField(null=True)
     config = models.JSONField(default=dict)

@@ -97,7 +97,9 @@ class WorkspaceIntegrationViewSet(BaseViewSet):
                 is_password_autoset=True,
                 is_bot=True,
                 first_name=integration.provider,
-                avatar=integration.avatar_url,
+                avatar=integration.avatar_url
+                if integration.avatar_url is not None
+                else "",
             )
 
             # Create an API Token for the bot user
@@ -129,6 +131,12 @@ class WorkspaceIntegrationViewSet(BaseViewSet):
                 return Response(
                     {"error": "Integration is already active in the workspace"},
                     status=status.HTTP_410_GONE,
+                )
+            else:
+                capture_exception(e)
+                return Response(
+                    {"error": "Something went wrong please try again later"},
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
         except (Workspace.DoesNotExist, Integration.DoesNotExist) as e:
             return Response(
