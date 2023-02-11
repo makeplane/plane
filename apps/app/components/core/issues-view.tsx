@@ -415,7 +415,7 @@ export const IssuesView: React.FC<Props> = ({
               <div
                 className={`${
                   trashBox ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-                } absolute z-20 bottom-4 left-4 flex items-center gap-2 bg-red-100 border-2 border-red-500 p-3 text-xs rounded ${
+                } fixed z-20 top-12 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-red-100 border-2 border-red-500 p-3 text-xs rounded ${
                   snapshot.isDraggingOver ? "bg-red-500 text-white" : ""
                 } duration-200`}
                 ref={provided.innerRef}
