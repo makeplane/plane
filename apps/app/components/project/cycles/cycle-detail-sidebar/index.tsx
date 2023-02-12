@@ -13,10 +13,15 @@ import "react-circular-progressbar/dist/styles.css";
 import { Popover, Transition } from "@headlessui/react";
 import DatePicker from "react-datepicker";
 // icons
-import { CalendarDaysIcon, ChartPieIcon, LinkIcon, UserIcon } from "@heroicons/react/24/outline";
-import { CycleSidebarStatusSelect } from "components/project/cycles";
+import {
+  CalendarDaysIcon,
+  ChartPieIcon,
+  LinkIcon,
+  Squares2X2Icon,
+  UserIcon,
+} from "@heroicons/react/24/outline";
 // ui
-import { Loader } from "components/ui";
+import { CustomSelect, Loader } from "components/ui";
 // hooks
 import useToast from "hooks/use-toast";
 // services
@@ -32,6 +37,7 @@ import { CycleIssueResponse, ICycle, IIssue } from "types";
 // fetch-keys
 import { CYCLE_DETAILS } from "constants/fetch-keys";
 import ProgressChart from "components/core/sidebar/progress-chart";
+import { CYCLE_STATUS } from "constants/cycle";
 
 type Props = {
   issues: IIssue[];
@@ -103,15 +109,40 @@ const CycleDetailSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cycleIssue
     >
       {cycle ? (
         <>
-          <div className="flex gap-2 text-sm my-2">
-            <div className="px-2 py-1 rounded bg-gray-200">
-              <span className="capitalize">{cycle.status}</span>
+          <div className="flex gap-1 text-sm my-2">
+            <div className="flex items-center ">
+              <Controller
+                control={control}
+                name="status"
+                render={({ field: { value } }) => (
+                  <CustomSelect
+                    label={
+                      <span
+                        className={`flex items-center gap-1 text-left capitalize p-1 text-xs h-full w-full  text-gray-900`}
+                      >
+                        <Squares2X2Icon className="h-4 w-4 flex-shrink-0" />
+                        {watch("status")}
+                      </span>
+                    }
+                    value={value}
+                    onChange={(value: any) => {
+                      submitChanges({ status: value });
+                    }}
+                  >
+                    {CYCLE_STATUS.map((option) => (
+                      <CustomSelect.Option key={option.value} value={option.value}>
+                        <span className="text-xs">{option.label}</span>
+                      </CustomSelect.Option>
+                    ))}
+                  </CustomSelect>
+                )}
+              />
             </div>
-            <Popover className="relative bg-gray-200 rounded-lg">
+            <Popover className="flex justify-center items-center relative  rounded-lg">
               {({ open }) => (
                 <>
                   <Popover.Button
-                    className={`group flex items-center gap-2 rounded-md border bg-transparent p-2 text-xs font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-900 focus:outline-none ${
+                    className={`group flex items-center gap-2 rounded-md border bg-transparent h-full w-full p-2 px-4  text-xs font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-900 focus:outline-none ${
                       open ? "bg-gray-100" : ""
                     }`}
                   >
@@ -240,13 +271,6 @@ const CycleDetailSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cycleIssue
                   {groupedIssues.completed.length}/{cycleIssues?.length}
                 </div>
               </div>
-            </div>
-            <div className="py-1">
-              <CycleSidebarStatusSelect
-                control={control}
-                submitChanges={submitChanges}
-                watch={watch}
-              />
             </div>
             <div className="py-1" />
           </div>
