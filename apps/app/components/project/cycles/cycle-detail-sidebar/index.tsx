@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 import Image from "next/image";
@@ -10,11 +10,13 @@ import { Controller, useForm } from "react-hook-form";
 // react-circular-progressbar
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
+import { Popover, Transition } from "@headlessui/react";
+import DatePicker from "react-datepicker";
 // icons
 import { CalendarDaysIcon, ChartPieIcon, LinkIcon, UserIcon } from "@heroicons/react/24/outline";
 import { CycleSidebarStatusSelect } from "components/project/cycles";
 // ui
-import { Loader, CustomDatePicker } from "components/ui";
+import { Loader } from "components/ui";
 // hooks
 import useToast from "hooks/use-toast";
 // services
@@ -24,7 +26,7 @@ import { SidebarProgressStats } from "components/core";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 import { groupBy } from "helpers/array.helper";
-import { renderShortNumericDateFormat } from "helpers/date-time.helper";
+import { renderDateFormat, renderShortNumericDateFormat } from "helpers/date-time.helper";
 // types
 import { CycleIssueResponse, ICycle, IIssue } from "types";
 // fetch-keys
@@ -41,6 +43,9 @@ type Props = {
 const CycleDetailSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cycleIssues }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
+
+  const [startDateRange, setStartDateRange] = useState<Date | null>(new Date());
+  const [endDateRange, setEndDateRange] = useState<Date | null>(null);
 
   const { setToastAlert } = useToast();
 
@@ -102,17 +107,61 @@ const CycleDetailSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cycleIssue
             <div className="px-2 py-1 rounded bg-gray-200">
               <span className="capitalize">{cycle.status}</span>
             </div>
-            <div className="px-2 py-1 rounded bg-gray-200">
-              <span>
-                {renderShortNumericDateFormat(`${cycle.start_date}`)
-                  ? renderShortNumericDateFormat(`${cycle.start_date}`)
-                  : "N/A"}{" "}
-                -{" "}
-                {renderShortNumericDateFormat(`${cycle.end_date}`)
-                  ? renderShortNumericDateFormat(`${cycle.end_date}`)
-                  : "N/A"}
-              </span>
-            </div>
+            <Popover className="relative bg-gray-200 rounded-lg">
+              {({ open }) => (
+                <>
+                  <Popover.Button
+                    className={`group flex items-center gap-2 rounded-md border bg-transparent p-2 text-xs font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-900 focus:outline-none ${
+                      open ? "bg-gray-100" : ""
+                    }`}
+                  >
+                    <CalendarDaysIcon className="h-4 w-4 flex-shrink-0" />
+                    <span>
+                      {renderShortNumericDateFormat(`${cycle.start_date}`)
+                        ? renderShortNumericDateFormat(`${cycle.start_date}`)
+                        : "N/A"}{" "}
+                      -{" "}
+                      {renderShortNumericDateFormat(`${cycle.end_date}`)
+                        ? renderShortNumericDateFormat(`${cycle.end_date}`)
+                        : "N/A"}
+                    </span>
+                  </Popover.Button>
+
+                  <Transition
+                    as={React.Fragment}
+                    enter="transition ease-out duration-200"
+                    enterFrom="opacity-0 translate-y-1"
+                    enterTo="opacity-100 translate-y-0"
+                    leave="transition ease-in duration-150"
+                    leaveFrom="opacity-100 translate-y-0"
+                    leaveTo="opacity-0 translate-y-1"
+                  >
+                    <Popover.Panel className="absolute top-10 left-0 z-20  transform overflow-hidden">
+                      <DatePicker
+                        selected={startDateRange}
+                        onChange={(dates) => {
+                          const [start, end] = dates;
+                          submitChanges({
+                            start_date: renderDateFormat(start),
+                            end_date: renderDateFormat(end),
+                          });
+                          if (setStartDateRange) {
+                            setStartDateRange(start);
+                          }
+                          if (setEndDateRange) {
+                            setEndDateRange(end);
+                          }
+                        }}
+                        startDate={startDateRange}
+                        endDate={endDateRange}
+                        selectsRange
+                        inline
+                      />
+                    </Popover.Panel>
+                  </Transition>
+                </>
+              )}
+            </Popover>
           </div>
           <div className="flex items-center justify-between pb-3">
             <h4 className="text-sm font-medium">{cycle.name}</h4>
@@ -193,52 +242,6 @@ const CycleDetailSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cycleIssue
               </div>
             </div>
             <div className="py-1">
-              <div className="flex flex-wrap items-center py-2">
-                <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
-                  <CalendarDaysIcon className="h-4 w-4 flex-shrink-0" />
-                  <p>Start date</p>
-                </div>
-                <div className="sm:basis-1/2">
-                  <Controller
-                    control={control}
-                    name="start_date"
-                    render={({ field: { value } }) => (
-                      <CustomDatePicker
-                        value={value}
-                        onChange={(val) =>
-                          submitChanges({
-                            start_date: val,
-                          })
-                        }
-                        isClearable={false}
-                      />
-                    )}
-                  />
-                </div>
-              </div>
-              <div className="flex flex-wrap items-center py-2">
-                <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
-                  <CalendarDaysIcon className="h-4 w-4 flex-shrink-0" />
-                  <p>End date</p>
-                </div>
-                <div className="sm:basis-1/2">
-                  <Controller
-                    control={control}
-                    name="end_date"
-                    render={({ field: { value } }) => (
-                      <CustomDatePicker
-                        value={value}
-                        onChange={(val) =>
-                          submitChanges({
-                            end_date: val,
-                          })
-                        }
-                        isClearable={false}
-                      />
-                    )}
-                  />
-                </div>
-              </div>
               <CycleSidebarStatusSelect
                 control={control}
                 submitChanges={submitChanges}
