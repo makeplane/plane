@@ -12,11 +12,13 @@ from plane.db.models import (
     WorkspaceIntegration,
     ProjectMember,
     Label,
+    GithubCommentSync,
 )
 from plane.api.serializers import (
     GithubRepositorySerializer,
     GithubIssueSyncSerializer,
     GithubRepositorySyncSerializer,
+    GithubCommentSyncSerializer,
 )
 
 
@@ -111,4 +113,15 @@ class GithubIssueSyncViewSet(BaseViewSet):
         serializer.save(
             project_id=self.kwargs.get("project_id"),
             repository_sync_id=self.kwargs.get("repo_sync_id"),
+        )
+
+
+class GithubCommentSyncViewSet(BaseViewSet):
+    serializer_class = GithubCommentSyncSerializer
+    model = GithubCommentSync
+
+    def perform_create(self, serializer):
+        serializer.save(
+            project_id=self.kwargs.get("project_id"),
+            issue_sync_id=self.kwargs.get("issue_sync_id"),
         )

@@ -78,3 +78,24 @@ class GithubIssueSync(ProjectBaseModel):
         verbose_name_plural = "Github Issue Syncs"
         db_table = "github_issue_syncs"
         ordering = ("-created_at",)
+
+
+class GithubCommentSync(ProjectBaseModel):
+    repo_comment_id = models.BigIntegerField()
+    comment = models.ForeignKey(
+        "db.IssueComment", related_name="comment_syncs", on_delete=models.CASCADE
+    )
+    issue_sync = models.ForeignKey(
+        "db.GithubIssueSync", related_name="comment_syncs", on_delete=models.CASCADE
+    )
+
+    def __str__(self):
+        """Return the github issue sync"""
+        return f"{self.comment.id}"
+
+    class Meta:
+        unique_together = ["issue_sync", "comment"]
+        verbose_name = "Github Comment Sync"
+        verbose_name_plural = "Github Comment Syncs"
+        db_table = "github_comment_syncs"
+        ordering = ("-created_at",)

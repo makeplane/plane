@@ -92,6 +92,7 @@ from plane.api.views import (
     WorkspaceIntegrationViewSet,
     GithubRepositorySyncViewSet,
     GithubIssueSyncViewSet,
+    GithubCommentSyncViewSet,
     ## End Integrations
 )
 
@@ -745,6 +746,15 @@ urlpatterns = [
         ),
     ),
     path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/workspace-integrations/<uuid:workspace_integration_id>/github-repository-sync/<uuid:pk>/",
+        GithubRepositorySyncViewSet.as_view(
+            {
+                "get": "retrieve",
+                "delete": "destroy",
+            }
+        ),
+    ),
+    path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/github-repository-sync/<uuid:repo_sync_id>/github-issue-sync/",
         GithubIssueSyncViewSet.as_view(
             {
@@ -755,7 +765,25 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/github-repository-sync/<uuid:repo_sync_id>/github-issue-sync/<uuid:pk>/",
-        GithubRepositorySyncViewSet.as_view(
+        GithubIssueSyncViewSet.as_view(
+            {
+                "get": "retrieve",
+                "delete": "destroy",
+            }
+        ),
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/github-repository-sync/<uuid:repo_sync_id>/github-issue-sync/<uuid:issue_sync_id>/github-comment-sync/",
+        GithubCommentSyncViewSet.as_view(
+            {
+                "post": "create",
+                "get": "list",
+            }
+        ),
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/github-repository-sync/<uuid:repo_sync_id>/github-issue-sync/<uuid:issue_sync_id>/github-comment-sync/<uuid:pk>/",
+        GithubCommentSyncViewSet.as_view(
             {
                 "get": "retrieve",
                 "delete": "destroy",

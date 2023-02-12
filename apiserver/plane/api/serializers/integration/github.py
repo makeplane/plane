@@ -1,6 +1,11 @@
 # Module imports
 from plane.api.serializers import BaseSerializer
-from plane.db.models import GithubIssueSync, GithubRepository, GithubRepositorySync
+from plane.db.models import (
+    GithubIssueSync,
+    GithubRepository,
+    GithubRepositorySync,
+    GithubCommentSync,
+)
 
 
 class GithubRepositorySerializer(BaseSerializer):
@@ -25,4 +30,16 @@ class GithubIssueSyncSerializer(BaseSerializer):
             "project",
             "workspace",
             "repository_sync",
+        ]
+
+
+class GithubCommentSyncSerializer(BaseSerializer):
+    class Meta:
+        model = GithubCommentSync
+        fields = "__all__"
+        read_only_fields = [
+            "project",
+            "workspace",
+            "repository_sync",
+            "issue_sync",
         ]

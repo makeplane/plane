@@ -48,4 +48,5 @@ from .integration import (
     GithubIssueSyncSerializer,
     GithubRepositorySerializer,
     GithubRepositorySyncSerializer,
+    GithubCommentSyncSerializer,
 )

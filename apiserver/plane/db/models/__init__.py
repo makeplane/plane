@@ -53,4 +53,5 @@ from .integration import (
     GithubRepository,
     GithubRepositorySync,
     GithubIssueSync,
+    GithubCommentSync,
 )
