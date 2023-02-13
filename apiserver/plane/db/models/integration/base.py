@@ -1,3 +1,6 @@
+# Python imports
+import uuid
+
 # Django imports
 from django.db import models
 
@@ -7,6 +10,8 @@ from plane.db.mixins import AuditModel
 
 
 class Integration(AuditModel):
+    
+    id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True)
     provider = models.CharField(max_length=400)
     network = models.PositiveIntegerField(
         default=1, choices=((1, "Private"), (2, "Public"))
@@ -18,6 +23,7 @@ class Integration(AuditModel):
     redirect_url = models.TextField(blank=True)
     metadata = models.JSONField(default=dict)
     verified = models.BooleanField(default=False)
+    avatar_url = models.URLField(blank=True, null=True)
 
     def __str__(self):
         """Return provider of the integration"""
@@ -40,6 +46,9 @@ class WorkspaceIntegration(BaseModel):
     )
     integration = models.ForeignKey(
         "db.Integration", related_name="integrated_workspaces", on_delete=models.CASCADE
+    )
+    api_token = models.ForeignKey(
+        "db.APIToken", related_name="integrations", on_delete=models.CASCADE
     )
     metadata = models.JSONField(default=dict)
 

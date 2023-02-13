@@ -3,4 +3,5 @@ from .github import (
     GithubRepositorySerializer,
     GithubRepositorySyncSerializer,
     GithubIssueSyncSerializer,
+    GithubCommentSyncSerializer,
 )

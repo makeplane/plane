@@ -18,6 +18,7 @@ from plane.db.models import (
     Workspace,
     User,
     WorkspaceMember,
+    APIToken,
 )
 from plane.api.serializers import IntegrationSerializer, WorkspaceIntegrationSerializer
 
@@ -94,12 +95,25 @@ class WorkspaceIntegrationViewSet(BaseViewSet):
                 username=uuid.uuid4().hex,
                 password=make_password(uuid.uuid4().hex),
                 is_password_autoset=True,
+                is_bot=True,
+                first_name=integration.provider,
+                avatar=integration.avatar_url
+                if integration.avatar_url is not None
+                else "",
+            )
+
+            # Create an API Token for the bot user
+            api_token = APIToken.objects.create(
+                user=bot_user,
+                user_type=1,  # bot user
+                workspace=workspace,
             )
 
             workspace_integration = WorkspaceIntegration.objects.create(
                 workspace=workspace,
                 integration=integration,
-                user=bot_user,
+                actor=bot_user,
+                api_token=api_token,
             )
 
             # Add bot user as a member of workspace
@@ -117,6 +131,12 @@ class WorkspaceIntegrationViewSet(BaseViewSet):
                 return Response(
                     {"error": "Integration is already active in the workspace"},
                     status=status.HTTP_410_GONE,
+                )
+            else:
+                capture_exception(e)
+                return Response(
+                    {"error": "Something went wrong please try again later"},
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
         except (Workspace.DoesNotExist, Integration.DoesNotExist) as e:
             return Response(

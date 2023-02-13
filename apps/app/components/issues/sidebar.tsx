@@ -38,6 +38,7 @@ import {
   TrashIcon,
   PlusIcon,
   XMarkIcon,
+  RectangleGroupIcon,
 } from "@heroicons/react/24/outline";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
@@ -298,30 +299,31 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
             </div>
             <div className="basis-1/2">
               <div className="flex flex-wrap gap-1">
-                {watchIssue("labels_list")?.map((label) => {
-                  const singleLabel = issueLabels?.find((l) => l.id === label);
+                {watchIssue("labels_list")?.map((labelId) => {
+                  const label = issueLabels?.find((l) => l.id === labelId);
 
-                  if (!singleLabel) return null;
-
-                  return (
-                    <span
-                      key={singleLabel.id}
-                      className="group flex cursor-pointer items-center gap-1 rounded-2xl border px-1 py-0.5 text-xs hover:border-red-500 hover:bg-red-50"
-                      onClick={() => {
-                        const updatedLabels = watchIssue("labels_list")?.filter((l) => l !== label);
-                        submitChanges({
-                          labels_list: updatedLabels,
-                        });
-                      }}
-                    >
+                  if (label)
+                    return (
                       <span
-                        className="h-2 w-2 flex-shrink-0 rounded-full"
-                        style={{ backgroundColor: singleLabel?.color ?? "green" }}
-                      />
-                      {singleLabel.name}
-                      <XMarkIcon className="h-2 w-2 group-hover:text-red-500" />
-                    </span>
-                  );
+                        key={label.id}
+                        className="group flex cursor-pointer items-center gap-1 rounded-2xl border px-1 py-0.5 text-xs hover:border-red-500 hover:bg-red-50"
+                        onClick={() => {
+                          const updatedLabels = watchIssue("labels_list")?.filter(
+                            (l) => l !== labelId
+                          );
+                          submitChanges({
+                            labels_list: updatedLabels,
+                          });
+                        }}
+                      >
+                        <span
+                          className="h-2 w-2 flex-shrink-0 rounded-full"
+                          style={{ backgroundColor: label?.color ?? "green" }}
+                        />
+                        {label.name}
+                        <XMarkIcon className="h-2 w-2 group-hover:text-red-500" />
+                      </span>
+                    );
                 })}
                 <Controller
                   control={control}
@@ -336,58 +338,95 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                       disabled={isNotAllowed}
                     >
                       {({ open }) => (
-                        <>
-                          <Listbox.Label className="sr-only">Label</Listbox.Label>
-                          <div className="relative">
-                            <Listbox.Button
-                              className={`flex ${
-                                isNotAllowed
-                                  ? "cursor-not-allowed"
-                                  : "cursor-pointer hover:bg-gray-100"
-                              } items-center gap-2 rounded-2xl border px-2 py-0.5 text-xs`}
-                            >
-                              Select Label
-                            </Listbox.Button>
+                        <div className="relative">
+                          <Listbox.Button
+                            className={`flex ${
+                              isNotAllowed
+                                ? "cursor-not-allowed"
+                                : "cursor-pointer hover:bg-gray-100"
+                            } items-center gap-2 rounded-2xl border px-2 py-0.5 text-xs`}
+                          >
+                            Select Label
+                          </Listbox.Button>
 
-                            <Transition
-                              show={open}
-                              as={React.Fragment}
-                              leave="transition ease-in duration-100"
-                              leaveFrom="opacity-100"
-                              leaveTo="opacity-0"
-                            >
-                              <Listbox.Options className="absolute right-0 z-10 mt-1 max-h-28 w-40 overflow-auto rounded-md bg-white py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                <div className="py-1">
-                                  {issueLabels ? (
-                                    issueLabels.length > 0 ? (
-                                      issueLabels.map((label: IIssueLabels) => (
-                                        <Listbox.Option
-                                          key={label.id}
-                                          className={({ active, selected }) =>
-                                            `${
-                                              active || selected ? "bg-indigo-50" : ""
-                                            } relative flex cursor-pointer select-none items-center gap-2 truncate p-2 text-gray-900`
-                                          }
-                                          value={label.id}
-                                        >
-                                          <span
-                                            className="h-2 w-2 flex-shrink-0 rounded-full"
-                                            style={{ backgroundColor: label.color ?? "green" }}
-                                          />
-                                          {label.name}
-                                        </Listbox.Option>
-                                      ))
-                                    ) : (
-                                      <div className="text-center">No labels found</div>
-                                    )
+                          <Transition
+                            show={open}
+                            as={React.Fragment}
+                            leave="transition ease-in duration-100"
+                            leaveFrom="opacity-100"
+                            leaveTo="opacity-0"
+                          >
+                            <Listbox.Options className="absolute right-0 z-10 mt-1 max-h-28 w-40 overflow-auto rounded-md bg-white py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                              <div className="py-1">
+                                {issueLabels ? (
+                                  issueLabels.length > 0 ? (
+                                    issueLabels.map((label: IIssueLabels) => {
+                                      const children = issueLabels?.filter(
+                                        (l) => l.parent === label.id
+                                      );
+
+                                      if (children.length === 0) {
+                                        if (!label.parent)
+                                          return (
+                                            <Listbox.Option
+                                              key={label.id}
+                                              className={({ active, selected }) =>
+                                                `${active || selected ? "bg-indigo-50" : ""} ${
+                                                  selected ? "font-medium" : ""
+                                                } flex cursor-pointer select-none items-center gap-2 truncate p-2 text-gray-900`
+                                              }
+                                              value={label.id}
+                                            >
+                                              <span
+                                                className="h-2 w-2 flex-shrink-0 rounded-full"
+                                                style={{
+                                                  backgroundColor: label?.color ?? "green",
+                                                }}
+                                              />
+                                              {label.name}
+                                            </Listbox.Option>
+                                          );
+                                      } else
+                                        return (
+                                          <div className="bg-gray-50 border-y border-gray-400">
+                                            <div className="flex select-none font-medium items-center gap-2 truncate p-2 text-gray-900">
+                                              <RectangleGroupIcon className="h-3 w-3" />{" "}
+                                              {label.name}
+                                            </div>
+                                            <div>
+                                              {children.map((child) => (
+                                                <Listbox.Option
+                                                  key={child.id}
+                                                  className={({ active, selected }) =>
+                                                    `${active || selected ? "bg-indigo-50" : ""} ${
+                                                      selected ? "font-medium" : ""
+                                                    } flex cursor-pointer select-none items-center gap-2 truncate p-2 text-gray-900`
+                                                  }
+                                                  value={child.id}
+                                                >
+                                                  <span
+                                                    className="h-2 w-2 flex-shrink-0 rounded-full"
+                                                    style={{
+                                                      backgroundColor: child?.color ?? "green",
+                                                    }}
+                                                  />
+                                                  {child.name}
+                                                </Listbox.Option>
+                                              ))}
+                                            </div>
+                                          </div>
+                                        );
+                                    })
                                   ) : (
-                                    <Spinner />
-                                  )}
-                                </div>
-                              </Listbox.Options>
-                            </Transition>
-                          </div>
-                        </>
+                                    <div className="text-center">No labels found</div>
+                                  )
+                                ) : (
+                                  <Spinner />
+                                )}
+                              </div>
+                            </Listbox.Options>
+                          </Transition>
+                        </div>
                       )}
                     </Listbox>
                   )}

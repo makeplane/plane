@@ -1,3 +1,6 @@
+# Python imports
+import uuid
+
 # Django imports
 from django.db import models
 
@@ -7,10 +10,14 @@ from plane.db.mixins import AuditModel
 
 
 class GithubRepository(AuditModel):
+    id = models.UUIDField(
+        default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True
+    )
     name = models.CharField(max_length=500)
     url = models.URLField(null=True)
     config = models.JSONField(default=dict)
     repository_id = models.BigIntegerField()
+    owner = models.CharField(max_length=500)
 
     def __str__(self):
         """Return the repo name"""
@@ -24,8 +31,8 @@ class GithubRepository(AuditModel):
 
 
 class GithubRepositorySync(ProjectBaseModel):
-    repository = models.ForeignKey(
-        "db.GithubRepository", on_delete=models.CASCADE, related_name="syncss"
+    repository = models.OneToOneField(
+        "db.GithubRepository", on_delete=models.CASCADE, related_name="syncs"
     )
     credentials = models.JSONField(default=dict)
     # Bot user
@@ -35,12 +42,16 @@ class GithubRepositorySync(ProjectBaseModel):
     workspace_integration = models.ForeignKey(
         "db.WorkspaceIntegration", related_name="github_syncs", on_delete=models.CASCADE
     )
+    label = models.ForeignKey(
+        "db.Label", on_delete=models.SET_NULL, null=True, related_name="repo_syncs"
+    )
 
     def __str__(self):
         """Return the repo sync"""
         return f"{self.repository.name} <{self.project.name}>"
 
     class Meta:
+        unique_together = ["project", "repository"]
         verbose_name = "Github Repository Sync"
         verbose_name_plural = "Github Repository Syncs"
         db_table = "github_repository_syncs"
@@ -48,12 +59,13 @@ class GithubRepositorySync(ProjectBaseModel):
 
 
 class GithubIssueSync(ProjectBaseModel):
+    repo_issue_id = models.BigIntegerField()
     github_issue_id = models.BigIntegerField()
     issue = models.ForeignKey(
         "db.Issue", related_name="github_syncs", on_delete=models.CASCADE
     )
-    repository = models.ForeignKey(
-        "db.GithubRepository", related_name="issue_syncs", on_delete=models.CASCADE
+    repository_sync = models.ForeignKey(
+        "db.GithubRepositorySync", related_name="issue_syncs", on_delete=models.CASCADE
     )
 
     def __str__(self):
@@ -61,7 +73,29 @@ class GithubIssueSync(ProjectBaseModel):
         return f"{self.repository.name}-{self.project.name}-{self.issue.name}"
 
     class Meta:
+        unique_together = ["repository_sync", "issue"]
         verbose_name = "Github Issue Sync"
         verbose_name_plural = "Github Issue Syncs"
         db_table = "github_issue_syncs"
+        ordering = ("-created_at",)
+
+
+class GithubCommentSync(ProjectBaseModel):
+    repo_comment_id = models.BigIntegerField()
+    comment = models.ForeignKey(
+        "db.IssueComment", related_name="comment_syncs", on_delete=models.CASCADE
+    )
+    issue_sync = models.ForeignKey(
+        "db.GithubIssueSync", related_name="comment_syncs", on_delete=models.CASCADE
+    )
+
+    def __str__(self):
+        """Return the github issue sync"""
+        return f"{self.comment.id}"
+
+    class Meta:
+        unique_together = ["issue_sync", "comment"]
+        verbose_name = "Github Comment Sync"
+        verbose_name_plural = "Github Comment Syncs"
+        db_table = "github_comment_syncs"
         ordering = ("-created_at",)

@@ -3,4 +3,5 @@ from .github import (
     GithubRepositorySyncViewSet,
     GithubIssueSyncViewSet,
     GithubAppInstallationViewSet,
+    GithubCommentSyncViewSet,
 )
