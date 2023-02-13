@@ -112,7 +112,7 @@ const SignInPage: NextPage = () => {
               Sign in to your account
             </h2>
             <div className="mt-16 bg-white py-8 px-4 sm:rounded-lg sm:px-10">
-              {process.env.NEXT_PUBLIC_OAUTH_ENABLED ? (
+              {Boolean(process.env.NEXT_PUBLIC_ENABLE_OAUTH) ? (
                 <>
                   <div className="mb-4">
                     <EmailSignInForm handleSuccess={onSignInSuccess} />
