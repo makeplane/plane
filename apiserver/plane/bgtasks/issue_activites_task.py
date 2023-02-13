@@ -748,7 +748,7 @@ def issue_activity(event):
         # Post the updates to segway for integrations and webhooks
         if len(issue_activities_created):
             # Don't send activities if the actor is a bot
-            if settings.PROXY_BASE_URL and not actor.is_bot:
+            if settings.PROXY_BASE_URL:
                 for issue_activity in issue_activities_created:
                     headers = {"Content-Type": "application/json"}
                     issue_activity_json = json.dumps(
