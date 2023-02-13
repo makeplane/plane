@@ -5,7 +5,6 @@ from django.urls import path
 
 from plane.api.views import (
     # Authentication
-    SignUpEndpoint,
     SignInEndpoint,
     SignOutEndpoint,
     MagicSignInEndpoint,
@@ -95,7 +94,6 @@ urlpatterns = [
     path("social-auth/", OauthEndpoint.as_view(), name="oauth"),
     # Auth
     path("sign-in/", SignInEndpoint.as_view(), name="sign-in"),
-    path("sign-up/", SignUpEndpoint.as_view(), name="sign-up"),
     path("sign-out/", SignOutEndpoint.as_view(), name="sign-out"),
     # Magic Sign In/Up
     path(
