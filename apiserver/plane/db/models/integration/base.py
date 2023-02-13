@@ -10,9 +10,10 @@ from plane.db.mixins import AuditModel
 
 
 class Integration(AuditModel):
-    
-    id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True)
-    provider = models.CharField(max_length=400)
+    id = models.UUIDField(
+        default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True
+    )
+    provider = models.CharField(max_length=400, unique=True)
     network = models.PositiveIntegerField(
         default=1, choices=((1, "Private"), (2, "Public"))
     )

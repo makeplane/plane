@@ -15,7 +15,6 @@ from plane.db.models import (
     GithubCommentSync,
 )
 from plane.api.serializers import (
-    GithubRepositorySerializer,
     GithubIssueSyncSerializer,
     GithubRepositorySyncSerializer,
     GithubCommentSyncSerializer,
@@ -36,10 +35,19 @@ class GithubRepositorySyncViewSet(BaseViewSet):
             config = request.data.get("config", {})
             repository_id = request.data.get("repository_id", False)
             owner = request.data.get("owner", False)
+            installation_id = request.data.get("installation_id", False)
 
-            if not name or not url or not repository_id or not owner:
+            if (
+                not name
+                or not url
+                or not repository_id
+                or not owner
+                or not installation_id
+            ):
                 return Response(
-                    {"error": "Name, url, and repository_id are required"},
+                    {
+                        "error": "Name, url, repository_id, owner and installation_id are required"
+                    },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -50,6 +58,7 @@ class GithubRepositorySyncViewSet(BaseViewSet):
                 config=config,
                 repository_id=repository_id,
                 owner=owner,
+                project_id=project_id,
             )
 
             # Get the workspace integration
@@ -79,6 +88,7 @@ class GithubRepositorySyncViewSet(BaseViewSet):
                 credentials=request.data.get("credentials", {}),
                 project_id=project_id,
                 label=label,
+                installation_id=installation_id,
             )
 
             # Add bot as a member in the project

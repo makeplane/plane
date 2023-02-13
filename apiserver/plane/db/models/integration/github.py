@@ -9,10 +9,7 @@ from plane.db.models import ProjectBaseModel
 from plane.db.mixins import AuditModel
 
 
-class GithubRepository(AuditModel):
-    id = models.UUIDField(
-        default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True
-    )
+class GithubRepository(ProjectBaseModel):
     name = models.CharField(max_length=500)
     url = models.URLField(null=True)
     config = models.JSONField(default=dict)
@@ -31,6 +28,7 @@ class GithubRepository(AuditModel):
 
 
 class GithubRepositorySync(ProjectBaseModel):
+    installation_id = models.BigIntegerField()
     repository = models.OneToOneField(
         "db.GithubRepository", on_delete=models.CASCADE, related_name="syncs"
     )
@@ -61,6 +59,7 @@ class GithubRepositorySync(ProjectBaseModel):
 class GithubIssueSync(ProjectBaseModel):
     repo_issue_id = models.BigIntegerField()
     github_issue_id = models.BigIntegerField()
+    issue_url = models.URLField(blank=False)
     issue = models.ForeignKey(
         "db.Issue", related_name="github_syncs", on_delete=models.CASCADE
     )
