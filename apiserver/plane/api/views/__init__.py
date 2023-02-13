@@ -80,4 +80,5 @@ from .integration import (
     IntegrationViewSet,
     GithubIssueSyncViewSet,
     GithubRepositorySyncViewSet,
+    GithubAppInstallationViewSet,
 )

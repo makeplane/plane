@@ -92,6 +92,7 @@ from plane.api.views import (
     WorkspaceIntegrationViewSet,
     GithubRepositorySyncViewSet,
     GithubIssueSyncViewSet,
+    GithubAppInstallationViewSet,
     ## End Integrations
 )
 
@@ -762,6 +763,10 @@ urlpatterns = [
             }
         ),
     ),
+    path(
+        "workspaces/<str:slug>/github-installations/<str:installation_id>/",
+        GithubAppInstallationViewSet.as_view(),
+    )
     ## End Github Integrations
     ## End Integrations
 ]
