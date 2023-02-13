@@ -34,8 +34,8 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
     reValidateMode: "onChange",
   });
 
-  const onSubmit = ({ email }: EmailCodeFormValues) => {
-    authenticationService
+  const onSubmit = async ({ email }: EmailCodeFormValues) => {
+    await authenticationService
       .emailCode({ email })
       .then((res) => {
         setValue("key", res.key);
@@ -46,8 +46,8 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
       });
   };
 
-  const handleSignin = (formData: EmailCodeFormValues) => {
-    authenticationService
+  const handleSignin = async (formData: EmailCodeFormValues) => {
+    await authenticationService
       .magicSignIn(formData)
       .then((response) => {
         onSuccess(response);
@@ -68,10 +68,7 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
 
   return (
     <>
-      <form
-        className="mt-5 space-y-5"
-        onSubmit={codeSent ? handleSubmit(handleSignin) : handleSubmit(onSubmit)}
-      >
+      <form className="mt-5 space-y-5">
         {codeSent && (
           <div className="rounded-md bg-green-50 p-4">
             <div className="flex">
@@ -117,16 +114,37 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
               error={errors.token}
               placeholder="Enter code"
             />
+            {/* <span
+              className="text-xs outline-none hover:text-theme"
+              onClick={() => {
+                console.log("Triggered");
+                handleSubmit(onSubmit);
+              }}
+            >
+              Resend code
+            </span> */}
           </div>
         )}
         <div>
-          <Button
-            disabled={isSubmitting || (!isValid && isDirty)}
-            className="w-full text-center"
-            type="submit"
-          >
-            {isSubmitting ? "Signing in..." : codeSent ? "Sign In" : "Continue with Email ID"}
-          </Button>
+          {codeSent ? (
+            <Button
+              type="submit"
+              className="w-full text-center"
+              onClick={handleSubmit(handleSignin)}
+              disabled={isSubmitting || (!isValid && isDirty)}
+            >
+              {isSubmitting ? "Signing in..." : "Sign in"}
+            </Button>
+          ) : (
+            <Button
+              type="submit"
+              className="w-full text-center"
+              onClick={handleSubmit(onSubmit)}
+              disabled={isSubmitting || (!isValid && isDirty)}
+            >
+              {isSubmitting ? "Sending code..." : "Send code"}
+            </Button>
+          )}
         </div>
       </form>
     </>

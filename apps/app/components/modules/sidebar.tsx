@@ -7,6 +7,16 @@ import { mutate } from "swr";
 
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
+// icons
+import {
+  CalendarDaysIcon,
+  ChartPieIcon,
+  LinkIcon,
+  PlusIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
+// progress-bar
+import { CircularProgressbar } from "react-circular-progressbar";
 // services
 import modulesService from "services/modules.service";
 // hooks
@@ -18,27 +28,21 @@ import {
   SidebarMembersSelect,
   SidebarStatusSelect,
 } from "components/modules";
-// progress-bar
-import { CircularProgressbar } from "react-circular-progressbar";
+
 import "react-circular-progressbar/dist/styles.css";
+// components
+import { SidebarProgressStats } from "components/core";
 // ui
 import { CustomDatePicker, Loader } from "components/ui";
-// icons
-import {
-  CalendarDaysIcon,
-  ChartPieIcon,
-  LinkIcon,
-  PlusIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
 import { groupBy } from "helpers/array.helper";
 // types
-import { IModule, ModuleIssueResponse } from "types";
+import { IIssue, IModule, ModuleIssueResponse } from "types";
 // fetch-keys
 import { MODULE_DETAILS } from "constants/fetch-keys";
+import ProgressChart from "components/core/sidebar/progress-chart";
 
 const defaultValues: Partial<IModule> = {
   lead: "",
@@ -49,6 +53,7 @@ const defaultValues: Partial<IModule> = {
 };
 
 type Props = {
+  issues: IIssue[];
   module?: IModule;
   isOpen: boolean;
   moduleIssues: ModuleIssueResponse[] | undefined;
@@ -56,6 +61,7 @@ type Props = {
 };
 
 export const ModuleDetailsSidebar: React.FC<Props> = ({
+  issues,
   module,
   isOpen,
   moduleIssues,
@@ -112,6 +118,8 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
       });
   }, [module, reset]);
 
+  const isStartValid = new Date(`${module?.start_date}`) <= new Date();
+  const isEndValid = new Date(`${module?.target_date}`) >= new Date(`${module?.start_date}`);
   return (
     <>
       <ModuleLinkModal
@@ -289,6 +297,22 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                     : null}
                 </div>
               </div>
+            </div>
+            <div className="flex flex-col items-center justify-center w-full gap-2 ">
+              {isStartValid && isEndValid ? (
+                <ProgressChart
+                  issues={issues}
+                  start={module?.start_date ?? ""}
+                  end={module?.target_date ?? ""}
+                />
+              ) : (
+                ""
+              )}
+              {issues.length > 0 ? (
+                <SidebarProgressStats issues={issues} groupedIssues={groupedIssues} />
+              ) : (
+                ""
+              )}
             </div>
           </>
         ) : (

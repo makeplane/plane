@@ -75,7 +75,6 @@ class ProjectViewSet(BaseViewSet):
 
     def create(self, request, slug):
         try:
-
             workspace = Workspace.objects.get(slug=slug)
 
             serializer = ProjectSerializer(
@@ -96,6 +95,7 @@ class ProjectViewSet(BaseViewSet):
                         "color": "#5e6ad2",
                         "sequence": 15000,
                         "group": "backlog",
+                        "default": True,
                     },
                     {
                         "name": "Todo",
@@ -132,6 +132,7 @@ class ProjectViewSet(BaseViewSet):
                             sequence=state["sequence"],
                             workspace=serializer.instance.workspace,
                             group=state["group"],
+                            default=state.get("default", False),
                         )
                         for state in states
                     ]
@@ -188,7 +189,7 @@ class ProjectViewSet(BaseViewSet):
                     {"name": "The project name is already taken"},
                     status=status.HTTP_410_GONE,
                 )
-        except (Project.DoesNotExist or Workspace.DoesNotExist) as e:
+        except Project.DoesNotExist or Workspace.DoesNotExist as e:
             return Response(
                 {"error": "Project does not exist"}, status=status.HTTP_404_NOT_FOUND
             )
@@ -206,14 +207,12 @@ class ProjectViewSet(BaseViewSet):
 
 
 class InviteProjectEndpoint(BaseAPIView):
-
     permission_classes = [
         ProjectBasePermission,
     ]
 
     def post(self, request, slug, project_id):
         try:
-
             email = request.data.get("email", False)
             role = request.data.get("role", False)
 
@@ -287,7 +286,6 @@ class InviteProjectEndpoint(BaseAPIView):
 
 
 class UserProjectInvitationsViewset(BaseViewSet):
-
     serializer_class = ProjectMemberInviteSerializer
     model = ProjectMemberInvite
 
@@ -301,7 +299,6 @@ class UserProjectInvitationsViewset(BaseViewSet):
 
     def create(self, request):
         try:
-
             invitations = request.data.get("invitations")
             project_invitations = ProjectMemberInvite.objects.filter(
                 pk__in=invitations, accepted=True
@@ -331,7 +328,6 @@ class UserProjectInvitationsViewset(BaseViewSet):
 
 
 class ProjectMemberViewSet(BaseViewSet):
-
     serializer_class = ProjectMemberSerializer
     model = ProjectMember
     permission_classes = [
@@ -356,14 +352,12 @@ class ProjectMemberViewSet(BaseViewSet):
 
 
 class AddMemberToProjectEndpoint(BaseAPIView):
-
     permission_classes = [
         ProjectBasePermission,
     ]
 
     def post(self, request, slug, project_id):
         try:
-
             member_id = request.data.get("member_id", False)
             role = request.data.get("role", False)
 
@@ -412,13 +406,11 @@ class AddMemberToProjectEndpoint(BaseAPIView):
 
 
 class AddTeamToProjectEndpoint(BaseAPIView):
-
     permission_classes = [
         ProjectBasePermission,
     ]
 
     def post(self, request, slug, project_id):
-
         try:
             team_members = TeamMember.objects.filter(
                 workspace__slug=slug, team__in=request.data.get("teams", [])
@@ -467,7 +459,6 @@ class AddTeamToProjectEndpoint(BaseAPIView):
 
 
 class ProjectMemberInvitationsViewset(BaseViewSet):
-
     serializer_class = ProjectMemberInviteSerializer
     model = ProjectMemberInvite
 
@@ -489,7 +480,6 @@ class ProjectMemberInvitationsViewset(BaseViewSet):
 
 
 class ProjectMemberInviteDetailViewSet(BaseViewSet):
-
     serializer_class = ProjectMemberInviteSerializer
     model = ProjectMemberInvite
 
@@ -509,14 +499,12 @@ class ProjectMemberInviteDetailViewSet(BaseViewSet):
 
 
 class ProjectIdentifierEndpoint(BaseAPIView):
-
     permission_classes = [
         ProjectBasePermission,
     ]
 
     def get(self, request, slug):
         try:
-
             name = request.GET.get("name", "").strip().upper()
 
             if name == "":
@@ -541,7 +529,6 @@ class ProjectIdentifierEndpoint(BaseAPIView):
 
     def delete(self, request, slug):
         try:
-
             name = request.data.get("name", "").strip().upper()
 
             if name == "":
@@ -616,7 +603,6 @@ class ProjectJoinEndpoint(BaseAPIView):
 class ProjectUserViewsEndpoint(BaseAPIView):
     def post(self, request, slug, project_id):
         try:
-
             project = Project.objects.get(pk=project_id, workspace__slug=slug)
 
             project_member = ProjectMember.objects.filter(
@@ -655,7 +641,6 @@ class ProjectUserViewsEndpoint(BaseAPIView):
 class ProjectMemberUserEndpoint(BaseAPIView):
     def get(self, request, slug, project_id):
         try:
-
             project_member = ProjectMember.objects.get(
                 project_id=project_id, workspace__slug=slug, member=request.user
             )

@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from sentry_sdk import capture_exception
 
+
 # Module imports
 from . import BaseViewSet
 from plane.api.serializers import StateSerializer
@@ -53,3 +54,19 @@ class StateViewSet(BaseViewSet):
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+    def destroy(self, request, slug, project_id, pk):
+        try:
+            state = State.objects.get(
+                pk=pk, project_id=project_id, workspace__slug=slug
+            )
+
+            if state.default:
+                return Response(
+                    {"error": "Default state cannot be deleted"}, status=False
+                )
+
+            state.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except State.DoesNotExist:
+            return Response({"error": "State does not exists"}, status=status.HTTP_404)

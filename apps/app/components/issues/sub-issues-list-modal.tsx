@@ -44,7 +44,7 @@ export const SubIssuesListModal: React.FC<Props> = ({ isOpen, handleClose, paren
       : issues?.results.filter((issue) => issue.name.toLowerCase().includes(query.toLowerCase())) ??
         [];
 
-  const handleCommandPaletteClose = () => {
+  const handleModalClose = () => {
     handleClose();
     setQuery("");
   };
@@ -93,7 +93,7 @@ export const SubIssuesListModal: React.FC<Props> = ({ isOpen, handleClose, paren
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment} afterLeave={() => setQuery("")} appear>
-      <Dialog as="div" className="relative z-20" onClose={handleCommandPaletteClose}>
+      <Dialog as="div" className="relative z-20" onClose={handleModalClose}>
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
