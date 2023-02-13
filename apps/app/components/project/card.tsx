@@ -12,13 +12,14 @@ import {
   ClipboardDocumentListIcon,
 } from "@heroicons/react/24/outline";
 // types
-import type { IProject } from "types";
 // ui
 import { Button } from "components/ui";
 // hooks
 import useProjectMembers from "hooks/use-project-members";
 // helpers
 import { renderShortNumericDateFormat } from "helpers/date-time.helper";
+// types
+import type { IProject } from "types";
 
 export type ProjectCardProps = {
   workspaceSlug: string;
@@ -85,6 +86,14 @@ export const ProjectCard: React.FC<ProjectCardProps> = (props) => {
         </div>
         <div className="mt-3 flex h-full items-end justify-between">
           <div className="flex gap-2">
+            <Button
+              theme="secondary"
+              className="flex items-center gap-1"
+              onClick={() => router.push(`/${workspaceSlug}/projects/${project.id}/issues`)}
+            >
+              <ClipboardDocumentListIcon className="h-3 w-3" />
+              Open Project
+            </Button>
             {!isMember ? (
               <button
                 type="button"
@@ -97,19 +106,11 @@ export const ProjectCard: React.FC<ProjectCardProps> = (props) => {
                 <span>Select to Join</span>
               </button>
             ) : (
-              <Button theme="secondary" className="flex items-center gap-1" disabled>
+              <div className="flex items-center gap-1 text-xs">
                 <CheckIcon className="h-3 w-3" />
                 Member
-              </Button>
+              </div>
             )}
-            <Button
-              theme="secondary"
-              className="flex items-center gap-1"
-              onClick={() => router.push(`/${workspaceSlug}/projects/${project.id}/issues`)}
-            >
-              <ClipboardDocumentListIcon className="h-3 w-3" />
-              Open Project
-            </Button>
           </div>
           <div className="mb-1 flex items-center gap-1 text-xs">
             <CalendarDaysIcon className="h-4 w-4" />

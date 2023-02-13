@@ -28,11 +28,13 @@ export const ViewStateSelect: React.FC<Props> = ({
   isNotAllowed,
 }) => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug } = router.query;
 
   const { data: stateGroups } = useSWR(
-    workspaceSlug && projectId ? STATE_LIST(issue.project) : null,
-    workspaceSlug ? () => stateService.getStates(workspaceSlug as string, issue.project) : null
+    workspaceSlug && issue ? STATE_LIST(issue.project) : null,
+    workspaceSlug && issue
+      ? () => stateService.getStates(workspaceSlug as string, issue.project)
+      : null
   );
   const states = getStatesList(stateGroups ?? {});
 

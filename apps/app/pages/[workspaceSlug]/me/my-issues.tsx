@@ -58,54 +58,56 @@ const MyIssuesPage: NextPage = () => {
         }
         right={
           <div className="flex items-center gap-2">
-            <Popover className="relative">
-              {({ open }) => (
-                <>
-                  <Popover.Button
-                    className={`group flex items-center gap-2 rounded-md border bg-transparent p-2 text-xs font-medium hover:bg-gray-100 hover:text-gray-900 focus:outline-none ${
-                      open ? "bg-gray-100 text-gray-900" : "text-gray-500"
-                    }`}
-                  >
-                    <span>View</span>
-                    <ChevronDownIcon className="h-4 w-4" aria-hidden="true" />
-                  </Popover.Button>
+            {myIssues && myIssues.length > 0 && (
+              <Popover className="relative">
+                {({ open }) => (
+                  <>
+                    <Popover.Button
+                      className={`group flex items-center gap-2 rounded-md border bg-transparent p-2 text-xs font-medium hover:bg-gray-100 hover:text-gray-900 focus:outline-none ${
+                        open ? "bg-gray-100 text-gray-900" : "text-gray-500"
+                      }`}
+                    >
+                      <span>View</span>
+                      <ChevronDownIcon className="h-4 w-4" aria-hidden="true" />
+                    </Popover.Button>
 
-                  <Transition
-                    as={React.Fragment}
-                    enter="transition ease-out duration-200"
-                    enterFrom="opacity-0 translate-y-1"
-                    enterTo="opacity-100 translate-y-0"
-                    leave="transition ease-in duration-150"
-                    leaveFrom="opacity-100 translate-y-0"
-                    leaveTo="opacity-0 translate-y-1"
-                  >
-                    <Popover.Panel className="absolute right-1/2 z-10 mr-5 mt-1 w-screen max-w-xs translate-x-1/2 transform overflow-hidden rounded-lg bg-white p-3 shadow-lg">
-                      <div className="relative flex flex-col gap-1 gap-y-4">
-                        <div className="relative flex flex-col gap-1">
-                          <h4 className="text-base text-gray-600">Properties</h4>
-                          <div className="flex flex-wrap items-center gap-2">
-                            {Object.keys(properties).map((key) => (
-                              <button
-                                key={key}
-                                type="button"
-                                className={`rounded border border-theme px-2 py-1 text-xs capitalize ${
-                                  properties[key as keyof Properties]
-                                    ? "border-theme bg-theme text-white"
-                                    : ""
-                                }`}
-                                onClick={() => setProperties(key as keyof Properties)}
-                              >
-                                {replaceUnderscoreIfSnakeCase(key)}
-                              </button>
-                            ))}
+                    <Transition
+                      as={React.Fragment}
+                      enter="transition ease-out duration-200"
+                      enterFrom="opacity-0 translate-y-1"
+                      enterTo="opacity-100 translate-y-0"
+                      leave="transition ease-in duration-150"
+                      leaveFrom="opacity-100 translate-y-0"
+                      leaveTo="opacity-0 translate-y-1"
+                    >
+                      <Popover.Panel className="absolute right-1/2 z-10 mr-5 mt-1 w-screen max-w-xs translate-x-1/2 transform overflow-hidden rounded-lg bg-white p-3 shadow-lg">
+                        <div className="relative flex flex-col gap-1 gap-y-4">
+                          <div className="relative flex flex-col gap-1">
+                            <h4 className="text-base text-gray-600">Properties</h4>
+                            <div className="flex flex-wrap items-center gap-2">
+                              {Object.keys(properties).map((key) => (
+                                <button
+                                  key={key}
+                                  type="button"
+                                  className={`rounded border border-theme px-2 py-1 text-xs capitalize ${
+                                    properties[key as keyof Properties]
+                                      ? "border-theme bg-theme text-white"
+                                      : ""
+                                  }`}
+                                  onClick={() => setProperties(key as keyof Properties)}
+                                >
+                                  {replaceUnderscoreIfSnakeCase(key)}
+                                </button>
+                              ))}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </Popover.Panel>
-                  </Transition>
-                </>
-              )}
-            </Popover>
+                      </Popover.Panel>
+                    </Transition>
+                  </>
+                )}
+              </Popover>
+            )}
             <HeaderButton
               Icon={PlusIcon}
               label="Add Issue"
