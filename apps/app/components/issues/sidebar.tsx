@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 
@@ -143,6 +143,12 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
     },
     [workspaceSlug, projectId, issueId, issueDetail]
   );
+
+  useEffect(() => {
+    if (!createLabelForm) return;
+
+    reset();
+  }, [createLabelForm, reset]);
 
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
@@ -431,24 +437,25 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                     </Listbox>
                   )}
                 />
-                <button
-                  type="button"
-                  className={`flex ${
-                    isNotAllowed ? "cursor-not-allowed" : "cursor-pointer hover:bg-gray-100"
-                  } items-center gap-1 rounded-2xl border px-2 py-0.5 text-xs`}
-                  onClick={() => setCreateLabelForm((prevData) => !prevData)}
-                  disabled={isNotAllowed}
-                >
-                  {createLabelForm ? (
-                    <>
-                      <XMarkIcon className="h-3 w-3" /> Cancel
-                    </>
-                  ) : (
-                    <>
-                      <PlusIcon className="h-3 w-3" /> New
-                    </>
-                  )}
-                </button>
+                {!isNotAllowed && (
+                  <button
+                    type="button"
+                    className={`flex ${
+                      isNotAllowed ? "cursor-not-allowed" : "cursor-pointer hover:bg-gray-100"
+                    } items-center gap-1 rounded-2xl border px-2 py-0.5 text-xs`}
+                    onClick={() => setCreateLabelForm((prevData) => !prevData)}
+                  >
+                    {createLabelForm ? (
+                      <>
+                        <XMarkIcon className="h-3 w-3" /> Cancel
+                      </>
+                    ) : (
+                      <>
+                        <PlusIcon className="h-3 w-3" /> New
+                      </>
+                    )}
+                  </button>
+                )}
               </div>
             </div>
           </div>

@@ -82,14 +82,14 @@ export const SidebarCycleSelect: React.FC<Props> = ({
           {cycles ? (
             cycles.length > 0 ? (
               <>
-                <CustomSelect.Option value={null} className="capitalize">
-                  None
-                </CustomSelect.Option>
                 {cycles.map((option) => (
                   <CustomSelect.Option key={option.id} value={option.id}>
                     {option.name}
                   </CustomSelect.Option>
                 ))}
+                <CustomSelect.Option value={null} className="capitalize">
+                  None
+                </CustomSelect.Option>
               </>
             ) : (
               <div className="text-center">No cycles found</div>
