@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // icons
@@ -15,7 +15,7 @@ const shortcuts = [
   {
     title: "Navigation",
     shortcuts: [
-      { keys: "Ctrl,Cmd,K", description: "To open navigator" },
+      { keys: "Ctrl,/,Cmd,K", description: "To open navigator" },
       { keys: "↑", description: "Move up" },
       { keys: "↓", description: "Move down" },
       { keys: "←", description: "Move left" },
@@ -34,21 +34,25 @@ const shortcuts = [
       { keys: "Delete", description: "To bulk delete issues" },
       { keys: "H", description: "To open shortcuts guide" },
       {
-        keys: "Ctrl,Cmd,Alt,C",
+        keys: "Ctrl,/,Cmd,Alt,C",
         description: "To copy issue url when on issue detail page.",
       },
     ],
   },
 ];
 
+const allShortcuts = shortcuts.map((i) => i.shortcuts).flat(1);
+
 export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
   const [query, setQuery] = useState("");
 
-  const filteredShortcuts = shortcuts.filter((shortcut) =>
-    shortcut.shortcuts.some((item) => item.description.includes(query.trim())) || query === ""
-      ? true
-      : false
+  const filteredShortcuts = allShortcuts.filter((shortcut) =>
+    shortcut.description.includes(query.trim()) || query === "" ? true : false
   );
+
+  useEffect(() => {
+    if (!isOpen) setQuery("");
+  }, [isOpen]);
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
@@ -104,8 +108,40 @@ export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                         />
                       </div>
                       <div className="flex w-full flex-col gap-y-3">
-                        {filteredShortcuts.length > 0 ? (
-                          filteredShortcuts.map(({ title, shortcuts }) => (
+                        {query.trim().length > 0 ? (
+                          filteredShortcuts.length > 0 ? (
+                            filteredShortcuts.map((shortcut) => (
+                              <div key={shortcut.keys} className="flex w-full flex-col">
+                                <div className="flex flex-col gap-y-3">
+                                  <div className="flex justify-between">
+                                    <p className="text-sm text-gray-500">{shortcut.description}</p>
+                                    <div className="flex items-center gap-x-1">
+                                      {shortcut.keys.split(",").map((key, index) => (
+                                        <span key={index} className="flex items-center gap-1">
+                                          <kbd className="rounded bg-gray-200 px-1 text-sm">
+                                            {key}
+                                          </kbd>
+                                        </span>
+                                      ))}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            ))
+                          ) : (
+                            <div className="flex flex-col gap-y-3">
+                              <p className="text-sm text-gray-500">
+                                No shortcuts found for{" "}
+                                <span className="font-semibold italic">
+                                  {`"`}
+                                  {query}
+                                  {`"`}
+                                </span>
+                              </p>
+                            </div>
+                          )
+                        ) : (
+                          shortcuts.map(({ title, shortcuts }) => (
                             <div key={title} className="flex w-full flex-col">
                               <p className="mb-4 font-medium">{title}</p>
                               <div className="flex flex-col gap-y-3">
@@ -126,17 +162,6 @@ export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                               </div>
                             </div>
                           ))
-                        ) : (
-                          <div className="flex flex-col gap-y-3">
-                            <p className="text-sm text-gray-500">
-                              No shortcuts found for{" "}
-                              <span className="font-semibold italic">
-                                {`"`}
-                                {query}
-                                {`"`}
-                              </span>
-                            </p>
-                          </div>
                         )}
                       </div>
                     </div>
