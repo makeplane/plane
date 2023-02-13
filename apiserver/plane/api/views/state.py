@@ -1,6 +1,11 @@
+# Python imports
+from itertools import groupby
+
 # Third party imports
-from rest_framework import status
 from rest_framework.response import Response
+from rest_framework import status
+from sentry_sdk import capture_exception
+
 
 # Module imports
 from . import BaseViewSet
@@ -30,6 +35,25 @@ class StateViewSet(BaseViewSet):
             .select_related("workspace")
             .distinct()
         )
+
+    def list(self, request, slug, project_id):
+        try:
+            state_dict = dict()
+            states = StateSerializer(self.get_queryset(), many=True).data
+
+            for key, value in groupby(
+                sorted(states, key=lambda state: state["group"]),
+                lambda state: state.get("group"),
+            ):
+                state_dict[str(key)] = list(value)
+
+            return Response(state_dict, status=status.HTTP_200_OK)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     def destroy(self, request, slug, project_id, pk):
         try:
