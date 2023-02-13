@@ -32,7 +32,7 @@ const helpOptions = [
     Icon: GithubIcon,
   },
   {
-    name: "Chat with us",
+    name: "Email us",
     href: "mailto:hello@plane.so",
     Icon: CommentIcon,
   },
