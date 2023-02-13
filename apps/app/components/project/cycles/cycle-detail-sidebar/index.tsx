@@ -90,6 +90,8 @@ const CycleDetailSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cycleIssue
       });
   }, [cycle, reset]);
 
+  const isStartValid = new Date(`${cycle?.start_date}`) <= new Date();
+  const isEndValid = new Date(`${cycle?.end_date}`) >= new Date(`${cycle?.start_date}`);
   return (
     <div
       className={`fixed top-0 ${
@@ -248,13 +250,17 @@ const CycleDetailSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cycleIssue
             <div className="py-1" />
           </div>
           <div className="flex flex-col items-center justify-center w-full gap-2 ">
-            <div className="relative h-[200px] w-full ">
-              <ProgressChart
-                issues={issues}
-                start={cycle?.start_date ?? ""}
-                end={cycle?.end_date ?? ""}
-              />
-            </div>
+            {isStartValid && isEndValid ? (
+              <div className="relative h-[200px] w-full ">
+                <ProgressChart
+                  issues={issues}
+                  start={cycle?.start_date ?? ""}
+                  end={cycle?.end_date ?? ""}
+                />
+              </div>
+            ) : (
+              ""
+            )}
             <SidebarProgressStats issues={issues} groupedIssues={groupedIssues} />
           </div>
         </>

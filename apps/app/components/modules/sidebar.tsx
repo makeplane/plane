@@ -118,6 +118,8 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
       });
   }, [module, reset]);
 
+  const isStartValid = new Date(`${module?.start_date}`) <= new Date();
+  const isEndValid = new Date(`${module?.target_date}`) >= new Date(`${module?.start_date}`);
   return (
     <>
       <ModuleLinkModal
@@ -297,11 +299,15 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
               </div>
             </div>
             <div className="flex flex-col items-center justify-center w-full gap-2 ">
-              <ProgressChart
-                issues={issues}
-                start={module?.start_date ?? ""}
-                end={module?.target_date ?? ""}
-              />
+              {isStartValid && isEndValid ? (
+                <ProgressChart
+                  issues={issues}
+                  start={module?.start_date ?? ""}
+                  end={module?.target_date ?? ""}
+                />
+              ) : (
+                ""
+              )}
 
               <SidebarProgressStats issues={issues} groupedIssues={groupedIssues} />
             </div>
