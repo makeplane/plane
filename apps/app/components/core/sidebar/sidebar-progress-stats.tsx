@@ -20,6 +20,7 @@ import User from "public/user.png";
 import { IIssue, IIssueLabels } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS } from "constants/fetch-keys";
+import useLocalStorage from "hooks/use-local-storage";
 // types
 type Props = {
   groupedIssues: any;
@@ -38,6 +39,7 @@ const stateGroupColours: {
 
 export const SidebarProgressStats: React.FC<Props> = ({ groupedIssues, issues }) => {
   const router = useRouter();
+  const [tab, setTab] = useLocalStorage("tab", "Assignees");
   const { workspaceSlug, projectId } = router.query;
   const { data: issueLabels } = useSWR<IIssueLabels[]>(
     workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
@@ -52,8 +54,34 @@ export const SidebarProgressStats: React.FC<Props> = ({ groupedIssues, issues })
       ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
       : null
   );
+
+  const currentValue = (tab: string) => {
+    switch (tab) {
+      case "Assignees":
+        return 0;
+      case "Labels":
+        return 1;
+      case "States":
+        return 2;
+    }
+  };
   return (
-    <Tab.Group>
+    <Tab.Group
+      defaultIndex={currentValue(tab)}
+      onChange={(i) => {
+        switch (i) {
+          case 0:
+            return setTab("Assignees");
+          case 1:
+            return setTab("Labels");
+          case 2:
+            return setTab("States");
+
+          default:
+            return setTab("Assignees");
+        }
+      }}
+    >
       <Tab.List
         as="div"
         className="flex items-center justify-between w-full rounded bg-gray-100 text-xs"
