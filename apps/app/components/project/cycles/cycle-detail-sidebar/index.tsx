@@ -261,7 +261,11 @@ const CycleDetailSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cycleIssue
             ) : (
               ""
             )}
-            <SidebarProgressStats issues={issues} groupedIssues={groupedIssues} />
+            {issues.length > 0 ? (
+              <SidebarProgressStats issues={issues} groupedIssues={groupedIssues} />
+            ) : (
+              ""
+            )}
           </div>
         </>
       ) : (

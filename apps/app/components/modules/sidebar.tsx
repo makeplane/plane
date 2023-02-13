@@ -308,8 +308,11 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
               ) : (
                 ""
               )}
-
-              <SidebarProgressStats issues={issues} groupedIssues={groupedIssues} />
+              {issues.length > 0 ? (
+                <SidebarProgressStats issues={issues} groupedIssues={groupedIssues} />
+              ) : (
+                ""
+              )}
             </div>
           </>
         ) : (
