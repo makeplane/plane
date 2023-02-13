@@ -69,6 +69,8 @@ export const SingleBoard: React.FC<Props> = ({
       ? (bgColor = "#22c55e")
       : (bgColor = "#ff0000");
 
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+
   return (
     <div className={`h-full flex-shrink-0 rounded ${!isCollapsed ? "" : "w-80 border bg-gray-50"}`}>
       <div className={`${!isCollapsed ? "" : "flex h-full flex-col space-y-3 overflow-y-auto"}`}>
@@ -95,7 +97,7 @@ export const SingleBoard: React.FC<Props> = ({
                   key={issue.id}
                   draggableId={issue.id}
                   index={index}
-                  isDragDisabled={selectedGroup === "created_by"}
+                  isDragDisabled={isNotAllowed || selectedGroup === "created_by"}
                 >
                   {(provided, snapshot) => (
                     <SingleBoardIssue

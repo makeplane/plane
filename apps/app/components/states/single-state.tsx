@@ -148,9 +148,7 @@ export const SingleState: React.FC<Props> = ({
             backgroundColor: state.color,
           }}
         />
-        <h6 className="text-sm">
-          {addSpaceIfCamelCase(state.name)} {state.sequence}
-        </h6>
+        <h6 className="text-sm">{addSpaceIfCamelCase(state.name)}</h6>
       </div>
       <div className="flex items-center gap-2">
         {index !== 0 && (
