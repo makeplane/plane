@@ -61,6 +61,10 @@ const workspaceLinks: (wSlug: string) => Array<{
     label: "Billing & Plans",
     href: `/${workspaceSlug}/settings/billing`,
   },
+  {
+    label: "Integrations",
+    href: `/${workspaceSlug}/settings/integrations`,
+  },
 ];
 
 const sidebarLinks: (

@@ -1,6 +1,14 @@
+import os
+import jwt
+from datetime import timedelta, datetime
+from cryptography.hazmat.primitives.serialization import load_pem_private_key
+from cryptography.hazmat.backends import default_backend
+
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.permissions import AllowAny
 from sentry_sdk import capture_exception
 
 # Module imports
@@ -135,3 +143,51 @@ class GithubCommentSyncViewSet(BaseViewSet):
             project_id=self.kwargs.get("project_id"),
             issue_sync_id=self.kwargs.get("issue_sync_id"),
         )
+
+
+class GithubAppInstallationViewSet(APIView):
+    permission_classes = [AllowAny]
+
+    def get_jwt_token(self):
+        app_id = os.environ.get("GITHUB_APP_ID", "")
+        secret = bytes(os.environ.get("GITHUB_APP_PRIVATE_KEY", ""), encoding="utf8")
+        current_timestamp = int(datetime.now().timestamp())
+        due_date = datetime.now() + timedelta(minutes=10)
+        expiry = int(due_date.timestamp())
+        payload = {
+            "iss": app_id,
+            "sub": app_id,
+            "exp": expiry,
+            "iat": current_timestamp,
+            "aud": "https://github.com/login/oauth/access_token",
+        }
+
+        priv_rsakey = load_pem_private_key(secret, None, default_backend())
+        token = jwt.encode(payload, priv_rsakey, algorithm="RS256")
+        return token
+
+    def post(self, request, slug, installation_id):
+        token = self.get_jwt_token()
+        import requests
+
+        url = f"https://api.github.com/app/installations/{installation_id}"
+        headers = {
+            "Authorization": "Bearer " + token,
+            "Accept": "application/vnd.github+json",
+        }
+        response = requests.get(url, headers=headers).json()
+
+        # serializer = GithubRepositorySerializer(
+        #     data={
+        #         "name": response.get("app_slug"),
+        #         "url": response.get("html_url"),
+        #         "repository_id": response.get("id"),
+        #         "config": response,
+        #         "owner": response.get("account").get("login"),
+        #     }
+        # )
+
+        # if serializer.is_valid(raise_exception=True):
+        #     serializer.save()
+
+        return Response("Created")
