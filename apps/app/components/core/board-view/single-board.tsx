@@ -25,11 +25,13 @@ type Props = {
   };
   selectedGroup: NestedKeyOf<IIssue> | null;
   members: IProjectMember[] | undefined;
+  handleEditIssue: (issue: IIssue) => void;
   addIssueToState: () => void;
   handleDeleteIssue: (issue: IIssue) => void;
   openIssuesListModal?: (() => void) | null;
   orderBy: NestedKeyOf<IIssue> | "manual" | null;
   handleTrashBox: (isDragging: boolean) => void;
+  removeIssue: ((bridgeId: string) => void) | null;
   userAuth: UserAuth;
 };
 
@@ -40,11 +42,13 @@ export const SingleBoard: React.FC<Props> = ({
   groupedByIssues,
   selectedGroup,
   members,
+  handleEditIssue,
   addIssueToState,
   handleDeleteIssue,
   openIssuesListModal,
   orderBy,
   handleTrashBox,
+  removeIssue,
   userAuth,
 }) => {
   // collapse/expand
@@ -104,10 +108,15 @@ export const SingleBoard: React.FC<Props> = ({
                       snapshot={snapshot}
                       type={type}
                       issue={issue}
+                      selectedGroup={selectedGroup}
                       properties={properties}
+                      editIssue={() => handleEditIssue(issue)}
                       handleDeleteIssue={handleDeleteIssue}
                       orderBy={orderBy}
                       handleTrashBox={handleTrashBox}
+                      removeIssue={() => {
+                        removeIssue && removeIssue(issue.bridge);
+                      }}
                       userAuth={userAuth}
                     />
                   )}

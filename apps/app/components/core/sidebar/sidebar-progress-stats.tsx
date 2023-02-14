@@ -10,6 +10,8 @@ import { Tab } from "@headlessui/react";
 // services
 import issuesServices from "services/issues.service";
 import projectService from "services/project.service";
+// hooks
+import useLocalStorage from "hooks/use-local-storage";
 // components
 import { SingleProgressStats } from "components/core";
 // ui
@@ -20,7 +22,6 @@ import User from "public/user.png";
 import { IIssue, IIssueLabels } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS } from "constants/fetch-keys";
-import useLocalStorage from "hooks/use-local-storage";
 // types
 type Props = {
   groupedIssues: any;
@@ -39,8 +40,10 @@ const stateGroupColours: {
 
 export const SidebarProgressStats: React.FC<Props> = ({ groupedIssues, issues }) => {
   const router = useRouter();
-  const [tab, setTab] = useLocalStorage("tab", "Assignees");
   const { workspaceSlug, projectId } = router.query;
+
+  const [tab, setTab] = useLocalStorage("tab", "Assignees");
+
   const { data: issueLabels } = useSWR<IIssueLabels[]>(
     workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
     workspaceSlug && projectId

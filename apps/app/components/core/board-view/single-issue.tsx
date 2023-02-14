@@ -23,6 +23,8 @@ import {
   ViewPrioritySelect,
   ViewStateSelect,
 } from "components/issues/view-select";
+// ui
+import { CustomMenu } from "components/ui";
 // types
 import {
   CycleIssueResponse,
@@ -41,7 +43,10 @@ type Props = {
   provided: DraggableProvided;
   snapshot: DraggableStateSnapshot;
   issue: IIssue;
+  selectedGroup: NestedKeyOf<IIssue> | null;
   properties: Properties;
+  editIssue: () => void;
+  removeIssue?: (() => void) | null;
   handleDeleteIssue: (issue: IIssue) => void;
   orderBy: NestedKeyOf<IIssue> | "manual" | null;
   handleTrashBox: (isDragging: boolean) => void;
@@ -53,7 +58,10 @@ export const SingleBoardIssue: React.FC<Props> = ({
   provided,
   snapshot,
   issue,
+  selectedGroup,
   properties,
+  editIssue,
+  removeIssue,
   handleDeleteIssue,
   orderBy,
   handleTrashBox,
@@ -170,13 +178,26 @@ export const SingleBoardIssue: React.FC<Props> = ({
       <div className="group/card relative select-none p-2">
         {!isNotAllowed && (
           <div className="absolute top-1.5 right-1.5 z-10 opacity-0 group-hover/card:opacity-100">
-            <button
+            {/* <button
               type="button"
               className="grid h-7 w-7 place-items-center rounded bg-white p-1 text-red-500 outline-none duration-300 hover:bg-red-50"
               onClick={() => handleDeleteIssue(issue)}
             >
               <TrashIcon className="h-4 w-4" />
-            </button>
+            </button> */}
+            {type && !isNotAllowed && (
+              <CustomMenu width="auto" ellipsis>
+                <CustomMenu.MenuItem onClick={editIssue}>Edit</CustomMenu.MenuItem>
+                {type !== "issue" && removeIssue && (
+                  <CustomMenu.MenuItem onClick={removeIssue}>
+                    <>Remove from {type}</>
+                  </CustomMenu.MenuItem>
+                )}
+                <CustomMenu.MenuItem onClick={() => handleDeleteIssue(issue)}>
+                  Delete permanently
+                </CustomMenu.MenuItem>
+              </CustomMenu>
+            )}
           </div>
         )}
         <Link href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}>
@@ -195,7 +216,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
           </a>
         </Link>
         <div className="flex flex-wrap items-center gap-x-1 gap-y-2 text-xs">
-          {properties.priority && (
+          {properties.priority && selectedGroup !== "priority" && (
             <ViewPrioritySelect
               issue={issue}
               partialUpdateIssue={partialUpdateIssue}
@@ -203,7 +224,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
               position="left"
             />
           )}
-          {properties.state && (
+          {properties.state && selectedGroup !== "state_detail.name" && (
             <ViewStateSelect
               issue={issue}
               partialUpdateIssue={partialUpdateIssue}

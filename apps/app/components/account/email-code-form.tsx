@@ -114,15 +114,15 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
               error={errors.token}
               placeholder="Enter code"
             />
-            {/* <span
-              className="text-xs outline-none hover:text-theme"
+            {/* <button
+              type="button"
+              className="text-xs outline-none hover:text-theme cursor-pointer"
               onClick={() => {
-                console.log("Triggered");
                 handleSubmit(onSubmit);
               }}
             >
               Resend code
-            </span> */}
+            </button> */}
           </div>
         )}
         <div>

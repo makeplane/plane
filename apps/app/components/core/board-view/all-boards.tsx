@@ -11,9 +11,11 @@ type Props = {
   states: IState[] | undefined;
   members: IProjectMember[] | undefined;
   addIssueToState: (groupTitle: string, stateId: string | null) => void;
+  handleEditIssue: (issue: IIssue) => void;
   openIssuesListModal?: (() => void) | null;
   handleDeleteIssue: (issue: IIssue) => void;
   handleTrashBox: (isDragging: boolean) => void;
+  removeIssue: ((bridgeId: string) => void) | null;
   userAuth: UserAuth;
 };
 
@@ -23,9 +25,11 @@ export const AllBoards: React.FC<Props> = ({
   states,
   members,
   addIssueToState,
+  handleEditIssue,
   openIssuesListModal,
   handleDeleteIssue,
   handleTrashBox,
+  removeIssue,
   userAuth,
 }) => {
   const { groupedByIssues, groupByProperty: selectedGroup, orderBy } = useIssueView(issues);
@@ -57,11 +61,13 @@ export const AllBoards: React.FC<Props> = ({
                       groupedByIssues={groupedByIssues}
                       selectedGroup={selectedGroup}
                       members={members}
+                      handleEditIssue={handleEditIssue}
                       addIssueToState={() => addIssueToState(singleGroup, stateId)}
                       handleDeleteIssue={handleDeleteIssue}
                       openIssuesListModal={openIssuesListModal ?? null}
                       orderBy={orderBy}
                       handleTrashBox={handleTrashBox}
+                      removeIssue={removeIssue}
                       userAuth={userAuth}
                     />
                   );

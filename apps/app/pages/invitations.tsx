@@ -3,19 +3,21 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 
-// icons
-import { CubeIcon, PlusIcon } from "@heroicons/react/24/outline";
+// lib
+import { requiredAuth } from "lib/auth";
 // services
 import workspaceService from "services/workspace.service";
 // hooks
 import useUser from "hooks/use-user";
-import { requiredAuth } from "lib/auth";
+import useToast from "hooks/use-toast";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 // components
 import SingleInvitation from "components/workspace/single-invitation";
 // ui
 import { Button, Spinner, EmptySpace, EmptySpaceItem } from "components/ui";
+// icons
+import { CubeIcon, PlusIcon } from "@heroicons/react/24/outline";
 // types
 import type { NextPage, NextPageContext } from "next";
 import type { IWorkspaceMemberInvitation } from "types";
@@ -26,6 +28,8 @@ const OnBoard: NextPage = () => {
   const { user } = useUser();
 
   const router = useRouter();
+
+  const { setToastAlert } = useToast();
 
   const { data: invitations, mutate: mutateInvitations } = useSWR(
     "USER_WORKSPACE_INVITATIONS",
@@ -51,6 +55,15 @@ const OnBoard: NextPage = () => {
 
   const submitInvitations = () => {
     // userService.updateUserOnBoard();
+
+    if (invitationsRespond.length === 0) {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Please select atleast one invitation.",
+      });
+      return;
+    }
 
     workspaceService
       .joinWorkspaces({ invitations: invitationsRespond })
@@ -100,9 +113,13 @@ const OnBoard: NextPage = () => {
                   ))}
                 </ul>
                 <div className="mt-6 flex items-center gap-2">
-                  <Button className="w-full" theme="secondary" onClick={() => router.push("/")}>
-                    Skip
-                  </Button>
+                  <Link href="/">
+                    <a className="w-full">
+                      <Button className="w-full" theme="secondary">
+                        Go to Home
+                      </Button>
+                    </a>
+                  </Link>
                   <Button className="w-full" onClick={submitInvitations}>
                     Accept and Continue
                   </Button>
@@ -112,26 +129,20 @@ const OnBoard: NextPage = () => {
               <div className="mt-3 flex flex-col gap-y-3">
                 <h2 className="mb-4 text-2xl font-medium">Your workspaces</h2>
                 {workspaces.map((workspace) => (
-                  <div
-                    className="mb-2 flex items-center justify-between rounded border px-4 py-2"
-                    key={workspace.id}
-                  >
-                    <div className="flex items-center gap-x-2">
-                      <CubeIcon className="h-5 w-5 text-gray-400" />
-                      <Link href={workspace.slug}>
-                        <a>{workspace.name}</a>
-                      </Link>
-                    </div>
-                    <div className="flex items-center gap-x-2">
-                      <p className="text-sm">{workspace.owner.first_name}</p>
-                    </div>
-                  </div>
+                  <Link key={workspace.id} href={workspace.slug}>
+                    <a>
+                      <div className="mb-2 flex items-center justify-between rounded border px-4 py-2">
+                        <div className="flex items-center gap-x-2">
+                          <CubeIcon className="h-5 w-5 text-gray-400" />
+                          {workspace.name}
+                        </div>
+                        <div className="flex items-center gap-x-2">
+                          <p className="text-sm">{workspace.owner.first_name}</p>
+                        </div>
+                      </div>
+                    </a>
+                  </Link>
                 ))}
-                <Link href="/">
-                  <a>
-                    <Button type="button">Go to workspaces</Button>
-                  </a>
-                </Link>
               </div>
             ) : (
               invitations.length === 0 &&

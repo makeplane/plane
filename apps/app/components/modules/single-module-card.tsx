@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useRouter } from "next/router";
 
 // components
@@ -13,7 +12,7 @@ import { CalendarDaysIcon, TrashIcon } from "@heroicons/react/24/outline";
 // helpers
 import { renderShortNumericDateFormat } from "helpers/date-time.helper";
 // types
-import { IModule, SelectModuleType } from "types";
+import { IModule } from "types";
 // common
 import { MODULE_STATUS } from "constants/module";
 
@@ -23,7 +22,6 @@ type Props = {
 
 export const SingleModuleCard: React.FC<Props> = ({ module }) => {
   const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
-  const [selectedModuleForDelete, setSelectedModuleForDelete] = useState<SelectModuleType>();
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -31,23 +29,18 @@ export const SingleModuleCard: React.FC<Props> = ({ module }) => {
   const handleDeleteModule = () => {
     if (!module) return;
 
-    setSelectedModuleForDelete({ ...module, actionType: "delete" });
     setModuleDeleteModal(true);
   };
 
   return (
     <>
       <DeleteModuleModal
-        isOpen={
-          moduleDeleteModal &&
-          !!selectedModuleForDelete &&
-          selectedModuleForDelete.actionType === "delete"
-        }
+        isOpen={moduleDeleteModal}
         setIsOpen={setModuleDeleteModal}
-        data={selectedModuleForDelete}
+        data={module}
       />
       <div className="group/card h-full w-full relative select-none p-2">
-        <div className="absolute top-4 right-4 z-50 bg-red-200 opacity-0 group-hover/card:opacity-100">
+        <div className="absolute top-4 right-4 z-10 bg-red-200 opacity-0 group-hover/card:opacity-100">
           <button
             type="button"
             className="grid h-7 w-7 place-items-center  bg-white p-1 text-red-500 outline-none duration-300 hover:bg-red-50"
