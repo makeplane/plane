@@ -36,10 +36,6 @@ const ConfirmCycleDeletion: React.FC<TConfirmCycleDeletionProps> = ({
 
   const { setToastAlert } = useToast();
 
-  useEffect(() => {
-    data && setIsOpen(true);
-  }, [data, setIsOpen]);
-
   const handleClose = () => {
     setIsOpen(false);
     setIsDeleteLoading(false);

@@ -10,6 +10,8 @@ import { Tab } from "@headlessui/react";
 // services
 import issuesServices from "services/issues.service";
 import projectService from "services/project.service";
+// hooks
+import useLocalStorage from "hooks/use-local-storage";
 // components
 import { SingleProgressStats } from "components/core";
 // ui
@@ -39,6 +41,9 @@ const stateGroupColours: {
 export const SidebarProgressStats: React.FC<Props> = ({ groupedIssues, issues }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+
+  const [tab, setTab] = useLocalStorage("tab", "Assignees");
+
   const { data: issueLabels } = useSWR<IIssueLabels[]>(
     workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
     workspaceSlug && projectId
@@ -52,8 +57,34 @@ export const SidebarProgressStats: React.FC<Props> = ({ groupedIssues, issues })
       ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
       : null
   );
+
+  const currentValue = (tab: string) => {
+    switch (tab) {
+      case "Assignees":
+        return 0;
+      case "Labels":
+        return 1;
+      case "States":
+        return 2;
+    }
+  };
   return (
-    <Tab.Group>
+    <Tab.Group
+      defaultIndex={currentValue(tab)}
+      onChange={(i) => {
+        switch (i) {
+          case 0:
+            return setTab("Assignees");
+          case 1:
+            return setTab("Labels");
+          case 2:
+            return setTab("States");
+
+          default:
+            return setTab("Assignees");
+        }
+      }}
+    >
       <Tab.List
         as="div"
         className="flex items-center justify-between w-full rounded bg-gray-100 text-xs"

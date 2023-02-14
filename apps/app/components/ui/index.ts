@@ -1,4 +1,3 @@
-// components
 export * from "./button";
 export * from "./custom-listbox";
 export * from "./custom-menu";
@@ -11,6 +10,6 @@ export * from "./outline-button";
 export * from "./select";
 export * from "./spinner";
 export * from "./text-area";
-export * from "./tooltip";
 export * from "./avatar";
 export * from "./datepicker";
+export * from "./tooltip";

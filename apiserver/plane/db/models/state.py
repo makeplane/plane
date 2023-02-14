@@ -23,6 +23,7 @@ class State(ProjectBaseModel):
         default="backlog",
         max_length=20,
     )
+    default = models.BooleanField(default=False)
 
     def __str__(self):
         """Return name of the state"""

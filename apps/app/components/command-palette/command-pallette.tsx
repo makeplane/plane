@@ -105,7 +105,7 @@ export const CommandPalette: React.FC = () => {
         if ((e.ctrlKey || e.metaKey) && (e.key === "k" || e.key === "K")) {
           e.preventDefault();
           setIsPaletteOpen(true);
-        } else if (e.ctrlKey && (e.key === "c" || e.key === "C")) {
+        } else if ((e.ctrlKey || e.metaKey) && (e.key === "c" || e.key === "C")) {
           if (e.altKey) {
             e.preventDefault();
             if (!router.query.issueId) return;
