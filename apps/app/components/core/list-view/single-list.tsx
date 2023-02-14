@@ -50,8 +50,16 @@ export const SingleList: React.FC<Props> = ({
 
   const createdBy =
     selectedGroup === "created_by"
-      ? members?.find((m) => m.member.id === groupTitle)?.member.first_name ?? "loading..."
+      ? members?.find((m) => m.member.id === groupTitle)?.member.first_name ?? "Loading..."
       : null;
+
+  let assignees: any;
+  if (selectedGroup === "assignees") {
+    assignees = groupTitle.split(",");
+    assignees = assignees
+      .map((a: string) => members?.find((m) => m.member.id === a)?.member.first_name)
+      .join(", ");
+  }
 
   return (
     <Disclosure key={groupTitle} as="div" defaultOpen>
@@ -67,10 +75,10 @@ export const SingleList: React.FC<Props> = ({
                 </span>
                 {selectedGroup !== null ? (
                   <h2 className="font-medium capitalize leading-5">
-                    {groupTitle === null || groupTitle === "null"
-                      ? "None"
-                      : createdBy
+                    {selectedGroup === "created_by"
                       ? createdBy
+                      : selectedGroup === "assignees"
+                      ? assignees
                       : addSpaceIfCamelCase(groupTitle)}
                   </h2>
                 ) : (

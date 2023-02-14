@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 
 // react-beautiful-dnd
-import { DropResult } from "react-beautiful-dnd";
+import { DragDropContext, DropResult } from "react-beautiful-dnd";
 // services
 import issuesService from "services/issues.service";
 import stateService from "services/state.service";
@@ -16,6 +16,9 @@ import useIssueView from "hooks/use-issue-view";
 // components
 import { AllLists, AllBoards } from "components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
+import StrictModeDroppable from "components/dnd/StrictModeDroppable";
+// icons
+import { TrashIcon } from "@heroicons/react/24/outline";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 // types
@@ -58,6 +61,9 @@ export const IssuesView: React.FC<Props> = ({
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   const [issueToDelete, setIssueToDelete] = useState<IIssue | null>(null);
 
+  // trash box
+  const [trashBox, setTrashBox] = useState(false);
+
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
@@ -78,271 +84,308 @@ export const IssuesView: React.FC<Props> = ({
       : null
   );
 
+  const handleDeleteIssue = useCallback(
+    (issue: IIssue) => {
+      setDeleteIssueModal(true);
+      setIssueToDelete(issue);
+    },
+    [setDeleteIssueModal, setIssueToDelete]
+  );
+
   const handleOnDragEnd = useCallback(
     (result: DropResult) => {
+      setTrashBox(false);
+
       if (!result.destination || !workspaceSlug || !projectId) return;
 
       const { source, destination } = result;
 
       const draggedItem = groupedByIssues[source.droppableId][source.index];
 
-      if (source.droppableId !== destination.droppableId) {
-        const sourceGroup = source.droppableId; // source group id
-        const destinationGroup = destination.droppableId; // destination group id
+      if (destination.droppableId === "trashBox") {
+        handleDeleteIssue(draggedItem);
+      } else {
+        if (source.droppableId !== destination.droppableId) {
+          const sourceGroup = source.droppableId; // source group id
+          const destinationGroup = destination.droppableId; // destination group id
 
-        if (!sourceGroup || !destinationGroup) return;
+          if (!sourceGroup || !destinationGroup) return;
 
-        if (selectedGroup === "priority") {
-          // update the removed item for mutation
-          draggedItem.priority = destinationGroup;
+          if (selectedGroup === "priority") {
+            // update the removed item for mutation
+            draggedItem.priority = destinationGroup;
 
-          if (cycleId)
-            mutate<CycleIssueResponse[]>(
-              CYCLE_ISSUES(cycleId as string),
+            if (cycleId)
+              mutate<CycleIssueResponse[]>(
+                CYCLE_ISSUES(cycleId as string),
+                (prevData) => {
+                  if (!prevData) return prevData;
+                  const updatedIssues = prevData.map((issue) => {
+                    if (issue.issue_detail.id === draggedItem.id) {
+                      return {
+                        ...issue,
+                        issue_detail: {
+                          ...draggedItem,
+                          priority: destinationGroup,
+                        },
+                      };
+                    }
+                    return issue;
+                  });
+                  return [...updatedIssues];
+                },
+                false
+              );
+
+            if (moduleId)
+              mutate<ModuleIssueResponse[]>(
+                MODULE_ISSUES(moduleId as string),
+                (prevData) => {
+                  if (!prevData) return prevData;
+                  const updatedIssues = prevData.map((issue) => {
+                    if (issue.issue_detail.id === draggedItem.id) {
+                      return {
+                        ...issue,
+                        issue_detail: {
+                          ...draggedItem,
+                          priority: destinationGroup,
+                        },
+                      };
+                    }
+                    return issue;
+                  });
+                  return [...updatedIssues];
+                },
+                false
+              );
+
+            mutate<IssueResponse>(
+              PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
               (prevData) => {
                 if (!prevData) return prevData;
-                const updatedIssues = prevData.map((issue) => {
-                  if (issue.issue_detail.id === draggedItem.id) {
+
+                const updatedIssues = prevData.results.map((issue) => {
+                  if (issue.id === draggedItem.id)
                     return {
-                      ...issue,
-                      issue_detail: {
-                        ...draggedItem,
-                        priority: destinationGroup,
-                      },
+                      ...draggedItem,
+                      priority: destinationGroup,
                     };
-                  }
+
                   return issue;
                 });
-                return [...updatedIssues];
+
+                return {
+                  ...prevData,
+                  results: updatedIssues,
+                };
               },
               false
             );
 
-          if (moduleId)
-            mutate<ModuleIssueResponse[]>(
-              MODULE_ISSUES(moduleId as string),
-              (prevData) => {
-                if (!prevData) return prevData;
-                const updatedIssues = prevData.map((issue) => {
-                  if (issue.issue_detail.id === draggedItem.id) {
-                    return {
-                      ...issue,
-                      issue_detail: {
-                        ...draggedItem,
-                        priority: destinationGroup,
-                      },
-                    };
-                  }
-                  return issue;
-                });
-                return [...updatedIssues];
-              },
-              false
-            );
+            // patch request
+            issuesService
+              .patchIssue(workspaceSlug as string, projectId as string, draggedItem.id, {
+                priority: destinationGroup,
+              })
+              .then((res) => {
+                if (cycleId) mutate(CYCLE_ISSUES(cycleId as string));
+                if (moduleId) mutate(MODULE_ISSUES(moduleId as string));
 
-          mutate<IssueResponse>(
-            PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
-            (prevData) => {
-              if (!prevData) return prevData;
-
-              const updatedIssues = prevData.results.map((issue) => {
-                if (issue.id === draggedItem.id)
-                  return {
-                    ...draggedItem,
-                    priority: destinationGroup,
-                  };
-
-                return issue;
+                mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
               });
+          } else if (selectedGroup === "state_detail.name") {
+            const destinationState = states?.find((s) => s.name === destinationGroup);
+            const destinationStateId = destinationState?.id;
 
-              return {
-                ...prevData,
-                results: updatedIssues,
-              };
-            },
-            false
-          );
+            // update the removed item for mutation
+            if (!destinationStateId || !destinationState) return;
+            draggedItem.state = destinationStateId;
+            draggedItem.state_detail = destinationState;
 
-          // patch request
-          issuesService
-            .patchIssue(workspaceSlug as string, projectId as string, draggedItem.id, {
-              priority: destinationGroup,
-            })
-            .then((res) => {
-              if (cycleId) mutate(CYCLE_ISSUES(cycleId as string));
-              if (moduleId) mutate(MODULE_ISSUES(moduleId as string));
+            if (cycleId)
+              mutate<CycleIssueResponse[]>(
+                CYCLE_ISSUES(cycleId as string),
+                (prevData) => {
+                  if (!prevData) return prevData;
+                  const updatedIssues = prevData.map((issue) => {
+                    if (issue.issue_detail.id === draggedItem.id) {
+                      return {
+                        ...issue,
+                        issue_detail: {
+                          ...draggedItem,
+                          state_detail: destinationState,
+                          state: destinationStateId,
+                        },
+                      };
+                    }
+                    return issue;
+                  });
+                  return [...updatedIssues];
+                },
+                false
+              );
 
-              mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
-            });
-        } else if (selectedGroup === "state_detail.name") {
-          const destinationState = states?.find((s) => s.name === destinationGroup);
-          const destinationStateId = destinationState?.id;
+            if (moduleId)
+              mutate<ModuleIssueResponse[]>(
+                MODULE_ISSUES(moduleId as string),
+                (prevData) => {
+                  if (!prevData) return prevData;
+                  const updatedIssues = prevData.map((issue) => {
+                    if (issue.issue_detail.id === draggedItem.id) {
+                      return {
+                        ...issue,
+                        issue_detail: {
+                          ...draggedItem,
+                          state_detail: destinationState,
+                          state: destinationStateId,
+                        },
+                      };
+                    }
+                    return issue;
+                  });
+                  return [...updatedIssues];
+                },
+                false
+              );
 
-          // update the removed item for mutation
-          if (!destinationStateId || !destinationState) return;
-          draggedItem.state = destinationStateId;
-          draggedItem.state_detail = destinationState;
-
-          if (cycleId)
-            mutate<CycleIssueResponse[]>(
-              CYCLE_ISSUES(cycleId as string),
+            mutate<IssueResponse>(
+              PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
               (prevData) => {
                 if (!prevData) return prevData;
-                const updatedIssues = prevData.map((issue) => {
-                  if (issue.issue_detail.id === draggedItem.id) {
+
+                const updatedIssues = prevData.results.map((issue) => {
+                  if (issue.id === draggedItem.id)
                     return {
-                      ...issue,
-                      issue_detail: {
-                        ...draggedItem,
-                        state_detail: destinationState,
-                        state: destinationStateId,
-                      },
+                      ...draggedItem,
+                      state_detail: destinationState,
+                      state: destinationStateId,
                     };
-                  }
+
                   return issue;
                 });
-                return [...updatedIssues];
+
+                return {
+                  ...prevData,
+                  results: updatedIssues,
+                };
               },
               false
             );
 
-          if (moduleId)
-            mutate<ModuleIssueResponse[]>(
-              MODULE_ISSUES(moduleId as string),
-              (prevData) => {
-                if (!prevData) return prevData;
-                const updatedIssues = prevData.map((issue) => {
-                  if (issue.issue_detail.id === draggedItem.id) {
-                    return {
-                      ...issue,
-                      issue_detail: {
-                        ...draggedItem,
-                        state_detail: destinationState,
-                        state: destinationStateId,
-                      },
-                    };
-                  }
-                  return issue;
-                });
-                return [...updatedIssues];
-              },
-              false
-            );
+            // patch request
+            issuesService
+              .patchIssue(workspaceSlug as string, projectId as string, draggedItem.id, {
+                state: destinationStateId,
+              })
+              .then((res) => {
+                if (cycleId) mutate(CYCLE_ISSUES(cycleId as string));
+                if (moduleId) mutate(MODULE_ISSUES(moduleId as string));
 
-          mutate<IssueResponse>(
-            PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
-            (prevData) => {
-              if (!prevData) return prevData;
-
-              const updatedIssues = prevData.results.map((issue) => {
-                if (issue.id === draggedItem.id)
-                  return {
-                    ...draggedItem,
-                    state_detail: destinationState,
-                    state: destinationStateId,
-                  };
-
-                return issue;
+                mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
               });
-
-              return {
-                ...prevData,
-                results: updatedIssues,
-              };
-            },
-            false
-          );
-
-          // patch request
-          issuesService
-            .patchIssue(workspaceSlug as string, projectId as string, draggedItem.id, {
-              state: destinationStateId,
-            })
-            .then((res) => {
-              if (cycleId) mutate(CYCLE_ISSUES(cycleId as string));
-              if (moduleId) mutate(MODULE_ISSUES(moduleId as string));
-
-              mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
-            });
+          }
         }
       }
     },
-    [workspaceSlug, cycleId, moduleId, groupedByIssues, projectId, selectedGroup, states]
+    [
+      workspaceSlug,
+      cycleId,
+      moduleId,
+      groupedByIssues,
+      projectId,
+      selectedGroup,
+      states,
+      handleDeleteIssue,
+    ]
   );
 
-  const addIssueToState = (groupTitle: string, stateId: string | null) => {
-    setCreateIssueModal(true);
-    if (selectedGroup)
-      setPreloadedData({
-        state: stateId ?? undefined,
-        [selectedGroup]: groupTitle,
-        actionType: "createIssue",
+  const addIssueToState = useCallback(
+    (groupTitle: string, stateId: string | null) => {
+      setCreateIssueModal(true);
+      if (selectedGroup)
+        setPreloadedData({
+          state: stateId ?? undefined,
+          [selectedGroup]: groupTitle,
+          actionType: "createIssue",
+        });
+      else setPreloadedData({ actionType: "createIssue" });
+    },
+    [setCreateIssueModal, setPreloadedData, selectedGroup]
+  );
+
+  const handleEditIssue = useCallback(
+    (issue: IIssue) => {
+      setEditIssueModal(true);
+      setIssueToEdit({
+        ...issue,
+        actionType: "edit",
+        cycle: issue.issue_cycle ? issue.issue_cycle.cycle : null,
+        module: issue.issue_module ? issue.issue_module.module : null,
       });
-    else setPreloadedData({ actionType: "createIssue" });
-  };
+    },
+    [setEditIssueModal, setIssueToEdit]
+  );
 
-  const handleEditIssue = (issue: IIssue) => {
-    setEditIssueModal(true);
-    setIssueToEdit({
-      ...issue,
-      actionType: "edit",
-      cycle: issue.issue_cycle ? issue.issue_cycle.cycle : null,
-      module: issue.issue_module ? issue.issue_module.module : null,
-    });
-  };
+  const removeIssueFromCycle = useCallback(
+    (bridgeId: string) => {
+      if (!workspaceSlug || !projectId) return;
 
-  const handleDeleteIssue = (issue: IIssue) => {
-    setDeleteIssueModal(true);
-    setIssueToDelete(issue);
-  };
+      mutate<CycleIssueResponse[]>(
+        CYCLE_ISSUES(cycleId as string),
+        (prevData) => prevData?.filter((p) => p.id !== bridgeId),
+        false
+      );
 
-  const removeIssueFromCycle = (bridgeId: string) => {
-    if (!workspaceSlug || !projectId) return;
+      issuesService
+        .removeIssueFromCycle(
+          workspaceSlug as string,
+          projectId as string,
+          cycleId as string,
+          bridgeId
+        )
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    },
+    [workspaceSlug, projectId, cycleId]
+  );
 
-    mutate<CycleIssueResponse[]>(
-      CYCLE_ISSUES(cycleId as string),
-      (prevData) => prevData?.filter((p) => p.id !== bridgeId),
-      false
-    );
+  const removeIssueFromModule = useCallback(
+    (bridgeId: string) => {
+      if (!workspaceSlug || !projectId) return;
 
-    issuesService
-      .removeIssueFromCycle(
-        workspaceSlug as string,
-        projectId as string,
-        cycleId as string,
-        bridgeId
-      )
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
+      mutate<ModuleIssueResponse[]>(
+        MODULE_ISSUES(moduleId as string),
+        (prevData) => prevData?.filter((p) => p.id !== bridgeId),
+        false
+      );
 
-  const removeIssueFromModule = (bridgeId: string) => {
-    if (!workspaceSlug || !projectId) return;
+      modulesService
+        .removeIssueFromModule(
+          workspaceSlug as string,
+          projectId as string,
+          moduleId as string,
+          bridgeId
+        )
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    },
+    [workspaceSlug, projectId, moduleId]
+  );
 
-    mutate<ModuleIssueResponse[]>(
-      MODULE_ISSUES(moduleId as string),
-      (prevData) => prevData?.filter((p) => p.id !== bridgeId),
-      false
-    );
-
-    modulesService
-      .removeIssueFromModule(
-        workspaceSlug as string,
-        projectId as string,
-        moduleId as string,
-        bridgeId
-      )
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
+  const handleTrashBox = useCallback(
+    (isDragging: boolean) => {
+      if (isDragging && !trashBox) setTrashBox(true);
+    },
+    [trashBox, setTrashBox]
+  );
 
   return (
     <>
@@ -364,38 +407,59 @@ export const IssuesView: React.FC<Props> = ({
         isOpen={deleteIssueModal}
         data={issueToDelete}
       />
-      {issueView === "list" ? (
-        <AllLists
-          type={type}
-          issues={issues}
-          states={states}
-          members={members}
-          addIssueToState={addIssueToState}
-          handleEditIssue={handleEditIssue}
-          handleDeleteIssue={handleDeleteIssue}
-          openIssuesListModal={type !== "issue" ? openIssuesListModal : null}
-          removeIssue={
-            type === "cycle"
-              ? removeIssueFromCycle
-              : type === "module"
-              ? removeIssueFromModule
-              : null
-          }
-          userAuth={userAuth}
-        />
-      ) : (
-        <AllBoards
-          type={type}
-          issues={issues}
-          states={states}
-          members={members}
-          addIssueToState={addIssueToState}
-          openIssuesListModal={type !== "issue" ? openIssuesListModal : null}
-          handleDeleteIssue={handleDeleteIssue}
-          handleOnDragEnd={handleOnDragEnd}
-          userAuth={userAuth}
-        />
-      )}
+
+      <div className="relative">
+        <DragDropContext onDragEnd={handleOnDragEnd}>
+          <StrictModeDroppable droppableId="trashBox">
+            {(provided, snapshot) => (
+              <div
+                className={`${
+                  trashBox ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+                } fixed z-20 top-12 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-red-100 border-2 border-red-500 p-3 text-xs rounded ${
+                  snapshot.isDraggingOver ? "bg-red-500 text-white" : ""
+                } duration-200`}
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+              >
+                <TrashIcon className="h-3 w-3" />
+                Drop issue here to delete
+              </div>
+            )}
+          </StrictModeDroppable>
+          {issueView === "list" ? (
+            <AllLists
+              type={type}
+              issues={issues}
+              states={states}
+              members={members}
+              addIssueToState={addIssueToState}
+              handleEditIssue={handleEditIssue}
+              handleDeleteIssue={handleDeleteIssue}
+              openIssuesListModal={type !== "issue" ? openIssuesListModal : null}
+              removeIssue={
+                type === "cycle"
+                  ? removeIssueFromCycle
+                  : type === "module"
+                  ? removeIssueFromModule
+                  : null
+              }
+              userAuth={userAuth}
+            />
+          ) : (
+            <AllBoards
+              type={type}
+              issues={issues}
+              states={states}
+              members={members}
+              addIssueToState={addIssueToState}
+              openIssuesListModal={type !== "issue" ? openIssuesListModal : null}
+              handleDeleteIssue={handleDeleteIssue}
+              handleTrashBox={handleTrashBox}
+              userAuth={userAuth}
+            />
+          )}
+        </DragDropContext>
+      </div>
     </>
   );
 };

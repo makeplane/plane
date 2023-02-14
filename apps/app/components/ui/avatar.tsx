@@ -13,7 +13,7 @@ import { IUser, IUserLite } from "types";
 import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 
 type AvatarProps = {
-  user: Partial<IUser> | Partial<IUserLite> | undefined;
+  user?: Partial<IUser> | Partial<IUserLite> | IUser | IUserLite | undefined | null;
   index?: number;
 };
 

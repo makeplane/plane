@@ -17,7 +17,6 @@ const initialValues: Properties = {
   sub_issue_count: false,
 };
 
-// TODO: CHECK THIS LOGIC
 const useIssuesProperties = (workspaceSlug?: string, projectId?: string) => {
   const [properties, setProperties] = useState<Properties>(initialValues);
 
@@ -34,6 +33,7 @@ const useIssuesProperties = (workspaceSlug?: string, projectId?: string) => {
 
   useEffect(() => {
     if (!issueProperties || !workspaceSlug || !projectId || !user) return;
+
     setProperties({ ...initialValues, ...issueProperties.properties });
 
     if (Object.keys(issueProperties).length === 0)
@@ -53,6 +53,7 @@ const useIssuesProperties = (workspaceSlug?: string, projectId?: string) => {
       if (!workspaceSlug || !user) return;
 
       setProperties((prev) => ({ ...prev, [key]: !prev[key] }));
+
       if (issueProperties && projectId) {
         mutateIssueProperties(
           (prev) =>

@@ -69,10 +69,10 @@ export const ViewPrioritySelect: React.FC<Props> = ({
             {PRIORITIES?.map((priority) => (
               <Listbox.Option
                 key={priority}
-                className={({ active }) =>
-                  `flex cursor-pointer select-none items-center gap-x-2 px-3 py-2 capitalize ${
-                    active ? "bg-indigo-50" : "bg-white"
-                  }`
+                className={({ active, selected }) =>
+                  `${active || selected ? "bg-indigo-50" : ""} ${
+                    selected ? "font-medium" : ""
+                  } flex cursor-pointer select-none items-center gap-x-2 px-3 py-2 capitalize`
                 }
                 value={priority}
               >

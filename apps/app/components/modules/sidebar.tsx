@@ -30,6 +30,8 @@ import {
 } from "components/modules";
 
 import "react-circular-progressbar/dist/styles.css";
+// components
+import { SidebarProgressStats } from "components/core";
 // ui
 import { CustomDatePicker, Loader } from "components/ui";
 // helpers
@@ -40,7 +42,7 @@ import { groupBy } from "helpers/array.helper";
 import { IIssue, IModule, ModuleIssueResponse } from "types";
 // fetch-keys
 import { MODULE_DETAILS } from "constants/fetch-keys";
-import SidebarProgressStats from "components/core/sidebar/sidebar-progress-stats";
+import ProgressChart from "components/core/sidebar/progress-chart";
 
 const defaultValues: Partial<IModule> = {
   lead: "",
@@ -116,6 +118,8 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
       });
   }, [module, reset]);
 
+  const isStartValid = new Date(`${module?.start_date}`) <= new Date();
+  const isEndValid = new Date(`${module?.target_date}`) >= new Date(`${module?.start_date}`);
   return (
     <>
       <ModuleLinkModal
@@ -294,8 +298,21 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                 </div>
               </div>
             </div>
-            <div className="w-full">
-              <SidebarProgressStats issues={issues} groupedIssues={groupedIssues} />
+            <div className="flex flex-col items-center justify-center w-full gap-2 ">
+              {isStartValid && isEndValid ? (
+                <ProgressChart
+                  issues={issues}
+                  start={module?.start_date ?? ""}
+                  end={module?.target_date ?? ""}
+                />
+              ) : (
+                ""
+              )}
+              {issues.length > 0 ? (
+                <SidebarProgressStats issues={issues} groupedIssues={groupedIssues} />
+              ) : (
+                ""
+              )}
             </div>
           </>
         ) : (

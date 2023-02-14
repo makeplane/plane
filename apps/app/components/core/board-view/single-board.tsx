@@ -29,6 +29,7 @@ type Props = {
   handleDeleteIssue: (issue: IIssue) => void;
   openIssuesListModal?: (() => void) | null;
   orderBy: NestedKeyOf<IIssue> | "manual" | null;
+  handleTrashBox: (isDragging: boolean) => void;
   userAuth: UserAuth;
 };
 
@@ -43,6 +44,7 @@ export const SingleBoard: React.FC<Props> = ({
   handleDeleteIssue,
   openIssuesListModal,
   orderBy,
+  handleTrashBox,
   userAuth,
 }) => {
   // collapse/expand
@@ -53,11 +55,6 @@ export const SingleBoard: React.FC<Props> = ({
 
   const [properties] = useIssuesProperties(workspaceSlug as string, projectId as string);
 
-  const createdBy =
-    selectedGroup === "created_by"
-      ? members?.find((m) => m.member.id === groupTitle)?.member.first_name ?? "loading..."
-      : null;
-
   if (selectedGroup === "priority")
     groupTitle === "high"
       ? (bgColor = "#dc2626")
@@ -67,17 +64,20 @@ export const SingleBoard: React.FC<Props> = ({
       ? (bgColor = "#22c55e")
       : (bgColor = "#ff0000");
 
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+
   return (
     <div className={`h-full flex-shrink-0 rounded ${!isCollapsed ? "" : "w-80 border bg-gray-50"}`}>
       <div className={`${!isCollapsed ? "" : "flex h-full flex-col space-y-3 overflow-y-auto"}`}>
         <BoardHeader
           addIssueToState={addIssueToState}
           bgColor={bgColor}
-          createdBy={createdBy}
+          selectedGroup={selectedGroup}
           groupTitle={groupTitle}
           groupedByIssues={groupedByIssues}
           isCollapsed={isCollapsed}
           setIsCollapsed={setIsCollapsed}
+          members={members}
         />
         <StrictModeDroppable key={groupTitle} droppableId={groupTitle}>
           {(provided, snapshot) => (
@@ -89,17 +89,29 @@ export const SingleBoard: React.FC<Props> = ({
               {...provided.droppableProps}
             >
               {groupedByIssues[groupTitle].map((issue, index: number) => (
-                <SingleBoardIssue
-                  key={index}
+                <Draggable
+                  key={issue.id}
+                  draggableId={issue.id}
                   index={index}
-                  type={type}
-                  issue={issue}
-                  selectedGroup={selectedGroup}
-                  properties={properties}
-                  handleDeleteIssue={handleDeleteIssue}
-                  orderBy={orderBy}
-                  userAuth={userAuth}
-                />
+                  isDragDisabled={
+                    isNotAllowed || selectedGroup === "created_by" || selectedGroup === "assignees"
+                  }
+                >
+                  {(provided, snapshot) => (
+                    <SingleBoardIssue
+                      key={index}
+                      provided={provided}
+                      snapshot={snapshot}
+                      type={type}
+                      issue={issue}
+                      properties={properties}
+                      handleDeleteIssue={handleDeleteIssue}
+                      orderBy={orderBy}
+                      handleTrashBox={handleTrashBox}
+                      userAuth={userAuth}
+                    />
+                  )}
+                </Draggable>
               ))}
               <span
                 style={{
