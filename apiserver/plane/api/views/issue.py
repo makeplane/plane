@@ -22,6 +22,7 @@ from plane.api.serializers import (
     LabelSerializer,
     IssueSerializer,
     LabelSerializer,
+    IssueFlatSerializer,
 )
 from plane.api.permissions import (
     ProjectEntityPermission,
@@ -579,7 +580,7 @@ class SubIssuesEndpoint(BaseAPIView):
             parent_issue = Issue.objects.get(pk=issue_id)
             sub_issue_ids = request.data.get("sub_issue_ids", [])
 
-            if len(sub_issue_ids):
+            if not len(sub_issue_ids):
                 return Response(
                     {"error": "Sub Issue IDs are required"},
                     status=status.HTTP_400_BAD_REQUEST,
@@ -590,12 +591,12 @@ class SubIssuesEndpoint(BaseAPIView):
             for sub_issue in sub_issues:
                 sub_issue.parent = parent_issue
 
-            updated_sub_issues = Issue.objects.bulk_update(
-                sub_issues, ["parent"], batch_size=10
-            )
+            _ = Issue.objects.bulk_update(sub_issues, ["parent"], batch_size=10)
+
+            updated_sub_issues = Issue.objects.filter(id__in=sub_issue_ids)
 
             return Response(
-                IssueSerializer(updated_sub_issues, many=True).data,
+                IssueFlatSerializer(updated_sub_issues, many=True).data,
                 status=status.HTTP_200_OK,
             )
         except Issue.DoesNotExist:
