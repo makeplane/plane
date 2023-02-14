@@ -1,18 +1,18 @@
 import React, { useState } from "react";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useRouter } from "next/router";
 
 // components
 import { DeleteModuleModal } from "components/modules";
+// ui
+import { AssigneesList, Avatar } from "components/ui";
 // icons
 import { CalendarDaysIcon, TrashIcon } from "@heroicons/react/24/outline";
-import User from "public/user.png";
 // helpers
 import { renderShortNumericDateFormat } from "helpers/date-time.helper";
 // types
-import { IModule, SelectModuleType } from "types";
+import { IModule } from "types";
 // common
 import { MODULE_STATUS } from "constants/module";
 
@@ -21,7 +21,6 @@ type Props = {
 };
 
 export const SingleModuleCard: React.FC<Props> = ({ module }) => {
-  const [selectedModuleForDelete, setSelectedModuleForDelete] = useState<SelectModuleType>();
   const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
 
   const router = useRouter();
@@ -57,70 +56,13 @@ export const SingleModuleCard: React.FC<Props> = ({ module }) => {
               <div className="space-y-2">
                 <h6 className="text-gray-500">LEAD</h6>
                 <div>
-                  {module.lead ? (
-                    module.lead_detail?.avatar && module.lead_detail.avatar !== "" ? (
-                      <div className="h-5 w-5 rounded-full border-2 border-white">
-                        <Image
-                          src={module.lead_detail.avatar}
-                          height="100%"
-                          width="100%"
-                          className="rounded-full"
-                          alt={module.lead_detail.first_name}
-                        />
-                      </div>
-                    ) : (
-                      <div className="grid h-5 w-5 place-items-center rounded-full border-2 border-white bg-gray-700 capitalize text-white">
-                        {module.lead_detail?.first_name && module.lead_detail.first_name !== ""
-                          ? module.lead_detail.first_name.charAt(0)
-                          : module.lead_detail?.email.charAt(0)}
-                      </div>
-                    )
-                  ) : (
-                    "N/A"
-                  )}
+                  <Avatar user={module.lead_detail} />
                 </div>
               </div>
               <div className="space-y-2">
                 <h6 className="text-gray-500">MEMBERS</h6>
                 <div className="flex items-center gap-1 text-xs">
-                  {module.members && module.members.length > 0 ? (
-                    module?.members_detail?.map((member, index: number) => (
-                      <div
-                        key={index}
-                        className={`relative z-[1] h-5 w-5 rounded-full ${
-                          index !== 0 ? "-ml-2.5" : ""
-                        }`}
-                      >
-                        {member?.avatar && member.avatar !== "" ? (
-                          <div className="h-5 w-5 rounded-full border-2 border-white bg-white">
-                            <Image
-                              src={member.avatar}
-                              height="100%"
-                              width="100%"
-                              className="rounded-full"
-                              alt={member?.first_name}
-                            />
-                          </div>
-                        ) : (
-                          <div className="grid h-5 w-5 place-items-center rounded-full border-2 border-white bg-gray-700 capitalize text-white">
-                            {member?.first_name && member.first_name !== ""
-                              ? member.first_name.charAt(0)
-                              : member?.email?.charAt(0)}
-                          </div>
-                        )}
-                      </div>
-                    ))
-                  ) : (
-                    <div className="h-5 w-5 rounded-full border-2 border-white bg-white">
-                      <Image
-                        src={User}
-                        height="100%"
-                        width="100%"
-                        className="rounded-full"
-                        alt="No user"
-                      />
-                    </div>
-                  )}
+                  <AssigneesList users={module.members_detail} />
                 </div>
               </div>
               <div className="space-y-2">
