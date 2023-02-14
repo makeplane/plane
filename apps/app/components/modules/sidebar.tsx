@@ -23,6 +23,7 @@ import modulesService from "services/modules.service";
 import useToast from "hooks/use-toast";
 // components
 import {
+  DeleteModuleModal,
   ModuleLinkModal,
   SidebarLeadSelect,
   SidebarMembersSelect,
@@ -57,16 +58,10 @@ type Props = {
   module?: IModule;
   isOpen: boolean;
   moduleIssues: ModuleIssueResponse[] | undefined;
-  handleDeleteModule: () => void;
 };
 
-export const ModuleDetailsSidebar: React.FC<Props> = ({
-  issues,
-  module,
-  isOpen,
-  moduleIssues,
-  handleDeleteModule,
-}) => {
+export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, moduleIssues }) => {
+  const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
   const [moduleLinkModal, setModuleLinkModal] = useState(false);
 
   const router = useRouter();
@@ -127,6 +122,11 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
         handleClose={() => setModuleLinkModal(false)}
         module={module}
       />
+      <DeleteModuleModal
+        isOpen={moduleDeleteModal}
+        setIsOpen={setModuleDeleteModal}
+        data={module}
+      />
       <div
         className={`fixed top-0 ${
           isOpen ? "right-0" : "-right-[24rem]"
@@ -163,7 +163,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                 <button
                   type="button"
                   className="rounded-md border border-red-500 p-2 text-red-500 shadow-sm duration-300 hover:bg-red-50 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                  onClick={() => handleDeleteModule()}
+                  onClick={() => setModuleDeleteModal(true)}
                 >
                   <TrashIcon className="h-3.5 w-3.5" />
                 </button>

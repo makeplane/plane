@@ -16,8 +16,9 @@ import {
   IssueStateSelect,
 } from "components/issues/select";
 import { CycleSelect as IssueCycleSelect } from "components/cycles/select";
-import { CreateUpdateStateModal } from "components/states";
+import { CreateStateModal } from "components/states";
 import CreateUpdateCycleModal from "components/project/cycles/create-update-cycle-modal";
+import { CreateLabelModal } from "components/labels";
 // ui
 import { Button, CustomDatePicker, CustomMenu, Input, Loader } from "components/ui";
 // icons
@@ -74,6 +75,7 @@ export const IssueForm: FC<IssueFormProps> = ({
   const [mostSimilarIssue, setMostSimilarIssue] = useState<IIssue | undefined>();
   const [cycleModal, setCycleModal] = useState(false);
   const [stateModal, setStateModal] = useState(false);
+  const [labelModal, setLabelModal] = useState(false);
   const [parentIssueListModalOpen, setParentIssueListModalOpen] = useState(false);
 
   const router = useRouter();
@@ -121,7 +123,7 @@ export const IssueForm: FC<IssueFormProps> = ({
     <>
       {projectId && (
         <>
-          <CreateUpdateStateModal
+          <CreateStateModal
             isOpen={stateModal}
             handleClose={() => setStateModal(false)}
             projectId={projectId}
@@ -129,6 +131,11 @@ export const IssueForm: FC<IssueFormProps> = ({
           <CreateUpdateCycleModal
             isOpen={cycleModal}
             setIsOpen={setCycleModal}
+            projectId={projectId}
+          />
+          <CreateLabelModal
+            isOpen={labelModal}
+            handleClose={() => setLabelModal(false)}
             projectId={projectId}
           />
         </>
@@ -281,7 +288,12 @@ export const IssueForm: FC<IssueFormProps> = ({
                   control={control}
                   name="labels_list"
                   render={({ field: { value, onChange } }) => (
-                    <IssueLabelSelect value={value} onChange={onChange} projectId={projectId} />
+                    <IssueLabelSelect
+                      setIsOpen={setLabelModal}
+                      value={value}
+                      onChange={onChange}
+                      projectId={projectId}
+                    />
                   )}
                 />
                 <div>

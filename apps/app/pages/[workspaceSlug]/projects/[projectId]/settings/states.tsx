@@ -80,7 +80,7 @@ const StatesSettings: NextPage<UserAuth> = (props) => {
         <div className="space-y-8">
           <div>
             <h3 className="text-3xl font-bold leading-6 text-gray-900">States</h3>
-            <p className="mt-4 text-sm text-gray-500">Manage the state of this project.</p>
+            <p className="mt-4 text-sm text-gray-500">Manage the states of this project.</p>
           </div>
           <div className="flex flex-col justify-between gap-4">
             {states && projectDetails ? (

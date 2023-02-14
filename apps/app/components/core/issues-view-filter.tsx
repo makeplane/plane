@@ -178,20 +178,29 @@ export const IssuesFilterView: React.FC<Props> = ({ issues }) => {
                       <div className="space-y-2 py-3">
                         <h4 className="text-sm text-gray-600">Display Properties</h4>
                         <div className="flex flex-wrap items-center gap-2">
-                          {Object.keys(properties).map((key) => (
-                            <button
-                              key={key}
-                              type="button"
-                              className={`rounded border px-2 py-1 text-xs capitalize ${
-                                properties[key as keyof Properties]
-                                  ? "border-theme bg-theme text-white"
-                                  : "border-gray-300"
-                              }`}
-                              onClick={() => setProperties(key as keyof Properties)}
-                            >
-                              {replaceUnderscoreIfSnakeCase(key)}
-                            </button>
-                          ))}
+                          {Object.keys(properties).map((key) => {
+                            if (
+                              issueView === "kanban" &&
+                              ((groupByProperty === "state_detail.name" && key === "state") ||
+                                (groupByProperty === "priority" && key === "priority"))
+                            )
+                              return;
+
+                            return (
+                              <button
+                                key={key}
+                                type="button"
+                                className={`rounded border px-2 py-1 text-xs capitalize ${
+                                  properties[key as keyof Properties]
+                                    ? "border-theme bg-theme text-white"
+                                    : "border-gray-300"
+                                }`}
+                                onClick={() => setProperties(key as keyof Properties)}
+                              >
+                                {replaceUnderscoreIfSnakeCase(key)}
+                              </button>
+                            );
+                          })}
                         </div>
                       </div>
                     </div>

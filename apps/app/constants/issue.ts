@@ -5,6 +5,7 @@ export const GROUP_BY_OPTIONS: Array<{ name: string; key: NestedKeyOf<IIssue> | 
   { name: "State", key: "state_detail.name" },
   { name: "Priority", key: "priority" },
   { name: "Created By", key: "created_by" },
+  { name: "Assignee", key: "assignees" },
   { name: "None", key: null },
 ];
 

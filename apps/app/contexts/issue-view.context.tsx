@@ -58,7 +58,7 @@ type ReducerFunctionType = (state: StateType, action: ReducerActionType) => Stat
 export const initialState: StateType = {
   issueView: "list",
   groupByProperty: null,
-  orderBy: null,
+  orderBy: "created_at",
   filterIssue: null,
 };
 
@@ -122,6 +122,7 @@ export const reducer: ReducerFunctionType = (state, action) => {
         ...payload,
       };
     }
+
     default: {
       return state;
     }
