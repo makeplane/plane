@@ -142,13 +142,16 @@ export const SingleState: React.FC<Props> = ({
       }`}
     >
       <div className="flex items-center gap-2">
-        <div
+        <span
           className="h-3 w-3 flex-shrink-0 rounded-full"
           style={{
             backgroundColor: state.color,
           }}
         />
-        <h6 className="text-sm">{addSpaceIfCamelCase(state.name)}</h6>
+        <div>
+          <h6 className="text-sm">{addSpaceIfCamelCase(state.name)}</h6>
+          <p className="text-xs text-gray-400">{state.description}</p>
+        </div>
       </div>
       <div className="flex items-center gap-2">
         {index !== 0 && (
