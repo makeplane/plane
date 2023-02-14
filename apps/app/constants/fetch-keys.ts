@@ -3,6 +3,7 @@ export const USER_WORKSPACE_INVITATIONS = "USER_WORKSPACE_INVITATIONS";
 export const USER_WORKSPACES = "USER_WORKSPACES";
 
 export const WORKSPACE_DETAILS = (workspaceSlug: string) => `WORKSPACE_DETAILS_${workspaceSlug}`;
+export const WORKSPACE_INTEGRATIONS = `WORKSPACE_INTEGRATIONS`;
 
 export const WORKSPACE_MEMBERS = (workspaceSlug: string) => `WORKSPACE_MEMBERS_${workspaceSlug}`;
 export const WORKSPACE_MEMBERS_ME = (workspaceSlug: string) =>

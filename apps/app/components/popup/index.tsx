@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import React, { useRef } from "react";
 
-const OAuthPopUp = ({ workspaceSlug }: any) => {
+const OAuthPopUp = ({ workspaceSlug, integration }: any) => {
   const popup = useRef<any>();
 
   const router = useRouter();
@@ -32,7 +32,7 @@ const OAuthPopUp = ({ workspaceSlug }: any) => {
   return (
     <>
       <div>
-        <button onClick={startAuth}>Github</button>
+        <button onClick={startAuth}>{integration.title}</button>
       </div>
     </>
   );

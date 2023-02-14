@@ -8,8 +8,8 @@ class AppInstallationsService extends APIService {
     super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
   }
 
-  async addGithubApp(workspaceSlug: string, installation_id: string): Promise<any> {
-    return this.post(`/api/workspaces/${workspaceSlug}/github-installations/${installation_id}/`)
+  async addGithubApp(workspaceSlug: string, provider: string, data: any): Promise<any> {
+    return this.post(`/api/workspaces/${workspaceSlug}/workspace-integrations/${provider}/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;

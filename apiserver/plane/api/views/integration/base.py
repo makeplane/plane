@@ -21,6 +21,7 @@ from plane.db.models import (
     APIToken,
 )
 from plane.api.serializers import IntegrationSerializer, WorkspaceIntegrationSerializer
+from plane.utils.integrations.github import get_github_metadata
 
 
 class IntegrationViewSet(BaseViewSet):
@@ -76,18 +77,22 @@ class WorkspaceIntegrationViewSet(BaseViewSet):
     serializer_class = WorkspaceIntegrationSerializer
     model = WorkspaceIntegration
 
-    def create(self, request, slug):
+    def create(self, request, slug, provider):
         try:
-            integration = request.data.get("integration", False)
+            installation_id = request.data.get("installation_id", None)
 
-            if not integration:
+            if not installation_id:
                 return Response(
-                    {"error": "Integration is required"},
+                    {"error": "Installation ID is required"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
             workspace = Workspace.objects.get(slug=slug)
-            integration = Integration.objects.get(pk=integration)
+            integration = Integration.objects.get(provider=provider)
+            config = {}
+            if provider == "github":
+                metadata = get_github_metadata(installation_id)
+                config = {"installation_id": installation_id}
 
             # Create a bot user
             bot_user = User.objects.create(
@@ -114,6 +119,8 @@ class WorkspaceIntegrationViewSet(BaseViewSet):
                 integration=integration,
                 actor=bot_user,
                 api_token=api_token,
+                metadata=metadata,
+                config=config,
             )
 
             # Add bot user as a member of workspace
@@ -139,6 +146,7 @@ class WorkspaceIntegrationViewSet(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
         except (Workspace.DoesNotExist, Integration.DoesNotExist) as e:
+            capture_exception(e)
             return Response(
                 {"error": "Workspace or Integration not found"},
                 status=status.HTTP_400_BAD_REQUEST,

@@ -13,6 +13,7 @@ class Integration(AuditModel):
     id = models.UUIDField(
         default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True
     )
+    title = models.CharField(max_length=400)
     provider = models.CharField(max_length=400, unique=True)
     network = models.PositiveIntegerField(
         default=1, choices=((1, "Private"), (2, "Public"))
@@ -52,6 +53,8 @@ class WorkspaceIntegration(BaseModel):
         "db.APIToken", related_name="integrations", on_delete=models.CASCADE
     )
     metadata = models.JSONField(default=dict)
+
+    config = models.JSONField(default=dict)
 
     def __str__(self):
         """Return name of the integration and workspace"""
