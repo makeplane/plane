@@ -75,7 +75,6 @@ class IssueViewSet(BaseViewSet):
             self.get_queryset().filter(pk=self.kwargs.get("pk", None)).first()
         )
         if current_instance is not None:
-
             issue_activity.delay(
                 {
                     "type": "issue.activity",
@@ -92,7 +91,6 @@ class IssueViewSet(BaseViewSet):
         return super().perform_update(serializer)
 
     def get_queryset(self):
-
         return (
             super()
             .get_queryset()
@@ -277,7 +275,6 @@ class UserWorkSpaceIssues(BaseAPIView):
 
 
 class WorkSpaceIssuesEndpoint(BaseAPIView):
-
     permission_classes = [
         WorkSpaceAdminPermission,
     ]
@@ -298,7 +295,6 @@ class WorkSpaceIssuesEndpoint(BaseAPIView):
 
 
 class IssueActivityEndpoint(BaseAPIView):
-
     permission_classes = [
         ProjectEntityPermission,
     ]
@@ -333,7 +329,6 @@ class IssueActivityEndpoint(BaseAPIView):
 
 
 class IssueCommentViewSet(BaseViewSet):
-
     serializer_class = IssueCommentSerializer
     model = IssueComment
     permission_classes = [
@@ -436,7 +431,6 @@ class IssuePropertyViewSet(BaseViewSet):
 
     def create(self, request, slug, project_id):
         try:
-
             issue_property, created = IssueProperty.objects.get_or_create(
                 user=request.user,
                 project_id=project_id,
@@ -463,7 +457,6 @@ class IssuePropertyViewSet(BaseViewSet):
 
 
 class LabelViewSet(BaseViewSet):
-
     serializer_class = LabelSerializer
     model = Label
     permission_classes = [
@@ -490,14 +483,12 @@ class LabelViewSet(BaseViewSet):
 
 
 class BulkDeleteIssuesEndpoint(BaseAPIView):
-
     permission_classes = [
         ProjectEntityPermission,
     ]
 
     def delete(self, request, slug, project_id):
         try:
-
             issue_ids = request.data.get("issue_ids", [])
 
             if not len(issue_ids):
@@ -527,14 +518,12 @@ class BulkDeleteIssuesEndpoint(BaseAPIView):
 
 
 class SubIssuesEndpoint(BaseAPIView):
-
     permission_classes = [
         ProjectEntityPermission,
     ]
 
     def get(self, request, slug, project_id, issue_id):
         try:
-
             sub_issues = (
                 Issue.objects.filter(
                     parent_id=issue_id, workspace__slug=slug, project_id=project_id
@@ -577,6 +566,42 @@ class SubIssuesEndpoint(BaseAPIView):
 
             serializer = IssueSerializer(sub_issues, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    # Assign multiple sub issues
+    def post(self, request, slug, project_id, issue_id):
+        try:
+            parent_issue = Issue.objects.get(pk=issue_id)
+            sub_issue_ids = request.data.get("sub_issue_ids", [])
+
+            if len(sub_issue_ids):
+                return Response(
+                    {"error": "Sub Issue IDs are required"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            sub_issues = Issue.objects.filter(id__in=sub_issue_ids)
+
+            for sub_issue in sub_issues:
+                sub_issue.parent = parent_issue
+
+            updated_sub_issues = Issue.objects.bulk_update(
+                sub_issues, ["parent"], batch_size=10
+            )
+
+            return Response(
+                IssueSerializer(updated_sub_issues, many=True).data,
+                status=status.HTTP_200_OK,
+            )
+        except Issue.DoesNotExist:
+            return Response(
+                {"Parent Issue does not exists"}, status=status.HTTP_400_BAD_REQUEST
+            )
         except Exception as e:
             capture_exception(e)
             return Response(
