@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -13,10 +13,15 @@ import {
   ChartPieIcon,
   LinkIcon,
   PlusIcon,
+  Squares2X2Icon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
 // progress-bar
 import { CircularProgressbar } from "react-circular-progressbar";
+
+import { Popover, Transition } from "@headlessui/react";
+import DatePicker from "react-datepicker";
+
 // services
 import modulesService from "services/modules.service";
 // hooks
@@ -27,16 +32,15 @@ import {
   ModuleLinkModal,
   SidebarLeadSelect,
   SidebarMembersSelect,
-  SidebarStatusSelect,
 } from "components/modules";
 
 import "react-circular-progressbar/dist/styles.css";
 // components
 import { SidebarProgressStats } from "components/core";
 // ui
-import { CustomDatePicker, Loader } from "components/ui";
+import { CustomSelect, Loader } from "components/ui";
 // helpers
-import { timeAgo } from "helpers/date-time.helper";
+import { renderShortNumericDateFormat, timeAgo } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
 import { groupBy } from "helpers/array.helper";
 // types
@@ -44,6 +48,8 @@ import { IIssue, IModule, ModuleIssueResponse } from "types";
 // fetch-keys
 import { MODULE_DETAILS } from "constants/fetch-keys";
 import ProgressChart from "components/core/sidebar/progress-chart";
+// constant
+import { MODULE_STATUS } from "constants/module";
 
 const defaultValues: Partial<IModule> = {
   lead: "",
@@ -63,6 +69,8 @@ type Props = {
 export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, moduleIssues }) => {
   const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
   const [moduleLinkModal, setModuleLinkModal] = useState(false);
+  const [startDateRange, setStartDateRange] = useState<Date | null>(new Date());
+  const [endDateRange, setEndDateRange] = useState<Date | null>(null);
 
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query;
@@ -134,6 +142,91 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
       >
         {module ? (
           <>
+            <div className="flex gap-1 text-sm my-2">
+              <div className="flex items-center ">
+                <Controller
+                  control={control}
+                  name="status"
+                  render={({ field: { value } }) => (
+                    <CustomSelect
+                      label={
+                        <span
+                          className={`flex items-center gap-1 text-left capitalize p-1 text-xs h-full w-full  text-gray-900`}
+                        >
+                          <Squares2X2Icon className="h-4 w-4 flex-shrink-0" />
+                          {watch("status")}
+                        </span>
+                      }
+                      value={value}
+                      onChange={(value: any) => {
+                        submitChanges({ status: value });
+                      }}
+                    >
+                      {MODULE_STATUS.map((option) => (
+                        <CustomSelect.Option key={option.value} value={option.value}>
+                          <span className="text-xs">{option.label}</span>
+                        </CustomSelect.Option>
+                      ))}
+                    </CustomSelect>
+                  )}
+                />
+              </div>
+              <Popover className="flex justify-center items-center relative  rounded-lg">
+                {({ open }) => (
+                  <>
+                    <Popover.Button
+                      className={`group flex items-center gap-2 rounded-md border bg-transparent h-full w-full p-2 px-4  text-xs font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-900 focus:outline-none ${
+                        open ? "bg-gray-100" : ""
+                      }`}
+                    >
+                      <CalendarDaysIcon className="h-4 w-4 flex-shrink-0" />
+                      <span>
+                        {renderShortNumericDateFormat(`${module?.start_date}`)
+                          ? renderShortNumericDateFormat(`${module?.start_date}`)
+                          : "N/A"}{" "}
+                        -{" "}
+                        {renderShortNumericDateFormat(`${module?.target_date}`)
+                          ? renderShortNumericDateFormat(`${module?.target_date}`)
+                          : "N/A"}
+                      </span>
+                    </Popover.Button>
+
+                    <Transition
+                      as={React.Fragment}
+                      enter="transition ease-out duration-200"
+                      enterFrom="opacity-0 translate-y-1"
+                      enterTo="opacity-100 translate-y-0"
+                      leave="transition ease-in duration-150"
+                      leaveFrom="opacity-100 translate-y-0"
+                      leaveTo="opacity-0 translate-y-1"
+                    >
+                      <Popover.Panel className="absolute top-10 left-0 z-20  transform overflow-hidden">
+                        <DatePicker
+                          selected={startDateRange}
+                          onChange={(dates) => {
+                            const [start, end] = dates;
+                            submitChanges({
+                              start_date: start?.toISOString(),
+                              target_date: end?.toISOString(),
+                            });
+                            if (setStartDateRange) {
+                              setStartDateRange(start);
+                            }
+                            if (setEndDateRange) {
+                              setEndDateRange(end);
+                            }
+                          }}
+                          startDate={startDateRange}
+                          endDate={endDateRange}
+                          selectsRange
+                          inline
+                        />
+                      </Popover.Panel>
+                    </Transition>
+                  </>
+                )}
+              </Popover>
+            </div>
             <div className="flex items-center justify-between pb-3">
               <h4 className="text-sm font-medium">{module.name}</h4>
               <div className="flex flex-wrap items-center gap-2">
@@ -195,59 +288,6 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
                     {groupedIssues.completed.length}/{moduleIssues?.length}
                   </div>
                 </div>
-              </div>
-              <div className="py-1">
-                <div className="flex flex-wrap items-center py-2">
-                  <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
-                    <CalendarDaysIcon className="h-4 w-4 flex-shrink-0" />
-                    <p>Start date</p>
-                  </div>
-                  <div className="sm:basis-1/2">
-                    <Controller
-                      control={control}
-                      name="start_date"
-                      render={({ field: { value } }) => (
-                        <CustomDatePicker
-                          value={value}
-                          onChange={(val) =>
-                            submitChanges({
-                              start_date: val,
-                            })
-                          }
-                        />
-                      )}
-                    />
-                  </div>
-                </div>
-                <div className="flex flex-wrap items-center py-2">
-                  <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
-                    <CalendarDaysIcon className="h-4 w-4 flex-shrink-0" />
-                    <p>End date</p>
-                  </div>
-                  <div className="sm:basis-1/2">
-                    <Controller
-                      control={control}
-                      name="target_date"
-                      render={({ field: { value } }) => (
-                        <CustomDatePicker
-                          value={value}
-                          onChange={(val) =>
-                            submitChanges({
-                              target_date: val,
-                            })
-                          }
-                        />
-                      )}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="py-1">
-                <SidebarStatusSelect
-                  control={control}
-                  submitChanges={submitChanges}
-                  watch={watch}
-                />
               </div>
               <div className="py-1">
                 <div className="flex items-center justify-between gap-2">
