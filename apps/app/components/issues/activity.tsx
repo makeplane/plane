@@ -1,7 +1,7 @@
 import React from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
-import { KeyedMutator } from "swr";
+import useSWR from "swr";
 
 // icons
 import {
@@ -13,7 +13,7 @@ import {
   UserIcon,
 } from "@heroicons/react/24/outline";
 // services
-import issuesServices from "services/issues.service";
+import issuesService from "services/issues.service";
 // components
 import { CommentCard } from "components/issues/comment";
 // ui
@@ -24,7 +24,8 @@ import { BlockedIcon, BlockerIcon, CyclesIcon, TagIcon, UserGroupIcon } from "co
 import { renderShortNumericDateFormat, timeAgo } from "helpers/date-time.helper";
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
-import { IIssueActivity, IIssueComment } from "types";
+import { IIssueComment } from "types";
+import { PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 
 const activityDetails: {
   [key: string]: {
@@ -85,19 +86,27 @@ const activityDetails: {
   },
 };
 
-type Props = {
-  issueActivities: IIssueActivity[];
-  mutate: KeyedMutator<IIssueActivity[]>;
-};
+type Props = {};
 
-export const IssueActivitySection: React.FC<Props> = ({ issueActivities, mutate }) => {
+export const IssueActivitySection: React.FC<Props> = () => {
   const router = useRouter();
-
   const { workspaceSlug, projectId, issueId } = router.query;
 
-  const onCommentUpdate = async (comment: IIssueComment) => {
+  const { data: issueActivities, mutate: mutateIssueActivities } = useSWR(
+    workspaceSlug && projectId && issueId ? PROJECT_ISSUES_ACTIVITY(issueId as string) : null,
+    workspaceSlug && projectId && issueId
+      ? () =>
+          issuesService.getIssueActivities(
+            workspaceSlug as string,
+            projectId as string,
+            issueId as string
+          )
+      : null
+  );
+
+  const handleCommentUpdate = async (comment: IIssueComment) => {
     if (!workspaceSlug || !projectId || !issueId) return;
-    await issuesServices
+    await issuesService
       .patchIssueComment(
         workspaceSlug as string,
         projectId as string,
@@ -106,13 +115,13 @@ export const IssueActivitySection: React.FC<Props> = ({ issueActivities, mutate 
         comment
       )
       .then((res) => {
-        mutate();
+        mutateIssueActivities();
       });
   };
 
-  const onCommentDelete = async (commentId: string) => {
+  const handleCommentDelete = async (commentId: string) => {
     if (!workspaceSlug || !projectId || !issueId) return;
-    await issuesServices
+    await issuesService
       .deleteIssueComment(
         workspaceSlug as string,
         projectId as string,
@@ -120,7 +129,7 @@ export const IssueActivitySection: React.FC<Props> = ({ issueActivities, mutate 
         commentId
       )
       .then((response) => {
-        mutate();
+        mutateIssueActivities();
         console.log(response);
       });
   };
@@ -234,8 +243,8 @@ export const IssueActivitySection: React.FC<Props> = ({ issueActivities, mutate 
                 <CommentCard
                   key={activity.id}
                   comment={activity as any}
-                  onSubmit={onCommentUpdate}
-                  handleCommentDeletion={onCommentDelete}
+                  onSubmit={handleCommentUpdate}
+                  handleCommentDeletion={handleCommentDelete}
                 />
               );
           })}
