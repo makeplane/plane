@@ -10,11 +10,14 @@ import { Disclosure, Transition } from "@headlessui/react";
 // services
 import issuesService from "services/issues.service";
 // components
-import { CreateUpdateIssueModal, SubIssuesListModal } from "components/issues";
+import { ExistingIssuesListModal } from "components/core";
+import { CreateUpdateIssueModal } from "components/issues";
 // ui
 import { CustomMenu } from "components/ui";
 // icons
 import { ChevronRightIcon, PlusIcon } from "@heroicons/react/24/outline";
+// helpers
+import { orderArrayBy } from "helpers/array.helper";
 // types
 import { IIssue, IssueResponse, UserAuth } from "types";
 // fetch-keys
@@ -41,6 +44,65 @@ export const SubIssuesList: FC<SubIssueListProps> = ({ parentIssue, userAuth }) 
           issuesService.subIssues(workspaceSlug as string, projectId as string, issueId as string)
       : null
   );
+
+  const { data: issues } = useSWR(
+    workspaceSlug && projectId
+      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
+      : null,
+    workspaceSlug && projectId
+      ? () => issuesService.getIssues(workspaceSlug as string, projectId as string)
+      : null
+  );
+
+  const addAsSubIssue = async (data: { issues: string[] }) => {
+    if (!workspaceSlug || !projectId) return;
+
+    await issuesService
+      .addSubIssues(workspaceSlug as string, projectId as string, parentIssue?.id ?? "", {
+        sub_issue_ids: data.issues,
+      })
+      .then((res) => {
+        mutate<IIssue[]>(
+          SUB_ISSUES(parentIssue?.id ?? ""),
+          (prevData) => {
+            let newSubIssues = [...(prevData as IIssue[])];
+
+            data.issues.forEach((issueId: string) => {
+              const issue = issues?.results.find((i) => i.id === issueId);
+
+              if (issue) newSubIssues.push(issue);
+            });
+
+            newSubIssues = orderArrayBy(newSubIssues, "created_at", "descending");
+
+            return newSubIssues;
+          },
+          false
+        );
+
+        mutate<IssueResponse>(
+          PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
+          (prevData) => ({
+            ...(prevData as IssueResponse),
+            results: (prevData?.results ?? []).map((p) => {
+              if (data.issues.includes(p.id))
+                return {
+                  ...p,
+                  parent: parentIssue.id,
+                };
+
+              return p;
+            }),
+          }),
+          false
+        );
+
+        mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const handleSubIssueRemove = (issueId: string) => {
     if (!workspaceSlug || !projectId) return;
@@ -94,10 +156,18 @@ export const SubIssuesList: FC<SubIssueListProps> = ({ parentIssue, userAuth }) 
         prePopulateData={{ ...preloadedData }}
         handleClose={() => setCreateIssueModal(false)}
       />
-      <SubIssuesListModal
+      <ExistingIssuesListModal
         isOpen={subIssuesListModal}
         handleClose={() => setSubIssuesListModal(false)}
-        parent={parentIssue}
+        issues={
+          issues?.results.filter(
+            (i) =>
+              (i.parent === "" || i.parent === null) &&
+              i.id !== parentIssue?.id &&
+              i.id !== parentIssue?.parent
+          ) ?? []
+        }
+        handleOnSubmit={addAsSubIssue}
       />
       {subIssues && subIssues.length > 0 ? (
         <Disclosure defaultOpen={true}>
