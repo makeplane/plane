@@ -8,7 +8,7 @@ const isEmailValid = (email: string) =>
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     );
 
-const MultiInput = ({ label, name, placeholder, setValue, watch }: any) => {
+export const MultiInput = ({ label, name, placeholder, setValue, watch }: any) => {
   const handleKeyDown = (e: any) => {
     if (e.key !== "Enter") return;
     const value = e.target.value;
@@ -72,5 +72,3 @@ const MultiInput = ({ label, name, placeholder, setValue, watch }: any) => {
     </>
   );
 };
-
-export default MultiInput;
