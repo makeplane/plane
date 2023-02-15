@@ -460,6 +460,12 @@ class IssueModuleDetailSerializer(BaseSerializer):
         ]
 
 
+class IssueLinkSerializer(BaseSerializer):
+    class Meta:
+        model = IssueLink
+        fields = "__all__"
+
+
 class IssueSerializer(BaseSerializer):
     project_detail = ProjectSerializer(read_only=True, source="project")
     state_detail = StateSerializer(read_only=True, source="state")
@@ -472,6 +478,7 @@ class IssueSerializer(BaseSerializer):
     blocker_issues = BlockerIssueSerializer(read_only=True, many=True)
     issue_cycle = IssueCycleDetailSerializer(read_only=True)
     issue_module = IssueModuleDetailSerializer(read_only=True)
+    issue_link = IssueLinkSerializer(read_only=True, many=True)
     sub_issues_count = serializers.IntegerField(read_only=True)
 
     class Meta:
