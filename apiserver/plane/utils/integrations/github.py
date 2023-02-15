@@ -35,3 +35,14 @@ def get_github_metadata(installation_id):
     }
     response = requests.get(url, headers=headers).json()
     return response
+
+
+def get_github_repos(repo_url):
+    token = get_jwt_token()
+
+    headers = {
+        "Authorization": "Bearer " + token,
+        "Accept": "application/vnd.github+json",
+    }
+    response = requests.get(repo_url, headers=headers).json()
+    return response

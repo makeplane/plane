@@ -1,18 +1,10 @@
-import os
-import jwt
-from datetime import timedelta, datetime
-from cryptography.hazmat.primitives.serialization import load_pem_private_key
-from cryptography.hazmat.backends import default_backend
-
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny
 from sentry_sdk import capture_exception
 
 # Module imports
-from plane.api.views import BaseViewSet
+from plane.api.views import BaseViewSet, BaseAPIView
 from plane.db.models import (
     GithubIssueSync,
     GithubRepositorySync,
@@ -27,6 +19,23 @@ from plane.api.serializers import (
     GithubRepositorySyncSerializer,
     GithubCommentSyncSerializer,
 )
+from plane.utils.integrations.github import get_github_repos
+
+
+class GithubRepositoriesEndpoint(BaseAPIView):
+    def get(self, request, slug, workspace_integration_id):
+        try:
+            workspace_integration = WorkspaceIntegration.objects.get(
+                workspace__slug=slug, pk=workspace_integration_id
+            )
+            repository_url = workspace_integration.metadata["account"]["repos_url"]
+            repositories = get_github_repos(repository_url)
+            return Response(repositories, status=status.HTTP_200_OK)
+        except WorkspaceIntegration.DoesNotExist:
+            return Response(
+                {"error": "Workspace Integration Does not exists"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
 
 class GithubRepositorySyncViewSet(BaseViewSet):
@@ -43,19 +52,10 @@ class GithubRepositorySyncViewSet(BaseViewSet):
             config = request.data.get("config", {})
             repository_id = request.data.get("repository_id", False)
             owner = request.data.get("owner", False)
-            installation_id = request.data.get("installation_id", False)
 
-            if (
-                not name
-                or not url
-                or not repository_id
-                or not owner
-                or not installation_id
-            ):
+            if not name or not url or not repository_id or not owner:
                 return Response(
-                    {
-                        "error": "Name, url, repository_id, owner and installation_id are required"
-                    },
+                    {"error": "Name, url, repository_id and owner are required"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -96,7 +96,6 @@ class GithubRepositorySyncViewSet(BaseViewSet):
                 credentials=request.data.get("credentials", {}),
                 project_id=project_id,
                 label=label,
-                installation_id=installation_id,
             )
 
             # Add bot as a member in the project
