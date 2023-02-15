@@ -277,6 +277,22 @@ class ProjectIssuesServices extends APIService {
         throw error?.response?.data;
       });
   }
+
+  async addSubIssues(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    data: { sub_issue_ids: string[] }
+  ): Promise<any> {
+    return this.post(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/sub-issues/`,
+      data
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }
 
 export default new ProjectIssuesServices();
