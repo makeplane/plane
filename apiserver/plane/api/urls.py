@@ -715,10 +715,18 @@ urlpatterns = [
         name="integrations",
     ),
     path(
-        "workspaces/<str:slug>/workspace-integrations/<str:provider>/",
+        "workspaces/<str:slug>/workspace-integrations/",
         WorkspaceIntegrationViewSet.as_view(
             {
                 "get": "list",
+            }
+        ),
+        name="workspace-integrations",
+    ),
+    path(
+        "workspaces/<str:slug>/workspace-integrations/<str:provider>/",
+        WorkspaceIntegrationViewSet.as_view(
+            {
                 "post": "create",
             }
         ),

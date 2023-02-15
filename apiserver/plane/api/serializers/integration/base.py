@@ -13,6 +13,8 @@ class IntegrationSerializer(BaseSerializer):
 
 
 class WorkspaceIntegrationSerializer(BaseSerializer):
+    integration_detail = IntegrationSerializer(read_only=True, source="integration")
+
     class Meta:
         model = WorkspaceIntegration
         fields = "__all__"

@@ -96,7 +96,7 @@ class WorkspaceIntegrationViewSet(BaseViewSet):
 
             # Create a bot user
             bot_user = User.objects.create(
-                email=f"{str(integration.id)}-{str(workspace.id)}@plane.so",
+                email=f"{uuid.uuid4().hex}@plane.so",
                 username=uuid.uuid4().hex,
                 password=make_password(uuid.uuid4().hex),
                 is_password_autoset=True,

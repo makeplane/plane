@@ -28,8 +28,9 @@ class GithubRepositoriesEndpoint(BaseAPIView):
             workspace_integration = WorkspaceIntegration.objects.get(
                 workspace__slug=slug, pk=workspace_integration_id
             )
-            repository_url = workspace_integration.metadata["account"]["repos_url"]
-            repositories = get_github_repos(repository_url)
+            access_tokens_url = workspace_integration.metadata["access_tokens_url"]
+            repositories_url = workspace_integration.metadata["repositories_url"]
+            repositories = get_github_repos(access_tokens_url, repositories_url)
             return Response(repositories, status=status.HTTP_200_OK)
         except WorkspaceIntegration.DoesNotExist:
             return Response(

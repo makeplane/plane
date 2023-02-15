@@ -13,7 +13,7 @@ import workspaceService from "services/workspace.service";
 import AppLayout from "layouts/app-layout";
 // ui
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-import { WORKSPACE_DETAILS, WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
+import { WORKSPACE_DETAILS, APP_INTEGRATIONS } from "constants/fetch-keys";
 import OAuthPopUp from "components/popup";
 
 type TWorkspaceIntegrationsProps = {
@@ -33,7 +33,7 @@ const WorkspaceIntegrations: NextPage<TWorkspaceIntegrationsProps> = (props) => 
     () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null)
   );
 
-  const { data: integrations } = useSWR(workspaceSlug ? WORKSPACE_INTEGRATIONS : null, () =>
+  const { data: integrations } = useSWR(workspaceSlug ? APP_INTEGRATIONS : null, () =>
     workspaceSlug ? workspaceService.getIntegrations() : null
   );
 

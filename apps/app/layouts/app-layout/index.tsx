@@ -98,6 +98,10 @@ const sidebarLinks: (
     label: "Labels",
     href: `/${workspaceSlug}/projects/${projectId}/settings/labels`,
   },
+  {
+    label: "Integrations",
+    href: `/${workspaceSlug}/projects/${projectId}/settings/integrations`,
+  },
 ];
 
 const AppLayout: FC<AppLayoutProps> = ({

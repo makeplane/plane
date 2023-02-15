@@ -37,12 +37,26 @@ def get_github_metadata(installation_id):
     return response
 
 
-def get_github_repos(repo_url):
+def get_github_repos(access_tokens_url, repositories_url):
     token = get_jwt_token()
 
     headers = {
         "Authorization": "Bearer " + token,
         "Accept": "application/vnd.github+json",
     }
-    response = requests.get(repo_url, headers=headers).json()
+
+    oauth_response = requests.post(
+        access_tokens_url,
+        headers=headers,
+    ).json()
+
+    oauth_token = oauth_response.get("token")
+    headers = {
+        "Authorization": "Bearer " + oauth_token,
+        "Accept": "application/vnd.github+json",
+    }
+    response = requests.get(
+        repositories_url,
+        headers=headers,
+    ).json()
     return response

@@ -28,7 +28,6 @@ class GithubRepository(ProjectBaseModel):
 
 
 class GithubRepositorySync(ProjectBaseModel):
-    installation_id = models.BigIntegerField()
     repository = models.OneToOneField(
         "db.GithubRepository", on_delete=models.CASCADE, related_name="syncs"
     )
