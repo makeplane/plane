@@ -97,8 +97,8 @@ export const SidebarAssigneeSelect: React.FC<Props> = ({ control, submitChanges,
                               <Listbox.Option
                                 key={option.member.id}
                                 className={({ active, selected }) =>
-                                  `${
-                                    active || selected ? "bg-indigo-50" : ""
+                                  `${active || selected ? "bg-indigo-50" : ""} ${
+                                    selected ? "font-medium" : ""
                                   } flex cursor-pointer select-none items-center gap-2 truncate p-2 text-gray-900`
                                 }
                                 value={option.member.id}

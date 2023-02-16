@@ -9,7 +9,7 @@ type Props = {
   inactiveStrokeColor?: string;
 };
 
-const ProgressBar: React.FC<Props> = ({
+export const ProgressBar: React.FC<Props> = ({
   maxValue = 0,
   value = 0,
   radius = 8,
@@ -67,4 +67,3 @@ const ProgressBar: React.FC<Props> = ({
     </svg>
   );
 };
-export default ProgressBar;

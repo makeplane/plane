@@ -5,9 +5,25 @@ import Link from "next/link";
 import { Menu, Transition } from "@headlessui/react";
 // icons
 import { ChevronDownIcon, EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
-// types
-import { MenuItemProps, Props } from "./types";
-// constants
+
+type Props = {
+  children: React.ReactNode;
+  label?: string | JSX.Element;
+  className?: string;
+  ellipsis?: boolean;
+  width?: "sm" | "md" | "lg" | "xl" | "auto";
+  textAlignment?: "left" | "center" | "right";
+  noBorder?: boolean;
+  optionsPosition?: "left" | "right";
+};
+
+type MenuItemProps = {
+  children: JSX.Element | string;
+  renderAs?: "button" | "a";
+  href?: string;
+  onClick?: () => void;
+  className?: string;
+};
 
 const CustomMenu = ({
   children,

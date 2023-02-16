@@ -14,6 +14,7 @@ type CustomSelectProps = {
   width?: "auto" | string;
   input?: boolean;
   noChevron?: boolean;
+  buttonClassName?: string;
   disabled?: boolean;
 };
 
@@ -27,6 +28,7 @@ const CustomSelect = ({
   width = "auto",
   input = false,
   noChevron = false,
+  buttonClassName = "",
   disabled = false,
 }: CustomSelectProps) => (
   <Listbox
@@ -38,7 +40,7 @@ const CustomSelect = ({
   >
     <div>
       <Listbox.Button
-        className={`flex w-full ${
+        className={`${buttonClassName} flex w-full ${
           disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-gray-100"
         } items-center justify-between gap-1 rounded-md border shadow-sm duration-300 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
           input ? "border-gray-300 px-3 py-2 text-sm" : "px-2 py-1 text-xs"
@@ -95,8 +97,8 @@ const Option: React.FC<OptionProps> = ({ children, value, className }) => (
   <Listbox.Option
     value={value}
     className={({ active, selected }) =>
-      `${selected ? "bg-indigo-50 font-medium" : ""} ${
-        active ? "bg-indigo-50" : ""
+      `${active || selected ? "bg-indigo-50" : ""} ${
+        selected ? "font-medium" : ""
       } relative flex cursor-pointer select-none items-center gap-2 truncate p-2 text-gray-900 ${className}`
     }
   >
