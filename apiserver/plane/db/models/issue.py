@@ -161,6 +161,23 @@ class IssueAssignee(ProjectBaseModel):
         return f"{self.issue.name} {self.assignee.email}"
 
 
+class IssueLink(ProjectBaseModel):
+    title = models.CharField(max_length=255, null=True)
+    url = models.URLField()
+    issue = models.ForeignKey(
+        "db.Issue", on_delete=models.CASCADE, related_name="issue_link"
+    )
+
+    class Meta:
+        verbose_name = "Issue Link"
+        verbose_name_plural = "Issue Links"
+        db_table = "issue_links"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.issue.name} {self.url}"
+
+
 class IssueActivity(ProjectBaseModel):
     issue = models.ForeignKey(
         Issue, on_delete=models.CASCADE, related_name="issue_activity"
