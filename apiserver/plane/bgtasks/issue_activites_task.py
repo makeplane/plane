@@ -708,7 +708,6 @@ def update_comment_activity(
 def delete_issue_activity(
     requested_data, current_instance, issue_id, project, actor, issue_activities
 ):
-    print("Delete ISsue")
     issue_activities.append(
         IssueActivity(
             project=project,
