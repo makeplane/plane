@@ -19,7 +19,7 @@ const OAuthPopUp = ({ workspaceSlug, integration }: any) => {
       height = 600;
     const left = window.innerWidth / 2 - width / 2;
     const top = window.innerHeight / 2 - height / 2;
-    const url = `https://github.com/apps/plane-web-local/installations/new?state=${workspaceSlug}`;
+    const url = `https://github.com/apps/${process.env.NEXT_PUBLIC_GITHUB_APP_NAME}/installations/new?state=${workspaceSlug}`;
 
     return window.open(url, "", `width=${width}, height=${height}, top=${top}, left=${left}`);
   };
