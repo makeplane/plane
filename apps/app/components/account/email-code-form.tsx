@@ -21,6 +21,7 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
   const [codeSent, setCodeSent] = useState(false);
   const [codeResent, setCodeResent] = useState(false);
   const [isCodeResending, setIsCodeResending] = useState(false);
+  const [errorResendingCode, setErrorResendingCode] = useState(false);
   const [resendCodeTimer, setResendCodeTimer] = useState(RESEND_CODE_TIMER);
 
   const { setToastAlert } = useToast();
@@ -42,6 +43,7 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
   });
 
   const onSubmit = async ({ email }: EmailCodeFormValues) => {
+    setErrorResendingCode(false);
     await authenticationService
       .emailCode({ email })
       .then((res) => {
@@ -49,7 +51,12 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
         setCodeSent(true);
       })
       .catch((err) => {
-        console.log(err);
+        setErrorResendingCode(true);
+        setToastAlert({
+          title: "Oops!",
+          type: "error",
+          message: err?.error,
+        });
       });
   };
 
@@ -82,6 +89,12 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
     }
     return () => clearTimeout(timer);
   }, [codeSent, resendCodeTimer]);
+
+  const emailOld = getValues("email");
+
+  useEffect(() => {
+    setErrorResendingCode(false);
+  }, [emailOld]);
 
   return (
     <>
@@ -146,7 +159,9 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
                   setResendCodeTimer(RESEND_CODE_TIMER);
                 });
               }}
-              disabled={resendCodeTimer > 0}
+              disabled={
+                resendCodeTimer > 0 || isCodeResending || isSubmitting || errorResendingCode
+              }
             >
               {resendCodeTimer > 0 ? (
                 <p className="text-right">
@@ -154,6 +169,8 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
                 </p>
               ) : isCodeResending ? (
                 "Sending code..."
+              ) : errorResendingCode ? (
+                "Please try again later"
               ) : (
                 "Resend code"
               )}
