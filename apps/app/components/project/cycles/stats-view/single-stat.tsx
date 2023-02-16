@@ -21,6 +21,8 @@ import { groupBy } from "helpers/array.helper";
 import { CycleIssueResponse, ICycle } from "types";
 // fetch-keys
 import { CYCLE_ISSUES } from "constants/fetch-keys";
+import { copyTextToClipboard } from "helpers/string.helper";
+import useToast from "hooks/use-toast";
 
 type TSingleStatProps = {
   cycle: ICycle;
@@ -43,6 +45,7 @@ const SingleStat: React.FC<TSingleStatProps> = (props) => {
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+  const { setToastAlert } = useToast();
 
   const { data: cycleIssues } = useSWR<CycleIssueResponse[]>(
     workspaceSlug && projectId && cycle.id ? CYCLE_ISSUES(cycle.id as string) : null,
@@ -77,6 +80,27 @@ const SingleStat: React.FC<TSingleStatProps> = (props) => {
                 </a>
               </Link>
               <CustomMenu width="auto" ellipsis>
+                <CustomMenu.MenuItem
+                  onClick={() =>
+                    copyTextToClipboard(
+                      `https://app.plane.so/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`
+                    )
+                      .then(() => {
+                        setToastAlert({
+                          type: "success",
+                          title: "Cycle link copied to clipboard",
+                        });
+                      })
+                      .catch(() => {
+                        setToastAlert({
+                          type: "error",
+                          title: "Some error occurred",
+                        });
+                      })
+                  }
+                >
+                  Copy cycle link
+                </CustomMenu.MenuItem>
                 <CustomMenu.MenuItem onClick={handleEditCycle}>Edit cycle</CustomMenu.MenuItem>
                 <CustomMenu.MenuItem onClick={handleDeleteCycle}>
                   Delete cycle permanently
