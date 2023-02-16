@@ -10,7 +10,7 @@ type Props = {
   disabled?: boolean;
 };
 
-const OutlineButton = React.forwardRef<HTMLButtonElement, Props>(
+export const OutlineButton = React.forwardRef<HTMLButtonElement, Props>(
   (
     {
       children,
@@ -58,5 +58,3 @@ const OutlineButton = React.forwardRef<HTMLButtonElement, Props>(
 );
 
 OutlineButton.displayName = "Button";
-
-export default OutlineButton;

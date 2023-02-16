@@ -24,7 +24,7 @@ type Props = {
 export const ViewStateSelect: React.FC<Props> = ({
   issue,
   partialUpdateIssue,
-  position,
+  position = "right",
   isNotAllowed,
 }) => {
   const router = useRouter();

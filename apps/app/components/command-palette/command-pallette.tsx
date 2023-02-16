@@ -102,10 +102,10 @@ export const CommandPalette: React.FC = () => {
         !(e.target instanceof HTMLInputElement) &&
         !(e.target as Element).classList?.contains("remirror-editor")
       ) {
-        if ((e.ctrlKey || e.metaKey) && (e.key === "k" || e.key === "K")) {
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
           e.preventDefault();
           setIsPaletteOpen(true);
-        } else if ((e.ctrlKey || e.metaKey) && (e.key === "c" || e.key === "C")) {
+        } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "c") {
           if (e.altKey) {
             e.preventDefault();
             if (!router.query.issueId) return;
@@ -124,26 +124,23 @@ export const CommandPalette: React.FC = () => {
                   title: "Some error occurred",
                 });
               });
-            console.log("URL Copied");
-          } else {
-            console.log("Text copied");
           }
-        } else if (e.key === "c" || e.key === "C") {
+        } else if (e.key.toLowerCase() === "c") {
           e.preventDefault();
           setIsIssueModalOpen(true);
-        } else if (e.key === "p" || e.key === "P") {
+        } else if (e.key.toLowerCase() === "p") {
           e.preventDefault();
           setIsProjectModalOpen(true);
-        } else if ((e.ctrlKey || e.metaKey) && (e.key === "b" || e.key === "B")) {
+        } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "b") {
           e.preventDefault();
           toggleCollapsed();
-        } else if (e.key === "h" || e.key === "H") {
+        } else if (e.key.toLowerCase() === "h") {
           e.preventDefault();
           setIsShortcutsModalOpen(true);
-        } else if (e.key === "q" || e.key === "Q") {
+        } else if (e.key.toLowerCase() === "q") {
           e.preventDefault();
           setIsCreateCycleModalOpen(true);
-        } else if (e.key === "m" || e.key === "M") {
+        } else if (e.key.toLowerCase() === "m") {
           e.preventDefault();
           setIsCreateModuleModalOpen(true);
         } else if (e.key === "Delete") {
