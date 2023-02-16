@@ -705,6 +705,38 @@ def update_comment_activity(
         )
 
 
+def delete_issue_activity(
+    requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+    print("Delete ISsue")
+    issue_activities.append(
+        IssueActivity(
+            project=project,
+            workspace=project.workspace,
+            comment=f"{actor.email} deleted the issue",
+            verb="deleted",
+            actor=actor,
+            field="issue",
+        )
+    )
+
+
+def delete_comment_activity(
+    requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            project=project,
+            workspace=project.workspace,
+            comment=f"{actor.email} deleted the comment",
+            verb="deleted",
+            actor=actor,
+            field="comment",
+        )
+    )
+
+
 # Receive message from room group
 @job("default")
 def issue_activity(event):
@@ -728,8 +760,10 @@ def issue_activity(event):
         ACTIVITY_MAPPER = {
             "issue.activity.created": create_issue_activity,
             "issue.activity.updated": update_issue_activity,
+            "issue.activity.deleted": delete_issue_activity,
             "comment.activity.created": create_comment_activity,
             "comment.activity.updated": update_comment_activity,
+            "comment.activity.deleted": delete_comment_activity,
         }
 
         func = ACTIVITY_MAPPER.get(type)

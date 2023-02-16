@@ -90,6 +90,27 @@ class IssueViewSet(BaseViewSet):
 
         return super().perform_update(serializer)
 
+    def perform_destroy(self, instance):
+        current_instance = (
+            self.get_queryset().filter(pk=self.kwargs.get("pk", None)).first()
+        )
+        if current_instance is not None:
+            issue_activity.delay(
+                {
+                    "type": "issue.activity.deleted",
+                    "requested_data": json.dumps(
+                        {"issue_id": str(self.kwargs.get("pk", None))}
+                    ),
+                    "actor_id": str(self.request.user.id),
+                    "issue_id": str(self.kwargs.get("pk", None)),
+                    "project_id": str(self.kwargs.get("project_id", None)),
+                    "current_instance": json.dumps(
+                        IssueSerializer(current_instance).data, cls=DjangoJSONEncoder
+                    ),
+                },
+            )
+        return super().perform_destroy(instance)
+
     def get_queryset(self):
         return (
             super()
@@ -384,6 +405,28 @@ class IssueCommentViewSet(BaseViewSet):
             )
 
         return super().perform_update(serializer)
+
+    def perform_destroy(self, instance):
+        current_instance = (
+            self.get_queryset().filter(pk=self.kwargs.get("pk", None)).first()
+        )
+        if current_instance is not None:
+            issue_activity.delay(
+                {
+                    "type": "comment.activity.deleted",
+                    "requested_data": json.dumps(
+                        {"comment_id": str(self.kwargs.get("pk", None))}
+                    ),
+                    "actor_id": str(self.request.user.id),
+                    "issue_id": str(self.kwargs.get("issue_id", None)),
+                    "project_id": str(self.kwargs.get("project_id", None)),
+                    "current_instance": json.dumps(
+                        IssueCommentSerializer(current_instance).data,
+                        cls=DjangoJSONEncoder,
+                    ),
+                },
+            )
+        return super().perform_destroy(instance)
 
     def get_queryset(self):
         return self.filter_queryset(
