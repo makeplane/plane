@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 // ui
 import { CheckCircleIcon } from "@heroicons/react/20/solid";
@@ -15,14 +15,21 @@ type EmailCodeFormValues = {
   token?: string;
 };
 
+const RESEND_CODE_TIMER = 30;
+
 export const EmailCodeForm = ({ onSuccess }: any) => {
   const [codeSent, setCodeSent] = useState(false);
+  const [codeResent, setCodeResent] = useState(false);
+  const [isCodeResending, setIsCodeResending] = useState(false);
+  const [resendCodeTimer, setResendCodeTimer] = useState(RESEND_CODE_TIMER);
+
   const { setToastAlert } = useToast();
   const {
     register,
     handleSubmit,
     setError,
     setValue,
+    getValues,
     formState: { errors, isSubmitting, isValid, isDirty },
   } = useForm<EmailCodeFormValues>({
     defaultValues: {
@@ -66,10 +73,20 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
       });
   };
 
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (codeSent) {
+      timer = setTimeout(() => {
+        setResendCodeTimer((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [codeSent, resendCodeTimer]);
+
   return (
     <>
       <form className="mt-5 space-y-5">
-        {codeSent && (
+        {(codeSent || codeResent) && (
           <div className="rounded-md bg-green-50 p-4">
             <div className="flex">
               <div className="flex-shrink-0">
@@ -77,7 +94,9 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
               </div>
               <div className="ml-3">
                 <p className="text-sm font-medium text-green-800">
-                  Please check your mail for code.
+                  {codeResent
+                    ? "Please check your mail for new code."
+                    : "Please check your mail for code."}
                 </p>
               </div>
             </div>
@@ -114,15 +133,31 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
               error={errors.token}
               placeholder="Enter code"
             />
-            {/* <button
+            <button
               type="button"
-              className="text-xs outline-none hover:text-theme cursor-pointer"
+              className={`text-xs mt-5 w-full flex justify-end outline-none hover:text-theme cursor-pointer ${
+                resendCodeTimer > 0 ? "text-gray-400" : "text-theme"
+              } `}
               onClick={() => {
-                handleSubmit(onSubmit);
+                setIsCodeResending(true);
+                onSubmit({ email: getValues("email") }).then(() => {
+                  setCodeResent(true);
+                  setIsCodeResending(false);
+                  setResendCodeTimer(RESEND_CODE_TIMER);
+                });
               }}
+              disabled={resendCodeTimer > 0}
             >
-              Resend code
-            </button> */}
+              {resendCodeTimer > 0 ? (
+                <p className="text-right">
+                  Didn{"'"}t receive code? Get new code in {resendCodeTimer} seconds.
+                </p>
+              ) : isCodeResending ? (
+                "Sending code..."
+              ) : (
+                "Resend code"
+              )}
+            </button>
           </div>
         )}
         <div>
