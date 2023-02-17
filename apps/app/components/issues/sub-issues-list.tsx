@@ -15,7 +15,7 @@ import { CreateUpdateIssueModal } from "components/issues";
 // ui
 import { CustomMenu } from "components/ui";
 // icons
-import { ChevronRightIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { ChevronRightIcon, PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // helpers
 import { orderArrayBy } from "helpers/array.helper";
 // types
@@ -23,12 +23,12 @@ import { IIssue, IssueResponse, UserAuth } from "types";
 // fetch-keys
 import { PROJECT_ISSUES_LIST, SUB_ISSUES } from "constants/fetch-keys";
 
-type SubIssueListProps = {
+type Props = {
   parentIssue: IIssue;
   userAuth: UserAuth;
 };
 
-export const SubIssuesList: FC<SubIssueListProps> = ({ parentIssue, userAuth }) => {
+export const SubIssuesList: FC<Props> = ({ parentIssue, userAuth }) => {
   // states
   const [createIssueModal, setCreateIssueModal] = useState(false);
   const [subIssuesListModal, setSubIssuesListModal] = useState(false);
@@ -226,13 +226,13 @@ export const SubIssuesList: FC<SubIssueListProps> = ({ parentIssue, userAuth }) 
                         </a>
                       </Link>
                       {!isNotAllowed && (
-                        <div className="opacity-0 group-hover:opacity-100">
-                          <CustomMenu ellipsis>
-                            <CustomMenu.MenuItem onClick={() => handleSubIssueRemove(issue.id)}>
-                              Remove as sub-issue
-                            </CustomMenu.MenuItem>
-                          </CustomMenu>
-                        </div>
+                        <button
+                          type="button"
+                          className="opacity-0 group-hover:opacity-100 cursor-pointer"
+                          onClick={() => handleSubIssueRemove(issue.id)}
+                        >
+                          <XMarkIcon className="h-4 w-4 text-gray-500 hover:text-gray-900" />
+                        </button>
                       )}
                     </div>
                   ))}
