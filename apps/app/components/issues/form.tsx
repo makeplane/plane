@@ -117,6 +117,8 @@ export const IssueForm: FC<IssueFormProps> = ({
       ...defaultValues,
       ...initialData,
       project: projectId,
+      assignees_list: initialData?.assignees ?? [],
+      labels_list: initialData?.labels ?? [],
     });
   }, [initialData, reset, projectId]);
 
@@ -278,13 +280,6 @@ export const IssueForm: FC<IssueFormProps> = ({
                 />
                 <Controller
                   control={control}
-                  name="assignees_list"
-                  render={({ field: { value, onChange } }) => (
-                    <IssueAssigneeSelect projectId={projectId} value={value} onChange={onChange} />
-                  )}
-                />
-                <Controller
-                  control={control}
                   name="labels_list"
                   render={({ field: { value, onChange } }) => (
                     <IssueLabelSelect
@@ -308,6 +303,13 @@ export const IssueForm: FC<IssueFormProps> = ({
                     )}
                   />
                 </div>
+                <Controller
+                  control={control}
+                  name="assignees_list"
+                  render={({ field: { value, onChange } }) => (
+                    <IssueAssigneeSelect projectId={projectId} value={value} onChange={onChange} />
+                  )}
+                />
                 <IssueParentSelect
                   control={control}
                   isOpen={parentIssueListModalOpen}

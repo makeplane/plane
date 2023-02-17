@@ -61,7 +61,7 @@ export interface IIssueParent {
 }
 
 export interface IIssue {
-  assignees: any[] | null;
+  assignees: string[] | null;
   assignee_details: IUser[];
   assignees_list: string[];
   attachments: any[];
