@@ -42,6 +42,9 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
     reValidateMode: "onChange",
   });
 
+  const isResendDisabled =
+    resendCodeTimer > 0 || isCodeResending || isSubmitting || errorResendingCode;
+
   const onSubmit = async ({ email }: EmailCodeFormValues) => {
     setErrorResendingCode(false);
     await authenticationService
@@ -159,9 +162,7 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
                   setResendCodeTimer(RESEND_CODE_TIMER);
                 });
               }}
-              disabled={
-                resendCodeTimer > 0 || isCodeResending || isSubmitting || errorResendingCode
-              }
+              disabled={isResendDisabled}
             >
               {resendCodeTimer > 0 ? (
                 <p className="text-right">
