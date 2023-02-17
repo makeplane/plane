@@ -107,7 +107,10 @@ const CreateWorkspace: NextPage = () => {
                         placeholder="Enter name"
                         autoComplete="off"
                         onChange={(e) =>
-                          setValue("slug", e.target.value.toLocaleLowerCase().replace(/ /g, "-"))
+                          setValue(
+                            "slug",
+                            e.target.value.toLocaleLowerCase().trim().replace(/ /g, "-")
+                          )
                         }
                         validations={{
                           required: "Workspace name is required",

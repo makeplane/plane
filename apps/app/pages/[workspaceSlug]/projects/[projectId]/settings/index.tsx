@@ -20,9 +20,8 @@ import EmojiIconPicker from "components/emoji-icon-picker";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { Button, Input, TextArea, Loader, CustomSelect } from "components/ui";
+import { Button, Input, TextArea, Loader, CustomSelect, OutlineButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-import OutlineButton from "components/ui/outline-button";
 // helpers
 import { debounce } from "helpers/common.helper";
 // types
