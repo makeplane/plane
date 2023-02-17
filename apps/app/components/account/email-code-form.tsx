@@ -6,6 +6,7 @@ import { Button, Input } from "components/ui";
 // services
 import authenticationService from "services/authentication.service";
 import useToast from "hooks/use-toast";
+import useTimer from "hooks/use-timer";
 // icons
 
 // types
@@ -15,16 +16,15 @@ type EmailCodeFormValues = {
   token?: string;
 };
 
-const RESEND_CODE_TIMER = 30;
-
 export const EmailCodeForm = ({ onSuccess }: any) => {
   const [codeSent, setCodeSent] = useState(false);
   const [codeResent, setCodeResent] = useState(false);
   const [isCodeResending, setIsCodeResending] = useState(false);
   const [errorResendingCode, setErrorResendingCode] = useState(false);
-  const [resendCodeTimer, setResendCodeTimer] = useState(RESEND_CODE_TIMER);
 
   const { setToastAlert } = useToast();
+  const { timer: resendCodeTimer, setTimer: setResendCodeTimer } = useTimer();
+
   const {
     register,
     handleSubmit,
@@ -82,16 +82,6 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
         });
       });
   };
-
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (codeSent) {
-      timer = setTimeout(() => {
-        setResendCodeTimer((prev) => prev - 1);
-      }, 1000);
-    }
-    return () => clearTimeout(timer);
-  }, [codeSent, resendCodeTimer]);
 
   const emailOld = getValues("email");
 
@@ -159,7 +149,7 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
                 onSubmit({ email: getValues("email") }).then(() => {
                   setCodeResent(true);
                   setIsCodeResending(false);
-                  setResendCodeTimer(RESEND_CODE_TIMER);
+                  setResendCodeTimer(30);
                 });
               }}
               disabled={isResendDisabled}
@@ -192,7 +182,11 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
             <Button
               type="submit"
               className="w-full text-center"
-              onClick={handleSubmit(onSubmit)}
+              onClick={() => {
+                handleSubmit(onSubmit)().then(() => {
+                  setResendCodeTimer(30);
+                });
+              }}
               disabled={isSubmitting || (!isValid && isDirty)}
             >
               {isSubmitting ? "Sending code..." : "Send code"}
