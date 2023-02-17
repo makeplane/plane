@@ -102,7 +102,8 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
                                 <span
                                   className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
                                   style={{
-                                    backgroundColor: label?.color ?? "green",
+                                    backgroundColor:
+                                      label.color && label.color !== "" ? label.color : "#000",
                                   }}
                                 />
                                 {label.name}
@@ -128,7 +129,7 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
                                     <span
                                       className="h-2 w-2 flex-shrink-0 rounded-full"
                                       style={{
-                                        backgroundColor: child?.color ?? "green",
+                                        backgroundColor: child?.color ?? "black",
                                       }}
                                     />
                                     {child.name}
