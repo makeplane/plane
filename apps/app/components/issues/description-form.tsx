@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useMemo } from "react";
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import dynamic from "next/dynamic";
 
@@ -38,6 +38,8 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
   userAuth,
 }) => {
   const { setToastAlert } = useToast();
+  const [issueTitleName, setIssueTitleName] = useState("");
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   const {
     handleSubmit,
@@ -104,21 +106,32 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
 
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
+  useEffect(() => {
+    if (textareaRef && textareaRef.current) {
+      textareaRef.current.style.height = "0px";
+      const scrollHeight = textareaRef.current.scrollHeight;
+      textareaRef.current.style.height = scrollHeight + "px";
+    }
+  }, [issueTitleName]);
+
   return (
     <div>
-      <Input
+      <textarea
         id="name"
         placeholder="Enter issue name"
         name="name"
         value={watch("name")}
-        autoComplete="off"
+        ref={textareaRef}
         onChange={(e) => {
+          setIssueTitleName(e.target.value);
           setValue("name", e.target.value);
           debounceHandler();
         }}
-        mode="transparent"
-        className="text-xl font-medium"
-        disabled={isNotAllowed}
+        required={true}
+        className="block px-3 py-2 text-xl
+        w-full overflow-hidden resize-none min-h-10
+        rounded border-none bg-transparent ring-0 focus:ring-1 focus:ring-theme outline-none "
+        role="textbox "
       />
       <span>{errors.name ? errors.name.message : null}</span>
       <RemirrorRichTextEditor
