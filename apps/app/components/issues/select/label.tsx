@@ -102,7 +102,8 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
                                 <span
                                   className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
                                   style={{
-                                    backgroundColor: label?.color ?? "black",
+                                    backgroundColor:
+                                      label.color && label.color !== "" ? label.color : "#000",
                                   }}
                                 />
                                 {label.name}

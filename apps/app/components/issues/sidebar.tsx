@@ -386,7 +386,10 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                                               <span
                                                 className="h-2 w-2 flex-shrink-0 rounded-full"
                                                 style={{
-                                                  backgroundColor: label?.color ?? "black",
+                                                  backgroundColor:
+                                                    label.color && label.color !== ""
+                                                      ? label.color
+                                                      : "#000",
                                                 }}
                                               />
                                               {label.name}
