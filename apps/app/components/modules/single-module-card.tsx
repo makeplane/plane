@@ -89,9 +89,7 @@ export const SingleModuleCard: React.FC<Props> = ({ module }) => {
                 <h6 className="text-gray-500">END DATE</h6>
                 <div className="flex w-min cursor-pointer items-center gap-1 whitespace-nowrap rounded border px-1.5 py-0.5 text-xs shadow-sm">
                   <CalendarDaysIcon className="h-3 w-3" />
-                  {module.target_date
-                    ? renderShortNumericDateFormat(module?.target_date)
-                    : "Invalid"}
+                  {module.target_date ? renderShortNumericDateFormat(module?.target_date) : "N/A"}
                 </div>
               </div>
               <div className="space-y-2">
