@@ -141,30 +141,20 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
         if (!createMore) handleClose();
 
         setToastAlert({
-          title: "Success",
           type: "success",
-          message: "Issue created successfully",
+          title: "Success!",
+          message: "Issue created successfully.",
         });
 
         if (payload.assignees_list?.some((assignee) => assignee === user?.id)) mutate(USER_ISSUE);
 
         if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
       })
-      .catch((err) => {
-        if (err.detail) {
-          setToastAlert({
-            title: "Join the project.",
-            type: "error",
-            message: "Click select to join from projects page to start making changes",
-          });
-        }
-        Object.keys(err).map((key) => {
-          const message = err[key];
-          if (!message) return;
-
-          setError(key as keyof IIssue, {
-            message: Array.isArray(message) ? message.join(", ") : message,
-          });
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Issue could not be created. Please try again.",
         });
       });
   };
@@ -194,14 +184,16 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
         if (!createMore) handleClose();
 
         setToastAlert({
-          title: "Success",
           type: "success",
-          message: "Issue updated successfully",
+          title: "Success!",
+          message: "Issue updated successfully.",
         });
       })
-      .catch((err) => {
-        Object.keys(err).map((key) => {
-          setError(key as keyof IIssue, { message: err[key].join(", ") });
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Issue could not be updated. Please try again.",
         });
       });
   };
@@ -211,8 +203,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
 
     const payload: Partial<IIssue> = {
       ...formData,
-      description: formData.description ? formData.description : "",
-      description_html: formData.description_html ? formData.description_html : "<p></p>",
+      description: formData.description ?? "",
+      description_html: formData.description_html ?? "<p></p>",
     };
 
     if (!data) await createIssue(payload);

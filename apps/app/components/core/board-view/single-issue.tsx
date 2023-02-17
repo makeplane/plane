@@ -37,6 +37,8 @@ import {
 } from "types";
 // fetch-keys
 import { CYCLE_ISSUES, MODULE_ISSUES, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import { copyTextToClipboard } from "helpers/string.helper";
+import useToast from "hooks/use-toast";
 
 type Props = {
   type?: string;
@@ -69,7 +71,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
-
+  const { setToastAlert } = useToast();
   const partialUpdateIssue = useCallback(
     (formData: Partial<IIssue>) => {
       if (!workspaceSlug || !projectId) return;
@@ -159,6 +161,23 @@ export const SingleBoardIssue: React.FC<Props> = ({
     };
   }
 
+  const handleCopyText = () => {
+    const originURL =
+      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`)
+      .then(() => {
+        setToastAlert({
+          type: "success",
+          title: "Issue link copied to clipboard",
+        });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Some error occurred",
+        });
+      });
+  };
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   useEffect(() => {
@@ -187,6 +206,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
             </button> */}
             {type && !isNotAllowed && (
               <CustomMenu width="auto" ellipsis>
+                <CustomMenu.MenuItem onClick={handleCopyText}>Copy issue link</CustomMenu.MenuItem>
                 <CustomMenu.MenuItem onClick={editIssue}>Edit</CustomMenu.MenuItem>
                 {type !== "issue" && removeIssue && (
                   <CustomMenu.MenuItem onClick={removeIssue}>

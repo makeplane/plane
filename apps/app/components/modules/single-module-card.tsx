@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 // components
 import { DeleteModuleModal } from "components/modules";
 // ui
-import { AssigneesList, Avatar } from "components/ui";
+import { AssigneesList, Avatar, CustomMenu } from "components/ui";
 // icons
 import { CalendarDaysIcon, TrashIcon } from "@heroicons/react/24/outline";
 // helpers
@@ -15,6 +15,8 @@ import { renderShortNumericDateFormat } from "helpers/date-time.helper";
 import { IModule } from "types";
 // common
 import { MODULE_STATUS } from "constants/module";
+import useToast from "hooks/use-toast";
+import { copyTextToClipboard } from "helpers/string.helper";
 
 type Props = {
   module: IModule;
@@ -24,12 +26,31 @@ export const SingleModuleCard: React.FC<Props> = ({ module }) => {
   const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, projectId } = router.query;
+  const { setToastAlert } = useToast();
 
   const handleDeleteModule = () => {
     if (!module) return;
 
     setModuleDeleteModal(true);
+  };
+
+  const handleCopyText = () => {
+    const originURL =
+      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/modules/${module.id}`)
+      .then(() => {
+        setToastAlert({
+          type: "success",
+          title: "Module link copied to clipboard",
+        });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Some error occurred",
+        });
+      });
   };
 
   return (
@@ -40,14 +61,13 @@ export const SingleModuleCard: React.FC<Props> = ({ module }) => {
         data={module}
       />
       <div className="group/card h-full w-full relative select-none p-2">
-        <div className="absolute top-4 right-4 z-10 bg-red-200 opacity-0 group-hover/card:opacity-100">
-          <button
-            type="button"
-            className="grid h-7 w-7 place-items-center  bg-white p-1 text-red-500 outline-none duration-300 hover:bg-red-50"
-            onClick={() => handleDeleteModule()}
-          >
-            <TrashIcon className="h-4 w-4" />
-          </button>
+        <div className="absolute top-4 right-4 ">
+          <CustomMenu width="auto" ellipsis>
+            <CustomMenu.MenuItem onClick={handleCopyText}>Copy module link</CustomMenu.MenuItem>
+            <CustomMenu.MenuItem onClick={handleDeleteModule}>
+              Delete module permanently
+            </CustomMenu.MenuItem>
+          </CustomMenu>
         </div>
         <Link href={`/${workspaceSlug}/projects/${module.project}/modules/${module.id}`}>
           <a className="flex flex-col cursor-pointer rounded-md border bg-white p-3 ">

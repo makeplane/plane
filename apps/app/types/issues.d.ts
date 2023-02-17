@@ -60,6 +60,11 @@ export interface IIssueParent {
   target_date: string | null;
 }
 
+export interface IIssueLink {
+  title: string;
+  url: string;
+}
+
 export interface IIssue {
   assignees: any[] | null;
   assignee_details: IUser[];
@@ -83,8 +88,17 @@ export interface IIssue {
   description_html: any;
   id: string;
   issue_cycle: IIssueCycle | null;
+  issue_link: {
+    created_at: Date;
+    created_by: string;
+    created_by_detail: IUserLite;
+    id: string;
+    title: string;
+    url: string;
+  }[];
   issue_module: IIssueModule | null;
   label_details: any[];
+  links_list: IIssueLink[];
   module: string | null;
   name: string;
   parent: string | null;
