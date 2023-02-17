@@ -101,7 +101,7 @@ class WorkspaceIntegrationViewSet(BaseViewSet):
                 password=make_password(uuid.uuid4().hex),
                 is_password_autoset=True,
                 is_bot=True,
-                first_name=integration.provider,
+                first_name=integration.title,
                 avatar=integration.avatar_url
                 if integration.avatar_url is not None
                 else "",
