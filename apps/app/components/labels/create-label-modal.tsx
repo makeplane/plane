@@ -118,7 +118,7 @@ export const CreateLabelModal: React.FC<Props> = ({ isOpen, projectId, handleClo
                                 <span
                                   className="ml-2 h-4 w-4 rounded"
                                   style={{
-                                    backgroundColor: watch("color") ?? "green",
+                                    backgroundColor: watch("color") ?? "black",
                                   }}
                                 />
                               )}

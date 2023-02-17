@@ -29,6 +29,7 @@ from .issue import (
     IssueAssignee,
     Label,
     IssueBlocker,
+    IssueLink,
 )
 
 from .asset import FileAsset

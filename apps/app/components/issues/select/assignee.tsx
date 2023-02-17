@@ -9,9 +9,7 @@ import { Transition, Combobox } from "@headlessui/react";
 // services
 import projectServices from "services/project.service";
 // ui
-import { Avatar } from "components/ui";
-// icons
-import { UserIcon } from "@heroicons/react/24/outline";
+import { AssigneesList, Avatar } from "components/ui";
 // fetch keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 
@@ -63,22 +61,10 @@ export const IssueAssigneeSelect: FC<IssueAssigneeSelectProps> = ({
     >
       {({ open }: any) => (
         <>
-          <Combobox.Label className="sr-only">Assignees</Combobox.Label>
-          <Combobox.Button
-            className={`flex cursor-pointer items-center gap-1 rounded-md border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500`}
-          >
-            <UserIcon className="h-3 w-3 text-gray-500" />
-            <span
-              className={`hidden truncate sm:block ${
-                value === null || value === undefined ? "" : "text-gray-900"
-              }`}
-            >
-              {Array.isArray(value)
-                ? value
-                    .map((v) => options?.find((option) => option.value === v)?.display)
-                    .join(", ") || "Assignees"
-                : options?.find((option) => option.value === value)?.display || "Assignees"}
-            </span>
+          <Combobox.Button className="flex items-center cursor-pointer gap-1 rounded-md">
+            <div className="flex items-center gap-1 text-xs">
+              {value && Array.isArray(value) ? <AssigneesList userIds={value} length={10} /> : null}
+            </div>
           </Combobox.Button>
 
           <Transition

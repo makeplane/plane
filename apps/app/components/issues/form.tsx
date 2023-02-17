@@ -49,7 +49,7 @@ const defaultValues: Partial<IIssue> = {
 };
 
 export interface IssueFormProps {
-  handleFormSubmit: (values: Partial<IIssue>) => void;
+  handleFormSubmit: (values: Partial<IIssue>) => Promise<void>;
   initialData?: Partial<IIssue>;
   issues: IIssue[];
   projectId: string;
@@ -107,17 +107,20 @@ export const IssueForm: FC<IssueFormProps> = ({
     reset({
       ...defaultValues,
       project: projectId,
+      description: "",
+      description_html: "<p></p>",
     });
   };
 
   useEffect(() => {
     reset({
       ...defaultValues,
-      ...watch(),
-      project: projectId,
       ...initialData,
+      project: projectId,
+      assignees_list: initialData?.assignees ?? [],
+      labels_list: initialData?.labels ?? [],
     });
-  }, [initialData, reset, watch, projectId]);
+  }, [initialData, reset, projectId]);
 
   return (
     <>
@@ -238,13 +241,11 @@ export const IssueForm: FC<IssueFormProps> = ({
                 <Controller
                   name="description"
                   control={control}
-                  render={({ field: { value, onChange } }) => (
+                  render={({ field: { value } }) => (
                     <RemirrorRichTextEditor
                       value={value}
-                      onBlur={(jsonValue, htmlValue) => {
-                        setValue("description", jsonValue);
-                        setValue("description_html", htmlValue);
-                      }}
+                      onJSONChange={(jsonValue) => setValue("description", jsonValue)}
+                      onHTMLChange={(htmlValue) => setValue("description_html", htmlValue)}
                       placeholder="Enter Your Text..."
                     />
                   )}
@@ -279,13 +280,6 @@ export const IssueForm: FC<IssueFormProps> = ({
                 />
                 <Controller
                   control={control}
-                  name="assignees_list"
-                  render={({ field: { value, onChange } }) => (
-                    <IssueAssigneeSelect projectId={projectId} value={value} onChange={onChange} />
-                  )}
-                />
-                <Controller
-                  control={control}
                   name="labels_list"
                   render={({ field: { value, onChange } }) => (
                     <IssueLabelSelect
@@ -309,6 +303,13 @@ export const IssueForm: FC<IssueFormProps> = ({
                     )}
                   />
                 </div>
+                <Controller
+                  control={control}
+                  name="assignees_list"
+                  render={({ field: { value, onChange } }) => (
+                    <IssueAssigneeSelect projectId={projectId} value={value} onChange={onChange} />
+                  )}
+                />
                 <IssueParentSelect
                   control={control}
                   isOpen={parentIssueListModalOpen}

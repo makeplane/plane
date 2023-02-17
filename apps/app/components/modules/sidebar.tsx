@@ -27,16 +27,12 @@ import modulesService from "services/modules.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components
-import {
-  DeleteModuleModal,
-  ModuleLinkModal,
-  SidebarLeadSelect,
-  SidebarMembersSelect,
-} from "components/modules";
+import { LinkModal, SidebarProgressStats } from "components/core";
+import { DeleteModuleModal, SidebarLeadSelect, SidebarMembersSelect } from "components/modules";
+import ProgressChart from "components/core/sidebar/progress-chart";
 
 import "react-circular-progressbar/dist/styles.css";
 // components
-import { SidebarProgressStats } from "components/core";
 // ui
 import { CustomSelect, Loader } from "components/ui";
 // helpers
@@ -44,10 +40,9 @@ import { renderShortNumericDateFormat, timeAgo } from "helpers/date-time.helper"
 import { copyTextToClipboard } from "helpers/string.helper";
 import { groupBy } from "helpers/array.helper";
 // types
-import { IIssue, IModule, ModuleIssueResponse } from "types";
+import { IIssue, IModule, ModuleIssueResponse, ModuleLink } from "types";
 // fetch-keys
 import { MODULE_DETAILS } from "constants/fetch-keys";
-import ProgressChart from "components/core/sidebar/progress-chart";
 // constant
 import { MODULE_STATUS } from "constants/module";
 
@@ -113,6 +108,29 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
       });
   };
 
+  const handleCreateLink = async (formData: ModuleLink) => {
+    if (!workspaceSlug || !projectId || !moduleId) return;
+
+    const previousLinks = module?.link_module.map((l) => ({ title: l.title, url: l.url }));
+
+    const payload: Partial<IModule> = {
+      links_list: [...(previousLinks ?? []), formData],
+    };
+
+    await modulesService
+      .patchModule(workspaceSlug as string, projectId as string, moduleId as string, payload)
+      .then((res) => {
+        mutate(MODULE_DETAILS(moduleId as string));
+      })
+      .catch((err) => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Couldn't create the link. Please try again.",
+        });
+      });
+  };
+
   useEffect(() => {
     if (module)
       reset({
@@ -123,12 +141,13 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
 
   const isStartValid = new Date(`${module?.start_date}`) <= new Date();
   const isEndValid = new Date(`${module?.target_date}`) >= new Date(`${module?.start_date}`);
+
   return (
     <>
-      <ModuleLinkModal
+      <LinkModal
         isOpen={moduleLinkModal}
         handleClose={() => setModuleLinkModal(false)}
-        module={module}
+        onFormSubmit={handleCreateLink}
       />
       <DeleteModuleModal
         isOpen={moduleDeleteModal}

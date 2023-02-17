@@ -141,7 +141,7 @@ export const CreateUpdateStateInline: React.FC<Props> = ({ data, onClose, select
                   <span
                     className="h-4 w-4 rounded"
                     style={{
-                      backgroundColor: watch("color") ?? "green",
+                      backgroundColor: watch("color") ?? "black",
                     }}
                   />
                 )}

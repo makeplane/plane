@@ -39,6 +39,7 @@ from plane.db.models import (
     IssueBlocker,
     CycleIssue,
     ModuleIssue,
+    IssueLink,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 
@@ -154,6 +155,12 @@ class IssueViewSet(BaseViewSet):
                         "module", "issue"
                     ).prefetch_related("module__members"),
                 ),
+            )
+            .prefetch_related(
+                Prefetch(
+                    "issue_link",
+                    queryset=IssueLink.objects.select_related("issue"),
+                )
             )
         )
 
@@ -286,6 +293,12 @@ class UserWorkSpaceIssues(BaseAPIView):
                         "issue_module",
                         queryset=ModuleIssue.objects.select_related("module", "issue"),
                     ),
+                )
+                .prefetch_related(
+                    Prefetch(
+                        "issue_link",
+                        queryset=IssueLink.objects.select_related("issue"),
+                    )
                 )
             )
             serializer = IssueSerializer(issues, many=True)

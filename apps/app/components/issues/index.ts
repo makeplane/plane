@@ -4,6 +4,7 @@ export * from "./activity";
 export * from "./delete-issue-modal";
 export * from "./description-form";
 export * from "./form";
+export * from "./links-list";
 export * from "./modal";
 export * from "./my-issues-list-item";
 export * from "./parent-issues-list-modal";
