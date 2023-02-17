@@ -100,7 +100,10 @@ export const CreateUpdateLabelInline: React.FC<Props> = ({
   useEffect(() => {
     if (!labelToUpdate) return;
 
-    setValue("color", labelToUpdate.color);
+    setValue(
+      "color",
+      labelToUpdate.color && labelToUpdate.color !== "" ? labelToUpdate.color : "#000"
+    );
     setValue("name", labelToUpdate.name);
   }, [labelToUpdate, setValue]);
 
@@ -123,7 +126,7 @@ export const CreateUpdateLabelInline: React.FC<Props> = ({
                   <span
                     className="h-4 w-4 rounded"
                     style={{
-                      backgroundColor: watch("color") ?? "green",
+                      backgroundColor: watch("color") ?? "#000",
                     }}
                   />
                 )}
