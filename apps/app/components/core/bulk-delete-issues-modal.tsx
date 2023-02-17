@@ -35,10 +35,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) =>
   const [query, setQuery] = useState("");
 
   const router = useRouter();
-
-  const {
-    query: { workspaceSlug, projectId },
-  } = router;
+  const { workspaceSlug, projectId } = router.query;
 
   const { data: issues } = useSWR(
     workspaceSlug && projectId
