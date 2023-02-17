@@ -4,8 +4,6 @@ import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 
-// react-hook-form
-import { useForm } from "react-hook-form";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
@@ -71,11 +69,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
     workspaceSlug ? PROJECTS_LIST(workspaceSlug as string) : null,
     workspaceSlug ? () => projectService.getProjects(workspaceSlug as string) : null
   );
-
-  const { setError } = useForm<IIssue>({
-    mode: "all",
-    reValidateMode: "onChange",
-  });
 
   useEffect(() => {
     if (projects && projects.length > 0)
