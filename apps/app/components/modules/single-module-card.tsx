@@ -35,6 +35,24 @@ export const SingleModuleCard: React.FC<Props> = ({ module }) => {
     setModuleDeleteModal(true);
   };
 
+  const handleCopyText = () => {
+    const originURL =
+      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/modules/${module.id}`)
+      .then(() => {
+        setToastAlert({
+          type: "success",
+          title: "Module link copied to clipboard",
+        });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Some error occurred",
+        });
+      });
+  };
+
   return (
     <>
       <DeleteModuleModal
@@ -45,27 +63,7 @@ export const SingleModuleCard: React.FC<Props> = ({ module }) => {
       <div className="group/card h-full w-full relative select-none p-2">
         <div className="absolute top-4 right-4 ">
           <CustomMenu width="auto" ellipsis>
-            <CustomMenu.MenuItem
-              onClick={() =>
-                copyTextToClipboard(
-                  `https://app.plane.so/${workspaceSlug}/projects/${projectId}/modules/${module.id}`
-                )
-                  .then(() => {
-                    setToastAlert({
-                      type: "success",
-                      title: "Module link copied to clipboard",
-                    });
-                  })
-                  .catch(() => {
-                    setToastAlert({
-                      type: "error",
-                      title: "Some error occurred",
-                    });
-                  })
-              }
-            >
-              Copy module link
-            </CustomMenu.MenuItem>
+            <CustomMenu.MenuItem onClick={handleCopyText}>Copy module link</CustomMenu.MenuItem>
             <CustomMenu.MenuItem onClick={handleDeleteModule}>
               Delete module permanently
             </CustomMenu.MenuItem>

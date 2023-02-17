@@ -125,6 +125,23 @@ export const SingleListIssue: React.FC<Props> = ({
     [workspaceSlug, projectId, cycleId, moduleId, issue]
   );
 
+  const handleCopyText = () => {
+    const originURL =
+      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`)
+      .then(() => {
+        setToastAlert({
+          type: "success",
+          title: "Issue link copied to clipboard",
+        });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Some error occurred",
+        });
+      });
+  };
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   return (
@@ -183,27 +200,7 @@ export const SingleListIssue: React.FC<Props> = ({
         )}
         {type && !isNotAllowed && (
           <CustomMenu width="auto" ellipsis>
-            <CustomMenu.MenuItem
-              onClick={() =>
-                copyTextToClipboard(
-                  `https://app.plane.so/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`
-                )
-                  .then(() => {
-                    setToastAlert({
-                      type: "success",
-                      title: "Issue link copied to clipboard",
-                    });
-                  })
-                  .catch(() => {
-                    setToastAlert({
-                      type: "error",
-                      title: "Some error occurred",
-                    });
-                  })
-              }
-            >
-              Copy issue link
-            </CustomMenu.MenuItem>
+            <CustomMenu.MenuItem onClick={handleCopyText}>Copy issue link</CustomMenu.MenuItem>
             <CustomMenu.MenuItem onClick={editIssue}>Edit</CustomMenu.MenuItem>
             {type !== "issue" && removeIssue && (
               <CustomMenu.MenuItem onClick={removeIssue}>
