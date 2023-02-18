@@ -112,7 +112,7 @@ class Issue(ProjectBaseModel):
 
             largest_sort_order = Issue.objects.filter(
                 project=self.project, state=self.state
-            ).aggregate(larget=models.Max("sort_order"))["largest"]
+            ).aggregate(largest=models.Max("sort_order"))["largest"]
             if largest_sort_order is not None:
                 self.sort_order = largest_sort_order + 10000
 
