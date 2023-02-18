@@ -22,7 +22,7 @@ import { TrashIcon } from "@heroicons/react/24/outline";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 // types
-import { CycleIssueResponse, IIssue, IssueResponse, ModuleIssueResponse, UserAuth } from "types";
+import { CycleIssueResponse, IIssue, ModuleIssueResponse, UserAuth } from "types";
 // fetch-keys
 import {
   CYCLE_ISSUES,
@@ -159,12 +159,12 @@ export const IssuesView: React.FC<Props> = ({
                 false
               );
 
-            mutate<IssueResponse>(
+            mutate<IIssue[]>(
               PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
               (prevData) => {
                 if (!prevData) return prevData;
 
-                const updatedIssues = prevData.results.map((issue) => {
+                const updatedIssues = prevData.map((issue) => {
                   if (issue.id === draggedItem.id)
                     return {
                       ...draggedItem,
@@ -174,10 +174,7 @@ export const IssuesView: React.FC<Props> = ({
                   return issue;
                 });
 
-                return {
-                  ...prevData,
-                  results: updatedIssues,
-                };
+                return updatedIssues;
               },
               false
             );
@@ -248,12 +245,12 @@ export const IssuesView: React.FC<Props> = ({
                 false
               );
 
-            mutate<IssueResponse>(
+            mutate<IIssue[]>(
               PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
               (prevData) => {
                 if (!prevData) return prevData;
 
-                const updatedIssues = prevData.results.map((issue) => {
+                const updatedIssues = prevData.map((issue) => {
                   if (issue.id === draggedItem.id)
                     return {
                       ...draggedItem,
@@ -264,10 +261,7 @@ export const IssuesView: React.FC<Props> = ({
                   return issue;
                 });
 
-                return {
-                  ...prevData,
-                  results: updatedIssues,
-                };
+                return updatedIssues;
               },
               false
             );

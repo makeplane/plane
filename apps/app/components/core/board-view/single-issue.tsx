@@ -12,10 +12,10 @@ import {
   DraggingStyle,
   NotDraggingStyle,
 } from "react-beautiful-dnd";
-// constants
-import { TrashIcon } from "@heroicons/react/24/outline";
 // services
 import issuesService from "services/issues.service";
+// hooks
+import useToast from "hooks/use-toast";
 // components
 import {
   ViewAssigneeSelect,
@@ -25,11 +25,12 @@ import {
 } from "components/issues/view-select";
 // ui
 import { CustomMenu } from "components/ui";
+// helpers
+import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import {
   CycleIssueResponse,
   IIssue,
-  IssueResponse,
   ModuleIssueResponse,
   NestedKeyOf,
   Properties,
@@ -37,8 +38,6 @@ import {
 } from "types";
 // fetch-keys
 import { CYCLE_ISSUES, MODULE_ISSUES, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
-import { copyTextToClipboard } from "helpers/string.helper";
-import useToast from "hooks/use-toast";
 
 type Props = {
   type?: string;
@@ -71,7 +70,9 @@ export const SingleBoardIssue: React.FC<Props> = ({
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+
   const { setToastAlert } = useToast();
+
   const partialUpdateIssue = useCallback(
     (formData: Partial<IIssue>) => {
       if (!workspaceSlug || !projectId) return;
@@ -118,15 +119,15 @@ export const SingleBoardIssue: React.FC<Props> = ({
           false
         );
 
-      mutate<IssueResponse>(
+      mutate<IIssue[]>(
         PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
-        (prevData) => ({
-          ...(prevData as IssueResponse),
-          results: (prevData?.results ?? []).map((p) => {
+        (prevData) =>
+          (prevData ?? []).map((p) => {
             if (p.id === issue.id) return { ...p, ...formData };
+
             return p;
           }),
-        }),
+
         false
       );
 

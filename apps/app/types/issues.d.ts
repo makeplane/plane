@@ -1,16 +1,5 @@
 import type { IState, IUser, IProject, ICycle, IModule, IUserLite } from "./";
 
-export interface IssueResponse {
-  next_cursor: string;
-  prev_cursor: string;
-  next_page_results: boolean;
-  prev_page_results: boolean;
-  count: number;
-  total_pages: number;
-  extra_stats: null;
-  results: IIssue[];
-}
-
 export interface IIssueCycle {
   id: string;
   cycle_detail: ICycle;
