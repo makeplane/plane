@@ -42,6 +42,7 @@ from plane.db.models import (
     IssueLink,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
+from plane.utils.grouper import group_results
 
 
 class IssueViewSet(BaseViewSet):
@@ -160,20 +161,13 @@ class IssueViewSet(BaseViewSet):
             )
 
             issues = IssueSerializer(issue_queryset, many=True).data
+            
             ## Grouping the results
             group_by = request.GET.get("group_by", False)
-
             if group_by:
-                issue_dict = dict()
-                for key, value in groupby(
-                    sorted(
-                        issues,
-                        key=lambda issue: str(issue.get(group_by)),
-                    ),
-                    key=lambda issue: str(issue.get(group_by)),
-                ):
-                    issue_dict[str(key)] = list(value)
-                return Response(issue_dict, status=status.HTTP_200_OK)
+                return Response(
+                    group_results(issues, group_by), status=status.HTTP_200_OK
+                )
 
             return Response(issues, status=status.HTTP_200_OK)
 
