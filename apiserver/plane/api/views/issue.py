@@ -143,50 +143,39 @@ class IssueViewSet(BaseViewSet):
             )
         )
 
-    def grouper(self, issue, group_by):
-        group_by = issue.get(group_by, "")
-
-        if isinstance(group_by, list):
-            if len(group_by):
-                return group_by[0]
-            else:
-                return ""
-
-        else:
-            return group_by
-
     def list(self, request, slug, project_id):
         try:
-            issue_queryset = self.get_queryset()
+            # Issue State groups
+            type = request.GET.get("type", "all")
+            group = ["backlog", "unstarted", "started", "completed", "cancelled"]
+            if type == "backlog":
+                group = ["backlog"]
+            if type == "active":
+                group = ["unstarted", "started"]
 
+            issue_queryset = (
+                self.get_queryset()
+                .order_by(request.GET.get("order_by", "created_at"))
+                .filter(state__group__in=group)
+            )
+
+            issues = IssueSerializer(issue_queryset, many=True).data
             ## Grouping the results
             group_by = request.GET.get("group_by", False)
-            # TODO: Move this group by from ittertools to ORM for better performance - nk
+
             if group_by:
                 issue_dict = dict()
-
-                issues = IssueSerializer(issue_queryset, many=True).data
-
                 for key, value in groupby(
-                    issues, lambda issue: self.grouper(issue, group_by)
+                    sorted(
+                        issues,
+                        key=lambda issue: str(issue.get(group_by)),
+                    ),
+                    key=lambda issue: str(issue.get(group_by)),
                 ):
                     issue_dict[str(key)] = list(value)
-
                 return Response(issue_dict, status=status.HTTP_200_OK)
 
-            return Response(
-                {
-                    "next_cursor": str(0),
-                    "prev_cursor": str(0),
-                    "next_page_results": False,
-                    "prev_page_results": False,
-                    "count": issue_queryset.count(),
-                    "total_pages": 1,
-                    "extra_stats": {},
-                    "results": IssueSerializer(issue_queryset, many=True).data,
-                },
-                status=status.HTTP_200_OK,
-            )
+            return Response(issues, status=status.HTTP_200_OK)
 
         except Exception as e:
             print(e)
