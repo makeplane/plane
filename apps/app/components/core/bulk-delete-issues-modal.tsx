@@ -18,7 +18,7 @@ import { Button } from "components/ui";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { LayerDiagonalIcon } from "components/icons";
 // types
-import { IIssue, IssueResponse } from "types";
+import { IIssue } from "types";
 // fetch keys
 import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 
@@ -62,8 +62,8 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) =>
 
   const filteredIssues: IIssue[] =
     query === ""
-      ? issues?.results ?? []
-      : issues?.results.filter(
+      ? issues ?? []
+      : issues?.filter(
           (issue) =>
             issue.name.toLowerCase().includes(query.toLowerCase()) ||
             `${issue.project_detail.identifier}-${issue.sequence_id}`
@@ -101,17 +101,9 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) =>
             message: res.message,
           });
 
-          mutate<IssueResponse>(
+          mutate<IIssue[]>(
             PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
-            (prevData) => ({
-              ...(prevData as IssueResponse),
-              count: (prevData?.results ?? []).filter(
-                (p) => !data.delete_issue_ids.some((id) => p.id === id)
-              ).length,
-              results: (prevData?.results ?? []).filter(
-                (p) => !data.delete_issue_ids.some((id) => p.id === id)
-              ),
-            }),
+            (prevData) => (prevData ?? []).filter((p) => !data.delete_issue_ids.includes(p.id)),
             false
           );
           handleClose();

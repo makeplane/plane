@@ -84,9 +84,9 @@ export const SidebarParentSelect: React.FC<Props> = ({
           disabled={isNotAllowed}
         >
           {watch("parent") && watch("parent") !== ""
-            ? `${
-                issues?.results.find((i) => i.id === watch("parent"))?.project_detail?.identifier
-              }-${issues?.results.find((i) => i.id === watch("parent"))?.sequence_id}`
+            ? `${issues?.find((i) => i.id === watch("parent"))?.project_detail?.identifier}-${
+                issues?.find((i) => i.id === watch("parent"))?.sequence_id
+              }`
             : "Select issue"}
         </button>
       </div>

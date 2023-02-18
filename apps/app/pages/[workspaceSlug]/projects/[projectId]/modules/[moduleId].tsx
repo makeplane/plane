@@ -113,7 +113,7 @@ const SingleModule: React.FC<UserAuth> = (props) => {
       <ExistingIssuesListModal
         isOpen={moduleIssuesListModal}
         handleClose={() => setModuleIssuesListModal(false)}
-        issues={issues?.results.filter((i) => !i.issue_module) ?? []}
+        issues={issues?.filter((i) => !i.issue_module) ?? []}
         handleOnSubmit={handleAddIssuesToModule}
       />
       <AppLayout

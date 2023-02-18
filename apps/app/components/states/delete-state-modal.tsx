@@ -74,7 +74,7 @@ export const DeleteStateModal: React.FC<Props> = ({ isOpen, onClose, data }) => 
       });
   };
 
-  const groupedIssues = groupBy(issues?.results ?? [], "state");
+  const groupedIssues = groupBy(issues ?? [], "state");
 
   useEffect(() => {
     if (data) setIssuesWithThisStateExist(!!groupedIssues[data.id]);

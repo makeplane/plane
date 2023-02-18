@@ -118,7 +118,7 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
       <ExistingIssuesListModal
         isOpen={cycleIssuesListModal}
         handleClose={() => setCycleIssuesListModal(false)}
-        issues={issues?.results.filter((i) => !i.issue_cycle) ?? []}
+        issues={issues?.filter((i) => !i.issue_cycle) ?? []}
         handleOnSubmit={handleAddIssuesToCycle}
       />
       <AppLayout

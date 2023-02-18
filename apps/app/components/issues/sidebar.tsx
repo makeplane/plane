@@ -222,7 +222,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
               control={control}
               submitChanges={submitChanges}
               issuesList={
-                issues?.results.filter(
+                issues?.filter(
                   (i) =>
                     i.id !== issueDetail?.id &&
                     i.id !== issueDetail?.parent &&
@@ -250,13 +250,13 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
             />
             <SidebarBlockerSelect
               submitChanges={submitChanges}
-              issuesList={issues?.results.filter((i) => i.id !== issueDetail?.id) ?? []}
+              issuesList={issues?.filter((i) => i.id !== issueDetail?.id) ?? []}
               watch={watchIssue}
               userAuth={userAuth}
             />
             <SidebarBlockedSelect
               submitChanges={submitChanges}
-              issuesList={issues?.results.filter((i) => i.id !== issueDetail?.id) ?? []}
+              issuesList={issues?.filter((i) => i.id !== issueDetail?.id) ?? []}
               watch={watchIssue}
               userAuth={userAuth}
             />

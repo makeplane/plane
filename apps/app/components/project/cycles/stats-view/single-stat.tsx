@@ -8,6 +8,8 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 // services
 import cyclesService from "services/cycles.service";
+// hooks
+import useToast from "hooks/use-toast";
 // ui
 import { Button, CustomMenu } from "components/ui";
 // icons
@@ -17,12 +19,11 @@ import { CyclesIcon } from "components/icons";
 // helpers
 import { renderShortNumericDateFormat } from "helpers/date-time.helper";
 import { groupBy } from "helpers/array.helper";
+import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import { CycleIssueResponse, ICycle } from "types";
 // fetch-keys
 import { CYCLE_ISSUES } from "constants/fetch-keys";
-import { copyTextToClipboard } from "helpers/string.helper";
-import useToast from "hooks/use-toast";
 
 type TSingleStatProps = {
   cycle: ICycle;
