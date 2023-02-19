@@ -17,7 +17,7 @@ import {
 } from "components/issues/select";
 import { CycleSelect as IssueCycleSelect } from "components/cycles/select";
 import { CreateStateModal } from "components/states";
-import CreateUpdateCycleModal from "components/project/cycles/create-update-cycle-modal";
+import { CreateUpdateCycleModal } from "components/cycles";
 import { CreateLabelModal } from "components/labels";
 // ui
 import { Button, CustomDatePicker, CustomMenu, Input, Loader } from "components/ui";
@@ -131,11 +131,7 @@ export const IssueForm: FC<IssueFormProps> = ({
             handleClose={() => setStateModal(false)}
             projectId={projectId}
           />
-          <CreateUpdateCycleModal
-            isOpen={cycleModal}
-            setIsOpen={setCycleModal}
-            projectId={projectId}
-          />
+          <CreateUpdateCycleModal isOpen={cycleModal} handleClose={() => setCycleModal(false)} />
           <CreateLabelModal
             isOpen={labelModal}
             handleClose={() => setLabelModal(false)}

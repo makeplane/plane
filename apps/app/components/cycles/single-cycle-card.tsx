@@ -41,7 +41,7 @@ const stateGroupColours: {
   completed: "#096e8d",
 };
 
-const SingleStat: React.FC<TSingleStatProps> = (props) => {
+export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
   const { cycle, handleEditCycle, handleDeleteCycle } = props;
 
   const router = useRouter();
@@ -184,5 +184,3 @@ const SingleStat: React.FC<TSingleStatProps> = (props) => {
     </>
   );
 };
-
-export default SingleStat;

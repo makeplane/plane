@@ -30,7 +30,7 @@ import cyclesService from "services/cycles.service";
 // components
 import { SidebarProgressStats } from "components/core";
 import ProgressChart from "components/core/sidebar/progress-chart";
-import ConfirmCycleDeletion from "components/project/cycles/confirm-cycle-deletion";
+import { DeleteCycleModal } from "components/cycles";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 import { groupBy } from "helpers/array.helper";
@@ -49,7 +49,7 @@ type Props = {
   cycleIssues: CycleIssueResponse[];
 };
 
-const CycleDetailSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cycleIssues }) => {
+export const CycleDetailsSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cycleIssues }) => {
   const [cycleDeleteModal, setCycleDeleteModal] = useState(false);
 
   const router = useRouter();
@@ -111,11 +111,7 @@ const CycleDetailSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cycleIssue
 
   return (
     <>
-      <ConfirmCycleDeletion
-        isOpen={cycleDeleteModal}
-        setIsOpen={setCycleDeleteModal}
-        data={cycle}
-      />
+      <DeleteCycleModal isOpen={cycleDeleteModal} setIsOpen={setCycleDeleteModal} data={cycle} />
       <div
         className={`fixed top-0 ${
           isOpen ? "right-0" : "-right-[24rem]"
@@ -331,5 +327,3 @@ const CycleDetailSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cycleIssue
     </>
   );
 };
-
-export default CycleDetailSidebar;

@@ -17,8 +17,8 @@ import { ShortcutsModal } from "components/command-palette";
 import { BulkDeleteIssuesModal } from "components/core";
 import { CreateProjectModal } from "components/project";
 import { CreateUpdateIssueModal } from "components/issues";
+import { CreateUpdateCycleModal } from "components/cycles";
 import { CreateUpdateModuleModal } from "components/modules";
-import CreateUpdateCycleModal from "components/project/cycles/create-update-cycle-modal";
 // ui
 import { Button } from "components/ui";
 // icons
@@ -169,8 +169,7 @@ export const CommandPalette: React.FC = () => {
         <>
           <CreateUpdateCycleModal
             isOpen={isCreateCycleModalOpen}
-            setIsOpen={setIsCreateCycleModalOpen}
-            projectId={projectId as string}
+            handleClose={() => setIsCreateCycleModalOpen(false)}
           />
           <CreateUpdateModuleModal
             isOpen={isCreateModuleModalOpen}
