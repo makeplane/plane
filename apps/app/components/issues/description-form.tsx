@@ -45,7 +45,6 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
     setValue,
     reset,
     formState: { errors },
-    setError,
   } = useForm<IIssue>({
     defaultValues: {
       name: "",
@@ -76,8 +75,8 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
 
       handleFormSubmit({
         name: formData.name ?? "",
-        description: formData.description,
-        description_html: formData.description_html,
+        description: formData.description ?? "",
+        description_html: formData.description_html ?? "<p></p>",
       });
     },
     [handleFormSubmit, setToastAlert]

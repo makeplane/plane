@@ -15,7 +15,7 @@ import AppLayout from "layouts/app-layout";
 import { IssueViewContextProvider } from "contexts/issue-view.context";
 // components
 import { ExistingIssuesListModal, IssuesFilterView, IssuesView } from "components/core";
-import CycleDetailSidebar from "components/project/cycles/cycle-detail-sidebar";
+import { CycleDetailsSidebar } from "components/cycles";
 // services
 import issuesServices from "services/issues.service";
 import cycleServices from "services/cycles.service";
@@ -215,7 +215,7 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
             <Spinner />
           </div>
         )}
-        <CycleDetailSidebar
+        <CycleDetailsSidebar
           issues={cycleIssuesArray ?? []}
           cycle={cycleDetails}
           isOpen={cycleSidebar}
