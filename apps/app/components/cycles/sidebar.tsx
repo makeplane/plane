@@ -7,9 +7,6 @@ import { mutate } from "swr";
 
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
-// react-circular-progressbar
-import { CircularProgressbar } from "react-circular-progressbar";
-import "react-circular-progressbar/dist/styles.css";
 import { Popover, Transition } from "@headlessui/react";
 import DatePicker from "react-datepicker";
 // icons
@@ -22,7 +19,7 @@ import {
   UserIcon,
 } from "@heroicons/react/24/outline";
 // ui
-import { CustomSelect, Loader } from "components/ui";
+import { CustomSelect, Loader, ProgressBar } from "components/ui";
 // hooks
 import useToast from "hooks/use-toast";
 // services
@@ -148,61 +145,93 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cy
                   )}
                 />
               </div>
-              <Popover className="flex justify-center items-center relative  rounded-lg">
-                {({ open }) => (
-                  <>
-                    <Popover.Button
-                      className={`group flex items-center gap-2 rounded-md border bg-transparent h-full w-full p-2 px-4  text-xs font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-900 focus:outline-none ${
-                        open ? "bg-gray-100" : ""
-                      }`}
-                    >
-                      <CalendarDaysIcon className="h-4 w-4 flex-shrink-0" />
-                      <span>
-                        {renderShortNumericDateFormat(`${cycle.start_date}`)
-                          ? renderShortNumericDateFormat(`${cycle.start_date}`)
-                          : "N/A"}{" "}
-                        -{" "}
-                        {renderShortNumericDateFormat(`${cycle.end_date}`)
-                          ? renderShortNumericDateFormat(`${cycle.end_date}`)
-                          : "N/A"}
-                      </span>
-                    </Popover.Button>
+              <div className="flex justify-center items-center gap-2 rounded-md border bg-transparent h-full  p-2 px-4  text-xs font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-900 focus:outline-none">
+                <Popover className="flex justify-center items-center relative  rounded-lg">
+                  {({ open }) => (
+                    <>
+                      <Popover.Button
+                        className={`group flex items-center  ${open ? "bg-gray-100" : ""}`}
+                      >
+                        <CalendarDaysIcon className="h-4 w-4 flex-shrink-0 mr-2" />
+                        <span>
+                          {renderShortNumericDateFormat(`${cycle.start_date}`)
+                            ? renderShortNumericDateFormat(`${cycle.start_date}`)
+                            : "N/A"}
+                        </span>
+                      </Popover.Button>
 
-                    <Transition
-                      as={React.Fragment}
-                      enter="transition ease-out duration-200"
-                      enterFrom="opacity-0 translate-y-1"
-                      enterTo="opacity-100 translate-y-0"
-                      leave="transition ease-in duration-150"
-                      leaveFrom="opacity-100 translate-y-0"
-                      leaveTo="opacity-0 translate-y-1"
-                    >
-                      <Popover.Panel className="absolute top-10 left-0 z-20  transform overflow-hidden">
-                        <DatePicker
-                          selected={startDateRange}
-                          onChange={(dates) => {
-                            const [start, end] = dates;
-                            submitChanges({
-                              start_date: renderDateFormat(start),
-                              end_date: renderDateFormat(end),
-                            });
-                            if (setStartDateRange) {
-                              setStartDateRange(start);
-                            }
-                            if (setEndDateRange) {
-                              setEndDateRange(end);
-                            }
-                          }}
-                          startDate={startDateRange}
-                          endDate={endDateRange}
-                          selectsRange
-                          inline
-                        />
-                      </Popover.Panel>
-                    </Transition>
-                  </>
-                )}
-              </Popover>
+                      <Transition
+                        as={React.Fragment}
+                        enter="transition ease-out duration-200"
+                        enterFrom="opacity-0 translate-y-1"
+                        enterTo="opacity-100 translate-y-0"
+                        leave="transition ease-in duration-150"
+                        leaveFrom="opacity-100 translate-y-0"
+                        leaveTo="opacity-0 translate-y-1"
+                      >
+                        <Popover.Panel className="absolute top-10 -left-10 z-20  transform overflow-hidden">
+                          <DatePicker
+                            selected={startDateRange}
+                            onChange={(date) => {
+                              submitChanges({
+                                start_date: renderDateFormat(date),
+                              });
+                              setStartDateRange(date);
+                            }}
+                            selectsStart
+                            startDate={startDateRange}
+                            endDate={endDateRange}
+                            inline
+                          />
+                        </Popover.Panel>
+                      </Transition>
+                    </>
+                  )}
+                </Popover>
+                <Popover className="flex justify-center items-center relative  rounded-lg">
+                  {({ open }) => (
+                    <>
+                      <Popover.Button
+                        className={`group flex items-center ${open ? "bg-gray-100" : ""}`}
+                      >
+                        <span>
+                          -{" "}
+                          {renderShortNumericDateFormat(`${cycle.end_date}`)
+                            ? renderShortNumericDateFormat(`${cycle.end_date}`)
+                            : "N/A"}
+                        </span>
+                      </Popover.Button>
+
+                      <Transition
+                        as={React.Fragment}
+                        enter="transition ease-out duration-200"
+                        enterFrom="opacity-0 translate-y-1"
+                        enterTo="opacity-100 translate-y-0"
+                        leave="transition ease-in duration-150"
+                        leaveFrom="opacity-100 translate-y-0"
+                        leaveTo="opacity-0 translate-y-1"
+                      >
+                        <Popover.Panel className="absolute top-10 -right-20 z-20  transform overflow-hidden">
+                          <DatePicker
+                            selected={endDateRange}
+                            onChange={(date) => {
+                              submitChanges({
+                                end_date: renderDateFormat(date),
+                              });
+                              setEndDateRange(date);
+                            }}
+                            selectsEnd
+                            startDate={startDateRange}
+                            endDate={endDateRange}
+                            minDate={startDateRange}
+                            inline
+                          />
+                        </Popover.Panel>
+                      </Transition>
+                    </>
+                  )}
+                </Popover>
+              </div>
             </div>
             <div className="flex items-center justify-between pb-3">
               <h4 className="text-sm font-medium">{cycle.name}</h4>
@@ -278,10 +307,9 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cy
                   <div className="flex items-center gap-2 sm:basis-1/2">
                     <div className="grid flex-shrink-0 place-items-center">
                       <span className="h-4 w-4">
-                        <CircularProgressbar
+                        <ProgressBar
                           value={groupedIssues.completed.length}
                           maxValue={cycleIssues?.length}
-                          strokeWidth={10}
                         />
                       </span>
                     </div>
