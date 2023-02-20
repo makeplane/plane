@@ -46,7 +46,7 @@ const ProgressChart: React.FC<Props> = ({ issues, start, end }) => {
   const ChartData = getChartData();
   return (
     <div className="relative h-[200px] w-full ">
-      <div className="flex  justify-start items-start gap-4 py-2 text-xs">
+      <div className="flex  justify-start items-start gap-4  text-xs">
         <div className="flex justify-center items-center gap-1">
           <span className="h-2 w-2 bg-green-600 rounded-full" />
           <span>Ideal</span>
