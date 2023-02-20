@@ -36,7 +36,7 @@ import "react-circular-progressbar/dist/styles.css";
 // ui
 import { CustomSelect, Loader } from "components/ui";
 // helpers
-import { renderShortNumericDateFormat, timeAgo } from "helpers/date-time.helper";
+import { renderDateFormat, renderShortNumericDateFormat, timeAgo } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
 import { groupBy } from "helpers/array.helper";
 // types
@@ -190,61 +190,93 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
                   )}
                 />
               </div>
-              <Popover className="flex justify-center items-center relative  rounded-lg">
-                {({ open }) => (
-                  <>
-                    <Popover.Button
-                      className={`group flex items-center gap-2 rounded-md border bg-transparent h-full w-full p-2 px-4  text-xs font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-900 focus:outline-none ${
-                        open ? "bg-gray-100" : ""
-                      }`}
-                    >
-                      <CalendarDaysIcon className="h-4 w-4 flex-shrink-0" />
-                      <span>
-                        {renderShortNumericDateFormat(`${module?.start_date}`)
-                          ? renderShortNumericDateFormat(`${module?.start_date}`)
-                          : "N/A"}{" "}
-                        -{" "}
-                        {renderShortNumericDateFormat(`${module?.target_date}`)
-                          ? renderShortNumericDateFormat(`${module?.target_date}`)
-                          : "N/A"}
-                      </span>
-                    </Popover.Button>
+              <div className="flex justify-center items-center gap-2 rounded-md border bg-transparent h-full  p-2 px-4  text-xs font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-900 focus:outline-none">
+                <Popover className="flex justify-center items-center relative  rounded-lg">
+                  {({ open }) => (
+                    <>
+                      <Popover.Button
+                        className={`group flex items-center  ${open ? "bg-gray-100" : ""}`}
+                      >
+                        <CalendarDaysIcon className="h-4 w-4 flex-shrink-0 mr-2" />
+                        <span>
+                          {renderShortNumericDateFormat(`${module?.start_date}`)
+                            ? renderShortNumericDateFormat(`${module?.start_date}`)
+                            : "N/A"}
+                        </span>
+                      </Popover.Button>
 
-                    <Transition
-                      as={React.Fragment}
-                      enter="transition ease-out duration-200"
-                      enterFrom="opacity-0 translate-y-1"
-                      enterTo="opacity-100 translate-y-0"
-                      leave="transition ease-in duration-150"
-                      leaveFrom="opacity-100 translate-y-0"
-                      leaveTo="opacity-0 translate-y-1"
-                    >
-                      <Popover.Panel className="absolute top-10 left-0 z-20  transform overflow-hidden">
-                        <DatePicker
-                          selected={startDateRange}
-                          onChange={(dates) => {
-                            const [start, end] = dates;
-                            submitChanges({
-                              start_date: start?.toISOString(),
-                              target_date: end?.toISOString(),
-                            });
-                            if (setStartDateRange) {
-                              setStartDateRange(start);
-                            }
-                            if (setEndDateRange) {
-                              setEndDateRange(end);
-                            }
-                          }}
-                          startDate={startDateRange}
-                          endDate={endDateRange}
-                          selectsRange
-                          inline
-                        />
-                      </Popover.Panel>
-                    </Transition>
-                  </>
-                )}
-              </Popover>
+                      <Transition
+                        as={React.Fragment}
+                        enter="transition ease-out duration-200"
+                        enterFrom="opacity-0 translate-y-1"
+                        enterTo="opacity-100 translate-y-0"
+                        leave="transition ease-in duration-150"
+                        leaveFrom="opacity-100 translate-y-0"
+                        leaveTo="opacity-0 translate-y-1"
+                      >
+                        <Popover.Panel className="absolute top-10 -left-10 z-20  transform overflow-hidden">
+                          <DatePicker
+                            selected={startDateRange}
+                            onChange={(date) => {
+                              submitChanges({
+                                start_date: renderDateFormat(date),
+                              });
+                              setStartDateRange(date);
+                            }}
+                            selectsStart
+                            startDate={startDateRange}
+                            endDate={endDateRange}
+                            inline
+                          />
+                        </Popover.Panel>
+                      </Transition>
+                    </>
+                  )}
+                </Popover>
+                <Popover className="flex justify-center items-center relative  rounded-lg">
+                  {({ open }) => (
+                    <>
+                      <Popover.Button
+                        className={`group flex items-center ${open ? "bg-gray-100" : ""}`}
+                      >
+                        <span>
+                          -{" "}
+                          {renderShortNumericDateFormat(`${module?.target_date}`)
+                            ? renderShortNumericDateFormat(`${module?.target_date}`)
+                            : "N/A"}
+                        </span>
+                      </Popover.Button>
+
+                      <Transition
+                        as={React.Fragment}
+                        enter="transition ease-out duration-200"
+                        enterFrom="opacity-0 translate-y-1"
+                        enterTo="opacity-100 translate-y-0"
+                        leave="transition ease-in duration-150"
+                        leaveFrom="opacity-100 translate-y-0"
+                        leaveTo="opacity-0 translate-y-1"
+                      >
+                        <Popover.Panel className="absolute top-10 -right-20 z-20  transform overflow-hidden">
+                          <DatePicker
+                            selected={endDateRange}
+                            onChange={(date) => {
+                              submitChanges({
+                                target_date: renderDateFormat(date),
+                              });
+                              setEndDateRange(date);
+                            }}
+                            selectsEnd
+                            startDate={startDateRange}
+                            endDate={endDateRange}
+                            minDate={startDateRange}
+                            inline
+                          />
+                        </Popover.Panel>
+                      </Transition>
+                    </>
+                  )}
+                </Popover>
+              </div>
             </div>
             <div className="flex items-center justify-between pb-3">
               <h4 className="text-sm font-medium">{module.name}</h4>
