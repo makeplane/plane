@@ -16,8 +16,6 @@ import {
   Squares2X2Icon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
-// progress-bar
-import { CircularProgressbar } from "react-circular-progressbar";
 
 import { Popover, Transition } from "@headlessui/react";
 import DatePicker from "react-datepicker";
@@ -31,10 +29,9 @@ import { LinkModal, SidebarProgressStats } from "components/core";
 import { DeleteModuleModal, SidebarLeadSelect, SidebarMembersSelect } from "components/modules";
 import ProgressChart from "components/core/sidebar/progress-chart";
 
-import "react-circular-progressbar/dist/styles.css";
 // components
 // ui
-import { CustomSelect, Loader } from "components/ui";
+import { CustomSelect, Loader, ProgressBar } from "components/ui";
 // helpers
 import { renderDateFormat, renderShortNumericDateFormat, timeAgo } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
@@ -329,10 +326,9 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
                   <div className="flex items-center gap-2 sm:basis-1/2">
                     <div className="grid flex-shrink-0 place-items-center">
                       <span className="h-4 w-4">
-                        <CircularProgressbar
+                        <ProgressBar
                           value={groupedIssues.completed.length}
                           maxValue={moduleIssues?.length}
-                          strokeWidth={10}
                         />
                       </span>
                     </div>

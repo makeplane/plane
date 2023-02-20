@@ -7,9 +7,6 @@ import { mutate } from "swr";
 
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
-// react-circular-progressbar
-import { CircularProgressbar } from "react-circular-progressbar";
-import "react-circular-progressbar/dist/styles.css";
 import { Popover, Transition } from "@headlessui/react";
 import DatePicker from "react-datepicker";
 // icons
@@ -22,7 +19,7 @@ import {
   UserIcon,
 } from "@heroicons/react/24/outline";
 // ui
-import { CustomSelect, Loader } from "components/ui";
+import { CustomSelect, Loader, ProgressBar } from "components/ui";
 // hooks
 import useToast from "hooks/use-toast";
 // services
@@ -310,10 +307,9 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cy
                   <div className="flex items-center gap-2 sm:basis-1/2">
                     <div className="grid flex-shrink-0 place-items-center">
                       <span className="h-4 w-4">
-                        <CircularProgressbar
+                        <ProgressBar
                           value={groupedIssues.completed.length}
                           maxValue={cycleIssues?.length}
-                          strokeWidth={10}
                         />
                       </span>
                     </div>

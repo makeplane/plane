@@ -1,6 +1,6 @@
 import React from "react";
 
-import { CircularProgressbar } from "react-circular-progressbar";
+import { ProgressBar } from "components/ui";
 
 type TSingleProgressStatsProps = {
   title: any;
@@ -18,7 +18,7 @@ export const SingleProgressStats: React.FC<TSingleProgressStatsProps> = ({
     <div className="flex items-center justify-end w-1/2 gap-1 px-2">
       <div className="flex h-5 justify-center items-center gap-1 ">
         <span className="h-4 w-4 ">
-          <CircularProgressbar value={completed} maxValue={total} strokeWidth={10} />
+          <ProgressBar value={completed} maxValue={total} />
         </span>
         <span className="w-8 text-right">{Math.floor((completed / total) * 100)}%</span>
       </div>
