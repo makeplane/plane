@@ -197,7 +197,7 @@ export const IssuesFilterView: React.FC<Props> = ({ issues }) => {
                                 }`}
                                 onClick={() => setProperties(key as keyof Properties)}
                               >
-                                {replaceUnderscoreIfSnakeCase(key)}
+                                {key === "key" ? "ID" : replaceUnderscoreIfSnakeCase(key)}
                               </button>
                             );
                           })}
