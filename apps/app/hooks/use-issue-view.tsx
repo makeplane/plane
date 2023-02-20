@@ -97,7 +97,7 @@ const useIssueView = (projectIssues: IIssue[]) => {
     groupedByIssues = Object.fromEntries(
       Object.entries(groupedByIssues).map(([key, value]) => [
         key,
-        orderArrayBy(value, orderBy, "descending"),
+        orderArrayBy(value, orderBy, orderBy === "sort_order" ? "ascending" : "descending"),
       ])
     );
   }

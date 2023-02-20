@@ -67,7 +67,12 @@ export const IssuesView: React.FC<Props> = ({
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
-  const { issueView, groupedByIssues, groupByProperty: selectedGroup } = useIssueView(issues);
+  const {
+    issueView,
+    groupedByIssues,
+    groupByProperty: selectedGroup,
+    orderBy,
+  } = useIssueView(issues);
 
   const { data: stateGroups } = useSWR(
     workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
@@ -101,10 +106,25 @@ export const IssuesView: React.FC<Props> = ({
       const { source, destination } = result;
 
       const draggedItem = groupedByIssues[source.droppableId][source.index];
+      let newSortOrder = draggedItem.sort_order;
 
       if (destination.droppableId === "trashBox") {
         handleDeleteIssue(draggedItem);
       } else {
+        if (orderBy === "sort_order") {
+          const destinationGroupArray = groupedByIssues[destination.droppableId];
+
+          if (destination.index === 0) newSortOrder = destinationGroupArray[0].sort_order - 10000;
+          else if (destination.index === destinationGroupArray.length)
+            newSortOrder =
+              destinationGroupArray[destinationGroupArray.length - 1].sort_order + 10000;
+          else
+            newSortOrder =
+              (destinationGroupArray[destination.index - 1].sort_order +
+                destinationGroupArray[destination.index].sort_order) /
+              2;
+        }
+
         if (source.droppableId !== destination.droppableId) {
           const sourceGroup = source.droppableId; // source group id
           const destinationGroup = destination.droppableId; // destination group id
@@ -127,6 +147,7 @@ export const IssuesView: React.FC<Props> = ({
                         issue_detail: {
                           ...draggedItem,
                           priority: destinationGroup,
+                          sort_order: newSortOrder,
                         },
                       };
                     }
@@ -149,6 +170,7 @@ export const IssuesView: React.FC<Props> = ({
                         issue_detail: {
                           ...draggedItem,
                           priority: destinationGroup,
+                          sort_order: newSortOrder,
                         },
                       };
                     }
@@ -169,6 +191,7 @@ export const IssuesView: React.FC<Props> = ({
                     return {
                       ...draggedItem,
                       priority: destinationGroup,
+                      sort_order: newSortOrder,
                     };
 
                   return issue;
@@ -183,6 +206,7 @@ export const IssuesView: React.FC<Props> = ({
             issuesService
               .patchIssue(workspaceSlug as string, projectId as string, draggedItem.id, {
                 priority: destinationGroup,
+                sort_order: newSortOrder,
               })
               .then((res) => {
                 if (cycleId) mutate(CYCLE_ISSUES(cycleId as string));
@@ -212,6 +236,7 @@ export const IssuesView: React.FC<Props> = ({
                           ...draggedItem,
                           state_detail: destinationState,
                           state: destinationStateId,
+                          sort_order: newSortOrder,
                         },
                       };
                     }
@@ -235,6 +260,7 @@ export const IssuesView: React.FC<Props> = ({
                           ...draggedItem,
                           state_detail: destinationState,
                           state: destinationStateId,
+                          sort_order: newSortOrder,
                         },
                       };
                     }
@@ -256,6 +282,7 @@ export const IssuesView: React.FC<Props> = ({
                       ...draggedItem,
                       state_detail: destinationState,
                       state: destinationStateId,
+                      sort_order: newSortOrder,
                     };
 
                   return issue;
@@ -270,6 +297,7 @@ export const IssuesView: React.FC<Props> = ({
             issuesService
               .patchIssue(workspaceSlug as string, projectId as string, draggedItem.id, {
                 state: destinationStateId,
+                sort_order: newSortOrder,
               })
               .then((res) => {
                 if (cycleId) mutate(CYCLE_ISSUES(cycleId as string));
@@ -288,6 +316,7 @@ export const IssuesView: React.FC<Props> = ({
       groupedByIssues,
       projectId,
       selectedGroup,
+      orderBy,
       states,
       handleDeleteIssue,
     ]

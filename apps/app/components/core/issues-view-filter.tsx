@@ -130,7 +130,10 @@ export const IssuesFilterView: React.FC<Props> = ({ issues }) => {
                                 option.key === "priority" ? null : (
                                   <CustomMenu.MenuItem
                                     key={option.key}
-                                    onClick={() => setOrderBy(option.key)}
+                                    onClick={() => {
+                                      console.log(option.key);
+                                      setOrderBy(option.key);
+                                    }}
                                   >
                                     {option.name}
                                   </CustomMenu.MenuItem>
