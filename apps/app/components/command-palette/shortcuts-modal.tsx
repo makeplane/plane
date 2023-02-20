@@ -45,9 +45,10 @@ const allShortcuts = shortcuts.map((i) => i.shortcuts).flat(1);
 
 export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
   const [query, setQuery] = useState("");
-
   const filteredShortcuts = allShortcuts.filter((shortcut) =>
-    shortcut.description.includes(query.trim()) || query === "" ? true : false
+    shortcut.description.toLowerCase().includes(query.trim().toLowerCase()) || query === ""
+      ? true
+      : false
   );
 
   useEffect(() => {

@@ -65,10 +65,6 @@ export const DeleteModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data }) 
       });
   };
 
-  useEffect(() => {
-    data && setIsOpen(true);
-  }, [data, setIsOpen]);
-
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
       <Dialog

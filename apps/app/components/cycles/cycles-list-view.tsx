@@ -1,8 +1,7 @@
 // react
 import { useState } from "react";
 // components
-import SingleStat from "components/project/cycles/stats-view/single-stat";
-import ConfirmCycleDeletion from "components/project/cycles/confirm-cycle-deletion";
+import { DeleteCycleModal, SingleCycleCard } from "components/cycles";
 // types
 import { ICycle, SelectCycleType } from "types";
 import { CompletedCycleIcon, CurrentCycleIcon, UpcomingCycleIcon } from "components/icons";
@@ -14,7 +13,7 @@ type TCycleStatsViewProps = {
   type: "current" | "upcoming" | "completed";
 };
 
-const CycleStatsView: React.FC<TCycleStatsViewProps> = ({
+export const CyclesListView: React.FC<TCycleStatsViewProps> = ({
   cycles,
   setCreateUpdateCycleModal,
   setSelectedCycle,
@@ -35,7 +34,7 @@ const CycleStatsView: React.FC<TCycleStatsViewProps> = ({
 
   return (
     <>
-      <ConfirmCycleDeletion
+      <DeleteCycleModal
         isOpen={
           cycleDeleteModal &&
           !!selectedCycleForDelete &&
@@ -46,7 +45,7 @@ const CycleStatsView: React.FC<TCycleStatsViewProps> = ({
       />
       {cycles.length > 0 ? (
         cycles.map((cycle) => (
-          <SingleStat
+          <SingleCycleCard
             key={cycle.id}
             cycle={cycle}
             handleDeleteCycle={() => handleDeleteCycle(cycle)}
@@ -71,5 +70,3 @@ const CycleStatsView: React.FC<TCycleStatsViewProps> = ({
     </>
   );
 };
-
-export default CycleStatsView;

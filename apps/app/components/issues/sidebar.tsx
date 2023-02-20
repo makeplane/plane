@@ -222,7 +222,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
               control={control}
               submitChanges={submitChanges}
               issuesList={
-                issues?.results.filter(
+                issues?.filter(
                   (i) =>
                     i.id !== issueDetail?.id &&
                     i.id !== issueDetail?.parent &&
@@ -250,13 +250,13 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
             />
             <SidebarBlockerSelect
               submitChanges={submitChanges}
-              issuesList={issues?.results.filter((i) => i.id !== issueDetail?.id) ?? []}
+              issuesList={issues?.filter((i) => i.id !== issueDetail?.id) ?? []}
               watch={watchIssue}
               userAuth={userAuth}
             />
             <SidebarBlockedSelect
               submitChanges={submitChanges}
-              issuesList={issues?.results.filter((i) => i.id !== issueDetail?.id) ?? []}
+              issuesList={issues?.filter((i) => i.id !== issueDetail?.id) ?? []}
               watch={watchIssue}
               userAuth={userAuth}
             />
@@ -324,7 +324,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                       >
                         <span
                           className="h-2 w-2 flex-shrink-0 rounded-full"
-                          style={{ backgroundColor: label?.color ?? "green" }}
+                          style={{ backgroundColor: label?.color ?? "black" }}
                         />
                         {label.name}
                         <XMarkIcon className="h-2 w-2 group-hover:text-red-500" />
@@ -386,7 +386,10 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                                               <span
                                                 className="h-2 w-2 flex-shrink-0 rounded-full"
                                                 style={{
-                                                  backgroundColor: label?.color ?? "green",
+                                                  backgroundColor:
+                                                    label.color && label.color !== ""
+                                                      ? label.color
+                                                      : "#000",
                                                 }}
                                               />
                                               {label.name}
@@ -413,7 +416,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                                                   <span
                                                     className="h-2 w-2 flex-shrink-0 rounded-full"
                                                     style={{
-                                                      backgroundColor: child?.color ?? "green",
+                                                      backgroundColor: child?.color ?? "black",
                                                     }}
                                                   />
                                                   {child.name}
@@ -472,7 +475,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                           <span
                             className="h-5 w-5 rounded"
                             style={{
-                              backgroundColor: watch("color") ?? "green",
+                              backgroundColor: watch("color") ?? "black",
                             }}
                           />
                         )}

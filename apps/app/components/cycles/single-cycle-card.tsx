@@ -8,6 +8,8 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 // services
 import cyclesService from "services/cycles.service";
+// hooks
+import useToast from "hooks/use-toast";
 // ui
 import { Button, CustomMenu } from "components/ui";
 // icons
@@ -17,6 +19,7 @@ import { CyclesIcon } from "components/icons";
 // helpers
 import { renderShortNumericDateFormat } from "helpers/date-time.helper";
 import { groupBy } from "helpers/array.helper";
+import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import { CycleIssueResponse, ICycle } from "types";
 // fetch-keys
@@ -38,11 +41,12 @@ const stateGroupColours: {
   completed: "#096e8d",
 };
 
-const SingleStat: React.FC<TSingleStatProps> = (props) => {
+export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
   const { cycle, handleEditCycle, handleDeleteCycle } = props;
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+  const { setToastAlert } = useToast();
 
   const { data: cycleIssues } = useSWR<CycleIssueResponse[]>(
     workspaceSlug && projectId && cycle.id ? CYCLE_ISSUES(cycle.id as string) : null,
@@ -63,6 +67,24 @@ const SingleStat: React.FC<TSingleStatProps> = (props) => {
     ...groupBy(cycleIssues ?? [], "issue_detail.state_detail.group"),
   };
 
+  const handleCopyText = () => {
+    const originURL =
+      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`)
+      .then(() => {
+        setToastAlert({
+          type: "success",
+          title: "Cycle link copied to clipboard",
+        });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Some error occurred",
+        });
+      });
+  };
+
   return (
     <>
       <div className="rounded-md border bg-white p-3">
@@ -77,6 +99,7 @@ const SingleStat: React.FC<TSingleStatProps> = (props) => {
                 </a>
               </Link>
               <CustomMenu width="auto" ellipsis>
+                <CustomMenu.MenuItem onClick={handleCopyText}>Copy cycle link</CustomMenu.MenuItem>
                 <CustomMenu.MenuItem onClick={handleEditCycle}>Edit cycle</CustomMenu.MenuItem>
                 <CustomMenu.MenuItem onClick={handleDeleteCycle}>
                   Delete cycle permanently
@@ -161,5 +184,3 @@ const SingleStat: React.FC<TSingleStatProps> = (props) => {
     </>
   );
 };
-
-export default SingleStat;

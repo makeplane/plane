@@ -3,6 +3,8 @@ import React, { useMemo } from "react";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 
+import { mutate } from "swr";
+
 // react-hook-form
 import { useForm, Controller } from "react-hook-form";
 // services
@@ -12,8 +14,9 @@ import { Loader } from "components/ui";
 // helpers
 import { debounce } from "helpers/common.helper";
 // types
-import type { IIssueActivity, IIssueComment } from "types";
-import type { KeyedMutator } from "swr";
+import type { IIssueComment } from "types";
+// fetch-keys
+import { PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
   ssr: false,
@@ -29,9 +32,7 @@ const defaultValues: Partial<IIssueComment> = {
   comment_json: "",
 };
 
-export const AddComment: React.FC<{
-  mutate: KeyedMutator<IIssueActivity[]>;
-}> = ({ mutate }) => {
+export const AddComment: React.FC = () => {
   const {
     handleSubmit,
     control,
@@ -57,7 +58,7 @@ export const AddComment: React.FC<{
     await issuesServices
       .createIssueComment(workspaceSlug as string, projectId as string, issueId as string, formData)
       .then(() => {
-        mutate();
+        mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
         reset(defaultValues);
       })
       .catch((error) => {

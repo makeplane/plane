@@ -8,19 +8,15 @@ import { mutate } from "swr";
 import { useForm } from "react-hook-form";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
-// services
-import modulesService from "services/modules.service";
 // ui
 import { Button, Input } from "components/ui";
 // types
-import type { IModule, ModuleLink } from "types";
-// fetch-keys
-import { MODULE_DETAILS } from "constants/fetch-keys";
+import type { IIssueLink, ModuleLink } from "types";
 
 type Props = {
   isOpen: boolean;
-  module: IModule | undefined;
   handleClose: () => void;
+  onFormSubmit: (formData: IIssueLink | ModuleLink) => void;
 };
 
 const defaultValues: ModuleLink = {
@@ -28,42 +24,20 @@ const defaultValues: ModuleLink = {
   url: "",
 };
 
-export const ModuleLinkModal: React.FC<Props> = ({ isOpen, module, handleClose }) => {
-  const router = useRouter();
-  const { workspaceSlug, projectId, moduleId } = router.query;
-
+export const LinkModal: React.FC<Props> = ({ isOpen, handleClose, onFormSubmit }) => {
   const {
     register,
     formState: { errors, isSubmitting },
     handleSubmit,
     reset,
-    setError,
   } = useForm<ModuleLink>({
     defaultValues,
   });
 
   const onSubmit = async (formData: ModuleLink) => {
-    if (!workspaceSlug || !projectId || !moduleId) return;
+    await onFormSubmit(formData);
 
-    const previousLinks = module?.link_module.map((l) => ({ title: l.title, url: l.url }));
-
-    const payload: Partial<IModule> = {
-      links_list: [...(previousLinks ?? []), formData],
-    };
-
-    await modulesService
-      .patchModule(workspaceSlug as string, projectId as string, moduleId as string, payload)
-      .then((res) => {
-        mutate(MODULE_DETAILS(moduleId as string));
-        onClose();
-      })
-      .catch((err) => {
-        Object.keys(err).map((key) => {
-          setError(key as keyof ModuleLink, {
-            message: err[key].join(", "),
-          });
-        });
-      });
+    onClose();
   };
 
   const onClose = () => {

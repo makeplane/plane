@@ -20,7 +20,6 @@ type FormInput = {
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
-  type: string;
   issues: IIssue[];
   handleOnSubmit: any;
 };
@@ -30,7 +29,6 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
   handleClose: onClose,
   issues,
   handleOnSubmit,
-  type,
 }) => {
   const [query, setQuery] = useState("");
 
@@ -105,7 +103,7 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="relative mx-auto max-w-2xl transform divide-y divide-gray-500 divide-opacity-10 rounded-xl bg-white bg-opacity-80 shadow-2xl ring-1 ring-black ring-opacity-5 backdrop-blur backdrop-filter transition-all">
+              <Dialog.Panel className="relative mx-auto max-w-2xl transform divide-y divide-gray-500 divide-opacity-10 rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
                 <form>
                   <Controller
                     control={control}
@@ -132,7 +130,7 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                             <li className="p-2">
                               {query === "" && (
                                 <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-gray-900">
-                                  Select issues to add to {type}
+                                  Select issues to add
                                 </h2>
                               )}
                               <ul className="text-sm text-gray-700">
@@ -203,7 +201,7 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                         onClick={handleSubmit(onSubmit)}
                         disabled={isSubmitting}
                       >
-                        {isSubmitting ? "Adding..." : `Add to ${type}`}
+                        {isSubmitting ? "Adding..." : "Add selected issues"}
                       </Button>
                     </div>
                   )}

@@ -6,4 +6,5 @@ export * from "./existing-issues-list-modal";
 export * from "./image-upload-modal";
 export * from "./issues-view-filter";
 export * from "./issues-view";
+export * from "./link-modal";
 export * from "./not-authorized-view";

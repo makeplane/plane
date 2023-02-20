@@ -24,7 +24,7 @@ export const SingleLabel: React.FC<Props> = ({
         <span
           className="h-3 w-3 flex-shrink-0 rounded-full"
           style={{
-            backgroundColor: label.color,
+            backgroundColor: label.color && label.color !== "" ? label.color : "#000",
           }}
         />
         <h6 className="text-sm">{label.name}</h6>

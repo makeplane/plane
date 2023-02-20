@@ -66,17 +66,11 @@ export const SidebarAssigneeSelect: React.FC<Props> = ({ control, submitChanges,
                       isNotAllowed ? "cursor-not-allowed" : "cursor-pointer"
                     } items-center gap-1 text-xs`}
                   >
-                    <span
-                      className={`hidden truncate text-left sm:block ${
-                        value ? "" : "text-gray-900"
-                      }`}
-                    >
-                      <div className="flex items-center gap-1 text-xs">
-                        {value && Array.isArray(value) ? (
-                          <AssigneesList userIds={value} length={10} />
-                        ) : null}
-                      </div>
-                    </span>
+                    <div className="flex items-center gap-1 text-xs">
+                      {value && Array.isArray(value) ? (
+                        <AssigneesList userIds={value} length={10} />
+                      ) : null}
+                    </div>
                   </Listbox.Button>
 
                   <Transition
@@ -97,8 +91,8 @@ export const SidebarAssigneeSelect: React.FC<Props> = ({ control, submitChanges,
                               <Listbox.Option
                                 key={option.member.id}
                                 className={({ active, selected }) =>
-                                  `${
-                                    active || selected ? "bg-indigo-50" : ""
+                                  `${active || selected ? "bg-indigo-50" : ""} ${
+                                    selected ? "font-medium" : ""
                                   } flex cursor-pointer select-none items-center gap-2 truncate p-2 text-gray-900`
                                 }
                                 value={option.member.id}
