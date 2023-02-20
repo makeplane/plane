@@ -215,6 +215,7 @@ const SingleModule: React.FC<UserAuth> = (props) => {
           module={moduleDetails}
           isOpen={moduleSidebar}
           moduleIssues={moduleIssues}
+          userAuth={props}
         />
       </AppLayout>
     </IssueViewContextProvider>

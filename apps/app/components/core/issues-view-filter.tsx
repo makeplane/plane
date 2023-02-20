@@ -131,7 +131,6 @@ export const IssuesFilterView: React.FC<Props> = ({ issues }) => {
                                   <CustomMenu.MenuItem
                                     key={option.key}
                                     onClick={() => {
-                                      console.log(option.key);
                                       setOrderBy(option.key);
                                     }}
                                   >

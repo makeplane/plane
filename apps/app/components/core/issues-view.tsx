@@ -114,27 +114,31 @@ export const IssuesView: React.FC<Props> = ({
         if (orderBy === "sort_order") {
           const destinationGroupArray = groupedByIssues[destination.droppableId];
 
-          if (destination.index === 0) newSortOrder = destinationGroupArray[0].sort_order - 10000;
-          else if (destination.index === destinationGroupArray.length)
-            newSortOrder =
-              destinationGroupArray[destinationGroupArray.length - 1].sort_order + 10000;
-          else
-            newSortOrder =
-              (destinationGroupArray[destination.index - 1].sort_order +
-                destinationGroupArray[destination.index].sort_order) /
-              2;
+          if (destinationGroupArray.length !== 0) {
+            if (destination.index === 0) newSortOrder = destinationGroupArray[0].sort_order - 10000;
+            else if (
+              (source.droppableId !== destination.droppableId &&
+                destination.index === destinationGroupArray.length) ||
+              (source.droppableId === destination.droppableId &&
+                destination.index === destinationGroupArray.length - 1)
+            )
+              newSortOrder =
+                destinationGroupArray[destinationGroupArray.length - 1].sort_order + 10000;
+            else
+              newSortOrder =
+                (destinationGroupArray[destination.index - 1].sort_order +
+                  destinationGroupArray[destination.index].sort_order) /
+                2;
+          }
         }
 
-        if (source.droppableId !== destination.droppableId) {
+        if (orderBy === "sort_order" || source.droppableId !== destination.droppableId) {
           const sourceGroup = source.droppableId; // source group id
           const destinationGroup = destination.droppableId; // destination group id
 
           if (!sourceGroup || !destinationGroup) return;
 
           if (selectedGroup === "priority") {
-            // update the removed item for mutation
-            draggedItem.priority = destinationGroup;
-
             if (cycleId)
               mutate<CycleIssueResponse[]>(
                 CYCLE_ISSUES(cycleId as string),
@@ -220,8 +224,6 @@ export const IssuesView: React.FC<Props> = ({
 
             // update the removed item for mutation
             if (!destinationStateId || !destinationState) return;
-            draggedItem.state = destinationStateId;
-            draggedItem.state_detail = destinationState;
 
             if (cycleId)
               mutate<CycleIssueResponse[]>(

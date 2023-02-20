@@ -20,7 +20,6 @@ import {
   IssueDetailsSidebar,
   IssueActivitySection,
   AddComment,
-  LinksList,
 } from "components/issues";
 // ui
 import { Loader, CustomMenu } from "components/ui";
@@ -196,7 +195,6 @@ const IssueDetailsPage: NextPage<UserAuth> = (props) => {
               />
               <div className="mt-2 space-y-2">
                 <SubIssuesList parentIssue={issueDetails} userAuth={props} />
-                <LinksList parentIssue={issueDetails} userAuth={props} />
               </div>
             </div>
             <div className="space-y-5 bg-secondary pt-3">
