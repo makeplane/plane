@@ -96,6 +96,7 @@ export interface IIssue {
   project: string;
   project_detail: IProject;
   sequence_id: number;
+  sort_order: number;
   sprints: string | null;
   start_date: string | null;
   state: string;

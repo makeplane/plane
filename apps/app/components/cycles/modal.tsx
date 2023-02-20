@@ -39,12 +39,18 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
       .then((res) => {
         mutate(CYCLE_LIST(projectId as string));
         handleClose();
+
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "Cycle created successfully.",
+        });
       })
       .catch((err) => {
         setToastAlert({
           type: "error",
-          title: "Error",
-          message: "Error in creating cycle. Please try again!",
+          title: "Error!",
+          message: "Error in creating cycle. Please try again.",
         });
       });
   };
@@ -55,12 +61,18 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
       .then((res) => {
         mutate(CYCLE_LIST(projectId as string));
         handleClose();
+
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "Cycle updated successfully.",
+        });
       })
       .catch((err) => {
         setToastAlert({
           type: "error",
-          title: "Error",
-          message: "Error in updating cycle. Please try again!",
+          title: "Error!",
+          message: "Error in updating cycle. Please try again.",
         });
       });
   };

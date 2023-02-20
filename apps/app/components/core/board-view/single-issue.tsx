@@ -49,7 +49,7 @@ type Props = {
   editIssue: () => void;
   removeIssue?: (() => void) | null;
   handleDeleteIssue: (issue: IIssue) => void;
-  orderBy: NestedKeyOf<IIssue> | "manual" | null;
+  orderBy: NestedKeyOf<IIssue> | null;
   handleTrashBox: (isDragging: boolean) => void;
   userAuth: UserAuth;
 };
@@ -150,7 +150,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
     style: DraggingStyle | NotDraggingStyle | undefined,
     snapshot: DraggableStateSnapshot
   ) {
-    if (orderBy === "manual") return style;
+    if (orderBy === "sort_order") return style;
     if (!snapshot.isDragging) return {};
     if (!snapshot.isDropAnimating) {
       return style;
@@ -179,11 +179,12 @@ export const SingleBoardIssue: React.FC<Props> = ({
         });
       });
   };
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   useEffect(() => {
     if (snapshot.isDragging) handleTrashBox(snapshot.isDragging);
   }, [snapshot, handleTrashBox]);
+
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   return (
     <div
@@ -198,13 +199,6 @@ export const SingleBoardIssue: React.FC<Props> = ({
       <div className="group/card relative select-none p-2">
         {!isNotAllowed && (
           <div className="absolute top-1.5 right-1.5 z-10 opacity-0 group-hover/card:opacity-100">
-            {/* <button
-              type="button"
-              className="grid h-7 w-7 place-items-center rounded bg-white p-1 text-red-500 outline-none duration-300 hover:bg-red-50"
-              onClick={() => handleDeleteIssue(issue)}
-            >
-              <TrashIcon className="h-4 w-4" />
-            </button> */}
             {type && !isNotAllowed && (
               <CustomMenu width="auto" ellipsis>
                 <CustomMenu.MenuItem onClick={handleCopyText}>Copy issue link</CustomMenu.MenuItem>
