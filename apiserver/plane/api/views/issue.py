@@ -22,6 +22,7 @@ from plane.api.serializers import (
     LabelSerializer,
     IssueSerializer,
     LabelSerializer,
+    IssueFlatSerializer,
 )
 from plane.api.permissions import (
     ProjectEntityPermission,
@@ -566,6 +567,42 @@ class SubIssuesEndpoint(BaseAPIView):
 
             serializer = IssueSerializer(sub_issues, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    # Assign multiple sub issues
+    def post(self, request, slug, project_id, issue_id):
+        try:
+            parent_issue = Issue.objects.get(pk=issue_id)
+            sub_issue_ids = request.data.get("sub_issue_ids", [])
+
+            if not len(sub_issue_ids):
+                return Response(
+                    {"error": "Sub Issue IDs are required"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            sub_issues = Issue.objects.filter(id__in=sub_issue_ids)
+
+            for sub_issue in sub_issues:
+                sub_issue.parent = parent_issue
+
+            _ = Issue.objects.bulk_update(sub_issues, ["parent"], batch_size=10)
+
+            updated_sub_issues = Issue.objects.filter(id__in=sub_issue_ids)
+
+            return Response(
+                IssueFlatSerializer(updated_sub_issues, many=True).data,
+                status=status.HTTP_200_OK,
+            )
+        except Issue.DoesNotExist:
+            return Response(
+                {"Parent Issue does not exists"}, status=status.HTTP_400_BAD_REQUEST
+            )
         except Exception as e:
             capture_exception(e)
             return Response(
