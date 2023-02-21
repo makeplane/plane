@@ -35,10 +35,11 @@ const SignInPage: NextPage = () => {
   const { setToastAlert } = useToast();
 
   const onSignInSuccess = useCallback(async () => {
+    setLoading(true);
     await mutateUser();
     const nextLocation = router.asPath.split("?next=")[1];
-    if (nextLocation) router.push(nextLocation as string);
-    else router.push("/");
+    if (nextLocation) await router.push(nextLocation as string);
+    else await router.push("/");
   }, [mutateUser, router]);
 
   const handleGoogleSignIn = ({ clientId, credential }: any) => {
