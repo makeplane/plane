@@ -116,20 +116,41 @@ export const IssuesView: React.FC<Props> = ({
           const destinationGroupArray = groupedByIssues[destination.droppableId];
 
           if (destinationGroupArray.length !== 0) {
-            if (destination.index === 0) newSortOrder = destinationGroupArray[0].sort_order - 10000;
-            else if (
-              (source.droppableId !== destination.droppableId &&
-                destination.index === destinationGroupArray.length) ||
-              (source.droppableId === destination.droppableId &&
-                destination.index === destinationGroupArray.length - 1)
-            )
-              newSortOrder =
-                destinationGroupArray[destinationGroupArray.length - 1].sort_order + 10000;
-            else
-              newSortOrder =
-                (destinationGroupArray[destination.index - 1].sort_order +
-                  destinationGroupArray[destination.index].sort_order) /
-                2;
+            // check if dropping in the same group
+            if (source.droppableId === destination.droppableId) {
+              // check if dropping at beginning
+              if (destination.index === 0)
+                newSortOrder = destinationGroupArray[0].sort_order - 10000;
+              // check if dropping at last
+              else if (destination.index === destinationGroupArray.length - 1)
+                newSortOrder =
+                  destinationGroupArray[destinationGroupArray.length - 1].sort_order + 10000;
+              else {
+                if (destination.index > source.index)
+                  newSortOrder =
+                    (destinationGroupArray[source.index + 1].sort_order +
+                      destinationGroupArray[source.index + 2].sort_order) /
+                    2;
+                else if (destination.index < source.index)
+                  newSortOrder =
+                    (destinationGroupArray[source.index - 1].sort_order +
+                      destinationGroupArray[source.index - 2].sort_order) /
+                    2;
+              }
+            } else {
+              // check if dropping at beginning
+              if (destination.index === 0)
+                newSortOrder = destinationGroupArray[0].sort_order - 10000;
+              // check if dropping at last
+              else if (destination.index === destinationGroupArray.length)
+                newSortOrder =
+                  destinationGroupArray[destinationGroupArray.length - 1].sort_order + 10000;
+              else
+                newSortOrder =
+                  (destinationGroupArray[destination.index - 1].sort_order +
+                    destinationGroupArray[destination.index].sort_order) /
+                  2;
+            }
           }
 
           draggedItem.sort_order = newSortOrder;
