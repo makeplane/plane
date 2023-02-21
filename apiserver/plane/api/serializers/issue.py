@@ -461,6 +461,9 @@ class IssueModuleDetailSerializer(BaseSerializer):
 
 
 class IssueLinkSerializer(BaseSerializer):
+
+    created_by_detail = UserLiteSerializer(read_only=True, source="created_by")
+
     class Meta:
         model = IssueLink
         fields = "__all__"

@@ -69,16 +69,6 @@ class Issue(ProjectBaseModel):
 
     def save(self, *args, **kwargs):
         # This means that the model isn't saved to the database yet
-        if self._state.adding:
-            # Get the maximum display_id value from the database
-
-            last_id = IssueSequence.objects.filter(project=self.project).aggregate(
-                largest=models.Max("sequence")
-            )["largest"]
-            # aggregate can return None! Check it first.
-            # If it isn't none, just use the last ID specified (which should be the greatest) and add one to it
-            if last_id is not None:
-                self.sequence_id = last_id + 1
         if self.state is None:
             try:
                 from plane.db.models import State
@@ -109,6 +99,23 @@ class Issue(ProjectBaseModel):
 
             except ImportError:
                 pass
+        if self._state.adding:
+            # Get the maximum display_id value from the database
+
+            last_id = IssueSequence.objects.filter(project=self.project).aggregate(
+                largest=models.Max("sequence")
+            )["largest"]
+            # aggregate can return None! Check it first.
+            # If it isn't none, just use the last ID specified (which should be the greatest) and add one to it
+            if last_id is not None:
+                self.sequence_id = last_id + 1
+
+            largest_sort_order = Issue.objects.filter(
+                project=self.project, state=self.state
+            ).aggregate(largest=models.Max("sort_order"))["largest"]
+            if largest_sort_order is not None:
+                self.sort_order = largest_sort_order + 10000
+
         # Strip the html tags using html parser
         self.description_stripped = (
             None
