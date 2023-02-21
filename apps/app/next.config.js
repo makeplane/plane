@@ -18,7 +18,7 @@ const nextConfig = {
   },
 };
 
-if (process.env.NEXT_PUBLIC_ENABLE_SENTRY) {
+if (parseInt(process.env.NEXT_PUBLIC_ENABLE_SENTRY || "0")) {
   module.exports = withSentryConfig(nextConfig, { silent: true }, { hideSourceMaps: true });
 } else {
   module.exports = nextConfig;
