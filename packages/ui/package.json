@@ -10,12 +10,13 @@
   "devDependencies": {
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
+    "@typescript-eslint/eslint-plugin": "^5.51.0",
     "classnames": "^2.3.2",
-    "config": "workspace:*",
     "eslint": "^7.32.0",
+    "eslint-config-custom": "*",
     "next": "12.3.2",
     "react": "^18.2.0",
-    "tsconfig": "workspace:*",
+    "tsconfig": "*",
     "typescript": "4.7.4"
   }
 }

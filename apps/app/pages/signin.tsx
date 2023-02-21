@@ -11,15 +11,18 @@ import authenticationService from "services/authentication.service";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 // social button
-import { GoogleLoginButton, GithubLoginButton, EmailSignInForm } from "components/account";
+import {
+  GoogleLoginButton,
+  GithubLoginButton,
+  EmailSignInForm,
+  EmailPasswordForm,
+} from "components/account";
 // ui
 import { Spinner } from "components/ui";
 // icons
 import Logo from "public/logo-with-text.png";
 // types
 import type { NextPage } from "next";
-
-const { NEXT_PUBLIC_GITHUB_ID } = process.env;
 
 const SignInPage: NextPage = () => {
   // router
@@ -69,7 +72,7 @@ const SignInPage: NextPage = () => {
         .socialAuth({
           medium: "github",
           credential,
-          clientId: NEXT_PUBLIC_GITHUB_ID,
+          clientId: process.env.NEXT_PUBLIC_GITHUB_ID,
         })
         .then(async () => {
           await onSignInSuccess();
@@ -109,15 +112,25 @@ const SignInPage: NextPage = () => {
               Sign in to your account
             </h2>
             <div className="mt-16 bg-white py-8 px-4 sm:rounded-lg sm:px-10">
-              <div className="mb-4">
-                <EmailSignInForm handleSuccess={onSignInSuccess} />
-              </div>
-              <div className="mb-4">
-                <GoogleLoginButton handleSignIn={handleGoogleSignIn} />
-              </div>
-              <div className="mb-4">
-                <GithubLoginButton handleSignIn={handleGithubSignIn} />
-              </div>
+              {Boolean(process.env.NEXT_PUBLIC_ENABLE_OAUTH) ? (
+                <>
+                  <div className="mb-4">
+                    <EmailSignInForm handleSuccess={onSignInSuccess} />
+                  </div>
+                  <div className="mb-4">
+                    <GoogleLoginButton handleSignIn={handleGoogleSignIn} />
+                  </div>
+                  <div className="mb-4">
+                    <GithubLoginButton handleSignIn={handleGithubSignIn} />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="mb-4">
+                    <EmailPasswordForm onSuccess={onSignInSuccess} />
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>

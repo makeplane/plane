@@ -33,6 +33,10 @@ CORS_ORIGIN_WHITELIST = [
 DATABASES["default"] = dj_database_url.config()
 SITE_ID = 1
 
+DOCKERIZED = os.environ.get(
+    "DOCKERIZED", False
+)  # Set the variable true if running in docker-compose environment
+
 # Enable Connection Pooling (if desired)
 # DATABASES['default']['ENGINE'] = 'django_postgrespool'
 
@@ -48,99 +52,110 @@ CORS_ALLOW_ALL_ORIGINS = True
 # Simplified static file serving.
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
+if os.environ.get("SENTRY_DSN", False):
+    sentry_sdk.init(
+        dsn=os.environ.get("SENTRY_DSN", ""),
+        integrations=[DjangoIntegration(), RedisIntegration()],
+        # If you wish to associate users to errors (assuming you are using
+        # django.contrib.auth) you may enable sending PII data.
+        traces_sample_rate=1,
+        send_default_pii=True,
+        environment="production",
+    )
 
-sentry_sdk.init(
-    dsn=os.environ.get("SENTRY_DSN"),
-    integrations=[DjangoIntegration(), RedisIntegration()],
-    # If you wish to associate users to errors (assuming you are using
-    # django.contrib.auth) you may enable sending PII data.
-    traces_sample_rate=1,
-    send_default_pii=True,
-    environment="production",
-)
+if (
+    os.environ.get("AWS_REGION", False)
+    and os.environ.get("AWS_ACCESS_KEY_ID", False)
+    and os.environ.get("AWS_SECRET_ACCESS_KEY", False)
+    and os.environ.get("AWS_S3_BUCKET_NAME", False)
+):
+    # The AWS region to connect to.
+    AWS_REGION = os.environ.get("AWS_REGION", "")
 
-# The AWS region to connect to.
-AWS_REGION = os.environ.get("AWS_REGION")
+    # The AWS access key to use.
+    AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "")
 
-# The AWS access key to use.
-AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+    # The AWS secret access key to use.
+    AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", "")
 
-# The AWS secret access key to use.
-AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+    # The optional AWS session token to use.
+    # AWS_SESSION_TOKEN = ""
 
-# The optional AWS session token to use.
-# AWS_SESSION_TOKEN = ""
+    # The name of the bucket to store files in.
+    AWS_S3_BUCKET_NAME = os.environ.get("AWS_S3_BUCKET_NAME", "")
 
+    # How to construct S3 URLs ("auto", "path", "virtual").
+    AWS_S3_ADDRESSING_STYLE = "auto"
 
-# The name of the bucket to store files in.
-AWS_S3_BUCKET_NAME = os.environ.get("AWS_S3_BUCKET_NAME")
+    # The full URL to the S3 endpoint. Leave blank to use the default region URL.
+    AWS_S3_ENDPOINT_URL = ""
 
-# How to construct S3 URLs ("auto", "path", "virtual").
-AWS_S3_ADDRESSING_STYLE = "auto"
+    # A prefix to be applied to every stored file. This will be joined to every filename using the "/" separator.
+    AWS_S3_KEY_PREFIX = ""
 
-# The full URL to the S3 endpoint. Leave blank to use the default region URL.
-AWS_S3_ENDPOINT_URL = ""
+    # Whether to enable authentication for stored files. If True, then generated URLs will include an authentication
+    # token valid for `AWS_S3_MAX_AGE_SECONDS`. If False, then generated URLs will not include an authentication token,
+    # and their permissions will be set to "public-read".
+    AWS_S3_BUCKET_AUTH = False
 
-# A prefix to be applied to every stored file. This will be joined to every filename using the "/" separator.
-AWS_S3_KEY_PREFIX = ""
+    # How long generated URLs are valid for. This affects the expiry of authentication tokens if `AWS_S3_BUCKET_AUTH`
+    # is True. It also affects the "Cache-Control" header of the files.
+    # Important: Changing this setting will not affect existing files.
+    AWS_S3_MAX_AGE_SECONDS = 60 * 60  # 1 hours.
 
-# Whether to enable authentication for stored files. If True, then generated URLs will include an authentication
-# token valid for `AWS_S3_MAX_AGE_SECONDS`. If False, then generated URLs will not include an authentication token,
-# and their permissions will be set to "public-read".
-AWS_S3_BUCKET_AUTH = False
+    # A URL prefix to be used for generated URLs. This is useful if your bucket is served through a CDN. This setting
+    # cannot be used with `AWS_S3_BUCKET_AUTH`.
+    AWS_S3_PUBLIC_URL = ""
 
-# How long generated URLs are valid for. This affects the expiry of authentication tokens if `AWS_S3_BUCKET_AUTH`
-# is True. It also affects the "Cache-Control" header of the files.
-# Important: Changing this setting will not affect existing files.
-AWS_S3_MAX_AGE_SECONDS = 60 * 60  # 1 hours.
+    # If True, then files will be stored with reduced redundancy. Check the S3 documentation and make sure you
+    # understand the consequences before enabling.
+    # Important: Changing this setting will not affect existing files.
+    AWS_S3_REDUCED_REDUNDANCY = False
 
-# A URL prefix to be used for generated URLs. This is useful if your bucket is served through a CDN. This setting
-# cannot be used with `AWS_S3_BUCKET_AUTH`.
-AWS_S3_PUBLIC_URL = ""
+    # The Content-Disposition header used when the file is downloaded. This can be a string, or a function taking a
+    # single `name` argument.
+    # Important: Changing this setting will not affect existing files.
+    AWS_S3_CONTENT_DISPOSITION = ""
 
-# If True, then files will be stored with reduced redundancy. Check the S3 documentation and make sure you
-# understand the consequences before enabling.
-# Important: Changing this setting will not affect existing files.
-AWS_S3_REDUCED_REDUNDANCY = False
+    # The Content-Language header used when the file is downloaded. This can be a string, or a function taking a
+    # single `name` argument.
+    # Important: Changing this setting will not affect existing files.
+    AWS_S3_CONTENT_LANGUAGE = ""
 
-# The Content-Disposition header used when the file is downloaded. This can be a string, or a function taking a
-# single `name` argument.
-# Important: Changing this setting will not affect existing files.
-AWS_S3_CONTENT_DISPOSITION = ""
+    # A mapping of custom metadata for each file. Each value can be a string, or a function taking a
+    # single `name` argument.
+    # Important: Changing this setting will not affect existing files.
+    AWS_S3_METADATA = {}
 
-# The Content-Language header used when the file is downloaded. This can be a string, or a function taking a
-# single `name` argument.
-# Important: Changing this setting will not affect existing files.
-AWS_S3_CONTENT_LANGUAGE = ""
+    # If True, then files will be stored using AES256 server-side encryption.
+    # If this is a string value (e.g., "aws:kms"), that encryption type will be used.
+    # Otherwise, server-side encryption is not be enabled.
+    # Important: Changing this setting will not affect existing files.
+    AWS_S3_ENCRYPT_KEY = False
 
-# A mapping of custom metadata for each file. Each value can be a string, or a function taking a
-# single `name` argument.
-# Important: Changing this setting will not affect existing files.
-AWS_S3_METADATA = {}
+    # The AWS S3 KMS encryption key ID (the `SSEKMSKeyId` parameter) is set from this string if present.
+    # This is only relevant if AWS S3 KMS server-side encryption is enabled (above).
+    # AWS_S3_KMS_ENCRYPTION_KEY_ID = ""
 
-# If True, then files will be stored using AES256 server-side encryption.
-# If this is a string value (e.g., "aws:kms"), that encryption type will be used.
-# Otherwise, server-side encryption is not be enabled.
-# Important: Changing this setting will not affect existing files.
-AWS_S3_ENCRYPT_KEY = False
+    # If True, then text files will be stored using gzip content encoding. Files will only be gzipped if their
+    # compressed size is smaller than their uncompressed size.
+    # Important: Changing this setting will not affect existing files.
+    AWS_S3_GZIP = True
 
-# The AWS S3 KMS encryption key ID (the `SSEKMSKeyId` parameter) is set from this string if present.
-# This is only relevant if AWS S3 KMS server-side encryption is enabled (above).
-# AWS_S3_KMS_ENCRYPTION_KEY_ID = ""
+    # The signature version to use for S3 requests.
+    AWS_S3_SIGNATURE_VERSION = None
 
-# If True, then text files will be stored using gzip content encoding. Files will only be gzipped if their
-# compressed size is smaller than their uncompressed size.
-# Important: Changing this setting will not affect existing files.
-AWS_S3_GZIP = True
+    # If True, then files with the same name will overwrite each other. By default it's set to False to have
+    # extra characters appended.
+    AWS_S3_FILE_OVERWRITE = False
 
-# The signature version to use for S3 requests.
-AWS_S3_SIGNATURE_VERSION = None
+    # AWS Settings End
 
-# If True, then files with the same name will overwrite each other. By default it's set to False to have
-# extra characters appended.
-AWS_S3_FILE_OVERWRITE = False
+    DEFAULT_FILE_STORAGE = "django_s3_storage.storage.S3Storage"
 
-# AWS Settings End
+else:
+    MEDIA_URL = "/uploads/"
+    MEDIA_ROOT = os.path.join(BASE_DIR, "uploads")
 
 
 # Enable Connection Pooling (if desired)
@@ -155,7 +170,6 @@ ALLOWED_HOSTS = [
 ]
 
 
-DEFAULT_FILE_STORAGE = "django_s3_storage.storage.S3Storage"
 # Simplified static file serving.
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
@@ -165,16 +179,27 @@ CSRF_COOKIE_SECURE = True
 
 REDIS_URL = os.environ.get("REDIS_URL")
 
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": REDIS_URL,
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "CONNECTION_POOL_KWARGS": {"ssl_cert_reqs": False},
-        },
+if DOCKERIZED:
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": REDIS_URL,
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            },
+        }
     }
-}
+else:
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": REDIS_URL,
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+                "CONNECTION_POOL_KWARGS": {"ssl_cert_reqs": False},
+            },
+        }
+    }
 
 RQ_QUEUES = {
     "default": {
@@ -182,11 +207,5 @@ RQ_QUEUES = {
     }
 }
 
-
-url = urlparse(os.environ.get("REDIS_URL"))
-
-DOCKERIZED = os.environ.get(
-    "DOCKERIZED", False
-)  # Set the variable true if running in docker-compose environment
 
 WEB_URL = os.environ.get("WEB_URL")
