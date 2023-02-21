@@ -20,9 +20,10 @@ import { copyTextToClipboard } from "helpers/string.helper";
 
 type Props = {
   module: IModule;
+  handleEditModule: () => void;
 };
 
-export const SingleModuleCard: React.FC<Props> = ({ module }) => {
+export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) => {
   const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
 
   const router = useRouter();
@@ -64,6 +65,7 @@ export const SingleModuleCard: React.FC<Props> = ({ module }) => {
         <div className="absolute top-4 right-4 ">
           <CustomMenu width="auto" ellipsis>
             <CustomMenu.MenuItem onClick={handleCopyText}>Copy module link</CustomMenu.MenuItem>
+            <CustomMenu.MenuItem onClick={handleEditModule}>Edit module</CustomMenu.MenuItem>
             <CustomMenu.MenuItem onClick={handleDeleteModule}>
               Delete module permanently
             </CustomMenu.MenuItem>
