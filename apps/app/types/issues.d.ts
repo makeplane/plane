@@ -55,7 +55,7 @@ export interface IIssueLink {
 }
 
 export interface IIssue {
-  assignees: string[] | null;
+  assignees: string[];
   assignee_details: IUser[];
   assignees_list: string[];
   attachments: any[];
