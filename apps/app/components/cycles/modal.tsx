@@ -1,74 +1,91 @@
 import { Fragment } from "react";
+
+import { useRouter } from "next/router";
+
 import { mutate } from "swr";
+
+// headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
 import cycleService from "services/cycles.service";
+// hooks
+import useToast from "hooks/use-toast";
 // components
 import { CycleForm } from "components/cycles";
-// helpers
-import { renderDateFormat } from "helpers/date-time.helper";
 // types
 import type { ICycle } from "types";
 // fetch keys
 import { CYCLE_LIST } from "constants/fetch-keys";
 
-export interface CycleModalProps {
+type CycleModalProps = {
   isOpen: boolean;
   handleClose: () => void;
-  projectId: string;
-  workspaceSlug: string;
-  initialData?: ICycle;
-}
+  data?: ICycle;
+};
 
-export const CycleModal: React.FC<CycleModalProps> = (props) => {
-  const { isOpen, handleClose, initialData, projectId, workspaceSlug } = props;
+export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
+  isOpen,
+  handleClose,
+  data,
+}) => {
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
 
-  const createCycle = (payload: Partial<ICycle>) => {
-    cycleService
-      .createCycle(workspaceSlug as string, projectId, payload)
+  const { setToastAlert } = useToast();
+
+  const createCycle = async (payload: Partial<ICycle>) => {
+    await cycleService
+      .createCycle(workspaceSlug as string, projectId as string, payload)
       .then((res) => {
-        mutate(CYCLE_LIST(projectId));
+        mutate(CYCLE_LIST(projectId as string));
         handleClose();
+
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "Cycle created successfully.",
+        });
       })
       .catch((err) => {
-        // TODO: Handle this ERROR.
-        // Object.keys(err).map((key) => {
-        //   setError(key as keyof typeof defaultValues, {
-        //     message: err[key].join(", "),
-        //   });
-        // });
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Error in creating cycle. Please try again.",
+        });
       });
   };
 
-  const updateCycle = (cycleId: string, payload: Partial<ICycle>) => {
-    cycleService
-      .updateCycle(workspaceSlug, projectId, cycleId, payload)
+  const updateCycle = async (cycleId: string, payload: Partial<ICycle>) => {
+    await cycleService
+      .updateCycle(workspaceSlug as string, projectId as string, cycleId, payload)
       .then((res) => {
-        mutate(CYCLE_LIST(projectId));
+        mutate(CYCLE_LIST(projectId as string));
         handleClose();
+
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "Cycle updated successfully.",
+        });
       })
       .catch((err) => {
-        // TODO: Handle this ERROR.
-        //   Object.keys(err).map((key) => {
-        //     setError(key as keyof typeof defaultValues, {
-        //       message: err[key].join(", "),
-        //     });
-        //   });
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Error in updating cycle. Please try again.",
+        });
       });
   };
 
-  const handleFormSubmit = (formValues: Partial<ICycle>) => {
-    if (workspaceSlug && projectId) {
-      const payload = {
-        ...formValues,
-      };
+  const handleFormSubmit = async (formData: Partial<ICycle>) => {
+    if (!workspaceSlug || !projectId) return;
 
-      if (initialData) {
-        updateCycle(initialData.id, payload);
-      } else {
-        createCycle(payload);
-      }
-    }
+    const payload: Partial<ICycle> = {
+      ...formData,
+    };
+
+    if (!data) await createCycle(payload);
+    else await updateCycle(data.id, payload);
   };
 
   return (
@@ -97,10 +114,12 @@ export const CycleModal: React.FC<CycleModalProps> = (props) => {
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-5 py-8 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
-                <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
-                  {initialData ? "Update" : "Create"} Cycle
-                </Dialog.Title>
-                <CycleForm handleFormSubmit={handleFormSubmit} handleFormCancel={handleClose} />
+                <CycleForm
+                  handleFormSubmit={handleFormSubmit}
+                  handleClose={handleClose}
+                  status={data ? true : false}
+                  data={data}
+                />
               </Dialog.Panel>
             </Transition.Child>
           </div>

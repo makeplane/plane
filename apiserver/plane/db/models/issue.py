@@ -4,6 +4,7 @@ from django.db import models
 from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils import timezone
 
 # Module imports
 from . import ProjectBaseModel
@@ -58,6 +59,7 @@ class Issue(ProjectBaseModel):
         "db.Label", blank=True, related_name="labels", through="IssueLabel"
     )
     sort_order = models.FloatField(default=65535)
+    completed_at = models.DateTimeField(null=True)
 
     class Meta:
         verbose_name = "Issue"
@@ -81,12 +83,32 @@ class Issue(ProjectBaseModel):
             try:
                 from plane.db.models import State
 
-                self.state, created = State.objects.get_or_create(
-                    project=self.project, name="Backlog"
-                )
+                default_state = State.objects.filter(
+                    project=self.project, default=True
+                ).first()
+                # if there is no default state assign any random state
+                if default_state is None:
+                    self.state = State.objects.filter(project=self.project).first()
+                else:
+                    self.state = default_state
             except ImportError:
                 pass
+        else:
+            try:
+                from plane.db.models import State
 
+                # Get the completed states of the project
+                completed_states = State.objects.filter(
+                    group="completed", project=self.project
+                ).values_list("pk", flat=True)
+                # Check if the current issue state and completed state id are same
+                if self.state.id in completed_states:
+                    self.completed_at = timezone.now()
+                else:
+                    self.completed_at = None
+
+            except ImportError:
+                pass
         # Strip the html tags using html parser
         self.description_stripped = (
             None
@@ -137,6 +159,23 @@ class IssueAssignee(ProjectBaseModel):
 
     def __str__(self):
         return f"{self.issue.name} {self.assignee.email}"
+
+
+class IssueLink(ProjectBaseModel):
+    title = models.CharField(max_length=255, null=True)
+    url = models.URLField()
+    issue = models.ForeignKey(
+        "db.Issue", on_delete=models.CASCADE, related_name="issue_link"
+    )
+
+    class Meta:
+        verbose_name = "Issue Link"
+        verbose_name_plural = "Issue Links"
+        db_table = "issue_links"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.issue.name} {self.url}"
 
 
 class IssueActivity(ProjectBaseModel):

@@ -1,15 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
-// react-hook-form
-import { useForm } from "react-hook-form";
 // headless ui
 import { Combobox, Transition } from "@headlessui/react";
 // icons
-import { TagIcon } from "@heroicons/react/24/outline";
+import { PlusIcon, RectangleGroupIcon, TagIcon } from "@heroicons/react/24/outline";
 // services
 import issuesServices from "services/issues.service";
 // types
@@ -18,67 +16,30 @@ import type { IIssueLabels } from "types";
 import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 
 type Props = {
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   value: string[];
   onChange: (value: string[]) => void;
   projectId: string;
 };
 
-const defaultValues: Partial<IIssueLabels> = {
-  name: "",
-};
-
-export const IssueLabelSelect: React.FC<Props> = ({ value, onChange, projectId }) => {
+export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, projectId }) => {
   // states
   const [query, setQuery] = useState("");
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const [isOpen, setIsOpen] = useState(false);
-
-  const { data: issueLabels, mutate: issueLabelsMutate } = useSWR<IIssueLabels[]>(
+  const { data: issueLabels } = useSWR<IIssueLabels[]>(
     projectId ? PROJECT_ISSUE_LABELS(projectId) : null,
     workspaceSlug && projectId
       ? () => issuesServices.getIssueLabels(workspaceSlug as string, projectId)
       : null
   );
 
-  const onSubmit = async (data: IIssueLabels) => {
-    if (!projectId || !workspaceSlug || isSubmitting) return;
-    await issuesServices
-      .createIssueLabel(workspaceSlug as string, projectId as string, data)
-      .then((response) => {
-        issueLabelsMutate((prevData) => [...(prevData ?? []), response], false);
-        setIsOpen(false);
-        reset(defaultValues);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const {
-    register,
-    handleSubmit,
-    formState: { isSubmitting },
-    setFocus,
-    reset,
-  } = useForm<IIssueLabels>({ defaultValues });
-
-  useEffect(() => {
-    isOpen && setFocus("name");
-  }, [isOpen, setFocus]);
-
-  const options = issueLabels?.map((label) => ({
-    value: label.id,
-    display: label.name,
-    color: label.color,
-  }));
-
   const filteredOptions =
     query === ""
-      ? options
-      : options?.filter((option) => option.display.toLowerCase().includes(query.toLowerCase()));
+      ? issueLabels
+      : issueLabels?.filter((l) => l.name.toLowerCase().includes(query.toLowerCase()));
 
   return (
     <>
@@ -98,10 +59,9 @@ export const IssueLabelSelect: React.FC<Props> = ({ value, onChange, projectId }
               <TagIcon className="h-3 w-3 text-gray-500" />
               <span className={`flex items-center gap-2 ${!value ? "" : "text-gray-900"}`}>
                 {Array.isArray(value)
-                  ? value
-                      .map((v) => options?.find((option) => option.value === v)?.display)
-                      .join(", ") || "Labels"
-                  : options?.find((option) => option.value === value)?.display || "Labels"}
+                  ? value.map((v) => issueLabels?.find((l) => l.id === v)?.name).join(", ") ||
+                    "Labels"
+                  : issueLabels?.find((l) => l.id === value)?.name || "Labels"}
               </span>
             </Combobox.Button>
 
@@ -122,79 +82,77 @@ export const IssueLabelSelect: React.FC<Props> = ({ value, onChange, projectId }
                   displayValue={(assigned: any) => assigned?.name}
                 />
                 <div className="py-1">
-                  {filteredOptions ? (
+                  {issueLabels && filteredOptions ? (
                     filteredOptions.length > 0 ? (
-                      filteredOptions.map((option) => (
-                        <Combobox.Option
-                          key={option.value}
-                          className={({ active, selected }) =>
-                            `${active ? "bg-indigo-50" : ""} ${
-                              selected ? "bg-indigo-50 font-medium" : ""
-                            } flex cursor-pointer select-none items-center gap-2 truncate p-2 text-gray-900`
-                          }
-                          value={option.value}
-                        >
-                          {issueLabels && (
-                            <>
-                              <span
-                                className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                                style={{
-                                  backgroundColor: option.color,
-                                }}
-                              />
-                              {option.display}
-                            </>
-                          )}
-                        </Combobox.Option>
-                      ))
+                      filteredOptions.map((label) => {
+                        const children = issueLabels?.filter((l) => l.parent === label.id);
+
+                        if (children.length === 0) {
+                          if (!label.parent)
+                            return (
+                              <Combobox.Option
+                                key={label.id}
+                                className={({ active, selected }) =>
+                                  `${active ? "bg-indigo-50" : ""} ${
+                                    selected ? "bg-indigo-50 font-medium" : ""
+                                  } flex cursor-pointer select-none items-center gap-2 truncate p-2 text-gray-900`
+                                }
+                                value={label.id}
+                              >
+                                <span
+                                  className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                                  style={{
+                                    backgroundColor:
+                                      label.color && label.color !== "" ? label.color : "#000",
+                                  }}
+                                />
+                                {label.name}
+                              </Combobox.Option>
+                            );
+                        } else
+                          return (
+                            <div className="bg-gray-50 border-y border-gray-400">
+                              <div className="flex select-none font-medium items-center gap-2 truncate p-2 text-gray-900">
+                                <RectangleGroupIcon className="h-3 w-3" /> {label.name}
+                              </div>
+                              <div>
+                                {children.map((child) => (
+                                  <Combobox.Option
+                                    key={child.id}
+                                    className={({ active, selected }) =>
+                                      `${active ? "bg-indigo-50" : ""} ${
+                                        selected ? "bg-indigo-50 font-medium" : ""
+                                      } flex cursor-pointer select-none items-center gap-2 truncate p-2 text-gray-900`
+                                    }
+                                    value={child.id}
+                                  >
+                                    <span
+                                      className="h-2 w-2 flex-shrink-0 rounded-full"
+                                      style={{
+                                        backgroundColor: child?.color ?? "black",
+                                      }}
+                                    />
+                                    {child.name}
+                                  </Combobox.Option>
+                                ))}
+                              </div>
+                            </div>
+                          );
+                      })
                     ) : (
                       <p className="text-xs text-gray-500 px-2">No labels found</p>
                     )
                   ) : (
                     <p className="text-xs text-gray-500 px-2">Loading...</p>
                   )}
-                  {/* <div className="cursor-default select-none p-2 hover:bg-indigo-50 hover:text-gray-900">
-                    {isOpen ? (
-                      <div className="flex items-center gap-x-1">
-                        <Input
-                          id="name"
-                          name="name"
-                          type="text"
-                          placeholder="Title"
-                          className="w-full"
-                          autoComplete="off"
-                          register={register}
-                          validations={{
-                            required: true,
-                          }}
-                        />
-                        <button
-                          type="button"
-                          className="grid place-items-center text-green-600"
-                          disabled={isSubmitting}
-                          onClick={handleSubmit(onSubmit)}
-                        >
-                          <PlusIcon className="h-4 w-4" />
-                        </button>
-                        <button
-                          type="button"
-                          className="grid place-items-center text-red-600"
-                          onClick={() => setIsOpen(false)}
-                        >
-                          <XMarkIcon className="h-4 w-4" aria-hidden="true" />
-                        </button>
-                      </div>
-                    ) : (
-                      <button
-                        type="button"
-                        className="flex items-center gap-2 w-full"
-                        onClick={() => setIsOpen(true)}
-                      >
-                        <PlusIcon className="h-4 w-4 text-gray-400" aria-hidden="true" />
-                        <span className="text-xs whitespace-nowrap">Create label</span>
-                      </button>
-                    )}
-                  </div> */}
+                  <button
+                    type="button"
+                    className="flex select-none w-full items-center gap-2 p-2 text-gray-400 outline-none hover:bg-indigo-50 hover:text-gray-900"
+                    onClick={() => setIsOpen(true)}
+                  >
+                    <PlusIcon className="h-3 w-3 text-gray-400" aria-hidden="true" />
+                    <span className="text-xs whitespace-nowrap">Create label</span>
+                  </button>
                 </div>
               </Combobox.Options>
             </Transition>

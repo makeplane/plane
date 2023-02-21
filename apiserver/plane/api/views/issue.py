@@ -39,6 +39,7 @@ from plane.db.models import (
     IssueBlocker,
     CycleIssue,
     ModuleIssue,
+    IssueLink,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 
@@ -75,7 +76,6 @@ class IssueViewSet(BaseViewSet):
             self.get_queryset().filter(pk=self.kwargs.get("pk", None)).first()
         )
         if current_instance is not None:
-
             issue_activity.delay(
                 {
                     "type": "issue.activity",
@@ -92,7 +92,6 @@ class IssueViewSet(BaseViewSet):
         return super().perform_update(serializer)
 
     def get_queryset(self):
-
         return (
             super()
             .get_queryset()
@@ -135,6 +134,12 @@ class IssueViewSet(BaseViewSet):
                         "module", "issue"
                     ).prefetch_related("module__members"),
                 ),
+            )
+            .prefetch_related(
+                Prefetch(
+                    "issue_link",
+                    queryset=IssueLink.objects.select_related("issue"),
+                )
             )
         )
 
@@ -265,6 +270,12 @@ class UserWorkSpaceIssues(BaseAPIView):
                         queryset=ModuleIssue.objects.select_related("module", "issue"),
                     ),
                 )
+                .prefetch_related(
+                    Prefetch(
+                        "issue_link",
+                        queryset=IssueLink.objects.select_related("issue"),
+                    )
+                )
             )
             serializer = IssueSerializer(issues, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -277,7 +288,6 @@ class UserWorkSpaceIssues(BaseAPIView):
 
 
 class WorkSpaceIssuesEndpoint(BaseAPIView):
-
     permission_classes = [
         WorkSpaceAdminPermission,
     ]
@@ -298,7 +308,6 @@ class WorkSpaceIssuesEndpoint(BaseAPIView):
 
 
 class IssueActivityEndpoint(BaseAPIView):
-
     permission_classes = [
         ProjectEntityPermission,
     ]
@@ -333,7 +342,6 @@ class IssueActivityEndpoint(BaseAPIView):
 
 
 class IssueCommentViewSet(BaseViewSet):
-
     serializer_class = IssueCommentSerializer
     model = IssueComment
     permission_classes = [
@@ -436,7 +444,6 @@ class IssuePropertyViewSet(BaseViewSet):
 
     def create(self, request, slug, project_id):
         try:
-
             issue_property, created = IssueProperty.objects.get_or_create(
                 user=request.user,
                 project_id=project_id,
@@ -463,7 +470,6 @@ class IssuePropertyViewSet(BaseViewSet):
 
 
 class LabelViewSet(BaseViewSet):
-
     serializer_class = LabelSerializer
     model = Label
     permission_classes = [
@@ -490,14 +496,12 @@ class LabelViewSet(BaseViewSet):
 
 
 class BulkDeleteIssuesEndpoint(BaseAPIView):
-
     permission_classes = [
         ProjectEntityPermission,
     ]
 
     def delete(self, request, slug, project_id):
         try:
-
             issue_ids = request.data.get("issue_ids", [])
 
             if not len(issue_ids):
@@ -527,14 +531,12 @@ class BulkDeleteIssuesEndpoint(BaseAPIView):
 
 
 class SubIssuesEndpoint(BaseAPIView):
-
     permission_classes = [
         ProjectEntityPermission,
     ]
 
     def get(self, request, slug, project_id, issue_id):
         try:
-
             sub_issues = (
                 Issue.objects.filter(
                     parent_id=issue_id, workspace__slug=slug, project_id=project_id

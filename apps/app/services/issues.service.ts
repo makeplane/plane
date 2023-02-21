@@ -1,7 +1,7 @@
 // services
 import APIService from "services/api.service";
 // type
-import type { IIssue, IIssueActivity, IIssueComment, IssueResponse } from "types";
+import type { IIssue, IIssueActivity, IIssueComment } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -18,7 +18,7 @@ class ProjectIssuesServices extends APIService {
       });
   }
 
-  async getIssues(workspaceSlug: string, projectId: string): Promise<IssueResponse> {
+  async getIssues(workspaceSlug: string, projectId: string): Promise<IIssue[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -271,6 +271,22 @@ class ProjectIssuesServices extends APIService {
   async subIssues(workspaceSlug: string, projectId: string, issueId: string) {
     return this.get(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/sub-issues/`
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async addSubIssues(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    data: { sub_issue_ids: string[] }
+  ): Promise<any> {
+    return this.post(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/sub-issues/`,
+      data
     )
       .then((response) => response?.data)
       .catch((error) => {

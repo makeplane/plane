@@ -81,14 +81,14 @@ export const SidebarModuleSelect: React.FC<Props> = ({
           {modules ? (
             modules.length > 0 ? (
               <>
-                <CustomSelect.Option value={null} className="capitalize">
-                  None
-                </CustomSelect.Option>
                 {modules.map((option) => (
                   <CustomSelect.Option key={option.id} value={option.id}>
                     {option.name}
                   </CustomSelect.Option>
                 ))}
+                <CustomSelect.Option value={null} className="capitalize">
+                  None
+                </CustomSelect.Option>
               </>
             ) : (
               <div className="text-center">No modules found</div>

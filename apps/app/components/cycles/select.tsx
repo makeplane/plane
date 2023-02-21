@@ -12,7 +12,7 @@ import { CyclesIcon } from "components/icons";
 // services
 import cycleServices from "services/cycles.service";
 // components
-import { CycleModal } from "components/cycles";
+import { CreateUpdateCycleModal } from "components/cycles";
 // fetch-keys
 import { CYCLE_LIST } from "constants/fetch-keys";
 
@@ -54,12 +54,7 @@ export const CycleSelect: React.FC<IssueCycleSelectProps> = ({
 
   return (
     <>
-      <CycleModal
-        isOpen={isCycleModalActive}
-        handleClose={closeCycleModal}
-        projectId={projectId}
-        workspaceSlug={workspaceSlug as string}
-      />
+      <CreateUpdateCycleModal isOpen={isCycleModalActive} handleClose={closeCycleModal} />
       <Listbox as="div" className="relative" value={value} onChange={onChange} multiple={multiple}>
         {({ open }) => (
           <>

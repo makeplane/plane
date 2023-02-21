@@ -23,20 +23,12 @@ import AppLayout from "layouts/app-layout";
 import { IssueViewContextProvider } from "contexts/issue-view.context";
 // components
 import { ExistingIssuesListModal, IssuesFilterView, IssuesView } from "components/core";
-import { CreateUpdateIssueModal } from "components/issues";
-import { DeleteModuleModal, ModuleDetailsSidebar } from "components/modules";
+import { ModuleDetailsSidebar } from "components/modules";
 // ui
 import { CustomMenu, EmptySpace, EmptySpaceItem, Spinner } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // types
-import {
-  IIssue,
-  IModule,
-  ModuleIssueResponse,
-  SelectIssue,
-  SelectModuleType,
-  UserAuth,
-} from "types";
+import { IModule, ModuleIssueResponse, UserAuth } from "types";
 
 // fetch-keys
 import {
@@ -47,15 +39,8 @@ import {
 } from "constants/fetch-keys";
 
 const SingleModule: React.FC<UserAuth> = (props) => {
-  const [moduleSidebar, setModuleSidebar] = useState(true);
-  const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
-  const [selectedIssues, setSelectedIssues] = useState<SelectIssue>(null);
   const [moduleIssuesListModal, setModuleIssuesListModal] = useState(false);
-  const [createUpdateIssueModal, setCreateUpdateIssueModal] = useState(false);
-  const [selectedModuleForDelete, setSelectedModuleForDelete] = useState<SelectModuleType>();
-  const [preloadedData, setPreloadedData] = useState<
-    (Partial<IIssue> & { actionType: "createIssue" | "edit" | "delete" }) | null
-  >(null);
+  const [moduleSidebar, setModuleSidebar] = useState(true);
 
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query;
@@ -119,58 +104,17 @@ const SingleModule: React.FC<UserAuth> = (props) => {
       .catch((e) => console.log(e));
   };
 
-  const openCreateIssueModal = (
-    issue?: IIssue,
-    actionType: "create" | "edit" | "delete" = "create"
-  ) => {
-    if (issue) {
-      setPreloadedData(null);
-      setSelectedIssues({ ...issue, actionType });
-    } else setSelectedIssues(null);
-
-    setCreateUpdateIssueModal(true);
-  };
-
   const openIssuesListModal = () => {
     setModuleIssuesListModal(true);
   };
 
-  const handleDeleteModule = () => {
-    if (!moduleDetails) return;
-
-    setSelectedModuleForDelete({ ...moduleDetails, actionType: "delete" });
-    setModuleDeleteModal(true);
-  };
-
   return (
     <IssueViewContextProvider>
-      {moduleId && (
-        <CreateUpdateIssueModal
-          isOpen={createUpdateIssueModal && selectedIssues?.actionType !== "delete"}
-          data={selectedIssues}
-          prePopulateData={
-            preloadedData
-              ? { module: moduleId as string, ...preloadedData }
-              : { module: moduleId as string, ...selectedIssues }
-          }
-          handleClose={() => setCreateUpdateIssueModal(false)}
-        />
-      )}
       <ExistingIssuesListModal
         isOpen={moduleIssuesListModal}
         handleClose={() => setModuleIssuesListModal(false)}
-        type="module"
-        issues={issues?.results.filter((i) => !i.issue_module) ?? []}
+        issues={issues?.filter((i) => !i.issue_module) ?? []}
         handleOnSubmit={handleAddIssuesToModule}
-      />
-      <DeleteModuleModal
-        isOpen={
-          moduleDeleteModal &&
-          !!selectedModuleForDelete &&
-          selectedModuleForDelete.actionType === "delete"
-        }
-        setIsOpen={setModuleDeleteModal}
-        data={selectedModuleForDelete}
       />
       <AppLayout
         breadcrumbs={
@@ -271,7 +215,7 @@ const SingleModule: React.FC<UserAuth> = (props) => {
           module={moduleDetails}
           isOpen={moduleSidebar}
           moduleIssues={moduleIssues}
-          handleDeleteModule={handleDeleteModule}
+          userAuth={props}
         />
       </AppLayout>
     </IssueViewContextProvider>

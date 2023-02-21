@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 
@@ -13,9 +13,10 @@ import { Popover, Listbox, Transition } from "@headlessui/react";
 // hooks
 import useToast from "hooks/use-toast";
 // services
-import issuesServices from "services/issues.service";
+import issuesService from "services/issues.service";
 import modulesService from "services/modules.service";
 // components
+import { LinkModal, LinksList } from "components/core";
 import {
   DeleteIssueModal,
   SidebarAssigneeSelect,
@@ -38,11 +39,12 @@ import {
   TrashIcon,
   PlusIcon,
   XMarkIcon,
+  RectangleGroupIcon,
 } from "@heroicons/react/24/outline";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import type { ICycle, IIssue, IIssueLabels, IModule, UserAuth } from "types";
+import type { ICycle, IIssue, IIssueLabels, IIssueLink, IModule, UserAuth } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS, PROJECT_ISSUES_LIST, ISSUE_DETAILS } from "constants/fetch-keys";
 
@@ -68,6 +70,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
 }) => {
   const [createLabelForm, setCreateLabelForm] = useState(false);
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
+  const [linkModal, setLinkModal] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
@@ -79,14 +82,14 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
       ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
       : null,
     workspaceSlug && projectId
-      ? () => issuesServices.getIssues(workspaceSlug as string, projectId as string)
+      ? () => issuesService.getIssues(workspaceSlug as string, projectId as string)
       : null
   );
 
   const { data: issueLabels, mutate: issueLabelMutate } = useSWR<IIssueLabels[]>(
     workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => issuesServices.getIssueLabels(workspaceSlug as string, projectId as string)
+      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -103,7 +106,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
 
   const handleNewLabel = (formData: any) => {
     if (!workspaceSlug || !projectId || isSubmitting) return;
-    issuesServices
+    issuesService
       .createIssueLabel(workspaceSlug as string, projectId as string, formData)
       .then((res) => {
         reset(defaultValues);
@@ -117,7 +120,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
     (cycleDetail: ICycle) => {
       if (!workspaceSlug || !projectId || !issueDetail) return;
 
-      issuesServices
+      issuesService
         .addIssueToCycle(workspaceSlug as string, projectId as string, cycleDetail.id, {
           issues: [issueDetail.id],
         })
@@ -143,10 +146,63 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
     [workspaceSlug, projectId, issueId, issueDetail]
   );
 
+  const handleCreateLink = async (formData: IIssueLink) => {
+    if (!workspaceSlug || !projectId || !issueDetail) return;
+
+    const previousLinks = issueDetail?.issue_link.map((l) => ({ title: l.title, url: l.url }));
+
+    const payload: Partial<IIssue> = {
+      links_list: [...(previousLinks ?? []), formData],
+    };
+
+    await issuesService
+      .patchIssue(workspaceSlug as string, projectId as string, issueDetail.id, payload)
+      .then((res) => {
+        mutate(ISSUE_DETAILS(issueDetail.id as string));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const handleDeleteLink = async (linkId: string) => {
+    if (!workspaceSlug || !projectId || !issueDetail) return;
+
+    const updatedLinks = issueDetail.issue_link.filter((l) => l.id !== linkId);
+
+    mutate<IIssue>(
+      ISSUE_DETAILS(issueDetail.id as string),
+      (prevData) => ({ ...(prevData as IIssue), issue_link: updatedLinks }),
+      false
+    );
+
+    await issuesService
+      .patchIssue(workspaceSlug as string, projectId as string, issueDetail.id, {
+        links_list: updatedLinks,
+      })
+      .then((res) => {
+        mutate(ISSUE_DETAILS(issueDetail.id as string));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  useEffect(() => {
+    if (!createLabelForm) return;
+
+    reset();
+  }, [createLabelForm, reset]);
+
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   return (
     <>
+      <LinkModal
+        isOpen={linkModal}
+        handleClose={() => setLinkModal(false)}
+        onFormSubmit={handleCreateLink}
+      />
       <DeleteIssueModal
         handleClose={() => setDeleteIssueModal(false)}
         isOpen={deleteIssueModal}
@@ -215,7 +271,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
               control={control}
               submitChanges={submitChanges}
               issuesList={
-                issues?.results.filter(
+                issues?.filter(
                   (i) =>
                     i.id !== issueDetail?.id &&
                     i.id !== issueDetail?.parent &&
@@ -243,13 +299,13 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
             />
             <SidebarBlockerSelect
               submitChanges={submitChanges}
-              issuesList={issues?.results.filter((i) => i.id !== issueDetail?.id) ?? []}
+              issuesList={issues?.filter((i) => i.id !== issueDetail?.id) ?? []}
               watch={watchIssue}
               userAuth={userAuth}
             />
             <SidebarBlockedSelect
               submitChanges={submitChanges}
-              issuesList={issues?.results.filter((i) => i.id !== issueDetail?.id) ?? []}
+              issuesList={issues?.filter((i) => i.id !== issueDetail?.id) ?? []}
               watch={watchIssue}
               userAuth={userAuth}
             />
@@ -290,7 +346,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
             />
           </div>
         </div>
-        <div className="space-y-3 pt-3">
+        <div className="space-y-3 py-3">
           <div className="flex items-start justify-between">
             <div className="flex basis-1/2 items-center gap-x-2 text-sm">
               <TagIcon className="h-4 w-4" />
@@ -298,30 +354,31 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
             </div>
             <div className="basis-1/2">
               <div className="flex flex-wrap gap-1">
-                {watchIssue("labels_list")?.map((label) => {
-                  const singleLabel = issueLabels?.find((l) => l.id === label);
+                {watchIssue("labels_list")?.map((labelId) => {
+                  const label = issueLabels?.find((l) => l.id === labelId);
 
-                  if (!singleLabel) return null;
-
-                  return (
-                    <span
-                      key={singleLabel.id}
-                      className="group flex cursor-pointer items-center gap-1 rounded-2xl border px-1 py-0.5 text-xs hover:border-red-500 hover:bg-red-50"
-                      onClick={() => {
-                        const updatedLabels = watchIssue("labels_list")?.filter((l) => l !== label);
-                        submitChanges({
-                          labels_list: updatedLabels,
-                        });
-                      }}
-                    >
+                  if (label)
+                    return (
                       <span
-                        className="h-2 w-2 flex-shrink-0 rounded-full"
-                        style={{ backgroundColor: singleLabel?.color ?? "green" }}
-                      />
-                      {singleLabel.name}
-                      <XMarkIcon className="h-2 w-2 group-hover:text-red-500" />
-                    </span>
-                  );
+                        key={label.id}
+                        className="group flex cursor-pointer items-center gap-1 rounded-2xl border px-1 py-0.5 text-xs hover:border-red-500 hover:bg-red-50"
+                        onClick={() => {
+                          const updatedLabels = watchIssue("labels_list")?.filter(
+                            (l) => l !== labelId
+                          );
+                          submitChanges({
+                            labels_list: updatedLabels,
+                          });
+                        }}
+                      >
+                        <span
+                          className="h-2 w-2 flex-shrink-0 rounded-full"
+                          style={{ backgroundColor: label?.color ?? "black" }}
+                        />
+                        {label.name}
+                        <XMarkIcon className="h-2 w-2 group-hover:text-red-500" />
+                      </span>
+                    );
                 })}
                 <Controller
                   control={control}
@@ -336,80 +393,121 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                       disabled={isNotAllowed}
                     >
                       {({ open }) => (
-                        <>
-                          <Listbox.Label className="sr-only">Label</Listbox.Label>
-                          <div className="relative">
-                            <Listbox.Button
-                              className={`flex ${
-                                isNotAllowed
-                                  ? "cursor-not-allowed"
-                                  : "cursor-pointer hover:bg-gray-100"
-                              } items-center gap-2 rounded-2xl border px-2 py-0.5 text-xs`}
-                            >
-                              Select Label
-                            </Listbox.Button>
+                        <div className="relative">
+                          <Listbox.Button
+                            className={`flex ${
+                              isNotAllowed
+                                ? "cursor-not-allowed"
+                                : "cursor-pointer hover:bg-gray-100"
+                            } items-center gap-2 rounded-2xl border px-2 py-0.5 text-xs`}
+                          >
+                            Select Label
+                          </Listbox.Button>
 
-                            <Transition
-                              show={open}
-                              as={React.Fragment}
-                              leave="transition ease-in duration-100"
-                              leaveFrom="opacity-100"
-                              leaveTo="opacity-0"
-                            >
-                              <Listbox.Options className="absolute right-0 z-10 mt-1 max-h-28 w-40 overflow-auto rounded-md bg-white py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                <div className="py-1">
-                                  {issueLabels ? (
-                                    issueLabels.length > 0 ? (
-                                      issueLabels.map((label: IIssueLabels) => (
-                                        <Listbox.Option
-                                          key={label.id}
-                                          className={({ active, selected }) =>
-                                            `${
-                                              active || selected ? "bg-indigo-50" : ""
-                                            } relative flex cursor-pointer select-none items-center gap-2 truncate p-2 text-gray-900`
-                                          }
-                                          value={label.id}
-                                        >
-                                          <span
-                                            className="h-2 w-2 flex-shrink-0 rounded-full"
-                                            style={{ backgroundColor: label.color ?? "green" }}
-                                          />
-                                          {label.name}
-                                        </Listbox.Option>
-                                      ))
-                                    ) : (
-                                      <div className="text-center">No labels found</div>
-                                    )
+                          <Transition
+                            show={open}
+                            as={React.Fragment}
+                            leave="transition ease-in duration-100"
+                            leaveFrom="opacity-100"
+                            leaveTo="opacity-0"
+                          >
+                            <Listbox.Options className="absolute right-0 z-10 mt-1 max-h-28 w-40 overflow-auto rounded-md bg-white py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                              <div className="py-1">
+                                {issueLabels ? (
+                                  issueLabels.length > 0 ? (
+                                    issueLabels.map((label: IIssueLabels) => {
+                                      const children = issueLabels?.filter(
+                                        (l) => l.parent === label.id
+                                      );
+
+                                      if (children.length === 0) {
+                                        if (!label.parent)
+                                          return (
+                                            <Listbox.Option
+                                              key={label.id}
+                                              className={({ active, selected }) =>
+                                                `${active || selected ? "bg-indigo-50" : ""} ${
+                                                  selected ? "font-medium" : ""
+                                                } flex cursor-pointer select-none items-center gap-2 truncate p-2 text-gray-900`
+                                              }
+                                              value={label.id}
+                                            >
+                                              <span
+                                                className="h-2 w-2 flex-shrink-0 rounded-full"
+                                                style={{
+                                                  backgroundColor:
+                                                    label.color && label.color !== ""
+                                                      ? label.color
+                                                      : "#000",
+                                                }}
+                                              />
+                                              {label.name}
+                                            </Listbox.Option>
+                                          );
+                                      } else
+                                        return (
+                                          <div className="bg-gray-50 border-y border-gray-400">
+                                            <div className="flex select-none font-medium items-center gap-2 truncate p-2 text-gray-900">
+                                              <RectangleGroupIcon className="h-3 w-3" />{" "}
+                                              {label.name}
+                                            </div>
+                                            <div>
+                                              {children.map((child) => (
+                                                <Listbox.Option
+                                                  key={child.id}
+                                                  className={({ active, selected }) =>
+                                                    `${active || selected ? "bg-indigo-50" : ""} ${
+                                                      selected ? "font-medium" : ""
+                                                    } flex cursor-pointer select-none items-center gap-2 truncate p-2 text-gray-900`
+                                                  }
+                                                  value={child.id}
+                                                >
+                                                  <span
+                                                    className="h-2 w-2 flex-shrink-0 rounded-full"
+                                                    style={{
+                                                      backgroundColor: child?.color ?? "black",
+                                                    }}
+                                                  />
+                                                  {child.name}
+                                                </Listbox.Option>
+                                              ))}
+                                            </div>
+                                          </div>
+                                        );
+                                    })
                                   ) : (
-                                    <Spinner />
-                                  )}
-                                </div>
-                              </Listbox.Options>
-                            </Transition>
-                          </div>
-                        </>
+                                    <div className="text-center">No labels found</div>
+                                  )
+                                ) : (
+                                  <Spinner />
+                                )}
+                              </div>
+                            </Listbox.Options>
+                          </Transition>
+                        </div>
                       )}
                     </Listbox>
                   )}
                 />
-                <button
-                  type="button"
-                  className={`flex ${
-                    isNotAllowed ? "cursor-not-allowed" : "cursor-pointer hover:bg-gray-100"
-                  } items-center gap-1 rounded-2xl border px-2 py-0.5 text-xs`}
-                  onClick={() => setCreateLabelForm((prevData) => !prevData)}
-                  disabled={isNotAllowed}
-                >
-                  {createLabelForm ? (
-                    <>
-                      <XMarkIcon className="h-3 w-3" /> Cancel
-                    </>
-                  ) : (
-                    <>
-                      <PlusIcon className="h-3 w-3" /> New
-                    </>
-                  )}
-                </button>
+                {!isNotAllowed && (
+                  <button
+                    type="button"
+                    className={`flex ${
+                      isNotAllowed ? "cursor-not-allowed" : "cursor-pointer hover:bg-gray-100"
+                    } items-center gap-1 rounded-2xl border px-2 py-0.5 text-xs`}
+                    onClick={() => setCreateLabelForm((prevData) => !prevData)}
+                  >
+                    {createLabelForm ? (
+                      <>
+                        <XMarkIcon className="h-3 w-3" /> Cancel
+                      </>
+                    ) : (
+                      <>
+                        <PlusIcon className="h-3 w-3" /> New
+                      </>
+                    )}
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -426,7 +524,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                           <span
                             className="h-5 w-5 rounded"
                             style={{
-                              backgroundColor: watch("color") ?? "green",
+                              backgroundColor: watch("color") ?? "black",
                             }}
                           />
                         )}
@@ -477,6 +575,29 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
               </Button>
             </form>
           )}
+        </div>
+        <div className="py-1 text-xs">
+          <div className="flex items-center justify-between gap-2">
+            <h4>Links</h4>
+            {!isNotAllowed && (
+              <button
+                type="button"
+                className="grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-100"
+                onClick={() => setLinkModal(true)}
+              >
+                <PlusIcon className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+          <div className="mt-2 space-y-2">
+            {issueDetail?.issue_link && issueDetail.issue_link.length > 0 ? (
+              <LinksList
+                links={issueDetail.issue_link}
+                handleDeleteLink={handleDeleteLink}
+                userAuth={userAuth}
+              />
+            ) : null}
+          </div>
         </div>
       </div>
     </>

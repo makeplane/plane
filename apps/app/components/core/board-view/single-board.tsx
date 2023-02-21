@@ -25,10 +25,13 @@ type Props = {
   };
   selectedGroup: NestedKeyOf<IIssue> | null;
   members: IProjectMember[] | undefined;
+  handleEditIssue: (issue: IIssue) => void;
   addIssueToState: () => void;
   handleDeleteIssue: (issue: IIssue) => void;
   openIssuesListModal?: (() => void) | null;
-  orderBy: NestedKeyOf<IIssue> | "manual" | null;
+  orderBy: NestedKeyOf<IIssue> | null;
+  handleTrashBox: (isDragging: boolean) => void;
+  removeIssue: ((bridgeId: string) => void) | null;
   userAuth: UserAuth;
 };
 
@@ -39,10 +42,13 @@ export const SingleBoard: React.FC<Props> = ({
   groupedByIssues,
   selectedGroup,
   members,
+  handleEditIssue,
   addIssueToState,
   handleDeleteIssue,
   openIssuesListModal,
   orderBy,
+  handleTrashBox,
+  removeIssue,
   userAuth,
 }) => {
   // collapse/expand
@@ -53,11 +59,6 @@ export const SingleBoard: React.FC<Props> = ({
 
   const [properties] = useIssuesProperties(workspaceSlug as string, projectId as string);
 
-  const createdBy =
-    selectedGroup === "created_by"
-      ? members?.find((m) => m.member.id === groupTitle)?.member.first_name ?? "loading..."
-      : null;
-
   if (selectedGroup === "priority")
     groupTitle === "high"
       ? (bgColor = "#dc2626")
@@ -67,43 +68,79 @@ export const SingleBoard: React.FC<Props> = ({
       ? (bgColor = "#22c55e")
       : (bgColor = "#ff0000");
 
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+
   return (
     <div className={`h-full flex-shrink-0 rounded ${!isCollapsed ? "" : "w-80 border bg-gray-50"}`}>
       <div className={`${!isCollapsed ? "" : "flex h-full flex-col space-y-3 overflow-y-auto"}`}>
         <BoardHeader
           addIssueToState={addIssueToState}
           bgColor={bgColor}
-          createdBy={createdBy}
+          selectedGroup={selectedGroup}
           groupTitle={groupTitle}
           groupedByIssues={groupedByIssues}
           isCollapsed={isCollapsed}
           setIsCollapsed={setIsCollapsed}
+          members={members}
         />
         <StrictModeDroppable key={groupTitle} droppableId={groupTitle}>
           {(provided, snapshot) => (
             <div
-              className={`relative mt-3 h-full space-y-3 px-3 pb-3 ${
+              className={`relative mt-3 h-full px-3 pb-3 ${
                 snapshot.isDraggingOver ? "bg-indigo-50 bg-opacity-50" : ""
               } ${!isCollapsed ? "hidden" : "block"}`}
               ref={provided.innerRef}
               {...provided.droppableProps}
             >
+              {orderBy !== "sort_order" && (
+                <>
+                  <div
+                    className={`absolute ${
+                      snapshot.isDraggingOver ? "block" : "hidden"
+                    } top-0 left-0 h-full w-full bg-indigo-200 opacity-50 pointer-events-none z-[99999998]`}
+                  />
+                  <div
+                    className={`absolute ${
+                      snapshot.isDraggingOver ? "block" : "hidden"
+                    } top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-xs whitespace-nowrap bg-white p-2 rounded pointer-events-none z-[99999999]`}
+                  >
+                    This board is ordered by {orderBy}
+                  </div>
+                </>
+              )}
               {groupedByIssues[groupTitle].map((issue, index: number) => (
-                <SingleBoardIssue
-                  key={index}
+                <Draggable
+                  key={issue.id}
+                  draggableId={issue.id}
                   index={index}
-                  type={type}
-                  issue={issue}
-                  selectedGroup={selectedGroup}
-                  properties={properties}
-                  handleDeleteIssue={handleDeleteIssue}
-                  orderBy={orderBy}
-                  userAuth={userAuth}
-                />
+                  isDragDisabled={
+                    isNotAllowed || selectedGroup === "created_by" || selectedGroup === "assignees"
+                  }
+                >
+                  {(provided, snapshot) => (
+                    <SingleBoardIssue
+                      key={index}
+                      provided={provided}
+                      snapshot={snapshot}
+                      type={type}
+                      issue={issue}
+                      selectedGroup={selectedGroup}
+                      properties={properties}
+                      editIssue={() => handleEditIssue(issue)}
+                      handleDeleteIssue={handleDeleteIssue}
+                      orderBy={orderBy}
+                      handleTrashBox={handleTrashBox}
+                      removeIssue={() => {
+                        removeIssue && removeIssue(issue.bridge);
+                      }}
+                      userAuth={userAuth}
+                    />
+                  )}
+                </Draggable>
               ))}
               <span
                 style={{
-                  display: orderBy === "manual" ? "inline" : "none",
+                  display: orderBy === "sort_order" ? "inline" : "none",
                 }}
               >
                 {provided.placeholder}

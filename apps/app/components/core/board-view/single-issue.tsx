@@ -1,21 +1,21 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import useSWR, { mutate } from "swr";
+import { mutate } from "swr";
 
 // react-beautiful-dnd
 import {
-  Draggable,
+  DraggableProvided,
   DraggableStateSnapshot,
   DraggingStyle,
   NotDraggingStyle,
 } from "react-beautiful-dnd";
-// constants
-import { TrashIcon } from "@heroicons/react/24/outline";
 // services
 import issuesService from "services/issues.service";
+// hooks
+import useToast from "hooks/use-toast";
 // components
 import {
   ViewAssigneeSelect,
@@ -23,11 +23,14 @@ import {
   ViewPrioritySelect,
   ViewStateSelect,
 } from "components/issues/view-select";
+// ui
+import { CustomMenu } from "components/ui";
+// helpers
+import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import {
   CycleIssueResponse,
   IIssue,
-  IssueResponse,
   ModuleIssueResponse,
   NestedKeyOf,
   Properties,
@@ -37,28 +40,38 @@ import {
 import { CYCLE_ISSUES, MODULE_ISSUES, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 
 type Props = {
-  index: number;
   type?: string;
+  provided: DraggableProvided;
+  snapshot: DraggableStateSnapshot;
   issue: IIssue;
   selectedGroup: NestedKeyOf<IIssue> | null;
   properties: Properties;
+  editIssue: () => void;
+  removeIssue?: (() => void) | null;
   handleDeleteIssue: (issue: IIssue) => void;
-  orderBy: NestedKeyOf<IIssue> | "manual" | null;
+  orderBy: NestedKeyOf<IIssue> | null;
+  handleTrashBox: (isDragging: boolean) => void;
   userAuth: UserAuth;
 };
 
 export const SingleBoardIssue: React.FC<Props> = ({
-  index,
   type,
+  provided,
+  snapshot,
   issue,
   selectedGroup,
   properties,
+  editIssue,
+  removeIssue,
   handleDeleteIssue,
   orderBy,
+  handleTrashBox,
   userAuth,
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+
+  const { setToastAlert } = useToast();
 
   const partialUpdateIssue = useCallback(
     (formData: Partial<IIssue>) => {
@@ -106,15 +119,15 @@ export const SingleBoardIssue: React.FC<Props> = ({
           false
         );
 
-      mutate<IssueResponse>(
+      mutate<IIssue[]>(
         PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
-        (prevData) => ({
-          ...(prevData as IssueResponse),
-          results: (prevData?.results ?? []).map((p) => {
+        (prevData) =>
+          (prevData ?? []).map((p) => {
             if (p.id === issue.id) return { ...p, ...formData };
+
             return p;
           }),
-        }),
+
         false
       );
 
@@ -137,7 +150,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
     style: DraggingStyle | NotDraggingStyle | undefined,
     snapshot: DraggableStateSnapshot
   ) {
-    if (orderBy === "manual") return style;
+    if (orderBy === "sort_order") return style;
     if (!snapshot.isDragging) return {};
     if (!snapshot.isDropAnimating) {
       return style;
@@ -149,92 +162,111 @@ export const SingleBoardIssue: React.FC<Props> = ({
     };
   }
 
+  const handleCopyText = () => {
+    const originURL =
+      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`)
+      .then(() => {
+        setToastAlert({
+          type: "success",
+          title: "Issue link copied to clipboard",
+        });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Some error occurred",
+        });
+      });
+  };
+
+  useEffect(() => {
+    if (snapshot.isDragging) handleTrashBox(snapshot.isDragging);
+  }, [snapshot, handleTrashBox]);
+
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   return (
-    <Draggable
-      key={issue.id}
-      draggableId={issue.id}
-      index={index}
-      isDragDisabled={selectedGroup === "created_by"}
+    <div
+      className={`rounded border bg-white shadow-sm mb-3 ${
+        snapshot.isDragging ? "border-theme bg-indigo-50 shadow-lg" : ""
+      }`}
+      ref={provided.innerRef}
+      {...provided.draggableProps}
+      {...provided.dragHandleProps}
+      style={getStyle(provided.draggableProps.style, snapshot)}
     >
-      {(provided, snapshot) => (
-        <div
-          className={`rounded border bg-white shadow-sm ${
-            snapshot.isDragging ? "border-theme bg-indigo-50 shadow-lg" : ""
-          }`}
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-          style={getStyle(provided.draggableProps.style, snapshot)}
-        >
-          <div className="group/card relative select-none p-2">
-            {!isNotAllowed && (
-              <div className="absolute top-1.5 right-1.5 z-10 opacity-0 group-hover/card:opacity-100">
-                <button
-                  type="button"
-                  className="grid h-7 w-7 place-items-center rounded bg-white p-1 text-red-500 outline-none duration-300 hover:bg-red-50"
-                  onClick={() => handleDeleteIssue(issue)}
-                >
-                  <TrashIcon className="h-4 w-4" />
-                </button>
+      <div className="group/card relative select-none p-2">
+        {!isNotAllowed && (
+          <div className="absolute top-1.5 right-1.5 z-10 opacity-0 group-hover/card:opacity-100">
+            {type && !isNotAllowed && (
+              <CustomMenu width="auto" ellipsis>
+                <CustomMenu.MenuItem onClick={editIssue}>Edit</CustomMenu.MenuItem>
+                {type !== "issue" && removeIssue && (
+                  <CustomMenu.MenuItem onClick={removeIssue}>
+                    <>Remove from {type}</>
+                  </CustomMenu.MenuItem>
+                )}
+                <CustomMenu.MenuItem onClick={() => handleDeleteIssue(issue)}>
+                  Delete permanently
+                </CustomMenu.MenuItem>
+                <CustomMenu.MenuItem onClick={handleCopyText}>Copy issue link</CustomMenu.MenuItem>
+              </CustomMenu>
+            )}
+          </div>
+        )}
+        <Link href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}>
+          <a>
+            {properties.key && (
+              <div className="mb-2 text-xs font-medium text-gray-500">
+                {issue.project_detail.identifier}-{issue.sequence_id}
               </div>
             )}
-            <Link href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}>
-              <a>
-                {properties.key && (
-                  <div className="mb-2 text-xs font-medium text-gray-500">
-                    {issue.project_detail.identifier}-{issue.sequence_id}
-                  </div>
-                )}
-                <h5
-                  className="mb-3 text-sm group-hover:text-theme"
-                  style={{ lineClamp: 3, WebkitLineClamp: 3 }}
-                >
-                  {issue.name}
-                </h5>
-              </a>
-            </Link>
-            <div className="flex flex-wrap items-center gap-x-1 gap-y-2 text-xs">
-              {properties.priority && (
-                <ViewPrioritySelect
-                  issue={issue}
-                  partialUpdateIssue={partialUpdateIssue}
-                  isNotAllowed={isNotAllowed}
-                  position="left"
-                />
-              )}
-              {properties.state && (
-                <ViewStateSelect
-                  issue={issue}
-                  partialUpdateIssue={partialUpdateIssue}
-                  isNotAllowed={isNotAllowed}
-                />
-              )}
-              {properties.due_date && (
-                <ViewDueDateSelect
-                  issue={issue}
-                  partialUpdateIssue={partialUpdateIssue}
-                  isNotAllowed={isNotAllowed}
-                />
-              )}
-              {properties.sub_issue_count && (
-                <div className="flex flex-shrink-0 items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
-                  {issue.sub_issues_count}{" "}
-                  {issue.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
-                </div>
-              )}
-              {properties.assignee && (
-                <ViewAssigneeSelect
-                  issue={issue}
-                  partialUpdateIssue={partialUpdateIssue}
-                  isNotAllowed={isNotAllowed}
-                />
-              )}
+            <h5
+              className="mb-3 text-sm group-hover:text-theme"
+              style={{ lineClamp: 3, WebkitLineClamp: 3 }}
+            >
+              {issue.name}
+            </h5>
+          </a>
+        </Link>
+        <div className="flex flex-wrap items-center gap-x-1 gap-y-2 text-xs">
+          {properties.priority && selectedGroup !== "priority" && (
+            <ViewPrioritySelect
+              issue={issue}
+              partialUpdateIssue={partialUpdateIssue}
+              isNotAllowed={isNotAllowed}
+              position="left"
+            />
+          )}
+          {properties.state && selectedGroup !== "state_detail.name" && (
+            <ViewStateSelect
+              issue={issue}
+              partialUpdateIssue={partialUpdateIssue}
+              isNotAllowed={isNotAllowed}
+            />
+          )}
+          {properties.due_date && (
+            <ViewDueDateSelect
+              issue={issue}
+              partialUpdateIssue={partialUpdateIssue}
+              isNotAllowed={isNotAllowed}
+            />
+          )}
+          {properties.sub_issue_count && (
+            <div className="flex flex-shrink-0 items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+              {issue.sub_issues_count} {issue.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
             </div>
-          </div>
+          )}
+          {properties.assignee && (
+            <ViewAssigneeSelect
+              issue={issue}
+              partialUpdateIssue={partialUpdateIssue}
+              isNotAllowed={isNotAllowed}
+            />
+          )}
         </div>
-      )}
-    </Draggable>
+      </div>
+    </div>
   );
 };

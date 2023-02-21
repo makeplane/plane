@@ -7,6 +7,8 @@ import { mutate } from "swr";
 
 // services
 import issuesService from "services/issues.service";
+// hooks
+import useToast from "hooks/use-toast";
 // components
 import {
   ViewAssigneeSelect,
@@ -16,17 +18,12 @@ import {
 } from "components/issues/view-select";
 // ui
 import { CustomMenu } from "components/ui";
+// helpers
+import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import {
-  CycleIssueResponse,
-  IIssue,
-  IssueResponse,
-  ModuleIssueResponse,
-  Properties,
-  UserAuth,
-} from "types";
+import { CycleIssueResponse, IIssue, ModuleIssueResponse, Properties, UserAuth } from "types";
 // fetch-keys
-import { CYCLE_ISSUES, MODULE_ISSUES, PROJECT_ISSUES_LIST, STATE_LIST } from "constants/fetch-keys";
+import { CYCLE_ISSUES, MODULE_ISSUES, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 
 type Props = {
   type?: string;
@@ -49,7 +46,7 @@ export const SingleListIssue: React.FC<Props> = ({
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
-
+  const { setToastAlert } = useToast();
   const partialUpdateIssue = useCallback(
     (formData: Partial<IIssue>) => {
       if (!workspaceSlug || !projectId) return;
@@ -96,15 +93,15 @@ export const SingleListIssue: React.FC<Props> = ({
           false
         );
 
-      mutate<IssueResponse>(
+      mutate<IIssue[]>(
         PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
-        (prevData) => ({
-          ...(prevData as IssueResponse),
-          results: (prevData?.results ?? []).map((p) => {
+        (prevData) =>
+          (prevData ?? []).map((p) => {
             if (p.id === issue.id) return { ...p, ...formData };
+
             return p;
           }),
-        }),
+
         false
       );
 
@@ -123,6 +120,23 @@ export const SingleListIssue: React.FC<Props> = ({
     [workspaceSlug, projectId, cycleId, moduleId, issue]
   );
 
+  const handleCopyText = () => {
+    const originURL =
+      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`)
+      .then(() => {
+        setToastAlert({
+          type: "success",
+          title: "Issue link copied to clipboard",
+        });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Some error occurred",
+        });
+      });
+  };
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   return (
@@ -190,6 +204,7 @@ export const SingleListIssue: React.FC<Props> = ({
             <CustomMenu.MenuItem onClick={() => handleDeleteIssue(issue)}>
               Delete permanently
             </CustomMenu.MenuItem>
+            <CustomMenu.MenuItem onClick={handleCopyText}>Copy issue link</CustomMenu.MenuItem>
           </CustomMenu>
         )}
       </div>

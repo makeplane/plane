@@ -1,17 +1,18 @@
 export interface IState {
   readonly id: string;
-  readonly created_at: Date;
-  readonly updated_at: Date;
-  name: string;
-  description: string;
   color: string;
-  readonly slug: string;
+  readonly created_at: Date;
   readonly created_by: string;
-  readonly updated_by: string;
-  project: string;
-  workspace: string;
-  sequence: number;
+  default: boolean;
+  description: string;
   group: "backlog" | "unstarted" | "started" | "completed" | "cancelled";
+  name: string;
+  project: string;
+  sequence: number;
+  readonly slug: string;
+  readonly updated_at: Date;
+  readonly updated_by: string;
+  workspace: string;
 }
 
 export interface StateResponse {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 // ui
 import { CheckCircleIcon } from "@heroicons/react/20/solid";
@@ -6,6 +6,7 @@ import { Button, Input } from "components/ui";
 // services
 import authenticationService from "services/authentication.service";
 import useToast from "hooks/use-toast";
+import useTimer from "hooks/use-timer";
 // icons
 
 // types
@@ -17,12 +18,19 @@ type EmailCodeFormValues = {
 
 export const EmailCodeForm = ({ onSuccess }: any) => {
   const [codeSent, setCodeSent] = useState(false);
+  const [codeResent, setCodeResent] = useState(false);
+  const [isCodeResending, setIsCodeResending] = useState(false);
+  const [errorResendingCode, setErrorResendingCode] = useState(false);
+
   const { setToastAlert } = useToast();
+  const { timer: resendCodeTimer, setTimer: setResendCodeTimer } = useTimer();
+
   const {
     register,
     handleSubmit,
     setError,
     setValue,
+    getValues,
     formState: { errors, isSubmitting, isValid, isDirty },
   } = useForm<EmailCodeFormValues>({
     defaultValues: {
@@ -34,30 +42,38 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
     reValidateMode: "onChange",
   });
 
-  const onSubmit = ({ email }: EmailCodeFormValues) => {
-    authenticationService
+  const isResendDisabled =
+    resendCodeTimer > 0 || isCodeResending || isSubmitting || errorResendingCode;
+
+  const onSubmit = async ({ email }: EmailCodeFormValues) => {
+    setErrorResendingCode(false);
+    await authenticationService
       .emailCode({ email })
       .then((res) => {
         setValue("key", res.key);
         setCodeSent(true);
       })
       .catch((err) => {
-        console.log(err);
+        setErrorResendingCode(true);
+        setToastAlert({
+          title: "Oops!",
+          type: "error",
+          message: err?.error,
+        });
       });
   };
 
-  const handleSignin = (formData: EmailCodeFormValues) => {
-    authenticationService
+  const handleSignin = async (formData: EmailCodeFormValues) => {
+    await authenticationService
       .magicSignIn(formData)
       .then((response) => {
         onSuccess(response);
       })
       .catch((error) => {
-        console.log(error);
         setToastAlert({
           title: "Oops!",
           type: "error",
-          message: "Enter the correct code to sign in",
+          message: error?.response?.data?.error ?? "Enter the correct code to sign in",
         });
         setError("token" as keyof EmailCodeFormValues, {
           type: "manual",
@@ -66,13 +82,16 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
       });
   };
 
+  const emailOld = getValues("email");
+
+  useEffect(() => {
+    setErrorResendingCode(false);
+  }, [emailOld]);
+
   return (
     <>
-      <form
-        className="mt-5 space-y-5"
-        onSubmit={codeSent ? handleSubmit(handleSignin) : handleSubmit(onSubmit)}
-      >
-        {codeSent && (
+      <form className="mt-5 space-y-5">
+        {(codeSent || codeResent) && (
           <div className="rounded-md bg-green-50 p-4">
             <div className="flex">
               <div className="flex-shrink-0">
@@ -80,7 +99,9 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
               </div>
               <div className="ml-3">
                 <p className="text-sm font-medium text-green-800">
-                  Please check your mail for code.
+                  {codeResent
+                    ? "Please check your mail for new code."
+                    : "Please check your mail for code."}
                 </p>
               </div>
             </div>
@@ -117,16 +138,59 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
               error={errors.token}
               placeholder="Enter code"
             />
+            <button
+              type="button"
+              className={`text-xs mt-5 w-full flex justify-end outline-none ${
+                isResendDisabled ? "text-gray-400 cursor-default" : "cursor-pointer text-theme"
+              } `}
+              onClick={() => {
+                setIsCodeResending(true);
+                onSubmit({ email: getValues("email") }).then(() => {
+                  setCodeResent(true);
+                  setIsCodeResending(false);
+                  setResendCodeTimer(30);
+                });
+              }}
+              disabled={isResendDisabled}
+            >
+              {resendCodeTimer > 0 ? (
+                <p className="text-right">
+                  Didn{"'"}t receive code? Get new code in {resendCodeTimer} seconds.
+                </p>
+              ) : isCodeResending ? (
+                "Sending code..."
+              ) : errorResendingCode ? (
+                "Please try again later"
+              ) : (
+                "Resend code"
+              )}
+            </button>
           </div>
         )}
         <div>
-          <Button
-            disabled={isSubmitting || (!isValid && isDirty)}
-            className="w-full text-center"
-            type="submit"
-          >
-            {isSubmitting ? "Signing in..." : codeSent ? "Sign In" : "Continue with Email ID"}
-          </Button>
+          {codeSent ? (
+            <Button
+              type="submit"
+              className="w-full text-center"
+              onClick={handleSubmit(handleSignin)}
+              disabled={isSubmitting || (!isValid && isDirty)}
+            >
+              {isSubmitting ? "Signing in..." : "Sign in"}
+            </Button>
+          ) : (
+            <Button
+              type="submit"
+              className="w-full text-center"
+              onClick={() => {
+                handleSubmit(onSubmit)().then(() => {
+                  setResendCodeTimer(30);
+                });
+              }}
+              disabled={isSubmitting || (!isValid && isDirty)}
+            >
+              {isSubmitting ? "Sending code..." : "Send code"}
+            </Button>
+          )}
         </div>
       </form>
     </>

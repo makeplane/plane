@@ -2,14 +2,13 @@ import { useState, useRef, FC } from "react";
 import { Transition } from "@headlessui/react";
 import Link from "next/link";
 // icons
-import { ArrowLongLeftIcon } from "@heroicons/react/24/outline";
+import { ArrowLongLeftIcon, InboxIcon } from "@heroicons/react/24/outline";
 import {
   QuestionMarkCircleIcon,
   BoltIcon,
   DocumentIcon,
   DiscordIcon,
   GithubIcon,
-  CommentIcon,
 } from "components/icons";
 // hooks
 import useTheme from "hooks/use-theme";
@@ -32,9 +31,9 @@ const helpOptions = [
     Icon: GithubIcon,
   },
   {
-    name: "Chat with us",
+    name: "Email us",
     href: "mailto:hello@plane.so",
-    Icon: CommentIcon,
+    Icon: InboxIcon,
   },
 ];
 

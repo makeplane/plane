@@ -4,8 +4,6 @@ import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 
-// react-hook-form
-import { useForm } from "react-hook-form";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
@@ -18,7 +16,7 @@ import useToast from "hooks/use-toast";
 // components
 import { IssueForm } from "components/issues";
 // types
-import type { IIssue, IssueResponse } from "types";
+import type { IIssue } from "types";
 // fetch keys
 import {
   PROJECT_ISSUES_DETAILS,
@@ -72,11 +70,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
     workspaceSlug ? () => projectService.getProjects(workspaceSlug as string) : null
   );
 
-  const { setError } = useForm<IIssue>({
-    mode: "all",
-    reValidateMode: "onChange",
-  });
-
   useEffect(() => {
     if (projects && projects.length > 0)
       setActiveProject(projects?.find((p) => p.id === projectId)?.id ?? projects?.[0].id ?? null);
@@ -98,15 +91,13 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
             false
           );
         } else
-          mutate<IssueResponse>(
+          mutate<IIssue[]>(
             PROJECT_ISSUES_LIST(workspaceSlug as string, activeProject ?? ""),
-            (prevData) => ({
-              ...(prevData as IssueResponse),
-              results: (prevData?.results ?? []).map((issue) => {
-                if (issue.id === res.id) return { ...issue, sprints: cycleId };
-                return issue;
+            (prevData) =>
+              (prevData ?? []).map((i) => {
+                if (i.id === res.id) return { ...i, sprints: cycleId };
+                return i;
               }),
-            }),
             false
           );
       })
@@ -133,7 +124,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
     await issuesService
       .createIssues(workspaceSlug as string, activeProject ?? "", payload)
       .then((res) => {
-        mutate<IssueResponse>(PROJECT_ISSUES_LIST(workspaceSlug as string, activeProject ?? ""));
+        mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, activeProject ?? ""));
 
         if (payload.cycle && payload.cycle !== "") addIssueToCycle(res.id, payload.cycle);
         if (payload.module && payload.module !== "") addIssueToModule(res.id, payload.module);
@@ -141,30 +132,20 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
         if (!createMore) handleClose();
 
         setToastAlert({
-          title: "Success",
           type: "success",
-          message: "Issue created successfully",
+          title: "Success!",
+          message: "Issue created successfully.",
         });
 
         if (payload.assignees_list?.some((assignee) => assignee === user?.id)) mutate(USER_ISSUE);
 
         if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
       })
-      .catch((err) => {
-        if (err.detail) {
-          setToastAlert({
-            title: "Join the project.",
-            type: "error",
-            message: "Click select to join from projects page to start making changes",
-          });
-        }
-        Object.keys(err).map((key) => {
-          const message = err[key];
-          if (!message) return;
-
-          setError(key as keyof IIssue, {
-            message: Array.isArray(message) ? message.join(", ") : message,
-          });
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Issue could not be created. Please try again.",
         });
       });
   };
@@ -176,15 +157,13 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
         if (isUpdatingSingleIssue) {
           mutate<IIssue>(PROJECT_ISSUES_DETAILS, (prevData) => ({ ...prevData, ...res }), false);
         } else {
-          mutate<IssueResponse>(
+          mutate<IIssue[]>(
             PROJECT_ISSUES_LIST(workspaceSlug as string, activeProject ?? ""),
-            (prevData) => ({
-              ...(prevData as IssueResponse),
-              results: (prevData?.results ?? []).map((issue) => {
-                if (issue.id === res.id) return { ...issue, ...res };
-                return issue;
-              }),
-            })
+            (prevData) =>
+              (prevData ?? []).map((i) => {
+                if (i.id === res.id) return { ...i, ...res };
+                return i;
+              })
           );
         }
 
@@ -194,14 +173,16 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
         if (!createMore) handleClose();
 
         setToastAlert({
-          title: "Success",
           type: "success",
-          message: "Issue updated successfully",
+          title: "Success!",
+          message: "Issue updated successfully.",
         });
       })
-      .catch((err) => {
-        Object.keys(err).map((key) => {
-          setError(key as keyof IIssue, { message: err[key].join(", ") });
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Issue could not be updated. Please try again.",
         });
       });
   };
@@ -211,8 +192,10 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
 
     const payload: Partial<IIssue> = {
       ...formData,
-      description: formData.description ? formData.description : "",
-      description_html: formData.description_html ? formData.description_html : "<p></p>",
+      assignees_list: formData.assignees,
+      labels_list: formData.labels,
+      description: formData.description ?? "",
+      description_html: formData.description_html ?? "<p></p>",
     };
 
     if (!data) await createIssue(payload);
@@ -221,7 +204,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-20" onClose={handleClose}>
+      <Dialog as="div" className="relative z-20" onClose={() => {}}>
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
@@ -247,7 +230,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
             >
               <Dialog.Panel className="relative transform rounded-lg bg-white p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
                 <IssueForm
-                  issues={issues?.results ?? []}
+                  issues={issues ?? []}
                   handleFormSubmit={handleFormSubmit}
                   initialData={prePopulateData}
                   createMore={createMore}

@@ -1,5 +1,7 @@
 import React, { useEffect } from "react";
 
+import { useRouter } from "next/router";
+
 import { mutate } from "swr";
 
 // react-hook-form
@@ -15,15 +17,13 @@ import useToast from "hooks/use-toast";
 // ui
 import { Button, CustomSelect, Input } from "components/ui";
 // types
-import type { IState, StateResponse } from "types";
+import type { IState } from "types";
 // fetch-keys
 import { STATE_LIST } from "constants/fetch-keys";
 // constants
 import { GROUP_CHOICES } from "constants/project";
 
 type Props = {
-  workspaceSlug?: string;
-  projectId?: string;
   data: IState | null;
   onClose: () => void;
   selectedGroup: StateGroup | null;
@@ -37,13 +37,10 @@ const defaultValues: Partial<IState> = {
   group: "backlog",
 };
 
-export const CreateUpdateStateInline: React.FC<Props> = ({
-  workspaceSlug,
-  projectId,
-  data,
-  onClose,
-  selectedGroup,
-}) => {
+export const CreateUpdateStateInline: React.FC<Props> = ({ data, onClose, selectedGroup }) => {
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
+
   const { setToastAlert } = useToast();
 
   const {
@@ -59,16 +56,18 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
   });
 
   useEffect(() => {
-    if (data === null) return;
+    if (!data) return;
+
     reset(data);
   }, [data, reset]);
 
   useEffect(() => {
-    if (!data)
-      reset({
-        ...defaultValues,
-        group: selectedGroup ?? "backlog",
-      });
+    if (data) return;
+
+    reset({
+      ...defaultValues,
+      group: selectedGroup ?? "backlog",
+    });
   }, [selectedGroup, data, reset]);
 
   const handleClose = () => {
@@ -78,14 +77,15 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
 
   const onSubmit = async (formData: IState) => {
     if (!workspaceSlug || !projectId || isSubmitting) return;
+
     const payload: IState = {
       ...formData,
     };
     if (!data) {
       await stateService
-        .createState(workspaceSlug, projectId, { ...payload })
+        .createState(workspaceSlug as string, projectId as string, { ...payload })
         .then((res) => {
-          mutate(STATE_LIST(projectId));
+          mutate(STATE_LIST(projectId as string));
           handleClose();
 
           setToastAlert({
@@ -103,11 +103,11 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
         });
     } else {
       await stateService
-        .updateState(workspaceSlug, projectId, data.id, {
+        .updateState(workspaceSlug as string, projectId as string, data.id, {
           ...payload,
         })
         .then((res) => {
-          mutate(STATE_LIST(projectId));
+          mutate(STATE_LIST(projectId as string));
           handleClose();
 
           setToastAlert({
@@ -141,7 +141,7 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
                   <span
                     className="h-4 w-4 rounded"
                     style={{
-                      backgroundColor: watch("color") ?? "green",
+                      backgroundColor: watch("color") ?? "black",
                     }}
                   />
                 )}
