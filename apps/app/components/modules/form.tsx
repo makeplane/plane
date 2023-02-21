@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // components
@@ -8,9 +10,10 @@ import { Button, CustomDatePicker, Input, TextArea } from "components/ui";
 import { IModule } from "types";
 
 type Props = {
-  handleFormSubmit: (values: Partial<IModule>) => void;
+  handleFormSubmit: (values: Partial<IModule>) => Promise<void>;
   handleClose: () => void;
   status: boolean;
+  data?: IModule;
 };
 
 const defaultValues: Partial<IModule> = {
@@ -21,7 +24,7 @@ const defaultValues: Partial<IModule> = {
   members_list: [],
 };
 
-export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, status }) => {
+export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, status, data }) => {
   const {
     register,
     formState: { errors, isSubmitting },
@@ -39,6 +42,13 @@ export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, sta
       ...defaultValues,
     });
   };
+
+  useEffect(() => {
+    reset({
+      ...defaultValues,
+      ...data,
+    });
+  }, [data, reset]);
 
   return (
     <form onSubmit={handleSubmit(handleCreateUpdateModule)}>

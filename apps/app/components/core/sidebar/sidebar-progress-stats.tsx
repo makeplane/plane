@@ -42,7 +42,7 @@ export const SidebarProgressStats: React.FC<Props> = ({ groupedIssues, issues })
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const [tab, setTab] = useLocalStorage("tab", "Assignees");
+  const { storedValue: tab, setValue: setTab } = useLocalStorage("tab", "Assignees");
 
   const { data: issueLabels } = useSWR<IIssueLabels[]>(
     workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
@@ -58,7 +58,7 @@ export const SidebarProgressStats: React.FC<Props> = ({ groupedIssues, issues })
       : null
   );
 
-  const currentValue = (tab: string) => {
+  const currentValue = (tab: string | null) => {
     switch (tab) {
       case "Assignees":
         return 0;
@@ -66,6 +66,8 @@ export const SidebarProgressStats: React.FC<Props> = ({ groupedIssues, issues })
         return 1;
       case "States":
         return 2;
+      default:
+        return 0;
     }
   };
   return (

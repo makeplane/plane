@@ -19,7 +19,7 @@ import { ChevronRightIcon, PlusIcon, XMarkIcon } from "@heroicons/react/24/outli
 // helpers
 import { orderArrayBy } from "helpers/array.helper";
 // types
-import { IIssue, IssueResponse, UserAuth } from "types";
+import { IIssue, UserAuth } from "types";
 // fetch-keys
 import { PROJECT_ISSUES_LIST, SUB_ISSUES } from "constants/fetch-keys";
 
@@ -68,7 +68,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, userAuth }) => {
             let newSubIssues = [...(prevData as IIssue[])];
 
             data.issues.forEach((issueId: string) => {
-              const issue = issues?.results.find((i) => i.id === issueId);
+              const issue = issues?.find((i) => i.id === issueId);
 
               if (issue) newSubIssues.push(issue);
             });
@@ -80,11 +80,10 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, userAuth }) => {
           false
         );
 
-        mutate<IssueResponse>(
+        mutate<IIssue[]>(
           PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
-          (prevData) => ({
-            ...(prevData as IssueResponse),
-            results: (prevData?.results ?? []).map((p) => {
+          (prevData) =>
+            (prevData ?? []).map((p) => {
               if (data.issues.includes(p.id))
                 return {
                   ...p,
@@ -93,7 +92,6 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, userAuth }) => {
 
               return p;
             }),
-          }),
           false
         );
 
@@ -118,11 +116,10 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, userAuth }) => {
       .then((res) => {
         mutate(SUB_ISSUES(parentIssue.id ?? ""));
 
-        mutate<IssueResponse>(
+        mutate<IIssue[]>(
           PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
-          (prevData) => ({
-            ...(prevData as IssueResponse),
-            results: (prevData?.results ?? []).map((p) => {
+          (prevData) =>
+            (prevData ?? []).map((p) => {
               if (p.id === res.id)
                 return {
                   ...p,
@@ -131,7 +128,6 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, userAuth }) => {
 
               return p;
             }),
-          }),
           false
         );
       })
@@ -160,7 +156,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, userAuth }) => {
         isOpen={subIssuesListModal}
         handleClose={() => setSubIssuesListModal(false)}
         issues={
-          issues?.results.filter(
+          issues?.filter(
             (i) =>
               (i.parent === "" || i.parent === null) &&
               i.id !== parentIssue?.id &&

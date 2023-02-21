@@ -1,4 +1,4 @@
-FROM python:3.8.14-alpine3.16 AS backend
+FROM python:3.11.1-alpine3.17 AS backend
 
 # set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -8,19 +8,19 @@ ENV PIP_DISABLE_PIP_VERSION_CHECK=1
 WORKDIR /code
 
 RUN apk --update --no-cache add \
-    "libpq~=14" \
+    "libpq~=15" \
     "libxslt~=1.1" \
-    "nodejs-current~=18" \
+    "nodejs-current~=19" \
     "xmlsec~=1.2"
 
 COPY requirements.txt ./
 COPY requirements ./requirements
 RUN apk add libffi-dev
 RUN apk --update --no-cache --virtual .build-deps add \
-    "bash~=5.1" \
-    "g++~=11.2" \
-    "gcc~=11.2" \
-    "cargo~=1.60" \
+    "bash~=5.2" \
+    "g++~=12.2" \
+    "gcc~=12.2" \
+    "cargo~=1.64" \
     "git~=2" \
     "make~=4.3" \
     "postgresql13-dev~=13" \
@@ -46,15 +46,16 @@ COPY templates templates/
 
 COPY gunicorn.config.py ./
 USER root
-RUN apk --update --no-cache add "bash~=5.1"
+RUN apk --update --no-cache add "bash~=5.2"
 COPY ./bin ./bin/
 
 RUN chmod +x ./bin/takeoff ./bin/worker
+RUN chmod -R 777 /code
 
 USER captain
 
 # Expose container port and run entry point script
 EXPOSE 8000
 
-CMD [ "./bin/takeoff" ]
+# CMD [ "./bin/takeoff" ]
 

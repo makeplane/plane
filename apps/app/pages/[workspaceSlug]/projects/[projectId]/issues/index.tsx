@@ -55,9 +55,7 @@ const ProjectIssues: NextPage<UserAuth> = (props) => {
         }
         right={
           <div className="flex items-center gap-2">
-            <IssuesFilterView
-              issues={projectIssues?.results.filter((p) => p.parent === null) ?? []}
-            />
+            <IssuesFilterView issues={projectIssues?.filter((p) => p.parent === null) ?? []} />
             <HeaderButton
               Icon={PlusIcon}
               label="Add Issue"
@@ -72,9 +70,9 @@ const ProjectIssues: NextPage<UserAuth> = (props) => {
         }
       >
         {projectIssues ? (
-          projectIssues.count > 0 ? (
+          projectIssues.length > 0 ? (
             <IssuesView
-              issues={projectIssues?.results.filter((p) => p.parent === null) ?? []}
+              issues={projectIssues?.filter((p) => p.parent === null) ?? []}
               userAuth={props}
             />
           ) : (

@@ -4,33 +4,14 @@ RUN apk update
 # Set working directory
 WORKDIR /app
 
-RUN apk add curl
+RUN yarn global add turbo
+COPY . .
 
-
-RUN curl -fsSL "https://github.com/pnpm/pnpm/releases/latest/download/pnpm-linuxstatic-x64" -o /bin/pnpm; chmod +x /bin/pnpm;
-
-ENV PNPM_HOME="pnpm"
-ENV PATH="${PATH}:./pnpm"
-
-COPY ./apps ./apps
-COPY ./package.json ./package.json
-COPY ./.eslintrc.js ./.eslintrc.js
-COPY ./turbo.json ./turbo.json
-COPY ./pnpm-workspace.yaml ./pnpm-workspace.yaml
-COPY ./pnpm-lock.yaml ./pnpm-lock.yaml
-
-RUN pnpm add -g turbo
 RUN turbo prune --scope=app --docker
 
 # Add lockfile and package.json's of isolated subworkspace
 FROM node:18-alpine AS installer
 
-RUN apk add curl
-
-RUN curl -fsSL "https://github.com/pnpm/pnpm/releases/latest/download/pnpm-linuxstatic-x64" -o /bin/pnpm; chmod +x /bin/pnpm;
-
-ENV PNPM_HOME="pnpm"
-ENV PATH="${PATH}:./pnpm"
 
 RUN apk add --no-cache libc6-compat
 RUN apk update
@@ -39,14 +20,14 @@ WORKDIR /app
 # First install the dependencies (as they change less often)
 COPY .gitignore .gitignore
 COPY --from=builder /app/out/json/ .
-COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
-RUN pnpm install
+COPY --from=builder /app/out/yarn.lock ./yarn.lock
+RUN yarn install
 
 # Build the project
 COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
 
-RUN pnpm turbo run build --filter=app...
+RUN yarn turbo run build --filter=app
 
 FROM node:18-alpine AS runner
 WORKDIR /app
@@ -62,8 +43,9 @@ COPY --from=installer /app/apps/app/package.json .
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=installer --chown=captain:plane /app/apps/app/.next/standalone ./
+# COPY --from=installer --chown=captain:plane /app/apps/app/.next/standalone/node_modules ./apps/app/node_modules
 COPY --from=installer --chown=captain:plane /app/apps/app/.next/static ./apps/app/.next/static
 
-EXPOSE 3000
+ENV NEXT_TELEMETRY_DISABLED 1
 
-CMD node apps/app/server.js
+EXPOSE 3000

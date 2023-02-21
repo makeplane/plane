@@ -55,10 +55,13 @@ export const SingleList: React.FC<Props> = ({
 
   let assignees: any;
   if (selectedGroup === "assignees") {
-    assignees = groupTitle.split(",");
-    assignees = assignees
-      .map((a: string) => members?.find((m) => m.member.id === a)?.member.first_name)
-      .join(", ");
+    assignees = groupTitle && groupTitle !== "" ? groupTitle.split(",") : [];
+    assignees =
+      assignees.length > 0
+        ? assignees
+            .map((a: string) => members?.find((m) => m.member.id === a)?.member.first_name)
+            .join(", ")
+        : "No assignee";
   }
 
   return (

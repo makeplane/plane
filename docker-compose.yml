@@ -1,8 +1,19 @@
 version: "3.8"
 
 services:
+  nginx:
+    container_name: nginx
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - 80:80
+    depends_on:
+      # - plane-web
+      - plane-api
   db:
     image: postgres:12-alpine
+    container_name: db
     restart: always
     volumes:
       - pgdata:/var/lib/postgresql/data
@@ -12,31 +23,28 @@ services:
       POSTGRES_PASSWORD: plane
     command: postgres -c 'max_connections=1000'
     ports:
-      - "5432:5432"
-
+      - 5432:5432
   redis:
     image: redis:6.2.7-alpine
+    container_name: redis
     restart: always
     ports:
-      - "6379:6379"
+      - 6379:6379
     volumes:
       - redisdata:/data
-
   plane-web:
-    image: plane-web
-    container_name: plane-frontend
+    container_name: planefrontend
     build:
       context: .
       dockerfile: ./apps/app/Dockerfile.web
     restart: always
+    command:  node apps/app/server.js
     env_file:
       - ./apps/app/.env
     ports:
       - 3000:3000
-
   plane-api:
-    image: plane-api
-    container_name: plane-backend
+    container_name: planebackend
     build:
       context: ./apiserver
       dockerfile: Dockerfile.api
@@ -45,7 +53,6 @@ services:
       - 8000:8000
     env_file:
       - ./apiserver/.env
-
     depends_on:
       - db
       - redis
@@ -53,10 +60,11 @@ services:
     links:
       - db:db
       - redis:redis
-
   plane-worker:
-    image: plane-api
-    container_name: plane-rqworker
+    container_name: planerqworker
+    build:
+      context: ./apiserver
+      dockerfile: Dockerfile.api
     depends_on:
       - redis
       - db
@@ -67,7 +75,6 @@ services:
       - db:db
     env_file:
       - ./apiserver/.env
-
 volumes:
   pgdata:
   redisdata:

@@ -15,7 +15,7 @@ import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
 import { Button } from "components/ui";
 // types
-import type { CycleIssueResponse, IIssue, IssueResponse, ModuleIssueResponse } from "types";
+import type { CycleIssueResponse, IIssue, ModuleIssueResponse } from "types";
 // fetch-keys
 import { CYCLE_ISSUES, PROJECT_ISSUES_LIST, MODULE_ISSUES, USER_ISSUE } from "constants/fetch-keys";
 
@@ -77,13 +77,9 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data })
             false
           );
 
-        mutate<IssueResponse>(
+        mutate<IIssue[]>(
           PROJECT_ISSUES_LIST(workspaceSlug as string, projectId),
-          (prevData) => ({
-            ...(prevData as IssueResponse),
-            results: prevData?.results.filter((i) => i.id !== data.id) ?? [],
-            count: (prevData?.count as number) - 1,
-          }),
+          (prevData) => (prevData ?? []).filter((i) => i.id !== data.id),
           false
         );
 

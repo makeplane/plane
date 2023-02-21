@@ -2,6 +2,7 @@
 
 from __future__ import absolute_import
 
+import dj_database_url
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
@@ -24,6 +25,10 @@ DATABASES = {
     }
 }
 
+DOCKERIZED = os.environ.get("DOCKERIZED", False)
+
+if DOCKERIZED:
+    DATABASES["default"] = dj_database_url.config()
 
 CACHES = {
     "default": {
@@ -41,15 +46,16 @@ INTERNAL_IPS = ("127.0.0.1",)
 
 CORS_ORIGIN_ALLOW_ALL = True
 
-sentry_sdk.init(
-    dsn=os.environ.get("SENTRY_DSN"),
-    integrations=[DjangoIntegration(), RedisIntegration()],
-    # If you wish to associate users to errors (assuming you are using
-    # django.contrib.auth) you may enable sending PII data.
-    send_default_pii=True,
-    environment="local",
-    traces_sample_rate=0.7,
-)
+if os.environ.get("SENTRY_DSN", False):
+    sentry_sdk.init(
+        dsn=os.environ.get("SENTRY_DSN"),
+        integrations=[DjangoIntegration(), RedisIntegration()],
+        # If you wish to associate users to errors (assuming you are using
+        # django.contrib.auth) you may enable sending PII data.
+        send_default_pii=True,
+        environment="local",
+        traces_sample_rate=0.7,
+    )
 
 REDIS_HOST = "localhost"
 REDIS_PORT = 6379
@@ -64,5 +70,10 @@ RQ_QUEUES = {
     },
 }
 
-WEB_URL = "http://localhost:3000"
+MEDIA_URL = "/uploads/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "uploads")
 
+if DOCKERIZED:
+    REDIS_URL = os.environ.get("REDIS_URL")
+
+WEB_URL = os.environ.get("WEB_URL", "localhost:3000")

@@ -1,16 +1,5 @@
 import type { IState, IUser, IProject, ICycle, IModule, IUserLite } from "./";
 
-export interface IssueResponse {
-  next_cursor: string;
-  prev_cursor: string;
-  next_page_results: boolean;
-  prev_page_results: boolean;
-  count: number;
-  total_pages: number;
-  extra_stats: null;
-  results: IIssue[];
-}
-
 export interface IIssueCycle {
   id: string;
   cycle_detail: ICycle;
@@ -66,7 +55,7 @@ export interface IIssueLink {
 }
 
 export interface IIssue {
-  assignees: any[] | null;
+  assignees: string[] | null;
   assignee_details: IUser[];
   assignees_list: string[];
   attachments: any[];
@@ -107,6 +96,7 @@ export interface IIssue {
   project: string;
   project_detail: IProject;
   sequence_id: number;
+  sort_order: number;
   sprints: string | null;
   start_date: string | null;
   state: string;

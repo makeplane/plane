@@ -1,39 +1,59 @@
-import { FC } from "react";
+import { useEffect } from "react";
+
+// react-hook-form
 import { Controller, useForm } from "react-hook-form";
-// components
-import { Button, Input, TextArea, CustomSelect } from "components/ui";
+// ui
+import { Button, CustomDatePicker, CustomSelect, Input, TextArea } from "components/ui";
 // types
-import type { ICycle } from "types";
+import { ICycle } from "types";
+
+type Props = {
+  handleFormSubmit: (values: Partial<ICycle>) => Promise<void>;
+  handleClose: () => void;
+  status: boolean;
+  data?: ICycle;
+};
 
 const defaultValues: Partial<ICycle> = {
   name: "",
   description: "",
   status: "draft",
-  start_date: new Date().toString(),
-  end_date: new Date().toString(),
+  start_date: "",
+  end_date: "",
 };
 
-export interface CycleFormProps {
-  handleFormSubmit: (values: Partial<ICycle>) => void;
-  handleFormCancel?: () => void;
-  initialData?: Partial<ICycle>;
-}
-
-export const CycleForm: FC<CycleFormProps> = (props) => {
-  const { handleFormSubmit, handleFormCancel = () => {}, initialData = null } = props;
-  // form handler
+export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, status, data }) => {
   const {
     register,
     formState: { errors, isSubmitting },
     handleSubmit,
     control,
+    reset,
   } = useForm<ICycle>({
-    defaultValues: initialData || defaultValues,
+    defaultValues,
   });
 
+  const handleCreateUpdateCycle = async (formData: Partial<ICycle>) => {
+    await handleFormSubmit(formData);
+
+    reset({
+      ...defaultValues,
+    });
+  };
+
+  useEffect(() => {
+    reset({
+      ...defaultValues,
+      ...data,
+    });
+  }, [data, reset]);
+
   return (
-    <form onSubmit={handleSubmit(handleFormSubmit)}>
+    <form onSubmit={handleSubmit(handleCreateUpdateCycle)}>
       <div className="space-y-5">
+        <h3 className="text-lg font-medium leading-6 text-gray-900">
+          {status ? "Update" : "Create"} Cycle
+        </h3>
         <div className="space-y-3">
           <div>
             <Input
@@ -47,6 +67,10 @@ export const CycleForm: FC<CycleFormProps> = (props) => {
               register={register}
               validations={{
                 required: "Name is required",
+                maxLength: {
+                  value: 255,
+                  message: "Name should be less than 255 characters",
+                },
               }}
             />
           </div>
@@ -86,42 +110,56 @@ export const CycleForm: FC<CycleFormProps> = (props) => {
           </div>
           <div className="flex gap-x-2">
             <div className="w-full">
-              <Input
-                id="start_date"
-                label="Start Date"
-                name="start_date"
-                type="date"
-                placeholder="Enter start date"
-                error={errors.start_date}
-                register={register}
-                validations={{
-                  required: "Start date is required",
-                }}
-              />
+              <h6 className="text-gray-500">Start Date</h6>
+              <div className="w-full">
+                <Controller
+                  control={control}
+                  name="start_date"
+                  rules={{ required: "Start date is required" }}
+                  render={({ field: { value, onChange } }) => (
+                    <CustomDatePicker
+                      renderAs="input"
+                      value={value}
+                      onChange={onChange}
+                      error={errors.start_date ? true : false}
+                    />
+                  )}
+                />
+                {errors.start_date && (
+                  <h6 className="text-sm text-red-500">{errors.start_date.message}</h6>
+                )}
+              </div>
             </div>
             <div className="w-full">
-              <Input
-                id="end_date"
-                label="End Date"
-                name="end_date"
-                type="date"
-                placeholder="Enter end date"
-                error={errors.end_date}
-                register={register}
-                validations={{
-                  required: "End date is required",
-                }}
-              />
+              <h6 className="text-gray-500">End Date</h6>
+              <div className="w-full">
+                <Controller
+                  control={control}
+                  name="end_date"
+                  rules={{ required: "End date is required" }}
+                  render={({ field: { value, onChange } }) => (
+                    <CustomDatePicker
+                      renderAs="input"
+                      value={value}
+                      onChange={onChange}
+                      error={errors.end_date ? true : false}
+                    />
+                  )}
+                />
+                {errors.end_date && (
+                  <h6 className="text-sm text-red-500">{errors.end_date.message}</h6>
+                )}
+              </div>
             </div>
           </div>
         </div>
       </div>
       <div className="mt-5 flex justify-end gap-2">
-        <Button theme="secondary" onClick={handleFormCancel}>
+        <Button theme="secondary" onClick={handleClose}>
           Cancel
         </Button>
         <Button type="submit" disabled={isSubmitting}>
-          {initialData
+          {status
             ? isSubmitting
               ? "Updating Cycle..."
               : "Update Cycle"

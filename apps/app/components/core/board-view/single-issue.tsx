@@ -12,10 +12,10 @@ import {
   DraggingStyle,
   NotDraggingStyle,
 } from "react-beautiful-dnd";
-// constants
-import { TrashIcon } from "@heroicons/react/24/outline";
 // services
 import issuesService from "services/issues.service";
+// hooks
+import useToast from "hooks/use-toast";
 // components
 import {
   ViewAssigneeSelect,
@@ -25,11 +25,12 @@ import {
 } from "components/issues/view-select";
 // ui
 import { CustomMenu } from "components/ui";
+// helpers
+import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import {
   CycleIssueResponse,
   IIssue,
-  IssueResponse,
   ModuleIssueResponse,
   NestedKeyOf,
   Properties,
@@ -37,8 +38,6 @@ import {
 } from "types";
 // fetch-keys
 import { CYCLE_ISSUES, MODULE_ISSUES, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
-import { copyTextToClipboard } from "helpers/string.helper";
-import useToast from "hooks/use-toast";
 
 type Props = {
   type?: string;
@@ -50,7 +49,7 @@ type Props = {
   editIssue: () => void;
   removeIssue?: (() => void) | null;
   handleDeleteIssue: (issue: IIssue) => void;
-  orderBy: NestedKeyOf<IIssue> | "manual" | null;
+  orderBy: NestedKeyOf<IIssue> | null;
   handleTrashBox: (isDragging: boolean) => void;
   userAuth: UserAuth;
 };
@@ -71,7 +70,9 @@ export const SingleBoardIssue: React.FC<Props> = ({
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+
   const { setToastAlert } = useToast();
+
   const partialUpdateIssue = useCallback(
     (formData: Partial<IIssue>) => {
       if (!workspaceSlug || !projectId) return;
@@ -118,15 +119,15 @@ export const SingleBoardIssue: React.FC<Props> = ({
           false
         );
 
-      mutate<IssueResponse>(
+      mutate<IIssue[]>(
         PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
-        (prevData) => ({
-          ...(prevData as IssueResponse),
-          results: (prevData?.results ?? []).map((p) => {
+        (prevData) =>
+          (prevData ?? []).map((p) => {
             if (p.id === issue.id) return { ...p, ...formData };
+
             return p;
           }),
-        }),
+
         false
       );
 
@@ -149,7 +150,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
     style: DraggingStyle | NotDraggingStyle | undefined,
     snapshot: DraggableStateSnapshot
   ) {
-    if (orderBy === "manual") return style;
+    if (orderBy === "sort_order") return style;
     if (!snapshot.isDragging) return {};
     if (!snapshot.isDropAnimating) {
       return style;
@@ -178,11 +179,12 @@ export const SingleBoardIssue: React.FC<Props> = ({
         });
       });
   };
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   useEffect(() => {
     if (snapshot.isDragging) handleTrashBox(snapshot.isDragging);
   }, [snapshot, handleTrashBox]);
+
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   return (
     <div
@@ -197,13 +199,6 @@ export const SingleBoardIssue: React.FC<Props> = ({
       <div className="group/card relative select-none p-2">
         {!isNotAllowed && (
           <div className="absolute top-1.5 right-1.5 z-10 opacity-0 group-hover/card:opacity-100">
-            {/* <button
-              type="button"
-              className="grid h-7 w-7 place-items-center rounded bg-white p-1 text-red-500 outline-none duration-300 hover:bg-red-50"
-              onClick={() => handleDeleteIssue(issue)}
-            >
-              <TrashIcon className="h-4 w-4" />
-            </button> */}
             {type && !isNotAllowed && (
               <CustomMenu width="auto" ellipsis>
                 <CustomMenu.MenuItem onClick={handleCopyText}>Copy issue link</CustomMenu.MenuItem>

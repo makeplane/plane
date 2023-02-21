@@ -14,8 +14,6 @@ import { ModuleForm } from "components/modules";
 import modulesService from "services/modules.service";
 // hooks
 import useToast from "hooks/use-toast";
-// helpers
-import { renderDateFormat } from "helpers/date-time.helper";
 // types
 import type { IModule } from "types";
 // fetch-keys
@@ -46,7 +44,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, da
     reset(defaultValues);
   };
 
-  const { reset, setError } = useForm<IModule>({
+  const { reset } = useForm<IModule>({
     defaultValues,
   });
 
@@ -58,16 +56,16 @@ export const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, da
         handleClose();
 
         setToastAlert({
-          title: "Success",
           type: "success",
-          message: "Module created successfully",
+          title: "Success!",
+          message: "Module created successfully.",
         });
       })
-      .catch((err) => {
-        Object.keys(err).map((key) => {
-          setError(key as keyof typeof defaultValues, {
-            message: err[key].join(", "),
-          });
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Module could not be created. Please try again.",
         });
       });
   };
@@ -92,16 +90,16 @@ export const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, da
         handleClose();
 
         setToastAlert({
-          title: "Success",
           type: "success",
-          message: "Module updated successfully",
+          title: "Success!",
+          message: "Module updated successfully.",
         });
       })
-      .catch((err) => {
-        Object.keys(err).map((key) => {
-          setError(key as keyof typeof defaultValues, {
-            message: err[key].join(", "),
-          });
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Module could not be updated. Please try again.",
         });
       });
   };
@@ -116,15 +114,6 @@ export const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, da
     if (!data) await createModule(payload);
     else await updateModule(payload);
   };
-
-  useEffect(() => {
-    if (data) {
-      setIsOpen(true);
-      reset(data);
-    } else {
-      reset(defaultValues);
-    }
-  }, [data, setIsOpen, reset]);
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
@@ -157,6 +146,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, da
                   handleFormSubmit={handleFormSubmit}
                   handleClose={handleClose}
                   status={data ? true : false}
+                  data={data}
                 />
               </Dialog.Panel>
             </Transition.Child>
