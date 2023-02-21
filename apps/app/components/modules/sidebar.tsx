@@ -25,7 +25,7 @@ import modulesService from "services/modules.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components
-import { LinkModal, SidebarProgressStats } from "components/core";
+import { LinkModal, LinksList, SidebarProgressStats } from "components/core";
 import { DeleteModuleModal, SidebarLeadSelect, SidebarMembersSelect } from "components/modules";
 import ProgressChart from "components/core/sidebar/progress-chart";
 
@@ -37,7 +37,7 @@ import { renderDateFormat, renderShortNumericDateFormat, timeAgo } from "helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 import { groupBy } from "helpers/array.helper";
 // types
-import { IIssue, IModule, ModuleIssueResponse, ModuleLink } from "types";
+import { IIssue, IModule, ModuleIssueResponse, ModuleLink, UserAuth } from "types";
 // fetch-keys
 import { MODULE_DETAILS } from "constants/fetch-keys";
 // constant
@@ -56,9 +56,16 @@ type Props = {
   module?: IModule;
   isOpen: boolean;
   moduleIssues: ModuleIssueResponse[] | undefined;
+  userAuth: UserAuth;
 };
 
-export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, moduleIssues }) => {
+export const ModuleDetailsSidebar: React.FC<Props> = ({
+  issues,
+  module,
+  isOpen,
+  moduleIssues,
+  userAuth,
+}) => {
   const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
   const [moduleLinkModal, setModuleLinkModal] = useState(false);
   const [startDateRange, setStartDateRange] = useState<Date | null>(new Date());
@@ -126,6 +133,13 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
           message: "Couldn't create the link. Please try again.",
         });
       });
+  };
+
+  const handleDeleteLink = (linkId: string) => {
+    if (!module) return;
+
+    const updatedLinks = module.link_module.filter((l) => l.id !== linkId);
+    submitChanges({ links_list: updatedLinks });
   };
 
   useEffect(() => {
@@ -348,40 +362,13 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
                   </button>
                 </div>
                 <div className="mt-2 space-y-2">
-                  {module.link_module && module.link_module.length > 0
-                    ? module.link_module.map((link) => (
-                        <div key={link.id} className="group relative">
-                          <div className="absolute top-1.5 right-1.5 z-10 opacity-0 group-hover:opacity-100">
-                            <button
-                              type="button"
-                              className="grid h-7 w-7 place-items-center rounded bg-gray-100 p-1 text-red-500 outline-none duration-300 hover:bg-red-50"
-                              onClick={() => {
-                                const updatedLinks = module.link_module.filter(
-                                  (l) => l.id !== link.id
-                                );
-                                submitChanges({ links_list: updatedLinks });
-                              }}
-                            >
-                              <TrashIcon className="h-4 w-4" />
-                            </button>
-                          </div>
-                          <Link href={link.url} target="_blank">
-                            <a className="group relative flex gap-2 rounded-md border bg-gray-100 p-2">
-                              <div className="mt-0.5">
-                                <LinkIcon className="h-3.5 w-3.5" />
-                              </div>
-                              <div>
-                                <h5>{link.title}</h5>
-                                <p className="mt-0.5 text-gray-500">
-                                  Added {timeAgo(link.created_at)} ago by{" "}
-                                  {link.created_by_detail.email}
-                                </p>
-                              </div>
-                            </a>
-                          </Link>
-                        </div>
-                      ))
-                    : null}
+                  {module.link_module && module.link_module.length > 0 ? (
+                    <LinksList
+                      links={module.link_module}
+                      handleDeleteLink={handleDeleteLink}
+                      userAuth={userAuth}
+                    />
+                  ) : null}
                 </div>
               </div>
             </div>
