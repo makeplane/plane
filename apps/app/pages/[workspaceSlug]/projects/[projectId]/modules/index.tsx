@@ -12,9 +12,8 @@ import { requiredAuth } from "lib/auth";
 import projectService from "services/project.service";
 import modulesService from "services/modules.service";
 // components
-import { SingleModuleCard } from "components/modules";
+import { CreateUpdateModuleModal, SingleModuleCard } from "components/modules";
 // ui
-import { CreateUpdateModuleModal } from "components/modules";
 import { EmptySpace, EmptySpaceItem, HeaderButton, Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
