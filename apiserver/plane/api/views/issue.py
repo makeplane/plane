@@ -138,7 +138,9 @@ class IssueViewSet(BaseViewSet):
             .prefetch_related(
                 Prefetch(
                     "issue_link",
-                    queryset=IssueLink.objects.select_related("issue"),
+                    queryset=IssueLink.objects.select_related("issue").select_related(
+                        "created_by"
+                    ),
                 )
             )
         )
@@ -273,7 +275,9 @@ class UserWorkSpaceIssues(BaseAPIView):
                 .prefetch_related(
                     Prefetch(
                         "issue_link",
-                        queryset=IssueLink.objects.select_related("issue"),
+                        queryset=IssueLink.objects.select_related(
+                            "issue"
+                        ).select_related("created_by"),
                     )
                 )
             )
