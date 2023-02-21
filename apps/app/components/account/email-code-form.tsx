@@ -70,11 +70,10 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
         onSuccess(response);
       })
       .catch((error) => {
-        console.log(error);
         setToastAlert({
           title: "Oops!",
           type: "error",
-          message: "Enter the correct code to sign in",
+          message: error?.response?.data?.error ?? "Enter the correct code to sign in",
         });
         setError("token" as keyof EmailCodeFormValues, {
           type: "manual",
@@ -141,8 +140,8 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
             />
             <button
               type="button"
-              className={`text-xs mt-5 w-full flex justify-end outline-none hover:text-theme cursor-pointer ${
-                resendCodeTimer > 0 ? "text-gray-400" : "text-theme"
+              className={`text-xs mt-5 w-full flex justify-end outline-none ${
+                isResendDisabled ? "text-gray-400 cursor-default" : "cursor-pointer text-theme"
               } `}
               onClick={() => {
                 setIsCodeResending(true);

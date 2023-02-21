@@ -65,3 +65,8 @@ package-lock.json
 
 # Sentry
 .sentryclirc
+
+# lock files
+package-lock.json
+pnpm-lock.yaml
+pnpm-workspace.yaml

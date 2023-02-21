@@ -16,7 +16,7 @@ import useToast from "hooks/use-toast";
 // components
 import { IssueForm } from "components/issues";
 // types
-import type { IIssue, IssueResponse } from "types";
+import type { IIssue } from "types";
 // fetch keys
 import {
   PROJECT_ISSUES_DETAILS,
@@ -91,15 +91,13 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
             false
           );
         } else
-          mutate<IssueResponse>(
+          mutate<IIssue[]>(
             PROJECT_ISSUES_LIST(workspaceSlug as string, activeProject ?? ""),
-            (prevData) => ({
-              ...(prevData as IssueResponse),
-              results: (prevData?.results ?? []).map((issue) => {
-                if (issue.id === res.id) return { ...issue, sprints: cycleId };
-                return issue;
+            (prevData) =>
+              (prevData ?? []).map((i) => {
+                if (i.id === res.id) return { ...i, sprints: cycleId };
+                return i;
               }),
-            }),
             false
           );
       })
@@ -126,7 +124,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
     await issuesService
       .createIssues(workspaceSlug as string, activeProject ?? "", payload)
       .then((res) => {
-        mutate<IssueResponse>(PROJECT_ISSUES_LIST(workspaceSlug as string, activeProject ?? ""));
+        mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, activeProject ?? ""));
 
         if (payload.cycle && payload.cycle !== "") addIssueToCycle(res.id, payload.cycle);
         if (payload.module && payload.module !== "") addIssueToModule(res.id, payload.module);
@@ -159,15 +157,13 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
         if (isUpdatingSingleIssue) {
           mutate<IIssue>(PROJECT_ISSUES_DETAILS, (prevData) => ({ ...prevData, ...res }), false);
         } else {
-          mutate<IssueResponse>(
+          mutate<IIssue[]>(
             PROJECT_ISSUES_LIST(workspaceSlug as string, activeProject ?? ""),
-            (prevData) => ({
-              ...(prevData as IssueResponse),
-              results: (prevData?.results ?? []).map((issue) => {
-                if (issue.id === res.id) return { ...issue, ...res };
-                return issue;
-              }),
-            })
+            (prevData) =>
+              (prevData ?? []).map((i) => {
+                if (i.id === res.id) return { ...i, ...res };
+                return i;
+              })
           );
         }
 
@@ -196,6 +192,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
 
     const payload: Partial<IIssue> = {
       ...formData,
+      assignees_list: formData.assignees,
+      labels_list: formData.labels,
       description: formData.description ?? "",
       description_html: formData.description_html ?? "<p></p>",
     };
@@ -206,7 +204,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-20" onClose={handleClose}>
+      <Dialog as="div" className="relative z-20" onClose={() => {}}>
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
@@ -232,7 +230,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
             >
               <Dialog.Panel className="relative transform rounded-lg bg-white p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
                 <IssueForm
-                  issues={issues?.results ?? []}
+                  issues={issues ?? []}
                   handleFormSubmit={handleFormSubmit}
                   initialData={prePopulateData}
                   createMore={createMore}

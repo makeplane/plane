@@ -17,7 +17,7 @@ import {
 } from "components/issues/select";
 import { CycleSelect as IssueCycleSelect } from "components/cycles/select";
 import { CreateStateModal } from "components/states";
-import CreateUpdateCycleModal from "components/project/cycles/create-update-cycle-modal";
+import { CreateUpdateCycleModal } from "components/cycles";
 import { CreateLabelModal } from "components/labels";
 // ui
 import { Button, CustomDatePicker, CustomMenu, Input, Loader } from "components/ui";
@@ -117,8 +117,6 @@ export const IssueForm: FC<IssueFormProps> = ({
       ...defaultValues,
       ...initialData,
       project: projectId,
-      assignees_list: initialData?.assignees ?? [],
-      labels_list: initialData?.labels ?? [],
     });
   }, [initialData, reset, projectId]);
 
@@ -131,11 +129,7 @@ export const IssueForm: FC<IssueFormProps> = ({
             handleClose={() => setStateModal(false)}
             projectId={projectId}
           />
-          <CreateUpdateCycleModal
-            isOpen={cycleModal}
-            setIsOpen={setCycleModal}
-            projectId={projectId}
-          />
+          <CreateUpdateCycleModal isOpen={cycleModal} handleClose={() => setCycleModal(false)} />
           <CreateLabelModal
             isOpen={labelModal}
             handleClose={() => setLabelModal(false)}
@@ -280,7 +274,7 @@ export const IssueForm: FC<IssueFormProps> = ({
                 />
                 <Controller
                   control={control}
-                  name="labels_list"
+                  name="labels"
                   render={({ field: { value, onChange } }) => (
                     <IssueLabelSelect
                       setIsOpen={setLabelModal}
@@ -305,7 +299,7 @@ export const IssueForm: FC<IssueFormProps> = ({
                 </div>
                 <Controller
                   control={control}
-                  name="assignees_list"
+                  name="assignees"
                   render={({ field: { value, onChange } }) => (
                     <IssueAssigneeSelect projectId={projectId} value={value} onChange={onChange} />
                   )}

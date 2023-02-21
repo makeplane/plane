@@ -15,8 +15,7 @@ import workspaceService from "services/workspace.service";
 // layouts
 import AppLayout from "layouts/app-layout";
 // components
-import CreateUpdateCycleModal from "components/project/cycles/create-update-cycle-modal";
-import CycleStatsView from "components/project/cycles/stats-view";
+import { CreateUpdateCycleModal, CyclesListView } from "components/cycles";
 // ui
 import { HeaderButton, EmptySpace, EmptySpaceItem, Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -63,15 +62,15 @@ const ProjectCycles: NextPage = () => {
   };
 
   const currentCycles = cycles?.filter(
-    (c) => getCycleStatus(c.start_date ?? "", c.end_date ?? "") === "current"
+    (c) => getCycleStatus(c.start_date, c.end_date) === "current"
   );
 
   const upcomingCycles = cycles?.filter(
-    (c) => getCycleStatus(c.start_date ?? "", c.end_date ?? "") === "upcoming"
+    (c) => getCycleStatus(c.start_date, c.end_date) === "upcoming"
   );
 
   const completedCycles = cycles?.filter(
-    (c) => getCycleStatus(c.start_date ?? "", c.end_date ?? "") === "completed"
+    (c) => getCycleStatus(c.start_date, c.end_date) === "completed"
   );
 
   useEffect(() => {
@@ -108,8 +107,7 @@ const ProjectCycles: NextPage = () => {
     >
       <CreateUpdateCycleModal
         isOpen={createUpdateCycleModal}
-        setIsOpen={setCreateUpdateCycleModal}
-        projectId={projectId as string}
+        handleClose={() => setCreateUpdateCycleModal(false)}
         data={selectedCycle}
       />
       {cycles ? (
@@ -117,7 +115,7 @@ const ProjectCycles: NextPage = () => {
           <div className="space-y-8">
             <h3 className="text-xl font-medium leading-6 text-gray-900">Current Cycle</h3>
             <div className="space-y-5">
-              <CycleStatsView
+              <CyclesListView
                 cycles={currentCycles ?? []}
                 setCreateUpdateCycleModal={setCreateUpdateCycleModal}
                 setSelectedCycle={setSelectedCycle}
@@ -147,7 +145,7 @@ const ProjectCycles: NextPage = () => {
                 </Tab.List>
                 <Tab.Panels>
                   <Tab.Panel as="div" className="mt-8 space-y-5">
-                    <CycleStatsView
+                    <CyclesListView
                       cycles={upcomingCycles ?? []}
                       setCreateUpdateCycleModal={setCreateUpdateCycleModal}
                       setSelectedCycle={setSelectedCycle}
@@ -155,7 +153,7 @@ const ProjectCycles: NextPage = () => {
                     />
                   </Tab.Panel>
                   <Tab.Panel as="div" className="mt-8 space-y-5">
-                    <CycleStatsView
+                    <CyclesListView
                       cycles={completedCycles ?? []}
                       setCreateUpdateCycleModal={setCreateUpdateCycleModal}
                       setSelectedCycle={setSelectedCycle}

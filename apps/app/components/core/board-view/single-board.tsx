@@ -29,7 +29,7 @@ type Props = {
   addIssueToState: () => void;
   handleDeleteIssue: (issue: IIssue) => void;
   openIssuesListModal?: (() => void) | null;
-  orderBy: NestedKeyOf<IIssue> | "manual" | null;
+  orderBy: NestedKeyOf<IIssue> | null;
   handleTrashBox: (isDragging: boolean) => void;
   removeIssue: ((bridgeId: string) => void) | null;
   userAuth: UserAuth;
@@ -86,12 +86,28 @@ export const SingleBoard: React.FC<Props> = ({
         <StrictModeDroppable key={groupTitle} droppableId={groupTitle}>
           {(provided, snapshot) => (
             <div
-              className={`relative mt-3 h-full space-y-3 px-3 pb-3 ${
+              className={`relative mt-3 h-full px-3 pb-3 ${
                 snapshot.isDraggingOver ? "bg-indigo-50 bg-opacity-50" : ""
               } ${!isCollapsed ? "hidden" : "block"}`}
               ref={provided.innerRef}
               {...provided.droppableProps}
             >
+              {orderBy !== "sort_order" && (
+                <>
+                  <div
+                    className={`absolute ${
+                      snapshot.isDraggingOver ? "block" : "hidden"
+                    } top-0 left-0 h-full w-full bg-indigo-200 opacity-50 pointer-events-none z-[99999998]`}
+                  />
+                  <div
+                    className={`absolute ${
+                      snapshot.isDraggingOver ? "block" : "hidden"
+                    } top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-xs whitespace-nowrap bg-white p-2 rounded pointer-events-none z-[99999999]`}
+                  >
+                    This board is ordered by {orderBy}
+                  </div>
+                </>
+              )}
               {groupedByIssues[groupTitle].map((issue, index: number) => (
                 <Draggable
                   key={issue.id}
@@ -124,7 +140,7 @@ export const SingleBoard: React.FC<Props> = ({
               ))}
               <span
                 style={{
-                  display: orderBy === "manual" ? "inline" : "none",
+                  display: orderBy === "sort_order" ? "inline" : "none",
                 }}
               >
                 {provided.placeholder}

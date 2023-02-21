@@ -119,14 +119,14 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
                 >
                   <Link
                     href={`/${workspaceSlug}/projects/${projectId}/issues/${
-                      issues?.results.find((i) => i.id === issue)?.id
+                      issues?.find((i) => i.id === issue)?.id
                     }`}
                   >
                     <a className="flex items-center gap-1">
                       <BlockerIcon height={10} width={10} />
-                      {`${
-                        issues?.results.find((i) => i.id === issue)?.project_detail?.identifier
-                      }-${issues?.results.find((i) => i.id === issue)?.sequence_id}`}
+                      {`${issues?.find((i) => i.id === issue)?.project_detail?.identifier}-${
+                        issues?.find((i) => i.id === issue)?.sequence_id
+                      }`}
                     </a>
                   </Link>
                   <span
@@ -244,8 +244,8 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
                                       />
                                       <span className="flex-shrink-0 text-xs text-gray-500">
                                         {
-                                          issues?.results.find((i) => i.id === issue.id)
-                                            ?.project_detail?.identifier
+                                          issues?.find((i) => i.id === issue.id)?.project_detail
+                                            ?.identifier
                                         }
                                         -{issue.sequence_id}
                                       </span>

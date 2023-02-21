@@ -130,7 +130,9 @@ export const IssuesFilterView: React.FC<Props> = ({ issues }) => {
                                 option.key === "priority" ? null : (
                                   <CustomMenu.MenuItem
                                     key={option.key}
-                                    onClick={() => setOrderBy(option.key)}
+                                    onClick={() => {
+                                      setOrderBy(option.key);
+                                    }}
                                   >
                                     {option.name}
                                   </CustomMenu.MenuItem>
@@ -197,7 +199,7 @@ export const IssuesFilterView: React.FC<Props> = ({ issues }) => {
                                 }`}
                                 onClick={() => setProperties(key as keyof Properties)}
                               >
-                                {replaceUnderscoreIfSnakeCase(key)}
+                                {key === "key" ? "ID" : replaceUnderscoreIfSnakeCase(key)}
                               </button>
                             );
                           })}

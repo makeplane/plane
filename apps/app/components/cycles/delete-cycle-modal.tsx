@@ -23,7 +23,7 @@ type TConfirmCycleDeletionProps = {
 // fetch-keys
 import { CYCLE_LIST } from "constants/fetch-keys";
 
-const ConfirmCycleDeletion: React.FC<TConfirmCycleDeletionProps> = ({
+export const DeleteCycleModal: React.FC<TConfirmCycleDeletionProps> = ({
   isOpen,
   setIsOpen,
   data,
@@ -149,5 +149,3 @@ const ConfirmCycleDeletion: React.FC<TConfirmCycleDeletionProps> = ({
     </Transition.Root>
   );
 };
-
-export default ConfirmCycleDeletion;

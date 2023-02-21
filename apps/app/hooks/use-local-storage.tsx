@@ -1,8 +1,13 @@
 import { useState, useEffect, useCallback } from "react";
 
 const getValueFromLocalStorage = (key: string, defaultValue: any) => {
-  const value = window.localStorage.getItem(key);
-  return value ? JSON.parse(value) : defaultValue;
+  try {
+    const item = window.localStorage.getItem(key);
+    return item ? JSON.parse(item) : defaultValue;
+  } catch (error) {
+    window.localStorage.removeItem(key);
+    return defaultValue;
+  }
 };
 
 const useLocalStorage = <T,>(key: string, initialValue: T) => {

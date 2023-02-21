@@ -10,22 +10,17 @@
     "NEXT_PUBLIC_SENTRY_DSN",
     "SENTRY_AUTH_TOKEN",
     "NEXT_PUBLIC_SENTRY_ENVIRONMENT",
-    "NEXT_PUBLIC_GITHUB_APP_NAME"
+    "NEXT_PUBLIC_GITHUB_APP_NAME",
+    "NEXT_PUBLIC_ENABLE_SENTRY",
+    "NEXT_PUBLIC_ENABLE_OAUTH"
   ],
   "pipeline": {
     "build": {
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": [
-        ".next/**",
-        "dist/**"
-      ]
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "dist/**"]
     },
     "test": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "outputs": []
     },
     "lint": {

@@ -46,6 +46,16 @@ const ProgressChart: React.FC<Props> = ({ issues, start, end }) => {
   const ChartData = getChartData();
   return (
     <div className="relative h-[200px] w-full ">
+      <div className="flex  justify-start items-start gap-4  text-xs">
+        <div className="flex justify-center items-center gap-1">
+          <span className="h-2 w-2 bg-green-600 rounded-full" />
+          <span>Ideal</span>
+        </div>
+        <div className="flex justify-center items-center gap-1">
+          <span className="h-2 w-2 bg-[#8884d8] rounded-full" />
+          <span>Current</span>
+        </div>
+      </div>
       <div className="flex items-center justify-center h-full w-full  absolute -left-8 py-3  text-xs">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
@@ -79,16 +89,6 @@ const ProgressChart: React.FC<Props> = ({ issues, start, end }) => {
             />
           </AreaChart>
         </ResponsiveContainer>
-      </div>
-      <div className="z-10 flex flex-col absolute top-2 right-2 justify-center items-start gap-1 text-xs">
-        <div className="flex justify-center items-center gap-2">
-          <span className="h-2 w-2 bg-green-600" />
-          <span>Ideal</span>
-        </div>
-        <div className="flex justify-center items-center gap-2">
-          <span className="h-2 w-2 bg-[#8884d8]" />
-          <span>Current</span>
-        </div>
       </div>
     </div>
   );

@@ -16,8 +16,6 @@ import {
   Squares2X2Icon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
-// progress-bar
-import { CircularProgressbar } from "react-circular-progressbar";
 
 import { Popover, Transition } from "@headlessui/react";
 import DatePicker from "react-datepicker";
@@ -27,20 +25,19 @@ import modulesService from "services/modules.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components
-import { LinkModal, SidebarProgressStats } from "components/core";
+import { LinkModal, LinksList, SidebarProgressStats } from "components/core";
 import { DeleteModuleModal, SidebarLeadSelect, SidebarMembersSelect } from "components/modules";
 import ProgressChart from "components/core/sidebar/progress-chart";
 
-import "react-circular-progressbar/dist/styles.css";
 // components
 // ui
-import { CustomSelect, Loader } from "components/ui";
+import { CustomSelect, Loader, ProgressBar } from "components/ui";
 // helpers
-import { renderShortNumericDateFormat, timeAgo } from "helpers/date-time.helper";
+import { renderDateFormat, renderShortNumericDateFormat, timeAgo } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
 import { groupBy } from "helpers/array.helper";
 // types
-import { IIssue, IModule, ModuleIssueResponse, ModuleLink } from "types";
+import { IIssue, IModule, ModuleIssueResponse, ModuleLink, UserAuth } from "types";
 // fetch-keys
 import { MODULE_DETAILS } from "constants/fetch-keys";
 // constant
@@ -59,9 +56,16 @@ type Props = {
   module?: IModule;
   isOpen: boolean;
   moduleIssues: ModuleIssueResponse[] | undefined;
+  userAuth: UserAuth;
 };
 
-export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, moduleIssues }) => {
+export const ModuleDetailsSidebar: React.FC<Props> = ({
+  issues,
+  module,
+  isOpen,
+  moduleIssues,
+  userAuth,
+}) => {
   const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
   const [moduleLinkModal, setModuleLinkModal] = useState(false);
   const [startDateRange, setStartDateRange] = useState<Date | null>(new Date());
@@ -131,6 +135,13 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
       });
   };
 
+  const handleDeleteLink = (linkId: string) => {
+    if (!module) return;
+
+    const updatedLinks = module.link_module.filter((l) => l.id !== linkId);
+    submitChanges({ links_list: updatedLinks });
+  };
+
   useEffect(() => {
     if (module)
       reset({
@@ -190,61 +201,93 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
                   )}
                 />
               </div>
-              <Popover className="flex justify-center items-center relative  rounded-lg">
-                {({ open }) => (
-                  <>
-                    <Popover.Button
-                      className={`group flex items-center gap-2 rounded-md border bg-transparent h-full w-full p-2 px-4  text-xs font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-900 focus:outline-none ${
-                        open ? "bg-gray-100" : ""
-                      }`}
-                    >
-                      <CalendarDaysIcon className="h-4 w-4 flex-shrink-0" />
-                      <span>
-                        {renderShortNumericDateFormat(`${module?.start_date}`)
-                          ? renderShortNumericDateFormat(`${module?.start_date}`)
-                          : "N/A"}{" "}
-                        -{" "}
-                        {renderShortNumericDateFormat(`${module?.target_date}`)
-                          ? renderShortNumericDateFormat(`${module?.target_date}`)
-                          : "N/A"}
-                      </span>
-                    </Popover.Button>
+              <div className="flex justify-center items-center gap-2 rounded-md border bg-transparent h-full  p-2 px-4  text-xs font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-900 focus:outline-none">
+                <Popover className="flex justify-center items-center relative  rounded-lg">
+                  {({ open }) => (
+                    <>
+                      <Popover.Button
+                        className={`group flex items-center  ${open ? "bg-gray-100" : ""}`}
+                      >
+                        <CalendarDaysIcon className="h-4 w-4 flex-shrink-0 mr-2" />
+                        <span>
+                          {renderShortNumericDateFormat(`${module?.start_date}`)
+                            ? renderShortNumericDateFormat(`${module?.start_date}`)
+                            : "N/A"}
+                        </span>
+                      </Popover.Button>
 
-                    <Transition
-                      as={React.Fragment}
-                      enter="transition ease-out duration-200"
-                      enterFrom="opacity-0 translate-y-1"
-                      enterTo="opacity-100 translate-y-0"
-                      leave="transition ease-in duration-150"
-                      leaveFrom="opacity-100 translate-y-0"
-                      leaveTo="opacity-0 translate-y-1"
-                    >
-                      <Popover.Panel className="absolute top-10 left-0 z-20  transform overflow-hidden">
-                        <DatePicker
-                          selected={startDateRange}
-                          onChange={(dates) => {
-                            const [start, end] = dates;
-                            submitChanges({
-                              start_date: start?.toISOString(),
-                              target_date: end?.toISOString(),
-                            });
-                            if (setStartDateRange) {
-                              setStartDateRange(start);
-                            }
-                            if (setEndDateRange) {
-                              setEndDateRange(end);
-                            }
-                          }}
-                          startDate={startDateRange}
-                          endDate={endDateRange}
-                          selectsRange
-                          inline
-                        />
-                      </Popover.Panel>
-                    </Transition>
-                  </>
-                )}
-              </Popover>
+                      <Transition
+                        as={React.Fragment}
+                        enter="transition ease-out duration-200"
+                        enterFrom="opacity-0 translate-y-1"
+                        enterTo="opacity-100 translate-y-0"
+                        leave="transition ease-in duration-150"
+                        leaveFrom="opacity-100 translate-y-0"
+                        leaveTo="opacity-0 translate-y-1"
+                      >
+                        <Popover.Panel className="absolute top-10 -left-10 z-20  transform overflow-hidden">
+                          <DatePicker
+                            selected={startDateRange}
+                            onChange={(date) => {
+                              submitChanges({
+                                start_date: renderDateFormat(date),
+                              });
+                              setStartDateRange(date);
+                            }}
+                            selectsStart
+                            startDate={startDateRange}
+                            endDate={endDateRange}
+                            inline
+                          />
+                        </Popover.Panel>
+                      </Transition>
+                    </>
+                  )}
+                </Popover>
+                <Popover className="flex justify-center items-center relative  rounded-lg">
+                  {({ open }) => (
+                    <>
+                      <Popover.Button
+                        className={`group flex items-center ${open ? "bg-gray-100" : ""}`}
+                      >
+                        <span>
+                          -{" "}
+                          {renderShortNumericDateFormat(`${module?.target_date}`)
+                            ? renderShortNumericDateFormat(`${module?.target_date}`)
+                            : "N/A"}
+                        </span>
+                      </Popover.Button>
+
+                      <Transition
+                        as={React.Fragment}
+                        enter="transition ease-out duration-200"
+                        enterFrom="opacity-0 translate-y-1"
+                        enterTo="opacity-100 translate-y-0"
+                        leave="transition ease-in duration-150"
+                        leaveFrom="opacity-100 translate-y-0"
+                        leaveTo="opacity-0 translate-y-1"
+                      >
+                        <Popover.Panel className="absolute top-10 -right-20 z-20  transform overflow-hidden">
+                          <DatePicker
+                            selected={endDateRange}
+                            onChange={(date) => {
+                              submitChanges({
+                                target_date: renderDateFormat(date),
+                              });
+                              setEndDateRange(date);
+                            }}
+                            selectsEnd
+                            startDate={startDateRange}
+                            endDate={endDateRange}
+                            minDate={startDateRange}
+                            inline
+                          />
+                        </Popover.Panel>
+                      </Transition>
+                    </>
+                  )}
+                </Popover>
+              </div>
             </div>
             <div className="flex items-center justify-between pb-3">
               <h4 className="text-sm font-medium">{module.name}</h4>
@@ -297,10 +340,9 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
                   <div className="flex items-center gap-2 sm:basis-1/2">
                     <div className="grid flex-shrink-0 place-items-center">
                       <span className="h-4 w-4">
-                        <CircularProgressbar
+                        <ProgressBar
                           value={groupedIssues.completed.length}
                           maxValue={moduleIssues?.length}
-                          strokeWidth={10}
                         />
                       </span>
                     </div>
@@ -320,40 +362,13 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({ issues, module, isOpen, 
                   </button>
                 </div>
                 <div className="mt-2 space-y-2">
-                  {module.link_module && module.link_module.length > 0
-                    ? module.link_module.map((link) => (
-                        <div key={link.id} className="group relative">
-                          <div className="absolute top-1.5 right-1.5 z-10 opacity-0 group-hover:opacity-100">
-                            <button
-                              type="button"
-                              className="grid h-7 w-7 place-items-center rounded bg-gray-100 p-1 text-red-500 outline-none duration-300 hover:bg-red-50"
-                              onClick={() => {
-                                const updatedLinks = module.link_module.filter(
-                                  (l) => l.id !== link.id
-                                );
-                                submitChanges({ links_list: updatedLinks });
-                              }}
-                            >
-                              <TrashIcon className="h-4 w-4" />
-                            </button>
-                          </div>
-                          <Link href={link.url} target="_blank">
-                            <a className="group relative flex gap-2 rounded-md border bg-gray-100 p-2">
-                              <div className="mt-0.5">
-                                <LinkIcon className="h-3.5 w-3.5" />
-                              </div>
-                              <div>
-                                <h5>{link.title}</h5>
-                                <p className="mt-0.5 text-gray-500">
-                                  Added {timeAgo(link.created_at)} ago by{" "}
-                                  {link.created_by_detail.email}
-                                </p>
-                              </div>
-                            </a>
-                          </Link>
-                        </div>
-                      ))
-                    : null}
+                  {module.link_module && module.link_module.length > 0 ? (
+                    <LinksList
+                      links={module.link_module}
+                      handleDeleteLink={handleDeleteLink}
+                      userAuth={userAuth}
+                    />
+                  ) : null}
                 </div>
               </div>
             </div>

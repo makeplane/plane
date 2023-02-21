@@ -7,6 +7,8 @@ import { mutate } from "swr";
 
 // services
 import issuesService from "services/issues.service";
+// hooks
+import useToast from "hooks/use-toast";
 // components
 import {
   ViewAssigneeSelect,
@@ -16,19 +18,12 @@ import {
 } from "components/issues/view-select";
 // ui
 import { CustomMenu } from "components/ui";
-// types
-import {
-  CycleIssueResponse,
-  IIssue,
-  IssueResponse,
-  ModuleIssueResponse,
-  Properties,
-  UserAuth,
-} from "types";
-// fetch-keys
-import { CYCLE_ISSUES, MODULE_ISSUES, PROJECT_ISSUES_LIST, STATE_LIST } from "constants/fetch-keys";
+// helpers
 import { copyTextToClipboard } from "helpers/string.helper";
-import useToast from "hooks/use-toast";
+// types
+import { CycleIssueResponse, IIssue, ModuleIssueResponse, Properties, UserAuth } from "types";
+// fetch-keys
+import { CYCLE_ISSUES, MODULE_ISSUES, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 
 type Props = {
   type?: string;
@@ -98,15 +93,15 @@ export const SingleListIssue: React.FC<Props> = ({
           false
         );
 
-      mutate<IssueResponse>(
+      mutate<IIssue[]>(
         PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
-        (prevData) => ({
-          ...(prevData as IssueResponse),
-          results: (prevData?.results ?? []).map((p) => {
+        (prevData) =>
+          (prevData ?? []).map((p) => {
             if (p.id === issue.id) return { ...p, ...formData };
+
             return p;
           }),
-        }),
+
         false
       );
 
@@ -200,7 +195,6 @@ export const SingleListIssue: React.FC<Props> = ({
         )}
         {type && !isNotAllowed && (
           <CustomMenu width="auto" ellipsis>
-            <CustomMenu.MenuItem onClick={handleCopyText}>Copy issue link</CustomMenu.MenuItem>
             <CustomMenu.MenuItem onClick={editIssue}>Edit</CustomMenu.MenuItem>
             {type !== "issue" && removeIssue && (
               <CustomMenu.MenuItem onClick={removeIssue}>
@@ -210,6 +204,7 @@ export const SingleListIssue: React.FC<Props> = ({
             <CustomMenu.MenuItem onClick={() => handleDeleteIssue(issue)}>
               Delete permanently
             </CustomMenu.MenuItem>
+            <CustomMenu.MenuItem onClick={handleCopyText}>Copy issue link</CustomMenu.MenuItem>
           </CustomMenu>
         )}
       </div>

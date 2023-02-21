@@ -20,9 +20,10 @@ import { copyTextToClipboard } from "helpers/string.helper";
 
 type Props = {
   module: IModule;
+  handleEditModule: () => void;
 };
 
-export const SingleModuleCard: React.FC<Props> = ({ module }) => {
+export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) => {
   const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
 
   const router = useRouter();
@@ -64,6 +65,7 @@ export const SingleModuleCard: React.FC<Props> = ({ module }) => {
         <div className="absolute top-4 right-4 ">
           <CustomMenu width="auto" ellipsis>
             <CustomMenu.MenuItem onClick={handleCopyText}>Copy module link</CustomMenu.MenuItem>
+            <CustomMenu.MenuItem onClick={handleEditModule}>Edit module</CustomMenu.MenuItem>
             <CustomMenu.MenuItem onClick={handleDeleteModule}>
               Delete module permanently
             </CustomMenu.MenuItem>
@@ -89,9 +91,7 @@ export const SingleModuleCard: React.FC<Props> = ({ module }) => {
                 <h6 className="text-gray-500">END DATE</h6>
                 <div className="flex w-min cursor-pointer items-center gap-1 whitespace-nowrap rounded border px-1.5 py-0.5 text-xs shadow-sm">
                   <CalendarDaysIcon className="h-3 w-3" />
-                  {module.target_date
-                    ? renderShortNumericDateFormat(module?.target_date)
-                    : "Invalid"}
+                  {module.target_date ? renderShortNumericDateFormat(module?.target_date) : "N/A"}
                 </div>
               </div>
               <div className="space-y-2">
