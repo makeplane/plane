@@ -188,6 +188,21 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
       });
   };
 
+  const handleCopyText = () => {
+    const originURL =
+      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+
+    copyTextToClipboard(
+      `${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issueDetail?.id}`
+    ).then(() => {
+      setToastAlert({
+        type: "success",
+        title: "Link Copied!",
+        message: "Issue link copied to clipboard.",
+      });
+    });
+  };
+
   useEffect(() => {
     if (!createLabelForm) return;
 
@@ -217,23 +232,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
             <button
               type="button"
               className="rounded-md border p-2 shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-              onClick={() =>
-                copyTextToClipboard(
-                  `https://app.plane.so/${workspaceSlug}/projects/${issueDetail?.project_detail?.id}/issues/${issueDetail?.id}`
-                )
-                  .then(() => {
-                    setToastAlert({
-                      type: "success",
-                      title: "Issue link copied to clipboard",
-                    });
-                  })
-                  .catch(() => {
-                    setToastAlert({
-                      type: "error",
-                      title: "Some error occurred",
-                    });
-                  })
-              }
+              onClick={handleCopyText}
             >
               <LinkIcon className="h-3.5 w-3.5" />
             </button>
@@ -373,7 +372,10 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                       >
                         <span
                           className="h-2 w-2 flex-shrink-0 rounded-full"
-                          style={{ backgroundColor: label?.color ?? "black" }}
+                          style={{
+                            backgroundColor:
+                              label?.color && label.color !== "" ? label.color : "#000",
+                          }}
                         />
                         {label.name}
                         <XMarkIcon className="h-2 w-2 group-hover:text-red-500" />

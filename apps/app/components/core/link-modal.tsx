@@ -84,21 +84,6 @@ export const LinkModal: React.FC<Props> = ({ isOpen, handleClose, onFormSubmit }
                       <div className="mt-2 space-y-3">
                         <div>
                           <Input
-                            id="title"
-                            label="Title"
-                            name="title"
-                            type="text"
-                            placeholder="Enter title"
-                            autoComplete="off"
-                            error={errors.title}
-                            register={register}
-                            validations={{
-                              required: "Title is required",
-                            }}
-                          />
-                        </div>
-                        <div>
-                          <Input
                             id="url"
                             label="URL"
                             name="url"
@@ -109,6 +94,21 @@ export const LinkModal: React.FC<Props> = ({ isOpen, handleClose, onFormSubmit }
                             register={register}
                             validations={{
                               required: "URL is required",
+                            }}
+                          />
+                        </div>
+                        <div>
+                          <Input
+                            id="title"
+                            label="Title"
+                            name="title"
+                            type="text"
+                            placeholder="Enter title"
+                            autoComplete="off"
+                            error={errors.title}
+                            register={register}
+                            validations={{
+                              required: "Title is required",
                             }}
                           />
                         </div>

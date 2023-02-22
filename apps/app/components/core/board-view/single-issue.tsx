@@ -165,19 +165,15 @@ export const SingleBoardIssue: React.FC<Props> = ({
   const handleCopyText = () => {
     const originURL =
       typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`)
-      .then(() => {
-        setToastAlert({
-          type: "success",
-          title: "Issue link copied to clipboard",
-        });
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Some error occurred",
-        });
+    copyTextToClipboard(
+      `${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`
+    ).then(() => {
+      setToastAlert({
+        type: "success",
+        title: "Link Copied!",
+        message: "Issue link copied to clipboard.",
       });
+    });
   };
 
   useEffect(() => {
@@ -201,14 +197,14 @@ export const SingleBoardIssue: React.FC<Props> = ({
           <div className="absolute top-1.5 right-1.5 z-10 opacity-0 group-hover/card:opacity-100">
             {type && !isNotAllowed && (
               <CustomMenu width="auto" ellipsis>
-                <CustomMenu.MenuItem onClick={editIssue}>Edit</CustomMenu.MenuItem>
+                <CustomMenu.MenuItem onClick={editIssue}>Edit issue</CustomMenu.MenuItem>
                 {type !== "issue" && removeIssue && (
                   <CustomMenu.MenuItem onClick={removeIssue}>
                     <>Remove from {type}</>
                   </CustomMenu.MenuItem>
                 )}
                 <CustomMenu.MenuItem onClick={() => handleDeleteIssue(issue)}>
-                  Delete permanently
+                  Delete issue
                 </CustomMenu.MenuItem>
                 <CustomMenu.MenuItem onClick={handleCopyText}>Copy issue link</CustomMenu.MenuItem>
               </CustomMenu>
@@ -236,7 +232,6 @@ export const SingleBoardIssue: React.FC<Props> = ({
               issue={issue}
               partialUpdateIssue={partialUpdateIssue}
               isNotAllowed={isNotAllowed}
-              position="left"
             />
           )}
           {properties.state && selectedGroup !== "state_detail.name" && (
@@ -256,6 +251,24 @@ export const SingleBoardIssue: React.FC<Props> = ({
           {properties.sub_issue_count && (
             <div className="flex flex-shrink-0 items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
               {issue.sub_issues_count} {issue.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
+            </div>
+          )}
+          {properties.labels && (
+            <div className="flex flex-wrap gap-1">
+              {issue.label_details.map((label) => (
+                <span
+                  key={label.id}
+                  className="group flex items-center gap-1 rounded-2xl border px-2 py-0.5 text-xs"
+                >
+                  <span
+                    className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                    style={{
+                      backgroundColor: label?.color && label.color !== "" ? label.color : "#000",
+                    }}
+                  />
+                  {label.name}
+                </span>
+              ))}
             </div>
           )}
           {properties.assignee && (

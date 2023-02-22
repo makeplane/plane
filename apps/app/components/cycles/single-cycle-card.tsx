@@ -70,19 +70,16 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
   const handleCopyText = () => {
     const originURL =
       typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`)
-      .then(() => {
-        setToastAlert({
-          type: "success",
-          title: "Cycle link copied to clipboard",
-        });
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Some error occurred",
-        });
+
+    copyTextToClipboard(
+      `${originURL}/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`
+    ).then(() => {
+      setToastAlert({
+        type: "success",
+        title: "Link Copied!",
+        message: "Cycle link copied to clipboard.",
       });
+    });
   };
 
   return (
@@ -99,11 +96,9 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
                 </a>
               </Link>
               <CustomMenu width="auto" ellipsis>
-                <CustomMenu.MenuItem onClick={handleCopyText}>Copy cycle link</CustomMenu.MenuItem>
                 <CustomMenu.MenuItem onClick={handleEditCycle}>Edit cycle</CustomMenu.MenuItem>
-                <CustomMenu.MenuItem onClick={handleDeleteCycle}>
-                  Delete cycle permanently
-                </CustomMenu.MenuItem>
+                <CustomMenu.MenuItem onClick={handleDeleteCycle}>Delete cycle</CustomMenu.MenuItem>
+                <CustomMenu.MenuItem onClick={handleCopyText}>Copy cycle link</CustomMenu.MenuItem>
               </CustomMenu>
             </div>
             <div className="grid grid-cols-3 gap-x-2 gap-y-3 text-xs">
