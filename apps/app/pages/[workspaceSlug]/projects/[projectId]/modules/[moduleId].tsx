@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 import { useRouter } from "next/router";
-import { NextPageContext } from "next";
+import { GetServerSidePropsContext } from "next";
 import useSWR, { mutate } from "swr";
 
 // icons
@@ -222,9 +222,10 @@ const SingleModule: React.FC<UserAuth> = (props) => {
   );
 };
 
-export const getServerSideProps = async (ctx: NextPageContext) => {
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const user = await requiredAuth(ctx.req?.headers.cookie);
-  const redirectAfterSignIn = ctx.req?.url;
+
+  const redirectAfterSignIn = ctx.resolvedUrl;
 
   if (!user) {
     return {

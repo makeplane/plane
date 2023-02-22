@@ -20,7 +20,7 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import { RectangleStackIcon, PlusIcon } from "@heroicons/react/24/outline";
 // types
 import type { UserAuth } from "types";
-import type { NextPage, NextPageContext } from "next";
+import type { GetServerSidePropsContext, NextPage } from "next";
 // fetch-keys
 import { PROJECT_DETAILS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 
@@ -111,9 +111,10 @@ const ProjectIssues: NextPage<UserAuth> = (props) => {
   );
 };
 
-export const getServerSideProps = async (ctx: NextPageContext) => {
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const user = await requiredAuth(ctx.req?.headers.cookie);
-  const redirectAfterSignIn = ctx.req?.url;
+
+  const redirectAfterSignIn = ctx.resolvedUrl;
 
   if (!user) {
     return {
