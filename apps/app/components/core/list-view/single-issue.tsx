@@ -16,7 +16,6 @@ import {
   ViewPrioritySelect,
   ViewStateSelect,
 } from "components/issues/view-select";
-import { Tooltip2 } from "@blueprintjs/popover2";
 
 // ui
 import { Tooltip, CustomMenu } from "components/ui";
