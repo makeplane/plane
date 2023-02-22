@@ -1,66 +1,40 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { Tooltip2 } from "@blueprintjs/popover2";
 
 export type Props = {
-  direction?: "top" | "right" | "bottom" | "left";
-  content: string | React.ReactNode;
-  margin?: string;
-  children: React.ReactNode;
-  className?: string;
+  tooltipHeading?: string;
+  tooltipContent: string;
+  position?: "top" | "right" | "bottom" | "left";
+  children: JSX.Element;
   disabled?: boolean;
 };
 
 export const Tooltip: React.FC<Props> = ({
-  content,
-  direction = "top",
+  tooltipHeading,
+  tooltipContent,
+  position = "top",
   children,
-  margin = "24px",
-  className = "",
   disabled = false,
 }) => {
-  const [active, setActive] = useState(false);
-  const [styleConfig, setStyleConfig] = useState(`top-[calc(-100%-${margin})]`);
-  let timeout: any;
-
-  const showToolTip = () => {
-    timeout = setTimeout(() => {
-      setActive(true);
-    }, 300);
-  };
-
-  const hideToolTip = () => {
-    clearInterval(timeout);
-    setActive(false);
-  };
-
-  const tooltipStyles = {
-    top: "left-[50%] translate-x-[-50%] before:contents-[''] before:border-solid before:border-transparent before:h-0 before:w-0 before:absolute before:pointer-events-none before:border-[6px] before:left-[50%] before:ml-[calc(6px*-1)] before:top-full before:border-t-black",
-
-    right: "right-[-100%] top-[50%] translate-x-0 translate-y-[-50%]",
-
-    bottom:
-      "left-[50%] translate-x-[-50%] before:contents-[''] before:border-solid before:border-transparent before:h-0 before:w-0 before:absolute before:pointer-events-none before:border-[6px] before:left-[50%] before:ml-[calc(6px*-1)] before:bottom-full before:border-b-black",
-
-    left: "left-[-100%] top-[50%] translate-x-0 translate-y-[-50%]",
-  };
-
-  useEffect(() => {
-    const styleConfig = `${direction}-[calc(-100%-${margin})]`;
-    setStyleConfig(styleConfig);
-  }, [margin, direction]);
-
   return (
-    <div className="relative inline-block" onMouseEnter={showToolTip} onMouseLeave={hideToolTip}>
-      {children}
-      {active && (
-        <div
-          className={`${className} ${
-            disabled ? "hidden" : ""
-          } absolute p-[6px] text-xs z-20 rounded leading-1 text-white bg-black text-center w-max max-w-[300px] 
-          ${tooltipStyles[direction]} ${styleConfig}`}
-        >
-          {content}
+    <Tooltip2
+      disabled={disabled}
+      content={
+        <div className="flex flex-col justify-center items-start gap-1 max-w-[600px] text-xs rounded-md bg-white p-2 shadow-md capitalize text-left">
+          {tooltipHeading ? (
+            <>
+              <h5 className="font-medium">{tooltipHeading}</h5>
+              <p className="text-gray-700">{tooltipContent}</p>
+            </>
+          ) : (
+            <p className="text-gray-700">{tooltipContent}</p>
+          )}
         </div>
-      )}
-    </div>
+      }
+      position={position}
+      renderTarget={({ isOpen: isTooltipOpen, ref: eleRefernce, ...tooltipProps }) =>
+        React.cloneElement(children, { ref: eleRefernce, ...tooltipProps, ...children.props })
+      }
+    />
   );
 };

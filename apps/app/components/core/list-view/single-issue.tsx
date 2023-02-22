@@ -16,8 +16,10 @@ import {
   ViewPrioritySelect,
   ViewStateSelect,
 } from "components/issues/view-select";
+import { Tooltip2 } from "@blueprintjs/popover2";
+
 // ui
-import { CustomMenu } from "components/ui";
+import { Tooltip, CustomMenu } from "components/ui";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
@@ -151,11 +153,20 @@ export const SingleListIssue: React.FC<Props> = ({
         <Link href={`/${workspaceSlug}/projects/${issue?.project_detail?.id}/issues/${issue.id}`}>
           <a className="group relative flex items-center gap-2">
             {properties.key && (
-              <span className="flex-shrink-0 text-xs text-gray-500">
-                {issue.project_detail?.identifier}-{issue.sequence_id}
-              </span>
+              <Tooltip
+                tooltipHeading="ID"
+                tooltipContent={`${issue.project_detail?.identifier}-${issue.sequence_id}`}
+              >
+                <span className="flex-shrink-0 text-xs text-gray-500">
+                  {issue.project_detail?.identifier}-{issue.sequence_id}
+                </span>
+              </Tooltip>
             )}
-            <span>{issue.name}</span>
+            <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
+              <span className="w-auto max-w-lg text-ellipsis overflow-hidden whitespace-nowrap">
+                {issue.name}
+              </span>
+            </Tooltip>
           </a>
         </Link>
       </div>
