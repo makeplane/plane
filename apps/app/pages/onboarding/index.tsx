@@ -23,7 +23,7 @@ import CommandMenu from "components/onboarding/command-menu";
 // images
 import Logo from "public/onboarding/logo.svg";
 // types
-import type { NextPage, NextPageContext } from "next";
+import type { NextPage, GetServerSidePropsContext } from "next";
 
 const Onboarding: NextPage = () => {
   const [step, setStep] = useState(1);
@@ -92,10 +92,10 @@ const Onboarding: NextPage = () => {
   );
 };
 
-export const getServerSideProps = async (ctx: NextPageContext) => {
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const user = await requiredAuth(ctx.req?.headers.cookie);
 
-  const redirectAfterSignIn = ctx.req?.url;
+  const redirectAfterSignIn = ctx.resolvedUrl;
 
   if (!user) {
     return {
