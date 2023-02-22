@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 // lodash
 import debounce from "lodash.debounce";
 // components
-import { Loader, Input } from "components/ui";
+import { Loader, TextArea } from "components/ui";
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
   ssr: false,
   loading: () => (
@@ -45,7 +45,6 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
     setValue,
     reset,
     formState: { errors },
-    setError,
   } = useForm<IIssue>({
     defaultValues: {
       name: "",
@@ -76,8 +75,8 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
 
       handleFormSubmit({
         name: formData.name ?? "",
-        description: formData.description,
-        description_html: formData.description_html,
+        description: formData.description ?? "",
+        description_html: formData.description_html ?? "<p></p>",
       });
     },
     [handleFormSubmit, setToastAlert]
@@ -106,19 +105,20 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
 
   return (
     <div>
-      <Input
+      <TextArea
         id="name"
         placeholder="Enter issue name"
         name="name"
         value={watch("name")}
-        autoComplete="off"
         onChange={(e) => {
           setValue("name", e.target.value);
           debounceHandler();
         }}
-        mode="transparent"
-        className="text-xl font-medium"
-        disabled={isNotAllowed}
+        required={true}
+        className="block px-3 py-2 text-xl
+      w-full overflow-hidden resize-none min-h-10
+      rounded border-none bg-transparent ring-0 focus:ring-1 focus:ring-theme outline-none "
+        role="textbox "
       />
       <span>{errors.name ? errors.name.message : null}</span>
       <RemirrorRichTextEditor

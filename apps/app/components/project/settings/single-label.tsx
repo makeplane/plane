@@ -72,7 +72,7 @@ const SingleLabel: React.FC<Props> = ({ label, issueLabels, editLabel, handleLab
                         <span
                           className="h-4 w-4 rounded"
                           style={{
-                            backgroundColor: watch("color") ?? "green",
+                            backgroundColor: watch("color") ?? "black",
                           }}
                         />
                       )}

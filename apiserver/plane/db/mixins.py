@@ -1,3 +1,7 @@
+# Python imports
+import uuid
+
+# Django imports
 from django.db import models
 
 

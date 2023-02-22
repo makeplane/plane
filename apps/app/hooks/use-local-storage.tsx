@@ -1,22 +1,48 @@
-import React, { useEffect, useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 
-const getSavedValue = (key: any, value: any) => {
-  const savedValue = localStorage.getItem(key);
-  if (savedValue) {
-    return savedValue;
+const getValueFromLocalStorage = (key: string, defaultValue: any) => {
+  try {
+    const item = window.localStorage.getItem(key);
+    return item ? JSON.parse(item) : defaultValue;
+  } catch (error) {
+    window.localStorage.removeItem(key);
+    return defaultValue;
   }
-  return value;
 };
 
-const useLocalStorage = (key: any, value: any) => {
-  const [updatedvalue, seUpdatedvalue] = useState(() => getSavedValue(key, value));
+const useLocalStorage = <T,>(key: string, initialValue: T) => {
+  const [storedValue, setStoredValue] = useState<T | null>(() =>
+    getValueFromLocalStorage(key, initialValue)
+  );
+
+  const setValue = useCallback(
+    (value: T) => {
+      window.localStorage.setItem(key, JSON.stringify(value));
+      setStoredValue(value);
+      window.dispatchEvent(new Event(`local-storage:${key}`));
+    },
+    [key]
+  );
+
+  const clearValue = useCallback(() => {
+    window.localStorage.removeItem(key);
+    setStoredValue(null);
+    window.dispatchEvent(new Event(`local-storage:${key}`));
+  }, [key]);
+
+  const reHydrate = useCallback(() => {
+    const data = getValueFromLocalStorage(key, initialValue);
+    setStoredValue(data);
+  }, [key, initialValue]);
 
   useEffect(() => {
-    localStorage.setItem(key, updatedvalue);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [updatedvalue]);
+    window.addEventListener(`local-storage:${key}`, reHydrate);
+    return () => {
+      window.removeEventListener(`local-storage:${key}`, reHydrate);
+    };
+  }, [key, reHydrate]);
 
-  return [updatedvalue, seUpdatedvalue];
+  return { storedValue, setValue, clearValue } as const;
 };
 
 export default useLocalStorage;

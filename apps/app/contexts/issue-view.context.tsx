@@ -19,7 +19,7 @@ type IssueViewProps = {
   issueView: "list" | "kanban" | null;
   groupByProperty: NestedKeyOf<IIssue> | null;
   filterIssue: "activeIssue" | "backlogIssue" | null;
-  orderBy: NestedKeyOf<IIssue> | "manual" | null;
+  orderBy: NestedKeyOf<IIssue> | null;
 };
 
 type ReducerActionType = {
@@ -34,12 +34,12 @@ type ReducerActionType = {
 };
 
 type ContextType = {
-  orderBy: NestedKeyOf<IIssue> | "manual" | null;
+  orderBy: NestedKeyOf<IIssue> | null;
   issueView: "list" | "kanban" | null;
   groupByProperty: NestedKeyOf<IIssue> | null;
   filterIssue: "activeIssue" | "backlogIssue" | null;
   setGroupByProperty: (property: NestedKeyOf<IIssue> | null) => void;
-  setOrderBy: (property: NestedKeyOf<IIssue> | "manual" | null) => void;
+  setOrderBy: (property: NestedKeyOf<IIssue> | null) => void;
   setFilterIssue: (property: "activeIssue" | "backlogIssue" | null) => void;
   resetFilterToDefault: () => void;
   setNewFilterDefaultView: () => void;
@@ -51,14 +51,14 @@ type StateType = {
   issueView: "list" | "kanban" | null;
   groupByProperty: NestedKeyOf<IIssue> | null;
   filterIssue: "activeIssue" | "backlogIssue" | null;
-  orderBy: NestedKeyOf<IIssue> | "manual" | null;
+  orderBy: NestedKeyOf<IIssue> | null;
 };
 type ReducerFunctionType = (state: StateType, action: ReducerActionType) => StateType;
 
 export const initialState: StateType = {
   issueView: "list",
   groupByProperty: null,
-  orderBy: null,
+  orderBy: "created_at",
   filterIssue: null,
 };
 
@@ -122,6 +122,7 @@ export const reducer: ReducerFunctionType = (state, action) => {
         ...payload,
       };
     }
+
     default: {
       return state;
     }
@@ -219,7 +220,7 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
   );
 
   const setOrderBy = useCallback(
-    (property: NestedKeyOf<IIssue> | "manual" | null) => {
+    (property: NestedKeyOf<IIssue> | null) => {
       dispatch({
         type: "SET_ORDER_BY_PROPERTY",
         payload: {

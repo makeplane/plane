@@ -24,9 +24,8 @@ import useToast from "hooks/use-toast";
 import { ImageUploadModal } from "components/core";
 import ConfirmWorkspaceDeletion from "components/workspace/confirm-workspace-deletion";
 // ui
-import { Spinner, Button, Input, CustomSelect } from "components/ui";
+import { Spinner, Button, Input, CustomSelect, OutlineButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-import OutlineButton from "components/ui/outline-button";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types

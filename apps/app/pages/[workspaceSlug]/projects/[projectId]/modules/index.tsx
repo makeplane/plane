@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 import useSWR from "swr";
@@ -12,20 +12,22 @@ import { requiredAuth } from "lib/auth";
 import projectService from "services/project.service";
 import modulesService from "services/modules.service";
 // components
-import { SingleModuleCard } from "components/modules";
+import { CreateUpdateModuleModal, SingleModuleCard } from "components/modules";
 // ui
 import { EmptySpace, EmptySpaceItem, HeaderButton, Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 // types
-import { IModule } from "types/modules";
+import { IModule, SelectModuleType } from "types/modules";
 // fetch-keys
-import type { NextPage, NextPageContext } from "next";
+import type { NextPage, GetServerSidePropsContext } from "next";
 import { MODULE_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
 
 const ProjectModules: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+  const [selectedModule, setSelectedModule] = useState<SelectModuleType>();
+  const [createUpdateModule, setCreateUpdateModule] = useState(false);
 
   const { data: activeProject } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
@@ -40,6 +42,19 @@ const ProjectModules: NextPage = () => {
       ? () => modulesService.getModules(workspaceSlug as string, projectId as string)
       : null
   );
+
+  const handleEditModule = (module: IModule) => {
+    setSelectedModule({ ...module, actionType: "edit" });
+    setCreateUpdateModule(true);
+  };
+
+  useEffect(() => {
+    if (createUpdateModule) return;
+    const timer = setTimeout(() => {
+      setSelectedModule(undefined);
+      clearTimeout(timer);
+    }, 500);
+  }, [createUpdateModule]);
 
   return (
     <AppLayout
@@ -65,12 +80,22 @@ const ProjectModules: NextPage = () => {
         />
       }
     >
+      <CreateUpdateModuleModal
+        isOpen={createUpdateModule}
+        // handleClose={() => setCreateUpdateModule(false)}
+        setIsOpen={setCreateUpdateModule}
+        data={selectedModule}
+      />
       {modules ? (
         modules.length > 0 ? (
           <div className="space-y-5">
             <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
               {modules.map((module) => (
-                <SingleModuleCard key={module.id} module={module} />
+                <SingleModuleCard
+                  key={module.id}
+                  module={module}
+                  handleEditModule={() => handleEditModule(module)}
+                />
               ))}
             </div>
           </div>
@@ -114,10 +139,10 @@ const ProjectModules: NextPage = () => {
   );
 };
 
-export const getServerSideProps = async (ctx: NextPageContext) => {
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const user = await requiredAuth(ctx.req?.headers.cookie);
 
-  const redirectAfterSignIn = ctx.req?.url;
+  const redirectAfterSignIn = ctx.resolvedUrl;
 
   if (!user) {
     return {

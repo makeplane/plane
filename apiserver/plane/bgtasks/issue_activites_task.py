@@ -1,5 +1,10 @@
 # Python imports
 import json
+import requests
+
+# Django imports
+from django.conf import settings
+from django.core.serializers.json import DjangoJSONEncoder
 
 # Third Party imports
 from django_rq import job
@@ -16,6 +21,7 @@ from plane.db.models import (
     Cycle,
     Module,
 )
+from plane.api.serializers import IssueActivitySerializer
 
 
 # Track Chnages in name
@@ -612,14 +618,136 @@ def track_modules(
         )
 
 
+def create_issue_activity(
+    requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            project=project,
+            workspace=project.workspace,
+            comment=f"{actor.email} created the issue",
+            verb="created",
+            actor=actor,
+        )
+    )
+
+
+def update_issue_activity(
+    requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+    ISSUE_ACTIVITY_MAPPER = {
+        "name": track_name,
+        "parent": track_parent,
+        "priority": track_priority,
+        "state": track_state,
+        "description": track_description,
+        "target_date": track_target_date,
+        "start_date": track_start_date,
+        "labels_list": track_labels,
+        "assignees_list": track_assignees,
+        "blocks_list": track_blocks,
+        "blockers_list": track_blockings,
+        "cycles_list": track_cycles,
+        "modules_list": track_modules,
+    }
+    for key in requested_data:
+        func = ISSUE_ACTIVITY_MAPPER.get(key, None)
+        if func is not None:
+            func(
+                requested_data,
+                current_instance,
+                issue_id,
+                project,
+                actor,
+                issue_activities,
+            )
+
+
+def create_comment_activity(
+    requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            project=project,
+            workspace=project.workspace,
+            comment=f"{actor.email} created a comment",
+            verb="created",
+            actor=actor,
+            field="comment",
+            new_value=requested_data.get("comment_html"),
+            new_identifier=requested_data.get("id"),
+            issue_comment_id=requested_data.get("id", None),
+        )
+    )
+
+
+def update_comment_activity(
+    requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+    if current_instance.get("comment_html") != requested_data.get("comment_html"):
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                project=project,
+                workspace=project.workspace,
+                comment=f"{actor.email} updated a comment",
+                verb="updated",
+                actor=actor,
+                field="comment",
+                old_value=current_instance.get("comment_html"),
+                old_identifier=current_instance.get("id"),
+                new_value=requested_data.get("comment_html"),
+                new_identifier=current_instance.get("id"),
+                issue_comment_id=current_instance.get("id"),
+            )
+        )
+
+
+def delete_issue_activity(
+    requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+    issue_activities.append(
+        IssueActivity(
+            project=project,
+            workspace=project.workspace,
+            comment=f"{actor.email} deleted the issue",
+            verb="deleted",
+            actor=actor,
+            field="issue",
+        )
+    )
+
+
+def delete_comment_activity(
+    requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            project=project,
+            workspace=project.workspace,
+            comment=f"{actor.email} deleted the comment",
+            verb="deleted",
+            actor=actor,
+            field="comment",
+        )
+    )
+
+
 # Receive message from room group
 @job("default")
 def issue_activity(event):
     try:
         issue_activities = []
-
+        type = event.get("type")
         requested_data = json.loads(event.get("requested_data"))
-        current_instance = json.loads(event.get("current_instance"))
+        current_instance = (
+            json.loads(event.get("current_instance"))
+            if event.get("current_instance") is not None
+            else None
+        )
         issue_id = event.get("issue_id", None)
         actor_id = event.get("actor_id")
         project_id = event.get("project_id")
@@ -628,37 +756,43 @@ def issue_activity(event):
 
         project = Project.objects.get(pk=project_id)
 
-        ISSUE_ACTIVITY_MAPPER = {
-            "name": track_name,
-            "parent": track_parent,
-            "priority": track_priority,
-            "state": track_state,
-            "description": track_description,
-            "target_date": track_target_date,
-            "start_date": track_start_date,
-            "labels_list": track_labels,
-            "assignees_list": track_assignees,
-            "blocks_list": track_blocks,
-            "blockers_list": track_blockings,
-            "cycles_list": track_cycles,
-            "modules_list": track_modules,
+        ACTIVITY_MAPPER = {
+            "issue.activity.created": create_issue_activity,
+            "issue.activity.updated": update_issue_activity,
+            "issue.activity.deleted": delete_issue_activity,
+            "comment.activity.created": create_comment_activity,
+            "comment.activity.updated": update_comment_activity,
+            "comment.activity.deleted": delete_comment_activity,
         }
 
-        for key in requested_data:
-            func = ISSUE_ACTIVITY_MAPPER.get(key, None)
-            if func is not None:
-                func(
-                    requested_data,
-                    current_instance,
-                    issue_id,
-                    project,
-                    actor,
-                    issue_activities,
-                )
+        func = ACTIVITY_MAPPER.get(type)
+        if func is not None:
+            func(
+                requested_data,
+                current_instance,
+                issue_id,
+                project,
+                actor,
+                issue_activities,
+            )
 
         # Save all the values to database
-        _ = IssueActivity.objects.bulk_create(issue_activities)
-
+        issue_activities_created = IssueActivity.objects.bulk_create(issue_activities)
+        # Post the updates to segway for integrations and webhooks
+        if len(issue_activities_created):
+            # Don't send activities if the actor is a bot
+            if settings.PROXY_BASE_URL:
+                for issue_activity in issue_activities_created:
+                    headers = {"Content-Type": "application/json"}
+                    issue_activity_json = json.dumps(
+                        IssueActivitySerializer(issue_activity).data,
+                        cls=DjangoJSONEncoder,
+                    )
+                    _ = requests.post(
+                        f"{settings.PROXY_BASE_URL}/hooks/workspaces/{str(issue_activity.workspace_id)}/projects/{str(issue_activity.project_id)}/issues/{str(issue_activity.issue_id)}/issue-activity-hooks/",
+                        json=issue_activity_json,
+                        headers=headers,
+                    )
         return
     except Exception as e:
         capture_exception(e)

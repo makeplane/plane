@@ -1,8 +1,9 @@
 # All the python scripts that are used for back migrations
 import uuid
+import random
+from django.contrib.auth.hashers import make_password
 from plane.db.models import ProjectIdentifier
 from plane.db.models import Issue, IssueComment, User
-from django.contrib.auth.hashers import make_password
 
 
 # Update description and description html values for old descriptions
@@ -76,6 +77,22 @@ def update_user_empty_password():
         User.objects.bulk_update(updated_users, ["password"], batch_size=50)
         print("Success")
 
+    except Exception as e:
+        print(e)
+        print("Failed")
+
+
+def updated_issue_sort_order():
+    try:
+        issues = Issue.objects.all()
+        updated_issues = []
+
+        for issue in issues:
+            issue.sort_order = issue.sequence_id * random.randint(100, 500)
+            updated_issues.append(issue)
+
+        Issue.objects.bulk_update(updated_issues, ["sort_order"], batch_size=100)
+        print("Success")
     except Exception as e:
         print(e)
         print("Failed")

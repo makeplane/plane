@@ -69,16 +69,6 @@ class Issue(ProjectBaseModel):
 
     def save(self, *args, **kwargs):
         # This means that the model isn't saved to the database yet
-        if self._state.adding:
-            # Get the maximum display_id value from the database
-
-            last_id = IssueSequence.objects.filter(project=self.project).aggregate(
-                largest=models.Max("sequence")
-            )["largest"]
-            # aggregate can return None! Check it first.
-            # If it isn't none, just use the last ID specified (which should be the greatest) and add one to it
-            if last_id is not None:
-                self.sequence_id = last_id + 1
         if self.state is None:
             try:
                 from plane.db.models import State
@@ -109,6 +99,23 @@ class Issue(ProjectBaseModel):
 
             except ImportError:
                 pass
+        if self._state.adding:
+            # Get the maximum display_id value from the database
+
+            last_id = IssueSequence.objects.filter(project=self.project).aggregate(
+                largest=models.Max("sequence")
+            )["largest"]
+            # aggregate can return None! Check it first.
+            # If it isn't none, just use the last ID specified (which should be the greatest) and add one to it
+            if last_id is not None:
+                self.sequence_id = last_id + 1
+
+            largest_sort_order = Issue.objects.filter(
+                project=self.project, state=self.state
+            ).aggregate(largest=models.Max("sort_order"))["largest"]
+            if largest_sort_order is not None:
+                self.sort_order = largest_sort_order + 10000
+
         # Strip the html tags using html parser
         self.description_stripped = (
             None
@@ -161,9 +168,26 @@ class IssueAssignee(ProjectBaseModel):
         return f"{self.issue.name} {self.assignee.email}"
 
 
+class IssueLink(ProjectBaseModel):
+    title = models.CharField(max_length=255, null=True)
+    url = models.URLField()
+    issue = models.ForeignKey(
+        "db.Issue", on_delete=models.CASCADE, related_name="issue_link"
+    )
+
+    class Meta:
+        verbose_name = "Issue Link"
+        verbose_name_plural = "Issue Links"
+        db_table = "issue_links"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.issue.name} {self.url}"
+
+
 class IssueActivity(ProjectBaseModel):
     issue = models.ForeignKey(
-        Issue, on_delete=models.CASCADE, related_name="issue_activity"
+        Issue, on_delete=models.SET_NULL, null=True, related_name="issue_activity"
     )
     verb = models.CharField(max_length=255, verbose_name="Action", default="created")
     field = models.CharField(

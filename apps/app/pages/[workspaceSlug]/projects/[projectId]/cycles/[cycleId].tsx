@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
-import { NextPageContext } from "next";
+import { GetServerSidePropsContext } from "next";
 // icons
 import { ArrowLeftIcon, ListBulletIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { CyclesIcon } from "components/icons";
@@ -15,7 +15,7 @@ import AppLayout from "layouts/app-layout";
 import { IssueViewContextProvider } from "contexts/issue-view.context";
 // components
 import { ExistingIssuesListModal, IssuesFilterView, IssuesView } from "components/core";
-import CycleDetailSidebar from "components/project/cycles/cycle-detail-sidebar";
+import { CycleDetailsSidebar } from "components/cycles";
 // services
 import issuesServices from "services/issues.service";
 import cycleServices from "services/cycles.service";
@@ -118,8 +118,7 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
       <ExistingIssuesListModal
         isOpen={cycleIssuesListModal}
         handleClose={() => setCycleIssuesListModal(false)}
-        type="cycle"
-        issues={issues?.results.filter((i) => !i.issue_cycle) ?? []}
+        issues={issues?.filter((i) => !i.issue_cycle) ?? []}
         handleOnSubmit={handleAddIssuesToCycle}
       />
       <AppLayout
@@ -216,7 +215,7 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
             <Spinner />
           </div>
         )}
-        <CycleDetailSidebar
+        <CycleDetailsSidebar
           issues={cycleIssuesArray ?? []}
           cycle={cycleDetails}
           isOpen={cycleSidebar}
@@ -227,9 +226,10 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
   );
 };
 
-export const getServerSideProps = async (ctx: NextPageContext) => {
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const user = await requiredAuth(ctx.req?.headers.cookie);
-  const redirectAfterSignIn = ctx.req?.url;
+
+  const redirectAfterSignIn = ctx.resolvedUrl;
 
   if (!user) {
     return {

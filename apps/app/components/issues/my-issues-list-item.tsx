@@ -82,7 +82,9 @@ export const MyIssuesListItem: React.FC<Props> = ({
                 {issue.project_detail?.identifier}-{issue.sequence_id}
               </span>
             )}
-            <span>{issue.name}</span>
+            <span className="w-[275px] md:w-[450px] lg:w-[600px] text-ellipsis overflow-hidden whitespace-nowrap">
+              {issue.name}
+            </span>
           </a>
         </Link>
       </div>

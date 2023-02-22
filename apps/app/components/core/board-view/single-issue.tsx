@@ -12,10 +12,10 @@ import {
   DraggingStyle,
   NotDraggingStyle,
 } from "react-beautiful-dnd";
-// constants
-import { TrashIcon } from "@heroicons/react/24/outline";
 // services
 import issuesService from "services/issues.service";
+// hooks
+import useToast from "hooks/use-toast";
 // components
 import {
   ViewAssigneeSelect,
@@ -23,11 +23,14 @@ import {
   ViewPrioritySelect,
   ViewStateSelect,
 } from "components/issues/view-select";
+// ui
+import { CustomMenu } from "components/ui";
+// helpers
+import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import {
   CycleIssueResponse,
   IIssue,
-  IssueResponse,
   ModuleIssueResponse,
   NestedKeyOf,
   Properties,
@@ -41,9 +44,12 @@ type Props = {
   provided: DraggableProvided;
   snapshot: DraggableStateSnapshot;
   issue: IIssue;
+  selectedGroup: NestedKeyOf<IIssue> | null;
   properties: Properties;
+  editIssue: () => void;
+  removeIssue?: (() => void) | null;
   handleDeleteIssue: (issue: IIssue) => void;
-  orderBy: NestedKeyOf<IIssue> | "manual" | null;
+  orderBy: NestedKeyOf<IIssue> | null;
   handleTrashBox: (isDragging: boolean) => void;
   userAuth: UserAuth;
 };
@@ -53,7 +59,10 @@ export const SingleBoardIssue: React.FC<Props> = ({
   provided,
   snapshot,
   issue,
+  selectedGroup,
   properties,
+  editIssue,
+  removeIssue,
   handleDeleteIssue,
   orderBy,
   handleTrashBox,
@@ -61,6 +70,8 @@ export const SingleBoardIssue: React.FC<Props> = ({
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+
+  const { setToastAlert } = useToast();
 
   const partialUpdateIssue = useCallback(
     (formData: Partial<IIssue>) => {
@@ -108,15 +119,15 @@ export const SingleBoardIssue: React.FC<Props> = ({
           false
         );
 
-      mutate<IssueResponse>(
+      mutate<IIssue[]>(
         PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
-        (prevData) => ({
-          ...(prevData as IssueResponse),
-          results: (prevData?.results ?? []).map((p) => {
+        (prevData) =>
+          (prevData ?? []).map((p) => {
             if (p.id === issue.id) return { ...p, ...formData };
+
             return p;
           }),
-        }),
+
         false
       );
 
@@ -139,7 +150,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
     style: DraggingStyle | NotDraggingStyle | undefined,
     snapshot: DraggableStateSnapshot
   ) {
-    if (orderBy === "manual") return style;
+    if (orderBy === "sort_order") return style;
     if (!snapshot.isDragging) return {};
     if (!snapshot.isDropAnimating) {
       return style;
@@ -151,15 +162,33 @@ export const SingleBoardIssue: React.FC<Props> = ({
     };
   }
 
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+  const handleCopyText = () => {
+    const originURL =
+      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`)
+      .then(() => {
+        setToastAlert({
+          type: "success",
+          title: "Issue link copied to clipboard",
+        });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Some error occurred",
+        });
+      });
+  };
 
   useEffect(() => {
     if (snapshot.isDragging) handleTrashBox(snapshot.isDragging);
   }, [snapshot, handleTrashBox]);
 
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+
   return (
     <div
-      className={`rounded border bg-white shadow-sm ${
+      className={`rounded border bg-white shadow-sm mb-3 ${
         snapshot.isDragging ? "border-theme bg-indigo-50 shadow-lg" : ""
       }`}
       ref={provided.innerRef}
@@ -170,13 +199,20 @@ export const SingleBoardIssue: React.FC<Props> = ({
       <div className="group/card relative select-none p-2">
         {!isNotAllowed && (
           <div className="absolute top-1.5 right-1.5 z-10 opacity-0 group-hover/card:opacity-100">
-            <button
-              type="button"
-              className="grid h-7 w-7 place-items-center rounded bg-white p-1 text-red-500 outline-none duration-300 hover:bg-red-50"
-              onClick={() => handleDeleteIssue(issue)}
-            >
-              <TrashIcon className="h-4 w-4" />
-            </button>
+            {type && !isNotAllowed && (
+              <CustomMenu width="auto" ellipsis>
+                <CustomMenu.MenuItem onClick={editIssue}>Edit</CustomMenu.MenuItem>
+                {type !== "issue" && removeIssue && (
+                  <CustomMenu.MenuItem onClick={removeIssue}>
+                    <>Remove from {type}</>
+                  </CustomMenu.MenuItem>
+                )}
+                <CustomMenu.MenuItem onClick={() => handleDeleteIssue(issue)}>
+                  Delete permanently
+                </CustomMenu.MenuItem>
+                <CustomMenu.MenuItem onClick={handleCopyText}>Copy issue link</CustomMenu.MenuItem>
+              </CustomMenu>
+            )}
           </div>
         )}
         <Link href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}>
@@ -195,7 +231,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
           </a>
         </Link>
         <div className="flex flex-wrap items-center gap-x-1 gap-y-2 text-xs">
-          {properties.priority && (
+          {properties.priority && selectedGroup !== "priority" && (
             <ViewPrioritySelect
               issue={issue}
               partialUpdateIssue={partialUpdateIssue}
@@ -203,7 +239,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
               position="left"
             />
           )}
-          {properties.state && (
+          {properties.state && selectedGroup !== "state_detail.name" && (
             <ViewStateSelect
               issue={issue}
               partialUpdateIssue={partialUpdateIssue}

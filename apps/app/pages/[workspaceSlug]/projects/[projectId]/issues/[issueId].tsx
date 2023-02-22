@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect } from "react";
 
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -17,27 +17,18 @@ import AppLayout from "layouts/app-layout";
 import {
   IssueDescriptionForm,
   SubIssuesList,
-  CreateUpdateIssueModal,
   IssueDetailsSidebar,
   IssueActivitySection,
   AddComment,
-  SubIssuesListModal,
 } from "components/issues";
 // ui
 import { Loader, CustomMenu } from "components/ui";
 import { Breadcrumbs } from "components/breadcrumbs";
-// icons
-import { PlusIcon } from "@heroicons/react/24/outline";
 // types
-import { IIssue, IssueResponse, UserAuth } from "types";
-import type { NextPage, NextPageContext } from "next";
+import { IIssue, UserAuth } from "types";
+import type { GetServerSidePropsContext, NextPage } from "next";
 // fetch-keys
-import {
-  PROJECT_ISSUES_ACTIVITY,
-  ISSUE_DETAILS,
-  SUB_ISSUES,
-  PROJECT_ISSUES_LIST,
-} from "constants/fetch-keys";
+import { PROJECT_ISSUES_ACTIVITY, ISSUE_DETAILS, SUB_ISSUES } from "constants/fetch-keys";
 
 const defaultValues = {
   name: "",
@@ -55,13 +46,6 @@ const defaultValues = {
 };
 
 const IssueDetailsPage: NextPage<UserAuth> = (props) => {
-  // states
-  const [isOpen, setIsOpen] = useState(false);
-  const [subIssuesListModal, setSubIssuesListModal] = useState(false);
-  const [preloadedData, setPreloadedData] = useState<
-    (Partial<IIssue> & { actionType: "createIssue" | "edit" | "delete" }) | undefined
-  >(undefined);
-
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
@@ -70,26 +54,6 @@ const IssueDetailsPage: NextPage<UserAuth> = (props) => {
     workspaceSlug && projectId && issueId
       ? () =>
           issuesService.retrieve(workspaceSlug as string, projectId as string, issueId as string)
-      : null
-  );
-
-  const { data: subIssues } = useSWR<IIssue[] | undefined>(
-    issueId && workspaceSlug && projectId ? SUB_ISSUES(issueId as string) : null,
-    issueId && workspaceSlug && projectId
-      ? () =>
-          issuesService.subIssues(workspaceSlug as string, projectId as string, issueId as string)
-      : null
-  );
-
-  const { data: issueActivities, mutate: mutateIssueActivities } = useSWR(
-    workspaceSlug && projectId && issueId ? PROJECT_ISSUES_ACTIVITY(issueId as string) : null,
-    workspaceSlug && projectId && issueId
-      ? () =>
-          issuesService.getIssueActivities(
-            workspaceSlug as string,
-            projectId as string,
-            issueId as string
-          )
       : null
   );
 
@@ -127,55 +91,19 @@ const IssueDetailsPage: NextPage<UserAuth> = (props) => {
         .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload)
         .then((res) => {
           mutateIssueDetails();
-          mutateIssueActivities();
+          mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
         })
         .catch((e) => {
           console.error(e);
         });
     },
-    [workspaceSlug, issueId, projectId, mutateIssueDetails, mutateIssueActivities]
+    [workspaceSlug, issueId, projectId, mutateIssueDetails]
   );
-
-  const handleSubIssueRemove = (issueId: string) => {
-    if (!workspaceSlug || !projectId) return;
-
-    mutate<IIssue[]>(
-      SUB_ISSUES(issueDetails?.id ?? ""),
-      (prevData) => prevData?.filter((i) => i.id !== issueId),
-      false
-    );
-
-    issuesService
-      .patchIssue(workspaceSlug as string, projectId as string, issueId, { parent: null })
-      .then((res) => {
-        mutate(SUB_ISSUES(issueDetails?.id ?? ""));
-
-        mutate<IssueResponse>(
-          PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
-          (prevData) => ({
-            ...(prevData as IssueResponse),
-            results: (prevData?.results ?? []).map((p) => {
-              if (p.id === res.id)
-                return {
-                  ...p,
-                  ...res,
-                };
-
-              return p;
-            }),
-          }),
-          false
-        );
-      })
-      .catch((e) => {
-        console.error(e);
-      });
-  };
 
   useEffect(() => {
     if (!issueDetails) return;
 
-    mutateIssueActivities();
+    mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
     reset({
       ...issueDetails,
       blockers_list:
@@ -189,9 +117,7 @@ const IssueDetailsPage: NextPage<UserAuth> = (props) => {
       labels_list: issueDetails.labels_list ?? issueDetails.labels,
       labels: issueDetails.labels_list ?? issueDetails.labels,
     });
-  }, [issueDetails, reset, mutateIssueActivities]);
-
-  const isNotAllowed = props.isGuest || props.isViewer;
+  }, [issueDetails, reset, issueId]);
 
   return (
     <AppLayout
@@ -211,22 +137,6 @@ const IssueDetailsPage: NextPage<UserAuth> = (props) => {
         </Breadcrumbs>
       }
     >
-      {isOpen && (
-        <CreateUpdateIssueModal
-          isOpen={isOpen}
-          handleClose={() => setIsOpen(false)}
-          prePopulateData={{
-            ...preloadedData,
-          }}
-        />
-      )}
-      {subIssuesListModal && (
-        <SubIssuesListModal
-          isOpen={subIssuesListModal}
-          handleClose={() => setSubIssuesListModal(false)}
-          parent={issueDetails}
-        />
-      )}
       {issueDetails && projectId ? (
         <div className="flex h-full">
           <div className="basis-2/3 space-y-5 divide-y-2 p-5">
@@ -283,62 +193,14 @@ const IssueDetailsPage: NextPage<UserAuth> = (props) => {
                 handleFormSubmit={submitChanges}
                 userAuth={props}
               />
-              <div className="mt-2">
-                {issueId && workspaceSlug && projectId && subIssues && subIssues.length > 0 ? (
-                  <SubIssuesList
-                    issues={subIssues ?? []}
-                    parentIssue={issueDetails}
-                    projectId={projectId?.toString()}
-                    workspaceSlug={workspaceSlug?.toString()}
-                    handleSubIssueRemove={handleSubIssueRemove}
-                    userAuth={props}
-                  />
-                ) : (
-                  !isNotAllowed && (
-                    <CustomMenu
-                      label={
-                        <>
-                          <PlusIcon className="h-3 w-3" />
-                          Add sub-issue
-                        </>
-                      }
-                      optionsPosition="left"
-                      noBorder
-                    >
-                      <CustomMenu.MenuItem
-                        onClick={() => {
-                          setIsOpen(true);
-                          setPreloadedData({
-                            parent: issueDetails.id,
-                            actionType: "createIssue",
-                          });
-                        }}
-                      >
-                        Create new
-                      </CustomMenu.MenuItem>
-                      <CustomMenu.MenuItem
-                        onClick={() => {
-                          setSubIssuesListModal(true);
-                          setPreloadedData({
-                            parent: issueDetails.id,
-                            actionType: "createIssue",
-                          });
-                        }}
-                      >
-                        Add an existing issue
-                      </CustomMenu.MenuItem>
-                    </CustomMenu>
-                  )
-                )}
+              <div className="mt-2 space-y-2">
+                <SubIssuesList parentIssue={issueDetails} userAuth={props} />
               </div>
             </div>
             <div className="space-y-5 bg-secondary pt-3">
               <h3 className="text-lg">Comments/Activity</h3>
-              <IssueActivitySection
-                issueActivities={issueActivities || []}
-                mutate={mutateIssueActivities}
-              />
-              <AddComment mutate={mutateIssueActivities} />
+              <IssueActivitySection />
+              <AddComment />
             </div>
           </div>
           <div className="basis-1/3 space-y-5 border-l p-5">
@@ -371,10 +233,10 @@ const IssueDetailsPage: NextPage<UserAuth> = (props) => {
   );
 };
 
-export const getServerSideProps = async (ctx: NextPageContext) => {
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const user = await requiredAuth(ctx.req?.headers.cookie);
 
-  const redirectAfterSignIn = ctx.req?.url;
+  const redirectAfterSignIn = ctx.resolvedUrl;
 
   if (!user) {
     return {

@@ -41,3 +41,12 @@ from .issue import (
 from .module import ModuleWriteSerializer, ModuleSerializer, ModuleIssueSerializer
 
 from .api_token import APITokenSerializer
+
+from .integration import (
+    IntegrationSerializer,
+    WorkspaceIntegrationSerializer,
+    GithubIssueSyncSerializer,
+    GithubRepositorySerializer,
+    GithubRepositorySyncSerializer,
+    GithubCommentSyncSerializer,
+)

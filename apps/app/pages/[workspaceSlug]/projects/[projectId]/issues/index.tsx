@@ -20,7 +20,7 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import { RectangleStackIcon, PlusIcon } from "@heroicons/react/24/outline";
 // types
 import type { UserAuth } from "types";
-import type { NextPage, NextPageContext } from "next";
+import type { GetServerSidePropsContext, NextPage } from "next";
 // fetch-keys
 import { PROJECT_DETAILS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 
@@ -55,9 +55,7 @@ const ProjectIssues: NextPage<UserAuth> = (props) => {
         }
         right={
           <div className="flex items-center gap-2">
-            <IssuesFilterView
-              issues={projectIssues?.results.filter((p) => p.parent === null) ?? []}
-            />
+            <IssuesFilterView issues={projectIssues?.filter((p) => p.parent === null) ?? []} />
             <HeaderButton
               Icon={PlusIcon}
               label="Add Issue"
@@ -72,9 +70,9 @@ const ProjectIssues: NextPage<UserAuth> = (props) => {
         }
       >
         {projectIssues ? (
-          projectIssues.count > 0 ? (
+          projectIssues.length > 0 ? (
             <IssuesView
-              issues={projectIssues?.results.filter((p) => p.parent === null) ?? []}
+              issues={projectIssues?.filter((p) => p.parent === null) ?? []}
               userAuth={props}
             />
           ) : (
@@ -113,9 +111,10 @@ const ProjectIssues: NextPage<UserAuth> = (props) => {
   );
 };
 
-export const getServerSideProps = async (ctx: NextPageContext) => {
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const user = await requiredAuth(ctx.req?.headers.cookie);
-  const redirectAfterSignIn = ctx.req?.url;
+
+  const redirectAfterSignIn = ctx.resolvedUrl;
 
   if (!user) {
     return {
