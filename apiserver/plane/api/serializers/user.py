@@ -21,6 +21,7 @@ class UserSerializer(BaseSerializer):
             "last_login_uagent",
             "token_updated_at",
             "is_onboarded",
+            "is_bot",
         ]
         extra_kwargs = {"password": {"write_only": True}}
 
@@ -34,7 +35,9 @@ class UserLiteSerializer(BaseSerializer):
             "last_name",
             "email",
             "avatar",
+            "is_bot",
         ]
         read_only_fields = [
             "id",
+            "is_bot",
         ]

@@ -3,7 +3,7 @@ import json
 from itertools import groupby, chain
 
 # Django imports
-from django.db.models import Prefetch, OuterRef, Func, F
+from django.db.models import Prefetch, OuterRef, Func, F, Q
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Third Party imports
@@ -80,7 +80,7 @@ class IssueViewSet(BaseViewSet):
         if current_instance is not None:
             issue_activity.delay(
                 {
-                    "type": "issue.activity",
+                    "type": "issue.activity.updated",
                     "requested_data": requested_data,
                     "actor_id": str(self.request.user.id),
                     "issue_id": str(self.kwargs.get("pk", None)),
@@ -92,6 +92,27 @@ class IssueViewSet(BaseViewSet):
             )
 
         return super().perform_update(serializer)
+
+    def perform_destroy(self, instance):
+        current_instance = (
+            self.get_queryset().filter(pk=self.kwargs.get("pk", None)).first()
+        )
+        if current_instance is not None:
+            issue_activity.delay(
+                {
+                    "type": "issue.activity.deleted",
+                    "requested_data": json.dumps(
+                        {"issue_id": str(self.kwargs.get("pk", None))}
+                    ),
+                    "actor_id": str(self.request.user.id),
+                    "issue_id": str(self.kwargs.get("pk", None)),
+                    "project_id": str(self.kwargs.get("project_id", None)),
+                    "current_instance": json.dumps(
+                        IssueSerializer(current_instance).data, cls=DjangoJSONEncoder
+                    ),
+                },
+            )
+        return super().perform_destroy(instance)
 
     def get_queryset(self):
         return (
@@ -193,15 +214,18 @@ class IssueViewSet(BaseViewSet):
                 serializer.save()
 
                 # Track the issue
-                IssueActivity.objects.create(
-                    issue_id=serializer.data["id"],
-                    project_id=project_id,
-                    workspace_id=serializer["workspace"],
-                    comment=f"{request.user.email} created the issue",
-                    verb="created",
-                    actor=request.user,
+                issue_activity.delay(
+                    {
+                        "type": "issue.activity.created",
+                        "requested_data": json.dumps(
+                            self.request.data, cls=DjangoJSONEncoder
+                        ),
+                        "actor_id": str(request.user.id),
+                        "issue_id": str(serializer.data.get("id", None)),
+                        "project_id": str(project_id),
+                        "current_instance": None,
+                    },
                 )
-
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -304,7 +328,10 @@ class IssueActivityEndpoint(BaseAPIView):
         try:
             issue_activities = (
                 IssueActivity.objects.filter(issue_id=issue_id)
-                .filter(project__project_projectmember__member=self.request.user)
+                .filter(
+                    ~Q(field="comment"),
+                    project__project_projectmember__member=self.request.user,
+                )
                 .select_related("actor")
             ).order_by("created_by")
             issue_comments = (
@@ -347,6 +374,60 @@ class IssueCommentViewSet(BaseViewSet):
             issue_id=self.kwargs.get("issue_id"),
             actor=self.request.user if self.request.user is not None else None,
         )
+        issue_activity.delay(
+            {
+                "type": "comment.activity.created",
+                "requested_data": json.dumps(serializer.data, cls=DjangoJSONEncoder),
+                "actor_id": str(self.request.user.id),
+                "issue_id": str(self.kwargs.get("issue_id")),
+                "project_id": str(self.kwargs.get("project_id")),
+                "current_instance": None,
+            },
+        )
+
+    def perform_update(self, serializer):
+        requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
+        current_instance = (
+            self.get_queryset().filter(pk=self.kwargs.get("pk", None)).first()
+        )
+        if current_instance is not None:
+            issue_activity.delay(
+                {
+                    "type": "comment.activity.updated",
+                    "requested_data": requested_data,
+                    "actor_id": str(self.request.user.id),
+                    "issue_id": str(self.kwargs.get("issue_id", None)),
+                    "project_id": str(self.kwargs.get("project_id", None)),
+                    "current_instance": json.dumps(
+                        IssueCommentSerializer(current_instance).data,
+                        cls=DjangoJSONEncoder,
+                    ),
+                },
+            )
+
+        return super().perform_update(serializer)
+
+    def perform_destroy(self, instance):
+        current_instance = (
+            self.get_queryset().filter(pk=self.kwargs.get("pk", None)).first()
+        )
+        if current_instance is not None:
+            issue_activity.delay(
+                {
+                    "type": "comment.activity.deleted",
+                    "requested_data": json.dumps(
+                        {"comment_id": str(self.kwargs.get("pk", None))}
+                    ),
+                    "actor_id": str(self.request.user.id),
+                    "issue_id": str(self.kwargs.get("issue_id", None)),
+                    "project_id": str(self.kwargs.get("project_id", None)),
+                    "current_instance": json.dumps(
+                        IssueCommentSerializer(current_instance).data,
+                        cls=DjangoJSONEncoder,
+                    ),
+                },
+            )
+        return super().perform_destroy(instance)
 
     def get_queryset(self):
         return self.filter_queryset(
