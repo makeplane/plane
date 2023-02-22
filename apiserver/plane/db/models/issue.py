@@ -187,7 +187,7 @@ class IssueLink(ProjectBaseModel):
 
 class IssueActivity(ProjectBaseModel):
     issue = models.ForeignKey(
-        Issue, on_delete=models.CASCADE, related_name="issue_activity"
+        Issue, on_delete=models.SET_NULL, null=True, related_name="issue_activity"
     )
     verb = models.CharField(max_length=255, verbose_name="Action", default="created")
     field = models.CharField(

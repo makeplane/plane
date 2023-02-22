@@ -1,8 +1,11 @@
 export const CURRENT_USER = "CURRENT_USER";
 export const USER_WORKSPACE_INVITATIONS = "USER_WORKSPACE_INVITATIONS";
 export const USER_WORKSPACES = "USER_WORKSPACES";
+export const APP_INTEGRATIONS = "APP_INTEGRATIONS";
 
 export const WORKSPACE_DETAILS = (workspaceSlug: string) => `WORKSPACE_DETAILS_${workspaceSlug}`;
+export const WORKSPACE_INTEGRATIONS = (workspaceSlug: string) =>
+  `WORKSPACE_INTEGRATIONS_${workspaceSlug}`;
 
 export const WORKSPACE_MEMBERS = (workspaceSlug: string) => `WORKSPACE_MEMBERS_${workspaceSlug}`;
 export const WORKSPACE_MEMBERS_ME = (workspaceSlug: string) =>

@@ -10,7 +10,13 @@ from .workspace import (
     TeamMember,
 )
 
-from .project import Project, ProjectMember, ProjectBaseModel, ProjectMemberInvite, ProjectIdentifier
+from .project import (
+    Project,
+    ProjectMember,
+    ProjectBaseModel,
+    ProjectMemberInvite,
+    ProjectIdentifier,
+)
 
 from .issue import (
     Issue,
@@ -38,6 +44,15 @@ from .shortcut import Shortcut
 
 from .view import View
 
-from .module import Module, ModuleMember, ModuleIssue, ModuleLink 
+from .module import Module, ModuleMember, ModuleIssue, ModuleLink
 
 from .api_token import APIToken
+
+from .integration import (
+    WorkspaceIntegration,
+    Integration,
+    GithubRepository,
+    GithubRepositorySync,
+    GithubIssueSync,
+    GithubCommentSync,
+)
