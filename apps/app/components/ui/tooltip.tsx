@@ -6,6 +6,7 @@ export type Props = {
   tooltipContent: string;
   position?: "top" | "right" | "bottom" | "left";
   children: JSX.Element;
+  disabled?: boolean;
 };
 
 export const Tooltip: React.FC<Props> = ({
@@ -13,9 +14,11 @@ export const Tooltip: React.FC<Props> = ({
   tooltipContent,
   position = "top",
   children,
+  disabled = false,
 }) => {
   return (
     <Tooltip2
+      disabled={disabled}
       content={
         <div className="flex flex-col justify-center items-start gap-1 max-w-[600px] text-xs rounded-md bg-white p-2 shadow-md capitalize text-left">
           {tooltipHeading ? (
