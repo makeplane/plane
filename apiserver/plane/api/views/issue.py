@@ -22,6 +22,7 @@ from plane.api.serializers import (
     LabelSerializer,
     IssueSerializer,
     LabelSerializer,
+    IssueFlatSerializer,
 )
 from plane.api.permissions import (
     ProjectEntityPermission,
@@ -42,6 +43,7 @@ from plane.db.models import (
     IssueLink,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
+from plane.utils.grouper import group_results
 
 
 class IssueViewSet(BaseViewSet):
@@ -138,55 +140,39 @@ class IssueViewSet(BaseViewSet):
             .prefetch_related(
                 Prefetch(
                     "issue_link",
-                    queryset=IssueLink.objects.select_related("issue"),
+                    queryset=IssueLink.objects.select_related("issue").select_related(
+                        "created_by"
+                    ),
                 )
             )
         )
 
-    def grouper(self, issue, group_by):
-        group_by = issue.get(group_by, "")
-
-        if isinstance(group_by, list):
-            if len(group_by):
-                return group_by[0]
-            else:
-                return ""
-
-        else:
-            return group_by
-
     def list(self, request, slug, project_id):
         try:
-            issue_queryset = self.get_queryset()
+            # Issue State groups
+            type = request.GET.get("type", "all")
+            group = ["backlog", "unstarted", "started", "completed", "cancelled"]
+            if type == "backlog":
+                group = ["backlog"]
+            if type == "active":
+                group = ["unstarted", "started"]
 
+            issue_queryset = (
+                self.get_queryset()
+                .order_by(request.GET.get("order_by", "created_at"))
+                .filter(state__group__in=group)
+            )
+
+            issues = IssueSerializer(issue_queryset, many=True).data
+            
             ## Grouping the results
             group_by = request.GET.get("group_by", False)
-            # TODO: Move this group by from ittertools to ORM for better performance - nk
             if group_by:
-                issue_dict = dict()
+                return Response(
+                    group_results(issues, group_by), status=status.HTTP_200_OK
+                )
 
-                issues = IssueSerializer(issue_queryset, many=True).data
-
-                for key, value in groupby(
-                    issues, lambda issue: self.grouper(issue, group_by)
-                ):
-                    issue_dict[str(key)] = list(value)
-
-                return Response(issue_dict, status=status.HTTP_200_OK)
-
-            return Response(
-                {
-                    "next_cursor": str(0),
-                    "prev_cursor": str(0),
-                    "next_page_results": False,
-                    "prev_page_results": False,
-                    "count": issue_queryset.count(),
-                    "total_pages": 1,
-                    "extra_stats": {},
-                    "results": IssueSerializer(issue_queryset, many=True).data,
-                },
-                status=status.HTTP_200_OK,
-            )
+            return Response(issues, status=status.HTTP_200_OK)
 
         except Exception as e:
             print(e)
@@ -273,7 +259,9 @@ class UserWorkSpaceIssues(BaseAPIView):
                 .prefetch_related(
                     Prefetch(
                         "issue_link",
-                        queryset=IssueLink.objects.select_related("issue"),
+                        queryset=IssueLink.objects.select_related(
+                            "issue"
+                        ).select_related("created_by"),
                     )
                 )
             )
@@ -579,6 +567,42 @@ class SubIssuesEndpoint(BaseAPIView):
 
             serializer = IssueSerializer(sub_issues, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    # Assign multiple sub issues
+    def post(self, request, slug, project_id, issue_id):
+        try:
+            parent_issue = Issue.objects.get(pk=issue_id)
+            sub_issue_ids = request.data.get("sub_issue_ids", [])
+
+            if not len(sub_issue_ids):
+                return Response(
+                    {"error": "Sub Issue IDs are required"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            sub_issues = Issue.objects.filter(id__in=sub_issue_ids)
+
+            for sub_issue in sub_issues:
+                sub_issue.parent = parent_issue
+
+            _ = Issue.objects.bulk_update(sub_issues, ["parent"], batch_size=10)
+
+            updated_sub_issues = Issue.objects.filter(id__in=sub_issue_ids)
+
+            return Response(
+                IssueFlatSerializer(updated_sub_issues, many=True).data,
+                status=status.HTTP_200_OK,
+            )
+        except Issue.DoesNotExist:
+            return Response(
+                {"Parent Issue does not exists"}, status=status.HTTP_400_BAD_REQUEST
+            )
         except Exception as e:
             capture_exception(e)
             return Response(

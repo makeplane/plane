@@ -192,6 +192,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
 
     const payload: Partial<IIssue> = {
       ...formData,
+      assignees_list: formData.assignees,
+      labels_list: formData.labels,
       description: formData.description ?? "",
       description_html: formData.description_html ?? "<p></p>",
     };

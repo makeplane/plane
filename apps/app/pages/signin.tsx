@@ -35,10 +35,11 @@ const SignInPage: NextPage = () => {
   const { setToastAlert } = useToast();
 
   const onSignInSuccess = useCallback(async () => {
+    setLoading(true);
     await mutateUser();
     const nextLocation = router.asPath.split("?next=")[1];
-    if (nextLocation) router.push(nextLocation as string);
-    else router.push("/");
+    if (nextLocation) await router.push(nextLocation as string);
+    else await router.push("/");
   }, [mutateUser, router]);
 
   const handleGoogleSignIn = ({ clientId, credential }: any) => {
@@ -112,7 +113,7 @@ const SignInPage: NextPage = () => {
               Sign in to your account
             </h2>
             <div className="mt-16 bg-white py-8 px-4 sm:rounded-lg sm:px-10">
-              {Boolean(process.env.NEXT_PUBLIC_ENABLE_OAUTH) ? (
+              {parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0") ? (
                 <>
                   <div className="mb-4">
                     <EmailSignInForm handleSuccess={onSignInSuccess} />

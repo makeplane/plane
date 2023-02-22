@@ -86,7 +86,7 @@ export const SingleBoard: React.FC<Props> = ({
         <StrictModeDroppable key={groupTitle} droppableId={groupTitle}>
           {(provided, snapshot) => (
             <div
-              className={`relative mt-3 h-full space-y-3 px-3 pb-3 ${
+              className={`relative mt-3 h-full px-3 pb-3 ${
                 snapshot.isDraggingOver ? "bg-indigo-50 bg-opacity-50" : ""
               } ${!isCollapsed ? "hidden" : "block"}`}
               ref={provided.innerRef}
@@ -104,7 +104,7 @@ export const SingleBoard: React.FC<Props> = ({
                       snapshot.isDraggingOver ? "block" : "hidden"
                     } top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-xs whitespace-nowrap bg-white p-2 rounded pointer-events-none z-[99999999]`}
                   >
-                    This board is order by {orderBy}
+                    This board is ordered by {orderBy}
                   </div>
                 </>
               )}

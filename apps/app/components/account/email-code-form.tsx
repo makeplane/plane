@@ -70,11 +70,10 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
         onSuccess(response);
       })
       .catch((error) => {
-        console.log(error);
         setToastAlert({
           title: "Oops!",
           type: "error",
-          message: "Enter the correct code to sign in",
+          message: error?.response?.data?.error ?? "Enter the correct code to sign in",
         });
         setError("token" as keyof EmailCodeFormValues, {
           type: "manual",

@@ -206,7 +206,6 @@ export const SingleListIssue: React.FC<Props> = ({
         )}
         {type && !isNotAllowed && (
           <CustomMenu width="auto" ellipsis>
-            <CustomMenu.MenuItem onClick={handleCopyText}>Copy issue link</CustomMenu.MenuItem>
             <CustomMenu.MenuItem onClick={editIssue}>Edit</CustomMenu.MenuItem>
             {type !== "issue" && removeIssue && (
               <CustomMenu.MenuItem onClick={removeIssue}>
@@ -216,6 +215,7 @@ export const SingleListIssue: React.FC<Props> = ({
             <CustomMenu.MenuItem onClick={() => handleDeleteIssue(issue)}>
               Delete permanently
             </CustomMenu.MenuItem>
+            <CustomMenu.MenuItem onClick={handleCopyText}>Copy issue link</CustomMenu.MenuItem>
           </CustomMenu>
         )}
       </div>
