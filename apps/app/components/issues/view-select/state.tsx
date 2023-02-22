@@ -5,7 +5,7 @@ import useSWR from "swr";
 // services
 import stateService from "services/state.service";
 // ui
-import { CustomSelect } from "components/ui";
+import { CustomSelect, Tooltip } from "components/ui";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 import { getStatesList } from "helpers/state.helper";
@@ -48,7 +48,16 @@ export const ViewStateSelect: React.FC<Props> = ({
               backgroundColor: states?.find((s) => s.id === issue.state)?.color,
             }}
           />
-          {addSpaceIfCamelCase(states?.find((s) => s.id === issue.state)?.name ?? "")}
+          <Tooltip
+            tooltipHeading="State"
+            tooltipContent={addSpaceIfCamelCase(
+              states?.find((s) => s.id === issue.state)?.name ?? ""
+            )}
+          >
+            <span>
+              {addSpaceIfCamelCase(states?.find((s) => s.id === issue.state)?.name ?? "")}
+            </span>
+          </Tooltip>
         </>
       }
       value={issue.state}

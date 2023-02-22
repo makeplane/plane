@@ -1,7 +1,7 @@
 import React from "react";
 
 // ui
-import { CustomSelect } from "components/ui";
+import { CustomSelect, Tooltip } from "components/ui";
 // icons
 import { getPriorityIcon } from "components/icons/priority-icon";
 // types
@@ -24,12 +24,14 @@ export const ViewPrioritySelect: React.FC<Props> = ({
 }) => (
   <CustomSelect
     label={
-      <span>
-        {getPriorityIcon(
-          issue.priority && issue.priority !== "" ? issue.priority ?? "" : "None",
-          "text-sm"
-        )}
-      </span>
+      <Tooltip tooltipHeading="Priority" tooltipContent={issue.priority ?? "None"}>
+        <span>
+          {getPriorityIcon(
+            issue.priority && issue.priority !== "" ? issue.priority ?? "" : "None",
+            "text-sm"
+          )}
+        </span>
+      </Tooltip>
     }
     value={issue.state}
     onChange={(data: string) => {

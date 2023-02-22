@@ -26,7 +26,7 @@ import { Loader, CustomMenu } from "components/ui";
 import { Breadcrumbs } from "components/breadcrumbs";
 // types
 import { IIssue, UserAuth } from "types";
-import type { NextPage, NextPageContext } from "next";
+import type { GetServerSidePropsContext, NextPage } from "next";
 // fetch-keys
 import { PROJECT_ISSUES_ACTIVITY, ISSUE_DETAILS, SUB_ISSUES } from "constants/fetch-keys";
 
@@ -233,10 +233,10 @@ const IssueDetailsPage: NextPage<UserAuth> = (props) => {
   );
 };
 
-export const getServerSideProps = async (ctx: NextPageContext) => {
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const user = await requiredAuth(ctx.req?.headers.cookie);
 
-  const redirectAfterSignIn = ctx.req?.url;
+  const redirectAfterSignIn = ctx.resolvedUrl;
 
   if (!user) {
     return {

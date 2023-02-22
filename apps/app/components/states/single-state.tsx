@@ -184,16 +184,18 @@ export const SingleState: React.FC<Props> = ({
             Set as default
           </button>
         )}
-        <Tooltip content="Cannot delete the default state." disabled={!state.default}>
-          <button
-            type="button"
-            className={`${state.default ? "cursor-not-allowed" : ""} grid place-items-center`}
-            onClick={handleDeleteState}
-            disabled={state.default}
-          >
+
+        <button
+          type="button"
+          className={`${state.default ? "cursor-not-allowed" : ""} grid place-items-center`}
+          onClick={handleDeleteState}
+          disabled={state.default}
+        >
+          <Tooltip tooltipContent="Cannot delete the default state." disabled={!state.default}>
             <TrashIcon className="h-4 w-4 text-red-400" />
-          </button>
-        </Tooltip>
+          </Tooltip>
+        </button>
+
         <button type="button" className="grid place-items-center" onClick={handleEditState}>
           <PencilSquareIcon className="h-4 w-4 text-gray-400" />
         </button>

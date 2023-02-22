@@ -22,7 +22,7 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 // types
 import { ICycle, SelectCycleType } from "types";
-import type { NextPage, NextPageContext } from "next";
+import type { NextPage, GetServerSidePropsContext } from "next";
 // fetching keys
 import { CYCLE_LIST, PROJECT_DETAILS, WORKSPACE_DETAILS } from "constants/fetch-keys";
 
@@ -200,10 +200,10 @@ const ProjectCycles: NextPage = () => {
   );
 };
 
-export const getServerSideProps = async (ctx: NextPageContext) => {
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const user = await requiredAuth(ctx.req?.headers.cookie);
 
-  const redirectAfterSignIn = ctx.req?.url;
+  const redirectAfterSignIn = ctx.resolvedUrl;
 
   if (!user) {
     return {

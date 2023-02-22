@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
-import { NextPageContext } from "next";
+import { GetServerSidePropsContext } from "next";
 // icons
 import { ArrowLeftIcon, ListBulletIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { CyclesIcon } from "components/icons";
@@ -226,9 +226,10 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
   );
 };
 
-export const getServerSideProps = async (ctx: NextPageContext) => {
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const user = await requiredAuth(ctx.req?.headers.cookie);
-  const redirectAfterSignIn = ctx.req?.url;
+
+  const redirectAfterSignIn = ctx.resolvedUrl;
 
   if (!user) {
     return {
