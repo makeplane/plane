@@ -2,12 +2,14 @@ import React, { useState } from "react";
 
 import Link from "next/link";
 import { useRouter } from "next/router";
+import Image from "next/image";
 
 // components
 import { DeleteModuleModal } from "components/modules";
 // ui
 import { AssigneesList, Avatar, CustomMenu } from "components/ui";
 // icons
+import User from "public/user.png";
 import { CalendarDaysIcon } from "@heroicons/react/24/outline";
 // helpers
 import { renderShortNumericDateFormat } from "helpers/date-time.helper";
@@ -67,24 +69,52 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
           </CustomMenu>
         </div>
         <Link href={`/${workspaceSlug}/projects/${module.project}/modules/${module.id}`}>
-          <a className="flex flex-col justify-between h-full cursor-pointer rounded-md border bg-white p-3 ">
-            <span className="w-3/4 text-ellipsis overflow-hidden">{module.name}</span>
+          <a className="flex flex-col justify-between h-full cursor-default rounded-md border bg-white p-3 ">
+            <span className="w-3/4 text-ellipsis cursor-pointer overflow-hidden">
+              {module.name}
+            </span>
             <div className="mt-4 grid grid-cols-2 gap-2 text-xs md:grid-cols-4">
-              <div className="space-y-2">
+              <div className="space-y-2 ">
                 <h6 className="text-gray-500">LEAD</h6>
                 <div>
-                  <Avatar user={module.lead_detail} />
+                  {module.lead_detail ? (
+                    <Avatar user={module.lead_detail} />
+                  ) : (
+                    <div className="flex items-center gap-1">
+                      <Image
+                        src={User}
+                        height="16px"
+                        width="16px"
+                        className="rounded-full"
+                        alt="N/A"
+                      />
+                      <span>N/A</span>
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="space-y-2">
                 <h6 className="text-gray-500">MEMBERS</h6>
-                <div className="flex items-center gap-1 text-xs">
-                  <AssigneesList users={module.members_detail} />
+                <div className="flex  items-center gap-1 text-xs">
+                  {module.members_detail && module.members_detail.length > 0 ? (
+                    <AssigneesList users={module.members_detail} length={3} />
+                  ) : (
+                    <div className="flex items-center gap-1">
+                      <Image
+                        src={User}
+                        height="16px"
+                        width="16px"
+                        className="rounded-full"
+                        alt="N/A"
+                      />
+                      <span>N/A</span>
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="space-y-2">
                 <h6 className="text-gray-500">END DATE</h6>
-                <div className="flex w-min cursor-pointer items-center gap-1 whitespace-nowrap rounded border px-1.5 py-0.5 text-xs shadow-sm">
+                <div className="flex w-min items-center gap-1 whitespace-nowrap rounded border px-1.5 py-0.5 text-xs shadow-sm">
                   <CalendarDaysIcon className="h-3 w-3" />
                   {module.target_date ? renderShortNumericDateFormat(module?.target_date) : "N/A"}
                 </div>
