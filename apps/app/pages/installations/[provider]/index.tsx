@@ -1,5 +1,9 @@
 import React, { useEffect } from "react";
-import appinstallationsService from "services/appinstallations.service";
+
+// services
+import appinstallationsService from "services/app-installations.service";
+// components
+import { Spinner } from "components/ui";
 
 interface IGithuPostInstallationProps {
   installation_id: string;
@@ -28,7 +32,13 @@ const AppPostInstallation = ({
         });
     }
   }, [state, installation_id, provider]);
-  return <>Loading...</>;
+
+  return (
+    <div className="absolute top-0 left-0 z-50 flex h-full w-full flex-col items-center justify-center gap-y-3 bg-white">
+      <h2 className="text-2xl text-gray-900">Installing. Please wait...</h2>
+      <Spinner />
+    </div>
+  );
 };
 
 export async function getServerSideProps(context: any) {
