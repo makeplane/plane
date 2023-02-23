@@ -8,7 +8,7 @@ import useSWR, { mutate } from "swr";
 import issuesService from "services/issues.service";
 import cyclesService from "services/cycles.service";
 // ui
-import { Spinner, CustomSelect } from "components/ui";
+import { Spinner, CustomSelect, Tooltip } from "components/ui";
 // icons
 import { CyclesIcon } from "components/icons";
 // types
@@ -65,11 +65,19 @@ export const SidebarCycleSelect: React.FC<Props> = ({
       <div className="space-y-1 sm:basis-1/2">
         <CustomSelect
           label={
-            <span
-              className={`hidden truncate text-left sm:block ${issueCycle ? "" : "text-gray-900"}`}
+            <Tooltip
+              position="top-right"
+              tooltipHeading="Cycle"
+              tooltipContent={issueCycle ? issueCycle.cycle_detail.name : "None"}
             >
-              {issueCycle ? issueCycle.cycle_detail.name : "None"}
-            </span>
+              <span
+                className={` w-full max-w-[125px] truncate text-left sm:block ${
+                  issueCycle ? "" : "text-gray-900"
+                }`}
+              >
+                {issueCycle ? issueCycle.cycle_detail.name : "None"}
+              </span>
+            </Tooltip>
           }
           value={issueCycle?.cycle_detail.id}
           onChange={(value: any) => {
@@ -84,11 +92,15 @@ export const SidebarCycleSelect: React.FC<Props> = ({
               <>
                 {cycles.map((option) => (
                   <CustomSelect.Option key={option.id} value={option.id}>
-                    {option.name}
+                    <Tooltip position="left-bottom" tooltipContent={option.name}>
+                      <span className="w-full max-w-[125px] truncate ">{option.name}</span>
+                    </Tooltip>
                   </CustomSelect.Option>
                 ))}
                 <CustomSelect.Option value={null} className="capitalize">
-                  None
+                  <Tooltip position="left-bottom" tooltipContent="None">
+                    <span className="w-full max-w-[125px] truncate">None</span>
+                  </Tooltip>
                 </CustomSelect.Option>
               </>
             ) : (
