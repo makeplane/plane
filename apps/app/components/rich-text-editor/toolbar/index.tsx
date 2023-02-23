@@ -4,14 +4,13 @@ import {
   ToggleItalicButton,
   ToggleUnderlineButton,
   ToggleStrikeButton,
+  ToggleOrderedListButton,
+  ToggleBulletListButton,
   RedoButton,
   UndoButton,
 } from "@remirror/react";
 // headings
 import HeadingControls from "./heading-controls";
-// list
-import { OrderedListButton } from "./ordered-list";
-import { UnorderedListButton } from "./unordered-list";
 
 export const RichTextToolbar: React.FC = () => (
   <div className="flex items-center gap-y-2 divide-x">
@@ -29,11 +28,8 @@ export const RichTextToolbar: React.FC = () => (
       <ToggleStrikeButton />
     </div>
     <div className="flex items-center gap-x-1 px-2">
-      <OrderedListButton />
-      <UnorderedListButton />
+      <ToggleOrderedListButton />
+      <ToggleBulletListButton />
     </div>
-    {/* <div className="flex items-center gap-x-1 px-2">
-      <LinkButton />
-    </div> */}
   </div>
 );

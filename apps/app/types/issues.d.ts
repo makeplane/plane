@@ -161,12 +161,12 @@ export type IssuePriorities = {
 };
 
 export type Properties = {
-  key: boolean;
-  state: boolean;
   assignee: boolean;
-  priority: boolean;
   due_date: boolean;
-  // cycle: boolean;
+  labels: boolean;
+  key: boolean;
+  priority: boolean;
+  state: boolean;
   sub_issue_count: boolean;
 };
 

@@ -138,8 +138,10 @@ const DelayAutoFocusInput = ({ autoFocus, ...rest }: HTMLProps<HTMLInputElement>
 export const FloatingLinkToolbar = () => {
   const { isEditing, linkPositioner, clickEdit, onRemove, submitHref, href, setHref, cancelHref } =
     useFloatingLinkState();
+
   const active = useActive();
   const activeLink = active.link();
+
   const { empty } = useCurrentSelection();
 
   const handleClickEdit = useCallback(() => {
@@ -148,6 +150,14 @@ export const FloatingLinkToolbar = () => {
 
   const linkEditButtons = activeLink ? (
     <>
+      <CommandButton
+        commandName="openLink"
+        onSelect={() => {
+          window.open(href, "_blank");
+        }}
+        icon="externalLinkFill"
+        enabled
+      />
       <CommandButton
         commandName="updateLink"
         onSelect={handleClickEdit}
@@ -164,7 +174,9 @@ export const FloatingLinkToolbar = () => {
     <>
       {!isEditing && <FloatingToolbar>{linkEditButtons}</FloatingToolbar>}
       {!isEditing && empty && (
-        <FloatingToolbar positioner={linkPositioner}>{linkEditButtons}</FloatingToolbar>
+        <FloatingToolbar positioner={linkPositioner} className="shadow-lg rounded bg-white p-1">
+          {linkEditButtons}
+        </FloatingToolbar>
       )}
 
       <FloatingWrapper

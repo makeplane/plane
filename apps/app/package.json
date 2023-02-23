@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@blueprintjs/core": "^4.16.3",
+    "@blueprintjs/popover2": "^1.13.3",
     "@headlessui/react": "^1.7.3",
     "@heroicons/react": "^2.0.12",
     "@remirror/core": "^2.0.11",
@@ -46,8 +48,8 @@
     "@typescript-eslint/eslint-plugin": "^5.48.2",
     "@typescript-eslint/parser": "^5.48.2",
     "autoprefixer": "^10.4.7",
-    "eslint-config-custom": "*",
     "eslint": "^8.31.0",
+    "eslint-config-custom": "*",
     "eslint-config-next": "12.2.2",
     "postcss": "^8.4.14",
     "tailwindcss": "^3.1.6",

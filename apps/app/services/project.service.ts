@@ -201,6 +201,37 @@ class ProjectServices extends APIService {
         throw error?.response?.data;
       });
   }
+
+  async getGithubRepositories(slug: string, workspaceIntegrationId: string): Promise<any> {
+    return this.get(
+      `/api/workspaces/${slug}/workspace-integrations/${workspaceIntegrationId}/github-repositories/`
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async syncGiuthubRepository(
+    slug: string,
+    projectId: string,
+    workspaceIntegrationId: string,
+    data: {
+      name: string;
+      owner: string;
+      repository_id: string;
+      url: string;
+    }
+  ): Promise<any> {
+    return this.post(
+      `/api/workspaces/${slug}/projects/${projectId}/workspace-integrations/${workspaceIntegrationId}/github-repository-sync/`,
+      data
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }
 
 export default new ProjectServices();

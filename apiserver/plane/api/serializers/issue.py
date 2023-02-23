@@ -50,16 +50,6 @@ class IssueFlatSerializer(BaseSerializer):
         ]
 
 
-# Issue Serializer with state details
-class IssueStateSerializer(BaseSerializer):
-    state_detail = StateSerializer(read_only=True, source="state")
-    project_detail = ProjectSerializer(read_only=True, source="project")
-
-    class Meta:
-        model = Issue
-        fields = "__all__"
-
-
 ##TODO: Find a better way to write this serializer
 ## Find a better approach to save manytomany?
 class IssueCreateSerializer(BaseSerializer):
@@ -461,8 +451,22 @@ class IssueModuleDetailSerializer(BaseSerializer):
 
 
 class IssueLinkSerializer(BaseSerializer):
+    created_by_detail = UserLiteSerializer(read_only=True, source="created_by")
+
     class Meta:
         model = IssueLink
+        fields = "__all__"
+
+
+# Issue Serializer with state details
+class IssueStateSerializer(BaseSerializer):
+    state_detail = StateSerializer(read_only=True, source="state")
+    project_detail = ProjectSerializer(read_only=True, source="project")
+    label_details = LabelSerializer(read_only=True, source="labels", many=True)
+    assignee_details = UserLiteSerializer(read_only=True, source="assignees", many=True)
+
+    class Meta:
+        model = Issue
         fields = "__all__"
 
 

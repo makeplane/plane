@@ -82,7 +82,9 @@ export const MyIssuesListItem: React.FC<Props> = ({
                 {issue.project_detail?.identifier}-{issue.sequence_id}
               </span>
             )}
-            <span>{issue.name}</span>
+            <span className="w-[275px] md:w-[450px] lg:w-[600px] text-ellipsis overflow-hidden whitespace-nowrap">
+              {issue.name}
+            </span>
           </a>
         </Link>
       </div>
@@ -111,6 +113,24 @@ export const MyIssuesListItem: React.FC<Props> = ({
         {properties.sub_issue_count && (
           <div className="flex flex-shrink-0 items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
             {issue?.sub_issues_count} {issue?.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
+          </div>
+        )}
+        {properties.labels && (
+          <div className="flex flex-wrap gap-1">
+            {issue.label_details.map((label) => (
+              <span
+                key={label.id}
+                className="group flex items-center gap-1 rounded-2xl border px-2 py-0.5 text-xs"
+              >
+                <span
+                  className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                  style={{
+                    backgroundColor: label?.color && label.color !== "" ? label.color : "#000",
+                  }}
+                />
+                {label.name}
+              </span>
+            ))}
           </div>
         )}
         {properties.assignee && (

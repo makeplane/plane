@@ -86,6 +86,14 @@ from plane.api.views import (
     # Api Tokens
     ApiTokenEndpoint,
     ## End Api Tokens
+    # Integrations
+    IntegrationViewSet,
+    WorkspaceIntegrationViewSet,
+    GithubRepositoriesEndpoint,
+    GithubRepositorySyncViewSet,
+    GithubIssueSyncViewSet,
+    GithubCommentSyncViewSet,
+    ## End Integrations
 )
 
 
@@ -681,7 +689,118 @@ urlpatterns = [
     ),
     ## End Modules
     # API Tokens
-    path("api-tokens/", ApiTokenEndpoint.as_view(), name="api-token"),
-    path("api-tokens/<uuid:pk>/", ApiTokenEndpoint.as_view(), name="api-token"),
+    path("api-tokens/", ApiTokenEndpoint.as_view(), name="api-tokens"),
+    path("api-tokens/<uuid:pk>/", ApiTokenEndpoint.as_view(), name="api-tokens"),
     ## End API Tokens
+    # Integrations
+    path(
+        "integrations/",
+        IntegrationViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="integrations",
+    ),
+    path(
+        "integrations/<uuid:pk>/",
+        IntegrationViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="integrations",
+    ),
+    path(
+        "workspaces/<str:slug>/workspace-integrations/",
+        WorkspaceIntegrationViewSet.as_view(
+            {
+                "get": "list",
+            }
+        ),
+        name="workspace-integrations",
+    ),
+    path(
+        "workspaces/<str:slug>/workspace-integrations/<str:provider>/",
+        WorkspaceIntegrationViewSet.as_view(
+            {
+                "post": "create",
+            }
+        ),
+        name="workspace-integrations",
+    ),
+    path(
+        "workspaces/<str:slug>/workspace-integrations/<uuid:pk>/",
+        WorkspaceIntegrationViewSet.as_view(
+            {
+                "get": "retrieve",
+                "delete": "destroy",
+            }
+        ),
+        name="workspace-integrations",
+    ),
+    # Github Integrations
+    path(
+        "workspaces/<str:slug>/workspace-integrations/<uuid:workspace_integration_id>/github-repositories/",
+        GithubRepositoriesEndpoint.as_view(),
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/workspace-integrations/<uuid:workspace_integration_id>/github-repository-sync/",
+        GithubRepositorySyncViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/workspace-integrations/<uuid:workspace_integration_id>/github-repository-sync/<uuid:pk>/",
+        GithubRepositorySyncViewSet.as_view(
+            {
+                "get": "retrieve",
+                "delete": "destroy",
+            }
+        ),
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/github-repository-sync/<uuid:repo_sync_id>/github-issue-sync/",
+        GithubIssueSyncViewSet.as_view(
+            {
+                "post": "create",
+                "get": "list",
+            }
+        ),
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/github-repository-sync/<uuid:repo_sync_id>/github-issue-sync/<uuid:pk>/",
+        GithubIssueSyncViewSet.as_view(
+            {
+                "get": "retrieve",
+                "delete": "destroy",
+            }
+        ),
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/github-repository-sync/<uuid:repo_sync_id>/github-issue-sync/<uuid:issue_sync_id>/github-comment-sync/",
+        GithubCommentSyncViewSet.as_view(
+            {
+                "post": "create",
+                "get": "list",
+            }
+        ),
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/github-repository-sync/<uuid:repo_sync_id>/github-issue-sync/<uuid:issue_sync_id>/github-comment-sync/<uuid:pk>/",
+        GithubCommentSyncViewSet.as_view(
+            {
+                "get": "retrieve",
+                "delete": "destroy",
+            }
+        ),
+    ),
+    ## End Github Integrations
+    ## End Integrations
 ]

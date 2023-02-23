@@ -20,7 +20,7 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // types
 import { IModule, SelectModuleType } from "types/modules";
 // fetch-keys
-import type { NextPage, NextPageContext } from "next";
+import type { NextPage, GetServerSidePropsContext } from "next";
 import { MODULE_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
 
 const ProjectModules: NextPage = () => {
@@ -139,10 +139,10 @@ const ProjectModules: NextPage = () => {
   );
 };
 
-export const getServerSideProps = async (ctx: NextPageContext) => {
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const user = await requiredAuth(ctx.req?.headers.cookie);
 
-  const redirectAfterSignIn = ctx.req?.url;
+  const redirectAfterSignIn = ctx.resolvedUrl;
 
   if (!user) {
     return {

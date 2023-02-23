@@ -136,11 +136,7 @@ export const SingleState: React.FC<Props> = ({
   };
 
   return (
-    <div
-      className={`group flex items-center justify-between gap-2 border-b bg-gray-50 p-3 ${
-        activeGroup !== state.group ? "last:border-0" : ""
-      }`}
-    >
+    <div className="group flex items-center justify-between gap-2 bg-gray-50 p-3">
       <div className="flex items-center gap-2">
         <span
           className="h-3 w-3 flex-shrink-0 rounded-full"
@@ -184,16 +180,18 @@ export const SingleState: React.FC<Props> = ({
             Set as default
           </button>
         )}
-        <Tooltip content="Cannot delete the default state." disabled={!state.default}>
-          <button
-            type="button"
-            className={`${state.default ? "cursor-not-allowed" : ""} grid place-items-center`}
-            onClick={handleDeleteState}
-            disabled={state.default}
-          >
+
+        <button
+          type="button"
+          className={`${state.default ? "cursor-not-allowed" : ""} grid place-items-center`}
+          onClick={handleDeleteState}
+          disabled={state.default}
+        >
+          <Tooltip tooltipContent="Cannot delete the default state." disabled={!state.default}>
             <TrashIcon className="h-4 w-4 text-red-400" />
-          </button>
-        </Tooltip>
+          </Tooltip>
+        </button>
+
         <button type="button" className="grid place-items-center" onClick={handleEditState}>
           <PencilSquareIcon className="h-4 w-4 text-gray-400" />
         </button>

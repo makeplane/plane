@@ -9,7 +9,7 @@ import { Listbox, Transition } from "@headlessui/react";
 // services
 import projectService from "services/project.service";
 // ui
-import { AssigneesList, Avatar } from "components/ui";
+import { AssigneesList, Avatar, Tooltip } from "components/ui";
 // types
 import { IIssue } from "types";
 // fetch-keys
@@ -56,13 +56,26 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
       {({ open }) => (
         <div>
           <Listbox.Button>
-            <div
-              className={`flex ${
-                isNotAllowed ? "cursor-not-allowed" : "cursor-pointer"
-              } items-center gap-1 text-xs`}
+            <Tooltip
+              tooltipHeading="Assignees"
+              tooltipContent={
+                issue.assignee_details.length > 0
+                  ? issue.assignee_details
+                      .map((assignee) =>
+                        assignee?.first_name !== "" ? assignee?.first_name : assignee?.email
+                      )
+                      .join(", ")
+                  : "No Assignee"
+              }
             >
-              <AssigneesList userIds={issue.assignees ?? []} />
-            </div>
+              <div
+                className={`flex ${
+                  isNotAllowed ? "cursor-not-allowed" : "cursor-pointer"
+                } items-center gap-1 text-xs`}
+              >
+                <AssigneesList userIds={issue.assignees ?? []} />
+              </div>
+            </Tooltip>
           </Listbox.Button>
 
           <Transition
