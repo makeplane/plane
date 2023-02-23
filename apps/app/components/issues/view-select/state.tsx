@@ -17,14 +17,14 @@ import { STATE_LIST } from "constants/fetch-keys";
 type Props = {
   issue: IIssue;
   partialUpdateIssue: (formData: Partial<IIssue>) => void;
-  position?: "left" | "right";
+  selfPositioned?: boolean;
   isNotAllowed: boolean;
 };
 
 export const ViewStateSelect: React.FC<Props> = ({
   issue,
   partialUpdateIssue,
-  position = "right",
+  selfPositioned = false,
   isNotAllowed,
 }) => {
   const router = useRouter();
@@ -67,6 +67,7 @@ export const ViewStateSelect: React.FC<Props> = ({
       maxHeight="md"
       noChevron
       disabled={isNotAllowed}
+      selfPositioned={selfPositioned}
     >
       {states?.map((state) => (
         <CustomSelect.Option key={state.id} value={state.id}>

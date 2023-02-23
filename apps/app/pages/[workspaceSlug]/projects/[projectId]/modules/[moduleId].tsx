@@ -27,6 +27,8 @@ import { ModuleDetailsSidebar } from "components/modules";
 // ui
 import { CustomMenu, EmptySpace, EmptySpaceItem, Spinner } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+// helpers
+import { truncateText } from "helpers/string.helper";
 // types
 import { IModule, ModuleIssueResponse, UserAuth } from "types";
 
@@ -130,7 +132,7 @@ const SingleModule: React.FC<UserAuth> = (props) => {
             label={
               <>
                 <RectangleGroupIcon className="h-3 w-3" />
-                {moduleDetails?.name}
+                {moduleDetails?.name && truncateText(moduleDetails.name, 40)}
               </>
             }
             className="ml-1.5"
@@ -142,7 +144,7 @@ const SingleModule: React.FC<UserAuth> = (props) => {
                 renderAs="a"
                 href={`/${workspaceSlug}/projects/${projectId}/modules/${module.id}`}
               >
-                {module.name}
+                {truncateText(module.name, 40)}
               </CustomMenu.MenuItem>
             ))}
           </CustomMenu>

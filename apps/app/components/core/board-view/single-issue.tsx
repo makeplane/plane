@@ -226,12 +226,13 @@ export const SingleBoardIssue: React.FC<Props> = ({
             </h5>
           </a>
         </Link>
-        <div className="flex flex-wrap items-center gap-x-1 gap-y-2 text-xs">
+        <div className="relative flex flex-wrap items-center gap-x-1 gap-y-2 text-xs">
           {properties.priority && selectedGroup !== "priority" && (
             <ViewPrioritySelect
               issue={issue}
               partialUpdateIssue={partialUpdateIssue}
               isNotAllowed={isNotAllowed}
+              selfPositioned
             />
           )}
           {properties.state && selectedGroup !== "state_detail.name" && (
@@ -239,6 +240,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
               issue={issue}
               partialUpdateIssue={partialUpdateIssue}
               isNotAllowed={isNotAllowed}
+              selfPositioned
             />
           )}
           {properties.due_date && (
@@ -276,6 +278,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
               issue={issue}
               partialUpdateIssue={partialUpdateIssue}
               isNotAllowed={isNotAllowed}
+              selfPositioned
             />
           )}
         </div>
