@@ -77,6 +77,14 @@ class WorkspaceIntegrationViewSet(BaseViewSet):
     serializer_class = WorkspaceIntegrationSerializer
     model = WorkspaceIntegration
 
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .select_related("integration")
+        )
+
     def create(self, request, slug, provider):
         try:
             installation_id = request.data.get("installation_id", None)
