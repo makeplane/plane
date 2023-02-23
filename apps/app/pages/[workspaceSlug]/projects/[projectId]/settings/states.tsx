@@ -27,7 +27,7 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 import { getStatesList, orderStateGroups } from "helpers/state.helper";
 // types
 import { UserAuth } from "types";
-import type { NextPage, NextPageContext } from "next";
+import type { NextPage, GetServerSidePropsContext } from "next";
 // fetch-keys
 import { PROJECT_DETAILS, STATE_LIST } from "constants/fetch-keys";
 
@@ -155,7 +155,7 @@ const StatesSettings: NextPage<UserAuth> = (props) => {
   );
 };
 
-export const getServerSideProps = async (ctx: NextPageContext) => {
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const projectId = ctx.query.projectId as string;
   const workspaceSlug = ctx.query.workspaceSlug as string;
 

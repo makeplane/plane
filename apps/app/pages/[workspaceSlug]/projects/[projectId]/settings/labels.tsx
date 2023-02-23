@@ -25,7 +25,7 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import { PlusIcon } from "@heroicons/react/24/outline";
 // types
 import { IIssueLabels, UserAuth } from "types";
-import type { NextPageContext, NextPage } from "next";
+import type { GetServerSidePropsContext, NextPage } from "next";
 // fetch-keys
 import { PROJECT_DETAILS, PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 
@@ -173,7 +173,7 @@ const LabelsSettings: NextPage<UserAuth> = (props) => {
   );
 };
 
-export const getServerSideProps = async (ctx: NextPageContext) => {
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const projectId = ctx.query.projectId as string;
   const workspaceSlug = ctx.query.workspaceSlug as string;
 
