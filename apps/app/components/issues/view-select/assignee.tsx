@@ -18,6 +18,7 @@ import { PROJECT_MEMBERS } from "constants/fetch-keys";
 type Props = {
   issue: IIssue;
   partialUpdateIssue: (formData: Partial<IIssue>) => void;
+  tooltipPosition?: "left" | "right";
   position?: "left" | "right";
   isNotAllowed: boolean;
 };
@@ -25,6 +26,7 @@ type Props = {
 export const ViewAssigneeSelect: React.FC<Props> = ({
   issue,
   partialUpdateIssue,
+  tooltipPosition = "right",
   position = "right",
   isNotAllowed,
 }) => {
@@ -57,7 +59,7 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
         <div>
           <Listbox.Button>
             <Tooltip
-              position="top-right"
+              position={`top-${tooltipPosition}`}
               tooltipHeading="Assignees"
               tooltipContent={
                 issue.assignee_details.length > 0
