@@ -21,7 +21,10 @@ from plane.db.models import (
     APIToken,
 )
 from plane.api.serializers import IntegrationSerializer, WorkspaceIntegrationSerializer
-from plane.utils.integrations.github import get_github_metadata
+from plane.utils.integrations.github import (
+    get_github_metadata,
+    delete_github_installation,
+)
 
 
 class IntegrationViewSet(BaseViewSet):
@@ -76,6 +79,14 @@ class IntegrationViewSet(BaseViewSet):
 class WorkspaceIntegrationViewSet(BaseViewSet):
     serializer_class = WorkspaceIntegrationSerializer
     model = WorkspaceIntegration
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .select_related("integration")
+        )
 
     def create(self, request, slug, provider):
         try:
@@ -149,6 +160,34 @@ class WorkspaceIntegrationViewSet(BaseViewSet):
             capture_exception(e)
             return Response(
                 {"error": "Workspace or Integration not found"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def destroy(self, request, slug, pk):
+        try:
+            workspace_integration = WorkspaceIntegration.objects.get(
+                pk=pk, workspace__slug=slug
+            )
+
+            if workspace_integration.integration.provider == "github":
+                installation_id = workspace_integration.config.get(
+                    "installation_id", False
+                )
+                if installation_id:
+                    delete_github_installation(installation_id=installation_id)
+
+            workspace_integration.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        except WorkspaceIntegration.DoesNotExist:
+            return Response(
+                {"error": "Workspace Integration Does not exists"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except Exception as e:
