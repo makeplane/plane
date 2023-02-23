@@ -60,3 +60,15 @@ def get_github_repos(access_tokens_url, repositories_url):
         headers=headers,
     ).json()
     return response
+
+
+def delete_github_installation(installation_id):
+    token = get_jwt_token()
+
+    url = f"https://api.github.com/app/installations/{installation_id}"
+    headers = {
+        "Authorization": "Bearer " + token,
+        "Accept": "application/vnd.github+json",
+    }
+    response = requests.delete(url, headers=headers)
+    return response
