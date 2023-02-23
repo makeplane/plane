@@ -115,6 +115,24 @@ export const MyIssuesListItem: React.FC<Props> = ({
             {issue?.sub_issues_count} {issue?.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
           </div>
         )}
+        {properties.labels && (
+          <div className="flex flex-wrap gap-1">
+            {issue.label_details.map((label) => (
+              <span
+                key={label.id}
+                className="group flex items-center gap-1 rounded-2xl border px-2 py-0.5 text-xs"
+              >
+                <span
+                  className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                  style={{
+                    backgroundColor: label?.color && label.color !== "" ? label.color : "#000",
+                  }}
+                />
+                {label.name}
+              </span>
+            ))}
+          </div>
+        )}
         {properties.assignee && (
           <div className="flex items-center gap-1">
             <AssigneesList userIds={issue.assignees ?? []} />

@@ -17,12 +17,12 @@ import { STATE_LIST } from "constants/fetch-keys";
 import { PRIORITIES } from "constants/project";
 
 const initialValues: Properties = {
-  key: true,
-  state: true,
   assignee: true,
-  priority: false,
   due_date: false,
-  // cycle: false,
+  key: true,
+  labels: true,
+  priority: false,
+  state: true,
   sub_issue_count: false,
 };
 
