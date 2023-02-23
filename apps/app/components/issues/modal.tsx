@@ -75,6 +75,19 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
       setActiveProject(projects?.find((p) => p.id === projectId)?.id ?? projects?.[0].id ?? null);
   }, [projectId, projects]);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        handleClose();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
   const addIssueToCycle = async (issueId: string, cycleId: string) => {
     if (!workspaceSlug || !projectId) return;
 

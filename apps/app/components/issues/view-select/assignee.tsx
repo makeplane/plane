@@ -19,6 +19,7 @@ type Props = {
   issue: IIssue;
   partialUpdateIssue: (formData: Partial<IIssue>) => void;
   selfPositioned?: boolean;
+  tooltipPosition?: "left" | "right";
   isNotAllowed: boolean;
 };
 
@@ -26,6 +27,7 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
   issue,
   partialUpdateIssue,
   selfPositioned = false,
+  tooltipPosition = "right",
   isNotAllowed,
 }) => {
   const router = useRouter();
@@ -57,7 +59,7 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
         <div>
           <Listbox.Button>
             <Tooltip
-              position="top-right"
+              position={`top-${tooltipPosition}`}
               tooltipHeading="Assignees"
               tooltipContent={
                 issue.assignee_details.length > 0
