@@ -23,7 +23,7 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 // types
-import type { NextPage, NextPageContext } from "next";
+import type { NextPage, GetServerSidePropsContext } from "next";
 // fetch-keys
 import {
   PROJECT_DETAILS,
@@ -313,7 +313,7 @@ const MembersSettings: NextPage<TMemberSettingsProps> = (props) => {
   );
 };
 
-export const getServerSideProps = async (ctx: NextPageContext) => {
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const projectId = ctx.query.projectId as string;
   const workspaceSlug = ctx.query.workspaceSlug as string;
 
