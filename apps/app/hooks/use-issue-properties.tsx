@@ -8,12 +8,12 @@ import useUser from "hooks/use-user";
 import { IssuePriorities, Properties } from "types";
 
 const initialValues: Properties = {
-  key: true,
-  state: true,
   assignee: true,
-  priority: false,
   due_date: false,
-  // cycle: false,
+  key: true,
+  labels: false,
+  priority: false,
+  state: true,
   sub_issue_count: false,
 };
 
@@ -83,12 +83,12 @@ const useIssuesProperties = (workspaceSlug?: string, projectId?: string) => {
   );
 
   const newProperties: Properties = {
-    key: properties.key,
-    state: properties.state,
     assignee: properties.assignee,
-    priority: properties.priority,
     due_date: properties.due_date,
-    // cycle: properties.cycle,
+    key: properties.key,
+    labels: properties.labels,
+    priority: properties.priority,
+    state: properties.state,
     sub_issue_count: properties.sub_issue_count,
   };
 

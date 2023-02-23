@@ -203,12 +203,12 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, userAuth }) => {
               >
                 <Disclosure.Panel className="mt-3 flex flex-col gap-y-1">
                   {subIssues.map((issue) => (
-                    <div
+                    <Link
                       key={issue.id}
-                      className="group flex items-center justify-between gap-2 rounded p-2 hover:bg-gray-100"
+                      href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}
                     >
-                      <Link href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}>
-                        <a className="flex items-center gap-2 rounded text-xs">
+                      <a className="group flex items-center justify-between gap-2 rounded p-2 hover:bg-gray-100">
+                        <div className="flex items-center gap-2 rounded text-xs">
                           <span
                             className="block flex-shrink-0 h-1.5 w-1.5 rounded-full"
                             style={{
@@ -219,18 +219,23 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, userAuth }) => {
                             {issue.project_detail.identifier}-{issue.sequence_id}
                           </span>
                           <span className="max-w-sm break-all font-medium">{issue.name}</span>
-                        </a>
-                      </Link>
-                      {!isNotAllowed && (
-                        <button
-                          type="button"
-                          className="opacity-0 group-hover:opacity-100 cursor-pointer"
-                          onClick={() => handleSubIssueRemove(issue.id)}
-                        >
-                          <XMarkIcon className="h-4 w-4 text-gray-500 hover:text-gray-900" />
-                        </button>
-                      )}
-                    </div>
+                        </div>
+
+                        {!isNotAllowed && (
+                          <button
+                            type="button"
+                            className="opacity-0 group-hover:opacity-100 cursor-pointer"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              handleSubIssueRemove(issue.id);
+                            }}
+                          >
+                            <XMarkIcon className="h-4 w-4 text-gray-500 hover:text-gray-900" />
+                          </button>
+                        )}
+                      </a>
+                    </Link>
                   ))}
                 </Disclosure.Panel>
               </Transition>

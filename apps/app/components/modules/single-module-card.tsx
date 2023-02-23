@@ -8,7 +8,7 @@ import { DeleteModuleModal } from "components/modules";
 // ui
 import { AssigneesList, Avatar, CustomMenu } from "components/ui";
 // icons
-import { CalendarDaysIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { CalendarDaysIcon } from "@heroicons/react/24/outline";
 // helpers
 import { renderShortNumericDateFormat } from "helpers/date-time.helper";
 // types
@@ -39,19 +39,16 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
   const handleCopyText = () => {
     const originURL =
       typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/modules/${module.id}`)
-      .then(() => {
-        setToastAlert({
-          type: "success",
-          title: "Module link copied to clipboard",
-        });
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Some error occurred",
-        });
+
+    copyTextToClipboard(
+      `${originURL}/${workspaceSlug}/projects/${projectId}/modules/${module.id}`
+    ).then(() => {
+      setToastAlert({
+        type: "success",
+        title: "Link Copied!",
+        message: "Module link copied to clipboard.",
       });
+    });
   };
 
   return (
@@ -64,11 +61,9 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
       <div className="group/card h-full w-full relative select-none p-2">
         <div className="absolute top-4 right-4 ">
           <CustomMenu width="auto" ellipsis>
-            <CustomMenu.MenuItem onClick={handleCopyText}>Copy module link</CustomMenu.MenuItem>
             <CustomMenu.MenuItem onClick={handleEditModule}>Edit module</CustomMenu.MenuItem>
-            <CustomMenu.MenuItem onClick={handleDeleteModule}>
-              Delete module permanently
-            </CustomMenu.MenuItem>
+            <CustomMenu.MenuItem onClick={handleDeleteModule}>Delete module</CustomMenu.MenuItem>
+            <CustomMenu.MenuItem onClick={handleCopyText}>Copy module link</CustomMenu.MenuItem>
           </CustomMenu>
         </div>
         <Link href={`/${workspaceSlug}/projects/${module.project}/modules/${module.id}`}>

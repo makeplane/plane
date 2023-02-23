@@ -124,19 +124,15 @@ export const SingleListIssue: React.FC<Props> = ({
   const handleCopyText = () => {
     const originURL =
       typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`)
-      .then(() => {
-        setToastAlert({
-          type: "success",
-          title: "Issue link copied to clipboard",
-        });
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Some error occurred",
-        });
+    copyTextToClipboard(
+      `${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`
+    ).then(() => {
+      setToastAlert({
+        type: "success",
+        title: "Link Copied!",
+        message: "Issue link copied to clipboard.",
       });
+    });
   };
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
@@ -196,6 +192,24 @@ export const SingleListIssue: React.FC<Props> = ({
             {issue.sub_issues_count} {issue.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
           </div>
         )}
+        {properties.labels && (
+          <div className="flex flex-wrap gap-1">
+            {issue.label_details.map((label) => (
+              <span
+                key={label.id}
+                className="group flex items-center gap-1 rounded-2xl border px-2 py-0.5 text-xs"
+              >
+                <span
+                  className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                  style={{
+                    backgroundColor: label?.color && label.color !== "" ? label.color : "#000",
+                  }}
+                />
+                {label.name}
+              </span>
+            ))}
+          </div>
+        )}
         {properties.assignee && (
           <ViewAssigneeSelect
             issue={issue}
@@ -205,14 +219,14 @@ export const SingleListIssue: React.FC<Props> = ({
         )}
         {type && !isNotAllowed && (
           <CustomMenu width="auto" ellipsis>
-            <CustomMenu.MenuItem onClick={editIssue}>Edit</CustomMenu.MenuItem>
+            <CustomMenu.MenuItem onClick={editIssue}>Edit issue</CustomMenu.MenuItem>
             {type !== "issue" && removeIssue && (
               <CustomMenu.MenuItem onClick={removeIssue}>
                 <>Remove from {type}</>
               </CustomMenu.MenuItem>
             )}
             <CustomMenu.MenuItem onClick={() => handleDeleteIssue(issue)}>
-              Delete permanently
+              Delete issue
             </CustomMenu.MenuItem>
             <CustomMenu.MenuItem onClick={handleCopyText}>Copy issue link</CustomMenu.MenuItem>
           </CustomMenu>

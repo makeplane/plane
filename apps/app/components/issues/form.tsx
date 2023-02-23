@@ -45,6 +45,9 @@ const defaultValues: Partial<IIssue> = {
   state: "",
   cycle: null,
   priority: null,
+  assignees: [],
+  assignees_list: [],
+  labels: [],
   labels_list: [],
 };
 
@@ -89,6 +92,7 @@ export const IssueForm: FC<IssueFormProps> = ({
     watch,
     control,
     setValue,
+    setFocus,
   } = useForm<IIssue>({
     defaultValues,
     mode: "all",
@@ -113,12 +117,14 @@ export const IssueForm: FC<IssueFormProps> = ({
   };
 
   useEffect(() => {
+    setFocus("name");
+
     reset({
       ...defaultValues,
       ...initialData,
       project: projectId,
     });
-  }, [initialData, reset, projectId]);
+  }, [setFocus, initialData, reset, projectId]);
 
   return (
     <>
@@ -204,13 +210,13 @@ export const IssueForm: FC<IssueFormProps> = ({
                   <div className="flex items-center gap-x-2">
                     <p className="text-sm text-gray-500">
                       <Link
-                        href={`/${workspaceSlug}/projects/${projectId}/issues/${mostSimilarIssue}`}
+                        href={`/${workspaceSlug}/projects/${projectId}/issues/${mostSimilarIssue.id}`}
                       >
                         <a target="_blank" type="button" className="inline text-left">
                           <span>Did you mean </span>
                           <span className="italic">
-                            {mostSimilarIssue?.project_detail.identifier}-
-                            {mostSimilarIssue?.sequence_id}: {mostSimilarIssue?.name}{" "}
+                            {mostSimilarIssue.project_detail.identifier}-
+                            {mostSimilarIssue.sequence_id}: {mostSimilarIssue.name}{" "}
                           </span>
                           ?
                         </a>
@@ -363,7 +369,7 @@ export const IssueForm: FC<IssueFormProps> = ({
             </button>
           </div>
           <div className="flex items-center gap-2">
-            <Button theme="secondary" onClick={handleClose}>
+            <Button type="button" theme="secondary" onClick={handleClose}>
               Discard
             </Button>
             <Button type="submit" disabled={isSubmitting}>

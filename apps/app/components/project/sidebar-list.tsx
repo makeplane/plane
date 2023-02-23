@@ -66,6 +66,18 @@ export const ProjectSidebarList: FC = () => {
     () => (workspaceSlug ? projectService.getProjects(workspaceSlug as string) : null)
   );
 
+  const handleCopyText = (projectId: string) => {
+    const originURL =
+      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/issues`).then(() => {
+      setToastAlert({
+        type: "success",
+        title: "Link Copied!",
+        message: "Project link copied to clipboard.",
+      });
+    });
+  };
+
   return (
     <>
       <CreateProjectModal isOpen={isCreateProjectModal} setIsOpen={setCreateProjectModal} />
@@ -112,20 +124,8 @@ export const ProjectSidebarList: FC = () => {
                         </Disclosure.Button>
                         {!sidebarCollapse && (
                           <CustomMenu ellipsis>
-                            <CustomMenu.MenuItem
-                              onClick={() =>
-                                copyTextToClipboard(
-                                  `https://app.plane.so/${workspaceSlug}/projects/${project?.id}/issues/`
-                                ).then(() => {
-                                  setToastAlert({
-                                    title: "Link Copied",
-                                    message: "Link copied to clipboard",
-                                    type: "success",
-                                  });
-                                })
-                              }
-                            >
-                              Copy link
+                            <CustomMenu.MenuItem onClick={() => handleCopyText(project.id)}>
+                              Copy project link
                             </CustomMenu.MenuItem>
                           </CustomMenu>
                         )}

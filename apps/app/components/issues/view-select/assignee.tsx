@@ -57,14 +57,14 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
         <div>
           <Listbox.Button>
             <Tooltip
-              tooltipHeading="Assignee"
+              tooltipHeading="Assignees"
               tooltipContent={
                 issue.assignee_details.length > 0
                   ? issue.assignee_details
-                      .map((assingee) =>
-                        assingee.first_name !== "" ? assingee.first_name : assingee.email
+                      .map((assignee) =>
+                        assignee?.first_name !== "" ? assignee?.first_name : assignee?.email
                       )
-                      .toString()
+                      .join(", ")
                   : "No Assignee"
               }
             >

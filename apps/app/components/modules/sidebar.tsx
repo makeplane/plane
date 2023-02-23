@@ -202,7 +202,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                 />
               </div>
               <div className="flex justify-center items-center gap-2 rounded-md border bg-transparent h-full  p-2 px-4  text-xs font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-900 focus:outline-none">
-                <Popover className="flex justify-center items-center relative  rounded-lg">
+                <Popover className="flex justify-center items-center relative rounded-lg">
                   {({ open }) => (
                     <>
                       <Popover.Button
@@ -372,7 +372,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                 </div>
               </div>
             </div>
-            <div className="flex flex-col items-center justify-center w-full gap-2 ">
+            <div className="flex flex-col items-center justify-center w-full gap-2">
               {isStartValid && isEndValid ? (
                 <ProgressChart
                   issues={issues}

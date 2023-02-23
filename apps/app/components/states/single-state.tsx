@@ -136,11 +136,7 @@ export const SingleState: React.FC<Props> = ({
   };
 
   return (
-    <div
-      className={`group flex items-center justify-between gap-2 border-b bg-gray-50 p-3 ${
-        activeGroup !== state.group ? "last:border-0" : ""
-      }`}
-    >
+    <div className="group flex items-center justify-between gap-2 bg-gray-50 p-3">
       <div className="flex items-center gap-2">
         <span
           className="h-3 w-3 flex-shrink-0 rounded-full"
