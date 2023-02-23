@@ -15,7 +15,7 @@ import {
 } from "components/issues/view-select";
 // ui
 import { AssigneesList } from "components/ui/avatar";
-import { CustomMenu } from "components/ui";
+import { CustomMenu, Tooltip } from "components/ui";
 // types
 import { IIssue, Properties } from "types";
 // fetch-keys
@@ -78,13 +78,20 @@ export const MyIssuesListItem: React.FC<Props> = ({
         <Link href={`/${workspaceSlug}/projects/${issue?.project_detail?.id}/issues/${issue.id}`}>
           <a className="group relative flex items-center gap-2">
             {properties?.key && (
-              <span className="flex-shrink-0 text-xs text-gray-500">
-                {issue.project_detail?.identifier}-{issue.sequence_id}
-              </span>
+              <Tooltip
+                tooltipHeading="ID"
+                tooltipContent={`${issue.project_detail?.identifier}-${issue.sequence_id}`}
+              >
+                <span className="flex-shrink-0 text-xs text-gray-500">
+                  {issue.project_detail?.identifier}-{issue.sequence_id}
+                </span>
+              </Tooltip>
             )}
-            <span className="w-[275px] md:w-[450px] lg:w-[600px] text-ellipsis overflow-hidden whitespace-nowrap">
-              {issue.name}
-            </span>
+            <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
+              <span className="w-auto max-w-lg text-ellipsis overflow-hidden whitespace-nowrap">
+                {issue.name}
+              </span>
+            </Tooltip>
           </a>
         </Link>
       </div>
@@ -134,9 +141,23 @@ export const MyIssuesListItem: React.FC<Props> = ({
           </div>
         )}
         {properties.assignee && (
-          <div className="flex items-center gap-1">
-            <AssigneesList userIds={issue.assignees ?? []} />
-          </div>
+          <Tooltip
+            position="top-right"
+            tooltipHeading="Assignees"
+            tooltipContent={
+              issue.assignee_details.length > 0
+                ? issue.assignee_details
+                    .map((assignee) =>
+                      assignee?.first_name !== "" ? assignee?.first_name : assignee?.email
+                    )
+                    .join(", ")
+                : "No Assignee"
+            }
+          >
+            <div className="flex items-center gap-1">
+              <AssigneesList userIds={issue.assignees ?? []} />
+            </div>
+          </Tooltip>
         )}
         <CustomMenu width="auto" ellipsis>
           <CustomMenu.MenuItem onClick={handleDeleteIssue}>Delete permanently</CustomMenu.MenuItem>
