@@ -23,6 +23,8 @@ import projectService from "services/project.service";
 // ui
 import { CustomMenu, EmptySpace, EmptySpaceItem, Spinner } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+// helpers
+import { truncateText } from "helpers/string.helper";
 // types
 import { CycleIssueResponse, UserAuth } from "types";
 // fetch-keys
@@ -135,7 +137,7 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
             label={
               <>
                 <CyclesIcon className="h-3 w-3" />
-                {cycleDetails?.name}
+                {cycleDetails?.name && truncateText(cycleDetails.name, 40)}
               </>
             }
             className="ml-1.5"
@@ -147,7 +149,7 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
                 renderAs="a"
                 href={`/${workspaceSlug}/projects/${activeProject?.id}/cycles/${cycle.id}`}
               >
-                {cycle.name}
+                {truncateText(cycle.name, 40)}
               </CustomMenu.MenuItem>
             ))}
           </CustomMenu>

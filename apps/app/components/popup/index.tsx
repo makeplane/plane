@@ -8,7 +8,7 @@ import workspaceService from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { Button } from "components/ui";
+import { Button, Loader } from "components/ui";
 // icons
 import GithubLogo from "public/logos/github-black.png";
 import useSWR, { mutate } from "swr";
@@ -105,38 +105,49 @@ const OAuthPopUp = ({ integration }: any) => {
         <div>
           <h3 className="flex items-center gap-4 font-semibold text-xl">
             {integration.title}
-            {isInstalled ? (
-              <span className="flex items-center text-green-500 font-normal text-sm gap-1">
-                <span className="h-1.5 w-1.5 bg-green-500 flex-shrink-0 rounded-full" /> Installed
-              </span>
-            ) : (
-              <span className="flex items-center text-gray-400 font-normal text-sm gap-1">
-                <span className="h-1.5 w-1.5 bg-gray-400 flex-shrink-0 rounded-full" /> Not
-                Installed
-              </span>
-            )}
+            {workspaceIntegrations ? (
+              isInstalled ? (
+                <span className="flex items-center text-green-500 font-normal text-sm gap-1">
+                  <span className="h-1.5 w-1.5 bg-green-500 flex-shrink-0 rounded-full" /> Installed
+                </span>
+              ) : (
+                <span className="flex items-center text-gray-400 font-normal text-sm gap-1">
+                  <span className="h-1.5 w-1.5 bg-gray-400 flex-shrink-0 rounded-full" /> Not
+                  Installed
+                </span>
+              )
+            ) : null}
           </h3>
           <p className="text-gray-400 text-sm">
-            {isInstalled
-              ? "Activate GitHub integrations on individual projects to sync with specific repositories."
-              : "Connect with GitHub with your Plane workspace to sync project issues."}
+            {workspaceIntegrations
+              ? isInstalled
+                ? "Activate GitHub integrations on individual projects to sync with specific repositories."
+                : "Connect with GitHub with your Plane workspace to sync project issues."
+              : "Loading..."}
           </p>
         </div>
       </div>
-      {isInstalled ? (
-        <Button
-          theme="danger"
-          size="rg"
-          className="text-xs"
-          onClick={handleRemoveIntegration}
-          disabled={deletingIntegration}
-        >
-          {deletingIntegration ? "Removing..." : "Remove installation"}
-        </Button>
+
+      {workspaceIntegrations ? (
+        isInstalled ? (
+          <Button
+            theme="danger"
+            size="rg"
+            className="text-xs"
+            onClick={handleRemoveIntegration}
+            disabled={deletingIntegration}
+          >
+            {deletingIntegration ? "Removing..." : "Remove installation"}
+          </Button>
+        ) : (
+          <Button theme="secondary" size="rg" className="text-xs" onClick={startAuth}>
+            Add installation
+          </Button>
+        )
       ) : (
-        <Button theme="secondary" size="rg" className="text-xs" onClick={startAuth}>
-          Add installation
-        </Button>
+        <Loader>
+          <Loader.Item height="35px" width="150px" />
+        </Loader>
       )}
     </div>
   );

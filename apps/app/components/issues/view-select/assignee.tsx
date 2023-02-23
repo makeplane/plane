@@ -18,16 +18,16 @@ import { PROJECT_MEMBERS } from "constants/fetch-keys";
 type Props = {
   issue: IIssue;
   partialUpdateIssue: (formData: Partial<IIssue>) => void;
+  selfPositioned?: boolean;
   tooltipPosition?: "left" | "right";
-  position?: "left" | "right";
   isNotAllowed: boolean;
 };
 
 export const ViewAssigneeSelect: React.FC<Props> = ({
   issue,
   partialUpdateIssue,
+  selfPositioned = false,
   tooltipPosition = "right",
-  position = "right",
   isNotAllowed,
 }) => {
   const router = useRouter();
@@ -52,7 +52,7 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
 
         partialUpdateIssue({ assignees_list: newData });
       }}
-      className="group relative flex-shrink-0"
+      className={`group ${!selfPositioned ? "relative" : ""} flex-shrink-0`}
       disabled={isNotAllowed}
     >
       {({ open }) => (
@@ -88,11 +88,7 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <Listbox.Options
-              className={`absolute z-10 mt-1 max-h-48 overflow-auto rounded-md bg-white py-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ${
-                position === "left" ? "left-0" : "right-0"
-              }`}
-            >
+            <Listbox.Options className="absolute right-0 z-10 mt-1 max-h-48 overflow-auto rounded-md bg-white py-1 text-xs shadow-lg min-w-full ring-1 ring-black ring-opacity-5 focus:outline-none">
               {members?.map((member) => (
                 <Listbox.Option
                   key={member.member.id}

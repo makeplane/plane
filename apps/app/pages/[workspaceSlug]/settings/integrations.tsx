@@ -13,6 +13,7 @@ import AppLayout from "layouts/app-layout";
 // componentss
 import OAuthPopUp from "components/popup";
 // ui
+import { Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // types
 import type { NextPage, GetServerSideProps } from "next";
@@ -54,13 +55,20 @@ const WorkspaceIntegrations: NextPage<UserAuth> = (props) => {
             <p className="mt-4 text-sm text-gray-500">Manage the workspace integrations.</p>
           </div>
           <div className="space-y-4">
-            {integrations?.map((integration) => (
-              <OAuthPopUp
-                key={integration.id}
-                workspaceSlug={workspaceSlug}
-                integration={integration}
-              />
-            ))}
+            {integrations ? (
+              integrations.map((integration) => (
+                <OAuthPopUp
+                  key={integration.id}
+                  workspaceSlug={workspaceSlug}
+                  integration={integration}
+                />
+              ))
+            ) : (
+              <Loader className="space-y-5">
+                <Loader.Item height="60px" />
+                <Loader.Item height="60px" />
+              </Loader>
+            )}
           </div>
         </section>
       </AppLayout>

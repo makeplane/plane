@@ -15,7 +15,7 @@ const Breadcrumbs = ({ children }: BreadcrumbsProps) => {
     <>
       <div className="flex items-center">
         <div
-          className="grid h-8 w-8 cursor-pointer place-items-center rounded border border-gray-300 text-center text-sm hover:bg-gray-100"
+          className="grid h-8 w-8 cursor-pointer place-items-center flex-shrink-0 rounded border border-gray-300 text-center text-sm hover:bg-gray-100"
           onClick={() => router.back()}
         >
           <ArrowLeftIcon className="h-3 w-3" />
