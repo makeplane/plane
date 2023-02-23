@@ -20,10 +20,11 @@ type TMultipleSelectProps = {
   selected: TSelectOption | null;
   setSelected: (value: any) => void;
   label: string;
+  direction?: "left" | "right";
 };
 
-export const MultiSelect: React.FC<TMultipleSelectProps> = (props) => {
-  const { options, selected, setSelected, label } = props;
+export const MultiLevelSelect: React.FC<TMultipleSelectProps> = (props) => {
+  const { options, selected, setSelected, label, direction = "right" } = props;
 
   const [openChildFor, setOpenChildFor] = useState<TSelectOption | null>(null);
 
