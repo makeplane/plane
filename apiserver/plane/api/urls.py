@@ -733,7 +733,7 @@ urlpatterns = [
         name="workspace-integrations",
     ),
     path(
-        "workspaces/<str:slug>/workspace-integrations/<uuid:pk>/",
+        "workspaces/<str:slug>/workspace-integrations/<uuid:pk>/provider/",
         WorkspaceIntegrationViewSet.as_view(
             {
                 "get": "retrieve",
