@@ -20,6 +20,8 @@ import { CustomMenu, Tooltip } from "components/ui";
 import { IIssue, Properties } from "types";
 // fetch-keys
 import { USER_ISSUE } from "constants/fetch-keys";
+import { copyTextToClipboard } from "helpers/string.helper";
+import useToast from "hooks/use-toast";
 
 type Props = {
   issue: IIssue;
@@ -36,6 +38,7 @@ export const MyIssuesListItem: React.FC<Props> = ({
 }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
+  const { setToastAlert } = useToast();
 
   const partialUpdateIssue = useCallback(
     (formData: Partial<IIssue>) => {
@@ -63,6 +66,20 @@ export const MyIssuesListItem: React.FC<Props> = ({
     },
     [workspaceSlug, projectId, issue]
   );
+
+  const handleCopyText = () => {
+    const originURL =
+      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    copyTextToClipboard(
+      `${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`
+    ).then(() => {
+      setToastAlert({
+        type: "success",
+        title: "Link Copied!",
+        message: "Issue link copied to clipboard.",
+      });
+    });
+  };
 
   const isNotAllowed = false;
 
@@ -160,7 +177,8 @@ export const MyIssuesListItem: React.FC<Props> = ({
           </Tooltip>
         )}
         <CustomMenu width="auto" ellipsis>
-          <CustomMenu.MenuItem onClick={handleDeleteIssue}>Delete permanently</CustomMenu.MenuItem>
+          <CustomMenu.MenuItem onClick={handleDeleteIssue}>Delete issue</CustomMenu.MenuItem>
+          <CustomMenu.MenuItem onClick={handleCopyText}>Copy issue link</CustomMenu.MenuItem>
         </CustomMenu>
       </div>
     </div>
