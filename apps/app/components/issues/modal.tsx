@@ -4,8 +4,6 @@ import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 
-// react-hook-form
-import { useForm } from "react-hook-form";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
@@ -16,13 +14,9 @@ import issuesService from "services/issues.service";
 import useUser from "hooks/use-user";
 import useToast from "hooks/use-toast";
 // components
-import CreateUpdateStateModal from "components/project/issues/BoardView/state/create-update-state-modal";
-import CreateUpdateCycleModal from "components/project/cycles/create-update-cycle-modal";
 import { IssueForm } from "components/issues";
-// common
-import { renderDateFormat } from "helpers/date-time.helper";
 // types
-import type { IIssue, IssueResponse } from "types";
+import type { IIssue } from "types";
 // fetch keys
 import {
   PROJECT_ISSUES_DETAILS,
@@ -54,7 +48,10 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   const [activeProject, setActiveProject] = useState<string | null>(null);
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+
+  if (cycleId) prePopulateData = { ...prePopulateData, cycle: cycleId as string };
+  if (moduleId) prePopulateData = { ...prePopulateData, module: moduleId as string };
 
   const { user } = useUser();
   const { setToastAlert } = useToast();
@@ -73,15 +70,23 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
     workspaceSlug ? () => projectService.getProjects(workspaceSlug as string) : null
   );
 
-  const { setError } = useForm<IIssue>({
-    mode: "all",
-    reValidateMode: "onChange",
-  });
-
   useEffect(() => {
     if (projects && projects.length > 0)
       setActiveProject(projects?.find((p) => p.id === projectId)?.id ?? projects?.[0].id ?? null);
   }, [projectId, projects]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        handleClose();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
   const addIssueToCycle = async (issueId: string, cycleId: string) => {
     if (!workspaceSlug || !projectId) return;
@@ -99,15 +104,13 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
             false
           );
         } else
-          mutate<IssueResponse>(
+          mutate<IIssue[]>(
             PROJECT_ISSUES_LIST(workspaceSlug as string, activeProject ?? ""),
-            (prevData) => ({
-              ...(prevData as IssueResponse),
-              results: (prevData?.results ?? []).map((issue) => {
-                if (issue.id === res.id) return { ...issue, sprints: cycleId };
-                return issue;
+            (prevData) =>
+              (prevData ?? []).map((i) => {
+                if (i.id === res.id) return { ...i, sprints: cycleId };
+                return i;
               }),
-            }),
             false
           );
       })
@@ -134,7 +137,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
     await issuesService
       .createIssues(workspaceSlug as string, activeProject ?? "", payload)
       .then((res) => {
-        mutate<IssueResponse>(PROJECT_ISSUES_LIST(workspaceSlug as string, activeProject ?? ""));
+        mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, activeProject ?? ""));
 
         if (payload.cycle && payload.cycle !== "") addIssueToCycle(res.id, payload.cycle);
         if (payload.module && payload.module !== "") addIssueToModule(res.id, payload.module);
@@ -142,30 +145,20 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
         if (!createMore) handleClose();
 
         setToastAlert({
-          title: "Success",
           type: "success",
-          message: "Issue created successfully",
+          title: "Success!",
+          message: "Issue created successfully.",
         });
 
         if (payload.assignees_list?.some((assignee) => assignee === user?.id)) mutate(USER_ISSUE);
 
         if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
       })
-      .catch((err) => {
-        if (err.detail) {
-          setToastAlert({
-            title: "Join the project.",
-            type: "error",
-            message: "Click select to join from projects page to start making changes",
-          });
-        }
-        Object.keys(err).map((key) => {
-          const message = err[key];
-          if (!message) return;
-
-          setError(key as keyof IIssue, {
-            message: Array.isArray(message) ? message.join(", ") : message,
-          });
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Issue could not be created. Please try again.",
         });
       });
   };
@@ -176,50 +169,55 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
       .then((res) => {
         if (isUpdatingSingleIssue) {
           mutate<IIssue>(PROJECT_ISSUES_DETAILS, (prevData) => ({ ...prevData, ...res }), false);
-        } else
-          mutate<IssueResponse>(
+        } else {
+          mutate<IIssue[]>(
             PROJECT_ISSUES_LIST(workspaceSlug as string, activeProject ?? ""),
-            (prevData) => ({
-              ...(prevData as IssueResponse),
-              results: (prevData?.results ?? []).map((issue) => {
-                if (issue.id === res.id) return { ...issue, ...res };
-                return issue;
-              }),
-            })
+            (prevData) =>
+              (prevData ?? []).map((i) => {
+                if (i.id === res.id) return { ...i, ...res };
+                return i;
+              })
           );
+        }
 
         if (payload.cycle && payload.cycle !== "") addIssueToCycle(res.id, payload.cycle);
+        if (payload.module && payload.module !== "") addIssueToModule(res.id, payload.module);
 
         if (!createMore) handleClose();
 
         setToastAlert({
-          title: "Success",
           type: "success",
-          message: "Issue updated successfully",
+          title: "Success!",
+          message: "Issue updated successfully.",
         });
       })
-      .catch((err) => {
-        Object.keys(err).map((key) => {
-          setError(key as keyof IIssue, { message: err[key].join(", ") });
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Issue could not be updated. Please try again.",
         });
       });
   };
 
   const handleFormSubmit = async (formData: Partial<IIssue>) => {
-    if (workspaceSlug && activeProject) {
-      const payload: Partial<IIssue> = {
-        ...formData,
-        target_date: formData.target_date ? renderDateFormat(formData.target_date ?? "") : null,
-      };
+    if (!workspaceSlug || !activeProject) return;
 
-      if (!data) await createIssue(payload);
-      else await updateIssue(payload);
-    }
+    const payload: Partial<IIssue> = {
+      ...formData,
+      assignees_list: formData.assignees,
+      labels_list: formData.labels,
+      description: formData.description ?? "",
+      description_html: formData.description_html ?? "<p></p>",
+    };
+
+    if (!data) await createIssue(payload);
+    else await updateIssue(payload);
   };
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-20" onClose={handleClose}>
+      <Dialog as="div" className="relative z-20" onClose={() => {}}>
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
@@ -245,7 +243,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
             >
               <Dialog.Panel className="relative transform rounded-lg bg-white p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
                 <IssueForm
-                  issues={issues?.results ?? []}
+                  issues={issues ?? []}
                   handleFormSubmit={handleFormSubmit}
                   initialData={prePopulateData}
                   createMore={createMore}

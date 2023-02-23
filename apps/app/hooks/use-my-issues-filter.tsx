@@ -8,20 +8,21 @@ import userService from "services/user.service";
 import useUser from "hooks/use-user";
 // helpers
 import { groupBy } from "helpers/array.helper";
+import { getStatesList } from "helpers/state.helper";
 // types
 import { Properties, NestedKeyOf, IIssue } from "types";
 // fetch-keys
 import { STATE_LIST } from "constants/fetch-keys";
 // constants
-import { PRIORITIES } from "constants/";
+import { PRIORITIES } from "constants/project";
 
 const initialValues: Properties = {
-  key: true,
-  state: true,
   assignee: true,
-  priority: false,
   due_date: false,
-  // cycle: false,
+  key: true,
+  labels: true,
+  priority: false,
+  state: true,
   sub_issue_count: false,
 };
 
@@ -36,12 +37,13 @@ const useMyIssuesProperties = (issues?: IIssue[]) => {
 
   const { user } = useUser();
 
-  const { data: states } = useSWR(
+  const { data: stateGroups } = useSWR(
     workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
     workspaceSlug && projectId
       ? () => stateService.getStates(workspaceSlug as string, projectId as string)
       : null
   );
+  const states = getStatesList(stateGroups ?? {});
 
   useEffect(() => {
     if (!user) return;

@@ -16,7 +16,7 @@ export const WorkspaceHomeCardsList: FC<WorkspaceHomeCardsListProps> = (props) =
     },
     {
       title: "Issues pending",
-      number: myIssues?.length ?? 0 - groupedIssues.completed.length,
+      number: myIssues.length - groupedIssues.completed.length,
     },
     {
       title: "Projects",

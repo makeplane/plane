@@ -9,7 +9,7 @@ import { Controller, useForm } from "react-hook-form";
 // lib
 import { requiredAdmin } from "lib/auth";
 // layouts
-import SettingsLayout from "layouts/settings-layout";
+import AppLayout from "layouts/app-layout";
 // services
 import projectService from "services/project.service";
 import workspaceService from "services/workspace.service";
@@ -20,7 +20,7 @@ import { Button, CustomSelect, Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // types
 import { IProject, IWorkspace } from "types";
-import type { NextPageContext, NextPage } from "next";
+import type { NextPage, GetServerSidePropsContext } from "next";
 // fetch-keys
 import { PROJECTS_LIST, PROJECT_DETAILS, WORKSPACE_MEMBERS } from "constants/fetch-keys";
 
@@ -103,8 +103,8 @@ const ControlSettings: NextPage<TControlSettingsProps> = (props) => {
   };
 
   return (
-    <SettingsLayout
-      type="project"
+    <AppLayout
+      settingsLayout="project"
       memberType={{ isMember, isOwner, isViewer, isGuest }}
       breadcrumbs={
         <Breadcrumbs>
@@ -247,11 +247,11 @@ const ControlSettings: NextPage<TControlSettingsProps> = (props) => {
           </div>
         </div>
       </form>
-    </SettingsLayout>
+    </AppLayout>
   );
 };
 
-export const getServerSideProps = async (ctx: NextPageContext) => {
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const projectId = ctx.query.projectId as string;
   const workspaceSlug = ctx.query.workspaceSlug as string;
 

@@ -11,15 +11,18 @@ import authenticationService from "services/authentication.service";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 // social button
-import { GoogleLoginButton, GithubLoginButton, EmailSignInForm } from "components/account";
+import {
+  GoogleLoginButton,
+  GithubLoginButton,
+  EmailSignInForm,
+  EmailPasswordForm,
+} from "components/account";
 // ui
 import { Spinner } from "components/ui";
 // icons
 import Logo from "public/logo-with-text.png";
 // types
 import type { NextPage } from "next";
-
-const { NEXT_PUBLIC_GITHUB_ID } = process.env;
 
 const SignInPage: NextPage = () => {
   // router
@@ -32,10 +35,11 @@ const SignInPage: NextPage = () => {
   const { setToastAlert } = useToast();
 
   const onSignInSuccess = useCallback(async () => {
+    setLoading(true);
     await mutateUser();
     const nextLocation = router.asPath.split("?next=")[1];
-    if (nextLocation) router.push(nextLocation as string);
-    else router.push("/");
+    if (nextLocation) await router.push(nextLocation as string);
+    else await router.push("/");
   }, [mutateUser, router]);
 
   const handleGoogleSignIn = ({ clientId, credential }: any) => {
@@ -62,27 +66,30 @@ const SignInPage: NextPage = () => {
     }
   };
 
-  const handleGithubSignIn = (githubToken: string) => {
-    setLoading(true);
-    authenticationService
-      .socialAuth({
-        medium: "github",
-        credential: githubToken,
-        clientId: NEXT_PUBLIC_GITHUB_ID,
-      })
-      .then(async () => {
-        await onSignInSuccess();
-      })
-      .catch((err) => {
-        console.log(err);
-        setToastAlert({
-          title: "Error signing in!",
-          type: "error",
-          message: "Something went wrong. Please try again later or contact the support team.",
+  const handleGithubSignIn = useCallback(
+    (credential: string) => {
+      setLoading(true);
+      authenticationService
+        .socialAuth({
+          medium: "github",
+          credential,
+          clientId: process.env.NEXT_PUBLIC_GITHUB_ID,
+        })
+        .then(async () => {
+          await onSignInSuccess();
+        })
+        .catch((err) => {
+          console.log(err);
+          setToastAlert({
+            title: "Error signing in!",
+            type: "error",
+            message: "Something went wrong. Please try again later or contact the support team.",
+          });
+          setLoading(false);
         });
-        setLoading(false);
-      });
-  };
+    },
+    [onSignInSuccess, setToastAlert]
+  );
 
   return (
     <DefaultLayout
@@ -106,15 +113,25 @@ const SignInPage: NextPage = () => {
               Sign in to your account
             </h2>
             <div className="mt-16 bg-white py-8 px-4 sm:rounded-lg sm:px-10">
-              <div className="mb-4">
-                <EmailSignInForm handleSuccess={onSignInSuccess} />
-              </div>
-              <div className="mb-4">
-                <GoogleLoginButton handleSignIn={handleGoogleSignIn} />
-              </div>
-              <div className="mb-4">
-                <GithubLoginButton handleSignIn={handleGithubSignIn} />
-              </div>
+              {parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0") ? (
+                <>
+                  <div className="mb-4">
+                    <EmailSignInForm handleSuccess={onSignInSuccess} />
+                  </div>
+                  <div className="mb-4">
+                    <GoogleLoginButton handleSignIn={handleGoogleSignIn} />
+                  </div>
+                  <div className="mb-4">
+                    <GithubLoginButton handleSignIn={handleGithubSignIn} />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="mb-4">
+                    <EmailPasswordForm onSuccess={onSignInSuccess} />
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>

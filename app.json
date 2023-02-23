@@ -6,8 +6,16 @@
   "website": "https://plane.so/",
   "success_url": "/",
   "stack": "heroku-22",
-  "keywords": ["plane", "project management", "django", "next"],
-  "addons": ["heroku-postgresql:mini", "heroku-redis:mini"],
+  "keywords": [
+    "plane",
+    "project management",
+    "django",
+    "next"
+  ],
+  "addons": [
+    "heroku-postgresql:mini",
+    "heroku-redis:mini"
+  ],
   "buildpacks": [
     {
       "url": "https://github.com/heroku/heroku-buildpack-python.git"

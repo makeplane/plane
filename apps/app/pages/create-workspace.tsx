@@ -25,7 +25,7 @@ import type { NextPage, NextPageContext } from "next";
 // fetch-keys
 import { USER_WORKSPACES } from "constants/fetch-keys";
 // constants
-import { companySize } from "constants/";
+import { COMPANY_SIZE } from "constants/workspace";
 
 const defaultValues = {
   name: "",
@@ -107,7 +107,10 @@ const CreateWorkspace: NextPage = () => {
                         placeholder="Enter name"
                         autoComplete="off"
                         onChange={(e) =>
-                          setValue("slug", e.target.value.toLocaleLowerCase().replace(/ /g, "-"))
+                          setValue(
+                            "slug",
+                            e.target.value.toLocaleLowerCase().trim().replace(/ /g, "-")
+                          )
                         }
                         validations={{
                           required: "Workspace name is required",
@@ -145,7 +148,7 @@ const CreateWorkspace: NextPage = () => {
                             label={value ? value.toString() : "Select company size"}
                             input
                           >
-                            {companySize?.map((item) => (
+                            {COMPANY_SIZE?.map((item) => (
                               <CustomSelect.Option key={item.value} value={item.value}>
                                 {item.label}
                               </CustomSelect.Option>

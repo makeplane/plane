@@ -1,9 +1,4 @@
-/** @type {import('tailwindcss').Config} */
-
-const defaultConfig = require("config/tailwind.config");
-
 module.exports = {
-  ...defaultConfig,
   content: ["./pages/**/*.tsx", "./components/**/*.tsx", "./layouts/**/*.tsx", "./ui/**/*.tsx"],
   theme: {
     extend: {

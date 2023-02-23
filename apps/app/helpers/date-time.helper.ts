@@ -1,4 +1,6 @@
-export const renderDateFormat = (date: string | Date) => {
+export const renderDateFormat = (date: string | Date | null) => {
+  if (!date) return "N/A";
+
   var d = new Date(date),
     month = "" + (d.getMonth() + 1),
     day = "" + d.getDate(),
@@ -21,6 +23,16 @@ export const findHowManyDaysLeft = (date: string | Date) => {
   const eventDate = new Date(date);
   const timeDiff = Math.abs(eventDate.getTime() - today.getTime());
   return Math.ceil(timeDiff / (1000 * 3600 * 24));
+};
+
+export const getDatesInRange = (startDate: Date, endDate: Date) => {
+  const date = new Date(startDate.getTime());
+  const dates = [];
+  while (date <= endDate) {
+    dates.push(new Date(date));
+    date.setDate(date.getDate() + 1);
+  }
+  return dates;
 };
 
 export const timeAgo = (time: any) => {

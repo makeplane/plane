@@ -122,12 +122,12 @@ const ConfirmProjectDeletion: React.FC<TConfirmProjectDeletionProps> = (props) =
                         aria-hidden="true"
                       />
                     </div>
-                    <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                    <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
                       <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
                         Delete Project
                       </Dialog.Title>
                       <div className="mt-2">
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-gray-500 break-all">
                           Are you sure you want to delete project - {`"`}
                           <span className="italic">{selectedProject?.name}</span>
                           {`"`} ? All of the data related to the project will be permanently
@@ -136,7 +136,7 @@ const ConfirmProjectDeletion: React.FC<TConfirmProjectDeletionProps> = (props) =
                       </div>
                       <div className="my-3 h-0.5 bg-gray-200" />
                       <div className="mt-3">
-                        <p className="text-sm">
+                        <p className="text-sm break-all">
                           Enter the project name{" "}
                           <span className="font-semibold">{selectedProject?.name}</span> to
                           continue:

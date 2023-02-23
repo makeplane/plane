@@ -1,39 +1,25 @@
-/** @type {import('next').NextConfig} */
+const { withSentryConfig } = require("@sentry/nextjs");
 const path = require("path");
 
 const nextConfig = {
   reactStrictMode: false,
   swcMinify: true,
   images: {
-    domains: ["vinci-web.s3.amazonaws.com", "planefs-staging.s3.ap-south-1.amazonaws.com"],
+    domains: [
+      "vinci-web.s3.amazonaws.com",
+      "planefs-staging.s3.ap-south-1.amazonaws.com",
+      "planefs.s3.amazonaws.com",
+    ],
   },
   output: "standalone",
   experimental: {
+    // this includes files from the monorepo base two directories up
     outputFileTracingRoot: path.join(__dirname, "../../"),
-    transpilePackages: ["components/ui"],
   },
 };
 
-module.exports = nextConfig;
-
-// const withPWA = require("next-pwa")({
-//   dest: "public",
-// });
-
-// module.exports = withPWA({
-//   pwa: {
-//     dest: "public",
-//     register: true,
-//     skipWaiting: true,
-//   },
-//   reactStrictMode: false,
-//   swcMinify: true,
-//   images: {
-//     domains: ["vinci-web.s3.amazonaws.com"],
-//   },
-//   output: "standalone",
-//   experimental: {
-//     outputFileTracingRoot: path.join(__dirname, "../../"),
-//     transpilePackages: ["components/ui"],
-//   },
-// });
+if (parseInt(process.env.NEXT_PUBLIC_ENABLE_SENTRY || "0")) {
+  module.exports = withSentryConfig(nextConfig, { silent: true }, { hideSourceMaps: true });
+} else {
+  module.exports = nextConfig;
+}

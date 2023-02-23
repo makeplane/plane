@@ -16,10 +16,10 @@ import workspaceService from "services/workspace.service";
 import { CustomSelect, Input } from "components/ui";
 // types
 import { IWorkspace, IWorkspaceMemberInvitation } from "types";
-// constants
-import { companySize } from "constants/";
 // fetch-keys
 import { USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
+// constants
+import { COMPANY_SIZE } from "constants/workspace";
 
 type Props = {
   setStep: React.Dispatch<React.SetStateAction<number>>;
@@ -186,7 +186,7 @@ const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
                           label={value ? value.toString() : "Select company size"}
                           input
                         >
-                          {companySize?.map((item) => (
+                          {COMPANY_SIZE?.map((item) => (
                             <CustomSelect.Option key={item.value} value={item.value}>
                               {item.label}
                             </CustomSelect.Option>

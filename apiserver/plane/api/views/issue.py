@@ -3,7 +3,7 @@ import json
 from itertools import groupby, chain
 
 # Django imports
-from django.db.models import Prefetch, OuterRef, Func, F
+from django.db.models import Prefetch, OuterRef, Func, F, Q
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Third Party imports
@@ -22,6 +22,7 @@ from plane.api.serializers import (
     LabelSerializer,
     IssueSerializer,
     LabelSerializer,
+    IssueFlatSerializer,
 )
 from plane.api.permissions import (
     ProjectEntityPermission,
@@ -39,8 +40,10 @@ from plane.db.models import (
     IssueBlocker,
     CycleIssue,
     ModuleIssue,
+    IssueLink,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
+from plane.utils.grouper import group_results
 
 
 class IssueViewSet(BaseViewSet):
@@ -75,10 +78,9 @@ class IssueViewSet(BaseViewSet):
             self.get_queryset().filter(pk=self.kwargs.get("pk", None)).first()
         )
         if current_instance is not None:
-
             issue_activity.delay(
                 {
-                    "type": "issue.activity",
+                    "type": "issue.activity.updated",
                     "requested_data": requested_data,
                     "actor_id": str(self.request.user.id),
                     "issue_id": str(self.kwargs.get("pk", None)),
@@ -91,8 +93,28 @@ class IssueViewSet(BaseViewSet):
 
         return super().perform_update(serializer)
 
-    def get_queryset(self):
+    def perform_destroy(self, instance):
+        current_instance = (
+            self.get_queryset().filter(pk=self.kwargs.get("pk", None)).first()
+        )
+        if current_instance is not None:
+            issue_activity.delay(
+                {
+                    "type": "issue.activity.deleted",
+                    "requested_data": json.dumps(
+                        {"issue_id": str(self.kwargs.get("pk", None))}
+                    ),
+                    "actor_id": str(self.request.user.id),
+                    "issue_id": str(self.kwargs.get("pk", None)),
+                    "project_id": str(self.kwargs.get("project_id", None)),
+                    "current_instance": json.dumps(
+                        IssueSerializer(current_instance).data, cls=DjangoJSONEncoder
+                    ),
+                },
+            )
+        return super().perform_destroy(instance)
 
+    def get_queryset(self):
         return (
             super()
             .get_queryset()
@@ -136,52 +158,42 @@ class IssueViewSet(BaseViewSet):
                     ).prefetch_related("module__members"),
                 ),
             )
+            .prefetch_related(
+                Prefetch(
+                    "issue_link",
+                    queryset=IssueLink.objects.select_related("issue").select_related(
+                        "created_by"
+                    ),
+                )
+            )
         )
-
-    def grouper(self, issue, group_by):
-        group_by = issue.get(group_by, "")
-
-        if isinstance(group_by, list):
-            if len(group_by):
-                return group_by[0]
-            else:
-                return ""
-
-        else:
-            return group_by
 
     def list(self, request, slug, project_id):
         try:
-            issue_queryset = self.get_queryset()
+            # Issue State groups
+            type = request.GET.get("type", "all")
+            group = ["backlog", "unstarted", "started", "completed", "cancelled"]
+            if type == "backlog":
+                group = ["backlog"]
+            if type == "active":
+                group = ["unstarted", "started"]
 
+            issue_queryset = (
+                self.get_queryset()
+                .order_by(request.GET.get("order_by", "created_at"))
+                .filter(state__group__in=group)
+            )
+
+            issues = IssueSerializer(issue_queryset, many=True).data
+            
             ## Grouping the results
             group_by = request.GET.get("group_by", False)
-            # TODO: Move this group by from ittertools to ORM for better performance - nk
             if group_by:
-                issue_dict = dict()
+                return Response(
+                    group_results(issues, group_by), status=status.HTTP_200_OK
+                )
 
-                issues = IssueSerializer(issue_queryset, many=True).data
-
-                for key, value in groupby(
-                    issues, lambda issue: self.grouper(issue, group_by)
-                ):
-                    issue_dict[str(key)] = list(value)
-
-                return Response(issue_dict, status=status.HTTP_200_OK)
-
-            return Response(
-                {
-                    "next_cursor": str(0),
-                    "prev_cursor": str(0),
-                    "next_page_results": False,
-                    "prev_page_results": False,
-                    "count": issue_queryset.count(),
-                    "total_pages": 1,
-                    "extra_stats": {},
-                    "results": IssueSerializer(issue_queryset, many=True).data,
-                },
-                status=status.HTTP_200_OK,
-            )
+            return Response(issues, status=status.HTTP_200_OK)
 
         except Exception as e:
             print(e)
@@ -202,15 +214,18 @@ class IssueViewSet(BaseViewSet):
                 serializer.save()
 
                 # Track the issue
-                IssueActivity.objects.create(
-                    issue_id=serializer.data["id"],
-                    project_id=project_id,
-                    workspace_id=serializer["workspace"],
-                    comment=f"{request.user.email} created the issue",
-                    verb="created",
-                    actor=request.user,
+                issue_activity.delay(
+                    {
+                        "type": "issue.activity.created",
+                        "requested_data": json.dumps(
+                            self.request.data, cls=DjangoJSONEncoder
+                        ),
+                        "actor_id": str(request.user.id),
+                        "issue_id": str(serializer.data.get("id", None)),
+                        "project_id": str(project_id),
+                        "current_instance": None,
+                    },
                 )
-
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -265,6 +280,14 @@ class UserWorkSpaceIssues(BaseAPIView):
                         queryset=ModuleIssue.objects.select_related("module", "issue"),
                     ),
                 )
+                .prefetch_related(
+                    Prefetch(
+                        "issue_link",
+                        queryset=IssueLink.objects.select_related(
+                            "issue"
+                        ).select_related("created_by"),
+                    )
+                )
             )
             serializer = IssueSerializer(issues, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -277,7 +300,6 @@ class UserWorkSpaceIssues(BaseAPIView):
 
 
 class WorkSpaceIssuesEndpoint(BaseAPIView):
-
     permission_classes = [
         WorkSpaceAdminPermission,
     ]
@@ -298,7 +320,6 @@ class WorkSpaceIssuesEndpoint(BaseAPIView):
 
 
 class IssueActivityEndpoint(BaseAPIView):
-
     permission_classes = [
         ProjectEntityPermission,
     ]
@@ -307,7 +328,10 @@ class IssueActivityEndpoint(BaseAPIView):
         try:
             issue_activities = (
                 IssueActivity.objects.filter(issue_id=issue_id)
-                .filter(project__project_projectmember__member=self.request.user)
+                .filter(
+                    ~Q(field="comment"),
+                    project__project_projectmember__member=self.request.user,
+                )
                 .select_related("actor")
             ).order_by("created_by")
             issue_comments = (
@@ -333,7 +357,6 @@ class IssueActivityEndpoint(BaseAPIView):
 
 
 class IssueCommentViewSet(BaseViewSet):
-
     serializer_class = IssueCommentSerializer
     model = IssueComment
     permission_classes = [
@@ -351,6 +374,60 @@ class IssueCommentViewSet(BaseViewSet):
             issue_id=self.kwargs.get("issue_id"),
             actor=self.request.user if self.request.user is not None else None,
         )
+        issue_activity.delay(
+            {
+                "type": "comment.activity.created",
+                "requested_data": json.dumps(serializer.data, cls=DjangoJSONEncoder),
+                "actor_id": str(self.request.user.id),
+                "issue_id": str(self.kwargs.get("issue_id")),
+                "project_id": str(self.kwargs.get("project_id")),
+                "current_instance": None,
+            },
+        )
+
+    def perform_update(self, serializer):
+        requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
+        current_instance = (
+            self.get_queryset().filter(pk=self.kwargs.get("pk", None)).first()
+        )
+        if current_instance is not None:
+            issue_activity.delay(
+                {
+                    "type": "comment.activity.updated",
+                    "requested_data": requested_data,
+                    "actor_id": str(self.request.user.id),
+                    "issue_id": str(self.kwargs.get("issue_id", None)),
+                    "project_id": str(self.kwargs.get("project_id", None)),
+                    "current_instance": json.dumps(
+                        IssueCommentSerializer(current_instance).data,
+                        cls=DjangoJSONEncoder,
+                    ),
+                },
+            )
+
+        return super().perform_update(serializer)
+
+    def perform_destroy(self, instance):
+        current_instance = (
+            self.get_queryset().filter(pk=self.kwargs.get("pk", None)).first()
+        )
+        if current_instance is not None:
+            issue_activity.delay(
+                {
+                    "type": "comment.activity.deleted",
+                    "requested_data": json.dumps(
+                        {"comment_id": str(self.kwargs.get("pk", None))}
+                    ),
+                    "actor_id": str(self.request.user.id),
+                    "issue_id": str(self.kwargs.get("issue_id", None)),
+                    "project_id": str(self.kwargs.get("project_id", None)),
+                    "current_instance": json.dumps(
+                        IssueCommentSerializer(current_instance).data,
+                        cls=DjangoJSONEncoder,
+                    ),
+                },
+            )
+        return super().perform_destroy(instance)
 
     def get_queryset(self):
         return self.filter_queryset(
@@ -436,7 +513,6 @@ class IssuePropertyViewSet(BaseViewSet):
 
     def create(self, request, slug, project_id):
         try:
-
             issue_property, created = IssueProperty.objects.get_or_create(
                 user=request.user,
                 project_id=project_id,
@@ -463,7 +539,6 @@ class IssuePropertyViewSet(BaseViewSet):
 
 
 class LabelViewSet(BaseViewSet):
-
     serializer_class = LabelSerializer
     model = Label
     permission_classes = [
@@ -490,14 +565,12 @@ class LabelViewSet(BaseViewSet):
 
 
 class BulkDeleteIssuesEndpoint(BaseAPIView):
-
     permission_classes = [
         ProjectEntityPermission,
     ]
 
     def delete(self, request, slug, project_id):
         try:
-
             issue_ids = request.data.get("issue_ids", [])
 
             if not len(issue_ids):
@@ -527,14 +600,12 @@ class BulkDeleteIssuesEndpoint(BaseAPIView):
 
 
 class SubIssuesEndpoint(BaseAPIView):
-
     permission_classes = [
         ProjectEntityPermission,
     ]
 
     def get(self, request, slug, project_id, issue_id):
         try:
-
             sub_issues = (
                 Issue.objects.filter(
                     parent_id=issue_id, workspace__slug=slug, project_id=project_id
@@ -577,6 +648,42 @@ class SubIssuesEndpoint(BaseAPIView):
 
             serializer = IssueSerializer(sub_issues, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    # Assign multiple sub issues
+    def post(self, request, slug, project_id, issue_id):
+        try:
+            parent_issue = Issue.objects.get(pk=issue_id)
+            sub_issue_ids = request.data.get("sub_issue_ids", [])
+
+            if not len(sub_issue_ids):
+                return Response(
+                    {"error": "Sub Issue IDs are required"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            sub_issues = Issue.objects.filter(id__in=sub_issue_ids)
+
+            for sub_issue in sub_issues:
+                sub_issue.parent = parent_issue
+
+            _ = Issue.objects.bulk_update(sub_issues, ["parent"], batch_size=10)
+
+            updated_sub_issues = Issue.objects.filter(id__in=sub_issue_ids)
+
+            return Response(
+                IssueFlatSerializer(updated_sub_issues, many=True).data,
+                status=status.HTTP_200_OK,
+            )
+        except Issue.DoesNotExist:
+            return Response(
+                {"Parent Issue does not exists"}, status=status.HTTP_400_BAD_REQUEST
+            )
         except Exception as e:
             capture_exception(e)
             return Response(

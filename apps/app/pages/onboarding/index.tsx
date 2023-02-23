@@ -2,11 +2,13 @@ import { useState } from "react";
 
 import Image from "next/image";
 import { useRouter } from "next/router";
-// hooks
-import type { NextPage, NextPageContext } from "next";
-import useUser from "hooks/use-user";
+
 // lib
 import { requiredAuth } from "lib/auth";
+// services
+import userService from "services/user.service";
+// hooks
+import useUser from "hooks/use-user";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 // components
@@ -20,7 +22,8 @@ import InviteMembers from "components/onboarding/invite-members";
 import CommandMenu from "components/onboarding/command-menu";
 // images
 import Logo from "public/onboarding/logo.svg";
-import userService from "services/user.service";
+// types
+import type { NextPage, GetServerSidePropsContext } from "next";
 
 const Onboarding: NextPage = () => {
   const [step, setStep] = useState(1);
@@ -89,10 +92,10 @@ const Onboarding: NextPage = () => {
   );
 };
 
-export const getServerSideProps = async (ctx: NextPageContext) => {
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const user = await requiredAuth(ctx.req?.headers.cookie);
 
-  const redirectAfterSignIn = ctx.req?.url;
+  const redirectAfterSignIn = ctx.resolvedUrl;
 
   if (!user) {
     return {

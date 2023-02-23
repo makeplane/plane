@@ -16,8 +16,9 @@ import {
   IssueStateSelect,
 } from "components/issues/select";
 import { CycleSelect as IssueCycleSelect } from "components/cycles/select";
-import CreateUpdateStateModal from "components/project/issues/BoardView/state/create-update-state-modal";
-import CreateUpdateCycleModal from "components/project/cycles/create-update-cycle-modal";
+import { CreateStateModal } from "components/states";
+import { CreateUpdateCycleModal } from "components/cycles";
+import { CreateLabelModal } from "components/labels";
 // ui
 import { Button, CustomDatePicker, CustomMenu, Input, Loader } from "components/ui";
 // icons
@@ -44,11 +45,14 @@ const defaultValues: Partial<IIssue> = {
   state: "",
   cycle: null,
   priority: null,
+  assignees: [],
+  assignees_list: [],
+  labels: [],
   labels_list: [],
 };
 
 export interface IssueFormProps {
-  handleFormSubmit: (values: Partial<IIssue>) => void;
+  handleFormSubmit: (values: Partial<IIssue>) => Promise<void>;
   initialData?: Partial<IIssue>;
   issues: IIssue[];
   projectId: string;
@@ -74,6 +78,7 @@ export const IssueForm: FC<IssueFormProps> = ({
   const [mostSimilarIssue, setMostSimilarIssue] = useState<IIssue | undefined>();
   const [cycleModal, setCycleModal] = useState(false);
   const [stateModal, setStateModal] = useState(false);
+  const [labelModal, setLabelModal] = useState(false);
   const [parentIssueListModalOpen, setParentIssueListModalOpen] = useState(false);
 
   const router = useRouter();
@@ -87,6 +92,7 @@ export const IssueForm: FC<IssueFormProps> = ({
     watch,
     control,
     setValue,
+    setFocus,
   } = useForm<IIssue>({
     defaultValues,
     mode: "all",
@@ -105,30 +111,34 @@ export const IssueForm: FC<IssueFormProps> = ({
     reset({
       ...defaultValues,
       project: projectId,
+      description: "",
+      description_html: "<p></p>",
     });
   };
 
   useEffect(() => {
+    setFocus("name");
+
     reset({
       ...defaultValues,
-      ...watch(),
-      project: projectId,
       ...initialData,
+      project: projectId,
     });
-  }, [initialData, reset, watch, projectId]);
+  }, [setFocus, initialData, reset, projectId]);
 
   return (
     <>
       {projectId && (
         <>
-          <CreateUpdateStateModal
+          <CreateStateModal
             isOpen={stateModal}
             handleClose={() => setStateModal(false)}
             projectId={projectId}
           />
-          <CreateUpdateCycleModal
-            isOpen={cycleModal}
-            setIsOpen={setCycleModal}
+          <CreateUpdateCycleModal isOpen={cycleModal} handleClose={() => setCycleModal(false)} />
+          <CreateLabelModal
+            isOpen={labelModal}
+            handleClose={() => setLabelModal(false)}
             projectId={projectId}
           />
         </>
@@ -200,13 +210,13 @@ export const IssueForm: FC<IssueFormProps> = ({
                   <div className="flex items-center gap-x-2">
                     <p className="text-sm text-gray-500">
                       <Link
-                        href={`/${workspaceSlug}/projects/${projectId}/issues/${mostSimilarIssue}`}
+                        href={`/${workspaceSlug}/projects/${projectId}/issues/${mostSimilarIssue.id}`}
                       >
                         <a target="_blank" type="button" className="inline text-left">
                           <span>Did you mean </span>
                           <span className="italic">
-                            {mostSimilarIssue?.project_detail.identifier}-
-                            {mostSimilarIssue?.sequence_id}: {mostSimilarIssue?.name}{" "}
+                            {mostSimilarIssue.project_detail.identifier}-
+                            {mostSimilarIssue.sequence_id}: {mostSimilarIssue.name}{" "}
                           </span>
                           ?
                         </a>
@@ -231,13 +241,11 @@ export const IssueForm: FC<IssueFormProps> = ({
                 <Controller
                   name="description"
                   control={control}
-                  render={({ field: { value, onChange } }) => (
+                  render={({ field: { value } }) => (
                     <RemirrorRichTextEditor
                       value={value}
-                      onBlur={(jsonValue, htmlValue) => {
-                        setValue("description", jsonValue);
-                        setValue("description_html", htmlValue);
-                      }}
+                      onJSONChange={(jsonValue) => setValue("description", jsonValue)}
+                      onHTMLChange={(htmlValue) => setValue("description_html", htmlValue)}
                       placeholder="Enter Your Text..."
                     />
                   )}
@@ -272,16 +280,14 @@ export const IssueForm: FC<IssueFormProps> = ({
                 />
                 <Controller
                   control={control}
-                  name="assignees_list"
+                  name="labels"
                   render={({ field: { value, onChange } }) => (
-                    <IssueAssigneeSelect projectId={projectId} value={value} onChange={onChange} />
-                  )}
-                />
-                <Controller
-                  control={control}
-                  name="labels_list"
-                  render={({ field: { value, onChange } }) => (
-                    <IssueLabelSelect value={value} onChange={onChange} projectId={projectId} />
+                    <IssueLabelSelect
+                      setIsOpen={setLabelModal}
+                      value={value}
+                      onChange={onChange}
+                      projectId={projectId}
+                    />
                   )}
                 />
                 <div>
@@ -297,6 +303,13 @@ export const IssueForm: FC<IssueFormProps> = ({
                     )}
                   />
                 </div>
+                <Controller
+                  control={control}
+                  name="assignees"
+                  render={({ field: { value, onChange } }) => (
+                    <IssueAssigneeSelect projectId={projectId} value={value} onChange={onChange} />
+                  )}
+                />
                 <IssueParentSelect
                   control={control}
                   isOpen={parentIssueListModalOpen}
@@ -356,7 +369,7 @@ export const IssueForm: FC<IssueFormProps> = ({
             </button>
           </div>
           <div className="flex items-center gap-2">
-            <Button theme="secondary" onClick={handleClose}>
+            <Button type="button" theme="secondary" onClick={handleClose}>
               Discard
             </Button>
             <Button type="submit" disabled={isSubmitting}>

@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useMemo } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import dynamic from "next/dynamic";
 
@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 // lodash
 import debounce from "lodash.debounce";
 // components
-import { Loader, Input } from "components/ui";
+import { Loader, TextArea } from "components/ui";
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
   ssr: false,
   loading: () => (
@@ -18,7 +18,6 @@ const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor
 });
 // types
 import { IIssue, UserAuth } from "types";
-import useToast from "hooks/use-toast";
 
 export interface IssueDescriptionFormValues {
   name: string;
@@ -37,7 +36,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
   handleFormSubmit,
   userAuth,
 }) => {
-  const { setToastAlert } = useToast();
+  const [characterLimit, setCharacterLimit] = useState(false);
 
   const {
     handleSubmit,
@@ -45,7 +44,6 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
     setValue,
     reset,
     formState: { errors },
-    setError,
   } = useForm<IIssue>({
     defaultValues: {
       name: "",
@@ -56,31 +54,15 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
 
   const handleDescriptionFormSubmit = useCallback(
     (formData: Partial<IIssue>) => {
-      if (!formData.name || formData.name === "") {
-        setToastAlert({
-          type: "error",
-          title: "Error in saving!",
-          message: "Title is required.",
-        });
-        return;
-      }
-
-      if (formData.name.length > 255) {
-        setToastAlert({
-          type: "error",
-          title: "Error in saving!",
-          message: "Title cannot have more than 255 characters.",
-        });
-        return;
-      }
+      if (!formData.name || formData.name.length === 0 || formData.name.length > 255) return;
 
       handleFormSubmit({
         name: formData.name ?? "",
-        description: formData.description,
-        description_html: formData.description_html,
+        description: formData.description ?? "",
+        description_html: formData.description_html ?? "<p></p>",
       });
     },
-    [handleFormSubmit, setToastAlert]
+    [handleFormSubmit]
   );
 
   const debounceHandler = useMemo(
@@ -106,20 +88,37 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
 
   return (
     <div>
-      <Input
-        id="name"
-        placeholder="Enter issue name"
-        name="name"
-        value={watch("name")}
-        autoComplete="off"
-        onChange={(e) => {
-          setValue("name", e.target.value);
-          debounceHandler();
-        }}
-        mode="transparent"
-        className="text-xl font-medium"
-        disabled={isNotAllowed}
-      />
+      <div className="relative">
+        <TextArea
+          id="name"
+          name="name"
+          placeholder="Enter issue name"
+          value={watch("name")}
+          onFocus={() => setCharacterLimit(true)}
+          onBlur={() => setCharacterLimit(false)}
+          onChange={(e) => {
+            setValue("name", e.target.value);
+            debounceHandler();
+          }}
+          required={true}
+          className="block px-3 py-2 text-xl
+      w-full overflow-hidden resize-none min-h-10
+      rounded border-none bg-transparent ring-0 focus:ring-1 focus:ring-theme outline-none"
+          role="textbox"
+        />
+        {characterLimit && (
+          <div className="absolute bottom-0 right-0 text-xs bg-white p-1 rounded pointer-events-none z-[2]">
+            <span
+              className={`${
+                watch("name").length === 0 || watch("name").length > 255 ? "text-red-500" : ""
+              }`}
+            >
+              {watch("name").length}
+            </span>
+            /255
+          </div>
+        )}
+      </div>
       <span>{errors.name ? errors.name.message : null}</span>
       <RemirrorRichTextEditor
         value={watch("description")}

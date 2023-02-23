@@ -4,10 +4,12 @@ from django.db import models
 from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils import timezone
 
 # Module imports
 from . import ProjectBaseModel
 from plane.utils.html_processor import strip_tags
+
 
 # TODO: Handle identifiers for Bulk Inserts - nk
 class Issue(ProjectBaseModel):
@@ -32,8 +34,8 @@ class Issue(ProjectBaseModel):
         related_name="state_issue",
     )
     name = models.CharField(max_length=255, verbose_name="Issue Name")
-    description = models.JSONField(blank=True, null=True)
-    description_html = models.TextField(blank=True, null=True)
+    description = models.JSONField(blank=True, default=dict)
+    description_html = models.TextField(blank=True, default="<p></p>")
     description_stripped = models.TextField(blank=True, null=True)
     priority = models.CharField(
         max_length=30,
@@ -56,6 +58,8 @@ class Issue(ProjectBaseModel):
     labels = models.ManyToManyField(
         "db.Label", blank=True, related_name="labels", through="IssueLabel"
     )
+    sort_order = models.FloatField(default=65535)
+    completed_at = models.DateTimeField(null=True)
 
     class Meta:
         verbose_name = "Issue"
@@ -65,6 +69,36 @@ class Issue(ProjectBaseModel):
 
     def save(self, *args, **kwargs):
         # This means that the model isn't saved to the database yet
+        if self.state is None:
+            try:
+                from plane.db.models import State
+
+                default_state = State.objects.filter(
+                    project=self.project, default=True
+                ).first()
+                # if there is no default state assign any random state
+                if default_state is None:
+                    self.state = State.objects.filter(project=self.project).first()
+                else:
+                    self.state = default_state
+            except ImportError:
+                pass
+        else:
+            try:
+                from plane.db.models import State
+
+                # Get the completed states of the project
+                completed_states = State.objects.filter(
+                    group="completed", project=self.project
+                ).values_list("pk", flat=True)
+                # Check if the current issue state and completed state id are same
+                if self.state.id in completed_states:
+                    self.completed_at = timezone.now()
+                else:
+                    self.completed_at = None
+
+            except ImportError:
+                pass
         if self._state.adding:
             # Get the maximum display_id value from the database
 
@@ -75,15 +109,12 @@ class Issue(ProjectBaseModel):
             # If it isn't none, just use the last ID specified (which should be the greatest) and add one to it
             if last_id is not None:
                 self.sequence_id = last_id + 1
-        if self.state is None:
-            try:
-                from plane.db.models import State
 
-                self.state, created = State.objects.get_or_create(
-                    project=self.project, name="Backlog"
-                )
-            except ImportError:
-                pass
+            largest_sort_order = Issue.objects.filter(
+                project=self.project, state=self.state
+            ).aggregate(largest=models.Max("sort_order"))["largest"]
+            if largest_sort_order is not None:
+                self.sort_order = largest_sort_order + 10000
 
         # Strip the html tags using html parser
         self.description_stripped = (
@@ -137,9 +168,26 @@ class IssueAssignee(ProjectBaseModel):
         return f"{self.issue.name} {self.assignee.email}"
 
 
+class IssueLink(ProjectBaseModel):
+    title = models.CharField(max_length=255, null=True)
+    url = models.URLField()
+    issue = models.ForeignKey(
+        "db.Issue", on_delete=models.CASCADE, related_name="issue_link"
+    )
+
+    class Meta:
+        verbose_name = "Issue Link"
+        verbose_name_plural = "Issue Links"
+        db_table = "issue_links"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.issue.name} {self.url}"
+
+
 class IssueActivity(ProjectBaseModel):
     issue = models.ForeignKey(
-        Issue, on_delete=models.CASCADE, related_name="issue_activity"
+        Issue, on_delete=models.SET_NULL, null=True, related_name="issue_activity"
     )
     verb = models.CharField(max_length=255, verbose_name="Action", default="created")
     field = models.CharField(
@@ -196,8 +244,8 @@ class TimelineIssue(ProjectBaseModel):
 
 class IssueComment(ProjectBaseModel):
     comment_stripped = models.TextField(verbose_name="Comment", blank=True)
-    comment_json = models.JSONField(blank=True, null=True)
-    comment_html = models.TextField(blank=True)
+    comment_json = models.JSONField(blank=True, default=dict)
+    comment_html = models.TextField(blank=True, default="<p></p>")
     attachments = ArrayField(models.URLField(), size=10, blank=True, default=list)
     issue = models.ForeignKey(Issue, on_delete=models.CASCADE)
     # System can also create comment
@@ -246,7 +294,6 @@ class IssueProperty(ProjectBaseModel):
 
 
 class Label(ProjectBaseModel):
-
     parent = models.ForeignKey(
         "self",
         on_delete=models.CASCADE,
@@ -256,7 +303,7 @@ class Label(ProjectBaseModel):
     )
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
-    colour = models.CharField(max_length=255, blank=True)
+    color = models.CharField(max_length=255, blank=True)
 
     class Meta:
         verbose_name = "Label"
@@ -269,7 +316,6 @@ class Label(ProjectBaseModel):
 
 
 class IssueLabel(ProjectBaseModel):
-
     issue = models.ForeignKey(
         "db.Issue", on_delete=models.CASCADE, related_name="label_issue"
     )
@@ -288,7 +334,6 @@ class IssueLabel(ProjectBaseModel):
 
 
 class IssueSequence(ProjectBaseModel):
-
     issue = models.ForeignKey(
         Issue, on_delete=models.SET_NULL, related_name="issue_sequence", null=True
     )
@@ -305,7 +350,6 @@ class IssueSequence(ProjectBaseModel):
 # TODO: Find a better method to save the model
 @receiver(post_save, sender=Issue)
 def create_issue_sequence(sender, instance, created, **kwargs):
-
     if created:
         IssueSequence.objects.create(
             issue=instance, sequence=instance.sequence_id, project=instance.project

@@ -8,16 +8,15 @@ import useUser from "hooks/use-user";
 import { IssuePriorities, Properties } from "types";
 
 const initialValues: Properties = {
-  key: true,
-  state: true,
   assignee: true,
-  priority: false,
   due_date: false,
-  // cycle: false,
+  key: true,
+  labels: false,
+  priority: false,
+  state: true,
   sub_issue_count: false,
 };
 
-// TODO: CHECK THIS LOGIC
 const useIssuesProperties = (workspaceSlug?: string, projectId?: string) => {
   const [properties, setProperties] = useState<Properties>(initialValues);
 
@@ -34,6 +33,7 @@ const useIssuesProperties = (workspaceSlug?: string, projectId?: string) => {
 
   useEffect(() => {
     if (!issueProperties || !workspaceSlug || !projectId || !user) return;
+
     setProperties({ ...initialValues, ...issueProperties.properties });
 
     if (Object.keys(issueProperties).length === 0)
@@ -51,7 +51,9 @@ const useIssuesProperties = (workspaceSlug?: string, projectId?: string) => {
   const updateIssueProperties = useCallback(
     (key: keyof Properties) => {
       if (!workspaceSlug || !user) return;
+
       setProperties((prev) => ({ ...prev, [key]: !prev[key] }));
+
       if (issueProperties && projectId) {
         mutateIssueProperties(
           (prev) =>
@@ -81,12 +83,12 @@ const useIssuesProperties = (workspaceSlug?: string, projectId?: string) => {
   );
 
   const newProperties: Properties = {
-    key: properties.key,
-    state: properties.state,
     assignee: properties.assignee,
-    priority: properties.priority,
     due_date: properties.due_date,
-    // cycle: properties.cycle,
+    key: properties.key,
+    labels: properties.labels,
+    priority: properties.priority,
+    state: properties.state,
     sub_issue_count: properties.sub_issue_count,
   };
 

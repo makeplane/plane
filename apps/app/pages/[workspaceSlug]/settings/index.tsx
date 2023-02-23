@@ -17,16 +17,15 @@ import { requiredWorkspaceAdmin } from "lib/auth";
 import workspaceService from "services/workspace.service";
 import fileServices from "services/file.service";
 // layouts
-import SettingsLayout from "layouts/settings-layout";
+import AppLayout from "layouts/app-layout";
 // hooks
 import useToast from "hooks/use-toast";
 // components
-import { ImageUploadModal } from "components/common/image-upload-modal";
+import { ImageUploadModal } from "components/core";
 import ConfirmWorkspaceDeletion from "components/workspace/confirm-workspace-deletion";
 // ui
-import { Spinner, Button, Input, CustomSelect } from "components/ui";
+import { Spinner, Button, Input, CustomSelect, OutlineButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-import OutlineButton from "components/ui/outline-button";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
@@ -35,7 +34,7 @@ import type { GetServerSideProps, NextPage } from "next";
 // fetch-keys
 import { WORKSPACE_DETAILS, USER_WORKSPACES } from "constants/fetch-keys";
 // constants
-import { companySize } from "constants/";
+import { COMPANY_SIZE } from "constants/workspace";
 
 const defaultValues: Partial<IWorkspace> = {
   name: "",
@@ -85,11 +84,13 @@ const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
 
   const onSubmit = async (formData: IWorkspace) => {
     if (!activeWorkspace) return;
+
     const payload: Partial<IWorkspace> = {
       logo: formData.logo,
       name: formData.name,
       company_size: formData.company_size,
     };
+
     await workspaceService
       .updateWorkspace(activeWorkspace.slug, payload)
       .then((res) => {
@@ -106,9 +107,9 @@ const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
   };
 
   return (
-    <SettingsLayout
-      memberType={{ ...props }}
-      type="workspace"
+    <AppLayout
+      settingsLayout="workspace"
+      memberType={props}
       meta={{
         title: "Plane - Workspace Settings",
       }}
@@ -278,7 +279,7 @@ const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
                     label={value ? value.toString() : "Select company size"}
                     input
                   >
-                    {companySize?.map((item) => (
+                    {COMPANY_SIZE?.map((item) => (
                       <CustomSelect.Option key={item.value} value={item.value}>
                         {item.label}
                       </CustomSelect.Option>
@@ -315,7 +316,7 @@ const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
           <Spinner />
         </div>
       )}
-    </SettingsLayout>
+    </AppLayout>
   );
 };
 

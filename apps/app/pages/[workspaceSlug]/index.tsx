@@ -1,34 +1,34 @@
 import React from "react";
+
 import Link from "next/link";
 import { useRouter } from "next/router";
 
+// lib
+import { requiredAuth } from "lib/auth";
+// layouts
+import AppLayout from "layouts/app-layout";
+// hooks
+import useProjects from "hooks/use-projects";
+import useWorkspaceDetails from "hooks/use-workspace-details";
+import useIssues from "hooks/use-issues";
+// components
+import { WorkspaceHomeCardsList, WorkspaceHomeGreetings } from "components/workspace";
+// ui
+import { Spinner, Tooltip } from "components/ui";
 // icons
 import {
   ArrowRightIcon,
   CalendarDaysIcon,
   ClipboardDocumentListIcon,
 } from "@heroicons/react/24/outline";
-// lib
-import { requiredAuth } from "lib/auth";
-// layouts
-import AppLayout from "layouts/app-layout";
-// components
-import { Spinner } from "components/ui";
-import { WorkspaceHomeCardsList, WorkspaceHomeGreetings } from "components/workspace";
-// hooks
-import useProjects from "hooks/use-projects";
-import useWorkspaceDetails from "hooks/use-workspace-details";
-import useIssues from "hooks/use-issues";
-// icons
 import { LayerDiagonalIcon } from "components/icons";
+import { getPriorityIcon } from "components/icons/priority-icon";
 // helpers
 import { renderShortNumericDateFormat, findHowManyDaysLeft } from "helpers/date-time.helper";
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 import { groupBy } from "helpers/array.helper";
 // types
-import type { NextPage, NextPageContext } from "next";
-// constants
-import { getPriorityIcon } from "constants/global";
+import type { NextPage, GetServerSidePropsContext } from "next";
 
 const WorkspacePage: NextPage = () => {
   // router
@@ -90,69 +90,78 @@ const WorkspacePage: NextPage = () => {
                                   href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}
                                 >
                                   <a className="group relative flex items-center gap-2">
-                                    <span className="">{issue.name}</span>
+                                    <Tooltip
+                                      position="top-left"
+                                      tooltipHeading="Title"
+                                      tooltipContent={issue.name}
+                                    >
+                                      <span className="w-auto max-w-[225px] md:max-w-[175px] lg:max-w-xs xl:max-w-sm   text-ellipsis overflow-hidden whitespace-nowrap">
+                                        {issue.name}
+                                      </span>
+                                    </Tooltip>
                                   </a>
                                 </Link>
                               </div>
                               <div className="flex flex-shrink-0 flex-wrap items-center gap-x-1 gap-y-2 text-xs">
-                                <div
-                                  className={`cursor-pointer rounded px-2 py-1 capitalize shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
-                                    issue.priority === "urgent"
-                                      ? "bg-red-100 text-red-600"
-                                      : issue.priority === "high"
-                                      ? "bg-orange-100 text-orange-500"
-                                      : issue.priority === "medium"
-                                      ? "bg-yellow-100 text-yellow-500"
-                                      : issue.priority === "low"
-                                      ? "bg-green-100 text-green-500"
-                                      : "bg-gray-100"
-                                  }`}
+                                <Tooltip
+                                  tooltipHeading="Priority"
+                                  tooltipContent={issue.priority ?? "None"}
                                 >
-                                  {getPriorityIcon(issue.priority)}
-                                </div>
-
-                                <div className="flex cursor-pointer items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
-                                  <span
-                                    className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                                    style={{
-                                      backgroundColor: issue.state_detail.color,
-                                    }}
-                                  />
-                                  {addSpaceIfCamelCase(issue.state_detail.name)}
-                                </div>
-                                <div
-                                  className={`group group relative flex flex-shrink-0 cursor-pointer items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
-                                    issue.target_date === null
-                                      ? ""
-                                      : issue.target_date < new Date().toISOString()
-                                      ? "text-red-600"
-                                      : findHowManyDaysLeft(issue.target_date) <= 3 &&
-                                        "text-orange-400"
-                                  }`}
-                                >
-                                  <CalendarDaysIcon className="h-4 w-4" />
-                                  {issue.target_date
-                                    ? renderShortNumericDateFormat(issue.target_date)
-                                    : "N/A"}
-                                  <div className="absolute bottom-full right-0 z-10 mb-2 hidden whitespace-nowrap rounded-md bg-white p-2 shadow-md group-hover:block">
-                                    <h5 className="mb-1 font-medium text-gray-900">Target date</h5>
-                                    <div>
-                                      {renderShortNumericDateFormat(issue.target_date ?? "")}
-                                    </div>
-                                    <div>
-                                      {issue.target_date &&
-                                        (issue.target_date < new Date().toISOString()
-                                          ? `Target date has passed by ${findHowManyDaysLeft(
-                                              issue.target_date
-                                            )} days`
-                                          : findHowManyDaysLeft(issue.target_date) <= 3
-                                          ? `Target date is in ${findHowManyDaysLeft(
-                                              issue.target_date
-                                            )} days`
-                                          : "Target date")}
-                                    </div>
+                                  <div
+                                    className={`cursor-pointer rounded px-2 py-1 capitalize shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
+                                      issue.priority === "urgent"
+                                        ? "bg-red-100 text-red-600"
+                                        : issue.priority === "high"
+                                        ? "bg-orange-100 text-orange-500"
+                                        : issue.priority === "medium"
+                                        ? "bg-yellow-100 text-yellow-500"
+                                        : issue.priority === "low"
+                                        ? "bg-green-100 text-green-500"
+                                        : "bg-gray-100"
+                                    }`}
+                                  >
+                                    {getPriorityIcon(issue.priority)}
                                   </div>
-                                </div>
+                                </Tooltip>
+                                <Tooltip
+                                  tooltipHeading="State"
+                                  tooltipContent={addSpaceIfCamelCase(issue.state_detail.name)}
+                                >
+                                  <div className="flex cursor-pointer items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                                    <span
+                                      className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                                      style={{
+                                        backgroundColor: issue.state_detail.color,
+                                      }}
+                                    />
+
+                                    <span>{addSpaceIfCamelCase(issue.state_detail.name)}</span>
+                                  </div>
+                                </Tooltip>
+                                <Tooltip
+                                  tooltipHeading="Due Date"
+                                  tooltipContent={
+                                    issue.target_date
+                                      ? renderShortNumericDateFormat(issue.target_date)
+                                      : "N/A"
+                                  }
+                                >
+                                  <div
+                                    className={`flex flex-shrink-0 cursor-pointer items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
+                                      issue.target_date === null
+                                        ? ""
+                                        : issue.target_date < new Date().toISOString()
+                                        ? "text-red-600"
+                                        : findHowManyDaysLeft(issue.target_date) <= 3 &&
+                                          "text-orange-400"
+                                    }`}
+                                  >
+                                    <CalendarDaysIcon className="h-4 w-4" />
+                                    {issue.target_date
+                                      ? renderShortNumericDateFormat(issue.target_date)
+                                      : "N/A"}
+                                  </div>
+                                </Tooltip>
                               </div>
                             </div>
                           ))}
@@ -164,7 +173,7 @@ const WorkspacePage: NextPage = () => {
                       <LayerDiagonalIcon height="56" width="56" />
                       <h3 className="text-gray-500">
                         No issues found. Create a new issue with{" "}
-                        <pre className="inline rounded bg-gray-100 px-2 py-1">C</pre>.
+                        <pre className="inline rounded bg-gray-200 px-2 py-1">C</pre>.
                       </h3>
                     </div>
                   )
@@ -191,7 +200,7 @@ const WorkspacePage: NextPage = () => {
                         <a className="flex items-center justify-between">
                           <div className="flex items-center gap-2 text-sm">
                             {project.icon ? (
-                              <span className="grid flex-shrink-0 place-items-center rounded uppercase text-white">
+                              <span className="grid flex-shrink-0 place-items-center rounded uppercase">
                                 {String.fromCodePoint(parseInt(project.icon))}
                               </span>
                             ) : (
@@ -226,10 +235,10 @@ const WorkspacePage: NextPage = () => {
   );
 };
 
-export const getServerSideProps = async (ctx: NextPageContext) => {
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const user = await requiredAuth(ctx.req?.headers.cookie);
 
-  const redirectAfterSignIn = ctx.req?.url;
+  const redirectAfterSignIn = ctx.resolvedUrl;
 
   if (!user) {
     return {

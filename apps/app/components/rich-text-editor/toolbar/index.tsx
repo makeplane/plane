@@ -1,39 +1,35 @@
-// history
-import { RedoButton } from "./redo";
-import { UndoButton } from "./undo";
-// formats
-import { BoldButton } from "./bold";
-import { ItalicButton } from "./italic";
-import { UnderlineButton } from "./underline";
-import { StrikeButton } from "./strike";
-import { LinkButton } from "./link";
+// buttons
+import {
+  ToggleBoldButton,
+  ToggleItalicButton,
+  ToggleUnderlineButton,
+  ToggleStrikeButton,
+  ToggleOrderedListButton,
+  ToggleBulletListButton,
+  RedoButton,
+  UndoButton,
+} from "@remirror/react";
 // headings
 import HeadingControls from "./heading-controls";
-// list
-import { OrderedListButton } from "./ordered-list";
-import { UnorderedListButton } from "./unordered-list";
 
 export const RichTextToolbar: React.FC = () => (
   <div className="flex items-center gap-y-2 divide-x">
     <div className="flex items-center gap-x-1 px-2">
-      <UndoButton />
       <RedoButton />
+      <UndoButton />
     </div>
     <div className="px-2">
       <HeadingControls />
     </div>
     <div className="flex items-center gap-x-1 px-2">
-      <BoldButton />
-      <ItalicButton />
-      <UnderlineButton />
-      <StrikeButton />
+      <ToggleBoldButton />
+      <ToggleItalicButton />
+      <ToggleUnderlineButton />
+      <ToggleStrikeButton />
     </div>
     <div className="flex items-center gap-x-1 px-2">
-      <OrderedListButton />
-      <UnorderedListButton />
+      <ToggleOrderedListButton />
+      <ToggleBulletListButton />
     </div>
-    {/* <div className="flex items-center gap-x-1 px-2">
-      <LinkButton />
-    </div> */}
   </div>
 );

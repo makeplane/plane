@@ -9,6 +9,7 @@ from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.conf import settings
+from django.contrib.auth.hashers import make_password
 
 # Third party imports
 from rest_framework.response import Response
@@ -32,74 +33,6 @@ def get_tokens_for_user(user):
         str(refresh.access_token),
         str(refresh),
     )
-
-
-class SignUpEndpoint(BaseAPIView):
-
-    permission_classes = (AllowAny,)
-
-    def post(self, request):
-        try:
-
-            email = request.data.get("email", False)
-            password = request.data.get("password", False)
-
-            ## Raise exception if any of the above are missing
-            if not email or not password:
-                return Response(
-                    {"error": "Both email and password are required"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            email = email.strip().lower()
-
-            try:
-                validate_email(email)
-            except ValidationError as e:
-                return Response(
-                    {"error": "Please provide a valid email address."},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            user = User.objects.filter(email=email).first()
-
-            if user is not None:
-                return Response(
-                    {"error": "Email ID is already taken"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            user = User.objects.create(email=email)
-            user.set_password(password)
-
-            # settings last actives for the user
-            user.last_active = timezone.now()
-            user.last_login_time = timezone.now()
-            user.last_login_ip = request.META.get("REMOTE_ADDR")
-            user.last_login_uagent = request.META.get("HTTP_USER_AGENT")
-            user.token_updated_at = timezone.now()
-            user.save()
-
-            serialized_user = UserSerializer(user).data
-
-            access_token, refresh_token = get_tokens_for_user(user)
-
-            data = {
-                "access_token": access_token,
-                "refresh_token": refresh_token,
-                "user": serialized_user,
-            }
-
-            return Response(data, status=status.HTTP_200_OK)
-
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {
-                    "error": "Something went wrong. Please try again later or contact the support team."
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
 
 
 class SignInEndpoint(BaseAPIView):
@@ -127,50 +60,69 @@ class SignInEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            user = User.objects.get(email=email)
+            user = User.objects.filter(email=email).first()
 
-            if not user.check_password(password):
-                return Response(
-                    {
-                        "error": "Sorry, we could not find a user with the provided credentials. Please try again."
-                    },
-                    status=status.HTTP_403_FORBIDDEN,
-                )
-            if not user.is_active:
-                return Response(
-                    {
-                        "error": "Your account has been deactivated. Please contact your site administrator."
-                    },
-                    status=status.HTTP_403_FORBIDDEN,
-                )
+            # Sign up Process
+            if user is None:
+                user = User.objects.create(email=email, username=uuid.uuid4().hex)
+                user.set_password(password)
 
-            serialized_user = UserSerializer(user).data
+                # settings last actives for the user
+                user.last_active = timezone.now()
+                user.last_login_time = timezone.now()
+                user.last_login_ip = request.META.get("REMOTE_ADDR")
+                user.last_login_uagent = request.META.get("HTTP_USER_AGENT")
+                user.token_updated_at = timezone.now()
+                user.save()
 
-            # settings last active for the user
-            user.last_active = timezone.now()
-            user.last_login_time = timezone.now()
-            user.last_login_ip = request.META.get("REMOTE_ADDR")
-            user.last_login_uagent = request.META.get("HTTP_USER_AGENT")
-            user.token_updated_at = timezone.now()
-            user.save()
+                serialized_user = UserSerializer(user).data
 
-            access_token, refresh_token = get_tokens_for_user(user)
+                access_token, refresh_token = get_tokens_for_user(user)
 
-            data = {
-                "access_token": access_token,
-                "refresh_token": refresh_token,
-                "user": serialized_user,
-            }
+                data = {
+                    "access_token": access_token,
+                    "refresh_token": refresh_token,
+                    "user": serialized_user,
+                }
 
-            return Response(data, status=status.HTTP_200_OK)
+                return Response(data, status=status.HTTP_200_OK)
+            # Sign in Process
+            else:
+                if not user.check_password(password):
+                    return Response(
+                        {
+                            "error": "Sorry, we could not find a user with the provided credentials. Please try again."
+                        },
+                        status=status.HTTP_403_FORBIDDEN,
+                    )
+                if not user.is_active:
+                    return Response(
+                        {
+                            "error": "Your account has been deactivated. Please contact your site administrator."
+                        },
+                        status=status.HTTP_403_FORBIDDEN,
+                    )
 
-        except User.DoesNotExist:
-            return Response(
-                {
-                    "error": "Sorry, we could not find a user with the provided credentials. Please try again."
-                },
-                status=status.HTTP_403_FORBIDDEN,
-            )
+                serialized_user = UserSerializer(user).data
+
+                # settings last active for the user
+                user.last_active = timezone.now()
+                user.last_login_time = timezone.now()
+                user.last_login_ip = request.META.get("REMOTE_ADDR")
+                user.last_login_uagent = request.META.get("HTTP_USER_AGENT")
+                user.token_updated_at = timezone.now()
+                user.save()
+
+                access_token, refresh_token = get_tokens_for_user(user)
+
+                data = {
+                    "access_token": access_token,
+                    "refresh_token": refresh_token,
+                    "user": serialized_user,
+                }
+
+                return Response(data, status=status.HTTP_200_OK)
+
         except Exception as e:
             capture_exception(e)
             return Response(
@@ -216,14 +168,12 @@ class SignOutEndpoint(BaseAPIView):
 
 
 class MagicSignInGenerateEndpoint(BaseAPIView):
-
     permission_classes = [
         AllowAny,
     ]
 
     def post(self, request):
         try:
-
             email = request.data.get("email", False)
 
             if not email:
@@ -269,7 +219,6 @@ class MagicSignInGenerateEndpoint(BaseAPIView):
                 ri.set(key, json.dumps(value), ex=expiry)
 
             else:
-
                 value = {"current_attempt": 0, "email": email, "token": token}
                 expiry = 600
 
@@ -293,14 +242,12 @@ class MagicSignInGenerateEndpoint(BaseAPIView):
 
 
 class MagicSignInEndpoint(BaseAPIView):
-
     permission_classes = [
         AllowAny,
     ]
 
     def post(self, request):
         try:
-
             user_token = request.data.get("token", "").strip().lower()
             key = request.data.get("key", False)
 
@@ -313,19 +260,20 @@ class MagicSignInEndpoint(BaseAPIView):
             ri = redis_instance()
 
             if ri.exists(key):
-
                 data = json.loads(ri.get(key))
 
                 token = data["token"]
                 email = data["email"]
 
                 if str(token) == str(user_token):
-
                     if User.objects.filter(email=email).exists():
                         user = User.objects.get(email=email)
                     else:
                         user = User.objects.create(
-                            email=email, username=uuid.uuid4().hex
+                            email=email,
+                            username=uuid.uuid4().hex,
+                            password=make_password(uuid.uuid4().hex),
+                            is_password_autoset=True,
                         )
 
                     user.last_active = timezone.now()

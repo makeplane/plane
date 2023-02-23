@@ -4,8 +4,7 @@ import useToast from "hooks/use-toast";
 import workspaceService from "services/workspace.service";
 import { IUser } from "types";
 // ui components
-import MultiInput from "components/ui/multi-input";
-import OutlineButton from "components/ui/outline-button";
+import { MultiInput, OutlineButton } from "components/ui";
 
 type Props = {
   setStep: React.Dispatch<React.SetStateAction<number>>;
