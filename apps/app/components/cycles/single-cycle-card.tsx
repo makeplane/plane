@@ -87,7 +87,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
       <div className="rounded-md border bg-white p-3">
         <div className="grid grid-cols-9 gap-2 divide-x">
           <div className="col-span-3 flex flex-col space-y-3">
-            <div className="flex items-center justify-between gap-2">
+            <div className="flex items-start justify-between gap-2">
               <Link href={`/${workspaceSlug}/projects/${projectId as string}/cycles/${cycle.id}`}>
                 <a>
                   <h2 className="font-medium w-full max-w-[175px] lg:max-w-[225px] xl:max-w-[300px]  text-ellipsis overflow-hidden">
