@@ -1,32 +1,28 @@
 import React from "react";
 
 import { useRouter } from "next/router";
+
 import useSWR from "swr";
 
-// lib
-import type { NextPage, GetServerSideProps } from "next";
-import { requiredWorkspaceAdmin } from "lib/auth";
-// constants
 // services
 import workspaceService from "services/workspace.service";
+// lib
+import { requiredWorkspaceAdmin } from "lib/auth";
 // layouts
 import AppLayout from "layouts/app-layout";
+// componentss
+import OAuthPopUp from "components/popup";
 // ui
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+// types
+import type { NextPage, GetServerSideProps } from "next";
+import { UserAuth } from "types";
+// fetch-keys
 import { WORKSPACE_DETAILS, APP_INTEGRATIONS } from "constants/fetch-keys";
-import OAuthPopUp from "components/popup";
 
-type TWorkspaceIntegrationsProps = {
-  isOwner: boolean;
-  isMember: boolean;
-  isViewer: boolean;
-  isGuest: boolean;
-};
-
-const WorkspaceIntegrations: NextPage<TWorkspaceIntegrationsProps> = (props) => {
-  const {
-    query: { workspaceSlug },
-  } = useRouter();
+const WorkspaceIntegrations: NextPage<UserAuth> = (props) => {
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
 
   const { data: activeWorkspace } = useSWR(
     workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
@@ -53,13 +49,19 @@ const WorkspaceIntegrations: NextPage<TWorkspaceIntegrationsProps> = (props) => 
         }
       >
         <section className="space-y-8">
-          {integrations?.map((integration: any) => (
-            <OAuthPopUp
-              workspaceSlug={workspaceSlug}
-              key={integration.id}
-              integration={integration}
-            />
-          ))}
+          <div>
+            <h3 className="text-3xl font-bold leading-6 text-gray-900">Integrations</h3>
+            <p className="mt-4 text-sm text-gray-500">Manage the workspace integrations.</p>
+          </div>
+          <div className="space-y-4">
+            {integrations?.map((integration) => (
+              <OAuthPopUp
+                key={integration.id}
+                workspaceSlug={workspaceSlug}
+                integration={integration}
+              />
+            ))}
+          </div>
         </section>
       </AppLayout>
     </>

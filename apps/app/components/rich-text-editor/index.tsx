@@ -143,7 +143,7 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = (props) => {
       }),
       new TableExtension(),
     ],
-    content: value,
+    content: !value || (typeof value === "object" && Object.keys(value).length === 0) ? "" : value,
     selection: "start",
     stringHandler: "html",
     onError,
@@ -153,7 +153,12 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = (props) => {
     (value: any) => {
       // Clear out old state when setting data from outside
       // This prevents e.g. the user from using CTRL-Z to go back to the old state
-      manager.view.updateState(manager.createState({ content: value ? value : "" }));
+      manager.view.updateState(
+        manager.createState({
+          content:
+            !value || (typeof value === "object" && Object.keys(value).length === 0) ? "" : value,
+        })
+      );
     },
     [manager]
   );

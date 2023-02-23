@@ -29,6 +29,8 @@ export const PROJECT_ISSUES_COMMENTS = (issueId: string) => `PROJECT_ISSUES_COMM
 export const PROJECT_ISSUES_ACTIVITY = (issueId: string) => `PROJECT_ISSUES_ACTIVITY_${issueId}`;
 export const PROJECT_ISSUE_BY_STATE = (projectId: string) => `PROJECT_ISSUE_BY_STATE_${projectId}`;
 export const PROJECT_ISSUE_LABELS = (projectId: string) => `PROJECT_ISSUE_LABELS_${projectId}`;
+export const PROJECT_GITHUB_REPOSITORY = (projectId: string) =>
+  `PROJECT_GITHUB_REPOSITORY_${projectId}`;
 
 export const CYCLE_LIST = (projectId: string) => `CYCLE_LIST_${projectId}`;
 export const CYCLE_ISSUES = (cycleId: string) => `CYCLE_ISSUES_${cycleId}`;

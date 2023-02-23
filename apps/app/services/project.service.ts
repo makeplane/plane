@@ -1,7 +1,13 @@
 // services
 import APIService from "services/api.service";
 // types
-import type { IProject, IProjectMember, IProjectMemberInvitation, ProjectViewTheme } from "types";
+import type {
+  GithubRepositoriesResponse,
+  IProject,
+  IProjectMember,
+  IProjectMemberInvitation,
+  ProjectViewTheme,
+} from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -202,7 +208,10 @@ class ProjectServices extends APIService {
       });
   }
 
-  async getGithubRepositories(slug: string, workspaceIntegrationId: string): Promise<any> {
+  async getGithubRepositories(
+    slug: string,
+    workspaceIntegrationId: string
+  ): Promise<GithubRepositoriesResponse> {
     return this.get(
       `/api/workspaces/${slug}/workspace-integrations/${workspaceIntegrationId}/github-repositories/`
     )
@@ -226,6 +235,20 @@ class ProjectServices extends APIService {
     return this.post(
       `/api/workspaces/${slug}/projects/${projectId}/workspace-integrations/${workspaceIntegrationId}/github-repository-sync/`,
       data
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getProjectGithubRepository(
+    workspaceSlug: string,
+    projectId: string,
+    integrationId: string
+  ): Promise<any> {
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/workspace-integrations/${integrationId}/github-repository-sync/`
     )
       .then((response) => response?.data)
       .catch((error) => {

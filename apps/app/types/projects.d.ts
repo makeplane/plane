@@ -61,3 +61,15 @@ export interface IProjectMemberInvitation {
   created_by: string;
   updated_by: string;
 }
+
+export interface IGithubRepository {
+  id: string;
+  full_name: string;
+  html_url: string;
+  url: string;
+}
+
+export interface GithubRepositoriesResponse {
+  repositories: IGithubRepository[];
+  total_count: number;
+}
