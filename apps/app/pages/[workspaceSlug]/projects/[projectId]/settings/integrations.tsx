@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import { useRouter } from "next/router";
-import Image from "next/image";
 
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 
 // lib
 import { requiredAdmin } from "lib/auth";
@@ -12,34 +11,23 @@ import AppLayout from "layouts/app-layout";
 // services
 import workspaceService from "services/workspace.service";
 import projectService from "services/project.service";
-
+// ui
+import { EmptySpace, EmptySpaceItem, Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+// icons
+import { PlusIcon, PuzzlePieceIcon } from "@heroicons/react/24/outline";
 // types
-import { IProject, IWorkspace } from "types";
+import { IProject, UserAuth } from "types";
 import type { NextPageContext, NextPage } from "next";
 // fetch-keys
 import { PROJECT_DETAILS, WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
+import { SingleIntegration } from "components/project";
 
-type TProjectIntegrationsProps = {
-  isMember: boolean;
-  isOwner: boolean;
-  isViewer: boolean;
-  isGuest: boolean;
-};
-
-const defaultValues: Partial<IProject> = {
-  project_lead: null,
-  default_assignee: null,
-};
-
-const ProjectIntegrations: NextPage<TProjectIntegrationsProps> = (props) => {
+const ProjectIntegrations: NextPage<UserAuth> = (props) => {
   const { isMember, isOwner, isViewer, isGuest } = props;
-  const [userRepos, setUserRepos] = useState([]);
-  const [activeIntegrationId, setActiveIntegrationId] = useState();
 
-  const {
-    query: { workspaceSlug, projectId },
-  } = useRouter();
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
 
   const { data: projectDetails } = useSWR<IProject>(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
@@ -48,34 +36,12 @@ const ProjectIntegrations: NextPage<TProjectIntegrationsProps> = (props) => {
       : null
   );
 
-  const { data: integrations } = useSWR(
+  const { data: workspaceIntegrations } = useSWR(
     workspaceSlug ? WORKSPACE_INTEGRATIONS(workspaceSlug as string) : null,
     () =>
       workspaceSlug ? workspaceService.getWorkspaceIntegrations(workspaceSlug as string) : null
   );
-  const handleChange = (repo: any) => {
-    const {
-      html_url,
-      owner: { login },
-      id,
-      name,
-    } = repo;
 
-    projectService
-      .syncGiuthubRepository(
-        workspaceSlug as string,
-        projectId as string,
-        activeIntegrationId as any,
-        { name, owner: login, repository_id: id, url: html_url }
-      )
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-  console.log(userRepos);
   return (
     <AppLayout
       settingsLayout="project"
@@ -90,41 +56,45 @@ const ProjectIntegrations: NextPage<TProjectIntegrationsProps> = (props) => {
         </Breadcrumbs>
       }
     >
-      <section className="space-y-8">
-        {integrations?.map((integration: any) => (
-          <div
-            key={integration.id}
-            onClick={() => {
-              setActiveIntegrationId(integration.id);
-              projectService
-                .getGithubRepositories(workspaceSlug as any, integration.id)
-                .then((response) => {
-                  setUserRepos(response.repositories);
-                })
-                .catch((err) => {
-                  console.log(err);
-                });
-            }}
-          >
-            {integration.integration_detail.provider}
-          </div>
-        ))}
-        {userRepos.length > 0 && (
-          <select
-            onChange={(e) => {
-              const repo = userRepos.find((repo: any) => repo.id == e.target.value);
-              handleChange(repo);
-            }}
-          >
-            <option value={undefined}>Select Repository</option>
-            {userRepos?.map((repo: any) => (
-              <option value={repo.id} key={repo.id}>
-                {repo.full_name}
-              </option>
+      {workspaceIntegrations ? (
+        workspaceIntegrations.length > 0 ? (
+          <section className="space-y-8">
+            <div>
+              <h3 className="text-3xl font-bold leading-6 text-gray-900">Integrations</h3>
+              <p className="mt-4 text-sm text-gray-500">Manage the project integrations.</p>
+            </div>
+            {workspaceIntegrations.map((integration) => (
+              <SingleIntegration
+                key={integration.integration_detail.id}
+                integration={integration}
+              />
             ))}
-          </select>
-        )}
-      </section>
+          </section>
+        ) : (
+          <div className="grid h-full w-full place-items-center px-4 sm:px-0">
+            <EmptySpace
+              title="You haven't added any integration yet."
+              description="Add GitHub and other integrations to sync your project issues."
+              Icon={PuzzlePieceIcon}
+            >
+              <EmptySpaceItem
+                title="Add new integration"
+                Icon={PlusIcon}
+                action={() => {
+                  router.push(`/${workspaceSlug}/settings/integrations`);
+                }}
+              />
+            </EmptySpace>
+          </div>
+        )
+      ) : (
+        <Loader className="space-y-5 md:w-2/3">
+          <Loader.Item height="40px" />
+          <Loader.Item height="40px" />
+          <Loader.Item height="40px" />
+          <Loader.Item height="40px" />
+        </Loader>
+      )}
     </AppLayout>
   );
 };

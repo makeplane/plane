@@ -15,7 +15,9 @@ type CustomSelectProps = {
   input?: boolean;
   noChevron?: boolean;
   buttonClassName?: string;
+  optionsClassName?: string;
   disabled?: boolean;
+  selfPositioned?: boolean;
 };
 
 const CustomSelect = ({
@@ -29,13 +31,15 @@ const CustomSelect = ({
   input = false,
   noChevron = false,
   buttonClassName = "",
+  optionsClassName = "",
   disabled = false,
+  selfPositioned = false,
 }: CustomSelectProps) => (
   <Listbox
     as="div"
     value={value}
     onChange={onChange}
-    className="relative flex-shrink-0 text-left"
+    className={`${!selfPositioned ? "relative" : ""} flex-shrink-0 text-left`}
     disabled={disabled}
   >
     <div>
@@ -67,8 +71,8 @@ const CustomSelect = ({
       leaveTo="transform opacity-0 scale-95"
     >
       <Listbox.Options
-        className={`absolute right-0 z-10 mt-1 origin-top-right overflow-y-auto rounded-md bg-white text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ${
-          width === "auto" ? "min-w-full whitespace-nowrap" : "w-56"
+        className={`${optionsClassName} absolute right-0 z-10 mt-1 origin-top-right overflow-y-auto rounded-md bg-white text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ${
+          width === "auto" ? "min-w-full whitespace-nowrap" : width
         } ${input ? "max-h-48" : ""} ${
           maxHeight === "lg"
             ? "max-h-60"
@@ -97,9 +101,9 @@ const Option: React.FC<OptionProps> = ({ children, value, className }) => (
   <Listbox.Option
     value={value}
     className={({ active, selected }) =>
-      `${active || selected ? "bg-indigo-50" : ""} ${
+      `${className} ${active || selected ? "bg-indigo-50" : ""} ${
         selected ? "font-medium" : ""
-      } relative flex cursor-pointer select-none items-center gap-2 truncate p-2 text-gray-900 ${className}`
+      } relative flex cursor-pointer select-none items-center gap-2 truncate p-2 text-gray-900`
     }
   >
     {children}

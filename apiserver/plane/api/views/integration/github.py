@@ -46,6 +46,14 @@ class GithubRepositorySyncViewSet(BaseViewSet):
     def perform_create(self, serializer):
         serializer.save(project_id=self.kwargs.get("project_id"))
 
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(project_id=self.kwargs.get("project_id"))
+        )
+
     def create(self, request, slug, project_id, workspace_integration_id):
         try:
             name = request.data.get("name", False)
@@ -60,6 +68,23 @@ class GithubRepositorySyncViewSet(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
+            # Get the workspace integration
+            workspace_integration = WorkspaceIntegration.objects.get(
+                pk=workspace_integration_id
+            )
+
+            # Delete the old repository object
+            GithubRepositorySync.objects.filter(
+                project_id=project_id, workspace__slug=slug
+            ).delete()
+            GithubRepository.objects.filter(
+                project_id=project_id, workspace__slug=slug
+            ).delete()
+            # Project member delete
+            ProjectMember.objects.filter(
+                member=workspace_integration.actor, role=20, project_id=project_id
+            ).delete()
+
             # Create repository
             repo = GithubRepository.objects.create(
                 name=name,
@@ -68,11 +93,6 @@ class GithubRepositorySyncViewSet(BaseViewSet):
                 repository_id=repository_id,
                 owner=owner,
                 project_id=project_id,
-            )
-
-            # Get the workspace integration
-            workspace_integration = WorkspaceIntegration.objects.get(
-                pk=workspace_integration_id
             )
 
             # Create a Label for github

@@ -14,7 +14,7 @@ import useIssues from "hooks/use-issues";
 // components
 import { WorkspaceHomeCardsList, WorkspaceHomeGreetings } from "components/workspace";
 // ui
-import { Spinner } from "components/ui";
+import { Spinner, Tooltip } from "components/ui";
 // icons
 import {
   ArrowRightIcon,
@@ -90,69 +90,78 @@ const WorkspacePage: NextPage = () => {
                                   href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}
                                 >
                                   <a className="group relative flex items-center gap-2">
-                                    <span className="">{issue.name}</span>
+                                    <Tooltip
+                                      position="top-left"
+                                      tooltipHeading="Title"
+                                      tooltipContent={issue.name}
+                                    >
+                                      <span className="w-auto max-w-[225px] md:max-w-[175px] lg:max-w-xs xl:max-w-sm   text-ellipsis overflow-hidden whitespace-nowrap">
+                                        {issue.name}
+                                      </span>
+                                    </Tooltip>
                                   </a>
                                 </Link>
                               </div>
                               <div className="flex flex-shrink-0 flex-wrap items-center gap-x-1 gap-y-2 text-xs">
-                                <div
-                                  className={`cursor-pointer rounded px-2 py-1 capitalize shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
-                                    issue.priority === "urgent"
-                                      ? "bg-red-100 text-red-600"
-                                      : issue.priority === "high"
-                                      ? "bg-orange-100 text-orange-500"
-                                      : issue.priority === "medium"
-                                      ? "bg-yellow-100 text-yellow-500"
-                                      : issue.priority === "low"
-                                      ? "bg-green-100 text-green-500"
-                                      : "bg-gray-100"
-                                  }`}
+                                <Tooltip
+                                  tooltipHeading="Priority"
+                                  tooltipContent={issue.priority ?? "None"}
                                 >
-                                  {getPriorityIcon(issue.priority)}
-                                </div>
-
-                                <div className="flex cursor-pointer items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
-                                  <span
-                                    className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                                    style={{
-                                      backgroundColor: issue.state_detail.color,
-                                    }}
-                                  />
-                                  {addSpaceIfCamelCase(issue.state_detail.name)}
-                                </div>
-                                <div
-                                  className={`group group relative flex flex-shrink-0 cursor-pointer items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
-                                    issue.target_date === null
-                                      ? ""
-                                      : issue.target_date < new Date().toISOString()
-                                      ? "text-red-600"
-                                      : findHowManyDaysLeft(issue.target_date) <= 3 &&
-                                        "text-orange-400"
-                                  }`}
-                                >
-                                  <CalendarDaysIcon className="h-4 w-4" />
-                                  {issue.target_date
-                                    ? renderShortNumericDateFormat(issue.target_date)
-                                    : "N/A"}
-                                  <div className="absolute bottom-full right-0 z-10 mb-2 hidden whitespace-nowrap rounded-md bg-white p-2 shadow-md group-hover:block">
-                                    <h5 className="mb-1 font-medium text-gray-900">Target date</h5>
-                                    <div>
-                                      {renderShortNumericDateFormat(issue.target_date ?? "")}
-                                    </div>
-                                    <div>
-                                      {issue.target_date &&
-                                        (issue.target_date < new Date().toISOString()
-                                          ? `Target date has passed by ${findHowManyDaysLeft(
-                                              issue.target_date
-                                            )} days`
-                                          : findHowManyDaysLeft(issue.target_date) <= 3
-                                          ? `Target date is in ${findHowManyDaysLeft(
-                                              issue.target_date
-                                            )} days`
-                                          : "Target date")}
-                                    </div>
+                                  <div
+                                    className={`cursor-pointer rounded px-2 py-1 capitalize shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
+                                      issue.priority === "urgent"
+                                        ? "bg-red-100 text-red-600"
+                                        : issue.priority === "high"
+                                        ? "bg-orange-100 text-orange-500"
+                                        : issue.priority === "medium"
+                                        ? "bg-yellow-100 text-yellow-500"
+                                        : issue.priority === "low"
+                                        ? "bg-green-100 text-green-500"
+                                        : "bg-gray-100"
+                                    }`}
+                                  >
+                                    {getPriorityIcon(issue.priority)}
                                   </div>
-                                </div>
+                                </Tooltip>
+                                <Tooltip
+                                  tooltipHeading="State"
+                                  tooltipContent={addSpaceIfCamelCase(issue.state_detail.name)}
+                                >
+                                  <div className="flex cursor-pointer items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                                    <span
+                                      className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                                      style={{
+                                        backgroundColor: issue.state_detail.color,
+                                      }}
+                                    />
+
+                                    <span>{addSpaceIfCamelCase(issue.state_detail.name)}</span>
+                                  </div>
+                                </Tooltip>
+                                <Tooltip
+                                  tooltipHeading="Due Date"
+                                  tooltipContent={
+                                    issue.target_date
+                                      ? renderShortNumericDateFormat(issue.target_date)
+                                      : "N/A"
+                                  }
+                                >
+                                  <div
+                                    className={`flex flex-shrink-0 cursor-pointer items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
+                                      issue.target_date === null
+                                        ? ""
+                                        : issue.target_date < new Date().toISOString()
+                                        ? "text-red-600"
+                                        : findHowManyDaysLeft(issue.target_date) <= 3 &&
+                                          "text-orange-400"
+                                    }`}
+                                  >
+                                    <CalendarDaysIcon className="h-4 w-4" />
+                                    {issue.target_date
+                                      ? renderShortNumericDateFormat(issue.target_date)
+                                      : "N/A"}
+                                  </div>
+                                </Tooltip>
                               </div>
                             </div>
                           ))}

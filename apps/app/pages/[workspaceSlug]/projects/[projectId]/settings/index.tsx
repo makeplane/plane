@@ -25,7 +25,7 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // helpers
 import { debounce } from "helpers/common.helper";
 // types
-import type { NextPage, NextPageContext } from "next";
+import type { NextPage, GetServerSidePropsContext } from "next";
 // fetch-keys
 import { PROJECTS_LIST, PROJECT_DETAILS, WORKSPACE_DETAILS } from "constants/fetch-keys";
 // constants
@@ -339,7 +339,7 @@ const GeneralSettings: NextPage<UserAuth> = (props) => {
   );
 };
 
-export const getServerSideProps = async (ctx: NextPageContext) => {
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const projectId = ctx.query.projectId as string;
   const workspaceSlug = ctx.query.workspaceSlug as string;
 

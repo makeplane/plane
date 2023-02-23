@@ -59,7 +59,7 @@ const EmojiIconPicker: React.FC<Props> = ({ label, value, onChange }) => {
         leaveTo="transform opacity-0 scale-95"
       >
         <Popover.Panel className="absolute z-10 mt-2 w-80 rounded-md bg-white shadow-lg">
-          <div className="h-80 w-80 overflow-auto rounded border bg-white p-2 shadow-2xl">
+          <div className="h-72 w-80 overflow-auto rounded border bg-white p-2 shadow-2xl">
             <Tab.Group as="div" className="flex h-full w-full flex-col">
               <Tab.List className="flex-0 -mx-2 flex justify-around gap-1 rounded border-b p-1">
                 {tabOptions.map((tab) => (

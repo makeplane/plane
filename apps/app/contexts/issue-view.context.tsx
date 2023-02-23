@@ -229,7 +229,10 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
       });
 
       if (!workspaceSlug || !projectId) return;
-      saveDataToServer(workspaceSlug as string, projectId as string, state);
+      saveDataToServer(workspaceSlug as string, projectId as string, {
+        ...state,
+        orderBy: property,
+      });
     },
     [projectId, workspaceSlug, state]
   );

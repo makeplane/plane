@@ -29,7 +29,7 @@ export const LinksList: React.FC<Props> = ({ links, handleDeleteLink, userAuth }
       {links.map((link) => (
         <div key={link.id} className="relative">
           {!isNotAllowed && (
-            <div className="absolute top-1.5 right-1.5 z-10 flex items-center gap-1">
+            <div className="absolute top-1.5 right-1.5 z-[1] flex items-center gap-1">
               <Link href={link.url}>
                 <a
                   className="grid h-7 w-7 place-items-center rounded bg-gray-100 p-1 outline-none"
@@ -56,8 +56,8 @@ export const LinksList: React.FC<Props> = ({ links, handleDeleteLink, userAuth }
                 <h5 className="w-4/5">{link.title}</h5>
                 <p className="mt-0.5 text-gray-500">
                   Added {timeAgo(link.created_at)}
-                  <br />
-                  by {link.created_by_detail.email}
+                  {/* <br />
+                  by {link.created_by_detail.email} */}
                 </p>
               </div>
             </a>

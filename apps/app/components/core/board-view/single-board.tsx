@@ -72,7 +72,7 @@ export const SingleBoard: React.FC<Props> = ({
 
   return (
     <div className={`h-full flex-shrink-0 rounded ${!isCollapsed ? "" : "w-80 border bg-gray-50"}`}>
-      <div className={`${!isCollapsed ? "" : "flex h-full flex-col space-y-3 overflow-y-auto"}`}>
+      <div className={`${!isCollapsed ? "" : "flex h-full flex-col space-y-3"}`}>
         <BoardHeader
           addIssueToState={addIssueToState}
           bgColor={bgColor}
@@ -86,7 +86,7 @@ export const SingleBoard: React.FC<Props> = ({
         <StrictModeDroppable key={groupTitle} droppableId={groupTitle}>
           {(provided, snapshot) => (
             <div
-              className={`relative mt-3 h-full px-3 pb-3 ${
+              className={`relative mt-3 h-full px-3 pb-3 overflow-y-auto  ${
                 snapshot.isDraggingOver ? "bg-indigo-50 bg-opacity-50" : ""
               } ${!isCollapsed ? "hidden" : "block"}`}
               ref={provided.innerRef}

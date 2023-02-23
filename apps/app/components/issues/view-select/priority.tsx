@@ -12,14 +12,14 @@ import { PRIORITIES } from "constants/project";
 type Props = {
   issue: IIssue;
   partialUpdateIssue: (formData: Partial<IIssue>) => void;
-  position?: "left" | "right";
+  selfPositioned?: boolean;
   isNotAllowed: boolean;
 };
 
 export const ViewPrioritySelect: React.FC<Props> = ({
   issue,
   partialUpdateIssue,
-  position = "right",
+  selfPositioned = false,
   isNotAllowed,
 }) => (
   <CustomSelect
@@ -53,6 +53,7 @@ export const ViewPrioritySelect: React.FC<Props> = ({
     } border-none`}
     noChevron
     disabled={isNotAllowed}
+    selfPositioned={selfPositioned}
   >
     {PRIORITIES?.map((priority) => (
       <CustomSelect.Option key={priority} value={priority} className="capitalize">
