@@ -57,6 +57,7 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
         <div>
           <Listbox.Button>
             <Tooltip
+              position="top-right"
               tooltipHeading="Assignees"
               tooltipContent={
                 issue.assignee_details.length > 0
