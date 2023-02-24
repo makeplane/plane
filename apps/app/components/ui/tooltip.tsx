@@ -38,7 +38,7 @@ export const Tooltip: React.FC<Props> = ({
     disabled={disabled}
     content={
       <div
-        className={`flex flex-col justify-center items-start gap-1 max-w-[600px] text-xs rounded-md bg-white p-2 shadow-md capitalize text-left ${className}`}
+        className={`flex flex-col justify-center items-start gap-1 max-w-[600px] text-xs rounded-md bg-white p-2 shadow-md text-left ${className}`}
       >
         {tooltipHeading ? (
           <>
