@@ -52,6 +52,7 @@ from .issue import (
     BulkDeleteIssuesEndpoint,
     UserWorkSpaceIssues,
     SubIssuesEndpoint,
+    IssueLinkViewSet,
 )
 
 from .auth_extended import (
@@ -70,7 +71,7 @@ from .authentication import (
     MagicSignInGenerateEndpoint,
 )
 
-from .module import ModuleViewSet, ModuleIssueViewSet
+from .module import ModuleViewSet, ModuleIssueViewSet, ModuleLinkViewSet
 
 from .api_token import ApiTokenEndpoint
 

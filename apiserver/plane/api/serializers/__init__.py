@@ -36,9 +36,15 @@ from .issue import (
     IssueSerializer,
     IssueFlatSerializer,
     IssueStateSerializer,
+    IssueLinkSerializer,
 )
 
-from .module import ModuleWriteSerializer, ModuleSerializer, ModuleIssueSerializer
+from .module import (
+    ModuleWriteSerializer,
+    ModuleSerializer,
+    ModuleIssueSerializer,
+    ModuleLinkSerializer,
+)
 
 from .api_token import APITokenSerializer
 

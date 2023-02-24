@@ -23,6 +23,7 @@ from plane.api.serializers import (
     IssueSerializer,
     LabelSerializer,
     IssueFlatSerializer,
+    IssueLinkSerializer,
 )
 from plane.api.permissions import (
     ProjectEntityPermission,
@@ -185,7 +186,7 @@ class IssueViewSet(BaseViewSet):
             )
 
             issues = IssueSerializer(issue_queryset, many=True).data
-            
+
             ## Grouping the results
             group_by = request.GET.get("group_by", False)
             if group_by:
@@ -690,3 +691,29 @@ class SubIssuesEndpoint(BaseAPIView):
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+class IssueLinkViewSet(BaseViewSet):
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+
+    model = IssueLink
+    serializer_class = IssueLinkSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(
+            project_id=self.kwargs.get("project_id"),
+            issue_id=self.kwargs.get("issue_id"),
+        )
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(project_id=self.kwargs.get("project_id"))
+            .filter(issue_id=self.kwargs.get("issue_id"))
+            .filter(project__project_projectmember__member=self.request.user)
+            .distinct()
+        )
