@@ -57,8 +57,8 @@ export const LinksList: React.FC<Props> = ({ links, handleDeleteLink, userAuth }
                 <h5 className="w-4/5">{link.title}</h5>
                 <p className="mt-0.5 text-gray-500">
                   Added {timeAgo(link.created_at)}
-                  {/* <br />
-                  by {link.created_by_detail.email} */}
+                  <br />
+                  by {link.created_by_detail.email}
                 </p>
               </div>
             </a>
