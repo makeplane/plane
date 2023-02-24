@@ -27,6 +27,7 @@ from plane.db.models import (
     ModuleLink,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
+from plane.utils.grouper import group_results
 
 
 class ModuleViewSet(BaseViewSet):
@@ -103,8 +104,8 @@ class ModuleIssueViewSet(BaseViewSet):
     model = ModuleIssue
 
     filterset_fields = [
-        "issue__id",
-        "workspace__id",
+        "issue__labels__id",
+        "issue__assignees__id",
     ]
 
     permission_classes = [
@@ -139,6 +140,31 @@ class ModuleIssueViewSet(BaseViewSet):
             .prefetch_related("module__members")
             .distinct()
         )
+
+    def list(self, request, slug, project_id, cycle_id):
+        try:
+            order_by = request.GET.get("order_by", "issue__created_at")
+            queryset = self.get_queryset().order_by(order_by)
+            group_by = request.GET.get("group_by", False)
+
+            module_issues = ModuleIssueSerializer(queryset, many=True).data
+
+            if group_by:
+                return Response(
+                    group_results(module_issues, f"issue_detail.{group_by}"),
+                    status=status.HTTP_200_OK,
+                )
+
+            return Response(
+                module_issues,
+                status=status.HTTP_200_OK,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     def create(self, request, slug, project_id, module_id):
         try:
