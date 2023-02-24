@@ -86,7 +86,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
+  }, [handleClose]);
 
   const addIssueToCycle = async (issueId: string, cycleId: string) => {
     if (!workspaceSlug || !projectId) return;
