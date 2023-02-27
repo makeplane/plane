@@ -2,8 +2,9 @@
 import json
 
 # Django imports
-from django.db.models import OuterRef, Func, F
+from django.db.models import OuterRef, Func, F, Q
 from django.core import serializers
+from django.utils import timezone
 
 # Third party imports
 from rest_framework.response import Response
@@ -11,7 +12,7 @@ from rest_framework import status
 from sentry_sdk import capture_exception
 
 # Module imports
-from . import BaseViewSet
+from . import BaseViewSet, BaseAPIView
 from plane.api.serializers import CycleSerializer, CycleIssueSerializer
 from plane.api.permissions import ProjectEntityPermission
 from plane.db.models import Cycle, CycleIssue, Issue
@@ -200,6 +201,93 @@ class CycleIssueViewSet(BaseViewSet):
             return Response(
                 {"error": "Cycle not found"}, status=status.HTTP_404_NOT_FOUND
             )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class CycleDateCheckEndpoint(BaseAPIView):
+    def post(self, request, slug, project_id):
+        try:
+            start_date = request.data.get("start_date")
+            end_date = request.data.get("end_date")
+
+            cycles = Cycle.objects.filter(
+                Q(start_date__lte=start_date, end_date__gte=start_date)
+                | Q(start_date__gte=end_date, end_date__lte=end_date),
+                workspace__slug=slug,
+                project_id=project_id,
+            )
+
+            if cycles.exists():
+                return Response(
+                    {
+                        "error": "You have a cycle already on the given dates, if you want to create your draft cycle you can do that by removing dates",
+                        "cycles": CycleSerializer(cycles, many=True).data,
+                        "status": False,
+                    }
+                )
+            else:
+                return Response({"status": True}, status=status.HTTP_200_OK)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class CurrentUpcomingCyclesEndpoint(BaseAPIView):
+    def get(self, request, slug, project_id):
+        try:
+            current_cycle = Cycle.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                start_date__lte=timezone.now(),
+                end_date__gte=timezone.now(),
+            )
+
+            upcoming_cycle = Cycle.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                start_date__gte=timezone.now(),
+            )
+
+            return Response(
+                {
+                    "current_cycle": CycleSerializer(current_cycle, many=True).data,
+                    "upcoming_cycle": CycleSerializer(upcoming_cycle, many=True).data,
+                },
+                status=status.HTTP_200_OK,
+            )
+
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class CompletedCyclesEndpoint(BaseAPIView):
+    def get(self, request, slug, project_id):
+        try:
+            past_cycles = Cycle.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                end_date__lte=timezone.now(),
+            )
+
+            return Response(
+                {
+                    "past_cycles": CycleSerializer(past_cycles, many=True).data,
+                },
+                status=status.HTTP_200_OK,
+            )
+
         except Exception as e:
             capture_exception(e)
             return Response(

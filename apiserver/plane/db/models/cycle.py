@@ -7,11 +7,7 @@ from . import ProjectBaseModel
 
 
 class Cycle(ProjectBaseModel):
-    STATUS_CHOICES = (
-        ("draft", "Draft"),
-        ("started", "Started"),
-        ("completed", "Completed"),
-    )
+
     name = models.CharField(max_length=255, verbose_name="Cycle Name")
     description = models.TextField(verbose_name="Cycle Description", blank=True)
     start_date = models.DateField(verbose_name="Start Date", blank=True, null=True)
@@ -21,12 +17,7 @@ class Cycle(ProjectBaseModel):
         on_delete=models.CASCADE,
         related_name="owned_by_cycle",
     )
-    status = models.CharField(
-        max_length=255,
-        verbose_name="Cycle Status",
-        choices=STATUS_CHOICES,
-        default="draft",
-    )
+
 
     class Meta:
         verbose_name = "Cycle"
