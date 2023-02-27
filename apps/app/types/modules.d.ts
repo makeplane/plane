@@ -14,6 +14,7 @@ export interface IModule {
     created_by: string;
     created_by_detail: IUserLite;
     id: string;
+    metadata: any;
     title: string;
     url: string;
   }[];

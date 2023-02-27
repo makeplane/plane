@@ -293,6 +293,41 @@ class ProjectIssuesServices extends APIService {
         throw error?.response?.data;
       });
   }
+
+  async createIssueLink(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    data: {
+      metadata: any;
+      title: string;
+      url: string;
+    }
+  ): Promise<any> {
+    return this.post(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-links/`,
+      data
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async deleteIssueLink(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    linkId: string
+  ): Promise<any> {
+    return this.delete(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-links/${linkId}/`
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }
 
 export default new ProjectIssuesServices();

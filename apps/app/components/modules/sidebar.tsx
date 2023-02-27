@@ -71,6 +71,8 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
   const [startDateRange, setStartDateRange] = useState<Date | null>(new Date());
   const [endDateRange, setEndDateRange] = useState<Date | null>(null);
 
+  console.log("module details: ", module);
+
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query;
 
@@ -115,14 +117,10 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
   const handleCreateLink = async (formData: ModuleLink) => {
     if (!workspaceSlug || !projectId || !moduleId) return;
 
-    const previousLinks = module?.link_module.map((l) => ({ title: l.title, url: l.url }));
-
-    const payload: Partial<IModule> = {
-      links_list: [...(previousLinks ?? []), formData],
-    };
+    const payload = { metadata: {}, ...formData };
 
     await modulesService
-      .patchModule(workspaceSlug as string, projectId as string, moduleId as string, payload)
+      .createModuleLink(workspaceSlug as string, projectId as string, moduleId as string, payload)
       .then((res) => {
         mutate(MODULE_DETAILS(moduleId as string));
       })
@@ -135,11 +133,25 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
       });
   };
 
-  const handleDeleteLink = (linkId: string) => {
-    if (!module) return;
+  const handleDeleteLink = async (linkId: string) => {
+    if (!workspaceSlug || !projectId || !module) return;
 
     const updatedLinks = module.link_module.filter((l) => l.id !== linkId);
-    submitChanges({ links_list: updatedLinks });
+
+    mutate<IModule>(
+      MODULE_DETAILS(module.id),
+      (prevData) => ({ ...(prevData as IModule), link_module: updatedLinks }),
+      false
+    );
+
+    await modulesService
+      .deleteModuleLink(workspaceSlug as string, projectId as string, module.id, linkId)
+      .then((res) => {
+        mutate(MODULE_DETAILS(module.id));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   useEffect(() => {
@@ -350,27 +362,6 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                   </div>
                 </div>
               </div>
-              <div className="py-1">
-                <div className="flex items-center justify-between gap-2">
-                  <h4>Links</h4>
-                  <button
-                    type="button"
-                    className="grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-100"
-                    onClick={() => setModuleLinkModal(true)}
-                  >
-                    <PlusIcon className="h-4 w-4" />
-                  </button>
-                </div>
-                <div className="mt-2 space-y-2">
-                  {module.link_module && module.link_module.length > 0 ? (
-                    <LinksList
-                      links={module.link_module}
-                      handleDeleteLink={handleDeleteLink}
-                      userAuth={userAuth}
-                    />
-                  ) : null}
-                </div>
-              </div>
             </div>
             <div className="flex flex-col items-center justify-center w-full gap-2">
               {isStartValid && isEndValid ? (
@@ -387,6 +378,27 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
               ) : (
                 ""
               )}
+            </div>
+            <div className="py-1 text-xs">
+              <div className="flex items-center justify-between gap-2">
+                <h4>Links</h4>
+                <button
+                  type="button"
+                  className="grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-100"
+                  onClick={() => setModuleLinkModal(true)}
+                >
+                  <PlusIcon className="h-4 w-4" />
+                </button>
+              </div>
+              <div className="mt-2 space-y-2">
+                {module.link_module && module.link_module.length > 0 ? (
+                  <LinksList
+                    links={module.link_module}
+                    handleDeleteLink={handleDeleteLink}
+                    userAuth={userAuth}
+                  />
+                ) : null}
+              </div>
             </div>
           </>
         ) : (
