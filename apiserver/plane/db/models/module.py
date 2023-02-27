@@ -7,7 +7,6 @@ from . import ProjectBaseModel
 
 
 class Module(ProjectBaseModel):
-
     name = models.CharField(max_length=255, verbose_name="Module Name")
     description = models.TextField(verbose_name="Module Description", blank=True)
     description_text = models.JSONField(
@@ -41,7 +40,6 @@ class Module(ProjectBaseModel):
         through_fields=("module", "member"),
     )
 
-
     class Meta:
         unique_together = ["name", "project"]
         verbose_name = "Module"
@@ -54,7 +52,6 @@ class Module(ProjectBaseModel):
 
 
 class ModuleMember(ProjectBaseModel):
-
     module = models.ForeignKey("db.Module", on_delete=models.CASCADE)
     member = models.ForeignKey("db.User", on_delete=models.CASCADE)
 
@@ -70,7 +67,6 @@ class ModuleMember(ProjectBaseModel):
 
 
 class ModuleIssue(ProjectBaseModel):
-
     module = models.ForeignKey(
         "db.Module", on_delete=models.CASCADE, related_name="issue_module"
     )
@@ -89,10 +85,12 @@ class ModuleIssue(ProjectBaseModel):
 
 
 class ModuleLink(ProjectBaseModel):
-
     title = models.CharField(max_length=255, null=True)
     url = models.URLField()
-    module = models.ForeignKey(Module, on_delete=models.CASCADE, related_name="link_module")
+    module = models.ForeignKey(
+        Module, on_delete=models.CASCADE, related_name="link_module"
+    )
+    metadata = models.JSONField(default=dict)
 
     class Meta:
         verbose_name = "Module Link"

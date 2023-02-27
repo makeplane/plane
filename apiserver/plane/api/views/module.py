@@ -17,6 +17,7 @@ from plane.api.serializers import (
     ModuleWriteSerializer,
     ModuleSerializer,
     ModuleIssueSerializer,
+    ModuleLinkSerializer,
 )
 from plane.api.permissions import ProjectEntityPermission
 from plane.db.models import (
@@ -258,3 +259,29 @@ class ModuleIssueViewSet(BaseViewSet):
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+class ModuleLinkViewSet(BaseViewSet):
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+
+    model = ModuleLink
+    serializer_class = ModuleLinkSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(
+            project_id=self.kwargs.get("project_id"),
+            module_id=self.kwargs.get("module_id"),
+        )
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(project_id=self.kwargs.get("project_id"))
+            .filter(module_id=self.kwargs.get("module_id"))
+            .filter(project__project_projectmember__member=self.request.user)
+            .distinct()
+        )

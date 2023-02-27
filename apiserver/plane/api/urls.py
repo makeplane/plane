@@ -65,6 +65,8 @@ from plane.api.views import (
     IssuePropertyViewSet,
     LabelViewSet,
     SubIssuesEndpoint,
+    IssueLinkViewSet,
+    ModuleLinkViewSet,
     ## End Issues
     # States
     StateViewSet,
@@ -573,6 +575,28 @@ urlpatterns = [
         SubIssuesEndpoint.as_view(),
         name="sub-issues",
     ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-links/",
+        IssueLinkViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="project-issue-links",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-links/<uuid:pk>/",
+        IssueLinkViewSet.as_view(
+            {
+                "get": "retrieve",
+                "put": "update",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="project-issue-links",
+    ),
     ## End Issues
     ## Issue Activity
     path(
@@ -704,6 +728,28 @@ urlpatterns = [
             }
         ),
         name="project-module-issues",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/modules/<uuid:module_id>/module-links/",
+        ModuleLinkViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="project-issue-module-links",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/modules/<uuid:module_id>/module-links/<uuid:pk>/",
+        ModuleLinkViewSet.as_view(
+            {
+                "get": "retrieve",
+                "put": "update",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="project-issue-module-links",
     ),
     ## End Modules
     # API Tokens
