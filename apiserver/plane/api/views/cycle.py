@@ -241,7 +241,7 @@ class CurrentUpcomingCyclesEndpoint(BaseAPIView):
             )
 
 
-class PastCyclesEndpoint(BaseAPIView):
+class CompletedCyclesEndpoint(BaseAPIView):
     def get(self, request, slug, project_id):
         try:
             past_cycles = Cycle.objects.filter(

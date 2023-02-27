@@ -80,7 +80,7 @@ from plane.api.views import (
     CycleIssueViewSet,
     CycleDateCheckEndpoint,
     CurrentUpcomingCyclesEndpoint,
-    PastCyclesEndpoint,
+    CompletedCyclesEndpoint,
     ## End Cycles
     # Modules
     ModuleViewSet,
@@ -504,8 +504,8 @@ urlpatterns = [
         name="project-cycle",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/past-cycles/",
-        PastCyclesEndpoint.as_view(),
+        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/completed-cycles/",
+        CompletedCyclesEndpoint.as_view(),
         name="project-cycle",
     ),
     ## End Cycles
