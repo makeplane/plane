@@ -16,6 +16,7 @@ from plane.api.serializers import CycleSerializer, CycleIssueSerializer
 from plane.api.permissions import ProjectEntityPermission
 from plane.db.models import Cycle, CycleIssue, Issue
 from plane.bgtasks.issue_activites_task import issue_activity
+from plane.utils.grouper import group_results
 
 
 class CycleViewSet(BaseViewSet):
@@ -52,6 +53,11 @@ class CycleIssueViewSet(BaseViewSet):
         ProjectEntityPermission,
     ]
 
+    filterset_fields = [
+        "issue__labels__id",
+        "issue__assignees__id",
+    ]
+
     def perform_create(self, serializer):
         serializer.save(
             project_id=self.kwargs.get("project_id"),
@@ -79,6 +85,31 @@ class CycleIssueViewSet(BaseViewSet):
             .prefetch_related("issue__assignees", "issue__labels")
             .distinct()
         )
+
+    def list(self, request, slug, project_id, cycle_id):
+        try:
+            order_by = request.GET.get("order_by", "issue__created_at")
+            queryset = self.get_queryset().order_by(order_by)
+            group_by = request.GET.get("group_by", False)
+
+            cycle_issues = CycleIssueSerializer(queryset, many=True).data
+
+            if group_by:
+                return Response(
+                    group_results(cycle_issues, f"issue_detail.{group_by}"),
+                    status=status.HTTP_200_OK,
+                )
+
+            return Response(
+                cycle_issues,
+                status=status.HTTP_200_OK,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     def create(self, request, slug, project_id, cycle_id):
         try:
