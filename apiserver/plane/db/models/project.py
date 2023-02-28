@@ -46,7 +46,6 @@ class Project(BaseModel):
         max_length=5,
         verbose_name="Project Identifier",
     )
-    slug = models.SlugField(max_length=100, blank=True)
     default_assignee = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -77,7 +76,6 @@ class Project(BaseModel):
         ordering = ("-created_at",)
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.name)
         self.identifier = self.identifier.strip().upper()
         return super().save(*args, **kwargs)
 

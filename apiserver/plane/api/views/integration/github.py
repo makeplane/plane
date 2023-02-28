@@ -25,11 +25,15 @@ from plane.utils.integrations.github import get_github_repos
 class GithubRepositoriesEndpoint(BaseAPIView):
     def get(self, request, slug, workspace_integration_id):
         try:
+            page = request.GET.get("page", 1)
             workspace_integration = WorkspaceIntegration.objects.get(
                 workspace__slug=slug, pk=workspace_integration_id
             )
             access_tokens_url = workspace_integration.metadata["access_tokens_url"]
-            repositories_url = workspace_integration.metadata["repositories_url"]
+            repositories_url = (
+                workspace_integration.metadata["repositories_url"]
+                + f"?per_page=100&page={page}"
+            )
             repositories = get_github_repos(access_tokens_url, repositories_url)
             return Response(repositories, status=status.HTTP_200_OK)
         except WorkspaceIntegration.DoesNotExist:

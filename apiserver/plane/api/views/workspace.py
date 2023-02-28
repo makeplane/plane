@@ -414,7 +414,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         return self.filter_queryset(
             super()
             .get_queryset()
-            .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(workspace__slug=self.kwargs.get("slug"), is_bot=False)
             .select_related("workspace", "workspace__owner")
             .select_related("member")
         )

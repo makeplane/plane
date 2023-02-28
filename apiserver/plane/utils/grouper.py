@@ -1,12 +1,34 @@
-def group_results(results_data, group_by):
+def resolve_keys(group_keys, value):
+    """resolve keys to a key which will be used for
+    grouping
+
+    Args:
+        group_keys (string): key which will be used for grouping
+        value (obj): data value
+
+    Returns:
+        string: the key which will be used for
     """
-    Utility function to group data into a given attribute.
-    Function can group attributes of string and list type.
+    keys = group_keys.split(".")
+    for key in keys:
+        value = value.get(key, None)
+    return value
+
+
+def group_results(results_data, group_by):
+    """group results data into certain group_by
+
+    Args:
+        results_data (obj): complete results data
+        group_by (key): string
+
+    Returns:
+        obj: grouped results
     """
     response_dict = dict()
 
     for value in results_data:
-        group_attribute = value.get(group_by, None)
+        group_attribute = resolve_keys(group_by, value)
         if isinstance(group_attribute, list):
             if len(group_attribute):
                 for attrib in group_attribute:

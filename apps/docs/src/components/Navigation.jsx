@@ -203,6 +203,7 @@ export const navigation = [
       { title: 'Issues', href: '/issues' },
       { title: 'Cycles', href: '/cycles' },
       { title: 'Modules', href: '/modules' },
+      { title: 'Integrations', href: '/integrations' },
     ],
   },
 ]

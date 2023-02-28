@@ -77,6 +77,17 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
 
   const { setToastAlert } = useToast();
 
+  console.log("isseu details: ", issueDetail);
+
+  // const { data: issueLinks } = useSWR(
+  //   workspaceSlug && projectId
+  //     ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
+  //     : null,
+  //   workspaceSlug && projectId
+  //     ? () => issuesService.getIssues(workspaceSlug as string, projectId as string)
+  //     : null
+  // );
+
   const { data: issues } = useSWR(
     workspaceSlug && projectId
       ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
@@ -149,16 +160,12 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
   const handleCreateLink = async (formData: IIssueLink) => {
     if (!workspaceSlug || !projectId || !issueDetail) return;
 
-    const previousLinks = issueDetail?.issue_link.map((l) => ({ title: l.title, url: l.url }));
-
-    const payload: Partial<IIssue> = {
-      links_list: [...(previousLinks ?? []), formData],
-    };
+    const payload = { metadata: {}, ...formData };
 
     await issuesService
-      .patchIssue(workspaceSlug as string, projectId as string, issueDetail.id, payload)
+      .createIssueLink(workspaceSlug as string, projectId as string, issueDetail.id, payload)
       .then((res) => {
-        mutate(ISSUE_DETAILS(issueDetail.id as string));
+        mutate(ISSUE_DETAILS(issueDetail.id));
       })
       .catch((err) => {
         console.log(err);
@@ -171,17 +178,15 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
     const updatedLinks = issueDetail.issue_link.filter((l) => l.id !== linkId);
 
     mutate<IIssue>(
-      ISSUE_DETAILS(issueDetail.id as string),
+      ISSUE_DETAILS(issueDetail.id),
       (prevData) => ({ ...(prevData as IIssue), issue_link: updatedLinks }),
       false
     );
 
     await issuesService
-      .patchIssue(workspaceSlug as string, projectId as string, issueDetail.id, {
-        links_list: updatedLinks,
-      })
+      .deleteIssueLink(workspaceSlug as string, projectId as string, issueDetail.id, linkId)
       .then((res) => {
-        mutate(ISSUE_DETAILS(issueDetail.id as string));
+        mutate(ISSUE_DETAILS(issueDetail.id));
       })
       .catch((err) => {
         console.log(err);

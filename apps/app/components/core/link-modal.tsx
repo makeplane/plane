@@ -16,7 +16,7 @@ import type { IIssueLink, ModuleLink } from "types";
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
-  onFormSubmit: (formData: IIssueLink | ModuleLink) => void;
+  onFormSubmit: (formData: IIssueLink | ModuleLink) => Promise<void>;
 };
 
 const defaultValues: ModuleLink = {

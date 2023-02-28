@@ -65,6 +65,8 @@ from plane.api.views import (
     IssuePropertyViewSet,
     LabelViewSet,
     SubIssuesEndpoint,
+    IssueLinkViewSet,
+    ModuleLinkViewSet,
     ## End Issues
     # States
     StateViewSet,
@@ -78,6 +80,9 @@ from plane.api.views import (
     # Cycles
     CycleViewSet,
     CycleIssueViewSet,
+    CycleDateCheckEndpoint,
+    CurrentUpcomingCyclesEndpoint,
+    CompletedCyclesEndpoint,
     ## End Cycles
     # Modules
     ModuleViewSet,
@@ -490,6 +495,21 @@ urlpatterns = [
         ),
         name="project-cycle",
     ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/date-check/",
+        CycleDateCheckEndpoint.as_view(),
+        name="project-cycle",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/current-upcoming-cycles/",
+        CurrentUpcomingCyclesEndpoint.as_view(),
+        name="project-cycle",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/completed-cycles/",
+        CompletedCyclesEndpoint.as_view(),
+        name="project-cycle",
+    ),
     ## End Cycles
     # Issue
     path(
@@ -554,6 +574,28 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/sub-issues/",
         SubIssuesEndpoint.as_view(),
         name="sub-issues",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-links/",
+        IssueLinkViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="project-issue-links",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-links/<uuid:pk>/",
+        IssueLinkViewSet.as_view(
+            {
+                "get": "retrieve",
+                "put": "update",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="project-issue-links",
     ),
     ## End Issues
     ## Issue Activity
@@ -686,6 +728,28 @@ urlpatterns = [
             }
         ),
         name="project-module-issues",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/modules/<uuid:module_id>/module-links/",
+        ModuleLinkViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="project-issue-module-links",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/modules/<uuid:module_id>/module-links/<uuid:pk>/",
+        ModuleLinkViewSet.as_view(
+            {
+                "get": "retrieve",
+                "put": "update",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="project-issue-module-links",
     ),
     ## End Modules
     # API Tokens
