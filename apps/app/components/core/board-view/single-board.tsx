@@ -14,10 +14,11 @@ import { CustomMenu } from "components/ui";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 // types
-import { IIssue, IProjectMember, NestedKeyOf, UserAuth } from "types";
+import { IIssue, IProjectMember, IState, NestedKeyOf, UserAuth } from "types";
 
 type Props = {
   type?: "issue" | "cycle" | "module";
+  currentState?: IState | null;
   bgColor?: string;
   groupTitle: string;
   groupedByIssues: {
@@ -37,6 +38,7 @@ type Props = {
 
 export const SingleBoard: React.FC<Props> = ({
   type,
+  currentState,
   bgColor,
   groupTitle,
   groupedByIssues,
@@ -71,10 +73,11 @@ export const SingleBoard: React.FC<Props> = ({
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   return (
-    <div className={`h-full flex-shrink-0 rounded ${!isCollapsed ? "" : "w-80 border bg-gray-50"}`}>
+    <div className={`h-full flex-shrink-0 rounded ${!isCollapsed ? "" : "w-96 bg-gray-50"}`}>
       <div className={`${!isCollapsed ? "" : "flex h-full flex-col space-y-3"}`}>
         <BoardHeader
           addIssueToState={addIssueToState}
+          currentState={currentState}
           bgColor={bgColor}
           selectedGroup={selectedGroup}
           groupTitle={groupTitle}

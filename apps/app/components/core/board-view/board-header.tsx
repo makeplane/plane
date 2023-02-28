@@ -1,22 +1,17 @@
 import React from "react";
 
-// react-beautiful-dnd
-import { DraggableProvided } from "react-beautiful-dnd";
 // icons
-import {
-  ArrowsPointingInIcon,
-  ArrowsPointingOutIcon,
-  EllipsisHorizontalIcon,
-  PlusIcon,
-} from "@heroicons/react/24/outline";
+import { ArrowsPointingInIcon, ArrowsPointingOutIcon, PlusIcon } from "@heroicons/react/24/outline";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
-import { IIssue, IProjectMember, NestedKeyOf } from "types";
+import { IIssue, IProjectMember, IState, NestedKeyOf } from "types";
+import { getStateGroupIcon } from "components/icons";
 type Props = {
   groupedByIssues: {
     [key: string]: IIssue[];
   };
+  currentState?: IState | null;
   selectedGroup: NestedKeyOf<IIssue> | null;
   groupTitle: string;
   bgColor?: string;
@@ -28,6 +23,7 @@ type Props = {
 
 export const BoardHeader: React.FC<Props> = ({
   groupedByIssues,
+  currentState,
   selectedGroup,
   groupTitle,
   bgColor,
@@ -60,16 +56,13 @@ export const BoardHeader: React.FC<Props> = ({
     >
       <div className={`flex items-center ${!isCollapsed ? "flex-col gap-2" : "gap-1"}`}>
         <div
-          className={`flex cursor-pointer items-center gap-x-1 rounded-md bg-slate-900 px-2 ${
+          className={`flex cursor-pointer items-center gap-x-3.5 ${
             !isCollapsed ? "mb-2 flex-col gap-y-2 py-2" : ""
           }`}
-          style={{
-            border: `2px solid ${bgColor}`,
-            backgroundColor: `${bgColor}20`,
-          }}
         >
+          {currentState && getStateGroupIcon(currentState.group)}
           <h2
-            className={`text-[0.9rem] font-medium capitalize`}
+            className={`text-xl font-semibold capitalize`}
             style={{
               writingMode: !isCollapsed ? "vertical-rl" : "horizontal-tb",
             }}
@@ -80,14 +73,16 @@ export const BoardHeader: React.FC<Props> = ({
               ? assignees
               : addSpaceIfCamelCase(groupTitle)}
           </h2>
-          <span className="ml-0.5 text-sm text-gray-500">{groupedByIssues[groupTitle].length}</span>
+          <span className="ml-0.5 text-sm bg-gray-100 py-1 px-3 rounded-full">
+            {groupedByIssues[groupTitle].length}
+          </span>
         </div>
       </div>
 
       <div className={`flex items-center ${!isCollapsed ? "flex-col pb-2" : ""}`}>
         <button
           type="button"
-          className="grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200"
+          className="grid h-7 w-7 place-items-center rounded p-1 text-gray-700 outline-none duration-300 hover:bg-gray-200"
           onClick={() => {
             setIsCollapsed((prevData) => !prevData);
           }}
@@ -100,7 +95,7 @@ export const BoardHeader: React.FC<Props> = ({
         </button>
         <button
           type="button"
-          className="grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200"
+          className="grid h-7 w-7 place-items-center rounded p-1 text-gray-700 outline-none duration-300 hover:bg-gray-200"
           onClick={addIssueToState}
         >
           <PlusIcon className="h-4 w-4" />

@@ -40,8 +40,13 @@ export const AllBoards: React.FC<Props> = ({
         <div className="h-[calc(100vh-157px)] lg:h-[calc(100vh-115px)] w-full">
           <div className="h-full w-full overflow-hidden">
             <div className="h-full w-full">
-              <div className="flex h-full gap-x-4 overflow-x-auto overflow-y-hidden">
+              <div className="flex h-full gap-x-12 overflow-x-auto overflow-y-hidden">
                 {Object.keys(groupedByIssues).map((singleGroup, index) => {
+                  const currentState =
+                    selectedGroup === "state_detail.name"
+                      ? states?.find((s) => s.name === singleGroup)
+                      : null;
+
                   const stateId =
                     selectedGroup === "state_detail.name"
                       ? states?.find((s) => s.name === singleGroup)?.id ?? null
@@ -56,6 +61,7 @@ export const AllBoards: React.FC<Props> = ({
                     <SingleBoard
                       key={index}
                       type={type}
+                      currentState={currentState}
                       bgColor={bgColor}
                       groupTitle={singleGroup}
                       groupedByIssues={groupedByIssues}

@@ -8,13 +8,13 @@ type CustomSelectProps = {
   value: any;
   onChange: any;
   children: React.ReactNode;
-  label: string | JSX.Element;
+  label?: string | JSX.Element;
   textAlignment?: "left" | "center" | "right";
   maxHeight?: "sm" | "rg" | "md" | "lg" | "none";
   width?: "auto" | string;
   input?: boolean;
   noChevron?: boolean;
-  buttonClassName?: string;
+  customButton?: JSX.Element;
   optionsClassName?: string;
   disabled?: boolean;
   selfPositioned?: boolean;
@@ -30,7 +30,7 @@ const CustomSelect = ({
   width = "auto",
   input = false,
   noChevron = false,
-  buttonClassName = "",
+  customButton,
   optionsClassName = "",
   disabled = false,
   selfPositioned = false,
@@ -43,22 +43,26 @@ const CustomSelect = ({
     disabled={disabled}
   >
     <div>
-      <Listbox.Button
-        className={`${buttonClassName} flex w-full ${
-          disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-gray-100"
-        } items-center justify-between gap-1 rounded-md border shadow-sm duration-300 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
-          input ? "border-gray-300 px-3 py-2 text-sm" : "px-2 py-1 text-xs"
-        } ${
-          textAlignment === "right"
-            ? "text-right"
-            : textAlignment === "center"
-            ? "text-center"
-            : "text-left"
-        }`}
-      >
-        {label}
-        {!noChevron && !disabled && <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />}
-      </Listbox.Button>
+      {customButton ? (
+        customButton
+      ) : (
+        <Listbox.Button
+          className={`flex w-full ${
+            disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-gray-100"
+          } items-center justify-between gap-1 rounded-md border shadow-sm duration-300 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
+            input ? "border-gray-300 px-3 py-2 text-sm" : "px-2 py-1 text-xs"
+          } ${
+            textAlignment === "right"
+              ? "text-right"
+              : textAlignment === "center"
+              ? "text-center"
+              : "text-left"
+          }`}
+        >
+          {label}
+          {!noChevron && !disabled && <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />}
+        </Listbox.Button>
+      )}
     </div>
 
     <Transition
