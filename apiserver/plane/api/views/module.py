@@ -142,7 +142,7 @@ class ModuleIssueViewSet(BaseViewSet):
             .distinct()
         )
 
-    def list(self, request, slug, project_id, cycle_id):
+    def list(self, request, slug, project_id, module_id):
         try:
             order_by = request.GET.get("order_by", "issue__created_at")
             queryset = self.get_queryset().order_by(order_by)
