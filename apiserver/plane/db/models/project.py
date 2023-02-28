@@ -155,3 +155,22 @@ class ProjectIdentifier(AuditModel):
         verbose_name_plural = "Project Identifiers"
         db_table = "project_identifiers"
         ordering = ("-created_at",)
+
+
+class ProjectFavourite(ProjectBaseModel):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="project_favourites",
+    )
+
+    class Meta:
+        unique_together = ["project", "user"]
+        verbose_name = "Project Favourite"
+        verbose_name_plural = "Project Favourites"
+        db_table = "project_favourites"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        """Return user of the project"""
+        return f"{self.user.email} <{self.project.name}>"

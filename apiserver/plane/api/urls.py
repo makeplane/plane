@@ -52,6 +52,7 @@ from plane.api.views import (
     ProjectJoinEndpoint,
     UserProjectInvitationsViewset,
     ProjectIdentifierEndpoint,
+    ProjectFavouritesViewSet,
     ## End Projects
     # Issues
     IssueViewSet,
@@ -376,6 +377,26 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/project-members/me/",
         ProjectMemberUserEndpoint.as_view(),
         name="project-view",
+    ),
+    path(
+        "workspaces/<str:slug>/user-favourite-projects/",
+        ProjectFavouritesViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="project",
+    ),
+    path(
+        "workspaces/<str:slug>/user-favourite-projects/<uuid:pk>/",
+        ProjectFavouritesViewSet.as_view(
+            {
+                "get": "retrieve",
+                "delete": "destroy",
+            }
+        ),
+        name="project",
     ),
     # End Projects
     #  States

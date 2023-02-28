@@ -22,6 +22,7 @@ from plane.api.serializers import (
     ProjectMemberSerializer,
     ProjectDetailSerializer,
     ProjectMemberInviteSerializer,
+    ProjectFavouriteSerializer,
 )
 
 from plane.api.permissions import ProjectBasePermission
@@ -35,6 +36,7 @@ from plane.db.models import (
     WorkspaceMember,
     State,
     TeamMember,
+    ProjectFavourite,
 )
 
 from plane.db.models import (
@@ -653,6 +655,53 @@ class ProjectMemberUserEndpoint(BaseAPIView):
                 {"error": "User not a member of the project"},
                 status=status.HTTP_403_FORBIDDEN,
             )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class ProjectFavouritesViewSet(BaseViewSet):
+    serializer_class = ProjectFavouriteSerializer
+    model = ProjectFavourite
+
+    def get_queryset(self):
+        return self.filter_queryset(
+            super()
+            .get_queryset()
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(user=self.request.user)
+            .select_related(
+                "project", "project__project_lead", "project__default_assignee"
+            )
+            .select_related("workspace", "workspace__owner")
+        )
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def create(self, request, slug):
+        try:
+            serializer = ProjectFavouriteSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save(user=request.user)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except IntegrityError as e:
+            print(str(e))
+            if "already exists" in str(e):
+                return Response(
+                    {"error": "The project is already added to favourites"},
+                    status=status.HTTP_410_GONE,
+                )
+            else:
+                capture_exception(e)
+                return Response(
+                    {"error": "Something went wrong please try again later"},
+                    status=status.HTTP_410_GONE,
+                )
         except Exception as e:
             capture_exception(e)
             return Response(

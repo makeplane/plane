@@ -13,6 +13,7 @@ from plane.db.models import (
     ProjectMember,
     ProjectMemberInvite,
     ProjectIdentifier,
+    ProjectFavourite,
 )
 
 
@@ -44,7 +45,6 @@ class ProjectSerializer(BaseSerializer):
         return project
 
     def update(self, instance, validated_data):
-
         identifier = validated_data.get("identifier", "").strip().upper()
 
         # If identifier is not passed update the project and return
@@ -73,7 +73,6 @@ class ProjectSerializer(BaseSerializer):
 
 
 class ProjectDetailSerializer(BaseSerializer):
-
     workspace = WorkSpaceSerializer(read_only=True)
     default_assignee = UserLiteSerializer(read_only=True)
     project_lead = UserLiteSerializer(read_only=True)
@@ -84,7 +83,6 @@ class ProjectDetailSerializer(BaseSerializer):
 
 
 class ProjectMemberSerializer(BaseSerializer):
-
     workspace = WorkSpaceSerializer(read_only=True)
     project = ProjectSerializer(read_only=True)
     member = UserLiteSerializer(read_only=True)
@@ -95,7 +93,6 @@ class ProjectMemberSerializer(BaseSerializer):
 
 
 class ProjectMemberInviteSerializer(BaseSerializer):
-
     project = ProjectSerializer(read_only=True)
     workspace = WorkSpaceSerializer(read_only=True)
 
@@ -108,3 +105,15 @@ class ProjectIdentifierSerializer(BaseSerializer):
     class Meta:
         model = ProjectIdentifier
         fields = "__all__"
+
+
+class ProjectFavouriteSerializer(BaseSerializer):
+    project_detail = ProjectSerializer(source="project", read_only=True)
+
+    class Meta:
+        model = ProjectFavourite
+        fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "user",
+        ]

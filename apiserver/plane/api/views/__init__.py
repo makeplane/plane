@@ -11,6 +11,7 @@ from .project import (
     ProjectJoinEndpoint,
     ProjectUserViewsEndpoint,
     ProjectMemberUserEndpoint,
+    ProjectFavouritesViewSet,
 )
 from .people import (
     UserEndpoint,

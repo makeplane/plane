@@ -16,6 +16,7 @@ from .project import (
     ProjectBaseModel,
     ProjectMemberInvite,
     ProjectIdentifier,
+    ProjectFavourite,
 )
 
 from .issue import (
