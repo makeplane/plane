@@ -69,45 +69,43 @@ export const WorkspaceSidebarDropdown = () => {
   return (
     <div className="relative">
       <Menu as="div" className="col-span-4 inline-block w-full text-left">
-        <div className="w-full">
-          <Menu.Button
-            className={`inline-flex w-full items-center justify-between rounded-md px-1 py-2 text-sm font-semibold text-gray-700 focus:outline-none ${
-              !sidebarCollapse
-                ? "border border-gray-300 shadow-sm hover:bg-gray-50 focus:bg-gray-50"
-                : ""
-            }`}
-          >
-            <div className="flex items-center gap-x-1">
-              <div className="relative flex h-5 w-5 items-center justify-center rounded bg-gray-700 p-4 uppercase text-white">
-                {activeWorkspace?.logo && activeWorkspace.logo !== "" ? (
-                  <Image
-                    src={activeWorkspace.logo}
-                    alt="Workspace Logo"
-                    layout="fill"
-                    objectFit="cover"
-                    className="rounded"
-                  />
-                ) : (
-                  activeWorkspace?.name?.charAt(0) ?? "..."
-                )}
-              </div>
-              {!sidebarCollapse && (
-                <p className="ml-1 text-left">
-                  {activeWorkspace?.name
-                    ? activeWorkspace.name.length > 17
-                      ? `${activeWorkspace.name.substring(0, 17)}...`
-                      : activeWorkspace.name
-                    : "Loading..."}
-                </p>
+        <Menu.Button
+          className={`inline-flex w-full items-center justify-between rounded-md px-1 py-2 text-sm font-semibold text-gray-700 focus:outline-none ${
+            !sidebarCollapse
+              ? "border border-gray-300 shadow-sm hover:bg-gray-50 focus:bg-gray-50"
+              : ""
+          }`}
+        >
+          <div className="flex items-center mx-auto gap-x-1">
+            <div className="relative flex h-5 w-5 items-center justify-center rounded bg-gray-700 p-4 uppercase text-white">
+              {activeWorkspace?.logo && activeWorkspace.logo !== "" ? (
+                <Image
+                  src={activeWorkspace.logo}
+                  alt="Workspace Logo"
+                  layout="fill"
+                  objectFit="cover"
+                  className="rounded"
+                />
+              ) : (
+                activeWorkspace?.name?.charAt(0) ?? "..."
               )}
             </div>
             {!sidebarCollapse && (
-              <div className="flex flex-grow justify-end">
-                <ChevronDownIcon className="ml-2 h-3 w-3" aria-hidden="true" />
-              </div>
+              <p className="ml-1 text-left">
+                {activeWorkspace?.name
+                  ? activeWorkspace.name.length > 17
+                    ? `${activeWorkspace.name.substring(0, 17)}...`
+                    : activeWorkspace.name
+                  : "Loading..."}
+              </p>
             )}
-          </Menu.Button>
-        </div>
+          </div>
+          {!sidebarCollapse && (
+            <div className="flex flex-grow justify-end">
+              <ChevronDownIcon className="ml-2 h-3 w-3" aria-hidden="true" />
+            </div>
+          )}
+        </Menu.Button>
 
         <Transition
           as={Fragment}

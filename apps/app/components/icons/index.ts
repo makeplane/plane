@@ -29,3 +29,8 @@ export * from "./upcoming-cycle-icon";
 export * from "./user-group-icon";
 export * from "./user-icon-circle";
 export * from "./user-icon";
+export * from "./grid-view-icons";
+export * from "./assignment-clipboard-icon";
+export * from "./tick-mark-icon";
+export * from "./contrast-icon";
+export * from "./people-group-icon";
