@@ -275,7 +275,7 @@ class CurrentUpcomingCyclesEndpoint(BaseAPIView):
 class CompletedCyclesEndpoint(BaseAPIView):
     def get(self, request, slug, project_id):
         try:
-            past_cycles = Cycle.objects.filter(
+            completed_cycles = Cycle.objects.filter(
                 workspace__slug=slug,
                 project_id=project_id,
                 end_date__lte=timezone.now(),
@@ -283,7 +283,9 @@ class CompletedCyclesEndpoint(BaseAPIView):
 
             return Response(
                 {
-                    "past_cycles": CycleSerializer(past_cycles, many=True).data,
+                    "completed_cycles": CycleSerializer(
+                        completed_cycles, many=True
+                    ).data,
                 },
                 status=status.HTTP_200_OK,
             )
