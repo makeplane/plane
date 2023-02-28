@@ -5,7 +5,7 @@ from datetime import datetime
 # Django imports
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
-from django.db.models import Q
+from django.db.models import Q, Exists, OuterRef
 from django.core.validators import validate_email
 from django.conf import settings
 
@@ -74,6 +74,22 @@ class ProjectViewSet(BaseViewSet):
             )
             .distinct()
         )
+
+    def list(self, request, slug):
+        try:
+            subquery = ProjectFavourite.objects.filter(
+                user=self.request.user,
+                project_id=OuterRef("pk"),
+                workspace__slug=self.kwargs.get("slug"),
+            )
+            projects = self.get_queryset().annotate(is_favourite=Exists(subquery))
+            return Response(ProjectDetailSerializer(projects, many=True).data)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     def create(self, request, slug):
         try:

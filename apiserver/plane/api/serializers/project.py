@@ -76,6 +76,7 @@ class ProjectDetailSerializer(BaseSerializer):
     workspace = WorkSpaceSerializer(read_only=True)
     default_assignee = UserLiteSerializer(read_only=True)
     project_lead = UserLiteSerializer(read_only=True)
+    is_favourite = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Project
