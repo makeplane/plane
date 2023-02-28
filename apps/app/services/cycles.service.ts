@@ -1,7 +1,7 @@
 // services
 import APIService from "services/api.service";
 // types
-import type { ICycle } from "types";
+import type { CompletedCyclesResponse, CurrentAndUpcomingCyclesResponse, ICycle } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -99,7 +99,7 @@ class ProjectCycleServices extends APIService {
       });
   }
 
-  async getCurrentAndUpcomingCycles(workspaceSlug: string, projectId: string): Promise<any> {
+  async getCurrentAndUpcomingCycles(workspaceSlug: string, projectId: string): Promise<CurrentAndUpcomingCyclesResponse> {
     return this.get(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/current-upcoming-cycles/`
     )
@@ -109,9 +109,9 @@ class ProjectCycleServices extends APIService {
       });
   }
 
-  async getCompletedCycles(workspaceSlug: string, projectId: string): Promise<any> {
+  async getCompletedCycles(workspaceSlug: string, projectId: string): Promise<CompletedCyclesResponse> {
     return this.get(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/past-cycles/`
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/completed-cycles/`
     )
       .then((response) => response?.data)
       .catch((error) => {

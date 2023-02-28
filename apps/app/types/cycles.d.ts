@@ -15,7 +15,19 @@ export interface ICycle {
   project: string;
   workspace: string;
   issue: string;
+  current_cycle: [];
+  upcoming_cycle: [];
+  past_cycles: [];
 }
+
+export interface CurrentAndUpcomingCyclesResponse {
+ current_cycle : ICycle[];
+ upcoming_cycle : ICycle[];
+}
+
+export interface CompletedCyclesResponse {
+  completed_cycles : ICycle[];
+ }
 
 export interface CycleIssueResponse {
   id: string;
