@@ -12,12 +12,12 @@ import { CompletedCycleIcon } from "components/icons";
 import cyclesService from "services/cycles.service";
 import { CYCLE_COMPLETE_LIST } from "constants/fetch-keys";
 
-type Props = {
+export interface CompletedCyclesListProps {
   setCreateUpdateCycleModal: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedCycle: React.Dispatch<React.SetStateAction<SelectCycleType>>;
-};
+}
 
-export const CompletedCyclesList: React.FC<Props> = ({
+export const CompletedCyclesList: React.FC<CompletedCyclesListProps> = ({
   setCreateUpdateCycleModal,
   setSelectedCycle,
 }) => {

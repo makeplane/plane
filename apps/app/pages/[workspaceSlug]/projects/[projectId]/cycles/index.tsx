@@ -16,7 +16,7 @@ import projectService from "services/project.service";
 // layouts
 import AppLayout from "layouts/app-layout";
 // components
-import { CreateUpdateCycleModal, CyclesList } from "components/cycles";
+import { CompletedCyclesListProps, CreateUpdateCycleModal, CyclesList } from "components/cycles";
 // ui
 import { HeaderButton, Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -25,13 +25,9 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import { SelectCycleType } from "types";
 import type { NextPage, GetServerSidePropsContext } from "next";
 // fetching keys
-import {
-  CYCLE_COMPLETE_LIST,
-  CYCLE_CURRENT_AND_UPCOMING_LIST,
-  PROJECT_DETAILS,
-} from "constants/fetch-keys";
+import { CYCLE_CURRENT_AND_UPCOMING_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
 
-const CompletedCyclesList = dynamic(
+const CompletedCyclesList = dynamic<CompletedCyclesListProps>(
   () => import("components/cycles").then((a) => a.CompletedCyclesList),
   {
     ssr: false,
@@ -64,14 +60,6 @@ const ProjectCycles: NextPage = () => {
       ? () => cycleService.getCurrentAndUpcomingCycles(workspaceSlug as string, projectId as string)
       : null
   );
-
-  const getCycleStatus = (startDate: string, endDate: string) => {
-    const today = new Date();
-
-    if (today < new Date(startDate)) return "upcoming";
-    else if (today > new Date(endDate)) return "completed";
-    else return "current";
-  };
 
   useEffect(() => {
     if (createUpdateCycleModal) return;
