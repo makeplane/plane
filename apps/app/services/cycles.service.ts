@@ -87,6 +87,37 @@ class ProjectCycleServices extends APIService {
         throw error?.response?.data;
       });
   }
+
+  async cycleDateCheck(workspaceSlug: string, projectId: string, data: {
+    start_date: string,
+    end_date: string
+  }): Promise<any> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/date-check/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getCurrentAndUpcomingCycles(workspaceSlug: string, projectId: string): Promise<any> {
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/current-upcoming-cycles/`
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getCompletedCycles(workspaceSlug: string, projectId: string): Promise<any> {
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/past-cycles/`
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }
 
 export default new ProjectCycleServices();
