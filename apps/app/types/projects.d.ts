@@ -1,6 +1,7 @@
 import type { IUserLite, IWorkspace } from "./";
 
 export interface IProject {
+  cover_image: string | null;
   created_at: Date;
   created_by: string;
   cycle_view: boolean;

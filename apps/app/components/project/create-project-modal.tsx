@@ -14,7 +14,10 @@ import workspaceService from "services/workspace.service";
 import useToast from "hooks/use-toast";
 // ui
 import { Button, Input, TextArea, CustomSelect } from "components/ui";
+// icons
+import { PhotoIcon } from "@heroicons/react/24/outline";
 // components
+import { UnsplashImageModal } from "components/core";
 import EmojiIconPicker from "components/emoji-icon-picker";
 // helpers
 import { getRandomEmoji } from "helpers/common.helper";
@@ -36,6 +39,7 @@ const defaultValues: Partial<IProject> = {
   description: "",
   network: 2,
   icon: getRandomEmoji(),
+  cover_image: null,
 };
 
 const IsGuestCondition: React.FC<{
@@ -58,6 +62,7 @@ const IsGuestCondition: React.FC<{
 export const CreateProjectModal: React.FC<Props> = (props) => {
   const { isOpen, setIsOpen } = props;
 
+  const [isUnsplashModalOpen, setIsUnsplashModalOpen] = useState(false);
   const [isChangeIdentifierRequired, setIsChangeIdentifierRequired] = useState(true);
 
   const { setToastAlert } = useToast();
@@ -173,6 +178,15 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-5 py-8 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl sm:p-6">
+                <div className="absolute border-2 rounded-md p-2 bg-red-a500 right-4 top-4">
+                  <button
+                    type="button"
+                    className="w-full h-full flex items-center justify-center outline-none"
+                    onClick={() => setIsUnsplashModalOpen(true)}
+                  >
+                    <PhotoIcon className="w-5 h-5 text-gray-700" />
+                  </button>
+                </div>
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="space-y-5">
                     <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
@@ -299,6 +313,14 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
             </Transition.Child>
           </div>
         </div>
+        <UnsplashImageModal
+          handleClose={() => setIsUnsplashModalOpen(false)}
+          isOpen={isUnsplashModalOpen}
+          onSelect={(imageUrl) => {
+            setValue("cover_image", imageUrl);
+            setIsUnsplashModalOpen(false);
+          }}
+        />
       </Dialog>
     </Transition.Root>
   );
