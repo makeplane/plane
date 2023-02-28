@@ -20,11 +20,10 @@ export interface IProject {
 }
 
 type ProjectViewTheme = {
-  collapsed: boolean;
-  issueView: "list" | "kanban" | null;
-  groupByProperty: NestedKeyOf<IIssue> | null;
-  filterIssue: "activeIssue" | "backlogIssue" | null;
-  orderBy: NestedKeyOf<IIssue> | null;
+  issueView: "list" | "kanban";
+  groupByProperty: "state" | "priority" | "labels" | null;
+  orderBy: "created_at" | "updated_at" | "priority" | "sort_order";
+  filterIssue: "active" | "backlog" | null;
 };
 
 export interface IProjectMember {

@@ -14,22 +14,23 @@ import { CustomMenu } from "components/ui";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 // types
-import { IIssue, IProjectMember, NestedKeyOf, UserAuth } from "types";
+import { IIssue, IProjectMember, IState, UserAuth } from "types";
+import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 
 type Props = {
   type?: "issue" | "cycle" | "module";
-  bgColor?: string;
+  currentState?: IState | null;
   groupTitle: string;
   groupedByIssues: {
     [key: string]: IIssue[];
   };
-  selectedGroup: NestedKeyOf<IIssue> | null;
+  selectedGroup: "state" | "priority" | "labels" | null;
   members: IProjectMember[] | undefined;
   handleEditIssue: (issue: IIssue) => void;
   addIssueToState: () => void;
   handleDeleteIssue: (issue: IIssue) => void;
   openIssuesListModal?: (() => void) | null;
-  orderBy: NestedKeyOf<IIssue> | null;
+  orderBy: "created_at" | "updated_at" | "priority" | "sort_order";
   handleTrashBox: (isDragging: boolean) => void;
   removeIssue: ((bridgeId: string) => void) | null;
   userAuth: UserAuth;
@@ -37,7 +38,7 @@ type Props = {
 
 export const SingleBoard: React.FC<Props> = ({
   type,
-  bgColor,
+  currentState,
   groupTitle,
   groupedByIssues,
   selectedGroup,
@@ -59,15 +60,6 @@ export const SingleBoard: React.FC<Props> = ({
 
   const [properties] = useIssuesProperties(workspaceSlug as string, projectId as string);
 
-  if (selectedGroup === "priority")
-    groupTitle === "high"
-      ? (bgColor = "#dc2626")
-      : groupTitle === "medium"
-      ? (bgColor = "#f97316")
-      : groupTitle === "low"
-      ? (bgColor = "#22c55e")
-      : (bgColor = "#ff0000");
-
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   return (
@@ -75,7 +67,7 @@ export const SingleBoard: React.FC<Props> = ({
       <div className={`${!isCollapsed ? "" : "flex h-full flex-col space-y-3"}`}>
         <BoardHeader
           addIssueToState={addIssueToState}
-          bgColor={bgColor}
+          currentState={currentState}
           selectedGroup={selectedGroup}
           groupTitle={groupTitle}
           groupedByIssues={groupedByIssues}
@@ -104,7 +96,7 @@ export const SingleBoard: React.FC<Props> = ({
                       snapshot.isDraggingOver ? "block" : "hidden"
                     } top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-xs whitespace-nowrap bg-white p-2 rounded pointer-events-none z-[99999999]`}
                   >
-                    This board is ordered by {orderBy}
+                    This board is ordered by {replaceUnderscoreIfSnakeCase(orderBy)}
                   </div>
                 </>
               )}
@@ -113,9 +105,7 @@ export const SingleBoard: React.FC<Props> = ({
                   key={issue.id}
                   draggableId={issue.id}
                   index={index}
-                  isDragDisabled={
-                    isNotAllowed || selectedGroup === "created_by" || selectedGroup === "assignees"
-                  }
+                  isDragDisabled={isNotAllowed}
                 >
                   {(provided, snapshot) => (
                     <SingleBoardIssue

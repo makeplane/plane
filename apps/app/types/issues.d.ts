@@ -205,3 +205,9 @@ export interface IIssueActivity {
   issue_comment: string | null;
   actor: string;
 }
+
+export interface IIssueFilterOptions {
+  group_by: "state" | "priority" | "labels" | null;
+  order_by: "created_at" | "updated_at" | "priority" | "sort_order";
+  type: "active" | "backlog" | null;
+}

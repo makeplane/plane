@@ -10,7 +10,7 @@ type Props = {
   issues: IIssue[];
   states: IState[] | undefined;
   members: IProjectMember[] | undefined;
-  addIssueToState: (groupTitle: string, stateId: string | null) => void;
+  addIssueToState: (groupTitle: string) => void;
   handleEditIssue: (issue: IIssue) => void;
   openIssuesListModal?: (() => void) | null;
   handleDeleteIssue: (issue: IIssue) => void;
@@ -42,27 +42,20 @@ export const AllBoards: React.FC<Props> = ({
             <div className="h-full w-full">
               <div className="flex h-full gap-x-4 overflow-x-auto overflow-y-hidden">
                 {Object.keys(groupedByIssues).map((singleGroup, index) => {
-                  const stateId =
-                    selectedGroup === "state_detail.name"
-                      ? states?.find((s) => s.name === singleGroup)?.id ?? null
-                      : null;
-
-                  const bgColor =
-                    selectedGroup === "state_detail.name"
-                      ? states?.find((s) => s.name === singleGroup)?.color
-                      : "#000000";
+                  const currentState =
+                    selectedGroup === "state" ? states?.find((s) => s.id === singleGroup) : null;
 
                   return (
                     <SingleBoard
                       key={index}
                       type={type}
-                      bgColor={bgColor}
+                      currentState={currentState}
                       groupTitle={singleGroup}
                       groupedByIssues={groupedByIssues}
                       selectedGroup={selectedGroup}
                       members={members}
                       handleEditIssue={handleEditIssue}
-                      addIssueToState={() => addIssueToState(singleGroup, stateId)}
+                      addIssueToState={() => addIssueToState(singleGroup)}
                       handleDeleteIssue={handleDeleteIssue}
                       openIssuesListModal={openIssuesListModal ?? null}
                       orderBy={orderBy}

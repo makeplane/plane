@@ -1,7 +1,7 @@
 // services
 import APIService from "services/api.service";
 // type
-import type { IIssue, IIssueActivity, IIssueComment } from "types";
+import type { IIssue, IIssueActivity, IIssueComment, IIssueFilterOptions } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -20,6 +20,22 @@ class ProjectIssuesServices extends APIService {
 
   async getIssues(workspaceSlug: string, projectId: string): Promise<IIssue[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getNewIssues(
+    workspaceSlug: string,
+    projectId: string,
+    queries: IIssueFilterOptions
+  ): Promise<any> {
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/?${
+        queries.group_by ? "group_by=" + queries.group_by : ""
+      }&order_by=${queries.order_by}${queries.type ? "&type=" + queries.type : ""}`
+    )
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

@@ -89,6 +89,8 @@ export const IssuesView: React.FC<Props> = ({
       : null
   );
 
+  console.log("Grouped by issues: ", groupedByIssues);
+
   const handleDeleteIssue = useCallback(
     (issue: IIssue) => {
       setDeleteIssueModal(true);
@@ -163,8 +165,8 @@ export const IssuesView: React.FC<Props> = ({
           if (!sourceGroup || !destinationGroup) return;
 
           if (selectedGroup === "priority") draggedItem.priority = destinationGroup;
-          else if (selectedGroup === "state_detail.name") {
-            const destinationState = states?.find((s) => s.name === destinationGroup);
+          else if (selectedGroup === "state") {
+            const destinationState = states?.find((s) => s.id === destinationGroup);
 
             if (!destinationState) return;
 
@@ -256,11 +258,10 @@ export const IssuesView: React.FC<Props> = ({
   );
 
   const addIssueToState = useCallback(
-    (groupTitle: string, stateId: string | null) => {
+    (groupTitle: string) => {
       setCreateIssueModal(true);
       if (selectedGroup)
         setPreloadedData({
-          state: stateId ?? undefined,
           [selectedGroup]: groupTitle,
           actionType: "createIssue",
         });

@@ -2,24 +2,23 @@ import { createContext, useCallback, useEffect, useReducer } from "react";
 
 import { useRouter } from "next/router";
 
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 
 // components
 import ToastAlert from "components/toast-alert";
 // services
 import projectService from "services/project.service";
-// types
-import type { IIssue, NestedKeyOf } from "types";
 // fetch-keys
 import { USER_PROJECT_VIEW } from "constants/fetch-keys";
+import { IProjectMember } from "types";
 
 export const issueViewContext = createContext<ContextType>({} as ContextType);
 
 type IssueViewProps = {
-  issueView: "list" | "kanban" | null;
-  groupByProperty: NestedKeyOf<IIssue> | null;
-  filterIssue: "activeIssue" | "backlogIssue" | null;
-  orderBy: NestedKeyOf<IIssue> | null;
+  issueView: "list" | "kanban";
+  groupByProperty: "state" | "priority" | "labels" | null;
+  filterIssue: "active" | "backlog" | null;
+  orderBy: "created_at" | "updated_at" | "priority" | "sort_order";
 };
 
 type ReducerActionType = {
@@ -33,14 +32,10 @@ type ReducerActionType = {
   payload?: Partial<IssueViewProps>;
 };
 
-type ContextType = {
-  orderBy: NestedKeyOf<IIssue> | null;
-  issueView: "list" | "kanban" | null;
-  groupByProperty: NestedKeyOf<IIssue> | null;
-  filterIssue: "activeIssue" | "backlogIssue" | null;
-  setGroupByProperty: (property: NestedKeyOf<IIssue> | null) => void;
-  setOrderBy: (property: NestedKeyOf<IIssue> | null) => void;
-  setFilterIssue: (property: "activeIssue" | "backlogIssue" | null) => void;
+type ContextType = IssueViewProps & {
+  setGroupByProperty: (property: "state" | "priority" | "labels" | null) => void;
+  setOrderBy: (property: "created_at" | "updated_at" | "priority" | "sort_order") => void;
+  setFilterIssue: (property: "active" | "backlog" | null) => void;
   resetFilterToDefault: () => void;
   setNewFilterDefaultView: () => void;
   setIssueViewToKanban: () => void;
@@ -48,10 +43,10 @@ type ContextType = {
 };
 
 type StateType = {
-  issueView: "list" | "kanban" | null;
-  groupByProperty: NestedKeyOf<IIssue> | null;
-  filterIssue: "activeIssue" | "backlogIssue" | null;
-  orderBy: NestedKeyOf<IIssue> | null;
+  issueView: "list" | "kanban";
+  groupByProperty: "state" | "priority" | "labels" | null;
+  orderBy: "created_at" | "updated_at" | "priority" | "sort_order";
+  filterIssue: "active" | "backlog" | null;
 };
 type ReducerFunctionType = (state: StateType, action: ReducerActionType) => StateType;
 
@@ -69,6 +64,7 @@ export const reducer: ReducerFunctionType = (state, action) => {
     case "REHYDRATE_THEME": {
       let collapsed: any = localStorage.getItem("collapsed");
       collapsed = collapsed ? JSON.parse(collapsed) : false;
+
       return { ...initialState, ...payload, collapsed };
     }
 
@@ -77,6 +73,7 @@ export const reducer: ReducerFunctionType = (state, action) => {
         ...state,
         issueView: payload?.issueView || "list",
       };
+
       return {
         ...state,
         ...newState,
@@ -88,6 +85,7 @@ export const reducer: ReducerFunctionType = (state, action) => {
         ...state,
         groupByProperty: payload?.groupByProperty || null,
       };
+
       return {
         ...state,
         ...newState,
@@ -97,8 +95,9 @@ export const reducer: ReducerFunctionType = (state, action) => {
     case "SET_ORDER_BY_PROPERTY": {
       const newState = {
         ...state,
-        orderBy: payload?.orderBy || null,
+        orderBy: payload?.orderBy || "created_at",
       };
+
       return {
         ...state,
         ...newState,
@@ -110,6 +109,7 @@ export const reducer: ReducerFunctionType = (state, action) => {
         ...state,
         filterIssue: payload?.filterIssue || null,
       };
+
       return {
         ...state,
         ...newState,
@@ -135,8 +135,21 @@ const saveDataToServer = async (workspaceSlug: string, projectID: string, state:
   });
 };
 
-const setNewDefault = async (workspaceSlug: string, projectID: string, state: any) => {
-  await projectService.setProjectView(workspaceSlug, projectID, {
+const setNewDefault = async (workspaceSlug: string, projectId: string, state: any) => {
+  mutate<IProjectMember>(
+    workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId as string) : null,
+    (prevData) => {
+      if (!prevData) return prevData;
+
+      return {
+        ...prevData,
+        view_props: state,
+      };
+    },
+    false
+  );
+
+  await projectService.setProjectView(workspaceSlug, projectId, {
     view_props: state,
     default_props: state,
   });
@@ -162,10 +175,11 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
         issueView: "kanban",
       },
     });
+
     dispatch({
       type: "SET_GROUP_BY_PROPERTY",
       payload: {
-        groupByProperty: "state_detail.name",
+        groupByProperty: "state",
       },
     });
 
@@ -174,7 +188,7 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
     saveDataToServer(workspaceSlug as string, projectId as string, {
       ...state,
       issueView: "kanban",
-      groupByProperty: "state_detail.name",
+      groupByProperty: "state",
     });
   }, [workspaceSlug, projectId, state]);
 
@@ -185,6 +199,7 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
         issueView: "list",
       },
     });
+
     dispatch({
       type: "SET_GROUP_BY_PROPERTY",
       payload: {
@@ -194,15 +209,28 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
 
     if (!workspaceSlug || !projectId) return;
 
+    mutateMyViewProps((prevData) => {
+      if (!prevData) return prevData;
+
+      return {
+        ...prevData,
+        view_props: {
+          ...state,
+          issueView: "list",
+          groupByProperty: null,
+        },
+      };
+    }, false);
+
     saveDataToServer(workspaceSlug as string, projectId as string, {
       ...state,
       issueView: "list",
       groupByProperty: null,
     });
-  }, [workspaceSlug, projectId, state]);
+  }, [workspaceSlug, projectId, state, mutateMyViewProps]);
 
   const setGroupByProperty = useCallback(
-    (property: NestedKeyOf<IIssue> | null) => {
+    (property: "state" | "priority" | "labels" | null) => {
       dispatch({
         type: "SET_GROUP_BY_PROPERTY",
         payload: {
@@ -211,16 +239,29 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
       });
 
       if (!workspaceSlug || !projectId) return;
+
+      mutateMyViewProps((prevData) => {
+        if (!prevData) return prevData;
+
+        return {
+          ...prevData,
+          view_props: {
+            ...state,
+            groupByProperty: property,
+          },
+        };
+      }, false);
+
       saveDataToServer(workspaceSlug as string, projectId as string, {
         ...state,
         groupByProperty: property,
       });
     },
-    [projectId, workspaceSlug, state]
+    [projectId, workspaceSlug, state, mutateMyViewProps]
   );
 
   const setOrderBy = useCallback(
-    (property: NestedKeyOf<IIssue> | null) => {
+    (property: "created_at" | "updated_at" | "priority" | "sort_order") => {
       dispatch({
         type: "SET_ORDER_BY_PROPERTY",
         payload: {
@@ -229,16 +270,29 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
       });
 
       if (!workspaceSlug || !projectId) return;
+
+      mutateMyViewProps((prevData) => {
+        if (!prevData) return prevData;
+
+        return {
+          ...prevData,
+          view_props: {
+            ...state,
+            orderBy: property,
+          },
+        };
+      }, false);
+
       saveDataToServer(workspaceSlug as string, projectId as string, {
         ...state,
         orderBy: property,
       });
     },
-    [projectId, workspaceSlug, state]
+    [projectId, workspaceSlug, state, mutateMyViewProps]
   );
 
   const setFilterIssue = useCallback(
-    (property: "activeIssue" | "backlogIssue" | null) => {
+    (property: "active" | "backlog" | null) => {
       dispatch({
         type: "SET_FILTER_ISSUES",
         payload: {
@@ -247,16 +301,30 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
       });
 
       if (!workspaceSlug || !projectId) return;
+
+      mutateMyViewProps((prevData) => {
+        if (!prevData) return prevData;
+
+        return {
+          ...prevData,
+          view_props: {
+            ...state,
+            filterIssue: property,
+          },
+        };
+      }, false);
+
       saveDataToServer(workspaceSlug as string, projectId as string, {
         ...state,
         filterIssue: property,
       });
     },
-    [projectId, workspaceSlug, state]
+    [projectId, workspaceSlug, state, mutateMyViewProps]
   );
 
   const setNewDefaultView = useCallback(() => {
     if (!workspaceSlug || !projectId) return;
+
     setNewDefault(workspaceSlug as string, projectId as string, state).then(() => {
       mutateMyViewProps();
     });
@@ -267,7 +335,9 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
       type: "RESET_TO_DEFAULT",
       payload: myViewProps?.default_props,
     });
+
     if (!workspaceSlug || !projectId) return;
+
     saveDataToServer(workspaceSlug as string, projectId as string, myViewProps?.default_props);
   }, [projectId, workspaceSlug, myViewProps]);
 
@@ -276,6 +346,10 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
       type: "REHYDRATE_THEME",
       payload: myViewProps?.view_props,
     });
+
+    console.log("Mutating...");
+
+    mutate("KUCHH BHI");
   }, [myViewProps]);
 
   return (

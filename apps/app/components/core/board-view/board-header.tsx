@@ -1,25 +1,18 @@
 import React from "react";
 
-// react-beautiful-dnd
-import { DraggableProvided } from "react-beautiful-dnd";
 // icons
-import {
-  ArrowsPointingInIcon,
-  ArrowsPointingOutIcon,
-  EllipsisHorizontalIcon,
-  PlusIcon,
-} from "@heroicons/react/24/outline";
+import { ArrowsPointingInIcon, ArrowsPointingOutIcon, PlusIcon } from "@heroicons/react/24/outline";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
-import { IIssue, IProjectMember, NestedKeyOf } from "types";
+import { IIssue, IProjectMember, IState, NestedKeyOf } from "types";
 type Props = {
   groupedByIssues: {
     [key: string]: IIssue[];
   };
-  selectedGroup: NestedKeyOf<IIssue> | null;
+  selectedGroup: "state" | "priority" | "labels" | null;
+  currentState?: IState | null;
   groupTitle: string;
-  bgColor?: string;
   addIssueToState: () => void;
   members: IProjectMember[] | undefined;
   isCollapsed: boolean;
@@ -30,27 +23,23 @@ export const BoardHeader: React.FC<Props> = ({
   groupedByIssues,
   selectedGroup,
   groupTitle,
-  bgColor,
+  currentState,
   addIssueToState,
   isCollapsed,
   setIsCollapsed,
   members,
 }) => {
-  const createdBy =
-    selectedGroup === "created_by"
-      ? members?.find((m) => m.member.id === groupTitle)?.member.first_name ?? "loading..."
-      : null;
+  let bgColor = "#000000";
+  if (selectedGroup === "state") bgColor = currentState?.color ?? "#000000";
 
-  let assignees: any;
-  if (selectedGroup === "assignees") {
-    assignees = groupTitle && groupTitle !== "" ? groupTitle.split(",") : [];
-    assignees =
-      assignees.length > 0
-        ? assignees
-            .map((a: string) => members?.find((m) => m.member.id === a)?.member.first_name)
-            .join(", ")
-        : "No assignee";
-  }
+  if (selectedGroup === "priority")
+    groupTitle === "high"
+      ? (bgColor = "#dc2626")
+      : groupTitle === "medium"
+      ? (bgColor = "#f97316")
+      : groupTitle === "low"
+      ? (bgColor = "#22c55e")
+      : (bgColor = "#ff0000");
 
   return (
     <div
@@ -74,10 +63,8 @@ export const BoardHeader: React.FC<Props> = ({
               writingMode: !isCollapsed ? "vertical-rl" : "horizontal-tb",
             }}
           >
-            {selectedGroup === "created_by"
-              ? createdBy
-              : selectedGroup === "assignees"
-              ? assignees
+            {selectedGroup === "state"
+              ? addSpaceIfCamelCase(currentState?.name ?? "")
               : addSpaceIfCamelCase(groupTitle)}
           </h2>
           <span className="ml-0.5 text-sm text-gray-500">{groupedByIssues[groupTitle].length}</span>

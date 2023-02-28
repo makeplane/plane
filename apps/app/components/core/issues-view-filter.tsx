@@ -183,7 +183,7 @@ export const IssuesFilterView: React.FC<Props> = ({ issues }) => {
                           {Object.keys(properties).map((key) => {
                             if (
                               issueView === "kanban" &&
-                              ((groupByProperty === "state_detail.name" && key === "state") ||
+                              ((groupByProperty === "state" && key === "state") ||
                                 (groupByProperty === "priority" && key === "priority"))
                             )
                               return;
