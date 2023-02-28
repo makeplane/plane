@@ -10,7 +10,7 @@ import useWorkspaces from "hooks/use-workspaces";
 import AppLayout from "layouts/app-layout";
 // components
 import { JoinProjectModal } from "components/project/join-project-modal";
-import { ProjectCard } from "components/project";
+import { SingleProjectCard } from "components/project";
 import ConfirmProjectDeletion from "components/project/confirm-project-deletion";
 // ui
 import { HeaderButton, EmptySpace, EmptySpaceItem, Loader } from "components/ui";
@@ -101,18 +101,15 @@ const ProjectsPage: NextPage = () => {
               </EmptySpace>
             </div>
           ) : (
-            <div className="h-full w-full space-y-5">
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {projects.map((item) => (
-                  <ProjectCard
-                    key={item.id}
-                    project={item}
-                    workspaceSlug={(activeWorkspace as any)?.slug}
-                    setToJoinProject={setSelectedProjectToJoin}
-                    setDeleteProject={setDeleteProject}
-                  />
-                ))}
-              </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-9">
+              {projects.map((project) => (
+                <SingleProjectCard
+                  key={project.id}
+                  project={project}
+                  setToJoinProject={setSelectedProjectToJoin}
+                  setDeleteProject={setDeleteProject}
+                />
+              ))}
             </div>
           )}
         </>

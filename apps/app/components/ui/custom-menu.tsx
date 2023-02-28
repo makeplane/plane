@@ -11,6 +11,7 @@ type Props = {
   label?: string | JSX.Element;
   className?: string;
   ellipsis?: boolean;
+  verticalEllipsis?: boolean;
   width?: "sm" | "md" | "lg" | "xl" | "auto";
   textAlignment?: "left" | "center" | "right";
   noBorder?: boolean;
@@ -30,6 +31,7 @@ const CustomMenu = ({
   label,
   className = "",
   ellipsis = false,
+  verticalEllipsis = false,
   width = "auto",
   textAlignment,
   noBorder = false,
@@ -37,9 +39,9 @@ const CustomMenu = ({
 }: Props) => (
   <Menu as="div" className={`relative w-min whitespace-nowrap text-left ${className}`}>
     <div>
-      {ellipsis ? (
+      {ellipsis || verticalEllipsis ? (
         <Menu.Button className="relative grid place-items-center rounded p-1 hover:bg-gray-100 focus:outline-none">
-          <EllipsisHorizontalIcon className="h-4 w-4" />
+          <EllipsisHorizontalIcon className={`h-4 w-4 ${verticalEllipsis ? "rotate-90" : ""}`} />
         </Menu.Button>
       ) : (
         <Menu.Button

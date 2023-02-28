@@ -4,6 +4,13 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  .text-1\.5xl {
+    font-size: 1.375rem;
+    line-height: 1.875rem;
+  }
+}
+
 @layer base {
   html {
     font-family: "Inter", sans-serif;
@@ -24,7 +31,7 @@
 }
 
 .scrollbar-enable::-webkit-scrollbar {
-  display: block ;
+  display: block;
 }
 
 /* Scrollbar style */
