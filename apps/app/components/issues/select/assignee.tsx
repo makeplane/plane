@@ -10,6 +10,9 @@ import { Transition, Combobox } from "@headlessui/react";
 import projectServices from "services/project.service";
 // ui
 import { AssigneesList, Avatar } from "components/ui";
+// icons
+import { UserGroupIcon } from "@heroicons/react/24/outline";
+
 // fetch keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 
@@ -61,10 +64,20 @@ export const IssueAssigneeSelect: FC<IssueAssigneeSelectProps> = ({
     >
       {({ open }: any) => (
         <>
-          <Combobox.Button className="flex items-center cursor-pointer gap-1 rounded-md">
-            <div className="flex items-center gap-1 text-xs">
-              {value && Array.isArray(value) ? <AssigneesList userIds={value} length={10} /> : null}
-            </div>
+          <Combobox.Button className="flex items-center cursor-pointer gap-1 rounded-md border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+            <span className="flex items-center gap-1 text-xs">
+              {value && value.length > 0 && Array.isArray(value) ? (
+                <>
+                  <AssigneesList userIds={value} length={3} showTotalLength />
+                  <span>Assignees</span>
+                </>
+              ) : (
+                <>
+                  <UserGroupIcon className="h-3 w-3 text-gray-500" />
+                  <span>Assignee</span>
+                </>
+              )}
+            </span>
           </Combobox.Button>
 
           <Transition

@@ -47,9 +47,15 @@ type AsigneesListProps = {
   users?: Partial<IUser[]> | (Partial<IUserLite> | undefined)[] | Partial<IUserLite>[];
   userIds?: string[];
   length?: number;
+  showTotalLength?: boolean;
 };
 
-export const AssigneesList: React.FC<AsigneesListProps> = ({ users, userIds, length = 5 }) => {
+export const AssigneesList: React.FC<AsigneesListProps> = ({
+  users,
+  userIds,
+  length = 5,
+  showTotalLength = false,
+}) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -82,7 +88,12 @@ export const AssigneesList: React.FC<AsigneesListProps> = ({ users, userIds, len
 
             return <Avatar key={userId} user={user} index={index} />;
           })}
-          {userIds.length > length ? <span>+{userIds.length - length}</span> : null}
+
+          {showTotalLength ? (
+            <span>{userIds.length}</span>
+          ) : userIds.length > length ? (
+            <span>+{userIds.length - length}</span>
+          ) : null}
         </>
       )}
     </>
