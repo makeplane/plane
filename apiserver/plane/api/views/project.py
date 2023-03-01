@@ -724,3 +724,22 @@ class ProjectFavouritesViewSet(BaseViewSet):
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+    def destroy(self, request, slug, project_id):
+        try:
+            project_favourite = ProjectFavourite.objects.get(
+                project=project_id, user=request.user, workspace__slug=slug
+            )
+            project_favourite.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except ProjectFavourite.DoesNotExist:
+            return Response(
+                {"error": "Project is not in favourites"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )

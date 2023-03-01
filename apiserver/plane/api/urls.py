@@ -389,10 +389,9 @@ urlpatterns = [
         name="project",
     ),
     path(
-        "workspaces/<str:slug>/user-favourite-projects/<uuid:pk>/",
+        "workspaces/<str:slug>/user-favourite-projects/<uuid:project_id>/",
         ProjectFavouritesViewSet.as_view(
             {
-                "get": "retrieve",
                 "delete": "destroy",
             }
         ),
