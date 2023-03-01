@@ -371,13 +371,13 @@ export const IssuesView: React.FC<Props> = ({
               <div
                 className={`${
                   trashBox ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-                } fixed z-20 top-12 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-red-100 border-2 border-red-500 p-3 text-xs rounded ${
+                } fixed z-20 top-9 right-9 flex justify-center items-center gap-2 bg-red-100 border-2 border-red-500 p-3 w-96 h-28 text-xs italic text-red-500 font-medium rounded ${
                   snapshot.isDraggingOver ? "bg-red-500 text-white" : ""
                 } duration-200`}
                 ref={provided.innerRef}
                 {...provided.droppableProps}
               >
-                <TrashIcon className="h-3 w-3" />
+                <TrashIcon className="h-4 w-4" />
                 Drop issue here to delete
               </div>
             )}
