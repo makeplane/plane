@@ -278,7 +278,7 @@ class CompletedCyclesEndpoint(BaseAPIView):
             past_cycles = Cycle.objects.filter(
                 workspace__slug=slug,
                 project_id=project_id,
-                end_date__lte=timezone.now(),
+                end_date__lt=timezone.now(),
             )
 
             return Response(
