@@ -47,14 +47,18 @@ class CycleViewSet(BaseViewSet):
 
     def create(self, request, slug, project_id):
         try:
-            if (request.start_date is None and request.end_date is None) or (
-                request.start_date is not None and request.end_date is not None
+            if (
+                request.data.get("start_date", None) is None
+                and request.data.get("end_date", None) is None
+            ) or (
+                request.data.get("start_date", None) is not None
+                and request.data.get("end_date", None) is not None
             ):
                 serializer = CycleSerializer(data=request.data)
                 if serializer.is_valid():
                     serializer.save(
-                        project_id=self.kwargs.get("project_id"),
-                        owned_by=self.request.user,
+                        project_id=project_id,
+                        owned_by=request.user,
                     )
                     return Response(serializer.data, status=status.HTTP_201_CREATED)
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
