@@ -22,9 +22,8 @@ type Props = {
 const defaultValues: Partial<ICycle> = {
   name: "",
   description: "",
-  status: "draft",
-  start_date: "",
-  end_date: "",
+  start_date: null,
+  end_date: null,
 };
 
 export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, status, data }) => {
@@ -77,7 +76,7 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
 
   const checkEmptyDate =
     (watch("start_date") === "" && watch("end_date") === "") ||
-    (watch("start_date") === null && watch("end_date") === null);
+    (!watch("start_date") && !watch("end_date"));
 
   useEffect(() => {
     reset({
