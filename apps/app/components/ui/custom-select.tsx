@@ -44,7 +44,7 @@ const CustomSelect = ({
   >
     <div>
       {customButton ? (
-        customButton
+        <Listbox.Button as="div">{customButton}</Listbox.Button>
       ) : (
         <Listbox.Button
           className={`flex w-full ${

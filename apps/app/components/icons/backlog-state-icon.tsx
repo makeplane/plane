@@ -6,7 +6,7 @@ export const BacklogStateIcon: React.FC<Props> = ({
   width = "20",
   height = "20",
   className,
-  color = "black",
+  color = "#858e96",
 }) => (
   <svg
     width={width}

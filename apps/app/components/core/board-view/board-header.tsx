@@ -50,7 +50,7 @@ export const BoardHeader: React.FC<Props> = ({
 
   return (
     <div
-      className={`flex justify-between p-3 pb-0 ${
+      className={`flex justify-between px-1 ${
         !isCollapsed ? "flex-col rounded-md border bg-gray-50" : ""
       }`}
     >
@@ -60,7 +60,7 @@ export const BoardHeader: React.FC<Props> = ({
             !isCollapsed ? "mb-2 flex-col gap-y-2 py-2" : ""
           }`}
         >
-          {currentState && getStateGroupIcon(currentState.group)}
+          {currentState && getStateGroupIcon(currentState.group, "20", "20", bgColor)}
           <h2
             className={`text-xl font-semibold capitalize`}
             style={{
@@ -82,7 +82,7 @@ export const BoardHeader: React.FC<Props> = ({
       <div className={`flex items-center ${!isCollapsed ? "flex-col pb-2" : ""}`}>
         <button
           type="button"
-          className="grid h-7 w-7 place-items-center rounded p-1 text-gray-700 outline-none duration-300 hover:bg-gray-200"
+          className="grid h-7 w-7 place-items-center rounded p-1 text-gray-700 outline-none duration-300 hover:bg-gray-100"
           onClick={() => {
             setIsCollapsed((prevData) => !prevData);
           }}
@@ -95,7 +95,7 @@ export const BoardHeader: React.FC<Props> = ({
         </button>
         <button
           type="button"
-          className="grid h-7 w-7 place-items-center rounded p-1 text-gray-700 outline-none duration-300 hover:bg-gray-200"
+          className="grid h-7 w-7 place-items-center rounded p-1 text-gray-700 outline-none duration-300 hover:bg-gray-100"
           onClick={addIssueToState}
         >
           <PlusIcon className="h-4 w-4" />

@@ -185,7 +185,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
   return (
     <div
       className={`rounded bg-white shadow mb-3 ${
-        snapshot.isDragging ? "border-theme bg-indigo-50 shadow-lg" : ""
+        snapshot.isDragging ? "border-2 border-theme shadow-lg" : ""
       }`}
       ref={provided.innerRef}
       {...provided.draggableProps}
