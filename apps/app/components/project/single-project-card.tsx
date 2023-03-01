@@ -137,6 +137,7 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
                   }
                   alt={project.name}
                   layout="fill"
+                  objectFit="cover"
                   className="rounded-t-[10px]"
                 />
                 <div className="absolute left-7 bottom-4 flex items-center gap-3 text-white">
