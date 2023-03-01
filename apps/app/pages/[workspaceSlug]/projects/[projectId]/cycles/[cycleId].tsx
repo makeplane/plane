@@ -34,6 +34,8 @@ import {
   PROJECT_ISSUES_LIST,
   PROJECT_DETAILS,
   CYCLE_DETAILS,
+  CYCLE_COMPLETE_LIST,
+  CYCLE_CURRENT_AND_UPCOMING_LIST,
 } from "constants/fetch-keys";
 
 const SingleCycle: React.FC<UserAuth> = (props) => {
@@ -77,6 +79,40 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
           )
       : null
   );
+
+  const { data: currentAndUpcomingCycles } = useSWR(
+    workspaceSlug && projectId ? CYCLE_CURRENT_AND_UPCOMING_LIST(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () =>
+          cycleServices.getCurrentAndUpcomingCycles(workspaceSlug as string, projectId as string)
+      : null
+  );
+
+  const { data: completedCycles } = useSWR(
+    workspaceSlug && projectId ? CYCLE_COMPLETE_LIST(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => cycleServices.getCompletedCycles(workspaceSlug as string, projectId as string)
+      : null
+  );
+
+  const checkForInProgress = currentAndUpcomingCycles?.current_cycle?.filter(
+    (c) => c.id === cycleDetails?.id
+  );
+  const checkForUpcoming = currentAndUpcomingCycles?.upcoming_cycle?.filter(
+    (c) => c.id === cycleDetails?.id
+  );
+  const checkForInCompleted = completedCycles?.completed_cycles?.filter(
+    (c) => c.id === cycleDetails?.id
+  );
+
+  const cycleStatus =
+    checkForInCompleted && checkForInCompleted.length > 0
+      ? "completed"
+      : checkForInProgress && checkForInProgress.length > 0
+      ? "current"
+      : checkForUpcoming && checkForUpcoming.length > 0
+      ? "upcoming"
+      : "draft";
 
   const { data: cycleIssues } = useSWR<CycleIssueResponse[]>(
     workspaceSlug && projectId && cycleId ? CYCLE_ISSUES(cycleId as string) : null,
@@ -218,6 +254,7 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
           </div>
         )}
         <CycleDetailsSidebar
+          cycleStatus={cycleStatus}
           issues={cycleIssuesArray ?? []}
           cycle={cycleDetails}
           isOpen={cycleSidebar}

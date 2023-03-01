@@ -25,7 +25,11 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import { SelectCycleType } from "types";
 import type { NextPage, GetServerSidePropsContext } from "next";
 // fetching keys
-import { CYCLE_CURRENT_AND_UPCOMING_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
+import {
+  CYCLE_CURRENT_AND_UPCOMING_LIST,
+  CYCLE_DRAFT_LIST,
+  PROJECT_DETAILS,
+} from "constants/fetch-keys";
 
 const CompletedCyclesList = dynamic<CompletedCyclesListProps>(
   () => import("components/cycles").then((a) => a.CompletedCyclesList),
@@ -51,6 +55,13 @@ const ProjectCycles: NextPage = () => {
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
     workspaceSlug && projectId
       ? () => projectService.getProject(workspaceSlug as string, projectId as string)
+      : null
+  );
+
+  const { data: draftCycles } = useSWR(
+    workspaceSlug && projectId ? CYCLE_DRAFT_LIST(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => cycleService.getDraftCycles(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -112,21 +123,28 @@ const ProjectCycles: NextPage = () => {
           <Tab.Group>
             <Tab.List
               as="div"
-              className="grid grid-cols-2 items-center gap-2 rounded-lg bg-gray-100 p-2 text-sm"
+              className="flex justify-between items-center gap-2 rounded-lg bg-gray-100 p-2 text-sm"
             >
               <Tab
                 className={({ selected }) =>
-                  `rounded-lg px-6 py-2 ${selected ? "bg-gray-300" : "hover:bg-gray-200"}`
+                  `w-1/3 rounded-lg px-6 py-2 ${selected ? "bg-gray-300" : "hover:bg-gray-200"}`
                 }
               >
                 Upcoming
               </Tab>
               <Tab
                 className={({ selected }) =>
-                  `rounded-lg px-6 py-2 ${selected ? "bg-gray-300" : "hover:bg-gray-200"}`
+                  `w-1/3 rounded-lg px-6 py-2 ${selected ? "bg-gray-300" : "hover:bg-gray-200"}`
                 }
               >
                 Completed
+              </Tab>
+              <Tab
+                className={({ selected }) =>
+                  ` w-1/3 rounded-lg px-6 py-2 ${selected ? "bg-gray-300" : "hover:bg-gray-200"}`
+                }
+              >
+                Draft
               </Tab>
             </Tab.List>
             <Tab.Panels>
@@ -145,6 +163,14 @@ const ProjectCycles: NextPage = () => {
                 />
               </Tab.Panel>
             </Tab.Panels>
+            <Tab.Panel as="div" className="mt-8 space-y-5">
+              <CyclesList
+                cycles={draftCycles?.draft_cycles ?? []}
+                setCreateUpdateCycleModal={setCreateUpdateCycleModal}
+                setSelectedCycle={setSelectedCycle}
+                type="upcoming"
+              />
+            </Tab.Panel>
           </Tab.Group>
         </div>
       </div>
