@@ -10,6 +10,7 @@ export interface IProject {
   icon: string;
   id: string;
   identifier: string;
+  is_favourite: boolean;
   module_view: boolean;
   name: string;
   network: number;

@@ -57,6 +57,7 @@ const ProjectsPage: NextPage = () => {
         onJoin={async () => {
           const project = projects?.find((item) => item.id === selectedProjectToJoin);
           if (!project) return;
+
           await projectService
             .joinProject(workspaceSlug as string, {
               project_ids: [project.id],

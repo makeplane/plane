@@ -2,20 +2,27 @@ import React from "react";
 
 import { useRouter } from "next/router";
 import Link from "next/link";
+import Image from "next/image";
 
+import { mutate } from "swr";
+
+// services
+import projectService from "services/project.service";
 // hooks
 import useProjectMembers from "hooks/use-project-members";
 import useToast from "hooks/use-toast";
 // ui
-import { CustomMenu, Loader } from "components/ui";
+import { CustomMenu, Loader, Tooltip } from "components/ui";
 // icons
 import { CalendarDaysIcon, PencilIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { StarIcon } from "@heroicons/react/20/solid";
 // helpers
 import { renderShortNumericDateFormat } from "helpers/date-time.helper";
-import { copyTextToClipboard } from "helpers/string.helper";
+import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 // types
 import type { IProject } from "types";
+// fetch-keys
+import { PROJECTS_LIST } from "constants/fetch-keys";
 
 export type ProjectCardProps = {
   project: IProject;
@@ -34,10 +41,74 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
   const { setToastAlert } = useToast();
 
   // fetching project members information
-  const { members, isMember, canDelete, canEdit } = useProjectMembers(
+  const { members, hasJoined, isOwner, isMember } = useProjectMembers(
     workspaceSlug as string,
     project.id
   );
+
+  const handleAddToFavourites = () => {
+    if (!workspaceSlug) return;
+
+    projectService
+      .addProjectToFavourites(workspaceSlug as string, {
+        project: project.id,
+      })
+      .then(() => {
+        mutate<IProject[]>(
+          PROJECTS_LIST(workspaceSlug as string),
+          (prevData) =>
+            (prevData ?? []).map((p) => ({
+              ...p,
+              is_favourite: p.id === project.id ? true : p.is_favourite,
+            })),
+          false
+        );
+
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "Successfully added the project to favourites.",
+        });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Couldn't remove the project from favourites. Please try again.",
+        });
+      });
+  };
+
+  const handleRemoveFromFavourites = () => {
+    if (!workspaceSlug || !project) return;
+
+    projectService
+      .removeProjectFromFavourites(workspaceSlug as string, project.id)
+      .then(() => {
+        mutate<IProject[]>(
+          PROJECTS_LIST(workspaceSlug as string),
+          (prevData) =>
+            (prevData ?? []).map((p) => ({
+              ...p,
+              is_favourite: p.id === project.id ? false : p.is_favourite,
+            })),
+          false
+        );
+
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "Successfully removed the project from favourites.",
+        });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Couldn't remove the project from favourites. Please try again.",
+        });
+      });
+  };
 
   const handleCopyText = () => {
     const originURL =
@@ -55,72 +126,103 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
   return (
     <>
       {members ? (
-        <Link href={`/${workspaceSlug as string}/projects/${project.id}/issues`}>
-          <a className="shadow rounded-[10px]">
-            <div
-              className="relative h-32 bg-center bg-cover bg-no-repeat rounded-t-[10px]"
-              style={{
-                backgroundImage: `url(${
-                  project.cover_image ??
-                  "https://images.unsplash.com/photo-1469474968028-56623f02e42e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=874&q=80"
-                })`,
-              }}
-            >
-              <div className="absolute left-7 bottom-4 flex items-center gap-3 text-white">
-                {!isMember ? (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setToJoinProject(project.id);
-                    }}
-                    className="flex cursor-pointer items-center gap-1 rounded border p-2 text-xs font-medium duration-300 hover:bg-gray-100"
-                  >
-                    <PlusIcon className="h-3 w-3" />
-                    <span>Select to Join</span>
-                  </button>
-                ) : (
-                  <span className="bg-[#09A953] px-2 py-1 rounded text-xs">Member</span>
-                )}
-                <span className="bg-[#f7ae59] h-6 w-9 grid place-items-center rounded">
-                  <StarIcon className="h-3 w-3" />
-                </span>
+        <div className="flex flex-col shadow rounded-[10px]">
+          <Link href={`/${workspaceSlug as string}/projects/${project.id}/issues`}>
+            <a>
+              <div className="relative h-32 w-full rounded-t-[10px]">
+                <Image
+                  src={
+                    project.cover_image ??
+                    "https://images.unsplash.com/photo-1672243775941-10d763d9adef?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+                  }
+                  alt={project.name}
+                  layout="fill"
+                  className="rounded-t-[10px]"
+                />
+                <div className="absolute left-7 bottom-4 flex items-center gap-3 text-white">
+                  {!hasJoined ? (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setToJoinProject(project.id);
+                      }}
+                      className="flex cursor-pointer items-center gap-1 bg-green-600 px-2 py-1 rounded text-xs"
+                    >
+                      <PlusIcon className="h-3 w-3" />
+                      <span>Select to Join</span>
+                    </button>
+                  ) : (
+                    <span className="bg-green-600 px-2 py-1 rounded text-xs">Member</span>
+                  )}
+                  {project.is_favourite && (
+                    <span className="bg-orange-400 h-6 w-9 grid place-items-center rounded">
+                      <StarIcon className="h-3 w-3" />
+                    </span>
+                  )}
+                </div>
               </div>
-            </div>
-            <div className="px-7 py-4 rounded-b-[10px]">
-              <div className="flex items-center justify-between">
-                <div className="text-1.5xl font-semibold">{project.name}</div>
-              </div>
-              <p className="mt-3.5 mb-7">{project.description}</p>
-              <div className="flex justify-between">
+            </a>
+          </Link>
+          <div className="flex flex-col px-7 py-4 rounded-b-[10px] h-full">
+            <Link href={`/${workspaceSlug as string}/projects/${project.id}/issues`}>
+              <a>
+                <div className="flex items-center gap-1">
+                  <h3 className="text-1.5xl font-semibold">{project.name}</h3>
+                  {project.icon && (
+                    <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
+                      {String.fromCodePoint(parseInt(project.icon))}
+                    </span>
+                  )}
+                </div>
+                <p className="mt-3.5 mb-7">{truncateText(project.description ?? "", 100)}</p>
+              </a>
+            </Link>
+            <div className="flex justify-between items-end h-full">
+              <Tooltip
+                tooltipContent={`Created at ${renderShortNumericDateFormat(project.created_at)}`}
+                position="bottom"
+                theme="dark"
+              >
                 <div className="flex items-center gap-1.5 text-xs">
                   <CalendarDaysIcon className="h-4 w-4" />
                   {renderShortNumericDateFormat(project.created_at)}
                 </div>
-                {isMember ? (
-                  <div className="flex items-center">
-                    {canEdit && (
-                      <Link href={`/${workspaceSlug}/projects/${project.id}/settings`}>
-                        <a className="grid cursor-pointer place-items-center rounded p-1 duration-300 hover:bg-gray-100">
-                          <PencilIcon className="h-4 w-4" />
-                        </a>
-                      </Link>
+              </Tooltip>
+              {hasJoined ? (
+                <div className="flex items-center">
+                  {(isOwner || isMember) && (
+                    <Link href={`/${workspaceSlug}/projects/${project.id}/settings`}>
+                      <a className="grid cursor-pointer place-items-center rounded p-1 duration-300 hover:bg-gray-100">
+                        <PencilIcon className="h-4 w-4" />
+                      </a>
+                    </Link>
+                  )}
+                  <CustomMenu width="auto" verticalEllipsis>
+                    {isOwner && (
+                      <CustomMenu.MenuItem onClick={() => setDeleteProject(project.id)}>
+                        Delete project
+                      </CustomMenu.MenuItem>
                     )}
-                    {canDelete && (
-                      <CustomMenu width="auto" verticalEllipsis>
-                        <CustomMenu.MenuItem onClick={() => setDeleteProject(project.id)}>
-                          Delete project
-                        </CustomMenu.MenuItem>
-                        <CustomMenu.MenuItem onClick={handleCopyText}>
-                          Copy project link
-                        </CustomMenu.MenuItem>
-                      </CustomMenu>
+                    {project.is_favourite ? (
+                      <CustomMenu.MenuItem onClick={handleRemoveFromFavourites}>
+                        Remove from favourites
+                      </CustomMenu.MenuItem>
+                    ) : (
+                      <CustomMenu.MenuItem onClick={handleAddToFavourites}>
+                        Add to favourites
+                      </CustomMenu.MenuItem>
                     )}
-                  </div>
-                ) : null}
-              </div>
+                    <CustomMenu.MenuItem onClick={handleCopyText}>
+                      Copy project link
+                    </CustomMenu.MenuItem>
+                  </CustomMenu>
+                </div>
+              ) : null}
             </div>
-          </a>
-        </Link>
+          </div>
+        </div>
       ) : (
         <Loader>
           <Loader.Item height="144px" />

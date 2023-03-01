@@ -24,6 +24,7 @@ type Props = {
   children: JSX.Element;
   disabled?: boolean;
   className?: string;
+  theme?: "light" | "dark";
 };
 
 export const Tooltip: React.FC<Props> = ({
@@ -33,21 +34,18 @@ export const Tooltip: React.FC<Props> = ({
   children,
   disabled = false,
   className = "",
+  theme = "light",
 }) => (
   <Tooltip2
     disabled={disabled}
     content={
       <div
-        className={`flex flex-col justify-center items-start gap-1 max-w-[600px] text-xs rounded-md bg-white p-2 shadow-md capitalize text-left ${className}`}
+        className={`${className} flex flex-col justify-center items-start gap-1 max-w-[600px] text-xs rounded-md p-2 shadow-md text-left ${
+          theme === "light" ? "bg-white text-gray-700" : "bg-black text-white"
+        }`}
       >
-        {tooltipHeading ? (
-          <>
-            <h5 className="font-medium">{tooltipHeading}</h5>
-            <p className="text-gray-700">{tooltipContent}</p>
-          </>
-        ) : (
-          <p className="text-gray-700">{tooltipContent}</p>
-        )}
+        {tooltipHeading && <h5 className="font-medium">{tooltipHeading}</h5>}
+        <p>{tooltipContent}</p>
       </div>
     }
     position={position}
