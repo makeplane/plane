@@ -1,5 +1,5 @@
 // hooks
-import useIssueView from "hooks/use-issue-view";
+import useIssueView from "hooks/use-project-issues-view";
 // components
 import { SingleList } from "components/core/list-view/single-list";
 // types

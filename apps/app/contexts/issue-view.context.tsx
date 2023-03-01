@@ -9,7 +9,12 @@ import ToastAlert from "components/toast-alert";
 // services
 import projectService from "services/project.service";
 // fetch-keys
-import { USER_PROJECT_VIEW } from "constants/fetch-keys";
+import {
+  CYCLE_ISSUES,
+  MODULE_ISSUES,
+  PROJECT_ISSUES_LIST,
+  USER_PROJECT_VIEW,
+} from "constants/fetch-keys";
 import { IProjectMember } from "types";
 
 export const issueViewContext = createContext<ContextType>({} as ContextType);
@@ -159,7 +164,7 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
   const { data: myViewProps, mutate: mutateMyViewProps } = useSWR(
     workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId as string) : null,
@@ -347,10 +352,18 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
       payload: myViewProps?.view_props,
     });
 
-    console.log("Mutating...");
-
-    mutate("KUCHH BHI");
-  }, [myViewProps]);
+    // TODO: think of a better way to do this
+    if (cycleId) {
+      mutate(CYCLE_ISSUES(cycleId as string), {}, false);
+      mutate(CYCLE_ISSUES(cycleId as string));
+    } else if (moduleId) {
+      mutate(MODULE_ISSUES(cycleId as string), {}, false);
+      mutate(MODULE_ISSUES(cycleId as string));
+    } else {
+      mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string), {}, false);
+      mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
+    }
+  }, [myViewProps, workspaceSlug, projectId, cycleId, moduleId]);
 
   return (
     <issueViewContext.Provider

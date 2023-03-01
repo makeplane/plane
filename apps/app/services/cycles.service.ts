@@ -1,7 +1,7 @@
 // services
 import APIService from "services/api.service";
 // types
-import type { ICycle } from "types";
+import type { CycleIssueResponse, ICycle, IIssue, IIssueFilterOptions } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -38,9 +38,15 @@ class ProjectCycleServices extends APIService {
       });
   }
 
-  async getCycleIssues(workspaceSlug: string, projectId: string, cycleId: string): Promise<any> {
+  async getCycleIssues(
+    workspaceSlug: string,
+    projectId: string,
+    cycleId: string,
+    queries?: IIssueFilterOptions
+  ): Promise<CycleIssueResponse[] | { [key: string]: CycleIssueResponse[] }> {
     return this.get(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-issues/`
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-issues/`,
+      { params: queries }
     )
       .then((response) => response?.data)
       .catch((error) => {

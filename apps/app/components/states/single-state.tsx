@@ -181,19 +181,28 @@ export const SingleState: React.FC<Props> = ({
           </button>
         )}
 
-        <button
-          type="button"
-          className={`${state.default ? "cursor-not-allowed" : ""} grid place-items-center`}
-          onClick={handleDeleteState}
-          disabled={state.default}
-        >
-          <Tooltip tooltipContent="Cannot delete the default state." disabled={!state.default}>
-            <TrashIcon className="h-4 w-4 text-red-400" />
-          </Tooltip>
-        </button>
-
         <button type="button" className="grid place-items-center" onClick={handleEditState}>
           <PencilSquareIcon className="h-4 w-4 text-gray-400" />
+        </button>
+        <button
+          type="button"
+          className={`${
+            state.default || groupLength === 1 ? "cursor-not-allowed" : ""
+          } grid place-items-center`}
+          onClick={handleDeleteState}
+          disabled={state.default || groupLength === 1}
+        >
+          {state.default ? (
+            <Tooltip tooltipContent="Cannot delete the default state.">
+              <TrashIcon className="h-4 w-4 text-red-400" />
+            </Tooltip>
+          ) : groupLength === 1 ? (
+            <Tooltip tooltipContent="Cannot have an empty group.">
+              <TrashIcon className="h-4 w-4 text-red-400" />
+            </Tooltip>
+          ) : (
+            <TrashIcon className="h-4 w-4 text-red-400" />
+          )}
         </button>
       </div>
     </div>

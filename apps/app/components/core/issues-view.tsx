@@ -12,7 +12,7 @@ import stateService from "services/state.service";
 import projectService from "services/project.service";
 import modulesService from "services/modules.service";
 // hooks
-import useIssueView from "hooks/use-issue-view";
+import useProjectIssuesView from "hooks/use-project-issues-view";
 // components
 import { AllLists, AllBoards } from "components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
@@ -31,6 +31,7 @@ import {
   PROJECT_MEMBERS,
   STATE_LIST,
 } from "constants/fetch-keys";
+import useCycleIssuesView from "hooks/use-cycle-issues-view";
 
 type Props = {
   type?: "issue" | "cycle" | "module";
@@ -67,12 +68,19 @@ export const IssuesView: React.FC<Props> = ({
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
+  // const {
+  //   issueView,
+  //   groupedByIssues,
+  //   groupByProperty: selectedGroup,
+  //   orderBy,
+  // } = useProjectIssuesView();
+
   const {
     issueView,
     groupedByIssues,
     groupByProperty: selectedGroup,
     orderBy,
-  } = useIssueView(issues);
+  } = useCycleIssuesView();
 
   const { data: stateGroups } = useSWR(
     workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
@@ -88,8 +96,6 @@ export const IssuesView: React.FC<Props> = ({
       ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
       : null
   );
-
-  console.log("Grouped by issues: ", groupedByIssues);
 
   const handleDeleteIssue = useCallback(
     (issue: IIssue) => {
@@ -372,56 +378,61 @@ export const IssuesView: React.FC<Props> = ({
               <div
                 className={`${
                   trashBox ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-                } fixed z-20 top-12 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-red-100 border-2 border-red-500 p-3 text-xs rounded ${
+                } fixed z-20 top-9 right-9 flex justify-center items-center gap-2 bg-red-100 border-2 border-red-500 p-3 w-96 h-28 text-xs italic text-red-500 font-medium rounded ${
                   snapshot.isDraggingOver ? "bg-red-500 text-white" : ""
                 } duration-200`}
                 ref={provided.innerRef}
                 {...provided.droppableProps}
               >
-                <TrashIcon className="h-3 w-3" />
+                <TrashIcon className="h-4 w-4" />
                 Drop issue here to delete
               </div>
             )}
           </StrictModeDroppable>
-          {issueView === "list" ? (
-            <AllLists
-              type={type}
-              issues={issues}
-              states={states}
-              members={members}
-              addIssueToState={addIssueToState}
-              handleEditIssue={handleEditIssue}
-              handleDeleteIssue={handleDeleteIssue}
-              openIssuesListModal={type !== "issue" ? openIssuesListModal : null}
-              removeIssue={
-                type === "cycle"
-                  ? removeIssueFromCycle
-                  : type === "module"
-                  ? removeIssueFromModule
-                  : null
-              }
-              userAuth={userAuth}
-            />
+          {false ? (
+            <p className="text-center">Loading...</p>
           ) : (
-            <AllBoards
-              type={type}
-              issues={issues}
-              states={states}
-              members={members}
-              addIssueToState={addIssueToState}
-              handleEditIssue={handleEditIssue}
-              openIssuesListModal={type !== "issue" ? openIssuesListModal : null}
-              handleDeleteIssue={handleDeleteIssue}
-              handleTrashBox={handleTrashBox}
-              removeIssue={
-                type === "cycle"
-                  ? removeIssueFromCycle
-                  : type === "module"
-                  ? removeIssueFromModule
-                  : null
-              }
-              userAuth={userAuth}
-            />
+            <>
+              {issueView === "list" ? (
+                <AllLists
+                  type={type}
+                  issues={issues}
+                  states={states}
+                  members={members}
+                  addIssueToState={addIssueToState}
+                  handleEditIssue={handleEditIssue}
+                  handleDeleteIssue={handleDeleteIssue}
+                  openIssuesListModal={type !== "issue" ? openIssuesListModal : null}
+                  removeIssue={
+                    type === "cycle"
+                      ? removeIssueFromCycle
+                      : type === "module"
+                      ? removeIssueFromModule
+                      : null
+                  }
+                  userAuth={userAuth}
+                />
+              ) : (
+                <AllBoards
+                  type={type}
+                  issues={issues}
+                  states={states}
+                  addIssueToState={addIssueToState}
+                  handleEditIssue={handleEditIssue}
+                  openIssuesListModal={type !== "issue" ? openIssuesListModal : null}
+                  handleDeleteIssue={handleDeleteIssue}
+                  handleTrashBox={handleTrashBox}
+                  removeIssue={
+                    type === "cycle"
+                      ? removeIssueFromCycle
+                      : type === "module"
+                      ? removeIssueFromModule
+                      : null
+                  }
+                  userAuth={userAuth}
+                />
+              )}
+            </>
           )}
         </DragDropContext>
       </div>

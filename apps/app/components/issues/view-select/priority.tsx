@@ -23,34 +23,38 @@ export const ViewPrioritySelect: React.FC<Props> = ({
   isNotAllowed,
 }) => (
   <CustomSelect
-    label={
-      <Tooltip tooltipHeading="Priority" tooltipContent={issue.priority ?? "None"}>
-        <span>
-          {getPriorityIcon(
-            issue.priority && issue.priority !== "" ? issue.priority ?? "" : "None",
-            "text-sm"
-          )}
-        </span>
-      </Tooltip>
-    }
     value={issue.state}
     onChange={(data: string) => {
       partialUpdateIssue({ priority: data });
     }}
     maxHeight="md"
-    buttonClassName={`flex ${
-      isNotAllowed ? "cursor-not-allowed" : "cursor-pointer"
-    } items-center gap-x-2 rounded px-2 py-0.5 capitalize shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
-      issue.priority === "urgent"
-        ? "bg-red-100 text-red-600 hover:bg-red-100"
-        : issue.priority === "high"
-        ? "bg-orange-100 text-orange-500 hover:bg-orange-100"
-        : issue.priority === "medium"
-        ? "bg-yellow-100 text-yellow-500 hover:bg-yellow-100"
-        : issue.priority === "low"
-        ? "bg-green-100 text-green-500 hover:bg-green-100"
-        : "bg-gray-100"
-    } border-none`}
+    customButton={
+      <button
+        type="button"
+        className={`grid place-items-center rounded w-6 h-6 ${
+          isNotAllowed ? "cursor-not-allowed" : "cursor-pointer"
+        } items-center shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
+          issue.priority === "urgent"
+            ? "bg-red-100 text-red-600 hover:bg-red-100"
+            : issue.priority === "high"
+            ? "bg-orange-100 text-orange-500 hover:bg-orange-100"
+            : issue.priority === "medium"
+            ? "bg-yellow-100 text-yellow-500 hover:bg-yellow-100"
+            : issue.priority === "low"
+            ? "bg-green-100 text-green-500 hover:bg-green-100"
+            : "bg-gray-100"
+        } border-none`}
+      >
+        <Tooltip tooltipHeading="Priority" tooltipContent={issue.priority ?? "None"}>
+          <span>
+            {getPriorityIcon(
+              issue.priority && issue.priority !== "" ? issue.priority ?? "" : "None",
+              "text-sm"
+            )}
+          </span>
+        </Tooltip>
+      </button>
+    }
     noChevron
     disabled={isNotAllowed}
     selfPositioned={selfPositioned}

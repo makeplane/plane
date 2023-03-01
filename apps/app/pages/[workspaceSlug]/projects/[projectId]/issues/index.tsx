@@ -55,7 +55,7 @@ const ProjectIssues: NextPage<UserAuth> = (props) => {
         }
         right={
           <div className="flex items-center gap-2">
-            <IssuesFilterView issues={projectIssues?.filter((p) => p.parent === null) ?? []} />
+            <IssuesFilterView />
             <HeaderButton
               Icon={PlusIcon}
               label="Add Issue"

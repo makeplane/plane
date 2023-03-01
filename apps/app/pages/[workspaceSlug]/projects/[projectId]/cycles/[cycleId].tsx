@@ -158,7 +158,7 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
           <div
             className={`flex items-center gap-2 ${cycleSidebar ? "mr-[24rem]" : ""} duration-300`}
           >
-            <IssuesFilterView issues={cycleIssuesArray ?? []} />
+            <IssuesFilterView />
             <button
               type="button"
               className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-100 ${
