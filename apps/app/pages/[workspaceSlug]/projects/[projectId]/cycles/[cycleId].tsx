@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 import { GetServerSidePropsContext } from "next";
 // icons
-import { ArrowLeftIcon, ListBulletIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { CyclesIcon } from "components/icons";
 // lib
 import { requiredAdmin, requiredAuth } from "lib/auth";
@@ -21,12 +21,12 @@ import issuesServices from "services/issues.service";
 import cycleServices from "services/cycles.service";
 import projectService from "services/project.service";
 // ui
-import { CustomMenu, EmptySpace, EmptySpaceItem, Spinner } from "components/ui";
+import { CustomMenu } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // helpers
 import { truncateText } from "helpers/string.helper";
 // types
-import { CycleIssueResponse, UserAuth } from "types";
+import { UserAuth } from "types";
 // fetch-keys
 import {
   CYCLE_ISSUES,
@@ -78,7 +78,7 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
       : null
   );
 
-  const { data: cycleIssues } = useSWR<CycleIssueResponse[]>(
+  const { data: cycleIssues } = useSWR(
     workspaceSlug && projectId && cycleId ? CYCLE_ISSUES(cycleId as string) : null,
     workspaceSlug && projectId && cycleId
       ? () =>
@@ -90,12 +90,14 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
       : null
   );
 
-  const cycleIssuesArray = cycleIssues?.map((issue) => ({
-    ...issue.issue_detail,
-    sub_issues_count: issue.sub_issues_count,
-    bridge: issue.id,
-    cycle: cycleId as string,
-  }));
+  const cycleIssuesArray = Array.isArray(cycleIssues)
+    ? cycleIssues?.map((issue) => ({
+        ...issue.issue_detail,
+        sub_issues_count: issue.sub_issues_count,
+        bridge: issue.id,
+        cycle: cycleId as string,
+      }))
+    : [];
 
   const openIssuesListModal = () => {
     setCycleIssuesListModal(true);
@@ -171,58 +173,15 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
           </div>
         }
       >
-        {cycleIssuesArray ? (
-          cycleIssuesArray.length > 0 ? (
-            <div className={`h-full ${cycleSidebar ? "mr-[24rem]" : ""} duration-300`}>
-              <IssuesView
-                type="cycle"
-                issues={cycleIssuesArray ?? []}
-                userAuth={props}
-                openIssuesListModal={openIssuesListModal}
-              />
-            </div>
-          ) : (
-            <div
-              className={`flex h-full flex-col items-center justify-center px-4 ${
-                cycleSidebar ? "mr-[24rem]" : ""
-              } duration-300`}
-            >
-              <EmptySpace
-                title="You don't have any issue yet."
-                description="A cycle is a fixed time period where a team commits to a set number of issues from their backlog. Cycles are usually one, two, or four weeks long."
-                Icon={CyclesIcon}
-              >
-                <EmptySpaceItem
-                  title="Create a new issue"
-                  description="Click to create a new issue inside the cycle."
-                  Icon={PlusIcon}
-                  action={() => {
-                    const e = new KeyboardEvent("keydown", {
-                      key: "c",
-                    });
-                    document.dispatchEvent(e);
-                  }}
-                />
-                <EmptySpaceItem
-                  title="Add an existing issue"
-                  description="Open list"
-                  Icon={ListBulletIcon}
-                  action={openIssuesListModal}
-                />
-              </EmptySpace>
-            </div>
-          )
-        ) : (
-          <div className="flex h-full w-full items-center justify-center">
-            <Spinner />
-          </div>
-        )}
-        <CycleDetailsSidebar
+        <div className={`h-full ${cycleSidebar ? "mr-[24rem]" : ""} duration-300`}>
+          <IssuesView type="cycle" userAuth={props} openIssuesListModal={openIssuesListModal} />
+        </div>
+        {/* <CycleDetailsSidebar
           issues={cycleIssuesArray ?? []}
           cycle={cycleDetails}
           isOpen={cycleSidebar}
           cycleIssues={cycleIssues ?? []}
-        />
+        /> */}
       </AppLayout>
     </IssueViewContextProvider>
   );

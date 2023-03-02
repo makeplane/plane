@@ -1,13 +1,13 @@
 // hooks
-import useProjectIssuesView from "hooks/use-project-issues-view";
+import useProjectIssuesView from "hooks/use-issues-view";
 // components
 import { SingleBoard } from "components/core/board-view/single-board";
 // types
-import { IIssue, IProjectMember, IState, UserAuth } from "types";
+import { IIssue, IState, UserAuth } from "types";
 
 type Props = {
   type: "issue" | "cycle" | "module";
-  issues: IIssue[];
+  groupedByIssues: { [key: string]: IIssue[] } | undefined;
   states: IState[] | undefined;
   addIssueToState: (groupTitle: string) => void;
   handleEditIssue: (issue: IIssue) => void;
@@ -20,7 +20,7 @@ type Props = {
 
 export const AllBoards: React.FC<Props> = ({
   type,
-  issues,
+  groupedByIssues,
   states,
   addIssueToState,
   handleEditIssue,
@@ -30,39 +30,43 @@ export const AllBoards: React.FC<Props> = ({
   removeIssue,
   userAuth,
 }) => {
-  const { groupedByIssues, groupByProperty: selectedGroup, orderBy } = useProjectIssuesView();
+  const { groupByProperty: selectedGroup, orderBy } = useProjectIssuesView();
 
   return (
-    <div className="h-[calc(100vh-157px)] lg:h-[calc(100vh-115px)] w-full">
-      <div className="h-full w-full overflow-hidden">
-        <div className="h-full w-full">
-          <div className="flex h-full gap-x-9 overflow-x-auto overflow-y-hidden">
-            {Object.keys(groupedByIssues).map((singleGroup, index) => {
-              const currentState =
-                selectedGroup === "state" ? states?.find((s) => s.id === singleGroup) : null;
+    <>
+      {groupedByIssues && (
+        <div className="h-[calc(100vh-157px)] w-full lg:h-[calc(100vh-115px)]">
+          <div className="h-full w-full overflow-hidden">
+            <div className="h-full w-full">
+              <div className="flex h-full gap-x-9 overflow-x-auto overflow-y-hidden">
+                {Object.keys(groupedByIssues).map((singleGroup, index) => {
+                  const currentState =
+                    selectedGroup === "state" ? states?.find((s) => s.id === singleGroup) : null;
 
-              return (
-                <SingleBoard
-                  key={index}
-                  type={type}
-                  currentState={currentState}
-                  groupTitle={singleGroup}
-                  groupedByIssues={groupedByIssues}
-                  selectedGroup={selectedGroup}
-                  handleEditIssue={handleEditIssue}
-                  addIssueToState={() => addIssueToState(singleGroup)}
-                  handleDeleteIssue={handleDeleteIssue}
-                  openIssuesListModal={openIssuesListModal ?? null}
-                  orderBy={orderBy}
-                  handleTrashBox={handleTrashBox}
-                  removeIssue={removeIssue}
-                  userAuth={userAuth}
-                />
-              );
-            })}
+                  return (
+                    <SingleBoard
+                      key={index}
+                      type={type}
+                      currentState={currentState}
+                      groupTitle={singleGroup}
+                      groupedByIssues={groupedByIssues}
+                      selectedGroup={selectedGroup}
+                      handleEditIssue={handleEditIssue}
+                      addIssueToState={() => addIssueToState(singleGroup)}
+                      handleDeleteIssue={handleDeleteIssue}
+                      openIssuesListModal={openIssuesListModal ?? null}
+                      orderBy={orderBy}
+                      handleTrashBox={handleTrashBox}
+                      removeIssue={removeIssue}
+                      userAuth={userAuth}
+                    />
+                  );
+                })}
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 };

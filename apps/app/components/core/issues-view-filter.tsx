@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 
 // hooks
 import useIssuesProperties from "hooks/use-issue-properties";
-import useProjectIssuesView from "hooks/use-project-issues-view";
+import useIssuesView from "hooks/use-issues-view";
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
 // ui
@@ -15,7 +15,7 @@ import { Squares2X2Icon } from "@heroicons/react/20/solid";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // types
-import { IIssue, Properties } from "types";
+import { Properties } from "types";
 // common
 import { GROUP_BY_OPTIONS, ORDER_BY_OPTIONS, FILTER_ISSUE_OPTIONS } from "constants/issue";
 
@@ -35,7 +35,7 @@ export const IssuesFilterView: React.FC = () => {
     filterIssue,
     resetFilterToDefault,
     setNewFilterDefaultView,
-  } = useProjectIssuesView();
+  } = useIssuesView();
 
   const [properties, setProperties] = useIssuesProperties(
     workspaceSlug as string,
