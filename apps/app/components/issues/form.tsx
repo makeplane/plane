@@ -14,6 +14,7 @@ import {
   IssuePrioritySelect,
   IssueProjectSelect,
   IssueStateSelect,
+  IssueDateSelect,
 } from "components/issues/select";
 import { CreateStateModal } from "components/states";
 import { CreateUpdateCycleModal } from "components/cycles";
@@ -294,11 +295,7 @@ export const IssueForm: FC<IssueFormProps> = ({
                     control={control}
                     name="target_date"
                     render={({ field: { value, onChange } }) => (
-                      <CustomDatePicker
-                        value={value}
-                        onChange={onChange}
-                        className="max-w-[7rem]"
-                      />
+                      <IssueDateSelect value={value} onChange={onChange} />
                     )}
                   />
                 </div>
