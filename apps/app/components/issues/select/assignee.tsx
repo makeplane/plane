@@ -74,19 +74,17 @@ export const IssueAssigneeSelect: FC<IssueAssigneeSelectProps> = ({
               }`
             }
           >
-            <span className="flex justify-center items-center text-xs">
-              {value && value.length > 0 && Array.isArray(value) ? (
-                <span className="flex items-center justify-center gap-2 px-3 py-1">
-                  <AssigneesList userIds={value} length={3} showLength={false} />
-                  <span className=" text-[#495057]">{value.length} Assignees</span>
-                </span>
-              ) : (
-                <span className="flex items-center justify-center  gap-2  px-3 py-1.5">
-                  <UserGroupIcon className="h-4 w-4 text-gray-500 " />
-                  <span className=" text-[#858E96]">Assignee</span>
-                </span>
-              )}
-            </span>
+            {value && value.length > 0 && Array.isArray(value) ? (
+              <span className="flex items-center justify-center text-xs gap-2 px-3 py-1">
+                <AssigneesList userIds={value} length={3} showLength={false} />
+                <span className=" text-[#495057]">{value.length} Assignees</span>
+              </span>
+            ) : (
+              <span className="flex items-center justify-center text-xs gap-2  px-3 py-1.5">
+                <UserGroupIcon className="h-4 w-4 text-gray-500 " />
+                <span className=" text-[#858E96]">Assignee</span>
+              </span>
+            )}
           </Combobox.Button>
 
           <Transition
@@ -97,9 +95,8 @@ export const IssueAssigneeSelect: FC<IssueAssigneeSelectProps> = ({
             leaveTo="opacity-0"
           >
             <Combobox.Options
-              className={`absolute z-10 max-h-52 min-w-[8rem] mt-1 px-2 py-2  
-              text-xs rounded-md shadow-md overflow-auto border-none bg-white 
-              ring-1 ring-black ring-opacity-5 focus:outline-none`}
+              className={`absolute z-10 max-h-52 min-w-[8rem] mt-1 px-2 py-2 text-xs
+              rounded-md shadow-md overflow-auto border-none bg-white focus:outline-none`}
             >
               <div className="flex justify-start items-center rounded-sm border-[0.6px] bg-[#FAFAFA] border-[#E2E2E2] w-full px-2">
                 <MagnifyingGlassIcon className="h-3 w-3 text-gray-500" />

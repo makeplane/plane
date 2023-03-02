@@ -71,28 +71,26 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
             }`
             }
           >
-            <span className="flex justify-center items-center text-xs">
-              {value && value !== "" ? (
-                <span className="flex items-center justify-center gap-2 px-3 py-1.5">
-                  <span
-                    className="h-3 w-3 flex-shrink-0 rounded-full"
-                    style={{
-                      backgroundColor: options?.find((option) => option.value === value)?.color,
-                    }}
-                  />
-                  <span className=" text-[#495057]">
-                    {options?.find((option) => option.value === value)?.display}
-                  </span>
+            {value && value !== "" ? (
+              <span className="flex items-center justify-center text-xs gap-2 px-3 py-1.5">
+                <span
+                  className="h-3 w-3 flex-shrink-0 rounded-full"
+                  style={{
+                    backgroundColor: options?.find((option) => option.value === value)?.color,
+                  }}
+                />
+                <span className=" text-[#495057]">
+                  {options?.find((option) => option.value === value)?.display}
                 </span>
-              ) : (
-                <span className="flex items-center justify-center  gap-1  px-3 py-1.5">
-                  <Squares2X2Icon className="h-4 w-4 text-gray-500 " />
-                  <span className=" text-[#858E96]">
-                    {options?.find((option) => option.value === value)?.display || "State"}
-                  </span>
+              </span>
+            ) : (
+              <span className="flex items-center justify-center  text-xs  gap-2  px-3 py-1.5">
+                <Squares2X2Icon className="h-4 w-4 text-gray-500 " />
+                <span className=" text-[#858E96]">
+                  {options?.find((option) => option.value === value)?.display || "State"}
                 </span>
-              )}
-            </span>
+              </span>
+            )}
           </Combobox.Button>
 
           <Transition
@@ -103,16 +101,15 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
             leaveTo="opacity-0"
           >
             <Combobox.Options
-              className={`absolute z-10 max-h-52 min-w-[8rem] mt-1 px-2 py-2  
-              text-xs rounded-md shadow-md overflow-auto border-none bg-white 
-              ring-1 ring-black ring-opacity-5 focus:outline-none`}
+              className={`absolute z-10 max-h-52 min-w-[8rem] mt-1 px-2 py-2 text-xs 
+              rounded-md shadow-md overflow-auto border-none bg-white focus:outline-none`}
             >
               <div className="flex justify-start items-center rounded-sm border-[0.6px] bg-[#FAFAFA] border-[#E2E2E2] w-full px-2">
                 <MagnifyingGlassIcon className="h-3 w-3 text-gray-500" />
                 <Combobox.Input
                   className="w-full  bg-transparent py-1 px-2  text-xs text-[#888888] focus:outline-none"
                   onChange={(event) => setQuery(event.target.value)}
-                  placeholder="Search"
+                  placeholder="Search States"
                   displayValue={(assigned: any) => assigned?.name}
                 />
               </div>
