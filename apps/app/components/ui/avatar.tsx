@@ -18,7 +18,7 @@ type AvatarProps = {
 };
 
 export const Avatar: React.FC<AvatarProps> = ({ user, index }) => (
-  <div className={`relative h-5 w-5 rounded-full ${index && index !== 0 ? "-ml-2.5" : ""}`}>
+  <div className={`relative h-5 w-5 rounded-full ${index && index !== 0 ? "-ml-3.5" : ""}`}>
     {user && user.avatar && user.avatar !== "" ? (
       <div
         className={`h-5 w-5 rounded-full border-2 ${
