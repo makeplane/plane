@@ -6,6 +6,7 @@ import { Listbox, Transition } from "@headlessui/react";
 import { getPriorityIcon } from "components/icons/priority-icon";
 // constants
 import { PRIORITIES } from "constants/project";
+import { CheckIcon } from "@heroicons/react/24/outline";
 
 type Props = {
   value: string | null;
@@ -16,9 +17,24 @@ export const IssuePrioritySelect: React.FC<Props> = ({ value, onChange }) => (
   <Listbox as="div" className="relative" value={value} onChange={onChange}>
     {({ open }) => (
       <>
-        <Listbox.Button className="flex cursor-pointer items-center gap-1 rounded-md border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
-          <span className="text-gray-500 grid place-items-center">{getPriorityIcon(value)}</span>
-          <div className="flex items-center gap-2 capitalize">{value ?? "Priority"}</div>
+        <Listbox.Button
+          className={({ open }) =>
+            `flex items-center text-xs cursor-pointer border rounded-md shadow-sm duration-300 
+            ${
+              open
+                ? "outline-none border-[#3F76FF] bg-[rgba(63,118,255,0.05)] ring-1 ring-[#3F76FF] "
+                : "hover:bg-[rgba(63,118,255,0.05)] focus:bg-[rgba(63,118,255,0.05)]"
+            }`
+          }
+        >
+          <span className="flex items-center justify-center text-xs gap-2 px-3 py-1.5">
+            <span className="flex items-center">
+              {getPriorityIcon(value, `${value ? "text-xs" : "text-xs text-[#858E96]"}`)}
+            </span>
+            <span className={`${value ? "text-[#495057]" : "text-[#858E96]"} capitalize`}>
+              {value ?? "Priority"}
+            </span>
+          </span>
         </Listbox.Button>
 
         <Transition
@@ -28,22 +44,34 @@ export const IssuePrioritySelect: React.FC<Props> = ({ value, onChange }) => (
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <Listbox.Options className="absolute mt-1 max-h-32 min-w-[8rem] overflow-y-auto whitespace-nowrap bg-white shadow-lg text-xs z-10 rounded-md py-1 ring-1 ring-black ring-opacity-5 focus:outline-none">
-            <div className="py-1">
+          <Listbox.Options
+            className={`absolute z-10 max-h-52 min-w-[8rem] px-2 py-2  text-xs 
+              rounded-md shadow-md overflow-auto border-none bg-white focus:outline-none`}
+          >
+            <div>
               {PRIORITIES.map((priority) => (
                 <Listbox.Option
                   key={priority}
-                  className={({ selected, active }) =>
-                    `${selected ? "bg-indigo-50 font-medium" : ""} ${
-                      active ? "bg-indigo-50" : ""
-                    } relative cursor-pointer select-none p-2 text-gray-900`
+                  className={({ active }) =>
+                    `${
+                      active ? "bg-[#E9ECEF]" : ""
+                    } group flex min-w-[14rem] cursor-pointer select-none items-center gap-2 truncate rounded px-1 py-1.5 text-[#495057]`
                   }
                   value={priority}
                 >
-                  <span className="flex items-center gap-2 capitalize">
-                    {getPriorityIcon(priority)}
-                    {priority ?? "None"}
-                  </span>
+                  {({ selected, active }) => (
+                    <div className="flex w-full gap-2 justify-between rounded">
+                      <div className="flex justify-start items-center gap-2">
+                        <span>{getPriorityIcon(priority)}</span>
+                        <span className="capitalize">{priority ?? "None"}</span>
+                      </div>
+                      <div className="flex justify-center items-center p-1 rounded">
+                        <CheckIcon
+                          className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`}
+                        />
+                      </div>
+                    </div>
+                  )}
                 </Listbox.Option>
               ))}
             </div>
