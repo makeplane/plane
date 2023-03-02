@@ -69,9 +69,7 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
             className={({ open }) =>
               `flex items-center text-xs cursor-pointer border rounded-md shadow-sm duration-200 
             ${
-              open
-                ? "outline-none border-[#3F76FF] bg-[rgba(63,118,255,0.05)] ring-1 ring-[#3F76FF] "
-                : "hover:bg-[rgba(63,118,255,0.05)]"
+              open ? "outline-none border-theme bg-theme/5 ring-1 ring-theme " : "hover:bg-theme/5"
             }`
             }
           >
@@ -80,12 +78,12 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
                 {currentOption && currentOption.group
                   ? getStateGroupIcon(currentOption.group, "16", "16", currentOption.color)
                   : ""}
-                <span className=" text-[#495057]">{currentOption?.display}</span>
+                <span className=" text-gray-600">{currentOption?.display}</span>
               </span>
             ) : (
               <span className="flex items-center justify-center  text-xs  gap-2  px-3 py-1.5">
                 <Squares2X2Icon className="h-4 w-4 text-gray-500 " />
-                <span className=" text-[#858E96]">{currentOption?.display || "State"}</span>
+                <span className=" text-gray-500">{currentOption?.display || "State"}</span>
               </span>
             )}
           </Combobox.Button>
@@ -104,10 +102,10 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
               className={`absolute z-10 max-h-52 min-w-[8rem] mt-1 px-2 py-2 text-xs 
               rounded-md shadow-md overflow-auto border-none bg-white focus:outline-none`}
             >
-              <div className="flex justify-start items-center rounded-sm border-[0.6px] bg-[#FAFAFA] border-[#E2E2E2] w-full px-2">
+              <div className="flex justify-start items-center rounded-sm border-[0.6px] bg-gray-100 border-gray-200 w-full px-2">
                 <MagnifyingGlassIcon className="h-3 w-3 text-gray-500" />
                 <Combobox.Input
-                  className="w-full  bg-transparent py-1 px-2  text-xs text-[#888888] focus:outline-none"
+                  className="w-full  bg-transparent py-1 px-2  text-xs text-gray-500 focus:outline-none"
                   onChange={(event) => setQuery(event.target.value)}
                   placeholder="Search States"
                   displayValue={(assigned: any) => assigned?.name}
@@ -121,8 +119,8 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
                         key={option.value}
                         className={({ active }) =>
                           `${
-                            active ? "bg-[#E9ECEF]" : ""
-                          } group flex min-w-[14rem] cursor-pointer select-none items-center gap-2 truncate rounded px-1 py-1.5 text-[#495057]`
+                            active ? "bg-gray-200" : ""
+                          } group flex min-w-[14rem] cursor-pointer select-none items-center gap-2 truncate rounded px-1 py-1.5 text-gray-600`
                         }
                         value={option.value}
                       >
@@ -151,12 +149,12 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
                 )}
                 <button
                   type="button"
-                  className="flex select-none w-full items-center py-2 px-1 rounded hover:bg-[#E9ECEF]"
+                  className="flex select-none w-full items-center py-2 px-1 rounded hover:bg-gray-200"
                   onClick={() => setIsOpen(true)}
                 >
                   <span className="flex justify-start items-center gap-1">
-                    <PlusIcon className="h-4 w-4 text-[#495057]" aria-hidden="true" />
-                    <span className="text-[#495057]">Create New State</span>
+                    <PlusIcon className="h-4 w-4 text-gray-600" aria-hidden="true" />
+                    <span className="text-gray-600">Create New State</span>
                   </span>
                 </button>
               </div>

@@ -21,17 +21,15 @@ export const IssuePrioritySelect: React.FC<Props> = ({ value, onChange }) => (
           className={({ open }) =>
             `flex items-center text-xs cursor-pointer border rounded-md shadow-sm duration-200 
             ${
-              open
-                ? "outline-none border-[#3F76FF] bg-[rgba(63,118,255,0.05)] ring-1 ring-[#3F76FF] "
-                : "hover:bg-[rgba(63,118,255,0.05)]"
+              open ? "outline-none border-theme bg-theme/5 ring-1 ring-theme " : "hover:bg-theme/5"
             }`
           }
         >
           <span className="flex items-center justify-center text-xs gap-2 px-3 py-1.5">
             <span className="flex items-center">
-              {getPriorityIcon(value, `${value ? "text-xs" : "text-xs text-[#858E96]"}`)}
+              {getPriorityIcon(value, `${value ? "text-xs" : "text-xs text-gray-500"}`)}
             </span>
-            <span className={`${value ? "text-[#495057]" : "text-[#858E96]"} capitalize`}>
+            <span className={`${value ? "text-gray-600" : "text-gray-500"} capitalize`}>
               {value ?? "Priority"}
             </span>
           </span>
@@ -57,8 +55,8 @@ export const IssuePrioritySelect: React.FC<Props> = ({ value, onChange }) => (
                   key={priority}
                   className={({ active }) =>
                     `${
-                      active ? "bg-[#E9ECEF]" : ""
-                    } group flex min-w-[14rem] cursor-pointer select-none items-center gap-2 truncate rounded px-1 py-1.5 text-[#495057]`
+                      active ? "bg-gray-200" : ""
+                    } group flex min-w-[14rem] cursor-pointer select-none items-center gap-2 truncate rounded px-1 py-1.5 text-gray-600`
                   }
                   value={priority}
                 >

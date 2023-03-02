@@ -21,23 +21,23 @@ export const IssueDateSelect: React.FC<Props> = ({ value, onChange }) => (
             `flex items-center text-xs cursor-pointer border rounded-md shadow-sm duration-200 
               ${
                 open
-                  ? "outline-none border-[#3F76FF] bg-[rgba(63,118,255,0.05)] ring-1 ring-[#3F76FF] "
-                  : "hover:bg-[rgba(63,118,255,0.05)] "
+                  ? "outline-none border-theme bg-theme/5 ring-1 ring-theme "
+                  : "hover:bg-theme/5 "
               }`
           }
         >
           <span className="flex items-center justify-center text-xs gap-2 px-3 py-1.5">
             {value ? (
               <>
-                <span className="text-[#495057]">{value}</span>
+                <span className="text-gray-600">{value}</span>
                 <button onClick={() => onChange(null)}>
-                  <XMarkIcon className="h-3 w-3 text-[#495057]" />
+                  <XMarkIcon className="h-3 w-3 text-gray-600" />
                 </button>
               </>
             ) : (
               <>
                 <CalendarDaysIcon className="h-4 w-4 flex-shrink-0 " />
-                <span className="text-[#858E96]">Due Date</span>
+                <span className="text-gray-500">Due Date</span>
               </>
             )}
           </span>

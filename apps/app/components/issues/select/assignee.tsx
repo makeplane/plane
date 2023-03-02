@@ -69,20 +69,20 @@ export const IssueAssigneeSelect: FC<IssueAssigneeSelectProps> = ({
               `flex items-center text-xs cursor-pointer border rounded-md shadow-sm duration-200 
               ${
                 open
-                  ? "outline-none border-[#3F76FF] bg-[rgba(63,118,255,0.05)] ring-1 ring-[#3F76FF] "
-                  : "hover:bg-[rgba(63,118,255,0.05)] "
+                  ? "outline-none border-theme bg-theme/5 ring-1 ring-theme "
+                  : "hover:bg-theme/5 "
               }`
             }
           >
             {value && value.length > 0 && Array.isArray(value) ? (
               <span className="flex items-center justify-center text-xs gap-2 px-3 py-1">
                 <AssigneesList userIds={value} length={3} showLength={false} />
-                <span className=" text-[#495057]">{value.length} Assignees</span>
+                <span className=" text-gray-500">{value.length} Assignees</span>
               </span>
             ) : (
               <span className="flex items-center justify-center text-xs gap-2  px-3 py-1.5">
                 <UserGroupIcon className="h-4 w-4 text-gray-500 " />
-                <span className=" text-[#858E96]">Assignee</span>
+                <span className=" text-gray-500">Assignee</span>
               </span>
             )}
           </Combobox.Button>
@@ -101,10 +101,10 @@ export const IssueAssigneeSelect: FC<IssueAssigneeSelectProps> = ({
               className={`absolute z-10 max-h-52 min-w-[8rem] mt-1 px-2 py-2 text-xs
               rounded-md shadow-md overflow-auto border-none bg-white focus:outline-none`}
             >
-              <div className="flex justify-start items-center rounded-sm border-[0.6px] bg-[#FAFAFA] border-[#E2E2E2] w-full px-2">
+              <div className="flex justify-start items-center rounded-sm border-[0.6px] bg-gray-100 border-gray-200 w-full px-2">
                 <MagnifyingGlassIcon className="h-3 w-3 text-gray-500" />
                 <Combobox.Input
-                  className="w-full  bg-transparent py-1 px-2 text-xs text-[#888888] focus:outline-none"
+                  className="w-full  bg-transparent py-1 px-2 text-xs text-gray-500 focus:outline-none"
                   onChange={(event) => setQuery(event.target.value)}
                   placeholder="Search for a person..."
                   displayValue={(assigned: any) => assigned?.name}
@@ -118,8 +118,8 @@ export const IssueAssigneeSelect: FC<IssueAssigneeSelectProps> = ({
                         key={option.value}
                         className={({ active }) =>
                           `${
-                            active ? "bg-[#E9ECEF]" : ""
-                          } group flex min-w-[14rem] cursor-pointer select-none items-center gap-2 truncate rounded px-1 py-1.5 text-[#495057]`
+                            active ? "bg-gray-200" : ""
+                          } group flex min-w-[14rem] cursor-pointer select-none items-center gap-2 truncate rounded px-1 py-1.5 text-gray-500`
                         }
                         value={option.value}
                       >
@@ -132,9 +132,9 @@ export const IssueAssigneeSelect: FC<IssueAssigneeSelectProps> = ({
                               <span>{option.display}</span>
                             </div>
                             <div
-                              className={`flex justify-center items-center p-1 rounded border  border-[#858E96] border-opacity-0 group-hover:border-opacity-100 
+                              className={`flex justify-center items-center p-1 rounded border  border-gray-500 border-opacity-0 group-hover:border-opacity-100 
                               ${selected ? "border-opacity-100 " : ""}  
-                              ${active ? "bg-[#F8F9FA]" : ""} `}
+                              ${active ? "bg-gray-100" : ""} `}
                             >
                               <CheckIcon
                                 className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`}
