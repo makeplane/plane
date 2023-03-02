@@ -11,7 +11,7 @@ import projectServices from "services/project.service";
 // ui
 import { AssigneesList, Avatar } from "components/ui";
 // icons
-import { UserGroupIcon } from "@heroicons/react/24/outline";
+import { UserGroupIcon, MagnifyingGlassIcon, CheckIcon } from "@heroicons/react/24/outline";
 
 // fetch keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
@@ -64,18 +64,27 @@ export const IssueAssigneeSelect: FC<IssueAssigneeSelectProps> = ({
     >
       {({ open }: any) => (
         <>
-          <Combobox.Button className="flex items-center cursor-pointer gap-1 rounded-md border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
-            <span className="flex items-center gap-1 text-xs">
+          <Combobox.Button
+            className={({ open }) =>
+              `flex items-center text-xs cursor-pointer border rounded-md shadow-sm duration-300 
+              ${
+                open
+                  ? "outline-none border-[#3F76FF] bg-[rgba(63,118,255,0.05)] ring-1 ring-[#3F76FF] "
+                  : "hover:bg-[rgba(63,118,255,0.05)] focus:bg-[rgba(63,118,255,0.05)]"
+              }`
+            }
+          >
+            <span className="flex justify-center items-center text-xs">
               {value && value.length > 0 && Array.isArray(value) ? (
-                <>
-                  <AssigneesList userIds={value} length={3} showTotalLength />
-                  <span>Assignees</span>
-                </>
+                <span className="flex items-center justify-center gap-1 px-3 py-1">
+                  <AssigneesList userIds={value} length={3} showLength={false} />
+                  <span className=" text-[#495057]">{value.length} Assignees</span>
+                </span>
               ) : (
-                <>
-                  <UserGroupIcon className="h-3 w-3 text-gray-500" />
-                  <span>Assignee</span>
-                </>
+                <span className="flex items-center justify-center  gap-1  px-3 py-1.5">
+                  <UserGroupIcon className="h-4 w-4 text-gray-500 " />
+                  <span className=" text-[#858E96]">Assignee</span>
+                </span>
               )}
             </span>
           </Combobox.Button>
@@ -88,34 +97,50 @@ export const IssueAssigneeSelect: FC<IssueAssigneeSelectProps> = ({
             leaveTo="opacity-0"
           >
             <Combobox.Options
-              className={`absolute z-10 mt-1 max-h-32 min-w-[8rem] overflow-auto rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none text-xs`}
+              className={`absolute z-10 max-h-52 min-w-[8rem] mt-1 px-2 py-2  
+              text-xs rounded-md shadow-md overflow-auto border-none bg-white 
+              ring-1 ring-black ring-opacity-5 focus:outline-none`}
             >
-              <Combobox.Input
-                className="w-full border-b bg-transparent p-2 text-xs focus:outline-none"
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder="Search"
-                displayValue={(assigned: any) => assigned?.name}
-              />
-              <div className="py-1">
+              <div className="flex justify-start items-center rounded-sm border-[0.6px] bg-[#FAFAFA] border-[#E2E2E2] w-full px-2">
+                <MagnifyingGlassIcon className="h-3 w-3 text-gray-500" />
+                <Combobox.Input
+                  className="w-full  bg-transparent py-1 px-2 text-xs text-[#888888] focus:outline-none"
+                  onChange={(event) => setQuery(event.target.value)}
+                  placeholder="Search for a person..."
+                  displayValue={(assigned: any) => assigned?.name}
+                />
+              </div>
+              <div className="py-1.5">
                 {filteredOptions ? (
                   filteredOptions.length > 0 ? (
                     filteredOptions.map((option) => (
                       <Combobox.Option
                         key={option.value}
                         className={({ active, selected }) =>
-                          `${active ? "bg-indigo-50" : ""} ${
-                            selected ? "bg-indigo-50 font-medium" : ""
-                          } flex cursor-pointer select-none items-center gap-2 truncate px-2 py-1 text-gray-900`
+                          `${
+                            active ? "bg-[#E9ECEF]" : ""
+                          } group flex cursor-pointer select-none items-center gap-2 truncate rounded px-1 py-1.5 text-gray-900`
                         }
                         value={option.value}
                       >
-                        {people && (
-                          <>
-                            <Avatar
-                              user={people?.find((p) => p.member.id === option.value)?.member}
-                            />
-                            {option.display}
-                          </>
+                        {({ selected, active }) => (
+                          <div className="flex w-full gap-2 justify-between rounded">
+                            <div className="flex justify-start items-center gap-1">
+                              <Avatar
+                                user={people?.find((p) => p.member.id === option.value)?.member}
+                              />
+                              <span>{option.display}</span>
+                            </div>
+                            <div
+                              className={`flex justify-center items-center p-1 rounded border  border-[#858E96] border-opacity-0 group-hover:border-opacity-100 
+                              ${selected ? "border-opacity-100 " : ""}  
+                              ${active ? "bg-[#F8F9FA]" : ""} `}
+                            >
+                              <CheckIcon
+                                className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`}
+                              />
+                            </div>
+                          </div>
                         )}
                       </Combobox.Option>
                     ))
