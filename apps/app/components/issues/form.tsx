@@ -15,7 +15,6 @@ import {
   IssueProjectSelect,
   IssueStateSelect,
 } from "components/issues/select";
-import { CycleSelect as IssueCycleSelect } from "components/cycles/select";
 import { CreateStateModal } from "components/states";
 import { CreateUpdateCycleModal } from "components/cycles";
 import { CreateLabelModal } from "components/labels";
@@ -266,16 +265,16 @@ export const IssueForm: FC<IssueFormProps> = ({
                 />
                 <Controller
                   control={control}
-                  name="cycle"
+                  name="priority"
                   render={({ field: { value, onChange } }) => (
-                    <IssueCycleSelect projectId={projectId} value={value} onChange={onChange} />
+                    <IssuePrioritySelect value={value} onChange={onChange} />
                   )}
                 />
                 <Controller
                   control={control}
-                  name="priority"
+                  name="assignees"
                   render={({ field: { value, onChange } }) => (
-                    <IssuePrioritySelect value={value} onChange={onChange} />
+                    <IssueAssigneeSelect projectId={projectId} value={value} onChange={onChange} />
                   )}
                 />
                 <Controller
@@ -303,13 +302,6 @@ export const IssueForm: FC<IssueFormProps> = ({
                     )}
                   />
                 </div>
-                <Controller
-                  control={control}
-                  name="assignees"
-                  render={({ field: { value, onChange } }) => (
-                    <IssueAssigneeSelect projectId={projectId} value={value} onChange={onChange} />
-                  )}
-                />
                 <IssueParentSelect
                   control={control}
                   isOpen={parentIssueListModalOpen}
