@@ -15,4 +15,4 @@ export * from "./progress-bar";
 export * from "./select";
 export * from "./spinner";
 export * from "./tooltip";
-export * from "./label-list";
+export * from "./labels-list";

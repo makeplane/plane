@@ -20,7 +20,7 @@ import issuesServices from "services/issues.service";
 import type { IIssueLabels } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
-import { IssueLabelList } from "components/ui";
+import { IssueLabelsList } from "components/ui";
 
 type Props = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -71,7 +71,7 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
             >
               {value && value.length > 0 ? (
                 <span className="flex items-center justify-center text-xs gap-2 px-3 py-1">
-                  <IssueLabelList
+                  <IssueLabelsList
                     labels={value.map((v) => issueLabels?.find((l) => l.id === v)?.color) ?? []}
                     length={3}
                     showLength

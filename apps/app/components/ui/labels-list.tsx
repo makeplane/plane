@@ -1,12 +1,12 @@
 import React from "react";
 
-type IssueLabelListProps = {
+type IssueLabelsListProps = {
   labels?: (string | undefined)[];
   length?: number;
   showLength?: boolean;
 };
 
-export const IssueLabelList: React.FC<IssueLabelListProps> = ({
+export const IssueLabelsList: React.FC<IssueLabelsListProps> = ({
   labels,
   length = 5,
   showLength = true,
