@@ -7,7 +7,12 @@ import useSWR from "swr";
 // services
 import stateService from "services/state.service";
 // headless ui
-import { Squares2X2Icon, PlusIcon } from "@heroicons/react/24/outline";
+import {
+  Squares2X2Icon,
+  PlusIcon,
+  MagnifyingGlassIcon,
+  CheckIcon,
+} from "@heroicons/react/24/outline";
 // icons
 import { Combobox, Transition } from "@headlessui/react";
 // helpers
@@ -47,7 +52,6 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
     query === ""
       ? options
       : options?.filter((option) => option.display.toLowerCase().includes(query.toLowerCase()));
-
   return (
     <Combobox
       as="div"
@@ -57,21 +61,37 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
     >
       {({ open }: any) => (
         <>
-          <Combobox.Label className="sr-only">State</Combobox.Label>
           <Combobox.Button
-            className={`flex cursor-pointer items-center gap-1 rounded-md border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500`}
+            className={({ open }) =>
+              `flex items-center text-xs cursor-pointer border rounded-md shadow-sm duration-300 
+            ${
+              open
+                ? "outline-none border-[#3F76FF] bg-[rgba(63,118,255,0.05)] ring-1 ring-[#3F76FF] "
+                : "hover:bg-[rgba(63,118,255,0.05)] focus:bg-[rgba(63,118,255,0.05)]"
+            }`
+            }
           >
-            <Squares2X2Icon className="h-3 w-3 text-gray-500" />
-            <span className={`flex items-center gap-2 ${!value ? "" : "text-gray-900"}`}>
+            <span className="flex justify-center items-center text-xs">
               {value && value !== "" ? (
-                <span
-                  className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                  style={{
-                    backgroundColor: options?.find((option) => option.value === value)?.color,
-                  }}
-                />
-              ) : null}
-              {options?.find((option) => option.value === value)?.display || "State"}
+                <span className="flex items-center justify-center gap-2 px-3 py-1.5">
+                  <span
+                    className="h-3 w-3 flex-shrink-0 rounded-full"
+                    style={{
+                      backgroundColor: options?.find((option) => option.value === value)?.color,
+                    }}
+                  />
+                  <span className=" text-[#495057]">
+                    {options?.find((option) => option.value === value)?.display}
+                  </span>
+                </span>
+              ) : (
+                <span className="flex items-center justify-center  gap-1  px-3 py-1.5">
+                  <Squares2X2Icon className="h-4 w-4 text-gray-500 " />
+                  <span className=" text-[#858E96]">
+                    {options?.find((option) => option.value === value)?.display || "State"}
+                  </span>
+                </span>
+              )}
             </span>
           </Combobox.Button>
 
@@ -83,38 +103,52 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
             leaveTo="opacity-0"
           >
             <Combobox.Options
-              className={`absolute z-10 mt-1 max-h-32 min-w-[8rem] overflow-auto rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none text-xs`}
+              className={`absolute z-10 max-h-52 min-w-[8rem] mt-1 px-2 py-2  
+              text-xs rounded-md shadow-md overflow-auto border-none bg-white 
+              ring-1 ring-black ring-opacity-5 focus:outline-none`}
             >
-              <Combobox.Input
-                className="w-full border-b bg-transparent p-2 text-xs focus:outline-none"
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder="Search"
-                displayValue={(assigned: any) => assigned?.name}
-              />
-              <div className="py-1">
+              <div className="flex justify-start items-center rounded-sm border-[0.6px] bg-[#FAFAFA] border-[#E2E2E2] w-full px-2">
+                <MagnifyingGlassIcon className="h-3 w-3 text-gray-500" />
+                <Combobox.Input
+                  className="w-full  bg-transparent py-1 px-2  text-xs text-[#888888] focus:outline-none"
+                  onChange={(event) => setQuery(event.target.value)}
+                  placeholder="Search"
+                  displayValue={(assigned: any) => assigned?.name}
+                />
+              </div>
+              <div className="py-1.5">
                 {filteredOptions ? (
                   filteredOptions.length > 0 ? (
                     filteredOptions.map((option) => (
                       <Combobox.Option
                         key={option.value}
-                        className={({ active, selected }) =>
-                          `${active ? "bg-indigo-50" : ""} ${
-                            selected ? "bg-indigo-50 font-medium" : ""
-                          } flex cursor-pointer select-none items-center gap-2 truncate p-2 text-gray-900`
+                        className={({ active }) =>
+                          `${
+                            active ? "bg-[#E9ECEF]" : ""
+                          } group flex min-w-[14rem] cursor-pointer select-none items-center gap-2 truncate rounded px-1 py-1.5 text-[#495057]`
                         }
                         value={option.value}
                       >
-                        {states && (
-                          <>
-                            <span
-                              className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                              style={{
-                                backgroundColor: option.color,
-                              }}
-                            />
-                            {option.display}
-                          </>
-                        )}
+                        {({ selected, active }) =>
+                          states && (
+                            <div className="flex w-full gap-2 justify-between rounded">
+                              <div className="flex justify-start items-center gap-2">
+                                <span
+                                  className="h-3 w-3 flex-shrink-0 rounded-full"
+                                  style={{
+                                    backgroundColor: option.color,
+                                  }}
+                                />
+                                <span>{option.display}</span>
+                              </div>
+                              <div className="flex justify-center items-center p-1 rounded">
+                                <CheckIcon
+                                  className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`}
+                                />
+                              </div>
+                            </div>
+                          )
+                        }
                       </Combobox.Option>
                     ))
                   ) : (
@@ -125,11 +159,13 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
                 )}
                 <button
                   type="button"
-                  className="flex select-none w-full items-center gap-2 p-2 text-gray-400 hover:bg-indigo-50 hover:text-gray-900"
+                  className="flex select-none w-full items-center py-2 px-1 rounded hover:bg-[#E9ECEF]"
                   onClick={() => setIsOpen(true)}
                 >
-                  <PlusIcon className="h-3 w-3 text-gray-400" aria-hidden="true" />
-                  <span className="text-xs whitespace-nowrap">Create state</span>
+                  <span className="flex justify-start items-center gap-1">
+                    <PlusIcon className="h-4 w-4 text-[#495057]" aria-hidden="true" />
+                    <span className="text-[#495057]">Create New State</span>
+                  </span>
                 </button>
               </div>
             </Combobox.Options>
