@@ -76,12 +76,12 @@ export const IssueAssigneeSelect: FC<IssueAssigneeSelectProps> = ({
           >
             <span className="flex justify-center items-center text-xs">
               {value && value.length > 0 && Array.isArray(value) ? (
-                <span className="flex items-center justify-center gap-1 px-3 py-1">
+                <span className="flex items-center justify-center gap-2 px-3 py-1">
                   <AssigneesList userIds={value} length={3} showLength={false} />
                   <span className=" text-[#495057]">{value.length} Assignees</span>
                 </span>
               ) : (
-                <span className="flex items-center justify-center  gap-1  px-3 py-1.5">
+                <span className="flex items-center justify-center  gap-2  px-3 py-1.5">
                   <UserGroupIcon className="h-4 w-4 text-gray-500 " />
                   <span className=" text-[#858E96]">Assignee</span>
                 </span>
@@ -116,10 +116,10 @@ export const IssueAssigneeSelect: FC<IssueAssigneeSelectProps> = ({
                     filteredOptions.map((option) => (
                       <Combobox.Option
                         key={option.value}
-                        className={({ active, selected }) =>
+                        className={({ active }) =>
                           `${
                             active ? "bg-[#E9ECEF]" : ""
-                          } group flex cursor-pointer select-none items-center gap-2 truncate rounded px-1 py-1.5 text-gray-900`
+                          } group flex min-w-[14rem] cursor-pointer select-none items-center gap-2 truncate rounded px-1 py-1.5 text-[#495057]`
                         }
                         value={option.value}
                       >
