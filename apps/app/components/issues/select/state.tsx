@@ -19,6 +19,7 @@ import { Combobox, Transition } from "@headlessui/react";
 import { getStatesList } from "helpers/state.helper";
 // fetch keys
 import { STATE_LIST } from "constants/fetch-keys";
+import { getStateGroupIcon } from "components/icons";
 
 type Props = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -46,12 +47,15 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
     value: state.id,
     display: state.name,
     color: state.color,
+    group: state.group,
   }));
 
   const filteredOptions =
     query === ""
       ? options
       : options?.filter((option) => option.display.toLowerCase().includes(query.toLowerCase()));
+
+  const currentOption = options?.find((option) => option.value === value);
   return (
     <Combobox
       as="div"
@@ -73,22 +77,15 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
           >
             {value && value !== "" ? (
               <span className="flex items-center justify-center text-xs gap-2 px-3 py-1.5">
-                <span
-                  className="h-3 w-3 flex-shrink-0 rounded-full"
-                  style={{
-                    backgroundColor: options?.find((option) => option.value === value)?.color,
-                  }}
-                />
-                <span className=" text-[#495057]">
-                  {options?.find((option) => option.value === value)?.display}
-                </span>
+                {currentOption && currentOption.group
+                  ? getStateGroupIcon(currentOption.group, "16", "16", currentOption.color)
+                  : ""}
+                <span className=" text-[#495057]">{currentOption?.display}</span>
               </span>
             ) : (
               <span className="flex items-center justify-center  text-xs  gap-2  px-3 py-1.5">
                 <Squares2X2Icon className="h-4 w-4 text-gray-500 " />
-                <span className=" text-[#858E96]">
-                  {options?.find((option) => option.value === value)?.display || "State"}
-                </span>
+                <span className=" text-[#858E96]">{currentOption?.display || "State"}</span>
               </span>
             )}
           </Combobox.Button>
@@ -130,12 +127,7 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
                           states && (
                             <div className="flex w-full gap-2 justify-between rounded">
                               <div className="flex justify-start items-center gap-2">
-                                <span
-                                  className="h-3 w-3 flex-shrink-0 rounded-full"
-                                  style={{
-                                    backgroundColor: option.color,
-                                  }}
-                                />
+                                {getStateGroupIcon(option.group, "16", "16", option.color)}
                                 <span>{option.display}</span>
                               </div>
                               <div className="flex justify-center items-center p-1 rounded">
