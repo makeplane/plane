@@ -18,7 +18,7 @@ type AvatarProps = {
 };
 
 export const Avatar: React.FC<AvatarProps> = ({ user, index }) => (
-  <div className={`relative h-5 w-5 rounded-full ${index && index !== 0 ? "-ml-2.5" : ""}`}>
+  <div className={`relative h-5 w-5 rounded-full ${index && index !== 0 ? "-ml-3.5" : ""}`}>
     {user && user.avatar && user.avatar !== "" ? (
       <div
         className={`h-5 w-5 rounded-full border-2 ${
@@ -47,9 +47,15 @@ type AsigneesListProps = {
   users?: Partial<IUser[]> | (Partial<IUserLite> | undefined)[] | Partial<IUserLite>[];
   userIds?: string[];
   length?: number;
+  showLength?: boolean;
 };
 
-export const AssigneesList: React.FC<AsigneesListProps> = ({ users, userIds, length = 5 }) => {
+export const AssigneesList: React.FC<AsigneesListProps> = ({
+  users,
+  userIds,
+  length = 5,
+  showLength = true,
+}) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -82,7 +88,13 @@ export const AssigneesList: React.FC<AsigneesListProps> = ({ users, userIds, len
 
             return <Avatar key={userId} user={user} index={index} />;
           })}
-          {userIds.length > length ? <span>+{userIds.length - length}</span> : null}
+          {showLength ? (
+            userIds.length > length ? (
+              <span>+{userIds.length - length}</span>
+            ) : null
+          ) : (
+            ""
+          )}
         </>
       )}
     </>
