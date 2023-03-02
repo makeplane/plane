@@ -13,11 +13,14 @@ import { BoardHeader, SingleBoardIssue } from "components/core";
 import { CustomMenu } from "components/ui";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
+// helpers
+import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // types
-import { IIssue, IProjectMember, NestedKeyOf, UserAuth } from "types";
+import { IIssue, IProjectMember, IState, NestedKeyOf, UserAuth } from "types";
 
 type Props = {
   type?: "issue" | "cycle" | "module";
+  currentState?: IState | null;
   bgColor?: string;
   groupTitle: string;
   groupedByIssues: {
@@ -37,6 +40,7 @@ type Props = {
 
 export const SingleBoard: React.FC<Props> = ({
   type,
+  currentState,
   bgColor,
   groupTitle,
   groupedByIssues,
@@ -71,10 +75,11 @@ export const SingleBoard: React.FC<Props> = ({
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   return (
-    <div className={`h-full flex-shrink-0 rounded ${!isCollapsed ? "" : "w-80 border bg-gray-50"}`}>
+    <div className={`h-full flex-shrink-0 rounded ${!isCollapsed ? "" : "w-96 bg-gray-50"}`}>
       <div className={`${!isCollapsed ? "" : "flex h-full flex-col space-y-3"}`}>
         <BoardHeader
           addIssueToState={addIssueToState}
+          currentState={currentState}
           bgColor={bgColor}
           selectedGroup={selectedGroup}
           groupTitle={groupTitle}
@@ -86,7 +91,7 @@ export const SingleBoard: React.FC<Props> = ({
         <StrictModeDroppable key={groupTitle} droppableId={groupTitle}>
           {(provided, snapshot) => (
             <div
-              className={`relative mt-3 h-full px-3 pb-3 overflow-y-auto  ${
+              className={`relative h-full p-1 overflow-y-auto  ${
                 snapshot.isDraggingOver ? "bg-indigo-50 bg-opacity-50" : ""
               } ${!isCollapsed ? "hidden" : "block"}`}
               ref={provided.innerRef}
@@ -104,7 +109,7 @@ export const SingleBoard: React.FC<Props> = ({
                       snapshot.isDraggingOver ? "block" : "hidden"
                     } top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-xs whitespace-nowrap bg-white p-2 rounded pointer-events-none z-[99999999]`}
                   >
-                    This board is ordered by {orderBy}
+                    This board is ordered by {replaceUnderscoreIfSnakeCase(orderBy ?? "")}
                   </div>
                 </>
               )}
@@ -148,21 +153,23 @@ export const SingleBoard: React.FC<Props> = ({
               {type === "issue" ? (
                 <button
                   type="button"
-                  className="flex items-center rounded p-2 text-xs font-medium outline-none duration-300 hover:bg-gray-100"
+                  className="flex items-center gap-2 text-theme font-medium outline-none"
                   onClick={addIssueToState}
                 >
-                  <PlusIcon className="mr-1 h-3 w-3" />
-                  Create
+                  <PlusIcon className="h-4 w-4" />
+                  Add Issue
                 </button>
               ) : (
                 <CustomMenu
-                  label={
-                    <span className="flex items-center gap-1">
-                      <PlusIcon className="h-3 w-3" />
-                      Add issue
-                    </span>
+                  customButton={
+                    <button
+                      type="button"
+                      className="flex items-center gap-2 text-theme font-medium outline-none"
+                    >
+                      <PlusIcon className="h-4 w-4" />
+                      Add Issue
+                    </button>
                   }
-                  className="mt-1"
                   optionsPosition="left"
                   noBorder
                 >
