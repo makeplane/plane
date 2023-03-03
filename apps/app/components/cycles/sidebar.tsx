@@ -128,7 +128,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                   <Squares2X2Icon className="h-4 w-4 flex-shrink-0" />
                   {cycleStatus === "current"
                     ? "In Progress"
-                    : cycleStatus === "past"
+                    : cycleStatus === "completed"
                     ? "Completed"
                     : cycleStatus === "upcoming"
                     ? "Upcoming"

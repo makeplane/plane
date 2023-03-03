@@ -95,7 +95,7 @@ export const getDateRangeStatus = (startDate: string  , endDate: string ) => {
   const end = new Date(endDate);
 
   if (end < now) {
-    return "past";
+    return "completed";
   } else if (start <= now && end >= now) {
     return "current";
   } else {

@@ -12,10 +12,16 @@ import cycleService from "services/cycles.service";
 import useToast from "hooks/use-toast";
 // components
 import { CycleForm } from "components/cycles";
+// helper
+import { getDateRangeStatus } from "helpers/date-time.helper";
 // types
 import type { ICycle } from "types";
 // fetch keys
-import { CYCLE_LIST } from "constants/fetch-keys";
+import {
+  CYCLE_COMPLETE_LIST,
+  CYCLE_CURRENT_AND_UPCOMING_LIST,
+  CYCLE_DRAFT_LIST,
+} from "constants/fetch-keys";
 
 type CycleModalProps = {
   isOpen: boolean;
@@ -37,7 +43,23 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
     await cycleService
       .createCycle(workspaceSlug as string, projectId as string, payload)
       .then((res) => {
-        mutate(CYCLE_LIST(projectId as string));
+        switch (
+          res?.start_date && res.end_date
+            ? getDateRangeStatus(res?.start_date, res.end_date)
+            : "draft"
+        ) {
+          case "completed":
+            mutate(CYCLE_COMPLETE_LIST(projectId as string));
+            break;
+          case "current":
+            mutate(CYCLE_CURRENT_AND_UPCOMING_LIST(projectId as string));
+            break;
+          case "upcoming":
+            mutate(CYCLE_CURRENT_AND_UPCOMING_LIST(projectId as string));
+            break;
+          default:
+            mutate(CYCLE_DRAFT_LIST(projectId as string));
+        }
         handleClose();
 
         setToastAlert({
@@ -59,7 +81,23 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
     await cycleService
       .updateCycle(workspaceSlug as string, projectId as string, cycleId, payload)
       .then((res) => {
-        mutate(CYCLE_LIST(projectId as string));
+        switch (
+          res?.start_date && res.end_date
+            ? getDateRangeStatus(res?.start_date, res.end_date)
+            : "draft"
+        ) {
+          case "completed":
+            mutate(CYCLE_COMPLETE_LIST(projectId as string));
+            break;
+          case "current":
+            mutate(CYCLE_CURRENT_AND_UPCOMING_LIST(projectId as string));
+            break;
+          case "upcoming":
+            mutate(CYCLE_CURRENT_AND_UPCOMING_LIST(projectId as string));
+            break;
+          default:
+            mutate(CYCLE_DRAFT_LIST(projectId as string));
+        }
         handleClose();
 
         setToastAlert({
