@@ -1,4 +1,5 @@
-export * from "./cycles-list-view";
+export * from "./completed-cycles-list";
+export * from "./cycles-list";
 export * from "./delete-cycle-modal";
 export * from "./form";
 export * from "./modal";

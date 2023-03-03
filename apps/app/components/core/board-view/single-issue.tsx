@@ -184,15 +184,15 @@ export const SingleBoardIssue: React.FC<Props> = ({
 
   return (
     <div
-      className={`rounded border bg-white shadow-sm mb-3 ${
-        snapshot.isDragging ? "border-theme bg-indigo-50 shadow-lg" : ""
+      className={`rounded bg-white shadow mb-3 ${
+        snapshot.isDragging ? "border-2 border-theme shadow-lg" : ""
       }`}
       ref={provided.innerRef}
       {...provided.draggableProps}
       {...provided.dragHandleProps}
       style={getStyle(provided.draggableProps.style, snapshot)}
     >
-      <div className="group/card relative select-none p-2">
+      <div className="group/card relative select-none p-4">
         {!isNotAllowed && (
           <div className="absolute top-1.5 right-1.5 z-10 opacity-0 group-hover/card:opacity-100">
             {type && !isNotAllowed && (
@@ -214,19 +214,19 @@ export const SingleBoardIssue: React.FC<Props> = ({
         <Link href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}>
           <a>
             {properties.key && (
-              <div className="mb-2 text-xs font-medium text-gray-500">
+              <div className="mb-2.5 text-xs font-medium text-gray-700">
                 {issue.project_detail.identifier}-{issue.sequence_id}
               </div>
             )}
             <h5
-              className="mb-3 text-sm group-hover:text-theme"
+              className="text-sm group-hover:text-theme"
               style={{ lineClamp: 3, WebkitLineClamp: 3 }}
             >
               {issue.name}
             </h5>
           </a>
         </Link>
-        <div className="relative flex flex-wrap items-center gap-x-1 gap-y-2 text-xs">
+        <div className="relative flex flex-wrap items-center gap-2 mt-2.5 text-xs">
           {properties.priority && selectedGroup !== "priority" && (
             <ViewPrioritySelect
               issue={issue}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 
+import Image from "next/image";
 import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
@@ -7,14 +8,19 @@ import useSWR, { mutate } from "swr";
 import { useForm, Controller } from "react-hook-form";
 
 import { Dialog, Transition } from "@headlessui/react";
+
 // services
 import projectServices from "services/project.service";
 import workspaceService from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
+import { PrimaryButton } from "components/ui/button/primary-button";
 import { Button, Input, TextArea, CustomSelect } from "components/ui";
+// icons
+import { XMarkIcon } from "@heroicons/react/24/outline";
 // components
+import { ImagePickerPopover } from "components/core";
 import EmojiIconPicker from "components/emoji-icon-picker";
 // helpers
 import { getRandomEmoji } from "helpers/common.helper";
@@ -36,6 +42,7 @@ const defaultValues: Partial<IProject> = {
   description: "",
   network: 2,
   icon: getRandomEmoji(),
+  cover_image: null,
 };
 
 const IsGuestCondition: React.FC<{
@@ -172,127 +179,143 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-5 py-8 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl sm:p-6">
-                <form onSubmit={handleSubmit(onSubmit)}>
-                  <div className="space-y-5">
-                    <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
-                      Create Project
-                    </Dialog.Title>
-                    <div className="mt-2">
-                      <p className="text-sm text-gray-500">
-                        Create a new project to start working on it.
-                      </p>
+              <Dialog.Panel className="transform rounded-lg bg-white text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
+                <div className="relative h-36 w-full rounded-t-lg bg-gray-300">
+                  {watch("cover_image") !== null && (
+                    <Image
+                      src={watch("cover_image")!}
+                      layout="fill"
+                      alt="cover image"
+                      objectFit="cover"
+                      className="rounded-t-lg"
+                    />
+                  )}
+
+                  <div className="absolute right-2 top-2 p-2">
+                    <button type="button" onClick={handleClose}>
+                      <XMarkIcon className="h-5 w-5 text-white" />
+                    </button>
+                  </div>
+                  <div className="absolute bottom-0 left-0 flex w-full justify-between px-6 py-5">
+                    <div className="absolute left-0 bottom-0 h-16 w-full bg-gradient-to-t from-black opacity-60" />
+                    <h3 className="z-[1] text-xl text-white">Create Project</h3>
+                    <div>
+                      <ImagePickerPopover
+                        label="Change Cover"
+                        onChange={(image) => {
+                          setValue("cover_image", image);
+                        }}
+                        value={watch("cover_image")}
+                      />
                     </div>
-                    <div className="space-y-3">
-                      <div className="flex gap-3">
-                        <div className="flex-shrink-0">
-                          <label htmlFor="icon" className="mb-2 text-gray-500">
-                            Icon
-                          </label>
-                          <Controller
-                            control={control}
-                            name="icon"
-                            render={({ field: { value, onChange } }) => (
-                              <EmojiIconPicker
-                                label={
-                                  value ? String.fromCodePoint(parseInt(value)) : "Select Icon"
-                                }
-                                value={value}
-                                onChange={onChange}
-                              />
-                            )}
-                          />
-                        </div>
-                        <div className="w-full">
-                          <Input
-                            id="name"
-                            label="Name"
-                            name="name"
-                            type="name"
-                            placeholder="Enter name"
-                            error={errors.name}
-                            register={register}
-                            validations={{
-                              required: "Name is required",
-                              maxLength: {
-                                value: 255,
-                                message: "Name should be less than 255 characters",
-                              },
-                            }}
-                          />
-                        </div>
-                      </div>
+                  </div>
+                </div>
+                <form onSubmit={handleSubmit(onSubmit)}>
+                  <div className="mt-5 space-y-4 px-4 py-3">
+                    <div className="flex items-center gap-x-2">
                       <div>
-                        <h6 className="text-gray-500">Network</h6>
-                        <Controller
-                          name="network"
-                          control={control}
-                          render={({ field: { onChange, value } }) => (
-                            <CustomSelect
-                              value={value}
-                              onChange={onChange}
-                              label={
-                                Object.keys(NETWORK_CHOICES).find((k) => k === value.toString())
-                                  ? NETWORK_CHOICES[
-                                      value.toString() as keyof typeof NETWORK_CHOICES
-                                    ]
-                                  : "Select network"
-                              }
-                              input
-                            >
-                              {Object.keys(NETWORK_CHOICES).map((key) => (
-                                <CustomSelect.Option key={key} value={key}>
-                                  {NETWORK_CHOICES[key as keyof typeof NETWORK_CHOICES]}
-                                </CustomSelect.Option>
-                              ))}
-                            </CustomSelect>
-                          )}
+                        <EmojiIconPicker
+                          label={String.fromCodePoint(parseInt(watch("icon")))}
+                          onChange={(emoji) => {
+                            setValue("icon", emoji);
+                          }}
+                          value={watch("icon")}
                         />
                       </div>
-                      <div>
-                        <TextArea
-                          id="description"
-                          name="description"
-                          label="Description"
-                          placeholder="Enter description"
-                          error={errors.description}
-                          register={register}
-                        />
-                      </div>
-                      <div>
+
+                      <div className="flex-shrink-0 flex-grow">
                         <Input
-                          id="identifier"
-                          label="Identifier"
-                          name="identifier"
-                          type="text"
-                          placeholder="Enter Project Identifier"
-                          error={errors.identifier}
+                          id="name"
+                          name="name"
+                          type="name"
+                          placeholder="Enter name"
+                          error={errors.name}
                           register={register}
-                          onChange={() => setIsChangeIdentifierRequired(false)}
+                          className="text-xl"
+                          mode="transparent"
                           validations={{
-                            required: "Identifier is required",
-                            validate: (value) =>
-                              /^[A-Z]+$/.test(value) || "Identifier must be uppercase text.",
-                            minLength: {
-                              value: 1,
-                              message: "Identifier must at least be of 1 character",
-                            },
+                            required: "Name is required",
                             maxLength: {
-                              value: 5,
-                              message: "Identifier must at most be of 5 characters",
+                              value: 255,
+                              message: "Name should be less than 255 characters",
                             },
                           }}
                         />
                       </div>
                     </div>
+
+                    <div>
+                      <Input
+                        id="identifier"
+                        name="identifier"
+                        type="text"
+                        mode="transparent"
+                        className="text-sm"
+                        placeholder="Enter Project Identifier"
+                        error={errors.identifier}
+                        register={register}
+                        onChange={() => setIsChangeIdentifierRequired(false)}
+                        validations={{
+                          required: "Identifier is required",
+                          validate: (value) =>
+                            /^[A-Z]+$/.test(value) || "Identifier must be uppercase text.",
+                          minLength: {
+                            value: 1,
+                            message: "Identifier must at least be of 1 character",
+                          },
+                          maxLength: {
+                            value: 5,
+                            message: "Identifier must at most be of 5 characters",
+                          },
+                        }}
+                      />
+                    </div>
+
+                    <div>
+                      <TextArea
+                        id="description"
+                        name="description"
+                        mode="transparent"
+                        className="text-sm"
+                        placeholder="Enter description"
+                        error={errors.description}
+                        register={register}
+                      />
+                    </div>
+
+                    <div className="w-40">
+                      <Controller
+                        name="network"
+                        control={control}
+                        render={({ field: { onChange, value } }) => (
+                          <CustomSelect
+                            value={value}
+                            onChange={onChange}
+                            label={
+                              Object.keys(NETWORK_CHOICES).find((k) => k === value.toString())
+                                ? NETWORK_CHOICES[value.toString() as keyof typeof NETWORK_CHOICES]
+                                : "Select network"
+                            }
+                            input
+                          >
+                            {Object.keys(NETWORK_CHOICES).map((key) => (
+                              <CustomSelect.Option key={key} value={key}>
+                                {NETWORK_CHOICES[key as keyof typeof NETWORK_CHOICES]}
+                              </CustomSelect.Option>
+                            ))}
+                          </CustomSelect>
+                        )}
+                      />
+                    </div>
                   </div>
-                  <div className="mt-5 flex justify-end gap-2">
+
+                  <div className="mt-5 flex justify-end gap-2 border-t-2 px-4 py-3">
                     <Button theme="secondary" onClick={handleClose}>
                       Cancel
                     </Button>
-                    <Button type="submit" disabled={isSubmitting}>
-                      {isSubmitting ? "Creating Project..." : "Create Project"}
-                    </Button>
+                    <PrimaryButton type="submit" size="sm" loading={isSubmitting}>
+                      {isSubmitting ? "Adding project..." : "Add Project"}
+                    </PrimaryButton>
                   </div>
                 </form>
               </Dialog.Panel>

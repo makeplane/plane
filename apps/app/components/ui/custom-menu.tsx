@@ -16,6 +16,7 @@ type Props = {
   textAlignment?: "left" | "center" | "right";
   noBorder?: boolean;
   optionsPosition?: "left" | "right";
+  customButton?: JSX.Element;
 };
 
 type MenuItemProps = {
@@ -36,6 +37,7 @@ const CustomMenu = ({
   textAlignment,
   noBorder = false,
   optionsPosition = "right",
+  customButton,
 }: Props) => (
   <Menu as="div" className={`relative w-min whitespace-nowrap text-left ${className}`}>
     <div>
