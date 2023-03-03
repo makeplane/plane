@@ -50,11 +50,8 @@ const WorkspaceIntegrations: NextPage<UserAuth> = (props) => {
         settingsLayout
       >
         <section className="space-y-8">
-          <div>
-            <h3 className="text-3xl font-bold leading-6 text-gray-900">Integrations</h3>
-            <p className="mt-4 text-sm text-gray-500">Manage the workspace integrations.</p>
-          </div>
-          <div className="space-y-4">
+          <h3 className="text-2xl font-semibold">Integrations</h3>
+          <div className="space-y-5">
             {integrations ? (
               integrations.map((integration) => (
                 <OAuthPopUp
