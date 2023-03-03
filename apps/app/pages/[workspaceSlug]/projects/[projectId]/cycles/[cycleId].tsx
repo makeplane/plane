@@ -25,6 +25,7 @@ import { CustomMenu, EmptySpace, EmptySpaceItem, Spinner } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // helpers
 import { truncateText } from "helpers/string.helper";
+import { getDateRangeStatus } from "helpers/date-time.helper";
 // types
 import { CycleIssueResponse, UserAuth } from "types";
 // fetch-keys
@@ -77,6 +78,11 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
           )
       : null
   );
+
+  const cycleStatus =
+    cycleDetails?.start_date && cycleDetails?.end_date
+      ? getDateRangeStatus(cycleDetails?.start_date, cycleDetails?.end_date)
+      : "draft";
 
   const { data: cycleIssues } = useSWR<CycleIssueResponse[]>(
     workspaceSlug && projectId && cycleId ? CYCLE_ISSUES(cycleId as string) : null,
@@ -218,6 +224,7 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
           </div>
         )}
         <CycleDetailsSidebar
+          cycleStatus={cycleStatus}
           issues={cycleIssuesArray ?? []}
           cycle={cycleDetails}
           isOpen={cycleSidebar}

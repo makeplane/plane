@@ -13,7 +13,7 @@ type TCycleStatsViewProps = {
   type: "current" | "upcoming" | "completed";
 };
 
-export const CyclesListView: React.FC<TCycleStatsViewProps> = ({
+export const CyclesList: React.FC<TCycleStatsViewProps> = ({
   cycles,
   setCreateUpdateCycleModal,
   setSelectedCycle,

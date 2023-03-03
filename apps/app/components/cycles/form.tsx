@@ -1,11 +1,16 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 
+// toast
+import useToast from "hooks/use-toast";
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // ui
 import { Button, CustomDatePicker, CustomSelect, Input, TextArea } from "components/ui";
 // types
 import { ICycle } from "types";
+// services
+import cyclesService from "services/cycles.service";
 
 type Props = {
   handleFormSubmit: (values: Partial<ICycle>) => Promise<void>;
@@ -17,17 +22,24 @@ type Props = {
 const defaultValues: Partial<ICycle> = {
   name: "",
   description: "",
-  status: "draft",
-  start_date: "",
-  end_date: "",
+  start_date: null,
+  end_date: null,
 };
 
 export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, status, data }) => {
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
+
+  const { setToastAlert } = useToast();
+
+  const [isDateValid, setIsDateValid] = useState(true);
+
   const {
     register,
     formState: { errors, isSubmitting },
     handleSubmit,
     control,
+    watch,
     reset,
   } = useForm<ICycle>({
     defaultValues,
@@ -40,6 +52,31 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
       ...defaultValues,
     });
   };
+
+  const dateChecker = async (payload: any) => {
+    await cyclesService
+      .cycleDateCheck(workspaceSlug as string, projectId as string, payload)
+      .then((res) => {
+        if (res.status) {
+          setIsDateValid(true);
+        } else {
+          setIsDateValid(false);
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message:
+              "You have a cycle already on the given dates, if you want to create your draft cycle you can do that by removing dates",
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const checkEmptyDate =
+    (watch("start_date") === "" && watch("end_date") === "") ||
+    (!watch("start_date") && !watch("end_date"));
 
   useEffect(() => {
     reset({
@@ -84,30 +121,7 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
               register={register}
             />
           </div>
-          <div>
-            <h6 className="text-gray-500">Status</h6>
-            <Controller
-              name="status"
-              control={control}
-              render={({ field }) => (
-                <CustomSelect
-                  {...field}
-                  label={<span className="capitalize">{field.value ?? "Select Status"}</span>}
-                  input
-                >
-                  {[
-                    { label: "Draft", value: "draft" },
-                    { label: "Started", value: "started" },
-                    { label: "Completed", value: "completed" },
-                  ].map((item) => (
-                    <CustomSelect.Option key={item.value} value={item.value}>
-                      {item.label}
-                    </CustomSelect.Option>
-                  ))}
-                </CustomSelect>
-              )}
-            />
-          </div>
+
           <div className="flex gap-x-2">
             <div className="w-full">
               <h6 className="text-gray-500">Start Date</h6>
@@ -115,12 +129,19 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
                 <Controller
                   control={control}
                   name="start_date"
-                  rules={{ required: "Start date is required" }}
                   render={({ field: { value, onChange } }) => (
                     <CustomDatePicker
                       renderAs="input"
                       value={value}
-                      onChange={onChange}
+                      onChange={(val) => {
+                        onChange(val);
+                        watch("end_date")
+                          ? dateChecker({
+                              start_date: val,
+                              end_date: watch("end_date"),
+                            })
+                          : "";
+                      }}
                       error={errors.start_date ? true : false}
                     />
                   )}
@@ -136,12 +157,19 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
                 <Controller
                   control={control}
                   name="end_date"
-                  rules={{ required: "End date is required" }}
                   render={({ field: { value, onChange } }) => (
                     <CustomDatePicker
                       renderAs="input"
                       value={value}
-                      onChange={onChange}
+                      onChange={(val) => {
+                        onChange(val);
+                        watch("start_date")
+                          ? dateChecker({
+                              start_date: watch("start_date"),
+                              end_date: val,
+                            })
+                          : "";
+                      }}
                       error={errors.end_date ? true : false}
                     />
                   )}
@@ -158,7 +186,18 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
         <Button theme="secondary" onClick={handleClose}>
           Cancel
         </Button>
-        <Button type="submit" disabled={isSubmitting}>
+
+        <Button
+          type="submit"
+          className={
+            checkEmptyDate
+              ? "cursor-pointer"
+              : isDateValid
+              ? "cursor-pointer"
+              : "cursor-not-allowed"
+          }
+          disabled={isSubmitting || checkEmptyDate ? false : isDateValid ? false : true}
+        >
           {status
             ? isSubmitting
               ? "Updating Cycle..."

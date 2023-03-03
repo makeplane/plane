@@ -88,3 +88,17 @@ export const timeAgo = (time: any) => {
     }
   return time;
 };
+
+export const getDateRangeStatus = (startDate: string  , endDate: string ) => {
+  const now = new Date();
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+
+  if (end < now) {
+    return "completed";
+  } else if (start <= now && end >= now) {
+    return "current";
+  } else {
+    return "upcoming";
+  }
+}
