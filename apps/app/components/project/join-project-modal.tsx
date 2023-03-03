@@ -13,9 +13,7 @@ type TJoinProjectModalProps = {
   onJoin: () => Promise<void>;
 };
 
-export const JoinProjectModal: React.FC<TJoinProjectModalProps> = (props) => {
-  const { onClose, onJoin, data } = props;
-
+export const JoinProjectModal: React.FC<TJoinProjectModalProps> = ({ onClose, onJoin, data }) => {
   const [isJoiningLoading, setIsJoiningLoading] = useState(false);
 
   const handleJoin = () => {
@@ -36,7 +34,7 @@ export const JoinProjectModal: React.FC<TJoinProjectModalProps> = (props) => {
 
   return (
     <Transition.Root show={Boolean(data)} as={React.Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={handleClose}>
+      <Dialog as="div" className="relative z-20" onClose={handleClose}>
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
@@ -49,7 +47,7 @@ export const JoinProjectModal: React.FC<TJoinProjectModalProps> = (props) => {
           <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
         </Transition.Child>
 
-        <div className="fixed inset-0 z-10 overflow-y-auto">
+        <div className="fixed inset-0 z-20 overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
             <Transition.Child
               as={React.Fragment}
@@ -71,8 +69,8 @@ export const JoinProjectModal: React.FC<TJoinProjectModalProps> = (props) => {
                   </p>
                   <div className="space-y-3" />
                 </div>
-                <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
-                  <Button theme="secondary" onClick={handleClose}>
+                <div className="mt-5 flex justify-end gap-2">
+                  <Button type="button" theme="secondary" onClick={handleClose}>
                     Cancel
                   </Button>
                   <Button type="submit" onClick={handleJoin} disabled={isJoiningLoading}>

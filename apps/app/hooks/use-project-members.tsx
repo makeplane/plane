@@ -13,20 +13,24 @@ const useProjectMembers = (workspaceSlug: string, projectId: string) => {
     projectService.projectMembers(workspaceSlug, projectId)
   );
 
-  const isMember = members?.some((item: any) => item.member.id === (user as any)?.id);
+  const hasJoined = members?.some((item: any) => item.member.id === (user as any)?.id);
 
-  const canEdit = members?.some(
-    (item) => (item.member.id === (user as any)?.id && item.role === 20) || item.role === 15
+  const isOwner = members?.some((item) => item.member.id === (user as any)?.id && item.role === 20);
+  const isMember = members?.some(
+    (item) => item.member.id === (user as any)?.id && item.role === 15
   );
-  const canDelete = members?.some(
-    (item) => item.member.id === (user as any)?.id && item.role === 20
+  const isViewer = members?.some(
+    (item) => item.member.id === (user as any)?.id && item.role === 10
   );
+  const isGuest = members?.some((item) => item.member.id === (user as any)?.id && item.role === 5);
 
   return {
     members,
+    hasJoined,
+    isOwner,
     isMember,
-    canEdit,
-    canDelete,
+    isViewer,
+    isGuest,
   };
 };
 

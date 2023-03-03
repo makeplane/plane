@@ -222,7 +222,7 @@ class ProjectServices extends APIService {
   }
 
   async syncGiuthubRepository(
-    slug: string,
+    workspaceSlug: string,
     projectId: string,
     workspaceIntegrationId: string,
     data: {
@@ -233,7 +233,7 @@ class ProjectServices extends APIService {
     }
   ): Promise<any> {
     return this.post(
-      `/api/workspaces/${slug}/projects/${projectId}/workspace-integrations/${workspaceIntegrationId}/github-repository-sync/`,
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/workspace-integrations/${workspaceIntegrationId}/github-repository-sync/`,
       data
     )
       .then((response) => response?.data)
@@ -250,6 +250,27 @@ class ProjectServices extends APIService {
     return this.get(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/workspace-integrations/${integrationId}/github-repository-sync/`
     )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async addProjectToFavourites(
+    workspaceSlug: string,
+    data: {
+      project: string;
+    }
+  ): Promise<any> {
+    return this.post(`/api/workspaces/${workspaceSlug}/user-favourite-projects/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async removeProjectFromFavourites(workspaceSlug: string, projectId: string): Promise<any> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/user-favourite-projects/${projectId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

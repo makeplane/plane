@@ -1,10 +1,8 @@
 import useSWR from "swr";
 import { useRouter } from "next/router";
-// types
-import { IProject } from "types";
 // services
 import projectService from "services/project.service";
-// constants
+// fetch-keys
 import { PROJECTS_LIST } from "constants/fetch-keys";
 
 const useProjects = () => {
@@ -12,7 +10,7 @@ const useProjects = () => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // api fetching
-  const { data: projects, mutate: mutateProjects } = useSWR<IProject[]>(
+  const { data: projects, mutate: mutateProjects } = useSWR(
     workspaceSlug ? PROJECTS_LIST(workspaceSlug as string) : null,
     workspaceSlug ? () => projectService.getProjects(workspaceSlug as string) : null
   );
