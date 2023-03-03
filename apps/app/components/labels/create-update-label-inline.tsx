@@ -109,7 +109,7 @@ export const CreateUpdateLabelInline: React.FC<Props> = ({
 
   return (
     <div
-      className={`flex items-center gap-2 rounded-md border p-3 md:w-2/3 ${
+      className={`flex items-center gap-2 rounded-[10px] border bg-white p-5 ${
         labelForm ? "" : "hidden"
       }`}
     >

@@ -127,7 +127,10 @@ export const CreateUpdateStateInline: React.FC<Props> = ({ data, onClose, select
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex items-center gap-x-2 bg-gray-50 p-2">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="flex items-center gap-x-2 rounded-[10px] bg-white p-5"
+    >
       <div className="h-8 w-8 flex-shrink-0">
         <Popover className="relative flex h-full w-full items-center justify-center rounded-xl bg-gray-200">
           {({ open }) => (
@@ -175,7 +178,7 @@ export const CreateUpdateStateInline: React.FC<Props> = ({ data, onClose, select
         name="name"
         register={register}
         autoFocus
-        placeholder="Enter state name"
+        placeholder="Name"
         validations={{
           required: true,
         }}
@@ -210,7 +213,7 @@ export const CreateUpdateStateInline: React.FC<Props> = ({ data, onClose, select
         id="description"
         name="description"
         register={register}
-        placeholder="Enter state description"
+        placeholder="Description"
         error={errors.description}
         autoComplete="off"
       />

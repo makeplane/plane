@@ -74,7 +74,7 @@ export interface IWorkspaceIntegrations {
   id: string;
   integration: string;
   integration_detail: IIntegrations;
-  metadata: anyl;
+  metadata: any;
   updated_at: string;
   updated_by: string;
   workspace: string;
