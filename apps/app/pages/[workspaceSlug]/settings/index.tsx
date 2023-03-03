@@ -7,15 +7,13 @@ import useSWR, { mutate } from "swr";
 
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
-// react-dropzone
-import Dropzone from "react-dropzone";
+
 // icons
 import { LinkIcon } from "@heroicons/react/24/outline";
 // lib
 import { requiredWorkspaceAdmin } from "lib/auth";
 // services
 import workspaceService from "services/workspace.service";
-import fileServices from "services/file.service";
 // layouts
 import AppLayout from "layouts/app-layout";
 // hooks
@@ -52,7 +50,6 @@ type TWorkspaceSettingsProps = {
 
 const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [image, setImage] = useState<File | null>(null);
   const [isImageUploading, setIsImageUploading] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
 
@@ -122,9 +119,11 @@ const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
       <ImageUploadModal
         isOpen={isImageUploadModalOpen}
         onClose={() => setIsImageUploadModalOpen(false)}
-        onSuccess={() => {
+        onSuccess={(imageUrl) => {
+          setIsImageUploading(true);
+          setValue("logo", imageUrl);
           setIsImageUploadModalOpen(false);
-          handleSubmit(onSubmit)();
+          handleSubmit(onSubmit)().then(() => setIsImageUploading(false));
         }}
         value={watch("logo")}
       />
@@ -147,62 +146,31 @@ const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
             <div className="col-span lg:col-span-5">
               <h4 className="text-md mb-1 leading-6 text-gray-900">Logo</h4>
               <div className="flex w-full gap-2">
-                <Dropzone
-                  multiple={false}
-                  accept={{
-                    "image/*": [],
-                  }}
-                  onDrop={(files) => {
-                    setImage(files[0]);
-                  }}
-                >
-                  {({ getRootProps, getInputProps }) => (
-                    <div>
-                      <input {...getInputProps()} />
-                      <div {...getRootProps()}>
-                        {(watch("logo") && watch("logo") !== null && watch("logo") !== "") ||
-                        (image && image !== null) ? (
-                          <div className="relative mx-auto flex h-12 w-12">
-                            <Image
-                              src={image ? URL.createObjectURL(image) : watch("logo") ?? ""}
-                              alt="Workspace Logo"
-                              objectFit="cover"
-                              layout="fill"
-                              className="rounded-md"
-                              priority
-                            />
-                          </div>
-                        ) : (
-                          <div className="relative flex h-12 w-12 items-center justify-center rounded bg-gray-700 p-4 uppercase text-white">
-                            {activeWorkspace?.name?.charAt(0) ?? "N"}
-                          </div>
-                        )}
-                      </div>
+                <button type="button" onClick={() => setIsImageUploadModalOpen(true)}>
+                  {watch("logo") && watch("logo") !== null && watch("logo") !== "" ? (
+                    <div className="relative mx-auto flex h-12 w-12">
+                      <Image
+                        src={watch("logo")!}
+                        alt="Workspace Logo"
+                        objectFit="cover"
+                        layout="fill"
+                        className="rounded-md"
+                        priority
+                      />
+                    </div>
+                  ) : (
+                    <div className="relative flex h-12 w-12 items-center justify-center rounded bg-gray-700 p-4 uppercase text-white">
+                      {activeWorkspace?.name?.charAt(0) ?? "N"}
                     </div>
                   )}
-                </Dropzone>
+                </button>
                 <div>
                   <p className="mb-2 text-sm text-gray-500">
                     Max file size is 5MB. Supported file types are .jpg and .png.
                   </p>
                   <Button
                     onClick={() => {
-                      if (image === null) return;
-                      setIsImageUploading(true);
-                      const formData = new FormData();
-                      formData.append("asset", image);
-                      formData.append("attributes", JSON.stringify({}));
-                      fileServices
-                        .uploadFile(workspaceSlug as string, formData)
-                        .then((response) => {
-                          const imageUrl = response.asset;
-                          setValue("logo", imageUrl);
-                          handleSubmit(onSubmit)();
-                          setIsImageUploading(false);
-                        })
-                        .catch(() => {
-                          setIsImageUploading(false);
-                        });
+                      setIsImageUploadModalOpen(true);
                     }}
                   >
                     {isImageUploading ? "Uploading..." : "Upload"}
