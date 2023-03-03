@@ -105,7 +105,6 @@ const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
 
   return (
     <AppLayout
-      settingsLayout="workspace"
       memberType={props}
       meta={{
         title: "Plane - Workspace Settings",
@@ -115,6 +114,7 @@ const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
           <BreadcrumbItem title={`${activeWorkspace?.name ?? "Workspace"} Settings`} />
         </Breadcrumbs>
       }
+      settingsLayout
     >
       <ImageUploadModal
         isOpen={isImageUploadModalOpen}

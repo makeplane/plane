@@ -138,7 +138,6 @@ const MembersSettings: NextPage<TMembersSettingsProps> = (props) => {
         members={members}
       />
       <AppLayout
-        settingsLayout="workspace"
         memberType={props}
         breadcrumbs={
           <Breadcrumbs>
@@ -149,6 +148,7 @@ const MembersSettings: NextPage<TMembersSettingsProps> = (props) => {
             <BreadcrumbItem title="Members Settings" />
           </Breadcrumbs>
         }
+        settingsLayout
       >
         <section className="space-y-8">
           <div>

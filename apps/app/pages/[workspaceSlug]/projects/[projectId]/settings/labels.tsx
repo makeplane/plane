@@ -19,7 +19,7 @@ import {
   SingleLabelGroup,
 } from "components/labels";
 // ui
-import { Button, Loader } from "components/ui";
+import { Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
@@ -28,6 +28,7 @@ import { IIssueLabels, UserAuth } from "types";
 import type { GetServerSidePropsContext, NextPage } from "next";
 // fetch-keys
 import { PROJECT_DETAILS, PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
+import { PrimaryButton } from "components/ui/button/primary-button";
 
 const LabelsSettings: NextPage<UserAuth> = (props) => {
   const { isMember, isOwner, isViewer, isGuest } = props;
@@ -98,7 +99,6 @@ const LabelsSettings: NextPage<UserAuth> = (props) => {
         parent={parentLabel}
       />
       <AppLayout
-        settingsLayout="project"
         memberType={{ isMember, isOwner, isViewer, isGuest }}
         breadcrumbs={
           <Breadcrumbs>
@@ -109,26 +109,28 @@ const LabelsSettings: NextPage<UserAuth> = (props) => {
             <BreadcrumbItem title="Labels Settings" />
           </Breadcrumbs>
         }
+        settingsLayout
       >
-        <section className="space-y-8">
-          <div>
-            <h3 className="text-3xl font-bold leading-6 text-gray-900">Labels</h3>
-            <p className="mt-4 text-sm text-gray-500">Manage the labels of this project.</p>
+        <section className="grid grid-cols-12 gap-10">
+          <div className="col-span-12 sm:col-span-5">
+            <h3 className="text-2xl font-semibold">Labels</h3>
+            <p className="text-gray-500">Manage the labels of this project.</p>
+            <PrimaryButton onClick={newLabel} size="sm" className="mt-4">
+              <span className="flex items-center gap-2">
+                <PlusIcon className="h-4 w-4" />
+                New label
+              </span>
+            </PrimaryButton>
           </div>
-          <div className="flex items-center justify-between gap-2 md:w-2/3">
-            <h4 className="text-md mb-1 leading-6 text-gray-900">Manage labels</h4>
-            <Button theme="secondary" className="flex items-center gap-x-1" onClick={newLabel}>
-              <PlusIcon className="h-4 w-4" />
-              New label
-            </Button>
-          </div>
-          <div className="space-y-5">
-            <CreateUpdateLabelInline
-              labelForm={labelForm}
-              setLabelForm={setLabelForm}
-              isUpdating={isUpdating}
-              labelToUpdate={labelToUpdate}
-            />
+          <div className="col-span-12 space-y-5 sm:col-span-7">
+            {labelForm && (
+              <CreateUpdateLabelInline
+                labelForm={labelForm}
+                setLabelForm={setLabelForm}
+                isUpdating={isUpdating}
+                labelToUpdate={labelToUpdate}
+              />
+            )}
             <>
               {issueLabels ? (
                 issueLabels.map((label) => {
@@ -158,7 +160,7 @@ const LabelsSettings: NextPage<UserAuth> = (props) => {
                     );
                 })
               ) : (
-                <Loader className="space-y-5 md:w-2/3">
+                <Loader className="space-y-5">
                   <Loader.Item height="40px" />
                   <Loader.Item height="40px" />
                   <Loader.Item height="40px" />

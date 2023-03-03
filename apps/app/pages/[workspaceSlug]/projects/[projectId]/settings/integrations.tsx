@@ -44,7 +44,6 @@ const ProjectIntegrations: NextPage<UserAuth> = (props) => {
 
   return (
     <AppLayout
-      settingsLayout="project"
       memberType={{ isMember, isOwner, isViewer, isGuest }}
       breadcrumbs={
         <Breadcrumbs>
@@ -55,20 +54,20 @@ const ProjectIntegrations: NextPage<UserAuth> = (props) => {
           <BreadcrumbItem title="Integrations" />
         </Breadcrumbs>
       }
+      settingsLayout
     >
       {workspaceIntegrations ? (
         workspaceIntegrations.length > 0 ? (
           <section className="space-y-8">
-            <div>
-              <h3 className="text-3xl font-bold leading-6 text-gray-900">Integrations</h3>
-              <p className="mt-4 text-sm text-gray-500">Manage the project integrations.</p>
+            <h3 className="text-2xl font-semibold">Integrations</h3>
+            <div className="space-y-5">
+              {workspaceIntegrations.map((integration) => (
+                <SingleIntegration
+                  key={integration.integration_detail.id}
+                  integration={integration}
+                />
+              ))}
             </div>
-            {workspaceIntegrations.map((integration) => (
-              <SingleIntegration
-                key={integration.integration_detail.id}
-                integration={integration}
-              />
-            ))}
           </section>
         ) : (
           <div className="grid h-full w-full place-items-center px-4 sm:px-0">

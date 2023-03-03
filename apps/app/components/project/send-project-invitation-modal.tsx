@@ -199,7 +199,7 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
                                               className={({ active, selected }) =>
                                                 `${active ? "bg-indigo-50" : ""} ${
                                                   selected ? "bg-indigo-50 font-medium" : ""
-                                                } text-gray-900 cursor-default select-none p-2`
+                                                } cursor-default select-none p-2 text-gray-900`
                                               }
                                               value={{
                                                 id: person.member.id,
@@ -258,7 +258,7 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
                       </div>
                     </div>
                   </div>
-                  <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
+                  <div className="mt-5 flex justify-end gap-2">
                     <Button theme="secondary" onClick={handleClose}>
                       Cancel
                     </Button>

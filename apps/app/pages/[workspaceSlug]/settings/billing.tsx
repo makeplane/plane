@@ -38,7 +38,6 @@ const BillingSettings: NextPage<TBillingSettingsProps> = (props) => {
   return (
     <>
       <AppLayout
-        settingsLayout="workspace"
         memberType={props}
         breadcrumbs={
           <Breadcrumbs>
@@ -49,6 +48,7 @@ const BillingSettings: NextPage<TBillingSettingsProps> = (props) => {
             <BreadcrumbItem title="Members Settings" />
           </Breadcrumbs>
         }
+        settingsLayout
       >
         <section className="space-y-8">
           <div>

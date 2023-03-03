@@ -20,7 +20,7 @@ const Sidebar: React.FC<SidebarProps> = ({ toggleSidebar, setToggleSidebar }) =>
   return (
     <nav className="relative z-20 h-screen">
       <div
-        className={`${sidebarCollapse ? "" : "w-auto md:w-80"} fixed inset-y-0 top-0 ${
+        className={`${sidebarCollapse ? "" : "w-auto md:w-72"} fixed inset-y-0 top-0 ${
           toggleSidebar ? "left-0" : "-left-60 md:left-0"
         } flex h-full flex-col bg-white duration-300 md:relative`}
       >

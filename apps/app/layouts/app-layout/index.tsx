@@ -19,11 +19,11 @@ import { JoinProject } from "components/project";
 import Container from "layouts/container";
 import AppSidebar from "layouts/app-layout/app-sidebar";
 import AppHeader from "layouts/app-layout/app-header";
-import SettingsSidebar from "layouts/settings-layout/settings-sidebar";
 // types
 import { UserAuth } from "types";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
+import SettingsNavbar from "layouts/settings-navbar";
 
 type Meta = {
   title?: string | null;
@@ -41,68 +41,9 @@ type AppLayoutProps = {
   breadcrumbs?: JSX.Element;
   left?: JSX.Element;
   right?: JSX.Element;
-  settingsLayout?: "project" | "workspace";
+  settingsLayout?: boolean;
   memberType?: UserAuth;
 };
-
-const workspaceLinks: (wSlug: string) => Array<{
-  label: string;
-  href: string;
-}> = (workspaceSlug) => [
-  {
-    label: "General",
-    href: `/${workspaceSlug}/settings`,
-  },
-  {
-    label: "Members",
-    href: `/${workspaceSlug}/settings/members`,
-  },
-  {
-    label: "Billing & Plans",
-    href: `/${workspaceSlug}/settings/billing`,
-  },
-  {
-    label: "Integrations",
-    href: `/${workspaceSlug}/settings/integrations`,
-  },
-];
-
-const sidebarLinks: (
-  wSlug?: string,
-  pId?: string
-) => Array<{
-  label: string;
-  href: string;
-}> = (workspaceSlug, projectId) => [
-  {
-    label: "General",
-    href: `/${workspaceSlug}/projects/${projectId}/settings`,
-  },
-  {
-    label: "Control",
-    href: `/${workspaceSlug}/projects/${projectId}/settings/control`,
-  },
-  {
-    label: "Members",
-    href: `/${workspaceSlug}/projects/${projectId}/settings/members`,
-  },
-  {
-    label: "Features",
-    href: `/${workspaceSlug}/projects/${projectId}/settings/features`,
-  },
-  {
-    label: "States",
-    href: `/${workspaceSlug}/projects/${projectId}/settings/states`,
-  },
-  {
-    label: "Labels",
-    href: `/${workspaceSlug}/projects/${projectId}/settings/labels`,
-  },
-  {
-    label: "Integrations",
-    href: `/${workspaceSlug}/projects/${projectId}/settings/integrations`,
-  },
-];
 
 const AppLayout: FC<AppLayoutProps> = ({
   meta,
@@ -113,7 +54,7 @@ const AppLayout: FC<AppLayoutProps> = ({
   breadcrumbs,
   left,
   right,
-  settingsLayout,
+  settingsLayout = false,
   memberType,
 }) => {
   // states
@@ -179,48 +120,50 @@ const AppLayout: FC<AppLayoutProps> = ({
             }
           />
         ) : (
-          <>
-            {settingsLayout && (
-              <SettingsSidebar
-                links={
-                  settingsLayout === "workspace"
-                    ? workspaceLinks(workspaceSlug as string)
-                    : sidebarLinks(workspaceSlug as string, projectId as string)
-                }
+          <main className="flex h-screen w-full min-w-0 flex-col overflow-y-auto">
+            {!noHeader && (
+              <AppHeader
+                breadcrumbs={breadcrumbs}
+                left={left}
+                right={right}
+                setToggleSidebar={setToggleSidebar}
               />
             )}
-            <main className="flex h-screen w-full min-w-0 flex-col overflow-y-auto">
-              {!noHeader && (
-                <AppHeader
-                  breadcrumbs={breadcrumbs}
-                  left={left}
-                  right={right}
-                  setToggleSidebar={setToggleSidebar}
-                />
-              )}
-              {projectId && !projectMembers ? (
-                <div className="flex h-full w-full items-center justify-center">
-                  <Spinner />
-                </div>
-              ) : isMember ? (
-                <div
-                  className={`w-full flex-grow ${
-                    noPadding ? "" : settingsLayout ? "p-9 lg:px-16 lg:pt-10" : "p-9"
-                  } ${
-                    bg === "primary"
-                      ? "bg-primary"
-                      : bg === "secondary"
-                      ? "bg-secondary"
-                      : "bg-primary"
-                  }`}
-                >
-                  {children}
-                </div>
-              ) : (
-                <JoinProject isJoiningProject={isJoiningProject} handleJoin={handleJoin} />
-              )}
-            </main>
-          </>
+            {projectId && !projectMembers ? (
+              <div className="flex h-full w-full items-center justify-center">
+                <Spinner />
+              </div>
+            ) : isMember ? (
+              <div
+                className={`w-full flex-grow ${
+                  noPadding ? "" : settingsLayout ? "p-9 lg:px-32 lg:pt-9" : "p-9"
+                } ${
+                  bg === "primary"
+                    ? "bg-primary"
+                    : bg === "secondary"
+                    ? "bg-secondary"
+                    : "bg-primary"
+                }`}
+              >
+                {settingsLayout && (
+                  <div className="mb-12 space-y-6">
+                    <div>
+                      <h3 className="text-3xl font-semibold">
+                        {projectId ? "Project" : "Workspace"} Settings
+                      </h3>
+                      <p className="mt-1 text-gray-600">
+                        This information will be displayed to every member of the project.
+                      </p>
+                    </div>
+                    <SettingsNavbar />
+                  </div>
+                )}
+                {children}
+              </div>
+            ) : (
+              <JoinProject isJoiningProject={isJoiningProject} handleJoin={handleJoin} />
+            )}
+          </main>
         )}
       </div>
     </Container>

@@ -37,7 +37,6 @@ const WorkspaceIntegrations: NextPage<UserAuth> = (props) => {
   return (
     <>
       <AppLayout
-        settingsLayout="workspace"
         memberType={props}
         breadcrumbs={
           <Breadcrumbs>
@@ -48,6 +47,7 @@ const WorkspaceIntegrations: NextPage<UserAuth> = (props) => {
             <BreadcrumbItem title="Integrations" />
           </Breadcrumbs>
         }
+        settingsLayout
       >
         <section className="space-y-8">
           <div>
