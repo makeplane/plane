@@ -9,4 +9,4 @@ export * from "./issues-view";
 export * from "./link-modal";
 export * from "./not-authorized-view";
 export * from "./multi-level-select";
-export * from "./unsplash-modal";
+export * from "./image-picker-popover";
