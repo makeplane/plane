@@ -3,6 +3,8 @@ import React, { useRef, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 
+import useSWR, { mutate } from "swr";
+
 // services
 import workspaceService from "services/workspace.service";
 // hooks
@@ -10,10 +12,11 @@ import useToast from "hooks/use-toast";
 // ui
 import { Button, Loader } from "components/ui";
 // icons
-import GithubLogo from "public/logos/github-black.png";
-import useSWR, { mutate } from "swr";
-import { APP_INTEGRATIONS, WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
+import GithubLogo from "public/logos/github-square.png";
+// types
 import { IWorkspaceIntegrations } from "types";
+// fetch-keys
+import { WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
 
 const OAuthPopUp = ({ integration }: any) => {
   const [deletingIntegration, setDeletingIntegration] = useState(false);
@@ -97,28 +100,28 @@ const OAuthPopUp = ({ integration }: any) => {
   );
 
   return (
-    <div className="flex items-center justify-between gap-2 border p-4 rounded-lg">
+    <div className="flex items-center justify-between gap-2 rounded-[10px] border bg-white p-5">
       <div className="flex items-start gap-4">
-        <div className="h-12 w-12">
+        <div className="h-12 w-12 flex-shrink-0">
           <Image src={GithubLogo} alt="GithubLogo" />
         </div>
         <div>
-          <h3 className="flex items-center gap-4 font-semibold text-xl">
+          <h3 className="flex items-center gap-4 text-xl font-semibold">
             {integration.title}
             {workspaceIntegrations ? (
               isInstalled ? (
-                <span className="flex items-center text-green-500 font-normal text-sm gap-1">
-                  <span className="h-1.5 w-1.5 bg-green-500 flex-shrink-0 rounded-full" /> Installed
+                <span className="flex items-center gap-1 text-sm font-normal text-green-500">
+                  <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-green-500" /> Installed
                 </span>
               ) : (
-                <span className="flex items-center text-gray-400 font-normal text-sm gap-1">
-                  <span className="h-1.5 w-1.5 bg-gray-400 flex-shrink-0 rounded-full" /> Not
+                <span className="flex items-center gap-1 text-sm font-normal text-gray-400">
+                  <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-gray-400" /> Not
                   Installed
                 </span>
               )
             ) : null}
           </h3>
-          <p className="text-gray-400 text-sm">
+          <p className="text-sm text-gray-400">
             {workspaceIntegrations
               ? isInstalled
                 ? "Activate GitHub integrations on individual projects to sync with specific repositories."

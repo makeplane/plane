@@ -87,7 +87,7 @@ export const SingleIntegration: React.FC<Props> = ({ integration }) => {
       {integration && (
         <div className="flex items-center justify-between gap-2 rounded-[10px] border bg-white p-5">
           <div className="flex items-start gap-4">
-            <div className="h-12 w-12">
+            <div className="h-12 w-12 flex-shrink-0">
               <Image src={GithubLogo} alt="GithubLogo" />
             </div>
             <div>

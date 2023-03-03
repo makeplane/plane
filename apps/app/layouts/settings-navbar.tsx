@@ -64,7 +64,7 @@ const SettingsNavbar: React.FC = () => {
   return (
     <div className="flex flex-wrap gap-4">
       {(projectId ? projectLinks : workspaceLinks).map((link) => (
-        <Link href={link.href}>
+        <Link key={link.href} href={link.href}>
           <a>
             <div
               className={`rounded-3xl border px-5 py-1.5 text-sm sm:px-7 sm:py-2 sm:text-base ${

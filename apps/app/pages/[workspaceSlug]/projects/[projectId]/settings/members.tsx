@@ -18,12 +18,13 @@ import AppLayout from "layouts/app-layout";
 import ConfirmProjectMemberRemove from "components/project/confirm-project-member-remove";
 import SendProjectInvitationModal from "components/project/send-project-invitation-modal";
 // ui
-import { Button, CustomMenu, CustomSelect, Loader } from "components/ui";
+import { CustomMenu, CustomSelect, Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 // types
 import type { NextPage, GetServerSidePropsContext } from "next";
+import { UserAuth } from "types";
 // fetch-keys
 import {
   PROJECT_DETAILS,
@@ -34,18 +35,8 @@ import {
 // constants
 import { ROLE } from "constants/workspace";
 
-type TMemberSettingsProps = {
-  isMember: boolean;
-  isOwner: boolean;
-  isViewer: boolean;
-  isGuest: boolean;
-};
-
-const MembersSettings: NextPage<TMemberSettingsProps> = (props) => {
-  const { isMember, isOwner, isViewer, isGuest } = props;
-
+const MembersSettings: NextPage<UserAuth> = ({ isMember, isOwner, isViewer, isGuest }) => {
   const [inviteModal, setInviteModal] = useState(false);
-  const [selectedMember, setSelectedMember] = useState<string | null>(null);
   const [selectedRemoveMember, setSelectedRemoveMember] = useState<string | null>(null);
   const [selectedInviteRemoveMember, setSelectedInviteRemoveMember] = useState<string | null>(null);
 
@@ -251,7 +242,6 @@ const MembersSettings: NextPage<TMemberSettingsProps> = (props) => {
                                     ),
                                   false
                                 );
-                                setSelectedMember(null);
                               })
                               .catch((err) => {
                                 console.log(err);
@@ -259,7 +249,7 @@ const MembersSettings: NextPage<TMemberSettingsProps> = (props) => {
                           }}
                         >
                           {Object.keys(ROLE).map((key) => (
-                            <CustomSelect.Option value={key}>
+                            <CustomSelect.Option key={key} value={key}>
                               <>{ROLE[parseInt(key) as keyof typeof ROLE]}</>
                             </CustomSelect.Option>
                           ))}
