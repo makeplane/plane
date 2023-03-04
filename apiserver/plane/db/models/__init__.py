@@ -38,7 +38,7 @@ from .social_connection import SocialLoginConnection
 
 from .state import State
 
-from .cycle import Cycle, CycleIssue
+from .cycle import Cycle, CycleIssue, CycleFavourite
 
 from .shortcut import Shortcut
 

@@ -83,6 +83,7 @@ from plane.api.views import (
     CycleDateCheckEndpoint,
     CurrentUpcomingCyclesEndpoint,
     CompletedCyclesEndpoint,
+    CycleFavouriteViewSet,
     ## End Cycles
     # Modules
     ModuleViewSet,
@@ -509,6 +510,25 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/completed-cycles/",
         CompletedCyclesEndpoint.as_view(),
         name="project-cycle",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/user-favourite-cycles/",
+        CycleFavouriteViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="user-favourite-cycle",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/user-favourite-cycles/<uuid:cycle_id>/",
+        CycleFavouriteViewSet.as_view(
+            {
+                "delete": "destroy",
+            }
+        ),
+        name="user-favourite-cycle",
     ),
     ## End Cycles
     # Issue

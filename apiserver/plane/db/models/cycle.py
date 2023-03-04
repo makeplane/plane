@@ -7,7 +7,6 @@ from . import ProjectBaseModel
 
 
 class Cycle(ProjectBaseModel):
-
     name = models.CharField(max_length=255, verbose_name="Cycle Name")
     description = models.TextField(verbose_name="Cycle Description", blank=True)
     start_date = models.DateField(verbose_name="Start Date", blank=True, null=True)
@@ -17,7 +16,6 @@ class Cycle(ProjectBaseModel):
         on_delete=models.CASCADE,
         related_name="owned_by_cycle",
     )
-
 
     class Meta:
         verbose_name = "Cycle"
@@ -50,3 +48,29 @@ class CycleIssue(ProjectBaseModel):
 
     def __str__(self):
         return f"{self.cycle}"
+
+
+class CycleFavourite(ProjectBaseModel):
+    """_summary_
+    CycleFavourite (model): To store all the cycle favourite of the user
+    """
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="cycle_favourites",
+    )
+    cycle = models.ForeignKey(
+        "db.Cycle", on_delete=models.CASCADE, related_name="cycle_favourites"
+    )
+
+    class Meta:
+        unique_together = ["cycle", "user"]
+        verbose_name = "Cycle Favourite"
+        verbose_name_plural = "Cycle Favourites"
+        db_table = "cycle_favourites"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        """Return user and the cycle"""
+        return f"{self.user.email} <{self.cycle.name}>"
