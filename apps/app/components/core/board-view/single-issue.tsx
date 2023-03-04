@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -68,6 +68,9 @@ export const SingleBoardIssue: React.FC<Props> = ({
   handleTrashBox,
   userAuth,
 }) => {
+  const [contextMenu, setContextMenu] = useState(false);
+  const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
+
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
@@ -180,18 +183,62 @@ export const SingleBoardIssue: React.FC<Props> = ({
     if (snapshot.isDragging) handleTrashBox(snapshot.isDragging);
   }, [snapshot, handleTrashBox]);
 
+  useEffect(() => {
+    const hideContextMenu = () => setContextMenu(false);
+
+    window.addEventListener("click", hideContextMenu);
+
+    return () => {
+      window.removeEventListener("click", hideContextMenu);
+    };
+  }, []);
+
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   return (
     <div
-      className={`rounded bg-white shadow mb-3 ${
+      className={`mb-3 rounded bg-white shadow ${
         snapshot.isDragging ? "border-2 border-theme shadow-lg" : ""
       }`}
       ref={provided.innerRef}
       {...provided.draggableProps}
       {...provided.dragHandleProps}
       style={getStyle(provided.draggableProps.style, snapshot)}
+      onContextMenu={(e) => {
+        e.preventDefault();
+        setContextMenu(true);
+        setContextMenuPosition({ x: e.pageX, y: e.pageY });
+      }}
     >
+      {contextMenu && (
+        <div className="fixed z-20 h-full w-full">
+          <div
+            className={`fixed z-20 flex flex-col items-stretch gap-1 rounded-md border bg-white p-2 text-xs shadow-lg`}
+            style={{
+              top: `${contextMenuPosition.y}px`,
+              left: `${contextMenuPosition.x}px`,
+            }}
+          >
+            <Link href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}>
+              <a className="w-full rounded px-1 py-1.5 text-left hover:bg-hover-gray">Open issue</a>
+            </Link>
+            <button
+              type="button"
+              className="rounded px-1 py-1.5 text-left hover:bg-hover-gray"
+              onClick={() => handleDeleteIssue(issue)}
+            >
+              Delete issue
+            </button>
+            <button
+              type="button"
+              className="rounded px-1 py-1.5 text-left hover:bg-hover-gray"
+              onClick={handleCopyText}
+            >
+              Copy issue link
+            </button>
+          </div>
+        </div>
+      )}
       <div className="group/card relative select-none p-4">
         {!isNotAllowed && (
           <div className="absolute top-1.5 right-1.5 z-10 opacity-0 group-hover/card:opacity-100">
@@ -226,7 +273,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
             </h5>
           </a>
         </Link>
-        <div className="relative flex flex-wrap items-center gap-2 mt-2.5 text-xs">
+        <div className="relative mt-2.5 flex flex-wrap items-center gap-2 text-xs">
           {properties.priority && selectedGroup !== "priority" && (
             <ViewPrioritySelect
               issue={issue}
