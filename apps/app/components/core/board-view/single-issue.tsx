@@ -24,7 +24,14 @@ import {
   ViewStateSelect,
 } from "components/issues/view-select";
 // ui
-import { CustomMenu } from "components/ui";
+import { ContextMenu, CustomMenu } from "components/ui";
+// icons
+import {
+  ClipboardDocumentCheckIcon,
+  LinkIcon,
+  PencilIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
@@ -47,6 +54,7 @@ type Props = {
   selectedGroup: NestedKeyOf<IIssue> | null;
   properties: Properties;
   editIssue: () => void;
+  makeIssueCopy: () => void;
   removeIssue?: (() => void) | null;
   handleDeleteIssue: (issue: IIssue) => void;
   orderBy: NestedKeyOf<IIssue> | null;
@@ -62,12 +70,14 @@ export const SingleBoardIssue: React.FC<Props> = ({
   selectedGroup,
   properties,
   editIssue,
+  makeIssueCopy,
   removeIssue,
   handleDeleteIssue,
   orderBy,
   handleTrashBox,
   userAuth,
 }) => {
+  // context menu
   const [contextMenu, setContextMenu] = useState(false);
   const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
 
@@ -183,154 +193,138 @@ export const SingleBoardIssue: React.FC<Props> = ({
     if (snapshot.isDragging) handleTrashBox(snapshot.isDragging);
   }, [snapshot, handleTrashBox]);
 
-  useEffect(() => {
-    const hideContextMenu = () => setContextMenu(false);
-
-    window.addEventListener("click", hideContextMenu);
-
-    return () => {
-      window.removeEventListener("click", hideContextMenu);
-    };
-  }, []);
-
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   return (
-    <div
-      className={`mb-3 rounded bg-white shadow ${
-        snapshot.isDragging ? "border-2 border-theme shadow-lg" : ""
-      }`}
-      ref={provided.innerRef}
-      {...provided.draggableProps}
-      {...provided.dragHandleProps}
-      style={getStyle(provided.draggableProps.style, snapshot)}
-      onContextMenu={(e) => {
-        e.preventDefault();
-        setContextMenu(true);
-        setContextMenuPosition({ x: e.pageX, y: e.pageY });
-      }}
-    >
-      {contextMenu && (
-        <div className="fixed z-20 h-full w-full">
-          <div
-            className={`fixed z-20 flex flex-col items-stretch gap-1 rounded-md border bg-white p-2 text-xs shadow-lg`}
-            style={{
-              top: `${contextMenuPosition.y}px`,
-              left: `${contextMenuPosition.x}px`,
-            }}
-          >
-            <Link href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}>
-              <a className="w-full rounded px-1 py-1.5 text-left hover:bg-hover-gray">Open issue</a>
-            </Link>
-            <button
-              type="button"
-              className="rounded px-1 py-1.5 text-left hover:bg-hover-gray"
-              onClick={() => handleDeleteIssue(issue)}
-            >
-              Delete issue
-            </button>
-            <button
-              type="button"
-              className="rounded px-1 py-1.5 text-left hover:bg-hover-gray"
-              onClick={handleCopyText}
-            >
-              Copy issue link
-            </button>
-          </div>
-        </div>
-      )}
-      <div className="group/card relative select-none p-4">
-        {!isNotAllowed && (
-          <div className="absolute top-1.5 right-1.5 z-10 opacity-0 group-hover/card:opacity-100">
-            {type && !isNotAllowed && (
-              <CustomMenu width="auto" ellipsis>
-                <CustomMenu.MenuItem onClick={editIssue}>Edit issue</CustomMenu.MenuItem>
-                {type !== "issue" && removeIssue && (
-                  <CustomMenu.MenuItem onClick={removeIssue}>
-                    <>Remove from {type}</>
+    <>
+      <ContextMenu
+        position={contextMenuPosition}
+        title="Quick actions"
+        isOpen={contextMenu}
+        setIsOpen={setContextMenu}
+      >
+        <ContextMenu.Item Icon={PencilIcon} onClick={editIssue}>
+          Edit issue
+        </ContextMenu.Item>
+        <ContextMenu.Item Icon={ClipboardDocumentCheckIcon} onClick={makeIssueCopy}>
+          Make a copy...
+        </ContextMenu.Item>
+        <ContextMenu.Item Icon={TrashIcon} onClick={() => handleDeleteIssue(issue)}>
+          Delete issue
+        </ContextMenu.Item>
+        <ContextMenu.Item Icon={LinkIcon} onClick={handleCopyText}>
+          Copy issue link
+        </ContextMenu.Item>
+      </ContextMenu>
+      <div
+        className={`mb-3 rounded bg-white shadow ${
+          snapshot.isDragging ? "border-2 border-theme shadow-lg" : ""
+        }`}
+        ref={provided.innerRef}
+        {...provided.draggableProps}
+        {...provided.dragHandleProps}
+        style={getStyle(provided.draggableProps.style, snapshot)}
+        onContextMenu={(e) => {
+          e.preventDefault();
+          setContextMenu(true);
+          setContextMenuPosition({ x: e.pageX, y: e.pageY });
+        }}
+      >
+        <div className="group/card relative select-none p-4">
+          {!isNotAllowed && (
+            <div className="absolute top-1.5 right-1.5 z-10 opacity-0 group-hover/card:opacity-100">
+              {type && !isNotAllowed && (
+                <CustomMenu width="auto" ellipsis>
+                  <CustomMenu.MenuItem onClick={editIssue}>Edit issue</CustomMenu.MenuItem>
+                  {type !== "issue" && removeIssue && (
+                    <CustomMenu.MenuItem onClick={removeIssue}>
+                      <>Remove from {type}</>
+                    </CustomMenu.MenuItem>
+                  )}
+                  <CustomMenu.MenuItem onClick={() => handleDeleteIssue(issue)}>
+                    Delete issue
                   </CustomMenu.MenuItem>
-                )}
-                <CustomMenu.MenuItem onClick={() => handleDeleteIssue(issue)}>
-                  Delete issue
-                </CustomMenu.MenuItem>
-                <CustomMenu.MenuItem onClick={handleCopyText}>Copy issue link</CustomMenu.MenuItem>
-              </CustomMenu>
+                  <CustomMenu.MenuItem onClick={handleCopyText}>
+                    Copy issue link
+                  </CustomMenu.MenuItem>
+                </CustomMenu>
+              )}
+            </div>
+          )}
+          <Link href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}>
+            <a>
+              {properties.key && (
+                <div className="mb-2.5 text-xs font-medium text-gray-700">
+                  {issue.project_detail.identifier}-{issue.sequence_id}
+                </div>
+              )}
+              <h5
+                className="text-sm group-hover:text-theme"
+                style={{ lineClamp: 3, WebkitLineClamp: 3 }}
+              >
+                {issue.name}
+              </h5>
+            </a>
+          </Link>
+          <div className="relative mt-2.5 flex flex-wrap items-center gap-2 text-xs">
+            {properties.priority && selectedGroup !== "priority" && (
+              <ViewPrioritySelect
+                issue={issue}
+                partialUpdateIssue={partialUpdateIssue}
+                isNotAllowed={isNotAllowed}
+                selfPositioned
+              />
             )}
-          </div>
-        )}
-        <Link href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}>
-          <a>
-            {properties.key && (
-              <div className="mb-2.5 text-xs font-medium text-gray-700">
-                {issue.project_detail.identifier}-{issue.sequence_id}
+            {properties.state && selectedGroup !== "state_detail.name" && (
+              <ViewStateSelect
+                issue={issue}
+                partialUpdateIssue={partialUpdateIssue}
+                isNotAllowed={isNotAllowed}
+                selfPositioned
+              />
+            )}
+            {properties.due_date && (
+              <ViewDueDateSelect
+                issue={issue}
+                partialUpdateIssue={partialUpdateIssue}
+                isNotAllowed={isNotAllowed}
+              />
+            )}
+            {properties.sub_issue_count && (
+              <div className="flex flex-shrink-0 items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                {issue.sub_issues_count} {issue.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
               </div>
             )}
-            <h5
-              className="text-sm group-hover:text-theme"
-              style={{ lineClamp: 3, WebkitLineClamp: 3 }}
-            >
-              {issue.name}
-            </h5>
-          </a>
-        </Link>
-        <div className="relative mt-2.5 flex flex-wrap items-center gap-2 text-xs">
-          {properties.priority && selectedGroup !== "priority" && (
-            <ViewPrioritySelect
-              issue={issue}
-              partialUpdateIssue={partialUpdateIssue}
-              isNotAllowed={isNotAllowed}
-              selfPositioned
-            />
-          )}
-          {properties.state && selectedGroup !== "state_detail.name" && (
-            <ViewStateSelect
-              issue={issue}
-              partialUpdateIssue={partialUpdateIssue}
-              isNotAllowed={isNotAllowed}
-              selfPositioned
-            />
-          )}
-          {properties.due_date && (
-            <ViewDueDateSelect
-              issue={issue}
-              partialUpdateIssue={partialUpdateIssue}
-              isNotAllowed={isNotAllowed}
-            />
-          )}
-          {properties.sub_issue_count && (
-            <div className="flex flex-shrink-0 items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
-              {issue.sub_issues_count} {issue.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
-            </div>
-          )}
-          {properties.labels && (
-            <div className="flex flex-wrap gap-1">
-              {issue.label_details.map((label) => (
-                <span
-                  key={label.id}
-                  className="group flex items-center gap-1 rounded-2xl border px-2 py-0.5 text-xs"
-                >
+            {properties.labels && (
+              <div className="flex flex-wrap gap-1">
+                {issue.label_details.map((label) => (
                   <span
-                    className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                    style={{
-                      backgroundColor: label?.color && label.color !== "" ? label.color : "#000",
-                    }}
-                  />
-                  {label.name}
-                </span>
-              ))}
-            </div>
-          )}
-          {properties.assignee && (
-            <ViewAssigneeSelect
-              issue={issue}
-              partialUpdateIssue={partialUpdateIssue}
-              isNotAllowed={isNotAllowed}
-              tooltipPosition="left"
-              selfPositioned
-            />
-          )}
+                    key={label.id}
+                    className="group flex items-center gap-1 rounded-2xl border px-2 py-0.5 text-xs"
+                  >
+                    <span
+                      className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                      style={{
+                        backgroundColor: label?.color && label.color !== "" ? label.color : "#000",
+                      }}
+                    />
+                    {label.name}
+                  </span>
+                ))}
+              </div>
+            )}
+            {properties.assignee && (
+              <ViewAssigneeSelect
+                issue={issue}
+                partialUpdateIssue={partialUpdateIssue}
+                isNotAllowed={isNotAllowed}
+                tooltipPosition="left"
+                selfPositioned
+              />
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };

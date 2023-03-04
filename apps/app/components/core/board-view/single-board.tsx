@@ -29,6 +29,7 @@ type Props = {
   selectedGroup: NestedKeyOf<IIssue> | null;
   members: IProjectMember[] | undefined;
   handleEditIssue: (issue: IIssue) => void;
+  makeIssueCopy: (issue: IIssue) => void;
   addIssueToState: () => void;
   handleDeleteIssue: (issue: IIssue) => void;
   openIssuesListModal?: (() => void) | null;
@@ -47,6 +48,7 @@ export const SingleBoard: React.FC<Props> = ({
   selectedGroup,
   members,
   handleEditIssue,
+  makeIssueCopy,
   addIssueToState,
   handleDeleteIssue,
   openIssuesListModal,
@@ -132,6 +134,7 @@ export const SingleBoard: React.FC<Props> = ({
                       selectedGroup={selectedGroup}
                       properties={properties}
                       editIssue={() => handleEditIssue(issue)}
+                      makeIssueCopy={() => makeIssueCopy(issue)}
                       handleDeleteIssue={handleDeleteIssue}
                       orderBy={orderBy}
                       handleTrashBox={handleTrashBox}

@@ -2,6 +2,7 @@ export * from "./input";
 export * from "./text-area";
 export * from "./avatar";
 export * from "./button";
+export * from "./context-menu";
 export * from "./custom-menu";
 export * from "./custom-search-select";
 export * from "./custom-select";

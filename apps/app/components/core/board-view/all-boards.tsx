@@ -11,6 +11,7 @@ type Props = {
   states: IState[] | undefined;
   members: IProjectMember[] | undefined;
   addIssueToState: (groupTitle: string, stateId: string | null) => void;
+  makeIssueCopy: (issue: IIssue) => void;
   handleEditIssue: (issue: IIssue) => void;
   openIssuesListModal?: (() => void) | null;
   handleDeleteIssue: (issue: IIssue) => void;
@@ -25,6 +26,7 @@ export const AllBoards: React.FC<Props> = ({
   states,
   members,
   addIssueToState,
+  makeIssueCopy,
   handleEditIssue,
   openIssuesListModal,
   handleDeleteIssue,
@@ -66,6 +68,7 @@ export const AllBoards: React.FC<Props> = ({
                   selectedGroup={selectedGroup}
                   members={members}
                   handleEditIssue={handleEditIssue}
+                  makeIssueCopy={makeIssueCopy}
                   addIssueToState={() => addIssueToState(singleGroup, stateId)}
                   handleDeleteIssue={handleDeleteIssue}
                   openIssuesListModal={openIssuesListModal ?? null}

@@ -77,17 +77,6 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
 
   const { setToastAlert } = useToast();
 
-  console.log("isseu details: ", issueDetail);
-
-  // const { data: issueLinks } = useSWR(
-  //   workspaceSlug && projectId
-  //     ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
-  //     : null,
-  //   workspaceSlug && projectId
-  //     ? () => issuesService.getIssues(workspaceSlug as string, projectId as string)
-  //     : null
-  // );
-
   const { data: issues } = useSWR(
     workspaceSlug && projectId
       ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
@@ -228,7 +217,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
         isOpen={deleteIssueModal}
         data={issueDetail ?? null}
       />
-      <div className="w-full divide-y-2 divide-gray-100 sticky top-5">
+      <div className="sticky top-5 w-full divide-y-2 divide-gray-100">
         <div className="flex items-center justify-between pb-3">
           <h4 className="text-sm font-medium">
             {issueDetail?.project_detail?.identifier}-{issueDetail?.sequence_id}
@@ -453,8 +442,8 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                                           );
                                       } else
                                         return (
-                                          <div className="bg-gray-50 border-y border-gray-400">
-                                            <div className="flex select-none font-medium items-center gap-2 truncate p-2 text-gray-900">
+                                          <div className="border-y border-gray-400 bg-gray-50">
+                                            <div className="flex select-none items-center gap-2 truncate p-2 font-medium text-gray-900">
                                               <RectangleGroupIcon className="h-3 w-3" />{" "}
                                               {label.name}
                                             </div>
