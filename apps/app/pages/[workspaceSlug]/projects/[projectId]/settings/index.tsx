@@ -272,7 +272,7 @@ const GeneralSettings: NextPage<UserAuth> = (props) => {
                       input
                     >
                       {Object.keys(NETWORK_CHOICES).map((key) => (
-                        <CustomSelect.Option key={key} value={key}>
+                        <CustomSelect.Option key={key} value={parseInt(key)}>
                           {NETWORK_CHOICES[key as keyof typeof NETWORK_CHOICES]}
                         </CustomSelect.Option>
                       ))}

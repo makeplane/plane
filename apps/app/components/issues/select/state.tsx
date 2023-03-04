@@ -67,21 +67,21 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
         <>
           <Combobox.Button
             className={({ open }) =>
-              `flex items-center text-xs cursor-pointer border rounded-md shadow-sm duration-200 
+              `flex cursor-pointer items-center rounded-md border text-xs shadow-sm duration-200 
             ${
-              open ? "outline-none border-theme bg-theme/5 ring-1 ring-theme " : "hover:bg-theme/5"
+              open ? "border-theme bg-theme/5 outline-none ring-1 ring-theme " : "hover:bg-theme/5"
             }`
             }
           >
             {value && value !== "" ? (
-              <span className="flex items-center justify-center text-xs gap-2 px-3 py-1.5">
+              <span className="flex items-center justify-center gap-2 px-3 py-1.5 text-xs">
                 {currentOption && currentOption.group
                   ? getStateGroupIcon(currentOption.group, "16", "16", currentOption.color)
                   : ""}
                 <span className=" text-gray-600">{currentOption?.display}</span>
               </span>
             ) : (
-              <span className="flex items-center justify-center  text-xs  gap-2  px-3 py-1.5">
+              <span className="flex items-center justify-center  gap-2  px-3  py-1.5 text-xs">
                 <Squares2X2Icon className="h-4 w-4 text-gray-500 " />
                 <span className=" text-gray-500">{currentOption?.display || "State"}</span>
               </span>
@@ -99,10 +99,10 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
             leaveTo="opacity-0 translate-y-1"
           >
             <Combobox.Options
-              className={`absolute z-10 max-h-52 min-w-[8rem] mt-1 px-2 py-2 text-xs 
-              rounded-md shadow-md overflow-auto border-none bg-white focus:outline-none`}
+              className={`absolute z-10 mt-1 max-h-52 min-w-[8rem] overflow-auto rounded-md border-none 
+              bg-white px-2 py-2 text-xs shadow-md focus:outline-none`}
             >
-              <div className="flex justify-start items-center rounded-sm border-[0.6px] bg-gray-100 border-gray-200 w-full px-2">
+              <div className="flex w-full items-center justify-start rounded-sm border-[0.6px] bg-gray-100 px-2">
                 <MagnifyingGlassIcon className="h-3 w-3 text-gray-500" />
                 <Combobox.Input
                   className="w-full  bg-transparent py-1 px-2  text-xs text-gray-500 focus:outline-none"
@@ -126,12 +126,12 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
                       >
                         {({ selected, active }) =>
                           states && (
-                            <div className="flex w-full gap-2 justify-between rounded">
-                              <div className="flex justify-start items-center gap-2">
+                            <div className="flex w-full justify-between gap-2 rounded">
+                              <div className="flex items-center justify-start gap-2">
                                 {getStateGroupIcon(option.group, "16", "16", option.color)}
                                 <span>{option.display}</span>
                               </div>
-                              <div className="flex justify-center items-center p-1 rounded">
+                              <div className="flex items-center justify-center rounded p-1">
                                 <CheckIcon
                                   className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`}
                                 />
@@ -142,17 +142,17 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
                       </Combobox.Option>
                     ))
                   ) : (
-                    <p className="text-xs text-gray-500 px-2">No states found</p>
+                    <p className="px-2 text-xs text-gray-500">No states found</p>
                   )
                 ) : (
-                  <p className="text-xs text-gray-500 px-2">Loading...</p>
+                  <p className="px-2 text-xs text-gray-500">Loading...</p>
                 )}
                 <button
                   type="button"
-                  className="flex select-none w-full items-center py-2 px-1 rounded hover:bg-gray-200"
+                  className="flex w-full select-none items-center rounded py-2 px-1 hover:bg-gray-200"
                   onClick={() => setIsOpen(true)}
                 >
-                  <span className="flex justify-start items-center gap-1">
+                  <span className="flex items-center justify-start gap-1">
                     <PlusIcon className="h-4 w-4 text-gray-600" aria-hidden="true" />
                     <span className="text-gray-600">Create New State</span>
                   </span>

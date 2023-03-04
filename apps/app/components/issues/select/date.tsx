@@ -13,20 +13,20 @@ type Props = {
 };
 
 export const IssueDateSelect: React.FC<Props> = ({ value, onChange }) => (
-  <Popover className="flex justify-center items-center relative  rounded-lg">
+  <Popover className="relative flex items-center justify-center  rounded-lg">
     {({ open }) => (
       <>
         <Popover.Button
           className={({ open }) =>
-            `flex items-center text-xs cursor-pointer border rounded-md shadow-sm duration-200 
+            `flex cursor-pointer items-center rounded-md border text-xs shadow-sm duration-200 
               ${
                 open
-                  ? "outline-none border-theme bg-theme/5 ring-1 ring-theme "
+                  ? "border-theme bg-theme/5 outline-none ring-1 ring-theme "
                   : "hover:bg-theme/5 "
               }`
           }
         >
-          <span className="flex items-center justify-center text-xs gap-2 px-3 py-1.5">
+          <span className="flex items-center justify-center gap-2 px-3 py-1.5 text-xs">
             {value ? (
               <>
                 <span className="text-gray-600">{value}</span>

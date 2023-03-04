@@ -66,21 +66,21 @@ export const IssueAssigneeSelect: FC<IssueAssigneeSelectProps> = ({
         <>
           <Combobox.Button
             className={({ open }) =>
-              `flex items-center text-xs cursor-pointer border rounded-md shadow-sm duration-200 
+              `flex cursor-pointer items-center rounded-md border text-xs shadow-sm duration-200 
               ${
                 open
-                  ? "outline-none border-theme bg-theme/5 ring-1 ring-theme "
+                  ? "border-theme bg-theme/5 outline-none ring-1 ring-theme "
                   : "hover:bg-theme/5 "
               }`
             }
           >
             {value && value.length > 0 && Array.isArray(value) ? (
-              <span className="flex items-center justify-center text-xs gap-2 px-3 py-1">
+              <span className="flex items-center justify-center gap-2 px-3 py-1">
                 <AssigneesList userIds={value} length={3} showLength={false} />
                 <span className=" text-gray-500">{value.length} Assignees</span>
               </span>
             ) : (
-              <span className="flex items-center justify-center text-xs gap-2  px-3 py-1.5">
+              <span className="flex items-center justify-center gap-2 px-3  py-1.5 text-xs">
                 <UserGroupIcon className="h-4 w-4 text-gray-500 " />
                 <span className=" text-gray-500">Assignee</span>
               </span>
@@ -98,10 +98,10 @@ export const IssueAssigneeSelect: FC<IssueAssigneeSelectProps> = ({
             leaveTo="opacity-0 translate-y-1"
           >
             <Combobox.Options
-              className={`absolute z-10 max-h-52 min-w-[8rem] mt-1 px-2 py-2 text-xs
-              rounded-md shadow-md overflow-auto border-none bg-white focus:outline-none`}
+              className={`absolute z-10 mt-1 max-h-52 min-w-[8rem] overflow-auto rounded-md border-none
+              bg-white px-2 py-2 text-xs shadow-md focus:outline-none`}
             >
-              <div className="flex justify-start items-center rounded-sm border-[0.6px] bg-gray-100 border-gray-200 w-full px-2">
+              <div className="flex w-full items-center justify-start rounded-sm border-[0.6px] bg-gray-100 px-2">
                 <MagnifyingGlassIcon className="h-3 w-3 text-gray-500" />
                 <Combobox.Input
                   className="w-full  bg-transparent py-1 px-2 text-xs text-gray-500 focus:outline-none"
@@ -118,21 +118,21 @@ export const IssueAssigneeSelect: FC<IssueAssigneeSelectProps> = ({
                         key={option.value}
                         className={({ active }) =>
                           `${
-                            active ? "bg-gray-200" : ""
+                            active ? "bg-hover-gray" : ""
                           } group flex min-w-[14rem] cursor-pointer select-none items-center gap-2 truncate rounded px-1 py-1.5 text-gray-500`
                         }
                         value={option.value}
                       >
                         {({ selected, active }) => (
-                          <div className="flex w-full gap-2 justify-between rounded">
-                            <div className="flex justify-start items-center gap-1">
+                          <div className="flex w-full justify-between gap-2 rounded">
+                            <div className="flex items-center justify-start gap-1">
                               <Avatar
                                 user={people?.find((p) => p.member.id === option.value)?.member}
                               />
                               <span>{option.display}</span>
                             </div>
                             <div
-                              className={`flex justify-center items-center p-1 rounded border  border-gray-500 border-opacity-0 group-hover:border-opacity-100 
+                              className={`flex items-center justify-center rounded border border-gray-500  border-opacity-0 p-1 group-hover:border-opacity-100 
                               ${selected ? "border-opacity-100 " : ""}  
                               ${active ? "bg-gray-100" : ""} `}
                             >
@@ -145,10 +145,10 @@ export const IssueAssigneeSelect: FC<IssueAssigneeSelectProps> = ({
                       </Combobox.Option>
                     ))
                   ) : (
-                    <p className="text-xs text-gray-500 px-2">No assignees found</p>
+                    <p className="px-2 text-xs text-gray-500">No assignees found</p>
                   )
                 ) : (
-                  <p className="text-xs text-gray-500 px-2">Loading...</p>
+                  <p className="px-2 text-xs text-gray-500">Loading...</p>
                 )}
               </div>
             </Combobox.Options>

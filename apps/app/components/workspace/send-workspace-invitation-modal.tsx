@@ -1,12 +1,12 @@
 import React from "react";
 import { mutate } from "swr";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 // headless
 import { Dialog, Transition } from "@headlessui/react";
 // services
 import workspaceService from "services/workspace.service";
 // ui
-import { Button, Input, Select } from "components/ui";
+import { Button, CustomSelect, Input } from "components/ui";
 // hooks
 import useToast from "hooks/use-toast";
 // types
@@ -37,6 +37,7 @@ const SendWorkspaceInvitationModal: React.FC<Props> = ({
   const { setToastAlert } = useToast();
 
   const {
+    control,
     register,
     formState: { errors, isSubmitting },
     handleSubmit,
@@ -44,7 +45,6 @@ const SendWorkspaceInvitationModal: React.FC<Props> = ({
   } = useForm<IWorkspaceMemberInvitation>({
     defaultValues,
     reValidateMode: "onChange",
-    mode: "all",
   });
 
   const handleClose = () => {
@@ -98,13 +98,13 @@ const SendWorkspaceInvitationModal: React.FC<Props> = ({
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-5 py-8 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative transform rounded-lg bg-white p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="space-y-5">
-                    <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
-                      Members
-                    </Dialog.Title>
-                    <div className="mt-2">
+                    <div>
+                      <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
+                        Members
+                      </Dialog.Title>
                       <p className="text-sm text-gray-500">
                         Invite members to work on your workspace.
                       </p>
@@ -129,34 +129,30 @@ const SendWorkspaceInvitationModal: React.FC<Props> = ({
                         />
                       </div>
                       <div>
-                        <Select
-                          id="role"
-                          label="Role"
+                        <Controller
+                          control={control}
+                          rules={{ required: true }}
                           name="role"
-                          error={errors.role}
-                          register={register}
-                          validations={{
-                            required: "Role is required",
-                          }}
-                          options={Object.entries(ROLE).map(([key, value]) => ({
-                            value: key,
-                            label: value,
-                          }))}
+                          render={({ field: { value, onChange } }) => (
+                            <CustomSelect
+                              value={value}
+                              label={ROLE[value]}
+                              onChange={onChange}
+                              width="w-full"
+                              input
+                            >
+                              {Object.entries(ROLE).map(([key, value]) => (
+                                <CustomSelect.Option key={key} value={key}>
+                                  {value}
+                                </CustomSelect.Option>
+                              ))}
+                            </CustomSelect>
+                          )}
                         />
                       </div>
-                      {/* <div>
-                        <TextArea
-                          id="message"
-                          name="message"
-                          label="Message"
-                          placeholder="Enter message"
-                          error={errors.message}
-                          register={register}
-                        />
-                      </div> */}
                     </div>
                   </div>
-                  <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
+                  <div className="mt-5 flex justify-end gap-2">
                     <Button theme="secondary" onClick={handleClose}>
                       Cancel
                     </Button>
