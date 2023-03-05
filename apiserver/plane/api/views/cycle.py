@@ -17,7 +17,7 @@ from . import BaseViewSet, BaseAPIView
 from plane.api.serializers import (
     CycleSerializer,
     CycleIssueSerializer,
-    CycleFavouriteSerializer,
+    CycleFavoriteSerializer,
 )
 from plane.api.permissions import ProjectEntityPermission
 from plane.db.models import Cycle, CycleIssue, Issue, CycleFavourite
@@ -318,8 +318,8 @@ class CompletedCyclesEndpoint(BaseAPIView):
             )
 
 
-class CycleFavouriteViewSet(BaseViewSet):
-    serializer_class = CycleFavouriteSerializer
+class CycleFavoriteViewSet(BaseViewSet):
+    serializer_class = CycleFavoriteSerializer
     model = CycleFavourite
 
     def get_queryset(self):
@@ -333,7 +333,7 @@ class CycleFavouriteViewSet(BaseViewSet):
 
     def create(self, request, slug, project_id):
         try:
-            serializer = CycleFavouriteSerializer(data=request.data)
+            serializer = CycleFavoriteSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save(user=request.user, project_id=project_id)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -341,7 +341,7 @@ class CycleFavouriteViewSet(BaseViewSet):
         except IntegrityError as e:
             if "already exists" in str(e):
                 return Response(
-                    {"error": "The cycle is already added to favourites"},
+                    {"error": "The cycle is already added to favorites"},
                     status=status.HTTP_410_GONE,
                 )
             else:
@@ -369,7 +369,7 @@ class CycleFavouriteViewSet(BaseViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
         except CycleFavourite.DoesNotExist:
             return Response(
-                {"error": "Cycle is not in favourites"},
+                {"error": "Cycle is not in favorites"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except Exception as e:

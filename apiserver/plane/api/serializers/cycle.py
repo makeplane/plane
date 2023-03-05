@@ -36,7 +36,7 @@ class CycleIssueSerializer(BaseSerializer):
         ]
 
 
-class CycleFavouriteSerializer(BaseSerializer):
+class CycleFavoriteSerializer(BaseSerializer):
     cycle_detail = CycleSerializer(source="cycle", read_only=True)
 
     class Meta:

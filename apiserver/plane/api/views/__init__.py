@@ -45,7 +45,7 @@ from .cycle import (
     CycleDateCheckEndpoint,
     CurrentUpcomingCyclesEndpoint,
     CompletedCyclesEndpoint,
-    CycleFavouriteViewSet,
+    CycleFavoriteViewSet,
 )
 from .asset import FileAssetEndpoint
 from .issue import (

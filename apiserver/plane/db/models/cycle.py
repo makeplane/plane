@@ -58,17 +58,17 @@ class CycleFavourite(ProjectBaseModel):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="cycle_favourites",
+        related_name="cycle_favorites",
     )
     cycle = models.ForeignKey(
-        "db.Cycle", on_delete=models.CASCADE, related_name="cycle_favourites"
+        "db.Cycle", on_delete=models.CASCADE, related_name="cycle_favorites"
     )
 
     class Meta:
         unique_together = ["cycle", "user"]
         verbose_name = "Cycle Favourite"
-        verbose_name_plural = "Cycle Favourites"
-        db_table = "cycle_favourites"
+        verbose_name_plural = "Cycle Favorites"
+        db_table = "cycle_favorites"
         ordering = ("-created_at",)
 
     def __str__(self):
