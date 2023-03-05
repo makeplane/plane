@@ -104,9 +104,12 @@ export const getDateRangeStatus = (startDate: string  , endDate: string ) => {
 }
 
 export const renderShortDateWithYearFormat = (date: Date) => {
+  if(isNaN(date.getTime())){
+    return "N/A"
+  }
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   const day = date.getDate();
   const month = months[date.getMonth()];
   const year = date.getFullYear();
-  return `${month} ${day}, ${year}`;
+  return ` ${month} ${day}, ${year}`;
 }
