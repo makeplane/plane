@@ -30,6 +30,21 @@
   -webkit-font-smoothing: antialiased;
 }
 
+/* Horizontal Scrollbar style */
+.horizontal-scroll-enable{
+  overflow-x: scroll;
+}
+
+.horizontal-scroll-enable::-webkit-scrollbar{
+  display: block;
+  height: 10px;
+}
+
+.horizontal-scroll-enable::-webkit-scrollbar-thumb{
+  border-radius: 5px;
+  background-color: #9ca3af;
+}
+/* end Horizontal Scrollbar style */
 .scrollbar-enable::-webkit-scrollbar {
   display: block;
 }
