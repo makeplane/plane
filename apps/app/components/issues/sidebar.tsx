@@ -243,20 +243,38 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
         </div>
         <div className="divide-y-2 divide-gray-100">
           <div className="py-1">
-            <SidebarStateSelect
+            <Controller
               control={control}
-              submitChanges={submitChanges}
-              userAuth={userAuth}
+              name="state"
+              render={({ field: { value } }) => (
+                <SidebarStateSelect
+                  value={value}
+                  onChange={(val: string) => submitChanges({ state: val })}
+                  userAuth={userAuth}
+                />
+              )}
             />
-            <SidebarAssigneeSelect
+            <Controller
               control={control}
-              submitChanges={submitChanges}
-              userAuth={userAuth}
+              name="assignees_list"
+              render={({ field: { value } }) => (
+                <SidebarAssigneeSelect
+                  value={value}
+                  onChange={(val: string[]) => submitChanges({ assignees_list: val })}
+                  userAuth={userAuth}
+                />
+              )}
             />
-            <SidebarPrioritySelect
+            <Controller
               control={control}
-              submitChanges={submitChanges}
-              userAuth={userAuth}
+              name="priority"
+              render={({ field: { value } }) => (
+                <SidebarPrioritySelect
+                  value={value}
+                  onChange={(val: string) => submitChanges({ priority: val })}
+                  userAuth={userAuth}
+                />
+              )}
             />
           </div>
           <div className="py-1">

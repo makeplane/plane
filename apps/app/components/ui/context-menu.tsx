@@ -20,20 +20,12 @@ const ContextMenu = ({ position, children, title, isOpen, setIsOpen }: Props) =>
     };
 
     window.addEventListener("click", hideContextMenu);
+    window.addEventListener("keydown", (e: KeyboardEvent) => {
+      if (e.key === "Escape") hideContextMenu();
+    });
 
     return () => {
       window.removeEventListener("click", hideContextMenu);
-    };
-  }, [isOpen, setIsOpen]);
-
-  useEffect(() => {
-    const hideContextMenu = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen) setIsOpen(false);
-    };
-
-    window.addEventListener("keydown", hideContextMenu);
-
-    return () => {
       window.removeEventListener("keydown", hideContextMenu);
     };
   }, [isOpen, setIsOpen]);

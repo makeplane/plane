@@ -5,7 +5,9 @@ import useSWR from "swr";
 // services
 import stateService from "services/state.service";
 // ui
-import { CustomSelect, Tooltip } from "components/ui";
+import { CustomSearchSelect, Tooltip } from "components/ui";
+// icons
+import { getStateGroupIcon } from "components/icons";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 import { getStatesList } from "helpers/state.helper";
@@ -13,7 +15,6 @@ import { getStatesList } from "helpers/state.helper";
 import { IIssue } from "types";
 // fetch-keys
 import { STATE_LIST } from "constants/fetch-keys";
-import { getStateGroupIcon } from "components/icons";
 
 type Props = {
   issue: IIssue;
@@ -41,42 +42,39 @@ export const ViewStateSelect: React.FC<Props> = ({
   );
   const states = getStatesList(stateGroups ?? {});
 
-  const currentState = states?.find((s) => s.id === issue.state);
+  const options = states?.map((state) => ({
+    value: state.id,
+    query: state.name,
+    content: (
+      <div className="flex items-center gap-2">
+        {getStateGroupIcon(state.group, "16", "16", state.color)}
+        {state.name}
+      </div>
+    ),
+  }));
+
+  const selectedOption = states?.find((s) => s.id === issue.state);
 
   return (
-    <CustomSelect
-      label={
-        <>
-          {getStateGroupIcon(
-            currentState?.group ?? "backlog",
-            "16",
-            "16",
-            currentState?.color ?? ""
-          )}
-          <Tooltip
-            tooltipHeading="State"
-            tooltipContent={addSpaceIfCamelCase(currentState?.name ?? "")}
-          >
-            <span>{addSpaceIfCamelCase(currentState?.name ?? "")}</span>
-          </Tooltip>
-        </>
-      }
+    <CustomSearchSelect
       value={issue.state}
       onChange={(data: string) => partialUpdateIssue({ state: data })}
-      maxHeight="md"
-      noChevron
-      disabled={isNotAllowed}
+      options={options}
+      label={
+        <Tooltip
+          tooltipHeading="State"
+          tooltipContent={addSpaceIfCamelCase(selectedOption?.name ?? "")}
+        >
+          <div className="flex items-center gap-2 text-gray-500">
+            {selectedOption &&
+              getStateGroupIcon(selectedOption.group, "16", "16", selectedOption.color)}
+            {selectedOption?.name ?? "State"}
+          </div>
+        </Tooltip>
+      }
       position={position}
-      selfPositioned={selfPositioned}
-    >
-      {states?.map((state) => (
-        <CustomSelect.Option key={state.id} value={state.id}>
-          <>
-            {getStateGroupIcon(state.group, "16", "16", state.color)}
-            {addSpaceIfCamelCase(state.name)}
-          </>
-        </CustomSelect.Option>
-      ))}
-    </CustomSelect>
+      disabled={isNotAllowed}
+      noChevron
+    />
   );
 };

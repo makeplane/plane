@@ -16,7 +16,6 @@ type CustomSearchSelectProps = {
   label?: string | JSX.Element;
   textAlignment?: "left" | "center" | "right";
   position?: "right" | "left";
-  input?: boolean;
   noChevron?: boolean;
   customButton?: JSX.Element;
   optionsClassName?: string;
@@ -33,7 +32,6 @@ export const CustomSearchSelect = ({
   onChange,
   options,
   position = "left",
-  input = false,
   noChevron = false,
   customButton,
   optionsClassName = "",
@@ -69,9 +67,7 @@ export const CustomSearchSelect = ({
                 <Combobox.Button
                   className={`flex w-full ${
                     disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-gray-100"
-                  } items-center justify-between gap-1 rounded-md border shadow-sm duration-300 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
-                    input ? "border-gray-300 px-3 py-2 text-sm" : "px-3 py-1.5 text-xs"
-                  } ${
+                  } items-center justify-between gap-1 rounded-md border px-3 py-1.5 text-xs shadow-sm duration-300 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
                     textAlignment === "right"
                       ? "text-right"
                       : textAlignment === "center"
@@ -99,9 +95,7 @@ export const CustomSearchSelect = ({
                 <Combobox.Options
                   className={`${optionsClassName} absolute min-w-[10rem] p-2 ${
                     position === "right" ? "right-0" : "left-0"
-                  } z-10 mt-1 origin-top-right overflow-y-auto rounded-md bg-white text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none  ${
-                    input ? "max-h-48" : ""
-                  }`}
+                  } z-10 mt-1 origin-top-right overflow-y-auto rounded-md bg-white text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none`}
                 >
                   <div className="flex w-full items-center justify-start rounded-sm border-[0.6px] bg-gray-100 px-2">
                     <MagnifyingGlassIcon className="h-3 w-3 text-gray-500" />
@@ -142,10 +136,10 @@ export const CustomSearchSelect = ({
                           </Combobox.Option>
                         ))
                       ) : (
-                        <p className="text-xs text-gray-500">No matching results</p>
+                        <p className="text-center text-gray-500">No matching results</p>
                       )
                     ) : (
-                      <p className="text-xs text-gray-500">Loading...</p>
+                      <p className="text-center text-gray-500">Loading...</p>
                     )}
                   </div>
                   {footerOption}
@@ -170,9 +164,7 @@ export const CustomSearchSelect = ({
                 <Combobox.Button
                   className={`flex w-full ${
                     disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-gray-100"
-                  } items-center justify-between gap-1 rounded-md border shadow-sm duration-300 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
-                    input ? "border-gray-300 px-3 py-2 text-sm" : "px-3 py-1.5 text-xs"
-                  } ${
+                  } items-center justify-between gap-1 rounded-md border px-3 py-1.5 text-xs shadow-sm duration-300 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
                     textAlignment === "right"
                       ? "text-right"
                       : textAlignment === "center"
@@ -200,20 +192,18 @@ export const CustomSearchSelect = ({
                 <Combobox.Options
                   className={`${optionsClassName} absolute min-w-[10rem] p-2 ${
                     position === "right" ? "right-0" : "left-0"
-                  } z-10 mt-1 origin-top-right overflow-y-auto rounded-md bg-white text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none  ${
-                    input ? "max-h-48" : ""
-                  }`}
+                  } z-10 mt-1 origin-top-right overflow-y-auto rounded-md bg-white text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none`}
                 >
                   <div className="flex w-full items-center justify-start rounded-sm border bg-gray-100 px-2 text-gray-500">
                     <MagnifyingGlassIcon className="h-3 w-3" />
                     <Combobox.Input
-                      className="w-full  bg-transparent py-1 px-2  text-xs focus:outline-none"
+                      className="w-full  bg-transparent py-1 px-2 text-xs focus:outline-none"
                       onChange={(e) => setQuery(e.target.value)}
                       placeholder="Type to search..."
                       displayValue={(assigned: any) => assigned?.name}
                     />
                   </div>
-                  <div className="mt-2">
+                  <div className="mt-2 space-y-1">
                     {filteredOptions ? (
                       filteredOptions.length > 0 ? (
                         filteredOptions.map((option) => (
@@ -235,10 +225,10 @@ export const CustomSearchSelect = ({
                           </Combobox.Option>
                         ))
                       ) : (
-                        <p className="text-gray-500">No matching results</p>
+                        <p className="text-center text-gray-500">No matching results</p>
                       )
                     ) : (
-                      <p className="text-gray-500">Loading...</p>
+                      <p className="text-center text-gray-500">Loading...</p>
                     )}
                   </div>
                   {footerOption}
