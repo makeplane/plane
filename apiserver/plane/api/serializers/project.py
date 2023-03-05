@@ -13,7 +13,7 @@ from plane.db.models import (
     ProjectMember,
     ProjectMemberInvite,
     ProjectIdentifier,
-    ProjectFavourite,
+    ProjectFavorite,
 )
 
 
@@ -76,7 +76,7 @@ class ProjectDetailSerializer(BaseSerializer):
     workspace = WorkSpaceSerializer(read_only=True)
     default_assignee = UserLiteSerializer(read_only=True)
     project_lead = UserLiteSerializer(read_only=True)
-    is_favourite = serializers.BooleanField(read_only=True)
+    is_favorite = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Project
@@ -108,11 +108,11 @@ class ProjectIdentifierSerializer(BaseSerializer):
         fields = "__all__"
 
 
-class ProjectFavouriteSerializer(BaseSerializer):
+class ProjectFavoriteSerializer(BaseSerializer):
     project_detail = ProjectSerializer(source="project", read_only=True)
 
     class Meta:
-        model = ProjectFavourite
+        model = ProjectFavorite
         fields = "__all__"
         read_only_fields = [
             "workspace",

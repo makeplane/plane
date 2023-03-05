@@ -22,7 +22,7 @@ from plane.api.serializers import (
     ProjectMemberSerializer,
     ProjectDetailSerializer,
     ProjectMemberInviteSerializer,
-    ProjectFavouriteSerializer,
+    ProjectFavoriteSerializer,
 )
 
 from plane.api.permissions import ProjectBasePermission
@@ -36,7 +36,7 @@ from plane.db.models import (
     WorkspaceMember,
     State,
     TeamMember,
-    ProjectFavourite,
+    ProjectFavorite,
 )
 
 from plane.db.models import (
@@ -77,12 +77,12 @@ class ProjectViewSet(BaseViewSet):
 
     def list(self, request, slug):
         try:
-            subquery = ProjectFavourite.objects.filter(
+            subquery = ProjectFavorite.objects.filter(
                 user=self.request.user,
                 project_id=OuterRef("pk"),
                 workspace__slug=self.kwargs.get("slug"),
             )
-            projects = self.get_queryset().annotate(is_favourite=Exists(subquery))
+            projects = self.get_queryset().annotate(is_favorite=Exists(subquery))
             return Response(ProjectDetailSerializer(projects, many=True).data)
         except Exception as e:
             capture_exception(e)
@@ -679,9 +679,9 @@ class ProjectMemberUserEndpoint(BaseAPIView):
             )
 
 
-class ProjectFavouritesViewSet(BaseViewSet):
-    serializer_class = ProjectFavouriteSerializer
-    model = ProjectFavourite
+class ProjectFavoritesViewSet(BaseViewSet):
+    serializer_class = ProjectFavoriteSerializer
+    model = ProjectFavorite
 
     def get_queryset(self):
         return self.filter_queryset(
@@ -700,7 +700,7 @@ class ProjectFavouritesViewSet(BaseViewSet):
 
     def create(self, request, slug):
         try:
-            serializer = ProjectFavouriteSerializer(data=request.data)
+            serializer = ProjectFavoriteSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save(user=request.user)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -709,7 +709,7 @@ class ProjectFavouritesViewSet(BaseViewSet):
             print(str(e))
             if "already exists" in str(e):
                 return Response(
-                    {"error": "The project is already added to favourites"},
+                    {"error": "The project is already added to favorites"},
                     status=status.HTTP_410_GONE,
                 )
             else:
@@ -727,14 +727,14 @@ class ProjectFavouritesViewSet(BaseViewSet):
 
     def destroy(self, request, slug, project_id):
         try:
-            project_favourite = ProjectFavourite.objects.get(
+            project_favorite = ProjectFavorite.objects.get(
                 project=project_id, user=request.user, workspace__slug=slug
             )
-            project_favourite.delete()
+            project_favorite.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
-        except ProjectFavourite.DoesNotExist:
+        except ProjectFavorite.DoesNotExist:
             return Response(
-                {"error": "Project is not in favourites"},
+                {"error": "Project is not in favorites"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except Exception as e:

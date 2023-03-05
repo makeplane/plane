@@ -157,18 +157,18 @@ class ProjectIdentifier(AuditModel):
         ordering = ("-created_at",)
 
 
-class ProjectFavourite(ProjectBaseModel):
+class ProjectFavorite(ProjectBaseModel):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="project_favourites",
+        related_name="project_favorites",
     )
 
     class Meta:
         unique_together = ["project", "user"]
-        verbose_name = "Project Favourite"
-        verbose_name_plural = "Project Favourites"
-        db_table = "project_favourites"
+        verbose_name = "Project Favorite"
+        verbose_name_plural = "Project Favorites"
+        db_table = "project_favorites"
         ordering = ("-created_at",)
 
     def __str__(self):
