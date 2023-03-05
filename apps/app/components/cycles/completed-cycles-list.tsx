@@ -58,14 +58,16 @@ export const CompletedCyclesList: React.FC<CompletedCyclesListProps> = ({
             data={selectedCycleForDelete}
           />
           {completedCycles?.completed_cycles.length > 0 ? (
-            completedCycles.completed_cycles.map((cycle) => (
-              <SingleCycleCard
-                key={cycle.id}
-                cycle={cycle}
-                handleDeleteCycle={() => handleDeleteCycle(cycle)}
-                handleEditCycle={() => handleEditCycle(cycle)}
-              />
-            ))
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-9">
+              {completedCycles.completed_cycles.map((cycle) => (
+                <SingleCycleCard
+                  key={cycle.id}
+                  cycle={cycle}
+                  handleDeleteCycle={() => handleDeleteCycle(cycle)}
+                  handleEditCycle={() => handleEditCycle(cycle)}
+                />
+              ))}
+            </div>
           ) : (
             <div className="flex flex-col items-center justify-center gap-4 text-center">
               <CompletedCycleIcon height="56" width="56" />
