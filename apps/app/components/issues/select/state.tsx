@@ -72,6 +72,7 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
           Create New State
         </button>
       }
+      noChevron
     />
   );
 };

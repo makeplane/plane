@@ -46,6 +46,7 @@ export const IssueProjectSelect: React.FC<IssueProjectSelectProps> = ({
         onChange(val);
         setActiveProject(val);
       }}
+      noChevron
     >
       {projects ? (
         projects.length > 0 ? (

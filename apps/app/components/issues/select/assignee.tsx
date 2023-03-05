@@ -22,7 +22,7 @@ export const IssueAssigneeSelect: React.FC<Props> = ({ projectId, value = [], on
   const { workspaceSlug } = router.query;
 
   // fetching project members
-  const { data: people } = useSWR(
+  const { data: members } = useSWR(
     workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
     workspaceSlug && projectId
       ? () => projectServices.projectMembers(workspaceSlug as string, projectId as string)
@@ -30,18 +30,20 @@ export const IssueAssigneeSelect: React.FC<Props> = ({ projectId, value = [], on
   );
 
   const options =
-    people?.map((person) => ({
-      value: person.member.id,
+    members?.map((member) => ({
+      value: member.member.id,
       query:
-        person.member.first_name && person.member.first_name !== ""
-          ? person.member.first_name
-          : person.member.email,
+        (member.member.first_name && member.member.first_name !== ""
+          ? member.member.first_name
+          : member.member.email) +
+          " " +
+          member.member.last_name ?? "",
       content: (
         <div className="flex items-center gap-2">
-          <Avatar user={person.member} />
-          {person.member.first_name && person.member.first_name !== ""
-            ? person.member.first_name
-            : person.member.email}
+          <Avatar user={member.member} />
+          {member.member.first_name && member.member.first_name !== ""
+            ? member.member.first_name
+            : member.member.email}
         </div>
       ),
     })) ?? [];
@@ -54,19 +56,20 @@ export const IssueAssigneeSelect: React.FC<Props> = ({ projectId, value = [], on
       label={
         <div className="flex items-center gap-2 text-gray-500">
           {value && value.length > 0 && Array.isArray(value) ? (
-            <span className="flex items-center justify-center gap-2">
+            <div className="flex items-center justify-center gap-2">
               <AssigneesList userIds={value} length={3} showLength={false} />
-              <span className=" text-gray-500">{value.length} Assignees</span>
-            </span>
+              <span className="text-gray-500">{value.length} Assignees</span>
+            </div>
           ) : (
-            <span className="flex items-center justify-center gap-2">
-              <UserGroupIcon className="h-4 w-4 text-gray-500 " />
-              <span className=" text-gray-500">Assignee</span>
-            </span>
+            <div className="flex items-center justify-center gap-2">
+              <UserGroupIcon className="h-4 w-4 text-gray-500" />
+              <span className="text-gray-500">Assignee</span>
+            </div>
           )}
         </div>
       }
       multiple
+      noChevron
     />
   );
 };

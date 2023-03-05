@@ -94,7 +94,7 @@ const CustomSelect = ({
             : ""
         }`}
       >
-        <div className="p-2">{children}</div>
+        <div className="space-y-1 p-2">{children}</div>
       </Listbox.Options>
     </Transition>
   </Listbox>
@@ -112,13 +112,14 @@ const Option: React.FC<OptionProps> = ({ children, value, className }) => (
     className={({ active, selected }) =>
       `${className} ${active || selected ? "bg-hover-gray" : ""} ${
         selected ? "font-medium" : ""
-      } flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 text-gray-500`
+      } cursor-pointer select-none truncate rounded px-1 py-1.5 text-gray-500`
     }
   >
     {({ selected }) => (
-      <>
-        {children} {selected && <CheckIcon className="h-4 w-4" />}
-      </>
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2">{children}</div>
+        {selected && <CheckIcon className="h-4 w-4 flex-shrink-0" />}
+      </div>
     )}
   </Listbox.Option>
 );

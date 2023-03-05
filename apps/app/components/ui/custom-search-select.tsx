@@ -58,6 +58,7 @@ export const CustomSearchSelect = ({
           value={value}
           onChange={onChange}
           className={`${!selfPositioned ? "relative" : ""} flex-shrink-0 text-left`}
+          disabled={disabled}
           multiple
         >
           {({ open }: any) => (
@@ -111,7 +112,7 @@ export const CustomSearchSelect = ({
                       displayValue={(assigned: any) => assigned?.name}
                     />
                   </div>
-                  <div className="mt-2">
+                  <div className="mt-2 space-y-1">
                     {filteredOptions ? (
                       filteredOptions.length > 0 ? (
                         filteredOptions.map((option) => (
@@ -124,10 +125,18 @@ export const CustomSearchSelect = ({
                               } flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 text-gray-500`
                             }
                           >
-                            {({ selected }) => (
+                            {({ active, selected }) => (
                               <>
                                 {option.content}
-                                {selected && <CheckIcon className="h-4 w-4" />}
+                                <div
+                                  className={`flex items-center justify-center rounded border border-gray-500 p-0.5 ${
+                                    active || selected ? "opacity-100" : "opacity-0"
+                                  }`}
+                                >
+                                  <CheckIcon
+                                    className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`}
+                                  />
+                                </div>
                               </>
                             )}
                           </Combobox.Option>
@@ -151,6 +160,7 @@ export const CustomSearchSelect = ({
           value={value}
           onChange={onChange}
           className={`${!selfPositioned ? "relative" : ""} flex-shrink-0 text-left`}
+          disabled={disabled}
         >
           {({ open }: any) => (
             <>

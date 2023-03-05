@@ -398,6 +398,7 @@ export const IssuesView: React.FC<Props> = ({
               states={states}
               members={members}
               addIssueToState={addIssueToState}
+              makeIssueCopy={makeIssueCopy}
               handleEditIssue={handleEditIssue}
               handleDeleteIssue={handleDeleteIssue}
               openIssuesListModal={type !== "issue" ? openIssuesListModal : null}

@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -18,7 +18,14 @@ import {
 } from "components/issues/view-select";
 
 // ui
-import { Tooltip, CustomMenu } from "components/ui";
+import { Tooltip, CustomMenu, ContextMenu } from "components/ui";
+// icons
+import {
+  ClipboardDocumentCheckIcon,
+  LinkIcon,
+  PencilIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
@@ -31,6 +38,7 @@ type Props = {
   issue: IIssue;
   properties: Properties;
   editIssue: () => void;
+  makeIssueCopy: () => void;
   removeIssue?: (() => void) | null;
   handleDeleteIssue: (issue: IIssue) => void;
   userAuth: UserAuth;
@@ -41,13 +49,20 @@ export const SingleListIssue: React.FC<Props> = ({
   issue,
   properties,
   editIssue,
+  makeIssueCopy,
   removeIssue,
   handleDeleteIssue,
   userAuth,
 }) => {
+  // context menu
+  const [contextMenu, setContextMenu] = useState(false);
+  const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
+
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+
   const { setToastAlert } = useToast();
+
   const partialUpdateIssue = useCallback(
     (formData: Partial<IIssue>) => {
       if (!workspaceSlug || !projectId) return;
@@ -63,6 +78,7 @@ export const SingleListIssue: React.FC<Props> = ({
                   issue_detail: {
                     ...p.issue_detail,
                     ...formData,
+                    assignees: formData.assignees_list ?? p.issue_detail.assignees_list,
                   },
                 };
               }
@@ -84,6 +100,7 @@ export const SingleListIssue: React.FC<Props> = ({
                   issue_detail: {
                     ...p.issue_detail,
                     ...formData,
+                    assignees: formData.assignees_list ?? p.issue_detail.assignees_list,
                   },
                 };
               }
@@ -98,7 +115,8 @@ export const SingleListIssue: React.FC<Props> = ({
         PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
         (prevData) =>
           (prevData ?? []).map((p) => {
-            if (p.id === issue.id) return { ...p, ...formData };
+            if (p.id === issue.id)
+              return { ...p, ...formData, assignees: formData.assignees_list ?? p.assignees_list };
 
             return p;
           }),
@@ -134,104 +152,136 @@ export const SingleListIssue: React.FC<Props> = ({
       });
     });
   };
+
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   return (
-    <div className="flex items-center justify-between gap-2 px-4 py-3 text-sm">
-      <div className="flex items-center gap-2">
-        <span
-          className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
-          style={{
-            backgroundColor: issue.state_detail.color,
-          }}
-        />
-        <Link href={`/${workspaceSlug}/projects/${issue?.project_detail?.id}/issues/${issue.id}`}>
-          <a className="group relative flex items-center gap-2">
-            {properties.key && (
-              <Tooltip
-                tooltipHeading="ID"
-                tooltipContent={`${issue.project_detail?.identifier}-${issue.sequence_id}`}
-              >
-                <span className="flex-shrink-0 text-xs text-gray-500">
-                  {issue.project_detail?.identifier}-{issue.sequence_id}
+    <>
+      <ContextMenu
+        position={contextMenuPosition}
+        title="Quick actions"
+        isOpen={contextMenu}
+        setIsOpen={setContextMenu}
+      >
+        <ContextMenu.Item Icon={PencilIcon} onClick={editIssue}>
+          Edit issue
+        </ContextMenu.Item>
+        <ContextMenu.Item Icon={ClipboardDocumentCheckIcon} onClick={makeIssueCopy}>
+          Make a copy...
+        </ContextMenu.Item>
+        <ContextMenu.Item Icon={TrashIcon} onClick={() => handleDeleteIssue(issue)}>
+          Delete issue
+        </ContextMenu.Item>
+        <ContextMenu.Item Icon={LinkIcon} onClick={handleCopyText}>
+          Copy issue link
+        </ContextMenu.Item>
+      </ContextMenu>
+      <div
+        className="flex items-center justify-between gap-2 px-4 py-3 text-sm"
+        onContextMenu={(e) => {
+          e.preventDefault();
+          setContextMenu(true);
+          setContextMenuPosition({ x: e.pageX, y: e.pageY });
+        }}
+      >
+        <div className="flex items-center gap-2">
+          <span
+            className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
+            style={{
+              backgroundColor: issue.state_detail.color,
+            }}
+          />
+          <Link href={`/${workspaceSlug}/projects/${issue?.project_detail?.id}/issues/${issue.id}`}>
+            <a className="group relative flex items-center gap-2">
+              {properties.key && (
+                <Tooltip
+                  tooltipHeading="ID"
+                  tooltipContent={`${issue.project_detail?.identifier}-${issue.sequence_id}`}
+                >
+                  <span className="flex-shrink-0 text-xs text-gray-500">
+                    {issue.project_detail?.identifier}-{issue.sequence_id}
+                  </span>
+                </Tooltip>
+              )}
+              <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
+                <span className="w-auto max-w-lg overflow-hidden text-ellipsis whitespace-nowrap">
+                  {issue.name}
                 </span>
               </Tooltip>
-            )}
-            <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
-              <span className="w-auto max-w-lg text-ellipsis overflow-hidden whitespace-nowrap">
-                {issue.name}
-              </span>
-            </Tooltip>
-          </a>
-        </Link>
-      </div>
-      <div className="flex flex-shrink-0 flex-wrap items-center gap-x-1 gap-y-2 text-xs">
-        {properties.priority && (
-          <ViewPrioritySelect
-            issue={issue}
-            partialUpdateIssue={partialUpdateIssue}
-            isNotAllowed={isNotAllowed}
-          />
-        )}
-        {properties.state && (
-          <ViewStateSelect
-            issue={issue}
-            partialUpdateIssue={partialUpdateIssue}
-            isNotAllowed={isNotAllowed}
-          />
-        )}
-        {properties.due_date && (
-          <ViewDueDateSelect
-            issue={issue}
-            partialUpdateIssue={partialUpdateIssue}
-            isNotAllowed={isNotAllowed}
-          />
-        )}
-        {properties.sub_issue_count && (
-          <div className="flex flex-shrink-0 items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm">
-            {issue.sub_issues_count} {issue.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
-          </div>
-        )}
-        {properties.labels && (
-          <div className="flex flex-wrap gap-1">
-            {issue.label_details.map((label) => (
-              <span
-                key={label.id}
-                className="group flex items-center gap-1 rounded-2xl border px-2 py-0.5 text-xs"
-              >
+            </a>
+          </Link>
+        </div>
+        <div className="flex flex-shrink-0 flex-wrap items-center gap-x-1 gap-y-2 text-xs">
+          {properties.priority && (
+            <ViewPrioritySelect
+              issue={issue}
+              partialUpdateIssue={partialUpdateIssue}
+              position="right"
+              isNotAllowed={isNotAllowed}
+            />
+          )}
+          {properties.state && (
+            <ViewStateSelect
+              issue={issue}
+              partialUpdateIssue={partialUpdateIssue}
+              position="right"
+              isNotAllowed={isNotAllowed}
+            />
+          )}
+          {properties.due_date && (
+            <ViewDueDateSelect
+              issue={issue}
+              partialUpdateIssue={partialUpdateIssue}
+              isNotAllowed={isNotAllowed}
+            />
+          )}
+          {properties.sub_issue_count && (
+            <div className="flex flex-shrink-0 items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm">
+              {issue.sub_issues_count} {issue.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
+            </div>
+          )}
+          {properties.labels && (
+            <div className="flex flex-wrap gap-1">
+              {issue.label_details.map((label) => (
                 <span
-                  className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                  style={{
-                    backgroundColor: label?.color && label.color !== "" ? label.color : "#000",
-                  }}
-                />
-                {label.name}
-              </span>
-            ))}
-          </div>
-        )}
-        {properties.assignee && (
-          <ViewAssigneeSelect
-            issue={issue}
-            partialUpdateIssue={partialUpdateIssue}
-            isNotAllowed={isNotAllowed}
-          />
-        )}
-        {type && !isNotAllowed && (
-          <CustomMenu width="auto" ellipsis>
-            <CustomMenu.MenuItem onClick={editIssue}>Edit issue</CustomMenu.MenuItem>
-            {type !== "issue" && removeIssue && (
-              <CustomMenu.MenuItem onClick={removeIssue}>
-                <>Remove from {type}</>
+                  key={label.id}
+                  className="group flex items-center gap-1 rounded-2xl border px-2 py-0.5 text-xs"
+                >
+                  <span
+                    className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                    style={{
+                      backgroundColor: label?.color && label.color !== "" ? label.color : "#000",
+                    }}
+                  />
+                  {label.name}
+                </span>
+              ))}
+            </div>
+          )}
+          {properties.assignee && (
+            <ViewAssigneeSelect
+              issue={issue}
+              partialUpdateIssue={partialUpdateIssue}
+              position="right"
+              isNotAllowed={isNotAllowed}
+            />
+          )}
+          {type && !isNotAllowed && (
+            <CustomMenu width="auto" ellipsis>
+              <CustomMenu.MenuItem onClick={editIssue}>Edit issue</CustomMenu.MenuItem>
+              {type !== "issue" && removeIssue && (
+                <CustomMenu.MenuItem onClick={removeIssue}>
+                  <>Remove from {type}</>
+                </CustomMenu.MenuItem>
+              )}
+              <CustomMenu.MenuItem onClick={() => handleDeleteIssue(issue)}>
+                Delete issue
               </CustomMenu.MenuItem>
-            )}
-            <CustomMenu.MenuItem onClick={() => handleDeleteIssue(issue)}>
-              Delete issue
-            </CustomMenu.MenuItem>
-            <CustomMenu.MenuItem onClick={handleCopyText}>Copy issue link</CustomMenu.MenuItem>
-          </CustomMenu>
-        )}
+              <CustomMenu.MenuItem onClick={handleCopyText}>Copy issue link</CustomMenu.MenuItem>
+            </CustomMenu>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };

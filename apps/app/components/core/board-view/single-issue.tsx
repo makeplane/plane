@@ -101,6 +101,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
                   issue_detail: {
                     ...p.issue_detail,
                     ...formData,
+                    assignees: formData.assignees_list ?? p.issue_detail.assignees_list,
                   },
                 };
               }
@@ -122,6 +123,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
                   issue_detail: {
                     ...p.issue_detail,
                     ...formData,
+                    assignees: formData.assignees_list ?? p.issue_detail.assignees_list,
                   },
                 };
               }
@@ -136,7 +138,8 @@ export const SingleBoardIssue: React.FC<Props> = ({
         PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
         (prevData) =>
           (prevData ?? []).map((p) => {
-            if (p.id === issue.id) return { ...p, ...formData };
+            if (p.id === issue.id)
+              return { ...p, ...formData, assignees: formData.assignees_list ?? p.assignees_list };
 
             return p;
           }),
@@ -159,10 +162,10 @@ export const SingleBoardIssue: React.FC<Props> = ({
     [workspaceSlug, projectId, cycleId, moduleId, issue]
   );
 
-  function getStyle(
+  const getStyle = (
     style: DraggingStyle | NotDraggingStyle | undefined,
     snapshot: DraggableStateSnapshot
-  ) {
+  ) => {
     if (orderBy === "sort_order") return style;
     if (!snapshot.isDragging) return {};
     if (!snapshot.isDropAnimating) {
@@ -173,7 +176,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
       ...style,
       transitionDuration: `0.001s`,
     };
-  }
+  };
 
   const handleCopyText = () => {
     const originURL =
@@ -295,7 +298,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 {issue.sub_issues_count} {issue.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
               </div>
             )}
-            {properties.labels && (
+            {properties.labels && issue.label_details.length > 0 && (
               <div className="flex flex-wrap gap-1">
                 {issue.label_details.map((label) => (
                   <span

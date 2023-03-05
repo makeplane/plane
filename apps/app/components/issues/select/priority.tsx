@@ -26,6 +26,7 @@ export const IssuePrioritySelect: React.FC<Props> = ({ value, onChange }) => (
       </div>
     }
     onChange={onChange}
+    noChevron
   >
     {PRIORITIES.map((priority) => (
       <CustomSelect.Option key={priority} value={priority}>

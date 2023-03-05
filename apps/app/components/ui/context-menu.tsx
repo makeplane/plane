@@ -15,14 +15,28 @@ type Props = {
 
 const ContextMenu = ({ position, children, title, isOpen, setIsOpen }: Props) => {
   useEffect(() => {
-    const hideContextMenu = () => setIsOpen(false);
+    const hideContextMenu = () => {
+      if (isOpen) setIsOpen(false);
+    };
 
     window.addEventListener("click", hideContextMenu);
 
     return () => {
       window.removeEventListener("click", hideContextMenu);
     };
-  }, [setIsOpen]);
+  }, [isOpen, setIsOpen]);
+
+  useEffect(() => {
+    const hideContextMenu = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isOpen) setIsOpen(false);
+    };
+
+    window.addEventListener("keydown", hideContextMenu);
+
+    return () => {
+      window.removeEventListener("keydown", hideContextMenu);
+    };
+  }, [isOpen, setIsOpen]);
 
   return (
     <div
@@ -61,10 +75,12 @@ const MenuItem: React.FC<MenuItemProps> = ({
   className = "",
   Icon,
 }) => (
-  <div className={`${className} w-full rounded px-1 py-1.5 text-left hover:bg-hover-gray`}>
+  <>
     {renderAs === "a" ? (
       <Link href={href}>
-        <a className="flex items-center gap-2">
+        <a
+          className={`${className} flex w-full items-center gap-2 rounded px-1 py-1.5 text-left hover:bg-hover-gray`}
+        >
           <>
             {Icon && <Icon />}
             {children}
@@ -72,14 +88,18 @@ const MenuItem: React.FC<MenuItemProps> = ({
         </a>
       </Link>
     ) : (
-      <button type="button" className="flex items-center gap-2" onClick={onClick}>
+      <button
+        type="button"
+        className={`${className} flex w-full items-center gap-2 rounded px-1 py-1.5 text-left hover:bg-hover-gray`}
+        onClick={onClick}
+      >
         <>
           {Icon && <Icon height={12} width={12} />}
           {children}
         </>
       </button>
     )}
-  </div>
+  </>
 );
 
 ContextMenu.Item = MenuItem;

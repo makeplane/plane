@@ -13,10 +13,12 @@ import { getStatesList } from "helpers/state.helper";
 import { IIssue } from "types";
 // fetch-keys
 import { STATE_LIST } from "constants/fetch-keys";
+import { getStateGroupIcon } from "components/icons";
 
 type Props = {
   issue: IIssue;
   partialUpdateIssue: (formData: Partial<IIssue>) => void;
+  position?: "left" | "right";
   selfPositioned?: boolean;
   isNotAllowed: boolean;
 };
@@ -24,6 +26,7 @@ type Props = {
 export const ViewStateSelect: React.FC<Props> = ({
   issue,
   partialUpdateIssue,
+  position = "left",
   selfPositioned = false,
   isNotAllowed,
 }) => {
@@ -38,46 +41,38 @@ export const ViewStateSelect: React.FC<Props> = ({
   );
   const states = getStatesList(stateGroups ?? {});
 
+  const currentState = states?.find((s) => s.id === issue.state);
+
   return (
     <CustomSelect
       label={
         <>
-          <span
-            className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
-            style={{
-              backgroundColor: states?.find((s) => s.id === issue.state)?.color,
-            }}
-          />
+          {getStateGroupIcon(
+            currentState?.group ?? "backlog",
+            "16",
+            "16",
+            currentState?.color ?? ""
+          )}
           <Tooltip
             tooltipHeading="State"
-            tooltipContent={addSpaceIfCamelCase(
-              states?.find((s) => s.id === issue.state)?.name ?? ""
-            )}
+            tooltipContent={addSpaceIfCamelCase(currentState?.name ?? "")}
           >
-            <span>
-              {addSpaceIfCamelCase(states?.find((s) => s.id === issue.state)?.name ?? "")}
-            </span>
+            <span>{addSpaceIfCamelCase(currentState?.name ?? "")}</span>
           </Tooltip>
         </>
       }
       value={issue.state}
-      onChange={(data: string) => {
-        partialUpdateIssue({ state: data });
-      }}
+      onChange={(data: string) => partialUpdateIssue({ state: data })}
       maxHeight="md"
       noChevron
       disabled={isNotAllowed}
+      position={position}
       selfPositioned={selfPositioned}
     >
       {states?.map((state) => (
         <CustomSelect.Option key={state.id} value={state.id}>
           <>
-            <span
-              className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
-              style={{
-                backgroundColor: state.color,
-              }}
-            />
+            {getStateGroupIcon(state.group, "16", "16", state.color)}
             {addSpaceIfCamelCase(state.name)}
           </>
         </CustomSelect.Option>
