@@ -24,11 +24,9 @@ export const LinearProgressIndicator: React.FC<Props> = ({ data }) => {
     );
   });
 
-  return total === 0 ? (
-    <div className="flex justify-between items-center h-1 gap-1  w-full"> - 0%</div>
-  ) : (
+  return (
     <div className="flex justify-between items-center h-1 gap-1  w-full">
-      <div className="flex h-full w-full rounded-md gap-1">{bars}</div>
+      {total === 0 ? " - 0%" : <div className="flex h-full w-full rounded-md gap-1">{bars}</div>}
     </div>
   );
 };
