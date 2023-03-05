@@ -50,9 +50,9 @@ class CycleIssue(ProjectBaseModel):
         return f"{self.cycle}"
 
 
-class CycleFavourite(ProjectBaseModel):
+class CycleFavorite(ProjectBaseModel):
     """_summary_
-    CycleFavourite (model): To store all the cycle favourite of the user
+    CycleFavorite (model): To store all the cycle favorite of the user
     """
 
     user = models.ForeignKey(
@@ -66,7 +66,7 @@ class CycleFavourite(ProjectBaseModel):
 
     class Meta:
         unique_together = ["cycle", "user"]
-        verbose_name = "Cycle Favourite"
+        verbose_name = "Cycle Favorite"
         verbose_name_plural = "Cycle Favorites"
         db_table = "cycle_favorites"
         ordering = ("-created_at",)

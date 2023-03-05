@@ -20,7 +20,7 @@ from plane.api.serializers import (
     CycleFavoriteSerializer,
 )
 from plane.api.permissions import ProjectEntityPermission
-from plane.db.models import Cycle, CycleIssue, Issue, CycleFavourite
+from plane.db.models import Cycle, CycleIssue, Issue, CycleFavorite
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
 
@@ -52,13 +52,13 @@ class CycleViewSet(BaseViewSet):
 
     def list(self, request, slug, project_id):
         try:
-            subquery = CycleFavourite.objects.filter(
+            subquery = CycleFavorite.objects.filter(
                 user=self.request.user,
                 cycle_id=OuterRef("pk"),
                 project_id=project_id,
                 workspace__slug=slug,
             )
-            cycles = self.get_queryset().annotate(is_favourite=Exists(subquery))
+            cycles = self.get_queryset().annotate(is_favorite=Exists(subquery))
             return Response(CycleSerializer(cycles, many=True).data)
         except Exception as e:
             capture_exception(e)
@@ -320,7 +320,7 @@ class CompletedCyclesEndpoint(BaseAPIView):
 
 class CycleFavoriteViewSet(BaseViewSet):
     serializer_class = CycleFavoriteSerializer
-    model = CycleFavourite
+    model = CycleFavorite
 
     def get_queryset(self):
         return self.filter_queryset(
@@ -359,15 +359,15 @@ class CycleFavoriteViewSet(BaseViewSet):
 
     def destroy(self, request, slug, project_id, cycle_id):
         try:
-            cycle_favourite = CycleFavourite.objects.get(
+            cycle_favorite = CycleFavorite.objects.get(
                 project=project_id,
                 user=request.user,
                 workspace__slug=slug,
                 cycle_id=cycle_id,
             )
-            cycle_favourite.delete()
+            cycle_favorite.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
-        except CycleFavourite.DoesNotExist:
+        except CycleFavorite.DoesNotExist:
             return Response(
                 {"error": "Cycle is not in favorites"},
                 status=status.HTTP_400_BAD_REQUEST,

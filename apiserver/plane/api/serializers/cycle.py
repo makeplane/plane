@@ -5,12 +5,12 @@ from rest_framework import serializers
 from .base import BaseSerializer
 from .user import UserLiteSerializer
 from .issue import IssueStateSerializer
-from plane.db.models import Cycle, CycleIssue, CycleFavourite
+from plane.db.models import Cycle, CycleIssue, CycleFavorite
 
 
 class CycleSerializer(BaseSerializer):
     owned_by = UserLiteSerializer(read_only=True)
-    is_favourite = serializers.BooleanField(read_only=True)
+    is_favorite = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Cycle
@@ -40,7 +40,7 @@ class CycleFavoriteSerializer(BaseSerializer):
     cycle_detail = CycleSerializer(source="cycle", read_only=True)
 
     class Meta:
-        model = CycleFavourite
+        model = CycleFavorite
         fields = "__all__"
         read_only_fields = [
             "workspace",
