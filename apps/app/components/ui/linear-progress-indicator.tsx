@@ -1,4 +1,5 @@
 import React from "react";
+import { Tooltip } from "./tooltip";
 
 type Props = {
   data: any;
@@ -15,10 +16,17 @@ export const LinearProgressIndicator: React.FC<Props> = ({ data }) => {
       backgroundColor: item.color,
     };
     progress += item.value;
-    return <div key={item.id} className="bar" style={style}></div>;
+
+    return (
+      <Tooltip tooltipContent={`${item.name} ${item.value}%`}>
+        <div key={item.id} className="bar" style={style}></div>
+      </Tooltip>
+    );
   });
 
-  return (
+  return total === 0 ? (
+    <div className="flex justify-between items-center h-1 gap-1  w-full"> - 0%</div>
+  ) : (
     <div className="flex justify-between items-center h-1 gap-1  w-full">
       <div className="flex h-full w-full rounded-md gap-1">{bars}</div>
     </div>
