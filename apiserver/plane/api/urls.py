@@ -52,6 +52,7 @@ from plane.api.views import (
     ProjectJoinEndpoint,
     UserProjectInvitationsViewset,
     ProjectIdentifierEndpoint,
+    ProjectFavoritesViewSet,
     ## End Projects
     # Issues
     IssueViewSet,
@@ -378,6 +379,25 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/project-members/me/",
         ProjectMemberUserEndpoint.as_view(),
         name="project-view",
+    ),
+    path(
+        "workspaces/<str:slug>/user-favorite-projects/",
+        ProjectFavoritesViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="project",
+    ),
+    path(
+        "workspaces/<str:slug>/user-favorite-projects/<uuid:project_id>/",
+        ProjectFavoritesViewSet.as_view(
+            {
+                "delete": "destroy",
+            }
+        ),
+        name="project",
     ),
     # End Projects
     #  States
@@ -706,6 +726,11 @@ urlpatterns = [
     ## File Assets
     path(
         "workspaces/<str:slug>/file-assets/",
+        FileAssetEndpoint.as_view(),
+        name="File Assets",
+    ),
+    path(
+        "workspaces/<str:slug>/file-assets/<uuid:pk>/",
         FileAssetEndpoint.as_view(),
         name="File Assets",
     ),

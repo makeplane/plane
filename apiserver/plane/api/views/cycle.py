@@ -142,8 +142,8 @@ class CycleIssueViewSet(BaseViewSet):
 
     def list(self, request, slug, project_id, cycle_id):
         try:
-            order_by = request.GET.get("order_by", "issue__created_at")
-            queryset = self.get_queryset().order_by(order_by)
+            order_by = request.GET.get("order_by", "created_at")
+            queryset = self.get_queryset().order_by(f"issue__{order_by}")
             group_by = request.GET.get("group_by", False)
 
             cycle_issues = CycleIssueSerializer(queryset, many=True).data
@@ -312,7 +312,7 @@ class CurrentUpcomingCyclesEndpoint(BaseAPIView):
             upcoming_cycle = Cycle.objects.filter(
                 workspace__slug=slug,
                 project_id=project_id,
-                start_date__gte=timezone.now(),
+                start_date__gt=timezone.now(),
             ).annotate(is_favorite=Exists(subquery))
 
             return Response(
@@ -343,7 +343,7 @@ class CompletedCyclesEndpoint(BaseAPIView):
             completed_cycles = Cycle.objects.filter(
                 workspace__slug=slug,
                 project_id=project_id,
-                end_date__lte=timezone.now(),
+                end_date__lt=timezone.now(),
             ).annotate(is_favorite=Exists(subquery))
 
             return Response(

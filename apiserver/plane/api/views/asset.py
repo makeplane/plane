@@ -11,7 +11,6 @@ from plane.api.serializers import FileAssetSerializer
 
 
 class FileAssetEndpoint(BaseAPIView):
-
     parser_classes = (MultiPartParser, FormParser)
 
     """
@@ -27,7 +26,6 @@ class FileAssetEndpoint(BaseAPIView):
         try:
             serializer = FileAssetSerializer(data=request.data)
             if serializer.is_valid():
-
                 if request.user.last_workspace_id is None:
                     return Response(
                         {"error": "Workspace id is required"},
@@ -37,6 +35,25 @@ class FileAssetEndpoint(BaseAPIView):
                 serializer.save(workspace_id=request.user.last_workspace_id)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def delete(self, request, slug, pk):
+        try:
+            file_asset = FileAsset.objects.get(pk=pk, workspace__slug=slug)
+            # Delete the file from storage
+            file_asset.asset.delete(save=False)
+            # Delete the file object
+            file_asset.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except FileAsset.DoesNotExist:
+            return Response(
+                {"error": "File Asset doesn't exist"}, status=status.HTTP_404_NOT_FOUND
+            )
         except Exception as e:
             capture_exception(e)
             return Response(
