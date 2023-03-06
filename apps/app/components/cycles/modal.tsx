@@ -43,11 +43,7 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
     await cycleService
       .createCycle(workspaceSlug as string, projectId as string, payload)
       .then((res) => {
-        switch (
-          res?.start_date && res.end_date
-            ? getDateRangeStatus(res?.start_date, res.end_date)
-            : "draft"
-        ) {
+        switch (getDateRangeStatus(res.start_date, res.end_date)) {
           case "completed":
             mutate(CYCLE_COMPLETE_LIST(projectId as string));
             break;
@@ -81,11 +77,7 @@ export const CreateUpdateCycleModal: React.FC<CycleModalProps> = ({
     await cycleService
       .updateCycle(workspaceSlug as string, projectId as string, cycleId, payload)
       .then((res) => {
-        switch (
-          res?.start_date && res.end_date
-            ? getDateRangeStatus(res?.start_date, res.end_date)
-            : "draft"
-        ) {
+        switch (getDateRangeStatus(res.start_date, res.end_date)) {
           case "completed":
             mutate(CYCLE_COMPLETE_LIST(projectId as string));
             break;
