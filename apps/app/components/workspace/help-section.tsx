@@ -56,7 +56,7 @@ export const WorkspaceHelpSection: FC<WorkspaceHelpSectionProps> = (props) => {
 
   return (
     <div
-      className={`flex w-full items-center justify-between self-baseline bg-white border-t border-gray-200 px-6 py-2 ${
+      className={`flex w-full items-center justify-between self-baseline border-t bg-white px-6 py-2 ${
         sidebarCollapse ? "flex-col-reverse" : ""
       }`}
     >
@@ -132,7 +132,7 @@ export const WorkspaceHelpSection: FC<WorkspaceHelpSectionProps> = (props) => {
               <Link href={href} key={name}>
                 <a
                   target="_blank"
-                  className="mx-3 flex items-center gap-x-2 rounded-md whitespace-nowrap  px-2 py-2 text-xs hover:bg-gray-100"
+                  className="mx-3 flex items-center gap-x-2 whitespace-nowrap rounded-md  px-2 py-2 text-xs hover:bg-gray-100"
                 >
                   <Icon className="h-5 w-5 text-gray-500" />
                   <span className="text-sm">{name}</span>

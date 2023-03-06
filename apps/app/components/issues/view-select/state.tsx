@@ -5,7 +5,9 @@ import useSWR from "swr";
 // services
 import stateService from "services/state.service";
 // ui
-import { CustomSelect, Tooltip } from "components/ui";
+import { CustomSearchSelect, Tooltip } from "components/ui";
+// icons
+import { getStateGroupIcon } from "components/icons";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 import { getStatesList } from "helpers/state.helper";
@@ -17,6 +19,7 @@ import { STATE_LIST } from "constants/fetch-keys";
 type Props = {
   issue: IIssue;
   partialUpdateIssue: (formData: Partial<IIssue>) => void;
+  position?: "left" | "right";
   selfPositioned?: boolean;
   isNotAllowed: boolean;
 };
@@ -24,6 +27,7 @@ type Props = {
 export const ViewStateSelect: React.FC<Props> = ({
   issue,
   partialUpdateIssue,
+  position = "left",
   selfPositioned = false,
   isNotAllowed,
 }) => {
@@ -38,50 +42,39 @@ export const ViewStateSelect: React.FC<Props> = ({
   );
   const states = getStatesList(stateGroups ?? {});
 
+  const options = states?.map((state) => ({
+    value: state.id,
+    query: state.name,
+    content: (
+      <div className="flex items-center gap-2">
+        {getStateGroupIcon(state.group, "16", "16", state.color)}
+        {state.name}
+      </div>
+    ),
+  }));
+
+  const selectedOption = states?.find((s) => s.id === issue.state);
+
   return (
-    <CustomSelect
-      label={
-        <>
-          <span
-            className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
-            style={{
-              backgroundColor: states?.find((s) => s.id === issue.state)?.color,
-            }}
-          />
-          <Tooltip
-            tooltipHeading="State"
-            tooltipContent={addSpaceIfCamelCase(
-              states?.find((s) => s.id === issue.state)?.name ?? ""
-            )}
-          >
-            <span>
-              {addSpaceIfCamelCase(states?.find((s) => s.id === issue.state)?.name ?? "")}
-            </span>
-          </Tooltip>
-        </>
-      }
+    <CustomSearchSelect
       value={issue.state}
-      onChange={(data: string) => {
-        partialUpdateIssue({ state: data });
-      }}
-      maxHeight="md"
-      noChevron
+      onChange={(data: string) => partialUpdateIssue({ state: data })}
+      options={options}
+      label={
+        <Tooltip
+          tooltipHeading="State"
+          tooltipContent={addSpaceIfCamelCase(selectedOption?.name ?? "")}
+        >
+          <div className="flex items-center gap-2 text-gray-500">
+            {selectedOption &&
+              getStateGroupIcon(selectedOption.group, "16", "16", selectedOption.color)}
+            {selectedOption?.name ?? "State"}
+          </div>
+        </Tooltip>
+      }
+      position={position}
       disabled={isNotAllowed}
-      selfPositioned={selfPositioned}
-    >
-      {states?.map((state) => (
-        <CustomSelect.Option key={state.id} value={state.id}>
-          <>
-            <span
-              className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
-              style={{
-                backgroundColor: state.color,
-              }}
-            />
-            {addSpaceIfCamelCase(state.name)}
-          </>
-        </CustomSelect.Option>
-      ))}
-    </CustomSelect>
+      noChevron
+    />
   );
 };

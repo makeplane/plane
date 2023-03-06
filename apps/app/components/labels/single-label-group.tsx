@@ -59,32 +59,34 @@ export const SingleLabelGroup: React.FC<Props> = ({
   };
 
   return (
-    <Disclosure as="div" className="rounded-md border p-3 text-gray-900 md:w-2/3" defaultOpen>
+    <Disclosure as="div" className="rounded-[10px] border bg-white p-5 text-gray-900" defaultOpen>
       {({ open }) => (
         <>
-          <div className="flex items-center justify-between gap-2 cursor-pointer">
-            <Disclosure.Button>
-              <div className="flex items-center gap-2">
+          <div className="flex cursor-pointer items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <span>
+                <RectangleGroupIcon className="h-4 w-4" />
+              </span>
+              <h6 className="font-medium text-gray-600">{label.name}</h6>
+            </div>
+            <div className="flex items-center gap-2">
+              <CustomMenu ellipsis>
+                <CustomMenu.MenuItem onClick={() => addLabelToGroup(label)}>
+                  Add more labels
+                </CustomMenu.MenuItem>
+                <CustomMenu.MenuItem onClick={() => editLabel(label)}>Edit</CustomMenu.MenuItem>
+                <CustomMenu.MenuItem onClick={() => handleLabelDelete(label.id)}>
+                  Delete
+                </CustomMenu.MenuItem>
+              </CustomMenu>
+              <Disclosure.Button>
                 <span>
                   <ChevronDownIcon
-                    className={`h-4 w-4 text-gray-500 ${!open ? "-rotate-90 transform" : ""}`}
+                    className={`h-4 w-4 text-gray-500 ${!open ? "rotate-90 transform" : ""}`}
                   />
                 </span>
-                <span>
-                  <RectangleGroupIcon className="h-4 w-4" />
-                </span>
-                <h6 className="text-sm">{label.name}</h6>
-              </div>
-            </Disclosure.Button>
-            <CustomMenu ellipsis>
-              <CustomMenu.MenuItem onClick={() => addLabelToGroup(label)}>
-                Add more labels
-              </CustomMenu.MenuItem>
-              <CustomMenu.MenuItem onClick={() => editLabel(label)}>Edit</CustomMenu.MenuItem>
-              <CustomMenu.MenuItem onClick={() => handleLabelDelete(label.id)}>
-                Delete
-              </CustomMenu.MenuItem>
-            </CustomMenu>
+              </Disclosure.Button>
+            </div>
           </div>
           <Transition
             show={open}
@@ -96,22 +98,22 @@ export const SingleLabelGroup: React.FC<Props> = ({
             leaveTo="transform opacity-0"
           >
             <Disclosure.Panel>
-              <div className="mt-2 ml-4">
+              <div className="mt-3 ml-6 space-y-3">
                 {labelChildren.map((child) => (
                   <div
                     key={child.id}
-                    className="group pl-4 py-1 flex items-center justify-between rounded text-sm hover:bg-gray-100"
+                    className="group flex items-center justify-between rounded-md border p-2 text-sm"
                   >
-                    <h5 className="flex items-center gap-2">
+                    <h5 className="flex items-center gap-3 text-gray-600">
                       <span
-                        className="h-2 w-2 flex-shrink-0 rounded-full"
+                        className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
                         style={{
                           backgroundColor: child.color,
                         }}
                       />
                       {child.name}
                     </h5>
-                    <div className="opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto">
+                    <div className="pointer-events-none opacity-0 group-hover:pointer-events-auto group-hover:opacity-100">
                       <CustomMenu ellipsis>
                         <CustomMenu.MenuItem onClick={() => removeFromGroup(child)}>
                           Remove from group

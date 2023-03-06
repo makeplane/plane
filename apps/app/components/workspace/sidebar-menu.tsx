@@ -53,7 +53,7 @@ export const WorkspaceSidebarMenu: React.FC = () => {
               <link.icon
                 className={`${
                   link.href === router.asPath ? "text-gray-900" : "text-gray-600"
-                } h-4 w-4 flex-shrink-0 group-hover:text-gray-900`}
+                } h-5 w-5 flex-shrink-0 group-hover:text-gray-900`}
                 aria-hidden="true"
               />
               {!sidebarCollapse && link.name}

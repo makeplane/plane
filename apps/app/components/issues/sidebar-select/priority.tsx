@@ -1,24 +1,22 @@
 import React from "react";
 
-// react-hook-form
-import { Control, Controller } from "react-hook-form";
 // ui
 import { CustomSelect } from "components/ui";
 // icons
 import { ChartBarIcon } from "@heroicons/react/24/outline";
 import { getPriorityIcon } from "components/icons/priority-icon";
 // types
-import { IIssue, UserAuth } from "types";
+import { UserAuth } from "types";
 // constants
 import { PRIORITIES } from "constants/project";
 
 type Props = {
-  control: Control<IIssue, any>;
-  submitChanges: (formData: Partial<IIssue>) => void;
+  value: string | null;
+  onChange: (val: string) => void;
   userAuth: UserAuth;
 };
 
-export const SidebarPrioritySelect: React.FC<Props> = ({ control, submitChanges, userAuth }) => {
+export const SidebarPrioritySelect: React.FC<Props> = ({ value, onChange, userAuth }) => {
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   return (
@@ -28,38 +26,31 @@ export const SidebarPrioritySelect: React.FC<Props> = ({ control, submitChanges,
         <p>Priority</p>
       </div>
       <div className="sm:basis-1/2">
-        <Controller
-          control={control}
-          name="priority"
-          render={({ field: { value } }) => (
-            <CustomSelect
-              label={
-                <span
-                  className={`flex items-center gap-2 text-left capitalize ${
-                    value ? "" : "text-gray-900"
-                  }`}
-                >
-                  {getPriorityIcon(value && value !== "" ? value ?? "" : "None", "text-sm")}
-                  {value && value !== "" ? value : "None"}
-                </span>
-              }
-              value={value}
-              onChange={(value: any) => {
-                submitChanges({ priority: value });
-              }}
-              disabled={isNotAllowed}
+        <CustomSelect
+          label={
+            <span
+              className={`flex items-center gap-2 text-left capitalize ${
+                value ? "" : "text-gray-900"
+              }`}
             >
-              {PRIORITIES.map((option) => (
-                <CustomSelect.Option key={option} value={option} className="capitalize">
-                  <>
-                    {getPriorityIcon(option, "text-sm")}
-                    {option ?? "None"}
-                  </>
-                </CustomSelect.Option>
-              ))}
-            </CustomSelect>
-          )}
-        />
+              {getPriorityIcon(value && value !== "" ? value ?? "" : "None", "text-sm")}
+              {value && value !== "" ? value : "None"}
+            </span>
+          }
+          value={value}
+          onChange={onChange}
+          width="w-full"
+          disabled={isNotAllowed}
+        >
+          {PRIORITIES.map((option) => (
+            <CustomSelect.Option key={option} value={option} className="capitalize">
+              <>
+                {getPriorityIcon(option, "text-sm")}
+                {option ?? "None"}
+              </>
+            </CustomSelect.Option>
+          ))}
+        </CustomSelect>
       </div>
     </div>
   );

@@ -105,7 +105,7 @@ export const MyIssuesListItem: React.FC<Props> = ({
               </Tooltip>
             )}
             <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
-              <span className="w-auto max-w-lg text-ellipsis overflow-hidden whitespace-nowrap">
+              <span className="w-auto max-w-lg overflow-hidden text-ellipsis whitespace-nowrap">
                 {issue.name}
               </span>
             </Tooltip>
@@ -135,7 +135,7 @@ export const MyIssuesListItem: React.FC<Props> = ({
           />
         )}
         {properties.sub_issue_count && (
-          <div className="flex flex-shrink-0 items-center gap-1 rounded border px-2 py-1 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+          <div className="flex flex-shrink-0 items-center gap-1 rounded-md border px-3 py-1.5 text-xs shadow-sm">
             {issue?.sub_issues_count} {issue?.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
           </div>
         )}

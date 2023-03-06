@@ -23,6 +23,7 @@ type Props = {
   selectedGroup: NestedKeyOf<IIssue> | null;
   members: IProjectMember[] | undefined;
   addIssueToState: () => void;
+  makeIssueCopy: (issue: IIssue) => void;
   handleEditIssue: (issue: IIssue) => void;
   handleDeleteIssue: (issue: IIssue) => void;
   openIssuesListModal?: (() => void) | null;
@@ -37,6 +38,7 @@ export const SingleList: React.FC<Props> = ({
   selectedGroup,
   members,
   addIssueToState,
+  makeIssueCopy,
   handleEditIssue,
   handleDeleteIssue,
   openIssuesListModal,
@@ -113,6 +115,7 @@ export const SingleList: React.FC<Props> = ({
                         issue={issue}
                         properties={properties}
                         editIssue={() => handleEditIssue(issue)}
+                        makeIssueCopy={() => makeIssueCopy(issue)}
                         handleDeleteIssue={handleDeleteIssue}
                         removeIssue={() => {
                           removeIssue && removeIssue(issue.bridge);
