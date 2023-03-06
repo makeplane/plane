@@ -46,11 +46,11 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
     project.id
   );
 
-  const handleAddToFavourites = () => {
+  const handleAddToFavorites = () => {
     if (!workspaceSlug) return;
 
     projectService
-      .addProjectToFavourites(workspaceSlug as string, {
+      .addProjectToFavorites(workspaceSlug as string, {
         project: project.id,
       })
       .then(() => {
@@ -59,7 +59,7 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
           (prevData) =>
             (prevData ?? []).map((p) => ({
               ...p,
-              is_favourite: p.id === project.id ? true : p.is_favourite,
+              is_favorite: p.id === project.id ? true : p.is_favorite,
             })),
           false
         );
@@ -68,30 +68,30 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
         setToastAlert({
           type: "success",
           title: "Success!",
-          message: "Successfully added the project to favourites.",
+          message: "Successfully added the project to favorites.",
         });
       })
       .catch(() => {
         setToastAlert({
           type: "error",
           title: "Error!",
-          message: "Couldn't remove the project from favourites. Please try again.",
+          message: "Couldn't remove the project from favorites. Please try again.",
         });
       });
   };
 
-  const handleRemoveFromFavourites = () => {
+  const handleRemoveFromFavorites = () => {
     if (!workspaceSlug || !project) return;
 
     projectService
-      .removeProjectFromFavourites(workspaceSlug as string, project.id)
+      .removeProjectFromFavorites(workspaceSlug as string, project.id)
       .then(() => {
         mutate<IProject[]>(
           PROJECTS_LIST(workspaceSlug as string),
           (prevData) =>
             (prevData ?? []).map((p) => ({
               ...p,
-              is_favourite: p.id === project.id ? false : p.is_favourite,
+              is_favorite: p.id === project.id ? false : p.is_favorite,
             })),
           false
         );
@@ -104,14 +104,14 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
         setToastAlert({
           type: "success",
           title: "Success!",
-          message: "Successfully removed the project from favourites.",
+          message: "Successfully removed the project from favorites.",
         });
       })
       .catch(() => {
         setToastAlert({
           type: "error",
           title: "Error!",
-          message: "Couldn't remove the project from favourites. Please try again.",
+          message: "Couldn't remove the project from favorites. Please try again.",
         });
       });
   };
@@ -163,7 +163,7 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
                   ) : (
                     <span className="rounded bg-green-600 px-2 py-1 text-xs">Member</span>
                   )}
-                  {project.is_favourite && (
+                  {project.is_favorite && (
                     <span className="grid h-6 w-9 place-items-center rounded bg-orange-400">
                       <StarIcon className="h-3 w-3" />
                     </span>
@@ -212,13 +212,13 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
                         Delete project
                       </CustomMenu.MenuItem>
                     )}
-                    {project.is_favourite ? (
-                      <CustomMenu.MenuItem onClick={handleRemoveFromFavourites}>
-                        Remove from favourites
+                    {project.is_favorite ? (
+                      <CustomMenu.MenuItem onClick={handleRemoveFromFavorites}>
+                        Remove from favorites
                       </CustomMenu.MenuItem>
                     ) : (
-                      <CustomMenu.MenuItem onClick={handleAddToFavourites}>
-                        Add to favourites
+                      <CustomMenu.MenuItem onClick={handleAddToFavorites}>
+                        Add to favorites
                       </CustomMenu.MenuItem>
                     )}
                     <CustomMenu.MenuItem onClick={handleCopyText}>

@@ -258,28 +258,28 @@ class ProjectServices extends APIService {
   }
 
   async getFavoriteProjects(workspaceSlug: string): Promise<IFavoriteProject[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/user-favourite-projects/`)
+    return this.get(`/api/workspaces/${workspaceSlug}/user-favorite-projects/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async addProjectToFavourites(
+  async addProjectToFavorites(
     workspaceSlug: string,
     data: {
       project: string;
     }
   ): Promise<any> {
-    return this.post(`/api/workspaces/${workspaceSlug}/user-favourite-projects/`, data)
+    return this.post(`/api/workspaces/${workspaceSlug}/user-favorite-projects/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async removeProjectFromFavourites(workspaceSlug: string, projectId: string): Promise<any> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/user-favourite-projects/${projectId}/`)
+  async removeProjectFromFavorites(workspaceSlug: string, projectId: string): Promise<any> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/user-favorite-projects/${projectId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
