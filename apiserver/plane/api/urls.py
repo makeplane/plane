@@ -83,6 +83,7 @@ from plane.api.views import (
     CycleDateCheckEndpoint,
     CurrentUpcomingCyclesEndpoint,
     CompletedCyclesEndpoint,
+    DraftCyclesEndpoint,
     ## End Cycles
     # Modules
     ModuleViewSet,
@@ -503,12 +504,17 @@ urlpatterns = [
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/current-upcoming-cycles/",
         CurrentUpcomingCyclesEndpoint.as_view(),
-        name="project-cycle",
+        name="project-cycle-upcoming",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/completed-cycles/",
         CompletedCyclesEndpoint.as_view(),
-        name="project-cycle",
+        name="project-cycle-completed",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/draft-cycles/",
+        DraftCyclesEndpoint.as_view(),
+        name="project-cycle-draft",
     ),
     ## End Cycles
     # Issue
