@@ -265,18 +265,24 @@ class CycleDateCheckEndpoint(BaseAPIView):
 class CurrentUpcomingCyclesEndpoint(BaseAPIView):
     def get(self, request, slug, project_id):
         try:
+            subquery = CycleFavorite.objects.filter(
+                user=self.request.user,
+                cycle_id=OuterRef("pk"),
+                project_id=project_id,
+                workspace__slug=slug,
+            )
             current_cycle = Cycle.objects.filter(
                 workspace__slug=slug,
                 project_id=project_id,
                 start_date__lte=timezone.now(),
                 end_date__gte=timezone.now(),
-            )
+            ).annotate(is_favorite=Exists(subquery))
 
             upcoming_cycle = Cycle.objects.filter(
                 workspace__slug=slug,
                 project_id=project_id,
                 start_date__gte=timezone.now(),
-            )
+            ).annotate(is_favorite=Exists(subquery))
 
             return Response(
                 {
@@ -297,11 +303,17 @@ class CurrentUpcomingCyclesEndpoint(BaseAPIView):
 class CompletedCyclesEndpoint(BaseAPIView):
     def get(self, request, slug, project_id):
         try:
+            subquery = CycleFavorite.objects.filter(
+                user=self.request.user,
+                cycle_id=OuterRef("pk"),
+                project_id=project_id,
+                workspace__slug=slug,
+            )
             past_cycles = Cycle.objects.filter(
                 workspace__slug=slug,
                 project_id=project_id,
                 end_date__lte=timezone.now(),
-            )
+            ).annotate(is_favorite=Exists(subquery))
 
             return Response(
                 {
