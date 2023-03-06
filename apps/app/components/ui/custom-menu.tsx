@@ -120,21 +120,27 @@ const MenuItem: React.FC<MenuItemProps> = ({
   onClick,
   className = "",
 }) => (
-  <Menu.Item
-    as="div"
-    className={({ active }) =>
-      `${className} ${
-        active ? "bg-hover-gray" : ""
-      } cursor-pointer select-none gap-2 truncate rounded px-1 py-1.5 text-gray-500`
-    }
-  >
-    {({ close }) =>
+  <Menu.Item as="div">
+    {({ active, close }) =>
       renderAs === "a" ? (
         <Link href={href ?? ""}>
-          <a onClick={close}>{children}</a>
+          <a
+            className={`${className} ${
+              active ? "bg-hover-gray" : ""
+            } w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-gray-500`}
+            onClick={close}
+          >
+            {children}
+          </a>
         </Link>
       ) : (
-        <button type="button" onClick={onClick}>
+        <button
+          type="button"
+          className={`${className} ${
+            active ? "bg-hover-gray" : ""
+          } w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-gray-500`}
+          onClick={onClick}
+        >
           {children}
         </button>
       )

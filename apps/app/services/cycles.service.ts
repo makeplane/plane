@@ -48,6 +48,20 @@ class ProjectCycleServices extends APIService {
   async getCycleIssues(
     workspaceSlug: string,
     projectId: string,
+    cycleId: string
+  ): Promise<CycleIssueResponse[]> {
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-issues/`
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getCycleIssuesWithParams(
+    workspaceSlug: string,
+    projectId: string,
     cycleId: string,
     queries?: IIssueFilterOptions
   ): Promise<CycleIssueResponse[] | { [key: string]: CycleIssueResponse[] }> {

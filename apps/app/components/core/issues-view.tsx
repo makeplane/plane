@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 
 import { useRouter } from "next/router";
 
@@ -32,7 +32,6 @@ import {
   STATE_LIST,
 } from "constants/fetch-keys";
 import { EmptySpace, EmptySpaceItem } from "components/ui";
-import cyclesService from "services/cycles.service";
 
 type Props = {
   type?: "issue" | "cycle" | "module";
@@ -63,49 +62,13 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
-  const { issueView, groupByProperty: selectedGroup, orderBy, filterIssue } = useIssuesView();
-
-  const params = {
-    group_by: selectedGroup,
-    order_by: orderBy,
-    type: filterIssue,
-  };
-
-  const { data: projectIssues } = useSWR(
-    PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string, params),
-    workspaceSlug && projectId
-      ? () => issuesService.getIssues(workspaceSlug as string, projectId as string, params)
-      : null
-  );
-
-  const { data: cycleIssues } = useSWR(
-    cycleId ? CYCLE_ISSUES(cycleId as string, params) : null,
-    workspaceSlug && projectId && cycleId
-      ? () =>
-          cyclesService.getCycleIssues(
-            workspaceSlug as string,
-            projectId as string,
-            cycleId as string,
-            params
-          )
-      : null
-  );
-
-  const groupedByIssues = useMemo(() => {
-    const issuesToGroup = cycleIssues ?? projectIssues;
-
-    if (Array.isArray(issuesToGroup)) return { allIssues: issuesToGroup };
-    else {
-      if (selectedGroup === "priority")
-        return Object.assign(
-          { urgent: [], high: [], medium: [], low: [], None: [] },
-          issuesToGroup
-        );
-      else return issuesToGroup;
-    }
-  }, [projectIssues, cycleIssues, selectedGroup]);
-
-  console.log("Grouped by issues: ", groupedByIssues);
+  const {
+    groupedByIssues,
+    issueView,
+    groupByProperty: selectedGroup,
+    orderBy,
+    params,
+  } = useIssuesView();
 
   const { data: stateGroups } = useSWR(
     workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
@@ -280,7 +243,6 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
       orderBy,
       states,
       handleDeleteIssue,
-      params,
     ]
   );
 

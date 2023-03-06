@@ -33,7 +33,7 @@ import { copyTextToClipboard } from "helpers/string.helper";
 import { groupBy } from "helpers/array.helper";
 import { renderDateFormat, renderShortNumericDateFormat } from "helpers/date-time.helper";
 // types
-import { CycleIssueResponse, ICycle, IIssue } from "types";
+import { ICycle, IIssue } from "types";
 // fetch-keys
 import { CYCLE_DETAILS } from "constants/fetch-keys";
 
@@ -41,17 +41,10 @@ type Props = {
   issues: IIssue[];
   cycle: ICycle | undefined;
   isOpen: boolean;
-  cycleIssues: CycleIssueResponse[];
   cycleStatus: string;
 };
 
-export const CycleDetailsSidebar: React.FC<Props> = ({
-  issues,
-  cycle,
-  isOpen,
-  cycleIssues,
-  cycleStatus,
-}) => {
+export const CycleDetailsSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cycleStatus }) => {
   const [cycleDeleteModal, setCycleDeleteModal] = useState(false);
 
   const router = useRouter();
@@ -73,7 +66,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
     started: [],
     cancelled: [],
     completed: [],
-    ...groupBy(cycleIssues ?? [], "issue_detail.state_detail.group"),
+    ...groupBy(issues ?? [], "state_detail.group"),
   };
 
   const { reset } = useForm({
@@ -120,10 +113,10 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
       >
         {cycle ? (
           <>
-            <div className="flex gap-1 text-sm my-2">
+            <div className="my-2 flex gap-1 text-sm">
               <div className="flex items-center ">
                 <span
-                  className={`flex items-center gap-1 text-left capitalize p-1 text-xs h-full w-full  text-gray-900`}
+                  className={`flex h-full w-full items-center gap-1 p-1 text-left text-xs capitalize  text-gray-900`}
                 >
                   <Squares2X2Icon className="h-4 w-4 flex-shrink-0" />
                   {cycleStatus === "current"
@@ -135,14 +128,14 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                     : "Draft"}
                 </span>
               </div>
-              <div className="flex justify-center items-center gap-2 rounded-md border bg-transparent h-full  p-2 px-4  text-xs font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-900 focus:outline-none">
-                <Popover className="flex justify-center items-center relative  rounded-lg">
+              <div className="flex h-full items-center justify-center gap-2 rounded-md border bg-transparent  p-2 px-4  text-xs font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-900 focus:outline-none">
+                <Popover className="relative flex items-center justify-center  rounded-lg">
                   {({ open }) => (
                     <>
                       <Popover.Button
                         className={`group flex items-center  ${open ? "bg-gray-100" : ""}`}
                       >
-                        <CalendarDaysIcon className="h-4 w-4 flex-shrink-0 mr-2" />
+                        <CalendarDaysIcon className="mr-2 h-4 w-4 flex-shrink-0" />
                         <span>
                           {renderShortNumericDateFormat(`${cycle.start_date}`)
                             ? renderShortNumericDateFormat(`${cycle.start_date}`)
@@ -178,7 +171,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                     </>
                   )}
                 </Popover>
-                <Popover className="flex justify-center items-center relative  rounded-lg">
+                <Popover className="relative flex items-center justify-center  rounded-lg">
                   {({ open }) => (
                     <>
                       <Popover.Button
@@ -265,7 +258,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                     <UserIcon className="h-4 w-4 flex-shrink-0" />
                     <p>Owned by</p>
                   </div>
-                  <div className="sm:basis-1/2 flex items-center gap-1">
+                  <div className="flex items-center gap-1 sm:basis-1/2">
                     {cycle.owned_by &&
                       (cycle.owned_by.avatar && cycle.owned_by.avatar !== "" ? (
                         <div className="h-5 w-5 rounded-full border-2 border-transparent">
@@ -301,17 +294,17 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                       <span className="h-4 w-4">
                         <ProgressBar
                           value={groupedIssues.completed.length}
-                          maxValue={cycleIssues?.length}
+                          maxValue={issues?.length}
                         />
                       </span>
                     </div>
-                    {groupedIssues.completed.length}/{cycleIssues?.length}
+                    {groupedIssues.completed.length}/{issues?.length}
                   </div>
                 </div>
               </div>
               <div className="py-1" />
             </div>
-            <div className="flex flex-col items-center justify-center w-full gap-2 ">
+            <div className="flex w-full flex-col items-center justify-center gap-2 ">
               {isStartValid && isEndValid ? (
                 <div className="relative h-[200px] w-full ">
                   <ProgressChart

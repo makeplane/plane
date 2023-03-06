@@ -18,7 +18,15 @@ class ProjectIssuesServices extends APIService {
       });
   }
 
-  async getIssues(
+  async getIssues(workspaceSlug: string, projectId: string): Promise<IIssue[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getIssuesWithParams(
     workspaceSlug: string,
     projectId: string,
     queries?: IIssueFilterOptions

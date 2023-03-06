@@ -24,14 +24,10 @@ export const PROJECT_DETAILS = (projectId: string) => `PROJECT_DETAILS_${project
 export const PROJECT_MEMBERS = (projectId: string) => `PROJECT_MEMBERS_${projectId}`;
 export const PROJECT_INVITATIONS = "PROJECT_INVITATIONS";
 
-export const PROJECT_ISSUES_LIST = (
-  workspaceSlug: string,
-  projectId: string,
-  params?: IIssueFilterOptions
-) => {
-  if (params) return `PROJECT_ISSUES_LIST_${workspaceSlug}_${projectId}_${JSON.stringify(params)}`;
-  else return `PROJECT_ISSUES_LIST_${workspaceSlug}_${projectId}`;
-};
+export const PROJECT_ISSUES_LIST = (workspaceSlug: string, projectId: string) =>
+  `PROJECT_ISSUES_LIST_${workspaceSlug}_${projectId}`;
+export const PROJECT_ISSUES_LIST_WITH_PARAMS = (projectId: string) =>
+  `PROJECT_ISSUES_LIST_WITH_PARAMS_${projectId}`;
 export const PROJECT_ISSUES_DETAILS = (issueId: string) => `PROJECT_ISSUES_DETAILS_${issueId}`;
 export const PROJECT_ISSUES_PROPERTIES = (projectId: string) =>
   `PROJECT_ISSUES_PROPERTIES_${projectId}`;
@@ -43,10 +39,8 @@ export const PROJECT_GITHUB_REPOSITORY = (projectId: string) =>
   `PROJECT_GITHUB_REPOSITORY_${projectId}`;
 
 export const CYCLE_LIST = (projectId: string) => `CYCLE_LIST_${projectId}`;
-export const CYCLE_ISSUES = (cycleId: string, params?: IIssueFilterOptions) => {
-  if (params) return `CYCLE_ISSUES_${cycleId}_${JSON.stringify(params)}`;
-  else return `CYCLE_ISSUES_${cycleId}`;
-};
+export const CYCLE_ISSUES = (cycleId: string) => `CYCLE_ISSUES_${cycleId}`;
+export const CYCLE_ISSUES_WITH_PARAMS = (cycleId: string) => `CYCLE_ISSUES_WITH_PARAMS_${cycleId}`;
 export const CYCLE_DETAILS = (cycleId: string) => `CYCLE_DETAIL_${cycleId}`;
 export const CYCLE_CURRENT_AND_UPCOMING_LIST = (projectId: string) =>
   `CYCLE_CURRENT_AND_UPCOMING_LIST_${projectId}`;
@@ -61,6 +55,8 @@ export const USER_PROJECT_VIEW = (projectId: string) => `USER_PROJECT_VIEW_${pro
 
 export const MODULE_LIST = (projectId: string) => `MODULE_LIST_${projectId}`;
 export const MODULE_ISSUES = (moduleId: string) => `MODULE_ISSUES_${moduleId}`;
+export const MODULE_ISSUES_WITH_PARAMS = (moduleId: string) =>
+  `MODULE_ISSUES_WITH_PARAMS_${moduleId}`;
 export const MODULE_DETAILS = (moduleId: string) => `MODULE_DETAIL_${moduleId}`;
 
 // Issues

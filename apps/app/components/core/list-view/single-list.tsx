@@ -46,7 +46,7 @@ export const SingleList: React.FC<Props> = ({
   userAuth,
 }) => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
   const [properties] = useIssuesProperties(workspaceSlug as string, projectId as string);
 
@@ -108,21 +108,34 @@ export const SingleList: React.FC<Props> = ({
               <div className="divide-y-2">
                 {groupedByIssues[groupTitle] ? (
                   groupedByIssues[groupTitle].length > 0 ? (
-                    groupedByIssues[groupTitle].map((issue: IIssue) => (
-                      <SingleListIssue
-                        key={issue.id}
-                        type={type}
-                        issue={issue}
-                        properties={properties}
-                        editIssue={() => handleEditIssue(issue)}
-                        makeIssueCopy={() => makeIssueCopy(issue)}
-                        handleDeleteIssue={handleDeleteIssue}
-                        removeIssue={() => {
-                          removeIssue && removeIssue(issue.bridge);
-                        }}
-                        userAuth={userAuth}
-                      />
-                    ))
+                    groupedByIssues[groupTitle].map((item: any) => {
+                      let issue: IIssue;
+                      if (cycleId || moduleId)
+                        issue = {
+                          ...item.issue_detail,
+                          sub_issues_count: item.sub_issues_count,
+                          bridge: item.id,
+                          cycle: cycleId as string,
+                          module: moduleId as string,
+                        };
+                      else issue = item;
+
+                      return (
+                        <SingleListIssue
+                          key={issue.id}
+                          type={type}
+                          issue={issue}
+                          properties={properties}
+                          editIssue={() => handleEditIssue(issue)}
+                          makeIssueCopy={() => makeIssueCopy(issue)}
+                          handleDeleteIssue={handleDeleteIssue}
+                          removeIssue={() => {
+                            removeIssue && removeIssue(issue.bridge);
+                          }}
+                          userAuth={userAuth}
+                        />
+                      );
+                    })
                   ) : (
                     <p className="px-4 py-3 text-sm text-gray-500">No issues.</p>
                   )

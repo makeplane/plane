@@ -16,15 +16,20 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // types
-import { IIssue, IProjectMember, IState, UserAuth } from "types";
+import {
+  CycleIssueResponse,
+  IIssue,
+  IProjectMember,
+  IState,
+  ModuleIssueResponse,
+  UserAuth,
+} from "types";
 
 type Props = {
   type?: "issue" | "cycle" | "module";
   currentState?: IState | null;
   groupTitle: string;
-  groupedByIssues: {
-    [key: string]: IIssue[];
-  };
+  groupedByIssues: any;
   selectedGroup: "state" | "priority" | "labels" | null;
   handleEditIssue: (issue: IIssue) => void;
   makeIssueCopy: (issue: IIssue) => void;
@@ -57,7 +62,7 @@ export const SingleBoard: React.FC<Props> = ({
   const [isCollapsed, setIsCollapsed] = useState(true);
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
   const [properties] = useIssuesProperties(workspaceSlug as string, projectId as string);
 
@@ -100,35 +105,42 @@ export const SingleBoard: React.FC<Props> = ({
                   </div>
                 </>
               )}
-              {groupedByIssues[groupTitle].map((issue, index: number) => (
-                <Draggable
-                  key={issue.id}
-                  draggableId={issue.id}
-                  index={index}
-                  isDragDisabled={isNotAllowed}
-                >
-                  {(provided, snapshot) => (
-                    <SingleBoardIssue
-                      key={index}
-                      provided={provided}
-                      snapshot={snapshot}
-                      type={type}
-                      issue={issue}
-                      selectedGroup={selectedGroup}
-                      properties={properties}
-                      editIssue={() => handleEditIssue(issue)}
-                      makeIssueCopy={() => makeIssueCopy(issue)}
-                      handleDeleteIssue={handleDeleteIssue}
-                      orderBy={orderBy}
-                      handleTrashBox={handleTrashBox}
-                      removeIssue={() => {
-                        removeIssue && removeIssue(issue.bridge);
-                      }}
-                      userAuth={userAuth}
-                    />
-                  )}
-                </Draggable>
-              ))}
+              {groupedByIssues[groupTitle].map((item: any, index: number) => {
+                let issue: IIssue;
+                if (cycleId || moduleId)
+                  issue = { ...item.issue_detail, sub_issues_count: item.sub_issues_count };
+                else issue = item;
+
+                return (
+                  <Draggable
+                    key={issue.id}
+                    draggableId={issue.id}
+                    index={index}
+                    isDragDisabled={isNotAllowed}
+                  >
+                    {(provided, snapshot) => (
+                      <SingleBoardIssue
+                        key={index}
+                        provided={provided}
+                        snapshot={snapshot}
+                        type={type}
+                        issue={issue}
+                        selectedGroup={selectedGroup}
+                        properties={properties}
+                        editIssue={() => handleEditIssue(issue)}
+                        makeIssueCopy={() => makeIssueCopy(issue)}
+                        handleDeleteIssue={handleDeleteIssue}
+                        orderBy={orderBy}
+                        handleTrashBox={handleTrashBox}
+                        removeIssue={() => {
+                          removeIssue && removeIssue(issue.bridge);
+                        }}
+                        userAuth={userAuth}
+                      />
+                    )}
+                  </Draggable>
+                );
+              })}
               <span
                 style={{
                   display: orderBy === "sort_order" ? "inline" : "none",

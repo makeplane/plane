@@ -125,12 +125,12 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
 
   return (
     <IssueViewContextProvider>
-      {/* <ExistingIssuesListModal
+      <ExistingIssuesListModal
         isOpen={cycleIssuesListModal}
         handleClose={() => setCycleIssuesListModal(false)}
         issues={issues?.filter((i) => !i.issue_cycle) ?? []}
         handleOnSubmit={handleAddIssuesToCycle}
-      /> */}
+      />
       <AppLayout
         breadcrumbs={
           <Breadcrumbs>
@@ -182,13 +182,12 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
         <div className={`h-full ${cycleSidebar ? "mr-[24rem]" : ""} duration-300`}>
           <IssuesView type="cycle" userAuth={props} openIssuesListModal={openIssuesListModal} />
         </div>
-        {/* <CycleDetailsSidebar
+        <CycleDetailsSidebar
           cycleStatus={cycleStatus}
           issues={cycleIssuesArray ?? []}
           cycle={cycleDetails}
           isOpen={cycleSidebar}
-          cycleIssues={cycleIssues ?? []}
-        /> */}
+        />
       </AppLayout>
     </IssueViewContextProvider>
   );

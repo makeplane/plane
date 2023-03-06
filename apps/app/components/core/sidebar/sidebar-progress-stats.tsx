@@ -22,6 +22,7 @@ import User from "public/user.png";
 import { IIssue, IIssueLabels } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS } from "constants/fetch-keys";
+import useIssuesView from "hooks/use-issues-view";
 // types
 type Props = {
   groupedIssues: any;
@@ -41,6 +42,8 @@ const stateGroupColours: {
 export const SidebarProgressStats: React.FC<Props> = ({ groupedIssues, issues }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+
+  const { setAssigneeFilter, setLabelFilter } = useIssuesView();
 
   const { storedValue: tab, setValue: setTab } = useLocalStorage("tab", "Assignees");
 
@@ -89,7 +92,7 @@ export const SidebarProgressStats: React.FC<Props> = ({ groupedIssues, issues })
     >
       <Tab.List
         as="div"
-        className="flex items-center justify-between w-full rounded bg-gray-100 text-xs"
+        className="flex w-full items-center justify-between rounded bg-gray-100 text-xs"
       >
         <Tab
           className={({ selected }) =>
@@ -113,11 +116,12 @@ export const SidebarProgressStats: React.FC<Props> = ({ groupedIssues, issues })
           States
         </Tab>
       </Tab.List>
-      <Tab.Panels className="flex items-center justify-between  w-full">
-        <Tab.Panel as="div" className="w-full flex flex-col ">
+      <Tab.Panels className="flex w-full items-center  justify-between">
+        <Tab.Panel as="div" className="flex w-full flex-col ">
           {members?.map((member, index) => {
             const totalArray = issues?.filter((i) => i.assignees?.includes(member.member.id));
             const completeArray = totalArray?.filter((i) => i.state_detail.group === "completed");
+
             if (totalArray.length > 0) {
               return (
                 <SingleProgressStats
@@ -130,6 +134,7 @@ export const SidebarProgressStats: React.FC<Props> = ({ groupedIssues, issues })
                   }
                   completed={completeArray.length}
                   total={totalArray.length}
+                  onClick={() => setAssigneeFilter(member.member.id)}
                 />
               );
             }
@@ -156,15 +161,17 @@ export const SidebarProgressStats: React.FC<Props> = ({ groupedIssues, issues })
                 ).length
               }
               total={issues?.filter((i) => i.assignees?.length === 0).length}
+              onClick={() => setAssigneeFilter(null)}
             />
           ) : (
             ""
           )}
         </Tab.Panel>
-        <Tab.Panel as="div" className="w-full flex flex-col ">
-          {issueLabels?.map((issue, index) => {
-            const totalArray = issues?.filter((i) => i.labels?.includes(issue.id));
+        <Tab.Panel as="div" className="flex w-full flex-col ">
+          {issueLabels?.map((label, index) => {
+            const totalArray = issues?.filter((i) => i.labels?.includes(label.id));
             const completeArray = totalArray?.filter((i) => i.state_detail.group === "completed");
+
             if (totalArray.length > 0) {
               return (
                 <SingleProgressStats
@@ -174,20 +181,22 @@ export const SidebarProgressStats: React.FC<Props> = ({ groupedIssues, issues })
                       <span
                         className="block h-2 w-2 rounded-full "
                         style={{
-                          backgroundColor: issue.color,
+                          backgroundColor:
+                            label.color && label.color !== "" ? label.color : "#000000",
                         }}
                       />
-                      <span className="text-xs capitalize">{issue.name}</span>
+                      <span className="text-xs capitalize">{label.name}</span>
                     </>
                   }
                   completed={completeArray.length}
                   total={totalArray.length}
+                  onClick={() => setLabelFilter(label.id)}
                 />
               );
             }
           })}
         </Tab.Panel>
-        <Tab.Panel as="div" className="w-full flex flex-col ">
+        <Tab.Panel as="div" className="flex w-full flex-col ">
           {Object.keys(groupedIssues).map((group, index) => (
             <SingleProgressStats
               key={index}

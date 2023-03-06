@@ -211,4 +211,6 @@ export interface IIssueFilterOptions {
   group_by: "state" | "priority" | "labels" | null;
   order_by: "created_at" | "updated_at" | "priority" | "sort_order";
   type: "active" | "backlog" | null;
+  issue__assignees__id: string | null;
+  issue__labels__id: string | null;
 }
