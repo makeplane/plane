@@ -23,7 +23,7 @@ import { capitalizeFirstLetter, copyTextToClipboard } from "helpers/string.helpe
 // types
 import { CycleIssueResponse, ICycle, IFavoriteCycle } from "types";
 // fetch-keys
-import { CYCLE_ISSUES, CYCLE_LIST, FAVORITE_CYCLES_LIST } from "constants/fetch-keys";
+import { CYCLE_ISSUES, CYCLE_LIST } from "constants/fetch-keys";
 
 type TSingleStatProps = {
   cycle: ICycle;
@@ -84,7 +84,6 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
             })),
           false
         );
-        mutate(FAVORITE_CYCLES_LIST(projectId as string));
 
         setToastAlert({
           type: "success",
@@ -114,11 +113,6 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
               ...c,
               is_favorite: c.id === cycle.id ? false : c.is_favorite,
             })),
-          false
-        );
-        mutate<IFavoriteCycle[]>(
-          FAVORITE_CYCLES_LIST(projectId as string),
-          (prevData: any) => (prevData ?? []).filter((c: any) => c.cycle !== cycle.id),
           false
         );
 
