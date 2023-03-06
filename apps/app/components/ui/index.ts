@@ -16,3 +16,4 @@ export * from "./progress-bar";
 export * from "./spinner";
 export * from "./tooltip";
 export * from "./labels-list";
+export * from "./linear-progress-indicator";

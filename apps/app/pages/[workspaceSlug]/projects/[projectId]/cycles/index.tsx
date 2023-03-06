@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
+
 import useSWR from "swr";
+
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { Tab } from "@headlessui/react";
-
 // lib
 import { requiredAuth } from "lib/auth";
 
@@ -110,68 +111,85 @@ const ProjectCycles: NextPage = () => {
         data={selectedCycle}
       />
       <div className="space-y-8">
-        <h3 className="text-xl font-medium leading-6 text-gray-900">Current Cycle</h3>
-        <div className="space-y-5">
-          <CyclesList
-            cycles={currentAndUpcomingCycles?.current_cycle ?? []}
-            setCreateUpdateCycleModal={setCreateUpdateCycleModal}
-            setSelectedCycle={setSelectedCycle}
-            type="current"
-          />
+        <div className="flex flex-col gap-5">
+          <h3 className="text-3xl font-semibold text-black">Current Cycle</h3>
+          <div className="space-y-5">
+            <CyclesList
+              cycles={currentAndUpcomingCycles?.current_cycle ?? []}
+              setCreateUpdateCycleModal={setCreateUpdateCycleModal}
+              setSelectedCycle={setSelectedCycle}
+              type="current"
+            />
+          </div>
         </div>
-        <div className="space-y-5">
-          <Tab.Group>
-            <Tab.List
-              as="div"
-              className="flex justify-between items-center gap-2 rounded-lg bg-gray-100 p-2 text-sm"
-            >
-              <Tab
-                className={({ selected }) =>
-                  `w-1/3 rounded-lg px-6 py-2 ${selected ? "bg-gray-300" : "hover:bg-gray-200"}`
-                }
+        <div className="flex flex-col gap-5">
+          <h3 className="text-3xl font-semibold text-black">Others</h3>
+          <div>
+            <Tab.Group>
+              <Tab.List
+                as="div"
+                className="flex items-center justify-start gap-4 text-base font-medium"
               >
-                Upcoming
-              </Tab>
-              <Tab
-                className={({ selected }) =>
-                  `w-1/3 rounded-lg px-6 py-2 ${selected ? "bg-gray-300" : "hover:bg-gray-200"}`
-                }
-              >
-                Completed
-              </Tab>
-              <Tab
-                className={({ selected }) =>
-                  ` w-1/3 rounded-lg px-6 py-2 ${selected ? "bg-gray-300" : "hover:bg-gray-200"}`
-                }
-              >
-                Draft
-              </Tab>
-            </Tab.List>
-            <Tab.Panels>
-              <Tab.Panel as="div" className="mt-8 space-y-5">
-                <CyclesList
-                  cycles={currentAndUpcomingCycles?.upcoming_cycle ?? []}
-                  setCreateUpdateCycleModal={setCreateUpdateCycleModal}
-                  setSelectedCycle={setSelectedCycle}
-                  type="upcoming"
-                />
-              </Tab.Panel>
-              <Tab.Panel as="div" className="mt-8 space-y-5">
-                <CompletedCyclesList
-                  setCreateUpdateCycleModal={setCreateUpdateCycleModal}
-                  setSelectedCycle={setSelectedCycle}
-                />
-              </Tab.Panel>
-            </Tab.Panels>
-            <Tab.Panel as="div" className="mt-8 space-y-5">
-              <CyclesList
-                cycles={draftCycles?.draft_cycles ?? []}
-                setCreateUpdateCycleModal={setCreateUpdateCycleModal}
-                setSelectedCycle={setSelectedCycle}
-                type="upcoming"
-              />
-            </Tab.Panel>
-          </Tab.Group>
+                <Tab
+                  className={({ selected }) =>
+                    ` rounded-3xl border px-6 py-3 ${
+                      selected
+                        ? "bg-theme text-white"
+                        : "border-gray-400 bg-white text-gray-900 hover:bg-gray-200"
+                    }`
+                  }
+                >
+                  Upcoming
+                </Tab>
+                <Tab
+                  className={({ selected }) =>
+                    ` rounded-3xl border px-6 py-3 ${
+                      selected
+                        ? "bg-theme text-white"
+                        : "border-gray-400 bg-white text-gray-900 hover:bg-gray-200"
+                    }`
+                  }
+                >
+                  Completed
+                </Tab>
+                <Tab
+                  className={({ selected }) =>
+                    ` rounded-3xl border px-6 py-3 ${
+                      selected
+                        ? "bg-theme text-white"
+                        : "border-gray-400 bg-white text-gray-900 hover:bg-gray-200"
+                    }`
+                  }
+                >
+                  Drafts
+                </Tab>
+              </Tab.List>
+              <Tab.Panels>
+                <Tab.Panel as="div" className="mt-8 space-y-5">
+                  <CyclesList
+                    cycles={currentAndUpcomingCycles?.upcoming_cycle ?? []}
+                    setCreateUpdateCycleModal={setCreateUpdateCycleModal}
+                    setSelectedCycle={setSelectedCycle}
+                    type="upcoming"
+                  />
+                </Tab.Panel>
+                <Tab.Panel as="div" className="mt-8 space-y-5">
+                  <CompletedCyclesList
+                    setCreateUpdateCycleModal={setCreateUpdateCycleModal}
+                    setSelectedCycle={setSelectedCycle}
+                  />
+                </Tab.Panel>
+                <Tab.Panel as="div" className="mt-8 space-y-5">
+                  <CyclesList
+                    cycles={draftCycles?.draft_cycles ?? []}
+                    setCreateUpdateCycleModal={setCreateUpdateCycleModal}
+                    setSelectedCycle={setSelectedCycle}
+                    type="upcoming"
+                  />
+                </Tab.Panel>
+              </Tab.Panels>
+            </Tab.Group>
+          </div>
         </div>
       </div>
     </AppLayout>
