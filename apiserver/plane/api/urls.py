@@ -683,6 +683,11 @@ urlpatterns = [
         FileAssetEndpoint.as_view(),
         name="File Assets",
     ),
+    path(
+        "workspaces/<str:slug>/file-assets/<uuid:pk>/",
+        FileAssetEndpoint.as_view(),
+        name="File Assets",
+    ),
     ## End File Assets
     ## Modules
     path(
