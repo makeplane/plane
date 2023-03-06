@@ -90,6 +90,7 @@ from plane.api.views import (
     # Modules
     ModuleViewSet,
     ModuleIssueViewSet,
+    ModuleFavoriteViewSet,
     ## End Modules
     # Api Tokens
     ApiTokenEndpoint,
@@ -801,6 +802,25 @@ urlpatterns = [
             }
         ),
         name="project-issue-module-links",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/user-favorite-modules/",
+        ModuleFavoriteViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="user-favorite-module",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/user-favorite-modules/<uuid:module_id>/",
+        ModuleFavoriteViewSet.as_view(
+            {
+                "delete": "destroy",
+            }
+        ),
+        name="user-favorite-module",
     ),
     ## End Modules
     # API Tokens

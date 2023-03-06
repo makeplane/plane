@@ -80,7 +80,12 @@ from .authentication import (
     MagicSignInGenerateEndpoint,
 )
 
-from .module import ModuleViewSet, ModuleIssueViewSet, ModuleLinkViewSet
+from .module import (
+    ModuleViewSet,
+    ModuleIssueViewSet,
+    ModuleLinkViewSet,
+    ModuleFavoriteViewSet,
+)
 
 from .api_token import ApiTokenEndpoint
 

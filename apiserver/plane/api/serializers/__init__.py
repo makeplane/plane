@@ -45,6 +45,7 @@ from .module import (
     ModuleSerializer,
     ModuleIssueSerializer,
     ModuleLinkSerializer,
+    ModuleFavoriteSerializer,
 )
 
 from .api_token import APITokenSerializer
