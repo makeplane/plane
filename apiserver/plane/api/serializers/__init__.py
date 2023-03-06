@@ -17,6 +17,7 @@ from .project import (
     ProjectMemberSerializer,
     ProjectMemberInviteSerializer,
     ProjectIdentifierSerializer,
+    ProjectFavoriteSerializer,
 )
 from .state import StateSerializer
 from .shortcut import ShortCutSerializer
