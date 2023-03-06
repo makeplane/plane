@@ -45,6 +45,37 @@ class CycleViewSet(BaseViewSet):
             .distinct()
         )
 
+    def create(self, request, slug, project_id):
+        try:
+            if (
+                request.data.get("start_date", None) is None
+                and request.data.get("end_date", None) is None
+            ) or (
+                request.data.get("start_date", None) is not None
+                and request.data.get("end_date", None) is not None
+            ):
+                serializer = CycleSerializer(data=request.data)
+                if serializer.is_valid():
+                    serializer.save(
+                        project_id=project_id,
+                        owned_by=request.user,
+                    )
+                    return Response(serializer.data, status=status.HTTP_201_CREATED)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response(
+                    {
+                        "error": "Both start date and end date are either required or are to be null"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
 
 class CycleIssueViewSet(BaseViewSet):
     serializer_class = CycleIssueSerializer
@@ -275,7 +306,7 @@ class CurrentUpcomingCyclesEndpoint(BaseAPIView):
 class CompletedCyclesEndpoint(BaseAPIView):
     def get(self, request, slug, project_id):
         try:
-            past_cycles = Cycle.objects.filter(
+            completed_cycles = Cycle.objects.filter(
                 workspace__slug=slug,
                 project_id=project_id,
                 end_date__lte=timezone.now(),
@@ -283,11 +314,35 @@ class CompletedCyclesEndpoint(BaseAPIView):
 
             return Response(
                 {
-                    "past_cycles": CycleSerializer(past_cycles, many=True).data,
+                    "completed_cycles": CycleSerializer(
+                        completed_cycles, many=True
+                    ).data,
                 },
                 status=status.HTTP_200_OK,
             )
 
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class DraftCyclesEndpoint(BaseAPIView):
+    def get(self, request, slug, project_id):
+        try:
+            draft_cycles = Cycle.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                end_date=None,
+                start_date=None,
+            )
+
+            return Response(
+                {"draft_cycles": CycleSerializer(draft_cycles, many=True).data},
+                status=status.HTTP_200_OK,
+            )
         except Exception as e:
             capture_exception(e)
             return Response(
