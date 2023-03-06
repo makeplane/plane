@@ -65,7 +65,6 @@ const StatesSettings: NextPage<UserAuth> = (props) => {
         onClose={() => setSelectDeleteState(null)}
       />
       <AppLayout
-        settingsLayout="project"
         memberType={{ isMember, isOwner, isViewer, isGuest }}
         breadcrumbs={
           <Breadcrumbs>
@@ -76,30 +75,31 @@ const StatesSettings: NextPage<UserAuth> = (props) => {
             <BreadcrumbItem title="States Settings" />
           </Breadcrumbs>
         }
+        settingsLayout
       >
-        <div className="space-y-8">
-          <div>
-            <h3 className="text-3xl font-bold leading-6 text-gray-900">States</h3>
-            <p className="mt-4 text-sm text-gray-500">Manage the states of this project.</p>
+        <div className="grid grid-cols-12 gap-10">
+          <div className="col-span-12 sm:col-span-5">
+            <h3 className="text-2xl font-semibold">States</h3>
+            <p className="text-gray-500">Manage the states of this project.</p>
           </div>
-          <div className="flex flex-col justify-between gap-4">
+          <div className="col-span-12 space-y-8 sm:col-span-7">
             {states && projectDetails ? (
               Object.keys(orderedStateGroups).map((key) => {
                 if (orderedStateGroups[key].length !== 0)
                   return (
                     <div key={key}>
-                      <div className="mb-2 flex w-full justify-between md:w-2/3">
-                        <p className="text-md capitalize leading-6 text-gray-900">{key} states</p>
+                      <div className="mb-2 flex w-full justify-between">
+                        <h4 className="font-medium capitalize">{key}</h4>
                         <button
                           type="button"
+                          className="flex items-center gap-2 text-theme outline-none"
                           onClick={() => setActiveGroup(key as keyof StateGroup)}
-                          className="flex items-center gap-2 text-xs text-theme"
                         >
-                          <PlusIcon className="h-3 w-3 text-theme" />
+                          <PlusIcon className="h-4 w-4" />
                           Add
                         </button>
                       </div>
-                      <div className="space-y-1 rounded-xl border divide-y p-1 md:w-2/3">
+                      <div className="divide-y rounded-[10px] border">
                         {key === activeGroup && (
                           <CreateUpdateStateInline
                             onClose={() => {
@@ -117,7 +117,6 @@ const StatesSettings: NextPage<UserAuth> = (props) => {
                               index={index}
                               state={state}
                               statesList={statesList}
-                              activeGroup={activeGroup}
                               handleEditState={() => setSelectedState(state.id)}
                               handleDeleteState={() => setSelectDeleteState(state.id)}
                             />

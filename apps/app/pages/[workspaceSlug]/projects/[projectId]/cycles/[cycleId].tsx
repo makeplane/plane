@@ -21,12 +21,13 @@ import issuesServices from "services/issues.service";
 import cycleServices from "services/cycles.service";
 import projectService from "services/project.service";
 // ui
-import { CustomMenu } from "components/ui";
+import { CustomMenu, EmptySpace } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // helpers
 import { truncateText } from "helpers/string.helper";
+import { getDateRangeStatus } from "helpers/date-time.helper";
 // types
-import { UserAuth } from "types";
+import { CycleIssueResponse, UserAuth } from "types";
 // fetch-keys
 import {
   CYCLE_ISSUES,
@@ -78,6 +79,11 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
       : null
   );
 
+  const cycleStatus =
+    cycleDetails?.start_date && cycleDetails?.end_date
+      ? getDateRangeStatus(cycleDetails?.start_date, cycleDetails?.end_date)
+      : "draft";
+
   const { data: cycleIssues } = useSWR(
     workspaceSlug && projectId && cycleId ? CYCLE_ISSUES(cycleId as string) : null,
     workspaceSlug && projectId && cycleId
@@ -119,12 +125,12 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
 
   return (
     <IssueViewContextProvider>
-      <ExistingIssuesListModal
+      {/* <ExistingIssuesListModal
         isOpen={cycleIssuesListModal}
         handleClose={() => setCycleIssuesListModal(false)}
         issues={issues?.filter((i) => !i.issue_cycle) ?? []}
         handleOnSubmit={handleAddIssuesToCycle}
-      />
+      /> */}
       <AppLayout
         breadcrumbs={
           <Breadcrumbs>
@@ -177,6 +183,7 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
           <IssuesView type="cycle" userAuth={props} openIssuesListModal={openIssuesListModal} />
         </div>
         {/* <CycleDetailsSidebar
+          cycleStatus={cycleStatus}
           issues={cycleIssuesArray ?? []}
           cycle={cycleDetails}
           isOpen={cycleSidebar}

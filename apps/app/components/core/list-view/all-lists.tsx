@@ -8,10 +8,11 @@ import { IIssue, IProjectMember, IState, UserAuth } from "types";
 // types
 type Props = {
   type: "issue" | "cycle" | "module";
-  groupedByIssues: { [key: string]: IIssue[] } | undefined;
+  groupedByIssues: any;
   states: IState[] | undefined;
   members: IProjectMember[] | undefined;
   addIssueToState: (groupTitle: string, stateId: string | null) => void;
+  makeIssueCopy: (issue: IIssue) => void;
   handleEditIssue: (issue: IIssue) => void;
   handleDeleteIssue: (issue: IIssue) => void;
   openIssuesListModal?: (() => void) | null;
@@ -25,6 +26,7 @@ export const AllLists: React.FC<Props> = ({
   states,
   members,
   addIssueToState,
+  makeIssueCopy,
   openIssuesListModal,
   handleEditIssue,
   handleDeleteIssue,
@@ -49,6 +51,7 @@ export const AllLists: React.FC<Props> = ({
                 selectedGroup={selectedGroup}
                 members={members}
                 addIssueToState={() => addIssueToState(singleGroup, stateId)}
+                makeIssueCopy={makeIssueCopy}
                 handleEditIssue={handleEditIssue}
                 handleDeleteIssue={handleDeleteIssue}
                 openIssuesListModal={type !== "issue" ? openIssuesListModal : null}

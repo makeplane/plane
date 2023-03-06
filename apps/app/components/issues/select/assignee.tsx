@@ -1,122 +1,75 @@
-import { useState, FC, Fragment } from "react";
-
 import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
-// headless ui
-import { Transition, Combobox } from "@headlessui/react";
 // services
 import projectServices from "services/project.service";
 // ui
-import { AssigneesList, Avatar } from "components/ui";
-// fetch keys
+import { AssigneesList, Avatar, CustomSearchSelect } from "components/ui";
+// icons
+import { UserGroupIcon } from "@heroicons/react/24/outline";
+// fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 
-export type IssueAssigneeSelectProps = {
+export type Props = {
   projectId: string;
   value: string[];
   onChange: (value: string[]) => void;
 };
 
-export const IssueAssigneeSelect: FC<IssueAssigneeSelectProps> = ({
-  projectId,
-  value = [],
-  onChange,
-}) => {
-  // states
-  const [query, setQuery] = useState("");
-
+export const IssueAssigneeSelect: React.FC<Props> = ({ projectId, value = [], onChange }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
   // fetching project members
-  const { data: people } = useSWR(
+  const { data: members } = useSWR(
     workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
     workspaceSlug && projectId
       ? () => projectServices.projectMembers(workspaceSlug as string, projectId as string)
       : null
   );
 
-  const options = people?.map((person) => ({
-    value: person.member.id,
-    display:
-      person.member.first_name && person.member.first_name !== ""
-        ? person.member.first_name
-        : person.member.email,
-  }));
-
-  const filteredOptions =
-    query === ""
-      ? options
-      : options?.filter((option) => option.display.toLowerCase().includes(query.toLowerCase()));
+  const options =
+    members?.map((member) => ({
+      value: member.member.id,
+      query:
+        (member.member.first_name && member.member.first_name !== ""
+          ? member.member.first_name
+          : member.member.email) +
+          " " +
+          member.member.last_name ?? "",
+      content: (
+        <div className="flex items-center gap-2">
+          <Avatar user={member.member} />
+          {member.member.first_name && member.member.first_name !== ""
+            ? member.member.first_name
+            : member.member.email}
+        </div>
+      ),
+    })) ?? [];
 
   return (
-    <Combobox
-      as="div"
+    <CustomSearchSelect
       value={value}
-      onChange={(val) => onChange(val)}
-      className="relative flex-shrink-0"
-      multiple
-    >
-      {({ open }: any) => (
-        <>
-          <Combobox.Button className="flex items-center cursor-pointer gap-1 rounded-md">
-            <div className="flex items-center gap-1 text-xs">
-              {value && Array.isArray(value) ? <AssigneesList userIds={value} length={10} /> : null}
+      onChange={onChange}
+      options={options}
+      label={
+        <div className="flex items-center gap-2 text-gray-500">
+          {value && value.length > 0 && Array.isArray(value) ? (
+            <div className="flex items-center justify-center gap-2">
+              <AssigneesList userIds={value} length={3} showLength={false} />
+              <span className="text-gray-500">{value.length} Assignees</span>
             </div>
-          </Combobox.Button>
-
-          <Transition
-            show={open}
-            as={Fragment}
-            leave="transition ease-in duration-100"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <Combobox.Options
-              className={`absolute z-10 mt-1 max-h-32 min-w-[8rem] overflow-auto rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none text-xs`}
-            >
-              <Combobox.Input
-                className="w-full border-b bg-transparent p-2 text-xs focus:outline-none"
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder="Search"
-                displayValue={(assigned: any) => assigned?.name}
-              />
-              <div className="py-1">
-                {filteredOptions ? (
-                  filteredOptions.length > 0 ? (
-                    filteredOptions.map((option) => (
-                      <Combobox.Option
-                        key={option.value}
-                        className={({ active, selected }) =>
-                          `${active ? "bg-indigo-50" : ""} ${
-                            selected ? "bg-indigo-50 font-medium" : ""
-                          } flex cursor-pointer select-none items-center gap-2 truncate px-2 py-1 text-gray-900`
-                        }
-                        value={option.value}
-                      >
-                        {people && (
-                          <>
-                            <Avatar
-                              user={people?.find((p) => p.member.id === option.value)?.member}
-                            />
-                            {option.display}
-                          </>
-                        )}
-                      </Combobox.Option>
-                    ))
-                  ) : (
-                    <p className="text-xs text-gray-500 px-2">No assignees found</p>
-                  )
-                ) : (
-                  <p className="text-xs text-gray-500 px-2">Loading...</p>
-                )}
-              </div>
-            </Combobox.Options>
-          </Transition>
-        </>
-      )}
-    </Combobox>
+          ) : (
+            <div className="flex items-center justify-center gap-2">
+              <UserGroupIcon className="h-4 w-4 text-gray-500" />
+              <span className="text-gray-500">Assignee</span>
+            </div>
+          )}
+        </div>
+      }
+      multiple
+      noChevron
+    />
   );
 };

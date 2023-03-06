@@ -2,39 +2,34 @@ import React from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 // icons
-import {
-  ClipboardDocumentListIcon,
-  Cog6ToothIcon,
-  HomeIcon,
-  RectangleStackIcon,
-} from "@heroicons/react/24/outline";
+import { GridViewIcon, AssignmentClipboardIcon, TickMarkIcon, SettingIcon } from "components/icons";
 // hooks
 import useTheme from "hooks/use-theme";
 
 const workspaceLinks = (workspaceSlug: string) => [
   {
-    icon: HomeIcon,
-    name: "Home",
+    icon: GridViewIcon,
+    name: "Dashboard",
     href: `/${workspaceSlug}`,
   },
   {
-    icon: ClipboardDocumentListIcon,
+    icon: AssignmentClipboardIcon,
     name: "Projects",
     href: `/${workspaceSlug}/projects`,
   },
   {
-    icon: RectangleStackIcon,
+    icon: TickMarkIcon,
     name: "My Issues",
     href: `/${workspaceSlug}/me/my-issues`,
   },
   {
-    icon: Cog6ToothIcon,
+    icon: SettingIcon,
     name: "Settings",
     href: `/${workspaceSlug}/settings`,
   },
 ];
 
-export const WorkspaceSidebarMenu = () => {
+export const WorkspaceSidebarMenu: React.FC = () => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -49,16 +44,16 @@ export const WorkspaceSidebarMenu = () => {
             <a
               className={`${
                 link.href === router.asPath
-                  ? "bg-gray-200 text-gray-900"
-                  : "text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100"
+                  ? "bg-indigo-50 text-gray-900"
+                  : "text-gray-500 hover:bg-indigo-50 hover:text-gray-900 focus:bg-indigo-50"
               } group flex items-center gap-3 rounded-md p-2 text-xs font-medium outline-none ${
                 sidebarCollapse ? "justify-center" : ""
               }`}
             >
               <link.icon
                 className={`${
-                  link.href === router.asPath ? "text-gray-900" : "text-gray-500"
-                } h-4 w-4 flex-shrink-0 group-hover:text-gray-900`}
+                  link.href === router.asPath ? "text-gray-900" : "text-gray-600"
+                } h-5 w-5 flex-shrink-0 group-hover:text-gray-900`}
                 aria-hidden="true"
               />
               {!sidebarCollapse && link.name}

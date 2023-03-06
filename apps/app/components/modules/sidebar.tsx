@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 
-import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { mutate } from "swr";
@@ -19,7 +18,6 @@ import {
 
 import { Popover, Transition } from "@headlessui/react";
 import DatePicker from "react-datepicker";
-
 // services
 import modulesService from "services/modules.service";
 // hooks
@@ -184,7 +182,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
       >
         {module ? (
           <>
-            <div className="flex gap-1 text-sm my-2">
+            <div className="my-2 flex gap-1 text-sm">
               <div className="flex items-center ">
                 <Controller
                   control={control}
@@ -193,7 +191,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                     <CustomSelect
                       label={
                         <span
-                          className={`flex items-center gap-1 text-left capitalize p-1 text-xs h-full w-full  text-gray-900`}
+                          className={`flex h-full w-full items-center gap-1 p-1 text-left text-xs capitalize  text-gray-900`}
                         >
                           <Squares2X2Icon className="h-4 w-4 flex-shrink-0" />
                           {watch("status")}
@@ -213,14 +211,14 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                   )}
                 />
               </div>
-              <div className="flex justify-center items-center gap-2 rounded-md border bg-transparent h-full  p-2 px-4  text-xs font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-900 focus:outline-none">
-                <Popover className="flex justify-center items-center relative rounded-lg">
+              <div className="flex h-full items-center justify-center gap-2 rounded-md border bg-transparent  p-2 px-4  text-xs font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-900 focus:outline-none">
+                <Popover className="relative flex items-center justify-center rounded-lg">
                   {({ open }) => (
                     <>
                       <Popover.Button
                         className={`group flex items-center  ${open ? "bg-gray-100" : ""}`}
                       >
-                        <CalendarDaysIcon className="h-4 w-4 flex-shrink-0 mr-2" />
+                        <CalendarDaysIcon className="mr-2 h-4 w-4 flex-shrink-0" />
                         <span>
                           {renderShortNumericDateFormat(`${module?.start_date}`)
                             ? renderShortNumericDateFormat(`${module?.start_date}`)
@@ -256,7 +254,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                     </>
                   )}
                 </Popover>
-                <Popover className="flex justify-center items-center relative  rounded-lg">
+                <Popover className="relative flex items-center justify-center  rounded-lg">
                   {({ open }) => (
                     <>
                       <Popover.Button
@@ -338,12 +336,30 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
             </div>
             <div className="divide-y-2 divide-gray-100 text-xs">
               <div className="py-1">
-                <SidebarLeadSelect
+                <Controller
                   control={control}
-                  submitChanges={submitChanges}
-                  lead={module.lead_detail}
+                  name="lead"
+                  render={({ field: { value } }) => (
+                    <SidebarLeadSelect
+                      value={value}
+                      onChange={(val: string) => {
+                        submitChanges({ lead: val });
+                      }}
+                    />
+                  )}
                 />
-                <SidebarMembersSelect control={control} submitChanges={submitChanges} />
+                <Controller
+                  control={control}
+                  name="members_list"
+                  render={({ field: { value } }) => (
+                    <SidebarMembersSelect
+                      value={value}
+                      onChange={(val: string[]) => {
+                        submitChanges({ members_list: val });
+                      }}
+                    />
+                  )}
+                />
                 <div className="flex flex-wrap items-center py-2">
                   <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
                     <ChartPieIcon className="h-4 w-4 flex-shrink-0" />
@@ -363,7 +379,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                 </div>
               </div>
             </div>
-            <div className="flex flex-col items-center justify-center w-full gap-2">
+            <div className="flex w-full flex-col items-center justify-center gap-2">
               {isStartValid && isEndValid ? (
                 <ProgressChart
                   issues={issues}

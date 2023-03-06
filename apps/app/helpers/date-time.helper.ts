@@ -88,3 +88,25 @@ export const timeAgo = (time: any) => {
     }
   return time;
 };
+
+export const getDateRangeStatus = (startDate: string  , endDate: string ) => {
+  const now = new Date();
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+
+  if (end < now) {
+    return "completed";
+  } else if (start <= now && end >= now) {
+    return "current";
+  } else {
+    return "upcoming";
+  }
+}
+
+export const renderShortDateWithYearFormat = (date: Date) => {
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const day = date.getDate();
+  const month = months[date.getMonth()];
+  const year = date.getFullYear();
+  return  isNaN(date.getTime()) ? "N/A" : ` ${month} ${day}, ${year}`;
+}

@@ -7,9 +7,10 @@ import { IIssue, IState, UserAuth } from "types";
 
 type Props = {
   type: "issue" | "cycle" | "module";
-  groupedByIssues: { [key: string]: IIssue[] } | undefined;
+  groupedByIssues: any;
   states: IState[] | undefined;
   addIssueToState: (groupTitle: string) => void;
+  makeIssueCopy: (issue: IIssue) => void;
   handleEditIssue: (issue: IIssue) => void;
   openIssuesListModal?: (() => void) | null;
   handleDeleteIssue: (issue: IIssue) => void;
@@ -23,6 +24,7 @@ export const AllBoards: React.FC<Props> = ({
   groupedByIssues,
   states,
   addIssueToState,
+  makeIssueCopy,
   handleEditIssue,
   openIssuesListModal,
   handleDeleteIssue,
@@ -34,39 +36,36 @@ export const AllBoards: React.FC<Props> = ({
 
   return (
     <>
-      {groupedByIssues && (
+      {groupedByIssues ? (
         <div className="h-[calc(100vh-157px)] w-full lg:h-[calc(100vh-115px)]">
-          <div className="h-full w-full overflow-hidden">
-            <div className="h-full w-full">
-              <div className="flex h-full gap-x-9 overflow-x-auto overflow-y-hidden">
-                {Object.keys(groupedByIssues).map((singleGroup, index) => {
-                  const currentState =
-                    selectedGroup === "state" ? states?.find((s) => s.id === singleGroup) : null;
+          <div className="horizontal-scroll-enable flex h-full gap-x-9 overflow-x-auto overflow-y-hidden">
+            {Object.keys(groupedByIssues).map((singleGroup, index) => {
+              const currentState =
+                selectedGroup === "state" ? states?.find((s) => s.id === singleGroup) : null;
 
-                  return (
-                    <SingleBoard
-                      key={index}
-                      type={type}
-                      currentState={currentState}
-                      groupTitle={singleGroup}
-                      groupedByIssues={groupedByIssues}
-                      selectedGroup={selectedGroup}
-                      handleEditIssue={handleEditIssue}
-                      addIssueToState={() => addIssueToState(singleGroup)}
-                      handleDeleteIssue={handleDeleteIssue}
-                      openIssuesListModal={openIssuesListModal ?? null}
-                      orderBy={orderBy}
-                      handleTrashBox={handleTrashBox}
-                      removeIssue={removeIssue}
-                      userAuth={userAuth}
-                    />
-                  );
-                })}
-              </div>
-            </div>
+              return (
+                <SingleBoard
+                  key={index}
+                  type={type}
+                  currentState={currentState}
+                  groupTitle={singleGroup}
+                  groupedByIssues={groupedByIssues}
+                  selectedGroup={selectedGroup}
+                  handleEditIssue={handleEditIssue}
+                  makeIssueCopy={makeIssueCopy}
+                  addIssueToState={() => addIssueToState(singleGroup)}
+                  handleDeleteIssue={handleDeleteIssue}
+                  openIssuesListModal={openIssuesListModal ?? null}
+                  orderBy={orderBy}
+                  handleTrashBox={handleTrashBox}
+                  removeIssue={removeIssue}
+                  userAuth={userAuth}
+                />
+              );
+            })}
           </div>
         </div>
-      )}
+      ) : null}
     </>
   );
 };

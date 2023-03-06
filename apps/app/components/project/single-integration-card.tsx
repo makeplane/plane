@@ -10,7 +10,7 @@ import useToast from "hooks/use-toast";
 // ui
 import { CustomSelect } from "components/ui";
 // icons
-import GithubLogo from "public/logos/github-black.png";
+import GithubLogo from "public/logos/github-square.png";
 // types
 import { IWorkspaceIntegrations } from "types";
 // fetch-keys
@@ -85,16 +85,16 @@ export const SingleIntegration: React.FC<Props> = ({ integration }) => {
   return (
     <>
       {integration && (
-        <div className="flex items-center justify-between gap-2 border p-4 rounded-xl">
+        <div className="flex items-center justify-between gap-2 rounded-[10px] border bg-white p-5">
           <div className="flex items-start gap-4">
-            <div className="h-12 w-12">
+            <div className="h-12 w-12 flex-shrink-0">
               <Image src={GithubLogo} alt="GithubLogo" />
             </div>
             <div>
-              <h3 className="flex items-center gap-4 font-semibold text-xl">
+              <h3 className="flex items-center gap-4 text-xl font-semibold">
                 {integration.integration_detail.title}
               </h3>
-              <p className="text-gray-400 text-sm">Select GitHub repository to enable sync.</p>
+              <p className="text-sm text-gray-400">Select GitHub repository to enable sync.</p>
             </div>
           </div>
           <CustomSelect
@@ -127,10 +127,10 @@ export const SingleIntegration: React.FC<Props> = ({ integration }) => {
                   </CustomSelect.Option>
                 ))
               ) : (
-                <p className="text-gray-400 text-center text-xs">No repositories found</p>
+                <p className="p-2 text-center text-xs text-gray-400">No repositories found</p>
               )
             ) : (
-              <p className="text-gray-400 text-center text-xs">Loading repositories</p>
+              <p className="p-2 text-center text-xs text-gray-400">Loading repositories...</p>
             )}
           </CustomSelect>
         </div>

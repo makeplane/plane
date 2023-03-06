@@ -17,6 +17,8 @@ export const WORKSPACE_INVITATION = "WORKSPACE_INVITATION";
 export const LAST_ACTIVE_WORKSPACE_AND_PROJECTS = "LAST_ACTIVE_WORKSPACE_AND_PROJECTS";
 
 export const PROJECTS_LIST = (workspaceSlug: string) => `PROJECTS_LIST_${workspaceSlug}`;
+export const FAVORITE_PROJECTS_LIST = (workspaceSlug: string) =>
+  `FAVORITE_PROJECTS_LIST_${workspaceSlug}`;
 export const PROJECT_DETAILS = (projectId: string) => `PROJECT_DETAILS_${projectId}`;
 
 export const PROJECT_MEMBERS = (projectId: string) => `PROJECT_MEMBERS_${projectId}`;
@@ -46,6 +48,10 @@ export const CYCLE_ISSUES = (cycleId: string, params?: IIssueFilterOptions) => {
   else return `CYCLE_ISSUES_${cycleId}`;
 };
 export const CYCLE_DETAILS = (cycleId: string) => `CYCLE_DETAIL_${cycleId}`;
+export const CYCLE_CURRENT_AND_UPCOMING_LIST = (projectId: string) =>
+  `CYCLE_CURRENT_AND_UPCOMING_LIST_${projectId}`;
+export const CYCLE_DRAFT_LIST = (projectId: string) => `CYCLE_DRAFT_LIST_${projectId}`;
+export const CYCLE_COMPLETE_LIST = (projectId: string) => `CYCLE_COMPLETE_LIST_${projectId}`;
 
 export const STATE_LIST = (projectId: string) => `STATE_LIST_${projectId}`;
 export const STATE_DETAIL = "STATE_DETAIL";

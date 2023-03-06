@@ -105,6 +105,8 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
     }
   }, [projectIssues, cycleIssues, selectedGroup]);
 
+  console.log("Grouped by issues: ", groupedByIssues);
+
   const { data: stateGroups } = useSWR(
     workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
     workspaceSlug
@@ -295,6 +297,15 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
     [setCreateIssueModal, setPreloadedData, selectedGroup]
   );
 
+  const makeIssueCopy = useCallback(
+    (issue: IIssue) => {
+      setCreateIssueModal(true);
+
+      setPreloadedData({ ...issue, name: `${issue.name} (Copy)`, actionType: "createIssue" });
+    },
+    [setCreateIssueModal, setPreloadedData]
+  );
+
   const handleEditIssue = useCallback(
     (issue: IIssue) => {
       setEditIssueModal(true);
@@ -418,6 +429,7 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
                     states={states}
                     members={members}
                     addIssueToState={addIssueToState}
+                    makeIssueCopy={makeIssueCopy}
                     handleEditIssue={handleEditIssue}
                     handleDeleteIssue={handleDeleteIssue}
                     openIssuesListModal={type !== "issue" ? openIssuesListModal : null}
@@ -433,9 +445,10 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
                 ) : (
                   <AllBoards
                     type={type}
-                    groupedByIssues={groupedByIssues}
                     states={states}
+                    groupedByIssues={groupedByIssues}
                     addIssueToState={addIssueToState}
+                    makeIssueCopy={makeIssueCopy}
                     handleEditIssue={handleEditIssue}
                     openIssuesListModal={type !== "issue" ? openIssuesListModal : null}
                     handleDeleteIssue={handleDeleteIssue}

@@ -27,6 +27,7 @@ type Props = {
   };
   selectedGroup: "state" | "priority" | "labels" | null;
   handleEditIssue: (issue: IIssue) => void;
+  makeIssueCopy: (issue: IIssue) => void;
   addIssueToState: () => void;
   handleDeleteIssue: (issue: IIssue) => void;
   openIssuesListModal?: (() => void) | null;
@@ -43,6 +44,7 @@ export const SingleBoard: React.FC<Props> = ({
   groupedByIssues,
   selectedGroup,
   handleEditIssue,
+  makeIssueCopy,
   addIssueToState,
   handleDeleteIssue,
   openIssuesListModal,
@@ -76,7 +78,7 @@ export const SingleBoard: React.FC<Props> = ({
         <StrictModeDroppable key={groupTitle} droppableId={groupTitle}>
           {(provided, snapshot) => (
             <div
-              className={`relative h-full p-1 overflow-y-auto  ${
+              className={`relative h-full overflow-y-auto p-1  ${
                 snapshot.isDraggingOver ? "bg-indigo-50 bg-opacity-50" : ""
               } ${!isCollapsed ? "hidden" : "block"}`}
               ref={provided.innerRef}
@@ -87,12 +89,12 @@ export const SingleBoard: React.FC<Props> = ({
                   <div
                     className={`absolute ${
                       snapshot.isDraggingOver ? "block" : "hidden"
-                    } top-0 left-0 h-full w-full bg-indigo-200 opacity-50 pointer-events-none z-[99999998]`}
+                    } pointer-events-none top-0 left-0 z-[99999998] h-full w-full bg-indigo-200 opacity-50`}
                   />
                   <div
                     className={`absolute ${
                       snapshot.isDraggingOver ? "block" : "hidden"
-                    } top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-xs whitespace-nowrap bg-white p-2 rounded pointer-events-none z-[99999999]`}
+                    } pointer-events-none top-1/2 left-1/2 z-[99999999] -translate-y-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-white p-2 text-xs`}
                   >
                     This board is ordered by {replaceUnderscoreIfSnakeCase(orderBy)}
                   </div>
@@ -115,6 +117,7 @@ export const SingleBoard: React.FC<Props> = ({
                       selectedGroup={selectedGroup}
                       properties={properties}
                       editIssue={() => handleEditIssue(issue)}
+                      makeIssueCopy={() => makeIssueCopy(issue)}
                       handleDeleteIssue={handleDeleteIssue}
                       orderBy={orderBy}
                       handleTrashBox={handleTrashBox}
@@ -136,7 +139,7 @@ export const SingleBoard: React.FC<Props> = ({
               {type === "issue" ? (
                 <button
                   type="button"
-                  className="flex items-center gap-2 text-theme font-medium outline-none"
+                  className="flex items-center gap-2 font-medium text-theme outline-none"
                   onClick={addIssueToState}
                 >
                   <PlusIcon className="h-4 w-4" />
@@ -147,7 +150,7 @@ export const SingleBoard: React.FC<Props> = ({
                   customButton={
                     <button
                       type="button"
-                      className="flex items-center gap-2 text-theme font-medium outline-none"
+                      className="flex items-center gap-2 font-medium text-theme outline-none"
                     >
                       <PlusIcon className="h-4 w-4" />
                       Add Issue

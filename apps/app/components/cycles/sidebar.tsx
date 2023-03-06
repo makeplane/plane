@@ -6,7 +6,7 @@ import Image from "next/image";
 import { mutate } from "swr";
 
 // react-hook-form
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Popover, Transition } from "@headlessui/react";
 import DatePicker from "react-datepicker";
 // icons
@@ -19,7 +19,7 @@ import {
   UserIcon,
 } from "@heroicons/react/24/outline";
 // ui
-import { CustomSelect, Loader, ProgressBar } from "components/ui";
+import { Loader, ProgressBar } from "components/ui";
 // hooks
 import useToast from "hooks/use-toast";
 // services
@@ -36,17 +36,22 @@ import { renderDateFormat, renderShortNumericDateFormat } from "helpers/date-tim
 import { CycleIssueResponse, ICycle, IIssue } from "types";
 // fetch-keys
 import { CYCLE_DETAILS } from "constants/fetch-keys";
-// constants
-import { CYCLE_STATUS } from "constants/cycle";
 
 type Props = {
   issues: IIssue[];
   cycle: ICycle | undefined;
   isOpen: boolean;
   cycleIssues: CycleIssueResponse[];
+  cycleStatus: string;
 };
 
-export const CycleDetailsSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cycleIssues }) => {
+export const CycleDetailsSidebar: React.FC<Props> = ({
+  issues,
+  cycle,
+  isOpen,
+  cycleIssues,
+  cycleStatus,
+}) => {
   const [cycleDeleteModal, setCycleDeleteModal] = useState(false);
 
   const router = useRouter();
@@ -60,7 +65,6 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cy
   const defaultValues: Partial<ICycle> = {
     start_date: new Date().toString(),
     end_date: new Date().toString(),
-    status: cycle?.status,
   };
 
   const groupedIssues = {
@@ -72,7 +76,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cy
     ...groupBy(cycleIssues ?? [], "issue_detail.state_detail.group"),
   };
 
-  const { reset, watch, control } = useForm({
+  const { reset } = useForm({
     defaultValues,
   });
 
@@ -118,32 +122,18 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cy
           <>
             <div className="flex gap-1 text-sm my-2">
               <div className="flex items-center ">
-                <Controller
-                  control={control}
-                  name="status"
-                  render={({ field: { value } }) => (
-                    <CustomSelect
-                      label={
-                        <span
-                          className={`flex items-center gap-1 text-left capitalize p-1 text-xs h-full w-full  text-gray-900`}
-                        >
-                          <Squares2X2Icon className="h-4 w-4 flex-shrink-0" />
-                          {watch("status")}
-                        </span>
-                      }
-                      value={value}
-                      onChange={(value: any) => {
-                        submitChanges({ status: value });
-                      }}
-                    >
-                      {CYCLE_STATUS.map((option) => (
-                        <CustomSelect.Option key={option.value} value={option.value}>
-                          <span className="text-xs">{option.label}</span>
-                        </CustomSelect.Option>
-                      ))}
-                    </CustomSelect>
-                  )}
-                />
+                <span
+                  className={`flex items-center gap-1 text-left capitalize p-1 text-xs h-full w-full  text-gray-900`}
+                >
+                  <Squares2X2Icon className="h-4 w-4 flex-shrink-0" />
+                  {cycleStatus === "current"
+                    ? "In Progress"
+                    : cycleStatus === "completed"
+                    ? "Completed"
+                    : cycleStatus === "upcoming"
+                    ? "Upcoming"
+                    : "Draft"}
+                </span>
               </div>
               <div className="flex justify-center items-center gap-2 rounded-md border bg-transparent h-full  p-2 px-4  text-xs font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-900 focus:outline-none">
                 <Popover className="flex justify-center items-center relative  rounded-lg">
@@ -289,14 +279,16 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cy
                         </div>
                       ) : (
                         <div className="grid h-5 w-5 place-items-center rounded-full border-2 border-white bg-gray-700 capitalize text-white">
-                          {cycle.owned_by?.first_name && cycle.owned_by.first_name !== ""
-                            ? cycle.owned_by.first_name.charAt(0)
+                          {cycle.owned_by &&
+                          cycle.owned_by?.first_name &&
+                          cycle.owned_by?.first_name !== ""
+                            ? cycle.owned_by?.first_name.charAt(0)
                             : cycle.owned_by?.email.charAt(0)}
                         </div>
                       ))}
-                    {cycle.owned_by.first_name !== ""
-                      ? cycle.owned_by.first_name
-                      : cycle.owned_by.email}
+                    {cycle.owned_by?.first_name !== ""
+                      ? cycle.owned_by?.first_name
+                      : cycle.owned_by?.email}
                   </div>
                 </div>
                 <div className="flex flex-wrap items-center py-2">

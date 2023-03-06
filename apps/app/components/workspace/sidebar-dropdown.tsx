@@ -69,45 +69,43 @@ export const WorkspaceSidebarDropdown = () => {
   return (
     <div className="relative">
       <Menu as="div" className="col-span-4 inline-block w-full text-left">
-        <div className="w-full">
-          <Menu.Button
-            className={`inline-flex w-full items-center justify-between rounded-md px-1 py-2 text-sm font-semibold text-gray-700 focus:outline-none ${
-              !sidebarCollapse
-                ? "border border-gray-300 shadow-sm hover:bg-gray-50 focus:bg-gray-50"
-                : ""
-            }`}
-          >
-            <div className="flex items-center gap-x-1">
-              <div className="relative flex h-5 w-5 items-center justify-center rounded bg-gray-700 p-4 uppercase text-white">
-                {activeWorkspace?.logo && activeWorkspace.logo !== "" ? (
-                  <Image
-                    src={activeWorkspace.logo}
-                    alt="Workspace Logo"
-                    layout="fill"
-                    objectFit="cover"
-                    className="rounded"
-                  />
-                ) : (
-                  activeWorkspace?.name?.charAt(0) ?? "..."
-                )}
-              </div>
-              {!sidebarCollapse && (
-                <p className="ml-1 text-left">
-                  {activeWorkspace?.name
-                    ? activeWorkspace.name.length > 17
-                      ? `${activeWorkspace.name.substring(0, 17)}...`
-                      : activeWorkspace.name
-                    : "Loading..."}
-                </p>
+        <Menu.Button
+          className={`inline-flex w-full items-center justify-between rounded-md px-1 py-2 text-sm font-semibold text-gray-700 focus:outline-none ${
+            !sidebarCollapse
+              ? "border border-gray-300 shadow-sm hover:bg-gray-50 focus:bg-gray-50"
+              : ""
+          }`}
+        >
+          <div className="mx-auto flex items-center gap-x-1">
+            <div className="relative flex h-5 w-5 items-center justify-center rounded bg-gray-700 p-4 uppercase text-white">
+              {activeWorkspace?.logo && activeWorkspace.logo !== "" ? (
+                <Image
+                  src={activeWorkspace.logo}
+                  alt="Workspace Logo"
+                  layout="fill"
+                  objectFit="cover"
+                  className="rounded"
+                />
+              ) : (
+                activeWorkspace?.name?.charAt(0) ?? "..."
               )}
             </div>
             {!sidebarCollapse && (
-              <div className="flex flex-grow justify-end">
-                <ChevronDownIcon className="ml-2 h-3 w-3" aria-hidden="true" />
-              </div>
+              <p className="ml-1 text-left">
+                {activeWorkspace?.name
+                  ? activeWorkspace.name.length > 17
+                    ? `${activeWorkspace.name.substring(0, 17)}...`
+                    : activeWorkspace.name
+                  : "Loading..."}
+              </p>
             )}
-          </Menu.Button>
-        </div>
+          </div>
+          {!sidebarCollapse && (
+            <div className="flex flex-grow justify-end">
+              <ChevronDownIcon className="ml-2 h-3 w-3" aria-hidden="true" />
+            </div>
+          )}
+        </Menu.Button>
 
         <Transition
           as={Fragment}
@@ -118,7 +116,7 @@ export const WorkspaceSidebarDropdown = () => {
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <Menu.Items className="fixed left-2 z-20 mt-1 w-full max-w-[14rem] origin-top-left rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+          <Menu.Items className="fixed left-2 z-20 mt-1 w-full max-w-[17rem] origin-top-left rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
             <div className="divide-y px-1 py-2">
               <div>
                 <Menu.Item as="div" className="px-2 pb-2 text-xs">

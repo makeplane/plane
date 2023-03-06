@@ -1,7 +1,14 @@
 // services
 import APIService from "services/api.service";
 // types
-import type { CycleIssueResponse, ICycle, IIssue, IIssueFilterOptions } from "types";
+import type {
+  CycleIssueResponse,
+  CompletedCyclesResponse,
+  CurrentAndUpcomingCyclesResponse,
+  DraftCyclesResponse,
+  ICycle,
+  IIssueFilterOptions,
+} from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -88,6 +95,58 @@ class ProjectCycleServices extends APIService {
 
   async deleteCycle(workspaceSlug: string, projectId: string, cycleId: string): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async cycleDateCheck(
+    workspaceSlug: string,
+    projectId: string,
+    data: {
+      start_date: string;
+      end_date: string;
+    }
+  ): Promise<any> {
+    return this.post(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/date-check/`,
+      data
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getCurrentAndUpcomingCycles(
+    workspaceSlug: string,
+    projectId: string
+  ): Promise<CurrentAndUpcomingCyclesResponse> {
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/current-upcoming-cycles/`
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getDraftCycles(workspaceSlug: string, projectId: string): Promise<DraftCyclesResponse> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/draft-cycles/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getCompletedCycles(
+    workspaceSlug: string,
+    projectId: string
+  ): Promise<CompletedCyclesResponse> {
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/completed-cycles/`
+    )
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
