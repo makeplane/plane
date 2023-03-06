@@ -4,8 +4,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
 
-// swr
 import useSWR from "swr";
+
 // services
 import cyclesService from "services/cycles.service";
 // hooks
@@ -94,18 +94,18 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
 
   return (
     <div className="h-full w-full">
-      <div className="flex flex-col shadow rounded-[10px] text-xs bg-white">
+      <div className="flex flex-col rounded-[10px] bg-white text-xs shadow">
         <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}>
           <a>
-            <div className="flex flex-col px-5 py-5 gap-4 rounded-b-[10px]  h-full">
-              <div className="flex justify-between items-center gap-1">
+            <div className="flex h-full flex-col gap-4 rounded-b-[10px] px-5  py-5">
+              <div className="flex items-center justify-between gap-1">
                 <h3 className="text-xl font-semibold leading-5">{cycle.name}</h3>
                 {/* <span className="p-1">
                   <StarIcon className="h-4 w-4 " color="#858E96" />
                 </span> */}
               </div>
 
-              <div className="flex justify-start items-center gap-5">
+              <div className="flex items-center justify-start gap-5">
                 <div className="flex items-start gap-1 ">
                   <CalendarDaysIcon className="h-4 w-4 text-gray-900" />
                   <span className="text-gray-400">Start :</span>
@@ -121,8 +121,8 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
           </a>
         </Link>
 
-        <div className="flex flex-col  rounded-b-[10px] h-full">
-          <div className="flex justify-between items-center px-5 py-4">
+        <div className="flex h-full  flex-col rounded-b-[10px]">
+          <div className="flex items-center justify-between px-5 py-4">
             <div className="flex items-center gap-2.5">
               {cycle.owned_by.avatar && cycle.owned_by.avatar !== "" ? (
                 <Image
@@ -134,7 +134,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
                 />
               ) : (
                 <button
-                  className="flex h-5 w-5 justify-center items-center capitalize rounded-full bg-gray-800  text-white"
+                  className="flex h-5 w-5 items-center justify-center rounded-full bg-gray-800 capitalize  text-white"
                   onClick={handleEditCycle}
                 >
                   {cycle.owned_by.first_name.charAt(0)}
@@ -162,11 +162,11 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
           <Disclosure>
             {({ open }) => (
               <div
-                className={`flex  flex-col  bg-gray-100 border-t border-gray-200 h-full w-full ${
+                className={`flex  h-full  w-full flex-col border-t border-gray-200 bg-gray-100 ${
                   open ? "" : "flex-row"
                 }`}
               >
-                <div className="flex  items-center gap-2 w-full px-5 py-4 ">
+                <div className="flex  w-full items-center gap-2 px-5 py-4 ">
                   <span> Progress </span>
                   <LinearProgressIndicator data={progressIndicatorData} />
                   <Disclosure.Button>
@@ -179,7 +179,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
                       <div className="col-span-2 space-y-3  px-5">
                         <div className="space-y-3 text-xs">
                           {Object.keys(groupedIssues).map((group) => (
-                            <div key={group} className="flex justify-between items-center gap-2">
+                            <div key={group} className="flex items-center justify-between gap-2">
                               <div className="flex  items-center gap-2">
                                 <span
                                   className="block h-2 w-2 rounded-full"

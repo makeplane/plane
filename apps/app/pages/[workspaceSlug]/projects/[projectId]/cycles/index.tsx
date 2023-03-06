@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
+
 import useSWR from "swr";
+
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { Tab } from "@headlessui/react";
-
 // lib
 import { requiredAuth } from "lib/auth";
 
@@ -111,7 +112,7 @@ const ProjectCycles: NextPage = () => {
       />
       <div className="space-y-8">
         <div className="flex flex-col gap-5">
-          <h3 className="text-3xl text-black font-semibold">Current Cycle</h3>
+          <h3 className="text-3xl font-semibold text-black">Current Cycle</h3>
           <div className="space-y-5">
             <CyclesList
               cycles={currentAndUpcomingCycles?.current_cycle ?? []}
@@ -122,19 +123,19 @@ const ProjectCycles: NextPage = () => {
           </div>
         </div>
         <div className="flex flex-col gap-5">
-          <h3 className="text-3xl text-black font-semibold">Others</h3>
+          <h3 className="text-3xl font-semibold text-black">Others</h3>
           <div>
             <Tab.Group>
               <Tab.List
                 as="div"
-                className="flex justify-start items-center gap-4 text-base font-medium"
+                className="flex items-center justify-start gap-4 text-base font-medium"
               >
                 <Tab
                   className={({ selected }) =>
-                    ` rounded-3xl px-6 py-3 border ${
+                    ` rounded-3xl border px-6 py-3 ${
                       selected
                         ? "bg-theme text-white"
-                        : "text-gray-900 bg-white border-gray-400 hover:bg-gray-200"
+                        : "border-gray-400 bg-white text-gray-900 hover:bg-gray-200"
                     }`
                   }
                 >
@@ -142,10 +143,10 @@ const ProjectCycles: NextPage = () => {
                 </Tab>
                 <Tab
                   className={({ selected }) =>
-                    ` rounded-3xl px-6 py-3 border ${
+                    ` rounded-3xl border px-6 py-3 ${
                       selected
                         ? "bg-theme text-white"
-                        : "text-gray-900 bg-white border-gray-400 hover:bg-gray-200"
+                        : "border-gray-400 bg-white text-gray-900 hover:bg-gray-200"
                     }`
                   }
                 >
@@ -153,10 +154,10 @@ const ProjectCycles: NextPage = () => {
                 </Tab>
                 <Tab
                   className={({ selected }) =>
-                    ` rounded-3xl px-6 py-3 border ${
+                    ` rounded-3xl border px-6 py-3 ${
                       selected
                         ? "bg-theme text-white"
-                        : "text-gray-900 bg-white border-gray-400 hover:bg-gray-200"
+                        : "border-gray-400 bg-white text-gray-900 hover:bg-gray-200"
                     }`
                   }
                 >

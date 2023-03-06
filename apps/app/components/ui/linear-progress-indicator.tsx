@@ -19,14 +19,14 @@ export const LinearProgressIndicator: React.FC<Props> = ({ data }) => {
 
     return (
       <Tooltip tooltipContent={`${item.name} ${item.value}%`}>
-        <div key={item.id} className="bar" style={style}></div>
+        <div key={item.id} className="bar" style={style} />
       </Tooltip>
     );
   });
 
   return (
-    <div className="flex justify-between items-center h-1 gap-1  w-full">
-      {total === 0 ? " - 0%" : <div className="flex h-full w-full rounded-md gap-1">{bars}</div>}
+    <div className="flex h-1 w-full items-center justify-between  gap-1">
+      {total === 0 ? " - 0%" : <div className="flex h-full w-full gap-1 rounded-md">{bars}</div>}
     </div>
   );
 };
