@@ -103,6 +103,9 @@ from plane.api.views import (
     GithubIssueSyncViewSet,
     GithubCommentSyncViewSet,
     ## End Integrations
+    # Importer
+    ServiceIssueImportSummaryEndpoint,
+    ## End importer
 )
 
 
@@ -938,4 +941,11 @@ urlpatterns = [
     ),
     ## End Github Integrations
     ## End Integrations
+    # Importer
+    path(
+        "workspaces/<str:slug>/importers/<str:service>/",
+        ServiceIssueImportSummaryEndpoint.as_view(),
+        name="importer",
+    ),
+    ##  End Importer
 ]

@@ -72,3 +72,39 @@ def delete_github_installation(installation_id):
     }
     response = requests.delete(url, headers=headers)
     return response
+
+
+def get_github_repo_details(access_tokens_url, owner, repo):
+    token = get_jwt_token()
+
+    headers = {
+        "Authorization": "Bearer " + token,
+        "Accept": "application/vnd.github+json",
+    }
+
+    oauth_response = requests.post(
+        access_tokens_url,
+        headers=headers,
+    ).json()
+
+    oauth_token = oauth_response.get("token")
+    headers = {
+        "Authorization": "Bearer " + oauth_token,
+        "Accept": "application/vnd.github+json",
+    }
+    open_issues = requests.get(
+        f"https://api.github.com/repos/{owner}/{repo}",
+        headers=headers,
+    ).json()["open_issues_count"]
+
+    labels = requests.get(
+        f"https://api.github.com/repos/{owner}/{repo}/labels?per_page=100&page=1",
+        headers=headers,
+    ).json()
+    
+    collaborators = requests.get(
+        f"https://api.github.com/repos/{owner}/{repo}/collaborators?per_page=100&page=1",
+        headers=headers,
+    ).json()
+
+    return open_issues, labels, collaborators

@@ -97,3 +97,5 @@ from .integration import (
     GithubCommentSyncViewSet,
     GithubRepositoriesEndpoint,
 )
+
+from .importer import ServiceIssueImportSummaryEndpoint

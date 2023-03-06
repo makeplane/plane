@@ -57,3 +57,5 @@ from .integration import (
     GithubIssueSync,
     GithubCommentSync,
 )
+
+from .importer import Importer

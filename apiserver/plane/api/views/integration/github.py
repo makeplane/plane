@@ -29,6 +29,13 @@ class GithubRepositoriesEndpoint(BaseAPIView):
             workspace_integration = WorkspaceIntegration.objects.get(
                 workspace__slug=slug, pk=workspace_integration_id
             )
+
+            if workspace_integration.integration.provider != "github":
+                return Response(
+                    {"error": "Not a github integration"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
             access_tokens_url = workspace_integration.metadata["access_tokens_url"]
             repositories_url = (
                 workspace_integration.metadata["repositories_url"]
