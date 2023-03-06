@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
 
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 
 // services
 import cyclesService from "services/cycles.service";
@@ -23,7 +23,7 @@ import { capitalizeFirstLetter, copyTextToClipboard } from "helpers/string.helpe
 // types
 import { CycleIssueResponse, ICycle } from "types";
 // fetch-keys
-import { CYCLE_ISSUES } from "constants/fetch-keys";
+import { CYCLE_ISSUES, CYCLE_LIST } from "constants/fetch-keys";
 
 type TSingleStatProps = {
   cycle: ICycle;
@@ -67,6 +67,70 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
     ...groupBy(cycleIssues ?? [], "issue_detail.state_detail.group"),
   };
 
+  const handleAddToFavorites = () => {
+    if (!workspaceSlug && !projectId && !cycle) return;
+
+    cyclesService
+      .addCycleToFavorites(workspaceSlug as string, projectId as string, {
+        cycle: cycle.id,
+      })
+      .then(() => {
+        mutate<ICycle[]>(
+          CYCLE_LIST(projectId as string),
+          (prevData) =>
+            (prevData ?? []).map((c) => ({
+              ...c,
+              is_favorite: c.id === cycle.id ? true : c.is_favorite,
+            })),
+          false
+        );
+
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "Successfully added the cycle to favorites.",
+        });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Couldn't add the cycle to favorites. Please try again.",
+        });
+      });
+  };
+
+  const handleRemoveFromFavorites = () => {
+    if (!workspaceSlug || !cycle) return;
+
+    cyclesService
+      .removeCycleFromFavorites(workspaceSlug as string, projectId as string, cycle.id)
+      .then(() => {
+        mutate<ICycle[]>(
+          CYCLE_LIST(projectId as string),
+          (prevData) =>
+            (prevData ?? []).map((c) => ({
+              ...c,
+              is_favorite: c.id === cycle.id ? false : c.is_favorite,
+            })),
+          false
+        );
+
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "Successfully removed the cycle from favorites.",
+        });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Couldn't remove the cycle from favorites. Please try again.",
+        });
+      });
+  };
+
   const handleCopyText = () => {
     const originURL =
       typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
@@ -95,31 +159,41 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
   return (
     <div className="h-full w-full">
       <div className="flex flex-col rounded-[10px] bg-white text-xs shadow">
-        <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}>
-          <a>
-            <div className="flex h-full flex-col gap-4 rounded-b-[10px] px-5  py-5">
-              <div className="flex items-center justify-between gap-1">
-                <h3 className="text-xl font-semibold leading-5">{cycle.name}</h3>
-                {/* <span className="p-1">
+        <div className="flex h-full flex-col gap-4 rounded-b-[10px] px-5  py-5">
+          <div className="flex items-center justify-between gap-1">
+            <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}>
+              <a className="w-full">
+                <h3 className="text-xl font-semibold leading-5 ">{cycle.name}</h3>
+              </a>
+            </Link>
+            {cycle.is_favorite ? (
+              <button onClick={handleRemoveFromFavorites} className="p-1 ">
+                <span>
+                  <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
+                </span>
+              </button>
+            ) : (
+              <button onClick={handleAddToFavorites} className="p-1">
+                <span>
                   <StarIcon className="h-4 w-4 " color="#858E96" />
-                </span> */}
-              </div>
+                </span>
+              </button>
+            )}
+          </div>
 
-              <div className="flex items-center justify-start gap-5">
-                <div className="flex items-start gap-1 ">
-                  <CalendarDaysIcon className="h-4 w-4 text-gray-900" />
-                  <span className="text-gray-400">Start :</span>
-                  <span>{renderShortDateWithYearFormat(startDate)}</span>
-                </div>
-                <div className="flex items-start gap-1 ">
-                  <CalendarDaysIcon className="h-4 w-4 text-gray-900" />
-                  <span className="text-gray-400">End :</span>
-                  <span>{renderShortDateWithYearFormat(endDate)}</span>
-                </div>
-              </div>
+          <div className="flex items-center justify-start gap-5">
+            <div className="flex items-start gap-1 ">
+              <CalendarDaysIcon className="h-4 w-4 text-gray-900" />
+              <span className="text-gray-400">Start :</span>
+              <span>{renderShortDateWithYearFormat(startDate)}</span>
             </div>
-          </a>
-        </Link>
+            <div className="flex items-start gap-1 ">
+              <CalendarDaysIcon className="h-4 w-4 text-gray-900" />
+              <span className="text-gray-400">End :</span>
+              <span>{renderShortDateWithYearFormat(endDate)}</span>
+            </div>
+          </div>
+        </div>
 
         <div className="flex h-full  flex-col rounded-b-[10px]">
           <div className="flex items-center justify-between px-5 py-4">
@@ -170,7 +244,10 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
                   <span> Progress </span>
                   <LinearProgressIndicator data={progressIndicatorData} />
                   <Disclosure.Button>
-                    <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
+                    <ChevronDownIcon
+                      className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`}
+                      aria-hidden="true"
+                    />
                   </Disclosure.Button>
                 </div>
                 <Transition show={open}>

@@ -132,10 +132,10 @@ const ProjectCycles: NextPage = () => {
               >
                 <Tab
                   className={({ selected }) =>
-                    ` rounded-3xl border px-6 py-3 ${
+                    `rounded-3xl border px-5 py-1.5 text-sm sm:px-7 sm:py-2 sm:text-base ${
                       selected
-                        ? "bg-theme text-white"
-                        : "border-gray-400 bg-white text-gray-900 hover:bg-gray-200"
+                        ? "border-theme bg-theme text-white"
+                        : "border-gray-300 bg-white hover:bg-hover-gray"
                     }`
                   }
                 >
@@ -143,10 +143,10 @@ const ProjectCycles: NextPage = () => {
                 </Tab>
                 <Tab
                   className={({ selected }) =>
-                    ` rounded-3xl border px-6 py-3 ${
+                    `rounded-3xl border px-5 py-1.5 text-sm sm:px-7 sm:py-2 sm:text-base ${
                       selected
-                        ? "bg-theme text-white"
-                        : "border-gray-400 bg-white text-gray-900 hover:bg-gray-200"
+                        ? "border-theme bg-theme text-white"
+                        : "border-gray-300 bg-white hover:bg-hover-gray"
                     }`
                   }
                 >
@@ -154,10 +154,10 @@ const ProjectCycles: NextPage = () => {
                 </Tab>
                 <Tab
                   className={({ selected }) =>
-                    ` rounded-3xl border px-6 py-3 ${
+                    `rounded-3xl border px-5 py-1.5 text-sm sm:px-7 sm:py-2 sm:text-base ${
                       selected
-                        ? "bg-theme text-white"
-                        : "border-gray-400 bg-white text-gray-900 hover:bg-gray-200"
+                        ? "border-theme bg-theme text-white"
+                        : "border-gray-300 bg-white hover:bg-hover-gray"
                     }`
                   }
                 >

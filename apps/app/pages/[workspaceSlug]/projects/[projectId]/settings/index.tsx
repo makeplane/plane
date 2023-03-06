@@ -15,7 +15,7 @@ import AppLayout from "layouts/app-layout";
 import projectService from "services/project.service";
 import workspaceService from "services/workspace.service";
 // components
-import ConfirmProjectDeletion from "components/project/confirm-project-deletion";
+import { DeleteProjectModal } from "components/project";
 import EmojiIconPicker from "components/emoji-icon-picker";
 // hooks
 import useToast from "hooks/use-toast";
@@ -138,7 +138,7 @@ const GeneralSettings: NextPage<UserAuth> = (props) => {
       }
       settingsLayout
     >
-      <ConfirmProjectDeletion
+      <DeleteProjectModal
         data={projectDetails ?? null}
         isOpen={Boolean(selectProject)}
         onClose={() => setSelectedProject(null)}
