@@ -76,7 +76,7 @@ export const WorkspaceSidebarDropdown = () => {
               : ""
           }`}
         >
-          <div className="flex items-center mx-auto gap-x-1">
+          <div className="mx-auto flex items-center gap-x-1">
             <div className="relative flex h-5 w-5 items-center justify-center rounded bg-gray-700 p-4 uppercase text-white">
               {activeWorkspace?.logo && activeWorkspace.logo !== "" ? (
                 <Image
@@ -116,7 +116,7 @@ export const WorkspaceSidebarDropdown = () => {
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <Menu.Items className="fixed left-2 z-20 mt-1 w-full max-w-[14rem] origin-top-left rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+          <Menu.Items className="fixed left-2 z-20 mt-1 w-full max-w-[17rem] origin-top-left rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
             <div className="divide-y px-1 py-2">
               <div>
                 <Menu.Item as="div" className="px-2 pb-2 text-xs">

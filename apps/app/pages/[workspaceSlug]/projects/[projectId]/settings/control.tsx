@@ -135,6 +135,7 @@ const ControlSettings: NextPage<TControlSettingsProps> = (props) => {
                         people?.find((person) => person.member.id === field.value)?.member
                           .first_name ?? "Select Lead"
                       }
+                      width="w-full"
                       input
                     >
                       {people?.map((person) => (
@@ -143,7 +144,7 @@ const ControlSettings: NextPage<TControlSettingsProps> = (props) => {
                           value={person.member.id}
                           className="flex items-center gap-2"
                         >
-                          <>
+                          <div className="flex items-center gap-2">
                             {person.member.avatar && person.member.avatar !== "" ? (
                               <div className="relative h-4 w-4">
                                 <Image
@@ -164,7 +165,7 @@ const ControlSettings: NextPage<TControlSettingsProps> = (props) => {
                             {person.member.first_name !== ""
                               ? person.member.first_name
                               : person.member.email}
-                          </>
+                          </div>
                         </CustomSelect.Option>
                       ))}
                     </CustomSelect>
@@ -194,6 +195,7 @@ const ControlSettings: NextPage<TControlSettingsProps> = (props) => {
                         people?.find((p) => p.member.id === field.value)?.member.first_name ??
                         "Select Default Assignee"
                       }
+                      width="w-full"
                       input
                     >
                       {people?.map((person) => (
@@ -202,7 +204,7 @@ const ControlSettings: NextPage<TControlSettingsProps> = (props) => {
                           value={person.member.id}
                           className="flex items-center gap-2"
                         >
-                          <>
+                          <div className="flex items-center gap-2">
                             {person.member.avatar && person.member.avatar !== "" ? (
                               <div className="relative h-4 w-4">
                                 <Image
@@ -223,7 +225,7 @@ const ControlSettings: NextPage<TControlSettingsProps> = (props) => {
                             {person.member.first_name !== ""
                               ? person.member.first_name
                               : person.member.email}
-                          </>
+                          </div>
                         </CustomSelect.Option>
                       ))}
                     </CustomSelect>

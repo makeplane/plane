@@ -83,10 +83,10 @@ export const MultiLevelSelect: React.FC<TMultipleSelectProps> = (props) => {
                       <>
                         {openChildFor?.id === option.id && (
                           <div
-                            className={`w-72 h-auto max-h-72 bg-white border border-gray-200 absolute rounded-lg ${
+                            className={`absolute h-auto max-h-72 w-72 rounded-lg border bg-white ${
                               direction === "right"
-                                ? "rounded-tl-none shadow-md left-full translate-x-2"
-                                : "rounded-tr-none shadow-md right-full -translate-x-2"
+                                ? "left-full translate-x-2 rounded-tl-none shadow-md"
+                                : "right-full -translate-x-2 rounded-tr-none shadow-md"
                             }`}
                           >
                             {option.children?.map((child) => (
@@ -118,7 +118,7 @@ export const MultiLevelSelect: React.FC<TMultipleSelectProps> = (props) => {
                             ))}
 
                             <div
-                              className={`w-0 h-0 absolute border-t-8 border-gray-300 ${
+                              className={`absolute h-0 w-0 border-t-8 border-gray-300 ${
                                 direction === "right"
                                   ? "top-0 left-0 -translate-x-2 border-r-8 border-b-8 border-b-transparent border-t-transparent border-l-transparent"
                                   : "top-0 right-0 translate-x-2 border-l-8 border-b-8 border-b-transparent border-t-transparent border-r-transparent"

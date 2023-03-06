@@ -99,7 +99,7 @@ const StatesSettings: NextPage<UserAuth> = (props) => {
                           Add
                         </button>
                       </div>
-                      <div className="divide-y rounded-[10px] border border-gray-200">
+                      <div className="divide-y rounded-[10px] border">
                         {key === activeGroup && (
                           <CreateUpdateStateInline
                             onClose={() => {

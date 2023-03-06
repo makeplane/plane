@@ -58,10 +58,10 @@ const EmojiIconPicker: React.FC<Props> = ({ label, value, onChange }) => {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Popover.Panel className="absolute z-10 mt-2 w-80 rounded-md bg-white shadow-lg">
+        <Popover.Panel className="absolute z-10 mt-2 w-80 rounded-lg bg-white shadow-lg">
           <div className="h-72 w-80 overflow-auto rounded border bg-white p-2 shadow-2xl">
             <Tab.Group as="div" className="flex h-full w-full flex-col">
-              <Tab.List className="flex-0 -mx-2 flex justify-around gap-1 rounded border-b p-1">
+              <Tab.List className="flex-0 -mx-2 flex justify-around gap-1 border-b p-1">
                 {tabOptions.map((tab) => (
                   <Tab
                     key={tab.key}
@@ -75,16 +75,16 @@ const EmojiIconPicker: React.FC<Props> = ({ label, value, onChange }) => {
                   </Tab>
                 ))}
               </Tab.List>
-              <Tab.Panels className="h-full w-full flex-1 overflow-y-auto overflow-x-hidden">
-                <Tab.Panel className="h-full w-full">
+              <Tab.Panels className="flex-1 overflow-y-auto">
+                <Tab.Panel>
                   {recentEmojis.length > 0 && (
-                    <div className="w-full py-2">
-                      <h3 className="mb-2 text-lg">Recent Emojis</h3>
+                    <div className="py-2">
+                      <h3 className="mb-2">Recent Emojis</h3>
                       <div className="grid grid-cols-9 gap-2">
                         {recentEmojis.map((emoji) => (
                           <button
                             type="button"
-                            className="select-none text-xl"
+                            className="select-none text-lg hover:bg-hover-gray"
                             key={emoji}
                             onClick={() => {
                               onChange(emoji);
@@ -97,13 +97,13 @@ const EmojiIconPicker: React.FC<Props> = ({ label, value, onChange }) => {
                       </div>
                     </div>
                   )}
-                  <div className="py-3">
-                    <h3 className="mb-2 text-lg">All Emojis</h3>
+                  <div>
+                    <h3 className="mb-2">All Emojis</h3>
                     <div className="grid grid-cols-9 gap-2">
                       {emojis.map((emoji) => (
                         <button
                           type="button"
-                          className="select-none text-xl"
+                          className="select-none text-lg hover:bg-hover-gray"
                           key={emoji}
                           onClick={() => {
                             onChange(emoji);

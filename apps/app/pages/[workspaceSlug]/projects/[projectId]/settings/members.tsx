@@ -181,7 +181,7 @@ const MembersSettings: NextPage<UserAuth> = ({ isMember, isOwner, isViewer, isGu
               <Loader.Item height="40px" />
             </Loader>
           ) : (
-            <div className="divide-y rounded-[10px] border border-gray-200 bg-white px-6">
+            <div className="divide-y rounded-[10px] border bg-white px-6">
               {members.length > 0
                 ? members.map((member) => (
                     <div key={member.id} className="flex items-center justify-between py-6">

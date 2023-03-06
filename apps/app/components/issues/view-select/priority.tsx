@@ -12,6 +12,7 @@ import { PRIORITIES } from "constants/project";
 type Props = {
   issue: IIssue;
   partialUpdateIssue: (formData: Partial<IIssue>) => void;
+  position?: "left" | "right";
   selfPositioned?: boolean;
   isNotAllowed: boolean;
 };
@@ -19,19 +20,18 @@ type Props = {
 export const ViewPrioritySelect: React.FC<Props> = ({
   issue,
   partialUpdateIssue,
+  position = "left",
   selfPositioned = false,
   isNotAllowed,
 }) => (
   <CustomSelect
     value={issue.state}
-    onChange={(data: string) => {
-      partialUpdateIssue({ priority: data });
-    }}
+    onChange={(data: string) => partialUpdateIssue({ priority: data })}
     maxHeight="md"
     customButton={
       <button
         type="button"
-        className={`grid place-items-center rounded w-6 h-6 ${
+        className={`grid h-6 w-6 place-items-center rounded ${
           isNotAllowed ? "cursor-not-allowed" : "cursor-pointer"
         } items-center shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
           issue.priority === "urgent"
@@ -57,6 +57,7 @@ export const ViewPrioritySelect: React.FC<Props> = ({
     }
     noChevron
     disabled={isNotAllowed}
+    position={position}
     selfPositioned={selfPositioned}
   >
     {PRIORITIES?.map((priority) => (

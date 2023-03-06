@@ -36,15 +36,15 @@ export const CustomDatePicker: React.FC<Props> = ({
     }}
     className={`${className} ${
       renderAs === "input"
-        ? "block bg-transparent text-sm focus:outline-none border-gray-300 px-3 py-2"
+        ? "block border-gray-300 bg-transparent px-3 py-2 text-sm focus:outline-none"
         : renderAs === "button"
-        ? `px-2 py-1 text-xs shadow-sm ${
+        ? `px-3 py-1.5 text-xs shadow-sm ${
             disabled ? "" : "hover:bg-gray-100"
-          } focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 duration-300`
+          } duration-300 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500`
         : ""
     } ${error ? "border-red-500 bg-red-100" : ""} ${
       disabled ? "cursor-not-allowed" : "cursor-pointer"
-    } w-full rounded-md bg-transparent border caret-transparent`}
+    } w-full rounded-md border bg-transparent caret-transparent`}
     dateFormat="dd-MM-yyyy"
     isClearable={isClearable}
     disabled={disabled}

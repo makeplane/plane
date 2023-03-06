@@ -65,26 +65,21 @@ export const SidebarCycleSelect: React.FC<Props> = ({
       <div className="space-y-1 sm:basis-1/2">
         <CustomSelect
           label={
-            <Tooltip
-              position="top-right"
-              tooltipHeading="Cycle"
-              tooltipContent={issueCycle ? issueCycle.cycle_detail.name : "None"}
+            <span
+              className={`w-full max-w-[125px] truncate text-left sm:block ${
+                issueCycle ? "" : "text-gray-900"
+              }`}
             >
-              <span
-                className={` w-full max-w-[125px] truncate text-left sm:block ${
-                  issueCycle ? "" : "text-gray-900"
-                }`}
-              >
-                {issueCycle ? issueCycle.cycle_detail.name : "None"}
-              </span>
-            </Tooltip>
+              {issueCycle ? issueCycle.cycle_detail.name : "None"}
+            </span>
           }
           value={issueCycle?.cycle_detail.id}
           onChange={(value: any) => {
-            value === null
+            !value
               ? removeIssueFromCycle(issueCycle?.id ?? "", issueCycle?.cycle ?? "")
               : handleCycleChange(cycles?.find((c) => c.id === value) as ICycle);
           }}
+          width="w-full"
           disabled={isNotAllowed}
         >
           {cycles ? (
@@ -97,11 +92,7 @@ export const SidebarCycleSelect: React.FC<Props> = ({
                     </Tooltip>
                   </CustomSelect.Option>
                 ))}
-                <CustomSelect.Option value={null} className="capitalize">
-                  <Tooltip position="left-bottom" tooltipContent="None">
-                    <span className="w-full max-w-[125px] truncate">None</span>
-                  </Tooltip>
-                </CustomSelect.Option>
+                <CustomSelect.Option value={null}>None</CustomSelect.Option>
               </>
             ) : (
               <div className="text-center">No cycles found</div>
