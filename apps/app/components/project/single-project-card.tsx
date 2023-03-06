@@ -20,9 +20,9 @@ import { StarIcon } from "@heroicons/react/20/solid";
 import { renderShortNumericDateFormat } from "helpers/date-time.helper";
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 // types
-import type { IProject } from "types";
+import type { IFavoriteProject, IProject } from "types";
 // fetch-keys
-import { PROJECTS_LIST } from "constants/fetch-keys";
+import { FAVORITE_PROJECTS_LIST, PROJECTS_LIST } from "constants/fetch-keys";
 
 export type ProjectCardProps = {
   project: IProject;
@@ -63,6 +63,7 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
             })),
           false
         );
+        mutate(FAVORITE_PROJECTS_LIST(workspaceSlug as string));
 
         setToastAlert({
           type: "success",
@@ -92,6 +93,11 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
               ...p,
               is_favourite: p.id === project.id ? false : p.is_favourite,
             })),
+          false
+        );
+        mutate<IFavoriteProject[]>(
+          FAVORITE_PROJECTS_LIST(workspaceSlug as string),
+          (prevData) => (prevData ?? []).filter((p) => p.project !== project.id),
           false
         );
 
@@ -126,7 +132,7 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
   return (
     <>
       {members ? (
-        <div className="flex flex-col shadow rounded-[10px]">
+        <div className="flex flex-col rounded-[10px] shadow">
           <Link href={`/${workspaceSlug as string}/projects/${project.id}/issues`}>
             <a>
               <div className="relative h-32 w-full rounded-t-[10px]">
@@ -149,16 +155,16 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
                         e.stopPropagation();
                         setToJoinProject(project.id);
                       }}
-                      className="flex cursor-pointer items-center gap-1 bg-green-600 px-2 py-1 rounded text-xs"
+                      className="flex cursor-pointer items-center gap-1 rounded bg-green-600 px-2 py-1 text-xs"
                     >
                       <PlusIcon className="h-3 w-3" />
                       <span>Select to Join</span>
                     </button>
                   ) : (
-                    <span className="bg-green-600 px-2 py-1 rounded text-xs">Member</span>
+                    <span className="rounded bg-green-600 px-2 py-1 text-xs">Member</span>
                   )}
                   {project.is_favourite && (
-                    <span className="bg-orange-400 h-6 w-9 grid place-items-center rounded">
+                    <span className="grid h-6 w-9 place-items-center rounded bg-orange-400">
                       <StarIcon className="h-3 w-3" />
                     </span>
                   )}
@@ -166,7 +172,7 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
               </div>
             </a>
           </Link>
-          <div className="flex flex-col px-7 py-4 rounded-b-[10px] h-full">
+          <div className="flex h-full flex-col rounded-b-[10px] px-7 py-4">
             <Link href={`/${workspaceSlug as string}/projects/${project.id}/issues`}>
               <a>
                 <div className="flex items-center gap-1">
@@ -180,7 +186,7 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
                 <p className="mt-3.5 mb-7">{truncateText(project.description ?? "", 100)}</p>
               </a>
             </Link>
-            <div className="flex justify-between items-end h-full">
+            <div className="flex h-full items-end justify-between">
               <Tooltip
                 tooltipContent={`Created at ${renderShortNumericDateFormat(project.created_at)}`}
                 position="bottom"

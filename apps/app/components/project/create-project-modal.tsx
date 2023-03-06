@@ -296,10 +296,11 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                                 ? NETWORK_CHOICES[value.toString() as keyof typeof NETWORK_CHOICES]
                                 : "Select network"
                             }
+                            width="w-full"
                             input
                           >
                             {Object.keys(NETWORK_CHOICES).map((key) => (
-                              <CustomSelect.Option key={key} value={key}>
+                              <CustomSelect.Option key={key} value={parseInt(key)}>
                                 {NETWORK_CHOICES[key as keyof typeof NETWORK_CHOICES]}
                               </CustomSelect.Option>
                             ))}

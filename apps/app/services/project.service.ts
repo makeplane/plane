@@ -3,6 +3,7 @@ import APIService from "services/api.service";
 // types
 import type {
   GithubRepositoriesResponse,
+  IFavoriteProject,
   IProject,
   IProjectMember,
   IProjectMemberInvitation,
@@ -250,6 +251,14 @@ class ProjectServices extends APIService {
     return this.get(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/workspace-integrations/${integrationId}/github-repository-sync/`
     )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getFavoriteProjects(workspaceSlug: string): Promise<IFavoriteProject[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/user-favourite-projects/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

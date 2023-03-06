@@ -20,7 +20,7 @@ import { CreateStateModal } from "components/states";
 import { CreateUpdateCycleModal } from "components/cycles";
 import { CreateLabelModal } from "components/labels";
 // ui
-import { Button, CustomDatePicker, CustomMenu, Input, Loader } from "components/ui";
+import { Button, CustomMenu, Input, Loader } from "components/ui";
 // icons
 import { XMarkIcon } from "@heroicons/react/24/outline";
 // helpers
@@ -95,7 +95,6 @@ export const IssueForm: FC<IssueFormProps> = ({
     setFocus,
   } = useForm<IIssue>({
     defaultValues,
-    mode: "all",
     reValidateMode: "onChange",
   });
 

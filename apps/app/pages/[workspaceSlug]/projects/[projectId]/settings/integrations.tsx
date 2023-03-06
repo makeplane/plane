@@ -70,7 +70,7 @@ const ProjectIntegrations: NextPage<UserAuth> = (props) => {
             </div>
           </section>
         ) : (
-          <div className="grid h-full w-full place-items-center px-4 sm:px-0">
+          <div className="grid h-full w-full place-items-center">
             <EmptySpace
               title="You haven't added any integration yet."
               description="Add GitHub and other integrations to sync your project issues."
@@ -87,7 +87,7 @@ const ProjectIntegrations: NextPage<UserAuth> = (props) => {
           </div>
         )
       ) : (
-        <Loader className="space-y-5 md:w-2/3">
+        <Loader className="space-y-5">
           <Loader.Item height="40px" />
           <Loader.Item height="40px" />
           <Loader.Item height="40px" />

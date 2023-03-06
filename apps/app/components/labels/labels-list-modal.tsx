@@ -92,7 +92,7 @@ export const LabelsListModal: React.FC<Props> = ({ isOpen, handleClose, parent }
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <Dialog.Panel className="relative mx-auto max-w-2xl transform divide-y divide-gray-500 divide-opacity-10 rounded-xl bg-white bg-opacity-80 shadow-2xl ring-1 ring-black ring-opacity-5 backdrop-blur backdrop-filter transition-all">
+            <Dialog.Panel className="relative mx-auto max-w-2xl transform divide-y divide-gray-500 divide-opacity-10 rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
               <Combobox>
                 <div className="relative m-1">
                   <MagnifyingGlassIcon
@@ -144,7 +144,7 @@ export const LabelsListModal: React.FC<Props> = ({ isOpen, handleClose, parent }
                                   }}
                                 >
                                   <span
-                                    className="block flex-shrink-0 h-1.5 w-1.5 rounded-full"
+                                    className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
                                     style={{
                                       backgroundColor: label.color,
                                     }}

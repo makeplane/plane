@@ -93,7 +93,7 @@ const FeaturesSettings: NextPage<UserAuth> = (props) => {
       <section className="space-y-8">
         <h3 className="text-2xl font-semibold">Features</h3>
         <div className="space-y-5">
-          <div className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border border-gray-200 bg-white p-6">
+          <div className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border bg-white p-6">
             <div className="flex items-start gap-3">
               <ContrastIcon color="#3f76ff" width={28} height={28} className="flex-shrink-0" />
               <div>
@@ -122,7 +122,7 @@ const FeaturesSettings: NextPage<UserAuth> = (props) => {
               />
             </button>
           </div>
-          <div className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border border-gray-200 bg-white p-6">
+          <div className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border bg-white p-6">
             <div className="flex items-start gap-3">
               <GridViewIcon color="#ff6b00" width={28} height={28} className="flex-shrink-0" />
               <div>
