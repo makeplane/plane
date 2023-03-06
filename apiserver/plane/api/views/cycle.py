@@ -284,7 +284,7 @@ class CurrentUpcomingCyclesEndpoint(BaseAPIView):
             upcoming_cycle = Cycle.objects.filter(
                 workspace__slug=slug,
                 project_id=project_id,
-                start_date__gte=timezone.now(),
+                start_date__gt=timezone.now(),
             )
 
             return Response(
@@ -309,7 +309,7 @@ class CompletedCyclesEndpoint(BaseAPIView):
             completed_cycles = Cycle.objects.filter(
                 workspace__slug=slug,
                 project_id=project_id,
-                end_date__lte=timezone.now(),
+                end_date__lt=timezone.now(),
             )
 
             return Response(
