@@ -145,7 +145,7 @@ class ModuleIssueViewSet(BaseViewSet):
     def list(self, request, slug, project_id, module_id):
         try:
             order_by = request.GET.get("order_by", "issue__created_at")
-            queryset = self.get_queryset().order_by(order_by)
+            queryset = self.get_queryset().order_by(f"issue__{order_by}")
             group_by = request.GET.get("group_by", False)
 
             module_issues = ModuleIssueSerializer(queryset, many=True).data
