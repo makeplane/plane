@@ -161,10 +161,12 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
                       <span>Select to Join</span>
                     </button>
                   ) : (
-                    <span className="rounded bg-green-600 px-2 py-1 text-xs">Member</span>
+                    <span className="cursor-default rounded bg-green-600 px-2 py-1 text-xs">
+                      Member
+                    </span>
                   )}
                   {project.is_favorite && (
-                    <span className="grid h-6 w-9 place-items-center rounded bg-orange-400">
+                    <span className="grid h-6 w-9 cursor-default place-items-center rounded bg-orange-400">
                       <StarIcon className="h-3 w-3" />
                     </span>
                   )}
@@ -192,7 +194,7 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
                 position="bottom"
                 theme="dark"
               >
-                <div className="flex items-center gap-1.5 text-xs">
+                <div className="flex cursor-default items-center gap-1.5 text-xs">
                   <CalendarDaysIcon className="h-4 w-4" />
                   {renderShortNumericDateFormat(project.created_at)}
                 </div>

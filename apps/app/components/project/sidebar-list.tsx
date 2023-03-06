@@ -1,53 +1,34 @@
 import React, { useState, FC } from "react";
+
 import { useRouter } from "next/router";
-import Link from "next/link";
-import { Disclosure, Transition } from "@headlessui/react";
-import useSWR from "swr";
+
+import useSWR, { mutate } from "swr";
 
 // icons
-import { ContrastIcon, LayerDiagonalIcon, PeopleGroupIcon } from "components/icons";
-import { ChevronDownIcon, PlusIcon, Cog6ToothIcon } from "@heroicons/react/24/outline";
+import { PlusIcon } from "@heroicons/react/24/outline";
 // hooks
 import useToast from "hooks/use-toast";
 import useTheme from "hooks/use-theme";
 // services
 import projectService from "services/project.service";
 // components
-import { CreateProjectModal } from "components/project";
+import { CreateProjectModal, DeleteProjectModal, SingleSidebarProject } from "components/project";
 // ui
-import { CustomMenu, Loader } from "components/ui";
+import { Loader } from "components/ui";
 // helpers
-import { copyTextToClipboard, truncateText } from "helpers/string.helper";
+import { copyTextToClipboard } from "helpers/string.helper";
+// types
+import { IFavoriteProject, IProject } from "types";
 // fetch-keys
 import { FAVORITE_PROJECTS_LIST, PROJECTS_LIST } from "constants/fetch-keys";
 
-const navigation = (workspaceSlug: string, projectId: string) => [
-  {
-    name: "Issues",
-    href: `/${workspaceSlug}/projects/${projectId}/issues`,
-    icon: LayerDiagonalIcon,
-  },
-  {
-    name: "Cycles",
-    href: `/${workspaceSlug}/projects/${projectId}/cycles`,
-    icon: ContrastIcon,
-  },
-  {
-    name: "Modules",
-    href: `/${workspaceSlug}/projects/${projectId}/modules`,
-    icon: PeopleGroupIcon,
-  },
-  {
-    name: "Settings",
-    href: `/${workspaceSlug}/projects/${projectId}/settings`,
-    icon: Cog6ToothIcon,
-  },
-];
-
 export const ProjectSidebarList: FC = () => {
+  const [deleteProjectModal, setDeleteProjectModal] = useState(false);
+  const [projectToDelete, setProjectToDelete] = useState<IProject | null>(null);
+
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug } = router.query;
   // states
   const [isCreateProjectModal, setCreateProjectModal] = useState(false);
   // theme
@@ -66,6 +47,81 @@ export const ProjectSidebarList: FC = () => {
   );
   const normalProjects = projects?.filter((p) => !p.is_favorite) ?? [];
 
+  const handleAddToFavorites = (project: IProject) => {
+    if (!workspaceSlug) return;
+
+    projectService
+      .addProjectToFavorites(workspaceSlug as string, {
+        project: project.id,
+      })
+      .then(() => {
+        mutate<IProject[]>(
+          PROJECTS_LIST(workspaceSlug as string),
+          (prevData) =>
+            (prevData ?? []).map((p) => ({
+              ...p,
+              is_favorite: p.id === project.id ? true : p.is_favorite,
+            })),
+          false
+        );
+        mutate(FAVORITE_PROJECTS_LIST(workspaceSlug as string));
+
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "Successfully added the project to favorites.",
+        });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Couldn't remove the project from favorites. Please try again.",
+        });
+      });
+  };
+
+  const handleRemoveFromFavorites = (project: IProject) => {
+    if (!workspaceSlug) return;
+
+    projectService
+      .removeProjectFromFavorites(workspaceSlug as string, project.id)
+      .then(() => {
+        mutate<IProject[]>(
+          PROJECTS_LIST(workspaceSlug as string),
+          (prevData) =>
+            (prevData ?? []).map((p) => ({
+              ...p,
+              is_favorite: p.id === project.id ? false : p.is_favorite,
+            })),
+          false
+        );
+        mutate<IFavoriteProject[]>(
+          FAVORITE_PROJECTS_LIST(workspaceSlug as string),
+          (prevData) => (prevData ?? []).filter((p) => p.project !== project.id),
+          false
+        );
+
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "Successfully removed the project from favorites.",
+        });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Couldn't remove the project from favorites. Please try again.",
+        });
+      });
+  };
+
+  const handleDeleteProject = (project: IProject) => {
+    setProjectToDelete(project);
+    setDeleteProjectModal(true);
+  };
+
   const handleCopyText = (projectId: string) => {
     const originURL =
       typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
@@ -81,6 +137,11 @@ export const ProjectSidebarList: FC = () => {
   return (
     <>
       <CreateProjectModal isOpen={isCreateProjectModal} setIsOpen={setCreateProjectModal} />
+      <DeleteProjectModal
+        isOpen={deleteProjectModal}
+        onClose={() => setDeleteProjectModal(false)}
+        data={projectToDelete}
+      />
       <div className="mt-2.5 h-full overflow-y-auto border-t bg-white pt-2.5">
         {favoriteProjects && favoriteProjects.length > 0 && (
           <div className="mt-3 flex flex-col space-y-2 px-6">
@@ -89,97 +150,14 @@ export const ProjectSidebarList: FC = () => {
               const project = favoriteProject.project_detail;
 
               return (
-                <Disclosure key={project?.id} defaultOpen={projectId === project?.id}>
-                  {({ open }) => (
-                    <>
-                      <Disclosure.Button
-                        as="div"
-                        className={`flex w-full cursor-pointer select-none items-center rounded-md py-2 text-left text-sm font-medium ${
-                          sidebarCollapse ? "justify-center" : "justify-between"
-                        }`}
-                      >
-                        <div className="flex items-center gap-x-2">
-                          {project.icon ? (
-                            <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-                              {String.fromCodePoint(parseInt(project.icon))}
-                            </span>
-                          ) : (
-                            <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
-                              {project?.name.charAt(0)}
-                            </span>
-                          )}
-
-                          {!sidebarCollapse && (
-                            <p className="overflow-hidden text-ellipsis text-[0.875rem]">
-                              {truncateText(project?.name, 20)}
-                            </p>
-                          )}
-                        </div>
-
-                        <div className="flex items-center gap-x-1">
-                          {!sidebarCollapse && (
-                            <CustomMenu ellipsis>
-                              <CustomMenu.MenuItem onClick={() => handleCopyText(project.id)}>
-                                Copy project link
-                              </CustomMenu.MenuItem>
-                            </CustomMenu>
-                          )}
-                          {!sidebarCollapse && (
-                            <span>
-                              <ChevronDownIcon
-                                className={`h-4 w-4 duration-300 ${open ? "rotate-180" : ""}`}
-                              />
-                            </span>
-                          )}
-                        </div>
-                      </Disclosure.Button>
-
-                      <Transition
-                        enter="transition duration-100 ease-out"
-                        enterFrom="transform scale-95 opacity-0"
-                        enterTo="transform scale-100 opacity-100"
-                        leave="transition duration-75 ease-out"
-                        leaveFrom="transform scale-100 opacity-100"
-                        leaveTo="transform scale-95 opacity-0"
-                      >
-                        <Disclosure.Panel
-                          className={`${
-                            sidebarCollapse ? "" : "ml-[2.25rem]"
-                          } flex flex-col gap-y-1`}
-                        >
-                          {navigation(workspaceSlug as string, project?.id).map((item) => {
-                            if (item.name === "Cycles" && !project.cycle_view) return;
-                            if (item.name === "Modules" && !project.module_view) return;
-
-                            return (
-                              <Link key={item.name} href={item.href}>
-                                <a
-                                  className={`group flex items-center rounded-md px-2 py-2 text-xs font-medium outline-none ${
-                                    item.href === router.asPath
-                                      ? "bg-indigo-50 text-gray-900"
-                                      : "text-gray-500 hover:bg-indigo-50 hover:text-gray-900 focus:bg-indigo-50 focus:text-gray-900"
-                                  } ${sidebarCollapse ? "justify-center" : ""}`}
-                                >
-                                  <div className="grid place-items-center">
-                                    <item.icon
-                                      className={`h-5 w-5 flex-shrink-0 ${
-                                        item.href === router.asPath
-                                          ? "text-gray-900"
-                                          : "text-gray-500 group-hover:text-gray-900"
-                                      } ${!sidebarCollapse ? "mr-3" : ""}`}
-                                      aria-hidden="true"
-                                    />
-                                  </div>
-                                  {!sidebarCollapse && item.name}
-                                </a>
-                              </Link>
-                            );
-                          })}
-                        </Disclosure.Panel>
-                      </Transition>
-                    </>
-                  )}
-                </Disclosure>
+                <SingleSidebarProject
+                  key={project.id}
+                  project={project}
+                  sidebarCollapse={sidebarCollapse}
+                  handleDeleteProject={() => handleDeleteProject(project)}
+                  handleCopyText={() => handleCopyText(project.id)}
+                  handleRemoveFromFavorites={() => handleRemoveFromFavorites(project)}
+                />
               );
             })}
           </div>
@@ -190,97 +168,14 @@ export const ProjectSidebarList: FC = () => {
             <>
               {normalProjects.length > 0 ? (
                 normalProjects.map((project) => (
-                  <Disclosure key={project?.id} defaultOpen={projectId === project?.id}>
-                    {({ open }) => (
-                      <>
-                        <Disclosure.Button
-                          as="div"
-                          className={`flex w-full cursor-pointer select-none items-center rounded-md py-2 text-left text-sm font-medium ${
-                            sidebarCollapse ? "justify-center" : "justify-between"
-                          }`}
-                        >
-                          <div className="flex items-center gap-x-2">
-                            {project.icon ? (
-                              <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-                                {String.fromCodePoint(parseInt(project.icon))}
-                              </span>
-                            ) : (
-                              <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
-                                {project?.name.charAt(0)}
-                              </span>
-                            )}
-
-                            {!sidebarCollapse && (
-                              <p className="overflow-hidden text-ellipsis text-[0.875rem]">
-                                {truncateText(project?.name, 20)}
-                              </p>
-                            )}
-                          </div>
-
-                          <div className="flex items-center gap-x-1">
-                            {!sidebarCollapse && (
-                              <CustomMenu ellipsis>
-                                <CustomMenu.MenuItem onClick={() => handleCopyText(project.id)}>
-                                  Copy project link
-                                </CustomMenu.MenuItem>
-                              </CustomMenu>
-                            )}
-                            {!sidebarCollapse && (
-                              <span>
-                                <ChevronDownIcon
-                                  className={`h-4 w-4 duration-300 ${open ? "rotate-180" : ""}`}
-                                />
-                              </span>
-                            )}
-                          </div>
-                        </Disclosure.Button>
-
-                        <Transition
-                          enter="transition duration-100 ease-out"
-                          enterFrom="transform scale-95 opacity-0"
-                          enterTo="transform scale-100 opacity-100"
-                          leave="transition duration-75 ease-out"
-                          leaveFrom="transform scale-100 opacity-100"
-                          leaveTo="transform scale-95 opacity-0"
-                        >
-                          <Disclosure.Panel
-                            className={`${
-                              sidebarCollapse ? "" : "ml-[2.25rem]"
-                            } flex flex-col gap-y-1`}
-                          >
-                            {navigation(workspaceSlug as string, project?.id).map((item) => {
-                              if (item.name === "Cycles" && !project.cycle_view) return;
-                              if (item.name === "Modules" && !project.module_view) return;
-
-                              return (
-                                <Link key={item.name} href={item.href}>
-                                  <a
-                                    className={`group flex items-center rounded-md px-2 py-2 text-xs font-medium outline-none ${
-                                      item.href === router.asPath
-                                        ? "bg-indigo-50 text-gray-900"
-                                        : "text-gray-500 hover:bg-indigo-50 hover:text-gray-900 focus:bg-indigo-50 focus:text-gray-900"
-                                    } ${sidebarCollapse ? "justify-center" : ""}`}
-                                  >
-                                    <div className="grid place-items-center">
-                                      <item.icon
-                                        className={`h-5 w-5 flex-shrink-0 ${
-                                          item.href === router.asPath
-                                            ? "text-gray-900"
-                                            : "text-gray-500 group-hover:text-gray-900"
-                                        } ${!sidebarCollapse ? "mr-3" : ""}`}
-                                        aria-hidden="true"
-                                      />
-                                    </div>
-                                    {!sidebarCollapse && item.name}
-                                  </a>
-                                </Link>
-                              );
-                            })}
-                          </Disclosure.Panel>
-                        </Transition>
-                      </>
-                    )}
-                  </Disclosure>
+                  <SingleSidebarProject
+                    key={project.id}
+                    project={project}
+                    sidebarCollapse={sidebarCollapse}
+                    handleDeleteProject={() => handleDeleteProject(project)}
+                    handleCopyText={() => handleCopyText(project.id)}
+                    handleAddToFavorites={() => handleAddToFavorites(project)}
+                  />
                 ))
               ) : (
                 <div className="space-y-3 text-center">
