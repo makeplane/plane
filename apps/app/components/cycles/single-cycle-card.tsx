@@ -170,7 +170,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
                   <span> Progress </span>
                   <LinearProgressIndicator data={progressIndicatorData} />
                   <Disclosure.Button>
-                    <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
+                    <ChevronDownIcon className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`} aria-hidden="true" />
                   </Disclosure.Button>
                 </div>
                 <Transition show={open}>
