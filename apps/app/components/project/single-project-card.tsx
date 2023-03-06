@@ -183,7 +183,9 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
                     </span>
                   )}
                 </div>
-                <p className="mt-3.5 mb-7">{truncateText(project.description ?? "", 100)}</p>
+                <p className="mt-3.5 mb-7 break-all">
+                  {truncateText(project.description ?? "", 100)}
+                </p>
               </a>
             </Link>
             <div className="flex h-full items-end justify-between">
