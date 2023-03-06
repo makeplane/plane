@@ -417,6 +417,16 @@ class IssueLinkSerializer(BaseSerializer):
             "issue",
         ]
 
+    # Validation if url already exists
+    def create(self, validated_data):
+        if IssueLink.objects.filter(
+            url=validated_data.get("url"), issue_id=validated_data.get("issue_id")
+        ).exists():
+            raise serializers.ValidationError(
+                {"error": "URL already exists for this Issue"}
+            )
+        return IssueLink.objects.create(**validated_data)
+
 
 # Issue Serializer with state details
 class IssueStateSerializer(BaseSerializer):
