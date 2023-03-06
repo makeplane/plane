@@ -67,7 +67,10 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
     issueView,
     groupByProperty: selectedGroup,
     orderBy,
-    params,
+    assigneeFilter,
+    labelFilter,
+    setAssigneeFilter,
+    setLabelFilter,
   } = useIssuesView();
 
   const { data: stateGroups } = useSWR(
@@ -362,8 +365,27 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
         isOpen={deleteIssueModal}
         data={issueToDelete}
       />
-
-      <div className="relative">
+      <div className="relative h-full">
+        <div className="flex items-center gap-2">
+          {assigneeFilter && (
+            <button
+              type="button"
+              className="rounded bg-black p-2 text-xs text-white"
+              onClick={() => setAssigneeFilter(null)}
+            >
+              Remove assignee filter
+            </button>
+          )}
+          {labelFilter && (
+            <button
+              type="button"
+              className="rounded bg-black p-2 text-xs text-white"
+              onClick={() => setLabelFilter(null)}
+            >
+              Remove label filter
+            </button>
+          )}
+        </div>
         <DragDropContext onDragEnd={handleOnDragEnd}>
           <StrictModeDroppable droppableId="trashBox">
             {(provided, snapshot) => (

@@ -107,6 +107,8 @@ const useIssuesView = () => {
     orderBy,
     setOrderBy,
     filterIssue,
+    assigneeFilter,
+    labelFilter,
     params,
     setFilterIssue,
     setAssigneeFilter,
