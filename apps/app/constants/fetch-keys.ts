@@ -37,6 +37,8 @@ export const PROJECT_GITHUB_REPOSITORY = (projectId: string) =>
 export const CYCLE_LIST = (projectId: string) => `CYCLE_LIST_${projectId}`;
 export const CYCLE_ISSUES = (cycleId: string) => `CYCLE_ISSUES_${cycleId}`;
 export const CYCLE_DETAILS = (cycleId: string) => `CYCLE_DETAIL_${cycleId}`;
+export const FAVORITE_CYCLES_LIST = (projectId: string) =>
+  `FAVORITE_CYCLES_LIST_${projectId}`;
 export const CYCLE_CURRENT_AND_UPCOMING_LIST = (projectId: string) =>
   `CYCLE_CURRENT_AND_UPCOMING_LIST_${projectId}`;
 export const CYCLE_DRAFT_LIST = (projectId: string) => `CYCLE_DRAFT_LIST_${projectId}`;

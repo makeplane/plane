@@ -9,6 +9,7 @@ export interface ICycle {
   description: string;
   start_date: string | null;
   end_date: string | null;
+  is_favorite: boolean;
   created_by: string;
   updated_by: string;
   project: string;
@@ -17,6 +18,19 @@ export interface ICycle {
   current_cycle: [];
   upcoming_cycle: [];
   past_cycles: [];
+}
+
+export interface IFavoriteCycle {
+  created_at: Date;
+  created_by: string;
+  cycle: string;
+  cycle_detail: ICycle;
+  id: string;
+  project: string;
+  updated_at: string;
+  updated_by: string;
+  user: string;
+  workspace: string;
 }
 
 export interface CurrentAndUpcomingCyclesResponse {
