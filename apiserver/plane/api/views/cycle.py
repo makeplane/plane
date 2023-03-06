@@ -2,7 +2,8 @@
 import json
 
 # Django imports
-from django.db.models import OuterRef, Func, F, Q
+from django.db import IntegrityError
+from django.db.models import OuterRef, Func, F, Q, Exists, OuterRef
 from django.core import serializers
 from django.utils import timezone
 
@@ -13,9 +14,13 @@ from sentry_sdk import capture_exception
 
 # Module imports
 from . import BaseViewSet, BaseAPIView
-from plane.api.serializers import CycleSerializer, CycleIssueSerializer
+from plane.api.serializers import (
+    CycleSerializer,
+    CycleIssueSerializer,
+    CycleFavoriteSerializer,
+)
 from plane.api.permissions import ProjectEntityPermission
-from plane.db.models import Cycle, CycleIssue, Issue
+from plane.db.models import Cycle, CycleIssue, Issue, CycleFavorite
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
 
@@ -44,6 +49,23 @@ class CycleViewSet(BaseViewSet):
             .select_related("owned_by")
             .distinct()
         )
+
+    def list(self, request, slug, project_id):
+        try:
+            subquery = CycleFavorite.objects.filter(
+                user=self.request.user,
+                cycle_id=OuterRef("pk"),
+                project_id=project_id,
+                workspace__slug=slug,
+            )
+            cycles = self.get_queryset().annotate(is_favorite=Exists(subquery))
+            return Response(CycleSerializer(cycles, many=True).data)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     def create(self, request, slug, project_id):
         try:
@@ -274,18 +296,24 @@ class CycleDateCheckEndpoint(BaseAPIView):
 class CurrentUpcomingCyclesEndpoint(BaseAPIView):
     def get(self, request, slug, project_id):
         try:
+            subquery = CycleFavorite.objects.filter(
+                user=self.request.user,
+                cycle_id=OuterRef("pk"),
+                project_id=project_id,
+                workspace__slug=slug,
+            )
             current_cycle = Cycle.objects.filter(
                 workspace__slug=slug,
                 project_id=project_id,
                 start_date__lte=timezone.now(),
                 end_date__gte=timezone.now(),
-            )
+            ).annotate(is_favorite=Exists(subquery))
 
             upcoming_cycle = Cycle.objects.filter(
                 workspace__slug=slug,
                 project_id=project_id,
                 start_date__gt=timezone.now(),
-            )
+            ).annotate(is_favorite=Exists(subquery))
 
             return Response(
                 {
@@ -306,11 +334,17 @@ class CurrentUpcomingCyclesEndpoint(BaseAPIView):
 class CompletedCyclesEndpoint(BaseAPIView):
     def get(self, request, slug, project_id):
         try:
+            subquery = CycleFavorite.objects.filter(
+                user=self.request.user,
+                cycle_id=OuterRef("pk"),
+                project_id=project_id,
+                workspace__slug=slug,
+            )
             completed_cycles = Cycle.objects.filter(
                 workspace__slug=slug,
                 project_id=project_id,
                 end_date__lt=timezone.now(),
-            )
+            ).annotate(is_favorite=Exists(subquery))
 
             return Response(
                 {
@@ -342,6 +376,68 @@ class DraftCyclesEndpoint(BaseAPIView):
             return Response(
                 {"draft_cycles": CycleSerializer(draft_cycles, many=True).data},
                 status=status.HTTP_200_OK,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class CycleFavoriteViewSet(BaseViewSet):
+    serializer_class = CycleFavoriteSerializer
+    model = CycleFavorite
+
+    def get_queryset(self):
+        return self.filter_queryset(
+            super()
+            .get_queryset()
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(user=self.request.user)
+            .select_related("cycle", "cycle__owned_by")
+        )
+
+    def create(self, request, slug, project_id):
+        try:
+            serializer = CycleFavoriteSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save(user=request.user, project_id=project_id)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except IntegrityError as e:
+            if "already exists" in str(e):
+                return Response(
+                    {"error": "The cycle is already added to favorites"},
+                    status=status.HTTP_410_GONE,
+                )
+            else:
+                capture_exception(e)
+                return Response(
+                    {"error": "Something went wrong please try again later"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def destroy(self, request, slug, project_id, cycle_id):
+        try:
+            cycle_favorite = CycleFavorite.objects.get(
+                project=project_id,
+                user=request.user,
+                workspace__slug=slug,
+                cycle_id=cycle_id,
+            )
+            cycle_favorite.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except CycleFavorite.DoesNotExist:
+            return Response(
+                {"error": "Cycle is not in favorites"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
         except Exception as e:
             capture_exception(e)
