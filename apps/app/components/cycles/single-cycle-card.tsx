@@ -21,7 +21,7 @@ import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { groupBy } from "helpers/array.helper";
 import { capitalizeFirstLetter, copyTextToClipboard } from "helpers/string.helper";
 // types
-import { CycleIssueResponse, ICycle, IFavoriteCycle } from "types";
+import { CycleIssueResponse, ICycle } from "types";
 // fetch-keys
 import { CYCLE_ISSUES, CYCLE_LIST } from "constants/fetch-keys";
 
