@@ -64,7 +64,7 @@ export const ProjectSidebarList: FC = () => {
     workspaceSlug ? PROJECTS_LIST(workspaceSlug as string) : null,
     () => (workspaceSlug ? projectService.getProjects(workspaceSlug as string) : null)
   );
-  const normalProjects = projects?.filter((p) => !p.is_favourite) ?? [];
+  const normalProjects = projects?.filter((p) => !p.is_favorite) ?? [];
 
   const handleCopyText = (projectId: string) => {
     const originURL =
