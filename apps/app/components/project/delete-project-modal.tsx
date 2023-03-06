@@ -24,7 +24,7 @@ type TConfirmProjectDeletionProps = {
   data: IProject | null;
 };
 
-const ConfirmProjectDeletion: React.FC<TConfirmProjectDeletionProps> = (props) => {
+export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = (props) => {
   const { isOpen, data, onClose, onSuccess } = props;
 
   const cancelButtonRef = useRef(null);
@@ -122,12 +122,12 @@ const ConfirmProjectDeletion: React.FC<TConfirmProjectDeletionProps> = (props) =
                         aria-hidden="true"
                       />
                     </div>
-                    <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                    <div className="mt-3 w-full text-center sm:mt-0 sm:ml-4 sm:text-left">
                       <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
                         Delete Project
                       </Dialog.Title>
                       <div className="mt-2">
-                        <p className="text-sm text-gray-500 break-all">
+                        <p className="break-all text-sm text-gray-500">
                           Are you sure you want to delete project - {`"`}
                           <span className="italic">{selectedProject?.name}</span>
                           {`"`} ? All of the data related to the project will be permanently
@@ -136,7 +136,7 @@ const ConfirmProjectDeletion: React.FC<TConfirmProjectDeletionProps> = (props) =
                       </div>
                       <div className="my-3 h-0.5 bg-gray-200" />
                       <div className="mt-3">
-                        <p className="text-sm break-all">
+                        <p className="break-all text-sm">
                           Enter the project name{" "}
                           <span className="font-semibold">{selectedProject?.name}</span> to
                           continue:
@@ -202,5 +202,3 @@ const ConfirmProjectDeletion: React.FC<TConfirmProjectDeletionProps> = (props) =
     </Transition.Root>
   );
 };
-
-export default ConfirmProjectDeletion;

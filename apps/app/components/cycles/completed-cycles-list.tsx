@@ -1,15 +1,18 @@
-// react
 import { useState } from "react";
-// next
+
 import { useRouter } from "next/router";
+
 import useSWR from "swr";
 
+// services
+import cyclesService from "services/cycles.service";
 // components
 import { DeleteCycleModal, SingleCycleCard } from "components/cycles";
+// icons
+import { CompletedCycleIcon } from "components/icons";
 // types
 import { ICycle, SelectCycleType } from "types";
-import { CompletedCycleIcon } from "components/icons";
-import cyclesService from "services/cycles.service";
+// fetch-keys
 import { CYCLE_COMPLETE_LIST } from "constants/fetch-keys";
 
 export interface CompletedCyclesListProps {
@@ -58,14 +61,16 @@ export const CompletedCyclesList: React.FC<CompletedCyclesListProps> = ({
             data={selectedCycleForDelete}
           />
           {completedCycles?.completed_cycles.length > 0 ? (
-            completedCycles.completed_cycles.map((cycle) => (
-              <SingleCycleCard
-                key={cycle.id}
-                cycle={cycle}
-                handleDeleteCycle={() => handleDeleteCycle(cycle)}
-                handleEditCycle={() => handleEditCycle(cycle)}
-              />
-            ))
+            <div className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
+              {completedCycles.completed_cycles.map((cycle) => (
+                <SingleCycleCard
+                  key={cycle.id}
+                  cycle={cycle}
+                  handleDeleteCycle={() => handleDeleteCycle(cycle)}
+                  handleEditCycle={() => handleEditCycle(cycle)}
+                />
+              ))}
+            </div>
           ) : (
             <div className="flex flex-col items-center justify-center gap-4 text-center">
               <CompletedCycleIcon height="56" width="56" />

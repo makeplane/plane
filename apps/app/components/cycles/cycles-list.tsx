@@ -1,10 +1,11 @@
-// react
 import { useState } from "react";
+
 // components
 import { DeleteCycleModal, SingleCycleCard } from "components/cycles";
+// icons
+import { CompletedCycleIcon, CurrentCycleIcon, UpcomingCycleIcon } from "components/icons";
 // types
 import { ICycle, SelectCycleType } from "types";
-import { CompletedCycleIcon, CurrentCycleIcon, UpcomingCycleIcon } from "components/icons";
 
 type TCycleStatsViewProps = {
   cycles: ICycle[];
@@ -44,14 +45,16 @@ export const CyclesList: React.FC<TCycleStatsViewProps> = ({
         data={selectedCycleForDelete}
       />
       {cycles.length > 0 ? (
-        cycles.map((cycle) => (
-          <SingleCycleCard
-            key={cycle.id}
-            cycle={cycle}
-            handleDeleteCycle={() => handleDeleteCycle(cycle)}
-            handleEditCycle={() => handleEditCycle(cycle)}
-          />
-        ))
+        <div className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
+          {cycles.map((cycle) => (
+            <SingleCycleCard
+              key={cycle.id}
+              cycle={cycle}
+              handleDeleteCycle={() => handleDeleteCycle(cycle)}
+              handleEditCycle={() => handleEditCycle(cycle)}
+            />
+          ))}
+        </div>
       ) : (
         <div className="flex flex-col items-center justify-center gap-4 text-center">
           {type === "upcoming" ? (

@@ -20,7 +20,7 @@ export const IssueLabelsList: React.FC<IssueLabelsListProps> = ({
               className={`h-4 w-4 flex-shrink-0 rounded-full border border-white
               `}
               style={{
-                backgroundColor: color,
+                backgroundColor: color && color !== "" ? color : "#000000",
               }}
             />
           </div>

@@ -20,9 +20,9 @@ import { StarIcon } from "@heroicons/react/20/solid";
 import { renderShortNumericDateFormat } from "helpers/date-time.helper";
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 // types
-import type { IProject } from "types";
+import type { IFavoriteProject, IProject } from "types";
 // fetch-keys
-import { PROJECTS_LIST } from "constants/fetch-keys";
+import { FAVORITE_PROJECTS_LIST, PROJECTS_LIST } from "constants/fetch-keys";
 
 export type ProjectCardProps = {
   project: IProject;
@@ -46,11 +46,11 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
     project.id
   );
 
-  const handleAddToFavourites = () => {
+  const handleAddToFavorites = () => {
     if (!workspaceSlug) return;
 
     projectService
-      .addProjectToFavourites(workspaceSlug as string, {
+      .addProjectToFavorites(workspaceSlug as string, {
         project: project.id,
       })
       .then(() => {
@@ -59,53 +59,59 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
           (prevData) =>
             (prevData ?? []).map((p) => ({
               ...p,
-              is_favourite: p.id === project.id ? true : p.is_favourite,
+              is_favorite: p.id === project.id ? true : p.is_favorite,
             })),
           false
         );
+        mutate(FAVORITE_PROJECTS_LIST(workspaceSlug as string));
 
         setToastAlert({
           type: "success",
           title: "Success!",
-          message: "Successfully added the project to favourites.",
+          message: "Successfully added the project to favorites.",
         });
       })
       .catch(() => {
         setToastAlert({
           type: "error",
           title: "Error!",
-          message: "Couldn't remove the project from favourites. Please try again.",
+          message: "Couldn't remove the project from favorites. Please try again.",
         });
       });
   };
 
-  const handleRemoveFromFavourites = () => {
+  const handleRemoveFromFavorites = () => {
     if (!workspaceSlug || !project) return;
 
     projectService
-      .removeProjectFromFavourites(workspaceSlug as string, project.id)
+      .removeProjectFromFavorites(workspaceSlug as string, project.id)
       .then(() => {
         mutate<IProject[]>(
           PROJECTS_LIST(workspaceSlug as string),
           (prevData) =>
             (prevData ?? []).map((p) => ({
               ...p,
-              is_favourite: p.id === project.id ? false : p.is_favourite,
+              is_favorite: p.id === project.id ? false : p.is_favorite,
             })),
+          false
+        );
+        mutate<IFavoriteProject[]>(
+          FAVORITE_PROJECTS_LIST(workspaceSlug as string),
+          (prevData) => (prevData ?? []).filter((p) => p.project !== project.id),
           false
         );
 
         setToastAlert({
           type: "success",
           title: "Success!",
-          message: "Successfully removed the project from favourites.",
+          message: "Successfully removed the project from favorites.",
         });
       })
       .catch(() => {
         setToastAlert({
           type: "error",
           title: "Error!",
-          message: "Couldn't remove the project from favourites. Please try again.",
+          message: "Couldn't remove the project from favorites. Please try again.",
         });
       });
   };
@@ -126,7 +132,7 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
   return (
     <>
       {members ? (
-        <div className="flex flex-col shadow rounded-[10px]">
+        <div className="flex flex-col rounded-[10px] shadow">
           <Link href={`/${workspaceSlug as string}/projects/${project.id}/issues`}>
             <a>
               <div className="relative h-32 w-full rounded-t-[10px]">
@@ -149,16 +155,18 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
                         e.stopPropagation();
                         setToJoinProject(project.id);
                       }}
-                      className="flex cursor-pointer items-center gap-1 bg-green-600 px-2 py-1 rounded text-xs"
+                      className="flex cursor-pointer items-center gap-1 rounded bg-green-600 px-2 py-1 text-xs"
                     >
                       <PlusIcon className="h-3 w-3" />
                       <span>Select to Join</span>
                     </button>
                   ) : (
-                    <span className="bg-green-600 px-2 py-1 rounded text-xs">Member</span>
+                    <span className="cursor-default rounded bg-green-600 px-2 py-1 text-xs">
+                      Member
+                    </span>
                   )}
-                  {project.is_favourite && (
-                    <span className="bg-orange-400 h-6 w-9 grid place-items-center rounded">
+                  {project.is_favorite && (
+                    <span className="grid h-6 w-9 cursor-default place-items-center rounded bg-orange-400">
                       <StarIcon className="h-3 w-3" />
                     </span>
                   )}
@@ -166,7 +174,7 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
               </div>
             </a>
           </Link>
-          <div className="flex flex-col px-7 py-4 rounded-b-[10px] h-full">
+          <div className="flex h-full flex-col rounded-b-[10px] px-7 py-4">
             <Link href={`/${workspaceSlug as string}/projects/${project.id}/issues`}>
               <a>
                 <div className="flex items-center gap-1">
@@ -180,13 +188,13 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
                 <p className="mt-3.5 mb-7">{truncateText(project.description ?? "", 100)}</p>
               </a>
             </Link>
-            <div className="flex justify-between items-end h-full">
+            <div className="flex h-full items-end justify-between">
               <Tooltip
                 tooltipContent={`Created at ${renderShortNumericDateFormat(project.created_at)}`}
                 position="bottom"
                 theme="dark"
               >
-                <div className="flex items-center gap-1.5 text-xs">
+                <div className="flex cursor-default items-center gap-1.5 text-xs">
                   <CalendarDaysIcon className="h-4 w-4" />
                   {renderShortNumericDateFormat(project.created_at)}
                 </div>
@@ -206,13 +214,13 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
                         Delete project
                       </CustomMenu.MenuItem>
                     )}
-                    {project.is_favourite ? (
-                      <CustomMenu.MenuItem onClick={handleRemoveFromFavourites}>
-                        Remove from favourites
+                    {project.is_favorite ? (
+                      <CustomMenu.MenuItem onClick={handleRemoveFromFavorites}>
+                        Remove from favorites
                       </CustomMenu.MenuItem>
                     ) : (
-                      <CustomMenu.MenuItem onClick={handleAddToFavourites}>
-                        Add to favourites
+                      <CustomMenu.MenuItem onClick={handleAddToFavorites}>
+                        Add to favorites
                       </CustomMenu.MenuItem>
                     )}
                     <CustomMenu.MenuItem onClick={handleCopyText}>

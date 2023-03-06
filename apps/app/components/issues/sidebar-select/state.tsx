@@ -4,28 +4,28 @@ import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
-// react-hook-form
-import { Control, Controller } from "react-hook-form";
 // services
 import stateService from "services/state.service";
 // ui
 import { Spinner, CustomSelect } from "components/ui";
 // icons
 import { Squares2X2Icon } from "@heroicons/react/24/outline";
+import { getStateGroupIcon } from "components/icons";
 // helpers
 import { getStatesList } from "helpers/state.helper";
+import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
-import { IIssue, UserAuth } from "types";
+import { UserAuth } from "types";
 // constants
 import { STATE_LIST } from "constants/fetch-keys";
 
 type Props = {
-  control: Control<IIssue, any>;
-  submitChanges: (formData: Partial<IIssue>) => void;
+  value: string;
+  onChange: (val: string) => void;
   userAuth: UserAuth;
 };
 
-export const SidebarStateSelect: React.FC<Props> = ({ control, submitChanges, userAuth }) => {
+export const SidebarStateSelect: React.FC<Props> = ({ value, onChange, userAuth }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -37,6 +37,8 @@ export const SidebarStateSelect: React.FC<Props> = ({ control, submitChanges, us
   );
   const states = getStatesList(stateGroups ?? {});
 
+  const selectedState = states?.find((s) => s.id === value);
+
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   return (
@@ -46,60 +48,40 @@ export const SidebarStateSelect: React.FC<Props> = ({ control, submitChanges, us
         <p>State</p>
       </div>
       <div className="sm:basis-1/2">
-        <Controller
-          control={control}
-          name="state"
-          render={({ field: { value } }) => (
-            <CustomSelect
-              label={
-                <span
-                  className={`flex items-center gap-2 text-left ${value ? "" : "text-gray-900"}`}
-                >
-                  {value ? (
-                    <>
-                      <span
-                        className="h-2 w-2 flex-shrink-0 rounded-full"
-                        style={{
-                          backgroundColor: states?.find((option) => option.id === value)?.color,
-                        }}
-                      />
-                      {states?.find((option) => option.id === value)?.name}
-                    </>
-                  ) : (
-                    "None"
-                  )}
-                </span>
-              }
-              value={value}
-              onChange={(value: any) => {
-                submitChanges({ state: value });
-              }}
-              disabled={isNotAllowed}
-            >
-              {states ? (
-                states.length > 0 ? (
-                  states.map((option) => (
-                    <CustomSelect.Option key={option.id} value={option.id}>
-                      <>
-                        {option.color && (
-                          <span
-                            className="h-2 w-2 flex-shrink-0 rounded-full"
-                            style={{ backgroundColor: option.color }}
-                          />
-                        )}
-                        {option.name}
-                      </>
-                    </CustomSelect.Option>
-                  ))
-                ) : (
-                  <div className="text-center">No states found</div>
-                )
-              ) : (
-                <Spinner />
+        <CustomSelect
+          label={
+            <div className={`flex items-center gap-2 text-left ${value ? "" : "text-gray-900"}`}>
+              {getStateGroupIcon(
+                selectedState?.group ?? "backlog",
+                "16",
+                "16",
+                selectedState?.color ?? ""
               )}
-            </CustomSelect>
+              {addSpaceIfCamelCase(selectedState?.name ?? "")}
+            </div>
+          }
+          value={value}
+          onChange={onChange}
+          width="w-full"
+          disabled={isNotAllowed}
+        >
+          {states ? (
+            states.length > 0 ? (
+              states.map((state) => (
+                <CustomSelect.Option key={state.id} value={state.id}>
+                  <>
+                    {getStateGroupIcon(state.group, "16", "16", state.color)}
+                    {state.name}
+                  </>
+                </CustomSelect.Option>
+              ))
+            ) : (
+              <div className="text-center">No states found</div>
+            )
+          ) : (
+            <Spinner />
           )}
-        />
+        </CustomSelect>
       </div>
     </div>
   );

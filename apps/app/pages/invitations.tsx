@@ -99,10 +99,7 @@ const OnBoard: NextPage = () => {
                 <p className="mt-1 text-sm text-gray-500">
                   Select invites that you want to accept.
                 </p>
-                <ul
-                  role="list"
-                  className="mt-6 divide-y divide-gray-200 border-t border-b border-gray-200"
-                >
+                <ul role="list" className="mt-6 divide-y divide-gray-200 border-t border-b">
                   {invitations.map((invitation) => (
                     <SingleInvitation
                       key={invitation.id}

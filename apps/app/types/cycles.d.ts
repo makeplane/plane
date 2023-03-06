@@ -9,6 +9,7 @@ export interface ICycle {
   description: string;
   start_date: string | null;
   end_date: string | null;
+  is_favorite: boolean;
   created_by: string;
   updated_by: string;
   project: string;

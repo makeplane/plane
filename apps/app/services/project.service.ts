@@ -3,6 +3,7 @@ import APIService from "services/api.service";
 // types
 import type {
   GithubRepositoriesResponse,
+  IFavoriteProject,
   IProject,
   IProjectMember,
   IProjectMemberInvitation,
@@ -256,21 +257,29 @@ class ProjectServices extends APIService {
       });
   }
 
-  async addProjectToFavourites(
-    workspaceSlug: string,
-    data: {
-      project: string;
-    }
-  ): Promise<any> {
-    return this.post(`/api/workspaces/${workspaceSlug}/user-favourite-projects/`, data)
+  async getFavoriteProjects(workspaceSlug: string): Promise<IFavoriteProject[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/user-favorite-projects/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async removeProjectFromFavourites(workspaceSlug: string, projectId: string): Promise<any> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/user-favourite-projects/${projectId}/`)
+  async addProjectToFavorites(
+    workspaceSlug: string,
+    data: {
+      project: string;
+    }
+  ): Promise<any> {
+    return this.post(`/api/workspaces/${workspaceSlug}/user-favorite-projects/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async removeProjectFromFavorites(workspaceSlug: string, projectId: string): Promise<any> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/user-favorite-projects/${projectId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

@@ -34,7 +34,7 @@ export const Avatar: React.FC<AvatarProps> = ({ user, index }) => (
         />
       </div>
     ) : (
-      <div className="grid h-5 w-5 place-items-center rounded-full border-2 border-white bg-gray-700 text-white capitalize">
+      <div className="grid h-5 w-5 place-items-center rounded-full border-2 border-white bg-gray-700 text-xs capitalize text-white">
         {user?.first_name && user.first_name !== ""
           ? user.first_name.charAt(0)
           : user?.email?.charAt(0)}

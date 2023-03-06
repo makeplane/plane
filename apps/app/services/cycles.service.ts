@@ -128,6 +128,29 @@ class ProjectCycleServices extends APIService {
         throw error?.response?.data;
       });
   }
+
+  async addCycleToFavorites(
+    workspaceSlug: string,
+    projectId: string,
+    data: {
+      cycle: string;
+    }
+  ): Promise<any> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/user-favorite-cycles/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async removeCycleFromFavorites(workspaceSlug: string, projectId: string, cycleId: string): Promise<any> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/user-favorite-cycles/${cycleId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
 }
 
 export default new ProjectCycleServices();
