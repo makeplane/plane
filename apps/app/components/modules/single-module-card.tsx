@@ -173,7 +173,7 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
             }}
           />
           <div className="flex h-full w-full flex-col items-start justify-between gap-6 p-5">
-            <div className="flex flex-col gap-5">
+            <div className="flex flex-col w-full gap-5">
               <Link href={`/${workspaceSlug}/projects/${module.project}/modules/${module.id}`}>
                 <a className="w-full">
                   <span className="text-xl font-semibold text-black">{module.name}</span>
