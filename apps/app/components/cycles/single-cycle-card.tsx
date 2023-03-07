@@ -275,12 +275,10 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
                   alt={cycle.owned_by.first_name}
                 />
               ) : (
-                <button
-                  className="flex h-5 w-5 items-center justify-center rounded-full bg-gray-800 capitalize  text-white"
-                  onClick={handleEditCycle}
-                >
+                <span
+                  className="flex h-5 w-5 items-center justify-center rounded-full bg-gray-800 capitalize  text-white">
                   {cycle.owned_by.first_name.charAt(0)}
-                </button>
+                </span>
               )}
               <span className="text-gray-900">{cycle.owned_by.first_name}</span>
             </div>

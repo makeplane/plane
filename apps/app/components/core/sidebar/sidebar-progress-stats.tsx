@@ -89,32 +89,44 @@ export const SidebarProgressStats: React.FC<Props> = ({ groupedIssues, issues })
     >
       <Tab.List
         as="div"
-        className="flex items-center justify-between w-full rounded bg-gray-100 text-xs"
+        className="flex items-center justify-between px-1 py-1.5 w-full rounded-md bg-gray-100 text-xs"
       >
         <Tab
-          className={({ selected }) =>
-            `w-1/2 rounded py-1 ${selected ? "bg-gray-300" : "hover:bg-gray-200"}`
-          }
+         className={({ selected }) =>
+         `rounded w-1/3 p-1 text-sm text-gray-900  ${
+           selected
+             ? " bg-theme text-white"
+             : "  hover:bg-hover-gray"
+         }`
+       }
         >
           Assignees
         </Tab>
         <Tab
-          className={({ selected }) =>
-            `w-1/2 rounded py-1 ${selected ? "bg-gray-300 font-semibold" : "hover:bg-gray-200 "}`
-          }
+         className={({ selected }) =>
+         `rounded w-1/3 p-1 text-sm  text-gray-900 ${
+           selected
+             ? " bg-theme text-white"
+             : " hover:bg-hover-gray"
+         }`
+       }
         >
           Labels
         </Tab>
         <Tab
           className={({ selected }) =>
-            `w-1/2 rounded py-1 ${selected ? "bg-gray-300 font-semibold" : "hover:bg-gray-200 "}`
-          }
+          `rounded w-1/3 p-1 text-sm  text-gray-900 ${
+            selected
+              ? " bg-theme text-white"
+              : " hover:bg-hover-gray"
+          }`
+        }
         >
           States
         </Tab>
       </Tab.List>
-      <Tab.Panels className="flex items-center justify-between  w-full">
-        <Tab.Panel as="div" className="w-full flex flex-col ">
+      <Tab.Panels className="flex items-center justify-between p-1 w-full">
+        <Tab.Panel as="div" className="w-full flex flex-col text-xs ">
           {members?.map((member, index) => {
             const totalArray = issues?.filter((i) => i.assignees?.includes(member.member.id));
             const completeArray = totalArray?.filter((i) => i.state_detail.group === "completed");
@@ -170,15 +182,15 @@ export const SidebarProgressStats: React.FC<Props> = ({ groupedIssues, issues })
                 <SingleProgressStats
                   key={index}
                   title={
-                    <>
+                    <div className="flex items-center gap-2">
                       <span
-                        className="block h-2 w-2 rounded-full "
+                        className="block h-3 w-3 rounded-full "
                         style={{
                           backgroundColor: issue.color,
                         }}
                       />
                       <span className="text-xs capitalize">{issue.name}</span>
-                    </>
+                    </div>
                   }
                   completed={completeArray.length}
                   total={totalArray.length}
@@ -192,15 +204,15 @@ export const SidebarProgressStats: React.FC<Props> = ({ groupedIssues, issues })
             <SingleProgressStats
               key={index}
               title={
-                <>
+                <div className="flex items-center gap-2">
                   <span
-                    className="block h-2 w-2 rounded-full "
+                    className="block h-3 w-3 rounded-full "
                     style={{
                       backgroundColor: stateGroupColours[group],
                     }}
                   />
                   <span className="text-xs capitalize">{group}</span>
-                </>
+                </div>
               }
               completed={groupedIssues[group].length}
               total={issues.length}
