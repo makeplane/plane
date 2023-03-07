@@ -34,9 +34,8 @@ import fileService from "services/file.service";
 // ui
 import { Spinner } from "components/ui";
 // components
-import { RichTextToolbar } from "./toolbar";
+import { CustomFloatingToolbar } from "./toolbar/float-tool-tip";
 import { MentionAutoComplete } from "./mention-autocomplete";
-import { FloatingLinkToolbar } from "./toolbar/link";
 
 export interface IRemirrorRichTextEditor {
   placeholder?: string;
@@ -50,6 +49,9 @@ export interface IRemirrorRichTextEditor {
   editable?: boolean;
   customClassName?: string;
 }
+
+// eslint-disable-next-line no-duplicate-imports
+import { FloatingWrapper, FloatingToolbar } from "@remirror/react";
 
 const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = (props) => {
   const {
@@ -182,30 +184,42 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = (props) => {
       <Remirror
         manager={manager}
         initialContent={state}
-        classNames={[`p-4 focus:outline-none ${customClassName}`]}
+        classNames={[
+          `p-4 relative focus:outline-none rounded-md border border-transparent focus:border-theme ${customClassName}`,
+        ]}
         editable={editable}
         onBlur={() => {
           onBlur(jsonValue, htmlValue);
         }}
       >
-        <div className="rounded-md border">
-          {showToolbar && editable && (
-            <div className="box-border w-full border-b py-2">
-              <RichTextToolbar />
-            </div>
-          )}
-          <EditorComponent />
-          {imageLoader && (
-            <div className="p-4">
-              <Spinner />
-            </div>
-          )}
-          {/* <TableComponents /> */}
-          <FloatingLinkToolbar />
-          <MentionAutoComplete mentions={mentions} tags={tags} />
-          {<OnChangeJSON onChange={handleJSONChange} />}
-          {<OnChangeHTML onChange={handleHTMLChange} />}
-        </div>
+        {(!value || value === "" || value?.content?.[0]?.content === undefined) && (
+          <p className="pointer-events-none absolute top-[8.8rem] left-9 text-gray-300">
+            {placeholder || "Enter text..."}
+          </p>
+        )}
+        <EditorComponent />
+
+        {imageLoader && (
+          <div className="p-4">
+            <Spinner />
+          </div>
+        )}
+
+        {editable && (
+          <FloatingWrapper
+            positioner="always"
+            floatingLabel="Custom Floating Toolbar"
+            renderOutsideEditor
+          >
+            <FloatingToolbar className="z-[9999] overflow-hidden rounded">
+              <CustomFloatingToolbar />
+            </FloatingToolbar>
+          </FloatingWrapper>
+        )}
+
+        <MentionAutoComplete mentions={mentions} tags={tags} />
+        {<OnChangeJSON onChange={handleJSONChange} />}
+        {<OnChangeHTML onChange={handleHTMLChange} />}
       </Remirror>
     </div>
   );
