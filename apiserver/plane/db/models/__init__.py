@@ -31,6 +31,7 @@ from .issue import (
     Label,
     IssueBlocker,
     IssueLink,
+    IssueSequence,
 )
 
 from .asset import FileAsset

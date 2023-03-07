@@ -61,6 +61,7 @@ from plane.api.views import (
     IssueCommentViewSet,
     UserWorkSpaceIssues,
     BulkDeleteIssuesEndpoint,
+    BulkCreateIssuesEndpoint,
     ProjectUserViewsEndpoint,
     TimeLineIssueViewSet,
     IssuePropertyViewSet,
@@ -615,6 +616,12 @@ urlpatterns = [
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-delete-issues/",
         BulkDeleteIssuesEndpoint.as_view(),
+        name="project-issues-bulk",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-create-issues/",
+        BulkCreateIssuesEndpoint.as_view(),
+        name="project-issues-bulk",
     ),
     path(
         "workspaces/<str:slug>/my-issues/",

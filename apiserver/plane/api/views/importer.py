@@ -8,9 +8,12 @@ from plane.api.views import BaseAPIView
 from plane.db.models import (
     WorkspaceIntegration,
     Importer,
+    APIToken,
+    Workspace,
 )
 from plane.api.serializers import ImporterSerializer
 from plane.utils.integrations.github import get_github_repo_details
+from plane.bgtasks.importer_task import service_importer
 
 
 class ServiceIssueImportSummaryEndpoint(BaseAPIView):
@@ -64,22 +67,47 @@ class ImportServiceEndpoint(BaseAPIView):
             # { "username": "john", "import": "invite", "email": "john@gmail.com"}
             # save repository info in metadata
 
+            workspace = Workspace.objects.get(slug=slug)
+
             if service == "github":
+                data = request.data.get("data", False)
+                metadata = request.data.get("metadata", False)
+                if not data or not metadata:
+                    return Response(
+                        {"error": "data and metadata are required"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+
+                api_token = APIToken.objects.filter(
+                    user=request.user, workspace__slug=slug
+                ).first()
+
+                if api_token is None:
+                    api_token = APIToken.objects.create(
+                        label="Github Importer", user=request.user, workspace=workspace
+                    )
+
                 importer = Importer.objects.create(
                     service=service,
                     project_id=project_id,
                     status="queued",
                     initiated_by=request.user,
-                    data=request.get("data", {}),
-                    metadata=request.data.get("metadata", {}),
+                    data=data,
+                    metadata=metadata,
+                    token=api_token,
                 )
 
+                service_importer.delay(service, importer.id)
                 serializer = ImporterSerializer(importer)
                 return Response(serializer.data, status=status.HTTP_200_OK)
 
             return Response(
                 {"error": "Servivce not supported yet"},
                 status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Workspace.DoesNotExist:
+            return Response(
+                {"error": "Workspace does not exist"}, status=status.HTTP_404_NOT_FOUND
             )
         except Exception as e:
             capture_exception(e)

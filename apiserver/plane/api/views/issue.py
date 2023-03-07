@@ -3,7 +3,7 @@ import json
 from itertools import groupby, chain
 
 # Django imports
-from django.db.models import Prefetch, OuterRef, Func, F, Q
+from django.db.models import Prefetch, OuterRef, Func, F, Q, Max
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Third Party imports
@@ -42,9 +42,12 @@ from plane.db.models import (
     CycleIssue,
     ModuleIssue,
     IssueLink,
+    State,
+    IssueSequence,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
+from plane.utils.html_processor import strip_tags
 
 
 class IssueViewSet(BaseViewSet):
@@ -717,3 +720,102 @@ class IssueLinkViewSet(BaseViewSet):
             .filter(project__project_projectmember__member=self.request.user)
             .distinct()
         )
+
+
+class BulkCreateIssuesEndpoint(BaseAPIView):
+    def post(self, request, slug, project_id):
+        try:
+            # Get the project
+            project = Project.objects.get(pk=project_id, workspace__slug=slug)
+
+            # Get the default state
+            default_state = State.objects.filter(
+                project_id=project_id, default=True
+            ).first()
+            # if there is no default state assign any random state
+            if default_state is None:
+                default_state = State.objects.filter(project_id=project_id).first()
+
+            # Get the maximum sequence_id
+            last_id = (
+                IssueSequence.objects.filter(project_id=project_id).aggregate(
+                    largest=Max("sequence")
+                )["largest"]
+                + 1
+            )
+
+            # Get the maximum sort order
+            largest_sort_order = (
+                Issue.objects.filter(
+                    project_id=project_id, state=default_state
+                ).aggregate(largest=Max("sort_order"))["largest"]
+                + 10000
+            )
+
+            # Get the issues_data
+            issues_data = request.data.get("issues_data", [])
+
+            if not len(issues_data):
+                return Response(
+                    {"error": "Issue data is required"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            bulk_issues = []
+            for issue_data in issues_data:
+                bulk_issues.append(
+                    Issue(
+                        project_id=project_id,
+                        workspace=project.workspace,
+                        state=default_state,
+                        name=issue_data.get("name", "Issue Created through Bulk"),
+                        description_html=issue_data.get("description_html", "<p></p>"),
+                        description_stripped=(
+                            None
+                            if (
+                                issue_data.get("description_html") == ""
+                                or issue_data.get("description_html") is None
+                            )
+                            else strip_tags(issue_data.get("description_html"))
+                        ),
+                        sequence_id=last_id,
+                        sort_order=largest_sort_order,
+                    )
+                )
+
+                largest_sort_order = largest_sort_order + 10000
+                last_id = last_id + 1
+
+            issues = Issue.objects.bulk_create(
+                bulk_issues,
+                batch_size=100,
+                ignore_conflicts=True,
+            )
+
+            _ = IssueSequence.objects.bulk_create(
+                [
+                    IssueSequence(
+                        issue=issue,
+                        sequence=issue.sequence_id,
+                        project=issue.project,
+                        workspace=project.workspace,
+                    )
+                    for issue in issues
+                ],
+                batch_size=100,
+            )
+
+            return Response(
+                IssueFlatSerializer(issues, many=True).data,
+                status=status.HTTP_201_CREATED,
+            )
+        except Project.DoesNotExist:
+            return Response(
+                {"error": "Project Does not exist"}, status=status.HTTP_404_NOT_FOUND
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
