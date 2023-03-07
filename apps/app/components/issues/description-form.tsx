@@ -1,11 +1,9 @@
-import { FC, useCallback, useEffect, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 
 import dynamic from "next/dynamic";
 
 // react-hook-form
 import { useForm } from "react-hook-form";
-// lodash
-import debounce from "lodash.debounce";
 // components
 import { Loader, TextArea } from "components/ui";
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
@@ -27,7 +25,7 @@ export interface IssueDescriptionFormValues {
 
 export interface IssueDetailsProps {
   issue: IIssue;
-  handleFormSubmit: (value: IssueDescriptionFormValues) => void;
+  handleFormSubmit: (value: IssueDescriptionFormValues) => Promise<void>;
   userAuth: UserAuth;
 }
 
@@ -36,6 +34,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
   handleFormSubmit,
   userAuth,
 }) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [characterLimit, setCharacterLimit] = useState(false);
 
   const {
@@ -53,10 +52,10 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
   });
 
   const handleDescriptionFormSubmit = useCallback(
-    (formData: Partial<IIssue>) => {
+    async (formData: Partial<IIssue>) => {
       if (!formData.name || formData.name.length === 0 || formData.name.length > 255) return;
 
-      handleFormSubmit({
+      await handleFormSubmit({
         name: formData.name ?? "",
         description: formData.description ?? "",
         description_html: formData.description_html ?? "<p></p>",
@@ -65,17 +64,19 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
     [handleFormSubmit]
   );
 
-  const debounceHandler = useMemo(
-    () => debounce(handleSubmit(handleDescriptionFormSubmit), 2000),
-    [handleSubmit, handleDescriptionFormSubmit]
-  );
+  useEffect(() => {
+    const alertUser = (e: BeforeUnloadEvent) => {
+      console.log("beforeunload");
+      e.preventDefault();
+      e.returnValue = "";
+      return "Are you sure you want to leave?";
+    };
 
-  useEffect(
-    () => () => {
-      debounceHandler.cancel();
-    },
-    [debounceHandler]
-  );
+    window.addEventListener("beforeunload", alertUser);
+    return () => {
+      window.removeEventListener("beforeunload", alertUser);
+    };
+  }, [isSubmitting]);
 
   // reset form values
   useEffect(() => {
@@ -95,19 +96,29 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
           placeholder="Enter issue name"
           value={watch("name")}
           onFocus={() => setCharacterLimit(true)}
-          onBlur={() => setCharacterLimit(false)}
+          onBlur={() => {
+            setCharacterLimit(false);
+
+            setIsSubmitting(true);
+            handleSubmit(handleDescriptionFormSubmit)()
+              .then(() => {
+                setIsSubmitting(false);
+              })
+              .catch(() => {
+                setIsSubmitting(false);
+              });
+          }}
           onChange={(e) => {
             setValue("name", e.target.value);
-            debounceHandler();
           }}
           required={true}
-          className="block px-3 py-2 text-xl
-      w-full overflow-hidden resize-none min-h-10
-      rounded border-none bg-transparent ring-0 focus:ring-1 focus:ring-theme outline-none"
+          className="min-h-10 block w-full resize-none
+      overflow-hidden rounded border-none bg-transparent
+      px-3 py-2 text-xl outline-none ring-0 focus:ring-1 focus:ring-theme"
           role="textbox"
         />
         {characterLimit && (
-          <div className="absolute bottom-0 right-0 text-xs bg-white p-1 rounded pointer-events-none z-[2]">
+          <div className="pointer-events-none absolute bottom-0 right-0 z-[2] rounded bg-white p-1 text-xs">
             <span
               className={`${
                 watch("name").length === 0 || watch("name").length > 255 ? "text-red-500" : ""
@@ -123,13 +134,21 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
       <RemirrorRichTextEditor
         value={watch("description")}
         placeholder="Describe the issue..."
-        onJSONChange={(json) => {
-          setValue("description", json);
-          debounceHandler();
+        onBlur={() => {
+          setIsSubmitting(true);
+          handleSubmit(handleDescriptionFormSubmit)()
+            .then(() => {
+              setIsSubmitting(false);
+            })
+            .catch(() => {
+              setIsSubmitting(false);
+            });
         }}
+        onJSONChange={(json) => setValue("description", json)}
         onHTMLChange={(html) => setValue("description_html", html)}
         editable={!isNotAllowed}
       />
+      <div className="text-right text-sm text-gray-500">{isSubmitting && "Saving..."}</div>
     </div>
   );
 };
