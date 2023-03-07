@@ -21,18 +21,17 @@ export interface ICycle {
 }
 
 export interface CurrentAndUpcomingCyclesResponse {
- current_cycle : ICycle[];
- upcoming_cycle : ICycle[];
+  current_cycle: ICycle[];
+  upcoming_cycle: ICycle[];
 }
 
-
 export interface DraftCyclesResponse {
-  draft_cycles : ICycle[];
- }
+  draft_cycles: ICycle[];
+}
 
 export interface CompletedCyclesResponse {
-  completed_cycles : ICycle[];
- }
+  completed_cycles: ICycle[];
+}
 
 export interface CycleIssueResponse {
   id: string;

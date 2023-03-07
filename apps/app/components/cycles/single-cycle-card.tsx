@@ -17,13 +17,25 @@ import { Disclosure, Transition } from "@headlessui/react";
 import { CalendarDaysIcon } from "@heroicons/react/20/solid";
 import { ChevronDownIcon, PencilIcon, StarIcon } from "@heroicons/react/24/outline";
 // helpers
-import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
+import { getDateRangeStatus, renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { groupBy } from "helpers/array.helper";
 import { capitalizeFirstLetter, copyTextToClipboard } from "helpers/string.helper";
 // types
-import { CycleIssueResponse, ICycle } from "types";
+import {
+  CompletedCyclesResponse,
+  CurrentAndUpcomingCyclesResponse,
+  CycleIssueResponse,
+  DraftCyclesResponse,
+  ICycle,
+} from "types";
 // fetch-keys
-import { CYCLE_ISSUES, CYCLE_LIST } from "constants/fetch-keys";
+import {
+  CYCLE_COMPLETE_LIST,
+  CYCLE_CURRENT_AND_UPCOMING_LIST,
+  CYCLE_DRAFT_LIST,
+  CYCLE_ISSUES,
+  CYCLE_LIST,
+} from "constants/fetch-keys";
 
 type TSingleStatProps = {
   cycle: ICycle;
@@ -75,15 +87,45 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
         cycle: cycle.id,
       })
       .then(() => {
-        mutate<ICycle[]>(
-          CYCLE_LIST(projectId as string),
-          (prevData) =>
-            (prevData ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? true : c.is_favorite,
-            })),
-          false
-        );
+        const cycleStatus = getDateRangeStatus(cycle.start_date, cycle.end_date);
+
+        if (cycleStatus === "current" || cycleStatus === "upcoming")
+          mutate<CurrentAndUpcomingCyclesResponse>(
+            CYCLE_CURRENT_AND_UPCOMING_LIST(projectId as string),
+            (prevData) => ({
+              current_cycle: (prevData?.current_cycle ?? []).map((c) => ({
+                ...c,
+                is_favorite: c.id === cycle.id ? true : c.is_favorite,
+              })),
+              upcoming_cycle: (prevData?.upcoming_cycle ?? []).map((c) => ({
+                ...c,
+                is_favorite: c.id === cycle.id ? true : c.is_favorite,
+              })),
+            }),
+            false
+          );
+        else if (cycleStatus === "completed")
+          mutate<CompletedCyclesResponse>(
+            CYCLE_COMPLETE_LIST(projectId as string),
+            (prevData) => ({
+              completed_cycles: (prevData?.completed_cycles ?? []).map((c) => ({
+                ...c,
+                is_favorite: c.id === cycle.id ? true : c.is_favorite,
+              })),
+            }),
+            false
+          );
+        else
+          mutate<DraftCyclesResponse>(
+            CYCLE_DRAFT_LIST(projectId as string),
+            (prevData) => ({
+              draft_cycles: (prevData?.draft_cycles ?? []).map((c) => ({
+                ...c,
+                is_favorite: c.id === cycle.id ? true : c.is_favorite,
+              })),
+            }),
+            false
+          );
 
         setToastAlert({
           type: "success",
@@ -106,15 +148,45 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
     cyclesService
       .removeCycleFromFavorites(workspaceSlug as string, projectId as string, cycle.id)
       .then(() => {
-        mutate<ICycle[]>(
-          CYCLE_LIST(projectId as string),
-          (prevData) =>
-            (prevData ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? false : c.is_favorite,
-            })),
-          false
-        );
+        const cycleStatus = getDateRangeStatus(cycle.start_date, cycle.end_date);
+
+        if (cycleStatus === "current" || cycleStatus === "upcoming")
+          mutate<CurrentAndUpcomingCyclesResponse>(
+            CYCLE_CURRENT_AND_UPCOMING_LIST(projectId as string),
+            (prevData) => ({
+              current_cycle: (prevData?.current_cycle ?? []).map((c) => ({
+                ...c,
+                is_favorite: c.id === cycle.id ? false : c.is_favorite,
+              })),
+              upcoming_cycle: (prevData?.upcoming_cycle ?? []).map((c) => ({
+                ...c,
+                is_favorite: c.id === cycle.id ? false : c.is_favorite,
+              })),
+            }),
+            false
+          );
+        else if (cycleStatus === "completed")
+          mutate<CompletedCyclesResponse>(
+            CYCLE_COMPLETE_LIST(projectId as string),
+            (prevData) => ({
+              completed_cycles: (prevData?.completed_cycles ?? []).map((c) => ({
+                ...c,
+                is_favorite: c.id === cycle.id ? false : c.is_favorite,
+              })),
+            }),
+            false
+          );
+        else
+          mutate<DraftCyclesResponse>(
+            CYCLE_DRAFT_LIST(projectId as string),
+            (prevData) => ({
+              draft_cycles: (prevData?.draft_cycles ?? []).map((c) => ({
+                ...c,
+                is_favorite: c.id === cycle.id ? false : c.is_favorite,
+              })),
+            }),
+            false
+          );
 
         setToastAlert({
           type: "success",
@@ -167,16 +239,12 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
               </a>
             </Link>
             {cycle.is_favorite ? (
-              <button onClick={handleRemoveFromFavorites} className="p-1 ">
-                <span>
-                  <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
-                </span>
+              <button onClick={handleRemoveFromFavorites}>
+                <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
               </button>
             ) : (
-              <button onClick={handleAddToFavorites} className="p-1">
-                <span>
-                  <StarIcon className="h-4 w-4 " color="#858E96" />
-                </span>
+              <button onClick={handleAddToFavorites}>
+                <StarIcon className="h-4 w-4 " color="#858E96" />
               </button>
             )}
           </div>
