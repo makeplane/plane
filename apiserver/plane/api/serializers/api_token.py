@@ -5,4 +5,10 @@ from plane.db.models import APIToken
 class APITokenSerializer(BaseSerializer):
     class Meta:
         model = APIToken
-        fields = "__all__"
+        fields = [
+            "label",
+            "user",
+            "user_type",
+            "workspace",
+            "created_at",
+        ]
