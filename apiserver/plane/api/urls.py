@@ -68,7 +68,7 @@ from plane.api.views import (
     LabelViewSet,
     SubIssuesEndpoint,
     IssueLinkViewSet,
-    ModuleLinkViewSet,
+    BulkCreateIssueLabelsEndpoint,
     ## End Issues
     # States
     StateViewSet,
@@ -92,6 +92,7 @@ from plane.api.views import (
     ModuleViewSet,
     ModuleIssueViewSet,
     ModuleFavoriteViewSet,
+    ModuleLinkViewSet,
     ## End Modules
     # Api Tokens
     ApiTokenEndpoint,
@@ -612,6 +613,11 @@ urlpatterns = [
             }
         ),
         name="project-issue-labels",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-create-labels/",
+        BulkCreateIssueLabelsEndpoint.as_view(),
+        name="project-bulk-labels",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-delete-issues/",

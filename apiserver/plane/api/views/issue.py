@@ -1,5 +1,6 @@
 # Python imports
 import json
+import random
 from itertools import groupby, chain
 
 # Django imports
@@ -44,6 +45,7 @@ from plane.db.models import (
     IssueLink,
     State,
     IssueSequence,
+    IssueLabel,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
@@ -761,6 +763,7 @@ class BulkCreateIssuesEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
+            # Issues
             bulk_issues = []
             for issue_data in issues_data:
                 bulk_issues.append(
@@ -780,6 +783,8 @@ class BulkCreateIssuesEndpoint(BaseAPIView):
                         ),
                         sequence_id=last_id,
                         sort_order=largest_sort_order,
+                        start_date=issue_data.get("start_date", None),
+                        target_date=issue_data.get("target_date", None),
                     )
                 )
 
@@ -792,6 +797,7 @@ class BulkCreateIssuesEndpoint(BaseAPIView):
                 ignore_conflicts=True,
             )
 
+            # Sequences
             _ = IssueSequence.objects.bulk_create(
                 [
                     IssueSequence(
@@ -805,8 +811,81 @@ class BulkCreateIssuesEndpoint(BaseAPIView):
                 batch_size=100,
             )
 
+            # Attach Labels
+            bulk_issue_labels = []
+            for issue, issue_data in zip(issues, issues_data):
+                labels_list = issue_data.get("labels_list", [])
+                bulk_issue_labels = bulk_issue_labels + [
+                    IssueLabel(
+                        issue=issue,
+                        label_id=label_id,
+                        project_id=project_id,
+                        workspace_id=project.workspace_id,
+                        created_by=request.user,
+                        updated_by=request.user,
+                    )
+                    for label_id in labels_list
+                ]
+
+            _ = IssueLabel.objects.bulk_create(bulk_issue_labels, batch_size=100)
+
+            # Attach Links
+            _ = IssueLink.objects.bulk_create(
+                [
+                    IssueLink(
+                        issue=issue,
+                        url=issue_data.get("link", {}).get("url", "https://github.com"),
+                        title=issue_data.get("link", {}).get("title", "Original Issue"),
+                        project_id=project_id,
+                        workspace_id=project.workspace_id,
+                        created_by=request.user,
+                        updated_by=request.user,
+                    )
+                    for issue, issue_data in zip(issues, issues_data)
+                ]
+            )
+
             return Response(
-                IssueFlatSerializer(issues, many=True).data,
+                {"issues": IssueFlatSerializer(issues, many=True).data},
+                status=status.HTTP_201_CREATED,
+            )
+        except Project.DoesNotExist:
+            return Response(
+                {"error": "Project Does not exist"}, status=status.HTTP_404_NOT_FOUND
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class BulkCreateIssueLabelsEndpoint(BaseAPIView):
+    def post(self, request, slug, project_id):
+        try:
+            label_data = request.data.get("label_data", [])
+            project = Project.objects.get(pk=project_id)
+
+            labels = Label.objects.bulk_create(
+                [
+                    Label(
+                        name=label.get("name", "Migrated"),
+                        description=label.get("description", "Migrated Issue"),
+                        color="#" + "%06x" % random.randint(0, 0xFFFFFF),
+                        project_id=project_id,
+                        workspace_id=project.workspace_id,
+                        created_by=request.user,
+                        updated_by=request.user,
+                    )
+                    for label in label_data
+                ],
+                batch_size=50,
+                ignore_conflicts=True,
+            )
+
+            return Response(
+                {"labels": LabelSerializer(labels, many=True).data},
                 status=status.HTTP_201_CREATED,
             )
         except Project.DoesNotExist:
