@@ -766,7 +766,7 @@ class BulkCreateIssuesEndpoint(BaseAPIView):
                 bulk_issues.append(
                     Issue(
                         project_id=project_id,
-                        workspace=project.workspace,
+                        workspace_id=project.workspace_id,
                         state=default_state,
                         name=issue_data.get("name", "Issue Created through Bulk"),
                         description_html=issue_data.get("description_html", "<p></p>"),
@@ -797,8 +797,8 @@ class BulkCreateIssuesEndpoint(BaseAPIView):
                     IssueSequence(
                         issue=issue,
                         sequence=issue.sequence_id,
-                        project=issue.project,
-                        workspace=project.workspace,
+                        project_id=project_id,
+                        workspace_id=project.workspace_id,
                     )
                     for issue in issues
                 ],
