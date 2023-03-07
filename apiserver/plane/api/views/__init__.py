@@ -11,6 +11,7 @@ from .project import (
     ProjectJoinEndpoint,
     ProjectUserViewsEndpoint,
     ProjectMemberUserEndpoint,
+    ProjectFavoritesViewSet,
 )
 from .people import (
     UserEndpoint,
@@ -45,6 +46,8 @@ from .cycle import (
     CycleDateCheckEndpoint,
     CurrentUpcomingCyclesEndpoint,
     CompletedCyclesEndpoint,
+    CycleFavoriteViewSet,
+    DraftCyclesEndpoint,
 )
 from .asset import FileAssetEndpoint
 from .issue import (
@@ -77,7 +80,12 @@ from .authentication import (
     MagicSignInGenerateEndpoint,
 )
 
-from .module import ModuleViewSet, ModuleIssueViewSet, ModuleLinkViewSet
+from .module import (
+    ModuleViewSet,
+    ModuleIssueViewSet,
+    ModuleLinkViewSet,
+    ModuleFavoriteViewSet,
+)
 
 from .api_token import ApiTokenEndpoint
 

@@ -10,8 +10,7 @@ import useWorkspaces from "hooks/use-workspaces";
 import AppLayout from "layouts/app-layout";
 // components
 import { JoinProjectModal } from "components/project/join-project-modal";
-import { SingleProjectCard } from "components/project";
-import ConfirmProjectDeletion from "components/project/confirm-project-deletion";
+import { DeleteProjectModal, SingleProjectCard } from "components/project";
 // ui
 import { HeaderButton, EmptySpace, EmptySpaceItem, Loader } from "components/ui";
 import { Breadcrumbs, BreadcrumbItem } from "components/breadcrumbs";
@@ -71,7 +70,7 @@ const ProjectsPage: NextPage = () => {
             });
         }}
       />
-      <ConfirmProjectDeletion
+      <DeleteProjectModal
         isOpen={!!deleteProject}
         onClose={() => setDeleteProject(null)}
         data={projects?.find((item) => item.id === deleteProject) ?? null}
@@ -102,7 +101,7 @@ const ProjectsPage: NextPage = () => {
               </EmptySpace>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-9">
+            <div className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
               {projects.map((project) => (
                 <SingleProjectCard
                   key={project.id}

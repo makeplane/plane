@@ -16,6 +16,7 @@ from .project import (
     ProjectBaseModel,
     ProjectMemberInvite,
     ProjectIdentifier,
+    ProjectFavorite,
 )
 
 from .issue import (
@@ -38,13 +39,13 @@ from .social_connection import SocialLoginConnection
 
 from .state import State
 
-from .cycle import Cycle, CycleIssue
+from .cycle import Cycle, CycleIssue, CycleFavorite
 
 from .shortcut import Shortcut
 
 from .view import View
 
-from .module import Module, ModuleMember, ModuleIssue, ModuleLink
+from .module import Module, ModuleMember, ModuleIssue, ModuleLink, ModuleFavorite
 
 from .api_token import APIToken
 

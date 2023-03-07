@@ -21,6 +21,7 @@ import { CreateUpdateCycleModal } from "components/cycles";
 import { CreateLabelModal } from "components/labels";
 // ui
 import { Button, CustomMenu, Input, Loader } from "components/ui";
+import { PrimaryButton } from "components/ui/button/primary-button";
 // icons
 import { XMarkIcon } from "@heroicons/react/24/outline";
 // helpers
@@ -156,7 +157,7 @@ export const IssueForm: FC<IssueFormProps> = ({
                 />
               )}
             />
-            <h3 className="text-lg font-medium leading-6 text-gray-900">
+            <h3 className="text-xl font-semibold leading-6 text-gray-900">
               {status ? "Update" : "Create"} Issue
             </h3>
           </div>
@@ -189,11 +190,11 @@ export const IssueForm: FC<IssueFormProps> = ({
               <div>
                 <Input
                   id="name"
-                  label="Title"
                   name="name"
                   onChange={handleTitleChange}
-                  className="resize-none"
-                  placeholder="Enter title"
+                  className="resize-none text-xl"
+                  placeholder="Title"
+                  mode="transparent"
                   autoComplete="off"
                   error={errors.name}
                   register={register}
@@ -219,7 +220,7 @@ export const IssueForm: FC<IssueFormProps> = ({
                           </span>
                           ?
                         </a>
-                      </Link>{" "}
+                      </Link>
                     </p>
                     <button
                       type="button"
@@ -234,9 +235,6 @@ export const IssueForm: FC<IssueFormProps> = ({
                 )}
               </div>
               <div>
-                <label htmlFor={"description"} className="mb-2 text-gray-500">
-                  Description
-                </label>
                 <Controller
                   name="description"
                   control={control}
@@ -245,7 +243,7 @@ export const IssueForm: FC<IssueFormProps> = ({
                       value={value}
                       onJSONChange={(jsonValue) => setValue("description", jsonValue)}
                       onHTMLChange={(htmlValue) => setValue("description_html", htmlValue)}
-                      placeholder="Enter Your Text..."
+                      placeholder="Description"
                     />
                   )}
                 />
@@ -333,7 +331,7 @@ export const IssueForm: FC<IssueFormProps> = ({
             </div>
           </div>
         </div>
-        <div className="mt-5 flex items-center justify-between gap-2">
+        <div className="-mx-5 mt-5 flex items-center justify-between gap-2 border-t px-5 pt-5">
           <div
             className="flex cursor-pointer items-center gap-1"
             onClick={() => setCreateMore((prevData) => !prevData)}
@@ -360,15 +358,15 @@ export const IssueForm: FC<IssueFormProps> = ({
             <Button type="button" theme="secondary" onClick={handleClose}>
               Discard
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
+            <PrimaryButton type="submit" size="sm" loading={isSubmitting}>
               {status
                 ? isSubmitting
                   ? "Updating Issue..."
                   : "Update Issue"
                 : isSubmitting
-                ? "Creating Issue..."
-                : "Create Issue"}
-            </Button>
+                ? "Adding Issue..."
+                : "Add Issue"}
+            </PrimaryButton>
           </div>
         </div>
       </form>
