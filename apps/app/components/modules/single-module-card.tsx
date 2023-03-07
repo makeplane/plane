@@ -32,7 +32,7 @@ import { IModule } from "types";
 // fetch-key
 import { MODULE_LIST, STATE_LIST } from "constants/fetch-keys";
 // helper
-import { copyTextToClipboard } from "helpers/string.helper";
+import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 import { getStatesList } from "helpers/state.helper";
 
 type Props = {
@@ -176,11 +176,10 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
             <div className="flex w-full flex-col gap-5">
               <Tooltip tooltipContent={module.name} position="top-left">
                 <span
-                  className="w-auto max-w-[300px] truncate break-all text-xl
-               font-semibold  text-black     "
+                  className="break-all text-xl font-semibold text-black"
                 >
                   <Link href={`/${workspaceSlug}/projects/${module.project}/modules/${module.id}`}>
-                    <a className="w-full">{module.name}</a>
+                    <a className="w-full">{truncateText(module.name, 75)}</a>
                   </Link>
                 </span>
               </Tooltip>

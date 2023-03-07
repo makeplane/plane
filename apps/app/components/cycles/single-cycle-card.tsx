@@ -19,7 +19,7 @@ import { ChevronDownIcon, PencilIcon, StarIcon } from "@heroicons/react/24/outli
 // helpers
 import { getDateRangeStatus, renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { groupBy } from "helpers/array.helper";
-import { capitalizeFirstLetter, copyTextToClipboard } from "helpers/string.helper";
+import { capitalizeFirstLetter, copyTextToClipboard, truncateText } from "helpers/string.helper";
 // types
 import {
   CompletedCyclesResponse,
@@ -235,7 +235,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
           <div className="flex items-center justify-between gap-1">
             <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}>
               <a className="w-full">
-                <h3 className="text-xl font-semibold leading-5 ">{cycle.name}</h3>
+                <h3 className="text-xl font-semibold leading-5 ">{truncateText(cycle.name,75)}</h3>
               </a>
             </Link>
             {cycle.is_favorite ? (
