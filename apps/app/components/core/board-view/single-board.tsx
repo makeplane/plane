@@ -104,7 +104,7 @@ export const SingleBoard: React.FC<Props> = ({
                   <div
                     className={`absolute ${
                       snapshot.isDraggingOver ? "block" : "hidden"
-                    } pointer-events-none top-0 left-0 z-[99999998] h-full w-full bg-indigo-200 opacity-50`}
+                    } pointer-events-none top-0 left-0 z-[99999998] h-full w-full bg-gray-100 opacity-50`}
                   />
                   <div
                     className={`absolute ${

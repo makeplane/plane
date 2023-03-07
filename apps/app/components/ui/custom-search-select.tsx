@@ -15,6 +15,7 @@ type CustomSearchSelectProps = {
   }[];
   label?: string | JSX.Element;
   textAlignment?: "left" | "center" | "right";
+  height?: "sm" | "md" | "rg" | "lg";
   position?: "right" | "left";
   noChevron?: boolean;
   customButton?: JSX.Element;
@@ -28,6 +29,7 @@ type CustomSearchSelectProps = {
 export const CustomSearchSelect = ({
   label,
   textAlignment,
+  height = "sm",
   value,
   onChange,
   options,
@@ -95,7 +97,7 @@ export const CustomSearchSelect = ({
                 <Combobox.Options
                   className={`${optionsClassName} absolute min-w-[10rem] p-2 ${
                     position === "right" ? "right-0" : "left-0"
-                  } z-10 mt-1 origin-top-right overflow-y-auto rounded-md bg-white text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none`}
+                  } z-10 mt-1 origin-top-right rounded-md bg-white text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none`}
                 >
                   <div className="flex w-full items-center justify-start rounded-sm border-[0.6px] bg-gray-100 px-2">
                     <MagnifyingGlassIcon className="h-3 w-3 text-gray-500" />
@@ -106,7 +108,19 @@ export const CustomSearchSelect = ({
                       displayValue={(assigned: any) => assigned?.name}
                     />
                   </div>
-                  <div className="mt-2 space-y-1">
+                  <div
+                    className={`mt-2 space-y-1 ${
+                      height === "sm"
+                        ? "max-h-28"
+                        : height === "md"
+                        ? "max-h-44"
+                        : height === "rg"
+                        ? "max-h-56"
+                        : height === "lg"
+                        ? "max-h-80"
+                        : ""
+                    } overflow-y-scroll`}
+                  >
                     {filteredOptions ? (
                       filteredOptions.length > 0 ? (
                         filteredOptions.map((option) => (
@@ -192,7 +206,7 @@ export const CustomSearchSelect = ({
                 <Combobox.Options
                   className={`${optionsClassName} absolute min-w-[10rem] p-2 ${
                     position === "right" ? "right-0" : "left-0"
-                  } z-10 mt-1 origin-top-right overflow-y-auto rounded-md bg-white text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none`}
+                  } z-10 mt-1 origin-top-right rounded-md bg-white text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none`}
                 >
                   <div className="flex w-full items-center justify-start rounded-sm border bg-gray-100 px-2 text-gray-500">
                     <MagnifyingGlassIcon className="h-3 w-3" />
@@ -203,7 +217,19 @@ export const CustomSearchSelect = ({
                       displayValue={(assigned: any) => assigned?.name}
                     />
                   </div>
-                  <div className="mt-2 space-y-1">
+                  <div
+                    className={`mt-2 space-y-1 ${
+                      height === "sm"
+                        ? "max-h-28"
+                        : height === "md"
+                        ? "max-h-44"
+                        : height === "rg"
+                        ? "max-h-56"
+                        : height === "lg"
+                        ? "max-h-80"
+                        : ""
+                    } overflow-y-scroll`}
+                  >
                     {filteredOptions ? (
                       filteredOptions.length > 0 ? (
                         filteredOptions.map((option) => (
