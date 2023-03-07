@@ -71,6 +71,8 @@ export const SidebarMembersSelect: React.FC<Props> = ({ value, onChange }) => {
           }
           options={options}
           onChange={onChange}
+          height="md"
+          position="right"
           multiple
         />
       </div>
