@@ -8,15 +8,20 @@ import { mutate } from "swr";
 import { Controller, useForm } from "react-hook-form";
 // icons
 import {
+  ArrowLongRightIcon,
   CalendarDaysIcon,
   ChartPieIcon,
+  ChevronDownIcon,
+  DocumentDuplicateIcon,
+  DocumentIcon,
   LinkIcon,
   PlusIcon,
   Squares2X2Icon,
   TrashIcon,
+  UserCircleIcon,
 } from "@heroicons/react/24/outline";
 
-import { Popover, Transition } from "@headlessui/react";
+import { Disclosure, Popover, Transition } from "@headlessui/react";
 import DatePicker from "react-datepicker";
 // services
 import modulesService from "services/modules.service";
@@ -29,10 +34,10 @@ import ProgressChart from "components/core/sidebar/progress-chart";
 
 // components
 // ui
-import { CustomSelect, Loader, ProgressBar } from "components/ui";
+import { CustomMenu, CustomSelect, Loader, ProgressBar } from "components/ui";
 // helpers
 import { renderDateFormat, renderShortNumericDateFormat, timeAgo } from "helpers/date-time.helper";
-import { copyTextToClipboard } from "helpers/string.helper";
+import { capitalizeFirstLetter, copyTextToClipboard } from "helpers/string.helper";
 import { groupBy } from "helpers/array.helper";
 // types
 import { IIssue, IModule, ModuleIssueResponse, ModuleLink, UserAuth } from "types";
@@ -152,6 +157,25 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
       });
   };
 
+  const handleCopyText = () => {
+    const originURL =
+      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+
+    copyTextToClipboard(`${workspaceSlug}/projects/${projectId}/modules/${module?.id}`)
+      .then(() => {
+        setToastAlert({
+          type: "success",
+          title: "Module link copied to clipboard",
+        });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Some error occurred",
+        });
+      });
+  };
+
   useEffect(() => {
     if (module)
       reset({
@@ -178,243 +202,323 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
       <div
         className={`fixed top-0 ${
           isOpen ? "right-0" : "-right-[24rem]"
-        } z-20 h-full w-[24rem] overflow-y-auto border-l bg-gray-50 p-5 duration-300`}
+        } z-20 h-full w-[24rem] overflow-y-auto border-l bg-gray-50 py-5 duration-300`}
       >
         {module ? (
           <>
-            <div className="my-2 flex gap-1 text-sm">
-              <div className="flex items-center ">
-                <Controller
-                  control={control}
-                  name="status"
-                  render={({ field: { value } }) => (
-                    <CustomSelect
-                      label={
-                        <span
-                          className={`flex h-full w-full items-center gap-1 p-1 text-left text-xs capitalize  text-gray-900`}
+            <div className="flex flex-col items-start justify-center">
+              <div className="flex gap-2.5 px-7 text-sm">
+                <div className="flex items-center ">
+                  <Controller
+                    control={control}
+                    name="status"
+                    render={({ field: { value } }) => (
+                      <CustomSelect
+                        customButton={
+                          <span
+                            className={`flex cursor-pointer items-center rounded border-[0.5px] border-gray-200 bg-gray-100 px-2.5 py-1.5 text-center text-sm capitalize text-gray-800 `}
+                          >
+                            {capitalizeFirstLetter(`${watch("status")}`)}
+                          </span>
+                        }
+                        value={value}
+                        onChange={(value: any) => {
+                          submitChanges({ status: value });
+                        }}
+                      >
+                        {MODULE_STATUS.map((option) => (
+                          <CustomSelect.Option key={option.value} value={option.value}>
+                            <span className="text-xs">{option.label}</span>
+                          </CustomSelect.Option>
+                        ))}
+                      </CustomSelect>
+                    )}
+                  />
+                </div>
+                <div className="relative flex h-full w-52 items-center justify-center gap-2 text-sm text-gray-800">
+                  <Popover className="flex h-full items-center  justify-center rounded-lg">
+                    {({ open }) => (
+                      <>
+                        <Popover.Button
+                          className={`group flex h-full items-center gap-1 rounded border-[0.5px]  border-gray-200 bg-gray-100 px-2.5 py-1.5 text-gray-800   ${
+                            open ? "bg-gray-100" : ""
+                          }`}
                         >
-                          <Squares2X2Icon className="h-4 w-4 flex-shrink-0" />
-                          {watch("status")}
-                        </span>
-                      }
-                      value={value}
-                      onChange={(value: any) => {
-                        submitChanges({ status: value });
-                      }}
-                    >
-                      {MODULE_STATUS.map((option) => (
-                        <CustomSelect.Option key={option.value} value={option.value}>
-                          <span className="text-xs">{option.label}</span>
-                        </CustomSelect.Option>
-                      ))}
-                    </CustomSelect>
-                  )}
-                />
-              </div>
-              <div className="flex h-full items-center justify-center gap-2 rounded-md border bg-transparent  p-2 px-4  text-xs font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-900 focus:outline-none">
-                <Popover className="relative flex items-center justify-center rounded-lg">
-                  {({ open }) => (
-                    <>
-                      <Popover.Button
-                        className={`group flex items-center  ${open ? "bg-gray-100" : ""}`}
-                      >
-                        <CalendarDaysIcon className="mr-2 h-4 w-4 flex-shrink-0" />
-                        <span>
-                          {renderShortNumericDateFormat(`${module?.start_date}`)
-                            ? renderShortNumericDateFormat(`${module?.start_date}`)
-                            : "N/A"}
-                        </span>
-                      </Popover.Button>
+                          <CalendarDaysIcon className="h-3 w-3" />
+                          <span>
+                            {renderShortNumericDateFormat(`${module.start_date}`)
+                              ? renderShortNumericDateFormat(`${module.start_date}`)
+                              : "N/A"}
+                          </span>
+                        </Popover.Button>
 
-                      <Transition
-                        as={React.Fragment}
-                        enter="transition ease-out duration-200"
-                        enterFrom="opacity-0 translate-y-1"
-                        enterTo="opacity-100 translate-y-0"
-                        leave="transition ease-in duration-150"
-                        leaveFrom="opacity-100 translate-y-0"
-                        leaveTo="opacity-0 translate-y-1"
-                      >
-                        <Popover.Panel className="absolute top-10 -left-10 z-20  transform overflow-hidden">
-                          <DatePicker
-                            selected={startDateRange}
-                            onChange={(date) => {
-                              submitChanges({
-                                start_date: renderDateFormat(date),
-                              });
-                              setStartDateRange(date);
-                            }}
-                            selectsStart
-                            startDate={startDateRange}
-                            endDate={endDateRange}
-                            inline
-                          />
-                        </Popover.Panel>
-                      </Transition>
-                    </>
-                  )}
-                </Popover>
-                <Popover className="relative flex items-center justify-center  rounded-lg">
-                  {({ open }) => (
-                    <>
-                      <Popover.Button
-                        className={`group flex items-center ${open ? "bg-gray-100" : ""}`}
-                      >
-                        <span>
-                          -{" "}
-                          {renderShortNumericDateFormat(`${module?.target_date}`)
-                            ? renderShortNumericDateFormat(`${module?.target_date}`)
-                            : "N/A"}
-                        </span>
-                      </Popover.Button>
+                        <Transition
+                          as={React.Fragment}
+                          enter="transition ease-out duration-200"
+                          enterFrom="opacity-0 translate-y-1"
+                          enterTo="opacity-100 translate-y-0"
+                          leave="transition ease-in duration-150"
+                          leaveFrom="opacity-100 translate-y-0"
+                          leaveTo="opacity-0 translate-y-1"
+                        >
+                          <Popover.Panel className="absolute top-10 -right-5 z-20  transform overflow-hidden">
+                            <DatePicker
+                              selected={startDateRange}
+                              onChange={(date) => {
+                                submitChanges({
+                                  start_date: renderDateFormat(date),
+                                });
+                                setStartDateRange(date);
+                              }}
+                              selectsStart
+                              startDate={startDateRange}
+                              endDate={endDateRange}
+                              maxDate={endDateRange}
+                              shouldCloseOnSelect
+                              inline
+                            />
+                          </Popover.Panel>
+                        </Transition>
+                      </>
+                    )}
+                  </Popover>
+                  <span>
+                    <ArrowLongRightIcon className="h-3 w-3" />
+                  </span>
+                  <Popover className="flex h-full items-center  justify-center rounded-lg">
+                    {({ open }) => (
+                      <>
+                        <Popover.Button
+                          className={`group flex items-center gap-1 rounded border-[0.5px] border-gray-200 bg-gray-100 px-2.5 py-1.5 text-gray-800  ${
+                            open ? "bg-gray-100" : ""
+                          }`}
+                        >
+                          <CalendarDaysIcon className="h-3 w-3 " />
 
-                      <Transition
-                        as={React.Fragment}
-                        enter="transition ease-out duration-200"
-                        enterFrom="opacity-0 translate-y-1"
-                        enterTo="opacity-100 translate-y-0"
-                        leave="transition ease-in duration-150"
-                        leaveFrom="opacity-100 translate-y-0"
-                        leaveTo="opacity-0 translate-y-1"
-                      >
-                        <Popover.Panel className="absolute top-10 -right-20 z-20  transform overflow-hidden">
-                          <DatePicker
-                            selected={endDateRange}
-                            onChange={(date) => {
-                              submitChanges({
-                                target_date: renderDateFormat(date),
-                              });
-                              setEndDateRange(date);
-                            }}
-                            selectsEnd
-                            startDate={startDateRange}
-                            endDate={endDateRange}
-                            minDate={startDateRange}
-                            inline
-                          />
-                        </Popover.Panel>
-                      </Transition>
-                    </>
-                  )}
-                </Popover>
+                          <span>
+                            {renderShortNumericDateFormat(`${module?.target_date}`)
+                              ? renderShortNumericDateFormat(`${module?.target_date}`)
+                              : "N/A"}
+                          </span>
+                        </Popover.Button>
+
+                        <Transition
+                          as={React.Fragment}
+                          enter="transition ease-out duration-200"
+                          enterFrom="opacity-0 translate-y-1"
+                          enterTo="opacity-100 translate-y-0"
+                          leave="transition ease-in duration-150"
+                          leaveFrom="opacity-100 translate-y-0"
+                          leaveTo="opacity-0 translate-y-1"
+                        >
+                          <Popover.Panel className="absolute top-10 -right-5 z-20  transform overflow-hidden">
+                            <DatePicker
+                              selected={endDateRange}
+                              onChange={(date) => {
+                                submitChanges({
+                                  target_date: renderDateFormat(date),
+                                });
+                                setEndDateRange(date);
+                              }}
+                              selectsEnd
+                              startDate={startDateRange}
+                              endDate={endDateRange}
+                              // minDate={startDateRange}
+
+                              inline
+                            />
+                          </Popover.Panel>
+                        </Transition>
+                      </>
+                    )}
+                  </Popover>
+                </div>
               </div>
-            </div>
-            <div className="flex items-center justify-between pb-3">
-              <h4 className="text-sm font-medium">{module.name}</h4>
-              <div className="flex flex-wrap items-center gap-2">
-                <button
-                  type="button"
-                  className="rounded-md border p-2 shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                  onClick={() =>
-                    copyTextToClipboard(
-                      `https://app.plane.so/${workspaceSlug}/projects/${projectId}/modules/${module.id}`
-                    )
-                      .then(() => {
-                        setToastAlert({
-                          type: "success",
-                          title: "Module link copied to clipboard",
-                        });
-                      })
-                      .catch(() => {
-                        setToastAlert({
-                          type: "error",
-                          title: "Some error occurred",
-                        });
-                      })
-                  }
-                >
-                  <LinkIcon className="h-3.5 w-3.5" />
-                </button>
-                <button
-                  type="button"
-                  className="rounded-md border border-red-500 p-2 text-red-500 shadow-sm duration-300 hover:bg-red-50 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                  onClick={() => setModuleDeleteModal(true)}
-                >
-                  <TrashIcon className="h-3.5 w-3.5" />
-                </button>
-              </div>
-            </div>
-            <div className="divide-y-2 divide-gray-100 text-xs">
-              <div className="py-1">
-                <Controller
-                  control={control}
-                  name="lead"
-                  render={({ field: { value } }) => (
-                    <SidebarLeadSelect
-                      value={value}
-                      onChange={(val: string) => {
-                        submitChanges({ lead: val });
-                      }}
-                    />
-                  )}
-                />
-                <Controller
-                  control={control}
-                  name="members_list"
-                  render={({ field: { value } }) => (
-                    <SidebarMembersSelect
-                      value={value}
-                      onChange={(val: string[]) => {
-                        submitChanges({ members_list: val });
-                      }}
-                    />
-                  )}
-                />
-                <div className="flex flex-wrap items-center py-2">
-                  <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
-                    <ChartPieIcon className="h-4 w-4 flex-shrink-0" />
-                    <p>Progress</p>
+
+              <div className="flex flex-col gap-6 px-7 py-6">
+                <div className="flex flex-col items-start justify-start gap-2 ">
+                  <div className="flex items-center justify-start gap-2  ">
+                    <h4 className="text-xl font-semibold text-gray-900">{module.name}</h4>
+                    <CustomMenu width="lg" ellipsis>
+                      <CustomMenu.MenuItem onClick={handleCopyText}>
+                        <span className="flex items-center justify-start gap-2 text-gray-800">
+                          <DocumentDuplicateIcon className="h-4 w-4" />
+                          <span>Copy Link</span>
+                        </span>
+                      </CustomMenu.MenuItem>
+                      <CustomMenu.MenuItem onClick={() => setModuleDeleteModal(true)}>
+                        <span className="flex items-center justify-start gap-2 text-gray-800">
+                          <TrashIcon className="h-4 w-4" />
+                          <span>Delete</span>
+                        </span>
+                      </CustomMenu.MenuItem>
+                    </CustomMenu>
                   </div>
-                  <div className="flex items-center gap-2 sm:basis-1/2">
-                    <div className="grid flex-shrink-0 place-items-center">
+
+                  <span className="whitespace-normal text-sm leading-5 text-black">
+                    {module.description}
+                  </span>
+                </div>
+
+                <div className="flex flex-col  gap-4  text-sm">
+                  <Controller
+                    control={control}
+                    name="lead"
+                    render={({ field: { value } }) => (
+                      <SidebarLeadSelect
+                        value={value}
+                        onChange={(val: string) => {
+                          submitChanges({ lead: value });
+                        }}
+                      />
+                    )}
+                  />
+                  <Controller
+                    control={control}
+                    name="members_list"
+                    render={({ field: { value } }) => (
+                      <SidebarMembersSelect
+                        value={value}
+                        onChange={(val: string[]) => {
+                          submitChanges({ members_list: val });
+                        }}
+                      />
+                    )}
+                  />
+
+                  <div className="flex items-center justify-start gap-1">
+                    <div className="flex w-40 items-center justify-start gap-2">
+                      <ChartPieIcon className="h-5 w-5 text-gray-400" />
+                      <span>Progress</span>
+                    </div>
+
+                    <div className="flex items-center gap-2.5 text-gray-800">
                       <span className="h-4 w-4">
                         <ProgressBar
                           value={groupedIssues.completed.length}
                           maxValue={moduleIssues?.length}
                         />
                       </span>
+                      {groupedIssues.completed.length}/{moduleIssues?.length}
                     </div>
-                    {groupedIssues.completed.length}/{moduleIssues?.length}
                   </div>
                 </div>
               </div>
             </div>
-            <div className="flex w-full flex-col items-center justify-center gap-2">
-              {isStartValid && isEndValid ? (
-                <ProgressChart
-                  issues={issues}
-                  start={module?.start_date ?? ""}
-                  end={module?.target_date ?? ""}
-                />
-              ) : (
-                ""
-              )}
-              {issues.length > 0 ? (
-                <SidebarProgressStats issues={issues} groupedIssues={groupedIssues} />
-              ) : (
-                ""
-              )}
+
+            <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-gray-300 px-7 py-6 ">
+              <Disclosure>
+                {({ open }) => (
+                  <div
+                    className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}
+                  >
+                    <div className="flex w-full items-center justify-between gap-2    ">
+                      <div className="flex items-center justify-start gap-2 text-sm">
+                        <span className="font-medium text-gray-500">Progress</span>
+                        {!open && moduleIssues ? (
+                          <span className="rounded bg-[#09A953]/10 px-1.5 py-0.5 text-xs text-[#09A953]">
+                            {Math.round(
+                              (groupedIssues.completed.length / moduleIssues?.length) * 100
+                            )}
+                            %
+                          </span>
+                        ) : (
+                          ""
+                        )}
+                      </div>
+
+                      <Disclosure.Button>
+                        <ChevronDownIcon
+                          className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`}
+                          aria-hidden="true"
+                        />
+                      </Disclosure.Button>
+                    </div>
+                    <Transition show={open}>
+                      <Disclosure.Panel>
+                        {isStartValid && isEndValid && moduleIssues ? (
+                          <div className=" h-full w-full py-4">
+                            <div className="flex  items-start justify-between gap-4 py-2 text-xs">
+                              <div className="flex items-center gap-1">
+                                <span>
+                                  <DocumentIcon className="h-3 w-3 text-gray-500" />
+                                </span>
+                                <span>
+                                  Pending Issues -{" "}
+                                  {moduleIssues?.length - groupedIssues.completed.length}{" "}
+                                </span>
+                              </div>
+
+                              <div className="flex items-center gap-3 text-gray-900">
+                                <div className="flex items-center justify-center gap-1">
+                                  <span className="h-2.5 w-2.5 rounded-full bg-[#A9BBD0]" />
+                                  <span>Ideal</span>
+                                </div>
+                                <div className="flex items-center justify-center gap-1">
+                                  <span className="h-2.5 w-2.5 rounded-full bg-[#4C8FFF]" />
+                                  <span>Current</span>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="relative h-40 w-96">
+                              <ProgressChart
+                                issues={issues}
+                                start={module?.start_date ?? ""}
+                                end={module?.target_date ?? ""}
+                              />
+                            </div>
+                          </div>
+                        ) : (
+                          ""
+                        )}
+                      </Disclosure.Panel>
+                    </Transition>
+                  </div>
+                )}
+              </Disclosure>
             </div>
-            <div className="py-1 text-xs">
-              <div className="flex items-center justify-between gap-2">
-                <h4>Links</h4>
-                <button
-                  type="button"
-                  className="grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-100"
-                  onClick={() => setModuleLinkModal(true)}
-                >
-                  <PlusIcon className="h-4 w-4" />
-                </button>
-              </div>
-              <div className="mt-2 space-y-2">
-                {module.link_module && module.link_module.length > 0 ? (
-                  <LinksList
-                    links={module.link_module}
-                    handleDeleteLink={handleDeleteLink}
-                    userAuth={userAuth}
-                  />
-                ) : null}
-              </div>
+
+            <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-gray-300 px-7 py-6 ">
+              <Disclosure>
+                {({ open }) => (
+                  <div
+                    className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}
+                  >
+                    <div className="flex w-full items-center justify-between gap-2    ">
+                      <div className="flex items-center justify-start gap-2 text-sm">
+                        <span className="font-medium text-gray-500">Other Information</span>
+                      </div>
+
+                      <Disclosure.Button>
+                        <ChevronDownIcon
+                          className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`}
+                          aria-hidden="true"
+                        />
+                      </Disclosure.Button>
+                    </div>
+                    <Transition show={open}>
+                      <Disclosure.Panel>
+                        {issues.length > 0 ? (
+                          <>
+                            <div className=" h-full w-full py-4">
+                              <SidebarProgressStats
+                                issues={issues}
+                                groupedIssues={groupedIssues}
+                                setModuleLinkModal={setModuleLinkModal}
+                                handleDeleteLink={handleDeleteLink}
+                                userAuth={userAuth}
+                                module={module}
+                              />
+                            </div>
+                          </>
+                        ) : (
+                          ""
+                        )}
+                      </Disclosure.Panel>
+                    </Transition>
+                  </div>
+                )}
+              </Disclosure>
             </div>
           </>
         ) : (
