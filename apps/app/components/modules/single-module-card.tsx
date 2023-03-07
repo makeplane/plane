@@ -175,9 +175,7 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
           <div className="flex h-full w-full flex-col items-start justify-between gap-6 p-5">
             <div className="flex w-full flex-col gap-5">
               <Tooltip tooltipContent={module.name} position="top-left">
-                <span
-                  className="break-all text-xl font-semibold text-black"
-                >
+                <span className="break-all text-xl font-semibold text-black">
                   <Link href={`/${workspaceSlug}/projects/${module.project}/modules/${module.id}`}>
                     <a className="w-full">{truncateText(module.name, 75)}</a>
                   </Link>
@@ -186,19 +184,19 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
               <div className="flex items-center gap-4">
                 <div className="flex items-start gap-1 ">
                   <CalendarDaysIcon className="h-4 w-4 text-gray-900" />
-                  <span className="text-gray-400">Start :</span>
+                  <span className="text-gray-400">Start:</span>
                   <span>{renderShortDateWithYearFormat(startDate)}</span>
                 </div>
-                <div className="flex items-start gap-1 ">
+                <div className="flex items-start gap-1">
                   <CalendarDaysIcon className="h-4 w-4 text-gray-900" />
-                  <span className="text-gray-400">End :</span>
+                  <span className="text-gray-400">End:</span>
                   <span>{renderShortDateWithYearFormat(endDate)}</span>
                 </div>
               </div>
               <div className="flex items-center gap-6">
                 <div className="flex items-center gap-1.5">
                   <UserCircleIcon className="h-5 w-5 text-gray-400" />
-                  <span>Lead : </span>
+                  <span>Lead:</span>
                   <div>
                     {module.lead_detail ? (
                       <div className="flex items-center gap-1">
@@ -221,7 +219,7 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
                 </div>
                 <div className="flex items-center gap-1.5">
                   <UserGroupIcon className="h-5 w-5 text-gray-400" />
-                  <span>Members</span>
+                  <span>Members:</span>
                   <div className="flex  items-center gap-1 text-xs">
                     {module.members_detail && module.members_detail.length > 0 ? (
                       <AssigneesList users={module.members_detail} length={3} />
