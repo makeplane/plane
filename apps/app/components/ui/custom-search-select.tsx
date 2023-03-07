@@ -29,7 +29,7 @@ type CustomSearchSelectProps = {
 export const CustomSearchSelect = ({
   label,
   textAlignment,
-  height = "sm",
+  height = "md",
   value,
   onChange,
   options,

@@ -76,15 +76,12 @@ export const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, da
       .then((res) => {
         mutate<IModule[]>(
           MODULE_LIST(projectId as string),
-          (prevData) => {
-            const newData = prevData?.map((item) => {
-              if (item.id === res.id) {
-                return res;
-              }
-              return item;
-            });
-            return newData;
-          },
+          (prevData) =>
+            prevData?.map((p) => {
+              if (p.id === res.id) return { ...p, ...payload };
+
+              return p;
+            }),
           false
         );
         handleClose();
