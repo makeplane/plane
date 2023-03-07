@@ -10,7 +10,7 @@ import projectService from "services/project.service";
 // ui
 import { Avatar, CustomSearchSelect } from "components/ui";
 // icons
-import { UserIcon } from "@heroicons/react/24/outline";
+import { UserCircleIcon, UserIcon } from "@heroicons/react/24/outline";
 import User from "public/user.png";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
@@ -53,10 +53,11 @@ export const SidebarLeadSelect: React.FC<Props> = ({ value, onChange }) => {
   const selectedOption = members?.find((m) => m.member.id === value)?.member;
 
   return (
-    <div className="flex flex-wrap items-center py-2">
-      <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
-        <UserIcon className="h-4 w-4 flex-shrink-0" />
-        <p>Lead</p>
+    <div className="flex items-center justify-start gap-1">
+
+      <div className="flex w-40 items-center justify-start gap-2">
+        <UserCircleIcon className="h-5 w-5 text-gray-400" />
+        <span>Lead</span>
       </div>
       <div className="sm:basis-1/2">
         <CustomSearchSelect

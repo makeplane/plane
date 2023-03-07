@@ -49,10 +49,10 @@ export const SidebarMembersSelect: React.FC<Props> = ({ value, onChange }) => {
     })) ?? [];
 
   return (
-    <div className="flex flex-wrap items-center py-2">
-      <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
-        <UserGroupIcon className="h-4 w-4 flex-shrink-0" />
-        <p>Members</p>
+    <div className="flex items-center justify-start gap-1">
+      <div className="flex w-40 items-center justify-start gap-2">
+        <UserGroupIcon className="h-5 w-5 text-gray-400" />
+        <span>Members</span>
       </div>
       <div className="sm:basis-1/2">
         <CustomSearchSelect

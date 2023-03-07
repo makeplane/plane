@@ -13,7 +13,7 @@ export const SingleProgressStats: React.FC<TSingleProgressStatsProps> = ({
   completed,
   total,
 }) => (
-  <div className="flex w-full items-center justify-between border-b-[1px] py-3 text-xs">
+  <div className="flex w-full items-center justify-between py-3 text-xs">
     <div className="flex w-1/2 items-center justify-start gap-2">{title}</div>
     <div className="flex w-1/2 items-center justify-end gap-1 px-2">
       <div className="flex h-5 items-center justify-center gap-1 ">

@@ -115,7 +115,7 @@ const ProjectCycles: NextPage = () => {
           <h3 className="text-3xl font-semibold text-black">Current Cycle</h3>
           <div className="space-y-5">
             <CyclesList
-              cycles={currentAndUpcomingCycles?.current_cycle ?? []}
+              cycles={currentAndUpcomingCycles?.current_cycle}
               setCreateUpdateCycleModal={setCreateUpdateCycleModal}
               setSelectedCycle={setSelectedCycle}
               type="current"
@@ -132,7 +132,7 @@ const ProjectCycles: NextPage = () => {
               >
                 <Tab
                   className={({ selected }) =>
-                    `rounded-3xl border px-5 py-1.5 text-sm sm:px-7 sm:py-2 sm:text-base ${
+                    `rounded-3xl border px-5 py-1.5 text-sm outline-none sm:px-7 sm:py-2 sm:text-base ${
                       selected
                         ? "border-theme bg-theme text-white"
                         : "border-gray-300 bg-white hover:bg-hover-gray"
@@ -143,7 +143,7 @@ const ProjectCycles: NextPage = () => {
                 </Tab>
                 <Tab
                   className={({ selected }) =>
-                    `rounded-3xl border px-5 py-1.5 text-sm sm:px-7 sm:py-2 sm:text-base ${
+                    `rounded-3xl border px-5 py-1.5 text-sm outline-none sm:px-7 sm:py-2 sm:text-base ${
                       selected
                         ? "border-theme bg-theme text-white"
                         : "border-gray-300 bg-white hover:bg-hover-gray"
@@ -154,7 +154,7 @@ const ProjectCycles: NextPage = () => {
                 </Tab>
                 <Tab
                   className={({ selected }) =>
-                    `rounded-3xl border px-5 py-1.5 text-sm sm:px-7 sm:py-2 sm:text-base ${
+                    `rounded-3xl border px-5 py-1.5 text-sm outline-none sm:px-7 sm:py-2 sm:text-base ${
                       selected
                         ? "border-theme bg-theme text-white"
                         : "border-gray-300 bg-white hover:bg-hover-gray"
@@ -167,7 +167,7 @@ const ProjectCycles: NextPage = () => {
               <Tab.Panels>
                 <Tab.Panel as="div" className="mt-8 space-y-5">
                   <CyclesList
-                    cycles={currentAndUpcomingCycles?.upcoming_cycle ?? []}
+                    cycles={currentAndUpcomingCycles?.upcoming_cycle}
                     setCreateUpdateCycleModal={setCreateUpdateCycleModal}
                     setSelectedCycle={setSelectedCycle}
                     type="upcoming"
@@ -181,10 +181,10 @@ const ProjectCycles: NextPage = () => {
                 </Tab.Panel>
                 <Tab.Panel as="div" className="mt-8 space-y-5">
                   <CyclesList
-                    cycles={draftCycles?.draft_cycles ?? []}
+                    cycles={draftCycles?.draft_cycles}
                     setCreateUpdateCycleModal={setCreateUpdateCycleModal}
                     setSelectedCycle={setSelectedCycle}
-                    type="upcoming"
+                    type="draft"
                   />
                 </Tab.Panel>
               </Tab.Panels>
