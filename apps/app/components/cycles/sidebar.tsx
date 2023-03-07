@@ -131,6 +131,9 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
   const isStartValid = new Date(`${cycle?.start_date}`) <= new Date();
   const isEndValid = new Date(`${cycle?.end_date}`) >= new Date(`${cycle?.start_date}`);
 
+  const progressPercentage = cycleIssues
+    ? Math.round((groupedIssues.completed.length / cycleIssues?.length) * 100)
+    : null;
   return (
     <>
       <DeleteCycleModal isOpen={cycleDeleteModal} setIsOpen={setCycleDeleteModal} data={cycle} />
@@ -329,12 +332,9 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                     <div className="flex w-full items-center justify-between gap-2    ">
                       <div className="flex items-center justify-start gap-2 text-sm">
                         <span className="font-medium text-gray-500">Progress</span>
-                        {!open ? (
+                        {!open && cycleIssues && progressPercentage ? (
                           <span className="rounded bg-[#09A953]/10 px-1.5 py-0.5 text-xs text-[#09A953]">
-                            {Math.round(
-                              (groupedIssues.completed.length / cycleIssues?.length) * 100
-                            )}
-                            %
+                            {progressPercentage ? `${progressPercentage}%` : ""}
                           </span>
                         ) : (
                           ""

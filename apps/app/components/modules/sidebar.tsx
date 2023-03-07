@@ -187,6 +187,10 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
   const isStartValid = new Date(`${module?.start_date}`) <= new Date();
   const isEndValid = new Date(`${module?.target_date}`) >= new Date(`${module?.start_date}`);
 
+  const progressPercentage = moduleIssues
+  ? Math.round((groupedIssues.completed.length / moduleIssues?.length) * 100)
+  : null;
+
   return (
     <>
       <LinkModal
@@ -415,12 +419,9 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                     <div className="flex w-full items-center justify-between gap-2    ">
                       <div className="flex items-center justify-start gap-2 text-sm">
                         <span className="font-medium text-gray-500">Progress</span>
-                        {!open && moduleIssues ? (
+                        {!open && moduleIssues && progressPercentage ? (
                           <span className="rounded bg-[#09A953]/10 px-1.5 py-0.5 text-xs text-[#09A953]">
-                            {Math.round(
-                              (groupedIssues.completed.length / moduleIssues?.length) * 100
-                            )}
-                            %
+                            {progressPercentage ? `${progressPercentage}%` : ""}
                           </span>
                         ) : (
                           ""

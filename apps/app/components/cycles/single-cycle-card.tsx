@@ -11,7 +11,7 @@ import cyclesService from "services/cycles.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomMenu, LinearProgressIndicator } from "components/ui";
+import { CustomMenu, LinearProgressIndicator, Tooltip } from "components/ui";
 import { Disclosure, Transition } from "@headlessui/react";
 // icons
 import { CalendarDaysIcon } from "@heroicons/react/20/solid";
@@ -235,7 +235,11 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
           <div className="flex items-center justify-between gap-1">
             <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}>
               <a className="w-full">
-                <h3 className="text-xl font-semibold leading-5 ">{truncateText(cycle.name,75)}</h3>
+                <Tooltip tooltipContent={cycle.name} position="top-left">
+                  <h3 className="text-xl font-semibold leading-5 ">
+                    {truncateText(cycle.name, 75)}
+                  </h3>
+                </Tooltip>
               </a>
             </Link>
             {cycle.is_favorite ? (
@@ -275,8 +279,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
                   alt={cycle.owned_by.first_name}
                 />
               ) : (
-                <span
-                  className="flex h-5 w-5 items-center justify-center rounded-full bg-gray-800 capitalize  text-white">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-gray-800 capitalize  text-white">
                   {cycle.owned_by.first_name.charAt(0)}
                 </span>
               )}
