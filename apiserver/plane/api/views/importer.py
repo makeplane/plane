@@ -4,21 +4,12 @@ from rest_framework.response import Response
 from sentry_sdk import capture_exception
 
 # Module imports
-from plane.api.views import BaseViewSet, BaseAPIView
+from plane.api.views import BaseAPIView
 from plane.db.models import (
-    GithubIssueSync,
-    GithubRepositorySync,
-    GithubRepository,
     WorkspaceIntegration,
-    ProjectMember,
-    Label,
-    GithubCommentSync,
+    Importer,
 )
-from plane.api.serializers import (
-    GithubIssueSyncSerializer,
-    GithubRepositorySyncSerializer,
-    GithubCommentSyncSerializer,
-)
+from plane.api.serializers import ImporterSerializer
 from plane.utils.integrations.github import get_github_repo_details
 
 
@@ -64,16 +55,32 @@ class ServiceIssueImportSummaryEndpoint(BaseAPIView):
 
 
 class ImportServiceEndpoint(BaseAPIView):
-    def post(self, request, slug):
+    def post(self, request, slug, project_id, service):
         try:
-            # save the owner and repo info
+            # save the owner and repo info - data
             # users: [] if no import else [{ below values }]
             # { "username": "pablohashescobar", "import": "map-existing", "email": "nikhilschacko@gmail.com" }
             # { "username": "aaryan610", "import": False, "" }
             # { "username": "john", "import": "invite", "email": "john@gmail.com"}
-            
-            
-            pass
+            # save repository info in metadata
+
+            if service == "github":
+                importer = Importer.objects.create(
+                    service=service,
+                    project_id=project_id,
+                    status="queued",
+                    initiated_by=request.user,
+                    data=request.get("data", {}),
+                    metadata=request.data.get("metadata", {}),
+                )
+
+                serializer = ImporterSerializer(importer)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+
+            return Response(
+                {"error": "Servivce not supported yet"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         except Exception as e:
             capture_exception(e)
             return Response(

@@ -58,3 +58,5 @@ from .integration import (
     GithubRepositorySyncSerializer,
     GithubCommentSyncSerializer,
 )
+
+from .importer import ImporterSerializer

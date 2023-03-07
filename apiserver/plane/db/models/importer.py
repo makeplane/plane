@@ -22,6 +22,11 @@ class Importer(ProjectBaseModel):
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="imports"
     )
     metadata = models.JSONField(default=dict)
+    config = models.JSONField(default=dict)
+    data = models.JSONField(default=dict)
+    token = models.ForeignKey(
+        "db.APIToken", on_delete=models.CASCADE, related_name="importer"
+    )
 
     class Meta:
         verbose_name = "Importer"

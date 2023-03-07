@@ -105,6 +105,7 @@ from plane.api.views import (
     ## End Integrations
     # Importer
     ServiceIssueImportSummaryEndpoint,
+    ImportServiceEndpoint,
     ## End importer
 )
 
@@ -945,6 +946,11 @@ urlpatterns = [
     path(
         "workspaces/<str:slug>/importers/<str:service>/",
         ServiceIssueImportSummaryEndpoint.as_view(),
+        name="importer",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/importers/<str:service>/",
+        ImportServiceEndpoint.as_view(),
         name="importer",
     ),
     ##  End Importer

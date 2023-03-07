@@ -98,4 +98,4 @@ from .integration import (
     GithubRepositoriesEndpoint,
 )
 
-from .importer import ServiceIssueImportSummaryEndpoint
+from .importer import ServiceIssueImportSummaryEndpoint, ImportServiceEndpoint
