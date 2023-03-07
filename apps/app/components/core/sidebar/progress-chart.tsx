@@ -1,9 +1,10 @@
 import React from "react";
 
-import { XAxis, YAxis, Tooltip, AreaChart, Area, ReferenceLine} from "recharts";
+import { XAxis, YAxis, Tooltip, AreaChart, Area, ReferenceLine, TooltipProps} from "recharts";
 
 //types
 import { IIssue } from "types";
+import { NameType, ValueType } from "recharts/types/component/DefaultTooltipContent";
 // helper
 import { getDatesInRange, renderShortNumericDateFormat } from "helpers/date-time.helper";
 
@@ -34,6 +35,18 @@ const ProgressChart: React.FC<Props> = ({ issues, start, end }) => {
       };
     });
     return dateWiseData;
+  };
+
+  const CustomTooltip = ({ active, payload }: TooltipProps<ValueType, NameType>) => {
+    if (active && payload && payload.length) {
+      console.log(payload[0].payload.currentDate);
+      return (
+        <div className="rounded-sm bg-gray-300 p-1 text-xs text-gray-800">
+          <p>{payload[0].payload.currentDate}</p>
+        </div>
+      );
+    }
+    return null;
   };
   const ChartData = getChartData();
   return (
@@ -69,7 +82,7 @@ const ProgressChart: React.FC<Props> = ({ issues, start, end }) => {
           tickSize={10}
           minTickGap={10}
         />
-        <Tooltip />
+        <Tooltip content={<CustomTooltip />} />
         <Area
           type="monotone"
           dataKey="pending"
