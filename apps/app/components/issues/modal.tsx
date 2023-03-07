@@ -231,7 +231,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
         </Transition.Child>
 
         <div className="fixed inset-0 z-10 overflow-y-auto">
-          <div className="mt-10 flex items-start justify-center p-4 text-center sm:p-0 md:mt-20">
+          <div className="mt-10 flex min-h-full items-start justify-center p-4 text-center sm:p-0 md:mt-20">
             <Transition.Child
               as={React.Fragment}
               enter="ease-out duration-300"
