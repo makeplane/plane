@@ -221,8 +221,8 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
                   <UserGroupIcon className="h-5 w-5 text-gray-400" />
                   <span>Members:</span>
                   <div className="flex  items-center gap-1 text-xs">
-                    {module.members_detail && module.members_detail.length > 0 ? (
-                      <AssigneesList users={module.members_detail} length={3} />
+                    {module.members && module.members.length > 0 ? (
+                      <AssigneesList userIds={module.members} length={3} />
                     ) : (
                       <div className="flex items-center gap-1">
                         <Image

@@ -106,6 +106,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, da
 
     const payload: Partial<IModule> = {
       ...formData,
+      members_list: formData.members,
     };
 
     if (!data) await createModule(payload);
