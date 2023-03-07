@@ -363,6 +363,7 @@ class ProjectMemberViewSet(BaseViewSet):
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
+            .filter(member__is_bot=False)
             .select_related("project")
             .select_related("member")
             .select_related("workspace", "workspace__owner")
