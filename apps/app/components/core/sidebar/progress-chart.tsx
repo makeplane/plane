@@ -50,7 +50,7 @@ const ProgressChart: React.FC<Props> = ({ issues, start, end }) => {
   };
   const ChartData = getChartData();
   return (
-    <div className="absolute -left-12  flex h-full w-full  items-center justify-center   text-xs">
+    <div className="absolute -left-4  flex h-full w-full  items-center justify-center text-xs">
       <AreaChart
         width={360}
         height={160}

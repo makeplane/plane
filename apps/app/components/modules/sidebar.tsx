@@ -14,11 +14,7 @@ import {
   ChevronDownIcon,
   DocumentDuplicateIcon,
   DocumentIcon,
-  LinkIcon,
-  PlusIcon,
-  Squares2X2Icon,
   TrashIcon,
-  UserCircleIcon,
 } from "@heroicons/react/24/outline";
 
 import { Disclosure, Popover, Transition } from "@headlessui/react";
@@ -28,7 +24,7 @@ import modulesService from "services/modules.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components
-import { LinkModal, LinksList, SidebarProgressStats } from "components/core";
+import { LinkModal, SidebarProgressStats } from "components/core";
 import { DeleteModuleModal, SidebarLeadSelect, SidebarMembersSelect } from "components/modules";
 import ProgressChart from "components/core/sidebar/progress-chart";
 
@@ -36,7 +32,7 @@ import ProgressChart from "components/core/sidebar/progress-chart";
 // ui
 import { CustomMenu, CustomSelect, Loader, ProgressBar } from "components/ui";
 // helpers
-import { renderDateFormat, renderShortNumericDateFormat, timeAgo } from "helpers/date-time.helper";
+import { renderDateFormat, renderShortDate, timeAgo } from "helpers/date-time.helper";
 import { capitalizeFirstLetter, copyTextToClipboard } from "helpers/string.helper";
 import { groupBy } from "helpers/array.helper";
 // types
@@ -73,8 +69,6 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
   const [moduleLinkModal, setModuleLinkModal] = useState(false);
   const [startDateRange, setStartDateRange] = useState<Date | null>(new Date());
   const [endDateRange, setEndDateRange] = useState<Date | null>(null);
-
-  console.log("module details: ", module);
 
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query;
@@ -188,8 +182,8 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
   const isEndValid = new Date(`${module?.target_date}`) >= new Date(`${module?.start_date}`);
 
   const progressPercentage = moduleIssues
-  ? Math.round((groupedIssues.completed.length / moduleIssues?.length) * 100)
-  : null;
+    ? Math.round((groupedIssues.completed.length / moduleIssues?.length) * 100)
+    : null;
 
   return (
     <>
@@ -249,11 +243,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                           }`}
                         >
                           <CalendarDaysIcon className="h-3 w-3" />
-                          <span>
-                            {renderShortNumericDateFormat(`${module.start_date}`)
-                              ? renderShortNumericDateFormat(`${module.start_date}`)
-                              : "N/A"}
-                          </span>
+                          <span>{renderShortDate(new Date(`${module.start_date}`))}</span>
                         </Popover.Button>
 
                         <Transition
@@ -299,11 +289,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                         >
                           <CalendarDaysIcon className="h-3 w-3 " />
 
-                          <span>
-                            {renderShortNumericDateFormat(`${module?.target_date}`)
-                              ? renderShortNumericDateFormat(`${module?.target_date}`)
-                              : "N/A"}
-                          </span>
+                          <span>{renderShortDate(new Date(`${module?.target_date}`))}</span>
                         </Popover.Button>
 
                         <Transition
@@ -461,7 +447,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                                 </div>
                               </div>
                             </div>
-                            <div className="relative h-40 w-96">
+                            <div className="relative h-40 w-80">
                               <ProgressChart
                                 issues={issues}
                                 start={module?.start_date ?? ""}

@@ -125,3 +125,23 @@ export const renderShortDateWithYearFormat = (date: Date) => {
   const year = date.getFullYear();
   return isNaN(date.getTime()) ? "N/A" : ` ${month} ${day}, ${year}`;
 };
+
+export const renderShortDate = (date: Date) => {
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  const day = date.getDate();
+  const month = months[date.getMonth()];
+  return isNaN(date.getTime()) ? "N/A" : `${day} ${month}`;
+};
