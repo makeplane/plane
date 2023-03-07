@@ -184,9 +184,12 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
       });
   }, [module, reset]);
 
+  const isStartValid = new Date(`${module?.start_date}`) <= new Date();
+  const isEndValid = new Date(`${module?.target_date}`) >= new Date(`${module?.start_date}`);
+
   const progressPercentage = moduleIssues
-    ? Math.round((groupedIssues.completed.length / moduleIssues?.length) * 100)
-    : null;
+  ? Math.round((groupedIssues.completed.length / moduleIssues?.length) * 100)
+  : null;
 
   return (
     <>
