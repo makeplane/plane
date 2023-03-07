@@ -33,7 +33,7 @@ import { DeleteCycleModal } from "components/cycles";
 // helpers
 import { capitalizeFirstLetter, copyTextToClipboard } from "helpers/string.helper";
 import { groupBy } from "helpers/array.helper";
-import { renderDateFormat, renderShortNumericDateFormat } from "helpers/date-time.helper";
+import { renderDateFormat, renderShortDate } from "helpers/date-time.helper";
 // types
 import { CycleIssueResponse, ICycle, IIssue } from "types";
 // fetch-keys
@@ -55,12 +55,11 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
   cycleStatus,
 }) => {
   const [cycleDeleteModal, setCycleDeleteModal] = useState(false);
+  const [startDateRange, setStartDateRange] = useState<Date | null>(new Date());
+  const [endDateRange, setEndDateRange] = useState<Date | null>(null);
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
-
-  const [startDateRange, setStartDateRange] = useState<Date | null>(new Date());
-  const [endDateRange, setEndDateRange] = useState<Date | null>(null);
 
   const { setToastAlert } = useToast();
 
@@ -163,11 +162,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                           }`}
                         >
                           <CalendarDaysIcon className="h-3 w-3" />
-                          <span>
-                            {renderShortNumericDateFormat(`${cycle.start_date}`)
-                              ? renderShortNumericDateFormat(`${cycle.start_date}`)
-                              : "N/A"}
-                          </span>
+                          <span>{renderShortDate(new Date(`${cycle?.start_date}`))}</span>
                         </Popover.Button>
 
                         <Transition
@@ -213,11 +208,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                         >
                           <CalendarDaysIcon className="h-3 w-3 " />
 
-                          <span>
-                            {renderShortNumericDateFormat(`${cycle.end_date}`)
-                              ? renderShortNumericDateFormat(`${cycle.end_date}`)
-                              : "N/A"}
-                          </span>
+                          <span>{renderShortDate(new Date(`${cycle?.end_date}`))}</span>
                         </Popover.Button>
 
                         <Transition
@@ -374,7 +365,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                                 </div>
                               </div>
                             </div>
-                            <div className="relative h-40 w-96">
+                            <div className="relative h-40 w-80">
                               <ProgressChart
                                 issues={issues}
                                 start={cycle?.start_date ?? ""}
