@@ -10,7 +10,7 @@ import useToast from "hooks/use-toast";
 // components
 import { DeleteModuleModal } from "components/modules";
 // ui
-import { AssigneesList, Avatar, CustomMenu } from "components/ui";
+import { AssigneesList, Avatar, CustomMenu, Tooltip } from "components/ui";
 // icons
 import User from "public/user.png";
 import {
@@ -32,7 +32,7 @@ import { IModule } from "types";
 // fetch-key
 import { MODULE_LIST, STATE_LIST } from "constants/fetch-keys";
 // helper
-import { copyTextToClipboard } from "helpers/string.helper";
+import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 import { getStatesList } from "helpers/state.helper";
 
 type Props = {
@@ -162,7 +162,7 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
         setIsOpen={setModuleDeleteModal}
         data={module}
       />
-      <div className="h-full w-full min-w-[380px]">
+      <div className="h-full w-full min-w-[360px]">
         <div className="flex h-full w-full flex-row rounded-[10px] bg-white text-xs shadow">
           <span
             className={`h-full w-2.5 rounded-l-[10px] `}
@@ -173,12 +173,16 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
             }}
           />
           <div className="flex h-full w-full flex-col items-start justify-between gap-6 p-5">
-            <div className="flex flex-col w-full gap-5">
-              <Link href={`/${workspaceSlug}/projects/${module.project}/modules/${module.id}`}>
-                <a className="w-full">
-                  <span className="text-xl font-semibold text-black">{module.name}</span>
-                </a>
-              </Link>
+            <div className="flex w-full flex-col gap-5">
+              <Tooltip tooltipContent={module.name} position="top-left">
+                <span
+                  className="break-all text-xl font-semibold text-black"
+                >
+                  <Link href={`/${workspaceSlug}/projects/${module.project}/modules/${module.id}`}>
+                    <a className="w-full">{truncateText(module.name, 75)}</a>
+                  </Link>
+                </span>
+              </Tooltip>
               <div className="flex items-center gap-4">
                 <div className="flex items-start gap-1 ">
                   <CalendarDaysIcon className="h-4 w-4 text-gray-900" />
@@ -242,30 +246,25 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
                 <span className="capitalize">{module?.status?.replace("-", " ")}</span>
               </div>
               <div className="flex items-center gap-1">
-                <span>
-                  {module.is_favorite ? (
-                    <button onClick={handleRemoveFromFavorites}>
-                      <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
-                    </button>
-                  ) : (
-                    <button onClick={handleAddToFavorites}>
-                      <StarIcon className="h-4 w-4 " color="#858E96" />
-                    </button>
-                  )}
-                </span>
-                <span>
-                  <CustomMenu width="auto" verticalEllipsis>
-                    <CustomMenu.MenuItem onClick={handleEditModule}>
-                      Edit module
-                    </CustomMenu.MenuItem>
-                    <CustomMenu.MenuItem onClick={handleDeleteModule}>
-                      Delete module
-                    </CustomMenu.MenuItem>
-                    <CustomMenu.MenuItem onClick={handleCopyText}>
-                      Copy module link
-                    </CustomMenu.MenuItem>
-                  </CustomMenu>
-                </span>
+                {module.is_favorite ? (
+                  <button onClick={handleRemoveFromFavorites}>
+                    <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
+                  </button>
+                ) : (
+                  <button onClick={handleAddToFavorites}>
+                    <StarIcon className="h-4 w-4 " color="#858E96" />
+                  </button>
+                )}
+
+                <CustomMenu width="auto" verticalEllipsis>
+                  <CustomMenu.MenuItem onClick={handleEditModule}>Edit module</CustomMenu.MenuItem>
+                  <CustomMenu.MenuItem onClick={handleDeleteModule}>
+                    Delete module
+                  </CustomMenu.MenuItem>
+                  <CustomMenu.MenuItem onClick={handleCopyText}>
+                    Copy module link
+                  </CustomMenu.MenuItem>
+                </CustomMenu>
               </div>
             </div>
           </div>
