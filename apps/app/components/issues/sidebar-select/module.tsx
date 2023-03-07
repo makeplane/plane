@@ -64,26 +64,21 @@ export const SidebarModuleSelect: React.FC<Props> = ({
       <div className="space-y-1 sm:basis-1/2">
         <CustomSelect
           label={
-            <Tooltip
-              position="top-right"
-              tooltipHeading="Module"
-              tooltipContent={modules?.find((m) => m.id === issueModule?.module)?.name ?? "None"}
+            <span
+              className={`w-full max-w-[125px] truncate text-left sm:block ${
+                issueModule ? "" : "text-gray-900"
+              }`}
             >
-              <span
-                className={`w-full max-w-[125px] truncate text-left sm:block ${
-                  issueModule ? "" : "text-gray-900"
-                }`}
-              >
-                {modules?.find((m) => m.id === issueModule?.module)?.name ?? "None"}
-              </span>
-            </Tooltip>
+              {modules?.find((m) => m.id === issueModule?.module)?.name ?? "None"}
+            </span>
           }
           value={issueModule?.module_detail?.id}
           onChange={(value: any) => {
-            value === null
+            !value
               ? removeIssueFromModule(issueModule?.id ?? "", issueModule?.module ?? "")
               : handleModuleChange(modules?.find((m) => m.id === value) as IModule);
           }}
+          width="w-full"
           disabled={isNotAllowed}
         >
           {modules ? (
@@ -96,11 +91,7 @@ export const SidebarModuleSelect: React.FC<Props> = ({
                     </Tooltip>
                   </CustomSelect.Option>
                 ))}
-                <CustomSelect.Option value={null} className="capitalize">
-                  <Tooltip position="left-bottom" tooltipContent="None">
-                    <span className="w-full max-w-[125px] truncate"> None </span>
-                  </Tooltip>
-                </CustomSelect.Option>
+                <CustomSelect.Option value={null}>None</CustomSelect.Option>
               </>
             ) : (
               <div className="text-center">No modules found</div>

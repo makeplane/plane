@@ -7,14 +7,30 @@ export interface ICycle {
   updated_at: Date;
   name: string;
   description: string;
-  start_date: string;
-  end_date: string;
-  status: string;
+  start_date: string | null;
+  end_date: string | null;
+  is_favorite: boolean;
   created_by: string;
   updated_by: string;
   project: string;
   workspace: string;
   issue: string;
+  current_cycle: [];
+  upcoming_cycle: [];
+  past_cycles: [];
+}
+
+export interface CurrentAndUpcomingCyclesResponse {
+  current_cycle: ICycle[];
+  upcoming_cycle: ICycle[];
+}
+
+export interface DraftCyclesResponse {
+  draft_cycles: ICycle[];
+}
+
+export interface CompletedCyclesResponse {
+  completed_cycles: ICycle[];
 }
 
 export interface CycleIssueResponse {

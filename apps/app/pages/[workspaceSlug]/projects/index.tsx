@@ -10,8 +10,7 @@ import useWorkspaces from "hooks/use-workspaces";
 import AppLayout from "layouts/app-layout";
 // components
 import { JoinProjectModal } from "components/project/join-project-modal";
-import { ProjectCard } from "components/project";
-import ConfirmProjectDeletion from "components/project/confirm-project-deletion";
+import { DeleteProjectModal, SingleProjectCard } from "components/project";
 // ui
 import { HeaderButton, EmptySpace, EmptySpaceItem, Loader } from "components/ui";
 import { Breadcrumbs, BreadcrumbItem } from "components/breadcrumbs";
@@ -57,6 +56,7 @@ const ProjectsPage: NextPage = () => {
         onJoin={async () => {
           const project = projects?.find((item) => item.id === selectedProjectToJoin);
           if (!project) return;
+
           await projectService
             .joinProject(workspaceSlug as string, {
               project_ids: [project.id],
@@ -70,7 +70,7 @@ const ProjectsPage: NextPage = () => {
             });
         }}
       />
-      <ConfirmProjectDeletion
+      <DeleteProjectModal
         isOpen={!!deleteProject}
         onClose={() => setDeleteProject(null)}
         data={projects?.find((item) => item.id === deleteProject) ?? null}
@@ -101,18 +101,15 @@ const ProjectsPage: NextPage = () => {
               </EmptySpace>
             </div>
           ) : (
-            <div className="h-full w-full space-y-5">
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {projects.map((item) => (
-                  <ProjectCard
-                    key={item.id}
-                    project={item}
-                    workspaceSlug={(activeWorkspace as any)?.slug}
-                    setToJoinProject={setSelectedProjectToJoin}
-                    setDeleteProject={setDeleteProject}
-                  />
-                ))}
-              </div>
+            <div className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
+              {projects.map((project) => (
+                <SingleProjectCard
+                  key={project.id}
+                  project={project}
+                  setToJoinProject={setSelectedProjectToJoin}
+                  setDeleteProject={setDeleteProject}
+                />
+              ))}
             </div>
           )}
         </>

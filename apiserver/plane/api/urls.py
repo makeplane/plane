@@ -52,6 +52,7 @@ from plane.api.views import (
     ProjectJoinEndpoint,
     UserProjectInvitationsViewset,
     ProjectIdentifierEndpoint,
+    ProjectFavoritesViewSet,
     ## End Projects
     # Issues
     IssueViewSet,
@@ -65,6 +66,8 @@ from plane.api.views import (
     IssuePropertyViewSet,
     LabelViewSet,
     SubIssuesEndpoint,
+    IssueLinkViewSet,
+    ModuleLinkViewSet,
     ## End Issues
     # States
     StateViewSet,
@@ -78,10 +81,16 @@ from plane.api.views import (
     # Cycles
     CycleViewSet,
     CycleIssueViewSet,
+    CycleDateCheckEndpoint,
+    CurrentUpcomingCyclesEndpoint,
+    CompletedCyclesEndpoint,
+    CycleFavoriteViewSet,
+    DraftCyclesEndpoint,
     ## End Cycles
     # Modules
     ModuleViewSet,
     ModuleIssueViewSet,
+    ModuleFavoriteViewSet,
     ## End Modules
     # Api Tokens
     ApiTokenEndpoint,
@@ -372,6 +381,25 @@ urlpatterns = [
         ProjectMemberUserEndpoint.as_view(),
         name="project-view",
     ),
+    path(
+        "workspaces/<str:slug>/user-favorite-projects/",
+        ProjectFavoritesViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="project",
+    ),
+    path(
+        "workspaces/<str:slug>/user-favorite-projects/<uuid:project_id>/",
+        ProjectFavoritesViewSet.as_view(
+            {
+                "delete": "destroy",
+            }
+        ),
+        name="project",
+    ),
     # End Projects
     #  States
     path(
@@ -490,6 +518,45 @@ urlpatterns = [
         ),
         name="project-cycle",
     ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/date-check/",
+        CycleDateCheckEndpoint.as_view(),
+        name="project-cycle",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/current-upcoming-cycles/",
+        CurrentUpcomingCyclesEndpoint.as_view(),
+        name="project-cycle-upcoming",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/completed-cycles/",
+        CompletedCyclesEndpoint.as_view(),
+        name="project-cycle-completed",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/draft-cycles/",
+        DraftCyclesEndpoint.as_view(),
+        name="project-cycle-draft",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/user-favorite-cycles/",
+        CycleFavoriteViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="user-favorite-cycle",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/user-favorite-cycles/<uuid:cycle_id>/",
+        CycleFavoriteViewSet.as_view(
+            {
+                "delete": "destroy",
+            }
+        ),
+        name="user-favorite-cycle",
+    ),
     ## End Cycles
     # Issue
     path(
@@ -554,6 +621,28 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/sub-issues/",
         SubIssuesEndpoint.as_view(),
         name="sub-issues",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-links/",
+        IssueLinkViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="project-issue-links",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-links/<uuid:pk>/",
+        IssueLinkViewSet.as_view(
+            {
+                "get": "retrieve",
+                "put": "update",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="project-issue-links",
     ),
     ## End Issues
     ## Issue Activity
@@ -641,6 +730,11 @@ urlpatterns = [
         FileAssetEndpoint.as_view(),
         name="File Assets",
     ),
+    path(
+        "workspaces/<str:slug>/file-assets/<uuid:pk>/",
+        FileAssetEndpoint.as_view(),
+        name="File Assets",
+    ),
     ## End File Assets
     ## Modules
     path(
@@ -686,6 +780,47 @@ urlpatterns = [
             }
         ),
         name="project-module-issues",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/modules/<uuid:module_id>/module-links/",
+        ModuleLinkViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="project-issue-module-links",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/modules/<uuid:module_id>/module-links/<uuid:pk>/",
+        ModuleLinkViewSet.as_view(
+            {
+                "get": "retrieve",
+                "put": "update",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="project-issue-module-links",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/user-favorite-modules/",
+        ModuleFavoriteViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="user-favorite-module",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/user-favorite-modules/<uuid:module_id>/",
+        ModuleFavoriteViewSet.as_view(
+            {
+                "delete": "destroy",
+            }
+        ),
+        name="user-favorite-module",
     ),
     ## End Modules
     # API Tokens

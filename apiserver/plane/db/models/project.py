@@ -46,7 +46,6 @@ class Project(BaseModel):
         max_length=5,
         verbose_name="Project Identifier",
     )
-    slug = models.SlugField(max_length=100, blank=True)
     default_assignee = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -64,6 +63,7 @@ class Project(BaseModel):
     icon = models.CharField(max_length=255, null=True, blank=True)
     module_view = models.BooleanField(default=True)
     cycle_view = models.BooleanField(default=True)
+    cover_image = models.URLField(blank=True, null=True)
 
     def __str__(self):
         """Return name of the project"""
@@ -77,7 +77,6 @@ class Project(BaseModel):
         ordering = ("-created_at",)
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.name)
         self.identifier = self.identifier.strip().upper()
         return super().save(*args, **kwargs)
 
@@ -157,3 +156,22 @@ class ProjectIdentifier(AuditModel):
         verbose_name_plural = "Project Identifiers"
         db_table = "project_identifiers"
         ordering = ("-created_at",)
+
+
+class ProjectFavorite(ProjectBaseModel):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="project_favorites",
+    )
+
+    class Meta:
+        unique_together = ["project", "user"]
+        verbose_name = "Project Favorite"
+        verbose_name_plural = "Project Favorites"
+        db_table = "project_favorites"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        """Return user of the project"""
+        return f"{self.user.email} <{self.project.name}>"

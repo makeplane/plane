@@ -24,7 +24,7 @@ const EmptySpace: React.FC<EmptySpaceProps> = ({ title, description, children, I
 
       <h2 className="text-lg font-medium text-gray-900">{title}</h2>
       <div className="mt-1 text-sm text-gray-500">{description}</div>
-      <ul role="list" className="mt-6 divide-y divide-gray-200 border-t border-b border-gray-200">
+      <ul role="list" className="mt-6 divide-y divide-gray-200 border-t border-b">
         {children}
       </ul>
       {link ? (

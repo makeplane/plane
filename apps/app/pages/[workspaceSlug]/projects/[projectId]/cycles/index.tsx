@@ -1,30 +1,48 @@
 import React, { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
+import dynamic from "next/dynamic";
+
 import useSWR from "swr";
+
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { Tab } from "@headlessui/react";
-
 // lib
 import { requiredAuth } from "lib/auth";
-import { CyclesIcon } from "components/icons";
+
 // services
 import cycleService from "services/cycles.service";
 import projectService from "services/project.service";
-import workspaceService from "services/workspace.service";
+
 // layouts
 import AppLayout from "layouts/app-layout";
 // components
-import { CreateUpdateCycleModal, CyclesListView } from "components/cycles";
+import { CompletedCyclesListProps, CreateUpdateCycleModal, CyclesList } from "components/cycles";
 // ui
-import { HeaderButton, EmptySpace, EmptySpaceItem, Loader } from "components/ui";
+import { HeaderButton, Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 // types
-import { ICycle, SelectCycleType } from "types";
+import { SelectCycleType } from "types";
 import type { NextPage, GetServerSidePropsContext } from "next";
 // fetching keys
-import { CYCLE_LIST, PROJECT_DETAILS, WORKSPACE_DETAILS } from "constants/fetch-keys";
+import {
+  CYCLE_CURRENT_AND_UPCOMING_LIST,
+  CYCLE_DRAFT_LIST,
+  PROJECT_DETAILS,
+} from "constants/fetch-keys";
+
+const CompletedCyclesList = dynamic<CompletedCyclesListProps>(
+  () => import("components/cycles").then((a) => a.CompletedCyclesList),
+  {
+    ssr: false,
+    loading: () => (
+      <Loader className="mb-5">
+        <Loader.Item height="12rem" width="100%" />
+      </Loader>
+    ),
+  }
+);
 
 const ProjectCycles: NextPage = () => {
   const [selectedCycle, setSelectedCycle] = useState<SelectCycleType>();
@@ -34,43 +52,25 @@ const ProjectCycles: NextPage = () => {
     query: { workspaceSlug, projectId },
   } = useRouter();
 
-  const { data: activeWorkspace } = useSWR(
-    workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
-    () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null)
-  );
-
   const { data: activeProject } = useSWR(
-    activeWorkspace && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    activeWorkspace && projectId
-      ? () => projectService.getProject(activeWorkspace.slug, projectId as string)
+    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
       : null
   );
 
-  const { data: cycles } = useSWR<ICycle[]>(
-    activeWorkspace && projectId ? CYCLE_LIST(projectId as string) : null,
-    activeWorkspace && projectId
-      ? () => cycleService.getCycles(activeWorkspace.slug, projectId as string)
+  const { data: draftCycles } = useSWR(
+    workspaceSlug && projectId ? CYCLE_DRAFT_LIST(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => cycleService.getDraftCycles(workspaceSlug as string, projectId as string)
       : null
   );
 
-  const getCycleStatus = (startDate: string, endDate: string) => {
-    const today = new Date();
-
-    if (today < new Date(startDate)) return "upcoming";
-    else if (today > new Date(endDate)) return "completed";
-    else return "current";
-  };
-
-  const currentCycles = cycles?.filter(
-    (c) => getCycleStatus(c.start_date, c.end_date) === "current"
-  );
-
-  const upcomingCycles = cycles?.filter(
-    (c) => getCycleStatus(c.start_date, c.end_date) === "upcoming"
-  );
-
-  const completedCycles = cycles?.filter(
-    (c) => getCycleStatus(c.start_date, c.end_date) === "completed"
+  const { data: currentAndUpcomingCycles } = useSWR(
+    workspaceSlug && projectId ? CYCLE_CURRENT_AND_UPCOMING_LIST(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => cycleService.getCurrentAndUpcomingCycles(workspaceSlug as string, projectId as string)
+      : null
   );
 
   useEffect(() => {
@@ -110,92 +110,88 @@ const ProjectCycles: NextPage = () => {
         handleClose={() => setCreateUpdateCycleModal(false)}
         data={selectedCycle}
       />
-      {cycles ? (
-        cycles.length > 0 ? (
-          <div className="space-y-8">
-            <h3 className="text-xl font-medium leading-6 text-gray-900">Current Cycle</h3>
-            <div className="space-y-5">
-              <CyclesListView
-                cycles={currentCycles ?? []}
-                setCreateUpdateCycleModal={setCreateUpdateCycleModal}
-                setSelectedCycle={setSelectedCycle}
-                type="current"
-              />
-            </div>
-            <div className="space-y-5">
-              <Tab.Group>
-                <Tab.List
-                  as="div"
-                  className="grid grid-cols-2 items-center gap-2 rounded-lg bg-gray-100 p-2 text-sm"
+      <div className="space-y-8">
+        <div className="flex flex-col gap-5">
+          <h3 className="text-3xl font-semibold text-black">Current Cycle</h3>
+          <div className="space-y-5">
+            <CyclesList
+              cycles={currentAndUpcomingCycles?.current_cycle}
+              setCreateUpdateCycleModal={setCreateUpdateCycleModal}
+              setSelectedCycle={setSelectedCycle}
+              type="current"
+            />
+          </div>
+        </div>
+        <div className="flex flex-col gap-5">
+          <h3 className="text-3xl font-semibold text-black">Others</h3>
+          <div>
+            <Tab.Group>
+              <Tab.List
+                as="div"
+                className="flex items-center justify-start gap-4 text-base font-medium"
+              >
+                <Tab
+                  className={({ selected }) =>
+                    `rounded-3xl border px-5 py-1.5 text-sm outline-none sm:px-7 sm:py-2 sm:text-base ${
+                      selected
+                        ? "border-theme bg-theme text-white"
+                        : "border-gray-300 bg-white hover:bg-hover-gray"
+                    }`
+                  }
                 >
-                  <Tab
-                    className={({ selected }) =>
-                      `rounded-lg px-6 py-2 ${selected ? "bg-gray-300" : "hover:bg-gray-200"}`
-                    }
-                  >
-                    Upcoming
-                  </Tab>
-                  <Tab
-                    className={({ selected }) =>
-                      `rounded-lg px-6 py-2 ${selected ? "bg-gray-300" : "hover:bg-gray-200"}`
-                    }
-                  >
-                    Completed
-                  </Tab>
-                </Tab.List>
-                <Tab.Panels>
-                  <Tab.Panel as="div" className="mt-8 space-y-5">
-                    <CyclesListView
-                      cycles={upcomingCycles ?? []}
-                      setCreateUpdateCycleModal={setCreateUpdateCycleModal}
-                      setSelectedCycle={setSelectedCycle}
-                      type="upcoming"
-                    />
-                  </Tab.Panel>
-                  <Tab.Panel as="div" className="mt-8 space-y-5">
-                    <CyclesListView
-                      cycles={completedCycles ?? []}
-                      setCreateUpdateCycleModal={setCreateUpdateCycleModal}
-                      setSelectedCycle={setSelectedCycle}
-                      type="completed"
-                    />
-                  </Tab.Panel>
-                </Tab.Panels>
-              </Tab.Group>
-            </div>
+                  Upcoming
+                </Tab>
+                <Tab
+                  className={({ selected }) =>
+                    `rounded-3xl border px-5 py-1.5 text-sm outline-none sm:px-7 sm:py-2 sm:text-base ${
+                      selected
+                        ? "border-theme bg-theme text-white"
+                        : "border-gray-300 bg-white hover:bg-hover-gray"
+                    }`
+                  }
+                >
+                  Completed
+                </Tab>
+                <Tab
+                  className={({ selected }) =>
+                    `rounded-3xl border px-5 py-1.5 text-sm outline-none sm:px-7 sm:py-2 sm:text-base ${
+                      selected
+                        ? "border-theme bg-theme text-white"
+                        : "border-gray-300 bg-white hover:bg-hover-gray"
+                    }`
+                  }
+                >
+                  Drafts
+                </Tab>
+              </Tab.List>
+              <Tab.Panels>
+                <Tab.Panel as="div" className="mt-8 space-y-5">
+                  <CyclesList
+                    cycles={currentAndUpcomingCycles?.upcoming_cycle}
+                    setCreateUpdateCycleModal={setCreateUpdateCycleModal}
+                    setSelectedCycle={setSelectedCycle}
+                    type="upcoming"
+                  />
+                </Tab.Panel>
+                <Tab.Panel as="div" className="mt-8 space-y-5">
+                  <CompletedCyclesList
+                    setCreateUpdateCycleModal={setCreateUpdateCycleModal}
+                    setSelectedCycle={setSelectedCycle}
+                  />
+                </Tab.Panel>
+                <Tab.Panel as="div" className="mt-8 space-y-5">
+                  <CyclesList
+                    cycles={draftCycles?.draft_cycles}
+                    setCreateUpdateCycleModal={setCreateUpdateCycleModal}
+                    setSelectedCycle={setSelectedCycle}
+                    type="draft"
+                  />
+                </Tab.Panel>
+              </Tab.Panels>
+            </Tab.Group>
           </div>
-        ) : (
-          <div className="flex h-full w-full flex-col items-center justify-center px-4">
-            <EmptySpace
-              title="You don't have any cycle yet."
-              description="A cycle is a fixed time period where a team commits to a set number of issues from their backlog. Cycles are usually one, two, or four weeks long."
-              Icon={CyclesIcon}
-            >
-              <EmptySpaceItem
-                title="Create a new cycle"
-                description={
-                  <span>
-                    Use <pre className="inline rounded bg-gray-200 px-2 py-1">Q</pre> shortcut to
-                    create a new cycle
-                  </span>
-                }
-                Icon={PlusIcon}
-                action={() => {
-                  const e = new KeyboardEvent("keydown", {
-                    key: "q",
-                  });
-                  document.dispatchEvent(e);
-                }}
-              />
-            </EmptySpace>
-          </div>
-        )
-      ) : (
-        <Loader className="space-y-5">
-          <Loader.Item height="150px" />
-          <Loader.Item height="150px" />
-        </Loader>
-      )}
+        </div>
+      </div>
     </AppLayout>
   );
 };

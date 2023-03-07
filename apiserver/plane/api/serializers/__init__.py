@@ -17,11 +17,12 @@ from .project import (
     ProjectMemberSerializer,
     ProjectMemberInviteSerializer,
     ProjectIdentifierSerializer,
+    ProjectFavoriteSerializer,
 )
 from .state import StateSerializer
 from .shortcut import ShortCutSerializer
 from .view import ViewSerializer
-from .cycle import CycleSerializer, CycleIssueSerializer
+from .cycle import CycleSerializer, CycleIssueSerializer, CycleFavoriteSerializer
 from .asset import FileAssetSerializer
 from .issue import (
     IssueCreateSerializer,
@@ -36,9 +37,16 @@ from .issue import (
     IssueSerializer,
     IssueFlatSerializer,
     IssueStateSerializer,
+    IssueLinkSerializer,
 )
 
-from .module import ModuleWriteSerializer, ModuleSerializer, ModuleIssueSerializer
+from .module import (
+    ModuleWriteSerializer,
+    ModuleSerializer,
+    ModuleIssueSerializer,
+    ModuleLinkSerializer,
+    ModuleFavoriteSerializer,
+)
 
 from .api_token import APITokenSerializer
 

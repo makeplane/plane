@@ -174,6 +174,7 @@ class IssueLink(ProjectBaseModel):
     issue = models.ForeignKey(
         "db.Issue", on_delete=models.CASCADE, related_name="issue_link"
     )
+    metadata = models.JSONField(default=dict)
 
     class Meta:
         verbose_name = "Issue Link"

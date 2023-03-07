@@ -28,11 +28,6 @@ from plane.db.models import (
 )
 
 
-class IssueLinkCreateSerializer(serializers.Serializer):
-    url = serializers.CharField(required=True)
-    title = serializers.CharField(required=False)
-
-
 class IssueFlatSerializer(BaseSerializer):
     ## Contain only flat fields
 
@@ -82,11 +77,6 @@ class IssueCreateSerializer(BaseSerializer):
         write_only=True,
         required=False,
     )
-    links_list = serializers.ListField(
-        child=IssueLinkCreateSerializer(),
-        write_only=True,
-        required=False,
-    )
 
     class Meta:
         model = Issue
@@ -105,7 +95,6 @@ class IssueCreateSerializer(BaseSerializer):
         assignees = validated_data.pop("assignees_list", None)
         labels = validated_data.pop("labels_list", None)
         blocks = validated_data.pop("blocks_list", None)
-        links = validated_data.pop("links_list", None)
 
         project = self.context["project"]
         issue = Issue.objects.create(**validated_data, project=project)
@@ -174,24 +163,6 @@ class IssueCreateSerializer(BaseSerializer):
                 batch_size=10,
             )
 
-        if links is not None:
-            IssueLink.objects.bulk_create(
-                [
-                    IssueLink(
-                        issue=issue,
-                        project=project,
-                        workspace=project.workspace,
-                        created_by=issue.created_by,
-                        updated_by=issue.updated_by,
-                        title=link.get("title", None),
-                        url=link.get("url", None),
-                    )
-                    for link in links
-                ],
-                batch_size=10,
-                ignore_conflicts=True,
-            )
-
         return issue
 
     def update(self, instance, validated_data):
@@ -199,7 +170,6 @@ class IssueCreateSerializer(BaseSerializer):
         assignees = validated_data.pop("assignees_list", None)
         labels = validated_data.pop("labels_list", None)
         blocks = validated_data.pop("blocks_list", None)
-        links = validated_data.pop("links_list", None)
 
         if blockers is not None:
             IssueBlocker.objects.filter(block=instance).delete()
@@ -267,25 +237,6 @@ class IssueCreateSerializer(BaseSerializer):
                     for block in blocks
                 ],
                 batch_size=10,
-            )
-
-        if links is not None:
-            IssueLink.objects.filter(issue=instance).delete()
-            IssueLink.objects.bulk_create(
-                [
-                    IssueLink(
-                        issue=instance,
-                        project=instance.project,
-                        workspace=instance.project.workspace,
-                        created_by=instance.created_by,
-                        updated_by=instance.updated_by,
-                        title=link.get("title", None),
-                        url=link.get("url", None),
-                    )
-                    for link in links
-                ],
-                batch_size=10,
-                ignore_conflicts=True,
             )
 
         return super().update(instance, validated_data)
@@ -456,6 +407,25 @@ class IssueLinkSerializer(BaseSerializer):
     class Meta:
         model = IssueLink
         fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "project",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+            "issue",
+        ]
+
+    # Validation if url already exists
+    def create(self, validated_data):
+        if IssueLink.objects.filter(
+            url=validated_data.get("url"), issue_id=validated_data.get("issue_id")
+        ).exists():
+            raise serializers.ValidationError(
+                {"error": "URL already exists for this Issue"}
+            )
+        return IssueLink.objects.create(**validated_data)
 
 
 # Issue Serializer with state details

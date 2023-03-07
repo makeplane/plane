@@ -20,6 +20,7 @@ import { IProject, UserAuth } from "types";
 import type { NextPage, GetServerSidePropsContext } from "next";
 // fetch-keys
 import { PROJECTS_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
+import { ContrastIcon, GridViewIcon } from "components/icons";
 
 const FeaturesSettings: NextPage<UserAuth> = (props) => {
   const router = useRouter();
@@ -77,7 +78,6 @@ const FeaturesSettings: NextPage<UserAuth> = (props) => {
 
   return (
     <AppLayout
-      settingsLayout="project"
       memberType={props}
       breadcrumbs={
         <Breadcrumbs>
@@ -88,80 +88,81 @@ const FeaturesSettings: NextPage<UserAuth> = (props) => {
           <BreadcrumbItem title="Features Settings" />
         </Breadcrumbs>
       }
+      settingsLayout
     >
       <section className="space-y-8">
-        <div>
-          <h3 className="text-3xl font-bold leading-6 text-gray-900">Project Features</h3>
+        <h3 className="text-2xl font-semibold">Features</h3>
+        <div className="space-y-5">
+          <div className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border bg-white p-6">
+            <div className="flex items-start gap-3">
+              <ContrastIcon color="#3f76ff" width={28} height={28} className="flex-shrink-0" />
+              <div>
+                <h4 className="text-xl font-semibold">Cycles</h4>
+                <p className="text-gray-500">
+                  Cycles are enabled for all the projects in this workspace. Access them from the
+                  navigation bar.
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                projectDetails?.cycle_view ? "bg-green-500" : "bg-gray-200"
+              }`}
+              role="switch"
+              aria-checked={projectDetails?.cycle_view}
+              onClick={() => handleSubmit({ cycle_view: !projectDetails?.cycle_view })}
+            >
+              <span className="sr-only">Use cycles</span>
+              <span
+                aria-hidden="true"
+                className={`inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                  projectDetails?.cycle_view ? "translate-x-5" : "translate-x-0"
+                }`}
+              />
+            </button>
+          </div>
+          <div className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border bg-white p-6">
+            <div className="flex items-start gap-3">
+              <GridViewIcon color="#ff6b00" width={28} height={28} className="flex-shrink-0" />
+              <div>
+                <h4 className="-mt-1.5 text-xl font-semibold">Modules</h4>
+                <p className="text-gray-500">
+                  Modules are enabled for all the projects in this workspace. Access it from the
+                  navigation bar.
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                projectDetails?.module_view ? "bg-green-500" : "bg-gray-200"
+              }`}
+              role="switch"
+              aria-checked={projectDetails?.module_view}
+              onClick={() => handleSubmit({ module_view: !projectDetails?.module_view })}
+            >
+              <span className="sr-only">Use cycles</span>
+              <span
+                aria-hidden="true"
+                className={`inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                  projectDetails?.module_view ? "translate-x-5" : "translate-x-0"
+                }`}
+              />
+            </button>
+          </div>
         </div>
-        <div className="space-y-8 md:w-2/3">
-          <div className="flex items-center justify-between gap-x-10 gap-y-2">
-            <div>
-              <h4 className="text-md mb-1 leading-6 text-gray-900">Use cycles</h4>
-              <p className="mb-3 text-sm text-gray-500">
-                Cycles are enabled for all the projects in this workspace. Access it from the
-                navigation bar.
-              </p>
-            </div>
-            <div>
-              <button
-                type="button"
-                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                  projectDetails?.cycle_view ? "bg-indigo-500" : "bg-gray-200"
-                }`}
-                role="switch"
-                aria-checked={projectDetails?.cycle_view}
-                onClick={() => handleSubmit({ cycle_view: !projectDetails?.cycle_view })}
-              >
-                <span className="sr-only">Use cycles</span>
-                <span
-                  aria-hidden="true"
-                  className={`inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                    projectDetails?.cycle_view ? "translate-x-5" : "translate-x-0"
-                  }`}
-                />
-              </button>
-            </div>
-          </div>
-          <div className="flex items-center justify-between gap-x-10 gap-y-2">
-            <div>
-              <h4 className="text-md mb-1 leading-6 text-gray-900">Use modules</h4>
-              <p className="mb-3 text-sm text-gray-500">
-                Modules are enabled for all the projects in this workspace. Access it from the
-                navigation bar.
-              </p>
-            </div>
-            <div>
-              <button
-                type="button"
-                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                  projectDetails?.module_view ? "bg-indigo-500" : "bg-gray-200"
-                }`}
-                role="switch"
-                aria-checked={projectDetails?.module_view}
-                onClick={() => handleSubmit({ module_view: !projectDetails?.module_view })}
-              >
-                <span className="sr-only">Use cycles</span>
-                <span
-                  aria-hidden="true"
-                  className={`inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                    projectDetails?.module_view ? "translate-x-5" : "translate-x-0"
-                  }`}
-                />
-              </button>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <a href="https://plane.so/" target="_blank" rel="noreferrer">
-              <Button theme="secondary" size="rg" className="text-xs">
-                Plane is open-source, view Roadmap
-              </Button>
-            </a>
-            <a href="https://github.com/makeplane/plane" target="_blank" rel="noreferrer">
-              <Button theme="secondary" size="rg" className="text-xs">
-                Star us on GitHub
-              </Button>
-            </a>
-          </div>
+        <div className="flex items-center gap-2">
+          <a href="https://plane.so/" target="_blank" rel="noreferrer">
+            <Button theme="secondary" size="rg" className="text-xs">
+              Plane is open-source, view Roadmap
+            </Button>
+          </a>
+          <a href="https://github.com/makeplane/plane" target="_blank" rel="noreferrer">
+            <Button theme="secondary" size="rg" className="text-xs">
+              Star us on GitHub
+            </Button>
+          </a>
         </div>
       </section>
     </AppLayout>

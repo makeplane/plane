@@ -11,6 +11,7 @@ type Props = {
   states: IState[] | undefined;
   members: IProjectMember[] | undefined;
   addIssueToState: (groupTitle: string, stateId: string | null) => void;
+  makeIssueCopy: (issue: IIssue) => void;
   handleEditIssue: (issue: IIssue) => void;
   openIssuesListModal?: (() => void) | null;
   handleDeleteIssue: (issue: IIssue) => void;
@@ -25,6 +26,7 @@ export const AllBoards: React.FC<Props> = ({
   states,
   members,
   addIssueToState,
+  makeIssueCopy,
   handleEditIssue,
   openIssuesListModal,
   handleDeleteIssue,
@@ -37,43 +39,46 @@ export const AllBoards: React.FC<Props> = ({
   return (
     <>
       {groupedByIssues ? (
-        <div className="h-[calc(100vh-157px)] lg:h-[calc(100vh-115px)] w-full">
-          <div className="h-full w-full overflow-hidden">
-            <div className="h-full w-full">
-              <div className="flex h-full gap-x-4 overflow-x-auto overflow-y-hidden">
-                {Object.keys(groupedByIssues).map((singleGroup, index) => {
-                  const stateId =
-                    selectedGroup === "state_detail.name"
-                      ? states?.find((s) => s.name === singleGroup)?.id ?? null
-                      : null;
+        <div className="h-[calc(100vh-157px)] w-full lg:h-[calc(100vh-115px)]">
+          <div className="horizontal-scroll-enable flex h-full gap-x-4 overflow-x-auto overflow-y-hidden">
+            {Object.keys(groupedByIssues).map((singleGroup, index) => {
+              const currentState =
+                selectedGroup === "state_detail.name"
+                  ? states?.find((s) => s.name === singleGroup)
+                  : null;
 
-                  const bgColor =
-                    selectedGroup === "state_detail.name"
-                      ? states?.find((s) => s.name === singleGroup)?.color
-                      : "#000000";
+              const stateId =
+                selectedGroup === "state_detail.name"
+                  ? states?.find((s) => s.name === singleGroup)?.id ?? null
+                  : null;
 
-                  return (
-                    <SingleBoard
-                      key={index}
-                      type={type}
-                      bgColor={bgColor}
-                      groupTitle={singleGroup}
-                      groupedByIssues={groupedByIssues}
-                      selectedGroup={selectedGroup}
-                      members={members}
-                      handleEditIssue={handleEditIssue}
-                      addIssueToState={() => addIssueToState(singleGroup, stateId)}
-                      handleDeleteIssue={handleDeleteIssue}
-                      openIssuesListModal={openIssuesListModal ?? null}
-                      orderBy={orderBy}
-                      handleTrashBox={handleTrashBox}
-                      removeIssue={removeIssue}
-                      userAuth={userAuth}
-                    />
-                  );
-                })}
-              </div>
-            </div>
+              const bgColor =
+                selectedGroup === "state_detail.name"
+                  ? states?.find((s) => s.name === singleGroup)?.color
+                  : "#000000";
+
+              return (
+                <SingleBoard
+                  key={index}
+                  type={type}
+                  currentState={currentState}
+                  bgColor={bgColor}
+                  groupTitle={singleGroup}
+                  groupedByIssues={groupedByIssues}
+                  selectedGroup={selectedGroup}
+                  members={members}
+                  handleEditIssue={handleEditIssue}
+                  makeIssueCopy={makeIssueCopy}
+                  addIssueToState={() => addIssueToState(singleGroup, stateId)}
+                  handleDeleteIssue={handleDeleteIssue}
+                  openIssuesListModal={openIssuesListModal ?? null}
+                  orderBy={orderBy}
+                  handleTrashBox={handleTrashBox}
+                  removeIssue={removeIssue}
+                  userAuth={userAuth}
+                />
+              );
+            })}
           </div>
         </div>
       ) : (

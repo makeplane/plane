@@ -149,16 +149,12 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
   const handleCreateLink = async (formData: IIssueLink) => {
     if (!workspaceSlug || !projectId || !issueDetail) return;
 
-    const previousLinks = issueDetail?.issue_link.map((l) => ({ title: l.title, url: l.url }));
-
-    const payload: Partial<IIssue> = {
-      links_list: [...(previousLinks ?? []), formData],
-    };
+    const payload = { metadata: {}, ...formData };
 
     await issuesService
-      .patchIssue(workspaceSlug as string, projectId as string, issueDetail.id, payload)
+      .createIssueLink(workspaceSlug as string, projectId as string, issueDetail.id, payload)
       .then((res) => {
-        mutate(ISSUE_DETAILS(issueDetail.id as string));
+        mutate(ISSUE_DETAILS(issueDetail.id));
       })
       .catch((err) => {
         console.log(err);
@@ -171,17 +167,15 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
     const updatedLinks = issueDetail.issue_link.filter((l) => l.id !== linkId);
 
     mutate<IIssue>(
-      ISSUE_DETAILS(issueDetail.id as string),
+      ISSUE_DETAILS(issueDetail.id),
       (prevData) => ({ ...(prevData as IIssue), issue_link: updatedLinks }),
       false
     );
 
     await issuesService
-      .patchIssue(workspaceSlug as string, projectId as string, issueDetail.id, {
-        links_list: updatedLinks,
-      })
+      .deleteIssueLink(workspaceSlug as string, projectId as string, issueDetail.id, linkId)
       .then((res) => {
-        mutate(ISSUE_DETAILS(issueDetail.id as string));
+        mutate(ISSUE_DETAILS(issueDetail.id));
       })
       .catch((err) => {
         console.log(err);
@@ -223,7 +217,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
         isOpen={deleteIssueModal}
         data={issueDetail ?? null}
       />
-      <div className="w-full divide-y-2 divide-gray-100 sticky top-5">
+      <div className="sticky top-5 w-full divide-y-2 divide-gray-100">
         <div className="flex items-center justify-between pb-3">
           <h4 className="text-sm font-medium">
             {issueDetail?.project_detail?.identifier}-{issueDetail?.sequence_id}
@@ -249,20 +243,38 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
         </div>
         <div className="divide-y-2 divide-gray-100">
           <div className="py-1">
-            <SidebarStateSelect
+            <Controller
               control={control}
-              submitChanges={submitChanges}
-              userAuth={userAuth}
+              name="state"
+              render={({ field: { value } }) => (
+                <SidebarStateSelect
+                  value={value}
+                  onChange={(val: string) => submitChanges({ state: val })}
+                  userAuth={userAuth}
+                />
+              )}
             />
-            <SidebarAssigneeSelect
+            <Controller
               control={control}
-              submitChanges={submitChanges}
-              userAuth={userAuth}
+              name="assignees_list"
+              render={({ field: { value } }) => (
+                <SidebarAssigneeSelect
+                  value={value}
+                  onChange={(val: string[]) => submitChanges({ assignees_list: val })}
+                  userAuth={userAuth}
+                />
+              )}
             />
-            <SidebarPrioritySelect
+            <Controller
               control={control}
-              submitChanges={submitChanges}
-              userAuth={userAuth}
+              name="priority"
+              render={({ field: { value } }) => (
+                <SidebarPrioritySelect
+                  value={value}
+                  onChange={(val: string) => submitChanges({ priority: val })}
+                  userAuth={userAuth}
+                />
+              )}
             />
           </div>
           <div className="py-1">
@@ -448,8 +460,8 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                                           );
                                       } else
                                         return (
-                                          <div className="bg-gray-50 border-y border-gray-400">
-                                            <div className="flex select-none font-medium items-center gap-2 truncate p-2 text-gray-900">
+                                          <div className="border-y border-gray-400 bg-gray-50">
+                                            <div className="flex select-none items-center gap-2 truncate p-2 font-medium text-gray-900">
                                               <RectangleGroupIcon className="h-3 w-3" />{" "}
                                               {label.name}
                                             </div>

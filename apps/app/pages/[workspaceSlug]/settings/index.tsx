@@ -7,15 +7,13 @@ import useSWR, { mutate } from "swr";
 
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
-// react-dropzone
-import Dropzone from "react-dropzone";
+
 // icons
 import { LinkIcon } from "@heroicons/react/24/outline";
 // lib
 import { requiredWorkspaceAdmin } from "lib/auth";
 // services
 import workspaceService from "services/workspace.service";
-import fileServices from "services/file.service";
 // layouts
 import AppLayout from "layouts/app-layout";
 // hooks
@@ -29,7 +27,7 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import type { IWorkspace } from "types";
+import type { IWorkspace, UserAuth } from "types";
 import type { GetServerSideProps, NextPage } from "next";
 // fetch-keys
 import { WORKSPACE_DETAILS, USER_WORKSPACES } from "constants/fetch-keys";
@@ -43,16 +41,8 @@ const defaultValues: Partial<IWorkspace> = {
   logo: null,
 };
 
-type TWorkspaceSettingsProps = {
-  isOwner: boolean;
-  isMember: boolean;
-  isViewer: boolean;
-  isGuest: boolean;
-};
-
-const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
+const WorkspaceSettings: NextPage<UserAuth> = (props) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [image, setImage] = useState<File | null>(null);
   const [isImageUploading, setIsImageUploading] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
 
@@ -108,7 +98,6 @@ const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
 
   return (
     <AppLayout
-      settingsLayout="workspace"
       memberType={props}
       meta={{
         title: "Plane - Workspace Settings",
@@ -118,13 +107,16 @@ const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
           <BreadcrumbItem title={`${activeWorkspace?.name ?? "Workspace"} Settings`} />
         </Breadcrumbs>
       }
+      settingsLayout
     >
       <ImageUploadModal
         isOpen={isImageUploadModalOpen}
         onClose={() => setIsImageUploadModalOpen(false)}
-        onSuccess={() => {
+        onSuccess={(imageUrl) => {
+          setIsImageUploading(true);
+          setValue("logo", imageUrl);
           setIsImageUploadModalOpen(false);
-          handleSubmit(onSubmit)();
+          handleSubmit(onSubmit)().then(() => setIsImageUploading(false));
         }}
         value={watch("logo")}
       />
@@ -136,73 +128,38 @@ const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
         data={activeWorkspace ?? null}
       />
       {activeWorkspace ? (
-        <div className="space-y-8">
-          <div>
-            <h3 className="text-3xl font-bold leading-6 text-gray-900">General</h3>
-            <p className="mt-4 text-sm text-gray-500">
-              This information will be displayed to every member of the workspace.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 gap-x-16 gap-y-8 lg:grid-cols-12">
-            <div className="col-span lg:col-span-5">
-              <h4 className="text-md mb-1 leading-6 text-gray-900">Logo</h4>
-              <div className="flex w-full gap-2">
-                <Dropzone
-                  multiple={false}
-                  accept={{
-                    "image/*": [],
-                  }}
-                  onDrop={(files) => {
-                    setImage(files[0]);
-                  }}
-                >
-                  {({ getRootProps, getInputProps }) => (
-                    <div>
-                      <input {...getInputProps()} />
-                      <div {...getRootProps()}>
-                        {(watch("logo") && watch("logo") !== null && watch("logo") !== "") ||
-                        (image && image !== null) ? (
-                          <div className="relative mx-auto flex h-12 w-12">
-                            <Image
-                              src={image ? URL.createObjectURL(image) : watch("logo") ?? ""}
-                              alt="Workspace Logo"
-                              objectFit="cover"
-                              layout="fill"
-                              className="rounded-md"
-                              priority
-                            />
-                          </div>
-                        ) : (
-                          <div className="relative flex h-12 w-12 items-center justify-center rounded bg-gray-700 p-4 uppercase text-white">
-                            {activeWorkspace?.name?.charAt(0) ?? "N"}
-                          </div>
-                        )}
-                      </div>
+        <div className="space-y-8 sm:space-y-12">
+          <div className="grid grid-cols-12 gap-4 sm:gap-16">
+            <div className="col-span-12 sm:col-span-6">
+              <h4 className="text-xl font-semibold">Logo</h4>
+              <p className="text-gray-500">
+                Max file size is 5MB. Supported file types are .jpg and .png.
+              </p>
+            </div>
+            <div className="col-span-12 sm:col-span-6">
+              <div className="flex items-center gap-4">
+                <button type="button" onClick={() => setIsImageUploadModalOpen(true)}>
+                  {watch("logo") && watch("logo") !== null && watch("logo") !== "" ? (
+                    <div className="relative mx-auto flex h-12 w-12">
+                      <Image
+                        src={watch("logo")!}
+                        alt="Workspace Logo"
+                        objectFit="cover"
+                        layout="fill"
+                        className="rounded-md"
+                        priority
+                      />
+                    </div>
+                  ) : (
+                    <div className="relative flex h-12 w-12 items-center justify-center rounded bg-gray-700 p-4 uppercase text-white">
+                      {activeWorkspace?.name?.charAt(0) ?? "N"}
                     </div>
                   )}
-                </Dropzone>
+                </button>
                 <div>
-                  <p className="mb-2 text-sm text-gray-500">
-                    Max file size is 5MB. Supported file types are .jpg and .png.
-                  </p>
                   <Button
                     onClick={() => {
-                      if (image === null) return;
-                      setIsImageUploading(true);
-                      const formData = new FormData();
-                      formData.append("asset", image);
-                      formData.append("attributes", JSON.stringify({}));
-                      fileServices
-                        .uploadFile(workspaceSlug as string, formData)
-                        .then((response) => {
-                          const imageUrl = response.asset;
-                          setValue("logo", imageUrl);
-                          handleSubmit(onSubmit)();
-                          setIsImageUploading(false);
-                        })
-                        .catch(() => {
-                          setIsImageUploading(false);
-                        });
+                      setIsImageUploadModalOpen(true);
                     }}
                   >
                     {isImageUploading ? "Uploading..." : "Upload"}
@@ -210,35 +167,13 @@ const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
                 </div>
               </div>
             </div>
-            <div className="lg:col-span-5">
-              <div className="mb-3 flex items-end justify-between gap-2">
-                <div>
-                  <h4 className="text-md mb-1 leading-6 text-gray-900">URL</h4>
-                  <p className="text-sm text-gray-500">Give a name to your workspace.</p>
-                </div>
-                <Button
-                  type="button"
-                  theme="secondary"
-                  className="h-min"
-                  onClick={() =>
-                    copyTextToClipboard(`https://app.plane.so/${activeWorkspace.slug}`)
-                      .then(() => {
-                        setToastAlert({
-                          type: "success",
-                          title: "Workspace link copied to clipboard",
-                        });
-                      })
-                      .catch(() => {
-                        setToastAlert({
-                          type: "error",
-                          title: "Some error occurred",
-                        });
-                      })
-                  }
-                >
-                  <LinkIcon className="h-3.5 w-3.5" />
-                </Button>
-              </div>
+          </div>
+          <div className="grid grid-cols-12 gap-4 sm:gap-16">
+            <div className="col-span-12 sm:col-span-6">
+              <h4 className="text-xl font-semibold">URL</h4>
+              <p className="text-gray-500">Your workspace URL.</p>
+            </div>
+            <div className="col-span-12 flex items-center gap-2 sm:col-span-6">
               <Input
                 id="url"
                 name="url"
@@ -249,10 +184,30 @@ const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
                 value={`app.plane.so/${activeWorkspace.slug}`}
                 disabled
               />
+              <Button
+                type="button"
+                theme="secondary"
+                className="h-min"
+                onClick={() =>
+                  copyTextToClipboard(`https://app.plane.so/${activeWorkspace.slug}`).then(() => {
+                    setToastAlert({
+                      type: "success",
+                      title: "Link Copied!",
+                      message: "Workspace link copied to clipboard.",
+                    });
+                  })
+                }
+              >
+                <LinkIcon className="h-[18px] w-[18px]" />
+              </Button>
             </div>
-            <div className="lg:col-span-5">
-              <h4 className="text-md mb-1 leading-6 text-gray-900">Name</h4>
-              <p className="mb-3 text-sm text-gray-500">Give a name to your workspace.</p>
+          </div>
+          <div className="grid grid-cols-12 gap-4 sm:gap-16">
+            <div className="col-span-12 sm:col-span-6">
+              <h4 className="text-xl font-semibold">Name</h4>
+              <p className="text-gray-500">Give a name to your workspace.</p>
+            </div>
+            <div className="col-span-12 sm:col-span-6">
               <Input
                 id="name"
                 name="name"
@@ -263,12 +218,15 @@ const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
                 validations={{
                   required: "Name is required",
                 }}
-                className="w-full"
               />
             </div>
-            <div className="lg:col-span-5">
-              <h4 className="text-md mb-1 leading-6 text-gray-900">Company Size</h4>
-              <p className="mb-3 text-sm text-gray-500">How big is your company?</p>
+          </div>
+          <div className="grid grid-cols-12 gap-4 sm:gap-16">
+            <div className="col-span-12 sm:col-span-6">
+              <h4 className="text-xl font-semibold">Company Size</h4>
+              <p className="text-gray-500">How big is your company?</p>
+            </div>
+            <div className="col-span-12 sm:col-span-6">
               <Controller
                 name="company_size"
                 control={control}
@@ -288,26 +246,25 @@ const WorkspaceSettings: NextPage<TWorkspaceSettingsProps> = (props) => {
                 )}
               />
             </div>
-            <div className="col-span-full">
-              <Button onClick={handleSubmit(onSubmit)} disabled={isSubmitting}>
-                {isSubmitting ? "Updating..." : "Update Workspace"}
-              </Button>
+          </div>
+          <div className="sm:text-right">
+            <Button onClick={handleSubmit(onSubmit)} disabled={isSubmitting}>
+              {isSubmitting ? "Updating..." : "Update Workspace"}
+            </Button>
+          </div>
+          <div className="grid grid-cols-12 gap-4 sm:gap-16">
+            <div className="col-span-12 sm:col-span-6">
+              <h4 className="text-xl font-semibold">Danger Zone</h4>
+              <p className="text-gray-500">
+                The danger zone of the workspace delete page is a critical area that requires
+                careful consideration and attention. When deleting a workspace, all of the data and
+                resources within that workspace will be permanently removed and cannot be recovered.
+              </p>
             </div>
-            <div className="space-y-8 lg:col-span-10">
-              <div>
-                <h4 className="text-md mb-1 leading-6 text-gray-900">Danger Zone</h4>
-                <p className="mb-3 text-sm text-gray-500">
-                  The danger zone of the workspace delete page is a critical area that requires
-                  careful consideration and attention. When deleting a workspace, all of the data
-                  and resources within that workspace will be permanently removed and cannot be
-                  recovered.
-                </p>
-              </div>
-              <div>
-                <OutlineButton theme="danger" onClick={() => setIsOpen(true)}>
-                  Delete the workspace
-                </OutlineButton>
-              </div>
+            <div className="col-span-12 sm:col-span-6">
+              <OutlineButton theme="danger" onClick={() => setIsOpen(true)}>
+                Delete the workspace
+              </OutlineButton>
             </div>
           </div>
         </div>

@@ -7,24 +7,12 @@ from .user import UserLiteSerializer
 from .project import ProjectSerializer
 from .issue import IssueStateSerializer
 
-from plane.db.models import User, Module, ModuleMember, ModuleIssue, ModuleLink
-
-
-class LinkCreateSerializer(serializers.Serializer):
-
-    url = serializers.CharField(required=True)
-    title = serializers.CharField(required=False)
+from plane.db.models import User, Module, ModuleMember, ModuleIssue, ModuleLink, ModuleFavorite
 
 
 class ModuleWriteSerializer(BaseSerializer):
-
     members_list = serializers.ListField(
         child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()),
-        write_only=True,
-        required=False,
-    )
-    links_list = serializers.ListField(
-        child=LinkCreateSerializer(),
         write_only=True,
         required=False,
     )
@@ -42,9 +30,7 @@ class ModuleWriteSerializer(BaseSerializer):
         ]
 
     def create(self, validated_data):
-
         members = validated_data.pop("members_list", None)
-        links = validated_data.pop("links_list", None)
 
         project = self.context["project"]
 
@@ -67,30 +53,10 @@ class ModuleWriteSerializer(BaseSerializer):
                 ignore_conflicts=True,
             )
 
-        if links is not None:
-            ModuleLink.objects.bulk_create(
-                [
-                    ModuleLink(
-                        module=module,
-                        project=project,
-                        workspace=project.workspace,
-                        created_by=module.created_by,
-                        updated_by=module.updated_by,
-                        title=link.get("title", None),
-                        url=link.get("url", None),
-                    )
-                    for link in links
-                ],
-                batch_size=10,
-                ignore_conflicts=True,
-            )
-
         return module
 
     def update(self, instance, validated_data):
-
         members = validated_data.pop("members_list", None)
-        links = validated_data.pop("links_list", None)
 
         if members is not None:
             ModuleMember.objects.filter(module=instance).delete()
@@ -105,25 +71,6 @@ class ModuleWriteSerializer(BaseSerializer):
                         updated_by=instance.updated_by,
                     )
                     for member in members
-                ],
-                batch_size=10,
-                ignore_conflicts=True,
-            )
-
-        if links is not None:
-            ModuleLink.objects.filter(module=instance).delete()
-            ModuleLink.objects.bulk_create(
-                [
-                    ModuleLink(
-                        module=instance,
-                        project=instance.project,
-                        workspace=instance.project.workspace,
-                        created_by=instance.created_by,
-                        updated_by=instance.updated_by,
-                        title=link.get("title", None),
-                        url=link.get("url", None),
-                    )
-                    for link in links
                 ],
                 batch_size=10,
                 ignore_conflicts=True,
@@ -147,7 +94,6 @@ class ModuleFlatSerializer(BaseSerializer):
 
 
 class ModuleIssueSerializer(BaseSerializer):
-
     module_detail = ModuleFlatSerializer(read_only=True, source="module")
     issue_detail = IssueStateSerializer(read_only=True, source="issue")
     sub_issues_count = serializers.IntegerField(read_only=True)
@@ -167,7 +113,6 @@ class ModuleIssueSerializer(BaseSerializer):
 
 
 class ModuleLinkSerializer(BaseSerializer):
-
     created_by_detail = UserLiteSerializer(read_only=True, source="created_by")
 
     class Meta:
@@ -180,16 +125,17 @@ class ModuleLinkSerializer(BaseSerializer):
             "updated_by",
             "created_at",
             "updated_at",
+            "module",
         ]
 
 
 class ModuleSerializer(BaseSerializer):
-
     project_detail = ProjectSerializer(read_only=True, source="project")
     lead_detail = UserLiteSerializer(read_only=True, source="lead")
     members_detail = UserLiteSerializer(read_only=True, many=True, source="members")
     issue_module = ModuleIssueSerializer(read_only=True, many=True)
     link_module = ModuleLinkSerializer(read_only=True, many=True)
+    is_favorite = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Module
@@ -201,4 +147,16 @@ class ModuleSerializer(BaseSerializer):
             "updated_by",
             "created_at",
             "updated_at",
+        ]
+
+class ModuleFavoriteSerializer(BaseSerializer):
+    module_detail = ModuleFlatSerializer(source="module", read_only=True)
+
+    class Meta:
+        model = ModuleFavorite
+        fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "project",
+            "user",
         ]

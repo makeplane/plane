@@ -204,7 +204,7 @@ export const CommandPalette: React.FC = () => {
             <div className="fixed inset-0 bg-gray-500 bg-opacity-25 transition-opacity" />
           </Transition.Child>
 
-          <div className="fixed inset-0 z-20 overflow-y-auto p-4 sm:p-6 md:p-20">
+          <div className="fixed inset-0 z-20 p-4 sm:p-6 md:p-20">
             <Transition.Child
               as={React.Fragment}
               enter="ease-out duration-300"
@@ -214,7 +214,7 @@ export const CommandPalette: React.FC = () => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="relative mx-auto max-w-2xl transform divide-y divide-gray-500 divide-opacity-10 rounded-xl bg-white bg-opacity-80 shadow-2xl ring-1 ring-black ring-opacity-5 backdrop-blur backdrop-filter transition-all">
+              <Dialog.Panel className="relative mx-auto max-w-2xl transform divide-y divide-gray-500 divide-opacity-10 rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
                 <Combobox
                   onChange={(value: any) => {
                     if (value?.url) router.push(value.url);

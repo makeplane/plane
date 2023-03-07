@@ -1,6 +1,7 @@
 import type { IUserLite, IWorkspace } from "./";
 
 export interface IProject {
+  cover_image: string | null;
   created_at: Date;
   created_by: string;
   cycle_view: boolean;
@@ -9,6 +10,7 @@ export interface IProject {
   icon: string;
   id: string;
   identifier: string;
+  is_favorite: boolean;
   module_view: boolean;
   name: string;
   network: number;
@@ -17,6 +19,18 @@ export interface IProject {
   updated_at: Date;
   updated_by: string;
   workspace: IWorkspace | string;
+}
+
+export interface IFavoriteProject {
+  created_at: Date;
+  created_by: string;
+  id: string;
+  project: string;
+  project_detail: IProject;
+  updated_at: Date;
+  updated_by: string;
+  user: string;
+  workspace: string;
 }
 
 type ProjectViewTheme = {

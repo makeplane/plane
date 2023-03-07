@@ -24,12 +24,12 @@ import { IState } from "types";
 import { StateGroup } from "components/states";
 // fetch-keys
 import { STATE_LIST } from "constants/fetch-keys";
+import { getStateGroupIcon } from "components/icons";
 
 type Props = {
   index: number;
   state: IState;
   statesList: IState[];
-  activeGroup: StateGroup;
   handleEditState: () => void;
   handleDeleteState: () => void;
 };
@@ -38,7 +38,6 @@ export const SingleState: React.FC<Props> = ({
   index,
   state,
   statesList,
-  activeGroup,
   handleEditState,
   handleDeleteState,
 }) => {
@@ -136,16 +135,11 @@ export const SingleState: React.FC<Props> = ({
   };
 
   return (
-    <div className="group flex items-center justify-between gap-2 bg-gray-50 p-3">
-      <div className="flex items-center gap-2">
-        <span
-          className="h-3 w-3 flex-shrink-0 rounded-full"
-          style={{
-            backgroundColor: state.color,
-          }}
-        />
+    <div className={`group flex items-center justify-between gap-2 rounded-[10px] bg-white p-5`}>
+      <div className="flex items-center gap-3">
+        {getStateGroupIcon(state.group, "20", "20", state.color)}
         <div>
-          <h6 className="text-sm">{addSpaceIfCamelCase(state.name)}</h6>
+          <h6 className="font-medium text-gray-600">{addSpaceIfCamelCase(state.name)}</h6>
           <p className="text-xs text-gray-400">{state.description}</p>
         </div>
       </div>
@@ -153,7 +147,7 @@ export const SingleState: React.FC<Props> = ({
         {index !== 0 && (
           <button
             type="button"
-            className="hidden group-hover:inline-block text-gray-400 hover:text-gray-900"
+            className="hidden text-gray-400 hover:text-gray-900 group-hover:inline-block"
             onClick={() => handleMove(state, "up")}
           >
             <ArrowUpIcon className="h-4 w-4" />
@@ -162,7 +156,7 @@ export const SingleState: React.FC<Props> = ({
         {!(index === groupLength - 1) && (
           <button
             type="button"
-            className="hidden group-hover:inline-block text-gray-400 hover:text-gray-900"
+            className="hidden text-gray-400 hover:text-gray-900 group-hover:inline-block"
             onClick={() => handleMove(state, "down")}
           >
             <ArrowDownIcon className="h-4 w-4" />
@@ -173,7 +167,7 @@ export const SingleState: React.FC<Props> = ({
         ) : (
           <button
             type="button"
-            className="hidden group-hover:inline-block text-xs text-gray-400 hover:text-gray-900"
+            className="hidden text-xs text-gray-400 hover:text-gray-900 group-hover:inline-block"
             onClick={handleMakeDefault}
             disabled={isSubmitting}
           >
@@ -181,19 +175,28 @@ export const SingleState: React.FC<Props> = ({
           </button>
         )}
 
-        <button
-          type="button"
-          className={`${state.default ? "cursor-not-allowed" : ""} grid place-items-center`}
-          onClick={handleDeleteState}
-          disabled={state.default}
-        >
-          <Tooltip tooltipContent="Cannot delete the default state." disabled={!state.default}>
-            <TrashIcon className="h-4 w-4 text-red-400" />
-          </Tooltip>
-        </button>
-
         <button type="button" className="grid place-items-center" onClick={handleEditState}>
           <PencilSquareIcon className="h-4 w-4 text-gray-400" />
+        </button>
+        <button
+          type="button"
+          className={`${
+            state.default || groupLength === 1 ? "cursor-not-allowed" : ""
+          } grid place-items-center`}
+          onClick={handleDeleteState}
+          disabled={state.default || groupLength === 1}
+        >
+          {state.default ? (
+            <Tooltip tooltipContent="Cannot delete the default state.">
+              <TrashIcon className="h-4 w-4 text-red-400" />
+            </Tooltip>
+          ) : groupLength === 1 ? (
+            <Tooltip tooltipContent="Cannot have an empty group.">
+              <TrashIcon className="h-4 w-4 text-red-400" />
+            </Tooltip>
+          ) : (
+            <TrashIcon className="h-4 w-4 text-red-400" />
+          )}
         </button>
       </div>
     </div>

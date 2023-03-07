@@ -96,7 +96,7 @@ export const AddComment: React.FC = () => {
                   setValue("comment_json", jsonValue);
                   setValue("comment_html", htmlValue);
                 }}
-                placeholder="Enter Your comment..."
+                // placeholder="Enter Your comment..."
               />
             )}
           />

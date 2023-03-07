@@ -1,70 +1,126 @@
 import React, { useState, FC } from "react";
+
 import { useRouter } from "next/router";
-import Link from "next/link";
-import { Disclosure, Transition } from "@headlessui/react";
-import useSWR from "swr";
+
+import useSWR, { mutate } from "swr";
 
 // icons
-import {
-  ChevronDownIcon,
-  PlusIcon,
-  Cog6ToothIcon,
-  RectangleStackIcon,
-  RectangleGroupIcon,
-} from "@heroicons/react/24/outline";
-import { CyclesIcon } from "components/icons";
+import { PlusIcon } from "@heroicons/react/24/outline";
 // hooks
 import useToast from "hooks/use-toast";
 import useTheme from "hooks/use-theme";
 // services
 import projectService from "services/project.service";
 // components
-import { CreateProjectModal } from "components/project";
+import { CreateProjectModal, DeleteProjectModal, SingleSidebarProject } from "components/project";
 // ui
-import { CustomMenu, Loader } from "components/ui";
+import { Loader } from "components/ui";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
+// types
+import { IFavoriteProject, IProject } from "types";
 // fetch-keys
-import { PROJECTS_LIST } from "constants/fetch-keys";
-
-const navigation = (workspaceSlug: string, projectId: string) => [
-  {
-    name: "Issues",
-    href: `/${workspaceSlug}/projects/${projectId}/issues`,
-    icon: RectangleStackIcon,
-  },
-  {
-    name: "Cycles",
-    href: `/${workspaceSlug}/projects/${projectId}/cycles`,
-    icon: CyclesIcon,
-  },
-  {
-    name: "Modules",
-    href: `/${workspaceSlug}/projects/${projectId}/modules`,
-    icon: RectangleGroupIcon,
-  },
-  {
-    name: "Settings",
-    href: `/${workspaceSlug}/projects/${projectId}/settings`,
-    icon: Cog6ToothIcon,
-  },
-];
+import { FAVORITE_PROJECTS_LIST, PROJECTS_LIST } from "constants/fetch-keys";
 
 export const ProjectSidebarList: FC = () => {
+  const [deleteProjectModal, setDeleteProjectModal] = useState(false);
+  const [projectToDelete, setProjectToDelete] = useState<IProject | null>(null);
+
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug } = router.query;
   // states
   const [isCreateProjectModal, setCreateProjectModal] = useState(false);
   // theme
   const { collapsed: sidebarCollapse } = useTheme();
   // toast handler
   const { setToastAlert } = useToast();
-  // fetching projects list
+
+  const { data: favoriteProjects } = useSWR(
+    workspaceSlug ? FAVORITE_PROJECTS_LIST(workspaceSlug as string) : null,
+    () => (workspaceSlug ? projectService.getFavoriteProjects(workspaceSlug as string) : null)
+  );
+
   const { data: projects } = useSWR(
     workspaceSlug ? PROJECTS_LIST(workspaceSlug as string) : null,
     () => (workspaceSlug ? projectService.getProjects(workspaceSlug as string) : null)
   );
+  const normalProjects = projects?.filter((p) => !p.is_favorite) ?? [];
+
+  const handleAddToFavorites = (project: IProject) => {
+    if (!workspaceSlug) return;
+
+    projectService
+      .addProjectToFavorites(workspaceSlug as string, {
+        project: project.id,
+      })
+      .then(() => {
+        mutate<IProject[]>(
+          PROJECTS_LIST(workspaceSlug as string),
+          (prevData) =>
+            (prevData ?? []).map((p) => ({
+              ...p,
+              is_favorite: p.id === project.id ? true : p.is_favorite,
+            })),
+          false
+        );
+        mutate(FAVORITE_PROJECTS_LIST(workspaceSlug as string));
+
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "Successfully added the project to favorites.",
+        });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Couldn't remove the project from favorites. Please try again.",
+        });
+      });
+  };
+
+  const handleRemoveFromFavorites = (project: IProject) => {
+    if (!workspaceSlug) return;
+
+    projectService
+      .removeProjectFromFavorites(workspaceSlug as string, project.id)
+      .then(() => {
+        mutate<IProject[]>(
+          PROJECTS_LIST(workspaceSlug as string),
+          (prevData) =>
+            (prevData ?? []).map((p) => ({
+              ...p,
+              is_favorite: p.id === project.id ? false : p.is_favorite,
+            })),
+          false
+        );
+        mutate<IFavoriteProject[]>(
+          FAVORITE_PROJECTS_LIST(workspaceSlug as string),
+          (prevData) => (prevData ?? []).filter((p) => p.project !== project.id),
+          false
+        );
+
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "Successfully removed the project from favorites.",
+        });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Couldn't remove the project from favorites. Please try again.",
+        });
+      });
+  };
+
+  const handleDeleteProject = (project: IProject) => {
+    setProjectToDelete(project);
+    setDeleteProjectModal(true);
+  };
 
   const handleCopyText = (projectId: string) => {
     const originURL =
@@ -81,136 +137,81 @@ export const ProjectSidebarList: FC = () => {
   return (
     <>
       <CreateProjectModal isOpen={isCreateProjectModal} setIsOpen={setCreateProjectModal} />
-      <div
-        className={`no-scrollbar mt-3 flex h-full flex-col space-y-2 overflow-y-auto bg-primary px-2 pt-5 pb-3 ${
-          sidebarCollapse ? "rounded-xl" : "rounded-t-3xl"
-        }`}
-      >
-        {projects ? (
-          <>
-            {projects.length > 0 ? (
-              projects.map((project) => (
-                <Disclosure key={project?.id} defaultOpen={projectId === project?.id}>
-                  {({ open }) => (
-                    <>
-                      <div className="flex items-center">
-                        <Disclosure.Button
-                          className={`flex w-full items-center gap-2 rounded-md p-2 text-left text-sm font-medium ${
-                            sidebarCollapse ? "justify-center" : ""
-                          }`}
-                        >
-                          {project.icon ? (
-                            <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-                              {String.fromCodePoint(parseInt(project.icon))}
-                            </span>
-                          ) : (
-                            <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
-                              {project?.name.charAt(0)}
-                            </span>
-                          )}
+      <DeleteProjectModal
+        isOpen={deleteProjectModal}
+        onClose={() => setDeleteProjectModal(false)}
+        data={projectToDelete}
+      />
+      <div className="mt-2.5 h-full overflow-y-auto border-t bg-white pt-2.5">
+        {favoriteProjects && favoriteProjects.length > 0 && (
+          <div className="mt-3 flex flex-col space-y-2 px-6">
+            {!sidebarCollapse && <h5 className="text-sm font-semibold text-gray-400">Favorites</h5>}
+            {favoriteProjects.map((favoriteProject) => {
+              const project = favoriteProject.project_detail;
 
-                          {!sidebarCollapse && (
-                            <span className="flex w-full items-center justify-between">
-                              <span className="w-[125px] text-ellipsis overflow-hidden">
-                                {project?.name}
-                              </span>
-                              <span>
-                                <ChevronDownIcon
-                                  className={`h-4 w-4 duration-300 ${open ? "rotate-180" : ""}`}
-                                />
-                              </span>
-                            </span>
-                          )}
-                        </Disclosure.Button>
-                        {!sidebarCollapse && (
-                          <CustomMenu ellipsis>
-                            <CustomMenu.MenuItem onClick={() => handleCopyText(project.id)}>
-                              Copy project link
-                            </CustomMenu.MenuItem>
-                          </CustomMenu>
-                        )}
-                      </div>
-                      <Transition
-                        enter="transition duration-100 ease-out"
-                        enterFrom="transform scale-95 opacity-0"
-                        enterTo="transform scale-100 opacity-100"
-                        leave="transition duration-75 ease-out"
-                        leaveFrom="transform scale-100 opacity-100"
-                        leaveTo="transform scale-95 opacity-0"
-                      >
-                        <Disclosure.Panel
-                          className={`${
-                            sidebarCollapse ? "" : "ml-[2.25rem]"
-                          } flex flex-col gap-y-1`}
-                        >
-                          {navigation(workspaceSlug as string, project?.id).map((item) => {
-                            const hi = "hi";
-
-                            if (item.name === "Cycles" && !project.cycle_view) return;
-                            if (item.name === "Modules" && !project.module_view) return;
-
-                            return (
-                              <Link key={item.name} href={item.href}>
-                                <a
-                                  className={`group flex items-center rounded-md px-2 py-2 text-xs font-medium outline-none ${
-                                    item.href === router.asPath
-                                      ? "bg-gray-200 text-gray-900"
-                                      : "text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900"
-                                  } ${sidebarCollapse ? "justify-center" : ""}`}
-                                >
-                                  <item.icon
-                                    className={`h-4 w-4 flex-shrink-0 ${
-                                      item.href === router.asPath
-                                        ? "text-gray-900"
-                                        : "text-gray-500 group-hover:text-gray-900"
-                                    } ${!sidebarCollapse ? "mr-3" : ""}`}
-                                    aria-hidden="true"
-                                  />
-                                  {!sidebarCollapse && item.name}
-                                </a>
-                              </Link>
-                            );
-                          })}
-                        </Disclosure.Panel>
-                      </Transition>
-                    </>
-                  )}
-                </Disclosure>
-              ))
-            ) : (
-              <div className="space-y-3 text-center">
-                {!sidebarCollapse && (
-                  <h4 className="text-sm text-gray-700">You don{"'"}t have any project yet</h4>
-                )}
-                <button
-                  type="button"
-                  className="group flex w-full items-center justify-center gap-2 rounded-md bg-gray-200 p-2 text-xs text-gray-900"
-                  onClick={() => setCreateProjectModal(true)}
-                >
-                  <PlusIcon className="h-4 w-4" />
-                  {!sidebarCollapse && "Create Project"}
-                </button>
-              </div>
-            )}
-          </>
-        ) : (
-          <div className="w-full">
-            <Loader className="space-y-5">
-              <div className="space-y-2">
-                <Loader.Item height="30px" />
-                <Loader.Item height="15px" width="80%" light />
-                <Loader.Item height="15px" width="80%" light />
-                <Loader.Item height="15px" width="80%" light />
-              </div>
-              <div className="space-y-2">
-                <Loader.Item height="30px" />
-                <Loader.Item height="15px" width="80%" light />
-                <Loader.Item height="15px" width="80%" light />
-                <Loader.Item height="15px" width="80%" light />
-              </div>
-            </Loader>
+              return (
+                <SingleSidebarProject
+                  key={project.id}
+                  project={project}
+                  sidebarCollapse={sidebarCollapse}
+                  handleDeleteProject={() => handleDeleteProject(project)}
+                  handleCopyText={() => handleCopyText(project.id)}
+                  handleRemoveFromFavorites={() => handleRemoveFromFavorites(project)}
+                />
+              );
+            })}
           </div>
         )}
+        <div className="mt-3 flex flex-col space-y-2 px-6 pb-3">
+          {!sidebarCollapse && <h5 className="text-sm font-semibold text-gray-400">Projects</h5>}
+          {projects ? (
+            <>
+              {normalProjects.length > 0 ? (
+                normalProjects.map((project) => (
+                  <SingleSidebarProject
+                    key={project.id}
+                    project={project}
+                    sidebarCollapse={sidebarCollapse}
+                    handleDeleteProject={() => handleDeleteProject(project)}
+                    handleCopyText={() => handleCopyText(project.id)}
+                    handleAddToFavorites={() => handleAddToFavorites(project)}
+                  />
+                ))
+              ) : (
+                <div className="space-y-3 text-center">
+                  {!sidebarCollapse && (
+                    <h4 className="text-sm text-gray-700">You don{"'"}t have any project yet</h4>
+                  )}
+                  <button
+                    type="button"
+                    className="group flex w-full items-center justify-center gap-2 rounded-md bg-gray-200 p-2 text-xs text-gray-900"
+                    onClick={() => setCreateProjectModal(true)}
+                  >
+                    <PlusIcon className="h-4 w-4" />
+                    {!sidebarCollapse && "Create Project"}
+                  </button>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="w-full">
+              <Loader className="space-y-5">
+                <div className="space-y-2">
+                  <Loader.Item height="30px" />
+                  <Loader.Item height="15px" width="80%" light />
+                  <Loader.Item height="15px" width="80%" light />
+                  <Loader.Item height="15px" width="80%" light />
+                </div>
+                <div className="space-y-2">
+                  <Loader.Item height="30px" />
+                  <Loader.Item height="15px" width="80%" light />
+                  <Loader.Item height="15px" width="80%" light />
+                  <Loader.Item height="15px" width="80%" light />
+                </div>
+              </Loader>
+            </div>
+          )}
+        </div>
       </div>
     </>
   );

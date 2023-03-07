@@ -43,7 +43,6 @@ from plane.bgtasks.workspace_invitation_task import workspace_invitation
 
 
 class WorkSpaceViewSet(BaseViewSet):
-
     model = Workspace
     serializer_class = WorkSpaceSerializer
     permission_classes = [
@@ -101,7 +100,6 @@ class WorkSpaceViewSet(BaseViewSet):
 
 
 class UserWorkSpacesEndpoint(BaseAPIView):
-
     search_fields = [
         "name",
     ]
@@ -111,7 +109,6 @@ class UserWorkSpacesEndpoint(BaseAPIView):
 
     def get(self, request):
         try:
-
             member_count = (
                 WorkspaceMember.objects.filter(workspace=OuterRef("id"))
                 .order_by()
@@ -163,14 +160,12 @@ class WorkSpaceAvailabilityCheckEndpoint(BaseAPIView):
 
 
 class InviteWorkspaceEndpoint(BaseAPIView):
-
     permission_classes = [
         WorkSpaceAdminPermission,
     ]
 
     def post(self, request, slug):
         try:
-
             emails = request.data.get("emails", False)
             # Check if email is provided
             if not emails or not len(emails):
@@ -267,7 +262,6 @@ class JoinWorkspaceEndpoint(BaseAPIView):
 
     def post(self, request, slug, pk):
         try:
-
             workspace_invite = WorkspaceMemberInvite.objects.get(
                 pk=pk, workspace__slug=slug
             )
@@ -286,7 +280,6 @@ class JoinWorkspaceEndpoint(BaseAPIView):
                 workspace_invite.save()
 
                 if workspace_invite.accepted:
-
                     # Check if the user created account after invitation
                     user = User.objects.filter(email=email).first()
 
@@ -334,7 +327,6 @@ class JoinWorkspaceEndpoint(BaseAPIView):
 
 
 class WorkspaceInvitationsViewset(BaseViewSet):
-
     serializer_class = WorkSpaceMemberInviteSerializer
     model = WorkspaceMemberInvite
 
@@ -352,7 +344,6 @@ class WorkspaceInvitationsViewset(BaseViewSet):
 
 
 class UserWorkspaceInvitationsEndpoint(BaseViewSet):
-
     serializer_class = WorkSpaceMemberInviteSerializer
     model = WorkspaceMemberInvite
 
@@ -366,7 +357,6 @@ class UserWorkspaceInvitationsEndpoint(BaseViewSet):
 
     def create(self, request):
         try:
-
             invitations = request.data.get("invitations")
             workspace_invitations = WorkspaceMemberInvite.objects.filter(
                 pk__in=invitations
@@ -397,7 +387,6 @@ class UserWorkspaceInvitationsEndpoint(BaseViewSet):
 
 
 class WorkSpaceMemberViewSet(BaseViewSet):
-
     serializer_class = WorkSpaceMemberSerializer
     model = WorkspaceMember
 
@@ -414,14 +403,13 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         return self.filter_queryset(
             super()
             .get_queryset()
-            .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(workspace__slug=self.kwargs.get("slug"), member__is_bot=False)
             .select_related("workspace", "workspace__owner")
             .select_related("member")
         )
 
 
 class TeamMemberViewSet(BaseViewSet):
-
     serializer_class = TeamSerializer
     model = Team
     permission_classes = [
@@ -443,9 +431,7 @@ class TeamMemberViewSet(BaseViewSet):
         )
 
     def create(self, request, slug):
-
         try:
-
             members = list(
                 WorkspaceMember.objects.filter(
                     workspace__slug=slug, member__id__in=request.data.get("members", [])
@@ -456,7 +442,6 @@ class TeamMemberViewSet(BaseViewSet):
             )
 
             if len(members) != len(request.data.get("members", [])):
-
                 users = list(set(request.data.get("members", [])).difference(members))
                 users = User.objects.filter(pk__in=users)
 
@@ -493,7 +478,6 @@ class TeamMemberViewSet(BaseViewSet):
 
 
 class UserWorkspaceInvitationEndpoint(BaseViewSet):
-
     model = WorkspaceMemberInvite
     serializer_class = WorkSpaceMemberInviteSerializer
 
@@ -513,7 +497,6 @@ class UserWorkspaceInvitationEndpoint(BaseViewSet):
 class UserLastProjectWithWorkspaceEndpoint(BaseAPIView):
     def get(self, request):
         try:
-
             user = User.objects.get(pk=request.user.id)
 
             last_workspace_id = user.last_workspace_id
@@ -577,7 +560,6 @@ class WorkspaceMemberUserEndpoint(BaseAPIView):
 class WorkspaceMemberUserViewsEndpoint(BaseAPIView):
     def post(self, request, slug):
         try:
-
             workspace_member = WorkspaceMember.objects.get(
                 workspace__slug=slug, member=request.user
             )

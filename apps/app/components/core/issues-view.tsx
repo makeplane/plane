@@ -269,6 +269,15 @@ export const IssuesView: React.FC<Props> = ({
     [setCreateIssueModal, setPreloadedData, selectedGroup]
   );
 
+  const makeIssueCopy = useCallback(
+    (issue: IIssue) => {
+      setCreateIssueModal(true);
+
+      setPreloadedData({ ...issue, name: `${issue.name} (Copy)`, actionType: "createIssue" });
+    },
+    [setCreateIssueModal, setPreloadedData]
+  );
+
   const handleEditIssue = useCallback(
     (issue: IIssue) => {
       setEditIssueModal(true);
@@ -370,14 +379,14 @@ export const IssuesView: React.FC<Props> = ({
             {(provided, snapshot) => (
               <div
                 className={`${
-                  trashBox ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-                } fixed z-20 top-12 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-red-100 border-2 border-red-500 p-3 text-xs rounded ${
+                  trashBox ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+                } fixed top-9 right-9 z-20 flex h-28 w-96 items-center justify-center gap-2 rounded border-2 border-red-500 bg-red-100 p-3 text-xs font-medium italic text-red-500 ${
                   snapshot.isDraggingOver ? "bg-red-500 text-white" : ""
                 } duration-200`}
                 ref={provided.innerRef}
                 {...provided.droppableProps}
               >
-                <TrashIcon className="h-3 w-3" />
+                <TrashIcon className="h-4 w-4" />
                 Drop issue here to delete
               </div>
             )}
@@ -389,6 +398,7 @@ export const IssuesView: React.FC<Props> = ({
               states={states}
               members={members}
               addIssueToState={addIssueToState}
+              makeIssueCopy={makeIssueCopy}
               handleEditIssue={handleEditIssue}
               handleDeleteIssue={handleDeleteIssue}
               openIssuesListModal={type !== "issue" ? openIssuesListModal : null}
@@ -408,6 +418,7 @@ export const IssuesView: React.FC<Props> = ({
               states={states}
               members={members}
               addIssueToState={addIssueToState}
+              makeIssueCopy={makeIssueCopy}
               handleEditIssue={handleEditIssue}
               openIssuesListModal={type !== "issue" ? openIssuesListModal : null}
               handleDeleteIssue={handleDeleteIssue}

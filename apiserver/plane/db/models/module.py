@@ -7,7 +7,6 @@ from . import ProjectBaseModel
 
 
 class Module(ProjectBaseModel):
-
     name = models.CharField(max_length=255, verbose_name="Module Name")
     description = models.TextField(verbose_name="Module Description", blank=True)
     description_text = models.JSONField(
@@ -41,7 +40,6 @@ class Module(ProjectBaseModel):
         through_fields=("module", "member"),
     )
 
-
     class Meta:
         unique_together = ["name", "project"]
         verbose_name = "Module"
@@ -54,7 +52,6 @@ class Module(ProjectBaseModel):
 
 
 class ModuleMember(ProjectBaseModel):
-
     module = models.ForeignKey("db.Module", on_delete=models.CASCADE)
     member = models.ForeignKey("db.User", on_delete=models.CASCADE)
 
@@ -70,7 +67,6 @@ class ModuleMember(ProjectBaseModel):
 
 
 class ModuleIssue(ProjectBaseModel):
-
     module = models.ForeignKey(
         "db.Module", on_delete=models.CASCADE, related_name="issue_module"
     )
@@ -89,10 +85,12 @@ class ModuleIssue(ProjectBaseModel):
 
 
 class ModuleLink(ProjectBaseModel):
-
     title = models.CharField(max_length=255, null=True)
     url = models.URLField()
-    module = models.ForeignKey(Module, on_delete=models.CASCADE, related_name="link_module")
+    module = models.ForeignKey(
+        Module, on_delete=models.CASCADE, related_name="link_module"
+    )
+    metadata = models.JSONField(default=dict)
 
     class Meta:
         verbose_name = "Module Link"
@@ -102,3 +100,29 @@ class ModuleLink(ProjectBaseModel):
 
     def __str__(self):
         return f"{self.module.name} {self.url}"
+
+
+class ModuleFavorite(ProjectBaseModel):
+    """_summary_
+    ModuleFavorite (model): To store all the module favorite of the user
+    """
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="module_favorites",
+    )
+    module = models.ForeignKey(
+        "db.Module", on_delete=models.CASCADE, related_name="module_favorites"
+    )
+
+    class Meta:
+        unique_together = ["module", "user"]
+        verbose_name = "Module Favorite"
+        verbose_name_plural = "Module Favorites"
+        db_table = "module_favorites"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        """Return user and the module"""
+        return f"{self.user.email} <{self.module.name}>"

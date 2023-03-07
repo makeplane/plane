@@ -18,12 +18,13 @@ import AppLayout from "layouts/app-layout";
 import ConfirmProjectMemberRemove from "components/project/confirm-project-member-remove";
 import SendProjectInvitationModal from "components/project/send-project-invitation-modal";
 // ui
-import { Button, CustomListbox, CustomMenu, Loader } from "components/ui";
+import { CustomMenu, CustomSelect, Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 // types
 import type { NextPage, GetServerSidePropsContext } from "next";
+import { UserAuth } from "types";
 // fetch-keys
 import {
   PROJECT_DETAILS,
@@ -34,18 +35,8 @@ import {
 // constants
 import { ROLE } from "constants/workspace";
 
-type TMemberSettingsProps = {
-  isMember: boolean;
-  isOwner: boolean;
-  isViewer: boolean;
-  isGuest: boolean;
-};
-
-const MembersSettings: NextPage<TMemberSettingsProps> = (props) => {
-  const { isMember, isOwner, isViewer, isGuest } = props;
-
+const MembersSettings: NextPage<UserAuth> = ({ isMember, isOwner, isViewer, isGuest }) => {
   const [inviteModal, setInviteModal] = useState(false);
-  const [selectedMember, setSelectedMember] = useState<string | null>(null);
   const [selectedRemoveMember, setSelectedRemoveMember] = useState<string | null>(null);
   const [selectedInviteRemoveMember, setSelectedInviteRemoveMember] = useState<string | null>(null);
 
@@ -158,7 +149,6 @@ const MembersSettings: NextPage<TMemberSettingsProps> = (props) => {
         members={members}
       />
       <AppLayout
-        settingsLayout="project"
         memberType={{ isMember, isOwner, isViewer, isGuest }}
         breadcrumbs={
           <Breadcrumbs>
@@ -169,142 +159,115 @@ const MembersSettings: NextPage<TMemberSettingsProps> = (props) => {
             <BreadcrumbItem title="Members Settings" />
           </Breadcrumbs>
         }
+        settingsLayout
       >
         <section className="space-y-8">
-          <div>
-            <h3 className="text-3xl font-bold leading-6 text-gray-900">Members</h3>
-            <p className="mt-4 text-sm text-gray-500">Manage all the members of the project.</p>
+          <div className="flex items-end justify-between gap-4">
+            <h3 className="text-2xl font-semibold">Members</h3>
+            <button
+              type="button"
+              className="flex items-center gap-2 text-theme outline-none"
+              onClick={() => setInviteModal(true)}
+            >
+              <PlusIcon className="h-4 w-4" />
+              Add Member
+            </button>
           </div>
           {!projectMembers || !projectInvitations ? (
-            <Loader className="space-y-5 md:w-2/3">
+            <Loader className="space-y-5">
               <Loader.Item height="40px" />
               <Loader.Item height="40px" />
               <Loader.Item height="40px" />
               <Loader.Item height="40px" />
             </Loader>
           ) : (
-            <div className="md:w-2/3">
-              <div className="flex items-center justify-between gap-2">
-                <h4 className="text-md mb-1 leading-6 text-gray-900">Manage members</h4>
-                <Button
-                  theme="secondary"
-                  className="flex items-center gap-x-1"
-                  onClick={() => setInviteModal(true)}
-                >
-                  <PlusIcon className="h-4 w-4" />
-                  Add Member
-                </Button>
-              </div>
-              <div className="mt-6 space-y-6">
-                {members.length > 0
-                  ? members.map((member) => (
-                      <div key={member.id} className="flex items-center justify-between">
-                        <div className="flex items-center gap-x-8 gap-y-2">
-                          <div className="relative flex h-10 w-10 items-center justify-center rounded bg-gray-700 p-4 capitalize text-white">
-                            {member.avatar && member.avatar !== "" ? (
-                              <Image
-                                src={member.avatar}
-                                alt={member.first_name}
-                                layout="fill"
-                                objectFit="cover"
-                                className="rounded"
-                              />
-                            ) : member.first_name !== "" ? (
-                              member.first_name.charAt(0)
-                            ) : (
-                              member.email.charAt(0)
-                            )}
-                          </div>
-                          <div>
-                            <h4 className="text-sm">
-                              {member.first_name} {member.last_name}{" "}
-                            </h4>
-                            <p className="text-xs text-gray-500">{member.email}</p>
-                          </div>
-                        </div>
-                        {!member.member && (
-                          <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">
-                            Request Pending
-                          </span>
-                        )}
-                        <div className="flex items-center gap-2 text-xs">
-                          {selectedMember === member.id ? (
-                            <CustomListbox
-                              options={Object.keys(ROLE).map((key) => ({
-                                value: key,
-                                display: ROLE[parseInt(key) as keyof typeof ROLE],
-                              }))}
-                              title={ROLE[member.role as keyof typeof ROLE] ?? "Select Role"}
-                              value={member.role}
-                              onChange={(value) => {
-                                if (!activeWorkspace || !projectDetails) return;
-                                projectService
-                                  .updateProjectMember(
-                                    activeWorkspace.slug,
-                                    projectDetails.id,
-                                    member.id,
-                                    {
-                                      role: value,
-                                    }
-                                  )
-                                  .then((res) => {
-                                    setToastAlert({
-                                      type: "success",
-                                      message: "Member role updated successfully.",
-                                      title: "Success",
-                                    });
-                                    mutateMembers(
-                                      (prevData: any) =>
-                                        prevData.map((m: any) =>
-                                          m.id === selectedMember
-                                            ? { ...m, ...res, role: value }
-                                            : m
-                                        ),
-                                      false
-                                    );
-                                    setSelectedMember(null);
-                                  })
-                                  .catch((err) => {
-                                    console.log(err);
-                                  });
-                              }}
+            <div className="divide-y rounded-[10px] border bg-white px-6">
+              {members.length > 0
+                ? members.map((member) => (
+                    <div key={member.id} className="flex items-center justify-between py-6">
+                      <div className="flex items-center gap-x-8 gap-y-2">
+                        <div className="relative flex h-10 w-10 items-center justify-center rounded-lg bg-gray-700 p-4 capitalize text-white">
+                          {member.avatar && member.avatar !== "" ? (
+                            <Image
+                              src={member.avatar}
+                              alt={member.first_name}
+                              layout="fill"
+                              objectFit="cover"
+                              className="rounded-lg"
                             />
+                          ) : member.first_name !== "" ? (
+                            member.first_name.charAt(0)
                           ) : (
-                            <p>{ROLE[member.role as keyof typeof ROLE] ?? "None"}</p>
+                            member.email.charAt(0)
                           )}
-                          <CustomMenu ellipsis>
-                            <CustomMenu.MenuItem
-                              onClick={() => {
-                                if (!member.member) {
-                                  setToastAlert({
-                                    type: "error",
-                                    message: "You can't edit a pending invitation.",
-                                    title: "Error",
-                                  });
-                                } else {
-                                  setSelectedMember(member.id);
-                                }
-                              }}
-                            >
-                              Edit
-                            </CustomMenu.MenuItem>
-                            <CustomMenu.MenuItem
-                              onClick={() => {
-                                if (member.member) {
-                                  setSelectedRemoveMember(member.id);
-                                } else {
-                                  setSelectedInviteRemoveMember(member.id);
-                                }
-                              }}
-                            >
-                              Remove
-                            </CustomMenu.MenuItem>
-                          </CustomMenu>
+                        </div>
+                        <div>
+                          <h4 className="text-sm">
+                            {member.first_name} {member.last_name}
+                          </h4>
+                          <p className="mt-0.5 text-xs text-gray-500">{member.email}</p>
                         </div>
                       </div>
-                    ))
-                  : null}
-              </div>
+                      {!member.member && (
+                        <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">
+                          Request Pending
+                        </span>
+                      )}
+                      <div className="flex items-center gap-2 text-xs">
+                        <CustomSelect
+                          label={ROLE[member.role as keyof typeof ROLE]}
+                          value={member.role}
+                          onChange={(value: 5 | 10 | 15 | 20 | undefined) => {
+                            if (!activeWorkspace || !projectDetails) return;
+
+                            projectService
+                              .updateProjectMember(
+                                activeWorkspace.slug,
+                                projectDetails.id,
+                                member.id,
+                                {
+                                  role: value,
+                                }
+                              )
+                              .then((res) => {
+                                setToastAlert({
+                                  type: "success",
+                                  message: "Member role updated successfully.",
+                                  title: "Success",
+                                });
+                                mutateMembers(
+                                  (prevData: any) =>
+                                    prevData.map((m: any) =>
+                                      m.id === member.id ? { ...m, ...res, role: value } : m
+                                    ),
+                                  false
+                                );
+                              })
+                              .catch((err) => {
+                                console.log(err);
+                              });
+                          }}
+                        >
+                          {Object.keys(ROLE).map((key) => (
+                            <CustomSelect.Option key={key} value={key}>
+                              <>{ROLE[parseInt(key) as keyof typeof ROLE]}</>
+                            </CustomSelect.Option>
+                          ))}
+                        </CustomSelect>
+                        <CustomMenu ellipsis>
+                          <CustomMenu.MenuItem
+                            onClick={() => {
+                              if (member.member) setSelectedRemoveMember(member.id);
+                              else setSelectedInviteRemoveMember(member.id);
+                            }}
+                          >
+                            Remove member
+                          </CustomMenu.MenuItem>
+                        </CustomMenu>
+                      </div>
+                    </div>
+                  ))
+                : null}
             </div>
           )}
         </section>

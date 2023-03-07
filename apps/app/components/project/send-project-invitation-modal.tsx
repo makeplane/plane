@@ -6,9 +6,8 @@ import useSWR, { mutate } from "swr";
 
 import { useForm, Controller } from "react-hook-form";
 
-import { Dialog, Transition, Listbox } from "@headlessui/react";
+import { Dialog, Transition } from "@headlessui/react";
 // ui
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { Button, CustomSelect, TextArea } from "components/ui";
 // hooks
 import useToast from "hooks/use-toast";
@@ -17,7 +16,7 @@ import projectService from "services/project.service";
 import workspaceService from "services/workspace.service";
 // types
 import { IProjectMemberInvitation } from "types";
-// fetch - keys
+// fetch-keys
 import { PROJECT_INVITATIONS, WORKSPACE_MEMBERS } from "constants/fetch-keys";
 // constants
 import { ROLE } from "constants/workspace";
@@ -130,7 +129,7 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-5 py-8 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="space-y-5">
                     <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
@@ -148,77 +147,36 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
                           name="user_id"
                           rules={{ required: "Please select a member" }}
                           render={({ field: { value, onChange } }) => (
-                            <Listbox
+                            <CustomSelect
                               value={value}
-                              onChange={(data: any) => {
-                                onChange(data.id);
-                                setValue("member_id", data.id);
-                                setValue("email", data.email);
-                              }}
-                            >
-                              {({ open }) => (
-                                <>
-                                  <Listbox.Label className="mb-2 text-gray-500">
-                                    Email
-                                  </Listbox.Label>
-                                  <div className="relative">
-                                    <Listbox.Button
-                                      className={`relative w-full cursor-default rounded-md border bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm ${
-                                        errors.user_id ? "border-red-500 bg-red-50" : ""
-                                      }`}
-                                    >
-                                      <span className="block truncate">
-                                        {value && value !== ""
-                                          ? people?.find((p) => p.member.id === value)?.member.email
-                                          : "Select email"}
-                                      </span>
-                                      <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                                        <ChevronDownIcon
-                                          className="h-5 w-5 text-gray-400"
-                                          aria-hidden="true"
-                                        />
-                                      </span>
-                                    </Listbox.Button>
+                              label={
+                                <div
+                                  className={`${errors.user_id ? "border-red-500 bg-red-50" : ""}`}
+                                >
+                                  {value && value !== ""
+                                    ? people?.find((p) => p.member.id === value)?.member.email
+                                    : "Select email"}
+                                </div>
+                              }
+                              onChange={(val: string) => {
+                                onChange(val);
+                                const person = uninvitedPeople?.find((p) => p.member.id === val);
 
-                                    <Transition
-                                      show={open}
-                                      as={React.Fragment}
-                                      leave="transition ease-in duration-100"
-                                      leaveFrom="opacity-100"
-                                      leaveTo="opacity-0"
-                                    >
-                                      <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                                        {uninvitedPeople?.length === 0 ? (
-                                          <div className="relative cursor-default select-none py-2 pl-3 pr-9 text-left text-gray-600">
-                                            Invite to workspace to add members
-                                          </div>
-                                        ) : (
-                                          uninvitedPeople?.map((person) => (
-                                            <Listbox.Option
-                                              key={person.member.id}
-                                              className={({ active, selected }) =>
-                                                `${active ? "bg-indigo-50" : ""} ${
-                                                  selected ? "bg-indigo-50 font-medium" : ""
-                                                } text-gray-900 cursor-default select-none p-2`
-                                              }
-                                              value={{
-                                                id: person.member.id,
-                                                email: person.member.email,
-                                              }}
-                                            >
-                                              {person.member.email}
-                                            </Listbox.Option>
-                                          ))
-                                        )}
-                                      </Listbox.Options>
-                                    </Transition>
-                                  </div>
-                                  <p className="text-sm text-red-400">
-                                    {errors.user_id && errors.user_id.message}
-                                  </p>
-                                </>
-                              )}
-                            </Listbox>
+                                setValue("member_id", val);
+                                setValue("email", person?.member.email ?? "");
+                              }}
+                              input
+                              width="w-full"
+                            >
+                              {uninvitedPeople?.map((person) => (
+                                <CustomSelect.Option
+                                  key={person.member.id}
+                                  value={person.member.id}
+                                >
+                                  {person.member.email}
+                                </CustomSelect.Option>
+                              ))}
+                            </CustomSelect>
                           )}
                         />
                       </div>
@@ -236,6 +194,7 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
                                 </span>
                               }
                               input
+                              width="w-full"
                             >
                               {Object.entries(ROLE).map(([key, label]) => (
                                 <CustomSelect.Option key={key} value={key}>
@@ -258,7 +217,7 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
                       </div>
                     </div>
                   </div>
-                  <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
+                  <div className="mt-5 flex justify-end gap-2">
                     <Button theme="secondary" onClick={handleClose}>
                       Cancel
                     </Button>

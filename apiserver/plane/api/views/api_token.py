@@ -28,7 +28,11 @@ class ApiTokenEndpoint(BaseAPIView):
             )
 
             serializer = APITokenSerializer(api_token)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            # Token will be only vissible while creating
+            return Response(
+                {"api_token": serializer.data, "token": api_token.token},
+                status=status.HTTP_201_CREATED,
+            )
 
         except Exception as e:
             capture_exception(e)

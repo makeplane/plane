@@ -89,14 +89,18 @@ const ProjectModules: NextPage = () => {
       {modules ? (
         modules.length > 0 ? (
           <div className="space-y-5">
-            <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
-              {modules.map((module) => (
-                <SingleModuleCard
-                  key={module.id}
-                  module={module}
-                  handleEditModule={() => handleEditModule(module)}
-                />
-              ))}
+            <div className="flex flex-col gap-5">
+              <h3 className="text-3xl font-semibold text-black">Module</h3>
+
+              <div className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
+                {modules.map((module) => (
+                  <SingleModuleCard
+                    key={module.id}
+                    module={module}
+                    handleEditModule={() => handleEditModule(module)}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         ) : (

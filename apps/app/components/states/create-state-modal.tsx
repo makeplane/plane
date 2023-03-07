@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 
 import { useRouter } from "next/router";
 
@@ -13,7 +13,7 @@ import { Dialog, Popover, Transition } from "@headlessui/react";
 // services
 import stateService from "services/state.service";
 // ui
-import { Button, Input, Select, TextArea } from "components/ui";
+import { Button, CustomSelect, Input, TextArea } from "components/ui";
 // icons
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 // types
@@ -129,19 +129,25 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
                         />
                       </div>
                       <div>
-                        <Select
-                          id="group"
-                          label="Group"
+                        <Controller
+                          control={control}
+                          rules={{ required: true }}
                           name="group"
-                          error={errors.group}
-                          register={register}
-                          validations={{
-                            required: "Group is required",
-                          }}
-                          options={Object.keys(GROUP_CHOICES).map((key) => ({
-                            value: key,
-                            label: GROUP_CHOICES[key as keyof typeof GROUP_CHOICES],
-                          }))}
+                          render={({ field: { value, onChange } }) => (
+                            <CustomSelect
+                              value={value}
+                              label={GROUP_CHOICES[value as keyof typeof GROUP_CHOICES]}
+                              onChange={onChange}
+                              width="w-full"
+                              input
+                            >
+                              {Object.keys(GROUP_CHOICES).map((key) => (
+                                <CustomSelect.Option key={key} value={key}>
+                                  {GROUP_CHOICES[key as keyof typeof GROUP_CHOICES]}
+                                </CustomSelect.Option>
+                              ))}
+                            </CustomSelect>
+                          )}
                         />
                       </div>
                       <div>
