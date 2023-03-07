@@ -11,6 +11,8 @@ import { Button, CustomDatePicker, CustomSelect, Input, TextArea } from "compone
 import { ICycle } from "types";
 // services
 import cyclesService from "services/cycles.service";
+// helper
+import { getDateRangeStatus } from "helpers/date-time.helper";
 
 type Props = {
   handleFormSubmit: (values: Partial<ICycle>) => Promise<void>;
@@ -52,6 +54,10 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
       ...defaultValues,
     });
   };
+
+  const cycleStatus =
+    data?.start_date && data?.end_date
+      ? getDateRangeStatus(data?.start_date, data?.end_date) : "";
 
   const dateChecker = async (payload: any) => {
     await cyclesService
@@ -135,7 +141,7 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
                       value={value}
                       onChange={(val) => {
                         onChange(val);
-                        watch("end_date")
+                        watch("end_date") && cycleStatus != "current"
                           ? dateChecker({
                               start_date: val,
                               end_date: watch("end_date"),
@@ -163,7 +169,7 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
                       value={value}
                       onChange={(val) => {
                         onChange(val);
-                        watch("start_date")
+                        watch("start_date") && cycleStatus != "current"
                           ? dateChecker({
                               start_date: watch("start_date"),
                               end_date: val,
