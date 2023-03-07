@@ -24,7 +24,7 @@ import {
   ViewStateSelect,
 } from "components/issues/view-select";
 // ui
-import { ContextMenu, CustomMenu } from "components/ui";
+import { ContextMenu, CustomMenu, Tooltip } from "components/ui";
 // icons
 import {
   ClipboardDocumentCheckIcon,
@@ -33,7 +33,7 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 // helpers
-import { copyTextToClipboard } from "helpers/string.helper";
+import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 // types
 import {
   CycleIssueResponse,
@@ -265,12 +265,12 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 className="text-sm group-hover:text-theme"
                 style={{ lineClamp: 3, WebkitLineClamp: 3 }}
               >
-                {issue.name}
+                {truncateText(issue.name, 100)}
               </h5>
             </a>
           </Link>
           <div className="relative mt-2.5 flex flex-wrap items-center gap-2 text-xs">
-            {properties.priority && selectedGroup !== "priority" && (
+            {properties.priority && (
               <ViewPrioritySelect
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
@@ -278,7 +278,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 selfPositioned
               />
             )}
-            {properties.state && selectedGroup !== "state_detail.name" && (
+            {properties.state && (
               <ViewStateSelect
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
