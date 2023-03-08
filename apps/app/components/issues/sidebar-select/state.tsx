@@ -63,6 +63,7 @@ export const SidebarStateSelect: React.FC<Props> = ({ value, onChange, userAuth 
           value={value}
           onChange={onChange}
           width="w-full"
+          position="right"
           disabled={isNotAllowed}
         >
           {states ? (
