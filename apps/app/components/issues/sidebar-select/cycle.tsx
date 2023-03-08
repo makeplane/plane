@@ -80,6 +80,7 @@ export const SidebarCycleSelect: React.FC<Props> = ({
               : handleCycleChange(cycles?.find((c) => c.id === value) as ICycle);
           }}
           width="w-full"
+          position="right"
           disabled={isNotAllowed}
         >
           {cycles ? (
