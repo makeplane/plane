@@ -111,7 +111,7 @@ export const SingleBoard: React.FC<Props> = ({
                       snapshot.isDraggingOver ? "block" : "hidden"
                     } pointer-events-none top-1/2 left-1/2 z-[99] -translate-y-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-white p-2 text-xs`}
                   >
-                    This board is ordered by {replaceUnderscoreIfSnakeCase(orderBy ?? "")}
+                    This board is ordered by {replaceUnderscoreIfSnakeCase(orderBy ?? "created_at")}
                   </div>
                 </>
               )}
