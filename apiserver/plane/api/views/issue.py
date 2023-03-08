@@ -739,19 +739,19 @@ class BulkCreateIssuesEndpoint(BaseAPIView):
                 default_state = State.objects.filter(project_id=project_id).first()
 
             # Get the maximum sequence_id
-            last_id = (
-                IssueSequence.objects.filter(project_id=project_id).aggregate(
-                    largest=Max("sequence")
-                )["largest"]
-                + 1
-            )
+            last_id = IssueSequence.objects.filter(project_id=project_id).aggregate(
+                largest=Max("sequence")
+            )["largest"]
+
+            last_id = 1 if last_id is None else last_id + 1
 
             # Get the maximum sort order
+            largest_sort_order = Issue.objects.filter(
+                project_id=project_id, state=default_state
+            ).aggregate(largest=Max("sort_order"))["largest"]
+
             largest_sort_order = (
-                Issue.objects.filter(
-                    project_id=project_id, state=default_state
-                ).aggregate(largest=Max("sort_order"))["largest"]
-                + 10000
+                65535 if largest_sort_order is None else largest_sort_order + 10000
             )
 
             # Get the issues_data
@@ -828,6 +828,25 @@ class BulkCreateIssuesEndpoint(BaseAPIView):
                 ]
 
             _ = IssueLabel.objects.bulk_create(bulk_issue_labels, batch_size=100)
+
+            # Create Comments
+            bulk_issue_comments = []
+            for issue, issue_data in zip(issues, issues_data):
+                comments_list = issue_data.get("comments_list", [])
+                bulk_issue_comments = bulk_issue_comments + [
+                    IssueComment(
+                        issue=issue,
+                        comment_html=comment.get("comment_html", "<p></p>"),
+                        actor=request.user,
+                        project_id=project_id,
+                        workspace_id=project.workspace_id,
+                        created_by=request.user,
+                        updated_by=request.user,
+                    )
+                    for comment in comments_list
+                ]
+
+            _ = IssueComment.objects.bulk_create(bulk_issue_comments, batch_size=100)
 
             # Attach Links
             _ = IssueLink.objects.bulk_create(
