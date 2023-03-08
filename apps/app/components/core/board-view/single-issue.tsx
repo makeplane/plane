@@ -262,7 +262,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 </div>
               )}
               <h5
-                className="text-sm group-hover:text-theme"
+                className="break-all text-sm group-hover:text-theme"
                 style={{ lineClamp: 3, WebkitLineClamp: 3 }}
               >
                 {truncateText(issue.name, 100)}

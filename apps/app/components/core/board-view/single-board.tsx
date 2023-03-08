@@ -104,12 +104,12 @@ export const SingleBoard: React.FC<Props> = ({
                   <div
                     className={`absolute ${
                       snapshot.isDraggingOver ? "block" : "hidden"
-                    } pointer-events-none top-0 left-0 z-[99999998] h-full w-full bg-gray-100 opacity-50`}
+                    } pointer-events-none top-0 left-0 z-[99] h-full w-full bg-gray-100 opacity-50`}
                   />
                   <div
                     className={`absolute ${
                       snapshot.isDraggingOver ? "block" : "hidden"
-                    } pointer-events-none top-1/2 left-1/2 z-[99999999] -translate-y-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-white p-2 text-xs`}
+                    } pointer-events-none top-1/2 left-1/2 z-[99] -translate-y-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-white p-2 text-xs`}
                   >
                     This board is ordered by {replaceUnderscoreIfSnakeCase(orderBy ?? "")}
                   </div>
