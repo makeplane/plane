@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useRouter } from "next/router";
 
 // headless ui
@@ -17,16 +17,13 @@ import useIssuesProperties from "hooks/use-issue-properties";
 // types
 import { IIssue, Properties } from "types";
 // components
-import { DeleteIssueModal, MyIssuesListItem } from "components/issues";
+import {  MyIssuesListItem } from "components/issues";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // types
 import type { NextPage } from "next";
 
 const MyIssuesPage: NextPage = () => {
-  const [deleteIssueModal, setDeleteIssueModal] = useState(false);
-  const [issueToDelete, setIssueToDelete] = useState<IIssue | null>(null);
-
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -38,18 +35,8 @@ const MyIssuesPage: NextPage = () => {
     undefined
   );
 
-  const handleDeleteIssue = (issue: IIssue) => {
-    setDeleteIssueModal(true);
-    setIssueToDelete(issue);
-  };
-
   return (
     <>
-      <DeleteIssueModal
-        handleClose={() => setDeleteIssueModal(false)}
-        isOpen={deleteIssueModal}
-        data={issueToDelete}
-      />
       <AppLayout
         breadcrumbs={
           <Breadcrumbs>
@@ -162,7 +149,6 @@ const MyIssuesPage: NextPage = () => {
                                   issue={issue}
                                   properties={properties}
                                   projectId={issue.project}
-                                  handleDeleteIssue={() => handleDeleteIssue(issue)}
                                 />
                               ))}
                             </div>

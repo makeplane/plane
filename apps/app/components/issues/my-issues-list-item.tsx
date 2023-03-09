@@ -27,14 +27,12 @@ type Props = {
   issue: IIssue;
   properties: Properties;
   projectId: string;
-  handleDeleteIssue: () => void;
 };
 
 export const MyIssuesListItem: React.FC<Props> = ({
   issue,
   properties,
   projectId,
-  handleDeleteIssue,
 }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -177,7 +175,6 @@ export const MyIssuesListItem: React.FC<Props> = ({
           </Tooltip>
         )}
         <CustomMenu width="auto" ellipsis>
-          <CustomMenu.MenuItem onClick={handleDeleteIssue}>Delete issue</CustomMenu.MenuItem>
           <CustomMenu.MenuItem onClick={handleCopyText}>Copy issue link</CustomMenu.MenuItem>
         </CustomMenu>
       </div>
