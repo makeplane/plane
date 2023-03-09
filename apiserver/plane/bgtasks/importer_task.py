@@ -14,7 +14,15 @@ from sentry_sdk import capture_exception
 
 # Module imports
 from plane.api.serializers import ImporterSerializer
-from plane.db.models import Importer, WorkspaceMemberInvite
+from plane.db.models import (
+    Importer,
+    WorkspaceMemberInvite,
+    GithubRepositorySync,
+    GithubRepository,
+    ProjectMember,
+    WorkspaceIntegration,
+    Label,
+)
 from .workspace_invitation_task import workspace_invitation
 
 
@@ -60,6 +68,62 @@ def service_importer(service, importer_id):
                 invitation.token,
                 settings.WEB_URL,
                 importer.initiated_by.email,
+            )
+
+        # Check if sync config is on
+        if service == "github" and importer.config.get("sync", False):
+            name = importer.data.get("name", False)
+            url = importer.data.get("url", False)
+            config = importer.data.get("config", {})
+            repository_id = importer.data.get("repository_id", False)
+            owner = importer.data.get("owner", False)
+
+            workspace_integration = WorkspaceIntegration.objects.get(
+                workspace_id=importer.workspace_id, integration__provider="github"
+            )
+
+            # Delete the old repository object
+            GithubRepositorySync.objects.filter(project_id=importer.project_id).delete()
+            GithubRepository.objects.filter(project_id=importer.project_id).delete()
+            # Project member delete
+
+            # Create a Label for github
+            label = Label.objects.filter(
+                name="GitHub", project_id=importer.project_id
+            ).first()
+
+            if label is None:
+                label = Label.objects.create(
+                    name="GitHub",
+                    project_id=importer.project_id,
+                    description="Label to sync Plane issues with GitHub issues",
+                    color="#003773",
+                )
+            # Create repository
+            repo = GithubRepository.objects.create(
+                name=name,
+                url=url,
+                config=config,
+                repository_id=repository_id,
+                owner=owner,
+                project_id=importer.project_id,
+            )
+
+            # Create repo sync
+            repo_sync = GithubRepositorySync.objects.create(
+                repository=repo,
+                workspace_integration=workspace_integration,
+                actor=workspace_integration.actor,
+                credentials=importer.data.get("credentials", {}),
+                project_id=importer.project_id,
+                label=label,
+            )
+
+            # Add bot as a member in the project
+            _ = ProjectMember.objects.get_or_create(
+                member=workspace_integration.actor,
+                role=20,
+                project_id=importer.project_id,
             )
 
         if settings.PROXY_BASE_URL:

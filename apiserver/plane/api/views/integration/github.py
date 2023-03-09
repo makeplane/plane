@@ -91,10 +91,6 @@ class GithubRepositorySyncViewSet(BaseViewSet):
             GithubRepository.objects.filter(
                 project_id=project_id, workspace__slug=slug
             ).delete()
-            # Project member delete
-            ProjectMember.objects.filter(
-                member=workspace_integration.actor, role=20, project_id=project_id
-            ).delete()
 
             # Create repository
             repo = GithubRepository.objects.create(
@@ -131,7 +127,7 @@ class GithubRepositorySyncViewSet(BaseViewSet):
             )
 
             # Add bot as a member in the project
-            _ = ProjectMember.objects.create(
+            _ = ProjectMember.objects.get_or_create(
                 member=workspace_integration.actor, role=20, project_id=project_id
             )
 
