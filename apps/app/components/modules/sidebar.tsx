@@ -327,7 +327,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
 
               <div className="flex flex-col gap-6 px-7 py-6">
                 <div className="flex flex-col items-start justify-start gap-2 ">
-                  <div className="flex items-center justify-start gap-2  ">
+                  <div className="flex items-start justify-start gap-2  ">
                     <h4 className="text-xl font-semibold text-gray-900">{module.name}</h4>
                     <CustomMenu width="lg" ellipsis>
                       <CustomMenu.MenuItem onClick={handleCopyText}>
