@@ -75,12 +75,20 @@ export const SingleList: React.FC<Props> = ({
     <Disclosure key={groupTitle} as="div" defaultOpen>
       {({ open }) => (
         <div className="rounded-[10px] border border-gray-300 bg-white">
-          <div className={`flex items-center justify-between bg-gray-100 px-5 py-3 ${open ? "rounded-t-[10px]" : "rounded-[10px]"}`}>
+          <div
+            className={`flex items-center justify-between bg-gray-100 px-5 py-3 ${
+              open ? "rounded-t-[10px]" : "rounded-[10px]"
+            }`}
+          >
             <Disclosure.Button>
               <div className="flex items-center gap-x-3">
-                <span>
-                  {currentState && getStateGroupIcon(currentState.group, "20", "20", bgColor)}
-                </span>
+                {selectedGroup !== null && selectedGroup === "state_detail.name" ? (
+                  <span>
+                    {currentState && getStateGroupIcon(currentState.group, "20", "20", bgColor)}
+                  </span>
+                ) : (
+                  ""
+                )}
                 {selectedGroup !== null ? (
                   <h2 className="text-xl font-semibold capitalize leading-6 text-gray-800">
                     {selectedGroup === "created_by"
