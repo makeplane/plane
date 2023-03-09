@@ -70,13 +70,13 @@ def service_importer(service, importer_id):
                 importer.initiated_by.email,
             )
 
-        # Check if sync config is on
+        # Check if sync config is on for github importers
         if service == "github" and importer.config.get("sync", False):
-            name = importer.data.get("name", False)
-            url = importer.data.get("url", False)
-            config = importer.data.get("config", {})
-            repository_id = importer.data.get("repository_id", False)
-            owner = importer.data.get("owner", False)
+            name = importer.metadata.get("name", False)
+            url = importer.metadata.get("url", False)
+            config = importer.metadata.get("config", {})
+            owner = importer.metadata.get("owner", False)
+            repository_id = importer.metadata.get("repository_id", False)
 
             workspace_integration = WorkspaceIntegration.objects.get(
                 workspace_id=importer.workspace_id, integration__provider="github"

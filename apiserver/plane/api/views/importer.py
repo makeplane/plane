@@ -72,9 +72,10 @@ class ImportServiceEndpoint(BaseAPIView):
             if service == "github":
                 data = request.data.get("data", False)
                 metadata = request.data.get("metadata", False)
-                if not data or not metadata:
+                config = request.data.get("config", False)
+                if not data or not metadata or not config:
                     return Response(
-                        {"error": "data and metadata are required"},
+                        {"error": "Data, config and metadata are required"},
                         status=status.HTTP_400_BAD_REQUEST,
                     )
 
@@ -95,6 +96,7 @@ class ImportServiceEndpoint(BaseAPIView):
                     data=data,
                     metadata=metadata,
                     token=api_token,
+                    config=config,
                     created_by=request.user,
                     updated_by=request.user,
                 )

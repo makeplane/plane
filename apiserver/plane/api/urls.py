@@ -104,6 +104,7 @@ from plane.api.views import (
     GithubRepositorySyncViewSet,
     GithubIssueSyncViewSet,
     GithubCommentSyncViewSet,
+    BulkCreateGithubIssueSyncEndpoint,
     ## End Integrations
     # Importer
     ServiceIssueImportSummaryEndpoint,
@@ -926,6 +927,10 @@ urlpatterns = [
                 "get": "list",
             }
         ),
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/github-repository-sync/<uuid:repo_sync_id>/bulk-create-github-issue-sync/",
+        BulkCreateGithubIssueSyncEndpoint.as_view(),
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/github-repository-sync/<uuid:repo_sync_id>/github-issue-sync/<uuid:pk>/",

@@ -98,6 +98,7 @@ from .integration import (
     GithubRepositorySyncViewSet,
     GithubCommentSyncViewSet,
     GithubRepositoriesEndpoint,
+    BulkCreateGithubIssueSyncEndpoint,
 )
 
 from .importer import (
