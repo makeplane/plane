@@ -27,7 +27,7 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 // helpers
-import { copyTextToClipboard } from "helpers/string.helper";
+import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 // types
 import { CycleIssueResponse, IIssue, ModuleIssueResponse, Properties, UserAuth } from "types";
 // fetch-keys
@@ -176,21 +176,15 @@ export const SingleListIssue: React.FC<Props> = ({
           Copy issue link
         </ContextMenu.Item>
       </ContextMenu>
-      <div
-        className="flex items-center justify-between gap-2 px-4 py-3 text-sm"
-        onContextMenu={(e) => {
-          e.preventDefault();
-          setContextMenu(true);
-          setContextMenuPosition({ x: e.pageX, y: e.pageY });
-        }}
-      >
-        <div className="flex items-center gap-2">
-          <span
-            className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
-            style={{
-              backgroundColor: issue.state_detail.color,
-            }}
-          />
+      <div className="border-b border-gray-300 last:border-b-0">
+        <div
+          className="flex items-center justify-between gap-2 px-4 py-4"
+          onContextMenu={(e) => {
+            e.preventDefault();
+            setContextMenu(true);
+            setContextMenuPosition({ x: e.pageX, y: e.pageY });
+          }}
+        >
           <Link href={`/${workspaceSlug}/projects/${issue?.project_detail?.id}/issues/${issue.id}`}>
             <a className="group relative flex items-center gap-2">
               {properties.key && (
@@ -198,88 +192,89 @@ export const SingleListIssue: React.FC<Props> = ({
                   tooltipHeading="ID"
                   tooltipContent={`${issue.project_detail?.identifier}-${issue.sequence_id}`}
                 >
-                  <span className="flex-shrink-0 text-xs text-gray-500">
+                  <span className="flex-shrink-0 text-sm text-gray-400">
                     {issue.project_detail?.identifier}-{issue.sequence_id}
                   </span>
                 </Tooltip>
               )}
               <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
-                <span className="w-auto max-w-lg overflow-hidden text-ellipsis whitespace-nowrap">
-                  {issue.name}
-                </span>
+                <span className="text-base text-gray-800">{truncateText(issue.name, 50)}</span>
               </Tooltip>
             </a>
           </Link>
-        </div>
-        <div className="flex flex-shrink-0 flex-wrap items-center gap-x-1 gap-y-2 text-xs">
-          {properties.priority && (
-            <ViewPrioritySelect
-              issue={issue}
-              partialUpdateIssue={partialUpdateIssue}
-              position="right"
-              isNotAllowed={isNotAllowed}
-            />
-          )}
-          {properties.state && (
-            <ViewStateSelect
-              issue={issue}
-              partialUpdateIssue={partialUpdateIssue}
-              position="right"
-              isNotAllowed={isNotAllowed}
-            />
-          )}
-          {properties.due_date && (
-            <ViewDueDateSelect
-              issue={issue}
-              partialUpdateIssue={partialUpdateIssue}
-              isNotAllowed={isNotAllowed}
-            />
-          )}
-          {properties.sub_issue_count && (
-            <div className="flex flex-shrink-0 items-center gap-1 rounded-md border px-3 py-1.5 text-xs shadow-sm">
-              {issue.sub_issues_count} {issue.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
-            </div>
-          )}
-          {properties.labels && (
-            <div className="flex flex-wrap gap-1">
-              {issue.label_details.map((label) => (
-                <span
-                  key={label.id}
-                  className="group flex items-center gap-1 rounded-2xl border px-2 py-0.5 text-xs"
-                >
+
+          <div className="flex  flex-wrap items-center gap-3 text-xs">
+            {properties.priority && (
+              <ViewPrioritySelect
+                issue={issue}
+                partialUpdateIssue={partialUpdateIssue}
+                position="right"
+                isNotAllowed={isNotAllowed}
+              />
+            )}
+            {properties.state && (
+              <ViewStateSelect
+                issue={issue}
+                partialUpdateIssue={partialUpdateIssue}
+                position="right"
+                isNotAllowed={isNotAllowed}
+              />
+            )}
+            {properties.due_date && (
+              <ViewDueDateSelect
+                issue={issue}
+                partialUpdateIssue={partialUpdateIssue}
+                isNotAllowed={isNotAllowed}
+              />
+            )}
+            {properties.sub_issue_count && (
+              <div className="flex  items-center gap-1 rounded-md border px-3 py-1.5 text-xs shadow-sm">
+                {issue.sub_issues_count} {issue.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
+              </div>
+            )}
+            {properties.labels && issue.label_details.length > 0 ? (
+              <div className="flex flex-wrap gap-1">
+                {issue.label_details.map((label) => (
                   <span
-                    className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                    style={{
-                      backgroundColor: label?.color && label.color !== "" ? label.color : "#000",
-                    }}
-                  />
-                  {label.name}
-                </span>
-              ))}
-            </div>
-          )}
-          {properties.assignee && (
-            <ViewAssigneeSelect
-              issue={issue}
-              partialUpdateIssue={partialUpdateIssue}
-              position="right"
-              isNotAllowed={isNotAllowed}
-            />
-          )}
-          {type && !isNotAllowed && (
-            <CustomMenu width="auto" ellipsis>
-              <CustomMenu.MenuItem onClick={editIssue}>Edit issue</CustomMenu.MenuItem>
-              {type !== "issue" && removeIssue && (
-                <CustomMenu.MenuItem onClick={removeIssue}>
-                  <>Remove from {type}</>
+                    key={label.id}
+                    className="group flex items-center gap-1 rounded-2xl border px-2 py-0.5 text-xs"
+                  >
+                    <span
+                      className="h-1.5 w-1.5  rounded-full"
+                      style={{
+                        backgroundColor: label?.color && label.color !== "" ? label.color : "#000",
+                      }}
+                    />
+                    {label.name}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              ""
+            )}
+            {properties.assignee && (
+              <ViewAssigneeSelect
+                issue={issue}
+                partialUpdateIssue={partialUpdateIssue}
+                position="right"
+                isNotAllowed={isNotAllowed}
+              />
+            )}
+            {type && !isNotAllowed && (
+              <CustomMenu width="auto" ellipsis>
+                <CustomMenu.MenuItem onClick={editIssue}>Edit issue</CustomMenu.MenuItem>
+                {type !== "issue" && removeIssue && (
+                  <CustomMenu.MenuItem onClick={removeIssue}>
+                    <>Remove from {type}</>
+                  </CustomMenu.MenuItem>
+                )}
+                <CustomMenu.MenuItem onClick={() => handleDeleteIssue(issue)}>
+                  Delete issue
                 </CustomMenu.MenuItem>
-              )}
-              <CustomMenu.MenuItem onClick={() => handleDeleteIssue(issue)}>
-                Delete issue
-              </CustomMenu.MenuItem>
-              <CustomMenu.MenuItem onClick={handleCopyText}>Copy issue link</CustomMenu.MenuItem>
-            </CustomMenu>
-          )}
+                <CustomMenu.MenuItem onClick={handleCopyText}>Copy issue link</CustomMenu.MenuItem>
+              </CustomMenu>
+            )}
+          </div>
         </div>
       </div>
     </>
