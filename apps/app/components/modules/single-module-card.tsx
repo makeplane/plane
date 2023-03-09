@@ -15,7 +15,10 @@ import { AssigneesList, Avatar, CustomMenu, Tooltip } from "components/ui";
 import User from "public/user.png";
 import {
   CalendarDaysIcon,
+  DocumentDuplicateIcon,
+  PencilIcon,
   StarIcon,
+  TrashIcon,
   UserCircleIcon,
   UserGroupIcon,
 } from "@heroicons/react/24/outline";
@@ -255,12 +258,23 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
                 )}
 
                 <CustomMenu width="auto" verticalEllipsis>
-                  <CustomMenu.MenuItem onClick={handleEditModule}>Edit module</CustomMenu.MenuItem>
+                  <CustomMenu.MenuItem onClick={handleEditModule}>
+                    <span className="flex items-center justify-start gap-2 text-gray-800">
+                      <PencilIcon className="h-4 w-4" />
+                      <span>Edit Module</span>
+                    </span>
+                  </CustomMenu.MenuItem>
                   <CustomMenu.MenuItem onClick={handleDeleteModule}>
-                    Delete module
+                    <span className="flex items-center justify-start gap-2 text-gray-800">
+                      <TrashIcon className="h-4 w-4" />
+                      <span>Delete Module</span>
+                    </span>
                   </CustomMenu.MenuItem>
                   <CustomMenu.MenuItem onClick={handleCopyText}>
-                    Copy module link
+                    <span className="flex items-center justify-start gap-2 text-gray-800">
+                      <DocumentDuplicateIcon className="h-4 w-4" />
+                      <span>Copy Module Link</span>
+                    </span>
                   </CustomMenu.MenuItem>
                 </CustomMenu>
               </div>
