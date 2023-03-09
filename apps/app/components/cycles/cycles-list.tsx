@@ -1,12 +1,10 @@
 import { useState } from "react";
 
 // components
-import { DeleteCycleModal, SingleCycleCard } from "components/cycles";
-// icons
-import { CompletedCycleIcon, CurrentCycleIcon, UpcomingCycleIcon } from "components/icons";
+import { DeleteCycleModal, EmptyCycle, SingleCycleCard } from "components/cycles";
+import { Loader } from "components/ui";
 // types
 import { ICycle, SelectCycleType } from "types";
-import { Loader } from "components/ui";
 
 type TCycleStatsViewProps = {
   cycles: ICycle[] | undefined;
@@ -58,19 +56,7 @@ export const CyclesList: React.FC<TCycleStatsViewProps> = ({
             ))}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center gap-4 text-center">
-            {type === "upcoming" ? (
-              <UpcomingCycleIcon height="56" width="56" />
-            ) : type === "draft" ? (
-              <CompletedCycleIcon height="56" width="56" />
-            ) : (
-              <CurrentCycleIcon height="56" width="56" />
-            )}
-            <h3 className="text-gray-500">
-              No {type} {type === "current" ? "cycle" : "cycles"} yet. Create with{" "}
-              <pre className="inline rounded bg-gray-200 px-2 py-1">Q</pre>.
-            </h3>
-          </div>
+          <EmptyCycle/>
         )
       ) : (
         <Loader className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
