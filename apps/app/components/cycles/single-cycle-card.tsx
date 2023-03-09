@@ -232,7 +232,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
     <div className="h-full w-full">
       <div className="flex flex-col rounded-[10px] bg-white text-xs shadow">
         <div className="flex h-full flex-col gap-4 rounded-b-[10px] px-5  py-5">
-          <div className="flex items-center justify-between gap-1">
+        <div className="flex items-start justify-between gap-1">
             <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}>
               <a className="w-full">
                 <Tooltip tooltipContent={cycle.name} position="top-left">
