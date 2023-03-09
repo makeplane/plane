@@ -15,7 +15,13 @@ import { CustomMenu, LinearProgressIndicator, Tooltip } from "components/ui";
 import { Disclosure, Transition } from "@headlessui/react";
 // icons
 import { CalendarDaysIcon } from "@heroicons/react/20/solid";
-import { ChevronDownIcon, PencilIcon, StarIcon } from "@heroicons/react/24/outline";
+import {
+  ChevronDownIcon,
+  DocumentDuplicateIcon,
+  PencilIcon,
+  StarIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
 // helpers
 import { getDateRangeStatus, renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { groupBy } from "helpers/array.helper";
@@ -232,7 +238,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
     <div className="h-full w-full">
       <div className="flex flex-col rounded-[10px] bg-white text-xs shadow">
         <div className="flex h-full flex-col gap-4 rounded-b-[10px] px-5  py-5">
-          <div className="flex items-center justify-between gap-1">
+          <div className="flex items-start justify-between gap-1">
             <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}>
               <a className="w-full">
                 <Tooltip tooltipContent={cycle.name} position="top-left">
@@ -296,8 +302,18 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
               </button>
 
               <CustomMenu width="auto" verticalEllipsis>
-                <CustomMenu.MenuItem onClick={handleDeleteCycle}>Delete cycle</CustomMenu.MenuItem>
-                <CustomMenu.MenuItem onClick={handleCopyText}>Copy cycle link</CustomMenu.MenuItem>
+                <CustomMenu.MenuItem onClick={handleDeleteCycle}>
+                  <span className="flex items-center justify-start gap-2 text-gray-800">
+                    <TrashIcon className="h-4 w-4" />
+                    <span>Delete Cycle</span>
+                  </span>
+                </CustomMenu.MenuItem>
+                <CustomMenu.MenuItem onClick={handleCopyText}>
+                  <span className="flex items-center justify-start gap-2 text-gray-800">
+                    <DocumentDuplicateIcon className="h-4 w-4" />
+                    <span>Copy Cycle Link</span>
+                  </span>
+                </CustomMenu.MenuItem>
               </CustomMenu>
             </div>
           </div>
@@ -313,10 +329,12 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
                   <span> Progress </span>
                   <LinearProgressIndicator data={progressIndicatorData} />
                   <Disclosure.Button>
-                    <ChevronDownIcon
-                      className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`}
-                      aria-hidden="true"
-                    />
+                    <span className="p-1">
+                      <ChevronDownIcon
+                        className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`}
+                        aria-hidden="true"
+                      />
+                    </span>
                   </Disclosure.Button>
                 </div>
                 <Transition show={open}>

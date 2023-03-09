@@ -20,22 +20,16 @@ import { CustomMenu, Tooltip } from "components/ui";
 import { IIssue, Properties } from "types";
 // fetch-keys
 import { USER_ISSUE } from "constants/fetch-keys";
-import { copyTextToClipboard } from "helpers/string.helper";
+import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 import useToast from "hooks/use-toast";
 
 type Props = {
   issue: IIssue;
   properties: Properties;
   projectId: string;
-  handleDeleteIssue: () => void;
 };
 
-export const MyIssuesListItem: React.FC<Props> = ({
-  issue,
-  properties,
-  projectId,
-  handleDeleteIssue,
-}) => {
+export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
   const { setToastAlert } = useToast();
@@ -84,14 +78,8 @@ export const MyIssuesListItem: React.FC<Props> = ({
   const isNotAllowed = false;
 
   return (
-    <div key={issue.id} className="flex items-center justify-between gap-2 px-4 py-3 text-sm">
-      <div className="flex items-center gap-2">
-        <span
-          className={`block h-1.5 w-1.5 flex-shrink-0 rounded-full`}
-          style={{
-            backgroundColor: issue.state_detail.color,
-          }}
-        />
+    <div className="border-b border-gray-300 last:border-b-0">
+      <div key={issue.id} className="flex items-center justify-between gap-2 px-4 py-4">
         <Link href={`/${workspaceSlug}/projects/${issue?.project_detail?.id}/issues/${issue.id}`}>
           <a className="group relative flex items-center gap-2">
             {properties?.key && (
@@ -99,87 +87,87 @@ export const MyIssuesListItem: React.FC<Props> = ({
                 tooltipHeading="ID"
                 tooltipContent={`${issue.project_detail?.identifier}-${issue.sequence_id}`}
               >
-                <span className="flex-shrink-0 text-xs text-gray-500">
+                <span className="flex-shrink-0 text-sm text-gray-400">
                   {issue.project_detail?.identifier}-{issue.sequence_id}
                 </span>
               </Tooltip>
             )}
             <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
-              <span className="w-auto max-w-lg overflow-hidden text-ellipsis whitespace-nowrap">
-                {issue.name}
-              </span>
+              <span className="text-base text-gray-800">{truncateText(issue.name, 50)}</span>
             </Tooltip>
           </a>
         </Link>
-      </div>
-      <div className="flex flex-shrink-0 flex-wrap items-center gap-x-1 gap-y-2 text-xs">
-        {properties.priority && (
-          <ViewPrioritySelect
-            issue={issue}
-            partialUpdateIssue={partialUpdateIssue}
-            isNotAllowed={isNotAllowed}
-          />
-        )}
-        {properties.state && (
-          <ViewStateSelect
-            issue={issue}
-            partialUpdateIssue={partialUpdateIssue}
-            isNotAllowed={isNotAllowed}
-          />
-        )}
-        {properties.due_date && (
-          <ViewDueDateSelect
-            issue={issue}
-            partialUpdateIssue={partialUpdateIssue}
-            isNotAllowed={isNotAllowed}
-          />
-        )}
-        {properties.sub_issue_count && (
-          <div className="flex flex-shrink-0 items-center gap-1 rounded-md border px-3 py-1.5 text-xs shadow-sm">
-            {issue?.sub_issues_count} {issue?.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
-          </div>
-        )}
-        {properties.labels && (
-          <div className="flex flex-wrap gap-1">
-            {issue.label_details.map((label) => (
-              <span
-                key={label.id}
-                className="group flex items-center gap-1 rounded-2xl border px-2 py-0.5 text-xs"
-              >
-                <span
-                  className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                  style={{
-                    backgroundColor: label?.color && label.color !== "" ? label.color : "#000",
-                  }}
-                />
-                {label.name}
-              </span>
-            ))}
-          </div>
-        )}
-        {properties.assignee && (
-          <Tooltip
-            position="top-right"
-            tooltipHeading="Assignees"
-            tooltipContent={
-              issue.assignee_details.length > 0
-                ? issue.assignee_details
-                    .map((assignee) =>
-                      assignee?.first_name !== "" ? assignee?.first_name : assignee?.email
-                    )
-                    .join(", ")
-                : "No Assignee"
-            }
-          >
-            <div className="flex items-center gap-1">
-              <AssigneesList userIds={issue.assignees ?? []} />
+
+        <div className="flex flex-wrap items-center gap-3 text-xs">
+          {properties.priority && (
+            <ViewPrioritySelect
+              issue={issue}
+              partialUpdateIssue={partialUpdateIssue}
+              isNotAllowed={isNotAllowed}
+            />
+          )}
+          {properties.state && (
+            <ViewStateSelect
+              issue={issue}
+              partialUpdateIssue={partialUpdateIssue}
+              isNotAllowed={isNotAllowed}
+            />
+          )}
+          {properties.due_date && (
+            <ViewDueDateSelect
+              issue={issue}
+              partialUpdateIssue={partialUpdateIssue}
+              isNotAllowed={isNotAllowed}
+            />
+          )}
+          {properties.sub_issue_count && (
+            <div className="flex items-center gap-1 rounded-md border px-3 py-1.5 text-xs shadow-sm">
+              {issue?.sub_issues_count} {issue?.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
             </div>
-          </Tooltip>
-        )}
-        <CustomMenu width="auto" ellipsis>
-          <CustomMenu.MenuItem onClick={handleDeleteIssue}>Delete issue</CustomMenu.MenuItem>
-          <CustomMenu.MenuItem onClick={handleCopyText}>Copy issue link</CustomMenu.MenuItem>
-        </CustomMenu>
+          )}
+          {properties.labels && issue.label_details.length > 0 ? (
+            <div className="flex flex-wrap gap-1">
+              {issue.label_details.map((label) => (
+                <span
+                  key={label.id}
+                  className="group flex items-center gap-1 rounded-2xl border px-2 py-0.5 text-xs"
+                >
+                  <span
+                    className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                    style={{
+                      backgroundColor: label?.color && label.color !== "" ? label.color : "#000",
+                    }}
+                  />
+                  {label.name}
+                </span>
+              ))}
+            </div>
+          ) : (
+            ""
+          )}
+          {properties.assignee && (
+            <Tooltip
+              position="top-right"
+              tooltipHeading="Assignees"
+              tooltipContent={
+                issue.assignee_details.length > 0
+                  ? issue.assignee_details
+                      .map((assignee) =>
+                        assignee?.first_name !== "" ? assignee?.first_name : assignee?.email
+                      )
+                      .join(", ")
+                  : "No Assignee"
+              }
+            >
+              <div className="flex items-center gap-1">
+                <AssigneesList userIds={issue.assignees ?? []} />
+              </div>
+            </Tooltip>
+          )}
+          <CustomMenu width="auto" ellipsis>
+            <CustomMenu.MenuItem onClick={handleCopyText}>Copy issue link</CustomMenu.MenuItem>
+          </CustomMenu>
+        </div>
       </div>
     </div>
   );

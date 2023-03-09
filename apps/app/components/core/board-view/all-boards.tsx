@@ -39,7 +39,7 @@ export const AllBoards: React.FC<Props> = ({
   return (
     <>
       {groupedByIssues ? (
-        <div className="h-[calc(100vh-157px)] w-full lg:h-[calc(100vh-115px)]">
+        <div className="h-[calc(100vh-140px)] w-full">
           <div className="horizontal-scroll-enable flex h-full gap-x-4 overflow-x-auto overflow-y-hidden">
             {Object.keys(groupedByIssues).map((singleGroup, index) => {
               const currentState =
