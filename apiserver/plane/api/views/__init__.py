@@ -100,4 +100,8 @@ from .integration import (
     GithubRepositoriesEndpoint,
 )
 
-from .importer import ServiceIssueImportSummaryEndpoint, ImportServiceEndpoint
+from .importer import (
+    ServiceIssueImportSummaryEndpoint,
+    ImportServiceEndpoint,
+    UpdateServiceImportStatusEndpoint,
+)

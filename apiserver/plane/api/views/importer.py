@@ -95,6 +95,8 @@ class ImportServiceEndpoint(BaseAPIView):
                     data=data,
                     metadata=metadata,
                     token=api_token,
+                    created_by=request.user,
+                    updated_by=request.user,
                 )
 
                 service_importer.delay(service, importer.id)
@@ -114,4 +116,22 @@ class ImportServiceEndpoint(BaseAPIView):
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class UpdateServiceImportStatusEndpoint(BaseAPIView):
+    def post(self, request, slug, project_id, service, importer_id):
+        try:
+            importer = Importer.objects.get(
+                pk=importer_id,
+                workspace__slug=slug,
+                project_id=project_id,
+                service=service,
+            )
+            importer.status = request.data.get("status", "processing")
+            importer.save()
+            return Response(status.HTTP_200_OK)
+        except Importer.DoesNotExist:
+            return Response(
+                {"error": "Importer does not exist"}, status=status.HTTP_404_NOT_FOUND
             )
