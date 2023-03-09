@@ -83,7 +83,7 @@ const MyIssuesPage: NextPage = () => {
                                   }`}
                                   onClick={() => setProperties(key as keyof Properties)}
                                 >
-                                  {replaceUnderscoreIfSnakeCase(key)}
+                                  {key === "key" ? "ID" : replaceUnderscoreIfSnakeCase(key)}
                                 </button>
                               ))}
                             </div>
