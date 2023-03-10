@@ -89,7 +89,9 @@ export const timeAgo = (time: any) => {
   return time;
 };
 
-export const getDateRangeStatus = (startDate: string  , endDate: string ) => {
+export const getDateRangeStatus = (startDate: string | null, endDate: string | null) => {
+  if (!startDate || !endDate) return "draft";
+
   const now = new Date();
   const start = new Date(startDate);
   const end = new Date(endDate);
@@ -101,12 +103,45 @@ export const getDateRangeStatus = (startDate: string  , endDate: string ) => {
   } else {
     return "upcoming";
   }
-}
+};
 
 export const renderShortDateWithYearFormat = (date: Date) => {
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
   const day = date.getDate();
   const month = months[date.getMonth()];
   const year = date.getFullYear();
-  return  isNaN(date.getTime()) ? "N/A" : ` ${month} ${day}, ${year}`;
-}
+  return isNaN(date.getTime()) ? "N/A" : ` ${month} ${day}, ${year}`;
+};
+
+export const renderShortDate = (date: Date) => {
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  const day = date.getDate();
+  const month = months[date.getMonth()];
+  return isNaN(date.getTime()) ? "N/A" : `${day} ${month}`;
+};

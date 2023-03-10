@@ -127,7 +127,7 @@ const MenuItem: React.FC<MenuItemProps> = ({
           <a
             className={`${className} ${
               active ? "bg-hover-gray" : ""
-            } w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-gray-500`}
+            } inline-block w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-gray-500`}
             onClick={close}
           >
             {children}

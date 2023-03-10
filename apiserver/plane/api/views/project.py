@@ -5,7 +5,7 @@ from datetime import datetime
 # Django imports
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
-from django.db.models import Q
+from django.db.models import Q, Exists, OuterRef
 from django.core.validators import validate_email
 from django.conf import settings
 
@@ -22,6 +22,7 @@ from plane.api.serializers import (
     ProjectMemberSerializer,
     ProjectDetailSerializer,
     ProjectMemberInviteSerializer,
+    ProjectFavoriteSerializer,
 )
 
 from plane.api.permissions import ProjectBasePermission
@@ -35,6 +36,7 @@ from plane.db.models import (
     WorkspaceMember,
     State,
     TeamMember,
+    ProjectFavorite,
 )
 
 from plane.db.models import (
@@ -72,6 +74,22 @@ class ProjectViewSet(BaseViewSet):
             )
             .distinct()
         )
+
+    def list(self, request, slug):
+        try:
+            subquery = ProjectFavorite.objects.filter(
+                user=self.request.user,
+                project_id=OuterRef("pk"),
+                workspace__slug=self.kwargs.get("slug"),
+            )
+            projects = self.get_queryset().annotate(is_favorite=Exists(subquery))
+            return Response(ProjectDetailSerializer(projects, many=True).data)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     def create(self, request, slug):
         try:
@@ -345,6 +363,7 @@ class ProjectMemberViewSet(BaseViewSet):
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
+            .filter(member__is_bot=False)
             .select_related("project")
             .select_related("member")
             .select_related("workspace", "workspace__owner")
@@ -652,6 +671,72 @@ class ProjectMemberUserEndpoint(BaseAPIView):
             return Response(
                 {"error": "User not a member of the project"},
                 status=status.HTTP_403_FORBIDDEN,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class ProjectFavoritesViewSet(BaseViewSet):
+    serializer_class = ProjectFavoriteSerializer
+    model = ProjectFavorite
+
+    def get_queryset(self):
+        return self.filter_queryset(
+            super()
+            .get_queryset()
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(user=self.request.user)
+            .select_related(
+                "project", "project__project_lead", "project__default_assignee"
+            )
+            .select_related("workspace", "workspace__owner")
+        )
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def create(self, request, slug):
+        try:
+            serializer = ProjectFavoriteSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save(user=request.user)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except IntegrityError as e:
+            print(str(e))
+            if "already exists" in str(e):
+                return Response(
+                    {"error": "The project is already added to favorites"},
+                    status=status.HTTP_410_GONE,
+                )
+            else:
+                capture_exception(e)
+                return Response(
+                    {"error": "Something went wrong please try again later"},
+                    status=status.HTTP_410_GONE,
+                )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def destroy(self, request, slug, project_id):
+        try:
+            project_favorite = ProjectFavorite.objects.get(
+                project=project_id, user=request.user, workspace__slug=slug
+            )
+            project_favorite.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except ProjectFavorite.DoesNotExist:
+            return Response(
+                {"error": "Project is not in favorites"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
         except Exception as e:
             capture_exception(e)

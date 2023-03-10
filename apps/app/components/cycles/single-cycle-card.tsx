@@ -11,19 +11,37 @@ import cyclesService from "services/cycles.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomMenu, LinearProgressIndicator } from "components/ui";
+import { CustomMenu, LinearProgressIndicator, Tooltip } from "components/ui";
 import { Disclosure, Transition } from "@headlessui/react";
 // icons
 import { CalendarDaysIcon } from "@heroicons/react/20/solid";
-import { ChevronDownIcon, PencilIcon, StarIcon } from "@heroicons/react/24/outline";
+import {
+  ChevronDownIcon,
+  DocumentDuplicateIcon,
+  PencilIcon,
+  StarIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
 // helpers
-import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
+import { getDateRangeStatus, renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { groupBy } from "helpers/array.helper";
-import { capitalizeFirstLetter, copyTextToClipboard } from "helpers/string.helper";
+import { capitalizeFirstLetter, copyTextToClipboard, truncateText } from "helpers/string.helper";
 // types
-import { CycleIssueResponse, ICycle } from "types";
+import {
+  CompletedCyclesResponse,
+  CurrentAndUpcomingCyclesResponse,
+  CycleIssueResponse,
+  DraftCyclesResponse,
+  ICycle,
+} from "types";
 // fetch-keys
-import { CYCLE_ISSUES, CYCLE_LIST } from "constants/fetch-keys";
+import {
+  CYCLE_COMPLETE_LIST,
+  CYCLE_CURRENT_AND_UPCOMING_LIST,
+  CYCLE_DRAFT_LIST,
+  CYCLE_ISSUES,
+  CYCLE_LIST,
+} from "constants/fetch-keys";
 
 type TSingleStatProps = {
   cycle: ICycle;
@@ -75,15 +93,45 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
         cycle: cycle.id,
       })
       .then(() => {
-        mutate<ICycle[]>(
-          CYCLE_LIST(projectId as string),
-          (prevData) =>
-            (prevData ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? true : c.is_favorite,
-            })),
-          false
-        );
+        const cycleStatus = getDateRangeStatus(cycle.start_date, cycle.end_date);
+
+        if (cycleStatus === "current" || cycleStatus === "upcoming")
+          mutate<CurrentAndUpcomingCyclesResponse>(
+            CYCLE_CURRENT_AND_UPCOMING_LIST(projectId as string),
+            (prevData) => ({
+              current_cycle: (prevData?.current_cycle ?? []).map((c) => ({
+                ...c,
+                is_favorite: c.id === cycle.id ? true : c.is_favorite,
+              })),
+              upcoming_cycle: (prevData?.upcoming_cycle ?? []).map((c) => ({
+                ...c,
+                is_favorite: c.id === cycle.id ? true : c.is_favorite,
+              })),
+            }),
+            false
+          );
+        else if (cycleStatus === "completed")
+          mutate<CompletedCyclesResponse>(
+            CYCLE_COMPLETE_LIST(projectId as string),
+            (prevData) => ({
+              completed_cycles: (prevData?.completed_cycles ?? []).map((c) => ({
+                ...c,
+                is_favorite: c.id === cycle.id ? true : c.is_favorite,
+              })),
+            }),
+            false
+          );
+        else
+          mutate<DraftCyclesResponse>(
+            CYCLE_DRAFT_LIST(projectId as string),
+            (prevData) => ({
+              draft_cycles: (prevData?.draft_cycles ?? []).map((c) => ({
+                ...c,
+                is_favorite: c.id === cycle.id ? true : c.is_favorite,
+              })),
+            }),
+            false
+          );
 
         setToastAlert({
           type: "success",
@@ -106,15 +154,45 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
     cyclesService
       .removeCycleFromFavorites(workspaceSlug as string, projectId as string, cycle.id)
       .then(() => {
-        mutate<ICycle[]>(
-          CYCLE_LIST(projectId as string),
-          (prevData) =>
-            (prevData ?? []).map((c) => ({
-              ...c,
-              is_favorite: c.id === cycle.id ? false : c.is_favorite,
-            })),
-          false
-        );
+        const cycleStatus = getDateRangeStatus(cycle.start_date, cycle.end_date);
+
+        if (cycleStatus === "current" || cycleStatus === "upcoming")
+          mutate<CurrentAndUpcomingCyclesResponse>(
+            CYCLE_CURRENT_AND_UPCOMING_LIST(projectId as string),
+            (prevData) => ({
+              current_cycle: (prevData?.current_cycle ?? []).map((c) => ({
+                ...c,
+                is_favorite: c.id === cycle.id ? false : c.is_favorite,
+              })),
+              upcoming_cycle: (prevData?.upcoming_cycle ?? []).map((c) => ({
+                ...c,
+                is_favorite: c.id === cycle.id ? false : c.is_favorite,
+              })),
+            }),
+            false
+          );
+        else if (cycleStatus === "completed")
+          mutate<CompletedCyclesResponse>(
+            CYCLE_COMPLETE_LIST(projectId as string),
+            (prevData) => ({
+              completed_cycles: (prevData?.completed_cycles ?? []).map((c) => ({
+                ...c,
+                is_favorite: c.id === cycle.id ? false : c.is_favorite,
+              })),
+            }),
+            false
+          );
+        else
+          mutate<DraftCyclesResponse>(
+            CYCLE_DRAFT_LIST(projectId as string),
+            (prevData) => ({
+              draft_cycles: (prevData?.draft_cycles ?? []).map((c) => ({
+                ...c,
+                is_favorite: c.id === cycle.id ? false : c.is_favorite,
+              })),
+            }),
+            false
+          );
 
         setToastAlert({
           type: "success",
@@ -160,23 +238,23 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
     <div className="h-full w-full">
       <div className="flex flex-col rounded-[10px] bg-white text-xs shadow">
         <div className="flex h-full flex-col gap-4 rounded-b-[10px] px-5  py-5">
-          <div className="flex items-center justify-between gap-1">
+          <div className="flex items-start justify-between gap-1">
             <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}>
               <a className="w-full">
-                <h3 className="text-xl font-semibold leading-5 ">{cycle.name}</h3>
+                <Tooltip tooltipContent={cycle.name} position="top-left">
+                  <h3 className="text-xl font-semibold leading-5 ">
+                    {truncateText(cycle.name, 75)}
+                  </h3>
+                </Tooltip>
               </a>
             </Link>
             {cycle.is_favorite ? (
-              <button onClick={handleRemoveFromFavorites} className="p-1 ">
-                <span>
-                  <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
-                </span>
+              <button onClick={handleRemoveFromFavorites}>
+                <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
               </button>
             ) : (
-              <button onClick={handleAddToFavorites} className="p-1">
-                <span>
-                  <StarIcon className="h-4 w-4 " color="#858E96" />
-                </span>
+              <button onClick={handleAddToFavorites}>
+                <StarIcon className="h-4 w-4 " color="#858E96" />
               </button>
             )}
           </div>
@@ -207,12 +285,9 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
                   alt={cycle.owned_by.first_name}
                 />
               ) : (
-                <button
-                  className="flex h-5 w-5 items-center justify-center rounded-full bg-gray-800 capitalize  text-white"
-                  onClick={handleEditCycle}
-                >
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-gray-800 capitalize  text-white">
                   {cycle.owned_by.first_name.charAt(0)}
-                </button>
+                </span>
               )}
               <span className="text-gray-900">{cycle.owned_by.first_name}</span>
             </div>
@@ -227,8 +302,18 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
               </button>
 
               <CustomMenu width="auto" verticalEllipsis>
-                <CustomMenu.MenuItem onClick={handleDeleteCycle}>Delete cycle</CustomMenu.MenuItem>
-                <CustomMenu.MenuItem onClick={handleCopyText}>Copy cycle link</CustomMenu.MenuItem>
+                <CustomMenu.MenuItem onClick={handleDeleteCycle}>
+                  <span className="flex items-center justify-start gap-2 text-gray-800">
+                    <TrashIcon className="h-4 w-4" />
+                    <span>Delete Cycle</span>
+                  </span>
+                </CustomMenu.MenuItem>
+                <CustomMenu.MenuItem onClick={handleCopyText}>
+                  <span className="flex items-center justify-start gap-2 text-gray-800">
+                    <DocumentDuplicateIcon className="h-4 w-4" />
+                    <span>Copy Cycle Link</span>
+                  </span>
+                </CustomMenu.MenuItem>
               </CustomMenu>
             </div>
           </div>
@@ -244,10 +329,12 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
                   <span> Progress </span>
                   <LinearProgressIndicator data={progressIndicatorData} />
                   <Disclosure.Button>
-                    <ChevronDownIcon
-                      className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`}
-                      aria-hidden="true"
-                    />
+                    <span className="p-1">
+                      <ChevronDownIcon
+                        className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`}
+                        aria-hidden="true"
+                      />
+                    </span>
                   </Disclosure.Button>
                 </div>
                 <Transition show={open}>

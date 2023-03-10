@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useRouter } from "next/router";
 
 // headless ui
@@ -17,16 +17,13 @@ import useIssuesProperties from "hooks/use-issue-properties";
 // types
 import { IIssue, Properties } from "types";
 // components
-import { DeleteIssueModal, MyIssuesListItem } from "components/issues";
+import { MyIssuesListItem } from "components/issues";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // types
 import type { NextPage } from "next";
 
 const MyIssuesPage: NextPage = () => {
-  const [deleteIssueModal, setDeleteIssueModal] = useState(false);
-  const [issueToDelete, setIssueToDelete] = useState<IIssue | null>(null);
-
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -38,18 +35,8 @@ const MyIssuesPage: NextPage = () => {
     undefined
   );
 
-  const handleDeleteIssue = (issue: IIssue) => {
-    setDeleteIssueModal(true);
-    setIssueToDelete(issue);
-  };
-
   return (
     <>
-      <DeleteIssueModal
-        handleClose={() => setDeleteIssueModal(false)}
-        isOpen={deleteIssueModal}
-        data={issueToDelete}
-      />
       <AppLayout
         breadcrumbs={
           <Breadcrumbs>
@@ -96,7 +83,7 @@ const MyIssuesPage: NextPage = () => {
                                   }`}
                                   onClick={() => setProperties(key as keyof Properties)}
                                 >
-                                  {replaceUnderscoreIfSnakeCase(key)}
+                                  {key === "key" ? "ID" : replaceUnderscoreIfSnakeCase(key)}
                                 </button>
                               ))}
                             </div>
@@ -129,8 +116,12 @@ const MyIssuesPage: NextPage = () => {
                 <div className="flex flex-col space-y-5">
                   <Disclosure as="div" defaultOpen>
                     {({ open }) => (
-                      <div className="rounded-lg bg-white">
-                        <div className="rounded-t-lg bg-gray-100 px-4 py-3">
+                      <div className="rounded-[10px] border border-gray-300 bg-white">
+                        <div
+                          className={`flex items-center justify-start bg-gray-100 px-5 py-3 ${
+                            open ? "rounded-t-[10px]" : "rounded-[10px]"
+                          }`}
+                        >
                           <Disclosure.Button>
                             <div className="flex items-center gap-x-2">
                               <span>
@@ -141,7 +132,9 @@ const MyIssuesPage: NextPage = () => {
                                 />
                               </span>
                               <h2 className="font-medium leading-5">My Issues</h2>
-                              <p className="text-sm text-gray-500">{myIssues.length}</p>
+                              <span className="rounded-full bg-gray-200 py-0.5 px-3 text-sm text-black">
+                                {myIssues.length}
+                              </span>
                             </div>
                           </Disclosure.Button>
                         </div>
@@ -155,17 +148,14 @@ const MyIssuesPage: NextPage = () => {
                           leaveTo="transform opacity-0"
                         >
                           <Disclosure.Panel>
-                            <div className="divide-y-2">
-                              {myIssues.map((issue: IIssue) => (
-                                <MyIssuesListItem
-                                  key={issue.id}
-                                  issue={issue}
-                                  properties={properties}
-                                  projectId={issue.project}
-                                  handleDeleteIssue={() => handleDeleteIssue(issue)}
-                                />
-                              ))}
-                            </div>
+                            {myIssues.map((issue: IIssue) => (
+                              <MyIssuesListItem
+                                key={issue.id}
+                                issue={issue}
+                                properties={properties}
+                                projectId={issue.project}
+                              />
+                            ))}
                           </Disclosure.Panel>
                         </Transition>
                       </div>

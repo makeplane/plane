@@ -7,7 +7,7 @@ from .user import UserLiteSerializer
 from .project import ProjectSerializer
 from .issue import IssueStateSerializer
 
-from plane.db.models import User, Module, ModuleMember, ModuleIssue, ModuleLink
+from plane.db.models import User, Module, ModuleMember, ModuleIssue, ModuleLink, ModuleFavorite
 
 
 class ModuleWriteSerializer(BaseSerializer):
@@ -135,6 +135,7 @@ class ModuleSerializer(BaseSerializer):
     members_detail = UserLiteSerializer(read_only=True, many=True, source="members")
     issue_module = ModuleIssueSerializer(read_only=True, many=True)
     link_module = ModuleLinkSerializer(read_only=True, many=True)
+    is_favorite = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Module
@@ -146,4 +147,16 @@ class ModuleSerializer(BaseSerializer):
             "updated_by",
             "created_at",
             "updated_at",
+        ]
+
+class ModuleFavoriteSerializer(BaseSerializer):
+    module_detail = ModuleFlatSerializer(source="module", read_only=True)
+
+    class Meta:
+        model = ModuleFavorite
+        fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "project",
+            "user",
         ]

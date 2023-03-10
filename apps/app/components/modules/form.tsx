@@ -114,8 +114,20 @@ export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, sta
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <ModuleStatusSelect control={control} error={errors.status} />
-            <ModuleLeadSelect control={control} />
-            <ModuleMembersSelect control={control} />
+            <Controller
+              control={control}
+              name="lead"
+              render={({ field: { value, onChange } }) => (
+                <ModuleLeadSelect value={value} onChange={onChange} />
+              )}
+            />
+            <Controller
+              control={control}
+              name="members"
+              render={({ field: { value, onChange } }) => (
+                <ModuleMembersSelect value={value} onChange={onChange} />
+              )}
+            />
           </div>
         </div>
       </div>

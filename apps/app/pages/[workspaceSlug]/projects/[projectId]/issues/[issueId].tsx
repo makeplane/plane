@@ -74,7 +74,7 @@ const IssueDetailsPage: NextPage<UserAuth> = (props) => {
   });
 
   const submitChanges = useCallback(
-    (formData: Partial<IIssue>) => {
+    async (formData: Partial<IIssue>) => {
       if (!workspaceSlug || !projectId || !issueId) return;
 
       mutate(
@@ -87,7 +87,7 @@ const IssueDetailsPage: NextPage<UserAuth> = (props) => {
       );
 
       const payload = { ...formData };
-      issuesService
+      await issuesService
         .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload)
         .then((res) => {
           mutateIssueDetails();
