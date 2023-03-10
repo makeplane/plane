@@ -209,13 +209,8 @@ class ProjectServices extends APIService {
       });
   }
 
-  async getGithubRepositories(
-    slug: string,
-    workspaceIntegrationId: string
-  ): Promise<GithubRepositoriesResponse> {
-    return this.get(
-      `/api/workspaces/${slug}/workspace-integrations/${workspaceIntegrationId}/github-repositories/`
-    )
+  async getGithubRepositories(url: string): Promise<GithubRepositoriesResponse> {
+    return this.getWithoutBase(url)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
