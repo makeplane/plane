@@ -7,7 +7,6 @@ import { IIssue, IState, UserAuth } from "types";
 
 type Props = {
   type: "issue" | "cycle" | "module";
-  groupedByIssues: any;
   states: IState[] | undefined;
   addIssueToState: (groupTitle: string) => void;
   makeIssueCopy: (issue: IIssue) => void;
@@ -21,7 +20,6 @@ type Props = {
 
 export const AllBoards: React.FC<Props> = ({
   type,
-  groupedByIssues,
   states,
   addIssueToState,
   makeIssueCopy,
@@ -32,38 +30,33 @@ export const AllBoards: React.FC<Props> = ({
   removeIssue,
   userAuth,
 }) => {
-  const { groupByProperty: selectedGroup, orderBy } = useProjectIssuesView();
+  const { groupedByIssues, groupByProperty: selectedGroup, orderBy } = useProjectIssuesView();
 
   return (
     <>
       {groupedByIssues ? (
-        <div className="h-[calc(100vh-140px)] w-full">
-          <div className="horizontal-scroll-enable flex h-full gap-x-4 overflow-x-auto overflow-y-hidden">
-            {Object.keys(groupedByIssues).map((singleGroup, index) => {
-              const currentState =
-                selectedGroup === "state" ? states?.find((s) => s.id === singleGroup) : null;
+        <div className="horizontal-scroll-enable flex h-[calc(100vh-140px)] gap-x-4">
+          {Object.keys(groupedByIssues).map((singleGroup, index) => {
+            const currentState =
+              selectedGroup === "state" ? states?.find((s) => s.id === singleGroup) : null;
 
-              return (
-                <SingleBoard
-                  key={index}
-                  type={type}
-                  currentState={currentState}
-                  groupTitle={singleGroup}
-                  groupedByIssues={groupedByIssues}
-                  selectedGroup={selectedGroup}
-                  handleEditIssue={handleEditIssue}
-                  makeIssueCopy={makeIssueCopy}
-                  addIssueToState={() => addIssueToState(singleGroup)}
-                  handleDeleteIssue={handleDeleteIssue}
-                  openIssuesListModal={openIssuesListModal ?? null}
-                  orderBy={orderBy}
-                  handleTrashBox={handleTrashBox}
-                  removeIssue={removeIssue}
-                  userAuth={userAuth}
-                />
-              );
-            })}
-          </div>
+            return (
+              <SingleBoard
+                key={index}
+                type={type}
+                currentState={currentState}
+                groupTitle={singleGroup}
+                handleEditIssue={handleEditIssue}
+                makeIssueCopy={makeIssueCopy}
+                addIssueToState={() => addIssueToState(singleGroup)}
+                handleDeleteIssue={handleDeleteIssue}
+                openIssuesListModal={openIssuesListModal ?? null}
+                handleTrashBox={handleTrashBox}
+                removeIssue={removeIssue}
+                userAuth={userAuth}
+              />
+            );
+          })}
         </div>
       ) : null}
     </>

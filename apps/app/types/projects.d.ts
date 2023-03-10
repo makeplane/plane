@@ -1,4 +1,4 @@
-import type { IUserLite, IWorkspace } from "./";
+import type { IIssueFilterOptions, IUserLite, IWorkspace } from "./";
 
 export interface IProject {
   cover_image: string | null;
@@ -37,7 +37,7 @@ type ProjectViewTheme = {
   issueView: "list" | "kanban";
   groupByProperty: "state" | "priority" | "labels" | null;
   orderBy: "created_at" | "updated_at" | "priority" | "sort_order";
-  filterIssue: "active" | "backlog" | null;
+  filters: IIssueFilterOptions;
 };
 
 export interface IProjectMember {

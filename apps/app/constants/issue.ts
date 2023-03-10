@@ -1,6 +1,3 @@
-// types
-import { IIssue, NestedKeyOf } from "types";
-
 export const GROUP_BY_OPTIONS: Array<{
   name: string;
   key: "state" | "priority" | "labels" | null;

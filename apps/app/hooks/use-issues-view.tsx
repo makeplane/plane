@@ -11,7 +11,7 @@ import issuesService from "services/issues.service";
 import cyclesService from "services/cycles.service";
 import modulesService from "services/modules.service";
 // types
-import { IIssueFilterOptions } from "types";
+import { IIssueViewOptions } from "types";
 // fetch-keys
 import {
   CYCLE_ISSUES_WITH_PARAMS,
@@ -26,12 +26,8 @@ const useIssuesView = () => {
     setGroupByProperty,
     orderBy,
     setOrderBy,
-    filterIssue,
-    assigneeFilter,
-    labelFilter,
-    setFilterIssue,
-    setAssigneeFilter,
-    setLabelFilter,
+    filters,
+    setFilters,
     resetFilterToDefault,
     setNewFilterDefaultView,
     setIssueViewToKanban,
@@ -41,12 +37,10 @@ const useIssuesView = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
-  const params: IIssueFilterOptions = {
+  const params: any = {
     group_by: groupByProperty,
     order_by: orderBy,
-    type: filterIssue,
-    issue__assignees__id: assigneeFilter,
-    issue__labels__id: labelFilter,
+    ...filters,
   };
 
   const { data: projectIssues } = useSWR(
@@ -87,17 +81,10 @@ const useIssuesView = () => {
     const issuesToGroup = cycleIssues ?? moduleIssues ?? projectIssues;
 
     if (Array.isArray(issuesToGroup)) return { allIssues: issuesToGroup };
-    else {
-      if (groupByProperty === "priority")
-        return Object.assign(
-          { urgent: [], high: [], medium: [], low: [], None: [] },
-          issuesToGroup
-        );
-      else return issuesToGroup;
-    }
-  }, [projectIssues, cycleIssues, moduleIssues, groupByProperty]);
+    else return issuesToGroup;
+  }, [projectIssues, cycleIssues, moduleIssues]);
 
-  console.log("Grouped by issues: ", groupedByIssues);
+  // console.log("Grouped by issues: ", groupedByIssues);
 
   return {
     groupedByIssues,
@@ -106,13 +93,9 @@ const useIssuesView = () => {
     setGroupByProperty,
     orderBy,
     setOrderBy,
-    filterIssue,
-    assigneeFilter,
-    labelFilter,
+    filters,
+    setFilters,
     params,
-    setFilterIssue,
-    setAssigneeFilter,
-    setLabelFilter,
     resetFilterToDefault,
     setNewFilterDefaultView,
     setIssueViewToKanban,

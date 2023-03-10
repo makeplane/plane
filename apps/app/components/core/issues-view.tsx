@@ -46,7 +46,7 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
     (Partial<IIssue> & { actionType: "createIssue" | "edit" | "delete" }) | undefined
   >(undefined);
 
-  // updates issue modal
+  // update issue modal
   const [editIssueModal, setEditIssueModal] = useState(false);
   const [issueToEdit, setIssueToEdit] = useState<
     (IIssue & { actionType: "edit" | "delete" }) | undefined
@@ -67,10 +67,8 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
     issueView,
     groupByProperty: selectedGroup,
     orderBy,
-    assigneeFilter,
-    labelFilter,
-    setAssigneeFilter,
-    setLabelFilter,
+    filters,
+    setFilters,
   } = useIssuesView();
 
   const { data: stateGroups } = useSWR(
@@ -365,120 +363,116 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
         isOpen={deleteIssueModal}
         data={issueToDelete}
       />
-      <div className="relative h-full">
-        <div className="flex items-center gap-2">
-          {assigneeFilter && (
-            <button
-              type="button"
-              className="rounded bg-black p-2 text-xs text-white"
-              onClick={() => setAssigneeFilter(null)}
-            >
-              Remove assignee filter
-            </button>
-          )}
-          {labelFilter && (
-            <button
-              type="button"
-              className="rounded bg-black p-2 text-xs text-white"
-              onClick={() => setLabelFilter(null)}
-            >
-              Remove label filter
-            </button>
-          )}
-        </div>
-        <DragDropContext onDragEnd={handleOnDragEnd}>
-          <StrictModeDroppable droppableId="trashBox">
-            {(provided, snapshot) => (
-              <div
-                className={`${
-                  trashBox ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
-                } fixed top-9 right-9 z-20 flex h-28 w-96 items-center justify-center gap-2 rounded border-2 border-red-500 bg-red-100 p-3 text-xs font-medium italic text-red-500 ${
-                  snapshot.isDraggingOver ? "bg-red-500 text-white" : ""
-                } duration-200`}
-                ref={provided.innerRef}
-                {...provided.droppableProps}
+      <div className="flex items-center gap-2">
+        {Object.keys(filters).map((key) => {
+          if (filters[key])
+            return (
+              <button
+                key={key}
+                type="button"
+                className="rounded bg-black p-2 text-xs text-white"
+                onClick={() =>
+                  setFilters({
+                    [key]: null,
+                  })
+                }
               >
-                <TrashIcon className="h-4 w-4" />
-                Drop issue here to delete
-              </div>
-            )}
-          </StrictModeDroppable>
-          {groupedByIssues ? (
-            Object.keys(groupedByIssues).length > 0 ? (
-              <>
-                {issueView === "list" ? (
-                  <AllLists
-                    type={type}
-                    groupedByIssues={groupedByIssues}
-                    states={states}
-                    members={members}
-                    addIssueToState={addIssueToState}
-                    makeIssueCopy={makeIssueCopy}
-                    handleEditIssue={handleEditIssue}
-                    handleDeleteIssue={handleDeleteIssue}
-                    openIssuesListModal={type !== "issue" ? openIssuesListModal : null}
-                    removeIssue={
-                      type === "cycle"
-                        ? removeIssueFromCycle
-                        : type === "module"
-                        ? removeIssueFromModule
-                        : null
-                    }
-                    userAuth={userAuth}
-                  />
-                ) : (
-                  <AllBoards
-                    type={type}
-                    states={states}
-                    groupedByIssues={groupedByIssues}
-                    addIssueToState={addIssueToState}
-                    makeIssueCopy={makeIssueCopy}
-                    handleEditIssue={handleEditIssue}
-                    openIssuesListModal={type !== "issue" ? openIssuesListModal : null}
-                    handleDeleteIssue={handleDeleteIssue}
-                    handleTrashBox={handleTrashBox}
-                    removeIssue={
-                      type === "cycle"
-                        ? removeIssueFromCycle
-                        : type === "module"
-                        ? removeIssueFromModule
-                        : null
-                    }
-                    userAuth={userAuth}
-                  />
-                )}
-              </>
-            ) : (
-              <div className="grid h-full w-full place-items-center px-4 sm:px-0">
-                <EmptySpace
-                  title="You don't have any issue yet."
-                  description="Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done."
-                  Icon={RectangleStackIcon}
-                >
-                  <EmptySpaceItem
-                    title="Create a new issue"
-                    description={
-                      <span>
-                        Use <pre className="inline rounded bg-gray-200 px-2 py-1">C</pre> shortcut
-                        to create a new issue
-                      </span>
-                    }
-                    Icon={PlusIcon}
-                    action={() => {
-                      const e = new KeyboardEvent("keydown", {
-                        key: "c",
-                      });
-                      document.dispatchEvent(e);
-                    }}
-                  />
-                </EmptySpace>
-              </div>
-            )
-          ) : (
-            <p className="text-center">Loading...</p>
-          )}
-        </DragDropContext>
+                Remove {key} filter
+              </button>
+            );
+        })}
       </div>
+      <DragDropContext onDragEnd={handleOnDragEnd}>
+        <StrictModeDroppable droppableId="trashBox">
+          {(provided, snapshot) => (
+            <div
+              className={`${
+                trashBox ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+              } fixed top-9 right-9 z-20 flex h-28 w-96 flex-col items-center justify-center gap-2 rounded border-2 border-red-500 bg-red-100 p-3 text-xs font-medium italic text-red-500 ${
+                snapshot.isDraggingOver ? "bg-red-500 text-white" : ""
+              } duration-200`}
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+            >
+              <TrashIcon className="h-4 w-4" />
+              Drop issue here to delete
+              {provided.placeholder}
+            </div>
+          )}
+        </StrictModeDroppable>
+        {groupedByIssues ? (
+          Object.keys(groupedByIssues).length > 0 ? (
+            <>
+              {issueView === "list" ? (
+                <AllLists
+                  type={type}
+                  states={states}
+                  members={members}
+                  addIssueToState={addIssueToState}
+                  makeIssueCopy={makeIssueCopy}
+                  handleEditIssue={handleEditIssue}
+                  handleDeleteIssue={handleDeleteIssue}
+                  openIssuesListModal={type !== "issue" ? openIssuesListModal : null}
+                  removeIssue={
+                    type === "cycle"
+                      ? removeIssueFromCycle
+                      : type === "module"
+                      ? removeIssueFromModule
+                      : null
+                  }
+                  userAuth={userAuth}
+                />
+              ) : (
+                <AllBoards
+                  type={type}
+                  states={states}
+                  addIssueToState={addIssueToState}
+                  makeIssueCopy={makeIssueCopy}
+                  handleEditIssue={handleEditIssue}
+                  openIssuesListModal={type !== "issue" ? openIssuesListModal : null}
+                  handleDeleteIssue={handleDeleteIssue}
+                  handleTrashBox={handleTrashBox}
+                  removeIssue={
+                    type === "cycle"
+                      ? removeIssueFromCycle
+                      : type === "module"
+                      ? removeIssueFromModule
+                      : null
+                  }
+                  userAuth={userAuth}
+                />
+              )}
+            </>
+          ) : (
+            <div className="grid h-full w-full place-items-center px-4 sm:px-0">
+              <EmptySpace
+                title="You don't have any issue yet."
+                description="Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done."
+                Icon={RectangleStackIcon}
+              >
+                <EmptySpaceItem
+                  title="Create a new issue"
+                  description={
+                    <span>
+                      Use <pre className="inline rounded bg-gray-200 px-2 py-1">C</pre> shortcut to
+                      create a new issue
+                    </span>
+                  }
+                  Icon={PlusIcon}
+                  action={() => {
+                    const e = new KeyboardEvent("keydown", {
+                      key: "c",
+                    });
+                    document.dispatchEvent(e);
+                  }}
+                />
+              </EmptySpace>
+            </div>
+          )
+        ) : (
+          <p className="text-center">Loading...</p>
+        )}
+      </DragDropContext>
     </>
   );
 };

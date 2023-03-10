@@ -7,7 +7,7 @@ import type {
   CurrentAndUpcomingCyclesResponse,
   DraftCyclesResponse,
   ICycle,
-  IIssueFilterOptions,
+  IIssueViewOptions,
 } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
@@ -63,7 +63,7 @@ class ProjectCycleServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     cycleId: string,
-    queries?: IIssueFilterOptions
+    queries?: IIssueViewOptions
   ): Promise<CycleIssueResponse[] | { [key: string]: CycleIssueResponse[] }> {
     return this.get(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-issues/`,
@@ -174,21 +174,29 @@ class ProjectCycleServices extends APIService {
       cycle: string;
     }
   ): Promise<any> {
-    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/user-favorite-cycles/`, data)
+    return this.post(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/user-favorite-cycles/`,
+      data
+    )
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async removeCycleFromFavorites(workspaceSlug: string, projectId: string, cycleId: string): Promise<any> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/user-favorite-cycles/${cycleId}/`)
+  async removeCycleFromFavorites(
+    workspaceSlug: string,
+    projectId: string,
+    cycleId: string
+  ): Promise<any> {
+    return this.delete(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/user-favorite-cycles/${cycleId}/`
+    )
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
-
 }
 
 export default new ProjectCycleServices();

@@ -8,7 +8,6 @@ import { IIssue, IProjectMember, IState, UserAuth } from "types";
 // types
 type Props = {
   type: "issue" | "cycle" | "module";
-  groupedByIssues: any;
   states: IState[] | undefined;
   members: IProjectMember[] | undefined;
   addIssueToState: (groupTitle: string, stateId: string | null) => void;
@@ -22,7 +21,6 @@ type Props = {
 
 export const AllLists: React.FC<Props> = ({
   type,
-  groupedByIssues,
   states,
   members,
   addIssueToState,
@@ -33,7 +31,7 @@ export const AllLists: React.FC<Props> = ({
   removeIssue,
   userAuth,
 }) => {
-  const { groupByProperty: selectedGroup } = useIssuesView();
+  const { groupedByIssues, groupByProperty: selectedGroup } = useIssuesView();
 
   return (
     <>

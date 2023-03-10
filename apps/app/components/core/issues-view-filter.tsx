@@ -30,9 +30,9 @@ export const IssuesFilterView: React.FC = () => {
     groupByProperty,
     setGroupByProperty,
     setOrderBy,
-    setFilterIssue,
     orderBy,
-    filterIssue,
+    filters,
+    setFilters,
     resetFilterToDefault,
     setNewFilterDefaultView,
   } = useIssuesView();
@@ -64,6 +64,24 @@ export const IssuesFilterView: React.FC = () => {
           <Squares2X2Icon className="h-4 w-4" />
         </button>
       </div>
+      <CustomMenu
+        customButton={
+          <button
+            type="button"
+            className="group flex items-center gap-2 rounded-md border bg-transparent p-2 text-xs font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:outline-none"
+          >
+            Filters
+            <ChevronDownIcon className="h-4 w-4" aria-hidden="true" />
+          </button>
+        }
+        optionsPosition="right"
+      >
+        <CustomMenu.MenuItem
+          onClick={() => setFilters({ assignees: "72d6ad43-41ff-4907-9980-2f5ee8745ad3" })}
+        >
+          Member- Aaryan
+        </CustomMenu.MenuItem>
+      </CustomMenu>
       <Popover className="relative">
         {({ open }) => (
           <>
@@ -72,7 +90,7 @@ export const IssuesFilterView: React.FC = () => {
                 open ? "bg-gray-100 text-gray-900" : "text-gray-500"
               }`}
             >
-              <span>View</span>
+              View
               <ChevronDownIcon className="h-4 w-4" aria-hidden="true" />
             </Popover.Button>
 
@@ -136,15 +154,19 @@ export const IssuesFilterView: React.FC = () => {
                       <h4 className="text-sm text-gray-600">Issue type</h4>
                       <CustomMenu
                         label={
-                          FILTER_ISSUE_OPTIONS.find((option) => option.key === filterIssue)?.name ??
-                          "Select"
+                          FILTER_ISSUE_OPTIONS.find((option) => option.key === filters.type)
+                            ?.name ?? "Select"
                         }
                         width="lg"
                       >
                         {FILTER_ISSUE_OPTIONS.map((option) => (
                           <CustomMenu.MenuItem
                             key={option.key}
-                            onClick={() => setFilterIssue(option.key)}
+                            onClick={() =>
+                              setFilters({
+                                type: option.key,
+                              })
+                            }
                           >
                             {option.name}
                           </CustomMenu.MenuItem>
@@ -171,29 +193,20 @@ export const IssuesFilterView: React.FC = () => {
                   <div className="space-y-2 py-3">
                     <h4 className="text-sm text-gray-600">Display Properties</h4>
                     <div className="flex flex-wrap items-center gap-2">
-                      {Object.keys(properties).map((key) => {
-                        if (
-                          issueView === "kanban" &&
-                          ((groupByProperty === "state" && key === "state") ||
-                            (groupByProperty === "priority" && key === "priority"))
-                        )
-                          return;
-
-                        return (
-                          <button
-                            key={key}
-                            type="button"
-                            className={`rounded border px-2 py-1 text-xs capitalize ${
-                              properties[key as keyof Properties]
-                                ? "border-theme bg-theme text-white"
-                                : "border-gray-300"
-                            }`}
-                            onClick={() => setProperties(key as keyof Properties)}
-                          >
-                            {key === "key" ? "ID" : replaceUnderscoreIfSnakeCase(key)}
-                          </button>
-                        );
-                      })}
+                      {Object.keys(properties).map((key) => (
+                        <button
+                          key={key}
+                          type="button"
+                          className={`rounded border px-2 py-1 text-xs capitalize ${
+                            properties[key as keyof Properties]
+                              ? "border-theme bg-theme text-white"
+                              : "border-gray-300"
+                          }`}
+                          onClick={() => setProperties(key as keyof Properties)}
+                        >
+                          {key === "key" ? "ID" : replaceUnderscoreIfSnakeCase(key)}
+                        </button>
+                      ))}
                     </div>
                   </div>
                 </div>

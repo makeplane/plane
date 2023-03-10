@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 import { Draggable } from "react-beautiful-dnd";
 // hooks
+import useIssuesView from "hooks/use-issues-view";
 import useIssuesProperties from "hooks/use-issue-properties";
 // components
 import { BoardHeader, SingleBoardIssue } from "components/core";
@@ -16,27 +17,17 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // types
-import {
-  CycleIssueResponse,
-  IIssue,
-  IProjectMember,
-  IState,
-  ModuleIssueResponse,
-  UserAuth,
-} from "types";
+import { IIssue, IState, UserAuth } from "types";
 
 type Props = {
   type?: "issue" | "cycle" | "module";
   currentState?: IState | null;
   groupTitle: string;
-  groupedByIssues: any;
-  selectedGroup: "state" | "priority" | "labels" | null;
   handleEditIssue: (issue: IIssue) => void;
   makeIssueCopy: (issue: IIssue) => void;
   addIssueToState: () => void;
   handleDeleteIssue: (issue: IIssue) => void;
   openIssuesListModal?: (() => void) | null;
-  orderBy: "created_at" | "updated_at" | "priority" | "sort_order";
   handleTrashBox: (isDragging: boolean) => void;
   removeIssue: ((bridgeId: string) => void) | null;
   userAuth: UserAuth;
@@ -46,20 +37,19 @@ export const SingleBoard: React.FC<Props> = ({
   type,
   currentState,
   groupTitle,
-  groupedByIssues,
-  selectedGroup,
   handleEditIssue,
   makeIssueCopy,
   addIssueToState,
   handleDeleteIssue,
   openIssuesListModal,
-  orderBy,
   handleTrashBox,
   removeIssue,
   userAuth,
 }) => {
   // collapse/expand
   const [isCollapsed, setIsCollapsed] = useState(true);
+
+  const { groupedByIssues, groupByProperty: selectedGroup, orderBy } = useIssuesView();
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
@@ -69,14 +59,12 @@ export const SingleBoard: React.FC<Props> = ({
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   return (
-    <div className={`h-full flex-shrink-0 rounded ${!isCollapsed ? "" : "w-96 bg-gray-50"}`}>
+    <div className={`h-full flex-shrink-0 ${!isCollapsed ? "" : "w-96 bg-gray-50"}`}>
       <div className={`${!isCollapsed ? "" : "flex h-full flex-col space-y-3"}`}>
         <BoardHeader
           addIssueToState={addIssueToState}
           currentState={currentState}
-          selectedGroup={selectedGroup}
           groupTitle={groupTitle}
-          groupedByIssues={groupedByIssues}
           isCollapsed={isCollapsed}
           setIsCollapsed={setIsCollapsed}
         />
@@ -125,12 +113,10 @@ export const SingleBoard: React.FC<Props> = ({
                         snapshot={snapshot}
                         type={type}
                         issue={issue}
-                        selectedGroup={selectedGroup}
                         properties={properties}
                         editIssue={() => handleEditIssue(issue)}
                         makeIssueCopy={() => makeIssueCopy(issue)}
                         handleDeleteIssue={handleDeleteIssue}
-                        orderBy={orderBy}
                         handleTrashBox={handleTrashBox}
                         removeIssue={() => {
                           removeIssue && removeIssue(issue.bridge);

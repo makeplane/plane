@@ -9,7 +9,7 @@ import ToastAlert from "components/toast-alert";
 // services
 import projectService from "services/project.service";
 // types
-import { IProjectMember } from "types";
+import { IIssueFilterOptions, IProjectMember, NestedKeyOf } from "types";
 // fetch-keys
 import {
   CYCLE_ISSUES_WITH_PARAMS,
@@ -23,10 +23,8 @@ export const issueViewContext = createContext<ContextType>({} as ContextType);
 type IssueViewProps = {
   issueView: "list" | "kanban";
   groupByProperty: "state" | "priority" | "labels" | null;
-  filterIssue: "active" | "backlog" | null;
   orderBy: "created_at" | "updated_at" | "priority" | "sort_order";
-  assigneeFilter: string | null;
-  labelFilter: string | null;
+  filters: IIssueFilterOptions;
 };
 
 type ReducerActionType = {
@@ -34,10 +32,8 @@ type ReducerActionType = {
     | "REHYDRATE_THEME"
     | "SET_ISSUE_VIEW"
     | "SET_ORDER_BY_PROPERTY"
-    | "SET_FILTER_ISSUES"
+    | "SET_FILTERS"
     | "SET_GROUP_BY_PROPERTY"
-    | "SET_ASSIGNEE_FILTER"
-    | "SET_LABEL_FILTER"
     | "RESET_TO_DEFAULT";
   payload?: Partial<IssueViewProps>;
 };
@@ -45,9 +41,7 @@ type ReducerActionType = {
 type ContextType = IssueViewProps & {
   setGroupByProperty: (property: "state" | "priority" | "labels" | null) => void;
   setOrderBy: (property: "created_at" | "updated_at" | "priority" | "sort_order") => void;
-  setFilterIssue: (property: "active" | "backlog" | null) => void;
-  setAssigneeFilter: (property: string | null) => void;
-  setLabelFilter: (property: string | null) => void;
+  setFilters: (filters: Partial<IIssueFilterOptions>) => void;
   resetFilterToDefault: () => void;
   setNewFilterDefaultView: () => void;
   setIssueViewToKanban: () => void;
@@ -58,9 +52,7 @@ type StateType = {
   issueView: "list" | "kanban";
   groupByProperty: "state" | "priority" | "labels" | null;
   orderBy: "created_at" | "updated_at" | "priority" | "sort_order";
-  filterIssue: "active" | "backlog" | null;
-  assigneeFilter: string | null;
-  labelFilter: string | null;
+  filters: IIssueFilterOptions;
 };
 type ReducerFunctionType = (state: StateType, action: ReducerActionType) => StateType;
 
@@ -68,9 +60,13 @@ export const initialState: StateType = {
   issueView: "list",
   groupByProperty: null,
   orderBy: "created_at",
-  filterIssue: null,
-  assigneeFilter: null,
-  labelFilter: null,
+  filters: {
+    type: null,
+    assignees: null,
+    labels: null,
+    issue__assignees__id: null,
+    issue__labels__id: null,
+  },
 };
 
 export const reducer: ReducerFunctionType = (state, action) => {
@@ -120,34 +116,13 @@ export const reducer: ReducerFunctionType = (state, action) => {
       };
     }
 
-    case "SET_FILTER_ISSUES": {
+    case "SET_FILTERS": {
       const newState = {
         ...state,
-        filterIssue: payload?.filterIssue || null,
-      };
-
-      return {
-        ...state,
-        ...newState,
-      };
-    }
-
-    case "SET_ASSIGNEE_FILTER": {
-      const newState = {
-        ...state,
-        assigneeFilter: payload?.assigneeFilter || null,
-      };
-
-      return {
-        ...state,
-        ...newState,
-      };
-    }
-
-    case "SET_LABEL_FILTER": {
-      const newState = {
-        ...state,
-        labelFilter: payload?.labelFilter || null,
+        filters: {
+          ...state.filters,
+          ...payload,
+        },
       };
 
       return {
@@ -331,12 +306,15 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
     [projectId, workspaceSlug, state, mutateMyViewProps]
   );
 
-  const setFilterIssue = useCallback(
-    (property: "active" | "backlog" | null) => {
+  const setFilters = useCallback(
+    (property: Partial<IIssueFilterOptions>) => {
       dispatch({
-        type: "SET_FILTER_ISSUES",
+        type: "SET_FILTERS",
         payload: {
-          filterIssue: property,
+          filters: {
+            ...state.filters,
+            ...property,
+          },
         },
       });
 
@@ -349,76 +327,20 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
           ...prevData,
           view_props: {
             ...state,
-            filterIssue: property,
+            filters: {
+              ...state.filters,
+              ...property,
+            },
           },
         };
       }, false);
 
       saveDataToServer(workspaceSlug as string, projectId as string, {
         ...state,
-        filterIssue: property,
-      });
-    },
-    [projectId, workspaceSlug, state, mutateMyViewProps]
-  );
-
-  const setAssigneeFilter = useCallback(
-    (property: string | null) => {
-      dispatch({
-        type: "SET_ASSIGNEE_FILTER",
-        payload: {
-          assigneeFilter: property,
+        filters: {
+          ...state.filters,
+          ...property,
         },
-      });
-
-      if (!workspaceSlug || !projectId) return;
-
-      mutateMyViewProps((prevData) => {
-        if (!prevData) return prevData;
-
-        return {
-          ...prevData,
-          view_props: {
-            ...state,
-            assigneeFilter: property,
-          },
-        };
-      }, false);
-
-      saveDataToServer(workspaceSlug as string, projectId as string, {
-        ...state,
-        assigneeFilter: property,
-      });
-    },
-    [projectId, workspaceSlug, state, mutateMyViewProps]
-  );
-
-  const setLabelFilter = useCallback(
-    (property: string | null) => {
-      dispatch({
-        type: "SET_LABEL_FILTER",
-        payload: {
-          labelFilter: property,
-        },
-      });
-
-      if (!workspaceSlug || !projectId) return;
-
-      mutateMyViewProps((prevData) => {
-        if (!prevData) return prevData;
-
-        return {
-          ...prevData,
-          view_props: {
-            ...state,
-            labelFilter: property,
-          },
-        };
-      }, false);
-
-      saveDataToServer(workspaceSlug as string, projectId as string, {
-        ...state,
-        labelFilter: property,
       });
     },
     [projectId, workspaceSlug, state, mutateMyViewProps]
@@ -470,12 +392,8 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
         setGroupByProperty,
         orderBy: state.orderBy,
         setOrderBy,
-        filterIssue: state.filterIssue,
-        assigneeFilter: state.assigneeFilter,
-        labelFilter: state.labelFilter,
-        setFilterIssue,
-        setAssigneeFilter,
-        setLabelFilter,
+        filters: state.filters,
+        setFilters,
         resetFilterToDefault: resetToDefault,
         setNewFilterDefaultView: setNewDefaultView,
         setIssueViewToKanban,

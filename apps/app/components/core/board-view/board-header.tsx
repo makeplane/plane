@@ -1,17 +1,15 @@
 import React from "react";
 
+// hooks
+import useIssuesView from "hooks/use-issues-view";
 // icons
 import { ArrowsPointingInIcon, ArrowsPointingOutIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { getStateGroupIcon } from "components/icons";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
-import { IIssue, IProjectMember, IState, NestedKeyOf } from "types";
-import { getStateGroupIcon } from "components/icons";
+import { IState } from "types";
 type Props = {
-  groupedByIssues: {
-    [key: string]: IIssue[];
-  };
-  selectedGroup: "state" | "priority" | "labels" | null;
   currentState?: IState | null;
   groupTitle: string;
   addIssueToState: () => void;
@@ -20,14 +18,14 @@ type Props = {
 };
 
 export const BoardHeader: React.FC<Props> = ({
-  groupedByIssues,
   currentState,
-  selectedGroup,
   groupTitle,
   addIssueToState,
   isCollapsed,
   setIsCollapsed,
 }) => {
+  const { groupedByIssues, groupByProperty: selectedGroup } = useIssuesView();
+
   let bgColor = "#000000";
   if (selectedGroup === "state") bgColor = currentState?.color ?? "#000000";
 
@@ -63,7 +61,7 @@ export const BoardHeader: React.FC<Props> = ({
               ? addSpaceIfCamelCase(currentState?.name ?? "")
               : addSpaceIfCamelCase(groupTitle)}
           </h2>
-          <span className="ml-0.5 text-sm bg-gray-100 py-1 px-3 rounded-full">
+          <span className="ml-0.5 rounded-full bg-gray-100 py-1 px-3 text-sm">
             {groupedByIssues[groupTitle].length}
           </span>
         </div>
