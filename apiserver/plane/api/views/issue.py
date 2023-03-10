@@ -173,7 +173,7 @@ class IssueViewSet(BaseViewSet):
 
     def list(self, request, slug, project_id):
         try:
-            filters = issue_filters(request.query_params)
+            filters = issue_filters(request.query_params, "GET")
             issue_queryset = (
                 self.get_queryset()
                 .order_by(request.GET.get("order_by", "created_at"))
