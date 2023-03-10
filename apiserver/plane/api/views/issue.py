@@ -6,6 +6,7 @@ from itertools import groupby, chain
 from django.db.models import Prefetch, OuterRef, Func, F, Q
 from django.core.serializers.json import DjangoJSONEncoder
 
+
 # Third Party imports
 from rest_framework.response import Response
 from rest_framework import status
@@ -45,6 +46,7 @@ from plane.db.models import (
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
+from plane.utils.issue_filters import issue_filters
 
 
 class IssueViewSet(BaseViewSet):
@@ -179,10 +181,12 @@ class IssueViewSet(BaseViewSet):
             if type == "active":
                 group = ["unstarted", "started"]
 
+            filters = issue_filters(request.query_params)
             issue_queryset = (
                 self.get_queryset()
                 .order_by(request.GET.get("order_by", "created_at"))
                 .filter(state__group__in=group)
+                .filter(**filters)
             )
 
             issues = IssueSerializer(issue_queryset, many=True).data
