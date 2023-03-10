@@ -194,20 +194,24 @@ export const WorkspaceSidebarDropdown = () => {
                 </div>
               )}
             </div>
-            <div className="flex flex-col items-start justify-start gap-3 border-t border-t-gray-200 px-5 py-3 text-sm">
+            <div className="flex w-full flex-col items-start justify-start gap-2 border-t border-t-gray-200 px-3 py-2 text-sm">
               {userLinks(workspaceSlug as string).map((link, index) => (
-                <Menu.Item key={index} as="div">
+                <Menu.Item
+                  key={index}
+                  as="div"
+                  className="flex w-full items-center justify-start rounded px-2 py-1 text-sm text-gray-600 hover:bg-gray-100"
+                >
                   <Link href={link.href}>
-                    <a className="block text-left text-gray-600 ">{link.name}</a>
+                    <a>{link.name}</a>
                   </Link>
                 </Menu.Item>
               ))}
             </div>
-            <div className="flex border-t border-t-gray-200 px-5 py-3">
+            <div className="w-full border-t border-t-gray-200 px-3 py-2">
               <Menu.Item
                 as="button"
                 type="button"
-                className="text-sm text-red-600"
+                className="flex w-full items-center justify-start rounded px-2 py-1 text-sm text-red-600 hover:bg-gray-100"
                 onClick={handleSignOut}
               >
                 Sign out
