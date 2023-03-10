@@ -129,7 +129,7 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                           {filteredIssues.length > 0 ? (
                             <li className="p-2">
                               {query === "" && (
-                                <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-gray-900">
+                                <h2 className="mb-2 px-3 text-xs font-semibold text-gray-900">
                                   Select issues to add
                                 </h2>
                               )}
@@ -175,18 +175,6 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                             </div>
                           )}
                         </Combobox.Options>
-
-                        {query !== "" && filteredIssues.length === 0 && (
-                          <div className="py-14 px-6 text-center sm:px-14">
-                            <RectangleStackIcon
-                              className="mx-auto h-6 w-6 text-gray-900 text-opacity-40"
-                              aria-hidden="true"
-                            />
-                            <p className="mt-4 text-sm text-gray-900">
-                              We couldn{"'"}t find any issue with that term. Please try again.
-                            </p>
-                          </div>
-                        )}
                       </Combobox>
                     )}
                   />

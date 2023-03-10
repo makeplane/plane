@@ -43,6 +43,7 @@ export const ModuleStatusSelect: React.FC<Props> = ({ control, error }) => (
           </div>
         }
         onChange={onChange}
+        noChevron
       >
         {MODULE_STATUS.map((status) => (
           <CustomSelect.Option key={status.value} value={status.value}>

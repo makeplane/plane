@@ -153,12 +153,11 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = (props) => {
 
   const updateState = useCallback(
     (value: any) => {
-      // Clear out old state when setting data from outside
-      // This prevents e.g. the user from using CTRL-Z to go back to the old state
       manager.view.updateState(
         manager.createState({
           content:
             !value || (typeof value === "object" && Object.keys(value).length === 0) ? "" : value,
+          selection: value === "" ? "start" : manager.view.state.selection,
         })
       );
     },
@@ -185,18 +184,18 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = (props) => {
         manager={manager}
         initialContent={state}
         classNames={[
-          `p-4 relative focus:outline-none rounded-md border border-transparent focus:border-theme ${customClassName}`,
+          `p-4 relative focus:outline-none rounded-md border focus:border-theme ${customClassName}`,
         ]}
         editable={editable}
         onBlur={() => {
           onBlur(jsonValue, htmlValue);
         }}
       >
-        {(!value || value === "" || value?.content?.[0]?.content === undefined) && (
-          <p className="pointer-events-none absolute top-[8.8rem] left-9 text-gray-300">
+        {/* {(!value || value === "" || value?.content?.[0]?.content === undefined) && (
+          <p className="pointer-events-none absolute top-[8.8rem] left-12 text-gray-300">
             {placeholder || "Enter text..."}
           </p>
-        )}
+        )} */}
         <EditorComponent />
 
         {imageLoader && (

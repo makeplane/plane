@@ -22,6 +22,7 @@ export interface IModule {
   members: string[];
   members_list: string[];
   members_detail: IUserLite[];
+  is_favorite: boolean;
   name: string;
   project: string;
   project_detail: IProject;

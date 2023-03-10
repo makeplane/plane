@@ -7,15 +7,18 @@ import useIssuesProperties from "hooks/use-issue-properties";
 // components
 import { SingleListIssue } from "components/core";
 // icons
-import { ChevronDownIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { PlusIcon } from "@heroicons/react/24/outline";
+import { getStateGroupIcon } from "components/icons";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
-import { IIssue, IProjectMember, NestedKeyOf, UserAuth } from "types";
+import { IIssue, IProjectMember, IState, NestedKeyOf, UserAuth } from "types";
 import { CustomMenu } from "components/ui";
 
 type Props = {
   type?: "issue" | "cycle" | "module";
+  currentState?: IState | null;
+  bgColor?: string;
   groupTitle: string;
   groupedByIssues: {
     [key: string]: IIssue[];
@@ -33,6 +36,8 @@ type Props = {
 
 export const SingleList: React.FC<Props> = ({
   type,
+  currentState,
+  bgColor,
   groupTitle,
   groupedByIssues,
   selectedGroup,
@@ -69,17 +74,23 @@ export const SingleList: React.FC<Props> = ({
   return (
     <Disclosure key={groupTitle} as="div" defaultOpen>
       {({ open }) => (
-        <div className="rounded-lg bg-white">
-          <div className="rounded-t-lg bg-gray-100 px-4 py-3">
+        <div className="rounded-[10px] border border-gray-300 bg-white">
+          <div
+            className={`flex items-center justify-between bg-gray-100 px-5 py-3 ${
+              open ? "rounded-t-[10px]" : "rounded-[10px]"
+            }`}
+          >
             <Disclosure.Button>
-              <div className="flex items-center gap-x-2">
-                <span>
-                  <ChevronDownIcon
-                    className={`h-4 w-4 text-gray-500 ${!open ? "-rotate-90 transform" : ""}`}
-                  />
-                </span>
+              <div className="flex items-center gap-x-3">
+                {selectedGroup !== null && selectedGroup === "state_detail.name" ? (
+                  <span>
+                    {currentState && getStateGroupIcon(currentState.group, "20", "20", bgColor)}
+                  </span>
+                ) : (
+                  ""
+                )}
                 {selectedGroup !== null ? (
-                  <h2 className="font-medium capitalize leading-5">
+                  <h2 className="text-xl font-semibold capitalize leading-6 text-gray-800">
                     {selectedGroup === "created_by"
                       ? createdBy
                       : selectedGroup === "assignees"
@@ -89,65 +100,25 @@ export const SingleList: React.FC<Props> = ({
                 ) : (
                   <h2 className="font-medium leading-5">All Issues</h2>
                 )}
-                <p className="text-sm text-gray-500">
+                <span className="rounded-full bg-gray-200 py-0.5 px-3 text-sm text-black">
                   {groupedByIssues[groupTitle as keyof IIssue].length}
-                </p>
+                </span>
               </div>
             </Disclosure.Button>
-          </div>
-          <Transition
-            show={open}
-            enter="transition duration-100 ease-out"
-            enterFrom="transform opacity-0"
-            enterTo="transform opacity-100"
-            leave="transition duration-75 ease-out"
-            leaveFrom="transform opacity-100"
-            leaveTo="transform opacity-0"
-          >
-            <Disclosure.Panel>
-              <div className="divide-y-2">
-                {groupedByIssues[groupTitle] ? (
-                  groupedByIssues[groupTitle].length > 0 ? (
-                    groupedByIssues[groupTitle].map((issue: IIssue) => (
-                      <SingleListIssue
-                        key={issue.id}
-                        type={type}
-                        issue={issue}
-                        properties={properties}
-                        editIssue={() => handleEditIssue(issue)}
-                        makeIssueCopy={() => makeIssueCopy(issue)}
-                        handleDeleteIssue={handleDeleteIssue}
-                        removeIssue={() => {
-                          removeIssue && removeIssue(issue.bridge);
-                        }}
-                        userAuth={userAuth}
-                      />
-                    ))
-                  ) : (
-                    <p className="px-4 py-3 text-sm text-gray-500">No issues.</p>
-                  )
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center">Loading...</div>
-                )}
-              </div>
-            </Disclosure.Panel>
-          </Transition>
-          <div className="p-3">
+
             {type === "issue" ? (
               <button
                 type="button"
-                className="flex items-center gap-1 rounded px-2 py-1 text-xs font-medium hover:bg-gray-100"
+                className="p-1  text-gray-500 hover:bg-gray-100"
                 onClick={addIssueToState}
               >
-                <PlusIcon className="h-3 w-3" />
-                Add issue
+                <PlusIcon className="h-4 w-4" />
               </button>
             ) : (
               <CustomMenu
                 label={
-                  <span className="flex items-center gap-1">
-                    <PlusIcon className="h-3 w-3" />
-                    Add issue
+                  <span className="flex items-center">
+                    <PlusIcon className="h-4 w-4" />
                   </span>
                 }
                 optionsPosition="left"
@@ -162,6 +133,41 @@ export const SingleList: React.FC<Props> = ({
               </CustomMenu>
             )}
           </div>
+          <Transition
+            show={open}
+            enter="transition duration-100 ease-out"
+            enterFrom="transform opacity-0"
+            enterTo="transform opacity-100"
+            leave="transition duration-75 ease-out"
+            leaveFrom="transform opacity-100"
+            leaveTo="transform opacity-0"
+          >
+            <Disclosure.Panel>
+              {groupedByIssues[groupTitle] ? (
+                groupedByIssues[groupTitle].length > 0 ? (
+                  groupedByIssues[groupTitle].map((issue: IIssue) => (
+                    <SingleListIssue
+                      key={issue.id}
+                      type={type}
+                      issue={issue}
+                      properties={properties}
+                      editIssue={() => handleEditIssue(issue)}
+                      makeIssueCopy={() => makeIssueCopy(issue)}
+                      handleDeleteIssue={handleDeleteIssue}
+                      removeIssue={() => {
+                        removeIssue && removeIssue(issue.bridge);
+                      }}
+                      userAuth={userAuth}
+                    />
+                  ))
+                ) : (
+                  <p className="px-4 py-3 text-sm text-gray-500">No issues.</p>
+                )
+              ) : (
+                <div className="flex h-full w-full items-center justify-center">Loading...</div>
+              )}
+            </Disclosure.Panel>
+          </Transition>
         </div>
       )}
     </Disclosure>

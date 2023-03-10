@@ -15,15 +15,25 @@ import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 type AvatarProps = {
   user?: Partial<IUser> | Partial<IUserLite> | IUser | IUserLite | undefined | null;
   index?: number;
+  height?: string;
+  width?: string;
+  fontSize?: string
 };
 
-export const Avatar: React.FC<AvatarProps> = ({ user, index }) => (
-  <div className={`relative h-5 w-5 rounded-full ${index && index !== 0 ? "-ml-3.5" : ""}`}>
+export const Avatar: React.FC<AvatarProps> = ({ user, index, height="20px", width="20px", fontSize="12px" }) => (
+  <div className={`relative rounded-full ${index && index !== 0 ? "-ml-3.5" : ""}`} style={{
+    height: height,
+    width: width,
+  }}>
     {user && user.avatar && user.avatar !== "" ? (
       <div
-        className={`h-5 w-5 rounded-full border-2 ${
+        className={`rounded-full border-2 ${
           index ? "border-white bg-white" : "border-transparent"
         }`}
+        style={{
+          height: height,
+          width: width,
+        }}
       >
         <Image
           src={user.avatar}
@@ -34,7 +44,11 @@ export const Avatar: React.FC<AvatarProps> = ({ user, index }) => (
         />
       </div>
     ) : (
-      <div className="grid h-5 w-5 place-items-center rounded-full border-2 border-white bg-gray-700 text-xs capitalize text-white">
+      <div className="grid place-items-center rounded-full border-2 border-white bg-gray-700 text-xs capitalize text-white" style={{
+        height: height,
+        width: width,
+        fontSize: fontSize,
+      }}>
         {user?.first_name && user.first_name !== ""
           ? user.first_name.charAt(0)
           : user?.email?.charAt(0)}

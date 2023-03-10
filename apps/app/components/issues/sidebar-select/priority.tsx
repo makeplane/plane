@@ -40,6 +40,7 @@ export const SidebarPrioritySelect: React.FC<Props> = ({ value, onChange, userAu
           value={value}
           onChange={onChange}
           width="w-full"
+          position="right"
           disabled={isNotAllowed}
         >
           {PRIORITIES.map((option) => (

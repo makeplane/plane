@@ -14,6 +14,7 @@ import { CompletedCycleIcon } from "components/icons";
 import { ICycle, SelectCycleType } from "types";
 // fetch-keys
 import { CYCLE_COMPLETE_LIST } from "constants/fetch-keys";
+import { Loader } from "components/ui";
 
 export interface CompletedCyclesListProps {
   setCreateUpdateCycleModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -49,38 +50,42 @@ export const CompletedCyclesList: React.FC<CompletedCyclesListProps> = ({
 
   return (
     <>
-      {completedCycles && (
-        <>
-          <DeleteCycleModal
-            isOpen={
-              cycleDeleteModal &&
-              !!selectedCycleForDelete &&
-              selectedCycleForDelete.actionType === "delete"
-            }
-            setIsOpen={setCycleDeleteModal}
-            data={selectedCycleForDelete}
-          />
-          {completedCycles?.completed_cycles.length > 0 ? (
-            <div className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
-              {completedCycles.completed_cycles.map((cycle) => (
-                <SingleCycleCard
-                  key={cycle.id}
-                  cycle={cycle}
-                  handleDeleteCycle={() => handleDeleteCycle(cycle)}
-                  handleEditCycle={() => handleEditCycle(cycle)}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center gap-4 text-center">
-              <CompletedCycleIcon height="56" width="56" />
-              <h3 className="text-gray-500">
-                No completed cycles yet. Create with{" "}
-                <pre className="inline rounded bg-gray-200 px-2 py-1">Q</pre>.
-              </h3>
-            </div>
-          )}
-        </>
+      <DeleteCycleModal
+        isOpen={
+          cycleDeleteModal &&
+          !!selectedCycleForDelete &&
+          selectedCycleForDelete.actionType === "delete"
+        }
+        setIsOpen={setCycleDeleteModal}
+        data={selectedCycleForDelete}
+      />
+      {completedCycles ? (
+        completedCycles.completed_cycles.length > 0 ? (
+          <div className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
+            {completedCycles.completed_cycles.map((cycle) => (
+              <SingleCycleCard
+                key={cycle.id}
+                cycle={cycle}
+                handleDeleteCycle={() => handleDeleteCycle(cycle)}
+                handleEditCycle={() => handleEditCycle(cycle)}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center gap-4 text-center">
+            <CompletedCycleIcon height="56" width="56" />
+            <h3 className="text-gray-500">
+              No completed cycles yet. Create with{" "}
+              <pre className="inline rounded bg-gray-200 px-2 py-1">Q</pre>.
+            </h3>
+          </div>
+        )
+      ) : (
+        <Loader className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
+          <Loader.Item height="200px" />
+          <Loader.Item height="200px" />
+          <Loader.Item height="200px" />
+        </Loader>
       )}
     </>
   );

@@ -38,15 +38,25 @@ export const AllLists: React.FC<Props> = ({
   return (
     <div className="flex flex-col space-y-5">
       {Object.keys(groupedByIssues).map((singleGroup) => {
+        const currentState =
+          selectedGroup === "state_detail.name"
+            ? states?.find((s) => s.name === singleGroup)
+            : null;
         const stateId =
           selectedGroup === "state_detail.name"
             ? states?.find((s) => s.name === singleGroup)?.id ?? null
             : null;
+        const bgColor =
+          selectedGroup === "state_detail.name"
+            ? states?.find((s) => s.name === singleGroup)?.color
+            : "#000000";
 
         return (
           <SingleList
             key={singleGroup}
             type={type}
+            currentState={currentState}
+            bgColor={bgColor}
             groupTitle={singleGroup}
             groupedByIssues={groupedByIssues}
             selectedGroup={selectedGroup}

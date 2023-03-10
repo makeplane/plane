@@ -77,6 +77,7 @@ export const SidebarAssigneeSelect: React.FC<Props> = ({ value, onChange, userAu
           }
           options={options}
           onChange={onChange}
+          position="right"
           multiple
           disabled={isNotAllowed}
         />
