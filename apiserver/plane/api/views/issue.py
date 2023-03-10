@@ -173,19 +173,10 @@ class IssueViewSet(BaseViewSet):
 
     def list(self, request, slug, project_id):
         try:
-            # Issue State groups
-            type = request.GET.get("type", "all")
-            group = ["backlog", "unstarted", "started", "completed", "cancelled"]
-            if type == "backlog":
-                group = ["backlog"]
-            if type == "active":
-                group = ["unstarted", "started"]
-
             filters = issue_filters(request.query_params)
             issue_queryset = (
                 self.get_queryset()
                 .order_by(request.GET.get("order_by", "created_at"))
-                .filter(state__group__in=group)
                 .filter(**filters)
             )
 

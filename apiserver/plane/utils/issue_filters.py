@@ -94,6 +94,17 @@ def filter_completed_at(params, filter):
             )
 
 
+def filter_issue_state_type(params, filter):
+    type = params.get("type", "all")
+    group = ["backlog", "unstarted", "started", "completed", "cancelled"]
+    if type == "backlog":
+        group = ["backlog"]
+    if type == "active":
+        group = ["unstarted", "started"]
+
+    filter["state__group__in"] = group
+
+
 def issue_filters(query_params):
     filter = dict()
 
@@ -110,6 +121,7 @@ def issue_filters(query_params):
         "start_date": filter_start_date,
         "target_date": filter_target_date,
         "completed_at": filter_completed_at,
+        "type": filter_issue_state_type,
     }
 
     for key, value in ISSUE_FILTER.items():
