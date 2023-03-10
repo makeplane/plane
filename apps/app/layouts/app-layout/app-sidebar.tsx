@@ -25,10 +25,8 @@ const Sidebar: React.FC<SidebarProps> = ({ toggleSidebar, setToggleSidebar }) =>
         } flex h-full flex-col bg-white duration-300 md:relative`}
       >
         <div className="flex h-full flex-1 flex-col border-r">
-          <div className="flex h-full flex-1 flex-col pt-2">
-            <div className="px-2">
-              <WorkspaceSidebarDropdown />
-            </div>
+          <div className="flex h-full flex-1 flex-col">
+            <WorkspaceSidebarDropdown />
             <WorkspaceSidebarMenu />
             <ProjectSidebarList />
             <WorkspaceHelpSection setSidebarActive={setToggleSidebar} />

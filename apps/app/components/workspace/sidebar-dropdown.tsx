@@ -12,7 +12,7 @@ import useWorkspaces from "hooks/use-workspaces";
 import userService from "services/user.service";
 import authenticationService from "services/authentication.service";
 // components
-import { Loader } from "components/ui";
+import { Avatar, Loader } from "components/ui";
 
 // types
 import { IWorkspace } from "types";
@@ -72,44 +72,48 @@ export const WorkspaceSidebarDropdown = () => {
 
   return (
     <div className="relative">
-      <Menu as="div" className="col-span-4 inline-block w-full text-left">
-        <Menu.Button
-          className={`inline-flex w-full items-center justify-between rounded-md px-1 py-2 text-sm font-semibold text-gray-700 focus:outline-none ${
-            !sidebarCollapse
-              ? "border border-gray-300 shadow-sm hover:bg-gray-50 focus:bg-gray-50"
-              : ""
-          }`}
-        >
-          <div className="mx-auto flex items-center gap-x-1">
-            <div className="relative flex h-5 w-5 items-center justify-center rounded bg-gray-700 p-4 uppercase text-white">
-              {activeWorkspace?.logo && activeWorkspace.logo !== "" ? (
-                <Image
-                  src={activeWorkspace.logo}
-                  alt="Workspace Logo"
-                  layout="fill"
-                  objectFit="cover"
-                  className="rounded"
-                />
-              ) : (
-                activeWorkspace?.name?.charAt(0) ?? "..."
+      <Menu as="div" className="col-span-4 inline-block w-full p-5 text-left">
+        <div className="flex w-full items-center justify-between gap-2.5">
+          <Menu.Button
+            className={`inline-flex w-full items-center rounded-md px-1 py-2 text-sm font-semibold text-gray-700 focus:outline-none `}
+          >
+            <div className="flex w-full items-center gap-x-2 rounded-md bg-gray-100 px-2 py-1.5">
+              <div className="relative flex h-6 w-6 items-center justify-center rounded bg-gray-700 p-2 uppercase text-white">
+                {activeWorkspace?.logo && activeWorkspace.logo !== "" ? (
+                  <Image
+                    src={activeWorkspace.logo}
+                    alt="Workspace Logo"
+                    layout="fill"
+                    objectFit="cover"
+                    className="rounded"
+                  />
+                ) : (
+                  activeWorkspace?.name?.charAt(0) ?? "..."
+                )}
+              </div>
+
+              {!sidebarCollapse && (
+                <p className="text-base">
+                  {activeWorkspace?.name
+                    ? activeWorkspace.name.length > 17
+                      ? `${activeWorkspace.name.substring(0, 17)}...`
+                      : activeWorkspace.name
+                    : "Loading..."}
+                </p>
               )}
             </div>
-            {!sidebarCollapse && (
-              <p className="ml-1 text-left">
-                {activeWorkspace?.name
-                  ? activeWorkspace.name.length > 17
-                    ? `${activeWorkspace.name.substring(0, 17)}...`
-                    : activeWorkspace.name
-                  : "Loading..."}
-              </p>
-            )}
-          </div>
+          </Menu.Button>
+
           {!sidebarCollapse && (
-            <div className="flex flex-grow justify-end">
-              <ChevronDownIcon className="ml-2 h-3 w-3" aria-hidden="true" />
-            </div>
+            <Link href={`/${workspaceSlug}/me/profile`}>
+              <a>
+                <div className="flex flex-grow justify-end">
+                  <Avatar user={user} height="32px" width="32px" fontSize="14px" />
+                </div>
+              </a>
+            </Link>
           )}
-        </Menu.Button>
+        </div>
 
         <Transition
           as={Fragment}
