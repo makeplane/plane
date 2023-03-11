@@ -1,0 +1,6 @@
+contact_links:
+  - name: Help and support
+    about: Reach out to us on our Discord server or GitHub discussions.
+  - name: Dedicated support
+    url: mailto:support@plane.so
+    about: Write to us if you'd like dedicated support using Plane
