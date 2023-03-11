@@ -25,7 +25,7 @@ type Props = {
   onClose: () => void;
 };
 
-const ConfirmWorkspaceDeletion: React.FC<Props> = ({ isOpen, data, onClose }) => {
+export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose }) => {
   const cancelButtonRef = useRef(null);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const [confirmProjectName, setConfirmProjectName] = useState("");
@@ -194,5 +194,3 @@ const ConfirmWorkspaceDeletion: React.FC<Props> = ({ isOpen, data, onClose }) =>
     </Transition.Root>
   );
 };
-
-export default ConfirmWorkspaceDeletion;
