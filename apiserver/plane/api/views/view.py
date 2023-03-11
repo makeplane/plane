@@ -8,10 +8,10 @@ from sentry_sdk import capture_exception
 
 # Module imports
 from . import BaseViewSet, BaseAPIView
-from plane.api.serializers import ViewSerializer, IssueSerializer
+from plane.api.serializers import IssueViewSerializer, IssueSerializer
 from plane.api.permissions import ProjectEntityPermission
 from plane.db.models import (
-    View,
+    IssueView,
     Issue,
     IssueBlocker,
     IssueLink,
@@ -21,8 +21,8 @@ from plane.db.models import (
 
 
 class IssueViewViewSet(BaseViewSet):
-    serializer_class = ViewSerializer
-    model = View
+    serializer_class = IssueViewSerializer
+    model = IssueView
     permission_classes = [
         ProjectEntityPermission,
     ]
@@ -50,7 +50,7 @@ class ViewIssuesEndpoint(BaseAPIView):
 
     def get(self, request, slug, project_id, view_id):
         try:
-            view = View.objects.get(pk=view_id)
+            view = IssueView.objects.get(pk=view_id)
             queries = view.query
 
             issues = (
@@ -105,9 +105,9 @@ class ViewIssuesEndpoint(BaseAPIView):
 
             serializer = IssueSerializer(issues, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        except View.DoesNotExist:
+        except IssueView.DoesNotExist:
             return Response(
-                {"error": "View does not exist"}, status=status.HTTP_404_NOT_FOUND
+                {"error": "Issue View does not exist"}, status=status.HTTP_404_NOT_FOUND
             )
         except Exception as e:
             capture_exception(e)
