@@ -20,7 +20,7 @@ from plane.db.models import (
 )
 
 
-class ViewViewSet(BaseViewSet):
+class IssueViewViewSet(BaseViewSet):
     serializer_class = ViewSerializer
     model = View
     permission_classes = [

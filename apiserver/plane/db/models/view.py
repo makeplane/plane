@@ -6,7 +6,7 @@ from django.db import models
 from . import ProjectBaseModel
 
 
-class View(ProjectBaseModel):
+class IssueView(ProjectBaseModel):
     name = models.CharField(max_length=255, verbose_name="View Name")
     description = models.TextField(verbose_name="View Description", blank=True)
     query = models.JSONField(verbose_name="View Query")
@@ -15,9 +15,9 @@ class View(ProjectBaseModel):
     )
 
     class Meta:
-        verbose_name = "View"
-        verbose_name_plural = "Views"
-        db_table = "views"
+        verbose_name = "Issue View"
+        verbose_name_plural = "Issue Views"
+        db_table = "issue_views"
         ordering = ("-created_at",)
 
     def __str__(self):

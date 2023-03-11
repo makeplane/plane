@@ -8,7 +8,7 @@ from plane.db.models import View
 from plane.utils.issue_filters import issue_filters
 
 
-class ViewSerializer(BaseSerializer):
+class IssueViewSerializer(BaseSerializer):
     class Meta:
         model = View
         fields = "__all__"

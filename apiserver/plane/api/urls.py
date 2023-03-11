@@ -76,7 +76,7 @@ from plane.api.views import (
     ShortCutViewSet,
     ## End Shortcuts
     # Views
-    ViewViewSet,
+    IssueViewViewSet,
     ViewIssuesEndpoint,
     ## End Views
     # Cycles
@@ -453,7 +453,7 @@ urlpatterns = [
     # Views
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/views/",
-        ViewViewSet.as_view(
+        IssueViewViewSet.as_view(
             {
                 "get": "list",
                 "post": "create",
@@ -463,7 +463,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/views/<uuid:pk>/",
-        ViewViewSet.as_view(
+        IssueViewViewSet.as_view(
             {
                 "get": "retrieve",
                 "put": "update",
