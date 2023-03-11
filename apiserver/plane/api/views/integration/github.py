@@ -20,9 +20,14 @@ from plane.api.serializers import (
     GithubCommentSyncSerializer,
 )
 from plane.utils.integrations.github import get_github_repos
+from plane.api.permissions import ProjectBasePermission, ProjectEntityPermission
 
 
 class GithubRepositoriesEndpoint(BaseAPIView):
+    permission_classes = [
+        ProjectBasePermission,
+    ]
+
     def get(self, request, slug, workspace_integration_id):
         try:
             page = request.GET.get("page", 1)
@@ -44,6 +49,10 @@ class GithubRepositoriesEndpoint(BaseAPIView):
 
 
 class GithubRepositorySyncViewSet(BaseViewSet):
+    permission_classes = [
+        ProjectBasePermission,
+    ]
+
     serializer_class = GithubRepositorySyncSerializer
     model = GithubRepositorySync
 
@@ -148,6 +157,10 @@ class GithubRepositorySyncViewSet(BaseViewSet):
 
 
 class GithubIssueSyncViewSet(BaseViewSet):
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+
     serializer_class = GithubIssueSyncSerializer
     model = GithubIssueSync
 
@@ -159,6 +172,11 @@ class GithubIssueSyncViewSet(BaseViewSet):
 
 
 class GithubCommentSyncViewSet(BaseViewSet):
+
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+    
     serializer_class = GithubCommentSyncSerializer
     model = GithubCommentSync
 
