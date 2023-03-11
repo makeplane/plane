@@ -263,6 +263,11 @@ class CycleIssueViewSet(BaseViewSet):
 
 
 class CycleDateCheckEndpoint(BaseAPIView):
+
+    permission_classes = [
+        ProjectEntityPermission,
+    ]    
+
     def post(self, request, slug, project_id):
         try:
             start_date = request.data.get("start_date")
@@ -294,6 +299,11 @@ class CycleDateCheckEndpoint(BaseAPIView):
 
 
 class CurrentUpcomingCyclesEndpoint(BaseAPIView):
+
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+    
     def get(self, request, slug, project_id):
         try:
             subquery = CycleFavorite.objects.filter(
@@ -332,6 +342,12 @@ class CurrentUpcomingCyclesEndpoint(BaseAPIView):
 
 
 class CompletedCyclesEndpoint(BaseAPIView):
+
+    permission_classes = [
+        ProjectEntityPermission,
+    ]    
+
+    
     def get(self, request, slug, project_id):
         try:
             subquery = CycleFavorite.objects.filter(
@@ -364,6 +380,11 @@ class CompletedCyclesEndpoint(BaseAPIView):
 
 
 class DraftCyclesEndpoint(BaseAPIView):
+
+    permission_classes = [
+        ProjectEntityPermission,
+    ]    
+
     def get(self, request, slug, project_id):
         try:
             draft_cycles = Cycle.objects.filter(
@@ -386,6 +407,11 @@ class DraftCyclesEndpoint(BaseAPIView):
 
 
 class CycleFavoriteViewSet(BaseViewSet):
+
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+    
     serializer_class = CycleFavoriteSerializer
     model = CycleFavorite
 
