@@ -968,7 +968,12 @@ urlpatterns = [
         name="importer",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/importers/<str:service>/",
+        "workspaces/<str:slug>/projects/importers/<str:service>/",
+        ImportServiceEndpoint.as_view(),
+        name="importer",
+    ),
+    path(
+        "workspaces/<str:slug>/importers/",
         ImportServiceEndpoint.as_view(),
         name="importer",
     ),

@@ -58,14 +58,15 @@ class ServiceIssueImportSummaryEndpoint(BaseAPIView):
 
 
 class ImportServiceEndpoint(BaseAPIView):
-    def post(self, request, slug, project_id, service):
+    def post(self, request, slug, service):
         try:
-            # save the owner and repo info - data
-            # users: [] if no import else [{ below values }]
-            # { "username": "pablohashescobar", "import": "map-existing", "email": "nikhilschacko@gmail.com" }
-            # { "username": "aaryan610", "import": False, "" }
-            # { "username": "john", "import": "invite", "email": "john@gmail.com"}
-            # save repository info in metadata
+            project_id = request.data.get("project_id", False)
+
+            if not project_id:
+                return Response(
+                    {"error": "Project ID is required"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             workspace = Workspace.objects.get(slug=slug)
 
@@ -113,6 +114,18 @@ class ImportServiceEndpoint(BaseAPIView):
             return Response(
                 {"error": "Workspace does not exist"}, status=status.HTTP_404_NOT_FOUND
             )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def get(self, request, slug):
+        try:
+            imports = Importer.objects.filter(workspace__slug=slug)
+            serializer = ImporterSerializer(imports, many=True)
+            return Response(serializer.data)
         except Exception as e:
             capture_exception(e)
             return Response(
