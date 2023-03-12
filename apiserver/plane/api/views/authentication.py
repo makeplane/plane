@@ -148,7 +148,7 @@ class SignInEndpoint(BaseAPIView):
                         json={
                             "event_id": uuid.uuid4().hex,
                             "event_data": {
-                                "medium": f"email",
+                                "medium": "email",
                             },
                             "user": {"email": email},
                             "device_ctx": {
@@ -322,7 +322,7 @@ class MagicSignInEndpoint(BaseAPIView):
                                 json={
                                     "event_id": uuid.uuid4().hex,
                                     "event_data": {
-                                        "medium": f"code",
+                                        "medium": "code",
                                     },
                                     "user": {"email": email},
                                     "device_ctx": {
@@ -352,7 +352,7 @@ class MagicSignInEndpoint(BaseAPIView):
                                 json={
                                     "event_id": uuid.uuid4().hex,
                                     "event_data": {
-                                        "medium": f"code",
+                                        "medium": "code",
                                     },
                                     "user": {"email": email},
                                     "device_ctx": {
