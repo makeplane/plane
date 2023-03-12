@@ -20,7 +20,7 @@ import AppLayout from "layouts/app-layout";
 import useToast from "hooks/use-toast";
 // components
 import { ImageUploadModal } from "components/core";
-import ConfirmWorkspaceDeletion from "components/workspace/confirm-workspace-deletion";
+import { DeleteWorkspaceModal } from "components/workspace";
 // ui
 import { Spinner, Button, Input, CustomSelect, OutlineButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -120,7 +120,7 @@ const WorkspaceSettings: NextPage<UserAuth> = (props) => {
         }}
         value={watch("logo")}
       />
-      <ConfirmWorkspaceDeletion
+      <DeleteWorkspaceModal
         isOpen={isOpen}
         onClose={() => {
           setIsOpen(false);
