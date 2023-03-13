@@ -20,7 +20,7 @@ import { IProject, UserAuth } from "types";
 import type { NextPage, GetServerSidePropsContext } from "next";
 // fetch-keys
 import { PROJECTS_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
-import { ContrastIcon, GridViewIcon } from "components/icons";
+import { ContrastIcon, PeopleGroupIcon } from "components/icons";
 
 const FeaturesSettings: NextPage<UserAuth> = (props) => {
   const router = useRouter();
@@ -124,7 +124,7 @@ const FeaturesSettings: NextPage<UserAuth> = (props) => {
           </div>
           <div className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border bg-white p-6">
             <div className="flex items-start gap-3">
-              <GridViewIcon color="#ff6b00" width={28} height={28} className="flex-shrink-0" />
+              <PeopleGroupIcon color="#ff6b00" width={28} height={28} className="flex-shrink-0" />
               <div>
                 <h4 className="-mt-1.5 text-xl font-semibold">Modules</h4>
                 <p className="text-gray-500">
