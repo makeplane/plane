@@ -5,7 +5,7 @@ from django.utils.dateparse import parse_datetime
 def filter_state(params, filter, method):
     if method == "GET":
         states = params.get("state").split(",")
-        if len(states):
+        if len(states) and "" not in states:
             filter["state__in"] = states
     else:
         if len(params.get("state")):
@@ -16,7 +16,7 @@ def filter_state(params, filter, method):
 def filter_priority(params, filter, method):
     if method == "GET":
         priorties = params.get("priority").split(",")
-        if len(priorties):
+        if len(priorties) and "" not in priorties:
             filter["priority__in"] = priorties
     else:
         if len(params.get("priority")):
@@ -27,7 +27,7 @@ def filter_priority(params, filter, method):
 def filter_parent(params, filter, method):
     if method == "GET":
         parents = params.get("parent").split(",")
-        if len(parents):
+        if len(parents) and "" not in parents:
             filter["parent__in"] = parents
     else:
         if len(params.get("parent")):
@@ -38,7 +38,7 @@ def filter_parent(params, filter, method):
 def filter_labels(params, filter, method):
     if method == "GET":
         labels = params.get("labels").split(",")
-        if len(labels):
+        if len(labels) and "" not in labels:
             filter["labels__in"] = labels
     else:
         if len(params.get("labels")):
@@ -49,7 +49,7 @@ def filter_labels(params, filter, method):
 def filter_assignees(params, filter, method):
     if method == "GET":
         assignees = params.get("assignees").split(",")
-        if len(assignees):
+        if len(assignees) and "" not in assignees:
             filter["assignees__in"] = assignees
     else:
         if len(params.get("assignees")):
@@ -60,7 +60,7 @@ def filter_assignees(params, filter, method):
 def filter_created_by(params, filter, method):
     if method == "GET":
         created_bys = params.get("created_by").split(",")
-        if len(created_bys):
+        if len(created_bys) and "" not in created_bys:
             filter["created_by__in"] = created_bys
     else:
         if len(params.get("created_by")):
@@ -77,7 +77,7 @@ def filter_name(params, filter, method):
 def filter_created_at(params, filter, method):
     if method == "GET":
         created_ats = params.get("created_at").split(",")
-        if len(created_ats):
+        if len(created_ats) and "" not in created_ats:
             for query in created_ats:
                 created_at_query = query.split(";")
                 if len(created_at_query) == 2 and "after" in created_at_query:
@@ -97,7 +97,7 @@ def filter_created_at(params, filter, method):
 def filter_updated_at(params, filter, method):
     if method == "GET":
         updated_bys = params.get("updated_at").split(",")
-        if len(updated_bys):
+        if len(updated_bys) and "" not in updated_bys:
             for query in updated_bys:
                 updated_at_query = query.split(";")
                 if len(updated_at_query) == 2 and "after" in updated_at_query:
@@ -117,7 +117,7 @@ def filter_updated_at(params, filter, method):
 def filter_start_date(params, filter, method):
     if method == "GET":
         start_dates = params.get("start_date").split(";")
-        if len(start_dates):
+        if len(start_dates) and "" not in start_dates:
             for query in start_dates:
                 start_date_query = query.split(";")
                 if len(start_date_query) == 2 and "after" in start_date_query:
@@ -137,7 +137,7 @@ def filter_start_date(params, filter, method):
 def filter_target_date(params, filter, method):
     if method == "GET":
         target_dates = params.get("target_date").split(";")
-        if len(target_dates):
+        if len(target_dates) and "" not in target_dates:
             for query in target_dates:
                 target_date_query = query.split(";")
                 if len(target_date_query) == 2 and "after" in target_date_query:
@@ -158,7 +158,7 @@ def filter_target_date(params, filter, method):
 def filter_completed_at(params, filter, method):
     if method == "GET":
         completed_ats = params.get("completed_at").split(",")
-        if len(completed_ats):
+        if len(completed_ats) and "" not in completed_ats:
             for query in completed_ats:
                 completed_at_query = query.split(";")
                 if len(completed_at_query) == 2 and "after" in completed_at_query:
