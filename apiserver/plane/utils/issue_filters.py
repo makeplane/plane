@@ -4,8 +4,9 @@ from django.utils.dateparse import parse_datetime
 
 def filter_state(params, filter, method):
     if method == "GET":
-        if len(params.getlist("state")):
-            filter["state__in"] = params.getlist("state")
+        states = params.get("state").split(",")
+        if len(states):
+            filter["state__in"] = states
     else:
         if len(params.get("state")):
             filter["state__in"] = params.get("state")
@@ -14,8 +15,9 @@ def filter_state(params, filter, method):
 
 def filter_priority(params, filter, method):
     if method == "GET":
-        if len(params.getlist("priority")):
-            filter["priority__in"] = params.getlist("priority")
+        priorties = params.get("priority").split(",")
+        if len(priorties):
+            filter["priority__in"] = priorties
     else:
         if len(params.get("priority")):
             filter["priority__in"] = params.get("priority")
@@ -24,8 +26,9 @@ def filter_priority(params, filter, method):
 
 def filter_parent(params, filter, method):
     if method == "GET":
-        if len(params.getlist("parent")):
-            filter["parent__in"] = params.getlist("parent")
+        parents = params.get("parent").split(",")
+        if len(parents):
+            filter["parent__in"] = parents
     else:
         if len(params.get("parent")):
             filter["parent__in"] = params.get("parent")
@@ -34,8 +37,9 @@ def filter_parent(params, filter, method):
 
 def filter_labels(params, filter, method):
     if method == "GET":
-        if len(params.getlist("labels")):
-            filter["labels__in"] = params.getlist("labels")
+        labels = params.get("labels").split(",")
+        if len(labels):
+            filter["labels__in"] = labels
     else:
         if len(params.get("labels")):
             filter["labels__in"] = params.get("labels")
@@ -44,8 +48,9 @@ def filter_labels(params, filter, method):
 
 def filter_assignees(params, filter, method):
     if method == "GET":
-        if len(params.getlist("assignees")):
-            filter["assignees__in"] = params.getlist("assignees")
+        assignees = params.get("assignees").split(",")
+        if len(assignees):
+            filter["assignees__in"] = assignees
     else:
         if len(params.get("assignees")):
             filter["assignees__in"] = params.get("assignees")
@@ -54,8 +59,9 @@ def filter_assignees(params, filter, method):
 
 def filter_created_by(params, filter, method):
     if method == "GET":
-        if len(params.getlist("created_by")):
-            filter["created_by__in"] = params.getlist("created_by")
+        created_bys = params.get("created_by").split(",")
+        if len(created_bys):
+            filter["created_by__in"] = created_bys
     else:
         if len(params.get("created_by")):
             filter["created_by__in"] = params.get("created_by")
@@ -70,9 +76,10 @@ def filter_name(params, filter, method):
 
 def filter_created_at(params, filter, method):
     if method == "GET":
-        if len(params.getlist("created_at")):
-            for query in params.getlist("created_at"):
-                created_at_query = query.split(",")
+        created_ats = params.get("created_at").split(",")
+        if len(created_ats):
+            for query in created_ats:
+                created_at_query = query.split(";")
                 if len(created_at_query) == 2 and "after" in created_at_query:
                     filter["created_at__date__gte"] = created_at_query[0]
                 else:
@@ -89,9 +96,10 @@ def filter_created_at(params, filter, method):
 
 def filter_updated_at(params, filter, method):
     if method == "GET":
-        if len(params.getlist("updated_at")):
-            for query in params.getlist("updated_at"):
-                updated_at_query = query.split(",")
+        updated_bys = params.get("updated_at").split(",")
+        if len(updated_bys):
+            for query in updated_bys:
+                updated_at_query = query.split(";")
                 if len(updated_at_query) == 2 and "after" in updated_at_query:
                     filter["updated_at__date__gte"] = updated_at_query[0]
                 else:
@@ -108,9 +116,10 @@ def filter_updated_at(params, filter, method):
 
 def filter_start_date(params, filter, method):
     if method == "GET":
-        if len(params.getlist("start_date")):
-            for query in params.getlist("start_date"):
-                start_date_query = query.split(",")
+        start_dates = params.get("start_date").split(";")
+        if len(start_dates):
+            for query in start_dates:
+                start_date_query = query.split(";")
                 if len(start_date_query) == 2 and "after" in start_date_query:
                     filter["start_date__date__gte"] = start_date_query[0]
                 else:
@@ -127,9 +136,10 @@ def filter_start_date(params, filter, method):
 
 def filter_target_date(params, filter, method):
     if method == "GET":
-        if len(params.getlist("target_date")):
-            for query in params.getlist("target_date"):
-                target_date_query = query.split(",")
+        target_dates = params.get("target_date").split(";")
+        if len(target_dates):
+            for query in target_dates:
+                target_date_query = query.split(";")
                 if len(target_date_query) == 2 and "after" in target_date_query:
                     filter["target_date__date__gte"] = target_date_query[0]
                 else:
@@ -147,9 +157,10 @@ def filter_target_date(params, filter, method):
 
 def filter_completed_at(params, filter, method):
     if method == "GET":
-        if len(params.getlist("completed_at")):
-            for query in params.getlist("completed_at"):
-                completed_at_query = query.split(",")
+        completed_ats = params.get("completed_at").split(",")
+        if len(completed_ats):
+            for query in completed_ats:
+                completed_at_query = query.split(";")
                 if len(completed_at_query) == 2 and "after" in completed_at_query:
                     filter["completed_at__date__gte"] = completed_at_query[0]
                 else:
