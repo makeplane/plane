@@ -3,9 +3,8 @@ name: Build Frontend Docker Image
 on:
   push:
     branches:
-      - 'main'
       - 'develop'
-      - 'feature/**'
+      - 'master'
 
 jobs:
   build_push_frontend:
