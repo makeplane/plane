@@ -82,7 +82,11 @@ class ProjectViewSet(BaseViewSet):
                 project_id=OuterRef("pk"),
                 workspace__slug=self.kwargs.get("slug"),
             )
-            projects = self.get_queryset().annotate(is_favorite=Exists(subquery))
+            projects = (
+                self.get_queryset()
+                .annotate(is_favorite=Exists(subquery))
+                .order_by("-is_favorite")
+            )
             return Response(ProjectDetailSerializer(projects, many=True).data)
         except Exception as e:
             capture_exception(e)
