@@ -3,9 +3,8 @@ name: Build Api Server Docker Image
 on:
   push:
     branches:
-      - 'main'
       - 'develop'
-      - 'feature/**'
+      - 'master'
     tags:
       - '*'
 
