@@ -152,6 +152,7 @@ const Profile: NextPage = () => {
           setIsImageUploadModalOpen(false);
         }}
         value={watch("avatar") !== "" ? watch("avatar") : undefined}
+        userImage
       />
       <div className="w-full space-y-5">
         <Breadcrumbs>

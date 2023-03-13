@@ -40,6 +40,14 @@ class FileServices extends APIService {
       });
   }
 
+  async uploadUserFile(file: FormData): Promise<any> {
+    return this.mediaUpload(`/api/users/file-assets/`, file)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async getUnsplashImages(page: number = 1, query?: string): Promise<UnSplashImage[]> {
     const clientId = process.env.NEXT_PUBLIC_UNSPLASH_ACCESS;
     const url = query
@@ -50,9 +58,7 @@ class FileServices extends APIService {
       method: "get",
       url,
     })
-      .then((response) => {
-        return response?.data?.results ?? response?.data;
-      })
+      .then((response) => response?.data?.results ?? response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
