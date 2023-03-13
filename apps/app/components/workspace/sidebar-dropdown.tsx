@@ -12,7 +12,9 @@ import useWorkspaces from "hooks/use-workspaces";
 import userService from "services/user.service";
 import authenticationService from "services/authentication.service";
 // components
-import { Avatar, Loader } from "components/ui";
+import { Avatar, Loader, Tooltip } from "components/ui";
+// helper
+import { truncateText } from "helpers/string.helper";
 
 // types
 import { IWorkspace } from "types";
@@ -96,7 +98,7 @@ export const WorkspaceSidebarDropdown = () => {
                 <p className="text-base">
                   {activeWorkspace?.name
                     ? activeWorkspace.name.length > 17
-                      ? `${activeWorkspace.name.substring(0, 17)}...`
+                      ? `${activeWorkspace.name.substring(0, 15)}...`
                       : activeWorkspace.name
                     : "Loading..."}
                 </p>
@@ -159,7 +161,10 @@ export const WorkspaceSidebarDropdown = () => {
                                   activeWorkspace?.name?.charAt(0) ?? "N"
                                 )}
                               </span>
-                              <h5 className="text-sm">{workspace.name}</h5>
+
+                              <h5 className="text-sm">
+                                {truncateText(workspace.name, 18)}
+                              </h5>
                             </div>
                             <span className="p-1">
                               <CheckIcon

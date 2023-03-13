@@ -14,6 +14,7 @@ import {
   ChevronDownIcon,
   DocumentDuplicateIcon,
   DocumentIcon,
+  ExclamationCircleIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
 
@@ -205,7 +206,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
         {module ? (
           <>
             <div className="flex flex-col items-start justify-center">
-              <div className="flex gap-2.5 px-7 text-sm">
+              <div className="flex gap-2.5 px-6 text-sm">
                 <div className="flex items-center ">
                   <Controller
                     control={control}
@@ -325,7 +326,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                 </div>
               </div>
 
-              <div className="flex flex-col gap-6 px-7 py-6">
+              <div className="flex flex-col gap-6 px-6 py-6">
                 <div className="flex flex-col items-start justify-start gap-2 ">
                   <div className="flex items-start justify-start gap-2  ">
                     <h4 className="text-xl font-semibold text-gray-900">{module.name}</h4>
@@ -396,7 +397,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
               </div>
             </div>
 
-            <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-gray-300 px-7 py-6 ">
+            <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-gray-300 px-6 py-6 ">
               <Disclosure>
                 {({ open }) => (
                   <div
@@ -414,12 +415,21 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                         )}
                       </div>
 
-                      <Disclosure.Button>
-                        <ChevronDownIcon
-                          className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`}
-                          aria-hidden="true"
-                        />
-                      </Disclosure.Button>
+                      {isStartValid && isEndValid ? (
+                        <Disclosure.Button>
+                          <ChevronDownIcon
+                            className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`}
+                            aria-hidden="true"
+                          />
+                        </Disclosure.Button>
+                      ) : (
+                        <div className="flex items-center gap-1">
+                          <ExclamationCircleIcon className="h-3 w-3" />
+                          <span className="text-xs italic">
+                            Invalid date. Please enter valid date.
+                          </span>
+                        </div>
+                      )}
                     </div>
                     <Transition show={open}>
                       <Disclosure.Panel>
@@ -465,7 +475,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
               </Disclosure>
             </div>
 
-            <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-gray-300 px-7 py-6 ">
+            <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-gray-300 px-6 py-6 ">
               <Disclosure>
                 {({ open }) => (
                   <div
@@ -476,12 +486,19 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                         <span className="font-medium text-gray-500">Other Information</span>
                       </div>
 
-                      <Disclosure.Button>
-                        <ChevronDownIcon
-                          className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`}
-                          aria-hidden="true"
-                        />
-                      </Disclosure.Button>
+                      {issues.length > 0 ? (
+                        <Disclosure.Button>
+                          <ChevronDownIcon
+                            className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`}
+                            aria-hidden="true"
+                          />
+                        </Disclosure.Button>
+                      ) : (
+                        <div className="flex items-center gap-1">
+                          <ExclamationCircleIcon className="h-3 w-3" />
+                          <span className="text-xs italic">No issues found. Please add issue.</span>
+                        </div>
+                      )}
                     </div>
                     <Transition show={open}>
                       <Disclosure.Panel>
