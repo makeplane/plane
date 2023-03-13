@@ -6,14 +6,23 @@ type TSingleProgressStatsProps = {
   title: any;
   completed: number;
   total: number;
+  onClick?: () => void;
+  selected?: boolean;
 };
 
 export const SingleProgressStats: React.FC<TSingleProgressStatsProps> = ({
   title,
   completed,
   total,
+  onClick,
+  selected = false,
 }) => (
-  <div className="flex w-full items-center justify-between py-3 text-xs">
+  <div
+    className={`flex w-full items-center justify-between py-3 text-xs ${
+      onClick ? "cursor-pointer hover:bg-gray-100" : ""
+    } ${selected ? "bg-gray-100" : ""}`}
+    onClick={onClick}
+  >
     <div className="flex w-1/2 items-center justify-start gap-2">{title}</div>
     <div className="flex w-1/2 items-center justify-end gap-1 px-2">
       <div className="flex h-5 items-center justify-center gap-1 ">

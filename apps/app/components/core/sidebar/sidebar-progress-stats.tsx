@@ -23,6 +23,7 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 import { IIssue, IIssueLabels, IModule, UserAuth } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS } from "constants/fetch-keys";
+import useIssuesView from "hooks/use-issues-view";
 // types
 type Props = {
   groupedIssues: any;
@@ -53,6 +54,8 @@ export const SidebarProgressStats: React.FC<Props> = ({
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+
+  const { setAssigneeFilter, setLabelFilter } = useIssuesView();
 
   const { storedValue: tab, setValue: setTab } = useLocalStorage("tab", "Assignees");
 
@@ -179,6 +182,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
           {members?.map((member, index) => {
             const totalArray = issues?.filter((i) => i.assignees?.includes(member.member.id));
             const completeArray = totalArray?.filter((i) => i.state_detail.group === "completed");
+
             if (totalArray.length > 0) {
               return (
                 <SingleProgressStats
@@ -191,6 +195,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
                   }
                   completed={completeArray.length}
                   total={totalArray.length}
+                  onClick={() => setAssigneeFilter(member.member.id)}
                 />
               );
             }
@@ -217,15 +222,17 @@ export const SidebarProgressStats: React.FC<Props> = ({
                 ).length
               }
               total={issues?.filter((i) => i.assignees?.length === 0).length}
+              onClick={() => setAssigneeFilter(null)}
             />
           ) : (
             ""
           )}
         </Tab.Panel>
         <Tab.Panel as="div" className="flex w-full flex-col ">
-          {issueLabels?.map((issue, index) => {
-            const totalArray = issues?.filter((i) => i.labels?.includes(issue.id));
+          {issueLabels?.map((label, index) => {
+            const totalArray = issues?.filter((i) => i.labels?.includes(label.id));
             const completeArray = totalArray?.filter((i) => i.state_detail.group === "completed");
+
             if (totalArray.length > 0) {
               return (
                 <SingleProgressStats
@@ -235,14 +242,16 @@ export const SidebarProgressStats: React.FC<Props> = ({
                       <span
                         className="block h-3 w-3 rounded-full "
                         style={{
-                          backgroundColor: issue.color,
+                          backgroundColor:
+                            label.color && label.color !== "" ? label.color : "#000000",
                         }}
                       />
-                      <span className="text-xs capitalize">{issue.name}</span>
+                      <span className="text-xs capitalize">{label.name}</span>
                     </div>
                   }
                   completed={completeArray.length}
                   total={totalArray.length}
+                  onClick={() => setLabelFilter(label.id)}
                 />
               );
             }

@@ -1,5 +1,5 @@
 // hooks
-import useIssueView from "hooks/use-issue-view";
+import useIssuesView from "hooks/use-issues-view";
 // components
 import { SingleList } from "components/core/list-view/single-list";
 // types
@@ -8,7 +8,6 @@ import { IIssue, IProjectMember, IState, UserAuth } from "types";
 // types
 type Props = {
   type: "issue" | "cycle" | "module";
-  issues: IIssue[];
   states: IState[] | undefined;
   members: IProjectMember[] | undefined;
   addIssueToState: (groupTitle: string, stateId: string | null) => void;
@@ -22,7 +21,6 @@ type Props = {
 
 export const AllLists: React.FC<Props> = ({
   type,
-  issues,
   states,
   members,
   addIssueToState,
@@ -33,44 +31,35 @@ export const AllLists: React.FC<Props> = ({
   removeIssue,
   userAuth,
 }) => {
-  const { groupedByIssues, groupByProperty: selectedGroup } = useIssueView(issues);
+  const { groupedByIssues, groupByProperty: selectedGroup } = useIssuesView();
 
   return (
-    <div className="flex flex-col space-y-5">
-      {Object.keys(groupedByIssues).map((singleGroup) => {
-        const currentState =
-          selectedGroup === "state_detail.name"
-            ? states?.find((s) => s.name === singleGroup)
-            : null;
-        const stateId =
-          selectedGroup === "state_detail.name"
-            ? states?.find((s) => s.name === singleGroup)?.id ?? null
-            : null;
-        const bgColor =
-          selectedGroup === "state_detail.name"
-            ? states?.find((s) => s.name === singleGroup)?.color
-            : "#000000";
+    <>
+      {groupedByIssues && (
+        <div className="flex flex-col space-y-5">
+          {Object.keys(groupedByIssues).map((singleGroup) => {
+            const stateId = selectedGroup === "state" ? singleGroup : null;
 
-        return (
-          <SingleList
-            key={singleGroup}
-            type={type}
-            currentState={currentState}
-            bgColor={bgColor}
-            groupTitle={singleGroup}
-            groupedByIssues={groupedByIssues}
-            selectedGroup={selectedGroup}
-            members={members}
-            addIssueToState={() => addIssueToState(singleGroup, stateId)}
-            makeIssueCopy={makeIssueCopy}
-            handleEditIssue={handleEditIssue}
-            handleDeleteIssue={handleDeleteIssue}
-            openIssuesListModal={type !== "issue" ? openIssuesListModal : null}
-            removeIssue={removeIssue}
-            userAuth={userAuth}
-          />
-        );
-      })}
-    </div>
+            return (
+              <SingleList
+                key={singleGroup}
+                type={type}
+                groupTitle={singleGroup}
+                groupedByIssues={groupedByIssues}
+                selectedGroup={selectedGroup}
+                members={members}
+                addIssueToState={() => addIssueToState(singleGroup, stateId)}
+                makeIssueCopy={makeIssueCopy}
+                handleEditIssue={handleEditIssue}
+                handleDeleteIssue={handleDeleteIssue}
+                openIssuesListModal={type !== "issue" ? openIssuesListModal : null}
+                removeIssue={removeIssue}
+                userAuth={userAuth}
+              />
+            );
+          })}
+        </div>
+      )}
+    </>
   );
 };

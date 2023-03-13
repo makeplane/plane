@@ -35,7 +35,7 @@ import { capitalizeFirstLetter, copyTextToClipboard } from "helpers/string.helpe
 import { groupBy } from "helpers/array.helper";
 import { renderDateFormat, renderShortDate } from "helpers/date-time.helper";
 // types
-import { CycleIssueResponse, ICycle, IIssue } from "types";
+import { ICycle, IIssue } from "types";
 // fetch-keys
 import { CYCLE_DETAILS } from "constants/fetch-keys";
 
@@ -43,17 +43,10 @@ type Props = {
   issues: IIssue[];
   cycle: ICycle | undefined;
   isOpen: boolean;
-  cycleIssues: CycleIssueResponse[];
   cycleStatus: string;
 };
 
-export const CycleDetailsSidebar: React.FC<Props> = ({
-  issues,
-  cycle,
-  isOpen,
-  cycleIssues,
-  cycleStatus,
-}) => {
+export const CycleDetailsSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cycleStatus }) => {
   const [cycleDeleteModal, setCycleDeleteModal] = useState(false);
   const [startDateRange, setStartDateRange] = useState<Date | null>(new Date());
   const [endDateRange, setEndDateRange] = useState<Date | null>(null);
@@ -74,7 +67,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
     started: [],
     cancelled: [],
     completed: [],
-    ...groupBy(cycleIssues ?? [], "issue_detail.state_detail.group"),
+    ...groupBy(issues ?? [], "state_detail.group"),
   };
 
   const { reset } = useForm({
@@ -130,8 +123,8 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
   const isStartValid = new Date(`${cycle?.start_date}`) <= new Date();
   const isEndValid = new Date(`${cycle?.end_date}`) >= new Date(`${cycle?.start_date}`);
 
-  const progressPercentage = cycleIssues
-    ? Math.round((groupedIssues.completed.length / cycleIssues?.length) * 100)
+  const progressPercentage = issues
+    ? Math.round((groupedIssues.completed.length / issues?.length) * 100)
     : null;
   return (
     <>
@@ -304,10 +297,10 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                       <span className="h-4 w-4">
                         <ProgressBar
                           value={groupedIssues.completed.length}
-                          maxValue={cycleIssues?.length}
+                          maxValue={issues?.length}
                         />
                       </span>
-                      {groupedIssues.completed.length}/{cycleIssues?.length}
+                      {groupedIssues.completed.length}/{issues?.length}
                     </div>
                   </div>
                 </div>
@@ -323,7 +316,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                     <div className="flex w-full items-center justify-between gap-2    ">
                       <div className="flex items-center justify-start gap-2 text-sm">
                         <span className="font-medium text-gray-500">Progress</span>
-                        {!open && cycleIssues && progressPercentage ? (
+                        {!open && issues && progressPercentage ? (
                           <span className="rounded bg-[#09A953]/10 px-1.5 py-0.5 text-xs text-[#09A953]">
                             {progressPercentage ? `${progressPercentage}%` : ""}
                           </span>
@@ -349,8 +342,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                                   <DocumentIcon className="h-3 w-3 text-gray-500" />
                                 </span>
                                 <span>
-                                  Pending Issues -{" "}
-                                  {cycleIssues?.length - groupedIssues.completed.length}{" "}
+                                  Pending Issues - {issues?.length - groupedIssues.completed.length}{" "}
                                 </span>
                               </div>
 
