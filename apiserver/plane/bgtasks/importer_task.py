@@ -35,33 +35,31 @@ def service_importer(service, importer_id):
 
         users = importer.data.get("users", [])
 
-        if not len(users):
-            return
-
-        workspace_members_invite = []
-        for user in users:
-            if user.get("import", False) == "invite":
-                workspace_members_invite.append(
-                    WorkspaceMemberInvite(
-                        email=user.get("email").strip().lower(),
-                        workspace_id=importer.workspace_id,
-                        token=jwt.encode(
-                            {
-                                "email": user.get("email").strip().lower(),
-                                "timestamp": datetime.now().timestamp(),
-                            },
-                            settings.SECRET_KEY,
-                            algorithm="HS256",
-                        ),
-                        role=10,
-                    )
-                )
-
+        # Create workspace member invitations
         workspace_invitations = WorkspaceMemberInvite.objects.bulk_create(
-            workspace_members_invite, batch_size=100, ignore_conflicts=True
+            [
+                WorkspaceMemberInvite(
+                    email=user.get("email").strip().lower(),
+                    workspace_id=importer.workspace_id,
+                    token=jwt.encode(
+                        {
+                            "email": user.get("email").strip().lower(),
+                            "timestamp": datetime.now().timestamp(),
+                        },
+                        settings.SECRET_KEY,
+                        algorithm="HS256",
+                    ),
+                    role=10,
+                )
+                for user in users
+                if user.get("import", False) == "invite"
+            ],
+            batch_size=100,
+            ignore_conflicts=True,
         )
 
-        for invitation in workspace_invitations:
+        # Send the invites
+        [
             workspace_invitation.delay(
                 invitation.email,
                 importer.workspace_id,
@@ -69,6 +67,8 @@ def service_importer(service, importer_id):
                 settings.WEB_URL,
                 importer.initiated_by.email,
             )
+            for invitation in workspace_invitations
+        ]
 
         # Check if sync config is on for github importers
         if service == "github" and importer.config.get("sync", False):
