@@ -40,7 +40,6 @@ import {
   CYCLE_CURRENT_AND_UPCOMING_LIST,
   CYCLE_DRAFT_LIST,
   CYCLE_ISSUES,
-  CYCLE_LIST,
 } from "constants/fetch-keys";
 
 type TSingleStatProps = {
@@ -49,7 +48,7 @@ type TSingleStatProps = {
   handleDeleteCycle: () => void;
 };
 
-const stateGroupColours: {
+const stateGroupColors: {
   [key: string]: string;
 } = {
   backlog: "#DEE2E6",
@@ -231,23 +230,23 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
       cycleIssues && cycleIssues.length > 0
         ? (groupedIssues[group].length / cycleIssues.length) * 100
         : 0,
-    color: stateGroupColours[group],
+    color: stateGroupColors[group],
   }));
 
   return (
-    <div className="h-full w-full">
+    <div>
       <div className="flex flex-col rounded-[10px] bg-white text-xs shadow">
-        <div className="flex h-full flex-col gap-4 rounded-b-[10px] px-5  py-5">
+        <div className="flex h-full flex-col gap-4 rounded-b-[10px] p-4">
           <div className="flex items-start justify-between gap-1">
-            <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}>
-              <a className="w-full">
-                <Tooltip tooltipContent={cycle.name} position="top-left">
-                  <h3 className="text-xl font-semibold leading-5 ">
+            <Tooltip tooltipContent={cycle.name} position="top-left">
+              <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}>
+                <a className="w-full">
+                  <h3 className="break-all text-lg font-semibold">
                     {truncateText(cycle.name, 75)}
                   </h3>
-                </Tooltip>
-              </a>
-            </Link>
+                </a>
+              </Link>
+            </Tooltip>
             {cycle.is_favorite ? (
               <button onClick={handleRemoveFromFavorites}>
                 <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
@@ -273,8 +272,8 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
           </div>
         </div>
 
-        <div className="flex h-full  flex-col rounded-b-[10px]">
-          <div className="flex items-center justify-between px-5 py-4">
+        <div className="flex h-full flex-col rounded-b-[10px]">
+          <div className="flex items-center justify-between p-4">
             <div className="flex items-center gap-2.5">
               {cycle.owned_by.avatar && cycle.owned_by.avatar !== "" ? (
                 <Image
@@ -291,7 +290,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
               )}
               <span className="text-gray-900">{cycle.owned_by.first_name}</span>
             </div>
-            <div className="flex items-center ">
+            <div className="flex items-center">
               <button
                 onClick={handleEditCycle}
                 className="flex cursor-pointer items-center rounded p-1 duration-300 hover:bg-gray-100"
@@ -321,11 +320,11 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
           <Disclosure>
             {({ open }) => (
               <div
-                className={`flex  h-full  w-full flex-col border-t border-gray-200 bg-gray-100 ${
+                className={`flex h-full w-full flex-col border-t border-gray-200 bg-gray-100 ${
                   open ? "" : "flex-row"
                 }`}
               >
-                <div className="flex  w-full items-center gap-2 px-5 py-4 ">
+                <div className="flex w-full items-center gap-2 px-4 py-1">
                   <span> Progress </span>
                   <LinearProgressIndicator data={progressIndicatorData} />
                   <Disclosure.Button>
@@ -339,8 +338,8 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
                 </div>
                 <Transition show={open}>
                   <Disclosure.Panel>
-                    <div className="overflow-hidden rounded-b-md bg-white p-3 shadow">
-                      <div className="col-span-2 space-y-3  px-5">
+                    <div className="overflow-hidden rounded-b-md bg-white py-3 shadow">
+                      <div className="col-span-2 space-y-3 px-4">
                         <div className="space-y-3 text-xs">
                           {Object.keys(groupedIssues).map((group) => (
                             <div key={group} className="flex items-center justify-between gap-2">
@@ -348,7 +347,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
                                 <span
                                   className="block h-2 w-2 rounded-full"
                                   style={{
-                                    backgroundColor: stateGroupColours[group],
+                                    backgroundColor: stateGroupColors[group],
                                   }}
                                 />
                                 <h6 className="text-xs capitalize">{group}</h6>

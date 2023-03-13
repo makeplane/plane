@@ -74,7 +74,7 @@ export const WorkspaceSidebarDropdown = () => {
 
   return (
     <div className="relative">
-      <Menu as="div" className="col-span-4 inline-block w-full p-5 text-left">
+      <Menu as="div" className="col-span-4 inline-block w-full px-5 py-3 text-left">
         <div className="flex w-full items-center justify-between gap-2.5">
           <Menu.Button
             className={`inline-flex w-full items-center rounded-md px-1 py-2 text-sm font-semibold text-gray-700 focus:outline-none `}
@@ -162,9 +162,7 @@ export const WorkspaceSidebarDropdown = () => {
                                 )}
                               </span>
 
-                              <h5 className="text-sm">
-                                {truncateText(workspace.name, 18)}
-                              </h5>
+                              <h5 className="text-sm">{truncateText(workspace.name, 18)}</h5>
                             </div>
                             <span className="p-1">
                               <CheckIcon

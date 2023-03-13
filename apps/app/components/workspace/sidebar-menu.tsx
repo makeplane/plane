@@ -45,7 +45,7 @@ export const WorkspaceSidebarMenu: React.FC = () => {
               link.href === router.asPath
                 ? "bg-indigo-50 text-gray-900"
                 : "text-gray-500 hover:bg-indigo-50 hover:text-gray-900 focus:bg-indigo-50"
-            } group flex w-full items-center gap-3 rounded-md p-2 text-base font-medium outline-none ${
+            } group flex w-full items-center gap-3 rounded-md p-2 text-sm font-medium outline-none ${
               sidebarCollapse ? "justify-center" : ""
             }`}
           >

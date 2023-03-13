@@ -56,11 +56,11 @@ export const CyclesList: React.FC<TCycleStatsViewProps> = ({
             ))}
           </div>
         ) : (
-          <EmptyCycle/>
+          <EmptyCycle />
         )
       ) : (
         <Loader className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
-          <Loader.Item height="300px" />
+          <Loader.Item height="200px" />
         </Loader>
       )}
     </>

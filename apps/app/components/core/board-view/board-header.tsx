@@ -56,13 +56,13 @@ export const BoardHeader: React.FC<Props> = ({
     >
       <div className={`flex items-center ${!isCollapsed ? "flex-col gap-2" : "gap-1"}`}>
         <div
-          className={`flex cursor-pointer items-center gap-x-3.5 ${
+          className={`flex cursor-pointer items-center gap-x-3 ${
             !isCollapsed ? "mb-2 flex-col gap-y-2 py-2" : ""
           }`}
         >
-          {currentState && getStateGroupIcon(currentState.group, "20", "20", bgColor)}
+          {currentState && getStateGroupIcon(currentState.group, "18", "18", bgColor)}
           <h2
-            className={`text-xl font-semibold capitalize`}
+            className="text-lg font-semibold capitalize"
             style={{
               writingMode: !isCollapsed ? "vertical-rl" : "horizontal-tb",
             }}
@@ -73,7 +73,7 @@ export const BoardHeader: React.FC<Props> = ({
               ? assignees
               : addSpaceIfCamelCase(groupTitle)}
           </h2>
-          <span className="ml-0.5 text-sm bg-gray-100 py-1 px-3 rounded-full">
+          <span className="ml-0.5 rounded-full bg-gray-100 py-1 px-3 text-sm">
             {groupedByIssues[groupTitle].length}
           </span>
         </div>
