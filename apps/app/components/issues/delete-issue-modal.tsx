@@ -122,51 +122,49 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data })
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-                <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                  <div className="sm:flex sm:items-start">
-                    <div>
-                      <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-red-100">
-                        <ExclamationTriangleIcon
-                          className="h-8 w-8 text-red-600"
-                          aria-hidden="true"
-                        />
-                      </div>
-                      <Dialog.Title
-                        as="h3"
-                        className="mt-3 text-lg font-medium leading-6 text-gray-900"
-                      >
-                        Are you sure you want to delete {`"`}
-                        {data?.project_detail.identifier}-{data?.sequence_id} - {data?.name}?{`"`}
-                      </Dialog.Title>
-                      <div className="mt-2">
-                        <p className="text-sm text-gray-500">
-                          All of the data related to the issue will be permanently removed. This
-                          action cannot be undone.
-                        </p>
-                      </div>
-                    </div>
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
+                <div className="flex flex-col gap-6 p-6">
+                  <div className="flex w-full items-center justify-start gap-6">
+                    <span className="place-items-center rounded-full bg-red-100 p-4">
+                      <ExclamationTriangleIcon
+                        className="h-6 w-6 text-red-600"
+                        aria-hidden="true"
+                      />
+                    </span>
+                    <span className="flex items-center justify-start">
+                      <h3 className="text-xl font-medium 2xl:text-2xl">Delete Issue</h3>
+                    </span>
                   </div>
-                </div>
-                <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                  <Button
-                    type="button"
-                    onClick={handleDeletion}
-                    theme="danger"
-                    disabled={isDeleteLoading}
-                    className="inline-flex sm:ml-3"
-                  >
-                    {isDeleteLoading ? "Deleting..." : "Delete"}
-                  </Button>
-                  <Button
-                    type="button"
-                    theme="secondary"
-                    className="inline-flex sm:ml-3"
-                    onClick={onClose}
-                    ref={cancelButtonRef}
-                  >
-                    Cancel
-                  </Button>
+                  <span>
+                    <p className="text-sm leading-7 text-gray-500 break-all">
+                      Are you sure you want to delete issue{" "}
+                      <span className="font-semibold break-all">
+                        {data?.project_detail.identifier}-{data?.sequence_id}
+                      </span>{" "}
+                      ? All of the data related to the issue will be permanently removed. This
+                      action cannot be undone.
+                    </p>
+                  </span>
+                  <div className="flex flex-row-reverse items-center gap-3">
+                    <Button
+                      type="button"
+                      onClick={handleDeletion}
+                      theme="danger"
+                      disabled={isDeleteLoading}
+                      className="rounded-lg border-none px-5 py-2 "
+                    >
+                      {isDeleteLoading ? "Deleting..." : "Delete Issue"}
+                    </Button>
+                    <Button
+                      type="button"
+                      theme="secondary"
+                      className="rounded-lg border-none px-5 py-2 "
+                      onClick={onClose}
+                      ref={cancelButtonRef}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
                 </div>
               </Dialog.Panel>
             </Transition.Child>
