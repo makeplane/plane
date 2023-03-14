@@ -24,7 +24,7 @@ import {
   ViewStateSelect,
 } from "components/issues/view-select";
 // ui
-import { ContextMenu, CustomMenu, Tooltip } from "components/ui";
+import { ContextMenu, CustomMenu } from "components/ui";
 // icons
 import {
   ClipboardDocumentCheckIcon,
@@ -233,7 +233,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
           setContextMenuPosition({ x: e.pageX, y: e.pageY });
         }}
       >
-        <div className="group/card relative select-none p-4">
+        <div className="group/card relative select-none p-3.5">
           {!isNotAllowed && (
             <div className="absolute top-1.5 right-1.5 z-10 opacity-0 group-hover/card:opacity-100">
               {type && !isNotAllowed && (

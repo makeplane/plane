@@ -3,7 +3,8 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Image from "next/image";
-import useSWR, { mutate } from "swr";
+
+import { mutate } from "swr";
 
 // toast
 import useToast from "hooks/use-toast";
@@ -23,34 +24,21 @@ import {
   UserGroupIcon,
 } from "@heroicons/react/24/outline";
 // helpers
-import {
-  renderShortDateWithYearFormat,
-  renderShortNumericDateFormat,
-} from "helpers/date-time.helper";
+import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // services
-import stateService from "services/state.service";
 import modulesService from "services/modules.service";
 // types
 import { IModule } from "types";
 // fetch-key
-import { MODULE_LIST, STATE_LIST } from "constants/fetch-keys";
-// helper
+import { MODULE_LIST } from "constants/fetch-keys";
+// helpers
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
-import { getStatesList } from "helpers/state.helper";
+// constants
+import { MODULE_STATUS } from "constants/module";
 
 type Props = {
   module: IModule;
   handleEditModule: () => void;
-};
-
-const stateGroupColours: {
-  [key: string]: string;
-} = {
-  backlog: "#3f76ff",
-  unstarted: "#ff9e9e",
-  started: "#d687ff",
-  cancelled: "#ff5353",
-  completed: "#096e8d",
 };
 
 export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) => {
@@ -65,17 +53,6 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
 
     setModuleDeleteModal(true);
   };
-  const { data: stateGroups } = useSWR(
-    workspaceSlug && module.project_detail.id ? STATE_LIST(module.project_detail.id) : null,
-    workspaceSlug && module.project_detail.id
-      ? () => stateService.getStates(workspaceSlug as string, module.project_detail.id)
-      : null
-  );
-
-  const states = getStatesList(stateGroups ?? {});
-  const selectedOption = states?.find(
-    (s) => s.name.replace(" ", "-").toLowerCase() === module.status?.replace(" ", "-").toLowerCase()
-  );
 
   const handleAddToFavorites = () => {
     if (!workspaceSlug && !projectId && !module) return;
@@ -166,23 +143,22 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
         data={module}
       />
       <div className="h-full w-full min-w-[360px]">
-        <div className="flex h-full w-full flex-row rounded-[10px] bg-white text-xs shadow">
-          <span
-            className={`h-full w-2.5 rounded-l-[10px] `}
-            style={{
-              backgroundColor: `${
-                selectedOption ? stateGroupColours[selectedOption.group] : "#6b7280"
-              }`,
-            }}
-          />
-          <div className="flex h-full w-full flex-col items-start justify-between gap-6 p-5">
+        <div
+          className="flex h-full w-full flex-row rounded-[10px] border-l-[10px] bg-white text-xs shadow"
+          style={{
+            borderColor: MODULE_STATUS.find((s) => s.value === module.status)?.color ?? "#6b7280",
+          }}
+        >
+          <div className="flex h-full w-full flex-col items-start justify-between gap-6 p-4">
             <div className="flex w-full flex-col gap-5">
               <Tooltip tooltipContent={module.name} position="top-left">
-                <span className="break-all text-xl font-semibold text-black">
-                  <Link href={`/${workspaceSlug}/projects/${module.project}/modules/${module.id}`}>
-                    <a className="w-full">{truncateText(module.name, 75)}</a>
-                  </Link>
-                </span>
+                <Link href={`/${workspaceSlug}/projects/${module.project}/modules/${module.id}`}>
+                  <a className="w-full">
+                    <h3 className="break-all text-lg font-semibold text-black">
+                      {truncateText(module.name, 75)}
+                    </h3>
+                  </a>
+                </Link>
               </Tooltip>
               <div className="flex items-center gap-4">
                 <div className="flex items-start gap-1 ">

@@ -69,7 +69,7 @@ export const CustomSearchSelect = ({
                 <Combobox.Button
                   className={`flex w-full ${
                     disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-gray-100"
-                  } items-center justify-between gap-1 rounded-md border px-3 py-1.5 text-xs shadow-sm duration-300 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
+                  } items-center justify-between gap-1 rounded-md border px-2.5 py-1 text-xs shadow-sm duration-300 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
                     textAlignment === "right"
                       ? "text-right"
                       : textAlignment === "center"
@@ -178,7 +178,7 @@ export const CustomSearchSelect = ({
                 <Combobox.Button
                   className={`flex w-full ${
                     disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-gray-100"
-                  } items-center justify-between gap-1 rounded-md border px-3 py-1.5 text-xs shadow-sm duration-300 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
+                  } items-center justify-between gap-1 rounded-md border px-2.5 py-1 text-xs shadow-sm duration-300 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
                     textAlignment === "right"
                       ? "text-right"
                       : textAlignment === "center"

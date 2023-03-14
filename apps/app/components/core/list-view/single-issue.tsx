@@ -178,7 +178,7 @@ export const SingleListIssue: React.FC<Props> = ({
       </ContextMenu>
       <div className="border-b border-gray-300 last:border-b-0">
         <div
-          className="flex items-center justify-between gap-2 px-4 py-4"
+          className="flex items-center justify-between gap-2 px-4 py-3"
           onContextMenu={(e) => {
             e.preventDefault();
             setContextMenu(true);
@@ -189,21 +189,21 @@ export const SingleListIssue: React.FC<Props> = ({
             <a className="group relative flex items-center gap-2">
               {properties.key && (
                 <Tooltip
-                  tooltipHeading="ID"
+                  tooltipHeading="Issue ID"
                   tooltipContent={`${issue.project_detail?.identifier}-${issue.sequence_id}`}
                 >
-                  <span className="flex-shrink-0 text-sm text-gray-400">
+                  <span className="flex-shrink-0 text-xs text-gray-400">
                     {issue.project_detail?.identifier}-{issue.sequence_id}
                   </span>
                 </Tooltip>
               )}
               <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
-                <span className="text-base text-gray-800">{truncateText(issue.name, 50)}</span>
+                <span className="text-sm text-gray-800">{truncateText(issue.name, 50)}</span>
               </Tooltip>
             </a>
           </Link>
 
-          <div className="flex  flex-wrap items-center gap-3 text-xs">
+          <div className="flex flex-wrap items-center gap-2 text-xs">
             {properties.priority && (
               <ViewPrioritySelect
                 issue={issue}
