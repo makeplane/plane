@@ -864,6 +864,21 @@ class BulkCreateIssuesEndpoint(BaseAPIView):
                 ]
             )
 
+            # Track the issue activities
+            [
+                issue_activity.delay(
+                    {
+                        "type": "issue.activity.created",
+                        "requested_data": None,
+                        "actor_id": str(request.user.id),
+                        "issue_id": str(issue.id),
+                        "project_id": str(project_id),
+                        "current_instance": None,
+                    },
+                )
+                for issue in issues
+            ]
+
             return Response(
                 {"issues": IssueFlatSerializer(issues, many=True).data},
                 status=status.HTTP_201_CREATED,
