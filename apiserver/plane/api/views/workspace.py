@@ -10,8 +10,9 @@ from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.contrib.sites.shortcuts import get_current_site
-from django.db.models import CharField, Count, OuterRef, Func, F
+from django.db.models import CharField, Count, OuterRef, Func, F, Q
 from django.db.models.functions import Cast
+from django.db.models.fields import DateField
 
 # Third party modules
 from rest_framework import status
@@ -37,6 +38,7 @@ from plane.db.models import (
     WorkspaceMemberInvite,
     Team,
     ProjectMember,
+    Issue,
 )
 from plane.api.permissions import WorkSpaceBasePermission, WorkSpaceAdminPermission
 from plane.bgtasks.workspace_invitation_task import workspace_invitation
@@ -572,6 +574,30 @@ class WorkspaceMemberUserViewsEndpoint(BaseAPIView):
                 {"error": "User not a member of workspace"},
                 status=status.HTTP_403_FORBIDDEN,
             )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class UserActivityGraph(BaseAPIView):
+    def get(self, request, slug):
+        try:
+            issues = (
+                Issue.objects.filter(
+                    assignees__in=[request.user],
+                    workspace__slug=slug,
+                    completed_at__isnull=False,
+                )
+                .annotate(completed_date=Cast("completed_at", DateField()))
+                .values("completed_date")
+                .annotate(completed_count=Count("completed_date"))
+                .order_by("completed_date")
+            )
+
+            return Response(issues, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)
             return Response(
