@@ -2,6 +2,12 @@ import React from "react";
 
 import { useRouter } from "next/router";
 
+import useSWR from "swr";
+
+// services
+import projectService from "services/project.service";
+import issuesService from "services/issues.service";
+import stateService from "services/state.service";
 // hooks
 import useIssuesProperties from "hooks/use-issue-properties";
 import useIssueView from "hooks/use-issue-view";
@@ -14,10 +20,14 @@ import { ChevronDownIcon, ListBulletIcon } from "@heroicons/react/24/outline";
 import { Squares2X2Icon } from "@heroicons/react/20/solid";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
+import { getStatesList } from "helpers/state.helper";
 // types
-import { IIssue, Properties } from "types";
-// common
+import { IIssue, IIssueLabels, Properties } from "types";
+// fetch-keys
+import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS, STATE_LIST } from "constants/fetch-keys";
+// constants
 import { GROUP_BY_OPTIONS, ORDER_BY_OPTIONS, FILTER_ISSUE_OPTIONS } from "constants/issue";
+import { PRIORITIES } from "constants/project";
 
 type Props = {
   issues?: IIssue[];
@@ -46,6 +56,28 @@ export const IssuesFilterView: React.FC<Props> = ({ issues }) => {
     projectId as string
   );
 
+  const { data: states } = useSWR(
+    workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
+      : null
+  );
+  const statesList = getStatesList(states ?? {});
+
+  const { data: members } = useSWR(
+    projectId ? PROJECT_MEMBERS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
+      : null
+  );
+
+  const { data: issueLabels } = useSWR<IIssueLabels[]>(
+    workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string)
+      : null
+  );
+
   return (
     <>
       {issues && issues.length > 0 && (
@@ -70,6 +102,42 @@ export const IssuesFilterView: React.FC<Props> = ({ issues }) => {
               <Squares2X2Icon className="h-4 w-4" />
             </button>
           </div>
+          <CustomMenu
+            label={
+              <span className="flex items-center gap-2 rounded-md py-1 text-xs font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:outline-none">
+                Filters
+              </span>
+            }
+          >
+            <h4 className="px-1 py-2 font-medium">Status</h4>
+            {statesList?.map((state) => (
+              <CustomMenu.MenuItem onClick={() => {}}>
+                <>{state.name}</>
+              </CustomMenu.MenuItem>
+            ))}
+            <h4 className="px-1 py-2 font-medium">Members</h4>
+            {members?.map((member) => (
+              <CustomMenu.MenuItem onClick={() => {}}>
+                <>
+                  {member.member.first_name && member.member.first_name !== ""
+                    ? member.member.first_name + " " + member.member.last_name
+                    : member.member.email}
+                </>
+              </CustomMenu.MenuItem>
+            ))}
+            <h4 className="px-1 py-2 font-medium">Labels</h4>
+            {issueLabels?.map((label) => (
+              <CustomMenu.MenuItem onClick={() => {}}>
+                <>{label.name}</>
+              </CustomMenu.MenuItem>
+            ))}
+            <h4 className="px-1 py-2 font-medium">Priority</h4>
+            {PRIORITIES?.map((priority) => (
+              <CustomMenu.MenuItem onClick={() => {}}>
+                <span className="capitalize">{priority ?? "None"}</span>
+              </CustomMenu.MenuItem>
+            ))}
+          </CustomMenu>
           <Popover className="relative">
             {({ open }) => (
               <>
