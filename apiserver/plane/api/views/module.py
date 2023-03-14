@@ -50,7 +50,7 @@ class ModuleViewSet(BaseViewSet):
         subquery = ModuleFavorite.objects.filter(
             user=self.request.user,
             module_id=OuterRef("pk"),
-            roject_id=self.kwargs.get("project_id"),
+            project_id=self.kwargs.get("project_id"),
             workspace__slug=self.kwargs.get("slug"),
         )
         return (
