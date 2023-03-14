@@ -57,7 +57,7 @@ export const ImageUploadModal: React.FC<TImageUploadModalProps> = ({
     formData.append("asset", image);
     formData.append("attributes", JSON.stringify({}));
 
-    if (userImage)
+    if (userImage) {
       fileServices
         .uploadUserFile(formData)
         .then((res) => {
@@ -68,7 +68,7 @@ export const ImageUploadModal: React.FC<TImageUploadModalProps> = ({
         .catch((err) => {
           console.error(err);
         });
-    else
+    } else
       fileServices
         .uploadFile(workspaceSlug as string, formData)
         .then((res) => {
@@ -126,11 +126,10 @@ export const ImageUploadModal: React.FC<TImageUploadModalProps> = ({
                             : ""
                         }`}
                       >
-                        {image !== null || (value && value !== null && value !== "") ? (
+                        {image !== null || (value && value !== "") ? (
                           <>
                             <button
                               type="button"
-                              onClick={openFileDialog}
                               className="absolute top-0 right-0 z-40 translate-x-1/2 -translate-y-1/2 rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600"
                             >
                               Edit

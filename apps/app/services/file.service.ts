@@ -40,8 +40,24 @@ class FileServices extends APIService {
       });
   }
 
+  async deleteFile(asset: string): Promise<any> {
+    return this.delete(`/api/workspaces/file-assets/${asset}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async uploadUserFile(file: FormData): Promise<any> {
     return this.mediaUpload(`/api/users/file-assets/`, file)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async deleteUserFile(asset: string): Promise<any> {
+    return this.delete(`/api/users/file-assets/${asset}`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
