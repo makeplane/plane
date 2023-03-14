@@ -23,7 +23,6 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 import { IIssue, IIssueLabels, IModule, UserAuth } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS } from "constants/fetch-keys";
-import useIssuesView from "hooks/use-issues-view";
 // types
 type Props = {
   groupedIssues: any;
@@ -54,8 +53,6 @@ export const SidebarProgressStats: React.FC<Props> = ({
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
-  const { setAssigneeFilter, setLabelFilter } = useIssuesView();
 
   const { storedValue: tab, setValue: setTab } = useLocalStorage("tab", "Assignees");
 
@@ -195,7 +192,6 @@ export const SidebarProgressStats: React.FC<Props> = ({
                   }
                   completed={completeArray.length}
                   total={totalArray.length}
-                  onClick={() => setAssigneeFilter(member.member.id)}
                 />
               );
             }
@@ -222,7 +218,6 @@ export const SidebarProgressStats: React.FC<Props> = ({
                 ).length
               }
               total={issues?.filter((i) => i.assignees?.length === 0).length}
-              onClick={() => setAssigneeFilter(null)}
             />
           ) : (
             ""
@@ -251,7 +246,6 @@ export const SidebarProgressStats: React.FC<Props> = ({
                   }
                   completed={completeArray.length}
                   total={totalArray.length}
-                  onClick={() => setLabelFilter(label.id)}
                 />
               );
             }

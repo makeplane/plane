@@ -62,7 +62,7 @@ export const BoardHeader: React.FC<Props> = ({
               : addSpaceIfCamelCase(groupTitle)}
           </h2>
           <span className="ml-0.5 rounded-full bg-gray-100 py-1 px-3 text-sm">
-            {groupedByIssues[groupTitle].length}
+            {groupedByIssues?.[groupTitle].length ?? 0}
           </span>
         </div>
       </div>

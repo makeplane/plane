@@ -26,7 +26,9 @@ export const ViewPrioritySelect: React.FC<Props> = ({
 }) => (
   <CustomSelect
     value={issue.priority}
-    onChange={(data: string) => partialUpdateIssue({ priority: data })}
+    onChange={(data: string) =>
+      partialUpdateIssue({ priority: data, state: issue.state, target_date: issue.target_date })
+    }
     maxHeight="md"
     customButton={
       <button

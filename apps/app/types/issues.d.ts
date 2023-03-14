@@ -67,7 +67,6 @@ export interface IIssue {
   blockers: any[];
   blockers_list: string[];
   blocks_list: string[];
-  bridge: string;
   bridge_id?: string | null;
   completed_at: Date;
   created_at: Date;

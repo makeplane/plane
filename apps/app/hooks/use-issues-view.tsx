@@ -17,6 +17,9 @@ import {
   PROJECT_ISSUES_LIST_WITH_PARAMS,
 } from "constants/fetch-keys";
 
+// types
+import type { IIssue } from "types";
+
 const useIssuesView = () => {
   const {
     issueView,
@@ -87,7 +90,11 @@ const useIssuesView = () => {
       : null
   );
 
-  const groupedByIssues: any = useMemo(() => {
+  const groupedByIssues:
+    | {
+        [key: string]: IIssue[];
+      }
+    | undefined = useMemo(() => {
     const issuesToGroup = cycleIssues ?? moduleIssues ?? projectIssues;
 
     if (Array.isArray(issuesToGroup)) return { allIssues: issuesToGroup };

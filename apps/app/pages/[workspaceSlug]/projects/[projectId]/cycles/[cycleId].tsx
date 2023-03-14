@@ -21,21 +21,15 @@ import issuesServices from "services/issues.service";
 import cycleServices from "services/cycles.service";
 import projectService from "services/project.service";
 // ui
-import { CustomMenu, EmptySpace } from "components/ui";
+import { CustomMenu } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // helpers
 import { truncateText } from "helpers/string.helper";
 import { getDateRangeStatus } from "helpers/date-time.helper";
 // types
-import { CycleIssueResponse, UserAuth } from "types";
+import { UserAuth } from "types";
 // fetch-keys
-import {
-  CYCLE_ISSUES,
-  CYCLE_LIST,
-  PROJECT_ISSUES_LIST,
-  PROJECT_DETAILS,
-  CYCLE_DETAILS,
-} from "constants/fetch-keys";
+import { CYCLE_ISSUES, CYCLE_LIST, PROJECT_DETAILS, CYCLE_DETAILS } from "constants/fetch-keys";
 
 const SingleCycle: React.FC<UserAuth> = (props) => {
   const [cycleIssuesListModal, setCycleIssuesListModal] = useState(false);
@@ -48,15 +42,6 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
     workspaceSlug && projectId
       ? () => projectService.getProject(workspaceSlug as string, projectId as string)
-      : null
-  );
-
-  const { data: issues } = useSWR(
-    workspaceSlug && projectId
-      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
-      : null,
-    workspaceSlug && projectId
-      ? () => issuesServices.getIssues(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -84,7 +69,7 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
       ? getDateRangeStatus(cycleDetails?.start_date, cycleDetails?.end_date)
       : "";
 
-  const { data: cycleIssues } = useSWR(
+  const { data: issues } = useSWR(
     workspaceSlug && projectId && cycleId ? CYCLE_ISSUES(cycleId as string) : null,
     workspaceSlug && projectId && cycleId
       ? () =>
@@ -95,15 +80,6 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
           )
       : null
   );
-
-  // const cycleIssuesArray = Array.isArray(cycleIssues)
-  //   ? cycleIssues?.map((issue) => ({
-  //       ...issue.issue_detail,
-  //       sub_issues_count: issue.sub_issues_count,
-  //       bridge: issue.id,
-  //       cycle: cycleId as string,
-  //     }))
-  //   : [];
 
   const openIssuesListModal = () => {
     setCycleIssuesListModal(true);

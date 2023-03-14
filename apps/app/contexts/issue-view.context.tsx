@@ -370,7 +370,9 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
       type: "REHYDRATE_THEME",
       payload: myViewProps?.view_props,
     });
+  }, [myViewProps]);
 
+  useEffect(() => {
     // TODO: think of a better way to do this
     if (cycleId) {
       mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string), {}, false);
@@ -382,7 +384,7 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
       mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string), {}, false);
       mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string));
     }
-  }, [myViewProps, projectId, cycleId, moduleId]);
+  }, [state, projectId, cycleId, moduleId]);
 
   return (
     <issueViewContext.Provider

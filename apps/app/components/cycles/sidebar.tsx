@@ -38,7 +38,7 @@ import { renderDateFormat, renderShortDate } from "helpers/date-time.helper";
 // types
 import { ICycle, IIssue } from "types";
 // fetch-keys
-import { CYCLE_DETAILS, CYCLE_ISSUES_WITH_PARAMS } from "constants/fetch-keys";
+import { CYCLE_DETAILS, CYCLE_ISSUES } from "constants/fetch-keys";
 
 type Props = {
   cycle: ICycle | undefined;
@@ -62,7 +62,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
   };
 
   const { data: issues } = useSWR<IIssue[]>(
-    workspaceSlug && projectId && cycleId ? CYCLE_ISSUES_WITH_PARAMS(cycleId as string) : null,
+    workspaceSlug && projectId && cycleId ? CYCLE_ISSUES(cycleId as string) : null,
     workspaceSlug && projectId && cycleId
       ? () =>
           cyclesService.getCycleIssues(

@@ -26,8 +26,9 @@ import { CycleIssueResponse, IIssue, ModuleIssueResponse, UserAuth } from "types
 // fetch-keys
 import {
   CYCLE_ISSUES,
+  CYCLE_ISSUES_WITH_PARAMS,
   MODULE_ISSUES,
-  PROJECT_ISSUES_LIST,
+  MODULE_ISSUES_WITH_PARAMS,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
   PROJECT_MEMBERS,
   STATE_LIST,
@@ -70,7 +71,6 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
     orderBy,
     filters,
     setFilters,
-    params,
   } = useIssuesView();
 
   const { data: stateGroups } = useSWR(
@@ -175,7 +175,7 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
           mutate<{
             [key: string]: IIssue[];
           }>(
-            CYCLE_ISSUES(cycleId as string),
+            CYCLE_ISSUES_WITH_PARAMS(cycleId as string),
             (prevData) => {
               if (!prevData) return prevData;
 
@@ -197,7 +197,7 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
           mutate<{
             [key: string]: IIssue[];
           }>(
-            MODULE_ISSUES(moduleId as string),
+            MODULE_ISSUES_WITH_PARAMS(moduleId as string),
             (prevData) => {
               if (!prevData) return prevData;
 

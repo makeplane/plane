@@ -52,7 +52,7 @@ export const SingleBoard: React.FC<Props> = ({
   const { groupedByIssues, groupByProperty: selectedGroup, orderBy } = useIssuesView();
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+  const { workspaceSlug, projectId } = router.query;
 
   const [properties] = useIssuesProperties(workspaceSlug as string, projectId as string);
 
@@ -93,40 +93,36 @@ export const SingleBoard: React.FC<Props> = ({
                   </div>
                 </>
               )}
-              {groupedByIssues[groupTitle].map((item: any, index: number) => {
-                let issue: IIssue;
-                if (cycleId || moduleId)
-                  issue = { ...item.issue_detail, sub_issues_count: item.sub_issues_count };
-                else issue = item;
-
-                return (
-                  <Draggable
-                    key={issue.id}
-                    draggableId={issue.id}
-                    index={index}
-                    isDragDisabled={isNotAllowed}
-                  >
-                    {(provided, snapshot) => (
-                      <SingleBoardIssue
-                        key={index}
-                        provided={provided}
-                        snapshot={snapshot}
-                        type={type}
-                        issue={issue}
-                        properties={properties}
-                        editIssue={() => handleEditIssue(issue)}
-                        makeIssueCopy={() => makeIssueCopy(issue)}
-                        handleDeleteIssue={handleDeleteIssue}
-                        handleTrashBox={handleTrashBox}
-                        removeIssue={() => {
-                          removeIssue && removeIssue(issue.bridge);
-                        }}
-                        userAuth={userAuth}
-                      />
-                    )}
-                  </Draggable>
-                );
-              })}
+              {groupedByIssues?.[groupTitle].map((issue, index) => (
+                <Draggable
+                  key={issue.id}
+                  draggableId={issue.id}
+                  index={index}
+                  isDragDisabled={isNotAllowed}
+                >
+                  {(provided, snapshot) => (
+                    <SingleBoardIssue
+                      key={index}
+                      provided={provided}
+                      snapshot={snapshot}
+                      type={type}
+                      index={index}
+                      selectedGroup={selectedGroup}
+                      issue={issue}
+                      groupTitle={groupTitle}
+                      properties={properties}
+                      editIssue={() => handleEditIssue(issue)}
+                      makeIssueCopy={() => makeIssueCopy(issue)}
+                      handleDeleteIssue={handleDeleteIssue}
+                      handleTrashBox={handleTrashBox}
+                      removeIssue={() => {
+                        if (removeIssue && issue.bridge_id) removeIssue(issue.bridge_id);
+                      }}
+                      userAuth={userAuth}
+                    />
+                  )}
+                </Draggable>
+              ))}
               <span
                 style={{
                   display: orderBy === "sort_order" ? "inline" : "none",

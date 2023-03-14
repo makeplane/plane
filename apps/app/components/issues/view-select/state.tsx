@@ -58,7 +58,13 @@ export const ViewStateSelect: React.FC<Props> = ({
   return (
     <CustomSearchSelect
       value={issue.state}
-      onChange={(data: string) => partialUpdateIssue({ state: data })}
+      onChange={(data: string) =>
+        partialUpdateIssue({
+          state: data,
+          priority: issue.priority,
+          target_date: issue.target_date,
+        })
+      }
       options={options}
       label={
         <Tooltip
