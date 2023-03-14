@@ -2,7 +2,10 @@ import React, { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import { PlusIcon, RectangleGroupIcon } from "@heroicons/react/24/outline";
+import { PlusIcon } from "@heroicons/react/24/outline";
+// image
+import emptyModule from "public/empty-state/empty-module.svg";
+
 
 // layouts
 import AppLayout from "layouts/app-layout";
@@ -14,7 +17,7 @@ import modulesService from "services/modules.service";
 // components
 import { CreateUpdateModuleModal, SingleModuleCard } from "components/modules";
 // ui
-import { EmptySpace, EmptySpaceItem, HeaderButton, Loader } from "components/ui";
+import { EmptyState, HeaderButton, Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 // types
@@ -103,30 +106,12 @@ const ProjectModules: NextPage = () => {
             </div>
           </div>
         ) : (
-          <div className="flex h-full w-full flex-col items-center justify-center px-4">
-            <EmptySpace
-              title="You don't have any module yet."
-              description="Modules are smaller, focused projects that help you group and organize issues within a specific time frame."
-              Icon={RectangleGroupIcon}
-            >
-              <EmptySpaceItem
-                title="Create a new module"
-                description={
-                  <span>
-                    Use <pre className="inline rounded bg-gray-200 px-2 py-1">M</pre> shortcut to
-                    create a new module
-                  </span>
-                }
-                Icon={PlusIcon}
-                action={() => {
-                  const e = new KeyboardEvent("keydown", {
-                    key: "m",
-                  });
-                  document.dispatchEvent(e);
-                }}
-              />
-            </EmptySpace>
-          </div>
+          <EmptyState
+            type="module"
+            title="Create New Module"
+            description="Modules are smaller, focused projects that help you group and organize issues within a specific time frame."
+            imgURL={emptyModule}
+          />
         )
       ) : (
         <Loader className="grid grid-cols-3 gap-4">

@@ -1,8 +1,11 @@
 import { useState } from "react";
 
 // components
-import { DeleteCycleModal, EmptyCycle, SingleCycleCard } from "components/cycles";
-import { Loader } from "components/ui";
+import { DeleteCycleModal,  SingleCycleCard } from "components/cycles";
+import { EmptyState, Loader } from "components/ui";
+// image
+import emptyCycle from "public/empty-state/empty-cycle.svg";
+
 // types
 import { ICycle, SelectCycleType } from "types";
 
@@ -56,7 +59,13 @@ export const CyclesList: React.FC<TCycleStatsViewProps> = ({
             ))}
           </div>
         ) : (
-          <EmptyCycle />
+          <EmptyState
+            type="cycle"
+            title="Create New Cycle"
+            description="Sprint more effectively with Cycles by confining your project
+          to a fixed amount of time. Create new cycle now."
+            imgURL={emptyCycle}
+          />
         )
       ) : (
         <Loader className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
