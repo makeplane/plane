@@ -252,7 +252,7 @@ class ImportServiceEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            workspace = Workspace.objects.get(workspace__slug=slug)
+            workspace = Workspace.objects.get(slug=slug)
 
             if service == "github":
                 data = request.data.get("data", False)
