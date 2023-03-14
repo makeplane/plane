@@ -12,9 +12,11 @@ type Props = {
   className?: string;
   ellipsis?: boolean;
   verticalEllipsis?: boolean;
+  height?: "sm" | "md" | "rg" | "lg";
   width?: "sm" | "md" | "lg" | "xl" | "auto";
   textAlignment?: "left" | "center" | "right";
   noBorder?: boolean;
+  noChevron?: boolean;
   optionsPosition?: "left" | "right";
   customButton?: JSX.Element;
 };
@@ -33,9 +35,11 @@ const CustomMenu = ({
   className = "",
   ellipsis = false,
   verticalEllipsis = false,
+  height = "md",
   width = "auto",
   textAlignment,
   noBorder = false,
+  noChevron = false,
   optionsPosition = "right",
   customButton,
 }: Props) => (
@@ -77,7 +81,7 @@ const CustomMenu = ({
             }`}
           >
             {label}
-            {!noBorder && <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />}
+            {!noChevron && <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />}
           </Menu.Button>
         )}
       </div>
@@ -93,8 +97,18 @@ const CustomMenu = ({
       leaveTo="transform opacity-0 scale-95"
     >
       <Menu.Items
-        className={`absolute z-20 mt-1 whitespace-nowrap rounded-md bg-white p-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ${
+        className={`absolute z-20 mt-1 overflow-y-scroll whitespace-nowrap rounded-md bg-white p-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ${
           optionsPosition === "left" ? "left-0 origin-top-left" : "right-0 origin-top-right"
+        } ${
+          height === "sm"
+            ? "max-h-28"
+            : height === "md"
+            ? "max-h-44"
+            : height === "rg"
+            ? "max-h-56"
+            : height === "lg"
+            ? "max-h-80"
+            : ""
         } ${
           width === "sm"
             ? "w-10"
