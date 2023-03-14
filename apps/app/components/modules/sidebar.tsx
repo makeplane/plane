@@ -359,7 +359,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                       <SidebarLeadSelect
                         value={value}
                         onChange={(val: string) => {
-                          submitChanges({ lead: value });
+                          submitChanges({ lead: val });
                         }}
                       />
                     )}
