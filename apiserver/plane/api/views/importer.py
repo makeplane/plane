@@ -70,7 +70,7 @@ class ServiceIssueImportSummaryEndpoint(BaseAPIView):
 
 
 class BulkImportIssuesEndpoint(BaseAPIView):
-    def post(self, request, slug, project_id):
+    def post(self, request, slug, project_id, service):
         try:
             # Get the project
             project = Project.objects.get(pk=project_id, workspace__slug=slug)
@@ -174,6 +174,22 @@ class BulkImportIssuesEndpoint(BaseAPIView):
 
             _ = IssueLabel.objects.bulk_create(bulk_issue_labels, batch_size=100)
 
+            # Track the issue activities
+            IssueActivity.objects.bulk_create(
+                [
+                    IssueActivity(
+                        issue=issue,
+                        actor=request.user,
+                        project_id=project_id,
+                        workspace_id=project.workspace_id,
+                        comment=f"{request.user.email} importer the issue from {service}",
+                        verb="created",
+                    )
+                    for issue in issues
+                ],
+                batch_size=100,
+            )
+
             # Create Comments
             bulk_issue_comments = []
             for issue, issue_data in zip(issues, issues_data):
@@ -207,22 +223,6 @@ class BulkImportIssuesEndpoint(BaseAPIView):
                     )
                     for issue, issue_data in zip(issues, issues_data)
                 ]
-            )
-
-            # Track the issue activities
-            IssueActivity.objects.bulk_create(
-                [
-                    IssueActivity(
-                        issue=issue,
-                        actor=request.user,
-                        project_id=project_id,
-                        workspace_id=project.workspace_id,
-                        comment=f"{request.user.email} importer the issue from ",
-                        verb="created",
-                    )
-                    for issue in issues
-                ],
-                batch_size=100,
             )
 
             return Response(

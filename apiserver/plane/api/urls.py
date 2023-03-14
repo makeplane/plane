@@ -627,7 +627,7 @@ urlpatterns = [
         name="project-issues-bulk",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-import-issues/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-import-issues/<str:service>/",
         BulkImportIssuesEndpoint.as_view(),
         name="project-issues-bulk",
     ),
