@@ -62,7 +62,6 @@ from .issue import (
     UserWorkSpaceIssues,
     SubIssuesEndpoint,
     IssueLinkViewSet,
-    BulkCreateIssuesEndpoint,
     BulkCreateIssueLabelsEndpoint,
 )
 
@@ -105,4 +104,5 @@ from .importer import (
     ServiceIssueImportSummaryEndpoint,
     ImportServiceEndpoint,
     UpdateServiceImportStatusEndpoint,
+    BulkImportIssuesEndpoint,
 )
