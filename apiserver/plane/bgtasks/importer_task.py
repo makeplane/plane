@@ -35,7 +35,6 @@ def service_importer(service, importer_id):
 
         users = importer.data.get("users", [])
 
-        # Create workspace member invitations
         workspace_invitations = WorkspaceMemberInvite.objects.bulk_create(
             [
                 WorkspaceMemberInvite(
@@ -53,6 +52,7 @@ def service_importer(service, importer_id):
                 )
                 for user in users
                 if user.get("import", False) == "invite"
+                or user.get("import", False) == "map"
             ],
             batch_size=100,
             ignore_conflicts=True,
