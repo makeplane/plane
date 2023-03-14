@@ -28,6 +28,7 @@ import {
   CYCLE_ISSUES,
   MODULE_ISSUES,
   PROJECT_ISSUES_LIST,
+  PROJECT_ISSUES_LIST_WITH_PARAMS,
   PROJECT_MEMBERS,
   STATE_LIST,
 } from "constants/fetch-keys";
@@ -69,6 +70,7 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
     orderBy,
     filters,
     setFilters,
+    params,
   } = useIssuesView();
 
   const { data: stateGroups } = useSWR(
@@ -153,85 +155,99 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
           draggedItem.sort_order = newSortOrder;
         }
 
-        if (orderBy === "sort_order" || source.droppableId !== destination.droppableId) {
-          const sourceGroup = source.droppableId; // source group id
-          const destinationGroup = destination.droppableId; // destination group id
+        const destinationGroup = destination.droppableId; // destination group id
 
-          if (!sourceGroup || !destinationGroup) return;
+        if (orderBy === "sort_order" || source.droppableId !== destination.droppableId) {
+          // different group/column;
+
+          // source.droppableId !== destination.droppableId -> even if order by is not sort_order,
+          // if the issue is moved to a different group, then we will change the group of the
+          // dragged item(or issue)
 
           if (selectedGroup === "priority") draggedItem.priority = destinationGroup;
-          else if (selectedGroup === "state") {
-            const destinationState = states?.find((s) => s.id === destinationGroup);
-
-            if (!destinationState) return;
-
-            draggedItem.state = destinationState.id;
-            draggedItem.state_detail = destinationState;
-          }
-
-          // if (cycleId)
-          //   mutate<CycleIssueResponse[]>(
-          //     CYCLE_ISSUES(cycleId as string),
-          //     (prevData) => {
-          //       if (!prevData) return prevData;
-          //       const updatedIssues = prevData.map((issue) => {
-          //         if (issue.issue_detail.id === draggedItem.id) {
-          //           return {
-          //             ...issue,
-          //             issue_detail: draggedItem,
-          //           };
-          //         }
-          //         return issue;
-          //       });
-          //       return [...updatedIssues];
-          //     },
-          //     false
-          //   );
-          // else if (moduleId)
-          //   mutate<ModuleIssueResponse[]>(
-          //     MODULE_ISSUES(moduleId as string),
-          //     (prevData) => {
-          //       if (!prevData) return prevData;
-          //       const updatedIssues = prevData.map((issue) => {
-          //         if (issue.issue_detail.id === draggedItem.id) {
-          //           return {
-          //             ...issue,
-          //             issue_detail: draggedItem,
-          //           };
-          //         }
-          //         return issue;
-          //       });
-          //       return [...updatedIssues];
-          //     },
-          //     false
-          //   );
-          // else
-          //   mutate<{ [key: string]: IIssue[] }>(
-          //     PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string, params),
-          //     (prevData) => {
-          //       if (!prevData) return prevData;
-
-          //       prevData[sourceGroup][source.index] = draggedItem;
-
-          //       return prevData;
-          //     },
-          //     false
-          //   );
-
-          // patch request
-          issuesService
-            .patchIssue(workspaceSlug as string, projectId as string, draggedItem.id, {
-              priority: draggedItem.priority,
-              state: draggedItem.state,
-              sort_order: draggedItem.sort_order,
-            })
-            .then((res) => {
-              if (cycleId) mutate(CYCLE_ISSUES(cycleId as string));
-              if (moduleId) mutate(MODULE_ISSUES(moduleId as string));
-
-              mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
-            });
+          else if (selectedGroup === "state") draggedItem.state = destinationGroup;
         }
+
+        const sourceGroup = source.droppableId; // source group id
+
+        // TODO: move this mutation logic to a separate function
+        if (cycleId)
+          mutate<{
+            [key: string]: IIssue[];
+          }>(
+            CYCLE_ISSUES(cycleId as string),
+            (prevData) => {
+              if (!prevData) return prevData;
+
+              const sourceGroupArray = prevData[sourceGroup];
+              const destinationGroupArray = prevData[destinationGroup];
+
+              sourceGroupArray.splice(source.index, 1);
+              destinationGroupArray.splice(destination.index, 0, draggedItem);
+
+              return {
+                ...prevData,
+                [sourceGroup]: sourceGroupArray,
+                [destinationGroup]: destinationGroupArray,
+              };
+            },
+            false
+          );
+        else if (moduleId)
+          mutate<{
+            [key: string]: IIssue[];
+          }>(
+            MODULE_ISSUES(moduleId as string),
+            (prevData) => {
+              if (!prevData) return prevData;
+
+              const sourceGroupArray = prevData[sourceGroup];
+              const destinationGroupArray = prevData[destinationGroup];
+
+              sourceGroupArray.splice(source.index, 1);
+              destinationGroupArray.splice(destination.index, 0, draggedItem);
+
+              return {
+                ...prevData,
+                [sourceGroup]: sourceGroupArray,
+                [destinationGroup]: destinationGroupArray,
+              };
+            },
+            false
+          );
+        else
+          mutate<{ [key: string]: IIssue[] }>(
+            PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string),
+            (prevData) => {
+              if (!prevData) return prevData;
+
+              const sourceGroupArray = prevData[sourceGroup];
+              const destinationGroupArray = prevData[destinationGroup];
+
+              sourceGroupArray.splice(source.index, 1);
+              destinationGroupArray.splice(destination.index, 0, draggedItem);
+
+              return {
+                ...prevData,
+                [sourceGroup]: sourceGroupArray,
+                [destinationGroup]: destinationGroupArray,
+              };
+            },
+            false
+          );
+
+        // patch request
+        issuesService
+          .patchIssue(workspaceSlug as string, projectId as string, draggedItem.id, {
+            priority: draggedItem.priority,
+            state: draggedItem.state,
+            sort_order: draggedItem.sort_order,
+          })
+          .then(() => {
+            if (cycleId) mutate(CYCLE_ISSUES(cycleId as string));
+            if (moduleId) mutate(MODULE_ISSUES(moduleId as string));
+            mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string));
+          });
       }
     },
     [
@@ -242,7 +258,6 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
       projectId,
       selectedGroup,
       orderBy,
-      states,
       handleDeleteIssue,
     ]
   );
@@ -365,7 +380,7 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
       />
       <div className="flex items-center gap-2">
         {Object.keys(filters).map((key) => {
-          if (filters[key])
+          if (filters[key as keyof typeof filters] !== null)
             return (
               <button
                 key={key}

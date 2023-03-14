@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 
-import { mutate } from "swr";
+import useSWR, { mutate } from "swr";
 
 // react-hook-form
 import { useForm } from "react-hook-form";
@@ -19,6 +19,7 @@ import {
   UserCircleIcon,
   ChevronDownIcon,
   DocumentIcon,
+  ExclamationCircleIcon,
 } from "@heroicons/react/24/outline";
 // ui
 import { CustomMenu, Loader, ProgressBar } from "components/ui";
@@ -37,16 +38,15 @@ import { renderDateFormat, renderShortDate } from "helpers/date-time.helper";
 // types
 import { ICycle, IIssue } from "types";
 // fetch-keys
-import { CYCLE_DETAILS } from "constants/fetch-keys";
+import { CYCLE_DETAILS, CYCLE_ISSUES_WITH_PARAMS } from "constants/fetch-keys";
 
 type Props = {
-  issues: IIssue[];
   cycle: ICycle | undefined;
   isOpen: boolean;
   cycleStatus: string;
 };
 
-export const CycleDetailsSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cycleStatus }) => {
+export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatus }) => {
   const [cycleDeleteModal, setCycleDeleteModal] = useState(false);
   const [startDateRange, setStartDateRange] = useState<Date | null>(new Date());
   const [endDateRange, setEndDateRange] = useState<Date | null>(null);
@@ -60,6 +60,18 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cy
     start_date: new Date().toString(),
     end_date: new Date().toString(),
   };
+
+  const { data: issues } = useSWR<IIssue[]>(
+    workspaceSlug && projectId && cycleId ? CYCLE_ISSUES_WITH_PARAMS(cycleId as string) : null,
+    workspaceSlug && projectId && cycleId
+      ? () =>
+          cyclesService.getCycleIssues(
+            workspaceSlug as string,
+            projectId as string,
+            cycleId as string
+          )
+      : null
+  );
 
   const groupedIssues = {
     backlog: [],
@@ -126,6 +138,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cy
   const progressPercentage = issues
     ? Math.round((groupedIssues.completed.length / issues?.length) * 100)
     : null;
+
   return (
     <>
       <DeleteCycleModal isOpen={cycleDeleteModal} setIsOpen={setCycleDeleteModal} data={cycle} />
@@ -137,7 +150,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cy
         {cycle ? (
           <>
             <div className="flex flex-col items-start justify-center">
-              <div className="flex gap-2.5 px-7 text-sm">
+              <div className="flex gap-2.5 px-6 text-sm">
                 <div className="flex items-center ">
                   <span
                     className={`flex items-center rounded border-[0.5px] border-gray-200 bg-gray-100 px-2.5 py-1.5 text-center text-sm capitalize text-gray-800 `}
@@ -237,7 +250,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cy
                 </div>
               </div>
 
-              <div className="flex flex-col gap-6 px-7 py-6">
+              <div className="flex flex-col gap-6 px-6 py-6">
                 <div className="flex flex-col items-start justify-start gap-2 ">
                   <div className="flex items-start justify-start gap-2  ">
                     <h4 className="text-xl font-semibold text-gray-900">{cycle.name}</h4>
@@ -307,7 +320,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cy
               </div>
             </div>
 
-            <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-gray-300 px-7 py-6 ">
+            <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-gray-300 px-6 py-6 ">
               <Disclosure>
                 {({ open }) => (
                   <div
@@ -324,13 +337,21 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cy
                           ""
                         )}
                       </div>
-
-                      <Disclosure.Button>
-                        <ChevronDownIcon
-                          className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`}
-                          aria-hidden="true"
-                        />
-                      </Disclosure.Button>
+                      {isStartValid && isEndValid ? (
+                        <Disclosure.Button>
+                          <ChevronDownIcon
+                            className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`}
+                            aria-hidden="true"
+                          />
+                        </Disclosure.Button>
+                      ) : (
+                        <div className="flex items-center gap-1">
+                          <ExclamationCircleIcon className="h-3 w-3" />
+                          <span className="text-xs italic">
+                            Invalid date. Please enter valid date.
+                          </span>
+                        </div>
+                      )}
                     </div>
                     <Transition show={open}>
                       <Disclosure.Panel>
@@ -342,7 +363,8 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cy
                                   <DocumentIcon className="h-3 w-3 text-gray-500" />
                                 </span>
                                 <span>
-                                  Pending Issues - {issues?.length - groupedIssues.completed.length}{" "}
+                                  Pending Issues -{" "}
+                                  {issues?.length ?? 0 - groupedIssues.completed.length}{" "}
                                 </span>
                               </div>
 
@@ -359,7 +381,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cy
                             </div>
                             <div className="relative h-40 w-80">
                               <ProgressChart
-                                issues={issues}
+                                issues={issues ?? []}
                                 start={cycle?.start_date ?? ""}
                                 end={cycle?.end_date ?? ""}
                               />
@@ -375,7 +397,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cy
               </Disclosure>
             </div>
 
-            <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-gray-300 px-7 py-6 ">
+            <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-gray-300 px-6 py-6 ">
               <Disclosure>
                 {({ open }) => (
                   <div
@@ -386,18 +408,28 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ issues, cycle, isOpen, cy
                         <span className="font-medium text-gray-500">Other Information</span>
                       </div>
 
-                      <Disclosure.Button>
-                        <ChevronDownIcon
-                          className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`}
-                          aria-hidden="true"
-                        />
-                      </Disclosure.Button>
+                      {(issues?.length ?? 0) > 0 ? (
+                        <Disclosure.Button>
+                          <ChevronDownIcon
+                            className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`}
+                            aria-hidden="true"
+                          />
+                        </Disclosure.Button>
+                      ) : (
+                        <div className="flex items-center gap-1">
+                          <ExclamationCircleIcon className="h-3 w-3" />
+                          <span className="text-xs italic">No issues found. Please add issue.</span>
+                        </div>
+                      )}
                     </div>
                     <Transition show={open}>
                       <Disclosure.Panel>
-                        {issues.length > 0 ? (
+                        {(issues?.length ?? 0) > 0 ? (
                           <div className=" h-full w-full py-4">
-                            <SidebarProgressStats issues={issues} groupedIssues={groupedIssues} />
+                            <SidebarProgressStats
+                              issues={issues ?? []}
+                              groupedIssues={groupedIssues}
+                            />
                           </div>
                         ) : (
                           ""

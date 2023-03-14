@@ -10,8 +10,6 @@ import { issueViewContext } from "contexts/issue-view.context";
 import issuesService from "services/issues.service";
 import cyclesService from "services/cycles.service";
 import modulesService from "services/modules.service";
-// types
-import { IIssueViewOptions } from "types";
 // fetch-keys
 import {
   CYCLE_ISSUES_WITH_PARAMS,
@@ -38,22 +36,32 @@ const useIssuesView = () => {
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
   const params: any = {
-    group_by: groupByProperty,
     order_by: orderBy,
-    ...filters,
+    group_by: groupByProperty,
+    assignees: filters.assignees ? filters.assignees.join(",") : undefined,
+    type: filters.type ? filters.type : undefined,
+    labels: filters.labels ? filters.labels.join(",") : undefined,
+    issue__assignees__id: filters.issue__assignees__id
+      ? filters.issue__assignees__id.join(",")
+      : undefined,
+    issue__labels__id: filters.issue__labels__id ? filters.issue__labels__id.join(",") : undefined,
   };
 
   const { data: projectIssues } = useSWR(
-    PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string),
-    workspaceSlug && projectId
+    workspaceSlug && projectId && params
+      ? PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string)
+      : null,
+    workspaceSlug && projectId && params
       ? () =>
           issuesService.getIssuesWithParams(workspaceSlug as string, projectId as string, params)
       : null
   );
 
   const { data: cycleIssues } = useSWR(
-    cycleId ? CYCLE_ISSUES_WITH_PARAMS(cycleId as string) : null,
-    workspaceSlug && projectId && cycleId
+    workspaceSlug && projectId && cycleId && params
+      ? CYCLE_ISSUES_WITH_PARAMS(cycleId as string)
+      : null,
+    workspaceSlug && projectId && cycleId && params
       ? () =>
           cyclesService.getCycleIssuesWithParams(
             workspaceSlug as string,
@@ -65,8 +73,10 @@ const useIssuesView = () => {
   );
 
   const { data: moduleIssues } = useSWR(
-    cycleId ? MODULE_ISSUES_WITH_PARAMS(moduleId as string) : null,
-    workspaceSlug && projectId && cycleId
+    workspaceSlug && projectId && moduleId && params
+      ? MODULE_ISSUES_WITH_PARAMS(moduleId as string)
+      : null,
+    workspaceSlug && projectId && moduleId && params
       ? () =>
           modulesService.getModuleIssuesWithParams(
             workspaceSlug as string,
@@ -83,8 +93,6 @@ const useIssuesView = () => {
     if (Array.isArray(issuesToGroup)) return { allIssues: issuesToGroup };
     else return issuesToGroup;
   }, [projectIssues, cycleIssues, moduleIssues]);
-
-  // console.log("Grouped by issues: ", groupedByIssues);
 
   return {
     groupedByIssues,

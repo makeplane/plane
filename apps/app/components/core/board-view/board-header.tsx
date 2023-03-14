@@ -46,13 +46,13 @@ export const BoardHeader: React.FC<Props> = ({
     >
       <div className={`flex items-center ${!isCollapsed ? "flex-col gap-2" : "gap-1"}`}>
         <div
-          className={`flex cursor-pointer items-center gap-x-3.5 ${
+          className={`flex cursor-pointer items-center gap-x-3 ${
             !isCollapsed ? "mb-2 flex-col gap-y-2 py-2" : ""
           }`}
         >
-          {currentState && getStateGroupIcon(currentState.group, "20", "20", bgColor)}
+          {currentState && getStateGroupIcon(currentState.group, "18", "18", bgColor)}
           <h2
-            className={`text-xl font-semibold capitalize`}
+            className="text-lg font-semibold capitalize"
             style={{
               writingMode: !isCollapsed ? "vertical-rl" : "horizontal-tb",
             }}

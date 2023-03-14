@@ -81,7 +81,8 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
 
   const cycleStatus =
     cycleDetails?.start_date && cycleDetails?.end_date
-      ? getDateRangeStatus(cycleDetails?.start_date, cycleDetails?.end_date) : "";
+      ? getDateRangeStatus(cycleDetails?.start_date, cycleDetails?.end_date)
+      : "";
 
   const { data: cycleIssues } = useSWR(
     workspaceSlug && projectId && cycleId ? CYCLE_ISSUES(cycleId as string) : null,
@@ -95,14 +96,14 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
       : null
   );
 
-  const cycleIssuesArray = Array.isArray(cycleIssues)
-    ? cycleIssues?.map((issue) => ({
-        ...issue.issue_detail,
-        sub_issues_count: issue.sub_issues_count,
-        bridge: issue.id,
-        cycle: cycleId as string,
-      }))
-    : [];
+  // const cycleIssuesArray = Array.isArray(cycleIssues)
+  //   ? cycleIssues?.map((issue) => ({
+  //       ...issue.issue_detail,
+  //       sub_issues_count: issue.sub_issues_count,
+  //       bridge: issue.id,
+  //       cycle: cycleId as string,
+  //     }))
+  //   : [];
 
   const openIssuesListModal = () => {
     setCycleIssuesListModal(true);
@@ -181,12 +182,7 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
         <div className={`h-full ${cycleSidebar ? "mr-[24rem]" : ""} duration-300`}>
           <IssuesView type="cycle" userAuth={props} openIssuesListModal={openIssuesListModal} />
         </div>
-        <CycleDetailsSidebar
-          cycleStatus={cycleStatus}
-          issues={cycleIssuesArray ?? []}
-          cycle={cycleDetails}
-          isOpen={cycleSidebar}
-        />
+        <CycleDetailsSidebar cycleStatus={cycleStatus} cycle={cycleDetails} isOpen={cycleSidebar} />
       </AppLayout>
     </IssueViewContextProvider>
   );

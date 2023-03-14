@@ -382,7 +382,7 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
       mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string), {}, false);
       mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string));
     }
-  }, [myViewProps, workspaceSlug, projectId, cycleId, moduleId]);
+  }, [myViewProps, projectId, cycleId, moduleId]);
 
   return (
     <issueViewContext.Provider

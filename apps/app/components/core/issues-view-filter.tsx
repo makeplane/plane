@@ -77,7 +77,11 @@ export const IssuesFilterView: React.FC = () => {
         optionsPosition="right"
       >
         <CustomMenu.MenuItem
-          onClick={() => setFilters({ assignees: "72d6ad43-41ff-4907-9980-2f5ee8745ad3" })}
+          onClick={() =>
+            setFilters({
+              assignees: ["72d6ad43-41ff-4907-9980-2f5ee8745ad3"],
+            })
+          }
         >
           Member- Aaryan
         </CustomMenu.MenuItem>

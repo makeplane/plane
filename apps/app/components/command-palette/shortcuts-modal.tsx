@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 // icons
 import { XMarkIcon } from "@heroicons/react/20/solid";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { MacCommandIcon } from "components/icons";
 // ui
 import { Input } from "components/ui";
 
@@ -15,7 +17,7 @@ const shortcuts = [
   {
     title: "Navigation",
     shortcuts: [
-      { keys: "Ctrl,/,Cmd,K", description: "To open navigator" },
+      { keys: "Ctrl,K", description: "To open navigator" },
       { keys: "↑", description: "Move up" },
       { keys: "↓", description: "Move down" },
       { keys: "←", description: "Move left" },
@@ -34,8 +36,8 @@ const shortcuts = [
       { keys: "Delete", description: "To bulk delete issues" },
       { keys: "H", description: "To open shortcuts guide" },
       {
-        keys: "Ctrl,/,Cmd,Alt,C",
-        description: "To copy issue url when on issue detail page.",
+        keys: "Ctrl,Alt,C",
+        description: "To copy issue url when on issue detail page",
       },
     ],
   },
@@ -100,13 +102,17 @@ export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                         </span>
                       </Dialog.Title>
                       <div>
-                        <Input
-                          id="search"
-                          name="search"
-                          type="text"
-                          placeholder="Search for shortcuts"
-                          onChange={(e) => setQuery(e.target.value)}
-                        />
+                        <div className="flex w-full items-center justify-start gap-1 rounded border-[0.6px] border-gray-200 bg-gray-100 px-3 py-2">
+                          <MagnifyingGlassIcon className="h-3.5 w-3.5 text-gray-500" />
+                          <Input
+                            className="w-full  border-none bg-transparent py-1 px-2 text-xs text-gray-500 focus:outline-none"
+                            id="search"
+                            name="search"
+                            type="text"
+                            placeholder="Search for shortcuts"
+                            onChange={(e) => setQuery(e.target.value)}
+                          />
+                        </div>
                       </div>
                       <div className="flex w-full flex-col gap-y-3">
                         {query.trim().length > 0 ? (
@@ -114,14 +120,20 @@ export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                             filteredShortcuts.map((shortcut) => (
                               <div key={shortcut.keys} className="flex w-full flex-col">
                                 <div className="flex flex-col gap-y-3">
-                                  <div className="flex justify-between">
+                                  <div className="flex items-center justify-between">
                                     <p className="text-sm text-gray-500">{shortcut.description}</p>
-                                    <div className="flex items-center gap-x-1">
+                                    <div className="flex items-center gap-x-2.5">
                                       {shortcut.keys.split(",").map((key, index) => (
                                         <span key={index} className="flex items-center gap-1">
-                                          <kbd className="rounded bg-gray-200 px-1 text-sm">
-                                            {key}
-                                          </kbd>
+                                          {key === "Ctrl" ? (
+                                            <span className="flex h-full items-center rounded-sm border border-gray-200 bg-gray-100 p-2">
+                                              <MacCommandIcon />
+                                            </span>
+                                          ) : (
+                                            <kbd className="rounded-sm border border-gray-200 bg-gray-100 px-2 py-1 text-sm font-medium text-gray-800">
+                                              {key === "Ctrl" ? <MacCommandIcon /> : key}
+                                            </kbd>
+                                          )}
                                         </span>
                                       ))}
                                     </div>
@@ -147,14 +159,20 @@ export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                               <p className="mb-4 font-medium">{title}</p>
                               <div className="flex flex-col gap-y-3">
                                 {shortcuts.map(({ keys, description }, index) => (
-                                  <div key={index} className="flex justify-between">
+                                  <div key={index} className="flex items-center justify-between">
                                     <p className="text-sm text-gray-500">{description}</p>
-                                    <div className="flex items-center gap-x-1">
+                                    <div className="flex items-center gap-x-2.5">
                                       {keys.split(",").map((key, index) => (
                                         <span key={index} className="flex items-center gap-1">
-                                          <kbd className="rounded bg-gray-200 px-1 text-sm">
-                                            {key}
-                                          </kbd>
+                                          {key === "Ctrl" ? (
+                                            <span className="flex h-full items-center rounded-sm border border-gray-200 bg-gray-100 p-2">
+                                              <MacCommandIcon />
+                                            </span>
+                                          ) : (
+                                            <kbd className="rounded-sm border border-gray-200 bg-gray-100 px-2 py-1 text-sm font-medium text-gray-800">
+                                              {key === "Ctrl" ? <MacCommandIcon /> : key}
+                                            </kbd>
+                                          )}
                                         </span>
                                       ))}
                                     </div>

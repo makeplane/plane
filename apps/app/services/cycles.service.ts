@@ -7,6 +7,7 @@ import type {
   CurrentAndUpcomingCyclesResponse,
   DraftCyclesResponse,
   ICycle,
+  IIssue,
   IIssueViewOptions,
 } from "types";
 
@@ -49,7 +50,7 @@ class ProjectCycleServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     cycleId: string
-  ): Promise<CycleIssueResponse[]> {
+  ): Promise<IIssue[]> {
     return this.get(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-issues/`
     )
@@ -64,7 +65,7 @@ class ProjectCycleServices extends APIService {
     projectId: string,
     cycleId: string,
     queries?: IIssueViewOptions
-  ): Promise<CycleIssueResponse[] | { [key: string]: CycleIssueResponse[] }> {
+  ): Promise<IIssue[] | { [key: string]: IIssue[] }> {
     return this.get(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-issues/`,
       { params: queries }

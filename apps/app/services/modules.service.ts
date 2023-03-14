@@ -1,7 +1,7 @@
 // services
 import APIService from "services/api.service";
 // types
-import type { IIssueViewOptions, IModule, ModuleIssueResponse } from "types";
+import type { IIssueViewOptions, IModule, ModuleIssueResponse, IIssue } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -80,7 +80,7 @@ class ProjectIssuesServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     moduleId: string
-  ): Promise<ModuleIssueResponse[]> {
+  ): Promise<IIssue[]> {
     return this.get(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/module-issues/`
     )
@@ -95,7 +95,12 @@ class ProjectIssuesServices extends APIService {
     projectId: string,
     moduleId: string,
     queries?: IIssueViewOptions
-  ): Promise<any> {
+  ): Promise<
+    | IIssue[]
+    | {
+        [key: string]: IIssue[];
+      }
+  > {
     return this.get(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/module-issues/`,
       { params: queries }
