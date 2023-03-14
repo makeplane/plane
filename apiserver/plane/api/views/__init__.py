@@ -36,7 +36,8 @@ from .workspace import (
     UserLastProjectWithWorkspaceEndpoint,
     WorkspaceMemberUserEndpoint,
     WorkspaceMemberUserViewsEndpoint,
-    UserActivityGraph,
+    UserActivityGraphEndpoint,
+    UserIssueCompletedGraphEndpoint,
 )
 from .state import StateViewSet
 from .shortcut import ShortCutViewSet
