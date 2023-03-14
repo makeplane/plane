@@ -1,6 +1,6 @@
 # Django imports
 from django.db import models
-
+from django.conf import settings
 
 # Module import
 from . import ProjectBaseModel
@@ -23,3 +23,25 @@ class IssueView(ProjectBaseModel):
     def __str__(self):
         """Return name of the View"""
         return f"{self.name} <{self.project.name}>"
+
+
+class IssueViewFavorite(ProjectBaseModel):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="user_view_favorites",
+    )
+    view = models.ForeignKey(
+        "db.IssueView", on_delete=models.CASCADE, related_name="view_favorites"
+    )
+
+    class Meta:
+        unique_together = ["view", "user"]
+        verbose_name = "View Favorite"
+        verbose_name_plural = "View Favorites"
+        db_table = "view_favorites"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        """Return user and the view"""
+        return f"{self.user.email} <{self.view.name}>"

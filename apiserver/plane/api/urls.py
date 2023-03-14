@@ -78,6 +78,7 @@ from plane.api.views import (
     # Views
     IssueViewViewSet,
     ViewIssuesEndpoint,
+    IssueViewFavoriteViewSet,
     ## End Views
     # Cycles
     CycleViewSet,
@@ -477,6 +478,25 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/views/<uuid:view_id>/issues/",
         ViewIssuesEndpoint.as_view(),
         name="project-view-issues",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/user-favorite-views/",
+        IssueViewFavoriteViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="user-favorite-view",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/user-favorite-views/<uuid:view_id>/",
+        IssueViewFavoriteViewSet.as_view(
+            {
+                "delete": "destroy",
+            }
+        ),
+        name="user-favorite-view",
     ),
     ## End Views
     ## Cycles
