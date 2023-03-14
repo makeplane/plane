@@ -68,9 +68,10 @@ class ImportServiceEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            workspace = Workspace.objects.get(slug=slug)
-
             if service == "github":
+                workspace_integration = WorkspaceIntegration.objects.get(
+                    integration__provider="github", workspace__slug=slug
+                )
                 data = request.data.get("data", False)
                 metadata = request.data.get("metadata", False)
                 config = request.data.get("config", False)
@@ -80,15 +81,6 @@ class ImportServiceEndpoint(BaseAPIView):
                         status=status.HTTP_400_BAD_REQUEST,
                     )
 
-                api_token = APIToken.objects.filter(
-                    user=request.user, workspace__slug=slug
-                ).first()
-
-                if api_token is None:
-                    api_token = APIToken.objects.create(
-                        label="Github Importer", user=request.user, workspace=workspace
-                    )
-
                 importer = Importer.objects.create(
                     service=service,
                     project_id=project_id,
@@ -96,7 +88,7 @@ class ImportServiceEndpoint(BaseAPIView):
                     initiated_by=request.user,
                     data=data,
                     metadata=metadata,
-                    token=api_token,
+                    token=workspace_integration.api_token,
                     config=config,
                     created_by=request.user,
                     updated_by=request.user,
@@ -110,9 +102,10 @@ class ImportServiceEndpoint(BaseAPIView):
                 {"error": "Servivce not supported yet"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        except Workspace.DoesNotExist:
+        except WorkspaceIntegration.DoesNotExist as e:
             return Response(
-                {"error": "Workspace does not exist"}, status=status.HTTP_404_NOT_FOUND
+                {"error": "Workspace Integration does not exist"},
+                status=status.HTTP_404_NOT_FOUND,
             )
         except Exception as e:
             capture_exception(e)
