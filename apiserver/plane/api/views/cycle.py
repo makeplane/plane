@@ -3,7 +3,7 @@ import json
 
 # Django imports
 from django.db import IntegrityError
-from django.db.models import OuterRef, Func, F, Q, Exists, OuterRef
+from django.db.models import OuterRef, Func, F, Q, Exists, OuterRef, Prefetch
 from django.core import serializers
 from django.utils import timezone
 
@@ -18,9 +18,18 @@ from plane.api.serializers import (
     CycleSerializer,
     CycleIssueSerializer,
     CycleFavoriteSerializer,
+    IssueStateSerializer,
 )
 from plane.api.permissions import ProjectEntityPermission
-from plane.db.models import Cycle, CycleIssue, Issue, CycleFavorite
+from plane.db.models import (
+    Cycle,
+    CycleIssue,
+    Issue,
+    CycleFavorite,
+    IssueBlocker,
+    IssueLink,
+    ModuleIssue,
+)
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
 
@@ -133,19 +142,38 @@ class CycleIssueViewSet(BaseViewSet):
     def list(self, request, slug, project_id, cycle_id):
         try:
             order_by = request.GET.get("order_by", "created_at")
-            queryset = self.get_queryset().order_by(f"issue__{order_by}")
             group_by = request.GET.get("group_by", False)
 
-            cycle_issues = CycleIssueSerializer(queryset, many=True).data
+            issues = (
+                Issue.objects.filter(issue_cycle__cycle_id=cycle_id)
+                .annotate(
+                    sub_issues_count=Issue.objects.filter(parent=OuterRef("id"))
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
+                .annotate(bridge_id=F("issue_cycle__id"))
+                .filter(project_id=project_id)
+                .filter(workspace__slug=slug)
+                .select_related("project")
+                .select_related("workspace")
+                .select_related("state")
+                .select_related("parent")
+                .prefetch_related("assignees")
+                .prefetch_related("labels")
+                .order_by(order_by)
+            )
+
+            issues_data = IssueStateSerializer(issues, many=True).data
 
             if group_by:
                 return Response(
-                    group_results(cycle_issues, f"issue_detail.{group_by}"),
+                    group_results(issues_data, group_by),
                     status=status.HTTP_200_OK,
                 )
 
             return Response(
-                cycle_issues,
+                issues_data,
                 status=status.HTTP_200_OK,
             )
         except Exception as e:
