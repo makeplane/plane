@@ -58,7 +58,6 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
     (i) => i.state_detail.group === "completed" || i.state_detail.group === "cancelled"
   ).length;
   const completionPercentage = (completedIssues / (moduleIssues ?? []).length) * 100;
-  console.log(completionPercentage);
 
   const handleDeleteModule = () => {
     if (!module) return;
@@ -266,7 +265,7 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
             <span>
               Progress
               <br />
-              {isNaN(completionPercentage) ? 0 : completionPercentage}%
+              {isNaN(completionPercentage) ? 0 : completionPercentage.toFixed(2)}%
             </span>
             <div className="bar relative mt-1 h-1 w-full rounded bg-gray-300">
               <div
