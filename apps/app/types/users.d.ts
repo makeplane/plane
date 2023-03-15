@@ -35,6 +35,11 @@ export interface IUserLite {
   created_at: Date;
 }
 
+export interface IUserActivity {
+  created_date: string;
+  activity_count: number;
+}
+
 export type UserAuth = {
   isMember: boolean;
   isOwner: boolean;
