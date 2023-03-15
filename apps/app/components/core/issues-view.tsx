@@ -416,7 +416,7 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
                                     key={state?.id}
                                     className="inline-flex items-center gap-x-1 rounded-full bg-gray-500 px-2 py-0.5 text-xs font-medium text-white"
                                   >
-                                    <span>{state?.name}</span>
+                                    <span>{state?.name ?? "Loading..."}</span>
                                     <span
                                       className="cursor-pointer"
                                       onClick={() => {

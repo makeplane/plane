@@ -42,3 +42,4 @@ export * from "./tick-mark-icon";
 export * from "./contrast-icon";
 export * from "./people-group-icon";
 export * from "./cmd-icon";
+export * from "./view-list-icon";

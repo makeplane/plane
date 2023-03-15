@@ -20,7 +20,9 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import { UserAuth } from "types";
 // fetch-keys
 import { PROJECT_DETAILS, VIEW_DETAILS, VIEW_ISSUES } from "constants/fetch-keys";
-import { IssuesView } from "components/core";
+import { IssuesFilterView, IssuesView } from "components/core";
+import { HeaderButton } from "components/ui";
+import { PlusIcon } from "@heroicons/react/24/outline";
 
 const SingleView: React.FC<UserAuth> = (props) => {
   const router = useRouter();
@@ -45,14 +47,6 @@ const SingleView: React.FC<UserAuth> = (props) => {
       : null
   );
 
-  const { data: viewIssues } = useSWR(
-    workspaceSlug && projectId && viewId ? VIEW_ISSUES(viewId as string) : null,
-    workspaceSlug && projectId && viewId
-      ? () =>
-          viewsService.getViewIssues(workspaceSlug as string, projectId as string, viewId as string)
-      : null
-  );
-
   return (
     <IssueViewContextProvider>
       <AppLayout
@@ -63,6 +57,21 @@ const SingleView: React.FC<UserAuth> = (props) => {
               link={`/${workspaceSlug}/projects/${activeProject?.id}/cycles`}
             />
           </Breadcrumbs>
+        }
+        right={
+          <div className="flex items-center gap-2">
+            <IssuesFilterView />
+            <HeaderButton
+              Icon={PlusIcon}
+              label="Add Issue"
+              onClick={() => {
+                const e = new KeyboardEvent("keydown", {
+                  key: "c",
+                });
+                document.dispatchEvent(e);
+              }}
+            />
+          </div>
         }
       >
         <IssuesView userAuth={props} />
