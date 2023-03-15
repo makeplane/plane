@@ -27,6 +27,15 @@ def group_results(results_data, group_by):
     """
     response_dict = dict()
 
+    if group_by == "priority":
+        response_dict = {
+            "urgent": [],
+            "high": [],
+            "medium": [],
+            "low": [],
+            "None": [],
+        }
+
     for value in results_data:
         group_attribute = resolve_keys(group_by, value)
         if isinstance(group_attribute, list):

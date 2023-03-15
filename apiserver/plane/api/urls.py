@@ -38,9 +38,12 @@ from plane.api.views import (
     AddTeamToProjectEndpoint,
     UserLastProjectWithWorkspaceEndpoint,
     UserWorkspaceInvitationEndpoint,
+    UserActivityGraphEndpoint,
+    UserIssueCompletedGraphEndpoint,
     ## End Workspaces
     # File Assets
     FileAssetEndpoint,
+    UserAssetsEndpoint,
     ## End File Assets
     # Projects
     ProjectViewSet,
@@ -61,13 +64,14 @@ from plane.api.views import (
     IssueCommentViewSet,
     UserWorkSpaceIssues,
     BulkDeleteIssuesEndpoint,
+    BulkImportIssuesEndpoint,
     ProjectUserViewsEndpoint,
     TimeLineIssueViewSet,
     IssuePropertyViewSet,
     LabelViewSet,
     SubIssuesEndpoint,
     IssueLinkViewSet,
-    ModuleLinkViewSet,
+    BulkCreateIssueLabelsEndpoint,
     ## End Issues
     # States
     StateViewSet,
@@ -76,7 +80,9 @@ from plane.api.views import (
     ShortCutViewSet,
     ## End Shortcuts
     # Views
-    ViewViewSet,
+    IssueViewViewSet,
+    ViewIssuesEndpoint,
+    IssueViewFavoriteViewSet,
     ## End Views
     # Cycles
     CycleViewSet,
@@ -91,6 +97,7 @@ from plane.api.views import (
     ModuleViewSet,
     ModuleIssueViewSet,
     ModuleFavoriteViewSet,
+    ModuleLinkViewSet,
     ## End Modules
     # Api Tokens
     ApiTokenEndpoint,
@@ -102,7 +109,13 @@ from plane.api.views import (
     GithubRepositorySyncViewSet,
     GithubIssueSyncViewSet,
     GithubCommentSyncViewSet,
+    BulkCreateGithubIssueSyncEndpoint,
     ## End Integrations
+    # Importer
+    ServiceIssueImportSummaryEndpoint,
+    ImportServiceEndpoint,
+    UpdateServiceImportStatusEndpoint,
+    ## End importer
 )
 
 
@@ -176,6 +189,18 @@ urlpatterns = [
         name="workspace",
     ),
     # user join workspace
+    # User Graphs
+    path(
+        "users/me/workspaces/<str:slug>/activity-graph/",
+        UserActivityGraphEndpoint.as_view(),
+        name="user-activity-graph",
+    ),
+    path(
+        "users/me/workspaces/<str:slug>/issues-completed-graph/",
+        UserIssueCompletedGraphEndpoint.as_view(),
+        name="completed-graph",
+    ),
+    ## User  Graph
     path(
         "users/me/invitations/workspaces/<str:slug>/<uuid:pk>/join/",
         JoinWorkspaceEndpoint.as_view(),
@@ -452,7 +477,7 @@ urlpatterns = [
     # Views
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/views/",
-        ViewViewSet.as_view(
+        IssueViewViewSet.as_view(
             {
                 "get": "list",
                 "post": "create",
@@ -462,7 +487,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/views/<uuid:pk>/",
-        ViewViewSet.as_view(
+        IssueViewViewSet.as_view(
             {
                 "get": "retrieve",
                 "put": "update",
@@ -471,6 +496,30 @@ urlpatterns = [
             }
         ),
         name="project-view",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/views/<uuid:view_id>/issues/",
+        ViewIssuesEndpoint.as_view(),
+        name="project-view-issues",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/user-favorite-views/",
+        IssueViewFavoriteViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="user-favorite-view",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/user-favorite-views/<uuid:view_id>/",
+        IssueViewFavoriteViewSet.as_view(
+            {
+                "delete": "destroy",
+            }
+        ),
+        name="user-favorite-view",
     ),
     ## End Views
     ## Cycles
@@ -609,8 +658,19 @@ urlpatterns = [
         name="project-issue-labels",
     ),
     path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-create-labels/",
+        BulkCreateIssueLabelsEndpoint.as_view(),
+        name="project-bulk-labels",
+    ),
+    path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-delete-issues/",
         BulkDeleteIssuesEndpoint.as_view(),
+        name="project-issues-bulk",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-import-issues/<str:service>/",
+        BulkImportIssuesEndpoint.as_view(),
+        name="project-issues-bulk",
     ),
     path(
         "workspaces/<str:slug>/my-issues/",
@@ -728,12 +788,22 @@ urlpatterns = [
     path(
         "workspaces/<str:slug>/file-assets/",
         FileAssetEndpoint.as_view(),
-        name="File Assets",
+        name="file-assets",
     ),
     path(
-        "workspaces/<str:slug>/file-assets/<uuid:pk>/",
+        "workspaces/file-assets/<uuid:workspace_id>/<str:asset_key>/",
         FileAssetEndpoint.as_view(),
-        name="File Assets",
+        name="file-assets",
+    ),
+    path(
+        "users/file-assets/",
+        UserAssetsEndpoint.as_view(),
+        name="user-file-assets",
+    ),
+    path(
+        "users/file-assets/user-profile/<str:asset_key>/",
+        UserAssetsEndpoint.as_view(),
+        name="user-file-assets",
     ),
     ## End File Assets
     ## Modules
@@ -910,6 +980,10 @@ urlpatterns = [
         ),
     ),
     path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/github-repository-sync/<uuid:repo_sync_id>/bulk-create-github-issue-sync/",
+        BulkCreateGithubIssueSyncEndpoint.as_view(),
+    ),
+    path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/github-repository-sync/<uuid:repo_sync_id>/github-issue-sync/<uuid:pk>/",
         GithubIssueSyncViewSet.as_view(
             {
@@ -938,4 +1012,26 @@ urlpatterns = [
     ),
     ## End Github Integrations
     ## End Integrations
+    # Importer
+    path(
+        "workspaces/<str:slug>/importers/<str:service>/",
+        ServiceIssueImportSummaryEndpoint.as_view(),
+        name="importer",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/importers/<str:service>/",
+        ImportServiceEndpoint.as_view(),
+        name="importer",
+    ),
+    path(
+        "workspaces/<str:slug>/importers/",
+        ImportServiceEndpoint.as_view(),
+        name="importer",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/service/<str:service>/importers/<uuid:importer_id>/",
+        UpdateServiceImportStatusEndpoint.as_view(),
+        name="importer",
+    ),
+    ##  End Importer
 ]

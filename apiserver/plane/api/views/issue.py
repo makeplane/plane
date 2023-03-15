@@ -1,10 +1,12 @@
 # Python imports
 import json
+import random
 from itertools import groupby, chain
 
 # Django imports
 from django.db.models import Prefetch, OuterRef, Func, F, Q
 from django.core.serializers.json import DjangoJSONEncoder
+
 
 # Third Party imports
 from rest_framework.response import Response
@@ -45,6 +47,7 @@ from plane.db.models import (
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
+from plane.utils.issue_filters import issue_filters
 
 
 class IssueViewSet(BaseViewSet):
@@ -171,18 +174,11 @@ class IssueViewSet(BaseViewSet):
 
     def list(self, request, slug, project_id):
         try:
-            # Issue State groups
-            type = request.GET.get("type", "all")
-            group = ["backlog", "unstarted", "started", "completed", "cancelled"]
-            if type == "backlog":
-                group = ["backlog"]
-            if type == "active":
-                group = ["unstarted", "started"]
-
+            filters = issue_filters(request.query_params, "GET")
             issue_queryset = (
                 self.get_queryset()
                 .order_by(request.GET.get("order_by", "created_at"))
-                .filter(state__group__in=group)
+                .filter(**filters)
             )
 
             issues = IssueSerializer(issue_queryset, many=True).data
@@ -717,3 +713,42 @@ class IssueLinkViewSet(BaseViewSet):
             .filter(project__project_projectmember__member=self.request.user)
             .distinct()
         )
+
+
+class BulkCreateIssueLabelsEndpoint(BaseAPIView):
+    def post(self, request, slug, project_id):
+        try:
+            label_data = request.data.get("label_data", [])
+            project = Project.objects.get(pk=project_id)
+
+            labels = Label.objects.bulk_create(
+                [
+                    Label(
+                        name=label.get("name", "Migrated"),
+                        description=label.get("description", "Migrated Issue"),
+                        color="#" + "%06x" % random.randint(0, 0xFFFFFF),
+                        project_id=project_id,
+                        workspace_id=project.workspace_id,
+                        created_by=request.user,
+                        updated_by=request.user,
+                    )
+                    for label in label_data
+                ],
+                batch_size=50,
+                ignore_conflicts=True,
+            )
+
+            return Response(
+                {"labels": LabelSerializer(labels, many=True).data},
+                status=status.HTTP_201_CREATED,
+            )
+        except Project.DoesNotExist:
+            return Response(
+                {"error": "Project Does not exist"}, status=status.HTTP_404_NOT_FOUND
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )

@@ -19,6 +19,7 @@ from plane.api.serializers import (
     ModuleIssueSerializer,
     ModuleLinkSerializer,
     ModuleFavoriteSerializer,
+    IssueStateSerializer,
 )
 from plane.api.permissions import ProjectEntityPermission
 from plane.db.models import (
@@ -47,11 +48,18 @@ class ModuleViewSet(BaseViewSet):
         )
 
     def get_queryset(self):
+        subquery = ModuleFavorite.objects.filter(
+            user=self.request.user,
+            module_id=OuterRef("pk"),
+            project_id=self.kwargs.get("project_id"),
+            workspace__slug=self.kwargs.get("slug"),
+        )
         return (
             super()
             .get_queryset()
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(workspace__slug=self.kwargs.get("slug"))
+            .annotate(is_favorite=Exists(subquery))
             .select_related("project")
             .select_related("workspace")
             .select_related("lead")
@@ -94,23 +102,6 @@ class ModuleViewSet(BaseViewSet):
                     {"name": "The module name is already taken"},
                     status=status.HTTP_410_GONE,
                 )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-    def list(self, request, slug, project_id):
-        try:
-            subquery = ModuleFavorite.objects.filter(
-                user=self.request.user,
-                module_id=OuterRef("pk"),
-                project_id=project_id,
-                workspace__slug=slug,
-            )
-            modules = self.get_queryset().annotate(is_favorite=Exists(subquery))
-            return Response(ModuleSerializer(modules, many=True).data)
         except Exception as e:
             capture_exception(e)
             return Response(
@@ -163,20 +154,39 @@ class ModuleIssueViewSet(BaseViewSet):
 
     def list(self, request, slug, project_id, module_id):
         try:
-            order_by = request.GET.get("order_by", "issue__created_at")
-            queryset = self.get_queryset().order_by(f"issue__{order_by}")
+            order_by = request.GET.get("order_by", "created_at")
             group_by = request.GET.get("group_by", False)
 
-            module_issues = ModuleIssueSerializer(queryset, many=True).data
+            issues = (
+                Issue.objects.filter(issue_module__module_id=module_id)
+                .annotate(
+                    sub_issues_count=Issue.objects.filter(parent=OuterRef("id"))
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
+                .annotate(bridge_id=F("issue_module__id"))
+                .filter(project_id=project_id)
+                .filter(workspace__slug=slug)
+                .select_related("project")
+                .select_related("workspace")
+                .select_related("state")
+                .select_related("parent")
+                .prefetch_related("assignees")
+                .prefetch_related("labels")
+                .order_by(order_by)
+            )
+
+            issues_data = IssueStateSerializer(issues, many=True).data
 
             if group_by:
                 return Response(
-                    group_results(module_issues, f"issue_detail.{group_by}"),
+                    group_results(issues_data, group_by),
                     status=status.HTTP_200_OK,
                 )
 
             return Response(
-                module_issues,
+                issues_data,
                 status=status.HTTP_200_OK,
             )
         except Exception as e:
@@ -307,7 +317,6 @@ class ModuleLinkViewSet(BaseViewSet):
 
 
 class ModuleFavoriteViewSet(BaseViewSet):
-
     permission_classes = [
         ProjectEntityPermission,
     ]
