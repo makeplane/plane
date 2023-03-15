@@ -38,6 +38,8 @@ from plane.api.views import (
     AddTeamToProjectEndpoint,
     UserLastProjectWithWorkspaceEndpoint,
     UserWorkspaceInvitationEndpoint,
+    UserActivityGraphEndpoint,
+    UserIssueCompletedGraphEndpoint,
     ## End Workspaces
     # File Assets
     FileAssetEndpoint,
@@ -176,6 +178,18 @@ urlpatterns = [
         name="workspace",
     ),
     # user join workspace
+    # User Graphs
+    path(
+        "users/me/workspaces/<str:slug>/activity-graph/",
+        UserActivityGraphEndpoint.as_view(),
+        name="user-activity-graph",
+    ),
+    path(
+        "users/me/workspaces/<str:slug>/issues-completed-graph/",
+        UserIssueCompletedGraphEndpoint.as_view(),
+        name="completed-graph",
+    ),
+    ## User  Graph
     path(
         "users/me/invitations/workspaces/<str:slug>/<uuid:pk>/join/",
         JoinWorkspaceEndpoint.as_view(),
