@@ -15,6 +15,7 @@ import {
 // services
 import issuesService from "services/issues.service";
 // hooks
+import useIssuesView from "hooks/use-issues-view";
 import useToast from "hooks/use-toast";
 // components
 import {
@@ -33,31 +34,30 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 // helpers
+import { handleIssuesMutation } from "constants/issue";
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 // types
-import {
-  CycleIssueResponse,
-  IIssue,
-  ModuleIssueResponse,
-  NestedKeyOf,
-  Properties,
-  UserAuth,
-} from "types";
+import { IIssue, Properties, UserAuth } from "types";
 // fetch-keys
-import { CYCLE_ISSUES, MODULE_ISSUES, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import {
+  CYCLE_ISSUES_WITH_PARAMS,
+  MODULE_ISSUES_WITH_PARAMS,
+  PROJECT_ISSUES_LIST_WITH_PARAMS,
+} from "constants/fetch-keys";
 
 type Props = {
   type?: string;
   provided: DraggableProvided;
   snapshot: DraggableStateSnapshot;
   issue: IIssue;
-  selectedGroup: NestedKeyOf<IIssue> | null;
   properties: Properties;
+  groupTitle?: string;
+  index: number;
+  selectedGroup: "priority" | "state" | "labels" | null;
   editIssue: () => void;
   makeIssueCopy: () => void;
   removeIssue?: (() => void) | null;
   handleDeleteIssue: (issue: IIssue) => void;
-  orderBy: NestedKeyOf<IIssue> | null;
   handleTrashBox: (isDragging: boolean) => void;
   userAuth: UserAuth;
 };
@@ -67,19 +67,22 @@ export const SingleBoardIssue: React.FC<Props> = ({
   provided,
   snapshot,
   issue,
-  selectedGroup,
   properties,
+  index,
+  selectedGroup,
   editIssue,
   makeIssueCopy,
   removeIssue,
+  groupTitle,
   handleDeleteIssue,
-  orderBy,
   handleTrashBox,
   userAuth,
 }) => {
   // context menu
   const [contextMenu, setContextMenu] = useState(false);
   const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
+
+  const { orderBy } = useIssuesView();
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
@@ -91,75 +94,55 @@ export const SingleBoardIssue: React.FC<Props> = ({
       if (!workspaceSlug || !projectId) return;
 
       if (cycleId)
-        mutate<CycleIssueResponse[]>(
-          CYCLE_ISSUES(cycleId as string),
-          (prevData) => {
-            const updatedIssues = (prevData ?? []).map((p) => {
-              if (p.issue_detail.id === issue.id) {
-                return {
-                  ...p,
-                  issue_detail: {
-                    ...p.issue_detail,
-                    ...formData,
-                    assignees: formData.assignees_list ?? p.issue_detail.assignees_list,
-                  },
-                };
-              }
-              return p;
-            });
-            return [...updatedIssues];
-          },
+        mutate<
+          | {
+              [key: string]: IIssue[];
+            }
+          | IIssue[]
+        >(
+          CYCLE_ISSUES_WITH_PARAMS(cycleId as string),
+          (prevData) =>
+            handleIssuesMutation(formData, groupTitle ?? "", selectedGroup, index, prevData),
           false
         );
 
       if (moduleId)
-        mutate<ModuleIssueResponse[]>(
-          MODULE_ISSUES(moduleId as string),
-          (prevData) => {
-            const updatedIssues = (prevData ?? []).map((p) => {
-              if (p.issue_detail.id === issue.id) {
-                return {
-                  ...p,
-                  issue_detail: {
-                    ...p.issue_detail,
-                    ...formData,
-                    assignees: formData.assignees_list ?? p.issue_detail.assignees_list,
-                  },
-                };
-              }
-              return p;
-            });
-            return [...updatedIssues];
-          },
+        mutate<
+          | {
+              [key: string]: IIssue[];
+            }
+          | IIssue[]
+        >(
+          MODULE_ISSUES_WITH_PARAMS(moduleId as string),
+          (prevData) =>
+            handleIssuesMutation(formData, groupTitle ?? "", selectedGroup, index, prevData),
           false
         );
 
-      mutate<IIssue[]>(
-        PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
+      mutate<
+        | {
+            [key: string]: IIssue[];
+          }
+        | IIssue[]
+      >(
+        PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string),
         (prevData) =>
-          (prevData ?? []).map((p) => {
-            if (p.id === issue.id)
-              return { ...p, ...formData, assignees: formData.assignees_list ?? p.assignees_list };
-
-            return p;
-          }),
-
+          handleIssuesMutation(formData, groupTitle ?? "", selectedGroup, index, prevData),
         false
       );
 
       issuesService
         .patchIssue(workspaceSlug as string, projectId as string, issue.id, formData)
         .then((res) => {
-          if (cycleId) mutate(CYCLE_ISSUES(cycleId as string));
-          if (moduleId) mutate(MODULE_ISSUES(moduleId as string));
-
-          mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
+          if (cycleId) mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string));
+          if (moduleId) mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string));
+          mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string));
         })
         .catch((error) => {
           console.log(error);
         });
     },
-    [workspaceSlug, projectId, cycleId, moduleId, issue]
+    [workspaceSlug, projectId, cycleId, moduleId, issue, groupTitle, index, selectedGroup]
   );
 
   const getStyle = (
@@ -168,9 +151,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
   ) => {
     if (orderBy === "sort_order") return style;
     if (!snapshot.isDragging) return {};
-    if (!snapshot.isDropAnimating) {
-      return style;
-    }
+    if (!snapshot.isDropAnimating) return style;
 
     return {
       ...style,
@@ -301,7 +282,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
             {properties.labels && issue.label_details.length > 0 && (
               <div className="flex flex-wrap gap-1">
                 {issue.label_details.map((label) => (
-                  <span
+                  <div
                     key={label.id}
                     className="group flex items-center gap-1 rounded-2xl border px-2 py-0.5 text-xs"
                   >
@@ -312,7 +293,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
                       }}
                     />
                     {label.name}
-                  </span>
+                  </div>
                 ))}
               </div>
             )}

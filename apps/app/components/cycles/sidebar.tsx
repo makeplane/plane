@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 
-import { mutate } from "swr";
+import useSWR, { mutate } from "swr";
 
 // react-hook-form
 import { useForm } from "react-hook-form";
@@ -36,25 +36,17 @@ import { capitalizeFirstLetter, copyTextToClipboard } from "helpers/string.helpe
 import { groupBy } from "helpers/array.helper";
 import { renderDateFormat, renderShortDate } from "helpers/date-time.helper";
 // types
-import { CycleIssueResponse, ICycle, IIssue } from "types";
+import { ICycle, IIssue } from "types";
 // fetch-keys
-import { CYCLE_DETAILS } from "constants/fetch-keys";
+import { CYCLE_DETAILS, CYCLE_ISSUES } from "constants/fetch-keys";
 
 type Props = {
-  issues: IIssue[];
   cycle: ICycle | undefined;
   isOpen: boolean;
-  cycleIssues: CycleIssueResponse[];
   cycleStatus: string;
 };
 
-export const CycleDetailsSidebar: React.FC<Props> = ({
-  issues,
-  cycle,
-  isOpen,
-  cycleIssues,
-  cycleStatus,
-}) => {
+export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatus }) => {
   const [cycleDeleteModal, setCycleDeleteModal] = useState(false);
   const [startDateRange, setStartDateRange] = useState<Date | null>(new Date());
   const [endDateRange, setEndDateRange] = useState<Date | null>(null);
@@ -69,13 +61,25 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
     end_date: new Date().toString(),
   };
 
+  const { data: issues } = useSWR<IIssue[]>(
+    workspaceSlug && projectId && cycleId ? CYCLE_ISSUES(cycleId as string) : null,
+    workspaceSlug && projectId && cycleId
+      ? () =>
+          cyclesService.getCycleIssues(
+            workspaceSlug as string,
+            projectId as string,
+            cycleId as string
+          )
+      : null
+  );
+
   const groupedIssues = {
     backlog: [],
     unstarted: [],
     started: [],
     cancelled: [],
     completed: [],
-    ...groupBy(cycleIssues ?? [], "issue_detail.state_detail.group"),
+    ...groupBy(issues ?? [], "state_detail.group"),
   };
 
   const { reset } = useForm({
@@ -131,9 +135,10 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
   const isStartValid = new Date(`${cycle?.start_date}`) <= new Date();
   const isEndValid = new Date(`${cycle?.end_date}`) >= new Date(`${cycle?.start_date}`);
 
-  const progressPercentage = cycleIssues
-    ? Math.round((groupedIssues.completed.length / cycleIssues?.length) * 100)
+  const progressPercentage = issues
+    ? Math.round((groupedIssues.completed.length / issues?.length) * 100)
     : null;
+
   return (
     <>
       <DeleteCycleModal isOpen={cycleDeleteModal} setIsOpen={setCycleDeleteModal} data={cycle} />
@@ -305,10 +310,10 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                       <span className="h-4 w-4">
                         <ProgressBar
                           value={groupedIssues.completed.length}
-                          maxValue={cycleIssues?.length}
+                          maxValue={issues?.length}
                         />
                       </span>
-                      {groupedIssues.completed.length}/{cycleIssues?.length}
+                      {groupedIssues.completed.length}/{issues?.length}
                     </div>
                   </div>
                 </div>
@@ -324,7 +329,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                     <div className="flex w-full items-center justify-between gap-2    ">
                       <div className="flex items-center justify-start gap-2 text-sm">
                         <span className="font-medium text-gray-500">Progress</span>
-                        {!open && cycleIssues && progressPercentage ? (
+                        {!open && issues && progressPercentage ? (
                           <span className="rounded bg-[#09A953]/10 px-1.5 py-0.5 text-xs text-[#09A953]">
                             {progressPercentage ? `${progressPercentage}%` : ""}
                           </span>
@@ -359,7 +364,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                                 </span>
                                 <span>
                                   Pending Issues -{" "}
-                                  {cycleIssues?.length - groupedIssues.completed.length}{" "}
+                                  {issues?.length ?? 0 - groupedIssues.completed.length}{" "}
                                 </span>
                               </div>
 
@@ -376,7 +381,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                             </div>
                             <div className="relative h-40 w-80">
                               <ProgressChart
-                                issues={issues}
+                                issues={issues ?? []}
                                 start={cycle?.start_date ?? ""}
                                 end={cycle?.end_date ?? ""}
                               />
@@ -403,7 +408,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                         <span className="font-medium text-gray-500">Other Information</span>
                       </div>
 
-                      {issues.length > 0 ? (
+                      {(issues?.length ?? 0) > 0 ? (
                         <Disclosure.Button>
                           <ChevronDownIcon
                             className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`}
@@ -419,9 +424,12 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                     </div>
                     <Transition show={open}>
                       <Disclosure.Panel>
-                        {issues.length > 0 ? (
+                        {(issues?.length ?? 0) > 0 ? (
                           <div className=" h-full w-full py-4">
-                            <SidebarProgressStats issues={issues} groupedIssues={groupedIssues} />
+                            <SidebarProgressStats
+                              issues={issues ?? []}
+                              groupedIssues={groupedIssues}
+                            />
                           </div>
                         ) : (
                           ""

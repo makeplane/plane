@@ -16,7 +16,8 @@ import {
   ViewPrioritySelect,
   ViewStateSelect,
 } from "components/issues/view-select";
-
+// hooks
+import useIssueView from "hooks/use-issues-view";
 // ui
 import { Tooltip, CustomMenu, ContextMenu } from "components/ui";
 // icons
@@ -28,16 +29,23 @@ import {
 } from "@heroicons/react/24/outline";
 // helpers
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
+import { handleIssuesMutation } from "constants/issue";
 // types
-import { CycleIssueResponse, IIssue, ModuleIssueResponse, Properties, UserAuth } from "types";
+import { IIssue, Properties, UserAuth } from "types";
 // fetch-keys
-import { CYCLE_ISSUES, MODULE_ISSUES, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import {
+  CYCLE_ISSUES_WITH_PARAMS,
+  MODULE_ISSUES_WITH_PARAMS,
+  PROJECT_ISSUES_LIST_WITH_PARAMS,
+} from "constants/fetch-keys";
 
 type Props = {
   type?: string;
   issue: IIssue;
   properties: Properties;
+  groupTitle?: string;
   editIssue: () => void;
+  index: number;
   makeIssueCopy: () => void;
   removeIssue?: (() => void) | null;
   handleDeleteIssue: (issue: IIssue) => void;
@@ -49,8 +57,10 @@ export const SingleListIssue: React.FC<Props> = ({
   issue,
   properties,
   editIssue,
+  index,
   makeIssueCopy,
   removeIssue,
+  groupTitle,
   handleDeleteIssue,
   userAuth,
 }) => {
@@ -63,80 +73,62 @@ export const SingleListIssue: React.FC<Props> = ({
 
   const { setToastAlert } = useToast();
 
+  const { groupByProperty: selectedGroup } = useIssueView();
+
   const partialUpdateIssue = useCallback(
     (formData: Partial<IIssue>) => {
       if (!workspaceSlug || !projectId) return;
 
       if (cycleId)
-        mutate<CycleIssueResponse[]>(
-          CYCLE_ISSUES(cycleId as string),
-          (prevData) => {
-            const updatedIssues = (prevData ?? []).map((p) => {
-              if (p.issue_detail.id === issue.id) {
-                return {
-                  ...p,
-                  issue_detail: {
-                    ...p.issue_detail,
-                    ...formData,
-                    assignees: formData.assignees_list ?? p.issue_detail.assignees_list,
-                  },
-                };
-              }
-              return p;
-            });
-            return [...updatedIssues];
-          },
+        mutate<
+          | {
+              [key: string]: IIssue[];
+            }
+          | IIssue[]
+        >(
+          CYCLE_ISSUES_WITH_PARAMS(cycleId as string),
+          (prevData) =>
+            handleIssuesMutation(formData, groupTitle ?? "", selectedGroup, index, prevData),
           false
         );
 
       if (moduleId)
-        mutate<ModuleIssueResponse[]>(
-          MODULE_ISSUES(moduleId as string),
-          (prevData) => {
-            const updatedIssues = (prevData ?? []).map((p) => {
-              if (p.issue_detail.id === issue.id) {
-                return {
-                  ...p,
-                  issue_detail: {
-                    ...p.issue_detail,
-                    ...formData,
-                    assignees: formData.assignees_list ?? p.issue_detail.assignees_list,
-                  },
-                };
-              }
-              return p;
-            });
-            return [...updatedIssues];
-          },
+        mutate<
+          | {
+              [key: string]: IIssue[];
+            }
+          | IIssue[]
+        >(
+          MODULE_ISSUES_WITH_PARAMS(moduleId as string),
+          (prevData) =>
+            handleIssuesMutation(formData, groupTitle ?? "", selectedGroup, index, prevData),
           false
         );
 
-      mutate<IIssue[]>(
-        PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
+      mutate<
+        | {
+            [key: string]: IIssue[];
+          }
+        | IIssue[]
+      >(
+        PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string),
         (prevData) =>
-          (prevData ?? []).map((p) => {
-            if (p.id === issue.id)
-              return { ...p, ...formData, assignees: formData.assignees_list ?? p.assignees_list };
-
-            return p;
-          }),
-
+          handleIssuesMutation(formData, groupTitle ?? "", selectedGroup, index, prevData),
         false
       );
 
       issuesService
         .patchIssue(workspaceSlug as string, projectId as string, issue.id, formData)
         .then((res) => {
-          if (cycleId) mutate(CYCLE_ISSUES(cycleId as string));
-          if (moduleId) mutate(MODULE_ISSUES(moduleId as string));
-
-          mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
+          if (cycleId) mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string));
+          if (moduleId) mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string));
+          mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string));
         })
         .catch((error) => {
           console.log(error);
         });
     },
-    [workspaceSlug, projectId, cycleId, moduleId, issue]
+    [workspaceSlug, projectId, cycleId, moduleId, issue, groupTitle, index, selectedGroup]
   );
 
   const handleCopyText = () => {

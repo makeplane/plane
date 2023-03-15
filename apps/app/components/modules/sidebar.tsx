@@ -33,11 +33,11 @@ import ProgressChart from "components/core/sidebar/progress-chart";
 // ui
 import { CustomMenu, CustomSelect, Loader, ProgressBar } from "components/ui";
 // helpers
-import { renderDateFormat, renderShortDate, timeAgo } from "helpers/date-time.helper";
+import { renderDateFormat, renderShortDate } from "helpers/date-time.helper";
 import { capitalizeFirstLetter, copyTextToClipboard } from "helpers/string.helper";
 import { groupBy } from "helpers/array.helper";
 // types
-import { IIssue, IModule, ModuleIssueResponse, ModuleLink, UserAuth } from "types";
+import { IIssue, IModule, ModuleLink, UserAuth } from "types";
 // fetch-keys
 import { MODULE_DETAILS } from "constants/fetch-keys";
 // constant
@@ -55,7 +55,7 @@ type Props = {
   issues: IIssue[];
   module?: IModule;
   isOpen: boolean;
-  moduleIssues: ModuleIssueResponse[] | undefined;
+  moduleIssues?: IIssue[];
   userAuth: UserAuth;
 };
 

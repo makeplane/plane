@@ -30,7 +30,6 @@ import { capitalizeFirstLetter, copyTextToClipboard, truncateText } from "helper
 import {
   CompletedCyclesResponse,
   CurrentAndUpcomingCyclesResponse,
-  CycleIssueResponse,
   DraftCyclesResponse,
   ICycle,
 } from "types";
@@ -65,7 +64,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
   const { workspaceSlug, projectId } = router.query;
   const { setToastAlert } = useToast();
 
-  const { data: cycleIssues } = useSWR<CycleIssueResponse[]>(
+  const { data: cycleIssues } = useSWR(
     workspaceSlug && projectId && cycle.id ? CYCLE_ISSUES(cycle.id as string) : null,
     workspaceSlug && projectId && cycle.id
       ? () => cyclesService.getCycleIssues(workspaceSlug as string, projectId as string, cycle.id)

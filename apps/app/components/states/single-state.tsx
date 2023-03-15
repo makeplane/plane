@@ -21,7 +21,6 @@ import { groupBy, orderArrayBy } from "helpers/array.helper";
 import { orderStateGroups } from "helpers/state.helper";
 // types
 import { IState } from "types";
-import { StateGroup } from "components/states";
 // fetch-keys
 import { STATE_LIST } from "constants/fetch-keys";
 import { getStateGroupIcon } from "components/icons";

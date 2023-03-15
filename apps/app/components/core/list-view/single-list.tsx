@@ -12,7 +12,7 @@ import { getStateGroupIcon } from "components/icons";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
-import { IIssue, IProjectMember, IState, NestedKeyOf, UserAuth } from "types";
+import { IIssue, IProjectMember, IState, UserAuth } from "types";
 import { CustomMenu } from "components/ui";
 
 type Props = {
@@ -23,7 +23,7 @@ type Props = {
   groupedByIssues: {
     [key: string]: IIssue[];
   };
-  selectedGroup: NestedKeyOf<IIssue> | null;
+  selectedGroup: "priority" | "state" | "labels" | null;
   members: IProjectMember[] | undefined;
   addIssueToState: () => void;
   makeIssueCopy: (issue: IIssue) => void;
@@ -55,22 +55,6 @@ export const SingleList: React.FC<Props> = ({
 
   const [properties] = useIssuesProperties(workspaceSlug as string, projectId as string);
 
-  const createdBy =
-    selectedGroup === "created_by"
-      ? members?.find((m) => m.member.id === groupTitle)?.member.first_name ?? "Loading..."
-      : null;
-
-  let assignees: any;
-  if (selectedGroup === "assignees") {
-    assignees = groupTitle && groupTitle !== "" ? groupTitle.split(",") : [];
-    assignees =
-      assignees.length > 0
-        ? assignees
-            .map((a: string) => members?.find((m) => m.member.id === a)?.member.first_name)
-            .join(", ")
-        : "No assignee";
-  }
-
   return (
     <Disclosure key={groupTitle} as="div" defaultOpen>
       {({ open }) => (
@@ -82,7 +66,7 @@ export const SingleList: React.FC<Props> = ({
           >
             <Disclosure.Button>
               <div className="flex items-center gap-x-3">
-                {selectedGroup !== null && selectedGroup === "state_detail.name" ? (
+                {selectedGroup !== null && selectedGroup === "state" ? (
                   <span>
                     {currentState && getStateGroupIcon(currentState.group, "20", "20", bgColor)}
                   </span>
@@ -91,11 +75,7 @@ export const SingleList: React.FC<Props> = ({
                 )}
                 {selectedGroup !== null ? (
                   <h2 className="text-xl font-semibold capitalize leading-6 text-gray-800">
-                    {selectedGroup === "created_by"
-                      ? createdBy
-                      : selectedGroup === "assignees"
-                      ? assignees
-                      : addSpaceIfCamelCase(groupTitle)}
+                    {addSpaceIfCamelCase(groupTitle)}
                   </h2>
                 ) : (
                   <h2 className="font-medium leading-5">All Issues</h2>
@@ -105,7 +85,6 @@ export const SingleList: React.FC<Props> = ({
                 </span>
               </div>
             </Disclosure.Button>
-
             {type === "issue" ? (
               <button
                 type="button"
@@ -145,17 +124,19 @@ export const SingleList: React.FC<Props> = ({
             <Disclosure.Panel>
               {groupedByIssues[groupTitle] ? (
                 groupedByIssues[groupTitle].length > 0 ? (
-                  groupedByIssues[groupTitle].map((issue: IIssue) => (
+                  groupedByIssues[groupTitle].map((issue, index) => (
                     <SingleListIssue
                       key={issue.id}
                       type={type}
                       issue={issue}
                       properties={properties}
+                      groupTitle={groupTitle}
+                      index={index}
                       editIssue={() => handleEditIssue(issue)}
                       makeIssueCopy={() => makeIssueCopy(issue)}
                       handleDeleteIssue={handleDeleteIssue}
                       removeIssue={() => {
-                        removeIssue && removeIssue(issue.bridge);
+                        if (removeIssue !== null && issue.bridge_id) removeIssue(issue.bridge_id);
                       }}
                       userAuth={userAuth}
                     />

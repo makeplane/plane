@@ -5,7 +5,6 @@ import useSWR from "swr";
 // lib
 import { requiredAdmin, requiredAuth } from "lib/auth";
 // services
-import issuesServices from "services/issues.service";
 import projectService from "services/project.service";
 // layouts
 import AppLayout from "layouts/app-layout";
@@ -14,30 +13,19 @@ import { IssueViewContextProvider } from "contexts/issue-view.context";
 // components
 import { IssuesFilterView, IssuesView } from "components/core";
 // ui
-import { Spinner, EmptySpace, EmptySpaceItem, HeaderButton, EmptyState } from "components/ui";
+import { HeaderButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { RectangleStackIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { PlusIcon } from "@heroicons/react/24/outline";
 // types
 import type { UserAuth } from "types";
 import type { GetServerSidePropsContext, NextPage } from "next";
 // fetch-keys
-import { PROJECT_DETAILS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
-// image
-import emptyIssue from "public/empty-state/empty-issue.svg";
+import { PROJECT_DETAILS } from "constants/fetch-keys";
 
 const ProjectIssues: NextPage<UserAuth> = (props) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
-  const { data: projectIssues } = useSWR(
-    workspaceSlug && projectId
-      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
-      : null,
-    workspaceSlug && projectId
-      ? () => issuesServices.getIssues(workspaceSlug as string, projectId as string)
-      : null
-  );
 
   const { data: projectDetails } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
@@ -57,7 +45,7 @@ const ProjectIssues: NextPage<UserAuth> = (props) => {
         }
         right={
           <div className="flex items-center gap-2">
-            <IssuesFilterView issues={projectIssues?.filter((p) => p.parent === null) ?? []} />
+            <IssuesFilterView />
             <HeaderButton
               Icon={PlusIcon}
               label="Add Issue"
@@ -71,26 +59,7 @@ const ProjectIssues: NextPage<UserAuth> = (props) => {
           </div>
         }
       >
-        {projectIssues ? (
-          projectIssues.length > 0 ? (
-            <IssuesView
-              issues={projectIssues?.filter((p) => p.parent === null) ?? []}
-              userAuth={props}
-            />
-          ) : (
-            <EmptyState
-            type="issue"
-            title="Create New Issue"
-            description="Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done.
-            Create a new issue"
-            imgURL={emptyIssue}
-          />
-          )
-        ) : (
-          <div className="flex h-full w-full items-center justify-center">
-            <Spinner />
-          </div>
-        )}
+        <IssuesView userAuth={props} />
       </AppLayout>
     </IssueViewContextProvider>
   );

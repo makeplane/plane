@@ -30,7 +30,7 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // helpers
 import { truncateText } from "helpers/string.helper";
 // types
-import { IModule, ModuleIssueResponse, UserAuth } from "types";
+import { IModule, UserAuth } from "types";
 
 // fetch-keys
 import {
@@ -63,7 +63,7 @@ const SingleModule: React.FC<UserAuth> = (props) => {
       : null
   );
 
-  const { data: moduleIssues } = useSWR<ModuleIssueResponse[]>(
+  const { data: moduleIssues } = useSWR(
     workspaceSlug && projectId && moduleId ? MODULE_ISSUES(moduleId as string) : null,
     workspaceSlug && projectId && moduleId
       ? () =>
@@ -86,13 +86,6 @@ const SingleModule: React.FC<UserAuth> = (props) => {
           )
       : null
   );
-
-  const moduleIssuesArray = moduleIssues?.map((issue) => ({
-    ...issue.issue_detail,
-    sub_issues_count: issue.sub_issues_count,
-    bridge: issue.id,
-    module: moduleId as string,
-  }));
 
   const handleAddIssuesToModule = async (data: { issues: string[] }) => {
     if (!workspaceSlug || !projectId) return;
@@ -153,7 +146,7 @@ const SingleModule: React.FC<UserAuth> = (props) => {
           <div
             className={`flex items-center gap-2 ${moduleSidebar ? "mr-[24rem]" : ""} duration-300`}
           >
-            <IssuesFilterView issues={moduleIssuesArray ?? []} />
+            <IssuesFilterView />
             <button
               type="button"
               className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-100 ${
@@ -166,12 +159,11 @@ const SingleModule: React.FC<UserAuth> = (props) => {
           </div>
         }
       >
-        {moduleIssuesArray ? (
-          moduleIssuesArray.length > 0 ? (
+        {moduleIssues ? (
+          moduleIssues.length > 0 ? (
             <div className={`h-full ${moduleSidebar ? "mr-[24rem]" : ""} duration-300`}>
               <IssuesView
                 type="module"
-                issues={moduleIssuesArray ?? []}
                 userAuth={props}
                 openIssuesListModal={openIssuesListModal}
               />
@@ -213,7 +205,7 @@ const SingleModule: React.FC<UserAuth> = (props) => {
           </div>
         )}
         <ModuleDetailsSidebar
-          issues={moduleIssuesArray ?? []}
+          issues={moduleIssues ?? []}
           module={moduleDetails}
           isOpen={moduleSidebar}
           moduleIssues={moduleIssues}
