@@ -81,6 +81,27 @@ class ProjectViewSet(BaseViewSet):
             .distinct()
         )
 
+    def list(self, request, slug):
+        try:
+            subquery = ProjectFavorite.objects.filter(
+                user=self.request.user,
+                project_id=OuterRef("pk"),
+                workspace__slug=self.kwargs.get("slug"),
+            )
+            projects = (
+                self.get_queryset()
+                .annotate(is_favorite=Exists(subquery))
+                .order_by("-is_favorite")
+            )
+            return Response(ProjectDetailSerializer(projects, many=True).data)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
     def create(self, request, slug):
         try:
             workspace = Workspace.objects.get(slug=slug)
