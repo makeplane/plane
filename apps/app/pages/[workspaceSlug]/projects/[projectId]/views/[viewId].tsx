@@ -10,6 +10,8 @@ import projectService from "services/project.service";
 import viewsService from "services/views.service";
 // layouts
 import AppLayout from "layouts/app-layout";
+// contexts
+import { IssueViewContextProvider } from "contexts/issue-view.context";
 // components
 import { CreateUpdateViewModal, DeleteViewModal } from "components/views";
 // ui
@@ -18,6 +20,7 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import { UserAuth } from "types";
 // fetch-keys
 import { PROJECT_DETAILS, VIEW_DETAILS, VIEW_ISSUES } from "constants/fetch-keys";
+import { IssuesView } from "components/core";
 
 const SingleView: React.FC<UserAuth> = (props) => {
   const router = useRouter();
@@ -51,18 +54,20 @@ const SingleView: React.FC<UserAuth> = (props) => {
   );
 
   return (
-    <AppLayout
-      breadcrumbs={
-        <Breadcrumbs>
-          <BreadcrumbItem
-            title={`${activeProject?.name ?? "Project"} Views`}
-            link={`/${workspaceSlug}/projects/${activeProject?.id}/cycles`}
-          />
-        </Breadcrumbs>
-      }
-    >
-      Content here
-    </AppLayout>
+    <IssueViewContextProvider>
+      <AppLayout
+        breadcrumbs={
+          <Breadcrumbs>
+            <BreadcrumbItem
+              title={`${activeProject?.name ?? "Project"} Views`}
+              link={`/${workspaceSlug}/projects/${activeProject?.id}/cycles`}
+            />
+          </Breadcrumbs>
+        }
+      >
+        <IssuesView userAuth={props} />
+      </AppLayout>
+    </IssueViewContextProvider>
   );
 };
 

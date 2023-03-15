@@ -62,8 +62,10 @@ export const initialState: StateType = {
   orderBy: "created_at",
   filters: {
     type: null,
+    priority: null,
     assignees: null,
     labels: null,
+    state: null,
     issue__assignees__id: null,
     issue__labels__id: null,
   },
