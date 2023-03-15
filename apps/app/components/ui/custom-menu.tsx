@@ -54,7 +54,7 @@ const CustomMenu = ({
         ) : (
           <Menu.Button
             type="button"
-            className={`flex cursor-pointer items-center justify-between gap-1 px-2 py-1 text-xs duration-300 hover:bg-gray-100 ${
+            className={`flex cursor-pointer items-center justify-between gap-1 px-2.5 py-1 text-xs duration-300 hover:bg-gray-100 ${
               textAlignment === "right"
                 ? "text-right"
                 : textAlignment === "center"

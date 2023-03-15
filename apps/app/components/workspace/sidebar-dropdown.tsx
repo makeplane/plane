@@ -12,7 +12,9 @@ import useWorkspaces from "hooks/use-workspaces";
 import userService from "services/user.service";
 import authenticationService from "services/authentication.service";
 // components
-import { Avatar, Loader } from "components/ui";
+import { Avatar, Loader, Tooltip } from "components/ui";
+// helper
+import { truncateText } from "helpers/string.helper";
 
 // types
 import { IWorkspace } from "types";
@@ -72,7 +74,7 @@ export const WorkspaceSidebarDropdown = () => {
 
   return (
     <div className="relative">
-      <Menu as="div" className="col-span-4 inline-block w-full p-5 text-left">
+      <Menu as="div" className="col-span-4 inline-block w-full px-5 py-3 text-left">
         <div className="flex w-full items-center justify-between gap-2.5">
           <Menu.Button
             className={`inline-flex w-full items-center rounded-md px-1 py-2 text-sm font-semibold text-gray-700 focus:outline-none `}
@@ -96,7 +98,7 @@ export const WorkspaceSidebarDropdown = () => {
                 <p className="text-base">
                   {activeWorkspace?.name
                     ? activeWorkspace.name.length > 17
-                      ? `${activeWorkspace.name.substring(0, 17)}...`
+                      ? `${activeWorkspace.name.substring(0, 15)}...`
                       : activeWorkspace.name
                     : "Loading..."}
                 </p>
@@ -159,7 +161,8 @@ export const WorkspaceSidebarDropdown = () => {
                                   activeWorkspace?.name?.charAt(0) ?? "N"
                                 )}
                               </span>
-                              <h5 className="text-sm">{workspace.name}</h5>
+
+                              <h5 className="text-sm">{truncateText(workspace.name, 18)}</h5>
                             </div>
                             <span className="p-1">
                               <CheckIcon
@@ -206,7 +209,7 @@ export const WorkspaceSidebarDropdown = () => {
                   className="flex w-full items-center justify-start rounded px-2 py-1 text-sm text-gray-600 hover:bg-gray-100"
                 >
                   <Link href={link.href}>
-                    <a>{link.name}</a>
+                    <a className="w-full">{link.name}</a>
                   </Link>
                 </Menu.Item>
               ))}

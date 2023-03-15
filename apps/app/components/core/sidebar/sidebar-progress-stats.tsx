@@ -179,6 +179,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
           {members?.map((member, index) => {
             const totalArray = issues?.filter((i) => i.assignees?.includes(member.member.id));
             const completeArray = totalArray?.filter((i) => i.state_detail.group === "completed");
+
             if (totalArray.length > 0) {
               return (
                 <SingleProgressStats
@@ -223,9 +224,10 @@ export const SidebarProgressStats: React.FC<Props> = ({
           )}
         </Tab.Panel>
         <Tab.Panel as="div" className="flex w-full flex-col ">
-          {issueLabels?.map((issue, index) => {
-            const totalArray = issues?.filter((i) => i.labels?.includes(issue.id));
+          {issueLabels?.map((label, index) => {
+            const totalArray = issues?.filter((i) => i.labels?.includes(label.id));
             const completeArray = totalArray?.filter((i) => i.state_detail.group === "completed");
+
             if (totalArray.length > 0) {
               return (
                 <SingleProgressStats
@@ -235,10 +237,11 @@ export const SidebarProgressStats: React.FC<Props> = ({
                       <span
                         className="block h-3 w-3 rounded-full "
                         style={{
-                          backgroundColor: issue.color,
+                          backgroundColor:
+                            label.color && label.color !== "" ? label.color : "#000000",
                         }}
                       />
-                      <span className="text-xs capitalize">{issue.name}</span>
+                      <span className="text-xs capitalize">{label.name}</span>
                     </div>
                   }
                   completed={completeArray.length}

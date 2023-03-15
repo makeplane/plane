@@ -28,6 +28,8 @@ export const ViewDueDateSelect: React.FC<Props> = ({ issue, partialUpdateIssue, 
         onChange={(val) =>
           partialUpdateIssue({
             target_date: val,
+            priority: issue.priority,
+            state: issue.state,
           })
         }
         className={issue?.target_date ? "w-[6.5rem]" : "w-[3rem] text-center"}

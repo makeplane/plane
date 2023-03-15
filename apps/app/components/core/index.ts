@@ -8,5 +8,4 @@ export * from "./issues-view-filter";
 export * from "./issues-view";
 export * from "./link-modal";
 export * from "./not-authorized-view";
-export * from "./multi-level-select";
 export * from "./image-picker-popover";

@@ -1,7 +1,7 @@
 // services
 import APIService from "services/api.service";
 // types
-import type { IModule } from "types";
+import type { IIssueViewOptions, IModule, ModuleIssueResponse, IIssue } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -76,9 +76,34 @@ class ProjectIssuesServices extends APIService {
       });
   }
 
-  async getModuleIssues(workspaceSlug: string, projectId: string, moduleId: string): Promise<any> {
+  async getModuleIssues(
+    workspaceSlug: string,
+    projectId: string,
+    moduleId: string
+  ): Promise<IIssue[]> {
     return this.get(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/module-issues/`
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getModuleIssuesWithParams(
+    workspaceSlug: string,
+    projectId: string,
+    moduleId: string,
+    queries?: IIssueViewOptions
+  ): Promise<
+    | IIssue[]
+    | {
+        [key: string]: IIssue[];
+      }
+  > {
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/module-issues/`,
+      { params: queries }
     )
       .then((response) => response?.data)
       .catch((error) => {
@@ -159,15 +184,24 @@ class ProjectIssuesServices extends APIService {
       module: string;
     }
   ): Promise<any> {
-    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/user-favorite-modules/`, data)
+    return this.post(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/user-favorite-modules/`,
+      data
+    )
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async removeModuleFromFavorites(workspaceSlug: string, projectId: string, moduleId: string): Promise<any> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/user-favorite-modules/${moduleId}/`)
+  async removeModuleFromFavorites(
+    workspaceSlug: string,
+    projectId: string,
+    moduleId: string
+  ): Promise<any> {
+    return this.delete(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/user-favorite-modules/${moduleId}/`
+    )
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

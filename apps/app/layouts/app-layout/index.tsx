@@ -136,7 +136,7 @@ const AppLayout: FC<AppLayoutProps> = ({
             ) : isMember ? (
               <div
                 className={`flex w-full flex-grow flex-col ${
-                  noPadding ? "" : settingsLayout ? "p-9 lg:px-32 lg:pt-9" : "p-9"
+                  noPadding ? "" : settingsLayout ? "p-8 lg:px-28" : "p-8"
                 } ${
                   bg === "primary"
                     ? "bg-primary"
