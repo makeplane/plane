@@ -63,6 +63,7 @@ class Project(BaseModel):
     icon = models.CharField(max_length=255, null=True, blank=True)
     module_view = models.BooleanField(default=True)
     cycle_view = models.BooleanField(default=True)
+    issue_views_view = models.BooleanField(default=True)
     cover_image = models.URLField(blank=True, null=True)
 
     def __str__(self):
