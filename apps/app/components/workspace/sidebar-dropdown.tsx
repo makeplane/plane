@@ -209,7 +209,7 @@ export const WorkspaceSidebarDropdown = () => {
                   className="flex w-full items-center justify-start rounded px-2 py-1 text-sm text-gray-600 hover:bg-gray-100"
                 >
                   <Link href={link.href}>
-                    <a>{link.name}</a>
+                    <a className="w-full">{link.name}</a>
                   </Link>
                 </Menu.Item>
               ))}
