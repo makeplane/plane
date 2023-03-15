@@ -21,7 +21,7 @@ class IssueViewSerializer(BaseSerializer):
         ]
 
     def create(self, validated_data):
-        query_params = validated_data.pop("query_data", {})
+        query_params = validated_data.get("query_data", {})
 
         if not bool(query_params):
             raise serializers.ValidationError(
@@ -32,7 +32,7 @@ class IssueViewSerializer(BaseSerializer):
         return IssueView.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        query_params = validated_data.pop("query_data", {})
+        query_params = validated_data.get("query_data", {})
         if not bool(query_params):
             raise serializers.ValidationError(
                 {"query_data": ["Query data field cannot be empty"]}
