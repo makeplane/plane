@@ -47,11 +47,18 @@ class ModuleViewSet(BaseViewSet):
         )
 
     def get_queryset(self):
+        subquery = ModuleFavorite.objects.filter(
+            user=self.request.user,
+            module_id=OuterRef("pk"),
+            project_id=self.kwargs.get("project_id"),
+            workspace__slug=self.kwargs.get("slug"),
+        )
         return (
             super()
             .get_queryset()
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(workspace__slug=self.kwargs.get("slug"))
+            .annotate(is_favorite=Exists(subquery))
             .select_related("project")
             .select_related("workspace")
             .select_related("lead")
@@ -94,23 +101,6 @@ class ModuleViewSet(BaseViewSet):
                     {"name": "The module name is already taken"},
                     status=status.HTTP_410_GONE,
                 )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-    def list(self, request, slug, project_id):
-        try:
-            subquery = ModuleFavorite.objects.filter(
-                user=self.request.user,
-                module_id=OuterRef("pk"),
-                project_id=project_id,
-                workspace__slug=slug,
-            )
-            modules = self.get_queryset().annotate(is_favorite=Exists(subquery))
-            return Response(ModuleSerializer(modules, many=True).data)
         except Exception as e:
             capture_exception(e)
             return Response(
@@ -307,7 +297,6 @@ class ModuleLinkViewSet(BaseViewSet):
 
 
 class ModuleFavoriteViewSet(BaseViewSet):
-
     permission_classes = [
         ProjectEntityPermission,
     ]

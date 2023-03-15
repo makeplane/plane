@@ -38,6 +38,12 @@ class CycleViewSet(BaseViewSet):
         )
 
     def get_queryset(self):
+        subquery = CycleFavorite.objects.filter(
+            user=self.request.user,
+            cycle_id=OuterRef("pk"),
+            project_id=self.kwargs.get("project_id"),
+            workspace__slug=self.kwargs.get("slug"),
+        )
         return self.filter_queryset(
             super()
             .get_queryset()
@@ -47,25 +53,9 @@ class CycleViewSet(BaseViewSet):
             .select_related("project")
             .select_related("workspace")
             .select_related("owned_by")
+            .annotate(is_favorite=Exists(subquery))
             .distinct()
         )
-
-    def list(self, request, slug, project_id):
-        try:
-            subquery = CycleFavorite.objects.filter(
-                user=self.request.user,
-                cycle_id=OuterRef("pk"),
-                project_id=project_id,
-                workspace__slug=slug,
-            )
-            cycles = self.get_queryset().annotate(is_favorite=Exists(subquery))
-            return Response(CycleSerializer(cycles, many=True).data)
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
 
     def create(self, request, slug, project_id):
         try:
