@@ -79,7 +79,9 @@ from plane.api.views import (
     ShortCutViewSet,
     ## End Shortcuts
     # Views
-    ViewViewSet,
+    IssueViewViewSet,
+    ViewIssuesEndpoint,
+    IssueViewFavoriteViewSet,
     ## End Views
     # Cycles
     CycleViewSet,
@@ -474,7 +476,7 @@ urlpatterns = [
     # Views
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/views/",
-        ViewViewSet.as_view(
+        IssueViewViewSet.as_view(
             {
                 "get": "list",
                 "post": "create",
@@ -484,7 +486,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/views/<uuid:pk>/",
-        ViewViewSet.as_view(
+        IssueViewViewSet.as_view(
             {
                 "get": "retrieve",
                 "put": "update",
@@ -493,6 +495,30 @@ urlpatterns = [
             }
         ),
         name="project-view",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/views/<uuid:view_id>/issues/",
+        ViewIssuesEndpoint.as_view(),
+        name="project-view-issues",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/user-favorite-views/",
+        IssueViewFavoriteViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="user-favorite-view",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/user-favorite-views/<uuid:view_id>/",
+        IssueViewFavoriteViewSet.as_view(
+            {
+                "delete": "destroy",
+            }
+        ),
+        name="user-favorite-view",
     ),
     ## End Views
     ## Cycles

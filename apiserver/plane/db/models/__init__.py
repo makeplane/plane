@@ -44,7 +44,7 @@ from .cycle import Cycle, CycleIssue, CycleFavorite
 
 from .shortcut import Shortcut
 
-from .view import View
+from .view import IssueView, IssueViewFavorite
 
 from .module import Module, ModuleMember, ModuleIssue, ModuleLink, ModuleFavorite
 

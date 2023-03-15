@@ -41,7 +41,7 @@ from .workspace import (
 )
 from .state import StateViewSet
 from .shortcut import ShortCutViewSet
-from .view import ViewViewSet
+from .view import IssueViewViewSet, ViewIssuesEndpoint, IssueViewFavoriteViewSet
 from .cycle import (
     CycleViewSet,
     CycleIssueViewSet,

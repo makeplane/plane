@@ -21,7 +21,7 @@ from .project import (
 )
 from .state import StateSerializer
 from .shortcut import ShortCutSerializer
-from .view import ViewSerializer
+from .view import IssueViewSerializer, IssueViewFavoriteSerializer
 from .cycle import CycleSerializer, CycleIssueSerializer, CycleFavoriteSerializer
 from .asset import FileAssetSerializer
 from .issue import (
