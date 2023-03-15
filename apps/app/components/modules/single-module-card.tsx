@@ -4,9 +4,11 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import Image from "next/image";
 
-import { mutate } from "swr";
+import useSWR, { mutate } from "swr";
 
-// toast
+// services
+import modulesService from "services/modules.service";
+// hooks
 import useToast from "hooks/use-toast";
 // components
 import { DeleteModuleModal } from "components/modules";
@@ -24,17 +26,12 @@ import {
   UserGroupIcon,
 } from "@heroicons/react/24/outline";
 // helpers
+import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
-// services
-import modulesService from "services/modules.service";
 // types
 import { IModule } from "types";
 // fetch-key
-import { MODULE_LIST } from "constants/fetch-keys";
-// helpers
-import { copyTextToClipboard, truncateText } from "helpers/string.helper";
-// constants
-import { MODULE_STATUS } from "constants/module";
+import { MODULE_ISSUES, MODULE_LIST } from "constants/fetch-keys";
 
 type Props = {
   module: IModule;
@@ -46,7 +43,20 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+
   const { setToastAlert } = useToast();
+
+  const { data: moduleIssues } = useSWR(
+    workspaceSlug && projectId && module.id ? MODULE_ISSUES(module.id as string) : null,
+    workspaceSlug && projectId && module.id
+      ? () =>
+          modulesService.getModuleIssues(workspaceSlug as string, projectId as string, module.id)
+      : null
+  );
+
+  const completedIssues = (moduleIssues ?? []).filter(
+    (i) => i.state_detail.group === "completed" || i.state_detail.group === "cancelled"
+  ).length;
 
   const handleDeleteModule = () => {
     if (!module) return;
@@ -143,25 +153,58 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
         data={module}
       />
       <div className="h-full w-full min-w-[360px]">
-        <div
-          className="flex h-full w-full flex-row rounded-[10px] border-l-[10px] bg-white text-xs shadow"
-          style={{
-            borderColor: MODULE_STATUS.find((s) => s.value === module.status)?.color ?? "#6b7280",
-          }}
-        >
-          <div className="flex h-full w-full flex-col items-start justify-between gap-6 p-4">
+        <div className="rounded-[10px] border bg-white text-xs">
+          <div className="p-4">
             <div className="flex w-full flex-col gap-5">
-              <Tooltip tooltipContent={module.name} position="top-left">
-                <Link href={`/${workspaceSlug}/projects/${module.project}/modules/${module.id}`}>
-                  <a className="w-full">
-                    <h3 className="break-all text-lg font-semibold text-black">
-                      {truncateText(module.name, 75)}
-                    </h3>
-                  </a>
-                </Link>
-              </Tooltip>
-              <div className="flex items-center gap-4">
-                <div className="flex items-start gap-1 ">
+              <div className="flex items-center justify-between gap-2">
+                <Tooltip tooltipContent={module.name} position="top-left">
+                  <Link href={`/${workspaceSlug}/projects/${module.project}/modules/${module.id}`}>
+                    <a className="w-full">
+                      <h3 className="break-all text-lg font-semibold text-black">
+                        {truncateText(module.name, 75)}
+                      </h3>
+                    </a>
+                  </Link>
+                </Tooltip>
+
+                <div className="flex items-center gap-1">
+                  <div className="mr-2 rounded bg-gray-100 px-2.5 py-2">
+                    <span className="capitalize">{module?.status?.replace("-", " ")}</span>
+                  </div>
+                  {module.is_favorite ? (
+                    <button onClick={handleRemoveFromFavorites}>
+                      <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
+                    </button>
+                  ) : (
+                    <button onClick={handleAddToFavorites}>
+                      <StarIcon className="h-4 w-4 " color="#858E96" />
+                    </button>
+                  )}
+
+                  <CustomMenu width="auto" verticalEllipsis>
+                    <CustomMenu.MenuItem onClick={handleEditModule}>
+                      <span className="flex items-center justify-start gap-2 text-gray-800">
+                        <PencilIcon className="h-4 w-4" />
+                        <span>Edit Module</span>
+                      </span>
+                    </CustomMenu.MenuItem>
+                    <CustomMenu.MenuItem onClick={handleDeleteModule}>
+                      <span className="flex items-center justify-start gap-2 text-gray-800">
+                        <TrashIcon className="h-4 w-4" />
+                        <span>Delete Module</span>
+                      </span>
+                    </CustomMenu.MenuItem>
+                    <CustomMenu.MenuItem onClick={handleCopyText}>
+                      <span className="flex items-center justify-start gap-2 text-gray-800">
+                        <DocumentDuplicateIcon className="h-4 w-4" />
+                        <span>Copy Module Link</span>
+                      </span>
+                    </CustomMenu.MenuItem>
+                  </CustomMenu>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex items-start gap-1">
                   <CalendarDaysIcon className="h-4 w-4 text-gray-900" />
                   <span className="text-gray-400">Start:</span>
                   <span>{renderShortDateWithYearFormat(startDate)}</span>
@@ -171,11 +214,9 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
                   <span className="text-gray-400">End:</span>
                   <span>{renderShortDateWithYearFormat(endDate)}</span>
                 </div>
-              </div>
-              <div className="flex items-center gap-6">
                 <div className="flex items-center gap-1.5">
-                  <UserCircleIcon className="h-5 w-5 text-gray-400" />
-                  <span>Lead:</span>
+                  <UserCircleIcon className="h-4 w-4 text-gray-900" />
+                  <span className="text-gray-400">Lead:</span>
                   <div>
                     {module.lead_detail ? (
                       <div className="flex items-center gap-1">
@@ -197,8 +238,8 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
                   </div>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <UserGroupIcon className="h-5 w-5 text-gray-400" />
-                  <span>Members:</span>
+                  <UserGroupIcon className="h-4 w-4 text-gray-900" />
+                  <span className="text-gray-400">Members:</span>
                   <div className="flex  items-center gap-1 text-xs">
                     {module.members && module.members.length > 0 ? (
                       <AssigneesList userIds={module.members} length={3} />
@@ -218,42 +259,14 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
                 </div>
               </div>
             </div>
-            <div className="flex w-full items-center justify-between gap-4">
-              <div className="flex items-center gap-2 rounded bg-gray-100 px-2.5 py-2">
-                <span className="capitalize">{module?.status?.replace("-", " ")}</span>
-              </div>
-              <div className="flex items-center gap-1">
-                {module.is_favorite ? (
-                  <button onClick={handleRemoveFromFavorites}>
-                    <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
-                  </button>
-                ) : (
-                  <button onClick={handleAddToFavorites}>
-                    <StarIcon className="h-4 w-4 " color="#858E96" />
-                  </button>
-                )}
-
-                <CustomMenu width="auto" verticalEllipsis>
-                  <CustomMenu.MenuItem onClick={handleEditModule}>
-                    <span className="flex items-center justify-start gap-2 text-gray-800">
-                      <PencilIcon className="h-4 w-4" />
-                      <span>Edit Module</span>
-                    </span>
-                  </CustomMenu.MenuItem>
-                  <CustomMenu.MenuItem onClick={handleDeleteModule}>
-                    <span className="flex items-center justify-start gap-2 text-gray-800">
-                      <TrashIcon className="h-4 w-4" />
-                      <span>Delete Module</span>
-                    </span>
-                  </CustomMenu.MenuItem>
-                  <CustomMenu.MenuItem onClick={handleCopyText}>
-                    <span className="flex items-center justify-start gap-2 text-gray-800">
-                      <DocumentDuplicateIcon className="h-4 w-4" />
-                      <span>Copy Module Link</span>
-                    </span>
-                  </CustomMenu.MenuItem>
-                </CustomMenu>
-              </div>
+          </div>
+          <div className="flex items-center gap-2 bg-gray-100 p-4">
+            Progress{" "}
+            <div className="bar relative h-1 w-full rounded bg-gray-300">
+              <div
+                className="absolute top-0 left-0 h-1 rounded bg-green-500 duration-300"
+                style={{ width: `${(completedIssues / (moduleIssues ?? []).length) * 100}%` }}
+              />
             </div>
           </div>
         </div>
