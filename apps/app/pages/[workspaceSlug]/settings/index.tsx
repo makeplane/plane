@@ -14,10 +14,11 @@ import { LinkIcon } from "@heroicons/react/24/outline";
 import { requiredWorkspaceAdmin } from "lib/auth";
 // services
 import workspaceService from "services/workspace.service";
-// layouts
-import AppLayout from "layouts/app-layout";
+import fileService from "services/file.service";
 // hooks
 import useToast from "hooks/use-toast";
+// layouts
+import AppLayout from "layouts/app-layout";
 // components
 import { ImageUploadModal } from "components/core";
 import { DeleteWorkspaceModal } from "components/workspace";
@@ -96,6 +97,15 @@ const WorkspaceSettings: NextPage<UserAuth> = (props) => {
       .catch((err) => console.error(err));
   };
 
+  const handleDelete = (url: string | null | undefined) => {
+    if (!url) return;
+
+    const index = url.indexOf(".com");
+    const asset = url.substring(index + 5);
+
+    fileService.deleteFile(asset);
+  };
+
   return (
     <AppLayout
       memberType={props}
@@ -114,6 +124,7 @@ const WorkspaceSettings: NextPage<UserAuth> = (props) => {
         onClose={() => setIsImageUploadModalOpen(false)}
         onSuccess={(imageUrl) => {
           setIsImageUploading(true);
+          handleDelete(activeWorkspace?.logo);
           setValue("logo", imageUrl);
           setIsImageUploadModalOpen(false);
           handleSubmit(onSubmit)().then(() => setIsImageUploading(false));

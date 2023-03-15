@@ -2,6 +2,12 @@ import React from "react";
 
 import { useRouter } from "next/router";
 
+import useSWR from "swr";
+
+// services
+import projectService from "services/project.service";
+import issuesService from "services/issues.service";
+import stateService from "services/state.service";
 // hooks
 import useIssuesProperties from "hooks/use-issue-properties";
 import useIssuesView from "hooks/use-issues-view";
@@ -14,10 +20,14 @@ import { ChevronDownIcon, ListBulletIcon } from "@heroicons/react/24/outline";
 import { Squares2X2Icon } from "@heroicons/react/20/solid";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
+import { getStatesList } from "helpers/state.helper";
 // types
-import { Properties } from "types";
-// common
+import { IIssue, IIssueLabels, Properties } from "types";
+// fetch-keys
+import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS, STATE_LIST } from "constants/fetch-keys";
+// constants
 import { GROUP_BY_OPTIONS, ORDER_BY_OPTIONS, FILTER_ISSUE_OPTIONS } from "constants/issue";
+import { PRIORITIES } from "constants/project";
 
 export const IssuesFilterView: React.FC = () => {
   const router = useRouter();
@@ -40,6 +50,28 @@ export const IssuesFilterView: React.FC = () => {
   const [properties, setProperties] = useIssuesProperties(
     workspaceSlug as string,
     projectId as string
+  );
+
+  const { data: states } = useSWR(
+    workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
+      : null
+  );
+  const statesList = getStatesList(states ?? {});
+
+  const { data: members } = useSWR(
+    projectId ? PROJECT_MEMBERS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
+      : null
+  );
+
+  const { data: issueLabels } = useSWR<IIssueLabels[]>(
+    workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string)
+      : null
   );
 
   return (

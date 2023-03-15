@@ -19,11 +19,16 @@ type TImageUploadModalProps = {
   onClose: () => void;
   isOpen: boolean;
   onSuccess: (url: string) => void;
+  userImage?: boolean;
 };
 
-export const ImageUploadModal: React.FC<TImageUploadModalProps> = (props) => {
-  const { value, onSuccess, isOpen, onClose } = props;
-
+export const ImageUploadModal: React.FC<TImageUploadModalProps> = ({
+  value,
+  onSuccess,
+  isOpen,
+  onClose,
+  userImage,
+}) => {
   const [image, setImage] = useState<File | null>(null);
   const [isImageUploading, setIsImageUploading] = useState(false);
 
@@ -46,22 +51,34 @@ export const ImageUploadModal: React.FC<TImageUploadModalProps> = (props) => {
   const handleSubmit = async () => {
     setIsImageUploading(true);
 
-    if (image === null || !workspaceSlug) return;
+    if (!image || !workspaceSlug) return;
 
     const formData = new FormData();
     formData.append("asset", image);
     formData.append("attributes", JSON.stringify({}));
 
-    fileServices
-      .uploadFile(workspaceSlug as string, formData)
-      .then((res) => {
-        const imageUrl = res.asset;
-        onSuccess(imageUrl);
-        setIsImageUploading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+    if (userImage) {
+      fileServices
+        .uploadUserFile(formData)
+        .then((res) => {
+          const imageUrl = res.asset;
+          onSuccess(imageUrl);
+          setIsImageUploading(false);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    } else
+      fileServices
+        .uploadFile(workspaceSlug as string, formData)
+        .then((res) => {
+          const imageUrl = res.asset;
+          onSuccess(imageUrl);
+          setIsImageUploading(false);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
   };
 
   const handleClose = () => {
@@ -109,11 +126,10 @@ export const ImageUploadModal: React.FC<TImageUploadModalProps> = (props) => {
                             : ""
                         }`}
                       >
-                        {image !== null || (value && value !== null && value !== "") ? (
+                        {image !== null || (value && value !== "") ? (
                           <>
                             <button
                               type="button"
-                              onClick={openFileDialog}
                               className="absolute top-0 right-0 z-40 translate-x-1/2 -translate-y-1/2 rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600"
                             >
                               Edit

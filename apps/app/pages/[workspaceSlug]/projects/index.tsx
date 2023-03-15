@@ -14,14 +14,16 @@ import AppLayout from "layouts/app-layout";
 import { JoinProjectModal } from "components/project/join-project-modal";
 import { DeleteProjectModal, SingleProjectCard } from "components/project";
 // ui
-import { HeaderButton, EmptySpace, EmptySpaceItem, Loader } from "components/ui";
+import { HeaderButton,  Loader, EmptyState } from "components/ui";
 import { Breadcrumbs, BreadcrumbItem } from "components/breadcrumbs";
 // icons
-import { ClipboardDocumentListIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { PlusIcon } from "@heroicons/react/24/outline";
 // types
 import type { GetServerSidePropsContext, NextPage } from "next";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
+// image
+import emptyProject from "public/empty-state/empty-project.svg";
 
 const ProjectsPage: NextPage = () => {
   // router
@@ -80,28 +82,12 @@ const ProjectsPage: NextPage = () => {
       {projects ? (
         <>
           {projects.length === 0 ? (
-            <div className="grid h-full w-full place-items-center px-4 sm:px-0">
-              <EmptySpace
-                title="You don't have any project yet."
-                description="Projects are a collection of issues. They can be used to represent the development work for a product, project, or service."
-                Icon={ClipboardDocumentListIcon}
-              >
-                <EmptySpaceItem
-                  title="Create a new project"
-                  description={
-                    <span>
-                      Use <pre className="inline rounded bg-gray-200 px-2 py-1">P</pre> shortcut to
-                      create a new project
-                    </span>
-                  }
-                  Icon={PlusIcon}
-                  action={() => {
-                    const e = new KeyboardEvent("keydown", { key: "p" });
-                    document.dispatchEvent(e);
-                  }}
-                />
-              </EmptySpace>
-            </div>
+            <EmptyState
+            type="project"
+            title="Create New Project"
+            description="Projects are a collection of issues. They can be used to represent the development work for a product, project, or service."
+            imgURL={emptyProject}
+          />
           ) : (
             <div className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
               {projects.map((project) => (

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
@@ -11,15 +10,14 @@ import { useForm } from "react-hook-form";
 // lib
 import { requiredAuth } from "lib/auth";
 // services
-import projectService from "services/project.service";
+import fileService from "services/file.service";
+import userService from "services/user.service";
+import workspaceService from "services/workspace.service";
 // hooks
 import useUser from "hooks/use-user";
 import useToast from "hooks/use-toast";
 // layouts
 import AppLayout from "layouts/app-layout";
-// services
-import userService from "services/user.service";
-import workspaceService from "services/workspace.service";
 // components
 import { ImageUploadModal } from "components/core";
 // ui
@@ -28,18 +26,16 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import {
   ChevronRightIcon,
-  ClipboardDocumentListIcon,
   PencilIcon,
-  RectangleStackIcon,
   UserIcon,
   UserPlusIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 // types
 import type { NextPage, GetServerSidePropsContext } from "next";
-import type { IIssue, IUser } from "types";
+import type { IUser } from "types";
 // fetch-keys
-import { USER_ISSUE, USER_WORKSPACE_INVITATIONS, PROJECTS_LIST } from "constants/fetch-keys";
+import { USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 
 const defaultValues: Partial<IUser> = {
   avatar: "",
@@ -50,11 +46,8 @@ const defaultValues: Partial<IUser> = {
 
 const Profile: NextPage = () => {
   const [isEditing, setIsEditing] = useState(false);
+  const [isRemoving, setIsRemoving] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
-
-  const {
-    query: { workspaceSlug },
-  } = useRouter();
 
   const {
     register,
@@ -68,18 +61,8 @@ const Profile: NextPage = () => {
   const { setToastAlert } = useToast();
   const { user: myProfile, mutateUser } = useUser();
 
-  const { data: myIssues } = useSWR<IIssue[]>(
-    myProfile && workspaceSlug ? USER_ISSUE(workspaceSlug as string) : null,
-    myProfile && workspaceSlug ? () => userService.userIssues(workspaceSlug as string) : null
-  );
-
   const { data: invitations } = useSWR(USER_WORKSPACE_INVITATIONS, () =>
     workspaceService.userWorkspaceInvitations()
-  );
-
-  const { data: projects } = useSWR(
-    workspaceSlug ? PROJECTS_LIST(workspaceSlug as string) : null,
-    () => (workspaceSlug ? () => projectService.getProjects(workspaceSlug as string) : null)
   );
 
   useEffect(() => {
@@ -88,45 +71,69 @@ const Profile: NextPage = () => {
 
   const onSubmit = (formData: IUser) => {
     const payload: Partial<IUser> = {
-      id: formData.id,
       first_name: formData.first_name,
       last_name: formData.last_name,
       avatar: formData.avatar,
     };
     userService
       .updateUser(payload)
-      .then((response) => {
+      .then((res) => {
         mutateUser((prevData) => {
           if (!prevData) return prevData;
-          return { ...prevData, user: { ...payload, ...response } };
-        });
+          return { ...prevData, user: { ...payload, ...res } };
+        }, false);
         setIsEditing(false);
         setToastAlert({
-          title: "Success",
           type: "success",
-          message: "Profile updated successfully",
+          title: "Success!",
+          message: "Profile updated successfully.",
         });
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "There was some error in updating your profile. Please try again.",
+        });
       });
   };
 
+  const handleDelete = (url: string | null | undefined, updateUser: boolean = false) => {
+    if (!url) return;
+
+    setIsRemoving(true);
+
+    const index = url.indexOf(".com");
+    const asset = url.substring(index + 5);
+
+    fileService.deleteUserFile(asset).then(() => {
+      if (updateUser)
+        userService
+          .updateUser({ avatar: "" })
+          .then((res) => {
+            setIsRemoving(false);
+            setToastAlert({
+              type: "success",
+              title: "Success!",
+              message: "Profile picture removed successfully.",
+            });
+            mutateUser((prevData) => {
+              if (!prevData) return prevData;
+              return { ...prevData, user: res };
+            }, false);
+          })
+          .catch(() => {
+            setIsRemoving(false);
+            setToastAlert({
+              type: "error",
+              title: "Error!",
+              message: "There was some error in deleting your profile picture. Please try again.",
+            });
+          });
+    });
+  };
+
   const quickLinks = [
-    {
-      icon: RectangleStackIcon,
-      title: "My Issues",
-      number: myIssues?.length ?? 0,
-      description: "View the list of issues assigned to you for this workspace.",
-      href: `/${workspaceSlug}/me/my-issues`,
-    },
-    {
-      icon: ClipboardDocumentListIcon,
-      title: "My Projects",
-      number: projects?.length ?? 0,
-      description: "View the list of projects of the workspace.",
-      href: `/${workspaceSlug}/projects`,
-    },
     {
       icon: UserPlusIcon,
       title: "Workspace Invitations",
@@ -147,11 +154,13 @@ const Profile: NextPage = () => {
         isOpen={isImageUploadModalOpen}
         onClose={() => setIsImageUploadModalOpen(false)}
         onSuccess={(url) => {
+          handleDelete(myProfile?.avatar);
           setValue("avatar", url);
           handleSubmit(onSubmit)();
           setIsImageUploadModalOpen(false);
         }}
         value={watch("avatar") !== "" ? watch("avatar") : undefined}
+        userImage
       />
       <div className="w-full space-y-5">
         <Breadcrumbs>
@@ -197,15 +206,26 @@ const Profile: NextPage = () => {
                       <br />
                       Supported file types are .jpg and .png.
                     </p>
-                    <Button
-                      type="button"
-                      className="mt-4"
-                      onClick={() => {
-                        setIsImageUploadModalOpen(true);
-                      }}
-                    >
-                      Upload
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        type="button"
+                        className="mt-4"
+                        onClick={() => setIsImageUploadModalOpen(true)}
+                      >
+                        Upload new
+                      </Button>
+                      {myProfile.avatar && myProfile.avatar !== "" && (
+                        <Button
+                          type="button"
+                          className="mt-4"
+                          theme="danger"
+                          onClick={() => handleDelete(myProfile.avatar, true)}
+                          disabled={isRemoving}
+                        >
+                          {isRemoving ? "Removing..." : "Remove"}
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </div>
                 <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
@@ -259,7 +279,7 @@ const Profile: NextPage = () => {
               </section>
               <section>
                 <h2 className="mb-3 text-xl font-medium">Quick Links</h2>
-                <div className="grid grid-cols-3 gap-5">
+                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
                   {quickLinks.map((item, index) => (
                     <Link key={index} href={item.href}>
                       <a className="group rounded-lg bg-secondary p-5 duration-300 hover:bg-theme">
