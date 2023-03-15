@@ -14,7 +14,9 @@ import { CompletedCycleIcon } from "components/icons";
 import { ICycle, SelectCycleType } from "types";
 // fetch-keys
 import { CYCLE_COMPLETE_LIST } from "constants/fetch-keys";
-import { Loader } from "components/ui";
+import { EmptyState, Loader } from "components/ui";
+// image
+import emptyCycle from "public/empty-state/empty-cycle.svg";
 
 export interface CompletedCyclesListProps {
   setCreateUpdateCycleModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -72,13 +74,13 @@ export const CompletedCyclesList: React.FC<CompletedCyclesListProps> = ({
             ))}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center gap-4 text-center">
-            <CompletedCycleIcon height="56" width="56" />
-            <h3 className="text-gray-500">
-              No completed cycles yet. Create with{" "}
-              <pre className="inline rounded bg-gray-200 px-2 py-1">Q</pre>.
-            </h3>
-          </div>
+          <EmptyState
+            type="cycle"
+            title="Create New Cycle"
+            description="Sprint more effectively with Cycles by confining your project
+          to a fixed amount of time. Create new cycle now."
+            imgURL={emptyCycle}
+          />
         )
       ) : (
         <Loader className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">

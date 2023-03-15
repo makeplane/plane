@@ -14,7 +14,7 @@ import { IssueViewContextProvider } from "contexts/issue-view.context";
 // components
 import { IssuesFilterView, IssuesView } from "components/core";
 // ui
-import { Spinner, EmptySpace, EmptySpaceItem, HeaderButton } from "components/ui";
+import { Spinner, EmptySpace, EmptySpaceItem, HeaderButton, EmptyState } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { RectangleStackIcon, PlusIcon } from "@heroicons/react/24/outline";
@@ -23,6 +23,8 @@ import type { UserAuth } from "types";
 import type { GetServerSidePropsContext, NextPage } from "next";
 // fetch-keys
 import { PROJECT_DETAILS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+// image
+import emptyIssue from "public/empty-state/empty-issue.svg";
 
 const ProjectIssues: NextPage<UserAuth> = (props) => {
   const router = useRouter();
@@ -76,30 +78,13 @@ const ProjectIssues: NextPage<UserAuth> = (props) => {
               userAuth={props}
             />
           ) : (
-            <div className="grid h-full w-full place-items-center px-4 sm:px-0">
-              <EmptySpace
-                title="You don't have any issue yet."
-                description="Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done."
-                Icon={RectangleStackIcon}
-              >
-                <EmptySpaceItem
-                  title="Create a new issue"
-                  description={
-                    <span>
-                      Use <pre className="inline rounded bg-gray-200 px-2 py-1">C</pre> shortcut to
-                      create a new issue
-                    </span>
-                  }
-                  Icon={PlusIcon}
-                  action={() => {
-                    const e = new KeyboardEvent("keydown", {
-                      key: "c",
-                    });
-                    document.dispatchEvent(e);
-                  }}
-                />
-              </EmptySpace>
-            </div>
+            <EmptyState
+            type="issue"
+            title="Create New Issue"
+            description="Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done.
+            Create a new issue"
+            imgURL={emptyIssue}
+          />
           )
         ) : (
           <div className="flex h-full w-full items-center justify-center">
