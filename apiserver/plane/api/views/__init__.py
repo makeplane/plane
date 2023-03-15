@@ -64,6 +64,7 @@ from .issue import (
     UserWorkSpaceIssues,
     SubIssuesEndpoint,
     IssueLinkViewSet,
+    BulkCreateIssueLabelsEndpoint,
 )
 
 from .auth_extended import (
@@ -98,4 +99,12 @@ from .integration import (
     GithubRepositorySyncViewSet,
     GithubCommentSyncViewSet,
     GithubRepositoriesEndpoint,
+    BulkCreateGithubIssueSyncEndpoint,
+)
+
+from .importer import (
+    ServiceIssueImportSummaryEndpoint,
+    ImportServiceEndpoint,
+    UpdateServiceImportStatusEndpoint,
+    BulkImportIssuesEndpoint,
 )

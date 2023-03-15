@@ -31,6 +31,7 @@ from .issue import (
     Label,
     IssueBlocker,
     IssueLink,
+    IssueSequence,
 )
 
 from .asset import FileAsset
@@ -57,3 +58,5 @@ from .integration import (
     GithubIssueSync,
     GithubCommentSync,
 )
+
+from .importer import Importer

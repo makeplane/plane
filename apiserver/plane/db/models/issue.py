@@ -307,6 +307,7 @@ class Label(ProjectBaseModel):
     color = models.CharField(max_length=255, blank=True)
 
     class Meta:
+        unique_together = ["name", "project"]
         verbose_name = "Label"
         verbose_name_plural = "Labels"
         db_table = "labels"

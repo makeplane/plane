@@ -742,7 +742,11 @@ def issue_activity(event):
     try:
         issue_activities = []
         type = event.get("type")
-        requested_data = json.loads(event.get("requested_data"))
+        requested_data = (
+            json.loads(event.get("requested_data"))
+            if event.get("current_instance") is not None
+            else None
+        )
         current_instance = (
             json.loads(event.get("current_instance"))
             if event.get("current_instance") is not None

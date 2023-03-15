@@ -63,13 +63,14 @@ from plane.api.views import (
     IssueCommentViewSet,
     UserWorkSpaceIssues,
     BulkDeleteIssuesEndpoint,
+    BulkImportIssuesEndpoint,
     ProjectUserViewsEndpoint,
     TimeLineIssueViewSet,
     IssuePropertyViewSet,
     LabelViewSet,
     SubIssuesEndpoint,
     IssueLinkViewSet,
-    ModuleLinkViewSet,
+    BulkCreateIssueLabelsEndpoint,
     ## End Issues
     # States
     StateViewSet,
@@ -93,6 +94,7 @@ from plane.api.views import (
     ModuleViewSet,
     ModuleIssueViewSet,
     ModuleFavoriteViewSet,
+    ModuleLinkViewSet,
     ## End Modules
     # Api Tokens
     ApiTokenEndpoint,
@@ -104,7 +106,13 @@ from plane.api.views import (
     GithubRepositorySyncViewSet,
     GithubIssueSyncViewSet,
     GithubCommentSyncViewSet,
+    BulkCreateGithubIssueSyncEndpoint,
     ## End Integrations
+    # Importer
+    ServiceIssueImportSummaryEndpoint,
+    ImportServiceEndpoint,
+    UpdateServiceImportStatusEndpoint,
+    ## End importer
 )
 
 
@@ -623,8 +631,19 @@ urlpatterns = [
         name="project-issue-labels",
     ),
     path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-create-labels/",
+        BulkCreateIssueLabelsEndpoint.as_view(),
+        name="project-bulk-labels",
+    ),
+    path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-delete-issues/",
         BulkDeleteIssuesEndpoint.as_view(),
+        name="project-issues-bulk",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-import-issues/<str:service>/",
+        BulkImportIssuesEndpoint.as_view(),
+        name="project-issues-bulk",
     ),
     path(
         "workspaces/<str:slug>/my-issues/",
@@ -924,6 +943,10 @@ urlpatterns = [
         ),
     ),
     path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/github-repository-sync/<uuid:repo_sync_id>/bulk-create-github-issue-sync/",
+        BulkCreateGithubIssueSyncEndpoint.as_view(),
+    ),
+    path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/github-repository-sync/<uuid:repo_sync_id>/github-issue-sync/<uuid:pk>/",
         GithubIssueSyncViewSet.as_view(
             {
@@ -952,4 +975,26 @@ urlpatterns = [
     ),
     ## End Github Integrations
     ## End Integrations
+    # Importer
+    path(
+        "workspaces/<str:slug>/importers/<str:service>/",
+        ServiceIssueImportSummaryEndpoint.as_view(),
+        name="importer",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/importers/<str:service>/",
+        ImportServiceEndpoint.as_view(),
+        name="importer",
+    ),
+    path(
+        "workspaces/<str:slug>/importers/",
+        ImportServiceEndpoint.as_view(),
+        name="importer",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/service/<str:service>/importers/<uuid:importer_id>/",
+        UpdateServiceImportStatusEndpoint.as_view(),
+        name="importer",
+    ),
+    ##  End Importer
 ]
