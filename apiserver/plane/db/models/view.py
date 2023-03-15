@@ -13,6 +13,7 @@ class IssueView(ProjectBaseModel):
     access = models.PositiveSmallIntegerField(
         default=1, choices=((0, "Private"), (1, "Public"))
     )
+    query_data = models.JSONField(default=dict)
 
     class Meta:
         verbose_name = "Issue View"

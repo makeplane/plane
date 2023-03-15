@@ -17,27 +17,28 @@ class IssueViewSerializer(BaseSerializer):
         read_only_fields = [
             "workspace",
             "project",
+            "query",
         ]
 
     def create(self, validated_data):
-        query_params = validated_data.pop("query", {})
+        query_params = validated_data.pop("query_data", {})
 
         if not bool(query_params):
             raise serializers.ValidationError(
-                {"query": ["Query field cannot be empty"]}
+                {"query_data": ["Query data field cannot be empty"]}
             )
 
         validated_data["query"] = issue_filters(query_params, "POST")
         return IssueView.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        query_params = validated_data.pop("query", {})
+        query_params = validated_data.pop("query_data", {})
         if not bool(query_params):
             raise serializers.ValidationError(
-                {"query": ["Query field cannot be empty"]}
+                {"query_data": ["Query data field cannot be empty"]}
             )
 
-        validated_data["query"] = issue_filters(query_params, "POST")
+        validated_data["query"] = issue_filters(query_params, "PATCH")
         return super().update(instance, validated_data)
 
 
