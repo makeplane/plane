@@ -263,15 +263,20 @@ class CycleIssueViewSet(BaseViewSet):
 
 
 class CycleDateCheckEndpoint(BaseAPIView):
-
     permission_classes = [
         ProjectEntityPermission,
-    ]    
+    ]
 
     def post(self, request, slug, project_id):
         try:
-            start_date = request.data.get("start_date")
-            end_date = request.data.get("end_date")
+            start_date = request.data.get("start_date", False)
+            end_date = request.data.get("end_date", False)
+
+            if not start_date or not end_date:
+                return Response(
+                    {"error": "Start date and end date both are required"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             cycles = Cycle.objects.filter(
                 Q(start_date__lte=start_date, end_date__gte=start_date)
@@ -299,11 +304,10 @@ class CycleDateCheckEndpoint(BaseAPIView):
 
 
 class CurrentUpcomingCyclesEndpoint(BaseAPIView):
-
     permission_classes = [
         ProjectEntityPermission,
     ]
-    
+
     def get(self, request, slug, project_id):
         try:
             subquery = CycleFavorite.objects.filter(
@@ -342,12 +346,10 @@ class CurrentUpcomingCyclesEndpoint(BaseAPIView):
 
 
 class CompletedCyclesEndpoint(BaseAPIView):
-
     permission_classes = [
         ProjectEntityPermission,
-    ]    
+    ]
 
-    
     def get(self, request, slug, project_id):
         try:
             subquery = CycleFavorite.objects.filter(
@@ -380,10 +382,9 @@ class CompletedCyclesEndpoint(BaseAPIView):
 
 
 class DraftCyclesEndpoint(BaseAPIView):
-
     permission_classes = [
         ProjectEntityPermission,
-    ]    
+    ]
 
     def get(self, request, slug, project_id):
         try:
@@ -407,11 +408,10 @@ class DraftCyclesEndpoint(BaseAPIView):
 
 
 class CycleFavoriteViewSet(BaseViewSet):
-
     permission_classes = [
         ProjectEntityPermission,
     ]
-    
+
     serializer_class = CycleFavoriteSerializer
     model = CycleFavorite
 
