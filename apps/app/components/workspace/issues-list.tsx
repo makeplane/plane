@@ -46,7 +46,7 @@ export const IssuesList: React.FC<Props> = ({ issues, type }) => {
             <h4 className="col-span-2">Issue</h4>
             <h4>Due Date</h4>
           </div>
-          <div className="h-72 overflow-y-scroll">
+          <div className="max-h-72 overflow-y-scroll">
             {issues.length > 0 ? (
               issues.map((issue) => {
                 const dateDifference = getDateDifference(new Date(issue.target_date as string));

@@ -1,7 +1,7 @@
 export const STATE_GROUP_COLORS: {
   [key: string]: string;
 } = {
-  backlog: "#dee2e6",
+  backlog: "#ced4da",
   unstarted: "#26b5ce",
   started: "#f7ae59",
   cancelled: "#d687ff",

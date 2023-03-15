@@ -1,3 +1,4 @@
+export * from "./activity-graph";
 export * from "./completed-issues-graph";
 export * from "./create-workspace-form";
 export * from "./delete-workspace-modal";

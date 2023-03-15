@@ -19,7 +19,6 @@ import {
 import { orderArrayBy } from "helpers/array.helper";
 // types
 import type { NextPage, GetServerSidePropsContext } from "next";
-import { IIssue } from "types";
 
 const WorkspacePage: NextPage = () => {
   const router = useRouter();
@@ -32,7 +31,7 @@ const WorkspacePage: NextPage = () => {
       (i) =>
         i.target_date &&
         i.target_date !== "" &&
-        (!i.completed_at || i.completed_at === "") &&
+        !i.completed_at &&
         new Date(i.target_date) < new Date()
     ) ?? [],
     "target_date",

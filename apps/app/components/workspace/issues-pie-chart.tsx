@@ -1,11 +1,13 @@
-// recharts
-// helpers
-import { STATE_GROUP_COLORS } from "constants/state";
-import { groupBy } from "helpers/array.helper";
 import { useCallback, useState } from "react";
-import { Cell, Pie, PieChart, Sector } from "recharts";
+
+// recharts
+import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Sector } from "recharts";
+// helpers
+import { groupBy } from "helpers/array.helper";
 // types
 import { IIssue } from "types";
+// constants
+import { STATE_GROUP_COLORS } from "constants/state";
 
 type Props = {
   issues: IIssue[] | undefined;
@@ -112,25 +114,28 @@ export const IssuesPieChart: React.FC<Props> = ({ issues }) => {
     <div>
       <h3 className="mb-2 font-semibold">Issues by States</h3>
       <div className="rounded-[10px] border bg-white p-4">
-        <PieChart width={730} height={250}>
-          <Pie
-            data={data}
-            dataKey="value"
-            nameKey="name"
-            cx="50%"
-            cy="50%"
-            fill="#8884d8"
-            innerRadius={70}
-            outerRadius={90}
-            activeIndex={activeIndex}
-            activeShape={renderActiveShape}
-            onMouseEnter={onPieEnter}
-          >
-            {data.map((cell: any) => (
-              <Cell key={cell.name} fill={STATE_GROUP_COLORS[cell.name.toLowerCase()]} />
-            ))}
-          </Pie>
-        </PieChart>
+        <ResponsiveContainer width="100%" height={250}>
+          <PieChart>
+            <Pie
+              data={data}
+              dataKey="value"
+              nameKey="name"
+              cx="50%"
+              cy="50%"
+              fill="#8884d8"
+              innerRadius={70}
+              outerRadius={90}
+              activeIndex={activeIndex}
+              activeShape={renderActiveShape}
+              onMouseEnter={onPieEnter}
+            >
+              {data.map((cell: any) => (
+                <Cell key={cell.name} fill={STATE_GROUP_COLORS[cell.name.toLowerCase()]} />
+              ))}
+            </Pie>
+            <Legend layout="vertical" verticalAlign="middle" align="right" height={36} />
+          </PieChart>
+        </ResponsiveContainer>
       </div>
     </div>
   );

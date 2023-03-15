@@ -1,13 +1,12 @@
 import React, { createContext, ReactElement } from "react";
 // swr
-import useSWR from "swr";
+import useSWR, { KeyedMutator } from "swr";
 // services
 import userService from "services/user.service";
 // constants
 import { CURRENT_USER } from "constants/fetch-keys";
 
 // types
-import type { KeyedMutator } from "swr";
 import type { IUser } from "types";
 
 interface IUserContextProps {

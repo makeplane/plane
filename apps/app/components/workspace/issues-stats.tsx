@@ -1,3 +1,5 @@
+// components
+import { ActivityGraph } from "components/workspace";
 // helpers
 import { groupBy } from "helpers/array.helper";
 // types
@@ -43,6 +45,7 @@ export const IssuesStats: React.FC<Props> = ({ issues }) => {
           </div>
           <div className="p-4 lg:col-span-2">
             <h3 className="mb-2 font-semibold capitalize">Activity Graph</h3>
+            <ActivityGraph />
           </div>
         </>
       ) : null}
