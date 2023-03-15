@@ -57,6 +57,7 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
   const completedIssues = (moduleIssues ?? []).filter(
     (i) => i.state_detail.group === "completed" || i.state_detail.group === "cancelled"
   ).length;
+  const completionPercentage = (completedIssues / (moduleIssues ?? []).length) * 100;
 
   const handleDeleteModule = () => {
     if (!module) return;
@@ -156,7 +157,7 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
         <div className="rounded-[10px] border bg-white text-xs">
           <div className="p-4">
             <div className="flex w-full flex-col gap-5">
-              <div className="flex items-center justify-between gap-2">
+              <div className="flex items-start justify-between gap-2">
                 <Tooltip tooltipContent={module.name} position="top-left">
                   <Link href={`/${workspaceSlug}/projects/${module.project}/modules/${module.id}`}>
                     <a className="w-full">
@@ -260,9 +261,13 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-2 bg-gray-100 p-4">
-            Progress{" "}
-            <div className="bar relative h-1 w-full rounded bg-gray-300">
+          <div className="flex gap-2 bg-gray-100 p-4">
+            <span>
+              Progress
+              <br />
+              {isNaN(completionPercentage) ? 0 : completionPercentage.toFixed(2)}%
+            </span>
+            <div className="bar relative mt-1 h-1 w-full rounded bg-gray-300">
               <div
                 className="absolute top-0 left-0 h-1 rounded bg-green-500 duration-300"
                 style={{ width: `${(completedIssues / (moduleIssues ?? []).length) * 100}%` }}
