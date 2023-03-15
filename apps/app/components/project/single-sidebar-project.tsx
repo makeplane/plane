@@ -6,8 +6,8 @@ import { Disclosure, Transition } from "@headlessui/react";
 // ui
 import { CustomMenu } from "components/ui";
 // icons
-import { ChevronDownIcon, Cog6ToothIcon } from "@heroicons/react/24/outline";
-import { ContrastIcon, LayerDiagonalIcon, PeopleGroupIcon } from "components/icons";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { ContrastIcon, LayerDiagonalIcon, PeopleGroupIcon, SettingIcon } from "components/icons";
 // helpers
 import { truncateText } from "helpers/string.helper";
 // types
@@ -41,7 +41,7 @@ const navigation = (workspaceSlug: string, projectId: string) => [
   {
     name: "Settings",
     href: `/${workspaceSlug}/projects/${projectId}/settings`,
-    icon: Cog6ToothIcon,
+    icon: SettingIcon,
   },
 ];
 

@@ -1,3 +1,5 @@
+import { IIssueFilterOptions } from "types";
+
 export const CURRENT_USER = "CURRENT_USER";
 export const USER_WORKSPACE_INVITATIONS = "USER_WORKSPACE_INVITATIONS";
 export const USER_WORKSPACES = "USER_WORKSPACES";
@@ -24,6 +26,8 @@ export const PROJECT_INVITATIONS = "PROJECT_INVITATIONS";
 
 export const PROJECT_ISSUES_LIST = (workspaceSlug: string, projectId: string) =>
   `PROJECT_ISSUES_LIST_${workspaceSlug}_${projectId}`;
+export const PROJECT_ISSUES_LIST_WITH_PARAMS = (projectId: string) =>
+  `PROJECT_ISSUES_LIST_WITH_PARAMS_${projectId}`;
 export const PROJECT_ISSUES_DETAILS = (issueId: string) => `PROJECT_ISSUES_DETAILS_${issueId}`;
 export const PROJECT_ISSUES_PROPERTIES = (projectId: string) =>
   `PROJECT_ISSUES_PROPERTIES_${projectId}`;
@@ -36,21 +40,28 @@ export const PROJECT_GITHUB_REPOSITORY = (projectId: string) =>
 
 export const CYCLE_LIST = (projectId: string) => `CYCLE_LIST_${projectId}`;
 export const CYCLE_ISSUES = (cycleId: string) => `CYCLE_ISSUES_${cycleId}`;
-export const CYCLE_DETAILS = (cycleId: string) => `CYCLE_DETAIL_${cycleId}`;
+export const CYCLE_ISSUES_WITH_PARAMS = (cycleId: string) => `CYCLE_ISSUES_WITH_PARAMS_${cycleId}`;
+export const CYCLE_DETAILS = (cycleId: string) => `CYCLE_DETAILS_${cycleId}`;
 export const CYCLE_CURRENT_AND_UPCOMING_LIST = (projectId: string) =>
   `CYCLE_CURRENT_AND_UPCOMING_LIST_${projectId}`;
 export const CYCLE_DRAFT_LIST = (projectId: string) => `CYCLE_DRAFT_LIST_${projectId}`;
 export const CYCLE_COMPLETE_LIST = (projectId: string) => `CYCLE_COMPLETE_LIST_${projectId}`;
 
 export const STATE_LIST = (projectId: string) => `STATE_LIST_${projectId}`;
-export const STATE_DETAIL = "STATE_DETAIL";
+export const STATE_DETAIL = "STATE_DETAILS";
 
 export const USER_ISSUE = (workspaceSlug: string) => `USER_ISSUE_${workspaceSlug}`;
 export const USER_PROJECT_VIEW = (projectId: string) => `USER_PROJECT_VIEW_${projectId}`;
 
 export const MODULE_LIST = (projectId: string) => `MODULE_LIST_${projectId}`;
 export const MODULE_ISSUES = (moduleId: string) => `MODULE_ISSUES_${moduleId}`;
-export const MODULE_DETAILS = (moduleId: string) => `MODULE_DETAIL_${moduleId}`;
+export const MODULE_ISSUES_WITH_PARAMS = (moduleId: string) =>
+  `MODULE_ISSUES_WITH_PARAMS_${moduleId}`;
+export const MODULE_DETAILS = (moduleId: string) => `MODULE_DETAILS_${moduleId}`;
+
+export const VIEWS_LIST = (projectId: string) => `VIEWS_LIST_${projectId}`;
+export const VIEW_ISSUES = (viewId: string) => `VIEW_ISSUES_${viewId}`;
+export const VIEW_DETAILS = (viewId: string) => `VIEW_DETAILS_${viewId}`;
 
 // Issues
 export const ISSUE_DETAILS = (issueId: string) => `ISSUE_DETAILS_${issueId}`;

@@ -67,8 +67,8 @@ export interface IIssue {
   blockers: any[];
   blockers_list: string[];
   blocks_list: string[];
-  bridge: string;
-  completed_at: string | null;
+  bridge_id?: string | null;
+  completed_at: Date;
   created_at: Date;
   created_by: string;
   cycle: string | null;
@@ -205,4 +205,18 @@ export interface IIssueActivity {
   issue: string;
   issue_comment: string | null;
   actor: string;
+}
+
+export interface IIssueFilterOptions {
+  type: "active" | "backlog" | null;
+  assignees: string[] | null;
+  labels: string[] | null;
+  issue__assignees__id: string[] | null;
+  issue__labels__id: string[] | null;
+}
+
+export interface IIssueViewOptions {
+  group_by: "state" | "priority" | "labels" | null;
+  order_by: "created_at" | "updated_at" | "priority" | "sort_order";
+  filters: IIssueFilterOptions;
 }

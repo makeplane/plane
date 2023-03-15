@@ -18,8 +18,8 @@ export const LinearProgressIndicator: React.FC<Props> = ({ data }) => {
     progress += item.value;
 
     return (
-      <Tooltip tooltipContent={`${item.name} ${Math.round(item.value)}%`}>
-        <div key={item.id} className="bar" style={style} />
+      <Tooltip key={item.id} tooltipContent={`${item.name} ${Math.round(item.value)}%`}>
+        <div className="bar" style={style} />
       </Tooltip>
     );
   });

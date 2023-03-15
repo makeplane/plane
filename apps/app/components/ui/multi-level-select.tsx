@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 
+// headless ui
 import { Listbox, Transition } from "@headlessui/react";
-
+// icons
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 
 type TSelectOption = {
@@ -23,9 +24,13 @@ type TMultipleSelectProps = {
   direction?: "left" | "right";
 };
 
-export const MultiLevelSelect: React.FC<TMultipleSelectProps> = (props) => {
-  const { options, selected, setSelected, label, direction = "right" } = props;
-
+export const MultiLevelSelect: React.FC<TMultipleSelectProps> = ({
+  options,
+  selected,
+  setSelected,
+  label,
+  direction = "right",
+}) => {
   const [openChildFor, setOpenChildFor] = useState<TSelectOption | null>(null);
 
   return (
