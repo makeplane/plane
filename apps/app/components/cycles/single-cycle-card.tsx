@@ -62,6 +62,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+
   const { setToastAlert } = useToast();
 
   const { data: cycleIssues } = useSWR(
@@ -80,7 +81,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
     started: [],
     cancelled: [],
     completed: [],
-    ...groupBy(cycleIssues ?? [], "issue_detail.state_detail.group"),
+    ...groupBy(cycleIssues ?? [], "state_detail.group"),
   };
 
   const handleAddToFavorites = () => {
@@ -324,7 +325,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
                 }`}
               >
                 <div className="flex w-full items-center gap-2 px-4 py-1">
-                  <span> Progress </span>
+                  <span>Progress</span>
                   <LinearProgressIndicator data={progressIndicatorData} />
                   <Disclosure.Button>
                     <span className="p-1">
