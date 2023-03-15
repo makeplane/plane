@@ -43,6 +43,7 @@ from plane.api.views import (
     ## End Workspaces
     # File Assets
     FileAssetEndpoint,
+    UserAssetsEndpoint,
     ## End File Assets
     # Projects
     ProjectViewSet,
@@ -787,12 +788,22 @@ urlpatterns = [
     path(
         "workspaces/<str:slug>/file-assets/",
         FileAssetEndpoint.as_view(),
-        name="File Assets",
+        name="file-assets",
     ),
     path(
-        "workspaces/<str:slug>/file-assets/<uuid:pk>/",
+        "workspaces/file-assets/<uuid:workspace_id>/<str:asset_key>/",
         FileAssetEndpoint.as_view(),
-        name="File Assets",
+        name="file-assets",
+    ),
+    path(
+        "users/file-assets/",
+        UserAssetsEndpoint.as_view(),
+        name="user-file-assets",
+    ),
+    path(
+        "users/file-assets/user-profile/<str:asset_key>/",
+        UserAssetsEndpoint.as_view(),
+        name="user-file-assets",
     ),
     ## End File Assets
     ## Modules
