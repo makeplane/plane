@@ -187,7 +187,7 @@ export interface IIssueLabels {
 
 export interface IIssueActivity {
   id: string;
-  actor_detail: IUser;
+  actor_detail: IUserLite;
   created_at: Date;
   updated_at: Date;
   verb: string;
