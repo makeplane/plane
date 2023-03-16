@@ -97,26 +97,57 @@ export const IssuesFilterView: React.FC = () => {
         </button>
       </div>
       <CustomMenu
-        customButton={
-          <button
-            type="button"
-            className="group flex items-center gap-2 rounded-md border bg-transparent p-2 text-xs font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:outline-none"
-          >
+        label={
+          <span className="flex items-center gap-2 rounded-md py-1 text-xs font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:outline-none">
             Filters
-            <ChevronDownIcon className="h-4 w-4" aria-hidden="true" />
-          </button>
+          </span>
         }
-        optionsPosition="right"
       >
-        <CustomMenu.MenuItem
-          onClick={() =>
-            setFilters({
-              assignees: ["72d6ad43-41ff-4907-9980-2f5ee8745ad3"],
-            })
-          }
-        >
-          Member- Aaryan
-        </CustomMenu.MenuItem>
+        <h4 className="px-1 py-2 font-medium">Status</h4>
+        {statesList?.map((state) => (
+          <CustomMenu.MenuItem
+            onClick={() => {
+              const filterStates = filters?.state ?? [];
+              const newFilterState = filterStates.includes(state.id)
+                ? filterStates.filter((id) => id !== state.id)
+                : [...filterStates, state.id];
+              setFilters({ ...filters, state: newFilterState });
+            }}
+          >
+            <>{state.name}</>
+          </CustomMenu.MenuItem>
+        ))}
+        <h4 className="px-1 py-2 font-medium">Members</h4>
+        {members?.map((member) => (
+          <CustomMenu.MenuItem onClick={() => {}}>
+            <>
+              {member.member.first_name && member.member.first_name !== ""
+                ? member.member.first_name + " " + member.member.last_name
+                : member.member.email}
+            </>
+          </CustomMenu.MenuItem>
+        ))}
+        <h4 className="px-1 py-2 font-medium">Labels</h4>
+        {issueLabels?.map((label) => (
+          <CustomMenu.MenuItem onClick={() => {}}>
+            <>{label.name}</>
+          </CustomMenu.MenuItem>
+        ))}
+        <h4 className="px-1 py-2 font-medium">Priority</h4>
+        {PRIORITIES?.map((priority) => (
+          <CustomMenu.MenuItem
+            onClick={() => {
+              if (priority === null) return;
+              const filterPriorities = filters?.priority ?? [];
+              const newFilterPriority = filterPriorities.includes(priority)
+                ? filterPriorities.filter((id) => id !== priority)
+                : [...filterPriorities, priority];
+              setFilters({ ...filters, priority: newFilterPriority });
+            }}
+          >
+            <span className="capitalize">{priority ?? "None"}</span>
+          </CustomMenu.MenuItem>
+        ))}
       </CustomMenu>
       <Popover className="relative">
         {({ open }) => (

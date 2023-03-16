@@ -21,11 +21,12 @@ import { VIEWS_LIST } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  data?: IView;
+  data: IView | null;
+  onClose: () => void;
+  onSuccess?: () => void;
 };
 
-export const DeleteViewModal: React.FC<Props> = ({ isOpen, setIsOpen, data }) => {
+export const DeleteViewModal: React.FC<Props> = ({ isOpen, data, onClose, onSuccess }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const router = useRouter();
@@ -36,19 +37,23 @@ export const DeleteViewModal: React.FC<Props> = ({ isOpen, setIsOpen, data }) =>
   const cancelButtonRef = useRef(null);
 
   const handleClose = () => {
-    setIsOpen(false);
     setIsDeleteLoading(false);
+    onClose();
   };
 
   const handleDeletion = async () => {
     setIsDeleteLoading(true);
 
-    if (!workspaceSlug || !data) return;
+    if (!workspaceSlug || !data || !projectId) return;
     await viewsService
-      .deleteView(projectId as string, data.id)
+      .deleteView(workspaceSlug as string, projectId as string, data.id)
       .then(() => {
-        mutate(VIEWS_LIST(projectId as string));
-        router.push(`/${workspaceSlug}/projects/${projectId}/issues`);
+        mutate<IView[]>(VIEWS_LIST(projectId as string), (views) =>
+          views?.filter((view) => view.id !== data.id)
+        );
+
+        if (onSuccess) onSuccess();
+
         handleClose();
 
         setToastAlert({

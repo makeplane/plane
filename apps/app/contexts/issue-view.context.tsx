@@ -8,6 +8,7 @@ import useSWR, { mutate } from "swr";
 import ToastAlert from "components/toast-alert";
 // services
 import projectService from "services/project.service";
+import viewsService from "services/views.service";
 // types
 import { IIssueFilterOptions, IProjectMember, NestedKeyOf } from "types";
 // fetch-keys
@@ -16,6 +17,8 @@ import {
   MODULE_ISSUES_WITH_PARAMS,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
   USER_PROJECT_VIEW,
+  VIEW_DETAILS,
+  VIEW_ISSUES,
 } from "constants/fetch-keys";
 
 export const issueViewContext = createContext<ContextType>({} as ContextType);
@@ -62,8 +65,10 @@ export const initialState: StateType = {
   orderBy: "created_at",
   filters: {
     type: null,
+    priority: null,
     assignees: null,
     labels: null,
+    state: null,
     issue__assignees__id: null,
     issue__labels__id: null,
   },
@@ -150,6 +155,17 @@ const saveDataToServer = async (workspaceSlug: string, projectID: string, state:
   });
 };
 
+const sendFilterDataToServer = async (
+  workspaceSlug: string,
+  projectID: string,
+  viewId: string,
+  state: any
+) => {
+  await viewsService.patchView(workspaceSlug, projectID, viewId, {
+    ...state,
+  });
+};
+
 const setNewDefault = async (workspaceSlug: string, projectId: string, state: any) => {
   mutate<IProjectMember>(
     workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId as string) : null,
@@ -174,12 +190,24 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
 
   const { data: myViewProps, mutate: mutateMyViewProps } = useSWR(
     workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId as string) : null,
     workspaceSlug && projectId
       ? () => projectService.projectMemberMe(workspaceSlug as string, projectId as string)
+      : null
+  );
+
+  const { data: viewDetails, mutate: mutateViewDetails } = useSWR(
+    workspaceSlug && projectId && viewId ? VIEW_DETAILS(viewId as string) : null,
+    workspaceSlug && projectId && viewId
+      ? () =>
+          viewsService.getViewDetails(
+            workspaceSlug as string,
+            projectId as string,
+            viewId as string
+          )
       : null
   );
 
@@ -335,15 +363,33 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
         };
       }, false);
 
-      saveDataToServer(workspaceSlug as string, projectId as string, {
-        ...state,
-        filters: {
-          ...state.filters,
-          ...property,
-        },
-      });
+      if (viewId) {
+        mutateViewDetails((prevData: any) => {
+          if (!prevData) return prevData;
+          return {
+            ...prevData,
+            query_data: {
+              ...state.filters,
+              ...property,
+            },
+          };
+        }, false);
+        sendFilterDataToServer(workspaceSlug as string, projectId as string, viewId as string, {
+          query_data: {
+            ...state.filters,
+            ...property,
+          },
+        });
+      } else
+        saveDataToServer(workspaceSlug as string, projectId as string, {
+          ...state,
+          filters: {
+            ...state.filters,
+            ...property,
+          },
+        });
     },
-    [projectId, workspaceSlug, state, mutateMyViewProps]
+    [projectId, workspaceSlug, state, mutateMyViewProps, viewId, mutateViewDetails]
   );
 
   const setNewDefaultView = useCallback(() => {
@@ -368,9 +414,15 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
   useEffect(() => {
     dispatch({
       type: "REHYDRATE_THEME",
-      payload: myViewProps?.view_props,
+      payload: {
+        ...myViewProps?.view_props,
+        filters: {
+          ...myViewProps?.view_props?.filters,
+          ...viewDetails?.query_data,
+        } as any,
+      },
     });
-  }, [myViewProps]);
+  }, [myViewProps, viewDetails]);
 
   useEffect(() => {
     // TODO: think of a better way to do this
@@ -380,11 +432,14 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
     } else if (moduleId) {
       mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string), {}, false);
       mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string));
+    } else if (viewId) {
+      mutate(VIEW_ISSUES(viewId as string), {}, false);
+      mutate(VIEW_ISSUES(viewId as string));
     } else {
       mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string), {}, false);
       mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string));
     }
-  }, [state, projectId, cycleId, moduleId]);
+  }, [state, projectId, cycleId, moduleId, viewId]);
 
   return (
     <issueViewContext.Provider

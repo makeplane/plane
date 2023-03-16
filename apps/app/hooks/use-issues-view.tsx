@@ -15,10 +15,12 @@ import {
   CYCLE_ISSUES_WITH_PARAMS,
   MODULE_ISSUES_WITH_PARAMS,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
+  VIEW_ISSUES,
 } from "constants/fetch-keys";
 
 // types
 import type { IIssue } from "types";
+import viewsService from "services/views.service";
 
 const useIssuesView = () => {
   const {
@@ -36,18 +38,22 @@ const useIssuesView = () => {
   } = useContext(issueViewContext);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
 
   const params: any = {
     order_by: orderBy,
     group_by: groupByProperty,
-    assignees: filters.assignees ? filters.assignees.join(",") : undefined,
-    type: filters.type ? filters.type : undefined,
-    labels: filters.labels ? filters.labels.join(",") : undefined,
-    issue__assignees__id: filters.issue__assignees__id
-      ? filters.issue__assignees__id.join(",")
+    assignees: filters?.assignees ? filters?.assignees.join(",") : undefined,
+    state: filters?.state ? filters?.state.join(",") : undefined,
+    priority: filters?.priority ? filters?.priority.join(",") : undefined,
+    type: filters?.type ? filters?.type : undefined,
+    labels: filters?.labels ? filters?.labels.join(",") : undefined,
+    issue__assignees__id: filters?.issue__assignees__id
+      ? filters?.issue__assignees__id.join(",")
       : undefined,
-    issue__labels__id: filters.issue__labels__id ? filters.issue__labels__id.join(",") : undefined,
+    issue__labels__id: filters?.issue__labels__id
+      ? filters?.issue__labels__id.join(",")
+      : undefined,
   };
 
   const { data: projectIssues } = useSWR(
@@ -57,6 +63,14 @@ const useIssuesView = () => {
     workspaceSlug && projectId && params
       ? () =>
           issuesService.getIssuesWithParams(workspaceSlug as string, projectId as string, params)
+      : null
+  );
+
+  const { data: viewIssues } = useSWR(
+    workspaceSlug && projectId && viewId ? VIEW_ISSUES(viewId as string) : null,
+    workspaceSlug && projectId && viewId
+      ? () =>
+          viewsService.getViewIssues(workspaceSlug as string, projectId as string, viewId as string)
       : null
   );
 
@@ -95,11 +109,11 @@ const useIssuesView = () => {
         [key: string]: IIssue[];
       }
     | undefined = useMemo(() => {
-    const issuesToGroup = cycleIssues ?? moduleIssues ?? projectIssues;
+    const issuesToGroup = viewIssues ?? cycleIssues ?? moduleIssues ?? projectIssues;
 
     if (Array.isArray(issuesToGroup)) return { allIssues: issuesToGroup };
     else return issuesToGroup;
-  }, [projectIssues, cycleIssues, moduleIssues]);
+  }, [projectIssues, cycleIssues, moduleIssues, viewIssues]);
 
   return {
     groupedByIssues,

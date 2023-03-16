@@ -12,6 +12,7 @@ type Props = {
   handleClose: () => void;
   status: boolean;
   data?: IView;
+  preLoadedData?: Partial<IView> | null;
 };
 
 const defaultValues: Partial<IView> = {
@@ -19,7 +20,13 @@ const defaultValues: Partial<IView> = {
   description: "",
 };
 
-export const ViewForm: React.FC<Props> = ({ handleFormSubmit, handleClose, status, data }) => {
+export const ViewForm: React.FC<Props> = ({
+  handleFormSubmit,
+  handleClose,
+  status,
+  data,
+  preLoadedData,
+}) => {
   const {
     register,
     formState: { errors, isSubmitting },
@@ -43,6 +50,13 @@ export const ViewForm: React.FC<Props> = ({ handleFormSubmit, handleClose, statu
       ...data,
     });
   }, [data, reset]);
+
+  useEffect(() => {
+    reset({
+      ...defaultValues,
+      ...preLoadedData,
+    });
+  }, [preLoadedData, reset]);
 
   return (
     <form onSubmit={handleSubmit(handleCreateUpdateView)}>
