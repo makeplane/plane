@@ -638,75 +638,75 @@ class UserIssueCompletedGraphEndpoint(BaseAPIView):
 
 class UserWorkspaceDashboardEndpoint(BaseAPIView):
     def get(self, request, slug):
-        # try:
-        issue_activities = (
-            IssueActivity.objects.filter(
-                actor=request.user,
-                workspace__slug=slug,
-                created_at__date__gte=date.today() + relativedelta(months=-3),
+        try:
+            issue_activities = (
+                IssueActivity.objects.filter(
+                    actor=request.user,
+                    workspace__slug=slug,
+                    created_at__date__gte=date.today() + relativedelta(months=-3),
+                )
+                .annotate(created_date=Cast("created_at", DateField()))
+                .values("created_date")
+                .annotate(activity_count=Count("created_date"))
+                .order_by("created_date")
             )
-            .annotate(created_date=Cast("created_at", DateField()))
-            .values("created_date")
-            .annotate(activity_count=Count("created_date"))
-            .order_by("created_date")
-        )
 
-        month = request.GET.get("month", 1)
-        completed_issues = (
-            Issue.objects.filter(
-                assignees__in=[request.user],
-                workspace__slug=slug,
-                completed_at__month=month,
-                completed_at__isnull=False,
+            month = request.GET.get("month", 1)
+            completed_issues = (
+                Issue.objects.filter(
+                    assignees__in=[request.user],
+                    workspace__slug=slug,
+                    completed_at__month=month,
+                    completed_at__isnull=False,
+                )
+                .annotate(completed_week=ExtractWeek("completed_at"))
+                .annotate(week=F("completed_week") % 4)
+                .values("week")
+                .annotate(completed_count=Count("completed_week"))
+                .order_by("week")
             )
-            .annotate(completed_week=ExtractWeek("completed_at"))
-            .annotate(week=F("completed_week") % 4)
-            .values("week")
-            .annotate(completed_count=Count("completed_week"))
-            .order_by("week")
-        )
 
-        assigned_issues = Issue.objects.filter(
-            workspace__slug=slug, assignees__in=[request.user]
-        ).count()
+            assigned_issues = Issue.objects.filter(
+                workspace__slug=slug, assignees__in=[request.user]
+            ).count()
 
-        pending_issues = Issue.objects.filter(
-            ~Q(state__group__in=["completed", "cancelled"]),
-            workspace__slug=slug,
-            assignees__in=[request.user],
-        ).count()
-
-        completed_issues_count = Issue.objects.filter(
-            workspace__slug=slug,
-            assignees__in=[request.user],
-            state__group="completed",
-        ).count()
-
-        issues_due_week = (
-            Issue.objects.filter(
+            pending_issues = Issue.objects.filter(
+                ~Q(state__group__in=["completed", "cancelled"]),
                 workspace__slug=slug,
                 assignees__in=[request.user],
+            ).count()
+
+            completed_issues_count = Issue.objects.filter(
+                workspace__slug=slug,
+                assignees__in=[request.user],
+                state__group="completed",
+            ).count()
+
+            issues_due_week = (
+                Issue.objects.filter(
+                    workspace__slug=slug,
+                    assignees__in=[request.user],
+                )
+                .annotate(target_week=ExtractWeek("target_date"))
+                .filter(target_week=timezone.now().date().isocalendar()[1])
+                .count()
             )
-            .annotate(target_week=ExtractWeek("target_date"))
-            .filter(target_week=timezone.now().date().isocalendar()[1])
-            .count()
-        )
 
-        return Response(
-            {
-                "issue_activities": issue_activities,
-                "completed_issues": completed_issues,
-                "assigned_issues_count": assigned_issues,
-                "pending_issues_count": pending_issues,
-                "completed_issues_count": completed_issues_count,
-                "issues_due_week_count": issues_due_week,
-            },
-            status=status.HTTP_200_OK,
-        )
+            return Response(
+                {
+                    "issue_activities": issue_activities,
+                    "completed_issues": completed_issues,
+                    "assigned_issues_count": assigned_issues,
+                    "pending_issues_count": pending_issues,
+                    "completed_issues_count": completed_issues_count,
+                    "issues_due_week_count": issues_due_week,
+                },
+                status=status.HTTP_200_OK,
+            )
 
-    # except Exception as e:
-    #     print(e)
-    #     return Response(
-    #         {"error": "Something went wrong please try again later"},
-    #         status=status.HTTP_400_BAD_REQUEST,
-    #     )
+        except Exception as e:
+            print(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
