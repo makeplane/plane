@@ -1,6 +1,6 @@
 # Python imports
 import jwt
-from datetime import date, datetime, timedelta
+from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 
 # Django imports
@@ -591,7 +591,7 @@ class UserActivityGraphEndpoint(BaseAPIView):
                 IssueActivity.objects.filter(
                     actor=request.user,
                     workspace__slug=slug,
-                    created_at__date__gte=date.today() + relativedelta(months=-3),
+                    created_at__date__gte=date.today() + relativedelta(months=-6),
                 )
                 .annotate(created_date=Cast("created_at", DateField()))
                 .values("created_date")
@@ -692,6 +692,14 @@ class UserWorkspaceDashboardEndpoint(BaseAPIView):
                 .count()
             )
 
+            state_distribution = (
+                Issue.objects.filter(workspace__slug=slug, assignees__in=[request.user])
+                .annotate(state_name=F("state__name"))
+                .values("state_name")
+                .annotate(state_count=Count("state_name"))
+                .order_by("state_name")
+            )
+
             return Response(
                 {
                     "issue_activities": issue_activities,
@@ -700,6 +708,7 @@ class UserWorkspaceDashboardEndpoint(BaseAPIView):
                     "pending_issues_count": pending_issues,
                     "completed_issues_count": completed_issues_count,
                     "issues_due_week_count": issues_due_week,
+                    "state_distribution": state_distribution,
                 },
                 status=status.HTTP_200_OK,
             )
