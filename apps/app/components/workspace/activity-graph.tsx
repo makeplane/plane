@@ -78,9 +78,9 @@ export const ActivityGraph = () => {
   };
 
   const activitiesIntensity = (activityCount: number) => {
-    if (activityCount <= 3) return "opacity-50";
-    else if (activityCount > 3 && activityCount <= 6) return "opacity-70";
-    else if (activityCount > 6 && activityCount <= 9) return "opacity-90";
+    if (activityCount <= 3) return "opacity-20";
+    else if (activityCount > 3 && activityCount <= 6) return "opacity-40";
+    else if (activityCount > 6 && activityCount <= 9) return "opacity-80";
     else return "";
   };
 
@@ -125,7 +125,7 @@ export const ActivityGraph = () => {
                       <div
                         className={`h-4 w-4 rounded ${
                           isActive
-                            ? `bg-green-500 ${activitiesIntensity(isActive.activity_count)}`
+                            ? `bg-blue-500 ${activitiesIntensity(isActive.activity_count)}`
                             : "bg-gray-100"
                         }`}
                       />
@@ -143,10 +143,10 @@ export const ActivityGraph = () => {
           <div className="mt-8 flex items-center gap-2 text-xs">
             <span>Less</span>
             <span className="h-4 w-4 rounded bg-gray-100" />
-            <span className="h-4 w-4 rounded bg-green-500 opacity-50" />
-            <span className="h-4 w-4 rounded bg-green-500 opacity-70" />
-            <span className="h-4 w-4 rounded bg-green-500 opacity-90" />
-            <span className="h-4 w-4 rounded bg-green-500" />
+            <span className="h-4 w-4 rounded bg-blue-500 opacity-20" />
+            <span className="h-4 w-4 rounded bg-blue-500 opacity-40" />
+            <span className="h-4 w-4 rounded bg-blue-500 opacity-80" />
+            <span className="h-4 w-4 rounded bg-blue-500" />
             <span>More</span>
           </div>
         </div>
