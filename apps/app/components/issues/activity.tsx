@@ -180,7 +180,7 @@ export const IssueActivitySection: React.FC<Props> = () => {
                     <p>
                       <span className="font-medium">
                         {activity.actor_detail.is_bot
-                          ? "GitHub Bot"
+                          ? activity.actor_detail.first_name + " Bot"
                           : activity.actor_detail.first_name +
                             " " +
                             activity.actor_detail.last_name}
