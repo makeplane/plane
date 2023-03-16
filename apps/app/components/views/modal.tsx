@@ -4,8 +4,6 @@ import { useRouter } from "next/router";
 
 import { mutate } from "swr";
 
-// react-hook-form
-import { useForm } from "react-hook-form";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
@@ -23,14 +21,15 @@ type Props = {
   isOpen: boolean;
   handleClose: () => void;
   data?: IView;
+  preLoadedData?: Partial<IView> | null;
 };
 
-const defaultValues: Partial<IView> = {
-  name: "",
-  description: "",
-};
-
-export const CreateUpdateViewModal: React.FC<Props> = ({ isOpen, handleClose, data }) => {
+export const CreateUpdateViewModal: React.FC<Props> = ({
+  isOpen,
+  handleClose,
+  data,
+  preLoadedData,
+}) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -38,14 +37,13 @@ export const CreateUpdateViewModal: React.FC<Props> = ({ isOpen, handleClose, da
 
   const onClose = () => {
     handleClose();
-    reset(defaultValues);
   };
 
-  const { reset } = useForm<IView>({
-    defaultValues,
-  });
-
   const createView = async (payload: IView) => {
+    payload = {
+      ...payload,
+      query_data: payload.query,
+    };
     await viewsService
       .createView(workspaceSlug as string, projectId as string, payload)
       .then(() => {
@@ -137,6 +135,7 @@ export const CreateUpdateViewModal: React.FC<Props> = ({ isOpen, handleClose, da
                   handleClose={handleClose}
                   status={data ? true : false}
                   data={data}
+                  preLoadedData={preLoadedData}
                 />
               </Dialog.Panel>
             </Transition.Child>

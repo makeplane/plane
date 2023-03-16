@@ -10,6 +10,8 @@ import projectService from "services/project.service";
 import viewsService from "services/views.service";
 // layouts
 import AppLayout from "layouts/app-layout";
+// contexts
+import { IssueViewContextProvider } from "contexts/issue-view.context";
 // components
 import { CreateUpdateViewModal, DeleteViewModal } from "components/views";
 // ui
@@ -18,6 +20,9 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import { UserAuth } from "types";
 // fetch-keys
 import { PROJECT_DETAILS, VIEW_DETAILS, VIEW_ISSUES } from "constants/fetch-keys";
+import { IssuesFilterView, IssuesView } from "components/core";
+import { HeaderButton } from "components/ui";
+import { PlusIcon } from "@heroicons/react/24/outline";
 
 const SingleView: React.FC<UserAuth> = (props) => {
   const router = useRouter();
@@ -42,27 +47,36 @@ const SingleView: React.FC<UserAuth> = (props) => {
       : null
   );
 
-  const { data: viewIssues } = useSWR(
-    workspaceSlug && projectId && viewId ? VIEW_ISSUES(viewId as string) : null,
-    workspaceSlug && projectId && viewId
-      ? () =>
-          viewsService.getViewIssues(workspaceSlug as string, projectId as string, viewId as string)
-      : null
-  );
-
   return (
-    <AppLayout
-      breadcrumbs={
-        <Breadcrumbs>
-          <BreadcrumbItem
-            title={`${activeProject?.name ?? "Project"} Views`}
-            link={`/${workspaceSlug}/projects/${activeProject?.id}/cycles`}
-          />
-        </Breadcrumbs>
-      }
-    >
-      Content here
-    </AppLayout>
+    <IssueViewContextProvider>
+      <AppLayout
+        breadcrumbs={
+          <Breadcrumbs>
+            <BreadcrumbItem
+              title={`${activeProject?.name ?? "Project"} Views`}
+              link={`/${workspaceSlug}/projects/${activeProject?.id}/cycles`}
+            />
+          </Breadcrumbs>
+        }
+        right={
+          <div className="flex items-center gap-2">
+            <IssuesFilterView />
+            <HeaderButton
+              Icon={PlusIcon}
+              label="Add Issue"
+              onClick={() => {
+                const e = new KeyboardEvent("keydown", {
+                  key: "c",
+                });
+                document.dispatchEvent(e);
+              }}
+            />
+          </div>
+        }
+      >
+        <IssuesView userAuth={props} />
+      </AppLayout>
+    </IssueViewContextProvider>
   );
 };
 

@@ -17,12 +17,20 @@ import useIssuesView from "hooks/use-issues-view";
 import { AllLists, AllBoards } from "components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
+import { CreateUpdateViewModal } from "components/views";
 // icons
-import { PlusIcon, RectangleStackIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { PlusIcon, RectangleStackIcon, TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 // types
-import { CycleIssueResponse, IIssue, ModuleIssueResponse, UserAuth } from "types";
+import {
+  CycleIssueResponse,
+  IIssue,
+  IIssueFilterOptions,
+  IView,
+  ModuleIssueResponse,
+  UserAuth,
+} from "types";
 // fetch-keys
 import {
   CYCLE_ISSUES,
@@ -44,6 +52,7 @@ type Props = {
 export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModal, userAuth }) => {
   // create issue modal
   const [createIssueModal, setCreateIssueModal] = useState(false);
+  const [createViewModal, setCreateViewModal] = useState<any>(null);
   const [preloadedData, setPreloadedData] = useState<
     (Partial<IIssue> & { actionType: "createIssue" | "edit" | "delete" }) | undefined
   >(undefined);
@@ -360,6 +369,11 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
 
   return (
     <>
+      <CreateUpdateViewModal
+        isOpen={createViewModal !== null}
+        handleClose={() => setCreateViewModal(null)}
+        preLoadedData={createViewModal}
+      />
       <CreateUpdateIssueModal
         isOpen={createIssueModal && preloadedData?.actionType === "createIssue"}
         handleClose={() => setCreateIssueModal(false)}
@@ -378,24 +392,95 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
         isOpen={deleteIssueModal}
         data={issueToDelete}
       />
-      <div className="flex items-center gap-2">
-        {Object.keys(filters).map((key) => {
-          if (filters[key as keyof typeof filters] !== null)
-            return (
-              <button
-                key={key}
-                type="button"
-                className="rounded bg-black p-2 text-xs text-white"
-                onClick={() =>
-                  setFilters({
-                    [key]: null,
-                  })
-                }
-              >
-                Remove {key} filter
-              </button>
-            );
-        })}
+      <div className="mb-3 flex items-center justify-between gap-2">
+        <div className="flex gap-x-3">
+          {Object.keys(filters).map((key) => {
+            if (filters[key as keyof typeof filters] !== null)
+              return (
+                <div key={key} className="flex gap-x-2 text-sm">
+                  <p>
+                    Filter for <span className="font-medium">{key}</span>:{" "}
+                  </p>
+                  {filters[key as keyof IIssueFilterOptions] === null ||
+                  (filters[key as keyof IIssueFilterOptions]?.length ?? 0) <= 0 ? (
+                    <p className="font-medium">None</p>
+                  ) : (
+                    Array.isArray(filters[key as keyof IIssueFilterOptions]) && (
+                      <p className="space-x-2 font-medium">
+                        {key === "state"
+                          ? (filters[key as keyof IIssueFilterOptions] as any)?.map(
+                              (stateId: any) => {
+                                const state = states?.find((s) => s.id === stateId);
+                                return (
+                                  <p
+                                    key={state?.id}
+                                    className="inline-flex items-center gap-x-1 rounded-full bg-gray-500 px-2 py-0.5 text-xs font-medium text-white"
+                                  >
+                                    <span>{state?.name ?? "Loading..."}</span>
+                                    <span
+                                      className="cursor-pointer"
+                                      onClick={() => {
+                                        setFilters({
+                                          ...filters,
+                                          [key]: (
+                                            filters[key as keyof IIssueFilterOptions] as any
+                                          )?.filter((s: any) => s !== stateId),
+                                        });
+                                      }}
+                                    >
+                                      <XMarkIcon className="h-3 w-3" />
+                                    </span>
+                                  </p>
+                                );
+                              }
+                            )
+                          : key === "priority"
+                          ? (filters[key as keyof IIssueFilterOptions] as any)?.map(
+                              (priority: any) => (
+                                <p
+                                  key={priority}
+                                  className="inline-flex items-center gap-x-1 rounded-full bg-gray-500 px-2 py-0.5 text-xs font-medium capitalize text-white"
+                                >
+                                  <span>{priority}</span>
+                                  <span
+                                    className="cursor-pointer"
+                                    onClick={() => {
+                                      setFilters({
+                                        ...filters,
+                                        [key]: (
+                                          filters[key as keyof IIssueFilterOptions] as any
+                                        )?.filter((p: any) => p !== priority),
+                                      });
+                                    }}
+                                  >
+                                    <XMarkIcon className="h-3 w-3" />
+                                  </span>
+                                </p>
+                              )
+                            )
+                          : (filters[key as keyof IIssueFilterOptions] as any)?.join(", ")}
+                      </p>
+                    )
+                  )}
+                </div>
+              );
+          })}
+        </div>
+
+        <div>
+          <button
+            type="button"
+            onClick={() =>
+              setCreateViewModal({
+                query: filters,
+              })
+            }
+            className="flex items-center gap-x-0.5 text-sm"
+          >
+            <PlusIcon className="h-3 w-3" />
+            <span>Save view</span>
+          </button>
+        </div>
       </div>
       <DragDropContext onDragEnd={handleOnDragEnd}>
         <StrictModeDroppable droppableId="trashBox">

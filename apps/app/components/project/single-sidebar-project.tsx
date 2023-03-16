@@ -7,7 +7,13 @@ import { Disclosure, Transition } from "@headlessui/react";
 import { CustomMenu } from "components/ui";
 // icons
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
-import { ContrastIcon, LayerDiagonalIcon, PeopleGroupIcon, SettingIcon } from "components/icons";
+import {
+  ContrastIcon,
+  LayerDiagonalIcon,
+  PeopleGroupIcon,
+  SettingIcon,
+  ViewListIcon,
+} from "components/icons";
 // helpers
 import { truncateText } from "helpers/string.helper";
 // types
@@ -37,6 +43,11 @@ const navigation = (workspaceSlug: string, projectId: string) => [
     name: "Modules",
     href: `/${workspaceSlug}/projects/${projectId}/modules`,
     icon: PeopleGroupIcon,
+  },
+  {
+    name: "Views",
+    href: `/${workspaceSlug}/projects/${projectId}/views`,
+    icon: ViewListIcon,
   },
   {
     name: "Settings",
