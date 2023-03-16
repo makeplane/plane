@@ -24,6 +24,7 @@ from plane.db.models import (
 )
 from plane.api.serializers import ImporterSerializer, IssueFlatSerializer
 from plane.utils.integrations.github import get_github_repo_details
+from plane.utils.importers.jira import jira_project_issue_summary
 from plane.bgtasks.importer_task import service_importer
 from plane.utils.html_processor import strip_tags
 
@@ -52,6 +53,30 @@ class ServiceIssueImportSummaryEndpoint(BaseAPIView):
                     status=status.HTTP_200_OK,
                 )
 
+            if service == "jira":
+                project_name = request.data.get("project_name", "")
+                api_token = request.data.get("api_token", "")
+                email = request.data.get("email", "")
+                cloud_hostname = request.data.get("cloud_hostname", "")
+                if (
+                    not bool(project_name)
+                    or not bool(api_token)
+                    or not bool(email)
+                    or not bool(cloud_hostname)
+                ):
+                    return Response(
+                        {
+                            "error": "Project name, Project key, API token, Cloud hostname and email are requied"
+                        },
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+
+                return Response(
+                    jira_project_issue_summary(
+                        email, api_token, project_name, cloud_hostname
+                    ),
+                    status=status.HTTP_200_OK,
+                )
             return Response(
                 {"error": "Service not supported yet"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -62,7 +87,7 @@ class ServiceIssueImportSummaryEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except Exception as e:
-            capture_exception(e)
+            print(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
