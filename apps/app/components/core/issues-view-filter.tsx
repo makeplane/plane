@@ -14,7 +14,7 @@ import useIssuesView from "hooks/use-issues-view";
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
 // ui
-import { CustomMenu } from "components/ui";
+import { CustomMenu, MultiLevelDropdown } from "components/ui";
 // icons
 import { ChevronDownIcon, ListBulletIcon } from "@heroicons/react/24/outline";
 import { Squares2X2Icon } from "@heroicons/react/20/solid";
@@ -96,59 +96,69 @@ export const IssuesFilterView: React.FC = () => {
           <Squares2X2Icon className="h-4 w-4" />
         </button>
       </div>
-      <CustomMenu
-        label={
-          <span className="flex items-center gap-2 rounded-md py-1 text-xs font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:outline-none">
-            Filters
-          </span>
-        }
-      >
-        <h4 className="px-1 py-2 font-medium">Status</h4>
-        {statesList?.map((state) => (
-          <CustomMenu.MenuItem
-            onClick={() => {
-              const filterStates = filters?.state ?? [];
-              const newFilterState = filterStates.includes(state.id)
-                ? filterStates.filter((id) => id !== state.id)
-                : [...filterStates, state.id];
-              setFilters({ ...filters, state: newFilterState });
-            }}
-          >
-            <>{state.name}</>
-          </CustomMenu.MenuItem>
-        ))}
-        <h4 className="px-1 py-2 font-medium">Members</h4>
-        {members?.map((member) => (
-          <CustomMenu.MenuItem onClick={() => {}}>
-            <>
-              {member.member.first_name && member.member.first_name !== ""
-                ? member.member.first_name + " " + member.member.last_name
-                : member.member.email}
-            </>
-          </CustomMenu.MenuItem>
-        ))}
-        <h4 className="px-1 py-2 font-medium">Labels</h4>
-        {issueLabels?.map((label) => (
-          <CustomMenu.MenuItem onClick={() => {}}>
-            <>{label.name}</>
-          </CustomMenu.MenuItem>
-        ))}
-        <h4 className="px-1 py-2 font-medium">Priority</h4>
-        {PRIORITIES?.map((priority) => (
-          <CustomMenu.MenuItem
-            onClick={() => {
-              if (priority === null) return;
-              const filterPriorities = filters?.priority ?? [];
-              const newFilterPriority = filterPriorities.includes(priority)
-                ? filterPriorities.filter((id) => id !== priority)
-                : [...filterPriorities, priority];
-              setFilters({ ...filters, priority: newFilterPriority });
-            }}
-          >
-            <span className="capitalize">{priority ?? "None"}</span>
-          </CustomMenu.MenuItem>
-        ))}
-      </CustomMenu>
+      <MultiLevelDropdown
+        label="Filter"
+        onSelect={(option) => {
+          setFilters({
+            ...filters,
+            [option.key]: [
+              ...((filters?.[option.key as keyof typeof filters] as any[]) ?? []),
+              option.value,
+            ],
+          });
+        }}
+        direction="left"
+        options={[
+          {
+            id: "priority",
+            label: "Priority",
+            value: PRIORITIES,
+            children: [
+              ...PRIORITIES.map((priority) => ({
+                id: priority ?? "none",
+                label: priority ?? "None",
+                value: {
+                  key: "priority",
+                  value: priority,
+                },
+                selected: filters?.priority?.includes(priority ?? "none"),
+              })),
+            ],
+          },
+          {
+            id: "state",
+            label: "State",
+            value: statesList,
+            children: [
+              ...statesList.map((state) => ({
+                id: state.id,
+                label: state.name,
+                value: {
+                  key: "state",
+                  value: state.id,
+                },
+                selected: filters?.state?.includes(state.id),
+              })),
+            ],
+          },
+          {
+            id: "assignee",
+            label: "Assignee",
+            value: members,
+            children: [
+              ...(members?.map((member) => ({
+                id: member.member.id,
+                label: member.member.first_name,
+                value: {
+                  key: "assignee",
+                  value: member.member.id,
+                },
+                selected: filters?.assignees?.includes(member.member.id),
+              })) ?? []),
+            ],
+          },
+        ]}
+      />
       <Popover className="relative">
         {({ open }) => (
           <>

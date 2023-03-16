@@ -458,6 +458,35 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
                                 </p>
                               )
                             )
+                          : key === "assignee"
+                          ? (filters[key as keyof IIssueFilterOptions] as any)?.map(
+                              (member: any) => (
+                                <p
+                                  key={member}
+                                  className="inline-flex items-center gap-x-1 rounded-full bg-gray-500 px-2 py-0.5 text-xs font-medium capitalize text-white"
+                                >
+                                  <span>
+                                    {
+                                      members?.find((m) => m.member.id === member)?.member
+                                        .first_name
+                                    }
+                                  </span>
+                                  <span
+                                    className="cursor-pointer"
+                                    onClick={() => {
+                                      setFilters({
+                                        ...filters,
+                                        [key as keyof IIssueFilterOptions]: (
+                                          filters[key as keyof IIssueFilterOptions] as any
+                                        )?.filter((p: any) => p !== member),
+                                      });
+                                    }}
+                                  >
+                                    <XMarkIcon className="h-3 w-3" />
+                                  </span>
+                                </p>
+                              )
+                            )
                           : (filters[key as keyof IIssueFilterOptions] as any)?.join(", ")}
                       </p>
                     )
