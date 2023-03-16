@@ -11,6 +11,7 @@ export interface IProject {
   id: string;
   identifier: string;
   is_favorite: boolean;
+  issue_views_view: boolean;
   module_view: boolean;
   name: string;
   network: number;
