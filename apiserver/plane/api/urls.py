@@ -40,6 +40,7 @@ from plane.api.views import (
     UserWorkspaceInvitationEndpoint,
     UserActivityGraphEndpoint,
     UserIssueCompletedGraphEndpoint,
+    UserWorkspaceDashboardEndpoint,
     ## End Workspaces
     # File Assets
     FileAssetEndpoint,
@@ -199,6 +200,11 @@ urlpatterns = [
         "users/me/workspaces/<str:slug>/issues-completed-graph/",
         UserIssueCompletedGraphEndpoint.as_view(),
         name="completed-graph",
+    ),
+    path(
+        "users/me/workspaces/<str:slug>/dashboard/",
+        UserWorkspaceDashboardEndpoint.as_view(),
+        name="user-workspace-dashboard",
     ),
     ## User  Graph
     path(

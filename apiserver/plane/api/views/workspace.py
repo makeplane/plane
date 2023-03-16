@@ -1,6 +1,6 @@
 # Python imports
 import jwt
-from datetime import date
+from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 
 # Django imports
@@ -629,8 +629,83 @@ class UserIssueCompletedGraphEndpoint(BaseAPIView):
 
             return Response(issues, status=status.HTTP_200_OK)
         except Exception as e:
-            print(e)
+            capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+class UserWorkspaceDashboardEndpoint(BaseAPIView):
+    def get(self, request, slug):
+        # try:  
+            issue_activities = (
+                IssueActivity.objects.filter(
+                    actor=request.user,
+                    workspace__slug=slug,
+                    created_at__date__gte=date.today() + relativedelta(months=-3),
+                )
+                .annotate(created_date=Cast("created_at", DateField()))
+                .values("created_date")
+                .annotate(activity_count=Count("created_date"))
+                .order_by("created_date")
+            )
+
+            month = request.GET.get("month", 1)
+            completed_issues = (
+                Issue.objects.filter(
+                    assignees__in=[request.user],
+                    workspace__slug=slug,
+                    completed_at__month=month,
+                    completed_at__isnull=False,
+                )
+                .annotate(completed_week=ExtractWeek("completed_at"))
+                .annotate(week=F("completed_week") % 4)
+                .values("week")
+                .annotate(completed_count=Count("completed_week"))
+                .order_by("week")
+            )
+
+            assigned_issues = Issue.objects.filter(
+                workspace__slug=slug, assignees__in=[request.user]
+            ).count()
+
+            # pending_issues = Issue.objects.filter(
+            #     workspace__slug=slug,
+            #     assignees__in=[request.user],
+            #     state__group__in=~Q(["completed", "cancelled"]),
+            # ).count()
+
+            completed_issues_count = Issue.objects.filter(
+                workspace__slug=slug,
+                assignees__in=[request.user],
+                state__group="completed",
+            ).count()
+
+            # start_week = datetime.date.today() - datetime.timedelta(date.weekday())
+            # end_week = start_week + datetime.timedelta(7)
+
+            # issues_due_week = Issue.objects.filter(
+            #     workspace__slug=slug,
+            #     assignees__in=[request.user],
+            #     target_date__range=[start_week, end_week],
+            # ).count()
+
+
+            return Response(
+                {
+                    "issue_activities": issue_activities,
+                    "completed_issues": completed_issues,
+                    "assigned_issues_count": assigned_issues,
+                    "pending_issues_count": 0,
+                    "completed_issues_count": completed_issues_count,
+                    "issues_due_week_count": 0,
+                },
+                status=status.HTTP_200_OK,
+            )
+        # except Exception as e:
+        #     print(e)
+        #     return Response(
+        #         {"error": "Something went wrong please try again later"},
+        #         status=status.HTTP_400_BAD_REQUEST,
+        #     )
