@@ -20,7 +20,7 @@ import { IProject, UserAuth } from "types";
 import type { NextPage, GetServerSidePropsContext } from "next";
 // fetch-keys
 import { PROJECTS_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
-import { ContrastIcon, PeopleGroupIcon } from "components/icons";
+import { ContrastIcon, PeopleGroupIcon, ViewListIcon } from "components/icons";
 
 const FeaturesSettings: NextPage<UserAuth> = (props) => {
   const router = useRouter();
@@ -93,7 +93,7 @@ const FeaturesSettings: NextPage<UserAuth> = (props) => {
       <section className="space-y-8">
         <h3 className="text-2xl font-semibold">Features</h3>
         <div className="space-y-5">
-          <div className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border bg-white p-6">
+          <div className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border bg-white p-5">
             <div className="flex items-start gap-3">
               <ContrastIcon color="#3f76ff" width={28} height={28} className="flex-shrink-0" />
               <div>
@@ -122,7 +122,7 @@ const FeaturesSettings: NextPage<UserAuth> = (props) => {
               />
             </button>
           </div>
-          <div className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border bg-white p-6">
+          <div className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border bg-white p-5">
             <div className="flex items-start gap-3">
               <PeopleGroupIcon color="#ff6b00" width={28} height={28} className="flex-shrink-0" />
               <div>
@@ -147,6 +147,35 @@ const FeaturesSettings: NextPage<UserAuth> = (props) => {
                 aria-hidden="true"
                 className={`inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
                   projectDetails?.module_view ? "translate-x-5" : "translate-x-0"
+                }`}
+              />
+            </button>
+          </div>
+          <div className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border bg-white p-5">
+            <div className="flex items-start gap-3">
+              <ViewListIcon color="#ff6b00" width={28} height={28} className="flex-shrink-0" />
+              <div>
+                <h4 className="-mt-1.5 text-xl font-semibold">Views</h4>
+                <p className="text-gray-500">
+                  Modules are enabled for all the projects in this workspace. Access it from the
+                  navigation bar.
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                projectDetails?.issue_views_view ? "bg-green-500" : "bg-gray-200"
+              }`}
+              role="switch"
+              aria-checked={projectDetails?.issue_views_view}
+              onClick={() => handleSubmit({ issue_views_view: !projectDetails?.issue_views_view })}
+            >
+              <span className="sr-only">Use views</span>
+              <span
+                aria-hidden="true"
+                className={`inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                  projectDetails?.issue_views_view ? "translate-x-5" : "translate-x-0"
                 }`}
               />
             </button>

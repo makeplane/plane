@@ -1,6 +1,7 @@
 import { Menu, Transition } from "@headlessui/react";
 import { Fragment, useState } from "react";
-import { ChevronDownIcon, ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/20/solid";
+import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/20/solid";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
 
 type MultiLevelDropdownProps = {
   label: string;
@@ -11,7 +12,7 @@ type MultiLevelDropdownProps = {
     selected?: boolean;
     children?: {
       id: string;
-      label: string;
+      label: string | JSX.Element;
       value: any;
       selected?: boolean;
     }[];
@@ -20,26 +21,27 @@ type MultiLevelDropdownProps = {
   direction?: "left" | "right";
 };
 
-export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = (props) => {
-  const { label, options, onSelect, direction = "right" } = props;
-
+export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
+  label,
+  options,
+  onSelect,
+  direction = "right",
+}) => {
   const [openChildFor, setOpenChildFor] = useState<string | null>(null);
 
   return (
-    <Menu as="div" className="relative inline-block text-left">
+    <Menu as="div" className="relative z-10 inline-block text-left">
       {({ open }) => (
         <>
           <div>
             <Menu.Button
-              onClick={() => {
-                setOpenChildFor(null);
-              }}
-              className={`group flex items-center gap-2 rounded-md border bg-transparent p-2 text-xs font-medium hover:bg-gray-100 hover:text-gray-900 focus:outline-none ${
+              onClick={() => setOpenChildFor(null)}
+              className={`group flex items-center justify-between gap-2 rounded-md border px-3 py-1.5 text-xs shadow-sm duration-300 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
                 open ? "bg-gray-100 text-gray-900" : "text-gray-500"
               }`}
             >
               {label}
-              <ChevronDownIcon className="h-4 w-4" aria-hidden="true" />
+              <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
             </Menu.Button>
           </div>
           <Transition
@@ -53,10 +55,10 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = (props) => 
           >
             <Menu.Items
               static
-              className="absolute right-0 mt-2 w-36 origin-top-right select-none divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+              className="absolute right-0 mt-1 w-36 origin-top-right select-none rounded-md bg-white text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
             >
               {options.map((option) => (
-                <div className="relative px-1 py-1" key={option.id}>
+                <div className="relative p-1" key={option.id}>
                   <Menu.Item
                     as="button"
                     onClick={(e: any) => {
@@ -81,7 +83,9 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = (props) => 
                         <div
                           className={`${
                             active || option.selected ? "bg-gray-100" : "text-gray-900"
-                          } group flex w-full items-center justify-between rounded-md px-2 py-2 text-sm`}
+                          } flex items-center gap-1 rounded px-1 py-1.5 ${
+                            direction === "right" ? "justify-between" : ""
+                          }`}
                         >
                           {direction === "left" && option.children && (
                             <ChevronLeftIcon className="h-4 w-4" aria-hidden="true" />
@@ -97,33 +101,31 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = (props) => 
                   {option.children && option.id === openChildFor && (
                     <Menu.Items
                       static
-                      className={`absolute top-0 mt-2 w-36 origin-top-right select-none divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ${
+                      className={`absolute top-0 w-36 origin-top-right select-none rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ${
                         direction === "left"
-                          ? "right-full -translate-x-2"
-                          : "left-full translate-x-2"
+                          ? "right-full -translate-x-1"
+                          : "left-full translate-x-1"
                       }`}
                     >
-                      {option.children.map((child) => (
-                        <div className="relative px-1 py-1" key={child.id}>
-                          <Menu.Item as="div" className="flex items-center justify-between">
-                            {({ active }) => (
-                              <>
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    onSelect(child.value);
-                                  }}
-                                  className={`${
-                                    active || option.selected ? "bg-gray-100" : "text-gray-900"
-                                  } group flex w-full items-center rounded-md px-2 py-2 text-sm capitalize`}
-                                >
-                                  {child.label}
-                                </button>
-                              </>
-                            )}
+                      <div className="p-1">
+                        {option.children.map((child) => (
+                          <Menu.Item
+                            key={child.id}
+                            as="button"
+                            type="button"
+                            onClick={() => {
+                              onSelect(child.value);
+                            }}
+                            className={({ active }) =>
+                              `${
+                                active || option.selected ? "bg-gray-100" : "text-gray-900"
+                              } flex w-full items-center rounded px-1 py-1.5 capitalize`
+                            }
+                          >
+                            {child.label}
                           </Menu.Item>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </Menu.Items>
                   )}
                 </div>

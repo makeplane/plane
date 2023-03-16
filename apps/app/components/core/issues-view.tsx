@@ -42,6 +42,7 @@ import {
   STATE_LIST,
 } from "constants/fetch-keys";
 import { EmptySpace, EmptySpaceItem } from "components/ui";
+import { PrimaryButton } from "components/ui/button/primary-button";
 
 type Props = {
   type?: "issue" | "cycle" | "module";
@@ -496,20 +497,21 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
           })}
         </div>
 
-        <div>
-          <button
+        {Object.keys(filters).length > 0 && (
+          <PrimaryButton
             type="button"
             onClick={() =>
               setCreateViewModal({
                 query: filters,
               })
             }
-            className="flex items-center gap-x-0.5 text-sm"
+            className="flex items-center gap-4 text-sm"
+            size="sm"
           >
-            <PlusIcon className="h-3 w-3" />
-            <span>Save view</span>
-          </button>
-        </div>
+            <PlusIcon className="h-4 w-4" />
+            Save view
+          </PrimaryButton>
+        )}
       </div>
       <DragDropContext onDragEnd={handleOnDragEnd}>
         <StrictModeDroppable droppableId="trashBox">

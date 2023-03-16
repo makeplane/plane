@@ -136,8 +136,12 @@ export const SingleSidebarProject: React.FC<Props> = ({
               className={`${sidebarCollapse ? "" : "ml-[2.25rem]"} flex flex-col gap-y-1`}
             >
               {navigation(workspaceSlug as string, project?.id).map((item) => {
-                if (item.name === "Cycles" && !project.cycle_view) return;
-                if (item.name === "Modules" && !project.module_view) return;
+                if (
+                  (item.name === "Cycles" && !project.cycle_view) ||
+                  (item.name === "Modules" && !project.module_view) ||
+                  (item.name === "Views" && !project.issue_views_view)
+                )
+                  return;
 
                 return (
                   <Link key={item.name} href={item.href}>
