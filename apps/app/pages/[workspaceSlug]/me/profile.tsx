@@ -3,8 +3,6 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
-import useSWR from "swr";
-
 // react-hook-form
 import { useForm } from "react-hook-form";
 // lib
@@ -12,7 +10,6 @@ import { requiredAuth } from "lib/auth";
 // services
 import fileService from "services/file.service";
 import userService from "services/user.service";
-import workspaceService from "services/workspace.service";
 // hooks
 import useUser from "hooks/use-user";
 import useToast from "hooks/use-toast";
@@ -27,6 +24,7 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import {
   ChevronRightIcon,
   PencilIcon,
+  RectangleStackIcon,
   UserIcon,
   UserPlusIcon,
   XMarkIcon,
@@ -34,8 +32,6 @@ import {
 // types
 import type { NextPage, GetServerSidePropsContext } from "next";
 import type { IUser } from "types";
-// fetch-keys
-import { USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 
 const defaultValues: Partial<IUser> = {
   avatar: "",
@@ -59,11 +55,7 @@ const Profile: NextPage = () => {
   } = useForm<IUser>({ defaultValues });
 
   const { setToastAlert } = useToast();
-  const { user: myProfile, mutateUser } = useUser();
-
-  const { data: invitations } = useSWR(USER_WORKSPACE_INVITATIONS, () =>
-    workspaceService.userWorkspaceInvitations()
-  );
+  const { user: myProfile, mutateUser, assignedIssuesLength, workspaceInvitesLength } = useUser();
 
   useEffect(() => {
     reset({ ...defaultValues, ...myProfile });
@@ -135,9 +127,16 @@ const Profile: NextPage = () => {
 
   const quickLinks = [
     {
+      icon: RectangleStackIcon,
+      title: "Assigned Issues",
+      number: assignedIssuesLength,
+      description: "View your workspace invitations.",
+      href: "/invitations",
+    },
+    {
       icon: UserPlusIcon,
       title: "Workspace Invitations",
-      number: invitations?.length ?? 0,
+      number: workspaceInvitesLength,
       description: "View your workspace invitations.",
       href: "/invitations",
     },
