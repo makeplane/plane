@@ -700,6 +700,20 @@ class UserWorkspaceDashboardEndpoint(BaseAPIView):
                 .order_by("state_group")
             )
 
+            overdue_issues = Issue.objects.filter(
+                workspace__slug=slug,
+                assignees__in=[request.user],
+                target_date__lt=timezone.now(),
+                completed_at__isnull=False,
+            ).values("id", "name", "workspace__slug", "project_id", "target_date")
+
+            upcoming_issues = Issue.objects.filter(
+                workspace__slug=slug,
+                assignees__in=[request.user],
+                target_date__gte=timezone.now(),
+                completed_at__isnull=False,
+            ).values("id", "name", "workspace__slug", "project_id", "target_date")
+
             return Response(
                 {
                     "issue_activities": issue_activities,
@@ -709,6 +723,8 @@ class UserWorkspaceDashboardEndpoint(BaseAPIView):
                     "completed_issues_count": completed_issues_count,
                     "issues_due_week_count": issues_due_week,
                     "state_distribution": state_distribution,
+                    "overdue_issues": overdue_issues,
+                    "upcoming_issues": upcoming_issues,
                 },
                 status=status.HTTP_200_OK,
             )
