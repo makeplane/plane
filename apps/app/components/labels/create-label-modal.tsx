@@ -13,7 +13,7 @@ import { Dialog, Popover, Transition } from "@headlessui/react";
 // services
 import issuesService from "services/issues.service";
 // ui
-import { Button, Input } from "components/ui";
+import { Input, PrimaryButton, SecondaryButton } from "components/ui";
 // icons
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 // types
@@ -171,12 +171,10 @@ export const CreateLabelModal: React.FC<Props> = ({ isOpen, projectId, handleClo
                     </div>
                   </div>
                   <div className="mt-5 flex justify-end gap-2">
-                    <Button theme="secondary" onClick={onClose}>
-                      Cancel
-                    </Button>
-                    <Button type="submit" disabled={isSubmitting}>
+                    <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
+                    <PrimaryButton type="submit" loading={isSubmitting}>
                       {isSubmitting ? "Creating Label..." : "Create Label"}
-                    </Button>
+                    </PrimaryButton>
                   </div>
                 </form>
               </Dialog.Panel>

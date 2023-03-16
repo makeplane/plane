@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 
+// headless ui
 import { Transition, Dialog } from "@headlessui/react";
-
 // ui
+import { PrimaryButton, SecondaryButton } from "components/ui";
+// types
 import type { IProject } from "types";
-import { Button } from "components/ui";
 
 // type
 type TJoinProjectModalProps = {
@@ -70,12 +71,10 @@ export const JoinProjectModal: React.FC<TJoinProjectModalProps> = ({ onClose, on
                   <div className="space-y-3" />
                 </div>
                 <div className="mt-5 flex justify-end gap-2">
-                  <Button type="button" theme="secondary" onClick={handleClose}>
-                    Cancel
-                  </Button>
-                  <Button type="submit" onClick={handleJoin} disabled={isJoiningLoading}>
+                  <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                  <PrimaryButton type="submit" onClick={handleJoin} loading={isJoiningLoading}>
                     {isJoiningLoading ? "Joining..." : "Join Project"}
-                  </Button>
+                  </PrimaryButton>
                 </div>
               </Dialog.Panel>
             </Transition.Child>

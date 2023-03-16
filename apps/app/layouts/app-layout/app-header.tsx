@@ -1,5 +1,3 @@
-// ui
-import { Button } from "components/ui";
 // icons
 import { Bars3Icon } from "@heroicons/react/24/outline";
 
@@ -14,14 +12,13 @@ const Header: React.FC<Props> = ({ breadcrumbs, left, right, setToggleSidebar })
   <div className="flex w-full flex-row items-center justify-between gap-y-4 border-b bg-white px-5 py-4 ">
     <div className="flex items-center gap-2">
       <div className="block md:hidden">
-        <Button
+        <button
           type="button"
-          theme="secondary"
-          className="h-8 w-8"
+          className="grid h-8 w-8 place-items-center rounded border border-gray-300"
           onClick={() => setToggleSidebar((prevData) => !prevData)}
         >
           <Bars3Icon className="h-5 w-5" />
-        </Button>
+        </button>
       </div>
       {breadcrumbs}
       {left}

@@ -15,8 +15,7 @@ import workspaceService from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { PrimaryButton } from "components/ui/button/primary-button";
-import { Button, Input, TextArea, CustomSelect } from "components/ui";
+import { Input, TextArea, CustomSelect, PrimaryButton, SecondaryButton } from "components/ui";
 // icons
 import { XMarkIcon } from "@heroicons/react/24/outline";
 // components
@@ -311,9 +310,7 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                   </div>
 
                   <div className="mt-5 flex justify-end gap-2 border-t-2 px-4 py-3">
-                    <Button theme="secondary" onClick={handleClose}>
-                      Cancel
-                    </Button>
+                    <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
                     <PrimaryButton type="submit" size="sm" loading={isSubmitting}>
                       {isSubmitting ? "Adding project..." : "Add Project"}
                     </PrimaryButton>
