@@ -13,21 +13,24 @@ import useIssuesProperties from "hooks/use-issue-properties";
 import useIssuesView from "hooks/use-issues-view";
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
+// components
+import { PRIORITIES } from "constants/project";
 // ui
-import { CustomMenu, MultiLevelDropdown } from "components/ui";
+import { Avatar, CustomMenu, MultiLevelDropdown } from "components/ui";
 // icons
 import { ChevronDownIcon, ListBulletIcon } from "@heroicons/react/24/outline";
 import { Squares2X2Icon } from "@heroicons/react/20/solid";
+import { getStateGroupIcon } from "components/icons";
+import { getPriorityIcon } from "components/icons/priority-icon";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 import { getStatesList } from "helpers/state.helper";
 // types
-import { IIssue, IIssueLabels, Properties } from "types";
+import { IIssueLabels, Properties } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS, STATE_LIST } from "constants/fetch-keys";
 // constants
 import { GROUP_BY_OPTIONS, ORDER_BY_OPTIONS, FILTER_ISSUE_OPTIONS } from "constants/issue";
-import { PRIORITIES } from "constants/project";
 
 export const IssuesFilterView: React.FC = () => {
   const router = useRouter();
@@ -97,7 +100,7 @@ export const IssuesFilterView: React.FC = () => {
         </button>
       </div>
       <MultiLevelDropdown
-        label="Filter"
+        label="Filters"
         onSelect={(option) => {
           setFilters({
             ...filters,
@@ -116,7 +119,11 @@ export const IssuesFilterView: React.FC = () => {
             children: [
               ...PRIORITIES.map((priority) => ({
                 id: priority ?? "none",
-                label: priority ?? "None",
+                label: (
+                  <div className="flex items-center gap-2">
+                    {getPriorityIcon(priority)} {priority ?? "None"}
+                  </div>
+                ),
                 value: {
                   key: "priority",
                   value: priority,
@@ -132,7 +139,11 @@ export const IssuesFilterView: React.FC = () => {
             children: [
               ...statesList.map((state) => ({
                 id: state.id,
-                label: state.name,
+                label: (
+                  <div className="flex items-center gap-2">
+                    {getStateGroupIcon(state.group, "16", "16", state.color)} {state.name}
+                  </div>
+                ),
                 value: {
                   key: "state",
                   value: state.id,
@@ -148,7 +159,14 @@ export const IssuesFilterView: React.FC = () => {
             children: [
               ...(members?.map((member) => ({
                 id: member.member.id,
-                label: member.member.first_name,
+                label: (
+                  <div className="flex items-center gap-2">
+                    <Avatar user={member.member} />
+                    {member.member.first_name && member.member.first_name !== ""
+                      ? member.member.first_name
+                      : member.member.email}
+                  </div>
+                ),
                 value: {
                   key: "assignee",
                   value: member.member.id,
@@ -163,12 +181,12 @@ export const IssuesFilterView: React.FC = () => {
         {({ open }) => (
           <>
             <Popover.Button
-              className={`group flex items-center gap-2 rounded-md border bg-transparent p-2 text-xs font-medium hover:bg-gray-100 hover:text-gray-900 focus:outline-none ${
+              className={`group flex items-center gap-2 rounded-md border bg-transparent px-3 py-1.5 text-xs hover:bg-gray-100 hover:text-gray-900 focus:outline-none ${
                 open ? "bg-gray-100 text-gray-900" : "text-gray-500"
               }`}
             >
               View
-              <ChevronDownIcon className="h-4 w-4" aria-hidden="true" />
+              <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
             </Popover.Button>
 
             <Transition
