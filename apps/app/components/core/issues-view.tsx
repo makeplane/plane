@@ -80,6 +80,7 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
     orderBy,
     filters,
     setFilters,
+    params,
   } = useIssuesView();
 
   const { data: stateGroups } = useSWR(
@@ -184,7 +185,7 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
           mutate<{
             [key: string]: IIssue[];
           }>(
-            CYCLE_ISSUES_WITH_PARAMS(cycleId as string),
+            CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params),
             (prevData) => {
               if (!prevData) return prevData;
 
@@ -206,7 +207,7 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
           mutate<{
             [key: string]: IIssue[];
           }>(
-            MODULE_ISSUES_WITH_PARAMS(moduleId as string),
+            MODULE_ISSUES_WITH_PARAMS(moduleId as string, params),
             (prevData) => {
               if (!prevData) return prevData;
 
@@ -226,7 +227,7 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
           );
         else
           mutate<{ [key: string]: IIssue[] }>(
-            PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string),
+            PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params),
             (prevData) => {
               if (!prevData) return prevData;
 
@@ -255,7 +256,7 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
           .then(() => {
             if (cycleId) mutate(CYCLE_ISSUES(cycleId as string));
             if (moduleId) mutate(MODULE_ISSUES(moduleId as string));
-            mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string));
+            mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
           });
       }
     },
@@ -268,6 +269,7 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
       selectedGroup,
       orderBy,
       handleDeleteIssue,
+      params,
     ]
   );
 

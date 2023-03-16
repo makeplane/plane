@@ -73,7 +73,7 @@ export const SingleListIssue: React.FC<Props> = ({
 
   const { setToastAlert } = useToast();
 
-  const { groupByProperty: selectedGroup } = useIssueView();
+  const { groupByProperty: selectedGroup, params } = useIssueView();
 
   const partialUpdateIssue = useCallback(
     (formData: Partial<IIssue>) => {
@@ -86,7 +86,7 @@ export const SingleListIssue: React.FC<Props> = ({
             }
           | IIssue[]
         >(
-          CYCLE_ISSUES_WITH_PARAMS(cycleId as string),
+          CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params),
           (prevData) =>
             handleIssuesMutation(formData, groupTitle ?? "", selectedGroup, index, prevData),
           false
@@ -99,7 +99,7 @@ export const SingleListIssue: React.FC<Props> = ({
             }
           | IIssue[]
         >(
-          MODULE_ISSUES_WITH_PARAMS(moduleId as string),
+          MODULE_ISSUES_WITH_PARAMS(moduleId as string, params),
           (prevData) =>
             handleIssuesMutation(formData, groupTitle ?? "", selectedGroup, index, prevData),
           false
@@ -111,7 +111,7 @@ export const SingleListIssue: React.FC<Props> = ({
           }
         | IIssue[]
       >(
-        PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string),
+        PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params),
         (prevData) =>
           handleIssuesMutation(formData, groupTitle ?? "", selectedGroup, index, prevData),
         false
@@ -120,15 +120,15 @@ export const SingleListIssue: React.FC<Props> = ({
       issuesService
         .patchIssue(workspaceSlug as string, projectId as string, issue.id, formData)
         .then((res) => {
-          if (cycleId) mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string));
-          if (moduleId) mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string));
-          mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string));
+          if (cycleId) mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
+          if (moduleId) mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
+          mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
         })
         .catch((error) => {
           console.log(error);
         });
     },
-    [workspaceSlug, projectId, cycleId, moduleId, issue, groupTitle, index, selectedGroup]
+    [workspaceSlug, projectId, cycleId, moduleId, issue, groupTitle, index, selectedGroup, params]
   );
 
   const handleCopyText = () => {

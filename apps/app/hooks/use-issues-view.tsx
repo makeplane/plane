@@ -58,7 +58,7 @@ const useIssuesView = () => {
 
   const { data: projectIssues } = useSWR(
     workspaceSlug && projectId && params
-      ? PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string)
+      ? PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params)
       : null,
     workspaceSlug && projectId && params
       ? () =>
@@ -76,7 +76,7 @@ const useIssuesView = () => {
 
   const { data: cycleIssues } = useSWR(
     workspaceSlug && projectId && cycleId && params
-      ? CYCLE_ISSUES_WITH_PARAMS(cycleId as string)
+      ? CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params)
       : null,
     workspaceSlug && projectId && cycleId && params
       ? () =>
@@ -91,7 +91,7 @@ const useIssuesView = () => {
 
   const { data: moduleIssues } = useSWR(
     workspaceSlug && projectId && moduleId && params
-      ? MODULE_ISSUES_WITH_PARAMS(moduleId as string)
+      ? MODULE_ISSUES_WITH_PARAMS(moduleId as string, params)
       : null,
     workspaceSlug && projectId && moduleId && params
       ? () =>
