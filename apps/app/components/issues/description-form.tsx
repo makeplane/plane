@@ -132,7 +132,11 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
       </div>
       <span>{errors.name ? errors.name.message : null}</span>
       <RemirrorRichTextEditor
-        value={watch("description")}
+        value={
+          watch("description") && watch("description") !== ""
+            ? watch("description")
+            : watch("description_html")
+        }
         placeholder="Describe the issue..."
         onBlur={() => {
           setIsSubmitting(true);
