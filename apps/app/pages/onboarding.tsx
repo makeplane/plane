@@ -38,9 +38,9 @@ const Onboarding: NextPage = () => {
     <DefaultLayout>
       <div className="grid h-full place-items-center p-5">
         {step <= 3 ? (
-          <div className="w-full space-y-4">
-            <div className="text-center">
-              <Image src={Logo} height="40" alt="Plane Logo" />
+          <div className="w-full">
+            <div className="text-center mb-8">
+              <Image src={Logo} height="50" alt="Plane Logo" />
             </div>
             {step === 1 ? (
               <UserDetails user={user} setStep={setStep} />
