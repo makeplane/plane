@@ -19,12 +19,20 @@ import {
 import { orderArrayBy } from "helpers/array.helper";
 // types
 import type { NextPage, GetServerSidePropsContext } from "next";
+import useSWR from "swr";
+import { USER_WORKSPACE_DASHBOARD } from "constants/fetch-keys";
+import userService from "services/user.service";
 
 const WorkspacePage: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
   const { myIssues } = useIssues(workspaceSlug as string);
+
+  const { data: workspaceDashboardData } = useSWR(
+    workspaceSlug ? USER_WORKSPACE_DASHBOARD(workspaceSlug as string) : null,
+    workspaceSlug ? () => userService.userWorkspaceDashboard(workspaceSlug as string) : null
+  );
 
   const overdueIssues = orderArrayBy(
     myIssues?.filter(
@@ -68,11 +76,11 @@ const WorkspacePage: NextPage = () => {
               </a>
             </div>
           </div>
-          <IssuesStats issues={myIssues} />
+          <IssuesStats data={workspaceDashboardData} />
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
             <IssuesList issues={overdueIssues} type="overdue" />
             <IssuesList issues={incomingIssues} type="upcoming" />
-            <IssuesPieChart issues={myIssues} />
+            <IssuesPieChart groupedIssues={workspaceDashboardData?.state_distribution} />
             <CompletedIssuesGraph issues={myIssues} />
           </div>
         </div>

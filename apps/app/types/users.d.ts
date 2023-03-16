@@ -40,6 +40,20 @@ export interface IUserActivity {
   activity_count: number;
 }
 
+export interface IUserStateDistribution {
+  state_group: string;
+  state_count: number;
+}
+
+export interface IUserWorkspaceDashboard {
+  issue_activities: IUserActivity[];
+  assigned_issues_count: number;
+  pending_issues_count: number;
+  completed_issues_count: number;
+  issues_due_week_count: number;
+  state_distribution: IUserStateDistribution[];
+}
+
 export type UserAuth = {
   isMember: boolean;
   isOwner: boolean;
