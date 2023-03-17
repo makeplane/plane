@@ -210,7 +210,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, userAuth }) => {
                       <a className="group flex items-center justify-between gap-2 rounded p-2 hover:bg-gray-100">
                         <div className="flex items-center gap-2 rounded text-xs">
                           <span
-                            className="block flex-shrink-0 h-1.5 w-1.5 rounded-full"
+                            className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
                             style={{
                               backgroundColor: issue.state_detail.color,
                             }}
@@ -224,7 +224,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, userAuth }) => {
                         {!isNotAllowed && (
                           <button
                             type="button"
-                            className="opacity-0 group-hover:opacity-100 cursor-pointer"
+                            className="cursor-pointer opacity-0 group-hover:opacity-100"
                             onClick={(e) => {
                               e.preventDefault();
                               e.stopPropagation();
@@ -253,6 +253,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, userAuth }) => {
             }
             optionsPosition="left"
             noBorder
+            noChevron
           >
             <CustomMenu.MenuItem onClick={handleCreateIssueModal}>Create new</CustomMenu.MenuItem>
             <CustomMenu.MenuItem onClick={() => setSubIssuesListModal(true)}>

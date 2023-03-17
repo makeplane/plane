@@ -88,7 +88,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   return (
-    <div>
+    <div className="relative">
       <div className="relative">
         <TextArea
           id="name"
@@ -132,7 +132,11 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
       </div>
       <span>{errors.name ? errors.name.message : null}</span>
       <RemirrorRichTextEditor
-        value={watch("description")}
+        value={
+          watch("description") && watch("description") !== ""
+            ? watch("description")
+            : watch("description_html")
+        }
         placeholder="Describe the issue..."
         onBlur={() => {
           setIsSubmitting(true);
@@ -148,7 +152,13 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
         onHTMLChange={(html) => setValue("description_html", html)}
         editable={!isNotAllowed}
       />
-      <div className="text-right text-sm text-gray-500">{isSubmitting && "Saving..."}</div>
+      <div
+        className={`absolute -bottom-8 right-0 text-sm text-gray-500 ${
+          isSubmitting ? "block" : "hidden"
+        }`}
+      >
+        Saving...
+      </div>
     </div>
   );
 };

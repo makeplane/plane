@@ -15,7 +15,7 @@ import stateService from "services/state.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { Button, CustomSelect, Input } from "components/ui";
+import { CustomSelect, Input, PrimaryButton, SecondaryButton } from "components/ui";
 // types
 import type { IState } from "types";
 // fetch-keys
@@ -217,12 +217,10 @@ export const CreateUpdateStateInline: React.FC<Props> = ({ data, onClose, select
         error={errors.description}
         autoComplete="off"
       />
-      <Button theme="secondary" onClick={handleClose}>
-        Cancel
-      </Button>
-      <Button theme="primary" disabled={isSubmitting} type="submit">
+      <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+      <PrimaryButton type="submit" loading={isSubmitting}>
         {isSubmitting ? (data ? "Updating..." : "Creating...") : data ? "Update" : "Create"}
-      </Button>
+      </PrimaryButton>
     </form>
   );
 };

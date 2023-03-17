@@ -10,7 +10,8 @@ from plane.api.serializers import (
 )
 
 from plane.api.views.base import BaseViewSet, BaseAPIView
-from plane.db.models import User, Workspace
+from plane.db.models import User, Workspace, WorkspaceMemberInvite, Issue
+
 
 class UserEndpoint(BaseViewSet):
     serializer_class = UserSerializer
@@ -22,11 +23,34 @@ class UserEndpoint(BaseViewSet):
     def retrieve(self, request):
         try:
             workspace = Workspace.objects.get(pk=request.user.last_workspace_id)
+            workspace_invites = WorkspaceMemberInvite.objects.filter(
+                email=request.user.email
+            ).count()
+            assigned_issues = Issue.objects.filter(assignees__in=[request.user]).count()
+
             return Response(
-                {"user": UserSerializer(request.user).data, "slug": workspace.slug}
+                {
+                    "user": UserSerializer(request.user).data,
+                    "slug": workspace.slug,
+                    "workspace_invites": workspace_invites,
+                    "assigned_issues": assigned_issues,
+                },
+                status=status.HTTP_200_OK,
             )
         except Workspace.DoesNotExist:
-            return Response({"user": UserSerializer(request.user).data, "slug": None})
+            workspace_invites = WorkspaceMemberInvite.objects.filter(
+                email=request.user.email
+            ).count()
+            assigned_issues = Issue.objects.filter(assignees__in=[request.user]).count()
+            return Response(
+                {
+                    "user": UserSerializer(request.user).data,
+                    "slug": None,
+                    "workspace_invites": workspace_invites,
+                    "assigned_issues": assigned_issues,
+                },
+                status=status.HTTP_200_OK,
+            )
         except Exception as e:
             return Response(
                 {"error": "Something went wrong please try again later"},

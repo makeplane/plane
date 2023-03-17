@@ -100,7 +100,7 @@ export const SingleList: React.FC<Props> = ({
                     <PlusIcon className="h-4 w-4" />
                   </span>
                 }
-                optionsPosition="left"
+                optionsPosition="right"
                 noBorder
               >
                 <CustomMenu.MenuItem onClick={addIssueToState}>Create new</CustomMenu.MenuItem>

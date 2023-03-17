@@ -5,7 +5,7 @@ import type { Props } from "./types";
 export const SettingIcon: React.FC<Props> = ({
   width = "24",
   height = "24",
-  color = "black",
+  color = "#858E96",
   className,
 }) => (
   <svg

@@ -13,6 +13,7 @@ from plane.db.models import (
     ProjectMember,
     Label,
     GithubCommentSync,
+    Project,
 )
 from plane.api.serializers import (
     GithubIssueSyncSerializer,
@@ -34,6 +35,13 @@ class GithubRepositoriesEndpoint(BaseAPIView):
             workspace_integration = WorkspaceIntegration.objects.get(
                 workspace__slug=slug, pk=workspace_integration_id
             )
+
+            if workspace_integration.integration.provider != "github":
+                return Response(
+                    {"error": "Not a github integration"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
             access_tokens_url = workspace_integration.metadata["access_tokens_url"]
             repositories_url = (
                 workspace_integration.metadata["repositories_url"]
@@ -93,10 +101,6 @@ class GithubRepositorySyncViewSet(BaseViewSet):
             GithubRepository.objects.filter(
                 project_id=project_id, workspace__slug=slug
             ).delete()
-            # Project member delete
-            ProjectMember.objects.filter(
-                member=workspace_integration.actor, role=20, project_id=project_id
-            ).delete()
 
             # Create repository
             repo = GithubRepository.objects.create(
@@ -133,7 +137,7 @@ class GithubRepositorySyncViewSet(BaseViewSet):
             )
 
             # Add bot as a member in the project
-            _ = ProjectMember.objects.create(
+            _ = ProjectMember.objects.get_or_create(
                 member=workspace_integration.actor, role=20, project_id=project_id
             )
 
@@ -169,6 +173,46 @@ class GithubIssueSyncViewSet(BaseViewSet):
             project_id=self.kwargs.get("project_id"),
             repository_sync_id=self.kwargs.get("repo_sync_id"),
         )
+
+
+class BulkCreateGithubIssueSyncEndpoint(BaseAPIView):
+    def post(self, request, slug, project_id, repo_sync_id):
+        try:
+            project = Project.objects.get(pk=project_id, workspace__slug=slug)
+
+            github_issue_syncs = request.data.get("github_issue_syncs", [])
+            github_issue_syncs = GithubIssueSync.objects.bulk_create(
+                [
+                    GithubIssueSync(
+                        issue_id=github_issue_sync.get("issue"),
+                        repo_issue_id=github_issue_sync.get("repo_issue_id"),
+                        issue_url=github_issue_sync.get("issue_url"),
+                        github_issue_id=github_issue_sync.get("github_issue_id"),
+                        repository_sync_id=repo_sync_id,
+                        project_id=project_id,
+                        workspace_id=project.workspace_id,
+                        created_by=request.user,
+                        updated_by=request.user,
+                    )
+                    for github_issue_sync in github_issue_syncs
+                ],
+                batch_size=100,
+                ignore_conflicts=True,
+            )
+
+            serializer = GithubIssueSyncSerializer(github_issue_syncs, many=True)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except Project.DoesNotExist:
+            return Response(
+                {"error": "Project does not exist"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
 
 class GithubCommentSyncViewSet(BaseViewSet):

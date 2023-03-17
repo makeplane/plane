@@ -3,7 +3,7 @@ import json
 
 # Django imports
 from django.db import IntegrityError
-from django.db.models import OuterRef, Func, F, Q, Exists, OuterRef
+from django.db.models import OuterRef, Func, F, Q, Exists, OuterRef, Prefetch
 from django.core import serializers
 from django.utils import timezone
 
@@ -18,9 +18,18 @@ from plane.api.serializers import (
     CycleSerializer,
     CycleIssueSerializer,
     CycleFavoriteSerializer,
+    IssueStateSerializer,
 )
 from plane.api.permissions import ProjectEntityPermission
-from plane.db.models import Cycle, CycleIssue, Issue, CycleFavorite
+from plane.db.models import (
+    Cycle,
+    CycleIssue,
+    Issue,
+    CycleFavorite,
+    IssueBlocker,
+    IssueLink,
+    ModuleIssue,
+)
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
 
@@ -38,6 +47,12 @@ class CycleViewSet(BaseViewSet):
         )
 
     def get_queryset(self):
+        subquery = CycleFavorite.objects.filter(
+            user=self.request.user,
+            cycle_id=OuterRef("pk"),
+            project_id=self.kwargs.get("project_id"),
+            workspace__slug=self.kwargs.get("slug"),
+        )
         return self.filter_queryset(
             super()
             .get_queryset()
@@ -47,25 +62,9 @@ class CycleViewSet(BaseViewSet):
             .select_related("project")
             .select_related("workspace")
             .select_related("owned_by")
+            .annotate(is_favorite=Exists(subquery))
             .distinct()
         )
-
-    def list(self, request, slug, project_id):
-        try:
-            subquery = CycleFavorite.objects.filter(
-                user=self.request.user,
-                cycle_id=OuterRef("pk"),
-                project_id=project_id,
-                workspace__slug=slug,
-            )
-            cycles = self.get_queryset().annotate(is_favorite=Exists(subquery))
-            return Response(CycleSerializer(cycles, many=True).data)
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
 
     def create(self, request, slug, project_id):
         try:
@@ -143,19 +142,38 @@ class CycleIssueViewSet(BaseViewSet):
     def list(self, request, slug, project_id, cycle_id):
         try:
             order_by = request.GET.get("order_by", "created_at")
-            queryset = self.get_queryset().order_by(f"issue__{order_by}")
             group_by = request.GET.get("group_by", False)
 
-            cycle_issues = CycleIssueSerializer(queryset, many=True).data
+            issues = (
+                Issue.objects.filter(issue_cycle__cycle_id=cycle_id)
+                .annotate(
+                    sub_issues_count=Issue.objects.filter(parent=OuterRef("id"))
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
+                .annotate(bridge_id=F("issue_cycle__id"))
+                .filter(project_id=project_id)
+                .filter(workspace__slug=slug)
+                .select_related("project")
+                .select_related("workspace")
+                .select_related("state")
+                .select_related("parent")
+                .prefetch_related("assignees")
+                .prefetch_related("labels")
+                .order_by(order_by)
+            )
+
+            issues_data = IssueStateSerializer(issues, many=True).data
 
             if group_by:
                 return Response(
-                    group_results(cycle_issues, f"issue_detail.{group_by}"),
+                    group_results(issues_data, group_by),
                     status=status.HTTP_200_OK,
                 )
 
             return Response(
-                cycle_issues,
+                issues_data,
                 status=status.HTTP_200_OK,
             )
         except Exception as e:
@@ -263,15 +281,20 @@ class CycleIssueViewSet(BaseViewSet):
 
 
 class CycleDateCheckEndpoint(BaseAPIView):
-
     permission_classes = [
         ProjectEntityPermission,
-    ]    
+    ]
 
     def post(self, request, slug, project_id):
         try:
-            start_date = request.data.get("start_date")
-            end_date = request.data.get("end_date")
+            start_date = request.data.get("start_date", False)
+            end_date = request.data.get("end_date", False)
+
+            if not start_date or not end_date:
+                return Response(
+                    {"error": "Start date and end date both are required"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             cycles = Cycle.objects.filter(
                 Q(start_date__lte=start_date, end_date__gte=start_date)
@@ -299,11 +322,10 @@ class CycleDateCheckEndpoint(BaseAPIView):
 
 
 class CurrentUpcomingCyclesEndpoint(BaseAPIView):
-
     permission_classes = [
         ProjectEntityPermission,
     ]
-    
+
     def get(self, request, slug, project_id):
         try:
             subquery = CycleFavorite.objects.filter(
@@ -342,12 +364,10 @@ class CurrentUpcomingCyclesEndpoint(BaseAPIView):
 
 
 class CompletedCyclesEndpoint(BaseAPIView):
-
     permission_classes = [
         ProjectEntityPermission,
-    ]    
+    ]
 
-    
     def get(self, request, slug, project_id):
         try:
             subquery = CycleFavorite.objects.filter(
@@ -380,10 +400,9 @@ class CompletedCyclesEndpoint(BaseAPIView):
 
 
 class DraftCyclesEndpoint(BaseAPIView):
-
     permission_classes = [
         ProjectEntityPermission,
-    ]    
+    ]
 
     def get(self, request, slug, project_id):
         try:
@@ -407,11 +426,10 @@ class DraftCyclesEndpoint(BaseAPIView):
 
 
 class CycleFavoriteViewSet(BaseViewSet):
-
     permission_classes = [
         ProjectEntityPermission,
     ]
-    
+
     serializer_class = CycleFavoriteSerializer
     model = CycleFavorite
 

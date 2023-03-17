@@ -13,21 +13,24 @@ import useIssuesProperties from "hooks/use-issue-properties";
 import useIssuesView from "hooks/use-issues-view";
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
+// components
+import { PRIORITIES } from "constants/project";
 // ui
-import { CustomMenu } from "components/ui";
+import { Avatar, CustomMenu, MultiLevelDropdown } from "components/ui";
 // icons
 import { ChevronDownIcon, ListBulletIcon } from "@heroicons/react/24/outline";
 import { Squares2X2Icon } from "@heroicons/react/20/solid";
+import { getStateGroupIcon } from "components/icons";
+import { getPriorityIcon } from "components/icons/priority-icon";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 import { getStatesList } from "helpers/state.helper";
 // types
-import { IIssue, IIssueLabels, Properties } from "types";
+import { IIssueLabels, Properties } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS, STATE_LIST } from "constants/fetch-keys";
 // constants
 import { GROUP_BY_OPTIONS, ORDER_BY_OPTIONS, FILTER_ISSUE_OPTIONS } from "constants/issue";
-import { PRIORITIES } from "constants/project";
 
 export const IssuesFilterView: React.FC = () => {
   const router = useRouter();
@@ -96,38 +99,94 @@ export const IssuesFilterView: React.FC = () => {
           <Squares2X2Icon className="h-4 w-4" />
         </button>
       </div>
-      <CustomMenu
-        customButton={
-          <button
-            type="button"
-            className="group flex items-center gap-2 rounded-md border bg-transparent p-2 text-xs font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:outline-none"
-          >
-            Filters
-            <ChevronDownIcon className="h-4 w-4" aria-hidden="true" />
-          </button>
-        }
-        optionsPosition="right"
-      >
-        <CustomMenu.MenuItem
-          onClick={() =>
-            setFilters({
-              assignees: ["72d6ad43-41ff-4907-9980-2f5ee8745ad3"],
-            })
-          }
-        >
-          Member- Aaryan
-        </CustomMenu.MenuItem>
-      </CustomMenu>
+      <MultiLevelDropdown
+        label="Filters"
+        onSelect={(option) => {
+          setFilters({
+            ...filters,
+            [option.key]: [
+              ...((filters?.[option.key as keyof typeof filters] as any[]) ?? []),
+              option.value,
+            ],
+          });
+        }}
+        direction="left"
+        options={[
+          {
+            id: "priority",
+            label: "Priority",
+            value: PRIORITIES,
+            children: [
+              ...PRIORITIES.map((priority) => ({
+                id: priority ?? "none",
+                label: (
+                  <div className="flex items-center gap-2">
+                    {getPriorityIcon(priority)} {priority ?? "None"}
+                  </div>
+                ),
+                value: {
+                  key: "priority",
+                  value: priority,
+                },
+                selected: filters?.priority?.includes(priority ?? "none"),
+              })),
+            ],
+          },
+          {
+            id: "state",
+            label: "State",
+            value: statesList,
+            children: [
+              ...statesList.map((state) => ({
+                id: state.id,
+                label: (
+                  <div className="flex items-center gap-2">
+                    {getStateGroupIcon(state.group, "16", "16", state.color)} {state.name}
+                  </div>
+                ),
+                value: {
+                  key: "state",
+                  value: state.id,
+                },
+                selected: filters?.state?.includes(state.id),
+              })),
+            ],
+          },
+          {
+            id: "assignee",
+            label: "Assignee",
+            value: members,
+            children: [
+              ...(members?.map((member) => ({
+                id: member.member.id,
+                label: (
+                  <div className="flex items-center gap-2">
+                    <Avatar user={member.member} />
+                    {member.member.first_name && member.member.first_name !== ""
+                      ? member.member.first_name
+                      : member.member.email}
+                  </div>
+                ),
+                value: {
+                  key: "assignee",
+                  value: member.member.id,
+                },
+                selected: filters?.assignees?.includes(member.member.id),
+              })) ?? []),
+            ],
+          },
+        ]}
+      />
       <Popover className="relative">
         {({ open }) => (
           <>
             <Popover.Button
-              className={`group flex items-center gap-2 rounded-md border bg-transparent p-2 text-xs font-medium hover:bg-gray-100 hover:text-gray-900 focus:outline-none ${
+              className={`group flex items-center gap-2 rounded-md border bg-transparent px-3 py-1.5 text-xs hover:bg-gray-100 hover:text-gray-900 focus:outline-none ${
                 open ? "bg-gray-100 text-gray-900" : "text-gray-500"
               }`}
             >
               View
-              <ChevronDownIcon className="h-4 w-4" aria-hidden="true" />
+              <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
             </Popover.Button>
 
             <Transition

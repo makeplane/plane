@@ -3,8 +3,6 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
-import useSWR from "swr";
-
 // react-hook-form
 import { useForm } from "react-hook-form";
 // lib
@@ -12,7 +10,6 @@ import { requiredAuth } from "lib/auth";
 // services
 import fileService from "services/file.service";
 import userService from "services/user.service";
-import workspaceService from "services/workspace.service";
 // hooks
 import useUser from "hooks/use-user";
 import useToast from "hooks/use-toast";
@@ -21,12 +18,13 @@ import AppLayout from "layouts/app-layout";
 // components
 import { ImageUploadModal } from "components/core";
 // ui
-import { Button, Input, Spinner } from "components/ui";
+import { DangerButton, Input, SecondaryButton, Spinner } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import {
   ChevronRightIcon,
   PencilIcon,
+  RectangleStackIcon,
   UserIcon,
   UserPlusIcon,
   XMarkIcon,
@@ -34,8 +32,6 @@ import {
 // types
 import type { NextPage, GetServerSidePropsContext } from "next";
 import type { IUser } from "types";
-// fetch-keys
-import { USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 
 const defaultValues: Partial<IUser> = {
   avatar: "",
@@ -59,11 +55,7 @@ const Profile: NextPage = () => {
   } = useForm<IUser>({ defaultValues });
 
   const { setToastAlert } = useToast();
-  const { user: myProfile, mutateUser } = useUser();
-
-  const { data: invitations } = useSWR(USER_WORKSPACE_INVITATIONS, () =>
-    workspaceService.userWorkspaceInvitations()
-  );
+  const { user: myProfile, mutateUser, assignedIssuesLength, workspaceInvitesLength } = useUser();
 
   useEffect(() => {
     reset({ ...defaultValues, ...myProfile });
@@ -135,9 +127,16 @@ const Profile: NextPage = () => {
 
   const quickLinks = [
     {
+      icon: RectangleStackIcon,
+      title: "Assigned Issues",
+      number: assignedIssuesLength,
+      description: "View your workspace invitations.",
+      href: "/invitations",
+    },
+    {
       icon: UserPlusIcon,
       title: "Workspace Invitations",
-      number: invitations?.length ?? 0,
+      number: workspaceInvitesLength,
       description: "View your workspace invitations.",
       href: "/invitations",
     },
@@ -206,24 +205,17 @@ const Profile: NextPage = () => {
                       <br />
                       Supported file types are .jpg and .png.
                     </p>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        type="button"
-                        className="mt-4"
-                        onClick={() => setIsImageUploadModalOpen(true)}
-                      >
+                    <div className="mt-4 flex items-center gap-2">
+                      <SecondaryButton onClick={() => setIsImageUploadModalOpen(true)}>
                         Upload new
-                      </Button>
+                      </SecondaryButton>
                       {myProfile.avatar && myProfile.avatar !== "" && (
-                        <Button
-                          type="button"
-                          className="mt-4"
-                          theme="danger"
+                        <DangerButton
                           onClick={() => handleDelete(myProfile.avatar, true)}
-                          disabled={isRemoving}
+                          loading={isRemoving}
                         >
                           {isRemoving ? "Removing..." : "Remove"}
-                        </Button>
+                        </DangerButton>
                       )}
                     </div>
                   </div>
@@ -270,9 +262,9 @@ const Profile: NextPage = () => {
                   </div>
                   {isEditing && (
                     <div>
-                      <Button type="submit" disabled={isSubmitting}>
+                      <SecondaryButton type="submit" loading={isSubmitting}>
                         {isSubmitting ? "Updating Profile..." : "Update Profile"}
-                      </Button>
+                      </SecondaryButton>
                     </div>
                   )}
                 </form>

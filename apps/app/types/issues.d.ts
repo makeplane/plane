@@ -137,7 +137,7 @@ export interface BlockeIssueDetail {
 export interface IIssueComment {
   id: string;
   actor: string;
-  actor_detail: IUser;
+  actor_detail: IUserLite;
   created_at: Date;
   updated_at: Date;
   comment: string;
@@ -187,7 +187,7 @@ export interface IIssueLabels {
 
 export interface IIssueActivity {
   id: string;
-  actor_detail: IUser;
+  actor_detail: IUserLite;
   created_at: Date;
   updated_at: Date;
   verb: string;
@@ -210,9 +210,11 @@ export interface IIssueActivity {
 export interface IIssueFilterOptions {
   type: "active" | "backlog" | null;
   assignees: string[] | null;
+  state: string[] | null;
   labels: string[] | null;
   issue__assignees__id: string[] | null;
   issue__labels__id: string[] | null;
+  priority: string[] | null;
 }
 
 export interface IIssueViewOptions {

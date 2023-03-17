@@ -206,7 +206,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
         {module ? (
           <>
             <div className="flex flex-col items-start justify-center">
-              <div className="flex gap-2.5 px-6 text-sm">
+              <div className="flex gap-2.5 px-5 text-sm">
                 <div className="flex items-center ">
                   <Controller
                     control={control}
@@ -526,7 +526,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
             </div>
           </>
         ) : (
-          <Loader>
+          <Loader className="px-5">
             <div className="space-y-2">
               <Loader.Item height="15px" width="50%" />
               <Loader.Item height="15px" width="30%" />

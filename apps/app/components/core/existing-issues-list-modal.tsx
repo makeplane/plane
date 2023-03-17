@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 
+// headless ui
+import { Combobox, Dialog, Transition } from "@headlessui/react";
 // react-hook-form
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 // hooks
-import { Combobox, Dialog, Transition } from "@headlessui/react";
-import { MagnifyingGlassIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
 import useToast from "hooks/use-toast";
-// headless ui
 // ui
-import { Button } from "components/ui";
+import { PrimaryButton, SecondaryButton } from "components/ui";
+// icons
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { LayerDiagonalIcon } from "components/icons";
 // types
 import { IIssue } from "types";
@@ -180,17 +181,10 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                   />
                   {filteredIssues.length > 0 && (
                     <div className="flex items-center justify-end gap-2 p-3">
-                      <Button type="button" theme="secondary" size="sm" onClick={handleClose}>
-                        Cancel
-                      </Button>
-                      <Button
-                        type="button"
-                        size="sm"
-                        onClick={handleSubmit(onSubmit)}
-                        disabled={isSubmitting}
-                      >
+                      <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                      <PrimaryButton onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
                         {isSubmitting ? "Adding..." : "Add selected issues"}
-                      </Button>
+                      </PrimaryButton>
                     </div>
                   )}
                 </form>

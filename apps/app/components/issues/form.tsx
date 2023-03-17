@@ -20,8 +20,7 @@ import { CreateStateModal } from "components/states";
 import { CreateUpdateCycleModal } from "components/cycles";
 import { CreateLabelModal } from "components/labels";
 // ui
-import { Button, CustomMenu, Input, Loader } from "components/ui";
-import { PrimaryButton } from "components/ui/button/primary-button";
+import { CustomMenu, Input, Loader, PrimaryButton, SecondaryButton } from "components/ui";
 // icons
 import { XMarkIcon } from "@heroicons/react/24/outline";
 // helpers
@@ -355,10 +354,8 @@ export const IssueForm: FC<IssueFormProps> = ({
             </button>
           </div>
           <div className="flex items-center gap-2">
-            <Button type="button" theme="secondary" onClick={handleClose}>
-              Discard
-            </Button>
-            <PrimaryButton type="submit" size="sm" loading={isSubmitting}>
+            <SecondaryButton onClick={handleClose}>Discard</SecondaryButton>
+            <PrimaryButton type="submit" loading={isSubmitting}>
               {status
                 ? isSubmitting
                   ? "Updating Issue..."

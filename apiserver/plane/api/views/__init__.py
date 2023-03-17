@@ -36,10 +36,12 @@ from .workspace import (
     UserLastProjectWithWorkspaceEndpoint,
     WorkspaceMemberUserEndpoint,
     WorkspaceMemberUserViewsEndpoint,
+    UserActivityGraphEndpoint,
+    UserIssueCompletedGraphEndpoint,
 )
 from .state import StateViewSet
 from .shortcut import ShortCutViewSet
-from .view import ViewViewSet
+from .view import IssueViewViewSet, ViewIssuesEndpoint, IssueViewFavoriteViewSet
 from .cycle import (
     CycleViewSet,
     CycleIssueViewSet,
@@ -49,7 +51,7 @@ from .cycle import (
     CycleFavoriteViewSet,
     DraftCyclesEndpoint,
 )
-from .asset import FileAssetEndpoint
+from .asset import FileAssetEndpoint, UserAssetsEndpoint
 from .issue import (
     IssueViewSet,
     WorkSpaceIssuesEndpoint,
@@ -62,6 +64,7 @@ from .issue import (
     UserWorkSpaceIssues,
     SubIssuesEndpoint,
     IssueLinkViewSet,
+    BulkCreateIssueLabelsEndpoint,
 )
 
 from .auth_extended import (
@@ -96,4 +99,12 @@ from .integration import (
     GithubRepositorySyncViewSet,
     GithubCommentSyncViewSet,
     GithubRepositoriesEndpoint,
+    BulkCreateGithubIssueSyncEndpoint,
+)
+
+from .importer import (
+    ServiceIssueImportSummaryEndpoint,
+    ImportServiceEndpoint,
+    UpdateServiceImportStatusEndpoint,
+    BulkImportIssuesEndpoint,
 )

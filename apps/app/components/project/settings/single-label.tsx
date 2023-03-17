@@ -1,14 +1,15 @@
-// react
 import React, { useState } from "react";
+
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
+// react-color
+import { TwitterPicker } from "react-color";
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
 // ui
-import { PencilIcon, RectangleGroupIcon } from "@heroicons/react/24/outline";
-import { TwitterPicker } from "react-color";
-import { Button, CustomMenu, Input } from "components/ui";
+import { CustomMenu, Input, PrimaryButton, SecondaryButton } from "components/ui";
 // icons
+import { PencilIcon, RectangleGroupIcon } from "@heroicons/react/24/outline";
 // types
 import { IIssueLabels } from "types";
 
@@ -110,19 +111,15 @@ const SingleLabel: React.FC<Props> = ({ label, issueLabels, editLabel, handleLab
                 id="labelName"
                 name="name"
                 register={register}
-                placeholder="Lable title"
+                placeholder="Label title"
                 validations={{
                   required: "Label title is required",
                 }}
                 error={errors.name}
               />
             </div>
-            <Button type="button" theme="secondary" onClick={() => setNewLabelForm(false)}>
-              Cancel
-            </Button>
-            <Button type="button" disabled={isSubmitting}>
-              {isSubmitting ? "Adding" : "Add"}
-            </Button>
+            <SecondaryButton onClick={() => setNewLabelForm(false)}>Cancel</SecondaryButton>
+            <PrimaryButton loading={isSubmitting}>{isSubmitting ? "Adding" : "Add"}</PrimaryButton>
           </div>
         </div>
       ) : (
