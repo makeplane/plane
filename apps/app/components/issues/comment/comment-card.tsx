@@ -55,7 +55,7 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
           {comment.actor_detail.avatar && comment.actor_detail.avatar !== "" ? (
             <Image
               src={comment.actor_detail.avatar}
-              alt={comment.actor_detail.name}
+              alt={comment.actor_detail.first_name}
               height={30}
               width={30}
               className="rounded-full"
@@ -71,7 +71,8 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
         <div className="w-full space-y-1">
           <p className="flex items-center gap-2 text-xs text-gray-500">
             <span>
-              {comment.actor_detail.first_name} {comment.actor_detail.last_name}
+              {comment.actor_detail.first_name}
+              {comment.actor_detail.is_bot ? "Bot" : " " + comment.actor_detail.last_name}
             </span>
             <span>{timeAgo(comment.created_at)}</span>
           </p>

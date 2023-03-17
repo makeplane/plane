@@ -13,14 +13,15 @@ import AppLayout from "layouts/app-layout";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { Button } from "components/ui";
+import { SecondaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+// icons
+import { ContrastIcon, PeopleGroupIcon, ViewListIcon } from "components/icons";
 // types
 import { IProject, UserAuth } from "types";
 import type { NextPage, GetServerSidePropsContext } from "next";
 // fetch-keys
 import { PROJECTS_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
-import { ContrastIcon, PeopleGroupIcon, ViewListIcon } from "components/icons";
 
 const FeaturesSettings: NextPage<UserAuth> = (props) => {
   const router = useRouter();
@@ -183,14 +184,10 @@ const FeaturesSettings: NextPage<UserAuth> = (props) => {
         </div>
         <div className="flex items-center gap-2">
           <a href="https://plane.so/" target="_blank" rel="noreferrer">
-            <Button theme="secondary" size="rg" className="text-xs">
-              Plane is open-source, view Roadmap
-            </Button>
+            <SecondaryButton outline>Plane is open-source, view Roadmap</SecondaryButton>
           </a>
           <a href="https://github.com/makeplane/plane" target="_blank" rel="noreferrer">
-            <Button theme="secondary" size="rg" className="text-xs">
-              Star us on GitHub
-            </Button>
+            <SecondaryButton outline>Star us on GitHub</SecondaryButton>
           </a>
         </div>
       </section>

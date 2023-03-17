@@ -13,7 +13,7 @@ import { Popover, Transition } from "@headlessui/react";
 // services
 import issuesService from "services/issues.service";
 // ui
-import { Button, Input } from "components/ui";
+import { Input, PrimaryButton, SecondaryButton } from "components/ui";
 // types
 import { IIssueLabels } from "types";
 // fetch-keys
@@ -168,24 +168,22 @@ export const CreateUpdateLabelInline: React.FC<Props> = ({
           error={errors.name}
         />
       </div>
-      <Button
-        type="button"
-        theme="secondary"
+      <SecondaryButton
         onClick={() => {
           reset();
           setLabelForm(false);
         }}
       >
         Cancel
-      </Button>
+      </SecondaryButton>
       {isUpdating ? (
-        <Button type="button" onClick={handleSubmit(handleLabelUpdate)} disabled={isSubmitting}>
+        <PrimaryButton onClick={handleSubmit(handleLabelUpdate)} loading={isSubmitting}>
           {isSubmitting ? "Updating" : "Update"}
-        </Button>
+        </PrimaryButton>
       ) : (
-        <Button type="button" onClick={handleSubmit(handleLabelCreate)} disabled={isSubmitting}>
+        <PrimaryButton onClick={handleSubmit(handleLabelCreate)} loading={isSubmitting}>
           {isSubmitting ? "Adding" : "Add"}
-        </Button>
+        </PrimaryButton>
       )}
     </div>
   );

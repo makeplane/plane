@@ -265,7 +265,7 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
             <span>
               Progress
               <br />
-              {isNaN(completionPercentage) ? 0 : completionPercentage.toFixed(2)}%
+              {isNaN(completionPercentage) ? 0 : completionPercentage.toFixed(0)}%
             </span>
             <div className="bar relative mt-1 h-1 w-full rounded bg-gray-300">
               <div

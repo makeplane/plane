@@ -18,7 +18,7 @@ import AppLayout from "layouts/app-layout";
 // components
 import { ImageUploadModal } from "components/core";
 // ui
-import { Button, Input, Spinner } from "components/ui";
+import { DangerButton, Input, SecondaryButton, Spinner } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import {
@@ -205,24 +205,17 @@ const Profile: NextPage = () => {
                       <br />
                       Supported file types are .jpg and .png.
                     </p>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        type="button"
-                        className="mt-4"
-                        onClick={() => setIsImageUploadModalOpen(true)}
-                      >
+                    <div className="mt-4 flex items-center gap-2">
+                      <SecondaryButton onClick={() => setIsImageUploadModalOpen(true)}>
                         Upload new
-                      </Button>
+                      </SecondaryButton>
                       {myProfile.avatar && myProfile.avatar !== "" && (
-                        <Button
-                          type="button"
-                          className="mt-4"
-                          theme="danger"
+                        <DangerButton
                           onClick={() => handleDelete(myProfile.avatar, true)}
-                          disabled={isRemoving}
+                          loading={isRemoving}
                         >
                           {isRemoving ? "Removing..." : "Remove"}
-                        </Button>
+                        </DangerButton>
                       )}
                     </div>
                   </div>
@@ -269,9 +262,9 @@ const Profile: NextPage = () => {
                   </div>
                   {isEditing && (
                     <div>
-                      <Button type="submit" disabled={isSubmitting}>
+                      <SecondaryButton type="submit" loading={isSubmitting}>
                         {isSubmitting ? "Updating Profile..." : "Update Profile"}
-                      </Button>
+                      </SecondaryButton>
                     </div>
                   )}
                 </form>

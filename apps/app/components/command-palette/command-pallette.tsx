@@ -20,7 +20,7 @@ import { CreateUpdateIssueModal } from "components/issues";
 import { CreateUpdateCycleModal } from "components/cycles";
 import { CreateUpdateModuleModal } from "components/modules";
 // ui
-import { Button } from "components/ui";
+import { SecondaryButton } from "components/ui";
 // icons
 import {
   FolderIcon,
@@ -350,11 +350,7 @@ export const CommandPalette: React.FC = () => {
                 </Combobox>
 
                 <div className="flex items-center justify-end gap-2 p-3">
-                  <div>
-                    <Button type="button" size="sm" onClick={handleCommandPaletteClose}>
-                      Close
-                    </Button>
-                  </div>
+                  <SecondaryButton onClick={handleCommandPaletteClose}>Close</SecondaryButton>
                 </div>
               </Dialog.Panel>
             </Transition.Child>

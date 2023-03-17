@@ -18,6 +18,8 @@ import { AllLists, AllBoards } from "components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 import { CreateUpdateViewModal } from "components/views";
+// ui
+import { EmptySpace, EmptySpaceItem, PrimaryButton } from "components/ui";
 // icons
 import { PlusIcon, RectangleStackIcon, TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // helpers
@@ -27,7 +29,6 @@ import {
   CycleIssueResponse,
   IIssue,
   IIssueFilterOptions,
-  IView,
   ModuleIssueResponse,
   UserAuth,
 } from "types";
@@ -41,8 +42,6 @@ import {
   PROJECT_MEMBERS,
   STATE_LIST,
 } from "constants/fetch-keys";
-import { EmptySpace, EmptySpaceItem } from "components/ui";
-import { PrimaryButton } from "components/ui/button/primary-button";
 
 type Props = {
   type?: "issue" | "cycle" | "module";
@@ -501,14 +500,12 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
 
         {Object.keys(filters).length > 0 && (
           <PrimaryButton
-            type="button"
             onClick={() =>
               setCreateViewModal({
                 query: filters,
               })
             }
-            className="flex items-center gap-4 text-sm"
-            size="sm"
+            className="flex items-center gap-2 text-sm"
           >
             <PlusIcon className="h-4 w-4" />
             Save view

@@ -6,7 +6,7 @@ import Image from "next/image";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 // ui
-import { Button } from "components/ui";
+import { SecondaryButton } from "components/ui";
 // images
 import Image404 from "public/404.svg";
 // types
@@ -33,9 +33,7 @@ const PageNotFound: NextPage = () => (
         </div>
         <Link href="/">
           <a className="block">
-            <Button type="button" largePadding>
-              Go to Home
-            </Button>
+            <SecondaryButton size="md">Go to Home</SecondaryButton>
           </a>
         </Link>
       </div>

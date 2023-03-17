@@ -1,6 +1,7 @@
 import { FC } from "react";
+
 // ui
-import { Button } from "components/ui";
+import { SecondaryButton } from "components/ui";
 
 export interface JoinProjectProps {
   isJoiningProject: boolean;
@@ -16,9 +17,9 @@ export const JoinProject: FC<JoinProjectProps> = ({ isJoiningProject, handleJoin
         below.
       </p>
       <div>
-        <Button type="button" disabled={isJoiningProject} onClick={handleJoin}>
+        <SecondaryButton loading={isJoiningProject} onClick={handleJoin}>
           {isJoiningProject ? "Joining..." : "Click to join"}
-        </Button>
+        </SecondaryButton>
       </div>
     </div>
   </div>
