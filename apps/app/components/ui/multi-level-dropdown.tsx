@@ -1,7 +1,10 @@
-import { Menu, Transition } from "@headlessui/react";
 import { Fragment, useState } from "react";
-import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/20/solid";
+
+// headless ui
+import { Menu, Transition } from "@headlessui/react";
+// icons
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/20/solid";
 
 type MultiLevelDropdownProps = {
   label: string;
@@ -107,7 +110,7 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                           : "left-full translate-x-1"
                       }`}
                     >
-                      <div className="p-1">
+                      <div className="space-y-1 p-1">
                         {option.children.map((child) => (
                           <Menu.Item
                             key={child.id}
@@ -118,7 +121,7 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                             }}
                             className={({ active }) =>
                               `${
-                                active || option.selected ? "bg-gray-100" : "text-gray-900"
+                                active || child.selected ? "bg-gray-100" : "text-gray-900"
                               } flex w-full items-center rounded px-1 py-1.5 capitalize`
                             }
                           >

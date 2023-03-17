@@ -16,6 +16,7 @@ export interface IView {
 export interface IQuery {
   state: string[] | null;
   parent: string[] | null;
+  priority: string[] | null;
   labels: string[] | null;
   assignees: string[] | null;
   created_by: string[] | null;

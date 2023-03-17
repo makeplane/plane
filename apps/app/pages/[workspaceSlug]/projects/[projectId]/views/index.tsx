@@ -21,13 +21,14 @@ import { TrashIcon } from "@heroicons/react/20/solid";
 // fetching keys
 import { PROJECT_DETAILS, VIEWS_LIST } from "constants/fetch-keys";
 // components
-import { CustomMenu, Spinner } from "components/ui";
-import { DeleteViewModal } from "components/views";
+import { CustomMenu, Spinner, PrimaryButton } from "components/ui";
+import { DeleteViewModal, CreateUpdateViewModal } from "components/views";
 // types
 import { IView } from "types";
 import type { NextPage, GetServerSidePropsContext } from "next";
 
 const ProjectViews: NextPage = () => {
+  const [isCreateViewModalOpen, setIsCreateViewModalOpen] = useState(false);
   const [selectedView, setSelectedView] = useState<IView | null>(null);
 
   const {
@@ -59,7 +60,18 @@ const ProjectViews: NextPage = () => {
           <BreadcrumbItem title={`${activeProject?.name ?? "Project"} Cycles`} />
         </Breadcrumbs>
       }
+      right={
+        <div className="flex items-center gap-2">
+          <PrimaryButton type="button" onClick={() => setIsCreateViewModalOpen(true)}>
+            Create View
+          </PrimaryButton>
+        </div>
+      }
     >
+      <CreateUpdateViewModal
+        isOpen={isCreateViewModalOpen}
+        handleClose={() => setIsCreateViewModalOpen(false)}
+      />
       <DeleteViewModal
         isOpen={!!selectedView}
         data={selectedView}
