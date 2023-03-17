@@ -289,7 +289,9 @@ class ImportServiceEndpoint(BaseAPIView):
                         status=status.HTTP_400_BAD_REQUEST,
                     )
 
-                api_token = APIToken.objects.filter(user=request.user).first()
+                api_token = APIToken.objects.filter(
+                    user=request.user, workspace=workspace
+                ).first()
                 if api_token is None:
                     api_token = APIToken.objects.create(
                         user=request.user,
@@ -312,15 +314,55 @@ class ImportServiceEndpoint(BaseAPIView):
 
                 service_importer.delay(service, importer.id)
                 serializer = ImporterSerializer(importer)
-                return Response(serializer.data, status=status.HTTP_200_OK)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+            if service == "jira":
+                data = request.data.get("data", False)
+                metadata = request.data.get("metadata", False)
+                config = request.data.get("config", False)
+                if not data or not metadata:
+                    return Response(
+                        {"error": "Data, config and metadata are required"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+                api_token = APIToken.objects.filter(
+                    user=request.user, workspace=workspace
+                ).first()
+                if api_token is None:
+                    api_token = APIToken.objects.create(
+                        user=request.user,
+                        label="Importer",
+                        workspace=workspace,
+                    )
+
+                importer = Importer.objects.create(
+                    service=service,
+                    project_id=project_id,
+                    status="queued",
+                    initiated_by=request.user,
+                    data=data,
+                    metadata=metadata,
+                    token=api_token,
+                    config=config,
+                    created_by=request.user,
+                    updated_by=request.user,
+                )
+
+                service_importer.delay(service, importer.id)
+                serializer = ImporterSerializer(importer)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
 
             return Response(
                 {"error": "Servivce not supported yet"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        except (Workspace.DoesNotExist, WorkspaceIntegration.DoesNotExist) as e:
+        except (
+            Workspace.DoesNotExist,
+            WorkspaceIntegration.DoesNotExist,
+            Project.DoesNotExist,
+        ) as e:
             return Response(
-                {"error": "Workspace Integration does not exist"},
+                {"error": "Workspace Integration or Project does not exist"},
                 status=status.HTTP_404_NOT_FOUND,
             )
         except Exception as e:
