@@ -8,7 +8,7 @@ import { useForm, Controller } from "react-hook-form";
 
 import { Dialog, Transition } from "@headlessui/react";
 // ui
-import { Button, CustomSelect, TextArea } from "components/ui";
+import { CustomSelect, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
 // hooks
 import useToast from "hooks/use-toast";
 // services
@@ -218,12 +218,10 @@ const SendProjectInvitationModal: React.FC<Props> = ({ isOpen, setIsOpen, member
                     </div>
                   </div>
                   <div className="mt-5 flex justify-end gap-2">
-                    <Button theme="secondary" onClick={handleClose}>
-                      Cancel
-                    </Button>
-                    <Button type="submit" disabled={isSubmitting}>
+                    <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                    <PrimaryButton type="submit" loading={isSubmitting}>
                       {isSubmitting ? "Sending Invitation..." : "Send Invitation"}
-                    </Button>
+                    </PrimaryButton>
                   </div>
                 </form>
               </Dialog.Panel>

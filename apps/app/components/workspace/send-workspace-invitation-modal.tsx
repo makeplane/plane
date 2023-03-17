@@ -6,7 +6,7 @@ import { Dialog, Transition } from "@headlessui/react";
 // services
 import workspaceService from "services/workspace.service";
 // ui
-import { Button, CustomSelect, Input } from "components/ui";
+import { CustomSelect, Input, PrimaryButton, SecondaryButton } from "components/ui";
 // hooks
 import useToast from "hooks/use-toast";
 // types
@@ -153,12 +153,10 @@ const SendWorkspaceInvitationModal: React.FC<Props> = ({
                     </div>
                   </div>
                   <div className="mt-5 flex justify-end gap-2">
-                    <Button theme="secondary" onClick={handleClose}>
-                      Cancel
-                    </Button>
-                    <Button type="submit" disabled={isSubmitting}>
+                    <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                    <PrimaryButton type="submit" loading={isSubmitting}>
                       {isSubmitting ? "Sending Invitation..." : "Send Invitation"}
-                    </Button>
+                    </PrimaryButton>
                   </div>
                 </form>
               </Dialog.Panel>

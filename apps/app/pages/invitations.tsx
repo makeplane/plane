@@ -15,7 +15,7 @@ import DefaultLayout from "layouts/default-layout";
 // components
 import SingleInvitation from "components/workspace/single-invitation";
 // ui
-import { Button, Spinner, EmptySpace, EmptySpaceItem } from "components/ui";
+import { Spinner, EmptySpace, EmptySpaceItem, SecondaryButton, PrimaryButton } from "components/ui";
 // icons
 import { CubeIcon, PlusIcon } from "@heroicons/react/24/outline";
 // types
@@ -112,14 +112,12 @@ const OnBoard: NextPage = () => {
                 <div className="mt-6 flex items-center gap-2">
                   <Link href="/">
                     <a className="w-full">
-                      <Button className="w-full" theme="secondary">
-                        Go to Home
-                      </Button>
+                      <SecondaryButton className="w-full">Go to Home</SecondaryButton>
                     </a>
                   </Link>
-                  <Button className="w-full" onClick={submitInvitations}>
+                  <PrimaryButton className="w-full" onClick={submitInvitations}>
                     Accept and Continue
-                  </Button>
+                  </PrimaryButton>
                 </div>
               </div>
             ) : workspaces && workspaces.length > 0 ? (

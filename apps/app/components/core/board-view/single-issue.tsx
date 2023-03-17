@@ -82,7 +82,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
   const [contextMenu, setContextMenu] = useState(false);
   const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
 
-  const { orderBy } = useIssuesView();
+  const { orderBy, params } = useIssuesView();
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
@@ -100,7 +100,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
             }
           | IIssue[]
         >(
-          CYCLE_ISSUES_WITH_PARAMS(cycleId as string),
+          CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params),
           (prevData) =>
             handleIssuesMutation(formData, groupTitle ?? "", selectedGroup, index, prevData),
           false
@@ -125,7 +125,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
           }
         | IIssue[]
       >(
-        PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string),
+        PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params),
         (prevData) =>
           handleIssuesMutation(formData, groupTitle ?? "", selectedGroup, index, prevData),
         false
@@ -134,15 +134,15 @@ export const SingleBoardIssue: React.FC<Props> = ({
       issuesService
         .patchIssue(workspaceSlug as string, projectId as string, issue.id, formData)
         .then((res) => {
-          if (cycleId) mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string));
-          if (moduleId) mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string));
-          mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string));
+          if (cycleId) mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
+          if (moduleId) mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
+          mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
         })
         .catch((error) => {
           console.log(error);
         });
     },
-    [workspaceSlug, projectId, cycleId, moduleId, issue, groupTitle, index, selectedGroup]
+    [workspaceSlug, projectId, cycleId, moduleId, issue, groupTitle, index, selectedGroup, params]
   );
 
   const getStyle = (

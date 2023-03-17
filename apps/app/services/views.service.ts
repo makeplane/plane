@@ -47,8 +47,8 @@ class ViewServices extends APIService {
       });
   }
 
-  async deleteView(projectId: string, viewId: string): Promise<any> {
-    return this.delete(`/api/projects/${projectId}/views/${viewId}/`)
+  async deleteView(workspaceSlug: string, projectId: string, viewId: string): Promise<any> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

@@ -14,7 +14,7 @@ import useToast from "hooks/use-toast";
 // services
 import issuesService from "services/issues.service";
 // ui
-import { Button } from "components/ui";
+import { PrimaryButton, SecondaryButton } from "components/ui";
 // icons
 import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { BlockedIcon, LayerDiagonalIcon } from "components/icons";
@@ -270,14 +270,10 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
 
                     {filteredIssues.length > 0 && (
                       <div className="flex items-center justify-end gap-2 p-3">
-                        <div>
-                          <Button type="button" theme="secondary" size="sm" onClick={handleClose}>
-                            Close
-                          </Button>
-                        </div>
-                        <Button onClick={handleSubmit(onSubmit)} size="sm">
+                        <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                        <PrimaryButton onClick={handleSubmit(onSubmit)}>
                           Add selected issues
-                        </Button>
+                        </PrimaryButton>
                       </div>
                     )}
                   </form>

@@ -52,7 +52,7 @@ export const ActivityGraph = () => {
     const date = new Date(year, month, 1);
 
     while (date.getMonth() === month && date < new Date()) {
-      dates.push(new Date(date));
+      dates.push(renderDateFormat(new Date(date)));
       date.setDate(date.getDate() + 1);
     }
 
@@ -68,21 +68,19 @@ export const ActivityGraph = () => {
     ...getDatesOfMonth(recentMonths[5]),
   ];
 
-  const getDatesOnDay = (dates: Date[], day: number) => {
-    const datesOnDay = [];
-
-    for (let i = 0; i < dates.length; i++)
-      if (dates[i].getDay() === day) datesOnDay.push(renderDateFormat(new Date(dates[i])));
-
-    return datesOnDay;
-  };
-
   const activitiesIntensity = (activityCount: number) => {
-    if (activityCount <= 3) return "opacity-50";
-    else if (activityCount > 3 && activityCount <= 6) return "opacity-70";
-    else if (activityCount > 6 && activityCount <= 9) return "opacity-90";
+    if (activityCount <= 3) return "opacity-20";
+    else if (activityCount > 3 && activityCount <= 6) return "opacity-40";
+    else if (activityCount > 6 && activityCount <= 9) return "opacity-80";
     else return "";
   };
+
+  const addPaddingTiles = () => {
+    const firstDateDay = new Date(recentDates[0]).getDay();
+
+    for (let i = 0; i < firstDateDay; i++) recentDates.unshift("");
+  };
+  addPaddingTiles();
 
   useEffect(() => {
     if (!ref.current) return;
@@ -91,7 +89,7 @@ export const ActivityGraph = () => {
   }, [ref]);
 
   return (
-    <div className="grid place-items-center">
+    <div className="grid place-items-center overflow-x-scroll">
       <div className="flex items-start gap-4">
         <div className="flex flex-col gap-2 pt-6">
           {DAYS.map((day, index) => (
@@ -100,53 +98,50 @@ export const ActivityGraph = () => {
             </h6>
           ))}
         </div>
-        <div className="w-full">
+        <div>
           <div className="flex items-center justify-between" style={{ width: `${width}px` }}>
-            {recentMonths.map((month) => (
-              <h6 key={month.getMonth()} className="w-full text-xs">
+            {recentMonths.map((month, index) => (
+              <h6 key={index} className="w-full text-xs">
                 {MONTHS[month.getMonth()].substring(0, 3)}
               </h6>
             ))}
           </div>
-          <div className="mt-1.5 space-y-2" ref={ref}>
-            {DAYS.map((day, index) => (
-              <div key={day} className="flex items-start gap-2">
-                {getDatesOnDay(recentDates, index).map((date) => {
-                  const isActive = userActivity?.find((a) => a.created_date === date);
+          <div
+            className="mt-2 grid w-full grid-flow-col gap-2"
+            style={{ gridTemplateRows: "repeat(7, minmax(0, 1fr))" }}
+            ref={ref}
+          >
+            {recentDates.map((date) => {
+              const isActive = userActivity?.find((a) => a.created_date === date);
 
-                  return (
-                    <Tooltip
-                      key={date}
-                      tooltipContent={`${
-                        isActive ? isActive.activity_count : 0
-                      } activities on ${renderShortNumericDateFormat(date)}`}
-                      theme="dark"
-                    >
-                      <div
-                        className={`h-4 w-4 rounded ${
-                          isActive
-                            ? `bg-green-500 ${activitiesIntensity(isActive.activity_count)}`
-                            : "bg-gray-100"
-                        }`}
-                      />
-                    </Tooltip>
-                  );
-                })}
-              </div>
-            ))}
+              return (
+                <Tooltip
+                  key={date}
+                  tooltipContent={`${
+                    isActive ? isActive.activity_count : 0
+                  } activities on ${renderShortNumericDateFormat(date)}`}
+                  theme="dark"
+                >
+                  <div
+                    className={`${
+                      date === "" ? "pointer-events-none opacity-0" : ""
+                    } h-4 w-4 rounded ${
+                      isActive
+                        ? `bg-blue-500 ${activitiesIntensity(isActive.activity_count)}`
+                        : "bg-gray-100"
+                    }`}
+                  />
+                </Tooltip>
+              );
+            })}
           </div>
-          {/* <div className="mt-4 grid w-full grid-flow-row grid-rows-6 gap-2">
-            {recentDates.map((date) => (
-              <div className="h-4 w-4 rounded bg-gray-100" />
-            ))}
-          </div> */}
           <div className="mt-8 flex items-center gap-2 text-xs">
             <span>Less</span>
             <span className="h-4 w-4 rounded bg-gray-100" />
-            <span className="h-4 w-4 rounded bg-green-500 opacity-50" />
-            <span className="h-4 w-4 rounded bg-green-500 opacity-70" />
-            <span className="h-4 w-4 rounded bg-green-500 opacity-90" />
-            <span className="h-4 w-4 rounded bg-green-500" />
+            <span className="h-4 w-4 rounded bg-blue-500 opacity-20" />
+            <span className="h-4 w-4 rounded bg-blue-500 opacity-40" />
+            <span className="h-4 w-4 rounded bg-blue-500 opacity-80" />
+            <span className="h-4 w-4 rounded bg-blue-500" />
             <span>More</span>
           </div>
         </div>

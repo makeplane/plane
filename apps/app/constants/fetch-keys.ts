@@ -1,4 +1,17 @@
-import { IIssueFilterOptions } from "types";
+const paramsToKey = (params: any) => {
+  const { state, priority, assignees } = params;
+
+  let stateKey = state ? state.split(",").join(" ") : "";
+  let priorityKey = priority ? priority.split(",").join(" ") : "";
+  let assigneesKey = assignees ? assignees.split(",").join(" ") : "";
+
+  // sorting each keys in ascending order
+  stateKey = stateKey.split(" ").sort().join("");
+  priorityKey = priorityKey.split(" ").sort().join("");
+  assigneesKey = assigneesKey.split(" ").sort().join("");
+
+  return `${stateKey}_${priorityKey}_${assigneesKey}`;
+};
 
 export const CURRENT_USER = "CURRENT_USER";
 export const USER_WORKSPACE_INVITATIONS = "USER_WORKSPACE_INVITATIONS";
@@ -26,8 +39,13 @@ export const PROJECT_INVITATIONS = "PROJECT_INVITATIONS";
 
 export const PROJECT_ISSUES_LIST = (workspaceSlug: string, projectId: string) =>
   `PROJECT_ISSUES_LIST_${workspaceSlug}_${projectId}`;
-export const PROJECT_ISSUES_LIST_WITH_PARAMS = (projectId: string) =>
-  `PROJECT_ISSUES_LIST_WITH_PARAMS_${projectId}`;
+export const PROJECT_ISSUES_LIST_WITH_PARAMS = (projectId: string, params?: any) => {
+  if (!params) return `PROJECT_ISSUES_LIST_WITH_PARAMS_${projectId}`;
+
+  const paramsKey = paramsToKey(params);
+
+  return `PROJECT_ISSUES_LIST_WITH_PARAMS_${projectId}_${paramsKey}`;
+};
 export const PROJECT_ISSUES_DETAILS = (issueId: string) => `PROJECT_ISSUES_DETAILS_${issueId}`;
 export const PROJECT_ISSUES_PROPERTIES = (projectId: string) =>
   `PROJECT_ISSUES_PROPERTIES_${projectId}`;
@@ -40,7 +58,13 @@ export const PROJECT_GITHUB_REPOSITORY = (projectId: string) =>
 
 export const CYCLE_LIST = (projectId: string) => `CYCLE_LIST_${projectId}`;
 export const CYCLE_ISSUES = (cycleId: string) => `CYCLE_ISSUES_${cycleId}`;
-export const CYCLE_ISSUES_WITH_PARAMS = (cycleId: string) => `CYCLE_ISSUES_WITH_PARAMS_${cycleId}`;
+export const CYCLE_ISSUES_WITH_PARAMS = (cycleId: string, params?: any) => {
+  if (!params) return `CYCLE_ISSUES_WITH_PARAMS_${cycleId}`;
+
+  const paramsKey = paramsToKey(params);
+
+  return `CYCLE_ISSUES_WITH_PARAMS_${cycleId}_${paramsKey}`;
+};
 export const CYCLE_DETAILS = (cycleId: string) => `CYCLE_DETAILS_${cycleId}`;
 export const CYCLE_CURRENT_AND_UPCOMING_LIST = (projectId: string) =>
   `CYCLE_CURRENT_AND_UPCOMING_LIST_${projectId}`;
@@ -56,8 +80,13 @@ export const USER_PROJECT_VIEW = (projectId: string) => `USER_PROJECT_VIEW_${pro
 
 export const MODULE_LIST = (projectId: string) => `MODULE_LIST_${projectId}`;
 export const MODULE_ISSUES = (moduleId: string) => `MODULE_ISSUES_${moduleId}`;
-export const MODULE_ISSUES_WITH_PARAMS = (moduleId: string) =>
-  `MODULE_ISSUES_WITH_PARAMS_${moduleId}`;
+export const MODULE_ISSUES_WITH_PARAMS = (moduleId: string, params?: any) => {
+  if (!params) return `MODULE_ISSUES_WITH_PARAMS_${moduleId}`;
+
+  const paramsKey = paramsToKey(params);
+
+  return `MODULE_ISSUES_WITH_PARAMS_${moduleId}_${paramsKey}`;
+};
 export const MODULE_DETAILS = (moduleId: string) => `MODULE_DETAILS_${moduleId}`;
 
 export const VIEWS_LIST = (projectId: string) => `VIEWS_LIST_${projectId}`;

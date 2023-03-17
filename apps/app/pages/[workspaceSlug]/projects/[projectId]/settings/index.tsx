@@ -20,7 +20,14 @@ import EmojiIconPicker from "components/emoji-icon-picker";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { Button, Input, TextArea, Loader, CustomSelect, OutlineButton } from "components/ui";
+import {
+  Input,
+  TextArea,
+  Loader,
+  CustomSelect,
+  OutlineButton,
+  SecondaryButton,
+} from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // helpers
 import { debounce } from "helpers/common.helper";
@@ -30,7 +37,6 @@ import type { NextPage, GetServerSidePropsContext } from "next";
 import { PROJECTS_LIST, PROJECT_DETAILS, WORKSPACE_DETAILS } from "constants/fetch-keys";
 // constants
 import { NETWORK_CHOICES } from "constants/project";
-import SettingsNavbar from "layouts/settings-navbar";
 
 const defaultValues: Partial<IProject> = {
   name: "",
@@ -288,9 +294,9 @@ const GeneralSettings: NextPage<UserAuth> = (props) => {
           </div>
           <div className="sm:text-right">
             {projectDetails ? (
-              <Button type="submit" disabled={isSubmitting}>
+              <SecondaryButton type="submit" loading={isSubmitting}>
                 {isSubmitting ? "Updating Project..." : "Update Project"}
-              </Button>
+              </SecondaryButton>
             ) : (
               <Loader className="mt-2 w-full">
                 <Loader.Item height="34px" width="100px" light />
