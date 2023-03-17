@@ -160,7 +160,7 @@ export const IssueActivitySection: React.FC<Props> = () => {
                         {activity.actor_detail.avatar && activity.actor_detail.avatar !== "" ? (
                           <Image
                             src={activity.actor_detail.avatar}
-                            alt={activity.actor_detail.name}
+                            alt={activity.actor_detail.first_name}
                             height={30}
                             width={30}
                             className="rounded-full"
@@ -179,7 +179,10 @@ export const IssueActivitySection: React.FC<Props> = () => {
                   <div className={`${activity.field ? "ml-1.5" : ""} w-full text-xs`}>
                     <p>
                       <span className="font-medium">
-                        {activity.actor_detail.first_name} {activity.actor_detail.last_name}
+                        {activity.actor_detail.first_name}
+                        {activity.actor_detail.is_bot
+                          ? " Bot"
+                          : " " + activity.actor_detail.last_name}
                       </span>
                       <span>
                         {" "}
