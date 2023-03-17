@@ -7,6 +7,7 @@ export * from "./invitation";
 export * from "./issues";
 export * from "./modules";
 export * from "./views";
+export * from "./integration";
 
 export type NestedKeyOf<ObjectType extends object> = {
   [Key in keyof ObjectType & (string | number)]: ObjectType[Key] extends object
