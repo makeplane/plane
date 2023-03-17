@@ -21,6 +21,7 @@ from plane.db.models import (
     IssueLink,
     IssueLabel,
     Workspace,
+    IssueAssignee,
 )
 from plane.api.serializers import ImporterSerializer, IssueFlatSerializer
 from plane.utils.integrations.github import get_github_repo_details
@@ -140,7 +141,9 @@ class BulkImportIssuesEndpoint(BaseAPIView):
                     Issue(
                         project_id=project_id,
                         workspace_id=project.workspace_id,
-                        state=default_state,
+                        state_id=issue_data.get("state")
+                        if issue_data.get("state", False)
+                        else default_state.id,
                         name=issue_data.get("name", "Issue Created through Bulk"),
                         description_html=issue_data.get("description_html", "<p></p>"),
                         description_stripped=(
@@ -155,6 +158,7 @@ class BulkImportIssuesEndpoint(BaseAPIView):
                         sort_order=largest_sort_order,
                         start_date=issue_data.get("start_date", None),
                         target_date=issue_data.get("target_date", None),
+                        priority=issue_data.get("priority", None),
                     )
                 )
 
@@ -197,7 +201,29 @@ class BulkImportIssuesEndpoint(BaseAPIView):
                     for label_id in labels_list
                 ]
 
-            _ = IssueLabel.objects.bulk_create(bulk_issue_labels, batch_size=100)
+            _ = IssueLabel.objects.bulk_create(
+                bulk_issue_labels, batch_size=100, ignore_conflicts=True
+            )
+
+            # Attach Assignees
+            bulk_issue_assignees = []
+            for issue, issue_data in zip(issues, issues_data):
+                assignees_list = issue_data.get("assignees_list", [])
+                bulk_issue_assignees = bulk_issue_assignees + [
+                    IssueAssignee(
+                        issue=issue,
+                        assignee_id=assignee_id,
+                        project_id=project_id,
+                        workspace_id=project.workspace_id,
+                        created_by=request.user,
+                        updated_by=request.user,
+                    )
+                    for assignee_id in assignees_list
+                ]
+
+            _ = IssueAssignee.objects.bulk_create(
+                bulk_issue_assignees, batch_size=100, ignore_conflicts=True
+            )
 
             # Track the issue activities
             IssueActivity.objects.bulk_create(
