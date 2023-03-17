@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 
@@ -13,7 +13,7 @@ import useToast from "hooks/use-toast";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
-import { Button, Input } from "components/ui";
+import { DangerButton, Input, SecondaryButton } from "components/ui";
 // types
 import type { IWorkspace } from "types";
 // fetch-keys
@@ -26,7 +26,6 @@ type Props = {
 };
 
 export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose }) => {
-  const cancelButtonRef = useRef(null);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const [confirmProjectName, setConfirmProjectName] = useState("");
   const [confirmDeleteMyProject, setConfirmDeleteMyProject] = useState(false);
@@ -77,12 +76,7 @@ export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose })
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog
-        as="div"
-        className="relative z-20"
-        initialFocus={cancelButtonRef}
-        onClose={handleClose}
-      >
+      <Dialog as="div" className="relative z-20" onClose={handleClose}>
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
@@ -166,25 +160,11 @@ export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose })
                     </div>
                   </div>
                 </div>
-                <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                  <Button
-                    type="button"
-                    onClick={handleDeletion}
-                    theme="danger"
-                    disabled={isDeleteLoading || !canDelete}
-                    className="inline-flex sm:ml-3"
-                  >
+                <div className="flex justify-end gap-2 bg-gray-50 p-4 sm:px-6">
+                  <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                  <DangerButton onClick={handleDeletion} loading={isDeleteLoading || !canDelete}>
                     {isDeleteLoading ? "Deleting..." : "Delete"}
-                  </Button>
-                  <Button
-                    type="button"
-                    theme="secondary"
-                    className="inline-flex sm:ml-3"
-                    onClick={handleClose}
-                    ref={cancelButtonRef}
-                  >
-                    Cancel
-                  </Button>
+                  </DangerButton>
                 </div>
               </Dialog.Panel>
             </Transition.Child>

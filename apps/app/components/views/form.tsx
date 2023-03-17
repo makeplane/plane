@@ -3,7 +3,7 @@ import { useEffect } from "react";
 // react-hook-form
 import { useForm } from "react-hook-form";
 // ui
-import { Button, Input, TextArea } from "components/ui";
+import { Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
 // types
 import { IView } from "types";
 
@@ -12,6 +12,7 @@ type Props = {
   handleClose: () => void;
   status: boolean;
   data?: IView;
+  preLoadedData?: Partial<IView> | null;
 };
 
 const defaultValues: Partial<IView> = {
@@ -19,7 +20,13 @@ const defaultValues: Partial<IView> = {
   description: "",
 };
 
-export const ViewForm: React.FC<Props> = ({ handleFormSubmit, handleClose, status, data }) => {
+export const ViewForm: React.FC<Props> = ({
+  handleFormSubmit,
+  handleClose,
+  status,
+  data,
+  preLoadedData,
+}) => {
   const {
     register,
     formState: { errors, isSubmitting },
@@ -43,6 +50,13 @@ export const ViewForm: React.FC<Props> = ({ handleFormSubmit, handleClose, statu
       ...data,
     });
   }, [data, reset]);
+
+  useEffect(() => {
+    reset({
+      ...defaultValues,
+      ...preLoadedData,
+    });
+  }, [preLoadedData, reset]);
 
   return (
     <form onSubmit={handleSubmit(handleCreateUpdateView)}>
@@ -83,10 +97,8 @@ export const ViewForm: React.FC<Props> = ({ handleFormSubmit, handleClose, statu
         </div>
       </div>
       <div className="mt-5 flex justify-end gap-2">
-        <Button theme="secondary" onClick={handleClose}>
-          Cancel
-        </Button>
-        <Button type="submit" disabled={isSubmitting}>
+        <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+        <PrimaryButton type="submit" loading={isSubmitting}>
           {status
             ? isSubmitting
               ? "Updating View..."
@@ -94,7 +106,7 @@ export const ViewForm: React.FC<Props> = ({ handleFormSubmit, handleClose, statu
             : isSubmitting
             ? "Creating View..."
             : "Create View"}
-        </Button>
+        </PrimaryButton>
       </div>
     </form>
   );

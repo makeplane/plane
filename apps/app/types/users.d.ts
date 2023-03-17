@@ -33,6 +33,12 @@ export interface IUserLite {
   email: string;
   avatar: string;
   created_at: Date;
+  is_bot: boolean;
+}
+
+export interface IUserActivity {
+  created_date: string;
+  activity_count: number;
 }
 
 export type UserAuth = {

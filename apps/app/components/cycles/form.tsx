@@ -1,18 +1,19 @@
 import { useEffect, useState } from "react";
+
 import { useRouter } from "next/router";
 
-// toast
-import useToast from "hooks/use-toast";
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
-// ui
-import { Button, CustomDatePicker, CustomSelect, Input, TextArea } from "components/ui";
-// types
-import { ICycle } from "types";
 // services
 import cyclesService from "services/cycles.service";
-// helper
+// hooks
+import useToast from "hooks/use-toast";
+// ui
+import { CustomDatePicker, Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
+// helpers
 import { getDateRangeStatus } from "helpers/date-time.helper";
+// types
+import { ICycle } from "types";
 
 type Props = {
   handleFormSubmit: (values: Partial<ICycle>) => Promise<void>;
@@ -188,11 +189,8 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
         </div>
       </div>
       <div className="mt-5 flex justify-end gap-2">
-        <Button theme="secondary" onClick={handleClose}>
-          Cancel
-        </Button>
-
-        <Button
+        <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+        <PrimaryButton
           type="submit"
           className={
             checkEmptyDate
@@ -201,7 +199,7 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
               ? "cursor-pointer"
               : "cursor-not-allowed"
           }
-          disabled={isSubmitting || checkEmptyDate ? false : isDateValid ? false : true}
+          loading={isSubmitting || checkEmptyDate ? false : isDateValid ? false : true}
         >
           {status
             ? isSubmitting
@@ -210,7 +208,7 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
             : isSubmitting
             ? "Creating Cycle..."
             : "Create Cycle"}
-        </Button>
+        </PrimaryButton>
       </div>
     </form>
   );

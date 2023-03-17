@@ -11,7 +11,7 @@ import useToast from "hooks/use-toast";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
-import { Button, Input } from "components/ui";
+import { DangerButton, Input, SecondaryButton } from "components/ui";
 // types
 import type { IProject, IWorkspace } from "types";
 // fetch-keys
@@ -24,10 +24,12 @@ type TConfirmProjectDeletionProps = {
   data: IProject | null;
 };
 
-export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = (props) => {
-  const { isOpen, data, onClose, onSuccess } = props;
-
-  const cancelButtonRef = useRef(null);
+export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = ({
+  isOpen,
+  data,
+  onClose,
+  onSuccess,
+}) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const [confirmProjectName, setConfirmProjectName] = useState("");
   const [confirmDeleteMyProject, setConfirmDeleteMyProject] = useState(false);
@@ -84,12 +86,7 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = (props
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog
-        as="div"
-        className="relative z-20"
-        initialFocus={cancelButtonRef}
-        onClose={handleClose}
-      >
+      <Dialog as="div" className="relative z-20" onClose={handleClose}>
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
@@ -168,25 +165,11 @@ export const DeleteProjectModal: React.FC<TConfirmProjectDeletionProps> = (props
                       name="typeDelete"
                     />
                   </div>
-                  <div className="flex flex-row-reverse items-center gap-3">
-                    <Button
-                      type="button"
-                      onClick={handleDeletion}
-                      theme="danger"
-                      disabled={isDeleteLoading || !canDelete}
-                      className="rounded-lg border-none px-5 py-2"
-                    >
+                  <div className="flex justify-end gap-2">
+                    <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                    <DangerButton onClick={handleDeletion} loading={isDeleteLoading || !canDelete}>
                       {isDeleteLoading ? "Deleting..." : "Delete Project"}
-                    </Button>
-                    <Button
-                      type="button"
-                      theme="secondary"
-                      className="rounded-lg border-none px-5 py-2"
-                      onClick={handleClose}
-                      ref={cancelButtonRef}
-                    >
-                      Cancel
-                    </Button>
+                    </DangerButton>
                   </div>
                 </div>
               </Dialog.Panel>

@@ -1,6 +1,7 @@
 # Python imports
 import jwt
-from datetime import datetime
+from datetime import date
+from dateutil.relativedelta import relativedelta
 
 # Django imports
 from django.db import IntegrityError
@@ -10,8 +11,9 @@ from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.contrib.sites.shortcuts import get_current_site
-from django.db.models import CharField, Count, OuterRef, Func, F
-from django.db.models.functions import Cast
+from django.db.models import CharField, Count, OuterRef, Func, F, Q
+from django.db.models.functions import Cast, ExtractWeek
+from django.db.models.fields import DateField
 
 # Third party modules
 from rest_framework import status
@@ -37,6 +39,8 @@ from plane.db.models import (
     WorkspaceMemberInvite,
     Team,
     ProjectMember,
+    IssueActivity,
+    Issue,
 )
 from plane.api.permissions import WorkSpaceBasePermission, WorkSpaceAdminPermission
 from plane.bgtasks.workspace_invitation_task import workspace_invitation
@@ -574,6 +578,58 @@ class WorkspaceMemberUserViewsEndpoint(BaseAPIView):
             )
         except Exception as e:
             capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class UserActivityGraphEndpoint(BaseAPIView):
+    def get(self, request, slug):
+        try:
+            issue_activities = (
+                IssueActivity.objects.filter(
+                    actor=request.user,
+                    workspace__slug=slug,
+                    created_at__date__gte=date.today() + relativedelta(months=-3),
+                )
+                .annotate(created_date=Cast("created_at", DateField()))
+                .values("created_date")
+                .annotate(activity_count=Count("created_date"))
+                .order_by("created_date")
+            )
+
+            return Response(issue_activities, status=status.HTTP_200_OK)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class UserIssueCompletedGraphEndpoint(BaseAPIView):
+    def get(self, request, slug):
+        try:
+            month = request.GET.get("month", 1)
+
+            issues = (
+                Issue.objects.filter(
+                    assignees__in=[request.user],
+                    workspace__slug=slug,
+                    completed_at__month=month,
+                    completed_at__isnull=False,
+                )
+                .annotate(completed_week=ExtractWeek("completed_at"))
+                .annotate(week=F("completed_week") % 4)
+                .values("week")
+                .annotate(completed_count=Count("completed_week"))
+                .order_by("week")
+            )
+
+            return Response(issues, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,

@@ -1,6 +1,6 @@
 // services
 import APIService from "services/api.service";
-import type { IUser } from "types";
+import type { IUser, IUserActivity } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -44,6 +44,14 @@ class UserService extends APIService {
 
   async updateUserOnBoard(): Promise<any> {
     return this.patch("/api/users/me/onboard/", { is_onboarded: true })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async userActivity(workspaceSlug: string): Promise<IUserActivity[]> {
+    return this.get(`/api/users/me/workspaces/${workspaceSlug}/activity-graph/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

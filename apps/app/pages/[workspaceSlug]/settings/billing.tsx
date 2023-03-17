@@ -11,7 +11,7 @@ import workspaceService from "services/workspace.service";
 // layouts
 import AppLayout from "layouts/app-layout";
 // ui
-import { Button } from "components/ui";
+import { SecondaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // types
 import type { NextPage, GetServerSideProps } from "next";
@@ -66,9 +66,7 @@ const BillingSettings: NextPage<TBillingSettingsProps> = (props) => {
               <h4 className="text-md mb-1 leading-6 text-gray-900">Current plan</h4>
               <p className="mb-3 text-sm text-gray-500">You are currently using the free plan</p>
               <a href="https://plane.so/pricing" target="_blank" rel="noreferrer">
-                <Button theme="secondary" size="rg" className="text-xs">
-                  View Plans and Upgrade
-                </Button>
+                <SecondaryButton outline>View Plans and Upgrade</SecondaryButton>
               </a>
             </div>
             <div>

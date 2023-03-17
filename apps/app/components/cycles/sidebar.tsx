@@ -150,7 +150,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
         {cycle ? (
           <>
             <div className="flex flex-col items-start justify-center">
-              <div className="flex gap-2.5 px-6 text-sm">
+              <div className="flex gap-2.5 px-5 text-sm">
                 <div className="flex items-center ">
                   <span
                     className={`flex items-center rounded border-[0.5px] border-gray-200 bg-gray-100 px-2.5 py-1.5 text-center text-sm capitalize text-gray-800 `}
@@ -442,7 +442,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
             </div>
           </>
         ) : (
-          <Loader>
+          <Loader className="px-5">
             <div className="space-y-2">
               <Loader.Item height="15px" width="50%" />
               <Loader.Item height="15px" width="30%" />
