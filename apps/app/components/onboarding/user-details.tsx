@@ -26,7 +26,7 @@ type Props = {
   setStep: React.Dispatch<React.SetStateAction<number>>;
 };
 
-const UserDetails: React.FC<Props> = ({ user, setStep }) => {
+export const UserDetails: React.FC<Props> = ({ user, setStep }) => {
   const { setToastAlert } = useToast();
 
   const {
@@ -132,5 +132,3 @@ const UserDetails: React.FC<Props> = ({ user, setStep }) => {
     </form>
   );
 };
-
-export default UserDetails;

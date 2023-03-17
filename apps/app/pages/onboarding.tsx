@@ -12,14 +12,11 @@ import useUser from "hooks/use-user";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 // components
-import Welcome from "components/onboarding/welcome";
-import PlanWithIssues from "components/onboarding/plan-with-issues";
-import MoveWithCycles from "components/onboarding/move-with-cycles";
-import BreakIntoModules from "components/onboarding/break-into-modules";
-import UserDetails from "components/onboarding/user-details";
-import Workspace from "components/onboarding/workspace";
-import InviteMembers from "components/onboarding/invite-members";
-import CommandMenu from "components/onboarding/command-menu";
+import { InviteMembers, OnboardingCard, UserDetails, Workspace } from "components/onboarding";
+
+import { PrimaryButton } from "components/ui/button/primary-button";
+// constant
+import { ONBOARDING_CARDS } from "constants/workspace";
 // images
 import Logo from "public/onboarding/logo.svg";
 // types
@@ -51,39 +48,39 @@ const Onboarding: NextPage = () => {
             )}
           </div>
         ) : (
-          <div className="h-max min-h-[360px] w-full rounded-lg bg-white px-8 py-10 text-center md:w-1/2">
-            <div className="h-3/4 w-full">
+          <div className="flex w-full max-w-2xl flex-col gap-12">
+            <div className="flex flex-col items-center justify-center gap-7 rounded-[10px] bg-white px-14 py-10 text-center shadow-md">
               {step === 4 ? (
-                <Welcome />
+                <OnboardingCard data={ONBOARDING_CARDS.welcome} />
               ) : step === 5 ? (
-                <PlanWithIssues />
+                <OnboardingCard data={ONBOARDING_CARDS.issue} />
               ) : step === 6 ? (
-                <MoveWithCycles />
+                <OnboardingCard data={ONBOARDING_CARDS.cycle} />
               ) : step === 7 ? (
-                <BreakIntoModules />
+                <OnboardingCard data={ONBOARDING_CARDS.module} />
               ) : (
-                <CommandMenu />
+                <OnboardingCard data={ONBOARDING_CARDS.commandMenu} />
               )}
-            </div>
-            <div className="mx-auto flex h-1/4 items-end lg:w-1/2">
-              <button
-                type="button"
-                className="w-full rounded-md bg-gray-200 px-4 py-2 text-sm"
-                onClick={() => {
-                  if (step === 8) {
-                    userService
-                      .updateUserOnBoard()
-                      .then(() => {
-                        router.push("/");
-                      })
-                      .catch((err) => {
-                        console.log(err);
-                      });
-                  } else setStep((prevData) => prevData + 1);
-                }}
-              >
-                {step === 4 || step === 8 ? "Get Started" : "Next"}
-              </button>
+              <div className="mx-auto flex h-1/4 items-end lg:w-1/2">
+                <PrimaryButton
+                  type="button"
+                  className="flex w-full items-center justify-center text-center"
+                  onClick={() => {
+                    if (step === 8) {
+                      userService
+                        .updateUserOnBoard()
+                        .then(() => {
+                          router.push("/");
+                        })
+                        .catch((err) => {
+                          console.log(err);
+                        });
+                    } else setStep((prevData) => prevData + 1);
+                  }}
+                >
+                  {step === 4 || step === 8 ? "Get Started" : "Next"}
+                </PrimaryButton>
+              </div>
             </div>
           </div>
         )}

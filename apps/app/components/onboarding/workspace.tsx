@@ -22,7 +22,7 @@ type Props = {
   setWorkspace: React.Dispatch<React.SetStateAction<any>>;
 };
 
-const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
+export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
 
@@ -182,5 +182,3 @@ const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
     </div>
   );
 };
-
-export default Workspace;

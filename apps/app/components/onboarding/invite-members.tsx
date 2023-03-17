@@ -12,7 +12,7 @@ type Props = {
   workspace: any;
 };
 
-const InviteMembers: React.FC<Props> = ({ setStep, workspace }) => {
+export const InviteMembers: React.FC<Props> = ({ setStep, workspace }) => {
   const { setToastAlert } = useToast();
 
   const {
@@ -85,5 +85,3 @@ const InviteMembers: React.FC<Props> = ({ setStep, workspace }) => {
     </form>
   );
 };
-
-export default InviteMembers;
