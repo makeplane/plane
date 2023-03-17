@@ -5,7 +5,7 @@ import { Combobox, Dialog, Transition } from "@headlessui/react";
 // icons
 import { MagnifyingGlassIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
 // ui
-import { Button } from "components/ui";
+import { PrimaryButton, SecondaryButton } from "components/ui";
 // types
 import { IIssue } from "types";
 import { LayerDiagonalIcon } from "components/icons";
@@ -145,12 +145,8 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                       )}
                     </Combobox>
                     <div className="flex items-center justify-end gap-2 p-3">
-                      <Button type="button" theme="danger" size="sm" onClick={handleClose}>
-                        Cancel
-                      </Button>
-                      <Button type="button" size="sm" onClick={() => onChange(values)}>
-                        Add issues
-                      </Button>
+                      <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                      <PrimaryButton onClick={() => onChange(values)}>Add issues</PrimaryButton>
                     </div>
                   </>
                 ) : (

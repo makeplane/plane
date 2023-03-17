@@ -16,7 +16,7 @@ import workspaceService from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { Button, CustomSelect, Loader } from "components/ui";
+import { CustomSelect, Loader, SecondaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // types
 import { IProject, IWorkspace } from "types";
@@ -239,9 +239,9 @@ const ControlSettings: NextPage<TControlSettingsProps> = (props) => {
             </div>
           </div>
           <div className="sm:text-right">
-            <Button type="submit" disabled={isSubmitting}>
+            <SecondaryButton type="submit" loading={isSubmitting}>
               {isSubmitting ? "Updating Project..." : "Update Project"}
-            </Button>
+            </SecondaryButton>
           </div>
         </div>
       </form>

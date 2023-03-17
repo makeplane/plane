@@ -23,7 +23,7 @@ import AppLayout from "layouts/app-layout";
 import { ImageUploadModal } from "components/core";
 import { DeleteWorkspaceModal } from "components/workspace";
 // ui
-import { Spinner, Button, Input, CustomSelect, OutlineButton } from "components/ui";
+import { Spinner, Input, CustomSelect, OutlineButton, SecondaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
@@ -168,13 +168,13 @@ const WorkspaceSettings: NextPage<UserAuth> = (props) => {
                   )}
                 </button>
                 <div>
-                  <Button
+                  <SecondaryButton
                     onClick={() => {
                       setIsImageUploadModalOpen(true);
                     }}
                   >
                     {isImageUploading ? "Uploading..." : "Upload"}
-                  </Button>
+                  </SecondaryButton>
                 </div>
               </div>
             </div>
@@ -195,9 +195,7 @@ const WorkspaceSettings: NextPage<UserAuth> = (props) => {
                 value={`app.plane.so/${activeWorkspace.slug}`}
                 disabled
               />
-              <Button
-                type="button"
-                theme="secondary"
+              <SecondaryButton
                 className="h-min"
                 onClick={() =>
                   copyTextToClipboard(`https://app.plane.so/${activeWorkspace.slug}`).then(() => {
@@ -208,9 +206,10 @@ const WorkspaceSettings: NextPage<UserAuth> = (props) => {
                     });
                   })
                 }
+                outline
               >
                 <LinkIcon className="h-[18px] w-[18px]" />
-              </Button>
+              </SecondaryButton>
             </div>
           </div>
           <div className="grid grid-cols-12 gap-4 sm:gap-16">
@@ -259,9 +258,9 @@ const WorkspaceSettings: NextPage<UserAuth> = (props) => {
             </div>
           </div>
           <div className="sm:text-right">
-            <Button onClick={handleSubmit(onSubmit)} disabled={isSubmitting}>
+            <SecondaryButton onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
               {isSubmitting ? "Updating..." : "Update Workspace"}
-            </Button>
+            </SecondaryButton>
           </div>
           <div className="grid grid-cols-12 gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">

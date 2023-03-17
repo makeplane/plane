@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 // ui
 import { CheckCircleIcon } from "@heroicons/react/20/solid";
-import { Button, Input } from "components/ui";
+import { Input, SecondaryButton } from "components/ui";
 // services
 import authenticationService from "services/authentication.service";
 import useToast from "hooks/use-toast";
@@ -140,8 +140,8 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
             />
             <button
               type="button"
-              className={`text-xs mt-5 w-full flex justify-end outline-none ${
-                isResendDisabled ? "text-gray-400 cursor-default" : "cursor-pointer text-theme"
+              className={`mt-5 flex w-full justify-end text-xs outline-none ${
+                isResendDisabled ? "cursor-default text-gray-400" : "cursor-pointer text-theme"
               } `}
               onClick={() => {
                 setIsCodeResending(true);
@@ -169,16 +169,16 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
         )}
         <div>
           {codeSent ? (
-            <Button
+            <SecondaryButton
               type="submit"
               className="w-full text-center"
               onClick={handleSubmit(handleSignin)}
-              disabled={isSubmitting || (!isValid && isDirty)}
+              loading={isSubmitting || (!isValid && isDirty)}
             >
               {isSubmitting ? "Signing in..." : "Sign in"}
-            </Button>
+            </SecondaryButton>
           ) : (
-            <Button
+            <SecondaryButton
               type="submit"
               className="w-full text-center"
               onClick={() => {
@@ -186,10 +186,10 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
                   setResendCodeTimer(30);
                 });
               }}
-              disabled={isSubmitting || (!isValid && isDirty)}
+              loading={isSubmitting || (!isValid && isDirty)}
             >
               {isSubmitting ? "Sending code..." : "Send code"}
-            </Button>
+            </SecondaryButton>
           )}
         </div>
       </form>

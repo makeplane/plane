@@ -5,7 +5,7 @@ import { Controller, useForm } from "react-hook-form";
 // components
 import { ModuleLeadSelect, ModuleMembersSelect, ModuleStatusSelect } from "components/modules";
 // ui
-import { Button, CustomDatePicker, Input, TextArea } from "components/ui";
+import { CustomDatePicker, Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
 // types
 import { IModule } from "types";
 
@@ -132,10 +132,8 @@ export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, sta
         </div>
       </div>
       <div className="mt-5 flex justify-end gap-2">
-        <Button theme="secondary" onClick={handleClose}>
-          Cancel
-        </Button>
-        <Button type="submit" disabled={isSubmitting}>
+        <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+        <PrimaryButton type="submit" loading={isSubmitting}>
           {status
             ? isSubmitting
               ? "Updating Module..."
@@ -143,7 +141,7 @@ export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, sta
             : isSubmitting
             ? "Creating Module..."
             : "Create Module"}
-        </Button>
+        </PrimaryButton>
       </div>
     </form>
   );

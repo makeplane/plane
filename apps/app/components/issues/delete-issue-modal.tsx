@@ -13,7 +13,7 @@ import useToast from "hooks/use-toast";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
-import { Button } from "components/ui";
+import { SecondaryButton, DangerButton } from "components/ui";
 // types
 import type { CycleIssueResponse, IIssue, ModuleIssueResponse } from "types";
 // fetch-keys
@@ -26,7 +26,6 @@ type Props = {
 };
 
 export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data }) => {
-  const cancelButtonRef = useRef(null);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const router = useRouter();
@@ -98,7 +97,7 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data })
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-20" initialFocus={cancelButtonRef} onClose={onClose}>
+      <Dialog as="div" className="relative z-20" onClose={onClose}>
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
@@ -136,34 +135,20 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data })
                     </span>
                   </div>
                   <span>
-                    <p className="text-sm leading-7 text-gray-500 break-all">
+                    <p className="break-all text-sm leading-7 text-gray-500">
                       Are you sure you want to delete issue{" "}
-                      <span className="font-semibold break-all">
+                      <span className="break-all font-semibold">
                         {data?.project_detail.identifier}-{data?.sequence_id}
                       </span>{" "}
                       ? All of the data related to the issue will be permanently removed. This
                       action cannot be undone.
                     </p>
                   </span>
-                  <div className="flex flex-row-reverse items-center gap-3">
-                    <Button
-                      type="button"
-                      onClick={handleDeletion}
-                      theme="danger"
-                      disabled={isDeleteLoading}
-                      className="rounded-lg border-none px-5 py-2 "
-                    >
+                  <div className="flex justify-end gap-2">
+                    <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
+                    <DangerButton onClick={handleDeletion} loading={isDeleteLoading}>
                       {isDeleteLoading ? "Deleting..." : "Delete Issue"}
-                    </Button>
-                    <Button
-                      type="button"
-                      theme="secondary"
-                      className="rounded-lg border-none px-5 py-2 "
-                      onClick={onClose}
-                      ref={cancelButtonRef}
-                    >
-                      Cancel
-                    </Button>
+                    </DangerButton>
                   </div>
                 </div>
               </Dialog.Panel>
