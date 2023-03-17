@@ -1,12 +1,14 @@
 # Python imports
 import json
 import requests
+import uuid
 import jwt
 from datetime import datetime
 
 # Django imports
 from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
+from django.contrib.auth.hashers import make_password
 
 # Third Party imports
 from django_rq import job
@@ -16,12 +18,13 @@ from sentry_sdk import capture_exception
 from plane.api.serializers import ImporterSerializer
 from plane.db.models import (
     Importer,
-    WorkspaceMemberInvite,
+    WorkspaceMember,
     GithubRepositorySync,
     GithubRepository,
     ProjectMember,
     WorkspaceIntegration,
     Label,
+    User,
 )
 from .workspace_invitation_task import workspace_invitation
 
@@ -35,40 +38,42 @@ def service_importer(service, importer_id):
 
         users = importer.data.get("users", [])
 
-        workspace_invitations = WorkspaceMemberInvite.objects.bulk_create(
+        # For all invited users create the uers
+        new_users = User.objects.bulk_create(
             [
-                WorkspaceMemberInvite(
+                User(
                     email=user.get("email").strip().lower(),
-                    workspace_id=importer.workspace_id,
-                    token=jwt.encode(
-                        {
-                            "email": user.get("email").strip().lower(),
-                            "timestamp": datetime.now().timestamp(),
-                        },
-                        settings.SECRET_KEY,
-                        algorithm="HS256",
-                    ),
-                    role=10,
+                    username=uuid.uuid4().hex,
+                    password=make_password(uuid.uuid4().hex),
+                    is_password_autoset=True,
                 )
                 for user in users
                 if user.get("import", False) == "invite"
-                or user.get("import", False) == "map"
+            ],
+            batch_size=10,
+        )
+
+        # Add new users to Workspace and project automatically
+        WorkspaceMember.objects.bulk_create(
+            [
+                WorkspaceMember(member=user, workspace_id=importer.workspace_id)
+                for user in new_users
             ],
             batch_size=100,
             ignore_conflicts=True,
         )
-
-        # Send the invites
-        [
-            workspace_invitation.delay(
-                invitation.email,
-                importer.workspace_id,
-                invitation.token,
-                settings.WEB_URL,
-                importer.initiated_by.email,
-            )
-            for invitation in workspace_invitations
-        ]
+        ProjectMember.objects.bulk_create(
+            [
+                ProjectMember(
+                    project_id=importer.project_id,
+                    workspace_id=importer.workspace_id,
+                    member=user,
+                )
+                for user in new_users
+            ],
+            batch_size=100,
+            ignore_conflicts=True,
+        )
 
         # Check if sync config is on for github importers
         if service == "github" and importer.config.get("sync", False):
@@ -85,7 +90,6 @@ def service_importer(service, importer_id):
             # Delete the old repository object
             GithubRepositorySync.objects.filter(project_id=importer.project_id).delete()
             GithubRepository.objects.filter(project_id=importer.project_id).delete()
-            # Project member delete
 
             # Create a Label for github
             label = Label.objects.filter(
