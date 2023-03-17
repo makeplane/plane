@@ -4,8 +4,8 @@ import useToast from "hooks/use-toast";
 import workspaceService from "services/workspace.service";
 import { IUser } from "types";
 // ui components
-import { Button, MultiInput, OutlineButton } from "components/ui";
-import { PrimaryButton } from "components/ui/button/primary-button";
+import {  MultiInput, PrimaryButton, SecondaryButton } from "components/ui";
+
 
 type Props = {
   setStep: React.Dispatch<React.SetStateAction<number>>;
@@ -68,18 +68,20 @@ export const InviteMembers: React.FC<Props> = ({ setStep, workspace }) => {
             type="submit"
             className="flex w-1/2 items-center justify-center text-center"
             disabled={isSubmitting}
+            size="md"
           >
             {isSubmitting ? "Inviting..." : "Continue"}
           </PrimaryButton>
 
-          <Button
+          <SecondaryButton
             type="button"
-            theme="secondary"
-            className="w-1/2 rounded-lg border-none"
+            className="w-1/2 rounded-lg bg-transparent border-none"
+            size="md"
+            outline
             onClick={() => setStep(4)}
           >
             Skip
-          </Button>
+          </SecondaryButton>
         </div>
       </div>
     </form>

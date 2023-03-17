@@ -7,13 +7,11 @@ import useToast from "hooks/use-toast";
 // services
 import userService from "services/user.service";
 // ui
-import { CustomSelect, Input } from "components/ui";
+import { CustomSelect, Input, PrimaryButton } from "components/ui";
 // types
 import { IUser } from "types";
 // constant
 import { USER_ROLE } from "constants/workspace";
-// component
-import { PrimaryButton } from "components/ui/button/primary-button";
 
 const defaultValues: Partial<IUser> = {
   first_name: "",
@@ -123,6 +121,7 @@ export const UserDetails: React.FC<Props> = ({ user, setStep }) => {
           <PrimaryButton
             type="submit"
             className="flex w-1/2 items-center justify-center text-center"
+            size="md"
             disabled={isSubmitting}
           >
             {isSubmitting ? "Updating..." : "Continue"}

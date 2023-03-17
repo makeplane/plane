@@ -13,8 +13,8 @@ import useUser from "hooks/use-user";
 import DefaultLayout from "layouts/default-layout";
 // components
 import { InviteMembers, OnboardingCard, UserDetails, Workspace } from "components/onboarding";
-
-import { PrimaryButton } from "components/ui/button/primary-button";
+// ui
+import { PrimaryButton } from "components/ui";
 // constant
 import { ONBOARDING_CARDS } from "constants/workspace";
 // images
@@ -64,7 +64,8 @@ const Onboarding: NextPage = () => {
               <div className="mx-auto flex h-1/4 items-end lg:w-1/2">
                 <PrimaryButton
                   type="button"
-                  className="flex w-full items-center justify-center text-center"
+                  className="flex w-full items-center justify-center text-center "
+                  size="md"
                   onClick={() => {
                     if (step === 8) {
                       userService

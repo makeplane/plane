@@ -15,7 +15,8 @@ import { USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 // constants
 import { CreateWorkspaceForm } from "components/workspace";
 // ui
-import { PrimaryButton } from "components/ui/button/primary-button";
+import { PrimaryButton } from "components/ui";
+
 
 type Props = {
   setStep: React.Dispatch<React.SetStateAction<number>>;
@@ -170,6 +171,7 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
                       ? "cursor-not-allowed opacity-80"
                       : ""
                   }`}
+                  size="md"
                   disabled={isJoiningWorkspaces || invitationsRespond.length === 0}
                 >
                   Join Workspace

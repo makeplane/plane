@@ -9,15 +9,14 @@ import workspaceService from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomSelect, Input } from "components/ui";
+import { CustomSelect, Input, PrimaryButton } from "components/ui";
 // types
 import { IWorkspace } from "types";
 // fetch-keys
 import { USER_WORKSPACES } from "constants/fetch-keys";
 // constants
 import { COMPANY_SIZE } from "constants/workspace";
-// component
-import { PrimaryButton } from "components/ui/button/primary-button";
+
 
 type Props = {
   onSubmit: (res: IWorkspace) => void;
@@ -152,6 +151,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({ onSubmit }) => {
             <PrimaryButton
               type="submit"
               className="flex w-1/2 items-center justify-center text-center"
+              size="md"
               disabled={isSubmitting}
             >
               {isSubmitting ? "Creating..." : "Create Workspace"}
