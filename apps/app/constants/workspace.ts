@@ -30,10 +30,10 @@ export const USER_ROLE = [
 export const ONBOARDING_CARDS = {
   welcome: {
     imgURL: Welcome,
-    step: "3/5",
-    title: "Move with Cycles",
+    step: "1/5",
+    title: "Welcome to Plane",
     description:
-      "Cycles help you and your team to progress faster, similar to the sprints commonly used in agile development.",
+      "Plane helps you plan your issues, cycles, and product modules to ship faster.",
   },
   issue: {
     imgURL: Issue,
