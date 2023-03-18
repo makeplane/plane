@@ -4,6 +4,8 @@ import Image from "next/image";
 
 // ui
 import { PrimaryButton } from "components/ui";
+// icon
+import { AssignmentClipboardIcon } from "components/icons";
 // img
 import JoinProjectImg from "public/join-project.svg";
 
@@ -31,6 +33,7 @@ export const JoinProject: FC<JoinProjectProps> = ({ isJoiningProject, handleJoin
         loading={isJoiningProject}
         onClick={handleJoin}
       >
+        <AssignmentClipboardIcon height={16} width={16} color="white" />
         {isJoiningProject ? "Joining..." : "Click to join"}
       </PrimaryButton>
     </div>
