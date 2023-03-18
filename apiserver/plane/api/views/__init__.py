@@ -107,4 +107,5 @@ from .importer import (
     ImportServiceEndpoint,
     UpdateServiceImportStatusEndpoint,
     BulkImportIssuesEndpoint,
+    BulkImportModulesEndpoint
 )

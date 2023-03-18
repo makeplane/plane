@@ -98,6 +98,7 @@ from plane.api.views import (
     ModuleIssueViewSet,
     ModuleFavoriteViewSet,
     ModuleLinkViewSet,
+    BulkImportModulesEndpoint,
     ## End Modules
     # Api Tokens
     ApiTokenEndpoint,
@@ -891,6 +892,11 @@ urlpatterns = [
             }
         ),
         name="user-favorite-module",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-import-modules/<str:service>/",
+        BulkImportModulesEndpoint.as_view(),
+        name="bulk-modules-create",
     ),
     ## End Modules
     # API Tokens
