@@ -15,6 +15,8 @@ import useUser from "hooks/use-user";
 import useToast from "hooks/use-toast";
 // components
 import { IssueForm } from "components/issues";
+// hooks
+import useIssuesView from "hooks/use-issues-view";
 // types
 import type { IIssue } from "types";
 // fetch keys
@@ -26,6 +28,8 @@ import {
   PROJECTS_LIST,
   MODULE_ISSUES,
   SUB_ISSUES,
+  PROJECT_ISSUES_LIST_WITH_PARAMS,
+  CYCLE_ISSUES_WITH_PARAMS,
 } from "constants/fetch-keys";
 
 export interface IssuesModalProps {
@@ -49,6 +53,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+
+  const { params } = useIssuesView();
 
   if (cycleId) prePopulateData = { ...prePopulateData, cycle: cycleId as string };
   if (moduleId) prePopulateData = { ...prePopulateData, module: moduleId as string };
@@ -96,7 +102,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
         issues: [issueId],
       })
       .then((res) => {
-        mutate(CYCLE_ISSUES(cycleId));
+        mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId, params));
         if (isUpdatingSingleIssue) {
           mutate<IIssue>(
             PROJECT_ISSUES_DETAILS,
@@ -105,7 +111,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
           );
         } else
           mutate<IIssue[]>(
-            PROJECT_ISSUES_LIST(workspaceSlug as string, activeProject ?? ""),
+            PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params),
             (prevData) =>
               (prevData ?? []).map((i) => {
                 if (i.id === res.id) return { ...i, sprints: cycleId };
@@ -137,7 +143,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
     await issuesService
       .createIssues(workspaceSlug as string, activeProject ?? "", payload)
       .then((res) => {
-        mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, activeProject ?? ""));
+        mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
 
         if (payload.cycle && payload.cycle !== "") addIssueToCycle(res.id, payload.cycle);
         if (payload.module && payload.module !== "") addIssueToModule(res.id, payload.module);
@@ -171,7 +177,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
           mutate<IIssue>(PROJECT_ISSUES_DETAILS, (prevData) => ({ ...prevData, ...res }), false);
         } else {
           mutate<IIssue[]>(
-            PROJECT_ISSUES_LIST(workspaceSlug as string, activeProject ?? ""),
+            PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params),
             (prevData) =>
               (prevData ?? []).map((i) => {
                 if (i.id === res.id) return { ...i, ...res };
