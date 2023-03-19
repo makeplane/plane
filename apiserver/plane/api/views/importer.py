@@ -27,6 +27,7 @@ from plane.db.models import (
     IssueAssignee,
     Module,
     ModuleLink,
+    ModuleIssue,
 )
 from plane.api.serializers import (
     ImporterSerializer,
@@ -481,6 +482,25 @@ class BulkImportModulesEndpoint(BaseAPIView):
                 ignore_conflicts=True,
             )
 
+            bulk_module_issues = []
+            for module, module_data in zip(modules, modules_data):
+                module_issues_list = module_data.get("module_issues_list", [])
+                bulk_module_issues = bulk_module_issues + [
+                    ModuleIssue(
+                        issue_id=issue,
+                        module=module,
+                        project_id=project_id,
+                        workspace_id=project.workspace_id,
+                        created_by=request.user,
+                        updated_by=request.user,
+                    )
+                    for issue in module_issues_list
+                ]
+
+            _ = ModuleIssue.objects.bulk_create(
+                bulk_module_issues, batch_size=100, ignore_conflicts=True
+            )
+
             serializer = ModuleSerializer(modules, many=True)
             return Response(
                 {"modules": serializer.data}, status=status.HTTP_201_CREATED
@@ -489,9 +509,9 @@ class BulkImportModulesEndpoint(BaseAPIView):
             return Response(
                 {"error": "Project does not exist"}, status=status.HTTP_404_NOT_FOUND
             )
-        # except Exception as e:
-        #     capture_exception(e)
-        #     return Response(
-        #         {"error": "Something went wrong please try again later"},
-        #         status=status.HTTP_400_BAD_REQUEST,
-        #     )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
