@@ -14,13 +14,16 @@ import { IWorkspaceMemberInvitation } from "types";
 import { USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 // constants
 import { CreateWorkspaceForm } from "components/workspace";
+// ui
+import { PrimaryButton } from "components/ui";
+
 
 type Props = {
   setStep: React.Dispatch<React.SetStateAction<number>>;
   setWorkspace: React.Dispatch<React.SetStateAction<any>>;
 };
 
-const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
+export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
 
@@ -59,28 +62,39 @@ const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
 
   return (
     <div className="grid w-full place-items-center">
-      <Tab.Group as="div" className="w-full rounded-lg bg-white p-8 md:w-2/5">
+      <Tab.Group
+        as="div"
+        className="flex w-full max-w-xl flex-col  rounded-[10px] bg-white shadow-md"
+      >
         <Tab.List
           as="div"
-          className="grid grid-cols-2 items-center gap-2 rounded-lg bg-gray-100 p-2 text-sm"
+          className="text-gray-8 flex items-center justify-start gap-3 px-10 pt-7 text-base"
         >
           <Tab
             className={({ selected }) =>
-              `rounded-lg px-6 py-2 ${selected ? "bg-gray-300" : "hover:bg-gray-200"}`
+              `rounded-3xl border px-5 py-2 outline-none ${
+                selected
+                  ? "border-theme bg-theme text-white"
+                  : "border-gray-300 bg-white hover:bg-hover-gray"
+              }`
             }
           >
-            New workspace
+            New Workspace
           </Tab>
           <Tab
             className={({ selected }) =>
-              `rounded-lg px-6 py-2 ${selected ? "bg-gray-300" : "hover:bg-gray-200"}`
+              `rounded-3xl border px-5 py-2 outline-none ${
+                selected
+                  ? "border-theme bg-theme text-white"
+                  : "border-gray-300 bg-white hover:bg-hover-gray"
+              }`
             }
           >
-            Invited workspaces
+            Invited Workspace
           </Tab>
         </Tab.List>
         <Tab.Panels>
-          <Tab.Panel className="pt-4">
+          <Tab.Panel>
             <CreateWorkspaceForm
               onSubmit={(res) => {
                 setWorkspace(res);
@@ -89,8 +103,8 @@ const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
             />
           </Tab.Panel>
           <Tab.Panel>
-            <div className="mt-4 space-y-8">
-              <div className="divide-y">
+            <div className="mt-6" >
+              <div className="divide-y py-8">
                 {invitations && invitations.length > 0 ? (
                   invitations.map((invitation) => (
                     <div key={invitation.id}>
@@ -149,19 +163,19 @@ const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
                   </div>
                 )}
               </div>
-              <div className="mx-auto h-1/4 lg:w-1/2">
-                <button
+              <div className="flex w-full items-center justify-center rounded-b-[10px]  py-7  ">
+                <PrimaryButton
                   type="submit"
-                  className={`w-full rounded-md bg-gray-200 px-4 py-2 text-sm ${
+                  className={`flex w-1/2 items-center justify-center text-center text-sm ${
                     isJoiningWorkspaces || invitationsRespond.length === 0
                       ? "cursor-not-allowed opacity-80"
                       : ""
                   }`}
+                  size="md"
                   disabled={isJoiningWorkspaces || invitationsRespond.length === 0}
-                  onClick={submitInvitations}
                 >
                   Join Workspace
-                </button>
+                </PrimaryButton>
               </div>
             </div>
           </Tab.Panel>
@@ -170,5 +184,3 @@ const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
     </div>
   );
 };
-
-export default Workspace;
