@@ -591,7 +591,7 @@ class UserActivityGraphEndpoint(BaseAPIView):
                 IssueActivity.objects.filter(
                     actor=request.user,
                     workspace__slug=slug,
-                    created_at__date__gte=date.today() + relativedelta(months=-3),
+                    created_at__date__gte=date.today() + relativedelta(months=-6),
                 )
                 .annotate(created_date=Cast("created_at", DateField()))
                 .values("created_date")
