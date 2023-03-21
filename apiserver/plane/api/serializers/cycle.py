@@ -12,8 +12,6 @@ class CycleSerializer(BaseSerializer):
     owned_by = UserLiteSerializer(read_only=True)
     is_favorite = serializers.BooleanField(read_only=True)
     total_issues = serializers.IntegerField(read_only=True)
-    state_group = serializers.CharField(read_only=True)
-    state_count = serializers.IntegerField(read_only=True)
     cancelled_issues = serializers.IntegerField(read_only=True)
     completed_issues = serializers.IntegerField(read_only=True)
     started_issues = serializers.IntegerField(read_only=True)
