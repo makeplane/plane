@@ -1,4 +1,6 @@
 import React, { createContext, ReactElement } from "react";
+// next
+import { useRouter } from "next/router";
 // swr
 import useSWR, { KeyedMutator } from "swr";
 // services
@@ -20,10 +22,17 @@ interface IUserContextProps {
 export const UserContext = createContext<IUserContextProps>({} as IUserContextProps);
 
 export const UserProvider = ({ children }: { children: ReactElement }) => {
+  const router = useRouter();
+
   // API to fetch user information
   const { data, error, mutate } = useSWR<IUser>(CURRENT_USER, () => userService.currentUser(), {
     shouldRetryOnError: false,
   });
+
+  if (error) {
+    router.push("/signin");
+    return null;
+  }
 
   return (
     <UserContext.Provider
