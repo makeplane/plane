@@ -32,6 +32,7 @@ from plane.db.models import (
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
+from plane.utils.issue_filters import issue_filters
 
 
 class CycleViewSet(BaseViewSet):
@@ -143,7 +144,7 @@ class CycleIssueViewSet(BaseViewSet):
         try:
             order_by = request.GET.get("order_by", "created_at")
             group_by = request.GET.get("group_by", False)
-
+            filters = issue_filters(request.query_params, "GET")
             issues = (
                 Issue.objects.filter(issue_cycle__cycle_id=cycle_id)
                 .annotate(
@@ -162,6 +163,7 @@ class CycleIssueViewSet(BaseViewSet):
                 .prefetch_related("assignees")
                 .prefetch_related("labels")
                 .order_by(order_by)
+                .filter(**filters)
             )
 
             issues_data = IssueStateSerializer(issues, many=True).data
