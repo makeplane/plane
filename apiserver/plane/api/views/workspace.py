@@ -629,7 +629,108 @@ class UserIssueCompletedGraphEndpoint(BaseAPIView):
 
             return Response(issues, status=status.HTTP_200_OK)
         except Exception as e:
-            print(e)
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class UserWorkspaceDashboardEndpoint(BaseAPIView):
+    def get(self, request, slug):
+        try:
+            issue_activities = (
+                IssueActivity.objects.filter(
+                    actor=request.user,
+                    workspace__slug=slug,
+                    created_at__date__gte=date.today() + relativedelta(months=-3),
+                )
+                .annotate(created_date=Cast("created_at", DateField()))
+                .values("created_date")
+                .annotate(activity_count=Count("created_date"))
+                .order_by("created_date")
+            )
+
+            month = request.GET.get("month", 1)
+            completed_issues = (
+                Issue.objects.filter(
+                    assignees__in=[request.user],
+                    workspace__slug=slug,
+                    completed_at__month=month,
+                    completed_at__isnull=False,
+                )
+                .annotate(completed_week=ExtractWeek("completed_at"))
+                .annotate(week=F("completed_week") % 4)
+                .values("week")
+                .annotate(completed_count=Count("completed_week"))
+                .order_by("week")
+            )
+
+            assigned_issues = Issue.objects.filter(
+                workspace__slug=slug, assignees__in=[request.user]
+            ).count()
+
+            pending_issues = Issue.objects.filter(
+                ~Q(state__group__in=["completed", "cancelled"]),
+                workspace__slug=slug,
+                assignees__in=[request.user],
+            ).count()
+
+            completed_issues_count = Issue.objects.filter(
+                workspace__slug=slug,
+                assignees__in=[request.user],
+                state__group="completed",
+            ).count()
+
+            issues_due_week = (
+                Issue.objects.filter(
+                    workspace__slug=slug,
+                    assignees__in=[request.user],
+                )
+                .annotate(target_week=ExtractWeek("target_date"))
+                .filter(target_week=timezone.now().date().isocalendar()[1])
+                .count()
+            )
+
+            state_distribution = (
+                Issue.objects.filter(workspace__slug=slug, assignees__in=[request.user])
+                .annotate(state_group=F("state__group"))
+                .values("state_group")
+                .annotate(state_count=Count("state_group"))
+                .order_by("state_group")
+            )
+
+            overdue_issues = Issue.objects.filter(
+                workspace__slug=slug,
+                assignees__in=[request.user],
+                target_date__lt=timezone.now(),
+                completed_at__isnull=False,
+            ).values("id", "name", "workspace__slug", "project_id", "target_date")
+
+            upcoming_issues = Issue.objects.filter(
+                workspace__slug=slug,
+                assignees__in=[request.user],
+                target_date__gte=timezone.now(),
+                completed_at__isnull=False,
+            ).values("id", "name", "workspace__slug", "project_id", "target_date")
+
+            return Response(
+                {
+                    "issue_activities": issue_activities,
+                    "completed_issues": completed_issues,
+                    "assigned_issues_count": assigned_issues,
+                    "pending_issues_count": pending_issues,
+                    "completed_issues_count": completed_issues_count,
+                    "issues_due_week_count": issues_due_week,
+                    "state_distribution": state_distribution,
+                    "overdue_issues": overdue_issues,
+                    "upcoming_issues": upcoming_issues,
+                },
+                status=status.HTTP_200_OK,
+            )
+
+        except Exception as e:
+            capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
