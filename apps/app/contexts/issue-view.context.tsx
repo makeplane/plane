@@ -336,6 +336,12 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
 
   const setFilters = useCallback(
     (property: Partial<IIssueFilterOptions>) => {
+      Object.keys(property).forEach((key) => {
+        if (property[key as keyof typeof property]?.length === 0) {
+          property[key as keyof typeof property] = null;
+        }
+      });
+
       dispatch({
         type: "SET_FILTERS",
         payload: {
