@@ -9,13 +9,14 @@ import workspaceService from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomSelect, Input } from "components/ui";
+import { CustomSelect, Input, PrimaryButton } from "components/ui";
 // types
 import { IWorkspace } from "types";
 // fetch-keys
 import { USER_WORKSPACES } from "constants/fetch-keys";
 // constants
 import { COMPANY_SIZE } from "constants/workspace";
+
 
 type Props = {
   onSubmit: (res: IWorkspace) => void;
@@ -77,77 +78,86 @@ export const CreateWorkspaceForm: React.FC<Props> = ({ onSubmit }) => {
   }, [reset]);
 
   return (
-    <form className="space-y-8" onSubmit={handleSubmit(handleCreateWorkspace)}>
-      <div className="w-full space-y-4 bg-white">
-        <div className="grid grid-cols-1 gap-4">
-          <div>
-            <Input
-              name="name"
-              register={register}
-              label="Workspace name"
-              placeholder="Enter name"
-              autoComplete="off"
-              onChange={(e) =>
-                setValue("slug", e.target.value.toLocaleLowerCase().trim().replace(/ /g, "-"))
-              }
-              validations={{
-                required: "Workspace name is required",
-              }}
-              error={errors.name}
-            />
-          </div>
-          <div>
-            <h6 className="text-gray-500">Workspace slug</h6>
-            <div className="flex items-center rounded-md border border-gray-300 px-3">
-              <span className="text-sm text-slate-600">{"https://app.plane.so/"}</span>
+    <form
+      className="flex w-full items-center justify-center"
+      onSubmit={handleSubmit(handleCreateWorkspace)}
+    >
+      <div className="flex w-full max-w-xl flex-col">
+        <div className="flex flex-col rounded-[10px] bg-white shadow-md">
+          <div className="flex flex-col justify-between gap-3 px-10 py-7">
+            <div className="flex flex-col items-start justify-center gap-2.5">
+              <span>Workspace name</span>
               <Input
-                mode="trueTransparent"
-                autoComplete="off"
-                name="slug"
+                name="name"
                 register={register}
-                className="block w-full rounded-md bg-transparent py-2 px-0 text-sm"
+                autoComplete="off"
+                onChange={(e) =>
+                  setValue("slug", e.target.value.toLocaleLowerCase().trim().replace(/ /g, "-"))
+                }
+                validations={{
+                  required: "Workspace name is required",
+                }}
+                error={errors.name}
               />
             </div>
-            {slugError && (
-              <span className="-mt-3 text-sm text-red-500">Workspace URL is already taken!</span>
-            )}
-          </div>
-          <div>
-            <h6 className="text-gray-500">Company size</h6>
-            <Controller
-              name="company_size"
-              control={control}
-              rules={{ required: "This field is required" }}
-              render={({ field: { value, onChange } }) => (
-                <CustomSelect
-                  value={value}
-                  onChange={onChange}
-                  label={value ? value.toString() : "Select company size"}
-                  input
-                  width="w-full"
-                >
-                  {COMPANY_SIZE?.map((item) => (
-                    <CustomSelect.Option key={item.value} value={item.value}>
-                      {item.label}
-                    </CustomSelect.Option>
-                  ))}
-                </CustomSelect>
+            <div className="flex flex-col items-start justify-center gap-2.5">
+              <span>Workspace URL</span>
+              <div className="flex w-full items-center rounded-md border border-gray-300 px-3">
+                <span className="text-sm text-slate-600">{"https://app.plane.so/"}</span>
+                <Input
+                  mode="trueTransparent"
+                  autoComplete="off"
+                  name="slug"
+                  register={register}
+                  className="block w-full rounded-md bg-transparent py-2 px-0 text-sm"
+                />
+              </div>
+              {slugError && (
+                <span className="-mt-3 text-sm text-red-500">Workspace URL is already taken!</span>
               )}
-            />
-            {errors.company_size && (
+            </div>
+          </div>
+
+          <div className="flex flex-col items-start justify-center gap-2.5 border-t border-gray-300 px-10 py-7">
+            <span>How large is your company</span>
+            <div className="w-full">
+              <Controller
+                name="company_size"
+                control={control}
+                rules={{ required: "This field is required" }}
+                render={({ field: { value, onChange } }) => (
+                  <CustomSelect
+                    value={value}
+                    onChange={onChange}
+                    label={value ? value.toString() : "Select company size"}
+                    input
+                    width="w-full"
+                  >
+                    {COMPANY_SIZE?.map((item) => (
+                      <CustomSelect.Option key={item.value} value={item.value}>
+                        {item.label}
+                      </CustomSelect.Option>
+                    ))}
+                  </CustomSelect>
+                )}
+              />
+              {errors.company_size && (
               <span className="text-sm text-red-500">{errors.company_size.message}</span>
             )}
+            </div>
+          </div>
+
+          <div className="flex w-full items-center justify-center rounded-b-[10px]  py-7  ">
+            <PrimaryButton
+              type="submit"
+              className="flex w-1/2 items-center justify-center text-center"
+              size="md"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Creating..." : "Create Workspace"}
+            </PrimaryButton>
           </div>
         </div>
-      </div>
-      <div className="mx-auto h-1/4 lg:w-1/2">
-        <button
-          type="submit"
-          className="w-full rounded-md bg-gray-200 px-4 py-2 text-sm"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? "Creating..." : "Continue"}
-        </button>
       </div>
     </form>
   );

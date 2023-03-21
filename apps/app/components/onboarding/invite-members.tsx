@@ -4,14 +4,15 @@ import useToast from "hooks/use-toast";
 import workspaceService from "services/workspace.service";
 import { IUser } from "types";
 // ui components
-import { MultiInput, OutlineButton } from "components/ui";
+import {  MultiInput, PrimaryButton, SecondaryButton } from "components/ui";
+
 
 type Props = {
   setStep: React.Dispatch<React.SetStateAction<number>>;
   workspace: any;
 };
 
-const InviteMembers: React.FC<Props> = ({ setStep, workspace }) => {
+export const InviteMembers: React.FC<Props> = ({ setStep, workspace }) => {
   const { setToastAlert } = useToast();
 
   const {
@@ -39,43 +40,50 @@ const InviteMembers: React.FC<Props> = ({ setStep, workspace }) => {
 
   return (
     <form
-      className="grid w-full place-items-center space-y-8"
+      className="flex w-full items-center justify-center"
       onSubmit={handleSubmit(onSubmit)}
       onKeyDown={(e) => {
         if (e.code === "Enter") e.preventDefault();
       }}
     >
-      <div className="w-full space-y-8 rounded-lg bg-white p-8 md:w-2/5">
-        <div className="space-y-4">
-          <h2 className="text-2xl font-medium">Invite co-workers to your team</h2>
-          <div className="space-y-4">
-            <div className="col-span-2 space-y-2">
+      <div className="flex w-full max-w-xl flex-col gap-12">
+        <div className="flex flex-col gap-6  rounded-[10px] bg-white px-10 py-7 shadow-md">
+          <h2 className="text-2xl font-medium ">Invite co-workers to your team</h2>
+          <div className="flex flex-col items-start justify-center gap-2.5 ">
+            <span>Email</span>
+            <div className="w-full">
               <MultiInput
-                label="Enter e-mails to invite"
                 name="emails"
-                placeholder="dummy@plane.so"
+                placeholder="Enter co-workers email id"
                 watch={watch}
                 setValue={setValue}
+                className="w-full"
               />
             </div>
           </div>
         </div>
 
-        <div className="mx-auto flex h-1/4 gap-2 lg:w-1/2">
-          <button
+        <div className="flex w-full flex-col items-center justify-center gap-3 ">
+          <PrimaryButton
             type="submit"
-            className="w-full rounded-md bg-gray-200 px-4 py-2 text-sm"
+            className="flex w-1/2 items-center justify-center text-center"
             disabled={isSubmitting}
+            size="md"
           >
-            {isSubmitting ? "Inviting..." : "Invite"}
-          </button>
-          <OutlineButton theme="secondary" className="w-full" onClick={() => setStep(4)}>
+            {isSubmitting ? "Inviting..." : "Continue"}
+          </PrimaryButton>
+
+          <SecondaryButton
+            type="button"
+            className="w-1/2 rounded-lg bg-transparent border-none"
+            size="md"
+            outline
+            onClick={() => setStep(4)}
+          >
             Skip
-          </OutlineButton>
+          </SecondaryButton>
         </div>
       </div>
     </form>
   );
 };
-
-export default InviteMembers;
