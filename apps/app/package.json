@@ -21,6 +21,7 @@
     "@types/lodash.debounce": "^4.0.7",
     "@types/react-datepicker": "^4.8.0",
     "axios": "^1.1.3",
+    "cmdk": "^0.2.0",
     "js-cookie": "^3.0.1",
     "lodash.debounce": "^4.0.8",
     "next": "12.3.2",

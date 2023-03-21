@@ -1,6 +1,7 @@
 // styles
 import "styles/globals.css";
 import "styles/editor.css";
+import "styles/command-pallette.css";
 // contexts
 import { UserProvider } from "contexts/user.context";
 import { ToastContextProvider } from "contexts/toast.context";
