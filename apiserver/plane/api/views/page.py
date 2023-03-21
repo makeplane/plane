@@ -73,6 +73,7 @@ class PageBlockViewSet(BaseViewSet):
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
+            .filter(page_id=self.kwargs.get("page_id"))
             .filter(project__project_projectmember__member=self.request.user)
             .select_related("project")
             .select_related("workspace")
