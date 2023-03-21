@@ -1,6 +1,6 @@
 # Python imports
 import jwt
-from datetime import date
+from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 
 # Django imports
