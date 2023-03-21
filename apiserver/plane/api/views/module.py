@@ -3,7 +3,7 @@ import json
 
 # Django Imports
 from django.db import IntegrityError
-from django.db.models import Prefetch, F, OuterRef, Func, Exists
+from django.db.models import Prefetch, F, OuterRef, Func, Exists, Count, Q
 from django.core import serializers
 
 # Third party imports
@@ -67,16 +67,39 @@ class ModuleViewSet(BaseViewSet):
             .prefetch_related("members")
             .prefetch_related(
                 Prefetch(
-                    "issue_module",
-                    queryset=ModuleIssue.objects.select_related(
-                        "module", "issue", "issue__state", "issue__project"
-                    ).prefetch_related("issue__assignees", "issue__labels"),
-                )
-            )
-            .prefetch_related(
-                Prefetch(
                     "link_module",
                     queryset=ModuleLink.objects.select_related("module", "created_by"),
+                )
+            )
+            .annotate(total_issues=Count("issue_module"))
+            .annotate(
+                completed_issues=Count(
+                    "issue_module__issue__state__group",
+                    filter=Q(issue_module__issue__state__group="completed"),
+                )
+            )
+            .annotate(
+                cancelled_issues=Count(
+                    "issue_module__issue__state__group",
+                    filter=Q(issue_module__issue__state__group="cancelled"),
+                )
+            )
+            .annotate(
+                started_issues=Count(
+                    "issue_module__issue__state__group",
+                    filter=Q(issue_module__issue__state__group="started"),
+                )
+            )
+            .annotate(
+                unstarted_issues=Count(
+                    "issue_module__issue__state__group",
+                    filter=Q(issue_module__issue__state__group="unstarted"),
+                )
+            )
+            .annotate(
+                backlog_issues=Count(
+                    "issue_module__issue__state__group",
+                    filter=Q(issue_module__issue__state__group="backlog"),
                 )
             )
         )
