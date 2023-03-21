@@ -175,10 +175,18 @@ class IssueViewSet(BaseViewSet):
     def list(self, request, slug, project_id):
         try:
             filters = issue_filters(request.query_params, "GET")
+            show_sub_issues = request.GET.get("show_sub_issues", "true")
+
             issue_queryset = (
                 self.get_queryset()
                 .order_by(request.GET.get("order_by", "created_at"))
                 .filter(**filters)
+            )
+
+            issue_queryset = (
+                issue_queryset
+                if show_sub_issues == "true"
+                else issue_queryset.filter(parent__isnull=True)
             )
 
             issues = IssueSerializer(issue_queryset, many=True).data

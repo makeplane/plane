@@ -60,3 +60,5 @@ from .integration import (
 )
 
 from .importer import Importer
+
+from .page import Page, PageBlock, PageFavorite
