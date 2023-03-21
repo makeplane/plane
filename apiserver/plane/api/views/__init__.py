@@ -108,6 +108,7 @@ from .importer import (
     ImportServiceEndpoint,
     UpdateServiceImportStatusEndpoint,
     BulkImportIssuesEndpoint,
+    BulkImportModulesEndpoint
 )
 
 from .page import PageViewSet, PageBlockViewSet, PageFavoriteViewSet, CreateIssueFromPageBlockEndpoint

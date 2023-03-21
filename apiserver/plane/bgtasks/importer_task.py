@@ -51,17 +51,29 @@ def service_importer(service, importer_id):
                 if user.get("import", False) == "invite"
             ],
             batch_size=10,
+            ignore_conflicts=True,
         )
+
+        workspace_users = User.objects.filter(
+            email__in=[
+                user.get("email").strip().lower()
+                for user in users
+                if user.get("import", False) == "invite"
+                or user.get("import", False) == "map"
+            ]
+        )
+
 
         # Add new users to Workspace and project automatically
         WorkspaceMember.objects.bulk_create(
             [
                 WorkspaceMember(member=user, workspace_id=importer.workspace_id)
-                for user in new_users
+                for user in workspace_users
             ],
             batch_size=100,
             ignore_conflicts=True,
         )
+
         ProjectMember.objects.bulk_create(
             [
                 ProjectMember(
@@ -69,7 +81,7 @@ def service_importer(service, importer_id):
                     workspace_id=importer.workspace_id,
                     member=user,
                 )
-                for user in new_users
+                for user in workspace_users
             ],
             batch_size=100,
             ignore_conflicts=True,
