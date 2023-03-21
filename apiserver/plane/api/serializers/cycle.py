@@ -11,7 +11,15 @@ from plane.db.models import Cycle, CycleIssue, CycleFavorite
 class CycleSerializer(BaseSerializer):
     owned_by = UserLiteSerializer(read_only=True)
     is_favorite = serializers.BooleanField(read_only=True)
-
+    total_issues = serializers.IntegerField(read_only=True)
+    state_group = serializers.CharField(read_only=True)
+    state_count = serializers.IntegerField(read_only=True)
+    cancelled_issues = serializers.IntegerField(read_only=True)
+    completed_issues = serializers.IntegerField(read_only=True)
+    started_issues = serializers.IntegerField(read_only=True)
+    unstarted_issues = serializers.IntegerField(read_only=True)
+    backlog_issues = serializers.IntegerField(read_only=True)
+    
     class Meta:
         model = Cycle
         fields = "__all__"

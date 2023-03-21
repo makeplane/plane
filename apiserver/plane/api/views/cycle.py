@@ -3,7 +3,7 @@ import json
 
 # Django imports
 from django.db import IntegrityError
-from django.db.models import OuterRef, Func, F, Q, Exists, OuterRef, Prefetch
+from django.db.models import OuterRef, Func, F, Q, Exists, OuterRef, Count, Prefetch
 from django.core import serializers
 from django.utils import timezone
 
@@ -47,6 +47,16 @@ class CycleViewSet(BaseViewSet):
         )
 
     def get_queryset(self):
+        # completed_issues = Issue.objects.filter(
+        #     workspace__slug=self.kwargs.get("slug"),
+        #     issue_cycle__cycle_id=OuterRef("pk"),
+        #     state__group="completed",
+        # )
+        # cancelled_issues = Issue.objects.filter(
+        #     workspace__slug=self.kwargs.get("slug"),
+        #     issue_cycle__cycle_id=OuterRef("pk"),
+        #     state__group="cancelled",
+        # )
         subquery = CycleFavorite.objects.filter(
             user=self.request.user,
             cycle_id=OuterRef("pk"),
@@ -63,6 +73,37 @@ class CycleViewSet(BaseViewSet):
             .select_related("workspace")
             .select_related("owned_by")
             .annotate(is_favorite=Exists(subquery))
+            .annotate(total_issues=Count("issue_cycle"))
+            .annotate(
+                completed_issues=Count(
+                    "issue_cycle__issue__state__group",
+                    filter=Q(issue_cycle__issue__state__group="completed"),
+                )
+            )
+            .annotate(
+                cancelled_issues=Count(
+                    "issue_cycle__issue__state__group",
+                    filter=Q(issue_cycle__issue__state__group="cancelled"),
+                )
+            )
+            .annotate(
+                started_issues=Count(
+                    "issue_cycle__issue__state__group",
+                    filter=Q(issue_cycle__issue__state__group="started"),
+                )
+            )
+            .annotate(
+                unstarted_issues=Count(
+                    "issue_cycle__issue__state__group",
+                    filter=Q(issue_cycle__issue__state__group="unstarted"),
+                )
+            )
+            .annotate(
+                backlog_issues=Count(
+                    "issue_cycle__issue__state__group",
+                    filter=Q(issue_cycle__issue__state__group="backlog"),
+                )
+            )
             .distinct()
         )
 
