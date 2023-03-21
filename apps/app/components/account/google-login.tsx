@@ -27,7 +27,7 @@ export const GoogleLoginButton: FC<IGoogleLoginButton> = (props) => {
         theme: "outline",
         size: "large",
         logo_alignment: "center",
-        width: document.getElementById("googleSignInButton")?.offsetWidth,
+        width: "410",
         text: "continue_with",
       } as GsiButtonConfiguration // customization attributes
     );
@@ -47,7 +47,7 @@ export const GoogleLoginButton: FC<IGoogleLoginButton> = (props) => {
   return (
     <>
       <Script src="https://accounts.google.com/gsi/client" async defer onLoad={loadScript} />
-      <div className="w-full" id="googleSignInButton" ref={googleSignInButton} />
+      <div className="h-12" id="googleSignInButton" ref={googleSignInButton} />
     </>
   );
 };

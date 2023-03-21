@@ -20,7 +20,7 @@ import {
 // ui
 import { Spinner } from "components/ui";
 // icons
-import Logo from "public/logo-with-text.png";
+import Logo from "public/logo.png";
 // types
 import type { NextPage } from "next";
 
@@ -105,31 +105,28 @@ const SignInPage: NextPage = () => {
       )}
       <div className="flex h-screen w-full items-center justify-center overflow-auto bg-gray-50">
         <div className="flex min-h-full w-full flex-col justify-center py-12 px-6 lg:px-8">
-          <div className="sm:mx-auto sm:w-full sm:max-w-md">
-            <div className="text-center">
-              <Image src={Logo} height={40} width={179} alt="Plane Web Logo" />
+          <div className="flex flex-col gap-10 sm:mx-auto sm:w-full sm:max-w-md">
+            <div className="flex flex-col items-center justify-center gap-10">
+              <Image src={Logo} height={80} width={80} alt="Plane Web Logo" />
+              <h2 className="text-center text-xl font-medium text-black">
+                Sign In to your Plane Account
+              </h2>
             </div>
-            <h2 className="mt-3 text-center text-3xl font-bold text-gray-900">
-              Sign in to your account
-            </h2>
-            <div className="mt-16 bg-white py-8 px-4 sm:rounded-lg sm:px-10">
+
+            <div className="flex flex-col rounded-[10px] bg-white  shadow-md">
               {parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0") ? (
                 <>
-                  <div className="mb-4">
-                    <EmailSignInForm handleSuccess={onSignInSuccess} />
-                  </div>
-                  <div className="mb-4">
+                  <EmailSignInForm handleSuccess={onSignInSuccess} />
+
+                  <div className="flex flex-col gap-3 py-5 px-5 border-t items-center justify-center border-gray-300 ">
                     <GoogleLoginButton handleSignIn={handleGoogleSignIn} />
-                  </div>
-                  <div className="mb-4">
+
                     <GithubLoginButton handleSignIn={handleGithubSignIn} />
                   </div>
                 </>
               ) : (
                 <>
-                  <div className="mb-4">
-                    <EmailPasswordForm onSuccess={onSignInSuccess} />
-                  </div>
+                  <EmailPasswordForm onSuccess={onSignInSuccess} />
                 </>
               )}
             </div>
