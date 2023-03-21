@@ -424,39 +424,6 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
     });
   }, [myViewProps, viewDetails]);
 
-  useEffect(() => {
-    const params: any = {
-      order_by: state.orderBy,
-      group_by: state.groupByProperty,
-      assignees: state.filters?.assignees ? state.filters?.assignees.join(",") : undefined,
-      state: state.filters?.state ? state.filters?.state.join(",") : undefined,
-      priority: state.filters?.priority ? state.filters?.priority.join(",") : undefined,
-      type: state.filters?.type ? state.filters?.type : undefined,
-      labels: state.filters?.labels ? state.filters?.labels.join(",") : undefined,
-      issue__assignees__id: state.filters?.issue__assignees__id
-        ? state.filters?.issue__assignees__id.join(",")
-        : undefined,
-      issue__labels__id: state.filters?.issue__labels__id
-        ? state.filters?.issue__labels__id.join(",")
-        : undefined,
-    };
-
-    // TODO: think of a better way to do this
-    if (cycleId) {
-      mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params), {}, false);
-      mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
-    } else if (moduleId) {
-      mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params), {}, false);
-      mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
-    } else if (viewId) {
-      mutate(VIEW_ISSUES(viewId as string), {}, false);
-      mutate(VIEW_ISSUES(viewId as string));
-    } else {
-      mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params), {}, false);
-      mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
-    }
-  }, [state, projectId, cycleId, moduleId, viewId]);
-
   return (
     <issueViewContext.Provider
       value={{

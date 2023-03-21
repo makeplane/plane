@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 // ui
 import { CheckCircleIcon } from "@heroicons/react/20/solid";
-import { Input, SecondaryButton } from "components/ui";
+import { Input, PrimaryButton, SecondaryButton } from "components/ui";
 // services
 import authenticationService from "services/authentication.service";
 import useToast from "hooks/use-toast";
@@ -90,7 +90,7 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
 
   return (
     <>
-      <form className="mt-5 space-y-5">
+      <form className="space-y-5 py-5 px-5">
         {(codeSent || codeResent) && (
           <div className="rounded-md bg-green-50 p-4">
             <div className="flex">
@@ -121,7 +121,7 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
                 ) || "Email ID is not valid",
             }}
             error={errors.email}
-            placeholder="Enter your Email ID"
+            placeholder="Enter you email Id"
           />
         </div>
 
@@ -169,18 +169,20 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
         )}
         <div>
           {codeSent ? (
-            <SecondaryButton
+            <PrimaryButton
               type="submit"
               className="w-full text-center"
+              size="md"
               onClick={handleSubmit(handleSignin)}
               loading={isSubmitting || (!isValid && isDirty)}
             >
               {isSubmitting ? "Signing in..." : "Sign in"}
-            </SecondaryButton>
+            </PrimaryButton>
           ) : (
-            <SecondaryButton
+            <PrimaryButton
               type="submit"
               className="w-full text-center"
+              size="md"
               onClick={() => {
                 handleSubmit(onSubmit)().then(() => {
                   setResendCodeTimer(30);
@@ -189,7 +191,7 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
               loading={isSubmitting || (!isValid && isDirty)}
             >
               {isSubmitting ? "Sending code..." : "Send code"}
-            </SecondaryButton>
+            </PrimaryButton>
           )}
         </div>
       </form>
