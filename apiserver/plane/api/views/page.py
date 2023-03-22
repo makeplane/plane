@@ -58,6 +58,7 @@ class PageViewSet(BaseViewSet):
             .select_related("owned_by")
             .annotate(is_favorite=Exists(subquery))
             .order_by(self.request.GET.get("order_by", "-created_at"))
+            .prefetch_related("labels")
             .distinct()
         )
 
@@ -65,6 +66,25 @@ class PageViewSet(BaseViewSet):
         serializer.save(
             project_id=self.kwargs.get("project_id"), owned_by=self.request.user
         )
+
+    def create(self, request, slug, project_id):
+        try:
+            serializer = PageSerializer(
+                data=request.data,
+                context={"project_id": project_id, "owned_by_id": request.user.id},
+            )
+
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            print(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
 
 class PageBlockViewSet(BaseViewSet):
@@ -228,7 +248,9 @@ class RecentPagesEndpoint(BaseAPIView):
                 .select_related("project")
                 .select_related("workspace")
                 .select_related("owned_by")
+                .prefetch_related("labels")
             )
+
             serializer = PageSerializer(pages, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
@@ -262,6 +284,7 @@ class FavoritePagesEndpoint(BaseAPIView):
                 .select_related("project")
                 .select_related("workspace")
                 .select_related("owned_by")
+                .prefetch_related("labels")
             )
 
             serializer = PageSerializer(pages, many=True)
@@ -288,6 +311,7 @@ class MyPagesEndpoint(BaseAPIView):
                 .select_related("project")
                 .select_related("workspace")
                 .select_related("owned_by")
+                .prefetch_related("labels")
             )
             serializer = PageSerializer(pages, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -315,6 +339,7 @@ class CreatedbyOtherPagesEndpoint(BaseAPIView):
                 .select_related("project")
                 .select_related("workspace")
                 .select_related("owned_by")
+                .prefetch_related("labels")
             )
             serializer = PageSerializer(pages, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
