@@ -18,7 +18,7 @@ class Page(ProjectBaseModel):
         choices=((0, "Public"), (1, "Private")), default=0
     )
     labels = models.ManyToManyField(
-        "db.Label", blank=True, related_name="labels", through="IssueLabel"
+        "db.Label", blank=True, related_name="pages", through="db.PageLabel"
     )
 
     class Meta:
@@ -76,7 +76,7 @@ class PageFavorite(ProjectBaseModel):
         return f"{self.user.email} <{self.page.name}>"
 
 
-class PageLabels(ProjectBaseModel):
+class PageLabel(ProjectBaseModel):
     label = models.ForeignKey(
         "db.Label", on_delete=models.CASCADE, related_name="page_labels"
     )
