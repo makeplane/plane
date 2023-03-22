@@ -29,7 +29,7 @@ export const AllLists: React.FC<Props> = ({
   removeIssue,
   userAuth,
 }) => {
-  const { groupedByIssues, groupByProperty: selectedGroup } = useIssuesView();
+  const { groupedByIssues, groupByProperty: selectedGroup, showEmptyGroups } = useIssuesView();
 
   return (
     <>
@@ -38,6 +38,8 @@ export const AllLists: React.FC<Props> = ({
           {Object.keys(groupedByIssues).map((singleGroup) => {
             const currentState =
               selectedGroup === "state" ? states?.find((s) => s.id === singleGroup) : null;
+
+            if (!showEmptyGroups && groupedByIssues[singleGroup].length === 0) return null;
 
             return (
               <SingleList

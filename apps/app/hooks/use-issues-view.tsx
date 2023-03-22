@@ -32,6 +32,8 @@ const useIssuesView = () => {
     setGroupByProperty,
     orderBy,
     setOrderBy,
+    showEmptyGroups,
+    setShowEmptyGroups,
     filters,
     setFilters,
     resetFilterToDefault,
@@ -107,6 +109,7 @@ const useIssuesView = () => {
   );
   const statesList = getStatesList(states ?? {});
   const stateIds = statesList.map((state) => state.id);
+
   let emptyStatesObject: { [key: string]: [] } = {};
   for (let i = 0; i < stateIds.length; i++) {
     emptyStatesObject[stateIds[i]] = [];
@@ -132,6 +135,8 @@ const useIssuesView = () => {
     setGroupByProperty,
     orderBy,
     setOrderBy,
+    showEmptyGroups,
+    setShowEmptyGroups,
     filters,
     setFilters,
     params,

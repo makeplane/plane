@@ -10,16 +10,9 @@ import ToastAlert from "components/toast-alert";
 import projectService from "services/project.service";
 import viewsService from "services/views.service";
 // types
-import { IIssueFilterOptions, IProjectMember, NestedKeyOf } from "types";
+import { IIssueFilterOptions, IProjectMember } from "types";
 // fetch-keys
-import {
-  CYCLE_ISSUES_WITH_PARAMS,
-  MODULE_ISSUES_WITH_PARAMS,
-  PROJECT_ISSUES_LIST_WITH_PARAMS,
-  USER_PROJECT_VIEW,
-  VIEW_DETAILS,
-  VIEW_ISSUES,
-} from "constants/fetch-keys";
+import { USER_PROJECT_VIEW, VIEW_DETAILS } from "constants/fetch-keys";
 
 export const issueViewContext = createContext<ContextType>({} as ContextType);
 
@@ -27,6 +20,7 @@ type IssueViewProps = {
   issueView: "list" | "kanban";
   groupByProperty: "state" | "priority" | "labels" | null;
   orderBy: "created_at" | "updated_at" | "priority" | "sort_order";
+  showEmptyGroups: boolean;
   filters: IIssueFilterOptions;
 };
 
@@ -35,6 +29,7 @@ type ReducerActionType = {
     | "REHYDRATE_THEME"
     | "SET_ISSUE_VIEW"
     | "SET_ORDER_BY_PROPERTY"
+    | "SET_SHOW_EMPTY_STATES"
     | "SET_FILTERS"
     | "SET_GROUP_BY_PROPERTY"
     | "RESET_TO_DEFAULT";
@@ -44,6 +39,7 @@ type ReducerActionType = {
 type ContextType = IssueViewProps & {
   setGroupByProperty: (property: "state" | "priority" | "labels" | null) => void;
   setOrderBy: (property: "created_at" | "updated_at" | "priority" | "sort_order") => void;
+  setShowEmptyGroups: (property: boolean) => void;
   setFilters: (filters: Partial<IIssueFilterOptions>, saveToServer?: boolean) => void;
   resetFilterToDefault: () => void;
   setNewFilterDefaultView: () => void;
@@ -55,6 +51,7 @@ type StateType = {
   issueView: "list" | "kanban";
   groupByProperty: "state" | "priority" | "labels" | null;
   orderBy: "created_at" | "updated_at" | "priority" | "sort_order";
+  showEmptyGroups: boolean;
   filters: IIssueFilterOptions;
 };
 type ReducerFunctionType = (state: StateType, action: ReducerActionType) => StateType;
@@ -63,6 +60,7 @@ export const initialState: StateType = {
   issueView: "list",
   groupByProperty: null,
   orderBy: "created_at",
+  showEmptyGroups: false,
   filters: {
     type: null,
     priority: null,
@@ -113,6 +111,18 @@ export const reducer: ReducerFunctionType = (state, action) => {
       const newState = {
         ...state,
         orderBy: payload?.orderBy || "created_at",
+      };
+
+      return {
+        ...state,
+        ...newState,
+      };
+    }
+
+    case "SET_SHOW_EMPTY_STATES": {
+      const newState = {
+        ...state,
+        showEmptyGroups: payload?.showEmptyGroups || false,
       };
 
       return {
@@ -190,7 +200,7 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
+  const { workspaceSlug, projectId, viewId } = router.query;
 
   const { data: myViewProps, mutate: mutateMyViewProps } = useSWR(
     workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId as string) : null,
@@ -334,6 +344,37 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
     [projectId, workspaceSlug, state, mutateMyViewProps]
   );
 
+  const setShowEmptyGroups = useCallback(
+    (property: boolean) => {
+      dispatch({
+        type: "SET_SHOW_EMPTY_STATES",
+        payload: {
+          showEmptyGroups: property,
+        },
+      });
+
+      if (!workspaceSlug || !projectId) return;
+
+      mutateMyViewProps((prevData) => {
+        if (!prevData) return prevData;
+
+        return {
+          ...prevData,
+          view_props: {
+            ...state,
+            showEmptyGroups: property,
+          },
+        };
+      }, false);
+
+      saveDataToServer(workspaceSlug as string, projectId as string, {
+        ...state,
+        showEmptyGroups: property,
+      });
+    },
+    [projectId, workspaceSlug, state, mutateMyViewProps]
+  );
+
   const setFilters = useCallback(
     (property: Partial<IIssueFilterOptions>, saveToServer = true) => {
       Object.keys(property).forEach((key) => {
@@ -438,7 +479,9 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
         groupByProperty: state.groupByProperty,
         setGroupByProperty,
         orderBy: state.orderBy,
+        showEmptyGroups: state.showEmptyGroups,
         setOrderBy,
+        setShowEmptyGroups,
         filters: state.filters,
         setFilters,
         resetFilterToDefault: resetToDefault,
