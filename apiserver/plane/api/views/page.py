@@ -182,3 +182,19 @@ class CreateIssueFromPageBlockEndpoint(BaseAPIView):
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+class MyPagesEndpoint(BaseAPIView):
+    def get(self, request, slug, project_id):
+        try:
+            pages = Page.objects.filter(
+                workspace__slug=slug, project_id=project_id, owned_by=request.user
+            )
+            serializer = PageSerializer(pages, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
