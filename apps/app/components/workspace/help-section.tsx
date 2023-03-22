@@ -57,7 +57,7 @@ export const WorkspaceHelpSection: FC<WorkspaceHelpSectionProps> = (props) => {
   return (
     <div
       className={`flex w-full items-center justify-between self-baseline border-t bg-white px-6 py-2 ${
-        sidebarCollapse ? "flex-col-reverse" : ""
+        sidebarCollapse ? "flex-col" : ""
       }`}
     >
       <button
