@@ -44,8 +44,8 @@ export const IssuesFilterView: React.FC = () => {
     setGroupByProperty,
     orderBy,
     setOrderBy,
-    showEmptyStates,
-    setShowEmptyStates,
+    showEmptyGroups,
+    setShowEmptyGroups,
     filters,
     setFilters,
     resetFilterToDefault,
@@ -278,17 +278,17 @@ export const IssuesFilterView: React.FC = () => {
                       <button
                         type="button"
                         className={`relative inline-flex h-3.5 w-6 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                          showEmptyStates ? "bg-green-500" : "bg-gray-200"
+                          showEmptyGroups ? "bg-green-500" : "bg-gray-200"
                         }`}
                         role="switch"
-                        aria-checked={showEmptyStates}
-                        onClick={() => setShowEmptyStates(!showEmptyStates)}
+                        aria-checked={showEmptyGroups}
+                        onClick={() => setShowEmptyGroups(!showEmptyGroups)}
                       >
-                        <span className="sr-only">Show empty states</span>
+                        <span className="sr-only">Show empty groups</span>
                         <span
                           aria-hidden="true"
                           className={`inline-block h-2.5 w-2.5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                            showEmptyStates ? "translate-x-2.5" : "translate-x-0"
+                            showEmptyGroups ? "translate-x-2.5" : "translate-x-0"
                           }`}
                         />
                       </button>

@@ -20,7 +20,7 @@ type IssueViewProps = {
   issueView: "list" | "kanban";
   groupByProperty: "state" | "priority" | "labels" | null;
   orderBy: "created_at" | "updated_at" | "priority" | "sort_order";
-  showEmptyStates: boolean;
+  showEmptyGroups: boolean;
   filters: IIssueFilterOptions;
 };
 
@@ -39,7 +39,7 @@ type ReducerActionType = {
 type ContextType = IssueViewProps & {
   setGroupByProperty: (property: "state" | "priority" | "labels" | null) => void;
   setOrderBy: (property: "created_at" | "updated_at" | "priority" | "sort_order") => void;
-  setShowEmptyStates: (property: boolean) => void;
+  setShowEmptyGroups: (property: boolean) => void;
   setFilters: (filters: Partial<IIssueFilterOptions>, saveToServer?: boolean) => void;
   resetFilterToDefault: () => void;
   setNewFilterDefaultView: () => void;
@@ -51,7 +51,7 @@ type StateType = {
   issueView: "list" | "kanban";
   groupByProperty: "state" | "priority" | "labels" | null;
   orderBy: "created_at" | "updated_at" | "priority" | "sort_order";
-  showEmptyStates: boolean;
+  showEmptyGroups: boolean;
   filters: IIssueFilterOptions;
 };
 type ReducerFunctionType = (state: StateType, action: ReducerActionType) => StateType;
@@ -60,7 +60,7 @@ export const initialState: StateType = {
   issueView: "list",
   groupByProperty: null,
   orderBy: "created_at",
-  showEmptyStates: false,
+  showEmptyGroups: false,
   filters: {
     type: null,
     priority: null,
@@ -122,7 +122,7 @@ export const reducer: ReducerFunctionType = (state, action) => {
     case "SET_SHOW_EMPTY_STATES": {
       const newState = {
         ...state,
-        showEmptyStates: payload?.showEmptyStates || false,
+        showEmptyGroups: payload?.showEmptyGroups || false,
       };
 
       return {
@@ -344,12 +344,12 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
     [projectId, workspaceSlug, state, mutateMyViewProps]
   );
 
-  const setShowEmptyStates = useCallback(
+  const setShowEmptyGroups = useCallback(
     (property: boolean) => {
       dispatch({
         type: "SET_SHOW_EMPTY_STATES",
         payload: {
-          showEmptyStates: property,
+          showEmptyGroups: property,
         },
       });
 
@@ -362,14 +362,14 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
           ...prevData,
           view_props: {
             ...state,
-            showEmptyStates: property,
+            showEmptyGroups: property,
           },
         };
       }, false);
 
       saveDataToServer(workspaceSlug as string, projectId as string, {
         ...state,
-        showEmptyStates: property,
+        showEmptyGroups: property,
       });
     },
     [projectId, workspaceSlug, state, mutateMyViewProps]
@@ -479,9 +479,9 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
         groupByProperty: state.groupByProperty,
         setGroupByProperty,
         orderBy: state.orderBy,
-        showEmptyStates: state.showEmptyStates,
+        showEmptyGroups: state.showEmptyGroups,
         setOrderBy,
-        setShowEmptyStates,
+        setShowEmptyGroups,
         filters: state.filters,
         setFilters,
         resetFilterToDefault: resetToDefault,

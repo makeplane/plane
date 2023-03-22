@@ -29,7 +29,7 @@ export const AllLists: React.FC<Props> = ({
   removeIssue,
   userAuth,
 }) => {
-  const { groupedByIssues, groupByProperty: selectedGroup, showEmptyStates } = useIssuesView();
+  const { groupedByIssues, groupByProperty: selectedGroup, showEmptyGroups } = useIssuesView();
 
   return (
     <>
@@ -39,7 +39,7 @@ export const AllLists: React.FC<Props> = ({
             const currentState =
               selectedGroup === "state" ? states?.find((s) => s.id === singleGroup) : null;
 
-            if (!showEmptyStates && groupedByIssues[singleGroup].length === 0) return null;
+            if (!showEmptyGroups && groupedByIssues[singleGroup].length === 0) return null;
 
             return (
               <SingleList
