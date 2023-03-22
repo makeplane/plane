@@ -15,12 +15,15 @@ import {
   CYCLE_ISSUES_WITH_PARAMS,
   MODULE_ISSUES_WITH_PARAMS,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
+  STATE_LIST,
   VIEW_ISSUES,
 } from "constants/fetch-keys";
 
 // types
 import type { IIssue } from "types";
 import viewsService from "services/views.service";
+import stateService from "services/state.service";
+import { getStatesList } from "helpers/state.helper";
 
 const useIssuesView = () => {
   const {
@@ -96,6 +99,19 @@ const useIssuesView = () => {
       : null
   );
 
+  const { data: states } = useSWR(
+    workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
+      : null
+  );
+  const statesList = getStatesList(states ?? {});
+  const stateIds = statesList.map((state) => state.id);
+  let emptyStatesObject: { [key: string]: [] } = {};
+  for (let i = 0; i < stateIds.length; i++) {
+    emptyStatesObject[stateIds[i]] = [];
+  }
+
   const groupedByIssues:
     | {
         [key: string]: IIssue[];
@@ -104,7 +120,9 @@ const useIssuesView = () => {
     const issuesToGroup = cycleIssues ?? moduleIssues ?? projectIssues;
 
     if (Array.isArray(issuesToGroup)) return { allIssues: issuesToGroup };
-    else return issuesToGroup;
+    if (groupByProperty === "state") return Object.assign(emptyStatesObject, issuesToGroup);
+
+    return issuesToGroup;
   }, [projectIssues, cycleIssues, moduleIssues]);
 
   return {
