@@ -19,7 +19,7 @@ import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 import { CreateUpdateViewModal } from "components/views";
 // ui
-import { EmptySpace, EmptySpaceItem, PrimaryButton } from "components/ui";
+import { Avatar, EmptySpace, EmptySpaceItem, PrimaryButton } from "components/ui";
 // icons
 import { PlusIcon, RectangleStackIcon, TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // helpers
@@ -42,6 +42,8 @@ import {
   PROJECT_MEMBERS,
   STATE_LIST,
 } from "constants/fetch-keys";
+import { getPriorityIcon } from "components/icons/priority-icon";
+import { getStateGroupIcon } from "components/icons";
 
 type Props = {
   type?: "issue" | "cycle" | "module";
@@ -71,7 +73,7 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
   const [trashBox, setTrashBox] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
 
   const {
     groupedByIssues,
@@ -369,6 +371,10 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
     [trashBox, setTrashBox]
   );
 
+  const nullFilters = Object.keys(filters).filter(
+    (key) => filters[key as keyof IIssueFilterOptions] === null
+  );
+
   return (
     <>
       <CreateUpdateViewModal
@@ -394,123 +400,134 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
         isOpen={deleteIssueModal}
         data={issueToDelete}
       />
-      <div className="mb-3 flex items-center justify-between gap-2">
-        <div className="flex gap-x-3">
+      <div className="mb-5 -mt-4 flex items-center justify-between gap-2">
+        <div className="flex flex-wrap items-center gap-3 text-xs">
           {Object.keys(filters).map((key) => {
             if (filters[key as keyof typeof filters] !== null)
               return (
-                <div key={key} className="flex gap-x-2 text-sm">
-                  <p>
-                    Filter for <span className="font-medium">{key}</span>:{" "}
-                  </p>
+                <div key={key} className="flex items-center gap-x-2 rounded bg-white px-2 py-1">
+                  <span className="font-medium capitalize text-gray-500">{key}:</span>
                   {filters[key as keyof IIssueFilterOptions] === null ||
                   (filters[key as keyof IIssueFilterOptions]?.length ?? 0) <= 0 ? (
-                    <p className="font-medium">None</p>
+                    <span>None</span>
+                  ) : Array.isArray(filters[key as keyof IIssueFilterOptions]) ? (
+                    <div className="space-x-2">
+                      {key === "state"
+                        ? filters.state?.map((stateId: any) => {
+                            const state = states?.find((s) => s.id === stateId);
+
+                            return (
+                              <p
+                                key={state?.id}
+                                className="inline-flex items-center gap-x-1 rounded-full px-2 py-0.5 font-medium text-white"
+                                style={{
+                                  color: state?.color,
+                                  backgroundColor: `${state?.color}20`,
+                                }}
+                              >
+                                <span>
+                                  {getStateGroupIcon(
+                                    state?.group ?? "backlog",
+                                    "12",
+                                    "12",
+                                    state?.color
+                                  )}
+                                </span>
+                                <span>{state?.name ?? ""}</span>
+                                <span
+                                  className="cursor-pointer"
+                                  onClick={() =>
+                                    setFilters({
+                                      state: filters.state?.filter((s: any) => s !== stateId),
+                                    })
+                                  }
+                                >
+                                  <XMarkIcon className="h-3 w-3" />
+                                </span>
+                              </p>
+                            );
+                          })
+                        : key === "priority"
+                        ? filters.priority?.map((priority: any) => (
+                            <p
+                              key={priority}
+                              className={`inline-flex items-center gap-x-1 rounded-full px-2 py-0.5 font-medium capitalize text-white ${
+                                priority === "urgent"
+                                  ? "bg-red-100 text-red-600 hover:bg-red-100"
+                                  : priority === "high"
+                                  ? "bg-orange-100 text-orange-500 hover:bg-orange-100"
+                                  : priority === "medium"
+                                  ? "bg-yellow-100 text-yellow-500 hover:bg-yellow-100"
+                                  : priority === "low"
+                                  ? "bg-green-100 text-green-500 hover:bg-green-100"
+                                  : "bg-gray-100"
+                              }`}
+                            >
+                              <span>{getPriorityIcon(priority)}</span>
+                              <span>{priority}</span>
+                              <span
+                                className="cursor-pointer"
+                                onClick={() =>
+                                  setFilters({
+                                    priority: filters.priority?.filter((p: any) => p !== priority),
+                                  })
+                                }
+                              >
+                                <XMarkIcon className="h-3 w-3" />
+                              </span>
+                            </p>
+                          ))
+                        : key === "assignees"
+                        ? filters.assignees?.map((memberId: string) => {
+                            const member = members?.find((m) => m.member.id === memberId)?.member;
+
+                            return (
+                              <p
+                                key={memberId}
+                                className="inline-flex items-center gap-x-1 rounded-full border px-2 py-0.5 font-medium capitalize"
+                              >
+                                <Avatar user={member} />
+                                <span>{member?.first_name}</span>
+                                <span
+                                  className="cursor-pointer"
+                                  onClick={() =>
+                                    setFilters({
+                                      assignees: filters.assignees?.filter(
+                                        (p: any) => p !== memberId
+                                      ),
+                                    })
+                                  }
+                                >
+                                  <XMarkIcon className="h-3 w-3" />
+                                </span>
+                              </p>
+                            );
+                          })
+                        : (filters[key as keyof IIssueFilterOptions] as any)?.join(", ")}
+                    </div>
                   ) : (
-                    Array.isArray(filters[key as keyof IIssueFilterOptions]) && (
-                      <p className="space-x-2 font-medium">
-                        {key === "state"
-                          ? (filters[key as keyof IIssueFilterOptions] as any)?.map(
-                              (stateId: any) => {
-                                const state = states?.find((s) => s.id === stateId);
-                                return (
-                                  <p
-                                    key={state?.id}
-                                    className="inline-flex items-center gap-x-1 rounded-full bg-gray-500 px-2 py-0.5 text-xs font-medium text-white"
-                                  >
-                                    <span>{state?.name ?? "Loading..."}</span>
-                                    <span
-                                      className="cursor-pointer"
-                                      onClick={() => {
-                                        setFilters({
-                                          ...filters,
-                                          [key]: (
-                                            filters[key as keyof IIssueFilterOptions] as any
-                                          )?.filter((s: any) => s !== stateId),
-                                        });
-                                      }}
-                                    >
-                                      <XMarkIcon className="h-3 w-3" />
-                                    </span>
-                                  </p>
-                                );
-                              }
-                            )
-                          : key === "priority"
-                          ? (filters[key as keyof IIssueFilterOptions] as any)?.map(
-                              (priority: any) => (
-                                <p
-                                  key={priority}
-                                  className="inline-flex items-center gap-x-1 rounded-full bg-gray-500 px-2 py-0.5 text-xs font-medium capitalize text-white"
-                                >
-                                  <span>{priority}</span>
-                                  <span
-                                    className="cursor-pointer"
-                                    onClick={() => {
-                                      setFilters({
-                                        ...filters,
-                                        [key]: (
-                                          filters[key as keyof IIssueFilterOptions] as any
-                                        )?.filter((p: any) => p !== priority),
-                                      });
-                                    }}
-                                  >
-                                    <XMarkIcon className="h-3 w-3" />
-                                  </span>
-                                </p>
-                              )
-                            )
-                          : key === "assignee"
-                          ? (filters[key as keyof IIssueFilterOptions] as any)?.map(
-                              (member: any) => (
-                                <p
-                                  key={member}
-                                  className="inline-flex items-center gap-x-1 rounded-full bg-gray-500 px-2 py-0.5 text-xs font-medium capitalize text-white"
-                                >
-                                  <span>
-                                    {
-                                      members?.find((m) => m.member.id === member)?.member
-                                        .first_name
-                                    }
-                                  </span>
-                                  <span
-                                    className="cursor-pointer"
-                                    onClick={() => {
-                                      setFilters({
-                                        ...filters,
-                                        [key as keyof IIssueFilterOptions]: (
-                                          filters[key as keyof IIssueFilterOptions] as any
-                                        )?.filter((p: any) => p !== member),
-                                      });
-                                    }}
-                                  >
-                                    <XMarkIcon className="h-3 w-3" />
-                                  </span>
-                                </p>
-                              )
-                            )
-                          : (filters[key as keyof IIssueFilterOptions] as any)?.join(", ")}
-                      </p>
-                    )
+                    <span className="capitalize">{filters[key as keyof typeof filters]}</span>
                   )}
                 </div>
               );
           })}
         </div>
 
-        {Object.keys(filters).length > 0 && (
-          <PrimaryButton
-            onClick={() =>
-              setCreateViewModal({
-                query: filters,
-              })
-            }
-            className="flex items-center gap-2 text-sm"
-          >
-            <PlusIcon className="h-4 w-4" />
-            Save view
-          </PrimaryButton>
-        )}
+        {Object.keys(filters).length > 0 &&
+          nullFilters.length !== Object.keys(filters).length &&
+          !viewId && (
+            <PrimaryButton
+              onClick={() =>
+                setCreateViewModal({
+                  query: filters,
+                })
+              }
+              className="flex items-center gap-2 text-sm"
+            >
+              <PlusIcon className="h-4 w-4" />
+              Save view
+            </PrimaryButton>
+          )}
       </div>
       <DragDropContext onDragEnd={handleOnDragEnd}>
         <StrictModeDroppable droppableId="trashBox">
