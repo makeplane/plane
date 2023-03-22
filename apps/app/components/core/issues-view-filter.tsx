@@ -153,8 +153,8 @@ export const IssuesFilterView: React.FC = () => {
             ],
           },
           {
-            id: "assignee",
-            label: "Assignee",
+            id: "assignees",
+            label: "Assignees",
             value: members,
             children: [
               ...(members?.map((member) => ({
@@ -168,7 +168,7 @@ export const IssuesFilterView: React.FC = () => {
                   </div>
                 ),
                 value: {
-                  key: "assignee",
+                  key: "assignees",
                   value: member.member.id,
                 },
                 selected: filters?.assignees?.includes(member.member.id),
