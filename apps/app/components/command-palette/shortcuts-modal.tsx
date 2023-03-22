@@ -52,7 +52,6 @@ export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
       ? true
       : false
   );
-  const { platform } = (window.navigator as any).userAgentData;
 
   useEffect(() => {
     if (!isOpen) setQuery("");
@@ -127,18 +126,12 @@ export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                                       {shortcut.keys.split(",").map((key, index) => (
                                         <span key={index} className="flex items-center gap-1">
                                           {key === "Ctrl" ? (
-                                            platform === "Windows" ? (
-                                              <kbd className="rounded-sm border border-gray-200 bg-gray-100 px-2 py-1 text-sm font-medium text-gray-800">
-                                                {key}
-                                              </kbd>
-                                            ) : (
-                                              <span className="flex h-full items-center rounded-sm border border-gray-200 bg-gray-100 p-2">
-                                                <MacCommandIcon />
-                                              </span>
-                                            )
+                                            <span className="flex h-full items-center rounded-sm border border-gray-200 bg-gray-100 p-2">
+                                              <MacCommandIcon />
+                                            </span>
                                           ) : (
                                             <kbd className="rounded-sm border border-gray-200 bg-gray-100 px-2 py-1 text-sm font-medium text-gray-800">
-                                              {key}
+                                              {key === "Ctrl" ? <MacCommandIcon /> : key}
                                             </kbd>
                                           )}
                                         </span>
@@ -172,18 +165,12 @@ export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                                       {keys.split(",").map((key, index) => (
                                         <span key={index} className="flex items-center gap-1">
                                           {key === "Ctrl" ? (
-                                            platform === "Windows" ? (
-                                              <kbd className="rounded-sm border border-gray-200 bg-gray-100 px-2 py-1 text-sm font-medium text-gray-800">
-                                                {key}
-                                              </kbd>
-                                            ) : (
-                                              <span className="flex h-full items-center rounded-sm border border-gray-200 bg-gray-100 p-2">
-                                                <MacCommandIcon />
-                                              </span>
-                                            )
+                                            <span className="flex h-full items-center rounded-sm border border-gray-200 bg-gray-100 p-2">
+                                              <MacCommandIcon />
+                                            </span>
                                           ) : (
                                             <kbd className="rounded-sm border border-gray-200 bg-gray-100 px-2 py-1 text-sm font-medium text-gray-800">
-                                              {key}
+                                              {key === "Ctrl" ? <MacCommandIcon /> : key}
                                             </kbd>
                                           )}
                                         </span>
