@@ -30,7 +30,11 @@ export const AllBoards: React.FC<Props> = ({
   removeIssue,
   userAuth,
 }) => {
-  const { groupedByIssues, groupByProperty: selectedGroup, orderBy } = useProjectIssuesView();
+  const {
+    groupedByIssues,
+    groupByProperty: selectedGroup,
+    showEmptyStates,
+  } = useProjectIssuesView();
 
   return (
     <>
@@ -39,6 +43,8 @@ export const AllBoards: React.FC<Props> = ({
           {Object.keys(groupedByIssues).map((singleGroup, index) => {
             const currentState =
               selectedGroup === "state" ? states?.find((s) => s.id === singleGroup) : null;
+
+            if (!showEmptyStates && groupedByIssues[singleGroup].length === 0) return null;
 
             return (
               <SingleBoard
