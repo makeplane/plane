@@ -814,7 +814,7 @@ urlpatterns = [
         name="user-file-assets",
     ),
     path(
-        "users/file-assets/user-profile/<str:asset_key>/",
+        "users/file-assets/<str:asset_key>/",
         UserAssetsEndpoint.as_view(),
         name="user-file-assets",
     ),
