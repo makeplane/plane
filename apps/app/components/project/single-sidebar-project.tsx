@@ -50,6 +50,11 @@ const navigation = (workspaceSlug: string, projectId: string) => [
     icon: ViewListIcon,
   },
   {
+    name: "Pages",
+    href: `/${workspaceSlug}/projects/${projectId}/pages`,
+    icon: ViewListIcon,
+  },
+  {
     name: "Settings",
     href: `/${workspaceSlug}/projects/${projectId}/settings`,
     icon: SettingIcon,
