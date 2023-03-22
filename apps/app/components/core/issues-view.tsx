@@ -12,6 +12,7 @@ import stateService from "services/state.service";
 import projectService from "services/project.service";
 import modulesService from "services/modules.service";
 // hooks
+import useToast from "hooks/use-toast";
 import useIssuesView from "hooks/use-issues-view";
 // components
 import { AllLists, AllBoards } from "components/core";
@@ -74,6 +75,8 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
+
+  const { setToastAlert } = useToast();
 
   const {
     groupedByIssues,
@@ -529,6 +532,11 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
             onClick={() => {
               if (viewId) {
                 setFilters({}, true);
+                setToastAlert({
+                  title: "View updated",
+                  message: "Your view has been updated",
+                  type: "success",
+                });
               } else
                 setCreateViewModal({
                   query: filters,
