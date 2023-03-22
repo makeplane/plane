@@ -44,7 +44,7 @@ type ReducerActionType = {
 type ContextType = IssueViewProps & {
   setGroupByProperty: (property: "state" | "priority" | "labels" | null) => void;
   setOrderBy: (property: "created_at" | "updated_at" | "priority" | "sort_order") => void;
-  setFilters: (filters: Partial<IIssueFilterOptions>) => void;
+  setFilters: (filters: Partial<IIssueFilterOptions>, saveToServer?: boolean) => void;
   resetFilterToDefault: () => void;
   setNewFilterDefaultView: () => void;
   setIssueViewToKanban: () => void;
@@ -335,7 +335,7 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
   );
 
   const setFilters = useCallback(
-    (property: Partial<IIssueFilterOptions>) => {
+    (property: Partial<IIssueFilterOptions>, saveToServer = true) => {
       Object.keys(property).forEach((key) => {
         if (property[key as keyof typeof property]?.length === 0) {
           property[key as keyof typeof property] = null;
@@ -380,13 +380,14 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
             },
           };
         }, false);
-        sendFilterDataToServer(workspaceSlug as string, projectId as string, viewId as string, {
-          query_data: {
-            ...state.filters,
-            ...property,
-          },
-        });
-      } else
+        if (saveToServer)
+          sendFilterDataToServer(workspaceSlug as string, projectId as string, viewId as string, {
+            query_data: {
+              ...state.filters,
+              ...property,
+            },
+          });
+      } else if (saveToServer)
         saveDataToServer(workspaceSlug as string, projectId as string, {
           ...state,
           filters: {

@@ -38,7 +38,7 @@ const useIssuesView = () => {
   } = useContext(issueViewContext);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
   const params: any = {
     order_by: orderBy,
@@ -63,14 +63,6 @@ const useIssuesView = () => {
     workspaceSlug && projectId && params
       ? () =>
           issuesService.getIssuesWithParams(workspaceSlug as string, projectId as string, params)
-      : null
-  );
-
-  const { data: viewIssues } = useSWR(
-    workspaceSlug && projectId && viewId ? VIEW_ISSUES(viewId as string) : null,
-    workspaceSlug && projectId && viewId
-      ? () =>
-          viewsService.getViewIssues(workspaceSlug as string, projectId as string, viewId as string)
       : null
   );
 
@@ -109,11 +101,11 @@ const useIssuesView = () => {
         [key: string]: IIssue[];
       }
     | undefined = useMemo(() => {
-    const issuesToGroup = viewIssues ?? cycleIssues ?? moduleIssues ?? projectIssues;
+    const issuesToGroup = cycleIssues ?? moduleIssues ?? projectIssues;
 
     if (Array.isArray(issuesToGroup)) return { allIssues: issuesToGroup };
     else return issuesToGroup;
-  }, [projectIssues, cycleIssues, moduleIssues, viewIssues]);
+  }, [projectIssues, cycleIssues, moduleIssues]);
 
   return {
     groupedByIssues,

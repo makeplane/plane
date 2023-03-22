@@ -34,7 +34,7 @@ import { GROUP_BY_OPTIONS, ORDER_BY_OPTIONS, FILTER_ISSUE_OPTIONS } from "consta
 
 export const IssuesFilterView: React.FC = () => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, viewId } = router.query;
 
   const {
     issueView,
@@ -102,13 +102,16 @@ export const IssuesFilterView: React.FC = () => {
       <MultiLevelDropdown
         label="Filters"
         onSelect={(option) => {
-          setFilters({
-            ...filters,
-            [option.key]: [
-              ...((filters?.[option.key as keyof typeof filters] as any[]) ?? []),
-              option.value,
-            ],
-          });
+          setFilters(
+            {
+              ...filters,
+              [option.key]: [
+                ...((filters?.[option.key as keyof typeof filters] as any[]) ?? []),
+                option.value,
+              ],
+            },
+            !Boolean(viewId)
+          );
         }}
         direction="left"
         options={[
