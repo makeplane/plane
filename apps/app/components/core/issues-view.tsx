@@ -21,7 +21,13 @@ import { CreateUpdateViewModal } from "components/views";
 // ui
 import { Avatar, EmptySpace, EmptySpaceItem, PrimaryButton } from "components/ui";
 // icons
-import { PlusIcon, RectangleStackIcon, TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import {
+  ListBulletIcon,
+  PlusIcon,
+  RectangleStackIcon,
+  TrashIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 // types
@@ -613,6 +619,14 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
                     document.dispatchEvent(e);
                   }}
                 />
+                {openIssuesListModal && (
+                  <EmptySpaceItem
+                    title="Add an existing issue"
+                    description="Open list"
+                    Icon={ListBulletIcon}
+                    action={openIssuesListModal}
+                  />
+                )}
               </EmptySpace>
             </div>
           )
