@@ -437,9 +437,12 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
                                 <span
                                   className="cursor-pointer"
                                   onClick={() =>
-                                    setFilters({
-                                      state: filters.state?.filter((s: any) => s !== stateId),
-                                    })
+                                    setFilters(
+                                      {
+                                        state: filters.state?.filter((s: any) => s !== stateId),
+                                      },
+                                      !Boolean(viewId)
+                                    )
                                   }
                                 >
                                   <XMarkIcon className="h-3 w-3" />
@@ -468,9 +471,14 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
                               <span
                                 className="cursor-pointer"
                                 onClick={() =>
-                                  setFilters({
-                                    priority: filters.priority?.filter((p: any) => p !== priority),
-                                  })
+                                  setFilters(
+                                    {
+                                      priority: filters.priority?.filter(
+                                        (p: any) => p !== priority
+                                      ),
+                                    },
+                                    !Boolean(viewId)
+                                  )
                                 }
                               >
                                 <XMarkIcon className="h-3 w-3" />
@@ -491,11 +499,14 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
                                 <span
                                   className="cursor-pointer"
                                   onClick={() =>
-                                    setFilters({
-                                      assignees: filters.assignees?.filter(
-                                        (p: any) => p !== memberId
-                                      ),
-                                    })
+                                    setFilters(
+                                      {
+                                        assignees: filters.assignees?.filter(
+                                          (p: any) => p !== memberId
+                                        ),
+                                      },
+                                      !Boolean(viewId)
+                                    )
                                   }
                                 >
                                   <XMarkIcon className="h-3 w-3" />
@@ -513,21 +524,22 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
           })}
         </div>
 
-        {Object.keys(filters).length > 0 &&
-          nullFilters.length !== Object.keys(filters).length &&
-          !viewId && (
-            <PrimaryButton
-              onClick={() =>
+        {Object.keys(filters).length > 0 && nullFilters.length !== Object.keys(filters).length && (
+          <PrimaryButton
+            onClick={() => {
+              if (viewId) {
+                setFilters({}, true);
+              } else
                 setCreateViewModal({
                   query: filters,
-                })
-              }
-              className="flex items-center gap-2 text-sm"
-            >
-              <PlusIcon className="h-4 w-4" />
-              Save view
-            </PrimaryButton>
-          )}
+                });
+            }}
+            className="flex items-center gap-2 text-sm"
+          >
+            {!viewId && <PlusIcon className="h-4 w-4" />}
+            Save view
+          </PrimaryButton>
+        )}
       </div>
       <DragDropContext onDragEnd={handleOnDragEnd}>
         <StrictModeDroppable droppableId="trashBox">
