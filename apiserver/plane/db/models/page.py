@@ -17,6 +17,9 @@ class Page(ProjectBaseModel):
     access = models.PositiveSmallIntegerField(
         choices=((0, "Public"), (1, "Private")), default=0
     )
+    labels = models.ManyToManyField(
+        "db.Label", blank=True, related_name="pages", through="db.PageLabel"
+    )
 
     class Meta:
         verbose_name = "Page"
@@ -71,3 +74,21 @@ class PageFavorite(ProjectBaseModel):
     def __str__(self):
         """Return user and the page"""
         return f"{self.user.email} <{self.page.name}>"
+
+
+class PageLabel(ProjectBaseModel):
+    label = models.ForeignKey(
+        "db.Label", on_delete=models.CASCADE, related_name="page_labels"
+    )
+    page = models.ForeignKey(
+        "db.Page", on_delete=models.CASCADE, related_name="page_labels"
+    )
+
+    class Meta:
+        verbose_name = "Page Label"
+        verbose_name_plural = "Page Labels"
+        db_table = "page_labels"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.page.name} {self.label.name}"

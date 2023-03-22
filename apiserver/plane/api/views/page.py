@@ -16,7 +16,6 @@ from plane.db.models import (
     PageFavorite,
     Issue,
     IssueAssignee,
-    IssueActivity,
 )
 from plane.api.serializers import (
     PageSerializer,
@@ -51,6 +50,7 @@ class PageViewSet(BaseViewSet):
             .select_related("workspace")
             .select_related("owned_by")
             .annotate(is_favorite=Exists(subquery))
+            .prefetch_related("labels")
             .distinct()
         )
 
@@ -58,6 +58,25 @@ class PageViewSet(BaseViewSet):
         serializer.save(
             project_id=self.kwargs.get("project_id"), owned_by=self.request.user
         )
+
+    def create(self, request, slug, project_id):
+        try:
+            serializer = PageSerializer(
+                data=request.data,
+                context={"project_id": project_id, "owned_by_id": request.user.id},
+            )
+
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            print(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
 
 class PageBlockViewSet(BaseViewSet):
@@ -176,6 +195,22 @@ class CreateIssueFromPageBlockEndpoint(BaseAPIView):
             return Response(
                 {"error": "Page Block does not exist"}, status=status.HTTP_404_NOT_FOUND
             )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class MyPagesEndpoint(BaseAPIView):
+    def get(self, request, slug, project_id):
+        try:
+            pages = Page.objects.filter(
+                workspace__slug=slug, project_id=project_id, owned_by=request.user
+            )
+            serializer = PageSerializer(pages, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)
             return Response(
