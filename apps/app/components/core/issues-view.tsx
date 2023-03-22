@@ -20,7 +20,7 @@ import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 import { CreateUpdateViewModal } from "components/views";
 // ui
-import { Avatar, EmptySpace, EmptySpaceItem, PrimaryButton } from "components/ui";
+import { Avatar, EmptySpace, EmptySpaceItem, PrimaryButton, Spinner } from "components/ui";
 // icons
 import {
   ListBulletIcon,
@@ -651,7 +651,9 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
             </div>
           )
         ) : (
-          <p className="text-center">Loading...</p>
+          <div className="flex h-full w-full items-center justify-center">
+            <Spinner />
+          </div>
         )}
       </DragDropContext>
     </>
