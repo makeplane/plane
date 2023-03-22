@@ -82,10 +82,10 @@ const ProjectViews: NextPage = () => {
       />
       {views ? (
         views.length > 0 ? (
-          <div className="rounded-md border">
+          <div className="rounded-[10px] border">
             {views.map((view) => (
               <div
-                className="flex items-center justify-between rounded-md border-b bg-white p-4"
+                className="flex items-center justify-between border-b bg-white p-4 first:rounded-t-[10px] last:rounded-b-[10px]"
                 key={view.id}
               >
                 <Link href={`/${workspaceSlug}/projects/${projectId}/views/${view.id}`}>
@@ -110,7 +110,7 @@ const ProjectViews: NextPage = () => {
           <EmptyState
             type="view"
             title="Create New View"
-            description="Views are smaller, focused projects that help you group and organize issues within a specific time frame."
+            description="Views aid in saving your issues by applying various filters and grouping options."
             imgURL={emptyView}
             action={() => setIsCreateViewModalOpen(true)}
           />

@@ -66,15 +66,11 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                     as="button"
                     onClick={(e: any) => {
                       if (option.children) {
-                        if (openChildFor === option.id) {
-                          e.stopPropagation();
-                          e.preventDefault();
-                          setOpenChildFor(null);
-                        } else {
-                          e.stopPropagation();
-                          e.preventDefault();
-                          setOpenChildFor(option.id);
-                        }
+                        e.stopPropagation();
+                        e.preventDefault();
+
+                        if (openChildFor === option.id) setOpenChildFor(null);
+                        else setOpenChildFor(option.id);
                       } else {
                         onSelect(option.value);
                       }
