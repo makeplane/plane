@@ -82,6 +82,12 @@ const ProjectPages: NextPage = () => {
         handleClose={() => setIsCreateUpdatePageModalOpen(false)}
         data={selectedPage}
       />
+      <div className="space-y-2 pb-8">
+        <h3 className="text-3xl font-semibold text-black">Pages</h3>
+        <p className="text-sm text-gray-500">
+          Note down all the important and minor details in the way you want to.
+        </p>
+      </div>
       <PagesList
         setSelectedPage={setSelectedPage}
         setCreateUpdatePageModal={setIsCreateUpdatePageModalOpen}

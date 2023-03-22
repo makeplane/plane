@@ -1,7 +1,7 @@
 // services
 import APIService from "services/api.service";
 // types
-import { IPage, IPageBlock, IPageBlockForm, IPageForm } from "types/pages";
+import { IPage, IPageBlock, IPageBlockForm, IPageFavorite, IPageForm } from "types/pages";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -36,6 +36,33 @@ class PageServices extends APIService {
 
   async deletePage(workspaceSlug: string, projectId: string, pageId: string): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async addPageToFavorites(
+    workspaceSlug: string,
+    projectId: string,
+    data: {
+      page: string;
+    }
+  ): Promise<IPageFavorite> {
+    return this.post(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/user-favorite-pages/`,
+      data
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async removePageFromFavorites(workspaceSlug: string, projectId: string, pageId: string) {
+    return this.delete(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/user-favorite-pages/${pageId}`
+    )
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
