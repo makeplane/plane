@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import Image from "next/image";
 
-import useSWR, { mutate } from "swr";
+import { mutate } from "swr";
 
 // services
 import modulesService from "services/modules.service";
@@ -31,7 +31,7 @@ import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // types
 import { IModule } from "types";
 // fetch-key
-import { MODULE_ISSUES, MODULE_LIST } from "constants/fetch-keys";
+import { MODULE_LIST } from "constants/fetch-keys";
 
 type Props = {
   module: IModule;
@@ -46,18 +46,7 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
 
   const { setToastAlert } = useToast();
 
-  const { data: moduleIssues } = useSWR(
-    workspaceSlug && projectId && module.id ? MODULE_ISSUES(module.id as string) : null,
-    workspaceSlug && projectId && module.id
-      ? () =>
-          modulesService.getModuleIssues(workspaceSlug as string, projectId as string, module.id)
-      : null
-  );
-
-  const completedIssues = (moduleIssues ?? []).filter(
-    (i) => i.state_detail.group === "completed" || i.state_detail.group === "cancelled"
-  ).length;
-  const completionPercentage = (completedIssues / (moduleIssues ?? []).length) * 100;
+  const completionPercentage = (module.completed_issues / module.total_issues) * 100;
 
   const handleDeleteModule = () => {
     if (!module) return;
@@ -271,7 +260,7 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
               <div className="bar relative h-1 w-full rounded bg-gray-300">
                 <div
                   className="absolute top-0 left-0 h-1 rounded bg-green-500 duration-300"
-                  style={{ width: `${(completedIssues / (moduleIssues ?? []).length) * 100}%` }}
+                  style={{ width: `${completionPercentage}%` }}
                 />
               </div>
             </Tooltip>
