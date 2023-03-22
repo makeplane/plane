@@ -22,7 +22,7 @@ class PageServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     pageId: string,
-    data: IPageForm
+    data: Partial<IPageForm>
   ): Promise<IPage> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/`,
@@ -113,7 +113,7 @@ class PageServices extends APIService {
     projectId: string,
     pageId: string,
     pageBlockId: string,
-    data: IPageBlockForm
+    data: Partial<IPageBlockForm>
   ): Promise<IPage> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/page-blocks/${pageBlockId}/`,

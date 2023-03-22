@@ -43,7 +43,7 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({
   const handleDeletion = async () => {
     setIsDeleteLoading(true);
     if (!data || !workspaceSlug) return;
-    console.log(data);
+
     await pagesService
       .deletePage(workspaceSlug as string, data.project, data.id)
       .then(() => {
@@ -60,8 +60,12 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({
           message: "Page deleted successfully",
         });
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Page could not be deleted. Please try again.",
+        });
       })
       .finally(() => {
         setIsDeleteLoading(false);

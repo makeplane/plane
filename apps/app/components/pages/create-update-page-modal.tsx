@@ -34,14 +34,11 @@ export const CreateUpdatePageModal: React.FC<Props> = ({ isOpen, handleClose, da
   };
 
   const createPage = async (payload: IPageForm) => {
-    payload = {
-      ...payload,
-    };
     await pagesService
       .createPage(workspaceSlug as string, projectId as string, payload)
       .then(() => {
         mutate(PAGE_LIST(projectId as string));
-        handleClose();
+        onClose();
 
         setToastAlert({
           type: "success",

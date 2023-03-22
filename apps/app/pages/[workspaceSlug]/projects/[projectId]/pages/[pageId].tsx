@@ -28,19 +28,10 @@ import useToast from "hooks/use-toast";
 
 const PageBlock: React.FC<any> = ({ pageBlock }: { pageBlock: IPageBlock }) => {
   const [name, setName] = useState(pageBlock.name);
-  const [showButtons, setShowButtons] = useState(false);
   const { setToastAlert } = useToast();
   const {
     query: { workspaceSlug, projectId, pageId },
   } = useRouter();
-
-  const handleMouseEnter = () => {
-    setShowButtons(true);
-  };
-
-  const handleMouseLeave = () => {
-    setShowButtons(false);
-  };
 
   const updatePageBlock = async () => {
     const pageBlockId = pageBlock.id;
@@ -90,11 +81,7 @@ const PageBlock: React.FC<any> = ({ pageBlock }: { pageBlock: IPageBlock }) => {
   };
 
   return (
-    <li
-      className="relative list-item rounded p-2 pr-6 hover:bg-slate-100"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
+    <li className="group relative list-item rounded p-2 pr-6 hover:bg-slate-100">
       <input
         type="text"
         value={name}
@@ -109,27 +96,13 @@ const PageBlock: React.FC<any> = ({ pageBlock }: { pageBlock: IPageBlock }) => {
         }}
         className="border-none bg-transparent outline-none"
       />
-      {showButtons && (
-        <div className="absolute top-[50%] right-0 z-20 mr-2 translate-y-[-50%]">
-          <CustomMenu>
-            <CustomMenu.MenuItem
-              onClick={() => {
-                handleMouseLeave();
-              }}
-            >
-              Convert to issue
-            </CustomMenu.MenuItem>
-            <CustomMenu.MenuItem
-              onClick={() => {
-                deletePageBlock();
-                handleMouseLeave();
-              }}
-            >
-              Delete block
-            </CustomMenu.MenuItem>
-          </CustomMenu>
-        </div>
-      )}
+
+      <div className="absolute top-[50%] right-0 z-20 mr-2 hidden translate-y-[-50%] group-hover:block">
+        <CustomMenu>
+          <CustomMenu.MenuItem>Convert to issue</CustomMenu.MenuItem>
+          <CustomMenu.MenuItem onClick={deletePageBlock}>Delete block</CustomMenu.MenuItem>
+        </CustomMenu>
+      </div>
     </li>
   );
 };
