@@ -1,6 +1,8 @@
 import React from "react";
 import Image from "next/image";
 
+// ui
+import { PrimaryButton } from "components/ui";
 // icon
 import { PlusIcon } from "@heroicons/react/24/outline";
 // helper
@@ -47,9 +49,8 @@ export const EmptyState: React.FC<Props> = ({ type, title, description, imgURL, 
       )}
       <p className="max-w-md text-sm text-gray-500">{description}</p>
 
-      <button
-        type="button"
-        className="flex items-center gap-1 rounded-lg bg-theme px-2.5 py-2 text-sm text-white"
+      <PrimaryButton
+        className="flex items-center gap-1"
         onClick={() => {
           if (action) {
             action();
@@ -66,7 +67,7 @@ export const EmptyState: React.FC<Props> = ({ type, title, description, imgURL, 
       >
         <PlusIcon className="h-4 w-4 font-bold text-white" />
         Create New {capitalizeFirstLetter(type)}
-      </button>
+      </PrimaryButton>
     </div>
   );
 };
