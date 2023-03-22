@@ -162,7 +162,7 @@ export const ProjectSidebarList: FC = () => {
             })}
           </div>
         )}
-        <div className="mt-3 flex flex-col space-y-2 px-6 pb-3">
+        <div className="flex flex-col space-y-2 p-3">
           {!sidebarCollapse && <h5 className="text-sm font-semibold text-gray-400">Projects</h5>}
           {projects ? (
             <>

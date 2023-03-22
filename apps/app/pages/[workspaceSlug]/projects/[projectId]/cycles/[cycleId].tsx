@@ -17,7 +17,7 @@ import { IssueViewContextProvider } from "contexts/issue-view.context";
 import { ExistingIssuesListModal, IssuesFilterView, IssuesView } from "components/core";
 import { CycleDetailsSidebar } from "components/cycles";
 // services
-import issuesServices from "services/issues.service";
+import issuesService from "services/issues.service";
 import cycleServices from "services/cycles.service";
 import projectService from "services/project.service";
 // ui
@@ -29,7 +29,13 @@ import { getDateRangeStatus } from "helpers/date-time.helper";
 // types
 import { UserAuth } from "types";
 // fetch-keys
-import { CYCLE_ISSUES, CYCLE_LIST, PROJECT_DETAILS, CYCLE_DETAILS } from "constants/fetch-keys";
+import {
+  CYCLE_ISSUES,
+  CYCLE_LIST,
+  PROJECT_DETAILS,
+  CYCLE_DETAILS,
+  PROJECT_ISSUES_LIST,
+} from "constants/fetch-keys";
 
 const SingleCycle: React.FC<UserAuth> = (props) => {
   const [cycleIssuesListModal, setCycleIssuesListModal] = useState(false);
@@ -70,14 +76,11 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
       : "";
 
   const { data: issues } = useSWR(
-    workspaceSlug && projectId && cycleId ? CYCLE_ISSUES(cycleId as string) : null,
-    workspaceSlug && projectId && cycleId
-      ? () =>
-          cycleServices.getCycleIssues(
-            workspaceSlug as string,
-            projectId as string,
-            cycleId as string
-          )
+    workspaceSlug && projectId
+      ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string)
+      : null,
+    workspaceSlug && projectId
+      ? () => issuesService.getIssues(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -88,7 +91,7 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
   const handleAddIssuesToCycle = async (data: { issues: string[] }) => {
     if (!workspaceSlug || !projectId) return;
 
-    await issuesServices
+    await issuesService
       .addIssueToCycle(workspaceSlug as string, projectId as string, cycleId as string, data)
       .then((res) => {
         console.log(res);
