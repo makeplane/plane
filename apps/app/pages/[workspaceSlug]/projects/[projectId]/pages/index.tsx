@@ -24,6 +24,7 @@ import { HeaderButton } from "components/ui";
 import { CreateUpdatePageModal } from "components/pages/create-update-page-modal";
 import { PagesList } from "components/pages/pages-list";
 import { IPage } from "types";
+import PagesMasonry from "components/pages/pages-masonry";
 
 const ProjectPages: NextPage = () => {
   const [isCreateUpdatePageModalOpen, setIsCreateUpdatePageModalOpen] = useState(false);
@@ -82,17 +83,44 @@ const ProjectPages: NextPage = () => {
         handleClose={() => setIsCreateUpdatePageModalOpen(false)}
         data={selectedPage}
       />
-      <div className="space-y-2 pb-8">
-        <h3 className="text-3xl font-semibold text-black">Pages</h3>
-        <p className="text-sm text-gray-500">
-          Note down all the important and minor details in the way you want to.
-        </p>
+      <div className="space-y-4">
+        <div className="overflow-hidden rounded-lg border border-gray-200 bg-white px-4 pt-3 pb-4 shadow-sm ">
+          <label htmlFor="name" className="sr-only">
+            Title
+          </label>
+          <input
+            type="text"
+            name="name"
+            id="name"
+            className="block w-full border-0 pt-2.5 text-lg font-medium placeholder-gray-500 outline-none focus:ring-0"
+            placeholder="Title"
+          />
+          <label htmlFor="description" className="sr-only">
+            Description
+          </label>
+          <textarea
+            rows={2}
+            name="description"
+            id="description"
+            className="block w-full resize-none border-0 pb-8 placeholder-gray-500 outline-none focus:ring-0 sm:text-sm"
+            placeholder="Write something..."
+            defaultValue={""}
+          />
+        </div>
+
+        {/* <div className="space-y-2 pb-8">
+          <h3 className="text-3xl font-semibold text-black">Pages</h3>
+          <p className="text-sm text-gray-500">
+            Note down all the important and minor details in the way you want to.
+          </p>
+        </div> */}
+        <PagesList
+          setSelectedPage={setSelectedPage}
+          setCreateUpdatePageModal={setIsCreateUpdatePageModalOpen}
+          pages={pages}
+        />
+        <PagesMasonry />
       </div>
-      <PagesList
-        setSelectedPage={setSelectedPage}
-        setCreateUpdatePageModal={setIsCreateUpdatePageModalOpen}
-        pages={pages}
-      />
     </AppLayout>
   );
 };
