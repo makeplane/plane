@@ -709,9 +709,10 @@ class UserWorkspaceDashboardEndpoint(BaseAPIView):
             ).values("id", "name", "workspace__slug", "project_id", "target_date")
 
             upcoming_issues = Issue.objects.filter(
+                ~Q(state__group__in=["completed", "cancelled"]),
+                ~Q(target_date__gte=timezone.now()) | ~Q(target_date__isnull=True),
                 workspace__slug=slug,
                 assignees__in=[request.user],
-                target_date__gte=timezone.now(),
                 completed_at__isnull=True,
             ).values("id", "name", "workspace__slug", "project_id", "target_date")
 
