@@ -2,51 +2,17 @@ import { useCallback, useState } from "react";
 
 // recharts
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Sector } from "recharts";
-// helpers
-import { groupBy } from "helpers/array.helper";
 // types
-import { IIssue } from "types";
+import { IUserStateDistribution } from "types";
 // constants
 import { STATE_GROUP_COLORS } from "constants/state";
 
 type Props = {
-  issues: IIssue[] | undefined;
+  groupedIssues: IUserStateDistribution[] | undefined;
 };
 
-export const IssuesPieChart: React.FC<Props> = ({ issues }) => {
+export const IssuesPieChart: React.FC<Props> = ({ groupedIssues }) => {
   const [activeIndex, setActiveIndex] = useState(0);
-
-  const groupedIssues = {
-    backlog: [],
-    unstarted: [],
-    started: [],
-    cancelled: [],
-    completed: [],
-    ...groupBy(issues ?? [], "state_detail.group"),
-  };
-
-  const data = [
-    {
-      name: "Backlog",
-      value: groupedIssues.backlog.length,
-    },
-    {
-      name: "Unstarted",
-      value: groupedIssues.unstarted.length,
-    },
-    {
-      name: "Started",
-      value: groupedIssues.started.length,
-    },
-    {
-      name: "Cancelled",
-      value: groupedIssues.cancelled.length,
-    },
-    {
-      name: "Completed",
-      value: groupedIssues.completed.length,
-    },
-  ];
 
   const onPieEnter = useCallback(
     (_: any, index: number) => {
@@ -80,8 +46,8 @@ export const IssuesPieChart: React.FC<Props> = ({ issues }) => {
 
     return (
       <g>
-        <text x={cx} y={cy} dy={8} textAnchor="middle" fill={fill}>
-          {payload.name}
+        <text x={cx} y={cy} dy={8} className="capitalize" textAnchor="middle" fill={fill}>
+          {payload.state_group}
         </text>
         <Sector
           cx={cx}
@@ -117,9 +83,9 @@ export const IssuesPieChart: React.FC<Props> = ({ issues }) => {
         <ResponsiveContainer width="100%" height={250}>
           <PieChart>
             <Pie
-              data={data}
-              dataKey="value"
-              nameKey="name"
+              data={groupedIssues}
+              dataKey="state_count"
+              nameKey="state_group"
               cx="50%"
               cy="50%"
               fill="#8884d8"
@@ -129,8 +95,11 @@ export const IssuesPieChart: React.FC<Props> = ({ issues }) => {
               activeShape={renderActiveShape}
               onMouseEnter={onPieEnter}
             >
-              {data.map((cell: any) => (
-                <Cell key={cell.name} fill={STATE_GROUP_COLORS[cell.name.toLowerCase()]} />
+              {groupedIssues?.map((cell) => (
+                <Cell
+                  key={cell.state_group}
+                  fill={STATE_GROUP_COLORS[cell.state_group.toLowerCase()]}
+                />
               ))}
             </Pie>
             <Legend layout="vertical" verticalAlign="middle" align="right" height={36} />

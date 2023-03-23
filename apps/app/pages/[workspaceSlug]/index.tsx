@@ -2,10 +2,14 @@ import React from "react";
 
 import { useRouter } from "next/router";
 
+import useSWR from "swr";
+
 // lib
 import { requiredAuth } from "lib/auth";
 // layouts
 import AppLayout from "layouts/app-layout";
+// services
+import userService from "services/user.service";
 // hooks
 import useIssues from "hooks/use-issues";
 // components
@@ -15,10 +19,10 @@ import {
   IssuesPieChart,
   IssuesStats,
 } from "components/workspace";
-// helpers
-import { orderArrayBy } from "helpers/array.helper";
 // types
 import type { NextPage, GetServerSidePropsContext } from "next";
+// fetch-keys
+import { USER_WORKSPACE_DASHBOARD } from "constants/fetch-keys";
 
 const WorkspacePage: NextPage = () => {
   const router = useRouter();
@@ -26,23 +30,9 @@ const WorkspacePage: NextPage = () => {
 
   const { myIssues } = useIssues(workspaceSlug as string);
 
-  const overdueIssues = orderArrayBy(
-    myIssues?.filter(
-      (i) =>
-        i.target_date &&
-        i.target_date !== "" &&
-        !i.completed_at &&
-        new Date(i.target_date) < new Date()
-    ) ?? [],
-    "target_date",
-    "descending"
-  );
-
-  const incomingIssues = orderArrayBy(
-    myIssues?.filter(
-      (i) => i.target_date && i.target_date !== "" && new Date(i.target_date) > new Date()
-    ) ?? [],
-    "target_date"
+  const { data: workspaceDashboardData } = useSWR(
+    workspaceSlug ? USER_WORKSPACE_DASHBOARD(workspaceSlug as string) : null,
+    workspaceSlug ? () => userService.userWorkspaceDashboard(workspaceSlug as string) : null
   );
 
   return (
@@ -68,11 +58,11 @@ const WorkspacePage: NextPage = () => {
               </a>
             </div>
           </div>
-          <IssuesStats issues={myIssues} />
+          <IssuesStats data={workspaceDashboardData} />
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-            <IssuesList issues={overdueIssues} type="overdue" />
-            <IssuesList issues={incomingIssues} type="upcoming" />
-            <IssuesPieChart issues={myIssues} />
+            <IssuesList issues={workspaceDashboardData?.overdue_issues} type="overdue" />
+            <IssuesList issues={workspaceDashboardData?.upcoming_issues} type="upcoming" />
+            <IssuesPieChart groupedIssues={workspaceDashboardData?.state_distribution} />
             <CompletedIssuesGraph issues={myIssues} />
           </div>
         </div>

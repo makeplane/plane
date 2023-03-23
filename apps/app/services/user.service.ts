@@ -1,6 +1,6 @@
 // services
 import APIService from "services/api.service";
-import type { IUser, IUserActivity } from "types";
+import type { IUser, IUserActivity, IUserWorkspaceDashboard } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -52,6 +52,14 @@ class UserService extends APIService {
 
   async userActivity(workspaceSlug: string): Promise<IUserActivity[]> {
     return this.get(`/api/users/me/workspaces/${workspaceSlug}/activity-graph/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async userWorkspaceDashboard(workspaceSlug: string): Promise<IUserWorkspaceDashboard> {
+    return this.get(`/api/users/me/workspaces/${workspaceSlug}/dashboard/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

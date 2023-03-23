@@ -150,6 +150,7 @@ export interface IIssueComment {
   workspace: string;
   issue: string;
 }
+
 export type IssuePriorities = {
   id: string;
   created_at: Date;
@@ -205,6 +206,14 @@ export interface IIssueActivity {
   issue: string;
   issue_comment: string | null;
   actor: string;
+}
+
+export interface IIssueLite {
+  id: string;
+  name: string;
+  project_id: string;
+  target_date: string;
+  workspace__slug: string;
 }
 
 export interface IIssueFilterOptions {
