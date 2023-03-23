@@ -21,14 +21,10 @@ const CreateWorkspace: NextPage = () => {
     <DefaultLayout>
       <div className="grid h-full place-items-center p-5">
         <div className="w-full space-y-4">
-          <div className="text-center">
-            <Image src={Logo} height="40" alt="Plane Logo" />
+          <div className="mb-8 text-center">
+            <Image src={Logo} height="50" alt="Plane Logo" />
           </div>
-          <div className="grid w-full place-items-center">
-            <div className="w-full rounded-lg bg-white p-8 md:w-2/5">
-              <CreateWorkspaceForm onSubmit={(res) => router.push(`/${res.slug}`)} />
-            </div>
-          </div>
+          <CreateWorkspaceForm onSubmit={(res) => router.push(`/${res.slug}`)} />
         </div>
       </div>
     </DefaultLayout>
