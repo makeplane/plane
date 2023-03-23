@@ -60,7 +60,7 @@ export const initialState: StateType = {
   issueView: "list",
   groupByProperty: null,
   orderBy: "created_at",
-  showEmptyGroups: false,
+  showEmptyGroups: true,
   filters: {
     type: null,
     priority: null,
@@ -122,7 +122,7 @@ export const reducer: ReducerFunctionType = (state, action) => {
     case "SET_SHOW_EMPTY_STATES": {
       const newState = {
         ...state,
-        showEmptyGroups: payload?.showEmptyGroups || false,
+        showEmptyGroups: payload?.showEmptyGroups || true,
       };
 
       return {
