@@ -1,4 +1,3 @@
-import { useState } from "react";
 // next imports
 import type { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/router";
@@ -10,7 +9,7 @@ import { requiredWorkspaceAdmin } from "lib/auth";
 import useToast from "hooks/use-toast";
 // layouts
 import AppLayout from "layouts/app-layout";
-import IntegrationRoot from "components/integration/root";
+import IntegrationGuide from "components/integration/guide";
 // ui
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // types
@@ -22,7 +21,10 @@ const ImportExport: NextPage<UserAuth> = (props) => {
   const { setToastAlert } = useToast();
 
   const router = useRouter();
-  const { workspaceSlug } = router.query as { workspaceSlug: string };
+  const { workspaceSlug, provider } = router.query as {
+    workspaceSlug: string;
+    provider: string;
+  };
 
   // fetching all the integrations available
   const { data: allIntegrations, error: allIntegrationsError } = useSWR<
@@ -68,7 +70,9 @@ const ImportExport: NextPage<UserAuth> = (props) => {
         settingsLayout
       >
         <section className="space-y-5">
-          <IntegrationRoot
+          <IntegrationGuide
+            workspaceSlug={workspaceSlug}
+            provider={provider}
             allIntegrations={allIntegrations}
             allIntegrationsError={allIntegrationsError}
             allWorkspaceIntegrations={allWorkspaceIntegrations}
