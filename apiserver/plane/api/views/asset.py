@@ -91,8 +91,6 @@ class UserAssetsEndpoint(BaseAPIView):
 
     def delete(self, request, asset_key):
         try:
-            asset_key = "user-profile" + "/" + asset_key
-            print(asset_key)
             file_asset = FileAsset.objects.get(asset=asset_key, created_by=request.user)
             # Delete the file from storage
             file_asset.asset.delete(save=False)

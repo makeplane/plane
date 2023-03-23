@@ -32,6 +32,7 @@ import {
 // types
 import type { NextPage, GetServerSidePropsContext } from "next";
 import type { IUser } from "types";
+import { useRouter } from "next/dist/client/router";
 
 const defaultValues: Partial<IUser> = {
   avatar: "",
@@ -44,6 +45,9 @@ const Profile: NextPage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
+
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
 
   const {
     register,
@@ -131,7 +135,7 @@ const Profile: NextPage = () => {
       title: "Assigned Issues",
       number: assignedIssuesLength,
       description: "View your workspace invitations.",
-      href: "/invitations",
+      href: `/${workspaceSlug}/me/my-issues`,
     },
     {
       icon: UserPlusIcon,

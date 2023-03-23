@@ -79,5 +79,5 @@ if DOCKERIZED:
 WEB_URL = os.environ.get("WEB_URL", "localhost:3000")
 PROXY_BASE_URL = os.environ.get("PROXY_BASE_URL", False)
 
-JITSU_SECRET_KEY = os.environ.get("JITSU_SECRET_KEY", False)
-JITSU_BASE_API = os.environ.get("JITSU_BASE_API", False)
+ANALYTICS_SECRET_KEY = os.environ.get("ANALYTICS_SECRET_KEY", False)
+ANALYTICS_BASE_API = os.environ.get("ANALYTICS_BASE_API", False)

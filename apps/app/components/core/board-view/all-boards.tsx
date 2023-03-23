@@ -2,8 +2,11 @@
 import useProjectIssuesView from "hooks/use-issues-view";
 // components
 import { SingleBoard } from "components/core/board-view/single-board";
+// helpers
+import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
 import { IIssue, IState, UserAuth } from "types";
+import { getStateGroupIcon } from "components/icons";
 
 type Props = {
   type: "issue" | "cycle" | "module";
@@ -30,7 +33,11 @@ export const AllBoards: React.FC<Props> = ({
   removeIssue,
   userAuth,
 }) => {
-  const { groupedByIssues, groupByProperty: selectedGroup, orderBy } = useProjectIssuesView();
+  const {
+    groupedByIssues,
+    groupByProperty: selectedGroup,
+    showEmptyGroups,
+  } = useProjectIssuesView();
 
   return (
     <>
@@ -39,6 +46,8 @@ export const AllBoards: React.FC<Props> = ({
           {Object.keys(groupedByIssues).map((singleGroup, index) => {
             const currentState =
               selectedGroup === "state" ? states?.find((s) => s.id === singleGroup) : null;
+
+            if (!showEmptyGroups && groupedByIssues[singleGroup].length === 0) return null;
 
             return (
               <SingleBoard
@@ -57,6 +66,33 @@ export const AllBoards: React.FC<Props> = ({
               />
             );
           })}
+          {!showEmptyGroups && (
+            <div className="h-full w-96 flex-shrink-0 space-y-3 p-1">
+              <h2 className="text-lg font-semibold">Hidden groups</h2>
+              <div className="space-y-3">
+                {Object.keys(groupedByIssues).map((singleGroup, index) => {
+                  const currentState =
+                    selectedGroup === "state" ? states?.find((s) => s.id === singleGroup) : null;
+
+                  if (groupedByIssues[singleGroup].length === 0)
+                    return (
+                      <div className="flex items-center justify-between gap-2 rounded bg-white p-2 shadow">
+                        <div className="flex items-center gap-2">
+                          {currentState &&
+                            getStateGroupIcon(currentState.group, "16", "16", currentState.color)}
+                          <h4 className="text-sm capitalize">
+                            {selectedGroup === "state"
+                              ? addSpaceIfCamelCase(currentState?.name ?? "")
+                              : addSpaceIfCamelCase(singleGroup)}
+                          </h4>
+                        </div>
+                        <span className="text-xs text-gray-500">0</span>
+                      </div>
+                    );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       ) : null}
     </>

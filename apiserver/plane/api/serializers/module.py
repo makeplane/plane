@@ -133,9 +133,14 @@ class ModuleSerializer(BaseSerializer):
     project_detail = ProjectSerializer(read_only=True, source="project")
     lead_detail = UserLiteSerializer(read_only=True, source="lead")
     members_detail = UserLiteSerializer(read_only=True, many=True, source="members")
-    issue_module = ModuleIssueSerializer(read_only=True, many=True)
     link_module = ModuleLinkSerializer(read_only=True, many=True)
     is_favorite = serializers.BooleanField(read_only=True)
+    total_issues = serializers.IntegerField(read_only=True)
+    cancelled_issues = serializers.IntegerField(read_only=True)
+    completed_issues = serializers.IntegerField(read_only=True)
+    started_issues = serializers.IntegerField(read_only=True)
+    unstarted_issues = serializers.IntegerField(read_only=True)
+    backlog_issues = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Module

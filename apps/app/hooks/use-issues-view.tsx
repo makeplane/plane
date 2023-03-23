@@ -15,12 +15,15 @@ import {
   CYCLE_ISSUES_WITH_PARAMS,
   MODULE_ISSUES_WITH_PARAMS,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
+  STATE_LIST,
   VIEW_ISSUES,
 } from "constants/fetch-keys";
 
 // types
 import type { IIssue } from "types";
 import viewsService from "services/views.service";
+import stateService from "services/state.service";
+import { getStatesList } from "helpers/state.helper";
 
 const useIssuesView = () => {
   const {
@@ -29,6 +32,8 @@ const useIssuesView = () => {
     setGroupByProperty,
     orderBy,
     setOrderBy,
+    showEmptyGroups,
+    setShowEmptyGroups,
     filters,
     setFilters,
     resetFilterToDefault,
@@ -38,7 +43,7 @@ const useIssuesView = () => {
   } = useContext(issueViewContext);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
   const params: any = {
     order_by: orderBy,
@@ -63,14 +68,6 @@ const useIssuesView = () => {
     workspaceSlug && projectId && params
       ? () =>
           issuesService.getIssuesWithParams(workspaceSlug as string, projectId as string, params)
-      : null
-  );
-
-  const { data: viewIssues } = useSWR(
-    workspaceSlug && projectId && viewId ? VIEW_ISSUES(viewId as string) : null,
-    workspaceSlug && projectId && viewId
-      ? () =>
-          viewsService.getViewIssues(workspaceSlug as string, projectId as string, viewId as string)
       : null
   );
 
@@ -104,16 +101,32 @@ const useIssuesView = () => {
       : null
   );
 
+  const { data: states } = useSWR(
+    workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
+      : null
+  );
+  const statesList = getStatesList(states ?? {});
+  const stateIds = statesList.map((state) => state.id);
+
+  let emptyStatesObject: { [key: string]: [] } = {};
+  for (let i = 0; i < stateIds.length; i++) {
+    emptyStatesObject[stateIds[i]] = [];
+  }
+
   const groupedByIssues:
     | {
         [key: string]: IIssue[];
       }
     | undefined = useMemo(() => {
-    const issuesToGroup = viewIssues ?? cycleIssues ?? moduleIssues ?? projectIssues;
+    const issuesToGroup = cycleIssues ?? moduleIssues ?? projectIssues;
 
     if (Array.isArray(issuesToGroup)) return { allIssues: issuesToGroup };
-    else return issuesToGroup;
-  }, [projectIssues, cycleIssues, moduleIssues, viewIssues]);
+    if (groupByProperty === "state") return Object.assign(emptyStatesObject, issuesToGroup);
+
+    return issuesToGroup;
+  }, [projectIssues, cycleIssues, moduleIssues]);
 
   return {
     groupedByIssues,
@@ -122,6 +135,8 @@ const useIssuesView = () => {
     setGroupByProperty,
     orderBy,
     setOrderBy,
+    showEmptyGroups,
+    setShowEmptyGroups,
     filters,
     setFilters,
     params,

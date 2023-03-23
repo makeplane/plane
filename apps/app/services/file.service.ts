@@ -65,14 +65,16 @@ class FileServices extends APIService {
   }
 
   async getUnsplashImages(page: number = 1, query?: string): Promise<UnSplashImage[]> {
-    const clientId = process.env.NEXT_PUBLIC_UNSPLASH_ACCESS;
-    const url = query
-      ? `https://api.unsplash.com/search/photos/?client_id=${clientId}&query=${query}&page=${page}&per_page=20`
-      : `https://api.unsplash.com/photos/?client_id=${clientId}&page=${page}&per_page=20`;
+    const url = "/api/unsplash";
 
     return this.request({
       method: "get",
       url,
+      params: {
+        page,
+        per_page: 20,
+        query,
+      },
     })
       .then((response) => response?.data?.results ?? response?.data)
       .catch((error) => {

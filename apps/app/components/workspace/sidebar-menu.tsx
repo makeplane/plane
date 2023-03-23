@@ -37,7 +37,7 @@ export const WorkspaceSidebarMenu: React.FC = () => {
   const { collapsed: sidebarCollapse } = useTheme();
 
   return (
-    <div className="flex w-full flex-col items-start justify-start gap-2 px-5 py-1">
+    <div className="flex w-full flex-col items-start justify-start gap-2 px-3 py-1">
       {workspaceLinks(workspaceSlug as string).map((link, index) => (
         <Link key={index} href={link.href}>
           <a
@@ -49,12 +49,16 @@ export const WorkspaceSidebarMenu: React.FC = () => {
               sidebarCollapse ? "justify-center" : ""
             }`}
           >
-            <link.icon
-              className={`${
-                link.href === router.asPath ? "text-gray-900" : "text-gray-600"
-              } h-5 w-5 flex-shrink-0 group-hover:text-gray-900`}
-              aria-hidden="true"
-            />
+            <span className="grid h-5 w-5 flex-shrink-0 place-items-center">
+              <link.icon
+                className={`${
+                  link.href === router.asPath ? "text-gray-900" : "text-gray-600"
+                } group-hover:text-gray-900`}
+                aria-hidden="true"
+                height="20"
+                width="20"
+              />
+            </span>
             {!sidebarCollapse && link.name}
           </a>
         </Link>
