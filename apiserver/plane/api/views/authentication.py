@@ -87,12 +87,12 @@ class SignInEndpoint(BaseAPIView):
                 }
 
                 # Send event to Jitsu for tracking
-                if settings.JITSU_BASE_API:
+                if settings.ANALYTICS_BASE_API:
                     _ = requests.post(
-                        settings.JITSU_BASE_API,
+                        settings.ANALYTICS_BASE_API,
                         headers={
                             "Content-Type": "application/json",
-                            "X-Auth-Token": settings.JITSU_SECRET_KEY,
+                            "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
                         },
                         json={
                             "event_id": uuid.uuid4().hex,
@@ -138,12 +138,12 @@ class SignInEndpoint(BaseAPIView):
 
                 access_token, refresh_token = get_tokens_for_user(user)
                 # Send event to Jitsu for tracking
-                if settings.JITSU_BASE_API:
+                if settings.ANALYTICS_BASE_API:
                     _ = requests.post(
-                        settings.JITSU_BASE_API,
+                        settings.ANALYTICS_BASE_API,
                         headers={
                             "Content-Type": "application/json",
-                            "X-Auth-Token": settings.JITSU_SECRET_KEY,
+                            "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
                         },
                         json={
                             "event_id": uuid.uuid4().hex,
@@ -312,12 +312,12 @@ class MagicSignInEndpoint(BaseAPIView):
                     if User.objects.filter(email=email).exists():
                         user = User.objects.get(email=email)
                         # Send event to Jitsu for tracking
-                        if settings.JITSU_BASE_API:
+                        if settings.ANALYTICS_BASE_API:
                             _ = requests.post(
-                                settings.JITSU_BASE_API,
+                                settings.ANALYTICS_BASE_API,
                                 headers={
                                     "Content-Type": "application/json",
-                                    "X-Auth-Token": settings.JITSU_SECRET_KEY,
+                                    "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
                                 },
                                 json={
                                     "event_id": uuid.uuid4().hex,
@@ -342,12 +342,12 @@ class MagicSignInEndpoint(BaseAPIView):
                             is_password_autoset=True,
                         )
                         # Send event to Jitsu for tracking
-                        if settings.JITSU_BASE_API:
+                        if settings.ANALYTICS_BASE_API:
                             _ = requests.post(
-                                settings.JITSU_BASE_API,
+                                settings.ANALYTICS_BASE_API,
                                 headers={
                                     "Content-Type": "application/json",
-                                    "X-Auth-Token": settings.JITSU_SECRET_KEY,
+                                    "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
                                 },
                                 json={
                                     "event_id": uuid.uuid4().hex,

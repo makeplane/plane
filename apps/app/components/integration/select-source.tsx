@@ -3,7 +3,7 @@ import { FC } from "react";
 import { GithubIcon } from "components/icons";
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
 // components
-import { Loader, Button } from "components/ui";
+import { Loader } from "components/ui";
 // types
 import { IIntegrationData } from "components/integration";
 import { IAppIntegrations } from "types";

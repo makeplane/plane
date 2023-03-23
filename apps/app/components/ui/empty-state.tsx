@@ -1,19 +1,22 @@
 import React from "react";
 import Image from "next/image";
 
+// ui
+import { PrimaryButton } from "components/ui";
 // icon
 import { PlusIcon } from "@heroicons/react/24/outline";
 // helper
 import { capitalizeFirstLetter } from "helpers/string.helper";
 
 type Props = {
-  type: "cycle" | "module" | "project" | "issue";
+  type: "cycle" | "module" | "project" | "issue" | "view";
   title: string;
   description: React.ReactNode | string;
   imgURL: string;
+  action?: () => void;
 };
 
-export const EmptyState: React.FC<Props> = ({ type, title, description, imgURL }) => {
+export const EmptyState: React.FC<Props> = ({ type, title, description, imgURL, action }) => {
   const shortcutKey = (type: string) => {
     switch (type) {
       case "cycle":
@@ -22,8 +25,10 @@ export const EmptyState: React.FC<Props> = ({ type, title, description, imgURL }
         return "M";
       case "project":
         return "P";
-      default:
+      case "issue":
         return "C";
+      default:
+        return null;
     }
   };
   return (
@@ -33,27 +38,36 @@ export const EmptyState: React.FC<Props> = ({ type, title, description, imgURL }
       </div>
 
       <h3 className="text-xl font-semibold">{title}</h3>
-      <span>
-        Use shortcut{" "}
-        <span className="rounded-sm mx-1 border border-gray-200 bg-gray-100 px-2 py-1 text-sm font-medium text-gray-800">
-          {shortcutKey(type)}
-        </span>{" "}
-        to create {type} from anywhere.
-      </span>
+      {shortcutKey(type) && (
+        <span>
+          Use shortcut{" "}
+          <span className="mx-1 rounded-sm border border-gray-200 bg-gray-100 px-2 py-1 text-sm font-medium text-gray-800">
+            {shortcutKey(type)}
+          </span>{" "}
+          to create {type} from anywhere.
+        </span>
+      )}
       <p className="max-w-md text-sm text-gray-500">{description}</p>
 
-      <button
-        className="flex items-center gap-1 rounded-lg bg-theme px-2.5 py-2 text-sm text-white"
+      <PrimaryButton
+        className="flex items-center gap-1"
         onClick={() => {
+          if (action) {
+            action();
+            return;
+          }
+
+          if (!shortcutKey(type)) return;
+
           const e = new KeyboardEvent("keydown", {
-            key: shortcutKey(type),
+            key: shortcutKey(type) as string,
           });
           document.dispatchEvent(e);
         }}
       >
         <PlusIcon className="h-4 w-4 font-bold text-white" />
         Create New {capitalizeFirstLetter(type)}
-      </button>
+      </PrimaryButton>
     </div>
   );
 };

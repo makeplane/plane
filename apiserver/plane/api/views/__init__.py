@@ -38,6 +38,7 @@ from .workspace import (
     WorkspaceMemberUserViewsEndpoint,
     UserActivityGraphEndpoint,
     UserIssueCompletedGraphEndpoint,
+    UserWorkspaceDashboardEndpoint,
 )
 from .state import StateViewSet
 from .shortcut import ShortCutViewSet
@@ -107,4 +108,13 @@ from .importer import (
     ImportServiceEndpoint,
     UpdateServiceImportStatusEndpoint,
     BulkImportIssuesEndpoint,
+    BulkImportModulesEndpoint,
+)
+
+from .page import (
+    PageViewSet,
+    PageBlockViewSet,
+    PageFavoriteViewSet,
+    CreateIssueFromPageBlockEndpoint,
+    MyPagesEndpoint,
 )

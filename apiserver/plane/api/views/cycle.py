@@ -3,7 +3,7 @@ import json
 
 # Django imports
 from django.db import IntegrityError
-from django.db.models import OuterRef, Func, F, Q, Exists, OuterRef, Prefetch
+from django.db.models import OuterRef, Func, F, Q, Exists, OuterRef, Count, Prefetch
 from django.core import serializers
 from django.utils import timezone
 
@@ -32,6 +32,7 @@ from plane.db.models import (
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
+from plane.utils.issue_filters import issue_filters
 
 
 class CycleViewSet(BaseViewSet):
@@ -63,6 +64,37 @@ class CycleViewSet(BaseViewSet):
             .select_related("workspace")
             .select_related("owned_by")
             .annotate(is_favorite=Exists(subquery))
+            .annotate(total_issues=Count("issue_cycle"))
+            .annotate(
+                completed_issues=Count(
+                    "issue_cycle__issue__state__group",
+                    filter=Q(issue_cycle__issue__state__group="completed"),
+                )
+            )
+            .annotate(
+                cancelled_issues=Count(
+                    "issue_cycle__issue__state__group",
+                    filter=Q(issue_cycle__issue__state__group="cancelled"),
+                )
+            )
+            .annotate(
+                started_issues=Count(
+                    "issue_cycle__issue__state__group",
+                    filter=Q(issue_cycle__issue__state__group="started"),
+                )
+            )
+            .annotate(
+                unstarted_issues=Count(
+                    "issue_cycle__issue__state__group",
+                    filter=Q(issue_cycle__issue__state__group="unstarted"),
+                )
+            )
+            .annotate(
+                backlog_issues=Count(
+                    "issue_cycle__issue__state__group",
+                    filter=Q(issue_cycle__issue__state__group="backlog"),
+                )
+            )
             .distinct()
         )
 
@@ -143,7 +175,7 @@ class CycleIssueViewSet(BaseViewSet):
         try:
             order_by = request.GET.get("order_by", "created_at")
             group_by = request.GET.get("group_by", False)
-
+            filters = issue_filters(request.query_params, "GET")
             issues = (
                 Issue.objects.filter(issue_cycle__cycle_id=cycle_id)
                 .annotate(
@@ -162,6 +194,7 @@ class CycleIssueViewSet(BaseViewSet):
                 .prefetch_related("assignees")
                 .prefetch_related("labels")
                 .order_by(order_by)
+                .filter(**filters)
             )
 
             issues_data = IssueStateSerializer(issues, many=True).data
@@ -334,18 +367,92 @@ class CurrentUpcomingCyclesEndpoint(BaseAPIView):
                 project_id=project_id,
                 workspace__slug=slug,
             )
-            current_cycle = Cycle.objects.filter(
-                workspace__slug=slug,
-                project_id=project_id,
-                start_date__lte=timezone.now(),
-                end_date__gte=timezone.now(),
-            ).annotate(is_favorite=Exists(subquery))
+            current_cycle = (
+                Cycle.objects.filter(
+                    workspace__slug=slug,
+                    project_id=project_id,
+                    start_date__lte=timezone.now(),
+                    end_date__gte=timezone.now(),
+                )
+                .select_related("project")
+                .select_related("workspace")
+                .select_related("owned_by")
+                .annotate(is_favorite=Exists(subquery))
+                .annotate(total_issues=Count("issue_cycle"))
+                .annotate(
+                    completed_issues=Count(
+                        "issue_cycle__issue__state__group",
+                        filter=Q(issue_cycle__issue__state__group="completed"),
+                    )
+                )
+                .annotate(
+                    cancelled_issues=Count(
+                        "issue_cycle__issue__state__group",
+                        filter=Q(issue_cycle__issue__state__group="cancelled"),
+                    )
+                )
+                .annotate(
+                    started_issues=Count(
+                        "issue_cycle__issue__state__group",
+                        filter=Q(issue_cycle__issue__state__group="started"),
+                    )
+                )
+                .annotate(
+                    unstarted_issues=Count(
+                        "issue_cycle__issue__state__group",
+                        filter=Q(issue_cycle__issue__state__group="unstarted"),
+                    )
+                )
+                .annotate(
+                    backlog_issues=Count(
+                        "issue_cycle__issue__state__group",
+                        filter=Q(issue_cycle__issue__state__group="backlog"),
+                    )
+                )
+            )
 
-            upcoming_cycle = Cycle.objects.filter(
-                workspace__slug=slug,
-                project_id=project_id,
-                start_date__gt=timezone.now(),
-            ).annotate(is_favorite=Exists(subquery))
+            upcoming_cycle = (
+                Cycle.objects.filter(
+                    workspace__slug=slug,
+                    project_id=project_id,
+                    start_date__gt=timezone.now(),
+                )
+                .select_related("project")
+                .select_related("workspace")
+                .select_related("owned_by")
+                .annotate(is_favorite=Exists(subquery))
+                .annotate(total_issues=Count("issue_cycle"))
+                .annotate(
+                    completed_issues=Count(
+                        "issue_cycle__issue__state__group",
+                        filter=Q(issue_cycle__issue__state__group="completed"),
+                    )
+                )
+                .annotate(
+                    cancelled_issues=Count(
+                        "issue_cycle__issue__state__group",
+                        filter=Q(issue_cycle__issue__state__group="cancelled"),
+                    )
+                )
+                .annotate(
+                    started_issues=Count(
+                        "issue_cycle__issue__state__group",
+                        filter=Q(issue_cycle__issue__state__group="started"),
+                    )
+                )
+                .annotate(
+                    unstarted_issues=Count(
+                        "issue_cycle__issue__state__group",
+                        filter=Q(issue_cycle__issue__state__group="unstarted"),
+                    )
+                )
+                .annotate(
+                    backlog_issues=Count(
+                        "issue_cycle__issue__state__group",
+                        filter=Q(issue_cycle__issue__state__group="backlog"),
+                    )
+                )
+            )
 
             return Response(
                 {
@@ -376,11 +483,48 @@ class CompletedCyclesEndpoint(BaseAPIView):
                 project_id=project_id,
                 workspace__slug=slug,
             )
-            completed_cycles = Cycle.objects.filter(
-                workspace__slug=slug,
-                project_id=project_id,
-                end_date__lt=timezone.now(),
-            ).annotate(is_favorite=Exists(subquery))
+            completed_cycles = (
+                Cycle.objects.filter(
+                    workspace__slug=slug,
+                    project_id=project_id,
+                    end_date__lt=timezone.now(),
+                )
+                .select_related("project")
+                .select_related("workspace")
+                .select_related("owned_by")
+                .annotate(is_favorite=Exists(subquery))
+                .annotate(total_issues=Count("issue_cycle"))
+                .annotate(
+                    completed_issues=Count(
+                        "issue_cycle__issue__state__group",
+                        filter=Q(issue_cycle__issue__state__group="completed"),
+                    )
+                )
+                .annotate(
+                    cancelled_issues=Count(
+                        "issue_cycle__issue__state__group",
+                        filter=Q(issue_cycle__issue__state__group="cancelled"),
+                    )
+                )
+                .annotate(
+                    started_issues=Count(
+                        "issue_cycle__issue__state__group",
+                        filter=Q(issue_cycle__issue__state__group="started"),
+                    )
+                )
+                .annotate(
+                    unstarted_issues=Count(
+                        "issue_cycle__issue__state__group",
+                        filter=Q(issue_cycle__issue__state__group="unstarted"),
+                    )
+                )
+                .annotate(
+                    backlog_issues=Count(
+                        "issue_cycle__issue__state__group",
+                        filter=Q(issue_cycle__issue__state__group="backlog"),
+                    )
+                )
+            )
 
             return Response(
                 {
@@ -406,11 +550,47 @@ class DraftCyclesEndpoint(BaseAPIView):
 
     def get(self, request, slug, project_id):
         try:
-            draft_cycles = Cycle.objects.filter(
-                workspace__slug=slug,
-                project_id=project_id,
-                end_date=None,
-                start_date=None,
+            draft_cycles = (
+                Cycle.objects.filter(
+                    workspace__slug=slug,
+                    project_id=project_id,
+                    end_date=None,
+                    start_date=None,
+                )
+                .select_related("project")
+                .select_related("workspace")
+                .select_related("owned_by")
+                .annotate(total_issues=Count("issue_cycle"))
+                .annotate(
+                    completed_issues=Count(
+                        "issue_cycle__issue__state__group",
+                        filter=Q(issue_cycle__issue__state__group="completed"),
+                    )
+                )
+                .annotate(
+                    cancelled_issues=Count(
+                        "issue_cycle__issue__state__group",
+                        filter=Q(issue_cycle__issue__state__group="cancelled"),
+                    )
+                )
+                .annotate(
+                    started_issues=Count(
+                        "issue_cycle__issue__state__group",
+                        filter=Q(issue_cycle__issue__state__group="started"),
+                    )
+                )
+                .annotate(
+                    unstarted_issues=Count(
+                        "issue_cycle__issue__state__group",
+                        filter=Q(issue_cycle__issue__state__group="unstarted"),
+                    )
+                )
+                .annotate(
+                    backlog_issues=Count(
+                        "issue_cycle__issue__state__group",
+                        filter=Q(issue_cycle__issue__state__group="backlog"),
+                    )
+                )
             )
 
             return Response(

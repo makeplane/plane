@@ -1,6 +1,9 @@
 import type { IUser, IUserLite, IIssue, IProject } from ".";
 
 export interface IModule {
+  backlog_issues: number;
+  cancelled_issues: number;
+  completed_issues: number;
   created_at: Date;
   created_by: string;
   description: string;
@@ -27,8 +30,11 @@ export interface IModule {
   project: string;
   project_detail: IProject;
   start_date: string | null;
+  started_issues: number;
   status: "backlog" | "planned" | "in-progress" | "paused" | "completed" | "cancelled" | null;
   target_date: string | null;
+  total_issues: number;
+  unstarted_issues: number;
   updated_at: Date;
   updated_by: string;
   workspace: string;

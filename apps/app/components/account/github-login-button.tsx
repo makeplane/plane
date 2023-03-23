@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
 // images
-import githubImage from "/public/logos/github.png";
+import githubImage from "/public/logos/github-black.png";
 
 const { NEXT_PUBLIC_GITHUB_ID } = process.env;
 
@@ -33,19 +33,15 @@ export const GithubLoginButton: FC<GithubLoginButtonProps> = (props) => {
   }, []);
 
   return (
-    <Link
-      href={`https://github.com/login/oauth/authorize?client_id=${NEXT_PUBLIC_GITHUB_ID}&redirect_uri=${loginCallBackURL}&scope=read:user,user:email`}
-    >
-      <button className="flex w-full items-center rounded bg-black px-3 py-2 text-sm text-white opacity-90 duration-300 hover:opacity-100">
-        <Image
-          src={githubImage}
-          height={25}
-          width={25}
-          className="flex-shrink-0"
-          alt="GitHub Logo"
-        />
-        <span className="w-full text-center font-medium">Continue with GitHub</span>
-      </button>
-    </Link>
+    <div className="px-1 w-full">
+      <Link
+        href={`https://github.com/login/oauth/authorize?client_id=${NEXT_PUBLIC_GITHUB_ID}&redirect_uri=${loginCallBackURL}&scope=read:user,user:email`}
+      >
+        <button className="flex w-full items-center justify-center gap-3 rounded-md border border-gray-200 p-2 text-sm font-medium text-gray-600 duration-300 hover:bg-gray-50">
+          <Image src={githubImage} height={22} width={22} color="#000" alt="GitHub Logo" />
+          <span>Sign In with Github</span>
+        </button>
+      </Link>
+    </div>
   );
 };

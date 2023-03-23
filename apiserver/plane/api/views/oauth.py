@@ -205,12 +205,12 @@ class OauthEndpoint(BaseAPIView):
                     "last_login_at": timezone.now(),
                 },
             )
-            if settings.JITSU_BASE_API:
+            if settings.ANALYTICS_BASE_API:
                 _ = requests.post(
-                    settings.JITSU_BASE_API,
+                    settings.ANALYTICS_BASE_API,
                     headers={
                         "Content-Type": "application/json",
-                        "X-Auth-Token": settings.JITSU_SECRET_KEY,
+                        "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
                     },
                     json={
                         "event_id": uuid.uuid4().hex,
@@ -273,12 +273,12 @@ class OauthEndpoint(BaseAPIView):
                 "user": serialized_user,
                 "permissions": [],
             }
-            if settings.JITSU_BASE_API:
+            if settings.ANALYTICS_BASE_API:
                 _ = requests.post(
-                    settings.JITSU_BASE_API,
+                    settings.ANALYTICS_BASE_API,
                     headers={
                         "Content-Type": "application/json",
-                        "X-Auth-Token": settings.JITSU_SECRET_KEY,
+                        "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
                     },
                     json={
                         "event_id": uuid.uuid4().hex,

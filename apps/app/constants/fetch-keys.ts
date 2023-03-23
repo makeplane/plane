@@ -1,16 +1,19 @@
 const paramsToKey = (params: any) => {
   const { state, priority, assignees } = params;
 
-  let stateKey = state ? state.split(",").join(" ") : "";
-  let priorityKey = priority ? priority.split(",").join(" ") : "";
-  let assigneesKey = assignees ? assignees.split(",").join(" ") : "";
+  let stateKey = state ? state.split(",") : [];
+  let priorityKey = priority ? priority.split(",") : [];
+  let assigneesKey = assignees ? assignees.split(",") : [];
+  const type = params.type ? params.type.toUpperCase() : "NULL";
+  const groupBy = params.group_by ? params.group_by.toUpperCase() : "NULL";
+  const orderBy = params.order_by ? params.order_by.toUpperCase() : "NULL";
 
   // sorting each keys in ascending order
-  stateKey = stateKey.split(" ").sort().join("");
-  priorityKey = priorityKey.split(" ").sort().join("");
-  assigneesKey = assigneesKey.split(" ").sort().join("");
+  stateKey = stateKey.sort().join("_");
+  priorityKey = priorityKey.sort().join("_");
+  assigneesKey = assigneesKey.sort().join("_");
 
-  return `${stateKey}_${priorityKey}_${assigneesKey}`;
+  return `${stateKey}_${priorityKey}_${assigneesKey}_${type}_${groupBy}_${orderBy}`;
 };
 
 export const CURRENT_USER = "CURRENT_USER";
@@ -98,3 +101,9 @@ export const ISSUE_DETAILS = (issueId: string) => `ISSUE_DETAILS_${issueId}`;
 export const SUB_ISSUES = (issueId: string) => `SUB_ISSUES_${issueId}`;
 
 // integrations
+
+// Pages
+export const PAGE_LIST = (pageId: string) => `PAGE_LIST_${pageId}`;
+export const PAGE_DETAILS = (pageId: string) => `PAGE_DETAILS_${pageId}`;
+export const PAGE_BLOCK_LIST = (pageId: string) => `PAGE_BLOCK_LIST_${pageId}`;
+export const PAGE_BLOCK_DETAILS = (pageId: string) => `PAGE_BLOCK_DETAILS_${pageId}`;

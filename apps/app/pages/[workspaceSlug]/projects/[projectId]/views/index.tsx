@@ -17,11 +17,13 @@ import AppLayout from "layouts/app-layout";
 // ui
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { TrashIcon } from "@heroicons/react/20/solid";
+import { TrashIcon } from "@heroicons/react/24/outline";
+// image
+import emptyView from "public/empty-state/empty-view.svg";
 // fetching keys
 import { PROJECT_DETAILS, VIEWS_LIST } from "constants/fetch-keys";
 // components
-import { CustomMenu, Spinner, PrimaryButton } from "components/ui";
+import { CustomMenu, PrimaryButton, Loader, EmptyState } from "components/ui";
 import { DeleteViewModal, CreateUpdateViewModal } from "components/views";
 // types
 import { IView } from "types";
@@ -78,36 +80,48 @@ const ProjectViews: NextPage = () => {
         onClose={() => setSelectedView(null)}
         onSuccess={() => setSelectedView(null)}
       />
-      <div className="rounded-md border border-gray-400">
-        {views ? (
-          views.map((view) => (
-            <div
-              className="flex items-center justify-between border-b border-gray-400 p-4 last:border-b-0"
-              key={view.id}
-            >
-              <Link href={`/${workspaceSlug}/projects/${projectId}/views/${view.id}`}>
-                <a>{view.name}</a>
-              </Link>
-              <CustomMenu width="auto" verticalEllipsis>
-                <CustomMenu.MenuItem
-                  onClick={() => {
-                    setSelectedView(view);
-                  }}
-                >
-                  <span className="flex items-center justify-start gap-2 text-gray-800">
-                    <TrashIcon className="h-4 w-4" />
-                    <span>Delete</span>
-                  </span>
-                </CustomMenu.MenuItem>
-              </CustomMenu>
-            </div>
-          ))
-        ) : (
-          <div className="flex justify-center pt-20">
-            <Spinner />
+      {views ? (
+        views.length > 0 ? (
+          <div className="rounded-[10px] border">
+            {views.map((view) => (
+              <div
+                className="flex items-center justify-between border-b bg-white p-4 first:rounded-t-[10px] last:rounded-b-[10px]"
+                key={view.id}
+              >
+                <Link href={`/${workspaceSlug}/projects/${projectId}/views/${view.id}`}>
+                  <a>{view.name}</a>
+                </Link>
+                <CustomMenu width="auto" verticalEllipsis>
+                  <CustomMenu.MenuItem
+                    onClick={() => {
+                      setSelectedView(view);
+                    }}
+                  >
+                    <span className="flex items-center justify-start gap-2 text-gray-800">
+                      <TrashIcon className="h-4 w-4" />
+                      <span>Delete</span>
+                    </span>
+                  </CustomMenu.MenuItem>
+                </CustomMenu>
+              </div>
+            ))}
           </div>
-        )}
-      </div>
+        ) : (
+          <EmptyState
+            type="view"
+            title="Create New View"
+            description="Views aid in saving your issues by applying various filters and grouping options."
+            imgURL={emptyView}
+            action={() => setIsCreateViewModalOpen(true)}
+          />
+        )
+      ) : (
+        <Loader className="space-y-3">
+          <Loader.Item height="30px" />
+          <Loader.Item height="30px" />
+          <Loader.Item height="30px" />
+        </Loader>
+      )}
     </AppLayout>
   );
 };
