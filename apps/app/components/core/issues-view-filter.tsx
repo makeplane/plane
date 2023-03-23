@@ -83,6 +83,7 @@ export const IssuesFilterView: React.FC = () => {
           );
         }}
         direction="left"
+        height="rg"
       />
       <Popover className="relative">
         {({ open }) => (

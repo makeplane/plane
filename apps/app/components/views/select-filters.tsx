@@ -22,9 +22,15 @@ type Props = {
   filters: IIssueFilterOptions | IQuery;
   onSelect: (option: any) => void;
   direction?: "left" | "right";
+  height?: "sm" | "md" | "rg" | "lg";
 };
 
-export const SelectFilters: React.FC<Props> = ({ filters, onSelect, direction = "right" }) => {
+export const SelectFilters: React.FC<Props> = ({
+  filters,
+  onSelect,
+  direction = "right",
+  height = "md",
+}) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -48,6 +54,7 @@ export const SelectFilters: React.FC<Props> = ({ filters, onSelect, direction = 
       label="Filters"
       onSelect={onSelect}
       direction={direction}
+      height={height}
       options={[
         {
           id: "priority",
