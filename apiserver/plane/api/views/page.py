@@ -59,6 +59,7 @@ class PageViewSet(BaseViewSet):
             .annotate(is_favorite=Exists(subquery))
             .order_by(self.request.GET.get("order_by", "-created_at"))
             .prefetch_related("labels")
+            .order_by("name", "-is_favorite")
             .distinct()
         )
 
@@ -106,6 +107,7 @@ class PageBlockViewSet(BaseViewSet):
             .select_related("workspace")
             .select_related("page")
             .select_related("issue")
+            .order_by("sort_order")
             .distinct()
         )
 
@@ -249,6 +251,7 @@ class RecentPagesEndpoint(BaseAPIView):
                 .select_related("workspace")
                 .select_related("owned_by")
                 .prefetch_related("labels")
+                .order_by("-updated_by")
             )
 
             serializer = PageSerializer(pages, many=True)
@@ -285,6 +288,7 @@ class FavoritePagesEndpoint(BaseAPIView):
                 .select_related("workspace")
                 .select_related("owned_by")
                 .prefetch_related("labels")
+                .order_by("name", "-is_favorite")
             )
 
             serializer = PageSerializer(pages, many=True)
@@ -312,6 +316,7 @@ class MyPagesEndpoint(BaseAPIView):
                 .select_related("workspace")
                 .select_related("owned_by")
                 .prefetch_related("labels")
+                .order_by("name", "-is_favorite")
             )
             serializer = PageSerializer(pages, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -340,6 +345,7 @@ class CreatedbyOtherPagesEndpoint(BaseAPIView):
                 .select_related("workspace")
                 .select_related("owned_by")
                 .prefetch_related("labels")
+                .order_by("name", "-is_favorite")
             )
             serializer = PageSerializer(pages, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)

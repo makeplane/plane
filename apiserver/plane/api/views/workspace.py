@@ -63,7 +63,9 @@ class WorkSpaceViewSet(BaseViewSet):
     lookup_field = "slug"
 
     def get_queryset(self):
-        return self.filter_queryset(super().get_queryset().select_related("owner"))
+        return self.filter_queryset(
+            super().get_queryset().select_related("owner")
+        ).order_by("name")
 
     def create(self, request):
         try:
