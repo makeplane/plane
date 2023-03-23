@@ -28,6 +28,7 @@ class PageSerializer(BaseSerializer):
         write_only=True,
         required=False,
     )
+    blocks = PageBlockSerializer(read_only=True, many=True)
 
     class Meta:
         model = Page

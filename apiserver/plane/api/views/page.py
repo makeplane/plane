@@ -3,7 +3,7 @@ from datetime import timedelta
 
 # Django imports
 from django.db import IntegrityError
-from django.db.models import Exists, OuterRef, Q
+from django.db.models import Exists, OuterRef, Q, Prefetch
 from django.utils import timezone
 
 # Third party imports
@@ -59,6 +59,11 @@ class PageViewSet(BaseViewSet):
             .annotate(is_favorite=Exists(subquery))
             .order_by(self.request.GET.get("order_by", "-created_at"))
             .prefetch_related("labels")
+            .prefetch_related(
+                Prefetch(
+                    "blocks", queryset=PageBlock.objects.select_related("page", "issue")
+                )
+            )
             .distinct()
         )
 
@@ -234,10 +239,10 @@ class RecentPagesEndpoint(BaseAPIView):
                 project_id=project_id,
                 workspace__slug=slug,
             )
-            pages = (
+            yesterday_pages = (
                 (
                     Page.objects.filter(
-                        updated_at__gte=(timezone.now() - timedelta(days=7)),
+                        updated_at__gte=(timezone.now() - timedelta(days=1)),
                         workspace__slug=slug,
                         project_id=project_id,
                     )
@@ -251,8 +256,37 @@ class RecentPagesEndpoint(BaseAPIView):
                 .prefetch_related("labels")
             )
 
-            serializer = PageSerializer(pages, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            earlier_this_week = (
+                (
+                    Page.objects.filter(
+                        updated_at__range=(
+                            (timezone.now() - timedelta(days=1)),
+                            (timezone.now() - timedelta(days=7)),
+                        ),
+                        workspace__slug=slug,
+                        project_id=project_id,
+                    )
+                    .filter(project__project_projectmember__member=request.user)
+                    .annotate(is_favorite=Exists(subquery))
+                    .order_by("-updated_by")
+                )
+                .select_related("project")
+                .select_related("workspace")
+                .select_related("owned_by")
+                .prefetch_related("labels")
+            )
+
+            yesterday_pages_serializer = PageSerializer(yesterday_pages, many=True)
+            earlier_this_week_serializer = PageBlockSerializer(
+                earlier_this_week, many=True
+            )
+            return Response(
+                {
+                    "yesterday": yesterday_pages_serializer.data,
+                    "earlier_this_week": earlier_this_week_serializer.data,
+                },
+                status=status.HTTP_200_OK,
+            )
         except Exception as e:
             print(e)
             return Response(
