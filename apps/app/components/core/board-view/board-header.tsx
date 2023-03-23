@@ -15,6 +15,7 @@ type Props = {
   addIssueToState: () => void;
   isCollapsed: boolean;
   setIsCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
+  isCompleted?: boolean;
 };
 
 export const BoardHeader: React.FC<Props> = ({
@@ -23,6 +24,7 @@ export const BoardHeader: React.FC<Props> = ({
   addIssueToState,
   isCollapsed,
   setIsCollapsed,
+  isCompleted = false,
 }) => {
   const { groupedByIssues, groupByProperty: selectedGroup } = useIssuesView();
 
@@ -81,13 +83,15 @@ export const BoardHeader: React.FC<Props> = ({
             <ArrowsPointingOutIcon className="h-4 w-4" />
           )}
         </button>
-        <button
-          type="button"
-          className="grid h-7 w-7 place-items-center rounded p-1 text-gray-700 outline-none duration-300 hover:bg-gray-100"
-          onClick={addIssueToState}
-        >
-          <PlusIcon className="h-4 w-4" />
-        </button>
+        {!isCompleted && (
+          <button
+            type="button"
+            className="grid h-7 w-7 place-items-center rounded p-1 text-gray-700 outline-none duration-300 hover:bg-gray-100"
+            onClick={addIssueToState}
+          >
+            <PlusIcon className="h-4 w-4" />
+          </button>
+        )}
       </div>
     </div>
   );

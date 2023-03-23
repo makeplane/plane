@@ -55,10 +55,16 @@ import { getStateGroupIcon } from "components/icons";
 type Props = {
   type?: "issue" | "cycle" | "module";
   openIssuesListModal?: () => void;
+  isCompleted?: boolean;
   userAuth: UserAuth;
 };
 
-export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModal, userAuth }) => {
+export const IssuesView: React.FC<Props> = ({
+  type = "issue",
+  openIssuesListModal,
+  isCompleted = false,
+  userAuth,
+}) => {
   // create issue modal
   const [createIssueModal, setCreateIssueModal] = useState(false);
   const [createViewModal, setCreateViewModal] = useState<any>(null);
@@ -592,6 +598,7 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
                       ? removeIssueFromModule
                       : null
                   }
+                  isCompleted={isCompleted}
                   userAuth={userAuth}
                 />
               ) : (
@@ -611,6 +618,7 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
                       ? removeIssueFromModule
                       : null
                   }
+                  isCompleted={isCompleted}
                   userAuth={userAuth}
                 />
               )}

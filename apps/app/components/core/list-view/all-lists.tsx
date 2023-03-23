@@ -15,6 +15,7 @@ type Props = {
   handleDeleteIssue: (issue: IIssue) => void;
   openIssuesListModal?: (() => void) | null;
   removeIssue: ((bridgeId: string) => void) | null;
+  isCompleted?: boolean;
   userAuth: UserAuth;
 };
 
@@ -27,6 +28,7 @@ export const AllLists: React.FC<Props> = ({
   handleEditIssue,
   handleDeleteIssue,
   removeIssue,
+  isCompleted = false,
   userAuth,
 }) => {
   const { groupedByIssues, groupByProperty: selectedGroup, showEmptyGroups } = useIssuesView();
@@ -55,6 +57,7 @@ export const AllLists: React.FC<Props> = ({
                 handleDeleteIssue={handleDeleteIssue}
                 openIssuesListModal={type !== "issue" ? openIssuesListModal : null}
                 removeIssue={removeIssue}
+                isCompleted={isCompleted}
                 userAuth={userAuth}
               />
             );

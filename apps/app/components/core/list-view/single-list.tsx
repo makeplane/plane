@@ -30,6 +30,7 @@ type Props = {
   handleDeleteIssue: (issue: IIssue) => void;
   openIssuesListModal?: (() => void) | null;
   removeIssue: ((bridgeId: string) => void) | null;
+  isCompleted?: boolean;
   userAuth: UserAuth;
 };
 
@@ -46,6 +47,7 @@ export const SingleList: React.FC<Props> = ({
   handleDeleteIssue,
   openIssuesListModal,
   removeIssue,
+  isCompleted = false,
   userAuth,
 }) => {
   const router = useRouter();
@@ -93,9 +95,11 @@ export const SingleList: React.FC<Props> = ({
               >
                 <PlusIcon className="h-4 w-4" />
               </button>
+            ) : isCompleted ? (
+              ""
             ) : (
               <CustomMenu
-                label={
+                customButton={
                   <span className="flex items-center">
                     <PlusIcon className="h-4 w-4" />
                   </span>
@@ -138,6 +142,7 @@ export const SingleList: React.FC<Props> = ({
                       removeIssue={() => {
                         if (removeIssue !== null && issue.bridge_id) removeIssue(issue.bridge_id);
                       }}
+                      isCompleted={isCompleted}
                       userAuth={userAuth}
                     />
                   ))

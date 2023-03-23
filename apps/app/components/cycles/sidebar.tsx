@@ -45,9 +45,15 @@ type Props = {
   cycle: ICycle | undefined;
   isOpen: boolean;
   cycleStatus: string;
+  isCompleted: boolean;
 };
 
-export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatus }) => {
+export const CycleDetailsSidebar: React.FC<Props> = ({
+  cycle,
+  isOpen,
+  cycleStatus,
+  isCompleted,
+}) => {
   const [cycleDeleteModal, setCycleDeleteModal] = useState(false);
   const [startDateRange, setStartDateRange] = useState<Date | null>(new Date());
   const [endDateRange, setEndDateRange] = useState<Date | null>(null);
@@ -164,6 +170,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
                     {({ open }) => (
                       <>
                         <Popover.Button
+                          disabled={isCompleted ?? false}
                           className={`group flex h-full items-center gap-1 rounded border-[0.5px]  border-gray-200 bg-gray-100 px-2.5 py-1.5 text-gray-800   ${
                             open ? "bg-gray-100" : ""
                           }`}
@@ -209,6 +216,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
                     {({ open }) => (
                       <>
                         <Popover.Button
+                          disabled={isCompleted ?? false}
                           className={`group flex items-center gap-1 rounded border-[0.5px] border-gray-200 bg-gray-100 px-2.5 py-1.5 text-gray-800  ${
                             open ? "bg-gray-100" : ""
                           }`}
@@ -262,12 +270,14 @@ export const CycleDetailsSidebar: React.FC<Props> = ({ cycle, isOpen, cycleStatu
                           <span>Copy Link</span>
                         </span>
                       </CustomMenu.MenuItem>
-                      <CustomMenu.MenuItem onClick={() => setCycleDeleteModal(true)}>
-                        <span className="flex items-center justify-start gap-2 text-gray-800">
-                          <TrashIcon className="h-4 w-4" />
-                          <span>Delete</span>
-                        </span>
-                      </CustomMenu.MenuItem>
+                      {!isCompleted && (
+                        <CustomMenu.MenuItem onClick={() => setCycleDeleteModal(true)}>
+                          <span className="flex items-center justify-start gap-2 text-gray-800">
+                            <TrashIcon className="h-4 w-4" />
+                            <span>Delete</span>
+                          </span>
+                        </CustomMenu.MenuItem>
+                      )}
                     </CustomMenu>
                   </div>
 
