@@ -76,7 +76,10 @@ export const AllBoards: React.FC<Props> = ({
 
                   if (groupedByIssues[singleGroup].length === 0)
                     return (
-                      <div className="flex items-center justify-between gap-2 rounded bg-white p-2 shadow">
+                      <div
+                        key={index}
+                        className="flex items-center justify-between gap-2 rounded bg-white p-2 shadow"
+                      >
                         <div className="flex items-center gap-2">
                           {currentState &&
                             getStateGroupIcon(currentState.group, "16", "16", currentState.color)}

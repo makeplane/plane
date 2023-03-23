@@ -79,6 +79,8 @@ export const STATE_DETAIL = "STATE_DETAILS";
 
 export const USER_ISSUE = (workspaceSlug: string) => `USER_ISSUE_${workspaceSlug}`;
 export const USER_ACTIVITY = (workspaceSlug: string) => `USER_ACTIVITY_${workspaceSlug}`;
+export const USER_WORKSPACE_DASHBOARD = (workspaceSlug: string) =>
+  `USER_WORKSPACE_DASHBOARD_${workspaceSlug}`;
 export const USER_PROJECT_VIEW = (projectId: string) => `USER_PROJECT_VIEW_${projectId}`;
 
 export const MODULE_LIST = (projectId: string) => `MODULE_LIST_${projectId}`;
