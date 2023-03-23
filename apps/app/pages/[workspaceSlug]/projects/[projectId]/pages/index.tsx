@@ -25,10 +25,44 @@ import { CreateUpdatePageModal } from "components/pages/create-update-page-modal
 import { PagesList } from "components/pages/pages-list";
 import { IPage } from "types";
 import PagesMasonry from "components/pages/pages-masonry";
+import { Tab } from "@headlessui/react";
+import { ListBulletIcon, RectangleGroupIcon, Squares2X2Icon } from "@heroicons/react/20/solid";
+import { PagesGrid } from "components/pages/pages-grid";
+
+const TabPill: React.FC<any> = (props) => {
+  return (
+    <Tab
+      className={({ selected }) =>
+        `rounded-full border px-5 py-1.5 text-sm outline-none ${
+          selected
+            ? "border-theme bg-theme text-white"
+            : "border-gray-300 bg-white hover:bg-hover-gray"
+        }`
+      }
+    >
+      {props.children}
+    </Tab>
+  );
+};
+
+const TabButton: React.FC<any> = (props) => {
+  return (
+    <Tab
+      className={({ selected }) =>
+        `h-8 w-8 rounded text-sm outline-none ${
+          selected ? " border bg-gray-200" : "bg-white hover:bg-gray-100"
+        }`
+      }
+    >
+      {props.children}
+    </Tab>
+  );
+};
 
 const ProjectPages: NextPage = () => {
   const [isCreateUpdatePageModalOpen, setIsCreateUpdatePageModalOpen] = useState(false);
   const [selectedPage, setSelectedPage] = useState<IPage>();
+  const [viewType, setViewType] = useState("list");
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -114,12 +148,64 @@ const ProjectPages: NextPage = () => {
             Note down all the important and minor details in the way you want to.
           </p>
         </div> */}
-        <PagesList
-          setSelectedPage={setSelectedPage}
-          setCreateUpdatePageModal={setIsCreateUpdatePageModalOpen}
-          pages={pages}
-        />
-        <PagesMasonry />
+        <div>
+          <Tab.Group>
+            <Tab.List as="div" className="flex items-center justify-between ">
+              <div className="flex gap-4 text-base font-medium">
+                <TabPill>Recent</TabPill>
+                <TabPill>All</TabPill>
+                <TabPill>Favorites</TabPill>
+                <TabPill>Created by me</TabPill>
+                <TabPill>Created by others</TabPill>
+              </div>
+              <div className="flex items-center gap-x-1">
+                <button
+                  type="button"
+                  className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200 ${
+                    viewType === "list" ? "bg-gray-200" : ""
+                  }`}
+                  onClick={() => setViewType("list")}
+                >
+                  <ListBulletIcon className="h-4 w-4" />
+                </button>
+                <button
+                  type="button"
+                  className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200 ${
+                    viewType === "grid" ? "bg-gray-200" : ""
+                  }`}
+                  onClick={() => setViewType("grid")}
+                >
+                  <Squares2X2Icon className="h-4 w-4" />
+                </button>
+                <button
+                  type="button"
+                  className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200 ${
+                    viewType === "masonry" ? "bg-gray-200" : ""
+                  }`}
+                  onClick={() => setViewType("masonry")}
+                >
+                  <RectangleGroupIcon className="h-4 w-4" />
+                </button>
+              </div>
+            </Tab.List>
+          </Tab.Group>
+        </div>
+
+        {viewType === "list" && (
+          <PagesList
+            setSelectedPage={setSelectedPage}
+            setCreateUpdatePageModal={setIsCreateUpdatePageModalOpen}
+            pages={pages}
+          />
+        )}
+        {viewType === "grid" && (
+          <PagesGrid
+            setSelectedPage={setSelectedPage}
+            setCreateUpdatePageModal={setIsCreateUpdatePageModalOpen}
+            pages={pages}
+          />
+        )}
+        {viewType === "masonry" && <PagesMasonry />}
       </div>
     </AppLayout>
   );
