@@ -1,53 +1,54 @@
-import { PencilIcon, StarIcon, SwatchIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { CustomMenu } from "components/ui";
 import React from "react";
 
-const MasonryItem: React.FC<any> = (props) => {
-  return (
-    <div
-      className="mb-6 w-full rounded-lg border border-gray-200 bg-white p-3"
-      style={{
-        backgroundColor: props.color,
-      }}
-    >
-      <h2 className="text-lg font-medium">Personal Diary</h2>
-      <p className="mt-2 text-sm leading-relaxed">{props.children}</p>
-      <div className="mt-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <button onClick={() => {}} type="button" className="z-10">
-              <SwatchIcon className="h-4 w-4 " color="#858E96" />
+// ui
+import { CustomMenu } from "components/ui";
+// icons
+import { PencilIcon, StarIcon, SwatchIcon, TrashIcon } from "@heroicons/react/24/outline";
+
+const MasonryItem: React.FC<any> = (props) => (
+  <div
+    className="mb-6 w-full rounded-lg border border-gray-200 bg-white p-3"
+    style={{
+      backgroundColor: props.color,
+    }}
+  >
+    <h2 className="text-lg font-medium">Personal Diary</h2>
+    <p className="mt-2 text-sm leading-relaxed">{props.children}</p>
+    <div className="mt-3">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <button onClick={() => {}} type="button" className="z-10">
+            <SwatchIcon className="h-4 w-4 " color="#858E96" />
+          </button>
+          {false ? (
+            <button onClick={() => {}} className="z-10">
+              <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
             </button>
-            {false ? (
-              <button onClick={() => {}} className="z-10">
-                <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
-              </button>
-            ) : (
-              <button onClick={() => {}} type="button" className="z-10">
-                <StarIcon className="h-4 w-4 " color="#858E96" />
-              </button>
-            )}
-            <CustomMenu width="auto" verticalEllipsis>
-              <CustomMenu.MenuItem onClick={() => {}}>
-                <span className="flex items-center justify-start gap-2 text-gray-800">
-                  <PencilIcon className="h-4 w-4" />
-                  <span>Edit Page</span>
-                </span>
-              </CustomMenu.MenuItem>
-              <CustomMenu.MenuItem onClick={() => {}}>
-                <span className="flex items-center justify-start gap-2 text-gray-800">
-                  <TrashIcon className="h-4 w-4" />
-                  <span>Delete Page</span>
-                </span>
-              </CustomMenu.MenuItem>
-            </CustomMenu>
-          </div>
-          <p className="text-sm text-gray-400">9:41 PM</p>
+          ) : (
+            <button onClick={() => {}} type="button" className="z-10">
+              <StarIcon className="h-4 w-4 " color="#858E96" />
+            </button>
+          )}
+          <CustomMenu width="auto" verticalEllipsis>
+            <CustomMenu.MenuItem onClick={() => {}}>
+              <span className="flex items-center justify-start gap-2 text-gray-800">
+                <PencilIcon className="h-4 w-4" />
+                <span>Edit Page</span>
+              </span>
+            </CustomMenu.MenuItem>
+            <CustomMenu.MenuItem onClick={() => {}}>
+              <span className="flex items-center justify-start gap-2 text-gray-800">
+                <TrashIcon className="h-4 w-4" />
+                <span>Delete Page</span>
+              </span>
+            </CustomMenu.MenuItem>
+          </CustomMenu>
         </div>
+        <p className="text-sm text-gray-400">9:41 PM</p>
       </div>
     </div>
-  );
-};
+  </div>
+);
 
 export default function PagesMasonry() {
   return (

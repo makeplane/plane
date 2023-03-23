@@ -29,36 +29,19 @@ import { Tab } from "@headlessui/react";
 import { ListBulletIcon, RectangleGroupIcon, Squares2X2Icon } from "@heroicons/react/20/solid";
 import { PagesGrid } from "components/pages/pages-grid";
 
-const TabPill: React.FC<any> = (props) => {
-  return (
-    <Tab
-      className={({ selected }) =>
-        `rounded-full border px-5 py-1.5 text-sm outline-none ${
-          selected
-            ? "border-theme bg-theme text-white"
-            : "border-gray-300 bg-white hover:bg-hover-gray"
-        }`
-      }
-    >
-      {props.children}
-    </Tab>
-  );
-};
-
-const TabButton: React.FC<any> = (props) => {
-  return (
-    <Tab
-      className={({ selected }) =>
-        `h-8 w-8 rounded text-sm outline-none ${
-          selected ? " border bg-gray-200" : "bg-white hover:bg-gray-100"
-        }`
-      }
-    >
-      {props.children}
-    </Tab>
-  );
-};
-
+const TabPill: React.FC<any> = (props) => (
+  <Tab
+    className={({ selected }) =>
+      `rounded-full border px-5 py-1.5 text-sm outline-none ${
+        selected
+          ? "border-theme bg-theme text-white"
+          : "border-gray-300 bg-white hover:bg-hover-gray"
+      }`
+    }
+  >
+    {props.children}
+  </Tab>
+);
 
 const ProjectPages: NextPage = () => {
   const [isCreateUpdatePageModalOpen, setIsCreateUpdatePageModalOpen] = useState(false);

@@ -163,7 +163,7 @@ export const SinglePageGridItem: React.FC<TSingleStatProps> = (props) => {
               iusto, illo hic neque quia vero aperiam? Nemo aliquam, hic incidunt mollitia totam
               asperiores sunt nam inventore voluptatibus eum?
             </p>
-            <div className="absolute bottom-0 h-24 w-full bg-gradient-to-t from-white"></div>
+            <div className="absolute bottom-0 h-24 w-full bg-gradient-to-t from-white" />
           </div>
         </div>
       </li>
