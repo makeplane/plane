@@ -116,7 +116,7 @@ const ProjectViews: NextPage = () => {
           />
         )
       ) : (
-        <Loader>
+        <Loader className="space-y-3">
           <Loader.Item height="30px" />
           <Loader.Item height="30px" />
           <Loader.Item height="30px" />

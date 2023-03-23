@@ -24,6 +24,7 @@ export * from "./layer-diagonal-icon";
 export * from "./lock-icon";
 export * from "./menu-icon";
 export * from "./plus-icon";
+export * from "./priority-icon";
 export * from "./question-mark-circle-icon";
 export * from "./setting-icon";
 export * from "./signal-cellular-icon";
