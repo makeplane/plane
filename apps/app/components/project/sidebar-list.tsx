@@ -144,7 +144,7 @@ export const ProjectSidebarList: FC = () => {
       />
       <div className="mt-2.5 h-full overflow-y-auto border-t bg-white pt-2.5">
         {favoriteProjects && favoriteProjects.length > 0 && (
-          <div className="mt-3 flex flex-col space-y-2 px-6">
+          <div className="mt-3 flex flex-col space-y-2 px-3">
             {!sidebarCollapse && <h5 className="text-sm font-semibold text-gray-400">Favorites</h5>}
             {favoriteProjects.map((favoriteProject) => {
               const project = favoriteProject.project_detail;
@@ -162,7 +162,7 @@ export const ProjectSidebarList: FC = () => {
             })}
           </div>
         )}
-        <div className="mt-3 flex flex-col space-y-2 px-6 pb-3">
+        <div className="flex flex-col space-y-2 p-3">
           {!sidebarCollapse && <h5 className="text-sm font-semibold text-gray-400">Projects</h5>}
           {projects ? (
             <>

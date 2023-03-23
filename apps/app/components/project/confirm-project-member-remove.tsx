@@ -4,7 +4,7 @@ import { Dialog, Transition } from "@headlessui/react";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
-import { Button } from "components/ui";
+import { SecondaryButton, DangerButton } from "components/ui";
 
 type Props = {
   isOpen: boolean;
@@ -15,8 +15,6 @@ type Props = {
 
 const ConfirmProjectMemberRemove: React.FC<Props> = ({ isOpen, onClose, data, handleDelete }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
-
-  const cancelButtonRef = useRef(null);
 
   const handleClose = () => {
     onClose();
@@ -31,12 +29,7 @@ const ConfirmProjectMemberRemove: React.FC<Props> = ({ isOpen, onClose, data, ha
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog
-        as="div"
-        className="relative z-20"
-        initialFocus={cancelButtonRef}
-        onClose={handleClose}
-      >
+      <Dialog as="div" className="relative z-20" onClose={handleClose}>
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
@@ -84,25 +77,11 @@ const ConfirmProjectMemberRemove: React.FC<Props> = ({ isOpen, onClose, data, ha
                     </div>
                   </div>
                 </div>
-                <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                  <Button
-                    type="button"
-                    onClick={handleDeletion}
-                    theme="danger"
-                    disabled={isDeleteLoading}
-                    className="inline-flex sm:ml-3"
-                  >
+                <div className="flex justify-end gap-2 bg-gray-50 p-4 sm:px-6">
+                  <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                  <DangerButton onClick={handleDeletion} loading={isDeleteLoading}>
                     {isDeleteLoading ? "Removing..." : "Remove"}
-                  </Button>
-                  <Button
-                    type="button"
-                    theme="secondary"
-                    className="inline-flex sm:ml-3"
-                    onClick={handleClose}
-                    ref={cancelButtonRef}
-                  >
-                    Cancel
-                  </Button>
+                  </DangerButton>
                 </div>
               </Dialog.Panel>
             </Transition.Child>

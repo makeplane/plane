@@ -189,7 +189,7 @@ export const SingleListIssue: React.FC<Props> = ({
                   </span>
                 </Tooltip>
               )}
-              <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
+              <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
                 <span className="text-sm text-gray-800">{truncateText(issue.name, 50)}</span>
               </Tooltip>
             </a>

@@ -146,7 +146,7 @@ export const SingleSidebarProject: React.FC<Props> = ({
                 return (
                   <Link key={item.name} href={item.href}>
                     <a
-                      className={`group flex items-center rounded-md px-2 py-2 text-xs font-medium outline-none ${
+                      className={`group flex items-center rounded-md p-2 text-xs font-medium outline-none ${
                         item.href === router.asPath
                           ? "bg-indigo-50 text-gray-900"
                           : "text-gray-500 hover:bg-indigo-50 hover:text-gray-900 focus:bg-indigo-50 focus:text-gray-900"

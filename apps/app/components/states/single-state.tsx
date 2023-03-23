@@ -134,7 +134,9 @@ export const SingleState: React.FC<Props> = ({
   };
 
   return (
-    <div className={`group flex items-center justify-between gap-2 rounded-[10px] bg-white p-5`}>
+    <div
+      className={`group flex items-center justify-between gap-2 bg-white p-5 first:rounded-t-[10px] last:rounded-b-[10px]`}
+    >
       <div className="flex items-center gap-3">
         {getStateGroupIcon(state.group, "20", "20", state.color)}
         <div>

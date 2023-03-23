@@ -24,6 +24,7 @@ from plane.db.models import (
     ModuleIssue,
     IssueViewFavorite,
 )
+from plane.utils.issue_filters import issue_filters
 
 
 class IssueViewViewSet(BaseViewSet):
@@ -66,10 +67,13 @@ class ViewIssuesEndpoint(BaseAPIView):
             view = IssueView.objects.get(pk=view_id)
             queries = view.query
 
+            filters = issue_filters(request.query_params, "GET")
+
             issues = (
                 Issue.objects.filter(
                     **queries, project_id=project_id, workspace__slug=slug
                 )
+                .filter(**filters)
                 .select_related("project")
                 .select_related("workspace")
                 .select_related("state")

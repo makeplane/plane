@@ -10,7 +10,9 @@ import projectService from "services/project.service";
 // hooks
 import useUser from "hooks/use-user";
 // ui
-import { Button, Spinner } from "components/ui";
+import { PrimaryButton, Spinner } from "components/ui";
+// icon
+import { LayerDiagonalIcon } from "components/icons";
 // components
 import { NotAuthorizedView } from "components/core";
 import { CommandPalette } from "components/command-palette";
@@ -103,17 +105,17 @@ const AppLayout: FC<AppLayoutProps> = ({
             actionButton={
               (memberType?.isViewer || memberType?.isGuest) && projectId ? (
                 <Link href={`/${workspaceSlug}/projects/${projectId}/issues`}>
-                  <Button size="sm" theme="secondary">
-                    Go to Issues
-                  </Button>
+                  <PrimaryButton className="flex items-center gap-1">
+                    <LayerDiagonalIcon height={16} width={16} color="white" /> Go to Issues
+                  </PrimaryButton>
                 </Link>
               ) : (
                 (memberType?.isViewer || memberType?.isGuest) &&
                 workspaceSlug && (
                   <Link href={`/${workspaceSlug}`}>
-                    <Button size="sm" theme="secondary">
-                      Go to workspace
-                    </Button>
+                    <PrimaryButton className="flex items-center gap-1">
+                      <LayerDiagonalIcon height={16} width={16} color="white" /> Go to workspace
+                    </PrimaryButton>
                   </Link>
                 )
               )

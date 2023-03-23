@@ -14,7 +14,6 @@ import {
   ChevronDownIcon,
   DocumentDuplicateIcon,
   DocumentIcon,
-  ExclamationCircleIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
 
@@ -28,10 +27,9 @@ import useToast from "hooks/use-toast";
 import { LinkModal, SidebarProgressStats } from "components/core";
 import { DeleteModuleModal, SidebarLeadSelect, SidebarMembersSelect } from "components/modules";
 import ProgressChart from "components/core/sidebar/progress-chart";
-
-// components
-// ui
 import { CustomMenu, CustomSelect, Loader, ProgressBar } from "components/ui";
+// icon
+import { ExclamationIcon } from "components/icons";
 // helpers
 import { renderDateFormat, renderShortDate } from "helpers/date-time.helper";
 import { capitalizeFirstLetter, copyTextToClipboard } from "helpers/string.helper";
@@ -206,7 +204,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
         {module ? (
           <>
             <div className="flex flex-col items-start justify-center">
-              <div className="flex gap-2.5 px-6 text-sm">
+              <div className="flex gap-2.5 px-5 text-sm">
                 <div className="flex items-center ">
                   <Controller
                     control={control}
@@ -424,8 +422,8 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                         </Disclosure.Button>
                       ) : (
                         <div className="flex items-center gap-1">
-                          <ExclamationCircleIcon className="h-3 w-3" />
-                          <span className="text-xs italic">
+                          <ExclamationIcon height={14} width={14} />
+                          <span className="text-xs italic text-gray-500">
                             Invalid date. Please enter valid date.
                           </span>
                         </div>
@@ -495,8 +493,10 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                         </Disclosure.Button>
                       ) : (
                         <div className="flex items-center gap-1">
-                          <ExclamationCircleIcon className="h-3 w-3" />
-                          <span className="text-xs italic">No issues found. Please add issue.</span>
+                          <ExclamationIcon height={14} width={14} />
+                          <span className="text-xs italic text-gray-500">
+                            No issues found. Please add issue.
+                          </span>
                         </div>
                       )}
                     </div>
@@ -526,7 +526,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
             </div>
           </>
         ) : (
-          <Loader>
+          <Loader className="px-5">
             <div className="space-y-2">
               <Loader.Item height="15px" width="50%" />
               <Loader.Item height="15px" width="30%" />

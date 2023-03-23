@@ -43,3 +43,4 @@ export * from "./contrast-icon";
 export * from "./people-group-icon";
 export * from "./cmd-icon";
 export * from "./view-list-icon";
+export * from "./exclamation-icon";

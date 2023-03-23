@@ -34,7 +34,7 @@ import { GROUP_BY_OPTIONS, ORDER_BY_OPTIONS, FILTER_ISSUE_OPTIONS } from "consta
 
 export const IssuesFilterView: React.FC = () => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, viewId } = router.query;
 
   const {
     issueView,
@@ -42,8 +42,10 @@ export const IssuesFilterView: React.FC = () => {
     setIssueViewToKanban,
     groupByProperty,
     setGroupByProperty,
-    setOrderBy,
     orderBy,
+    setOrderBy,
+    showEmptyGroups,
+    setShowEmptyGroups,
     filters,
     setFilters,
     resetFilterToDefault,
@@ -102,13 +104,16 @@ export const IssuesFilterView: React.FC = () => {
       <MultiLevelDropdown
         label="Filters"
         onSelect={(option) => {
-          setFilters({
-            ...filters,
-            [option.key]: [
-              ...((filters?.[option.key as keyof typeof filters] as any[]) ?? []),
-              option.value,
-            ],
-          });
+          setFilters(
+            {
+              ...filters,
+              [option.key]: [
+                ...((filters?.[option.key as keyof typeof filters] as any[]) ?? []),
+                option.value,
+              ],
+            },
+            !Boolean(viewId)
+          );
         }}
         direction="left"
         options={[
@@ -153,8 +158,8 @@ export const IssuesFilterView: React.FC = () => {
             ],
           },
           {
-            id: "assignee",
-            label: "Assignee",
+            id: "assignees",
+            label: "Assignees",
             value: members,
             children: [
               ...(members?.map((member) => ({
@@ -168,7 +173,7 @@ export const IssuesFilterView: React.FC = () => {
                   </div>
                 ),
                 value: {
-                  key: "assignee",
+                  key: "assignees",
                   value: member.member.id,
                 },
                 selected: filters?.assignees?.includes(member.member.id),
@@ -200,9 +205,9 @@ export const IssuesFilterView: React.FC = () => {
             >
               <Popover.Panel className="absolute right-0 z-20 mt-1 w-screen max-w-xs transform overflow-hidden rounded-lg bg-white p-3 shadow-lg">
                 <div className="relative divide-y-2">
-                  <div className="space-y-4 pb-3">
+                  <div className="space-y-4 pb-3 text-xs">
                     <div className="flex items-center justify-between">
-                      <h4 className="text-sm text-gray-600">Group by</h4>
+                      <h4 className="text-gray-600">Group by</h4>
                       <CustomMenu
                         label={
                           GROUP_BY_OPTIONS.find((option) => option.key === groupByProperty)?.name ??
@@ -223,7 +228,7 @@ export const IssuesFilterView: React.FC = () => {
                       </CustomMenu>
                     </div>
                     <div className="flex items-center justify-between">
-                      <h4 className="text-sm text-gray-600">Order by</h4>
+                      <h4 className="text-gray-600">Order by</h4>
                       <CustomMenu
                         label={
                           ORDER_BY_OPTIONS.find((option) => option.key === orderBy)?.name ??
@@ -246,7 +251,7 @@ export const IssuesFilterView: React.FC = () => {
                       </CustomMenu>
                     </div>
                     <div className="flex items-center justify-between">
-                      <h4 className="text-sm text-gray-600">Issue type</h4>
+                      <h4 className="text-gray-600">Issue type</h4>
                       <CustomMenu
                         label={
                           FILTER_ISSUE_OPTIONS.find((option) => option.key === filters.type)
@@ -268,17 +273,33 @@ export const IssuesFilterView: React.FC = () => {
                         ))}
                       </CustomMenu>
                     </div>
-                    <div className="relative flex justify-end gap-x-3">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-gray-600">Show empty states</h4>
                       <button
                         type="button"
-                        className="text-xs"
-                        onClick={() => resetFilterToDefault()}
+                        className={`relative inline-flex h-3.5 w-6 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                          showEmptyGroups ? "bg-green-500" : "bg-gray-200"
+                        }`}
+                        role="switch"
+                        aria-checked={showEmptyGroups}
+                        onClick={() => setShowEmptyGroups(!showEmptyGroups)}
                       >
+                        <span className="sr-only">Show empty groups</span>
+                        <span
+                          aria-hidden="true"
+                          className={`inline-block h-2.5 w-2.5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                            showEmptyGroups ? "translate-x-2.5" : "translate-x-0"
+                          }`}
+                        />
+                      </button>
+                    </div>
+                    <div className="relative flex justify-end gap-x-3">
+                      <button type="button" onClick={() => resetFilterToDefault()}>
                         Reset to default
                       </button>
                       <button
                         type="button"
-                        className="text-xs font-medium text-theme"
+                        className="font-medium text-theme"
                         onClick={() => setNewFilterDefaultView()}
                       >
                         Set as default

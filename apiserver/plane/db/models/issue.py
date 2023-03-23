@@ -85,7 +85,7 @@ class Issue(ProjectBaseModel):
                 pass
         else:
             try:
-                from plane.db.models import State
+                from plane.db.models import State, PageBlock
 
                 # Get the completed states of the project
                 completed_states = State.objects.filter(
@@ -94,7 +94,15 @@ class Issue(ProjectBaseModel):
                 # Check if the current issue state and completed state id are same
                 if self.state.id in completed_states:
                     self.completed_at = timezone.now()
+                    # check if there are any page blocks
+                    PageBlock.objects.filter(issue_id=self.id).filter().update(
+                        completed_at=timezone.now()
+                    )
+
                 else:
+                    PageBlock.objects.filter(issue_id=self.id).filter().update(
+                        completed_at=None
+                    )
                     self.completed_at = None
 
             except ImportError:

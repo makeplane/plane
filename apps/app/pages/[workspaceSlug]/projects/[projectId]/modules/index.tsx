@@ -6,7 +6,6 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 // image
 import emptyModule from "public/empty-state/empty-module.svg";
 
-
 // layouts
 import AppLayout from "layouts/app-layout";
 // lib

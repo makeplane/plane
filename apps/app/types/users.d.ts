@@ -33,6 +33,7 @@ export interface IUserLite {
   email: string;
   avatar: string;
   created_at: Date;
+  is_bot: boolean;
 }
 
 export interface IUserActivity {

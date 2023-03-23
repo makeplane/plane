@@ -3,16 +3,16 @@ import React, { useCallback, useState } from "react";
 import NextImage from "next/image";
 import { useRouter } from "next/router";
 
+// react-dropzone
 import { useDropzone } from "react-dropzone";
-
+// headless ui
 import { Transition, Dialog } from "@headlessui/react";
-
 // services
 import fileServices from "services/file.service";
-// icon
-import { UserCircleIcon } from "components/icons";
 // ui
-import { Button } from "components/ui";
+import { PrimaryButton, SecondaryButton } from "components/ui";
+// icons
+import { UserCircleIcon } from "components/icons";
 
 type TImageUploadModalProps = {
   value?: string | null;
@@ -39,12 +39,7 @@ export const ImageUploadModal: React.FC<TImageUploadModalProps> = ({
     setImage(acceptedFiles[0]);
   }, []);
 
-  const {
-    getRootProps,
-    getInputProps,
-    isDragActive,
-    open: openFileDialog,
-  } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
   });
 
@@ -158,16 +153,10 @@ export const ImageUploadModal: React.FC<TImageUploadModalProps> = ({
                   </div>
                 </div>
                 <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
-                  <Button theme="secondary" onClick={handleClose}>
-                    Cancel
-                  </Button>
-                  <Button
-                    type="submit"
-                    onClick={handleSubmit}
-                    disabled={isImageUploading || image === null}
-                  >
+                  <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                  <PrimaryButton onClick={handleSubmit} loading={isImageUploading || !image}>
                     {isImageUploading ? "Uploading..." : "Upload & Save"}
-                  </Button>
+                  </PrimaryButton>
                 </div>
               </Dialog.Panel>
             </Transition.Child>

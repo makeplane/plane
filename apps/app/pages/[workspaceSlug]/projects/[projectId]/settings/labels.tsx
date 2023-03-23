@@ -19,7 +19,7 @@ import {
   SingleLabelGroup,
 } from "components/labels";
 // ui
-import { Loader } from "components/ui";
+import { Loader, PrimaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
@@ -28,7 +28,6 @@ import { IIssueLabels, UserAuth } from "types";
 import type { GetServerSidePropsContext, NextPage } from "next";
 // fetch-keys
 import { PROJECT_DETAILS, PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
-import { PrimaryButton } from "components/ui/button/primary-button";
 
 const LabelsSettings: NextPage<UserAuth> = (props) => {
   const { isMember, isOwner, isViewer, isGuest } = props;
