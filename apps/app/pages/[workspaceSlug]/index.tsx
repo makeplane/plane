@@ -35,8 +35,6 @@ const WorkspacePage: NextPage = () => {
     workspaceSlug ? () => userService.userWorkspaceDashboard(workspaceSlug as string) : null
   );
 
-  hi = "hi";
-
   return (
     <AppLayout noHeader={true}>
       <div className="h-full w-full">
