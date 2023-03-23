@@ -42,18 +42,16 @@ export const PagesList: React.FC<TPagesListProps> = ({
       />
       {pages ? (
         pages.length > 0 ? (
-          <div className="border border-gray-200 bg-white sm:rounded-[10px] ">
-            <ul role="list" className="divide-y divide-gray-200">
-              {pages.map((page) => (
-                <SinglePageListItem
-                  page={page}
-                  key={page.id}
-                  handleDeletePage={() => handleDeletePage(page)}
-                  handleEditPage={() => handleEditPage(page)}
-                />
-              ))}
-            </ul>
-          </div>
+          <ul role="list" className="divide-y divide-gray-200">
+            {pages.map((page) => (
+              <SinglePageListItem
+                page={page}
+                key={page.id}
+                handleDeletePage={() => handleDeletePage(page)}
+                handleEditPage={() => handleEditPage(page)}
+              />
+            ))}
+          </ul>
         ) : (
           "No Pages found"
         )
