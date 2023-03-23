@@ -30,6 +30,7 @@ type Props = {
   openIssuesListModal?: (() => void) | null;
   handleTrashBox: (isDragging: boolean) => void;
   removeIssue: ((bridgeId: string) => void) | null;
+  isCompleted?: boolean;
   userAuth: UserAuth;
 };
 
@@ -44,6 +45,7 @@ export const SingleBoard: React.FC<Props> = ({
   openIssuesListModal,
   handleTrashBox,
   removeIssue,
+  isCompleted = false,
   userAuth,
 }) => {
   // collapse/expand
@@ -56,7 +58,7 @@ export const SingleBoard: React.FC<Props> = ({
 
   const [properties] = useIssuesProperties(workspaceSlug as string, projectId as string);
 
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || isCompleted;
 
   return (
     <div className={`h-full flex-shrink-0 ${!isCollapsed ? "" : "w-96 bg-gray-50"}`}>
@@ -67,6 +69,7 @@ export const SingleBoard: React.FC<Props> = ({
           groupTitle={groupTitle}
           isCollapsed={isCollapsed}
           setIsCollapsed={setIsCollapsed}
+          isCompleted={isCompleted}
         />
         <StrictModeDroppable key={groupTitle} droppableId={groupTitle}>
           {(provided, snapshot) => (
@@ -118,6 +121,7 @@ export const SingleBoard: React.FC<Props> = ({
                       removeIssue={() => {
                         if (removeIssue && issue.bridge_id) removeIssue(issue.bridge_id);
                       }}
+                      isCompleted={isCompleted}
                       userAuth={userAuth}
                     />
                   )}
@@ -139,6 +143,8 @@ export const SingleBoard: React.FC<Props> = ({
                   <PlusIcon className="h-4 w-4" />
                   Add Issue
                 </button>
+              ) : isCompleted ? (
+                ""
               ) : (
                 <CustomMenu
                   customButton={

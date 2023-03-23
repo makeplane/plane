@@ -159,7 +159,7 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
         }
       >
         <div className={`h-full ${cycleSidebar ? "mr-[24rem]" : ""} duration-300`}>
-          <IssuesView type="cycle" userAuth={props} openIssuesListModal={openIssuesListModal} />
+          <IssuesView type="cycle" userAuth={props} openIssuesListModal={openIssuesListModal} isCompleted={cycleStatus === "completed" ?? false} />
         </div>
         <CycleDetailsSidebar cycleStatus={cycleStatus} cycle={cycleDetails} isOpen={cycleSidebar} isCompleted={cycleStatus === "completed" ?? false} />
       </AppLayout>

@@ -49,6 +49,7 @@ type Props = {
   makeIssueCopy: () => void;
   removeIssue?: (() => void) | null;
   handleDeleteIssue: (issue: IIssue) => void;
+  isCompleted?:boolean;
   userAuth: UserAuth;
 };
 
@@ -62,6 +63,7 @@ export const SingleListIssue: React.FC<Props> = ({
   removeIssue,
   groupTitle,
   handleDeleteIssue,
+  isCompleted=false,
   userAuth,
 }) => {
   // context menu
@@ -145,7 +147,7 @@ export const SingleListIssue: React.FC<Props> = ({
     });
   };
 
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || isCompleted;
 
   return (
     <>
