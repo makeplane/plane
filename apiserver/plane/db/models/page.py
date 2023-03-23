@@ -49,7 +49,7 @@ class PageBlock(ProjectBaseModel):
     def save(self, *args, **kwargs):
         if self._state.adding:
             largest_sort_order = PageBlock.objects.filter(
-                project=self.project, state=self.state
+                project=self.project, page=self.page
             ).aggregate(largest=models.Max("sort_order"))["largest"]
             if largest_sort_order is not None:
                 self.sort_order = largest_sort_order + 10000
