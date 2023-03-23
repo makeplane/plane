@@ -40,6 +40,7 @@ from plane.api.views import (
     UserWorkspaceInvitationEndpoint,
     UserActivityGraphEndpoint,
     UserIssueCompletedGraphEndpoint,
+    UserWorkspaceDashboardEndpoint,
     ## End Workspaces
     # File Assets
     FileAssetEndpoint,
@@ -98,7 +99,15 @@ from plane.api.views import (
     ModuleIssueViewSet,
     ModuleFavoriteViewSet,
     ModuleLinkViewSet,
+    BulkImportModulesEndpoint,
     ## End Modules
+    # Pages
+    PageViewSet,
+    PageBlockViewSet,
+    PageFavoriteViewSet,
+    CreateIssueFromPageBlockEndpoint,
+    MyPagesEndpoint,
+    ## End Pages
     # Api Tokens
     ApiTokenEndpoint,
     ## End Api Tokens
@@ -199,6 +208,11 @@ urlpatterns = [
         "users/me/workspaces/<str:slug>/issues-completed-graph/",
         UserIssueCompletedGraphEndpoint.as_view(),
         name="completed-graph",
+    ),
+    path(
+        "users/me/workspaces/<str:slug>/dashboard/",
+        UserWorkspaceDashboardEndpoint.as_view(),
+        name="user-workspace-dashboard",
     ),
     ## User  Graph
     path(
@@ -801,7 +815,7 @@ urlpatterns = [
         name="user-file-assets",
     ),
     path(
-        "users/file-assets/user-profile/<str:asset_key>/",
+        "users/file-assets/<str:asset_key>/",
         UserAssetsEndpoint.as_view(),
         name="user-file-assets",
     ),
@@ -892,7 +906,85 @@ urlpatterns = [
         ),
         name="user-favorite-module",
     ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-import-modules/<str:service>/",
+        BulkImportModulesEndpoint.as_view(),
+        name="bulk-modules-create",
+    ),
     ## End Modules
+    # Pages
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/",
+        PageViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="project-pages",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/",
+        PageViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="project-pages",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/page-blocks/",
+        PageBlockViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="project-page-blocks",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/page-blocks/<uuid:pk>/",
+        PageBlockViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="project-page-blocks",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/user-favorite-pages/",
+        PageFavoriteViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="user-favorite-pages",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/user-favorite-pages/<uuid:page_id>/",
+        PageFavoriteViewSet.as_view(
+            {
+                "delete": "destroy",
+            }
+        ),
+        name="user-favorite-pages",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/page-blocks/<uuid:page_block_id>/issues/",
+        CreateIssueFromPageBlockEndpoint.as_view(),
+        name="page-block-issues",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/user/pages/",
+        MyPagesEndpoint.as_view(),
+        name="my-pages",
+    ),
+    ## End Pages
     # API Tokens
     path("api-tokens/", ApiTokenEndpoint.as_view(), name="api-tokens"),
     path("api-tokens/<uuid:pk>/", ApiTokenEndpoint.as_view(), name="api-tokens"),

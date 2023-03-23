@@ -59,6 +59,7 @@ const TabButton: React.FC<any> = (props) => {
   );
 };
 
+
 const ProjectPages: NextPage = () => {
   const [isCreateUpdatePageModalOpen, setIsCreateUpdatePageModalOpen] = useState(false);
   const [selectedPage, setSelectedPage] = useState<IPage>();

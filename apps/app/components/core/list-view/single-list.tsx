@@ -24,7 +24,6 @@ type Props = {
     [key: string]: IIssue[];
   };
   selectedGroup: "priority" | "state" | "labels" | null;
-  members: IProjectMember[] | undefined;
   addIssueToState: () => void;
   makeIssueCopy: (issue: IIssue) => void;
   handleEditIssue: (issue: IIssue) => void;
@@ -41,7 +40,6 @@ export const SingleList: React.FC<Props> = ({
   groupTitle,
   groupedByIssues,
   selectedGroup,
-  members,
   addIssueToState,
   makeIssueCopy,
   handleEditIssue,
@@ -75,7 +73,9 @@ export const SingleList: React.FC<Props> = ({
                 )}
                 {selectedGroup !== null ? (
                   <h2 className="text-xl font-semibold capitalize leading-6 text-gray-800">
-                    {addSpaceIfCamelCase(groupTitle)}
+                    {selectedGroup === "state"
+                      ? addSpaceIfCamelCase(currentState?.name ?? "")
+                      : addSpaceIfCamelCase(groupTitle)}
                   </h2>
                 ) : (
                   <h2 className="font-medium leading-5">All Issues</h2>

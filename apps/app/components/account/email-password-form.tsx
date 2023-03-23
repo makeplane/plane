@@ -60,7 +60,7 @@ export const EmailPasswordForm = ({ onSuccess }: any) => {
   };
   return (
     <>
-      <form className="mt-5" onSubmit={handleSubmit(onSubmit)}>
+      <form className="mt-5 py-5 px-5" onSubmit={handleSubmit(onSubmit)}>
         <div>
           <Input
             id="email"

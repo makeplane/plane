@@ -74,13 +74,15 @@ export const WorkspaceSidebarDropdown = () => {
 
   return (
     <div className="relative">
-      <Menu as="div" className="col-span-4 inline-block w-full px-5 py-3 text-left">
-        <div className="flex w-full items-center justify-between gap-2.5">
-          <Menu.Button
-            className={`inline-flex w-full items-center rounded-md px-1 py-2 text-sm font-semibold text-gray-700 focus:outline-none `}
-          >
-            <div className="flex w-full items-center gap-x-2 rounded-md bg-gray-100 px-2 py-1.5">
-              <div className="relative flex h-6 w-6 items-center justify-center rounded bg-gray-700 p-2 uppercase text-white">
+      <Menu as="div" className="col-span-4 inline-block w-full p-3 text-left">
+        <div className="flex items-center justify-between gap-2.5">
+          <Menu.Button className="flex w-full items-center rounded-md py-2 text-sm font-semibold text-gray-700 focus:outline-none">
+            <div
+              className={`flex w-full items-center gap-x-2 rounded-md bg-gray-100 px-2 py-1.5 ${
+                sidebarCollapse ? "justify-center" : ""
+              }`}
+            >
+              <div className="relative grid h-6 w-6 place-items-center rounded bg-gray-700 uppercase text-white">
                 {activeWorkspace?.logo && activeWorkspace.logo !== "" ? (
                   <Image
                     src={activeWorkspace.logo}
@@ -95,12 +97,8 @@ export const WorkspaceSidebarDropdown = () => {
               </div>
 
               {!sidebarCollapse && (
-                <p className="text-base">
-                  {activeWorkspace?.name
-                    ? activeWorkspace.name.length > 17
-                      ? `${activeWorkspace.name.substring(0, 15)}...`
-                      : activeWorkspace.name
-                    : "Loading..."}
+                <p>
+                  {activeWorkspace?.name ? truncateText(activeWorkspace.name, 14) : "Loading..."}
                 </p>
               )}
             </div>
@@ -130,12 +128,9 @@ export const WorkspaceSidebarDropdown = () => {
             className="fixed left-2 z-20 mt-1  flex w-full max-w-[17rem] origin-top-left flex-col rounded-md
           bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
           >
-            <div className="flex flex-col items-start justify-start gap-3 px-5 py-3">
-              <Menu.Item as="div" className="text-sm text-gray-500">
-                {user?.email}
-              </Menu.Item>
+            <div className="flex flex-col items-start justify-start gap-3 p-3">
+              <div className="text-sm text-gray-500">{user?.email}</div>
               <span className="text-sm font-semibold text-gray-500">Workspace</span>
-
               {workspaces ? (
                 <div className="flex h-full w-full flex-col items-start justify-start gap-3.5">
                   {workspaces.length > 0 ? (

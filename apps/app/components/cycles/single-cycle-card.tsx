@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
 
-import useSWR, { mutate } from "swr";
+import { mutate } from "swr";
 
 // services
 import cyclesService from "services/cycles.service";
@@ -24,8 +24,7 @@ import {
 } from "@heroicons/react/24/outline";
 // helpers
 import { getDateRangeStatus, renderShortDateWithYearFormat } from "helpers/date-time.helper";
-import { groupBy } from "helpers/array.helper";
-import { capitalizeFirstLetter, copyTextToClipboard, truncateText } from "helpers/string.helper";
+import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 // types
 import {
   CompletedCyclesResponse,
@@ -38,7 +37,6 @@ import {
   CYCLE_COMPLETE_LIST,
   CYCLE_CURRENT_AND_UPCOMING_LIST,
   CYCLE_DRAFT_LIST,
-  CYCLE_ISSUES,
 } from "constants/fetch-keys";
 
 type TSingleStatProps = {
@@ -47,42 +45,46 @@ type TSingleStatProps = {
   handleDeleteCycle: () => void;
 };
 
-const stateGroupColors: {
-  [key: string]: string;
-} = {
-  backlog: "#DEE2E6",
-  unstarted: "#26B5CE",
-  started: "#F7AE59",
-  cancelled: "#D687FF",
-  completed: "#09A953",
-};
+const stateGroups = [
+  {
+    key: "backlog_issues",
+    title: "Backlog",
+    color: "#dee2e6",
+  },
+  {
+    key: "unstarted_issues",
+    title: "Unstarted",
+    color: "#26b5ce",
+  },
+  {
+    key: "started_issues",
+    title: "Started",
+    color: "#f7ae59",
+  },
+  {
+    key: "cancelled_issues",
+    title: "Cancelled",
+    color: "#d687ff",
+  },
+  {
+    key: "completed_issues",
+    title: "Completed",
+    color: "#09a953",
+  },
+];
 
-export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
-  const { cycle, handleEditCycle, handleDeleteCycle } = props;
-
+export const SingleCycleCard: React.FC<TSingleStatProps> = ({
+  cycle,
+  handleEditCycle,
+  handleDeleteCycle,
+}) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
   const { setToastAlert } = useToast();
 
-  const { data: cycleIssues } = useSWR(
-    workspaceSlug && projectId && cycle.id ? CYCLE_ISSUES(cycle.id as string) : null,
-    workspaceSlug && projectId && cycle.id
-      ? () => cyclesService.getCycleIssues(workspaceSlug as string, projectId as string, cycle.id)
-      : null
-  );
-
   const endDate = new Date(cycle.end_date ?? "");
   const startDate = new Date(cycle.start_date ?? "");
-
-  const groupedIssues = {
-    backlog: [],
-    unstarted: [],
-    started: [],
-    cancelled: [],
-    completed: [],
-    ...groupBy(cycleIssues ?? [], "state_detail.group"),
-  };
 
   const handleAddToFavorites = () => {
     if (!workspaceSlug && !projectId && !cycle) return;
@@ -223,14 +225,14 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
     });
   };
 
-  const progressIndicatorData = Object.keys(groupedIssues).map((group, index) => ({
+  const progressIndicatorData = stateGroups.map((group, index) => ({
     id: index,
-    name: capitalizeFirstLetter(group),
+    name: group.title,
     value:
-      cycleIssues && cycleIssues.length > 0
-        ? (groupedIssues[group].length / cycleIssues.length) * 100
+      cycle.total_issues > 0
+        ? ((cycle[group.key as keyof ICycle] as number) / cycle.total_issues) * 100
         : 0,
-    color: stateGroupColors[group],
+    color: group.color,
   }));
 
   return (
@@ -341,25 +343,30 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = (props) => {
                     <div className="overflow-hidden rounded-b-md bg-white py-3 shadow">
                       <div className="col-span-2 space-y-3 px-4">
                         <div className="space-y-3 text-xs">
-                          {Object.keys(groupedIssues).map((group) => (
-                            <div key={group} className="flex items-center justify-between gap-2">
+                          {stateGroups.map((group) => (
+                            <div
+                              key={group.key}
+                              className="flex items-center justify-between gap-2"
+                            >
                               <div className="flex  items-center gap-2">
                                 <span
                                   className="block h-2 w-2 rounded-full"
                                   style={{
-                                    backgroundColor: stateGroupColors[group],
+                                    backgroundColor: group.color,
                                   }}
                                 />
-                                <h6 className="text-xs capitalize">{group}</h6>
+                                <h6 className="text-xs">{group.title}</h6>
                               </div>
                               <div>
                                 <span>
-                                  {groupedIssues[group].length}{" "}
+                                  {cycle[group.key as keyof ICycle] as number}{" "}
                                   <span className="text-gray-500">
                                     -{" "}
-                                    {cycleIssues && cycleIssues.length > 0
+                                    {cycle.total_issues > 0
                                       ? `${Math.round(
-                                          (groupedIssues[group].length / cycleIssues.length) * 100
+                                          ((cycle[group.key as keyof ICycle] as number) /
+                                            cycle.total_issues) *
+                                            100
                                         )}%`
                                       : "0%"}
                                   </span>
