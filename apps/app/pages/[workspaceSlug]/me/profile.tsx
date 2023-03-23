@@ -172,7 +172,7 @@ const Profile: NextPage = () => {
         {myProfile ? (
           <>
             <div className="space-y-5">
-              <section className="relative flex gap-10 rounded-xl bg-secondary p-5">
+              <section className="relative flex flex-col gap-y-6 gap-x-10 rounded-xl bg-secondary p-5 md:flex-row">
                 <button
                   type="button"
                   className="absolute top-4 right-4 cursor-pointer rounded bg-indigo-100 p-1 duration-300 hover:bg-theme hover:text-white"
@@ -187,7 +187,7 @@ const Profile: NextPage = () => {
                 <div className="flex-shrink-0">
                   <div className="space-y-4">
                     <div className="relative">
-                      <span className="inline-block h-40 w-40 overflow-hidden rounded bg-gray-100">
+                      <div className="inline-block h-40 w-40 overflow-hidden rounded bg-gray-100">
                         {!watch("avatar") || watch("avatar") === "" ? (
                           <UserIcon className="h-full w-full text-gray-300" />
                         ) : (
@@ -202,7 +202,7 @@ const Profile: NextPage = () => {
                             />
                           </div>
                         )}
-                      </span>
+                      </div>
                     </div>
                     <p className="text-sm text-gray-500">
                       Max file size is 5MB.
