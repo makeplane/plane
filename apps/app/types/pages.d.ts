@@ -39,21 +39,22 @@ export interface IPageForm {
 }
 
 export interface IPageBlock {
-  id: string;
-  issue_detail: string | null;
+  completed_at: Date | null;
   created_at: Date;
-  updated_at: Date;
-  name: string;
+  created_by: string;
   description: string;
   description_html: string;
   description_stripped: string | null;
-  completed_at: Date | null;
-  created_by: string;
-  updated_by: string;
-  project: string;
-  workspace: string;
-  page: string;
+  id: string;
   issue: string | null;
+  issue_detail: string | null;
+  name: string;
+  page: string;
+  project: string;
+  sort_order: number;
+  updated_at: Date;
+  updated_by: string;
+  workspace: string;
 }
 
 export interface IPageBlockForm {

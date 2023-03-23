@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 
+// react-hook-form
+import { useForm } from "react-hook-form";
 // lib
 import { requiredAuth } from "lib/auth";
 // services
@@ -20,13 +22,13 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import { Loader, PrimaryButton, TextArea } from "components/ui";
 // icons
 import { ArrowLeftIcon, PlusIcon, ShareIcon, StarIcon } from "@heroicons/react/24/outline";
+// helpers
+import { renderShortTime } from "helpers/date-time.helper";
 // types
 import type { NextPage, GetServerSidePropsContext } from "next";
-import { IPage } from "types";
+import { IPage, IPageBlock } from "types";
 // fetch-keys
 import { PAGE_BLOCK_LIST, PAGE_DETAILS, PROJECT_DETAILS } from "constants/fetch-keys";
-import { renderShortTime } from "helpers/date-time.helper";
-import { useForm } from "react-hook-form";
 
 const SinglePage: NextPage = () => {
   const router = useRouter();
@@ -94,8 +96,16 @@ const SinglePage: NextPage = () => {
         name: "New block",
       })
       .then((res) => {
-        console.log(res);
-        mutate(PAGE_BLOCK_LIST(pageId as string));
+        mutate<IPageBlock[]>(
+          PAGE_BLOCK_LIST(pageId as string),
+          (prevData) =>
+            prevData?.map((p) => {
+              if (p.id === res.id) return { ...p, ...res };
+
+              return p;
+            }),
+          false
+        );
       })
       .catch(() => {
         setToastAlert({
@@ -163,7 +173,7 @@ const SinglePage: NextPage = () => {
       }
     >
       {pageDetails ? (
-        <div className="h-full w-full rounded-md border bg-white p-4">
+        <div className="h-full w-full space-y-4 rounded-md border bg-white p-4">
           <div className="flex items-center justify-between gap-2 px-3">
             <button
               type="button"
@@ -192,7 +202,7 @@ const SinglePage: NextPage = () => {
               )}
             </div>
           </div>
-          <div className="mt-4">
+          <div>
             <TextArea
               id="name"
               name="name"

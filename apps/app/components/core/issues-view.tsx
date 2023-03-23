@@ -420,7 +420,7 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
                   (filters[key as keyof IIssueFilterOptions]?.length ?? 0) <= 0 ? (
                     <span>None</span>
                   ) : Array.isArray(filters[key as keyof IIssueFilterOptions]) ? (
-                    <div className="space-x-2">
+                    <div className="flex items-center gap-2">
                       {key === "state"
                         ? filters.state?.map((stateId: any) => {
                             const state = states?.find((s) => s.id === stateId);
