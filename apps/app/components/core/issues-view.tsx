@@ -96,6 +96,7 @@ export const IssuesView: React.FC<Props> = ({
     groupByProperty: selectedGroup,
     orderBy,
     filters,
+    isNotEmpty,
     setFilters,
     params,
   } = useIssuesView();
@@ -580,7 +581,7 @@ export const IssuesView: React.FC<Props> = ({
           )}
         </StrictModeDroppable>
         {groupedByIssues ? (
-          Object.keys(groupedByIssues).length > 0 ? (
+          isNotEmpty ? (
             <>
               {issueView === "list" ? (
                 <AllLists
