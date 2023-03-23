@@ -108,7 +108,7 @@ export const SingleBoard: React.FC<Props> = ({
                     key={issue.id}
                     draggableId={issue.id}
                     index={index}
-                    isDragDisabled={isNotAllowed}
+                    isDragDisabled={isNotAllowed || selectedGroup === "created_by"}
                   >
                     {(provided, snapshot) => (
                       <SingleBoardIssue

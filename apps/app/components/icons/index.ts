@@ -28,6 +28,7 @@ export * from "./priority-icon";
 export * from "./question-mark-circle-icon";
 export * from "./setting-icon";
 export * from "./signal-cellular-icon";
+export * from "./stacked-layers-icon";
 export * from "./started-state-icon";
 export * from "./state-group-icon";
 export * from "./tag-icon";

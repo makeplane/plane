@@ -28,6 +28,7 @@ import { DeleteViewModal, CreateUpdateViewModal } from "components/views";
 // types
 import { IView } from "types";
 import type { NextPage, GetServerSidePropsContext } from "next";
+import { StackedLayersIcon } from "components/icons";
 
 const ProjectViews: NextPage = () => {
   const [isCreateViewModalOpen, setIsCreateViewModalOpen] = useState(false);
@@ -59,7 +60,7 @@ const ProjectViews: NextPage = () => {
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
-          <BreadcrumbItem title={`${activeProject?.name ?? "Project"} Cycles`} />
+          <BreadcrumbItem title={`${activeProject?.name ?? "Project"} Views`} />
         </Breadcrumbs>
       }
       right={
@@ -82,29 +83,35 @@ const ProjectViews: NextPage = () => {
       />
       {views ? (
         views.length > 0 ? (
-          <div className="rounded-[10px] border">
-            {views.map((view) => (
-              <div
-                className="flex items-center justify-between border-b bg-white p-4 first:rounded-t-[10px] last:rounded-b-[10px]"
-                key={view.id}
-              >
-                <Link href={`/${workspaceSlug}/projects/${projectId}/views/${view.id}`}>
-                  <a>{view.name}</a>
-                </Link>
-                <CustomMenu width="auto" verticalEllipsis>
-                  <CustomMenu.MenuItem
-                    onClick={() => {
-                      setSelectedView(view);
-                    }}
-                  >
-                    <span className="flex items-center justify-start gap-2 text-gray-800">
-                      <TrashIcon className="h-4 w-4" />
-                      <span>Delete</span>
-                    </span>
-                  </CustomMenu.MenuItem>
-                </CustomMenu>
-              </div>
-            ))}
+          <div className="space-y-5">
+            <h3 className="text-3xl font-semibold text-black">Views</h3>
+            <div className="rounded-[10px] border">
+              {views.map((view) => (
+                <div
+                  className="flex items-center justify-between border-b bg-white p-4 first:rounded-t-[10px] last:rounded-b-[10px]"
+                  key={view.id}
+                >
+                  <div className="flex items-center gap-2">
+                    <StackedLayersIcon height={18} width={18} />
+                    <Link href={`/${workspaceSlug}/projects/${projectId}/views/${view.id}`}>
+                      <a>{view.name}</a>
+                    </Link>
+                  </div>
+                  <CustomMenu width="auto" verticalEllipsis>
+                    <CustomMenu.MenuItem
+                      onClick={() => {
+                        setSelectedView(view);
+                      }}
+                    >
+                      <span className="flex items-center justify-start gap-2 text-gray-800">
+                        <TrashIcon className="h-4 w-4" />
+                        <span>Delete</span>
+                      </span>
+                    </CustomMenu.MenuItem>
+                  </CustomMenu>
+                </div>
+              ))}
+            </div>
           </div>
         ) : (
           <EmptyState
