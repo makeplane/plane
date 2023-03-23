@@ -1,6 +1,8 @@
 import React from "react";
+
 import Link from "next/link";
 import { useRouter } from "next/router";
+
 import { mutate } from "swr";
 
 // services
@@ -17,7 +19,6 @@ import useToast from "hooks/use-toast";
 import { IPage } from "types";
 // fetch keys
 import { PAGE_LIST } from "constants/fetch-keys";
-import Label from "./page-label";
 
 type TSingleStatProps = {
   page: IPage;
@@ -106,9 +107,6 @@ export const SinglePageGridItem: React.FC<TSingleStatProps> = (props) => {
                   <p className="mr-2 truncate text-sm font-medium">{truncateText(page.name, 75)}</p>
                 </a>
               </Link>
-              <Label variant="green">Meetings</Label>
-              <Label variant="red">Standup</Label>
-              <Label variant="blue">Plans</Label>
             </div>
 
             <div className="ml-2 flex flex-shrink-0">

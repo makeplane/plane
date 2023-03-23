@@ -7,7 +7,6 @@ import { mutate } from "swr";
 import pagesService from "services/pages.service";
 // ui
 import { CustomMenu } from "components/ui";
-import Label from "./page-label";
 // icons
 import { PencilIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
 // helpers
@@ -16,7 +15,7 @@ import { truncateText } from "helpers/string.helper";
 import useToast from "hooks/use-toast";
 // types
 import { IPage } from "types";
-// fetch keys
+// fetch-keys
 import { PAGE_LIST } from "constants/fetch-keys";
 
 type TSingleStatProps = {
@@ -106,9 +105,6 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = (props) => {
                   <p className="mr-2 truncate text-sm font-medium">{truncateText(page.name, 75)}</p>
                 </a>
               </Link>
-              <Label variant="green">Meetings</Label>
-              <Label variant="red">Standup</Label>
-              <Label variant="blue">Plans</Label>
             </div>
             <div className="ml-2 flex flex-shrink-0">
               <div className="flex items-center gap-2">
@@ -121,7 +117,7 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = (props) => {
                   </button>
                 ) : (
                   <button onClick={handleAddToFavorites} type="button" className="z-10">
-                    <StarIcon className="h-4 w-4 " color="#858E96" />
+                    <StarIcon className="h-4 w-4 " color="#858e96" />
                   </button>
                 )}
                 <CustomMenu width="auto" verticalEllipsis>

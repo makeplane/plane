@@ -77,6 +77,14 @@ class PageServices extends APIService {
       });
   }
 
+  async getPageDetails(workspaceSlug: string, projectId: string, pageId: string): Promise<IPage> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async createPageBlock(
     workspaceSlug: string,
     projectId: string,

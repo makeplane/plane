@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 
@@ -6,116 +6,52 @@ import useSWR, { mutate } from "swr";
 
 // lib
 import { requiredAuth } from "lib/auth";
-
 // services
 import projectService from "services/project.service";
-
+import pagesService from "services/pages.service";
+// hooks
+import useToast from "hooks/use-toast";
 // layouts
 import AppLayout from "layouts/app-layout";
+// components
+import { SinglePageBlock } from "components/pages";
 // ui
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-
-// fetching keys
-import { PAGE_BLOCK_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
-// components
-import { CustomMenu } from "components/ui";
-
+import { Loader, PrimaryButton, TextArea } from "components/ui";
+// icons
+import { ArrowLeftIcon, PlusIcon, ShareIcon, StarIcon } from "@heroicons/react/24/outline";
 // types
-import { IPageBlock, IView } from "types";
 import type { NextPage, GetServerSidePropsContext } from "next";
-import pagesService from "services/pages.service";
-import useToast from "hooks/use-toast";
+import { IPage } from "types";
+// fetch-keys
+import { PAGE_BLOCK_LIST, PAGE_DETAILS, PROJECT_DETAILS } from "constants/fetch-keys";
+import { renderShortTime } from "helpers/date-time.helper";
+import { useForm } from "react-hook-form";
 
-const PageBlock: React.FC<any> = ({ pageBlock }: { pageBlock: IPageBlock }) => {
-  const [name, setName] = useState(pageBlock.name);
+const SinglePage: NextPage = () => {
+  const router = useRouter();
+  const { workspaceSlug, projectId, pageId } = router.query;
+
   const { setToastAlert } = useToast();
-  const {
-    query: { workspaceSlug, projectId, pageId },
-  } = useRouter();
 
-  const updatePageBlock = async () => {
-    const pageBlockId = pageBlock.id;
-    await pagesService
-      .patchPageBlock(
-        workspaceSlug as string,
-        projectId as string,
-        pageId as string,
-        pageBlockId as string,
-        {
-          name,
-        }
-      )
-      .then(() => {
-        mutate(PAGE_BLOCK_LIST(pageId as string));
-        console.log("Updated block");
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Page could not be updated. Please try again.",
-        });
-      });
-  };
-
-  const deletePageBlock = async () => {
-    const pageBlockId = pageBlock.id;
-    await pagesService
-      .deletePageBlock(
-        workspaceSlug as string,
-        projectId as string,
-        pageId as string,
-        pageBlockId as string
-      )
-      .then(() => {
-        mutate(PAGE_BLOCK_LIST(pageId as string));
-        console.log("deleted block");
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Page could not be deleted. Please try again.",
-        });
-      });
-  };
-
-  return (
-    <li className="group flex justify-between rounded p-2 hover:bg-slate-100">
-      <input
-        type="text"
-        value={name}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            console.log("Updating...");
-            updatePageBlock();
-          }
-        }}
-        onChange={(e) => {
-          setName(e.target.value);
-        }}
-        className="border-none bg-transparent outline-none"
-      />
-      <div className="hidden group-hover:block">
-        <CustomMenu>
-          <CustomMenu.MenuItem>Convert to issue</CustomMenu.MenuItem>
-          <CustomMenu.MenuItem onClick={deletePageBlock}>Delete block</CustomMenu.MenuItem>
-        </CustomMenu>
-      </div>
-    </li>
-  );
-};
-
-const ProjectPages: NextPage = () => {
-  const { setToastAlert } = useToast();
-  const {
-    query: { workspaceSlug, projectId, pageId },
-  } = useRouter();
+  const { handleSubmit, reset, watch, setValue } = useForm<IPage>({ defaultValues: { name: "" } });
 
   const { data: activeProject } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
     workspaceSlug && projectId
       ? () => projectService.getProject(workspaceSlug as string, projectId as string)
+      : null
+  );
+
+  const { data: pageDetails } = useSWR(
+    workspaceSlug && projectId && pageId ? PAGE_DETAILS(pageId as string) : null,
+    workspaceSlug && projectId
+      ? () =>
+          pagesService.getPageDetails(
+            workspaceSlug as string,
+            projectId as string,
+            pageId as string
+          )
       : null
   );
 
@@ -131,12 +67,34 @@ const ProjectPages: NextPage = () => {
       : null
   );
 
+  const updatePage = async (formData: IPage) => {
+    if (!workspaceSlug || !projectId || !pageId) return;
+
+    if (!formData.name || formData.name.length === 0 || formData.name === "") return;
+
+    await pagesService
+      .patchPage(workspaceSlug as string, projectId as string, pageId as string, formData)
+      .then(() => {
+        mutate<IPage>(
+          PAGE_DETAILS(pageId as string),
+          (prevData) => ({
+            ...prevData,
+            ...formData,
+          }),
+          false
+        );
+      });
+  };
+
   const createPageBlock = async () => {
+    if (!workspaceSlug || !projectId || !pageId) return;
+
     await pagesService
       .createPageBlock(workspaceSlug as string, projectId as string, pageId as string, {
         name: "New block",
       })
-      .then(() => {
+      .then((res) => {
+        console.log(res);
         mutate(PAGE_BLOCK_LIST(pageId as string));
       })
       .catch(() => {
@@ -147,6 +105,50 @@ const ProjectPages: NextPage = () => {
         });
       });
   };
+
+  const handleAddToFavorites = () => {
+    if (!workspaceSlug || !projectId || !pageId) return;
+
+    mutate<IPage>(
+      PAGE_DETAILS(pageId as string),
+      (prevData) => ({
+        ...(prevData as IPage),
+        is_favorite: true,
+      }),
+      false
+    );
+
+    pagesService.addPageToFavorites(workspaceSlug as string, projectId as string, {
+      page: pageId as string,
+    });
+  };
+
+  const handleRemoveFromFavorites = () => {
+    if (!workspaceSlug || !projectId || !pageId) return;
+
+    mutate<IPage>(
+      PAGE_DETAILS(pageId as string),
+      (prevData) => ({
+        ...(prevData as IPage),
+        is_favorite: false,
+      }),
+      false
+    );
+
+    pagesService.removePageFromFavorites(
+      workspaceSlug as string,
+      projectId as string,
+      pageId as string
+    );
+  };
+
+  useEffect(() => {
+    if (!pageDetails) return;
+
+    reset({
+      ...pageDetails,
+    });
+  }, [reset, pageDetails]);
 
   return (
     <AppLayout
@@ -160,17 +162,77 @@ const ProjectPages: NextPage = () => {
         </Breadcrumbs>
       }
     >
-      <div className="flex space-x-4 px-2">
-        <button onClick={createPageBlock}>Li</button>
-        <button onClick={() => {}}>P</button>
-      </div>
-      <div className="rounded border border-slate-200 bg-white p-4 ">
-        {pageBlocks
-          ? pageBlocks.length === 0
-            ? "Write something..."
-            : pageBlocks.map((pageBlock) => <PageBlock key={pageBlock.id} pageBlock={pageBlock} />)
-          : "Loading..."}
-      </div>
+      {pageDetails ? (
+        <div className="h-full w-full rounded-md border bg-white p-4">
+          <div className="flex items-center justify-between gap-2 px-3">
+            <button
+              type="button"
+              className="flex items-center gap-2 text-sm text-gray-500"
+              onClick={() => router.back()}
+            >
+              <ArrowLeftIcon className="h-4 w-4" />
+              Back
+            </button>
+            <div className="flex items-center gap-4">
+              <span className="text-sm text-gray-500">
+                {renderShortTime(pageDetails.created_at)}
+              </span>
+              <PrimaryButton className="flex items-center gap-2">
+                <ShareIcon className="h-4 w-4" />
+                Share
+              </PrimaryButton>
+              {pageDetails.is_favorite ? (
+                <button onClick={handleRemoveFromFavorites} className="z-10">
+                  <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
+                </button>
+              ) : (
+                <button onClick={handleAddToFavorites} type="button" className="z-10">
+                  <StarIcon className="h-4 w-4" />
+                </button>
+              )}
+            </div>
+          </div>
+          <div className="mt-4">
+            <TextArea
+              id="name"
+              name="name"
+              placeholder="Enter issue name"
+              value={watch("name")}
+              onBlur={handleSubmit(updatePage)}
+              onChange={(e) => {
+                setValue("name", e.target.value);
+              }}
+              required={true}
+              className="min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-2xl font-semibold outline-none ring-0 focus:ring-1 focus:ring-theme"
+              role="textbox"
+            />
+          </div>
+          <div className="px-3">
+            {pageBlocks ? (
+              pageBlocks.length === 0 ? (
+                <button
+                  type="button"
+                  className="flex items-center gap-1 rounded px-2.5 py-1 text-xs hover:bg-gray-100"
+                  onClick={createPageBlock}
+                >
+                  <PlusIcon className="h-3 w-3" />
+                  Add new block
+                </button>
+              ) : (
+                pageBlocks.map((pageBlock) => (
+                  <SinglePageBlock key={pageBlock.id} pageBlock={pageBlock} />
+                ))
+              )
+            ) : (
+              "Loading..."
+            )}
+          </div>
+        </div>
+      ) : (
+        <Loader>
+          <Loader.Item height="200px" />
+        </Loader>
+      )}
     </AppLayout>
   );
 };
@@ -196,4 +258,4 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   };
 };
 
-export default ProjectPages;
+export default SinglePage;

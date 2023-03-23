@@ -145,3 +145,19 @@ export const renderShortDate = (date: Date) => {
   const month = months[date.getMonth()];
   return isNaN(date.getTime()) ? "N/A" : `${day} ${month}`;
 };
+
+export const renderShortTime = (date: string | Date) => {
+  if (!date || date === "") return null;
+
+  date = new Date(date);
+
+  const hours = date.getHours();
+  let minutes: any = date.getMinutes();
+
+  // Add leading zero to single-digit minutes
+  if (minutes < 10) {
+    minutes = "0" + minutes;
+  }
+
+  return hours + ":" + minutes;
+};

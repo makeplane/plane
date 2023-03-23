@@ -13,22 +13,23 @@ export interface LabelDetail {
 }
 
 export interface IPage {
-  id: string;
-  is_favorite: boolean;
+  access: number;
+  color: string;
   created_at: Date;
-  updated_at: Date;
-  name: string;
-  labels: string[];
-  label_details: LabelDetail[];
+  created_by: string;
   description: string;
   description_html: string;
   description_stripped: string | null;
-  access: number;
-  created_by: string;
-  updated_by: string;
-  project: string;
-  workspace: string;
+  id: string;
+  is_favorite: boolean;
+  label_details: LabelDetail[];
+  labels: string[];
+  name: string;
   owned_by: string;
+  project: string;
+  updated_at: Date;
+  updated_by: string;
+  workspace: string;
 }
 
 export interface IPageForm {

@@ -23,6 +23,7 @@ export * from "./started-state-icon";
 export * from "./layer-diagonal-icon";
 export * from "./lock-icon";
 export * from "./menu-icon";
+export * from "./pencil-scribble-icon";
 export * from "./plus-icon";
 export * from "./priority-icon";
 export * from "./question-mark-circle-icon";

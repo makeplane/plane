@@ -10,6 +10,7 @@ import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import {
   ContrastIcon,
   LayerDiagonalIcon,
+  PencilScribbleIcon,
   PeopleGroupIcon,
   SettingIcon,
   ViewListIcon,
@@ -52,7 +53,7 @@ const navigation = (workspaceSlug: string, projectId: string) => [
   {
     name: "Pages",
     href: `/${workspaceSlug}/projects/${projectId}/pages`,
-    icon: ViewListIcon,
+    icon: PencilScribbleIcon,
   },
   {
     name: "Settings",
@@ -164,6 +165,7 @@ export const SingleSidebarProject: React.FC<Props> = ({
                               ? "text-gray-900"
                               : "text-gray-500 group-hover:text-gray-900"
                           } ${!sidebarCollapse ? "mr-3" : ""}`}
+                          color={item.href === router.asPath ? "#111827" : "#858e96"}
                           aria-hidden="true"
                         />
                       </div>
