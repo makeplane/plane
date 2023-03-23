@@ -2,20 +2,11 @@ import { useState } from "react";
 // components
 import { DeletePageModal } from "components/pages";
 import { Loader } from "components/ui";
+import { SinglePageGridItem } from "components/pages/page-grid-item";
 // types
 import { IPage } from "types";
-import { SinglePageListItem } from "./single-page-list-item";
-type TPagesListProps = {
-  pages: IPage[] | undefined;
-  setCreateUpdatePageModal: React.Dispatch<React.SetStateAction<boolean>>;
-  setSelectedPage: React.Dispatch<React.SetStateAction<any>>;
-};
 
-export const PagesList: React.FC<TPagesListProps> = ({
-  pages,
-  setCreateUpdatePageModal,
-  setSelectedPage,
-}) => {
+export const PagesGrid: React.FC<any> = ({ pages, setCreateUpdatePageModal, setSelectedPage }) => {
   const [pageDeleteModal, setPageDeleteModal] = useState(false);
   const [selectedPageForDelete, setSelectedPageForDelete] = useState<any>();
 
@@ -42,16 +33,18 @@ export const PagesList: React.FC<TPagesListProps> = ({
       />
       {pages ? (
         pages.length > 0 ? (
-          <ul role="list" className="divide-y divide-gray-200">
-            {pages.map((page) => (
-              <SinglePageListItem
-                page={page}
-                key={page.id}
-                handleDeletePage={() => handleDeletePage(page)}
-                handleEditPage={() => handleEditPage(page)}
-              />
-            ))}
-          </ul>
+          <div className="rounded-[10px] border border-gray-200 bg-white">
+            <ul role="list" className="divide-y divide-gray-200">
+              {pages.map((page: any) => (
+                <SinglePageGridItem
+                  page={page}
+                  key={page.id}
+                  handleDeletePage={() => handleDeletePage(page)}
+                  handleEditPage={() => handleEditPage(page)}
+                />
+              ))}
+            </ul>
+          </div>
         ) : (
           "No Pages found"
         )
