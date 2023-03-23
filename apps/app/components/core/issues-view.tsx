@@ -207,7 +207,7 @@ export const IssuesView: React.FC<Props> = ({
               if (!prevData) return prevData;
 
               const sourceGroupArray = prevData[sourceGroup];
-              const destinationGroupArray = prevData[destinationGroup];
+              const destinationGroupArray = groupedByIssues[destinationGroup];
 
               sourceGroupArray.splice(source.index, 1);
               destinationGroupArray.splice(destination.index, 0, draggedItem);
@@ -229,7 +229,7 @@ export const IssuesView: React.FC<Props> = ({
               if (!prevData) return prevData;
 
               const sourceGroupArray = prevData[sourceGroup];
-              const destinationGroupArray = prevData[destinationGroup];
+              const destinationGroupArray = groupedByIssues[destinationGroup];
 
               sourceGroupArray.splice(source.index, 1);
               destinationGroupArray.splice(destination.index, 0, draggedItem);
@@ -249,7 +249,7 @@ export const IssuesView: React.FC<Props> = ({
               if (!prevData) return prevData;
 
               const sourceGroupArray = prevData[sourceGroup];
-              const destinationGroupArray = prevData[destinationGroup];
+              const destinationGroupArray = groupedByIssues[destinationGroup];
 
               sourceGroupArray.splice(source.index, 1);
               destinationGroupArray.splice(destination.index, 0, draggedItem);

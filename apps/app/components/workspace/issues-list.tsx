@@ -7,12 +7,12 @@ import { ExclamationTriangleIcon } from "@heroicons/react/20/solid";
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { truncateText } from "helpers/string.helper";
 // types
-import { IIssue } from "types";
+import { IIssueLite } from "types";
 import { Loader } from "components/ui";
 import { LayerDiagonalIcon } from "components/icons";
 
 type Props = {
-  issues: IIssue[] | undefined;
+  issues: IIssueLite[] | undefined;
   type: "overdue" | "upcoming";
 };
 
@@ -53,7 +53,7 @@ export const IssuesList: React.FC<Props> = ({ issues, type }) => {
 
                 return (
                   <Link
-                    href={`/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`}
+                    href={`/${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`}
                     key={issue.id}
                   >
                     <a>

@@ -1,32 +1,22 @@
 import { useEffect, useRef, useState } from "react";
 
-import { useRouter } from "next/router";
-
-import useSWR from "swr";
-
-// services
-import userService from "services/user.service";
 // ui
 import { Tooltip } from "components/ui";
 // helpers
 import { renderDateFormat, renderShortNumericDateFormat } from "helpers/date-time.helper";
-// fetch-keys
-import { USER_ACTIVITY } from "constants/fetch-keys";
+// types
+import { IUserActivity } from "types";
 // constants
 import { DAYS, MONTHS } from "constants/project";
 
-export const ActivityGraph = () => {
+type Props = {
+  activities: IUserActivity[] | undefined;
+};
+
+export const ActivityGraph: React.FC<Props> = ({ activities }) => {
   const ref = useRef<HTMLDivElement>(null);
 
   const [width, setWidth] = useState(0);
-
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
-
-  const { data: userActivity } = useSWR(
-    workspaceSlug ? USER_ACTIVITY(workspaceSlug as string) : null,
-    workspaceSlug ? () => userService.userActivity(workspaceSlug as string) : null
-  );
 
   const today = new Date();
   const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
@@ -112,7 +102,7 @@ export const ActivityGraph = () => {
             ref={ref}
           >
             {recentDates.map((date) => {
-              const isActive = userActivity?.find((a) => a.created_date === date);
+              const isActive = activities?.find((a) => a.created_date === date);
 
               return (
                 <Tooltip

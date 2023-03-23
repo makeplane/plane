@@ -7,7 +7,6 @@ import { mutate } from "swr";
 import pagesService from "services/pages.service";
 // ui
 import { CustomMenu } from "components/ui";
-import Label from "./page-label";
 // icons
 import { PencilIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
 // helpers
@@ -18,6 +17,7 @@ import useToast from "hooks/use-toast";
 import { IPage } from "types";
 // fetch keys
 import { PAGE_LIST } from "constants/fetch-keys";
+import Label from "./page-label";
 
 type TSingleStatProps = {
   page: IPage;
@@ -25,7 +25,7 @@ type TSingleStatProps = {
   handleDeletePage: () => void;
 };
 
-export const SinglePageListItem: React.FC<TSingleStatProps> = (props) => {
+export const SinglePageGridItem: React.FC<TSingleStatProps> = (props) => {
   const { page, handleEditPage, handleDeletePage } = props;
 
   const router = useRouter();
@@ -98,7 +98,7 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = (props) => {
   return (
     <div>
       <li>
-        <div className="relative rounded px-4 py-4 hover:bg-gray-200 sm:px-6">
+        <div className="relative rounded px-4 py-4  sm:px-6">
           <div className="flex items-center justify-between">
             <div className="flex gap-2">
               <Link href={`/${workspaceSlug}/projects/${projectId}/pages/${page.id}`}>
@@ -110,6 +110,7 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = (props) => {
               <Label variant="red">Standup</Label>
               <Label variant="blue">Plans</Label>
             </div>
+
             <div className="ml-2 flex flex-shrink-0">
               <div className="flex items-center gap-2">
                 <p className="text-sm text-gray-400">
@@ -140,6 +141,29 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = (props) => {
                 </CustomMenu>
               </div>
             </div>
+          </div>
+          <div className="relative mt-6 space-y-2 text-sm leading-relaxed text-gray-600">
+            <p>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis atque aliquam
+              saepe sapiente illo ratione delectus dolorem repellat, id autem, molestiae neque
+              quaerat ipsum perspiciatis pariatur? Unde consectetur quibusdam ut.
+            </p>
+            <p>
+              Quisquam quas expedita cupiditate ipsum cumque fugit at, optio quia ea? Id doloribus
+              assumenda ad magni laborum aut, aspernatur nemo similique, suscipit dolores porro
+              necessitatibus, inventore ab aliquid molestias. Aspernatur.
+            </p>
+            <p>
+              Beatae obcaecati minus temporibus sunt, quo nulla, tenetur nisi sit maiores aspernatur
+              numquam facilis asperiores eos rerum, ad dolorem quos laboriosam dicta eaque! Pariatur
+              magni eos, architecto itaque esse minus.
+            </p>
+            <p>
+              Dolorum saepe impedit officiis odit! Porro aliquid dolorum corporis impedit eaque
+              iusto, illo hic neque quia vero aperiam? Nemo aliquam, hic incidunt mollitia totam
+              asperiores sunt nam inventore voluptatibus eum?
+            </p>
+            <div className="absolute bottom-0 h-24 w-full bg-gradient-to-t from-white" />
           </div>
         </div>
       </li>
