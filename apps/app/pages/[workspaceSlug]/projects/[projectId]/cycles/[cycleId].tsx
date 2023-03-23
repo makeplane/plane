@@ -73,7 +73,7 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
   const cycleStatus =
     cycleDetails?.start_date && cycleDetails?.end_date
       ? getDateRangeStatus(cycleDetails?.start_date, cycleDetails?.end_date)
-      : "";
+      : "draft";
 
   const { data: issues } = useSWR(
     workspaceSlug && projectId
