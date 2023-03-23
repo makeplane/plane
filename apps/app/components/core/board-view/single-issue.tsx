@@ -189,7 +189,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
         isOpen={contextMenu}
         setIsOpen={setContextMenu}
       >
-        {!isNotAllowed &&(
+        {!isNotAllowed && (
           <>
             <ContextMenu.Item Icon={PencilIcon} onClick={editIssue}>
               Edit issue
@@ -222,7 +222,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
       >
         <div className="group/card relative select-none p-3.5">
           {!isNotAllowed && (
-            <div className="absolute top-1.5 right-1.5 z-10 opacity-0 group-hover/card:opacity-100">
+            <div className="z-1 absolute top-1.5 right-1.5 opacity-0 group-hover/card:opacity-100">
               {type && !isNotAllowed && (
                 <CustomMenu width="auto" ellipsis>
                   <CustomMenu.MenuItem onClick={editIssue}>Edit issue</CustomMenu.MenuItem>
