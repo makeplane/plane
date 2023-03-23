@@ -11,6 +11,7 @@ import issuesService from "services/issues.service";
 import stateService from "services/state.service";
 import projectService from "services/project.service";
 import modulesService from "services/modules.service";
+import viewsService from "services/views.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useIssuesView from "hooks/use-issues-view";
@@ -29,6 +30,7 @@ import {
   TrashIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+import { getStateGroupIcon } from "components/icons";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 // types
@@ -48,9 +50,9 @@ import {
   PROJECT_ISSUES_LIST_WITH_PARAMS,
   PROJECT_MEMBERS,
   STATE_LIST,
+  VIEW_DETAILS,
 } from "constants/fetch-keys";
 import { getPriorityIcon } from "components/icons/priority-icon";
-import { getStateGroupIcon } from "components/icons";
 
 type Props = {
   type?: "issue" | "cycle" | "module";
@@ -113,6 +115,18 @@ export const IssuesView: React.FC<Props> = ({
     projectId ? PROJECT_MEMBERS(projectId as string) : null,
     workspaceSlug && projectId
       ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
+      : null
+  );
+
+  const { data: viewDetails } = useSWR(
+    workspaceSlug && projectId && viewId ? VIEW_DETAILS(viewId as string) : null,
+    workspaceSlug && projectId && viewId
+      ? () =>
+          viewsService.getViewDetails(
+            workspaceSlug as string,
+            projectId as string,
+            viewId as string
+          )
       : null
   );
 
@@ -391,6 +405,8 @@ export const IssuesView: React.FC<Props> = ({
     (key) => filters[key as keyof IIssueFilterOptions] === null
   );
 
+  const isUpdatingView = JSON.stringify(filters) === JSON.stringify(viewDetails?.query_data);
+
   return (
     <>
       <CreateUpdateViewModal
@@ -540,27 +556,49 @@ export const IssuesView: React.FC<Props> = ({
           })}
         </div>
 
-        {Object.keys(filters).length > 0 && nullFilters.length !== Object.keys(filters).length && (
-          <PrimaryButton
-            onClick={() => {
-              if (viewId) {
-                setFilters({}, true);
-                setToastAlert({
-                  title: "View updated",
-                  message: "Your view has been updated",
-                  type: "success",
-                });
-              } else
-                setCreateViewModal({
-                  query: filters,
-                });
-            }}
-            className="flex items-center gap-2 text-sm"
-          >
-            {!viewId && <PlusIcon className="h-4 w-4" />}
-            Save view
-          </PrimaryButton>
-        )}
+        {viewId
+          ? isUpdatingView && (
+              <PrimaryButton
+                onClick={() => {
+                  if (viewId) {
+                    setFilters({}, true);
+                    setToastAlert({
+                      title: "View updated",
+                      message: "Your view has been updated",
+                      type: "success",
+                    });
+                  } else
+                    setCreateViewModal({
+                      query: filters,
+                    });
+                }}
+                className="flex items-center gap-2 text-sm"
+              >
+                Update view
+              </PrimaryButton>
+            )
+          : Object.keys(filters).length > 0 &&
+            nullFilters.length !== Object.keys(filters).length && (
+              <PrimaryButton
+                onClick={() => {
+                  if (viewId) {
+                    setFilters({}, true);
+                    setToastAlert({
+                      title: "View updated",
+                      message: "Your view has been updated",
+                      type: "success",
+                    });
+                  } else
+                    setCreateViewModal({
+                      query: filters,
+                    });
+                }}
+                className="flex items-center gap-2 text-sm"
+              >
+                <PlusIcon className="h-4 w-4" />
+                Save view
+              </PrimaryButton>
+            )}
       </div>
       <DragDropContext onDragEnd={handleOnDragEnd}>
         <StrictModeDroppable droppableId="trashBox">

@@ -1,19 +1,27 @@
 import { useRouter } from "next/router";
 
+import useSWR from "swr";
+
 // headless ui
 import { Disclosure, Transition } from "@headlessui/react";
+// services
+import issuesService from "services/issues.service";
+import projectService from "services/project.service";
 // hooks
 import useIssuesProperties from "hooks/use-issue-properties";
 // components
 import { SingleListIssue } from "components/core";
+// ui
+import { CustomMenu } from "components/ui";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { getStateGroupIcon } from "components/icons";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
-import { IIssue, IProjectMember, IState, UserAuth } from "types";
-import { CustomMenu } from "components/ui";
+import { IIssue, IIssueLabels, IState, TIssueGroupByOptions, UserAuth } from "types";
+// fetch-keys
+import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS } from "constants/fetch-keys";
 
 type Props = {
   type?: "issue" | "cycle" | "module";
@@ -23,7 +31,7 @@ type Props = {
   groupedByIssues: {
     [key: string]: IIssue[];
   };
-  selectedGroup: "priority" | "state" | "labels" | null;
+  selectedGroup: TIssueGroupByOptions;
   addIssueToState: () => void;
   makeIssueCopy: (issue: IIssue) => void;
   handleEditIssue: (issue: IIssue) => void;
@@ -55,6 +63,42 @@ export const SingleList: React.FC<Props> = ({
 
   const [properties] = useIssuesProperties(workspaceSlug as string, projectId as string);
 
+  const { data: issueLabels } = useSWR<IIssueLabels[]>(
+    workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string)
+      : null
+  );
+
+  const { data: members } = useSWR(
+    workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
+      : null
+  );
+
+  const getGroupTitle = () => {
+    let title = addSpaceIfCamelCase(groupTitle);
+
+    switch (selectedGroup) {
+      case "state":
+        title = addSpaceIfCamelCase(currentState?.name ?? "");
+        break;
+      case "labels":
+        title = issueLabels?.find((label) => label.id === groupTitle)?.name ?? "None";
+        break;
+      case "created_by":
+        const member = members?.find((member) => member.member.id === groupTitle)?.member;
+        title =
+          member?.first_name && member.first_name !== ""
+            ? `${member.first_name} ${member.last_name}`
+            : member?.email ?? "";
+        break;
+    }
+
+    return title;
+  };
+
   return (
     <Disclosure key={groupTitle} as="div" defaultOpen>
       {({ open }) => (
@@ -75,9 +119,7 @@ export const SingleList: React.FC<Props> = ({
                 )}
                 {selectedGroup !== null ? (
                   <h2 className="text-xl font-semibold capitalize leading-6 text-gray-800">
-                    {selectedGroup === "state"
-                      ? addSpaceIfCamelCase(currentState?.name ?? "")
-                      : addSpaceIfCamelCase(groupTitle)}
+                    {getGroupTitle()}
                   </h2>
                 ) : (
                   <h2 className="font-medium leading-5">All Issues</h2>

@@ -10,7 +10,7 @@ import ToastAlert from "components/toast-alert";
 import projectService from "services/project.service";
 import viewsService from "services/views.service";
 // types
-import { IIssueFilterOptions, IProjectMember } from "types";
+import { IIssueFilterOptions, IProjectMember, TIssueGroupByOptions } from "types";
 // fetch-keys
 import { USER_PROJECT_VIEW, VIEW_DETAILS } from "constants/fetch-keys";
 
@@ -18,7 +18,7 @@ export const issueViewContext = createContext<ContextType>({} as ContextType);
 
 type IssueViewProps = {
   issueView: "list" | "kanban";
-  groupByProperty: "state" | "priority" | "labels" | null;
+  groupByProperty: TIssueGroupByOptions;
   orderBy: "created_at" | "updated_at" | "priority" | "sort_order";
   showEmptyGroups: boolean;
   filters: IIssueFilterOptions;
@@ -37,7 +37,7 @@ type ReducerActionType = {
 };
 
 type ContextType = IssueViewProps & {
-  setGroupByProperty: (property: "state" | "priority" | "labels" | null) => void;
+  setGroupByProperty: (property: TIssueGroupByOptions) => void;
   setOrderBy: (property: "created_at" | "updated_at" | "priority" | "sort_order") => void;
   setShowEmptyGroups: (property: boolean) => void;
   setFilters: (filters: Partial<IIssueFilterOptions>, saveToServer?: boolean) => void;
@@ -49,7 +49,7 @@ type ContextType = IssueViewProps & {
 
 type StateType = {
   issueView: "list" | "kanban";
-  groupByProperty: "state" | "priority" | "labels" | null;
+  groupByProperty: TIssueGroupByOptions;
   orderBy: "created_at" | "updated_at" | "priority" | "sort_order";
   showEmptyGroups: boolean;
   filters: IIssueFilterOptions;
@@ -167,11 +167,11 @@ const saveDataToServer = async (workspaceSlug: string, projectID: string, state:
 
 const sendFilterDataToServer = async (
   workspaceSlug: string,
-  projectID: string,
+  projectId: string,
   viewId: string,
   state: any
 ) => {
-  await viewsService.patchView(workspaceSlug, projectID, viewId, {
+  await viewsService.patchView(workspaceSlug, projectId, viewId, {
     ...state,
   });
 };
@@ -283,7 +283,7 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
   }, [workspaceSlug, projectId, state, mutateMyViewProps]);
 
   const setGroupByProperty = useCallback(
-    (property: "state" | "priority" | "labels" | null) => {
+    (property: TIssueGroupByOptions) => {
       dispatch({
         type: "SET_GROUP_BY_PROPERTY",
         payload: {

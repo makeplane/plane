@@ -37,7 +37,7 @@ import {
 import { handleIssuesMutation } from "constants/issue";
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 // types
-import { IIssue, Properties, UserAuth } from "types";
+import { IIssue, Properties, TIssueGroupByOptions, UserAuth } from "types";
 // fetch-keys
 import {
   CYCLE_ISSUES_WITH_PARAMS,
@@ -53,7 +53,7 @@ type Props = {
   properties: Properties;
   groupTitle?: string;
   index: number;
-  selectedGroup: "priority" | "state" | "labels" | null;
+  selectedGroup: TIssueGroupByOptions;
   editIssue: () => void;
   makeIssueCopy: () => void;
   removeIssue?: (() => void) | null;

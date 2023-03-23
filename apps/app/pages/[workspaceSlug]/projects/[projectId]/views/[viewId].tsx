@@ -12,17 +12,17 @@ import viewsService from "services/views.service";
 import AppLayout from "layouts/app-layout";
 // contexts
 import { IssueViewContextProvider } from "contexts/issue-view.context";
-// components
-import { CreateUpdateViewModal, DeleteViewModal } from "components/views";
 // ui
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // types
 import { UserAuth } from "types";
 // fetch-keys
-import { PROJECT_DETAILS, VIEW_DETAILS, VIEW_ISSUES } from "constants/fetch-keys";
+import { PROJECT_DETAILS, VIEWS_LIST, VIEW_DETAILS } from "constants/fetch-keys";
 import { IssuesFilterView, IssuesView } from "components/core";
-import { HeaderButton } from "components/ui";
+import { CustomMenu, HeaderButton } from "components/ui";
 import { PlusIcon } from "@heroicons/react/24/outline";
+import { truncateText } from "helpers/string.helper";
+import { StackedLayersIcon } from "components/icons";
 
 const SingleView: React.FC<UserAuth> = (props) => {
   const router = useRouter();
@@ -32,6 +32,13 @@ const SingleView: React.FC<UserAuth> = (props) => {
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
     workspaceSlug && projectId
       ? () => projectService.getProject(workspaceSlug as string, projectId as string)
+      : null
+  );
+
+  const { data: views } = useSWR(
+    workspaceSlug && projectId ? VIEWS_LIST(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => viewsService.getViews(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -57,6 +64,28 @@ const SingleView: React.FC<UserAuth> = (props) => {
               link={`/${workspaceSlug}/projects/${activeProject?.id}/cycles`}
             />
           </Breadcrumbs>
+        }
+        left={
+          <CustomMenu
+            label={
+              <>
+                <StackedLayersIcon height={12} width={12} />
+                {viewDetails?.name && truncateText(viewDetails.name, 40)}
+              </>
+            }
+            className="ml-1.5"
+            width="auto"
+          >
+            {views?.map((view) => (
+              <CustomMenu.MenuItem
+                key={view.id}
+                renderAs="a"
+                href={`/${workspaceSlug}/projects/${projectId}/views/${view.id}`}
+              >
+                {truncateText(view.name, 40)}
+              </CustomMenu.MenuItem>
+            ))}
+          </CustomMenu>
         }
         right={
           <div className="flex items-center gap-2">
