@@ -77,7 +77,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
   groupTitle,
   handleDeleteIssue,
   handleTrashBox,
-  isCompleted=false,
+  isCompleted = false,
   userAuth,
 }) => {
   // context menu
@@ -189,15 +189,21 @@ export const SingleBoardIssue: React.FC<Props> = ({
         isOpen={contextMenu}
         setIsOpen={setContextMenu}
       >
-        <ContextMenu.Item Icon={PencilIcon} onClick={editIssue}>
-          Edit issue
-        </ContextMenu.Item>
-        <ContextMenu.Item Icon={ClipboardDocumentCheckIcon} onClick={makeIssueCopy}>
-          Make a copy...
-        </ContextMenu.Item>
-        <ContextMenu.Item Icon={TrashIcon} onClick={() => handleDeleteIssue(issue)}>
-          Delete issue
-        </ContextMenu.Item>
+        {isNotAllowed ? (
+          ""
+        ) : (
+          <>
+            <ContextMenu.Item Icon={PencilIcon} onClick={editIssue}>
+              Edit issue
+            </ContextMenu.Item>
+            <ContextMenu.Item Icon={ClipboardDocumentCheckIcon} onClick={makeIssueCopy}>
+              Make a copy...
+            </ContextMenu.Item>
+            <ContextMenu.Item Icon={TrashIcon} onClick={() => handleDeleteIssue(issue)}>
+              Delete issue
+            </ContextMenu.Item>
+          </>
+        )}
         <ContextMenu.Item Icon={LinkIcon} onClick={handleCopyText}>
           Copy issue link
         </ContextMenu.Item>
