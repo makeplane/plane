@@ -134,7 +134,7 @@ const Profile: NextPage = () => {
       icon: RectangleStackIcon,
       title: "Assigned Issues",
       number: assignedIssuesLength,
-      description: "View your workspace invitations.",
+      description: "View issues assigned to you.",
       href: `/${workspaceSlug}/me/my-issues`,
     },
     {
