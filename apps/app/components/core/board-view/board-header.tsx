@@ -83,9 +83,7 @@ export const BoardHeader: React.FC<Props> = ({
             <ArrowsPointingOutIcon className="h-4 w-4" />
           )}
         </button>
-        {isCompleted ? (
-          ""
-        ) : (
+        {!isCompleted && (
           <button
             type="button"
             className="grid h-7 w-7 place-items-center rounded p-1 text-gray-700 outline-none duration-300 hover:bg-gray-100"

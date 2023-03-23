@@ -143,9 +143,7 @@ export const SingleBoard: React.FC<Props> = ({
                   <PlusIcon className="h-4 w-4" />
                   Add Issue
                 </button>
-              ) : isCompleted ? (
-                ""
-              ) : (
+              ) : !isCompleted && (
                 <CustomMenu
                   customButton={
                     <button

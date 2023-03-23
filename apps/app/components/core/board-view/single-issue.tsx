@@ -189,9 +189,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
         isOpen={contextMenu}
         setIsOpen={setContextMenu}
       >
-        {isNotAllowed ? (
-          ""
-        ) : (
+        {!isNotAllowed &&(
           <>
             <ContextMenu.Item Icon={PencilIcon} onClick={editIssue}>
               Edit issue

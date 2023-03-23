@@ -295,9 +295,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
               <span className="text-gray-900">{cycle.owned_by.first_name}</span>
             </div>
             <div className="flex items-center">
-              {isCompleted ? (
-                ""
-              ) : (
+              {!isCompleted && (
                 <button
                   onClick={handleEditCycle}
                   className="flex cursor-pointer items-center rounded p-1 duration-300 hover:bg-gray-100"
@@ -309,9 +307,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
               )}
 
               <CustomMenu width="auto" verticalEllipsis>
-                {isCompleted ? (
-                  ""
-                ) : (
+                {!isCompleted && (
                   <CustomMenu.MenuItem onClick={handleDeleteCycle}>
                     <span className="flex items-center justify-start gap-2 text-gray-800">
                       <TrashIcon className="h-4 w-4" />

@@ -270,9 +270,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                           <span>Copy Link</span>
                         </span>
                       </CustomMenu.MenuItem>
-                      {isCompleted ? (
-                        ""
-                      ) : (
+                      {!isCompleted && (
                         <CustomMenu.MenuItem onClick={() => setCycleDeleteModal(true)}>
                           <span className="flex items-center justify-start gap-2 text-gray-800">
                             <TrashIcon className="h-4 w-4" />
