@@ -14,7 +14,7 @@ import { PrimaryButton, SecondaryButton } from "components/ui";
 // icons
 import { UserCircleIcon } from "components/icons";
 
-type TImageUploadModalProps = {
+type Props = {
   value?: string | null;
   onClose: () => void;
   isOpen: boolean;
@@ -22,7 +22,7 @@ type TImageUploadModalProps = {
   userImage?: boolean;
 };
 
-export const ImageUploadModal: React.FC<TImageUploadModalProps> = ({
+export const ImageUploadModal: React.FC<Props> = ({
   value,
   onSuccess,
   isOpen,
@@ -59,6 +59,7 @@ export const ImageUploadModal: React.FC<TImageUploadModalProps> = ({
           const imageUrl = res.asset;
           onSuccess(imageUrl);
           setIsImageUploading(false);
+          setImage(null);
         })
         .catch((err) => {
           console.error(err);
@@ -70,6 +71,7 @@ export const ImageUploadModal: React.FC<TImageUploadModalProps> = ({
           const imageUrl = res.asset;
           onSuccess(imageUrl);
           setIsImageUploading(false);
+          setImage(null);
         })
         .catch((err) => {
           console.error(err);
@@ -77,6 +79,7 @@ export const ImageUploadModal: React.FC<TImageUploadModalProps> = ({
   };
 
   const handleClose = () => {
+    setImage(null);
     onClose();
   };
 
