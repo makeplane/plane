@@ -81,7 +81,7 @@ const PageBlock: React.FC<any> = ({ pageBlock }: { pageBlock: IPageBlock }) => {
   };
 
   return (
-    <li className="group relative list-item rounded p-2 pr-6 hover:bg-slate-100">
+    <li className="group flex justify-between rounded p-2 hover:bg-slate-100">
       <input
         type="text"
         value={name}
@@ -96,8 +96,7 @@ const PageBlock: React.FC<any> = ({ pageBlock }: { pageBlock: IPageBlock }) => {
         }}
         className="border-none bg-transparent outline-none"
       />
-
-      <div className="absolute top-[50%] right-0 z-20 mr-2 hidden translate-y-[-50%] group-hover:block">
+      <div className="hidden group-hover:block">
         <CustomMenu>
           <CustomMenu.MenuItem>Convert to issue</CustomMenu.MenuItem>
           <CustomMenu.MenuItem onClick={deletePageBlock}>Delete block</CustomMenu.MenuItem>
