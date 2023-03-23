@@ -2,33 +2,22 @@ import React from "react";
 
 import { useRouter } from "next/router";
 
-import useSWR from "swr";
-
-// services
-import projectService from "services/project.service";
-import issuesService from "services/issues.service";
-import stateService from "services/state.service";
 // hooks
 import useIssuesProperties from "hooks/use-issue-properties";
 import useIssuesView from "hooks/use-issues-view";
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
 // components
-import { PRIORITIES } from "constants/project";
+import { SelectFilters } from "components/views";
 // ui
-import { Avatar, CustomMenu, MultiLevelDropdown } from "components/ui";
+import { CustomMenu } from "components/ui";
 // icons
 import { ChevronDownIcon, ListBulletIcon } from "@heroicons/react/24/outline";
 import { Squares2X2Icon } from "@heroicons/react/20/solid";
-import { getStateGroupIcon } from "components/icons";
-import { getPriorityIcon } from "components/icons/priority-icon";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
-import { getStatesList } from "helpers/state.helper";
 // types
-import { IIssueLabels, Properties } from "types";
-// fetch-keys
-import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS, STATE_LIST } from "constants/fetch-keys";
+import { Properties } from "types";
 // constants
 import { GROUP_BY_OPTIONS, ORDER_BY_OPTIONS, FILTER_ISSUE_OPTIONS } from "constants/issue";
 
@@ -57,28 +46,6 @@ export const IssuesFilterView: React.FC = () => {
     projectId as string
   );
 
-  const { data: states } = useSWR(
-    workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
-      : null
-  );
-  const statesList = getStatesList(states ?? {});
-
-  const { data: members } = useSWR(
-    projectId ? PROJECT_MEMBERS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
-      : null
-  );
-
-  const { data: issueLabels } = useSWR<IIssueLabels[]>(
-    workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string)
-      : null
-  );
-
   return (
     <div className="flex items-center gap-2">
       <div className="flex items-center gap-x-1">
@@ -101,8 +68,8 @@ export const IssuesFilterView: React.FC = () => {
           <Squares2X2Icon className="h-4 w-4" />
         </button>
       </div>
-      <MultiLevelDropdown
-        label="Filters"
+      <SelectFilters
+        filters={filters}
         onSelect={(option) => {
           setFilters(
             {
@@ -116,71 +83,6 @@ export const IssuesFilterView: React.FC = () => {
           );
         }}
         direction="left"
-        options={[
-          {
-            id: "priority",
-            label: "Priority",
-            value: PRIORITIES,
-            children: [
-              ...PRIORITIES.map((priority) => ({
-                id: priority ?? "none",
-                label: (
-                  <div className="flex items-center gap-2">
-                    {getPriorityIcon(priority)} {priority ?? "None"}
-                  </div>
-                ),
-                value: {
-                  key: "priority",
-                  value: priority,
-                },
-                selected: filters?.priority?.includes(priority ?? "none"),
-              })),
-            ],
-          },
-          {
-            id: "state",
-            label: "State",
-            value: statesList,
-            children: [
-              ...statesList.map((state) => ({
-                id: state.id,
-                label: (
-                  <div className="flex items-center gap-2">
-                    {getStateGroupIcon(state.group, "16", "16", state.color)} {state.name}
-                  </div>
-                ),
-                value: {
-                  key: "state",
-                  value: state.id,
-                },
-                selected: filters?.state?.includes(state.id),
-              })),
-            ],
-          },
-          {
-            id: "assignees",
-            label: "Assignees",
-            value: members,
-            children: [
-              ...(members?.map((member) => ({
-                id: member.member.id,
-                label: (
-                  <div className="flex items-center gap-2">
-                    <Avatar user={member.member} />
-                    {member.member.first_name && member.member.first_name !== ""
-                      ? member.member.first_name
-                      : member.member.email}
-                  </div>
-                ),
-                value: {
-                  key: "assignees",
-                  value: member.member.id,
-                },
-                selected: filters?.assignees?.includes(member.member.id),
-              })) ?? []),
-            ],
-          },
-        ]}
       />
       <Popover className="relative">
         {({ open }) => (
