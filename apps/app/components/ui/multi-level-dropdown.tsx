@@ -22,6 +22,7 @@ type MultiLevelDropdownProps = {
   }[];
   onSelect: (value: any) => void;
   direction?: "left" | "right";
+  height?: "sm" | "md" | "rg" | "lg";
 };
 
 export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
@@ -29,6 +30,7 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
   options,
   onSelect,
   direction = "right",
+  height = "md",
 }) => {
   const [openChildFor, setOpenChildFor] = useState<string | null>(null);
 
@@ -58,7 +60,7 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
           >
             <Menu.Items
               static
-              className="absolute right-0 mt-1 w-36 origin-top-right select-none rounded-md bg-white text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+              className="absolute right-0 z-10 mt-1 w-36 origin-top-right select-none rounded-md bg-white text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
             >
               {options.map((option) => (
                 <div className="relative p-1" key={option.id}>
@@ -100,10 +102,20 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                   {option.children && option.id === openChildFor && (
                     <Menu.Items
                       static
-                      className={`absolute top-0 w-36 origin-top-right select-none rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ${
+                      className={`absolute top-0 w-36 origin-top-right select-none overflow-y-scroll rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ${
                         direction === "left"
                           ? "right-full -translate-x-1"
                           : "left-full translate-x-1"
+                      } ${
+                        height === "sm"
+                          ? "max-h-28"
+                          : height === "md"
+                          ? "max-h-44"
+                          : height === "rg"
+                          ? "max-h-56"
+                          : height === "lg"
+                          ? "max-h-80"
+                          : ""
                       }`}
                     >
                       <div className="space-y-1 p-1">
@@ -118,7 +130,7 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                             className={({ active }) =>
                               `${
                                 active || child.selected ? "bg-gray-100" : "text-gray-900"
-                              } flex w-full items-center rounded px-1 py-1.5 capitalize`
+                              } flex w-full items-center break-all rounded px-1 py-1.5 capitalize`
                             }
                           >
                             {child.label}

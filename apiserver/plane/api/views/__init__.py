@@ -116,5 +116,8 @@ from .page import (
     PageBlockViewSet,
     PageFavoriteViewSet,
     CreateIssueFromPageBlockEndpoint,
+    RecentPagesEndpoint,
+    FavoritePagesEndpoint,
     MyPagesEndpoint,
+    CreatedbyOtherPagesEndpoint,
 )

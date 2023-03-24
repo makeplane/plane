@@ -37,7 +37,7 @@ import {
 import { handleIssuesMutation } from "constants/issue";
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 // types
-import { IIssue, Properties, UserAuth } from "types";
+import { IIssue, Properties, TIssueGroupByOptions, UserAuth } from "types";
 // fetch-keys
 import {
   CYCLE_ISSUES_WITH_PARAMS,
@@ -53,12 +53,13 @@ type Props = {
   properties: Properties;
   groupTitle?: string;
   index: number;
-  selectedGroup: "priority" | "state" | "labels" | null;
+  selectedGroup: TIssueGroupByOptions;
   editIssue: () => void;
   makeIssueCopy: () => void;
   removeIssue?: (() => void) | null;
   handleDeleteIssue: (issue: IIssue) => void;
   handleTrashBox: (isDragging: boolean) => void;
+  isCompleted?: boolean;
   userAuth: UserAuth;
 };
 
@@ -76,6 +77,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
   groupTitle,
   handleDeleteIssue,
   handleTrashBox,
+  isCompleted = false,
   userAuth,
 }) => {
   // context menu
@@ -177,7 +179,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
     if (snapshot.isDragging) handleTrashBox(snapshot.isDragging);
   }, [snapshot, handleTrashBox]);
 
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || isCompleted;
 
   return (
     <>
@@ -187,15 +189,19 @@ export const SingleBoardIssue: React.FC<Props> = ({
         isOpen={contextMenu}
         setIsOpen={setContextMenu}
       >
-        <ContextMenu.Item Icon={PencilIcon} onClick={editIssue}>
-          Edit issue
-        </ContextMenu.Item>
-        <ContextMenu.Item Icon={ClipboardDocumentCheckIcon} onClick={makeIssueCopy}>
-          Make a copy...
-        </ContextMenu.Item>
-        <ContextMenu.Item Icon={TrashIcon} onClick={() => handleDeleteIssue(issue)}>
-          Delete issue
-        </ContextMenu.Item>
+        {!isNotAllowed && (
+          <>
+            <ContextMenu.Item Icon={PencilIcon} onClick={editIssue}>
+              Edit issue
+            </ContextMenu.Item>
+            <ContextMenu.Item Icon={ClipboardDocumentCheckIcon} onClick={makeIssueCopy}>
+              Make a copy...
+            </ContextMenu.Item>
+            <ContextMenu.Item Icon={TrashIcon} onClick={() => handleDeleteIssue(issue)}>
+              Delete issue
+            </ContextMenu.Item>
+          </>
+        )}
         <ContextMenu.Item Icon={LinkIcon} onClick={handleCopyText}>
           Copy issue link
         </ContextMenu.Item>
@@ -216,7 +222,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
       >
         <div className="group/card relative select-none p-3.5">
           {!isNotAllowed && (
-            <div className="absolute top-1.5 right-1.5 z-10 opacity-0 group-hover/card:opacity-100">
+            <div className="z-1 absolute top-1.5 right-1.5 opacity-0 group-hover/card:opacity-100">
               {type && !isNotAllowed && (
                 <CustomMenu width="auto" ellipsis>
                   <CustomMenu.MenuItem onClick={editIssue}>Edit issue</CustomMenu.MenuItem>

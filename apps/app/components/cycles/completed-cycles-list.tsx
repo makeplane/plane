@@ -70,6 +70,7 @@ export const CompletedCyclesList: React.FC<CompletedCyclesListProps> = ({
                 cycle={cycle}
                 handleDeleteCycle={() => handleDeleteCycle(cycle)}
                 handleEditCycle={() => handleEditCycle(cycle)}
+                isCompleted
               />
             ))}
           </div>

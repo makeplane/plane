@@ -11,6 +11,7 @@ import issuesService from "services/issues.service";
 import stateService from "services/state.service";
 import projectService from "services/project.service";
 import modulesService from "services/modules.service";
+import viewsService from "services/views.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useIssuesView from "hooks/use-issues-view";
@@ -29,6 +30,7 @@ import {
   TrashIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+import { getStateGroupIcon } from "components/icons";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 // types
@@ -48,17 +50,23 @@ import {
   PROJECT_ISSUES_LIST_WITH_PARAMS,
   PROJECT_MEMBERS,
   STATE_LIST,
+  VIEW_DETAILS,
 } from "constants/fetch-keys";
 import { getPriorityIcon } from "components/icons/priority-icon";
-import { getStateGroupIcon } from "components/icons";
 
 type Props = {
   type?: "issue" | "cycle" | "module";
   openIssuesListModal?: () => void;
+  isCompleted?: boolean;
   userAuth: UserAuth;
 };
 
-export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModal, userAuth }) => {
+export const IssuesView: React.FC<Props> = ({
+  type = "issue",
+  openIssuesListModal,
+  isCompleted = false,
+  userAuth,
+}) => {
   // create issue modal
   const [createIssueModal, setCreateIssueModal] = useState(false);
   const [createViewModal, setCreateViewModal] = useState<any>(null);
@@ -90,6 +98,7 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
     groupByProperty: selectedGroup,
     orderBy,
     filters,
+    isNotEmpty,
     setFilters,
     params,
   } = useIssuesView();
@@ -201,7 +210,7 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
               if (!prevData) return prevData;
 
               const sourceGroupArray = prevData[sourceGroup];
-              const destinationGroupArray = prevData[destinationGroup];
+              const destinationGroupArray = groupedByIssues[destinationGroup];
 
               sourceGroupArray.splice(source.index, 1);
               destinationGroupArray.splice(destination.index, 0, draggedItem);
@@ -223,7 +232,7 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
               if (!prevData) return prevData;
 
               const sourceGroupArray = prevData[sourceGroup];
-              const destinationGroupArray = prevData[destinationGroup];
+              const destinationGroupArray = groupedByIssues[destinationGroup];
 
               sourceGroupArray.splice(source.index, 1);
               destinationGroupArray.splice(destination.index, 0, draggedItem);
@@ -243,7 +252,7 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
               if (!prevData) return prevData;
 
               const sourceGroupArray = prevData[sourceGroup];
-              const destinationGroupArray = prevData[destinationGroup];
+              const destinationGroupArray = groupedByIssues[destinationGroup];
 
               sourceGroupArray.splice(source.index, 1);
               destinationGroupArray.splice(destination.index, 0, draggedItem);
@@ -551,7 +560,7 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
             className="flex items-center gap-2 text-sm"
           >
             {!viewId && <PlusIcon className="h-4 w-4" />}
-            Save view
+            {viewId ? "Update" : "Save"} view
           </PrimaryButton>
         )}
       </div>
@@ -574,7 +583,7 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
           )}
         </StrictModeDroppable>
         {groupedByIssues ? (
-          Object.keys(groupedByIssues).length > 0 ? (
+          isNotEmpty ? (
             <>
               {issueView === "list" ? (
                 <AllLists
@@ -592,6 +601,7 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
                       ? removeIssueFromModule
                       : null
                   }
+                  isCompleted={isCompleted}
                   userAuth={userAuth}
                 />
               ) : (
@@ -611,6 +621,7 @@ export const IssuesView: React.FC<Props> = ({ type = "issue", openIssuesListModa
                       ? removeIssueFromModule
                       : null
                   }
+                  isCompleted={isCompleted}
                   userAuth={userAuth}
                 />
               )}

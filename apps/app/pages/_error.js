@@ -19,15 +19,32 @@
 import * as Sentry from "@sentry/nextjs";
 import NextErrorComponent from "next/error";
 
-const CustomErrorComponent = (props) => <NextErrorComponent statusCode={props.statusCode} />;
+const CustomErrorComponent = ({ statusCode }) => {
+  console.log(statusCode, "statusCode");
+
+  return (
+    <p>
+      We{"'"}re Sorry! An exception has been detected, and our engineering team has been notified.
+      We apologize for any inconvenience this may have caused. Please reach out to our engineering
+      team at <a href="mailto:support@plane.so">support@plane.so</a> or on our{" "}
+      <a href="https://discord.com/invite/A92xrEGCge" target="_blank" rel="noopener noreferrer">
+        Discord
+      </a>{" "}
+      server for further assistance.
+    </p>
+  );
+};
 
 CustomErrorComponent.getInitialProps = async (contextData) => {
   // In case this is running in a serverless function, await this in order to give Sentry
   // time to send the error before the lambda exits
   await Sentry.captureUnderscoreErrorException(contextData);
 
-  // This will contain the status code of the response
-  return NextErrorComponent.getInitialProps(contextData);
+  const { res, err } = contextData;
+
+  const statusCode = res ? res.statusCode : err ? err.statusCode : 404;
+
+  return { statusCode };
 };
 
 export default CustomErrorComponent;

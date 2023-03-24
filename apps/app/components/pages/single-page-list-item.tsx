@@ -7,6 +7,7 @@ import { mutate } from "swr";
 import pagesService from "services/pages.service";
 // ui
 import { CustomMenu } from "components/ui";
+import Label from "./page-label";
 // icons
 import { PencilIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
 // helpers
@@ -22,20 +23,6 @@ type TSingleStatProps = {
   page: IPage;
   handleEditPage: () => void;
   handleDeletePage: () => void;
-};
-
-const Label: React.FC<any> = (props) => {
-  let color = "bg-green-100 text-green-800";
-  if (props.variant === "red") {
-    color = "bg-red-100 text-red-800";
-  } else if (props.variant === "blue") {
-    color = "bg-blue-100 text-blue-800";
-  }
-  return (
-    <p className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${color}`}>
-      {props.children}
-    </p>
-  );
 };
 
 export const SinglePageListItem: React.FC<TSingleStatProps> = (props) => {
@@ -111,7 +98,7 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = (props) => {
   return (
     <div>
       <li>
-        <div className="relative px-4 py-4 hover:bg-gray-50 sm:px-6">
+        <div className="relative rounded px-4 py-4 hover:bg-gray-200 sm:px-6">
           <div className="flex items-center justify-between">
             <div className="flex gap-2">
               <Link href={`/${workspaceSlug}/projects/${projectId}/pages/${page.id}`}>

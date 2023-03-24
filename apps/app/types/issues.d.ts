@@ -150,6 +150,7 @@ export interface IIssueComment {
   workspace: string;
   issue: string;
 }
+
 export type IssuePriorities = {
   id: string;
   created_at: Date;
@@ -207,6 +208,14 @@ export interface IIssueActivity {
   actor: string;
 }
 
+export interface IIssueLite {
+  id: string;
+  name: string;
+  project_id: string;
+  target_date: string;
+  workspace__slug: string;
+}
+
 export interface IIssueFilterOptions {
   type: "active" | "backlog" | null;
   assignees: string[] | null;
@@ -217,8 +226,10 @@ export interface IIssueFilterOptions {
   priority: string[] | null;
 }
 
+export type TIssueGroupByOptions = "state" | "priority" | "labels" | "created_by" | null;
+
 export interface IIssueViewOptions {
-  group_by: "state" | "priority" | "labels" | null;
+  group_by: TIssueGroupByOptions;
   order_by: "created_at" | "updated_at" | "priority" | "sort_order";
   filters: IIssueFilterOptions;
 }

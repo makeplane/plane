@@ -1,4 +1,4 @@
-import { IIssue, IWorkspace, NestedKeyOf, Properties } from "./";
+import { IIssue, IIssueLite, IWorkspace, NestedKeyOf, Properties } from "./";
 
 export interface IUser {
   id: readonly string;
@@ -39,6 +39,22 @@ export interface IUserLite {
 export interface IUserActivity {
   created_date: string;
   activity_count: number;
+}
+
+export interface IUserStateDistribution {
+  state_group: string;
+  state_count: number;
+}
+
+export interface IUserWorkspaceDashboard {
+  assigned_issues_count: number;
+  completed_issues_count: number;
+  issue_activities: IUserActivity[];
+  issues_due_week_count: number;
+  overdue_issues: IIssueLite[];
+  pending_issues_count: number;
+  state_distribution: IUserStateDistribution[];
+  upcoming_issues: IIssueLite[];
 }
 
 export type UserAuth = {

@@ -39,7 +39,6 @@ const ProgressChart: React.FC<Props> = ({ issues, start, end }) => {
 
   const CustomTooltip = ({ active, payload }: TooltipProps<ValueType, NameType>) => {
     if (active && payload && payload.length) {
-      console.log(payload[0].payload.currentDate);
       return (
         <div className="rounded-sm bg-gray-300 p-1 text-xs text-gray-800">
           <p>{payload[0].payload.currentDate}</p>

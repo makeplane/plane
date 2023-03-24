@@ -106,7 +106,10 @@ from plane.api.views import (
     PageBlockViewSet,
     PageFavoriteViewSet,
     CreateIssueFromPageBlockEndpoint,
+    RecentPagesEndpoint,
+    FavoritePagesEndpoint,
     MyPagesEndpoint,
+    CreatedbyOtherPagesEndpoint,
     ## End Pages
     # Api Tokens
     ApiTokenEndpoint,
@@ -980,9 +983,24 @@ urlpatterns = [
         name="page-block-issues",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/user/pages/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/recent-pages/",
+        RecentPagesEndpoint.as_view(),
+        name="recent-pages",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/favorite-pages/",
+        FavoritePagesEndpoint.as_view(),
+        name="recent-pages",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/my-pages/",
         MyPagesEndpoint.as_view(),
-        name="my-pages",
+        name="user-pages",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/created-by-other-pages/",
+        CreatedbyOtherPagesEndpoint.as_view(),
+        name="created-by-other-pages",
     ),
     ## End Pages
     # API Tokens

@@ -79,6 +79,8 @@ export const STATE_DETAIL = "STATE_DETAILS";
 
 export const USER_ISSUE = (workspaceSlug: string) => `USER_ISSUE_${workspaceSlug}`;
 export const USER_ACTIVITY = (workspaceSlug: string) => `USER_ACTIVITY_${workspaceSlug}`;
+export const USER_WORKSPACE_DASHBOARD = (workspaceSlug: string) =>
+  `USER_WORKSPACE_DASHBOARD_${workspaceSlug}`;
 export const USER_PROJECT_VIEW = (projectId: string) => `USER_PROJECT_VIEW_${projectId}`;
 
 export const MODULE_LIST = (projectId: string) => `MODULE_LIST_${projectId}`;
@@ -99,6 +101,8 @@ export const VIEW_DETAILS = (viewId: string) => `VIEW_DETAILS_${viewId}`;
 // Issues
 export const ISSUE_DETAILS = (issueId: string) => `ISSUE_DETAILS_${issueId}`;
 export const SUB_ISSUES = (issueId: string) => `SUB_ISSUES_${issueId}`;
+
+// integrations
 
 // Pages
 export const PAGE_LIST = (pageId: string) => `PAGE_LIST_${pageId}`;

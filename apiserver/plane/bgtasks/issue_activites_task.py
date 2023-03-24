@@ -676,8 +676,8 @@ def create_comment_activity(
             verb="created",
             actor=actor,
             field="comment",
-            new_value=requested_data.get("comment_html"),
-            new_identifier=requested_data.get("id"),
+            new_value=requested_data.get("comment_html", ""),
+            new_identifier=requested_data.get("id", None),
             issue_comment_id=requested_data.get("id", None),
         )
     )
@@ -696,11 +696,11 @@ def update_comment_activity(
                 verb="updated",
                 actor=actor,
                 field="comment",
-                old_value=current_instance.get("comment_html"),
+                old_value=current_instance.get("comment_html", ""),
                 old_identifier=current_instance.get("id"),
-                new_value=requested_data.get("comment_html"),
-                new_identifier=current_instance.get("id"),
-                issue_comment_id=current_instance.get("id"),
+                new_value=requested_data.get("comment_html", ""),
+                new_identifier=current_instance.get("id", None),
+                issue_comment_id=current_instance.get("id", None),
             )
         )
 

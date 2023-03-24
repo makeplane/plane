@@ -670,7 +670,7 @@ class UserWorkspaceDashboardEndpoint(BaseAPIView):
                 workspace__slug=slug, assignees__in=[request.user]
             ).count()
 
-            pending_issues = Issue.objects.filter(
+            pending_issues_count = Issue.objects.filter(
                 ~Q(state__group__in=["completed", "cancelled"]),
                 workspace__slug=slug,
                 assignees__in=[request.user],
@@ -701,17 +701,19 @@ class UserWorkspaceDashboardEndpoint(BaseAPIView):
             )
 
             overdue_issues = Issue.objects.filter(
+                ~Q(state__group__in=["completed", "cancelled"]),
                 workspace__slug=slug,
                 assignees__in=[request.user],
                 target_date__lt=timezone.now(),
-                completed_at__isnull=False,
+                completed_at__isnull=True,
             ).values("id", "name", "workspace__slug", "project_id", "target_date")
 
             upcoming_issues = Issue.objects.filter(
+                ~Q(state__group__in=["completed", "cancelled"]),
+                ~Q(target_date__gte=timezone.now()),
                 workspace__slug=slug,
                 assignees__in=[request.user],
-                target_date__gte=timezone.now(),
-                completed_at__isnull=False,
+                completed_at__isnull=True,
             ).values("id", "name", "workspace__slug", "project_id", "target_date")
 
             return Response(
@@ -719,7 +721,7 @@ class UserWorkspaceDashboardEndpoint(BaseAPIView):
                     "issue_activities": issue_activities,
                     "completed_issues": completed_issues,
                     "assigned_issues_count": assigned_issues,
-                    "pending_issues_count": pending_issues,
+                    "pending_issues_count": pending_issues_count,
                     "completed_issues_count": completed_issues_count,
                     "issues_due_week_count": issues_due_week,
                     "state_distribution": state_distribution,

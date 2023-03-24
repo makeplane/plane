@@ -43,6 +43,7 @@ type TSingleStatProps = {
   cycle: ICycle;
   handleEditCycle: () => void;
   handleDeleteCycle: () => void;
+  isCompleted?: boolean;
 };
 
 const stateGroups = [
@@ -77,6 +78,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
   cycle,
   handleEditCycle,
   handleDeleteCycle,
+  isCompleted = false,
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -293,22 +295,26 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
               <span className="text-gray-900">{cycle.owned_by.first_name}</span>
             </div>
             <div className="flex items-center">
-              <button
-                onClick={handleEditCycle}
-                className="flex cursor-pointer items-center rounded p-1 duration-300 hover:bg-gray-100"
-              >
-                <span>
-                  <PencilIcon className="h-4 w-4" />
-                </span>
-              </button>
+              {!isCompleted && (
+                <button
+                  onClick={handleEditCycle}
+                  className="flex cursor-pointer items-center rounded p-1 duration-300 hover:bg-gray-100"
+                >
+                  <span>
+                    <PencilIcon className="h-4 w-4" />
+                  </span>
+                </button>
+              )}
 
               <CustomMenu width="auto" verticalEllipsis>
-                <CustomMenu.MenuItem onClick={handleDeleteCycle}>
-                  <span className="flex items-center justify-start gap-2 text-gray-800">
-                    <TrashIcon className="h-4 w-4" />
-                    <span>Delete Cycle</span>
-                  </span>
-                </CustomMenu.MenuItem>
+                {!isCompleted && (
+                  <CustomMenu.MenuItem onClick={handleDeleteCycle}>
+                    <span className="flex items-center justify-start gap-2 text-gray-800">
+                      <TrashIcon className="h-4 w-4" />
+                      <span>Delete Cycle</span>
+                    </span>
+                  </CustomMenu.MenuItem>
+                )}
                 <CustomMenu.MenuItem onClick={handleCopyText}>
                   <span className="flex items-center justify-start gap-2 text-gray-800">
                     <DocumentDuplicateIcon className="h-4 w-4" />
