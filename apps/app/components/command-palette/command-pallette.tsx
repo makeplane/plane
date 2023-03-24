@@ -31,6 +31,10 @@ export const CommandPalette: React.FC = () => {
   const [isCreateModuleModalOpen, setIsCreateModuleModalOpen] = useState(false);
   const [isBulkDeleteIssuesModalOpen, setIsBulkDeleteIssuesModalOpen] = useState(false);
 
+  const [search, setSearch] = React.useState<string>("");
+  const [pages, setPages] = React.useState<string[]>([]);
+  const page = pages[pages.length - 1];
+
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -147,6 +151,10 @@ export const CommandPalette: React.FC = () => {
     setIsCreateModuleModalOpen(true);
   };
 
+  const goToSettings = (path: string = "") => {
+    router.push(`/${workspaceSlug}/settings/${path}`);
+  };
+
   return (
     <>
       <ShortcutsModal isOpen={isShortcutsModalOpen} setIsOpen={setIsShortcutsModalOpen} />
@@ -203,63 +211,104 @@ export const CommandPalette: React.FC = () => {
                 leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               >
                 <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-2xl ring-1 ring-black ring-opacity-5 transition-all sm:my-8 sm:w-full sm:max-w-lg">
-                  <Command>
+                  <Command
+                    onKeyDown={(e) => {
+                      // Escape goes to previous page
+                      // Backspace goes to previous page when search is empty
+                      if (e.key === "Escape" || (e.key === "Backspace" && !search)) {
+                        e.preventDefault();
+                        setPages((pages) => pages.slice(0, -1));
+                      }
+                    }}
+                  >
                     <Command.Input
                       className="w-full rounded-t-lg border-b px-3 py-4 text-sm outline-none"
                       placeholder="Type a command or search..."
+                      value={search}
+                      onValueChange={(e) => {
+                        setSearch(e);
+                      }}
                       autoFocus
                     />
                     <Command.List className="max-h-96 overflow-scroll p-2">
                       <Command.Empty className="my-4 text-center text-gray-500">
                         No results found.
                       </Command.Empty>
-                      <Command.Group heading="Issue">
-                        <Command.Item onSelect={createNewIssue}>
-                          Create new issue
-                          <kbd>C</kbd>
-                        </Command.Item>
-                      </Command.Group>
 
-                      {workspaceSlug && (
-                        <Command.Group heading="Project">
-                          <Command.Item onSelect={createNewProject}>
-                            Create new project
-                            <kbd>P</kbd>
-                          </Command.Item>
-                        </Command.Group>
-                      )}
-
-                      {projectId && (
+                      {!page && (
                         <>
-                          <Command.Group heading="Cycle">
-                            <Command.Item onSelect={createNewCycle}>
-                              Create new cycle
-                              <kbd>Q</kbd>
+                          <Command.Group heading="Issue">
+                            <Command.Item onSelect={createNewIssue}>
+                              Create new issue
+                              <kbd>C</kbd>
                             </Command.Item>
                           </Command.Group>
 
-                          <Command.Group heading="Module">
-                            <Command.Item onSelect={createNewModule}>
-                              Create new module
-                              <kbd>M</kbd>
+                          {workspaceSlug && (
+                            <Command.Group heading="Project">
+                              <Command.Item onSelect={createNewProject}>
+                                Create new project
+                                <kbd>P</kbd>
+                              </Command.Item>
+                            </Command.Group>
+                          )}
+
+                          {projectId && (
+                            <>
+                              <Command.Group heading="Cycle">
+                                <Command.Item onSelect={createNewCycle}>
+                                  Create new cycle
+                                  <kbd>Q</kbd>
+                                </Command.Item>
+                              </Command.Group>
+
+                              <Command.Group heading="Module">
+                                <Command.Item onSelect={createNewModule}>
+                                  Create new module
+                                  <kbd>M</kbd>
+                                </Command.Item>
+                              </Command.Group>
+
+                              <Command.Group heading="View">
+                                <Command.Item onSelect={createNewView}>
+                                  Create new view
+                                  <kbd>Q</kbd>
+                                </Command.Item>
+                              </Command.Group>
+                            </>
+                          )}
+
+                          <Command.Group heading="Workspace Settings">
+                            <Command.Item onSelect={() => setPages([...pages, "settings"])}>
+                              Search settings...
                             </Command.Item>
                           </Command.Group>
-
-                          <Command.Group heading="View">
-                            <Command.Item onSelect={createNewView}>
-                              Create new view
-                              <kbd>Q</kbd>
+                          <Command.Group heading="Account">
+                            <Command.Item onSelect={createNewWorkspace}>
+                              Create new workspace
                             </Command.Item>
+                            <Command.Item onSelect={logout}>Log out</Command.Item>
                           </Command.Group>
                         </>
                       )}
 
-                      <Command.Group heading="Account">
-                        <Command.Item onSelect={createNewWorkspace}>
-                          Create new workspace
-                        </Command.Item>
-                        <Command.Item onSelect={logout}>Log out</Command.Item>
-                      </Command.Group>
+                      {page === "settings" && workspaceSlug && (
+                        <>
+                          <Command.Item onSelect={() => goToSettings()}>General</Command.Item>
+                          <Command.Item onSelect={() => goToSettings("members")}>
+                            Members
+                          </Command.Item>
+                          <Command.Item onSelect={() => goToSettings("billing")}>
+                            Billings and Plans
+                          </Command.Item>
+                          <Command.Item onSelect={() => goToSettings("integrations")}>
+                            Integrations
+                          </Command.Item>
+                          <Command.Item onSelect={() => goToSettings("import-export")}>
+                            Import/Export
+                          </Command.Item>
+                        </>
+                      )}
                     </Command.List>
                   </Command>
                 </Dialog.Panel>
