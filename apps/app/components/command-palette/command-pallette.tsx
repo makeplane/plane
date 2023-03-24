@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from "react";
-
 import { useRouter } from "next/router";
-
+// headless ui
+import { Dialog, Transition } from "@headlessui/react";
 // cmdk
 import { Command } from "cmdk";
 // hooks
@@ -15,6 +15,7 @@ import { CreateProjectModal } from "components/project";
 import { CreateUpdateIssueModal } from "components/issues";
 import { CreateUpdateCycleModal } from "components/cycles";
 import { CreateUpdateModuleModal } from "components/modules";
+import { CreateUpdateViewModal } from "components/views";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 
@@ -24,6 +25,7 @@ export const CommandPalette: React.FC = () => {
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [isShortcutsModalOpen, setIsShortcutsModalOpen] = useState(false);
   const [isCreateCycleModalOpen, setIsCreateCycleModalOpen] = useState(false);
+  const [isCreateViewModalOpen, setIsCreateViewModalOpen] = useState(false);
   const [isCreateModuleModalOpen, setIsCreateModuleModalOpen] = useState(false);
   const [isBulkDeleteIssuesModalOpen, setIsBulkDeleteIssuesModalOpen] = useState(false);
 
@@ -98,6 +100,36 @@ export const CommandPalette: React.FC = () => {
 
   if (!user) return null;
 
+  const createNewWorkspace = () => {
+    setIsPaletteOpen(false);
+    router.push("/create-workspace");
+  };
+
+  const createNewProject = () => {
+    setIsPaletteOpen(false);
+    setIsProjectModalOpen(true);
+  };
+
+  const createNewIssue = () => {
+    setIsPaletteOpen(false);
+    setIsIssueModalOpen(true);
+  };
+
+  const createNewCycle = () => {
+    setIsPaletteOpen(false);
+    setIsCreateCycleModalOpen(true);
+  };
+
+  const createNewView = () => {
+    setIsPaletteOpen(false);
+    setIsCreateViewModalOpen(true);
+  };
+
+  const createNewModule = () => {
+    setIsPaletteOpen(false);
+    setIsCreateModuleModalOpen(true);
+  };
+
   return (
     <>
       <ShortcutsModal isOpen={isShortcutsModalOpen} setIsOpen={setIsShortcutsModalOpen} />
@@ -114,6 +146,10 @@ export const CommandPalette: React.FC = () => {
             isOpen={isCreateModuleModalOpen}
             setIsOpen={setIsCreateModuleModalOpen}
           />
+          <CreateUpdateViewModal
+            handleClose={() => setIsCreateViewModalOpen(false)}
+            isOpen={isCreateViewModalOpen}
+          />
         </>
       )}
       <CreateUpdateIssueModal
@@ -124,55 +160,95 @@ export const CommandPalette: React.FC = () => {
         isOpen={isBulkDeleteIssuesModalOpen}
         setIsOpen={setIsBulkDeleteIssuesModalOpen}
       />
-      <div
-        className={`fixed top-0 left-0 z-20 h-full w-full ${isPaletteOpen ? "block" : "hidden"}`}
-      >
-        <div className="relative">
-          <Command.Dialog
-            open={isPaletteOpen}
-            onOpenChange={setIsPaletteOpen}
-            label="Global Command Menu"
-            className="absolute top-20 left-1/2 z-20 h-1/2 w-1/2 -translate-x-1/2 rounded-lg border bg-white shadow"
+      <Transition.Root show={isPaletteOpen} as={React.Fragment}>
+        <Dialog as="div" className="relative z-30" onClose={() => setIsPaletteOpen(false)}>
+          <Transition.Child
+            as={React.Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
           >
-            <Command.Input
-              className="w-full rounded-t-lg border-b px-2 py-3 text-sm outline-none"
-              placeholder="Type a command or search..."
-            />
-            <Command.List className="p-2">
-              <Command.Empty className="mt-4 text-center text-gray-500">
-                No results found.
-              </Command.Empty>
+            <div className="fixed inset-0 bg-gray-500 bg-opacity-25 transition-opacity" />
+          </Transition.Child>
 
-              <Command.Group heading="Create">
-                <Command.Item>Create new workspace</Command.Item>
-                <Command.Item>
-                  Create new project
-                  <kbd>P</kbd>
-                </Command.Item>
-                <Command.Item>
-                  Create new issue
-                  <kbd>C</kbd>
-                </Command.Item>
-                <Command.Item>
-                  Create new module
-                  <kbd>M</kbd>
-                </Command.Item>
-                <Command.Item>
-                  Create new cycle
-                  <kbd>Q</kbd>
-                </Command.Item>
-              </Command.Group>
+          <div className="fixed inset-0 z-30 overflow-y-auto">
+            <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+              <Transition.Child
+                as={React.Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                enterTo="opacity-100 translate-y-0 sm:scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              >
+                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-2xl ring-1 ring-black ring-opacity-5 transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                  <Command>
+                    <Command.Input
+                      className="w-full rounded-t-lg border-b px-3 py-4 text-sm outline-none"
+                      placeholder="Type a command or search..."
+                      autoFocus
+                    />
+                    <Command.List className="max-h-96 overflow-scroll p-2">
+                      <Command.Empty className="my-4 text-center text-gray-500">
+                        No results found.
+                      </Command.Empty>
+                      <Command.Group heading="Issue">
+                        <Command.Item onSelect={createNewIssue}>
+                          Create new issue
+                          <kbd>C</kbd>
+                        </Command.Item>
+                      </Command.Group>
 
-              <Command.Group heading="Letters">
-                <Command.Item>a</Command.Item>
-                <Command.Item>b</Command.Item>
-                <Command.Separator />
-                <Command.Item>c</Command.Item>
-              </Command.Group>
-            </Command.List>
-          </Command.Dialog>
-        </div>
-      </div>
+                      {workspaceSlug && (
+                        <Command.Group heading="Project">
+                          <Command.Item onSelect={createNewProject}>
+                            Create new project
+                            <kbd>P</kbd>
+                          </Command.Item>
+                        </Command.Group>
+                      )}
+
+                      {projectId && (
+                        <>
+                          <Command.Group heading="Cycle">
+                            <Command.Item onSelect={createNewCycle}>
+                              Create new cycle
+                              <kbd>Q</kbd>
+                            </Command.Item>
+                          </Command.Group>
+
+                          <Command.Group heading="Module">
+                            <Command.Item onSelect={createNewModule}>
+                              Create new module
+                              <kbd>M</kbd>
+                            </Command.Item>
+                          </Command.Group>
+
+                          <Command.Group heading="View">
+                            <Command.Item onSelect={createNewView}>
+                              Create new view
+                              <kbd>Q</kbd>
+                            </Command.Item>
+                          </Command.Group>
+                        </>
+                      )}
+                      <Command.Group heading="Workspace">
+                        <Command.Item onSelect={createNewWorkspace}>
+                          Create new workspace
+                        </Command.Item>
+                      </Command.Group>
+                    </Command.List>
+                  </Command>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition.Root>
     </>
   );
 };
