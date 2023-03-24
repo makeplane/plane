@@ -32,13 +32,14 @@ import { IIssue } from "types";
 // fetch keys
 import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY, STATE_LIST } from "constants/fetch-keys";
 // icons
-import { getStateGroupIcon } from "components/icons";
+import { getStateGroupIcon, CheckIcon } from "components/icons";
 
 type Props = {
   setIsPaletteOpen: Dispatch<SetStateAction<boolean>>;
+  issue: IIssue;
 };
 
-const ChangeIssueState: React.FC<Props> = ({ setIsPaletteOpen }) => {
+const ChangeIssueState: React.FC<Props> = ({ setIsPaletteOpen, issue }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
@@ -92,6 +93,7 @@ const ChangeIssueState: React.FC<Props> = ({ setIsPaletteOpen }) => {
                 {getStateGroupIcon(state.group, "16", "16", state.color)}
                 <p>{state.name}</p>
               </div>
+              <div>{state.id === issue.state && <CheckIcon className="h-3 w-3" />}</div>
             </Command.Item>
           ))
         ) : (
@@ -277,7 +279,13 @@ export const CommandPalette: React.FC = () => {
         isOpen={isBulkDeleteIssuesModalOpen}
         setIsOpen={setIsBulkDeleteIssuesModalOpen}
       />
-      <Transition.Root show={isPaletteOpen} as={React.Fragment}>
+      <Transition.Root
+        show={isPaletteOpen}
+        afterLeave={() => {
+          setSearch("");
+        }}
+        as={React.Fragment}
+      >
         <Dialog as="div" className="relative z-30" onClose={() => setIsPaletteOpen(false)}>
           <Transition.Child
             as={React.Fragment}
@@ -291,147 +299,154 @@ export const CommandPalette: React.FC = () => {
             <div className="fixed inset-0 bg-gray-500 bg-opacity-25 transition-opacity" />
           </Transition.Child>
 
-          <div className="fixed inset-0 z-30 overflow-y-auto">
-            <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-              <Transition.Child
-                as={React.Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                enterTo="opacity-100 translate-y-0 sm:scale-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              >
-                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-2xl ring-1 ring-black ring-opacity-5 transition-all sm:my-8 sm:w-full sm:max-w-lg">
-                  <Command
-                    onKeyDown={(e) => {
-                      // Escape goes to previous page
-                      // Backspace goes to previous page when search is empty
-                      if (e.key === "Escape" || (e.key === "Backspace" && !search)) {
-                        e.preventDefault();
-                        setPages((pages) => pages.slice(0, -1));
-                        setPlaceholder("Type a command or search...");
-                      }
+          <div className="fixed inset-0 z-30 overflow-y-auto p-4 sm:p-6 md:p-20">
+            <Transition.Child
+              as={React.Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              enterTo="opacity-100 translate-y-0 sm:scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            >
+              <Dialog.Panel className="relative mx-auto transform overflow-hidden rounded-lg bg-white text-left shadow-2xl ring-1 ring-black ring-opacity-5 transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                <Command
+                  onKeyDown={(e) => {
+                    // when seach is empty and page is undefined
+                    // when user tries to close the modal with esc
+                    if (e.key === "Escape" && !page && !search) {
+                      setIsPaletteOpen(false);
+                    }
+                    // Escape goes to previous page
+                    // Backspace goes to previous page when search is empty
+                    if (e.key === "Escape" || (e.key === "Backspace" && !search)) {
+                      e.preventDefault();
+                      setPages((pages) => pages.slice(0, -1));
+                      setPlaceholder("Type a command or search...");
+                    }
+                  }}
+                >
+                  {issueId && issueDetails && (
+                    <div className="p-3">
+                      <span className="rounded bg-slate-100 p-1 px-2 text-xs font-medium">
+                        {issueDetails.project_detail?.identifier}-{issueDetails.sequence_id}{" "}
+                        {issueDetails?.name}
+                      </span>
+                    </div>
+                  )}
+                  <Command.Input
+                    className="w-full rounded-t-lg border-b px-3 py-4 text-sm outline-none"
+                    placeholder={placeholder}
+                    value={search}
+                    onValueChange={(e) => {
+                      setSearch(e);
                     }}
-                  >
-                    {issueId && issueDetails && (
-                      <div className="p-3">
-                        <span className="rounded bg-slate-100 p-1 px-2 text-xs font-semibold">
-                          {issueDetails.project_detail?.identifier}-{issueDetails.sequence_id}{" "}
-                          {issueDetails?.name}
-                        </span>
-                      </div>
-                    )}
-                    <Command.Input
-                      className="w-full rounded-t-lg border-b px-3 py-4 text-sm outline-none"
-                      placeholder={placeholder}
-                      value={search}
-                      onValueChange={(e) => {
-                        setSearch(e);
-                      }}
-                      autoFocus
-                    />
-                    <Command.List className="max-h-96 overflow-scroll p-2">
-                      <Command.Empty className="my-4 text-center text-gray-500">
-                        No results found.
-                      </Command.Empty>
+                    autoFocus
+                  />
+                  <Command.List className="max-h-96 overflow-scroll p-2">
+                    <Command.Empty className="my-4 text-center text-gray-500">
+                      No results found.
+                    </Command.Empty>
 
-                      {!page && (
-                        <>
-                          {issueId && (
-                            <>
-                              <Command.Item
-                                onSelect={() => {
-                                  setPlaceholder("Change state...");
-                                  setPages([...pages, "change-issue-state"]);
-                                }}
-                              >
-                                Change state...
-                              </Command.Item>
-                            </>
-                          )}
-                          <Command.Group heading="Issue">
-                            <Command.Item onSelect={createNewIssue}>
-                              Create new issue
-                              <kbd>C</kbd>
+                    {!page && (
+                      <>
+                        {issueId && (
+                          <>
+                            <Command.Item
+                              onSelect={() => {
+                                setPlaceholder("Change state...");
+                                setSearch("");
+                                setPages([...pages, "change-issue-state"]);
+                              }}
+                            >
+                              Change state...
+                            </Command.Item>
+                          </>
+                        )}
+                        <Command.Group heading="Issue">
+                          <Command.Item onSelect={createNewIssue}>
+                            Create new issue
+                            <kbd>C</kbd>
+                          </Command.Item>
+                        </Command.Group>
+
+                        {workspaceSlug && (
+                          <Command.Group heading="Project">
+                            <Command.Item onSelect={createNewProject}>
+                              Create new project
+                              <kbd>P</kbd>
                             </Command.Item>
                           </Command.Group>
+                        )}
 
-                          {workspaceSlug && (
-                            <Command.Group heading="Project">
-                              <Command.Item onSelect={createNewProject}>
-                                Create new project
-                                <kbd>P</kbd>
+                        {projectId && (
+                          <>
+                            <Command.Group heading="Cycle">
+                              <Command.Item onSelect={createNewCycle}>
+                                Create new cycle
+                                <kbd>Q</kbd>
                               </Command.Item>
                             </Command.Group>
-                          )}
 
-                          {projectId && (
-                            <>
-                              <Command.Group heading="Cycle">
-                                <Command.Item onSelect={createNewCycle}>
-                                  Create new cycle
-                                  <kbd>Q</kbd>
-                                </Command.Item>
-                              </Command.Group>
+                            <Command.Group heading="Module">
+                              <Command.Item onSelect={createNewModule}>
+                                Create new module
+                                <kbd>M</kbd>
+                              </Command.Item>
+                            </Command.Group>
 
-                              <Command.Group heading="Module">
-                                <Command.Item onSelect={createNewModule}>
-                                  Create new module
-                                  <kbd>M</kbd>
-                                </Command.Item>
-                              </Command.Group>
+                            <Command.Group heading="View">
+                              <Command.Item onSelect={createNewView}>
+                                Create new view
+                                <kbd>Q</kbd>
+                              </Command.Item>
+                            </Command.Group>
+                          </>
+                        )}
 
-                              <Command.Group heading="View">
-                                <Command.Item onSelect={createNewView}>
-                                  Create new view
-                                  <kbd>Q</kbd>
-                                </Command.Item>
-                              </Command.Group>
-                            </>
-                          )}
-
-                          <Command.Group heading="Workspace Settings">
-                            <Command.Item onSelect={() => setPages([...pages, "settings"])}>
-                              Search settings...
-                            </Command.Item>
-                          </Command.Group>
-                          <Command.Group heading="Account">
-                            <Command.Item onSelect={createNewWorkspace}>
-                              Create new workspace
-                            </Command.Item>
-                            <Command.Item onSelect={logout}>Log out</Command.Item>
-                          </Command.Group>
-                        </>
-                      )}
-
-                      {page === "settings" && workspaceSlug && (
-                        <>
-                          <Command.Item onSelect={() => goToSettings()}>General</Command.Item>
-                          <Command.Item onSelect={() => goToSettings("members")}>
-                            Members
+                        <Command.Group heading="Workspace Settings">
+                          <Command.Item onSelect={() => setPages([...pages, "settings"])}>
+                            Search settings...
                           </Command.Item>
-                          <Command.Item onSelect={() => goToSettings("billing")}>
-                            Billings and Plans
+                        </Command.Group>
+                        <Command.Group heading="Account">
+                          <Command.Item onSelect={createNewWorkspace}>
+                            Create new workspace
                           </Command.Item>
-                          <Command.Item onSelect={() => goToSettings("integrations")}>
-                            Integrations
-                          </Command.Item>
-                          <Command.Item onSelect={() => goToSettings("import-export")}>
-                            Import/Export
-                          </Command.Item>
-                        </>
-                      )}
-                      {page === "change-issue-state" && (
-                        <>
-                          <ChangeIssueState setIsPaletteOpen={setIsPaletteOpen} />
-                        </>
-                      )}
-                    </Command.List>
-                  </Command>
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
+                          <Command.Item onSelect={logout}>Log out</Command.Item>
+                        </Command.Group>
+                      </>
+                    )}
+
+                    {page === "settings" && workspaceSlug && (
+                      <>
+                        <Command.Item onSelect={() => goToSettings()}>General</Command.Item>
+                        <Command.Item onSelect={() => goToSettings("members")}>
+                          Members
+                        </Command.Item>
+                        <Command.Item onSelect={() => goToSettings("billing")}>
+                          Billings and Plans
+                        </Command.Item>
+                        <Command.Item onSelect={() => goToSettings("integrations")}>
+                          Integrations
+                        </Command.Item>
+                        <Command.Item onSelect={() => goToSettings("import-export")}>
+                          Import/Export
+                        </Command.Item>
+                      </>
+                    )}
+                    {page === "change-issue-state" && issueDetails && (
+                      <>
+                        <ChangeIssueState
+                          issue={issueDetails}
+                          setIsPaletteOpen={setIsPaletteOpen}
+                        />
+                      </>
+                    )}
+                  </Command.List>
+                </Command>
+              </Dialog.Panel>
+            </Transition.Child>
           </div>
         </Dialog>
       </Transition.Root>
