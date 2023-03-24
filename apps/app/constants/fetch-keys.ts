@@ -102,6 +102,8 @@ export const VIEW_DETAILS = (viewId: string) => `VIEW_DETAILS_${viewId}`;
 export const ISSUE_DETAILS = (issueId: string) => `ISSUE_DETAILS_${issueId}`;
 export const SUB_ISSUES = (issueId: string) => `SUB_ISSUES_${issueId}`;
 
+// integrations
+
 // Pages
 export const PAGE_LIST = (pageId: string) => `PAGE_LIST_${pageId}`;
 export const PAGE_DETAILS = (pageId: string) => `PAGE_DETAILS_${pageId}`;

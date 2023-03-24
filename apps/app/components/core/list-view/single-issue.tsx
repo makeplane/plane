@@ -49,6 +49,7 @@ type Props = {
   makeIssueCopy: () => void;
   removeIssue?: (() => void) | null;
   handleDeleteIssue: (issue: IIssue) => void;
+  isCompleted?: boolean;
   userAuth: UserAuth;
 };
 
@@ -62,6 +63,7 @@ export const SingleListIssue: React.FC<Props> = ({
   removeIssue,
   groupTitle,
   handleDeleteIssue,
+  isCompleted = false,
   userAuth,
 }) => {
   // context menu
@@ -145,7 +147,7 @@ export const SingleListIssue: React.FC<Props> = ({
     });
   };
 
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || isCompleted;
 
   return (
     <>
@@ -155,15 +157,19 @@ export const SingleListIssue: React.FC<Props> = ({
         isOpen={contextMenu}
         setIsOpen={setContextMenu}
       >
-        <ContextMenu.Item Icon={PencilIcon} onClick={editIssue}>
-          Edit issue
-        </ContextMenu.Item>
-        <ContextMenu.Item Icon={ClipboardDocumentCheckIcon} onClick={makeIssueCopy}>
-          Make a copy...
-        </ContextMenu.Item>
-        <ContextMenu.Item Icon={TrashIcon} onClick={() => handleDeleteIssue(issue)}>
-          Delete issue
-        </ContextMenu.Item>
+        {!isNotAllowed && (
+          <>
+            <ContextMenu.Item Icon={PencilIcon} onClick={editIssue}>
+              Edit issue
+            </ContextMenu.Item>
+            <ContextMenu.Item Icon={ClipboardDocumentCheckIcon} onClick={makeIssueCopy}>
+              Make a copy...
+            </ContextMenu.Item>
+            <ContextMenu.Item Icon={TrashIcon} onClick={() => handleDeleteIssue(issue)}>
+              Delete issue
+            </ContextMenu.Item>
+          </>
+        )}
         <ContextMenu.Item Icon={LinkIcon} onClick={handleCopyText}>
           Copy issue link
         </ContextMenu.Item>

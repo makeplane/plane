@@ -25,6 +25,10 @@ const SettingsNavbar: React.FC = () => {
       label: "Integrations",
       href: `/${workspaceSlug}/settings/integrations`,
     },
+    {
+      label: "Import/Export",
+      href: `/${workspaceSlug}/settings/import-export`,
+    },
   ];
 
   const projectLinks: Array<{

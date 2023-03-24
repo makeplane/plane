@@ -226,8 +226,10 @@ export interface IIssueFilterOptions {
   priority: string[] | null;
 }
 
+export type TIssueGroupByOptions = "state" | "priority" | "labels" | "created_by" | null;
+
 export interface IIssueViewOptions {
-  group_by: "state" | "priority" | "labels" | null;
+  group_by: TIssueGroupByOptions;
   order_by: "created_at" | "updated_at" | "priority" | "sort_order";
   filters: IIssueFilterOptions;
 }

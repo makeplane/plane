@@ -4,6 +4,7 @@ from django.conf import settings
 
 # Module imports
 from . import ProjectBaseModel
+from plane.utils.html_processor import strip_tags
 
 
 class Page(ProjectBaseModel):
@@ -17,6 +18,7 @@ class Page(ProjectBaseModel):
     access = models.PositiveSmallIntegerField(
         choices=((0, "Public"), (1, "Private")), default=0
     )
+    color = models.CharField(max_length=255, blank=True)
     labels = models.ManyToManyField(
         "db.Label", blank=True, related_name="pages", through="db.PageLabel"
     )
@@ -42,6 +44,35 @@ class PageBlock(ProjectBaseModel):
         "db.Issue", on_delete=models.SET_NULL, related_name="blocks", null=True
     )
     completed_at = models.DateTimeField(null=True)
+    sort_order = models.FloatField(default=65535)
+
+    def save(self, *args, **kwargs):
+        if self._state.adding:
+            largest_sort_order = PageBlock.objects.filter(
+                project=self.project, page=self.page
+            ).aggregate(largest=models.Max("sort_order"))["largest"]
+            if largest_sort_order is not None:
+                self.sort_order = largest_sort_order + 10000
+
+        # Strip the html tags using html parser
+        self.description_stripped = (
+            None
+            if (self.description_html == "" or self.description_html is None)
+            else strip_tags(self.description_html)
+        )
+
+        if self.completed_at and self.issue:
+            try:
+                from plane.db.models import State, Issue
+
+                completed_state = State.objects.filter(
+                    group="completed", project=self.project
+                ).first()
+                if completed_state is not None:
+                    Issue.objects.update(pk=self.issue_id, state=completed_state)
+            except ImportError:
+                pass
+        super(PageBlock, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = "Page Block"

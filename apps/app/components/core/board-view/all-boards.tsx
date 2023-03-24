@@ -18,6 +18,7 @@ type Props = {
   handleDeleteIssue: (issue: IIssue) => void;
   handleTrashBox: (isDragging: boolean) => void;
   removeIssue: ((bridgeId: string) => void) | null;
+  isCompleted?: boolean;
   userAuth: UserAuth;
 };
 
@@ -31,6 +32,7 @@ export const AllBoards: React.FC<Props> = ({
   handleDeleteIssue,
   handleTrashBox,
   removeIssue,
+  isCompleted = false,
   userAuth,
 }) => {
   const {
@@ -62,6 +64,7 @@ export const AllBoards: React.FC<Props> = ({
                 openIssuesListModal={openIssuesListModal ?? null}
                 handleTrashBox={handleTrashBox}
                 removeIssue={removeIssue}
+                isCompleted={isCompleted}
                 userAuth={userAuth}
               />
             );
@@ -76,7 +79,10 @@ export const AllBoards: React.FC<Props> = ({
 
                   if (groupedByIssues[singleGroup].length === 0)
                     return (
-                      <div className="flex items-center justify-between gap-2 rounded bg-white p-2 shadow">
+                      <div
+                        key={index}
+                        className="flex items-center justify-between gap-2 rounded bg-white p-2 shadow"
+                      >
                         <div className="flex items-center gap-2">
                           {currentState &&
                             getStateGroupIcon(currentState.group, "16", "16", currentState.color)}

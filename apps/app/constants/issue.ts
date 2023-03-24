@@ -1,10 +1,11 @@
 export const GROUP_BY_OPTIONS: Array<{
   name: string;
-  key: "state" | "priority" | "labels" | null;
+  key: TIssueGroupByOptions;
 }> = [
   { name: "State", key: "state" },
   { name: "Priority", key: "priority" },
   { name: "Labels", key: "labels" },
+  { name: "Created by", key: "created_by" },
   { name: "None", key: null },
 ];
 
@@ -36,12 +37,12 @@ export const FILTER_ISSUE_OPTIONS: Array<{
   },
 ];
 
-import { IIssue } from "types";
+import { IIssue, TIssueGroupByOptions } from "types";
 
 type THandleIssuesMutation = (
   formData: Partial<IIssue>,
   oldGroupTitle: string,
-  selectedGroupBy: "state" | "priority" | "labels" | null,
+  selectedGroupBy: TIssueGroupByOptions,
   issueIndex: number,
   prevData?:
     | {

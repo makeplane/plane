@@ -110,7 +110,7 @@ const useIssuesView = () => {
   const statesList = getStatesList(states ?? {});
   const stateIds = statesList.map((state) => state.id);
 
-  let emptyStatesObject: { [key: string]: [] } = {};
+  const emptyStatesObject: { [key: string]: [] } = {};
   for (let i = 0; i < stateIds.length; i++) {
     emptyStatesObject[stateIds[i]] = [];
   }
@@ -123,10 +123,15 @@ const useIssuesView = () => {
     const issuesToGroup = cycleIssues ?? moduleIssues ?? projectIssues;
 
     if (Array.isArray(issuesToGroup)) return { allIssues: issuesToGroup };
-    if (groupByProperty === "state") return Object.assign(emptyStatesObject, issuesToGroup);
+    if (groupByProperty === "state")
+      return issuesToGroup ? Object.assign(emptyStatesObject, issuesToGroup) : undefined;
 
     return issuesToGroup;
   }, [projectIssues, cycleIssues, moduleIssues]);
+
+  const isEmpty =
+    Object.values(groupedByIssues ?? {}).every((group) => group.length === 0) ||
+    Object.keys(groupedByIssues ?? {}).length === 0;
 
   return {
     groupedByIssues,
@@ -140,6 +145,7 @@ const useIssuesView = () => {
     filters,
     setFilters,
     params,
+    isNotEmpty: !isEmpty,
     resetFilterToDefault,
     setNewFilterDefaultView,
     setIssueViewToKanban,
