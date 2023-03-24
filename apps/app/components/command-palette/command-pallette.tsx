@@ -11,7 +11,7 @@ import useTheme from "hooks/use-theme";
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
 // components
-import { ShortcutsModal, ChangeIssueState } from "components/command-palette";
+import { ShortcutsModal, ChangeIssueState, ChangeIssuePriority } from "components/command-palette";
 import { BulkDeleteIssuesModal } from "components/core";
 import { CreateUpdateCycleModal } from "components/cycles";
 import { CreateUpdateIssueModal } from "components/issues";
@@ -283,6 +283,15 @@ export const CommandPalette: React.FC = () => {
                             >
                               Change state...
                             </Command.Item>
+                            <Command.Item
+                              onSelect={() => {
+                                setPlaceholder("Change priority...");
+                                setSearch("");
+                                setPages([...pages, "change-issue-priority"]);
+                              }}
+                            >
+                              Change priority...
+                            </Command.Item>
                           </>
                         )}
                         <Command.Group heading="Issue">
@@ -364,6 +373,12 @@ export const CommandPalette: React.FC = () => {
                           setIsPaletteOpen={setIsPaletteOpen}
                         />
                       </>
+                    )}
+                    {page === "change-issue-priority" && issueDetails && (
+                      <ChangeIssuePriority
+                        issue={issueDetails}
+                        setIsPaletteOpen={setIsPaletteOpen}
+                      />
                     )}
                   </Command.List>
                 </Command>
