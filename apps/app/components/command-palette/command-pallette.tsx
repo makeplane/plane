@@ -18,6 +18,8 @@ import { CreateUpdateModuleModal } from "components/modules";
 import { CreateUpdateViewModal } from "components/views";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
+// services
+import authenticationService from "services/authentication.service";
 
 export const CommandPalette: React.FC = () => {
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
@@ -32,7 +34,7 @@ export const CommandPalette: React.FC = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { user } = useUser();
+  const { user, mutateUser } = useUser();
   const { setToastAlert } = useToast();
   const { toggleCollapsed } = useTheme();
 
@@ -103,6 +105,21 @@ export const CommandPalette: React.FC = () => {
   const createNewWorkspace = () => {
     setIsPaletteOpen(false);
     router.push("/create-workspace");
+  };
+
+  const logout = async () => {
+    await authenticationService
+      .signOut()
+      .then((response) => {
+        console.log("user signed out", response);
+      })
+      .catch((error) => {
+        console.log("Failed to sign out", error);
+      })
+      .finally(() => {
+        mutateUser();
+        router.push("/signin");
+      });
   };
 
   const createNewProject = () => {
@@ -236,10 +253,12 @@ export const CommandPalette: React.FC = () => {
                           </Command.Group>
                         </>
                       )}
-                      <Command.Group heading="Workspace">
+
+                      <Command.Group heading="Account">
                         <Command.Item onSelect={createNewWorkspace}>
                           Create new workspace
                         </Command.Item>
+                        <Command.Item onSelect={logout}>Log out</Command.Item>
                       </Command.Group>
                     </Command.List>
                   </Command>
