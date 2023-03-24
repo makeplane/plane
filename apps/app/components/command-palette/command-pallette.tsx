@@ -59,6 +59,25 @@ export const CommandPalette: React.FC = () => {
       : null
   );
 
+  const copyIssueUrlToClipboard = useCallback(() => {
+    if (!router.query.issueId) return;
+
+    const url = new URL(window.location.href);
+    copyTextToClipboard(url.href)
+      .then(() => {
+        setToastAlert({
+          type: "success",
+          title: "Copied to clipboard",
+        });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Some error occurred",
+        });
+      });
+  }, [router, setToastAlert]);
+
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (
@@ -72,22 +91,7 @@ export const CommandPalette: React.FC = () => {
         } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "c") {
           if (e.altKey) {
             e.preventDefault();
-            if (!router.query.issueId) return;
-
-            const url = new URL(window.location.href);
-            copyTextToClipboard(url.href)
-              .then(() => {
-                setToastAlert({
-                  type: "success",
-                  title: "Copied to clipboard",
-                });
-              })
-              .catch(() => {
-                setToastAlert({
-                  type: "error",
-                  title: "Some error occurred",
-                });
-              });
+            copyIssueUrlToClipboard();
           }
         } else if (e.key.toLowerCase() === "c") {
           e.preventDefault();
@@ -113,7 +117,7 @@ export const CommandPalette: React.FC = () => {
         }
       }
     },
-    [toggleCollapsed, setToastAlert, router]
+    [toggleCollapsed, copyIssueUrlToClipboard]
   );
 
   useEffect(() => {
@@ -307,6 +311,14 @@ export const CommandPalette: React.FC = () => {
                               Change priority...
                             </Command.Item>
                             <Command.Item onSelect={deleteIssue}>Delete issue</Command.Item>
+                            <Command.Item
+                              onSelect={() => {
+                                setIsPaletteOpen(false);
+                                copyIssueUrlToClipboard();
+                              }}
+                            >
+                              Copy issue URL to clipboard
+                            </Command.Item>
                           </>
                         )}
                         <Command.Group heading="Issue">
