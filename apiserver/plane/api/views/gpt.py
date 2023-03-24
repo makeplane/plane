@@ -19,9 +19,9 @@ class GPTIntegrationEndpoint(BaseAPIView):
 
     def post(self, request, slug, project_id):
         try:
-            if not settings.OPENAI_API_KEY:
+            if not settings.OPENAI_API_KEY or not settings.GPT_ENGINE:
                 return Response(
-                    {"error": "OpenAI API key is required"},
+                    {"error": "OpenAI API key and engine is required"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -38,7 +38,7 @@ class GPTIntegrationEndpoint(BaseAPIView):
 
             openai.api_key = settings.OPENAI_API_KEY
             response = openai.Completion.create(
-                engine="text-davinci-003",
+                engine=settings.GPT_ENGINE,
                 prompt=final_text,
                 temperature=0.7,
                 max_tokens=1024,
