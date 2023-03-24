@@ -1,9 +1,10 @@
 const paramsToKey = (params: any) => {
-  const { state, priority, assignees } = params;
+  const { state, priority, assignees, created_by } = params;
 
   let stateKey = state ? state.split(",") : [];
   let priorityKey = priority ? priority.split(",") : [];
   let assigneesKey = assignees ? assignees.split(",") : [];
+  let createdByKey = created_by ? created_by.split(",") : [];
   const type = params.type ? params.type.toUpperCase() : "NULL";
   const groupBy = params.group_by ? params.group_by.toUpperCase() : "NULL";
   const orderBy = params.order_by ? params.order_by.toUpperCase() : "NULL";
@@ -12,8 +13,9 @@ const paramsToKey = (params: any) => {
   stateKey = stateKey.sort().join("_");
   priorityKey = priorityKey.sort().join("_");
   assigneesKey = assigneesKey.sort().join("_");
+  createdByKey = createdByKey.sort().join("_");
 
-  return `${stateKey}_${priorityKey}_${assigneesKey}_${type}_${groupBy}_${orderBy}`;
+  return `${stateKey}_${priorityKey}_${assigneesKey}_${createdByKey}_${type}_${groupBy}_${orderBy}`;
 };
 
 export const CURRENT_USER = "CURRENT_USER";

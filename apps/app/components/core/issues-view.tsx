@@ -569,6 +569,47 @@ export const IssuesView: React.FC<Props> = ({
                               <XMarkIcon className="h-3 w-3" />
                             </button>
                           </div>
+                        ) : (key as keyof IIssueFilterOptions) === "created_by" ? (
+                          <div className="flex items-center gap-x-1">
+                            {filters.created_by?.map((memberId: string) => {
+                              const member = members?.find((m) => m.member.id === memberId)?.member;
+
+                              return (
+                                <p
+                                  key={memberId}
+                                  className="inline-flex items-center gap-x-1 rounded-full border px-2 py-0.5 font-medium capitalize"
+                                >
+                                  <Avatar user={member} />
+                                  <span>{member?.first_name}</span>
+                                  <span
+                                    className="cursor-pointer"
+                                    onClick={() =>
+                                      setFilters(
+                                        {
+                                          assignees: filters.created_by?.filter(
+                                            (p: any) => p !== memberId
+                                          ),
+                                        },
+                                        !Boolean(viewId)
+                                      )
+                                    }
+                                  >
+                                    <XMarkIcon className="h-3 w-3" />
+                                  </span>
+                                </p>
+                              );
+                            })}
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setFilters({
+                                  created_by: null,
+                                })
+                              }
+                            >
+                              <XMarkIcon className="h-3 w-3" />
+                            </button>
+                          </div>
                         ) : (
                           (filters[key as keyof IIssueFilterOptions] as any)?.join(", ")
                         )}
