@@ -19,7 +19,7 @@ import { renderShortTime } from "helpers/date-time.helper";
 // types
 import { IPage } from "types";
 // fetch-keys
-import { PAGE_LIST } from "constants/fetch-keys";
+import { RECENT_PAGES_LIST } from "constants/fetch-keys";
 
 type TSingleStatProps = {
   page: IPage;
@@ -44,7 +44,7 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = (props) => {
       })
       .then(() => {
         mutate<IPage[]>(
-          PAGE_LIST(projectId as string),
+          RECENT_PAGES_LIST(projectId as string),
           (prevData) =>
             (prevData ?? []).map((m) => ({
               ...m,
@@ -74,7 +74,7 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = (props) => {
       .removePageFromFavorites(workspaceSlug as string, projectId as string, page.id)
       .then(() => {
         mutate<IPage[]>(
-          PAGE_LIST(projectId as string),
+          RECENT_PAGES_LIST(projectId as string),
           (prevData) =>
             (prevData ?? []).map((m) => ({
               ...m,
@@ -100,7 +100,7 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = (props) => {
   return (
     <div>
       <li>
-        <div className="relative rounded px-4 py-4 hover:bg-gray-200 sm:px-6">
+        <div className="relative rounded px-4 py-4 hover:bg-gray-100 sm:px-6">
           <div className="flex items-center justify-between">
             <div className="flex gap-2">
               <Link href={`/${workspaceSlug}/projects/${projectId}/pages/${page.id}`}>

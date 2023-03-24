@@ -38,6 +38,11 @@ export interface IPageForm {
   labels_list?: string[];
 }
 
+export interface RecentPagesResponse {
+  earlier_this_week: IPage[];
+  yesterday: IPage[];
+}
+
 export interface IPageBlock {
   completed_at: Date | null;
   created_at: Date;

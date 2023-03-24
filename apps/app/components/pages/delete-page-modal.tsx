@@ -18,10 +18,10 @@ import type { IPage } from "types";
 type TConfirmPageDeletionProps = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  data?: IPage;
+  data?: IPage | null;
 };
 // fetch-keys
-import { PAGE_LIST } from "constants/fetch-keys";
+import { RECENT_PAGES_LIST } from "constants/fetch-keys";
 
 export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({
   isOpen,
@@ -31,7 +31,7 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, projectId } = router.query;
 
   const { setToastAlert } = useToast();
 
@@ -42,13 +42,13 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({
 
   const handleDeletion = async () => {
     setIsDeleteLoading(true);
-    if (!data || !workspaceSlug) return;
+    if (!data || !workspaceSlug || !projectId) return;
 
     await pagesService
       .deletePage(workspaceSlug as string, data.project, data.id)
       .then(() => {
         mutate<IPage[]>(
-          PAGE_LIST(data.project),
+          RECENT_PAGES_LIST(projectId as string),
           (prevData) => prevData?.filter((page) => page.id !== data?.id),
           false
         );

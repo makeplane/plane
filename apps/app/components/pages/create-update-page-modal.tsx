@@ -15,12 +15,12 @@ import { PageForm } from "./page-form";
 // types
 import { IPage, IPageForm } from "types";
 // fetch-keys
-import { PAGE_LIST } from "constants/fetch-keys";
+import { RECENT_PAGES_LIST } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
-  data?: IPage;
+  data?: IPage | null;
 };
 
 export const CreateUpdatePageModal: React.FC<Props> = ({ isOpen, handleClose, data }) => {
@@ -37,7 +37,7 @@ export const CreateUpdatePageModal: React.FC<Props> = ({ isOpen, handleClose, da
     await pagesService
       .createPage(workspaceSlug as string, projectId as string, payload)
       .then(() => {
-        mutate(PAGE_LIST(projectId as string));
+        mutate(RECENT_PAGES_LIST(projectId as string));
         onClose();
 
         setToastAlert({
@@ -60,7 +60,7 @@ export const CreateUpdatePageModal: React.FC<Props> = ({ isOpen, handleClose, da
       .patchPage(workspaceSlug as string, projectId as string, data?.id ?? "", payload)
       .then((res) => {
         mutate<IPage[]>(
-          PAGE_LIST(projectId as string),
+          RECENT_PAGES_LIST(projectId as string),
           (prevData) =>
             prevData?.map((p) => {
               if (p.id === res.id) return { ...p, ...payload };

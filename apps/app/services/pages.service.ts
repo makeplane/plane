@@ -1,7 +1,14 @@
 // services
 import APIService from "services/api.service";
 // types
-import { IPage, IPageBlock, IPageBlockForm, IPageFavorite, IPageForm } from "types/pages";
+import {
+  IPage,
+  IPageBlock,
+  IPageBlockForm,
+  IPageFavorite,
+  IPageForm,
+  RecentPagesResponse,
+} from "types/pages";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -69,8 +76,42 @@ class PageServices extends APIService {
       });
   }
 
-  async listPages(workspaceSlug: string, projectId: string): Promise<IPage[]> {
+  async getRecentPages(workspaceSlug: string, projectId: string): Promise<RecentPagesResponse> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/recent-pages/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getAllPages(workspaceSlug: string, projectId: string): Promise<IPage[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getFavoritePages(workspaceSlug: string, projectId: string): Promise<IPage[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/favorite-pages/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getMyPages(workspaceSlug: string, projectId: string): Promise<IPage[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/my-pages/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getOtherPages(workspaceSlug: string, projectId: string): Promise<IPage[]> {
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/created-by-other-pages/`
+    )
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
