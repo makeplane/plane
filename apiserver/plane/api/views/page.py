@@ -1,5 +1,6 @@
 # Python imports
-from datetime import timedelta
+from datetime import timedelta, datetime
+from django.utils import timezone
 
 # Django imports
 from django.db import IntegrityError
@@ -239,10 +240,13 @@ class RecentPagesEndpoint(BaseAPIView):
                 project_id=project_id,
                 workspace__slug=slug,
             )
+            current_time = timezone.now()
+            day_before = current_time - timedelta(days=1)
+
             yesterday_pages = (
                 (
                     Page.objects.filter(
-                        updated_at__gte=(timezone.now() - timedelta(days=1)),
+                        updated_at__date=day_before.date(),
                         workspace__slug=slug,
                         project_id=project_id,
                     )
