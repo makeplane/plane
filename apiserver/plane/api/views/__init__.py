@@ -121,3 +121,6 @@ from .page import (
     MyPagesEndpoint,
     CreatedbyOtherPagesEndpoint,
 )
+
+
+from .gpt import GPTIntegrationEndpoint
