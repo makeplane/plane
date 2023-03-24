@@ -14,7 +14,7 @@ import useUser from "hooks/use-user";
 import { ShortcutsModal, ChangeIssueState, ChangeIssuePriority } from "components/command-palette";
 import { BulkDeleteIssuesModal } from "components/core";
 import { CreateUpdateCycleModal } from "components/cycles";
-import { CreateUpdateIssueModal } from "components/issues";
+import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import { CreateUpdateModuleModal } from "components/modules";
 import { CreateProjectModal } from "components/project";
 import { CreateUpdateViewModal } from "components/views";
@@ -37,6 +37,7 @@ export const CommandPalette: React.FC = () => {
   const [isCreateViewModalOpen, setIsCreateViewModalOpen] = useState(false);
   const [isCreateModuleModalOpen, setIsCreateModuleModalOpen] = useState(false);
   const [isBulkDeleteIssuesModalOpen, setIsBulkDeleteIssuesModalOpen] = useState(false);
+  const [deleteIssueModal, setDeleteIssueModal] = useState(false);
 
   const [search, setSearch] = React.useState<string>("");
   const [placeholder, setPlaceholder] = React.useState("Type a command or search...");
@@ -167,6 +168,11 @@ export const CommandPalette: React.FC = () => {
     setIsCreateModuleModalOpen(true);
   };
 
+  const deleteIssue = () => {
+    setIsPaletteOpen(false);
+    setDeleteIssueModal(true);
+  };
+
   const goToSettings = (path: string = "") => {
     router.push(`/${workspaceSlug}/settings/${path}`);
   };
@@ -193,6 +199,14 @@ export const CommandPalette: React.FC = () => {
           />
         </>
       )}
+      {issueId && issueDetails && (
+        <DeleteIssueModal
+          handleClose={() => setDeleteIssueModal(false)}
+          isOpen={deleteIssueModal}
+          data={issueDetails}
+        />
+      )}
+
       <CreateUpdateIssueModal
         isOpen={isIssueModalOpen}
         handleClose={() => setIsIssueModalOpen(false)}
@@ -292,6 +306,7 @@ export const CommandPalette: React.FC = () => {
                             >
                               Change priority...
                             </Command.Item>
+                            <Command.Item onSelect={deleteIssue}>Delete issue</Command.Item>
                           </>
                         )}
                         <Command.Group heading="Issue">
