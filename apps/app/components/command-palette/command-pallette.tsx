@@ -1,5 +1,7 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, Dispatch, SetStateAction } from "react";
 import { useRouter } from "next/router";
+import useSWR, { mutate } from "swr";
+
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // cmdk
@@ -8,6 +10,8 @@ import { Command } from "cmdk";
 import useTheme from "hooks/use-theme";
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
+// ui
+import { Spinner } from "components/ui";
 // components
 import { ShortcutsModal } from "components/command-palette";
 import { BulkDeleteIssuesModal } from "components/core";
@@ -18,8 +22,87 @@ import { CreateUpdateModuleModal } from "components/modules";
 import { CreateUpdateViewModal } from "components/views";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
+import { getStatesList } from "helpers/state.helper";
 // services
 import authenticationService from "services/authentication.service";
+import issuesService from "services/issues.service";
+import stateService from "services/state.service";
+// types
+import { IIssue } from "types";
+// fetch keys
+import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY, STATE_LIST } from "constants/fetch-keys";
+// icons
+import { getStateGroupIcon } from "components/icons";
+
+type Props = {
+  setIsPaletteOpen: Dispatch<SetStateAction<boolean>>;
+};
+
+const ChangeIssueState: React.FC<Props> = ({ setIsPaletteOpen }) => {
+  const router = useRouter();
+  const { workspaceSlug, projectId, issueId } = router.query;
+
+  const { data: stateGroups, mutate: mutateIssueDetails } = useSWR(
+    workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
+      : null
+  );
+  const states = getStatesList(stateGroups ?? {});
+
+  const submitChanges = useCallback(
+    async (formData: Partial<IIssue>) => {
+      if (!workspaceSlug || !projectId || !issueId) return;
+
+      mutate(
+        ISSUE_DETAILS(issueId as string),
+        (prevData: IIssue) => ({
+          ...prevData,
+          ...formData,
+        }),
+        false
+      );
+
+      const payload = { ...formData };
+      await issuesService
+        .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload)
+        .then(() => {
+          mutateIssueDetails();
+          mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+    },
+    [workspaceSlug, issueId, projectId, mutateIssueDetails]
+  );
+
+  const handleIssueState = (stateId: string) => {
+    submitChanges({ state: stateId });
+    setIsPaletteOpen(false);
+  };
+
+  return (
+    <>
+      {states ? (
+        states.length > 0 ? (
+          states.map((state) => (
+            <Command.Item key={state.id} onSelect={() => handleIssueState(state.id)}>
+              <div className="flex items-center space-x-3">
+                {getStateGroupIcon(state.group, "16", "16", state.color)}
+                <p>{state.name}</p>
+              </div>
+            </Command.Item>
+          ))
+        ) : (
+          <div className="text-center">No states found</div>
+        )
+      ) : (
+        <Spinner />
+      )}
+    </>
+  );
+};
 
 export const CommandPalette: React.FC = () => {
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
@@ -32,15 +115,24 @@ export const CommandPalette: React.FC = () => {
   const [isBulkDeleteIssuesModalOpen, setIsBulkDeleteIssuesModalOpen] = useState(false);
 
   const [search, setSearch] = React.useState<string>("");
+  const [placeholder, setPlaceholder] = React.useState("Type a command or search...");
   const [pages, setPages] = React.useState<string[]>([]);
   const page = pages[pages.length - 1];
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, issueId } = router.query;
 
   const { user, mutateUser } = useUser();
   const { setToastAlert } = useToast();
   const { toggleCollapsed } = useTheme();
+
+  const { data: issueDetails } = useSWR<IIssue | undefined>(
+    workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId as string) : null,
+    workspaceSlug && projectId && issueId
+      ? () =>
+          issuesService.retrieve(workspaceSlug as string, projectId as string, issueId as string)
+      : null
+  );
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -218,12 +310,21 @@ export const CommandPalette: React.FC = () => {
                       if (e.key === "Escape" || (e.key === "Backspace" && !search)) {
                         e.preventDefault();
                         setPages((pages) => pages.slice(0, -1));
+                        setPlaceholder("Type a command or search...");
                       }
                     }}
                   >
+                    {issueId && issueDetails && (
+                      <div className="p-3">
+                        <span className="rounded bg-slate-100 p-1 px-2 text-xs font-semibold">
+                          {issueDetails.project_detail?.identifier}-{issueDetails.sequence_id}{" "}
+                          {issueDetails?.name}
+                        </span>
+                      </div>
+                    )}
                     <Command.Input
                       className="w-full rounded-t-lg border-b px-3 py-4 text-sm outline-none"
-                      placeholder="Type a command or search..."
+                      placeholder={placeholder}
                       value={search}
                       onValueChange={(e) => {
                         setSearch(e);
@@ -237,6 +338,18 @@ export const CommandPalette: React.FC = () => {
 
                       {!page && (
                         <>
+                          {issueId && (
+                            <>
+                              <Command.Item
+                                onSelect={() => {
+                                  setPlaceholder("Change state...");
+                                  setPages([...pages, "change-issue-state"]);
+                                }}
+                              >
+                                Change state...
+                              </Command.Item>
+                            </>
+                          )}
                           <Command.Group heading="Issue">
                             <Command.Item onSelect={createNewIssue}>
                               Create new issue
@@ -307,6 +420,11 @@ export const CommandPalette: React.FC = () => {
                           <Command.Item onSelect={() => goToSettings("import-export")}>
                             Import/Export
                           </Command.Item>
+                        </>
+                      )}
+                      {page === "change-issue-state" && (
+                        <>
+                          <ChangeIssueState setIsPaletteOpen={setIsPaletteOpen} />
                         </>
                       )}
                     </Command.List>
