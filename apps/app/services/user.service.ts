@@ -58,8 +58,15 @@ class UserService extends APIService {
       });
   }
 
-  async userWorkspaceDashboard(workspaceSlug: string): Promise<IUserWorkspaceDashboard> {
-    return this.get(`/api/users/me/workspaces/${workspaceSlug}/dashboard/`)
+  async userWorkspaceDashboard(
+    workspaceSlug: string,
+    month: number
+  ): Promise<IUserWorkspaceDashboard> {
+    return this.get(`/api/users/me/workspaces/${workspaceSlug}/dashboard/`, {
+      params: {
+        month: month,
+      },
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
