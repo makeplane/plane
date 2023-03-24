@@ -118,18 +118,6 @@ export const IssuesView: React.FC<Props> = ({
       : null
   );
 
-  const { data: viewDetails } = useSWR(
-    workspaceSlug && projectId && viewId ? VIEW_DETAILS(viewId as string) : null,
-    workspaceSlug && projectId && viewId
-      ? () =>
-          viewsService.getViewDetails(
-            workspaceSlug as string,
-            projectId as string,
-            viewId as string
-          )
-      : null
-  );
-
   const handleDeleteIssue = useCallback(
     (issue: IIssue) => {
       setDeleteIssueModal(true);
@@ -405,8 +393,6 @@ export const IssuesView: React.FC<Props> = ({
     (key) => filters[key as keyof IIssueFilterOptions] === null
   );
 
-  const isUpdatingView = JSON.stringify(filters) === JSON.stringify(viewDetails?.query_data);
-
   return (
     <>
       <CreateUpdateViewModal
@@ -556,49 +542,27 @@ export const IssuesView: React.FC<Props> = ({
           })}
         </div>
 
-        {viewId
-          ? isUpdatingView && (
-              <PrimaryButton
-                onClick={() => {
-                  if (viewId) {
-                    setFilters({}, true);
-                    setToastAlert({
-                      title: "View updated",
-                      message: "Your view has been updated",
-                      type: "success",
-                    });
-                  } else
-                    setCreateViewModal({
-                      query: filters,
-                    });
-                }}
-                className="flex items-center gap-2 text-sm"
-              >
-                Update view
-              </PrimaryButton>
-            )
-          : Object.keys(filters).length > 0 &&
-            nullFilters.length !== Object.keys(filters).length && (
-              <PrimaryButton
-                onClick={() => {
-                  if (viewId) {
-                    setFilters({}, true);
-                    setToastAlert({
-                      title: "View updated",
-                      message: "Your view has been updated",
-                      type: "success",
-                    });
-                  } else
-                    setCreateViewModal({
-                      query: filters,
-                    });
-                }}
-                className="flex items-center gap-2 text-sm"
-              >
-                <PlusIcon className="h-4 w-4" />
-                Save view
-              </PrimaryButton>
-            )}
+        {Object.keys(filters).length > 0 && nullFilters.length !== Object.keys(filters).length && (
+          <PrimaryButton
+            onClick={() => {
+              if (viewId) {
+                setFilters({}, true);
+                setToastAlert({
+                  title: "View updated",
+                  message: "Your view has been updated",
+                  type: "success",
+                });
+              } else
+                setCreateViewModal({
+                  query: filters,
+                });
+            }}
+            className="flex items-center gap-2 text-sm"
+          >
+            {!viewId && <PlusIcon className="h-4 w-4" />}
+            {viewId ? "Update" : "Save"} view
+          </PrimaryButton>
+        )}
       </div>
       <DragDropContext onDragEnd={handleOnDragEnd}>
         <StrictModeDroppable droppableId="trashBox">
