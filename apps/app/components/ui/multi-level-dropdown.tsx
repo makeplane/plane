@@ -130,7 +130,7 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                             className={({ active }) =>
                               `${
                                 active || child.selected ? "bg-gray-100" : "text-gray-900"
-                              } flex w-full items-center break-all rounded px-1 py-1.5 capitalize`
+                              } flex w-full items-center break-all rounded px-1 py-1.5 text-left capitalize`
                             }
                           >
                             {child.label}

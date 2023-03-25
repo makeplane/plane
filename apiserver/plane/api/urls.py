@@ -131,6 +131,9 @@ from plane.api.views import (
     # Search
     GlobalSearchEndpoint,
     ## End Search
+    # Gpt
+    GPTIntegrationEndpoint,
+    ## End Gpt
 )
 
 
@@ -1154,4 +1157,11 @@ urlpatterns = [
         name="global-search",
     ),
     ## End Search
+    # Gpt
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/ai-assistant/",
+        GPTIntegrationEndpoint.as_view(),
+        name="importer",
+    ),
+    ## End Gpt
 ]

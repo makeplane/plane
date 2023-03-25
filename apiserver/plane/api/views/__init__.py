@@ -123,3 +123,6 @@ from .page import (
 )
 
 from .search import GlobalSearchEndpoint
+
+
+from .gpt import GPTIntegrationEndpoint

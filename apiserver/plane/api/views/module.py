@@ -102,6 +102,7 @@ class ModuleViewSet(BaseViewSet):
                     filter=Q(issue_module__issue__state__group="backlog"),
                 )
             )
+            .order_by("name", "-is_favorite")
         )
 
     def create(self, request, slug, project_id):
@@ -337,6 +338,7 @@ class ModuleLinkViewSet(BaseViewSet):
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(module_id=self.kwargs.get("module_id"))
             .filter(project__project_projectmember__member=self.request.user)
+            .order_by("-created_at")
             .distinct()
         )
 
