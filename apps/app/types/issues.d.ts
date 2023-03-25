@@ -224,6 +224,7 @@ export interface IIssueFilterOptions {
   issue__assignees__id: string[] | null;
   issue__labels__id: string[] | null;
   priority: string[] | null;
+  created_by: string[] | null;
 }
 
 export type TIssueGroupByOptions = "state" | "priority" | "labels" | "created_by" | null;

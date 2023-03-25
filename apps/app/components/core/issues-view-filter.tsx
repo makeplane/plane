@@ -71,16 +71,29 @@ export const IssuesFilterView: React.FC = () => {
       <SelectFilters
         filters={filters}
         onSelect={(option) => {
-          setFilters(
-            {
-              ...filters,
-              [option.key]: [
-                ...((filters?.[option.key as keyof typeof filters] as any[]) ?? []),
-                option.value,
-              ],
-            },
-            !Boolean(viewId)
-          );
+          const key = option.key as keyof typeof filters;
+
+          const valueExists = filters[key]?.includes(option.value);
+
+          if (valueExists) {
+            setFilters(
+              {
+                ...(filters ?? {}),
+                [option.key]: ((filters[key] ?? []) as any[])?.filter(
+                  (val) => val !== option.value
+                ),
+              },
+              !Boolean(viewId)
+            );
+          } else {
+            setFilters(
+              {
+                ...(filters ?? {}),
+                [option.key]: [...((filters[key] ?? []) as any[]), option.value],
+              },
+              !Boolean(viewId)
+            );
+          }
         }}
         direction="left"
         height="rg"
