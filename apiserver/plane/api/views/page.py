@@ -247,7 +247,7 @@ class RecentPagesEndpoint(BaseAPIView):
 
             todays_pages = (
                 Page.objects.filter(
-                    updated_at__date=timezone.now().date,
+                    updated_at__date=timezone.now().date(),
                     workspace__slug=slug,
                     project_id=project_id,
                 )
@@ -298,9 +298,7 @@ class RecentPagesEndpoint(BaseAPIView):
             )
             todays_pages_serializer = PageSerializer(todays_pages, many=True)
             yesterday_pages_serializer = PageSerializer(yesterdays_pages, many=True)
-            earlier_this_week_serializer = PageSerializer(
-                earlier_this_week, many=True
-            )
+            earlier_this_week_serializer = PageSerializer(earlier_this_week, many=True)
             return Response(
                 {
                     "todays": todays_pages_serializer.data,
