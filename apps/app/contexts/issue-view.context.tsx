@@ -69,6 +69,7 @@ export const initialState: StateType = {
     state: null,
     issue__assignees__id: null,
     issue__labels__id: null,
+    created_by: null,
   },
 };
 

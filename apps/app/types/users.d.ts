@@ -52,6 +52,10 @@ export interface IUserWorkspaceDashboard {
   issue_activities: IUserActivity[];
   issues_due_week_count: number;
   overdue_issues: IIssueLite[];
+  completed_issues: {
+    week_in_month: number;
+    completed_count: number;
+  }[];
   pending_issues_count: number;
   state_distribution: IUserStateDistribution[];
   upcoming_issues: IIssueLite[];
