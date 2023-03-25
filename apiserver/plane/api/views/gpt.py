@@ -34,7 +34,7 @@ class GPTIntegrationEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            final_text = task + prompt
+            final_text = task + "\n" + prompt
 
             openai.api_key = settings.OPENAI_API_KEY
             response = openai.Completion.create(
