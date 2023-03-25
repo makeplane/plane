@@ -111,5 +111,5 @@ export const FAVORITE_PAGES_LIST = (projectId: string) => `FAVORITE_PAGES_LIST_$
 export const MY_PAGES_LIST = (projectId: string) => `MY_PAGES_LIST_${projectId}`;
 export const OTHER_PAGES_LIST = (projectId: string) => `OTHER_PAGES_LIST_${projectId}`;
 export const PAGE_DETAILS = (pageId: string) => `PAGE_DETAILS_${pageId}`;
-export const PAGE_BLOCK_LIST = (pageId: string) => `PAGE_BLOCK_LIST_${pageId}`;
+export const PAGE_BLOCKS_LIST = (pageId: string) => `PAGE_BLOCK_LIST_${pageId}`;
 export const PAGE_BLOCK_DETAILS = (pageId: string) => `PAGE_BLOCK_DETAILS_${pageId}`;

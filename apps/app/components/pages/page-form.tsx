@@ -3,16 +3,16 @@ import { useForm } from "react-hook-form";
 // ui
 import { Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
 // types
-import { IPageForm } from "types";
+import { IPage } from "types";
 
 type Props = {
-  handleFormSubmit: (values: IPageForm) => Promise<void>;
+  handleFormSubmit: (values: IPage) => Promise<void>;
   handleClose: () => void;
   status: boolean;
-  data?: IPageForm;
+  data?: IPage | null;
 };
 
-const defaultValues: IPageForm = {
+const defaultValues = {
   name: "",
   description: "",
 };
@@ -23,11 +23,11 @@ export const PageForm: React.FC<Props> = ({ handleFormSubmit, handleClose, statu
     formState: { errors, isSubmitting },
     handleSubmit,
     reset,
-  } = useForm<IPageForm>({
+  } = useForm<IPage>({
     defaultValues,
   });
 
-  const handleCreateUpdatePage = async (formData: IPageForm) => {
+  const handleCreateUpdatePage = async (formData: IPage) => {
     await handleFormSubmit(formData);
 
     reset({

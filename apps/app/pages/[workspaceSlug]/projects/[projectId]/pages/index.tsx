@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { useRouter } from "next/router";
 import type { GetServerSidePropsContext, NextPage } from "next";
@@ -19,14 +19,14 @@ import { PlusIcon } from "components/icons";
 // layouts
 import AppLayout from "layouts/app-layout";
 // components
-import { DeletePageModal, RecentPagesList, CreateUpdatePageModal } from "components/pages";
+import { RecentPagesList, CreateUpdatePageModal } from "components/pages";
 // ui
 import { HeaderButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { ListBulletIcon, RectangleGroupIcon, Squares2X2Icon } from "@heroicons/react/20/solid";
 // types
-import { IPage } from "types";
+import { TPageViewProps } from "types";
 // fetch-keys
 import { PROJECT_DETAILS, RECENT_PAGES_LIST } from "constants/fetch-keys";
 
@@ -50,13 +50,9 @@ const OtherPagesList = dynamic(() => import("components/pages").then((a) => a.Ot
 });
 
 const ProjectPages: NextPage = () => {
-  const [isCreateUpdatePageModalOpen, setIsCreateUpdatePageModalOpen] = useState(false);
-  const [selectedPage, setSelectedPage] = useState<IPage>();
+  const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
 
-  const [deletePageModal, setDeletePageModal] = useState(false);
-  const [selectedPageToDelete, setSelectedPageToDelete] = useState<IPage | null>(null);
-
-  const [viewType, setViewType] = useState<"list" | "grid" | "masonry">("list");
+  const [viewType, setViewType] = useState<TPageViewProps>("list");
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -75,34 +71,11 @@ const ProjectPages: NextPage = () => {
       : null
   );
 
-  const handleDeletePage = (page: IPage) => {
-    setSelectedPageToDelete(page);
-    setDeletePageModal(true);
-  };
-
-  useEffect(() => {
-    if (isCreateUpdatePageModalOpen) return;
-    const timer = setTimeout(() => {
-      setSelectedPage(undefined);
-      clearTimeout(timer);
-    }, 500);
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [isCreateUpdatePageModalOpen]);
-
   return (
     <>
       <CreateUpdatePageModal
-        isOpen={isCreateUpdatePageModalOpen}
-        handleClose={() => setIsCreateUpdatePageModalOpen(false)}
-        data={selectedPage}
-      />
-      <DeletePageModal
-        isOpen={deletePageModal}
-        setIsOpen={setDeletePageModal}
-        data={selectedPageToDelete}
+        isOpen={createUpdatePageModal}
+        handleClose={() => setCreateUpdatePageModal(false)}
       />
       <AppLayout
         meta={{
@@ -118,7 +91,7 @@ const ProjectPages: NextPage = () => {
           <HeaderButton
             Icon={PlusIcon}
             label="Create Page"
-            onClick={() => setIsCreateUpdatePageModalOpen(true)}
+            onClick={() => setCreateUpdatePageModal(true)}
           />
         }
       >
@@ -184,15 +157,15 @@ const ProjectPages: NextPage = () => {
                   >
                     <ListBulletIcon className="h-4 w-4" />
                   </button>
-                  <button
+                  {/* <button
                     type="button"
                     className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200 ${
-                      viewType === "grid" ? "bg-gray-200" : ""
+                      viewType === "detailed" ? "bg-gray-200" : ""
                     }`}
-                    onClick={() => setViewType("grid")}
+                    onClick={() => setViewType("detailed")}
                   >
                     <Squares2X2Icon className="h-4 w-4" />
-                  </button>
+                  </button> */}
                   <button
                     type="button"
                     className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200 ${
@@ -206,41 +179,19 @@ const ProjectPages: NextPage = () => {
               </Tab.List>
               <Tab.Panels>
                 <Tab.Panel>
-                  <RecentPagesList
-                    pages={recentPages}
-                    handleDeletePage={handleDeletePage}
-                    setCreateUpdatePageModal={setIsCreateUpdatePageModalOpen}
-                    setSelectedPage={setSelectedPage}
-                    viewType={viewType}
-                  />
+                  <RecentPagesList pages={recentPages} viewType={viewType} />
                 </Tab.Panel>
                 <Tab.Panel>
-                  <AllPagesList
-                    handleDeletePage={handleDeletePage}
-                    setCreateUpdatePageModal={setIsCreateUpdatePageModalOpen}
-                    setSelectedPage={setSelectedPage}
-                  />
+                  <AllPagesList viewType={viewType} />
                 </Tab.Panel>
                 <Tab.Panel>
-                  <FavoritePagesList
-                    handleDeletePage={handleDeletePage}
-                    setCreateUpdatePageModal={setIsCreateUpdatePageModalOpen}
-                    setSelectedPage={setSelectedPage}
-                  />
+                  <FavoritePagesList viewType={viewType} />
                 </Tab.Panel>
                 <Tab.Panel>
-                  <MyPagesList
-                    handleDeletePage={handleDeletePage}
-                    setCreateUpdatePageModal={setIsCreateUpdatePageModalOpen}
-                    setSelectedPage={setSelectedPage}
-                  />
+                  <MyPagesList viewType={viewType} />
                 </Tab.Panel>
                 <Tab.Panel>
-                  <OtherPagesList
-                    handleDeletePage={handleDeletePage}
-                    setCreateUpdatePageModal={setIsCreateUpdatePageModalOpen}
-                    setSelectedPage={setSelectedPage}
-                  />
+                  <OtherPagesList viewType={viewType} />
                 </Tab.Panel>
               </Tab.Panels>
             </Tab.Group>

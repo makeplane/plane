@@ -13,7 +13,7 @@ import useToast from "hooks/use-toast";
 // components
 import { PageForm } from "./page-form";
 // types
-import { IPage, IPageForm } from "types";
+import { IPage } from "types";
 // fetch-keys
 import { RECENT_PAGES_LIST } from "constants/fetch-keys";
 
@@ -33,7 +33,7 @@ export const CreateUpdatePageModal: React.FC<Props> = ({ isOpen, handleClose, da
     handleClose();
   };
 
-  const createPage = async (payload: IPageForm) => {
+  const createPage = async (payload: IPage) => {
     await pagesService
       .createPage(workspaceSlug as string, projectId as string, payload)
       .then(() => {
@@ -55,7 +55,7 @@ export const CreateUpdatePageModal: React.FC<Props> = ({ isOpen, handleClose, da
       });
   };
 
-  const updatePage = async (payload: IPageForm) => {
+  const updatePage = async (payload: IPage) => {
     await pagesService
       .patchPage(workspaceSlug as string, projectId as string, data?.id ?? "", payload)
       .then((res) => {
@@ -86,7 +86,7 @@ export const CreateUpdatePageModal: React.FC<Props> = ({ isOpen, handleClose, da
       });
   };
 
-  const handleFormSubmit = async (formData: IPageForm) => {
+  const handleFormSubmit = async (formData: IPage) => {
     if (!workspaceSlug || !projectId) return;
 
     if (!data) await createPage(formData);

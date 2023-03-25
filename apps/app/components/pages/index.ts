@@ -8,4 +8,5 @@ export * from "./page-form";
 export * from "./pages-view";
 export * from "./recent-pages-list";
 export * from "./single-page-block";
+export * from "./single-page-detailed-item";
 export * from "./single-page-list-item";

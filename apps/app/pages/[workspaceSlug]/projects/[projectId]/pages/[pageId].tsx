@@ -24,11 +24,12 @@ import { Loader, PrimaryButton, TextArea } from "components/ui";
 import { ArrowLeftIcon, PlusIcon, ShareIcon, StarIcon } from "@heroicons/react/24/outline";
 // helpers
 import { renderShortTime } from "helpers/date-time.helper";
+import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import type { NextPage, GetServerSidePropsContext } from "next";
 import { IPage, IPageBlock } from "types";
 // fetch-keys
-import { PAGE_BLOCK_LIST, PAGE_DETAILS, PROJECT_DETAILS } from "constants/fetch-keys";
+import { PAGE_BLOCKS_LIST, PAGE_DETAILS, PROJECT_DETAILS } from "constants/fetch-keys";
 
 const SinglePage: NextPage = () => {
   const router = useRouter();
@@ -38,7 +39,7 @@ const SinglePage: NextPage = () => {
 
   const { handleSubmit, reset, watch, setValue } = useForm<IPage>({ defaultValues: { name: "" } });
 
-  const { data: activeProject } = useSWR(
+  const { data: projectDetails } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
     workspaceSlug && projectId
       ? () => projectService.getProject(workspaceSlug as string, projectId as string)
@@ -58,7 +59,7 @@ const SinglePage: NextPage = () => {
   );
 
   const { data: pageBlocks } = useSWR(
-    workspaceSlug && projectId && pageId ? PAGE_BLOCK_LIST(pageId as string) : null,
+    workspaceSlug && projectId && pageId ? PAGE_BLOCKS_LIST(pageId as string) : null,
     workspaceSlug && projectId
       ? () =>
           pagesService.listPageBlocks(
@@ -94,16 +95,12 @@ const SinglePage: NextPage = () => {
     await pagesService
       .createPageBlock(workspaceSlug as string, projectId as string, pageId as string, {
         name: "New block",
+        description_html: "<p>New block description...</p>",
       })
       .then((res) => {
         mutate<IPageBlock[]>(
-          PAGE_BLOCK_LIST(pageId as string),
-          (prevData) =>
-            prevData?.map((p) => {
-              if (p.id === res.id) return { ...p, ...res };
-
-              return p;
-            }),
+          PAGE_BLOCKS_LIST(pageId as string),
+          (prevData) => [...(prevData as IPageBlock[]), res],
           false
         );
       })
@@ -152,6 +149,21 @@ const SinglePage: NextPage = () => {
     );
   };
 
+  const handleCopyText = () => {
+    const originURL =
+      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+
+    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/pages/${pageId}`).then(
+      () => {
+        setToastAlert({
+          type: "success",
+          title: "Link Copied!",
+          message: "Page link copied to clipboard.",
+        });
+      }
+    );
+  };
+
   useEffect(() => {
     if (!pageDetails) return;
 
@@ -168,7 +180,7 @@ const SinglePage: NextPage = () => {
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
-          <BreadcrumbItem title={`${activeProject?.name ?? "Project"} Pages`} />
+          <BreadcrumbItem title={`${projectDetails?.name ?? "Project"} Pages`} />
         </Breadcrumbs>
       }
     >
@@ -187,7 +199,7 @@ const SinglePage: NextPage = () => {
               <span className="text-sm text-gray-500">
                 {renderShortTime(pageDetails.created_at)}
               </span>
-              <PrimaryButton className="flex items-center gap-2">
+              <PrimaryButton className="flex items-center gap-2" onClick={handleCopyText}>
                 <ShareIcon className="h-4 w-4" />
                 Share
               </PrimaryButton>
@@ -209,9 +221,7 @@ const SinglePage: NextPage = () => {
               placeholder="Enter issue name"
               value={watch("name")}
               onBlur={handleSubmit(updatePage)}
-              onChange={(e) => {
-                setValue("name", e.target.value);
-              }}
+              onChange={(e) => setValue("name", e.target.value)}
               required={true}
               className="min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-2xl font-semibold outline-none ring-0 focus:ring-1 focus:ring-theme"
               role="textbox"
@@ -229,12 +239,29 @@ const SinglePage: NextPage = () => {
                   Add new block
                 </button>
               ) : (
-                pageBlocks.map((pageBlock) => (
-                  <SinglePageBlock key={pageBlock.id} pageBlock={pageBlock} />
-                ))
+                <>
+                  <div className="space-y-4">
+                    {pageBlocks.map((block) => (
+                      <SinglePageBlock key={block.id} block={block} />
+                    ))}
+                  </div>
+                  <div className="-mr-3 flex justify-end">
+                    <button
+                      type="button"
+                      className="flex items-center gap-1 rounded px-2.5 py-1 text-xs hover:bg-gray-100"
+                      onClick={createPageBlock}
+                    >
+                      <PlusIcon className="h-3 w-3" />
+                      Add new block
+                    </button>
+                  </div>
+                </>
               )
             ) : (
-              "Loading..."
+              <Loader>
+                <Loader.Item height="150px" />
+                <Loader.Item height="150px" />
+              </Loader>
             )}
           </div>
         </div>
