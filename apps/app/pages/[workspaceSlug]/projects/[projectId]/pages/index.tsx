@@ -21,7 +21,7 @@ import AppLayout from "layouts/app-layout";
 // components
 import { RecentPagesList, CreateUpdatePageModal } from "components/pages";
 // ui
-import { HeaderButton } from "components/ui";
+import { HeaderButton, Input, TextArea } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { ListBulletIcon, RectangleGroupIcon, Squares2X2Icon } from "@heroicons/react/20/solid";
@@ -30,24 +30,33 @@ import { TPageViewProps } from "types";
 // fetch-keys
 import { PROJECT_DETAILS, RECENT_PAGES_LIST } from "constants/fetch-keys";
 
-const AllPagesList = dynamic(() => import("components/pages").then((a) => a.AllPagesList), {
-  ssr: false,
-});
+const AllPagesList = dynamic<{ viewType: TPageViewProps }>(
+  () => import("components/pages").then((a) => a.AllPagesList),
+  {
+    ssr: false,
+  }
+);
 
-const FavoritePagesList = dynamic(
+const FavoritePagesList = dynamic<{ viewType: TPageViewProps }>(
   () => import("components/pages").then((a) => a.FavoritePagesList),
   {
     ssr: false,
   }
 );
 
-const MyPagesList = dynamic(() => import("components/pages").then((a) => a.MyPagesList), {
-  ssr: false,
-});
+const MyPagesList = dynamic<{ viewType: TPageViewProps }>(
+  () => import("components/pages").then((a) => a.MyPagesList),
+  {
+    ssr: false,
+  }
+);
 
-const OtherPagesList = dynamic(() => import("components/pages").then((a) => a.OtherPagesList), {
-  ssr: false,
-});
+const OtherPagesList = dynamic<{ viewType: TPageViewProps }>(
+  () => import("components/pages").then((a) => a.OtherPagesList),
+  {
+    ssr: false,
+  }
+);
 
 const ProjectPages: NextPage = () => {
   const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
@@ -57,7 +66,7 @@ const ProjectPages: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { data: activeProject } = useSWR(
+  const { data: projectDetails } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
     workspaceSlug && projectId
       ? () => projectService.getProject(workspaceSlug as string, projectId as string)
@@ -84,7 +93,7 @@ const ProjectPages: NextPage = () => {
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
-            <BreadcrumbItem title={`${activeProject?.name ?? "Project"} Pages`} />
+            <BreadcrumbItem title={`${projectDetails?.name ?? "Project"} Pages`} />
           </Breadcrumbs>
         }
         right={
@@ -97,20 +106,14 @@ const ProjectPages: NextPage = () => {
       >
         <div className="space-y-4">
           <div className="overflow-hidden rounded-lg border border-gray-200 bg-white px-4 pt-3 pb-4 shadow-sm ">
-            <label htmlFor="name" className="sr-only">
-              Title
-            </label>
-            <input
+            <Input
               type="text"
               name="name"
               id="name"
               className="block w-full border-0 pt-2.5 text-lg font-medium placeholder-gray-500 outline-none focus:ring-0"
               placeholder="Title"
             />
-            <label htmlFor="description" className="sr-only">
-              Description
-            </label>
-            <textarea
+            <TextArea
               rows={2}
               name="description"
               id="description"

@@ -3,6 +3,7 @@ import { IIssueLabels } from "./issues";
 
 export interface IPage {
   access: number;
+  blocks: IPageBlock[];
   color: string;
   created_at: Date;
   created_by: string;
@@ -23,8 +24,7 @@ export interface IPage {
 }
 
 export interface RecentPagesResponse {
-  earlier_this_week: IPage[];
-  yesterday: IPage[];
+  [key: string]: IPage[];
 }
 
 export interface IPageBlock {

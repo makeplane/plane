@@ -11,11 +11,11 @@ import { TPageViewProps } from "types";
 // fetch-keys
 import { MY_PAGES_LIST } from "constants/fetch-keys";
 
-type TPagesListProps = {
+type Props = {
   viewType: TPageViewProps;
 };
 
-export const MyPagesList: React.FC<TPagesListProps> = ({ viewType }) => {
+export const MyPagesList: React.FC<Props> = ({ viewType }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 

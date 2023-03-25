@@ -12,7 +12,7 @@ import pagesService from "services/pages.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomMenu, TextArea } from "components/ui";
+import { CustomMenu, Loader, TextArea } from "components/ui";
 // icons
 import { WaterDropIcon } from "components/icons";
 // helpers
@@ -28,6 +28,11 @@ type Props = {
 
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
   ssr: false,
+  loading: () => (
+    <Loader>
+      <Loader.Item height="100px" width="100%" />
+    </Loader>
+  ),
 });
 
 export const SinglePageBlock: React.FC<Props> = ({ block }) => {
@@ -177,7 +182,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block }) => {
           <CustomMenu.MenuItem onClick={deletePageBlock}>Delete block</CustomMenu.MenuItem>
         </CustomMenu>
       </div>
-      <div className="page-block-section -mx-3 -mt-2">
+      <div className="page-block-section -mx-3 -mt-5">
         <Controller
           name="description"
           control={control}

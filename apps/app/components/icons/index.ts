@@ -7,6 +7,7 @@ export * from "./calendar-month-icon";
 export * from "./cancel-icon";
 export * from "./cancelled-state-icon";
 export * from "./clipboard-icon";
+export * from "./color-pallette-icon";
 export * from "./comment-icon";
 export * from "./completed-cycle-icon";
 export * from "./completed-state-icon";

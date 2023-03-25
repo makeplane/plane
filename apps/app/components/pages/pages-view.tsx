@@ -2,8 +2,6 @@ import { useState } from "react";
 
 import { useRouter } from "next/router";
 
-import { mutate } from "swr";
-
 // services
 import pagesService from "services/pages.service";
 // hooks
@@ -19,8 +17,6 @@ import {
 import { Loader } from "components/ui";
 // types
 import { IPage, TPageViewProps } from "types";
-// fetch-keys
-import { RECENT_PAGES_LIST } from "constants/fetch-keys";
 
 type Props = {
   pages: IPage[] | undefined;
@@ -57,15 +53,6 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
         page: page.id,
       })
       .then(() => {
-        mutate<IPage[]>(
-          RECENT_PAGES_LIST(projectId as string),
-          (prevData) =>
-            (prevData ?? []).map((m) => ({
-              ...m,
-              is_favorite: m.id === page.id ? true : m.is_favorite,
-            })),
-          false
-        );
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -87,15 +74,6 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
     pagesService
       .removePageFromFavorites(workspaceSlug as string, projectId as string, page.id)
       .then(() => {
-        mutate<IPage[]>(
-          RECENT_PAGES_LIST(projectId as string),
-          (prevData) =>
-            (prevData ?? []).map((m) => ({
-              ...m,
-              is_favorite: m.id === page.id ? false : m.is_favorite,
-            })),
-          false
-        );
         setToastAlert({
           type: "success",
           title: "Success!",

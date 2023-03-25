@@ -6,11 +6,16 @@ import useSWR, { mutate } from "swr";
 
 // react-hook-form
 import { useForm } from "react-hook-form";
+// headless ui
+import { Popover, Transition } from "@headlessui/react";
+// react-color
+import { TwitterPicker } from "react-color";
 // lib
 import { requiredAuth } from "lib/auth";
 // services
 import projectService from "services/project.service";
 import pagesService from "services/pages.service";
+import issuesService from "services/issues.service";
 // hooks
 import useToast from "hooks/use-toast";
 // layouts
@@ -19,17 +24,23 @@ import AppLayout from "layouts/app-layout";
 import { SinglePageBlock } from "components/pages";
 // ui
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-import { Loader, PrimaryButton, TextArea } from "components/ui";
+import { CustomSearchSelect, Loader, PrimaryButton, TextArea } from "components/ui";
 // icons
 import { ArrowLeftIcon, PlusIcon, ShareIcon, StarIcon } from "@heroicons/react/24/outline";
+import { ColorPalletteIcon } from "components/icons";
 // helpers
 import { renderShortTime } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import type { NextPage, GetServerSidePropsContext } from "next";
-import { IPage, IPageBlock } from "types";
+import { IIssueLabels, IPage, IPageBlock } from "types";
 // fetch-keys
-import { PAGE_BLOCKS_LIST, PAGE_DETAILS, PROJECT_DETAILS } from "constants/fetch-keys";
+import {
+  PAGE_BLOCKS_LIST,
+  PAGE_DETAILS,
+  PROJECT_DETAILS,
+  PROJECT_ISSUE_LABELS,
+} from "constants/fetch-keys";
 
 const SinglePage: NextPage = () => {
   const router = useRouter();
@@ -37,7 +48,9 @@ const SinglePage: NextPage = () => {
 
   const { setToastAlert } = useToast();
 
-  const { handleSubmit, reset, watch, setValue } = useForm<IPage>({ defaultValues: { name: "" } });
+  const { handleSubmit, reset, watch, setValue, control } = useForm<IPage>({
+    defaultValues: { name: "" },
+  });
 
   const { data: projectDetails } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
@@ -70,6 +83,13 @@ const SinglePage: NextPage = () => {
       : null
   );
 
+  const { data: labels } = useSWR<IIssueLabels[]>(
+    workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string)
+      : null
+  );
+
   const updatePage = async (formData: IPage) => {
     if (!workspaceSlug || !projectId || !pageId) return;
 
@@ -86,6 +106,26 @@ const SinglePage: NextPage = () => {
           }),
           false
         );
+      });
+  };
+
+  const partialUpdatePage = async (formData: Partial<IPage>) => {
+    if (!workspaceSlug || !projectId || !pageId) return;
+
+    mutate<IPage>(
+      PAGE_DETAILS(pageId as string),
+      (prevData) => ({
+        ...(prevData as IPage),
+        ...formData,
+        labels: formData.labels_list ? formData.labels_list : (prevData as IPage).labels,
+      }),
+      false
+    );
+
+    await pagesService
+      .patchPage(workspaceSlug as string, projectId as string, pageId as string, formData)
+      .then(() => {
+        mutate(PAGE_DETAILS(pageId as string));
       });
   };
 
@@ -164,6 +204,23 @@ const SinglePage: NextPage = () => {
     );
   };
 
+  const options =
+    labels?.map((label) => ({
+      value: label.id,
+      query: label.name,
+      content: (
+        <div className="flex items-center gap-2">
+          <span
+            className="h-2 w-2 flex-shrink-0 rounded-full"
+            style={{
+              backgroundColor: label.color && label.color !== "" ? label.color : "#000000",
+            }}
+          />
+          {label.name}
+        </div>
+      ),
+    })) ?? [];
+
   useEffect(() => {
     if (!pageDetails) return;
 
@@ -195,6 +252,41 @@ const SinglePage: NextPage = () => {
               <ArrowLeftIcon className="h-4 w-4" />
               Back
             </button>
+            <div className="flex flex-wrap gap-1">
+              {pageDetails.label_details.length > 0 ? (
+                pageDetails.label_details.map((label) => (
+                  <div
+                    key={label.id}
+                    className="group flex items-center gap-1 rounded-2xl border px-2 py-0.5 text-xs"
+                  >
+                    <span
+                      className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                      style={{
+                        backgroundColor: label?.color && label.color !== "" ? label.color : "#000",
+                      }}
+                    />
+                    {label.name}
+                  </div>
+                ))
+              ) : (
+                <CustomSearchSelect
+                  customButton={
+                    <button
+                      type="button"
+                      className="flex items-center gap-1 rounded-md bg-gray-100 px-3 py-1.5 text-xs hover:bg-gray-200"
+                    >
+                      <PlusIcon className="h-3 w-3" />
+                      Add new label
+                    </button>
+                  }
+                  value={pageDetails.labels}
+                  onChange={(val: string[]) => partialUpdatePage({ labels_list: val })}
+                  options={options}
+                  multiple
+                  noChevron
+                />
+              )}
+            </div>
             <div className="flex items-center gap-4">
               <span className="text-sm text-gray-500">
                 {renderShortTime(pageDetails.created_at)}
@@ -203,6 +295,51 @@ const SinglePage: NextPage = () => {
                 <ShareIcon className="h-4 w-4" />
                 Share
               </PrimaryButton>
+              <button type="button" className="text-sm">
+                AI
+              </button>
+              <div className="flex-shrink-0">
+                <Popover className="relative grid place-items-center">
+                  {({ open }) => (
+                    <>
+                      <Popover.Button
+                        type="button"
+                        className={`group inline-flex items-center outline-none ${
+                          open ? "text-gray-900" : "text-gray-500"
+                        }`}
+                      >
+                        {watch("color") && watch("color") !== "" ? (
+                          <span
+                            className="h-4 w-4 rounded"
+                            style={{
+                              backgroundColor: watch("color") ?? "black",
+                            }}
+                          />
+                        ) : (
+                          <ColorPalletteIcon height={16} width={16} />
+                        )}
+                      </Popover.Button>
+
+                      <Transition
+                        as={React.Fragment}
+                        enter="transition ease-out duration-200"
+                        enterFrom="opacity-0 translate-y-1"
+                        enterTo="opacity-100 translate-y-0"
+                        leave="transition ease-in duration-150"
+                        leaveFrom="opacity-100 translate-y-0"
+                        leaveTo="opacity-0 translate-y-1"
+                      >
+                        <Popover.Panel className="absolute top-full right-0 z-20 mt-1 max-w-xs px-2 sm:px-0">
+                          <TwitterPicker
+                            color={pageDetails.color}
+                            onChange={(val) => partialUpdatePage({ color: val.hex })}
+                          />
+                        </Popover.Panel>
+                      </Transition>
+                    </>
+                  )}
+                </Popover>
+              </div>
               {pageDetails.is_favorite ? (
                 <button onClick={handleRemoveFromFavorites} className="z-10">
                   <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
@@ -245,7 +382,7 @@ const SinglePage: NextPage = () => {
                       <SinglePageBlock key={block.id} block={block} />
                     ))}
                   </div>
-                  <div className="-mr-3 flex justify-end">
+                  <div className="">
                     <button
                       type="button"
                       className="flex items-center gap-1 rounded px-2.5 py-1 text-xs hover:bg-gray-100"
