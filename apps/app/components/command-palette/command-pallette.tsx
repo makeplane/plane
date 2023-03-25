@@ -178,6 +178,7 @@ export const CommandPalette: React.FC = () => {
   };
 
   const goToSettings = (path: string = "") => {
+    setIsPaletteOpen(false);
     router.push(`/${workspaceSlug}/settings/${path}`);
   };
 
@@ -268,14 +269,14 @@ export const CommandPalette: React.FC = () => {
                 >
                   {issueId && issueDetails && (
                     <div className="p-3">
-                      <span className="rounded bg-slate-100 p-1 px-2 text-xs font-medium">
+                      <span className="rounded bg-slate-100 p-1 px-2 text-xs font-medium text-slate-500">
                         {issueDetails.project_detail?.identifier}-{issueDetails.sequence_id}{" "}
                         {issueDetails?.name}
                       </span>
                     </div>
                   )}
                   <Command.Input
-                    className="w-full rounded-t-lg border-b px-3 py-4 text-sm outline-none"
+                    className="w-full rounded-t-lg border-b p-4 text-sm outline-none"
                     placeholder={placeholder}
                     value={search}
                     onValueChange={(e) => {
@@ -363,7 +364,13 @@ export const CommandPalette: React.FC = () => {
                         )}
 
                         <Command.Group heading="Workspace Settings">
-                          <Command.Item onSelect={() => setPages([...pages, "settings"])}>
+                          <Command.Item
+                            onSelect={() => {
+                              setPlaceholder("Search workspace settings...");
+                              setSearch("");
+                              setPages([...pages, "settings"]);
+                            }}
+                          >
                             Search settings...
                           </Command.Item>
                         </Command.Group>
