@@ -12,6 +12,7 @@ import { truncateText } from "helpers/string.helper";
 import { renderShortDate, renderShortTime } from "helpers/date-time.helper";
 // types
 import { IPage } from "types";
+import { PencilScribbleIcon } from "components/icons";
 
 type TSingleStatProps = {
   page: IPage;
@@ -36,6 +37,7 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
       <div className="relative rounded p-4 hover:bg-gray-100">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
+            <PencilScribbleIcon />
             <Link href={`/${workspaceSlug}/projects/${projectId}/pages/${page.id}`}>
               <a>
                 <p className="mr-2 truncate text-sm font-medium">{truncateText(page.name, 75)}</p>

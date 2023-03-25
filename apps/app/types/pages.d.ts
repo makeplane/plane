@@ -33,6 +33,7 @@ export interface IPageBlock {
   created_by: string;
   description: any;
   description_html: any;
+  description_stripped: any;
   id: string;
   issue: string | null;
   issue_detail: string | null;
