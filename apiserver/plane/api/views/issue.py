@@ -26,6 +26,7 @@ from plane.api.serializers import (
     LabelSerializer,
     IssueFlatSerializer,
     IssueLinkSerializer,
+    IssueLiteSerializer,
 )
 from plane.api.permissions import (
     ProjectEntityPermission,
@@ -136,40 +137,6 @@ class IssueViewSet(BaseViewSet):
             .select_related("parent")
             .prefetch_related("assignees")
             .prefetch_related("labels")
-            .prefetch_related(
-                Prefetch(
-                    "blocked_issues",
-                    queryset=IssueBlocker.objects.select_related("blocked_by", "block"),
-                )
-            )
-            .prefetch_related(
-                Prefetch(
-                    "blocker_issues",
-                    queryset=IssueBlocker.objects.select_related("block", "blocked_by"),
-                )
-            )
-            .prefetch_related(
-                Prefetch(
-                    "issue_cycle",
-                    queryset=CycleIssue.objects.select_related("cycle", "issue"),
-                ),
-            )
-            .prefetch_related(
-                Prefetch(
-                    "issue_module",
-                    queryset=ModuleIssue.objects.select_related(
-                        "module", "issue"
-                    ).prefetch_related("module__members"),
-                ),
-            )
-            .prefetch_related(
-                Prefetch(
-                    "issue_link",
-                    queryset=IssueLink.objects.select_related("issue").select_related(
-                        "created_by"
-                    ),
-                )
-            )
         )
 
     def list(self, request, slug, project_id):
@@ -189,7 +156,7 @@ class IssueViewSet(BaseViewSet):
                 else issue_queryset.filter(parent__isnull=True)
             )
 
-            issues = IssueSerializer(issue_queryset, many=True).data
+            issues = IssueLiteSerializer(issue_queryset, many=True).data
 
             ## Grouping the results
             group_by = request.GET.get("group_by", False)
@@ -201,7 +168,6 @@ class IssueViewSet(BaseViewSet):
             return Response(issues, status=status.HTTP_200_OK)
 
         except Exception as e:
-            print(e)
             capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
@@ -239,6 +205,17 @@ class IssueViewSet(BaseViewSet):
                 {"error": "Project was not found"}, status=status.HTTP_404_NOT_FOUND
             )
 
+    def retrieve(self, request, slug, project_id, pk=None):
+        try:
+            issue = Issue.objects.get(
+                workspace__slug=slug, project_id=project_id, pk=pk
+            )
+            return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
+        except Issue.DoesNotExist:
+            return Response(
+                {"error": "Issue Does not exist"}, status=status.HTTP_404_NOT_FOUND
+            )
+
 
 class UserWorkSpaceIssues(BaseAPIView):
     def get(self, request, slug):
@@ -257,45 +234,9 @@ class UserWorkSpaceIssues(BaseAPIView):
                 .select_related("parent")
                 .prefetch_related("assignees")
                 .prefetch_related("labels")
-                .prefetch_related(
-                    Prefetch(
-                        "blocked_issues",
-                        queryset=IssueBlocker.objects.select_related(
-                            "blocked_by", "block"
-                        ),
-                    )
-                )
-                .prefetch_related(
-                    Prefetch(
-                        "blocker_issues",
-                        queryset=IssueBlocker.objects.select_related(
-                            "block", "blocked_by"
-                        ),
-                    )
-                )
-                .prefetch_related(
-                    Prefetch(
-                        "issue_cycle",
-                        queryset=CycleIssue.objects.select_related("cycle", "issue"),
-                    ),
-                )
-                .prefetch_related(
-                    Prefetch(
-                        "issue_module",
-                        queryset=ModuleIssue.objects.select_related("module", "issue"),
-                    ),
-                )
-                .prefetch_related(
-                    Prefetch(
-                        "issue_link",
-                        queryset=IssueLink.objects.select_related(
-                            "issue"
-                        ).select_related("created_by"),
-                    )
-                )
                 .order_by("-created_at")
             )
-            serializer = IssueSerializer(issues, many=True)
+            serializer = IssueLiteSerializer(issues, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)
@@ -625,37 +566,9 @@ class SubIssuesEndpoint(BaseAPIView):
                 .select_related("parent")
                 .prefetch_related("assignees")
                 .prefetch_related("labels")
-                .prefetch_related(
-                    Prefetch(
-                        "blocked_issues",
-                        queryset=IssueBlocker.objects.select_related(
-                            "blocked_by", "block"
-                        ),
-                    )
-                )
-                .prefetch_related(
-                    Prefetch(
-                        "blocker_issues",
-                        queryset=IssueBlocker.objects.select_related(
-                            "block", "blocked_by"
-                        ),
-                    )
-                )
-                .prefetch_related(
-                    Prefetch(
-                        "issue_cycle",
-                        queryset=CycleIssue.objects.select_related("cycle", "issue"),
-                    ),
-                )
-                .prefetch_related(
-                    Prefetch(
-                        "issue_module",
-                        queryset=ModuleIssue.objects.select_related("module", "issue"),
-                    ),
-                )
             )
 
-            serializer = IssueSerializer(sub_issues, many=True)
+            serializer = IssueLiteSerializer(sub_issues, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)

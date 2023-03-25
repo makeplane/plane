@@ -118,3 +118,10 @@ class ProjectFavoriteSerializer(BaseSerializer):
             "workspace",
             "user",
         ]
+
+
+class ProjectLiteSerializer(BaseSerializer):
+    class Meta:
+        model = Project
+        fields = ["id", "identifier", "name"]
+        read_only_fields = fields

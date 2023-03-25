@@ -26,7 +26,7 @@ from plane.api.serializers import (
     PageSerializer,
     PageBlockSerializer,
     PageFavoriteSerializer,
-    IssueSerializer,
+    IssueLiteSerializer,
 )
 
 
@@ -217,7 +217,7 @@ class CreateIssueFromPageBlockEndpoint(BaseAPIView):
             page_block.issue = issue
             page_block.save()
 
-            return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
+            return Response(IssueLiteSerializer(issue).data, status=status.HTTP_200_OK)
         except PageBlock.DoesNotExist:
             return Response(
                 {"error": "Page Block does not exist"}, status=status.HTTP_404_NOT_FOUND
