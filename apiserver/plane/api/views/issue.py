@@ -293,6 +293,7 @@ class UserWorkSpaceIssues(BaseAPIView):
                         ).select_related("created_by"),
                     )
                 )
+                .order_by("-created_at")
             )
             serializer = IssueSerializer(issues, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -311,8 +312,10 @@ class WorkSpaceIssuesEndpoint(BaseAPIView):
 
     def get(self, request, slug):
         try:
-            issues = Issue.objects.filter(workspace__slug=slug).filter(
-                project__project_projectmember__member=self.request.user
+            issues = (
+                Issue.objects.filter(workspace__slug=slug)
+                .filter(project__project_projectmember__member=self.request.user)
+                .order_by("-created_at")
             )
             serializer = IssueSerializer(issues, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -338,7 +341,7 @@ class IssueActivityEndpoint(BaseAPIView):
                     project__project_projectmember__member=self.request.user,
                 )
                 .select_related("actor")
-            ).order_by("created_by")
+            ).order_by("created_at")
             issue_comments = (
                 IssueComment.objects.filter(issue_id=issue_id)
                 .filter(project__project_projectmember__member=self.request.user)
@@ -565,6 +568,7 @@ class LabelViewSet(BaseViewSet):
             .select_related("project")
             .select_related("workspace")
             .select_related("parent")
+            .order_by("name")
             .distinct()
         )
 
@@ -719,6 +723,7 @@ class IssueLinkViewSet(BaseViewSet):
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(issue_id=self.kwargs.get("issue_id"))
             .filter(project__project_projectmember__member=self.request.user)
+            .order_by("-created_at")
             .distinct()
         )
 

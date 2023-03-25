@@ -60,6 +60,8 @@ class PageViewSet(BaseViewSet):
             .annotate(is_favorite=Exists(subquery))
             .order_by(self.request.GET.get("order_by", "-created_at"))
             .prefetch_related("labels")
+
+            .order_by("name", "-is_favorite")
             .prefetch_related(
                 Prefetch(
                     "blocks", queryset=PageBlock.objects.select_related("page", "issue")
@@ -112,6 +114,7 @@ class PageBlockViewSet(BaseViewSet):
             .select_related("workspace")
             .select_related("page")
             .select_related("issue")
+            .order_by("sort_order")
             .distinct()
         )
 
@@ -258,6 +261,7 @@ class RecentPagesEndpoint(BaseAPIView):
                 .select_related("workspace")
                 .select_related("owned_by")
                 .prefetch_related("labels")
+                .order_by("-updated_by")
             )
 
             earlier_this_week = (
@@ -323,6 +327,7 @@ class FavoritePagesEndpoint(BaseAPIView):
                 .select_related("workspace")
                 .select_related("owned_by")
                 .prefetch_related("labels")
+                .order_by("name", "-is_favorite")
             )
 
             serializer = PageSerializer(pages, many=True)
@@ -342,6 +347,12 @@ class MyPagesEndpoint(BaseAPIView):
 
     def get(self, request, slug, project_id):
         try:
+            subquery = PageFavorite.objects.filter(
+                user=request.user,
+                page_id=OuterRef("pk"),
+                project_id=project_id,
+                workspace__slug=slug,
+            )
             pages = (
                 Page.objects.filter(
                     workspace__slug=slug, project_id=project_id, owned_by=request.user
@@ -350,6 +361,8 @@ class MyPagesEndpoint(BaseAPIView):
                 .select_related("workspace")
                 .select_related("owned_by")
                 .prefetch_related("labels")
+                .annotate(is_favorite=Exists(subquery))
+                .order_by("name", "-is_favorite")
             )
             serializer = PageSerializer(pages, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -368,6 +381,12 @@ class CreatedbyOtherPagesEndpoint(BaseAPIView):
 
     def get(self, request, slug, project_id):
         try:
+            subquery = PageFavorite.objects.filter(
+                user=request.user,
+                page_id=OuterRef("pk"),
+                project_id=project_id,
+                workspace__slug=slug,
+            )
             pages = (
                 Page.objects.filter(
                     ~Q(owned_by=request.user),
@@ -378,6 +397,8 @@ class CreatedbyOtherPagesEndpoint(BaseAPIView):
                 .select_related("workspace")
                 .select_related("owned_by")
                 .prefetch_related("labels")
+                .annotate(is_favorite=Exists(subquery))
+                .order_by("name", "-is_favorite")
             )
             serializer = PageSerializer(pages, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
