@@ -11,8 +11,15 @@ from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.contrib.sites.shortcuts import get_current_site
-from django.db.models import CharField, Count, OuterRef, Func, F, Q
-from django.db.models.functions import Cast, ExtractWeek
+from django.db.models import (
+    CharField,
+    Count,
+    OuterRef,
+    Func,
+    F,
+    Q,
+)
+from django.db.models.functions import ExtractWeek, Cast, ExtractDay
 from django.db.models.fields import DateField
 
 # Third party modules
@@ -636,6 +643,11 @@ class UserIssueCompletedGraphEndpoint(BaseAPIView):
             )
 
 
+class WeekInMonth(Func):
+    function = "FLOOR"
+    template = "(((%(expressions)s - 1) / 7) + 1)::INTEGER"
+
+
 class UserWorkspaceDashboardEndpoint(BaseAPIView):
     def get(self, request, slug):
         try:
@@ -652,6 +664,7 @@ class UserWorkspaceDashboardEndpoint(BaseAPIView):
             )
 
             month = request.GET.get("month", 1)
+
             completed_issues = (
                 Issue.objects.filter(
                     assignees__in=[request.user],
@@ -659,11 +672,11 @@ class UserWorkspaceDashboardEndpoint(BaseAPIView):
                     completed_at__month=month,
                     completed_at__isnull=False,
                 )
-                .annotate(completed_week=ExtractWeek("completed_at"))
-                .annotate(week=F("completed_week") % 4)
-                .values("week")
-                .annotate(completed_count=Count("completed_week"))
-                .order_by("week")
+                .annotate(day_of_month=ExtractDay("completed_at"))
+                .annotate(week_in_month=WeekInMonth(F("day_of_month")))
+                .values("week_in_month")
+                .annotate(completed_count=Count("id"))
+                .order_by("week_in_month")
             )
 
             assigned_issues = Issue.objects.filter(
@@ -710,7 +723,7 @@ class UserWorkspaceDashboardEndpoint(BaseAPIView):
 
             upcoming_issues = Issue.objects.filter(
                 ~Q(state__group__in=["completed", "cancelled"]),
-                ~Q(target_date__gte=timezone.now()),
+                target_date__gte=timezone.now(),
                 workspace__slug=slug,
                 assignees__in=[request.user],
                 completed_at__isnull=True,
