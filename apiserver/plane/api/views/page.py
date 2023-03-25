@@ -247,7 +247,7 @@ class RecentPagesEndpoint(BaseAPIView):
 
             yesterday_pages = (
                 Page.objects.filter(
-                    updated_at__date=day_before.date(),
+                    updated_at__date__gte=day_before.date(),
                     workspace__slug=slug,
                     project_id=project_id,
                 )
