@@ -6,7 +6,8 @@ from itertools import groupby, chain
 # Django imports
 from django.db.models import Prefetch, OuterRef, Func, F, Q
 from django.core.serializers.json import DjangoJSONEncoder
-
+from django.utils.decorators import method_decorator
+from django.views.decorators.gzip import gzip_page
 
 # Third Party imports
 from rest_framework.response import Response
@@ -139,6 +140,7 @@ class IssueViewSet(BaseViewSet):
             .prefetch_related("labels")
         )
 
+    @method_decorator(gzip_page)
     def list(self, request, slug, project_id):
         try:
             filters = issue_filters(request.query_params, "GET")
@@ -218,6 +220,7 @@ class IssueViewSet(BaseViewSet):
 
 
 class UserWorkSpaceIssues(BaseAPIView):
+    @method_decorator(gzip_page)
     def get(self, request, slug):
         try:
             issues = (
@@ -251,6 +254,7 @@ class WorkSpaceIssuesEndpoint(BaseAPIView):
         WorkSpaceAdminPermission,
     ]
 
+    @method_decorator(gzip_page)
     def get(self, request, slug):
         try:
             issues = (
@@ -273,6 +277,7 @@ class IssueActivityEndpoint(BaseAPIView):
         ProjectEntityPermission,
     ]
 
+    @method_decorator(gzip_page)
     def get(self, request, slug, project_id, issue_id):
         try:
             issue_activities = (
@@ -554,6 +559,7 @@ class SubIssuesEndpoint(BaseAPIView):
         ProjectEntityPermission,
     ]
 
+    @method_decorator(gzip_page)
     def get(self, request, slug, project_id, issue_id):
         try:
             sub_issues = (
