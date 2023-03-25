@@ -96,9 +96,9 @@ def filter_created_at(params, filter, method):
 
 def filter_updated_at(params, filter, method):
     if method == "GET":
-        updated_bys = params.get("updated_at").split(",")
-        if len(updated_bys) and "" not in updated_bys:
-            for query in updated_bys:
+        updated_ats = params.get("updated_at").split(",")
+        if len(updated_ats) and "" not in updated_ats:
+            for query in updated_ats:
                 updated_at_query = query.split(";")
                 if len(updated_at_query) == 2 and "after" in updated_at_query:
                     filter["updated_at__date__gte"] = updated_at_query[0]
@@ -116,7 +116,7 @@ def filter_updated_at(params, filter, method):
 
 def filter_start_date(params, filter, method):
     if method == "GET":
-        start_dates = params.get("start_date").split(";")
+        start_dates = params.get("start_date").split(",")
         if len(start_dates) and "" not in start_dates:
             for query in start_dates:
                 start_date_query = query.split(";")
@@ -136,7 +136,7 @@ def filter_start_date(params, filter, method):
 
 def filter_target_date(params, filter, method):
     if method == "GET":
-        target_dates = params.get("target_date").split(";")
+        target_dates = params.get("target_date").split(",")
         if len(target_dates) and "" not in target_dates:
             for query in target_dates:
                 target_date_query = query.split(";")
