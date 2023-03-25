@@ -60,7 +60,6 @@ class PageViewSet(BaseViewSet):
             .annotate(is_favorite=Exists(subquery))
             .order_by(self.request.GET.get("order_by", "-created_at"))
             .prefetch_related("labels")
-
             .order_by("name", "-is_favorite")
             .prefetch_related(
                 Prefetch(
@@ -88,7 +87,7 @@ class PageViewSet(BaseViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         except Exception as e:
-            print(e)
+            capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -247,16 +246,14 @@ class RecentPagesEndpoint(BaseAPIView):
             day_before = current_time - timedelta(days=1)
 
             yesterday_pages = (
-                (
-                    Page.objects.filter(
-                        updated_at__date=day_before.date(),
-                        workspace__slug=slug,
-                        project_id=project_id,
-                    )
-                    .filter(project__project_projectmember__member=request.user)
-                    .annotate(is_favorite=Exists(subquery))
-                    .order_by("-updated_by")
+                Page.objects.filter(
+                    updated_at__date=day_before.date(),
+                    workspace__slug=slug,
+                    project_id=project_id,
                 )
+                .filter(project__project_projectmember__member=request.user)
+                .annotate(is_favorite=Exists(subquery))
+                .filter(Q(owned_by=self.request.user) | Q(access=0))
                 .select_related("project")
                 .select_related("workspace")
                 .select_related("owned_by")
@@ -265,23 +262,23 @@ class RecentPagesEndpoint(BaseAPIView):
             )
 
             earlier_this_week = (
-                (
-                    Page.objects.filter(
-                        updated_at__range=(
-                            (timezone.now() - timedelta(days=1)),
-                            (timezone.now() - timedelta(days=7)),
-                        ),
-                        workspace__slug=slug,
-                        project_id=project_id,
-                    )
-                    .filter(project__project_projectmember__member=request.user)
-                    .annotate(is_favorite=Exists(subquery))
-                    .order_by("-updated_by")
+                Page.objects.filter(
+                    updated_at__date__range=(
+                        (timezone.now() - timedelta(days=7)).date(),
+                        (timezone.now() - timedelta(days=1)).date(),
+                    ),
+                    workspace__slug=slug,
+                    project_id=project_id,
                 )
+                .annotate(is_favorite=Exists(subquery))
+                .filter(Q(owned_by=self.request.user) | Q(access=0))
+                .filter(project__project_projectmember__member=request.user)
+                .annotate(is_favorite=Exists(subquery))
                 .select_related("project")
                 .select_related("workspace")
                 .select_related("owned_by")
                 .prefetch_related("labels")
+                .order_by("-updated_by")
             )
 
             yesterday_pages_serializer = PageSerializer(yesterday_pages, many=True)
@@ -296,7 +293,7 @@ class RecentPagesEndpoint(BaseAPIView):
                 status=status.HTTP_200_OK,
             )
         except Exception as e:
-            print(e)
+            capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -322,6 +319,8 @@ class FavoritePagesEndpoint(BaseAPIView):
                     project_id=project_id,
                 )
                 .annotate(is_favorite=Exists(subquery))
+                .filter(Q(owned_by=self.request.user) | Q(access=0))
+                .filter(project__project_projectmember__member=request.user)
                 .filter(is_favorite=True)
                 .select_related("project")
                 .select_related("workspace")
@@ -362,6 +361,8 @@ class MyPagesEndpoint(BaseAPIView):
                 .select_related("owned_by")
                 .prefetch_related("labels")
                 .annotate(is_favorite=Exists(subquery))
+                .filter(Q(owned_by=self.request.user) | Q(access=0))
+                .filter(project__project_projectmember__member=request.user)
                 .order_by("name", "-is_favorite")
             )
             serializer = PageSerializer(pages, many=True)
@@ -392,6 +393,7 @@ class CreatedbyOtherPagesEndpoint(BaseAPIView):
                     ~Q(owned_by=request.user),
                     workspace__slug=slug,
                     project_id=project_id,
+                    access=0,
                 )
                 .select_related("project")
                 .select_related("workspace")
