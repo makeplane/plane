@@ -67,7 +67,7 @@ class PageSerializer(BaseSerializer):
     def update(self, instance, validated_data):
         labels = validated_data.pop("labels_list", None)
         if labels is not None:
-            PageLabel.objects.filter(issue=instance).delete()
+            PageLabel.objects.filter(page=instance).delete()
             PageLabel.objects.bulk_create(
                 [
                     PageLabel(
