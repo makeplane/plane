@@ -301,9 +301,9 @@ class RecentPagesEndpoint(BaseAPIView):
             earlier_this_week_serializer = PageSerializer(earlier_this_week, many=True)
             return Response(
                 {
-                    "todays": todays_pages_serializer.data,
-                    "yesterdays": yesterday_pages_serializer.data,
-                    "earlier_this_weeks": earlier_this_week_serializer.data,
+                    "today": todays_pages_serializer.data,
+                    "yesterday": yesterday_pages_serializer.data,
+                    "earlier_this_week": earlier_this_week_serializer.data,
                 },
                 status=status.HTTP_200_OK,
             )
