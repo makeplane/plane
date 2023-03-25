@@ -11,7 +11,7 @@ class PageServices extends APIService {
     super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
   }
 
-  async createPage(workspaceSlug: string, projectId: string, data: IPage): Promise<IPage> {
+  async createPage(workspaceSlug: string, projectId: string, data: Partial<IPage>): Promise<IPage> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/`, data)
       .then((response) => response?.data)
       .catch((error) => {

@@ -33,14 +33,34 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
 
   return (
     <li>
-      <div className="relative rounded px-4 py-4 hover:bg-gray-100 sm:px-6">
+      <div className="relative rounded p-4 hover:bg-gray-100">
         <div className="flex items-center justify-between">
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
             <Link href={`/${workspaceSlug}/projects/${projectId}/pages/${page.id}`}>
-              <a className="after:absolute after:inset-0">
+              <a>
                 <p className="mr-2 truncate text-sm font-medium">{truncateText(page.name, 75)}</p>
               </a>
             </Link>
+            {page.label_details.length > 0 &&
+              page.label_details.map((label) => (
+                <div
+                  key={label.id}
+                  className="group flex items-center gap-1 rounded-2xl border px-2 py-0.5 text-xs"
+                  style={{
+                    backgroundColor: `${
+                      label?.color && label.color !== "" ? label.color : "#000000"
+                    }20`,
+                  }}
+                >
+                  <span
+                    className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                    style={{
+                      backgroundColor: label?.color && label.color !== "" ? label.color : "#000000",
+                    }}
+                  />
+                  {label.name}
+                </div>
+              ))}
           </div>
           <div className="ml-2 flex flex-shrink-0">
             <div className="flex items-center gap-2">
@@ -57,13 +77,13 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
               <CustomMenu width="auto" verticalEllipsis>
                 <CustomMenu.MenuItem onClick={handleEditPage}>
                   <span className="flex items-center justify-start gap-2 text-gray-800">
-                    <PencilIcon className="h-4 w-4" />
+                    <PencilIcon className="h-3.5 w-3.5" />
                     <span>Edit Page</span>
                   </span>
                 </CustomMenu.MenuItem>
                 <CustomMenu.MenuItem onClick={handleDeletePage}>
                   <span className="flex items-center justify-start gap-2 text-gray-800">
-                    <TrashIcon className="h-4 w-4" />
+                    <TrashIcon className="h-3.5 w-3.5" />
                     <span>Delete Page</span>
                   </span>
                 </CustomMenu.MenuItem>

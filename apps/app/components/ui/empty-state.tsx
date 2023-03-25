@@ -9,7 +9,7 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 import { capitalizeFirstLetter } from "helpers/string.helper";
 
 type Props = {
-  type: "cycle" | "module" | "project" | "issue" | "view";
+  type: "cycle" | "module" | "project" | "issue" | "view" | "page";
   title: string;
   description: React.ReactNode | string;
   imgURL: string;

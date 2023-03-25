@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-// next
+
 import { useRouter } from "next/router";
-// swr
-import { mutate } from "swr";
+
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
@@ -15,13 +14,12 @@ import { DangerButton, SecondaryButton } from "components/ui";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // types
 import type { IPage } from "types";
+
 type TConfirmPageDeletionProps = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   data?: IPage | null;
 };
-// fetch-keys
-import { RECENT_PAGES_LIST } from "constants/fetch-keys";
 
 export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({
   isOpen,
@@ -47,17 +45,11 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({
     await pagesService
       .deletePage(workspaceSlug as string, data.project, data.id)
       .then(() => {
-        mutate<IPage[]>(
-          RECENT_PAGES_LIST(projectId as string),
-          (prevData) => prevData?.filter((page) => page.id !== data?.id),
-          false
-        );
         handleClose();
-
         setToastAlert({
-          title: "Success",
           type: "success",
-          message: "Page deleted successfully",
+          title: "Success!",
+          message: "Page deleted successfully.",
         });
       })
       .catch(() => {

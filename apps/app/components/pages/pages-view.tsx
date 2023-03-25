@@ -14,7 +14,9 @@ import {
   SinglePageListItem,
 } from "components/pages";
 // ui
-import { Loader } from "components/ui";
+import { EmptyState, Loader } from "components/ui";
+// images
+import emptyPage from "public/empty-state/empty-page.svg";
 // types
 import { IPage, TPageViewProps } from "types";
 
@@ -101,9 +103,9 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
         setIsOpen={setDeletePageModal}
         data={selectedPageToDelete}
       />
-      {viewType === "list" ? (
-        pages ? (
-          pages.length > 0 ? (
+      {pages ? (
+        pages.length > 0 ? (
+          viewType === "list" ? (
             <ul role="list" className="divide-y">
               {pages.map((page) => (
                 <SinglePageListItem
@@ -116,19 +118,7 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
                 />
               ))}
             </ul>
-          ) : (
-            <p className="mt-4 text-center">No pages found</p>
-          )
-        ) : (
-          <Loader className="mt-8 space-y-4">
-            <Loader.Item height="40px" />
-            <Loader.Item height="40px" />
-            <Loader.Item height="40px" />
-          </Loader>
-        )
-      ) : viewType === "detailed" ? (
-        pages ? (
-          pages.length > 0 ? (
+          ) : viewType === "detailed" ? (
             <div className="rounded-[10px] border border-gray-200 bg-white">
               {pages.map((page) => (
                 <SinglePageDetailedItem
@@ -142,33 +132,36 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
               ))}
             </div>
           ) : (
-            <p className="mt-4 text-center">No pages found</p>
+            <div className="rounded-[10px] border border-gray-200 bg-white">
+              {pages.map((page) => (
+                <SinglePageDetailedItem
+                  key={page.id}
+                  page={page}
+                  handleEditPage={() => handleEditPage(page)}
+                  handleDeletePage={() => handleDeletePage(page)}
+                  handleAddToFavorites={() => handleAddToFavorites(page)}
+                  handleRemoveFromFavorites={() => handleRemoveFromFavorites(page)}
+                />
+              ))}
+            </div>
           )
         ) : (
-          <Loader className="mt-8 space-y-4">
-            <Loader.Item height="200px" />
-            <Loader.Item height="200px" />
-          </Loader>
+          <EmptyState
+            type="page"
+            title="Create New Page"
+            description="Sprint more effectively with Cycles by confining your project
+      to a fixed amount of time. Create new cycle now."
+            imgURL={emptyPage}
+          />
         )
-      ) : pages ? (
-        pages.length > 0 ? (
-          <div className="rounded-[10px] border border-gray-200 bg-white">
-            {pages.map((page) => (
-              <SinglePageDetailedItem
-                key={page.id}
-                page={page}
-                handleEditPage={() => handleEditPage(page)}
-                handleDeletePage={() => handleDeletePage(page)}
-                handleAddToFavorites={() => handleAddToFavorites(page)}
-                handleRemoveFromFavorites={() => handleRemoveFromFavorites(page)}
-              />
-            ))}
-          </div>
-        ) : (
-          <p className="mt-4 text-center">No pages found</p>
-        )
+      ) : viewType === "list" ? (
+        <Loader className="space-y-4">
+          <Loader.Item height="40px" />
+          <Loader.Item height="40px" />
+          <Loader.Item height="40px" />
+        </Loader>
       ) : (
-        <Loader className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <Loader className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           <Loader.Item height="150px" />
           <Loader.Item height="150px" />
           <Loader.Item height="150px" />

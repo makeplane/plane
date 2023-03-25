@@ -135,7 +135,6 @@ const SinglePage: NextPage = () => {
     await pagesService
       .createPageBlock(workspaceSlug as string, projectId as string, pageId as string, {
         name: "New block",
-        description_html: "<p>New block description...</p>",
       })
       .then((res) => {
         mutate<IPageBlock[]>(
@@ -253,21 +252,50 @@ const SinglePage: NextPage = () => {
               Back
             </button>
             <div className="flex flex-wrap gap-1">
-              {pageDetails.label_details.length > 0 ? (
-                pageDetails.label_details.map((label) => (
-                  <div
-                    key={label.id}
-                    className="group flex items-center gap-1 rounded-2xl border px-2 py-0.5 text-xs"
-                  >
-                    <span
-                      className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                      style={{
-                        backgroundColor: label?.color && label.color !== "" ? label.color : "#000",
-                      }}
-                    />
-                    {label.name}
-                  </div>
-                ))
+              {pageDetails.labels.length > 0 ? (
+                <>
+                  {pageDetails.labels.map((labelId) => {
+                    const label = labels?.find((label) => label.id === labelId);
+
+                    if (!label) return;
+
+                    return (
+                      <div
+                        key={label.id}
+                        className="group flex items-center gap-1 rounded-2xl border px-2 py-0.5 text-xs"
+                        style={{
+                          backgroundColor: `${
+                            label?.color && label.color !== "" ? label.color : "#000000"
+                          }20`,
+                        }}
+                      >
+                        <span
+                          className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                          style={{
+                            backgroundColor:
+                              label?.color && label.color !== "" ? label.color : "#000000",
+                          }}
+                        />
+                        {label.name}
+                      </div>
+                    );
+                  })}
+                  <CustomSearchSelect
+                    customButton={
+                      <button
+                        type="button"
+                        className="flex items-center gap-1 rounded-md bg-gray-100 p-1.5 text-xs hover:bg-gray-200"
+                      >
+                        <PlusIcon className="h-3.5 w-3.5" />
+                      </button>
+                    }
+                    value={pageDetails.labels}
+                    onChange={(val: string[]) => partialUpdatePage({ labels_list: val })}
+                    options={options}
+                    multiple
+                    noChevron
+                  />
+                </>
               ) : (
                 <CustomSearchSelect
                   customButton={

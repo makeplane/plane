@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
@@ -21,6 +21,7 @@ import { copyTextToClipboard } from "helpers/string.helper";
 import { IPageBlock } from "types";
 // fetch-keys
 import { PAGE_BLOCKS_LIST } from "constants/fetch-keys";
+import { CreateUpdateIssueModal } from "components/issues";
 
 type Props = {
   block: IPageBlock;
@@ -36,6 +37,8 @@ const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor
 });
 
 export const SinglePageBlock: React.FC<Props> = ({ block }) => {
+  const [createUpdateIssueModal, setCreateUpdateIssueModal] = useState(false);
+
   const router = useRouter();
   const { workspaceSlug, projectId, pageId } = router.query;
 
@@ -115,6 +118,10 @@ export const SinglePageBlock: React.FC<Props> = ({ block }) => {
       });
   };
 
+  const editAndPushBlockIntoIssues = async () => {
+    setCreateUpdateIssueModal(true);
+  };
+
   const deletePageBlock = async () => {
     if (!workspaceSlug || !projectId || !pageId) return;
 
@@ -158,6 +165,15 @@ export const SinglePageBlock: React.FC<Props> = ({ block }) => {
 
   return (
     <div>
+      <CreateUpdateIssueModal
+        isOpen={createUpdateIssueModal}
+        handleClose={() => setCreateUpdateIssueModal(false)}
+        prePopulateData={{
+          name: watch("name"),
+          description: watch("description"),
+          description_html: watch("description_html"),
+        }}
+      />
       <div className="-mx-3 -mt-2 flex items-center justify-between gap-2">
         <TextArea
           id="name"
@@ -175,9 +191,14 @@ export const SinglePageBlock: React.FC<Props> = ({ block }) => {
           {block.issue ? (
             <CustomMenu.MenuItem onClick={handleCopyText}>Copy issue link</CustomMenu.MenuItem>
           ) : (
-            <CustomMenu.MenuItem onClick={pushBlockIntoIssues}>
-              Push into issues
-            </CustomMenu.MenuItem>
+            <>
+              <CustomMenu.MenuItem onClick={pushBlockIntoIssues}>
+                Push into issues
+              </CustomMenu.MenuItem>
+              <CustomMenu.MenuItem onClick={editAndPushBlockIntoIssues}>
+                Edit and push into issues
+              </CustomMenu.MenuItem>
+            </>
           )}
           <CustomMenu.MenuItem onClick={deletePageBlock}>Delete block</CustomMenu.MenuItem>
         </CustomMenu>

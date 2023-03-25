@@ -6,14 +6,17 @@ import dynamic from "next/dynamic";
 
 import useSWR from "swr";
 
+// react-hook-form
+import { useForm } from "react-hook-form";
 // lib
 import { requiredAuth } from "lib/auth";
-
 // headless ui
 import { Tab } from "@headlessui/react";
 // services
 import projectService from "services/project.service";
 import pagesService from "services/pages.service";
+// hooks
+import useToast from "hooks/use-toast";
 // icons
 import { PlusIcon } from "components/icons";
 // layouts
@@ -21,12 +24,12 @@ import AppLayout from "layouts/app-layout";
 // components
 import { RecentPagesList, CreateUpdatePageModal } from "components/pages";
 // ui
-import { HeaderButton, Input, TextArea } from "components/ui";
+import { HeaderButton, Input, PrimaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { ListBulletIcon, RectangleGroupIcon, Squares2X2Icon } from "@heroicons/react/20/solid";
+import { ListBulletIcon, RectangleGroupIcon } from "@heroicons/react/20/solid";
 // types
-import { TPageViewProps } from "types";
+import { IPage, TPageViewProps } from "types";
 // fetch-keys
 import { PROJECT_DETAILS, RECENT_PAGES_LIST } from "constants/fetch-keys";
 
@@ -66,6 +69,20 @@ const ProjectPages: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
+  const { setToastAlert } = useToast();
+
+  const {
+    handleSubmit,
+    register,
+    watch,
+    reset,
+    formState: { isSubmitting },
+  } = useForm<Partial<IPage>>({
+    defaultValues: {
+      name: "",
+    },
+  });
+
   const { data: projectDetails } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
     workspaceSlug && projectId
@@ -79,6 +96,37 @@ const ProjectPages: NextPage = () => {
       ? () => pagesService.getRecentPages(workspaceSlug as string, projectId as string)
       : null
   );
+
+  const createPage = async (formData: Partial<IPage>) => {
+    if (!workspaceSlug || !projectId) return;
+
+    if (formData.name === "") {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Page name is required",
+      });
+      return;
+    }
+
+    await pagesService
+      .createPage(workspaceSlug as string, projectId as string, formData)
+      .then(() => {
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "Page created successfully.",
+        });
+        reset();
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Page could not be created. Please try again",
+        });
+      });
+  };
 
   return (
     <>
@@ -105,30 +153,23 @@ const ProjectPages: NextPage = () => {
         }
       >
         <div className="space-y-4">
-          <div className="overflow-hidden rounded-lg border border-gray-200 bg-white px-4 pt-3 pb-4 shadow-sm ">
+          <form
+            onSubmit={handleSubmit(createPage)}
+            className="flex items-center justify-between gap-2 rounded-[10px] border border-gray-200 bg-white p-2 shadow-sm"
+          >
             <Input
               type="text"
               name="name"
-              id="name"
-              className="block w-full border-0 pt-2.5 text-lg font-medium placeholder-gray-500 outline-none focus:ring-0"
-              placeholder="Title"
+              register={register}
+              className="border-none outline-none focus:ring-0"
+              placeholder="Type to create a new page..."
             />
-            <TextArea
-              rows={2}
-              name="description"
-              id="description"
-              className="block w-full resize-none border-0 pb-8 placeholder-gray-500 outline-none focus:ring-0 sm:text-sm"
-              placeholder="Write something..."
-              defaultValue={""}
-            />
-          </div>
-
-          {/* <div className="space-y-2 pb-8">
-          <h3 className="text-3xl font-semibold text-black">Pages</h3>
-          <p className="text-sm text-gray-500">
-            Note down all the important and minor details in the way you want to.
-          </p>
-        </div> */}
+            {watch("name") !== "" && (
+              <PrimaryButton type="submit" loading={isSubmitting}>
+                {isSubmitting ? "Creating..." : "Create"}
+              </PrimaryButton>
+            )}
+          </form>
           <div>
             <Tab.Group>
               <Tab.List as="div" className="flex items-center justify-between">
