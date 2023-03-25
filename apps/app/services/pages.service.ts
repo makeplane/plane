@@ -1,7 +1,8 @@
 // services
 import APIService from "services/api.service";
+import { IIssue } from "types";
 // types
-import { IPage, IPageBlock, IPageBlockForm, IPageFavorite, IPageForm } from "types/pages";
+import { IPage, IPageBlock, RecentPagesResponse } from "types/pages";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -10,7 +11,7 @@ class PageServices extends APIService {
     super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
   }
 
-  async createPage(workspaceSlug: string, projectId: string, data: IPageForm): Promise<IPage> {
+  async createPage(workspaceSlug: string, projectId: string, data: Partial<IPage>): Promise<IPage> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -22,7 +23,7 @@ class PageServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     pageId: string,
-    data: Partial<IPageForm>
+    data: Partial<IPage>
   ): Promise<IPage> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/`,
@@ -48,7 +49,7 @@ class PageServices extends APIService {
     data: {
       page: string;
     }
-  ): Promise<IPageFavorite> {
+  ): Promise<any> {
     return this.post(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/user-favorite-pages/`,
       data
@@ -69,8 +70,50 @@ class PageServices extends APIService {
       });
   }
 
-  async listPages(workspaceSlug: string, projectId: string): Promise<IPage[]> {
+  async getRecentPages(workspaceSlug: string, projectId: string): Promise<RecentPagesResponse> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/recent-pages/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getAllPages(workspaceSlug: string, projectId: string): Promise<IPage[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getFavoritePages(workspaceSlug: string, projectId: string): Promise<IPage[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/favorite-pages/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getMyPages(workspaceSlug: string, projectId: string): Promise<IPage[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/my-pages/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getOtherPages(workspaceSlug: string, projectId: string): Promise<IPage[]> {
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/created-by-other-pages/`
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getPageDetails(workspaceSlug: string, projectId: string, pageId: string): Promise<IPage> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -81,8 +124,8 @@ class PageServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     pageId: string,
-    data: IPageBlockForm
-  ): Promise<IPage> {
+    data: Partial<IPageBlock>
+  ): Promise<IPageBlock> {
     return this.post(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/page-blocks/`,
       data
@@ -113,7 +156,7 @@ class PageServices extends APIService {
     projectId: string,
     pageId: string,
     pageBlockId: string,
-    data: Partial<IPageBlockForm>
+    data: Partial<IPageBlock>
   ): Promise<IPage> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/page-blocks/${pageBlockId}/`,
@@ -147,6 +190,21 @@ class PageServices extends APIService {
   ): Promise<IPageBlock[]> {
     return this.get(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/page-blocks/`
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async convertPageBlockToIssue(
+    workspaceSlug: string,
+    projectId: string,
+    pageId: string,
+    blockId: string
+  ): Promise<IIssue> {
+    return this.post(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/page-blocks/${blockId}/issues/`
     )
       .then((response) => response?.data)
       .catch((error) => {

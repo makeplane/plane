@@ -13,14 +13,14 @@ import useToast from "hooks/use-toast";
 // components
 import { PageForm } from "./page-form";
 // types
-import { IPage, IPageForm } from "types";
+import { IPage } from "types";
 // fetch-keys
-import { PAGE_LIST } from "constants/fetch-keys";
+import { RECENT_PAGES_LIST } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
-  data?: IPage;
+  data?: IPage | null;
 };
 
 export const CreateUpdatePageModal: React.FC<Props> = ({ isOpen, handleClose, data }) => {
@@ -33,11 +33,11 @@ export const CreateUpdatePageModal: React.FC<Props> = ({ isOpen, handleClose, da
     handleClose();
   };
 
-  const createPage = async (payload: IPageForm) => {
+  const createPage = async (payload: IPage) => {
     await pagesService
       .createPage(workspaceSlug as string, projectId as string, payload)
       .then(() => {
-        mutate(PAGE_LIST(projectId as string));
+        mutate(RECENT_PAGES_LIST(projectId as string));
         onClose();
 
         setToastAlert({
@@ -55,20 +55,11 @@ export const CreateUpdatePageModal: React.FC<Props> = ({ isOpen, handleClose, da
       });
   };
 
-  const updatePage = async (payload: IPageForm) => {
+  const updatePage = async (payload: IPage) => {
     await pagesService
       .patchPage(workspaceSlug as string, projectId as string, data?.id ?? "", payload)
-      .then((res) => {
-        mutate<IPage[]>(
-          PAGE_LIST(projectId as string),
-          (prevData) =>
-            prevData?.map((p) => {
-              if (p.id === res.id) return { ...p, ...payload };
-
-              return p;
-            }),
-          false
-        );
+      .then(() => {
+        mutate(RECENT_PAGES_LIST(projectId as string));
         onClose();
 
         setToastAlert({
@@ -86,7 +77,7 @@ export const CreateUpdatePageModal: React.FC<Props> = ({ isOpen, handleClose, da
       });
   };
 
-  const handleFormSubmit = async (formData: IPageForm) => {
+  const handleFormSubmit = async (formData: IPage) => {
     if (!workspaceSlug || !projectId) return;
 
     if (!data) await createPage(formData);
