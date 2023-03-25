@@ -27,3 +27,4 @@ django-rq==2.6.0
 django-redis==5.2.0
 uvicorn==0.20.0
 channels==4.0.0
+openai==0.27.2
