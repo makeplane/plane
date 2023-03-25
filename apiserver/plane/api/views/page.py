@@ -245,9 +245,25 @@ class RecentPagesEndpoint(BaseAPIView):
             current_time = timezone.now()
             day_before = current_time - timedelta(days=1)
 
-            yesterday_pages = (
+            todays_pages = (
                 Page.objects.filter(
-                    updated_at__date__gte=day_before.date(),
+                    updated_at__date=timezone.now().date,
+                    workspace__slug=slug,
+                    project_id=project_id,
+                )
+                .filter(project__project_projectmember__member=request.user)
+                .annotate(is_favorite=Exists(subquery))
+                .filter(Q(owned_by=self.request.user) | Q(access=0))
+                .select_related("project")
+                .select_related("workspace")
+                .select_related("owned_by")
+                .prefetch_related("labels")
+                .order_by("-updated_by")
+            )
+
+            yesterdays_pages = (
+                Page.objects.filter(
+                    updated_at__date=day_before.date(),
                     workspace__slug=slug,
                     project_id=project_id,
                 )
@@ -280,15 +296,16 @@ class RecentPagesEndpoint(BaseAPIView):
                 .prefetch_related("labels")
                 .order_by("-updated_by")
             )
-
-            yesterday_pages_serializer = PageSerializer(yesterday_pages, many=True)
-            earlier_this_week_serializer = PageBlockSerializer(
+            todays_pages_serializer = PageSerializer(todays_pages, many=True)
+            yesterday_pages_serializer = PageSerializer(yesterdays_pages, many=True)
+            earlier_this_week_serializer = PageSerializer(
                 earlier_this_week, many=True
             )
             return Response(
                 {
-                    "yesterday": yesterday_pages_serializer.data,
-                    "earlier_this_week": earlier_this_week_serializer.data,
+                    "todays": todays_pages_serializer.data,
+                    "yesterdays": yesterday_pages_serializer.data,
+                    "earlier_this_weeks": earlier_this_week_serializer.data,
                 },
                 status=status.HTTP_200_OK,
             )
