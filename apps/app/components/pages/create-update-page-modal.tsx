@@ -58,17 +58,8 @@ export const CreateUpdatePageModal: React.FC<Props> = ({ isOpen, handleClose, da
   const updatePage = async (payload: IPage) => {
     await pagesService
       .patchPage(workspaceSlug as string, projectId as string, data?.id ?? "", payload)
-      .then((res) => {
-        mutate<IPage[]>(
-          RECENT_PAGES_LIST(projectId as string),
-          (prevData) =>
-            prevData?.map((p) => {
-              if (p.id === res.id) return { ...p, ...payload };
-
-              return p;
-            }),
-          false
-        );
+      .then(() => {
+        mutate(RECENT_PAGES_LIST(projectId as string));
         onClose();
 
         setToastAlert({

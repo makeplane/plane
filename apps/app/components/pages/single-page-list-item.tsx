@@ -4,12 +4,12 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 // ui
-import { CustomMenu } from "components/ui";
+import { CustomMenu, Tooltip } from "components/ui";
 // icons
 import { PencilIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
 // helpers
 import { truncateText } from "helpers/string.helper";
-import { renderShortTime } from "helpers/date-time.helper";
+import { renderShortDate, renderShortTime } from "helpers/date-time.helper";
 // types
 import { IPage } from "types";
 
@@ -64,7 +64,13 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
           </div>
           <div className="ml-2 flex flex-shrink-0">
             <div className="flex items-center gap-2">
-              <p className="text-sm text-gray-400">{renderShortTime(page.updated_at)}</p>
+              <Tooltip
+                tooltipContent={`Last updated at ${renderShortTime(
+                  page.updated_at
+                )} ${renderShortDate(page.updated_at)}`}
+              >
+                <p className="text-sm text-gray-400">{renderShortTime(page.updated_at)}</p>
+              </Tooltip>
               {page.is_favorite ? (
                 <button onClick={handleRemoveFromFavorites}>
                   <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />

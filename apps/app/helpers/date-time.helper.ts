@@ -105,7 +105,11 @@ export const getDateRangeStatus = (startDate: string | null, endDate: string | n
   }
 };
 
-export const renderShortDateWithYearFormat = (date: Date) => {
+export const renderShortDateWithYearFormat = (date: string | Date) => {
+  if (!date || date === "") return null;
+
+  date = new Date(date);
+
   const months = [
     "Jan",
     "Feb",
@@ -126,7 +130,11 @@ export const renderShortDateWithYearFormat = (date: Date) => {
   return isNaN(date.getTime()) ? "N/A" : ` ${month} ${day}, ${year}`;
 };
 
-export const renderShortDate = (date: Date) => {
+export const renderShortDate = (date: string | Date) => {
+  if (!date || date === "") return null;
+
+  date = new Date(date);
+
   const months = [
     "Jan",
     "Feb",
