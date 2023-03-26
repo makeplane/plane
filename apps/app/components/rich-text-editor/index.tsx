@@ -48,6 +48,7 @@ export interface IRemirrorRichTextEditor {
   showToolbar?: boolean;
   editable?: boolean;
   customClassName?: string;
+  gptOption?: boolean;
   noBorder?: boolean;
 }
 
@@ -66,6 +67,7 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = (props) => {
     showToolbar = true,
     editable = true,
     customClassName,
+    gptOption = false,
     noBorder = false,
   } = props;
 
@@ -215,7 +217,7 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = (props) => {
             renderOutsideEditor
           >
             <FloatingToolbar className="z-[9999] overflow-hidden rounded">
-              <CustomFloatingToolbar />
+              <CustomFloatingToolbar gptOption={gptOption} editorState={state} />
             </FloatingToolbar>
           </FloatingWrapper>
         )}

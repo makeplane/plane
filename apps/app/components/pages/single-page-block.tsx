@@ -9,8 +9,12 @@ import { mutate } from "swr";
 import { Controller, useForm } from "react-hook-form";
 // services
 import pagesService from "services/pages.service";
+import aiService from "services/ai.service";
 // hooks
 import useToast from "hooks/use-toast";
+// components
+import { CreateUpdateIssueModal } from "components/issues";
+import { GptAssistantModal } from "components/core";
 // ui
 import { CustomMenu, Loader, TextArea } from "components/ui";
 // icons
@@ -18,13 +22,13 @@ import { WaterDropIcon } from "components/icons";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import { IPageBlock } from "types";
+import { IPageBlock, IProject } from "types";
 // fetch-keys
 import { PAGE_BLOCKS_LIST } from "constants/fetch-keys";
-import { CreateUpdateIssueModal } from "components/issues";
 
 type Props = {
   block: IPageBlock;
+  projectDetails: IProject | undefined;
 };
 
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
@@ -36,8 +40,10 @@ const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor
   ),
 });
 
-export const SinglePageBlock: React.FC<Props> = ({ block }) => {
+export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails }) => {
   const [createUpdateIssueModal, setCreateUpdateIssueModal] = useState(false);
+
+  const [gptAssistantModal, setGptAssistantModal] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug, projectId, pageId } = router.query;
@@ -68,17 +74,15 @@ export const SinglePageBlock: React.FC<Props> = ({ block }) => {
       false
     );
 
-    await pagesService.patchPageBlock(
-      workspaceSlug as string,
-      projectId as string,
-      pageId as string,
-      block.id,
-      {
+    await pagesService
+      .patchPageBlock(workspaceSlug as string, projectId as string, pageId as string, block.id, {
         name: formData.name,
         description: formData.description,
         description_html: formData.description_html,
-      }
-    );
+      })
+      .then(() => {
+        mutate(PAGE_BLOCKS_LIST(pageId as string));
+      });
   };
 
   const pushBlockIntoIssues = async () => {
@@ -142,6 +146,28 @@ export const SinglePageBlock: React.FC<Props> = ({ block }) => {
       });
   };
 
+  const handleAiAssistance = async (response: string) => {
+    if (!workspaceSlug || !projectId) return;
+
+    setValue("description", {});
+    setValue("description_html", `<p>${response}</p>`);
+    handleSubmit(updatePageBlock)()
+      .then(() => {
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "Block description updated successfully.",
+        });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Block description could not be updated. Please try again.",
+        });
+      });
+  };
+
   const handleCopyText = () => {
     const originURL =
       typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
@@ -187,23 +213,32 @@ export const SinglePageBlock: React.FC<Props> = ({ block }) => {
           role="textbox"
           disabled={block.issue ? true : false}
         />
-        <CustomMenu label={<WaterDropIcon width={14} height={15} />} noBorder noChevron>
-          {block.issue ? (
-            <CustomMenu.MenuItem onClick={handleCopyText}>Copy issue link</CustomMenu.MenuItem>
-          ) : (
-            <>
-              <CustomMenu.MenuItem onClick={pushBlockIntoIssues}>
-                Push into issues
-              </CustomMenu.MenuItem>
-              <CustomMenu.MenuItem onClick={editAndPushBlockIntoIssues}>
-                Edit and push into issues
-              </CustomMenu.MenuItem>
-            </>
-          )}
-          <CustomMenu.MenuItem onClick={deletePageBlock}>Delete block</CustomMenu.MenuItem>
-        </CustomMenu>
+        <div className="flex items-center">
+          <button
+            type="button"
+            className="rounded px-1.5 py-1 text-xs hover:bg-gray-100"
+            onClick={() => setGptAssistantModal((prevData) => !prevData)}
+          >
+            AI
+          </button>
+          <CustomMenu label={<WaterDropIcon width={14} height={15} />} noBorder noChevron>
+            {block.issue ? (
+              <CustomMenu.MenuItem onClick={handleCopyText}>Copy issue link</CustomMenu.MenuItem>
+            ) : (
+              <>
+                <CustomMenu.MenuItem onClick={pushBlockIntoIssues}>
+                  Push into issues
+                </CustomMenu.MenuItem>
+                <CustomMenu.MenuItem onClick={editAndPushBlockIntoIssues}>
+                  Edit and push into issues
+                </CustomMenu.MenuItem>
+              </>
+            )}
+            <CustomMenu.MenuItem onClick={deletePageBlock}>Delete block</CustomMenu.MenuItem>
+          </CustomMenu>
+        </div>
       </div>
-      <div className="page-block-section -mx-3 -mt-5">
+      <div className="page-block-section relative -mx-3 -mt-5">
         <Controller
           name="description"
           control={control}
@@ -220,9 +255,17 @@ export const SinglePageBlock: React.FC<Props> = ({ block }) => {
               placeholder="Description..."
               editable={block.issue ? false : true}
               customClassName="text-gray-500"
+              // gptOption
               noBorder
             />
           )}
+        />
+        <GptAssistantModal
+          isOpen={gptAssistantModal}
+          handleClose={() => setGptAssistantModal(false)}
+          inset="top-2 left-0"
+          content={block.description_stripped}
+          onResponse={handleAiAssistance}
         />
       </div>
     </div>

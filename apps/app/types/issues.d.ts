@@ -75,6 +75,7 @@ export interface IIssue {
   cycle_detail: ICycle | null;
   description: any;
   description_html: any;
+  description_stripped: any;
   id: string;
   issue_cycle: IIssueCycle | null;
   issue_link: {

@@ -323,9 +323,6 @@ const SinglePage: NextPage = () => {
                 <ShareIcon className="h-4 w-4" />
                 Share
               </PrimaryButton>
-              <button type="button" className="text-sm">
-                AI
-              </button>
               <div className="flex-shrink-0">
                 <Popover className="relative grid place-items-center">
                   {({ open }) => (
@@ -407,7 +404,11 @@ const SinglePage: NextPage = () => {
                 <>
                   <div className="space-y-4">
                     {pageBlocks.map((block) => (
-                      <SinglePageBlock key={block.id} block={block} />
+                      <SinglePageBlock
+                        key={block.id}
+                        block={block}
+                        projectDetails={projectDetails}
+                      />
                     ))}
                   </div>
                   <div className="">
