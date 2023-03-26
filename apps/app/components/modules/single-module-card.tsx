@@ -250,20 +250,17 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
           </div>
         </div>
         <div className="flex h-full items-end">
-          <div className="flex w-full items-center gap-2 justify-self-end bg-gray-100 p-4">
+          <div className="flex w-full items-center justify-between gap-2 justify-self-end bg-gray-100 p-4">
             <span>Progress</span>
-            <Tooltip
-              tooltipContent={`Progress ${
-                isNaN(completionPercentage) ? 0 : completionPercentage.toFixed(0)
-              }%`}
-            >
-              <div className="bar relative h-1 w-full rounded bg-gray-300">
-                <div
-                  className="absolute top-0 left-0 h-1 rounded bg-green-500 duration-300"
-                  style={{ width: `${completionPercentage}%` }}
-                />
-              </div>
-            </Tooltip>
+            <div className="bar relative h-1 w-full rounded bg-gray-300">
+              <div
+                className="absolute top-0 left-0 h-1 rounded bg-green-500 duration-300"
+                style={{
+                  width: `${isNaN(completionPercentage) ? 0 : completionPercentage.toFixed(0)}%`,
+                }}
+              />
+            </div>
+            <span>{isNaN(completionPercentage) ? 0 : completionPercentage.toFixed(0)}%</span>
           </div>
         </div>
       </div>
