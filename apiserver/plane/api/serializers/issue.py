@@ -8,6 +8,7 @@ from .state import StateSerializer, StateLiteSerializer
 from .user import UserLiteSerializer
 from .project import ProjectSerializer, ProjectLiteSerializer
 from .workspace import WorkSpaceSerializer
+from .estimate import EstimatePointSerializer
 from plane.db.models import (
     User,
     Issue,
@@ -458,6 +459,7 @@ class IssueSerializer(BaseSerializer):
     parent_detail = IssueFlatSerializer(read_only=True, source="parent")
     label_details = LabelSerializer(read_only=True, source="labels", many=True)
     assignee_details = UserLiteSerializer(read_only=True, source="assignees", many=True)
+    estimate_point_detail = EstimatePointSerializer(read_only=True, source="estimate")
     # List of issues blocked by this issue
     blocked_issues = BlockedIssueSerializer(read_only=True, many=True)
     # List of issues that block this issue
@@ -486,6 +488,7 @@ class IssueLiteSerializer(BaseSerializer):
     label_details = LabelLiteSerializer(read_only=True, source="labels", many=True)
     assignee_details = UserLiteSerializer(read_only=True, source="assignees", many=True)
     sub_issues_count = serializers.IntegerField(read_only=True)
+    estimate_point_detail = EstimatePointSerializer(read_only=True, source="estimate")
 
     class Meta:
         model = Issue
