@@ -34,7 +34,7 @@ type Props = {
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
   ssr: false,
   loading: () => (
-    <Loader>
+    <Loader className="mx-4 mt-6">
       <Loader.Item height="100px" width="100%" />
     </Loader>
   ),

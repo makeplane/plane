@@ -15,7 +15,12 @@ import { PageForm } from "./page-form";
 // types
 import { IPage } from "types";
 // fetch-keys
-import { RECENT_PAGES_LIST } from "constants/fetch-keys";
+import {
+  ALL_PAGES_LIST,
+  FAVORITE_PAGES_LIST,
+  MY_PAGES_LIST,
+  RECENT_PAGES_LIST,
+} from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
@@ -36,8 +41,18 @@ export const CreateUpdatePageModal: React.FC<Props> = ({ isOpen, handleClose, da
   const createPage = async (payload: IPage) => {
     await pagesService
       .createPage(workspaceSlug as string, projectId as string, payload)
-      .then(() => {
+      .then((res) => {
         mutate(RECENT_PAGES_LIST(projectId as string));
+        mutate<IPage[]>(
+          MY_PAGES_LIST(projectId as string),
+          (prevData) => [res, ...(prevData as IPage[])],
+          false
+        );
+        mutate<IPage[]>(
+          ALL_PAGES_LIST(projectId as string),
+          (prevData) => [res, ...(prevData as IPage[])],
+          false
+        );
         onClose();
 
         setToastAlert({
@@ -58,8 +73,38 @@ export const CreateUpdatePageModal: React.FC<Props> = ({ isOpen, handleClose, da
   const updatePage = async (payload: IPage) => {
     await pagesService
       .patchPage(workspaceSlug as string, projectId as string, data?.id ?? "", payload)
-      .then(() => {
+      .then((res) => {
         mutate(RECENT_PAGES_LIST(projectId as string));
+        mutate<IPage[]>(
+          FAVORITE_PAGES_LIST(projectId as string),
+          (prevData) =>
+            (prevData ?? []).map((p) => {
+              if (p.id === res.id) return { ...p, ...res };
+
+              return p;
+            }),
+          false
+        );
+        mutate<IPage[]>(
+          MY_PAGES_LIST(projectId as string),
+          (prevData) =>
+            (prevData ?? []).map((p) => {
+              if (p.id === res.id) return { ...p, ...res };
+
+              return p;
+            }),
+          false
+        );
+        mutate<IPage[]>(
+          ALL_PAGES_LIST(projectId as string),
+          (prevData) =>
+            (prevData ?? []).map((p) => {
+              if (p.id === res.id) return { ...p, ...res };
+
+              return p;
+            }),
+          false
+        );
         onClose();
 
         setToastAlert({

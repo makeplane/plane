@@ -7,22 +7,18 @@ import pagesService from "services/pages.service";
 // components
 import { PagesView } from "components/pages";
 // types
-import { TPageViewProps } from "types";
+import { TPagesListProps } from "./types";
 // fetch-keys
-import { ALL_PAGES_LIST } from "constants/fetch-keys";
+import { OTHER_PAGES_LIST } from "constants/fetch-keys";
 
-type Props = {
-  viewType: TPageViewProps;
-};
-
-export const AllPagesList: React.FC<Props> = ({ viewType }) => {
+export const OtherPagesList: React.FC<TPagesListProps> = ({ viewType }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
   const { data: pages } = useSWR(
-    workspaceSlug && projectId ? ALL_PAGES_LIST(projectId as string) : null,
+    workspaceSlug && projectId ? OTHER_PAGES_LIST(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => pagesService.getAllPages(workspaceSlug as string, projectId as string)
+      ? () => pagesService.getOtherPages(workspaceSlug as string, projectId as string)
       : null
   );
 
