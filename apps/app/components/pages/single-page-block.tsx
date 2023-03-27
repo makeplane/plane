@@ -34,7 +34,7 @@ type Props = {
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
   ssr: false,
   loading: () => (
-    <Loader>
+    <Loader className="mx-4 mt-6">
       <Loader.Item height="100px" width="100%" />
     </Loader>
   ),
@@ -149,7 +149,20 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails }) => {
   const handleAiAssistance = async (response: string) => {
     if (!workspaceSlug || !projectId) return;
 
-    setValue("description", {});
+    setValue("description", {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [
+            {
+              text: response,
+              type: "text",
+            },
+          ],
+        },
+      ],
+    });
     setValue("description_html", `<p>${response}</p>`);
     handleSubmit(updatePageBlock)()
       .then(() => {
@@ -204,7 +217,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails }) => {
         <TextArea
           id="name"
           name="name"
-          placeholder="Enter issue name"
+          placeholder="Enter block title"
           value={watch("name")}
           onBlur={handleSubmit(updatePageBlock)}
           onChange={(e) => setValue("name", e.target.value)}

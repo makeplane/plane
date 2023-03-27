@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import type { GetServerSidePropsContext, NextPage } from "next";
 import dynamic from "next/dynamic";
 
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 
 // react-hook-form
 import { useForm } from "react-hook-form";
@@ -22,7 +22,7 @@ import { PlusIcon } from "components/icons";
 // layouts
 import AppLayout from "layouts/app-layout";
 // components
-import { RecentPagesList, CreateUpdatePageModal } from "components/pages";
+import { RecentPagesList, CreateUpdatePageModal, TPagesListProps } from "components/pages";
 // ui
 import { HeaderButton, Input, PrimaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -31,30 +31,35 @@ import { ListBulletIcon, RectangleGroupIcon } from "@heroicons/react/20/solid";
 // types
 import { IPage, TPageViewProps, UserAuth } from "types";
 // fetch-keys
-import { PROJECT_DETAILS, RECENT_PAGES_LIST } from "constants/fetch-keys";
+import {
+  ALL_PAGES_LIST,
+  MY_PAGES_LIST,
+  PROJECT_DETAILS,
+  RECENT_PAGES_LIST,
+} from "constants/fetch-keys";
 
-const AllPagesList = dynamic<{ viewType: TPageViewProps }>(
+const AllPagesList = dynamic<TPagesListProps>(
   () => import("components/pages").then((a) => a.AllPagesList),
   {
     ssr: false,
   }
 );
 
-const FavoritePagesList = dynamic<{ viewType: TPageViewProps }>(
+const FavoritePagesList = dynamic<TPagesListProps>(
   () => import("components/pages").then((a) => a.FavoritePagesList),
   {
     ssr: false,
   }
 );
 
-const MyPagesList = dynamic<{ viewType: TPageViewProps }>(
+const MyPagesList = dynamic<TPagesListProps>(
   () => import("components/pages").then((a) => a.MyPagesList),
   {
     ssr: false,
   }
 );
 
-const OtherPagesList = dynamic<{ viewType: TPageViewProps }>(
+const OtherPagesList = dynamic<TPagesListProps>(
   () => import("components/pages").then((a) => a.OtherPagesList),
   {
     ssr: false,
@@ -90,13 +95,6 @@ const ProjectPages: NextPage<UserAuth> = (props) => {
       : null
   );
 
-  const { data: recentPages } = useSWR(
-    workspaceSlug && projectId ? RECENT_PAGES_LIST(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => pagesService.getRecentPages(workspaceSlug as string, projectId as string)
-      : null
-  );
-
   const createPage = async (formData: Partial<IPage>) => {
     if (!workspaceSlug || !projectId) return;
 
@@ -111,13 +109,25 @@ const ProjectPages: NextPage<UserAuth> = (props) => {
 
     await pagesService
       .createPage(workspaceSlug as string, projectId as string, formData)
-      .then(() => {
+      .then((res) => {
         setToastAlert({
           type: "success",
           title: "Success!",
           message: "Page created successfully.",
         });
         reset();
+
+        mutate(RECENT_PAGES_LIST(projectId as string));
+        mutate<IPage[]>(
+          MY_PAGES_LIST(projectId as string),
+          (prevData) => [res, ...(prevData as IPage[])],
+          false
+        );
+        mutate<IPage[]>(
+          ALL_PAGES_LIST(projectId as string),
+          (prevData) => [res, ...(prevData as IPage[])],
+          false
+        );
       })
       .catch(() => {
         setToastAlert({
@@ -224,7 +234,7 @@ const ProjectPages: NextPage<UserAuth> = (props) => {
               </Tab.List>
               <Tab.Panels>
                 <Tab.Panel>
-                  <RecentPagesList pages={recentPages} viewType={viewType} />
+                  <RecentPagesList viewType={viewType} />
                 </Tab.Panel>
                 <Tab.Panel>
                   <AllPagesList viewType={viewType} />
