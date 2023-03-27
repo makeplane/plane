@@ -50,6 +50,7 @@ export interface IRemirrorRichTextEditor {
   customClassName?: string;
   gptOption?: boolean;
   noBorder?: boolean;
+  borderOnFocus?: boolean;
 }
 
 // eslint-disable-next-line no-duplicate-imports
@@ -69,6 +70,7 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = (props) => {
     customClassName,
     gptOption = false,
     noBorder = false,
+    borderOnFocus = true,
   } = props;
 
   const [imageLoader, setImageLoader] = useState(false);
@@ -188,9 +190,9 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = (props) => {
         manager={manager}
         initialContent={state}
         classNames={[
-          `p-4 relative focus:outline-none rounded-md focus:border-theme ${
+          `p-4 relative focus:outline-none rounded-md focus:border-gray-200 ${
             noBorder ? "" : "border"
-          } ${customClassName}`,
+          } ${borderOnFocus ? "focus:border" : ""} ${customClassName}`,
         ]}
         editable={editable}
         onBlur={() => {
