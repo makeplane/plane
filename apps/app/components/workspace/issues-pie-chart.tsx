@@ -80,7 +80,7 @@ export const IssuesPieChart: React.FC<Props> = ({ groupedIssues }) => {
     <div>
       <h3 className="mb-2 font-semibold">Issues by States</h3>
       <div className="rounded-[10px] border bg-white p-4">
-        <ResponsiveContainer width="100%" height={250}>
+        <ResponsiveContainer width="100%" height={320}>
           <PieChart>
             <Pie
               data={groupedIssues}
