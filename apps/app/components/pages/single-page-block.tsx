@@ -217,7 +217,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails }) => {
         <TextArea
           id="name"
           name="name"
-          placeholder="Enter issue name"
+          placeholder="Enter block title"
           value={watch("name")}
           onBlur={handleSubmit(updatePageBlock)}
           onChange={(e) => setValue("name", e.target.value)}
