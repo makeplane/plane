@@ -121,17 +121,17 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
           false
         );
         setToastAlert({
-          title: "Success",
           type: "success",
-          message: "Project created successfully",
+          title: "Success!",
+          message: "Project created successfully.",
         });
         handleClose();
       })
       .catch((err) => {
         if (err.status === 403) {
           setToastAlert({
-            title: "Error",
             type: "error",
+            title: "Error!",
             message: "You don't have permission to create project.",
           });
           handleClose();
