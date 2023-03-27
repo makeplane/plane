@@ -1,8 +1,14 @@
 import { useState, useRef, FC } from "react";
-import { Transition } from "@headlessui/react";
+
 import Link from "next/link";
+
+// headless ui
+import { Transition } from "@headlessui/react";
+// hooks
+import useTheme from "hooks/use-theme";
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // icons
-import { ArrowLongLeftIcon, InboxIcon } from "@heroicons/react/24/outline";
+import { ArrowLongLeftIcon, ChatBubbleOvalLeftEllipsisIcon } from "@heroicons/react/24/outline";
 import {
   QuestionMarkCircleIcon,
   BoltIcon,
@@ -10,9 +16,6 @@ import {
   DiscordIcon,
   GithubIcon,
 } from "components/icons";
-// hooks
-import useTheme from "hooks/use-theme";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
 
 const helpOptions = [
   {
@@ -34,7 +37,7 @@ const helpOptions = [
     name: "Chat with us",
     href: null,
     onClick: () => (window as any).$crisp.push(["do", "chat:show"]),
-    Icon: InboxIcon,
+    Icon: ChatBubbleOvalLeftEllipsisIcon,
   },
 ];
 
