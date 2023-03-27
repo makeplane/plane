@@ -1,5 +1,5 @@
 // types
-import { IIssueLabels } from "./issues";
+import { IIssue, IIssueLabels } from "./issues";
 
 export interface IPage {
   access: number;
@@ -36,11 +36,12 @@ export interface IPageBlock {
   description_stripped: any;
   id: string;
   issue: string | null;
-  issue_detail: string | null;
+  issue_detail: IIssue | null;
   name: string;
   page: string;
   project: string;
   sort_order: number;
+  sync: boolean;
   updated_at: Date;
   updated_by: string;
   workspace: string;
