@@ -149,7 +149,20 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails }) => {
   const handleAiAssistance = async (response: string) => {
     if (!workspaceSlug || !projectId) return;
 
-    setValue("description", {});
+    setValue("description", {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [
+            {
+              text: response,
+              type: "text",
+            },
+          ],
+        },
+      ],
+    });
     setValue("description_html", `<p>${response}</p>`);
     handleSubmit(updatePageBlock)()
       .then(() => {
