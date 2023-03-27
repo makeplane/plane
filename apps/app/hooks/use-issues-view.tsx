@@ -10,20 +10,18 @@ import { issueViewContext } from "contexts/issue-view.context";
 import issuesService from "services/issues.service";
 import cyclesService from "services/cycles.service";
 import modulesService from "services/modules.service";
+import stateService from "services/state.service";
+// helpers
+import { getStatesList } from "helpers/state.helper";
+// types
+import type { IIssue } from "types";
 // fetch-keys
 import {
   CYCLE_ISSUES_WITH_PARAMS,
   MODULE_ISSUES_WITH_PARAMS,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
   STATE_LIST,
-  VIEW_ISSUES,
 } from "constants/fetch-keys";
-
-// types
-import type { IIssue } from "types";
-import viewsService from "services/views.service";
-import stateService from "services/state.service";
-import { getStatesList } from "helpers/state.helper";
 
 const useIssuesView = () => {
   const {
@@ -128,7 +126,7 @@ const useIssuesView = () => {
       return issuesToGroup ? Object.assign(emptyStatesObject, issuesToGroup) : undefined;
 
     return issuesToGroup;
-  }, [projectIssues, cycleIssues, moduleIssues]);
+  }, [projectIssues, cycleIssues, moduleIssues, groupByProperty]);
 
   const isEmpty =
     Object.values(groupedByIssues ?? {}).every((group) => group.length === 0) ||

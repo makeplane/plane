@@ -1,4 +1,10 @@
-import type { IIssueFilterOptions, IUserLite, IWorkspace, TIssueGroupByOptions } from "./";
+import type {
+  IIssueFilterOptions,
+  IUserLite,
+  IWorkspace,
+  TIssueGroupByOptions,
+  TIssueOrderByOptions,
+} from "./";
 
 export interface IProject {
   cover_image: string | null;
@@ -37,7 +43,7 @@ export interface IFavoriteProject {
 type ProjectViewTheme = {
   issueView: "list" | "kanban";
   groupByProperty: TIssueGroupByOptions;
-  orderBy: "created_at" | "updated_at" | "priority" | "sort_order";
+  orderBy: TIssueOrderByOptions;
   filters: IIssueFilterOptions;
 };
 
