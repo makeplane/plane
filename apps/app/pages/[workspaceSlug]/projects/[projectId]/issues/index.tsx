@@ -37,6 +37,7 @@ const ProjectIssues: NextPage<UserAuth> = (props) => {
   return (
     <IssueViewContextProvider>
       <AppLayout
+        memberType={props}
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
