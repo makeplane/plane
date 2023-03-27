@@ -6,6 +6,8 @@ from django.db import IntegrityError
 from django.db.models import OuterRef, Func, F, Q, Exists, OuterRef, Count, Prefetch
 from django.core import serializers
 from django.utils import timezone
+from django.utils.decorators import method_decorator
+from django.views.decorators.gzip import gzip_page
 
 # Third party imports
 from rest_framework.response import Response
@@ -169,6 +171,7 @@ class CycleIssueViewSet(BaseViewSet):
             .distinct()
         )
 
+    @method_decorator(gzip_page)
     def list(self, request, slug, project_id, cycle_id):
         try:
             order_by = request.GET.get("order_by", "created_at")
