@@ -1,4 +1,5 @@
 import { useRouter } from "next/router";
+import Link from "next/link";
 import React, { useCallback, useEffect, useState } from "react";
 import useSWR from "swr";
 
@@ -21,7 +22,6 @@ import { CreateUpdateViewModal } from "components/views";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // services
-import authenticationService from "services/authentication.service";
 import issuesService from "services/issues.service";
 // types
 import { IIssue } from "types";
@@ -362,6 +362,54 @@ export const CommandPalette: React.FC = () => {
                         <Command.Group heading="Account">
                           <Command.Item onSelect={createNewWorkspace}>
                             Create new workspace
+                          </Command.Item>
+                        </Command.Group>
+                        <Command.Group heading="Help">
+                          <Command.Item
+                            onSelect={() => {
+                              setIsPaletteOpen(false);
+                              const e = new KeyboardEvent("keydown", {
+                                key: "h",
+                              });
+                              document.dispatchEvent(e);
+                            }}
+                          >
+                            Open keyboard shortcuts
+                          </Command.Item>
+                          <Command.Item
+                            onSelect={() => {
+                              setIsPaletteOpen(false);
+                              window.open("https://docs.plane.so/", "_blank");
+                            }}
+                          >
+                            Open Plane documentation
+                          </Command.Item>
+                          <Command.Item
+                            onSelect={() => {
+                              setIsPaletteOpen(false);
+                              window.open("https://discord.com/invite/A92xrEGCge", "_blank");
+                            }}
+                          >
+                            Join our discord
+                          </Command.Item>
+                          <Command.Item
+                            onSelect={() => {
+                              setIsPaletteOpen(false);
+                              window.open(
+                                "https://github.com/makeplane/plane/issues/new/choose",
+                                "_blank"
+                              );
+                            }}
+                          >
+                            Report a bug
+                          </Command.Item>
+                          <Command.Item
+                            onSelect={() => {
+                              setIsPaletteOpen(false);
+                              window.open("mailto:hello@plane.so", "_blank");
+                            }}
+                          >
+                            Email us
                           </Command.Item>
                         </Command.Group>
                       </>
