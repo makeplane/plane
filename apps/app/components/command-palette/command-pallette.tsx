@@ -1,7 +1,6 @@
 import { useRouter } from "next/router";
-import Link from "next/link";
 import React, { useCallback, useEffect, useState } from "react";
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
@@ -31,7 +30,7 @@ import issuesService from "services/issues.service";
 // types
 import { IIssue } from "types";
 // fetch keys
-import { ISSUE_DETAILS } from "constants/fetch-keys";
+import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 
 export const CommandPalette: React.FC = () => {
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
@@ -52,7 +51,7 @@ export const CommandPalette: React.FC = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
-  const { user, mutateUser } = useUser();
+  const { user } = useUser();
   const { setToastAlert } = useToast();
   const { toggleCollapsed } = useTheme();
 
@@ -63,6 +62,47 @@ export const CommandPalette: React.FC = () => {
           issuesService.retrieve(workspaceSlug as string, projectId as string, issueId as string)
       : null
   );
+
+  const updateIssue = useCallback(
+    async (formData: Partial<IIssue>) => {
+      if (!workspaceSlug || !projectId || !issueId) return;
+
+      mutate(
+        ISSUE_DETAILS(issueId as string),
+        (prevData: IIssue) => ({
+          ...prevData,
+          ...formData,
+        }),
+        false
+      );
+
+      const payload = { ...formData };
+      await issuesService
+        .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload)
+        .then(() => {
+          mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
+          mutate(ISSUE_DETAILS(issueId as string));
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+    },
+    [workspaceSlug, issueId, projectId]
+  );
+
+  const handleIssueAssignees = (assignee: string) => {
+    if (!issueDetails) return;
+
+    setIsPaletteOpen(false);
+    const updatedAssignees = issueDetails.assignees ?? [];
+
+    if (updatedAssignees.includes(assignee)) {
+      updatedAssignees.splice(updatedAssignees.indexOf(assignee), 1);
+    } else {
+      updatedAssignees.push(assignee);
+    }
+    updateIssue({ assignees_list: updatedAssignees });
+  };
 
   const copyIssueUrlToClipboard = useCallback(() => {
     if (!router.query.issueId) return;
@@ -310,6 +350,25 @@ export const CommandPalette: React.FC = () => {
                             >
                               Assign to...
                             </Command.Item>
+                            {issueDetails?.assignees.includes(user.id) ? (
+                              <Command.Item
+                                onSelect={() => {
+                                  handleIssueAssignees(user.id);
+                                  setSearch("");
+                                }}
+                              >
+                                Un-assign from me
+                              </Command.Item>
+                            ) : (
+                              <Command.Item
+                                onSelect={() => {
+                                  handleIssueAssignees(user.id);
+                                  setSearch("");
+                                }}
+                              >
+                                Assign to me
+                              </Command.Item>
+                            )}
                             <Command.Item onSelect={deleteIssue}>Delete issue</Command.Item>
                             <Command.Item
                               onSelect={() => {

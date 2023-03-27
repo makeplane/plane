@@ -79,7 +79,7 @@ export const ChangeIssueAssignee: React.FC<Props> = ({ setIsPaletteOpen, issue }
     [workspaceSlug, issueId, projectId]
   );
 
-  const handleIssueState = (assignee: string) => {
+  const handleIssueAssignees = (assignee: string) => {
     const updatedAssignees = issue.assignees ?? [];
 
     if (updatedAssignees.includes(assignee)) {
@@ -95,7 +95,7 @@ export const ChangeIssueAssignee: React.FC<Props> = ({ setIsPaletteOpen, issue }
   return (
     <>
       {options.map((option) => (
-        <Command.Item key={option.value} onSelect={() => handleIssueState(option.value)}>
+        <Command.Item key={option.value} onSelect={() => handleIssueAssignees(option.value)}>
           {option.content}
         </Command.Item>
       ))}
