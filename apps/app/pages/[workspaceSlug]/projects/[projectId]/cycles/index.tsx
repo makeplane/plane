@@ -8,7 +8,7 @@ import useSWR from "swr";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { Tab } from "@headlessui/react";
 // lib
-import { requiredAuth } from "lib/auth";
+import { requiredAdmin, requiredAuth } from "lib/auth";
 
 // services
 import cycleService from "services/cycles.service";
@@ -23,7 +23,7 @@ import { HeaderButton, Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 // types
-import { SelectCycleType } from "types";
+import { SelectCycleType, UserAuth } from "types";
 import type { NextPage, GetServerSidePropsContext } from "next";
 // fetching keys
 import {
@@ -44,7 +44,7 @@ const CompletedCyclesList = dynamic<CompletedCyclesListProps>(
   }
 );
 
-const ProjectCycles: NextPage = () => {
+const ProjectCycles: NextPage<UserAuth> = (props) => {
   const [selectedCycle, setSelectedCycle] = useState<SelectCycleType>();
   const [createUpdateCycleModal, setCreateUpdateCycleModal] = useState(false);
 
@@ -86,6 +86,7 @@ const ProjectCycles: NextPage = () => {
       meta={{
         title: "Plane - Cycles",
       }}
+      memberType={props}
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
@@ -210,9 +211,17 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     };
   }
 
+  const projectId = ctx.query.projectId as string;
+  const workspaceSlug = ctx.query.workspaceSlug as string;
+
+  const memberDetail = await requiredAdmin(workspaceSlug, projectId, ctx.req?.headers.cookie);
+
   return {
     props: {
-      user,
+      isOwner: memberDetail?.role === 20,
+      isMember: memberDetail?.role === 15,
+      isViewer: memberDetail?.role === 10,
+      isGuest: memberDetail?.role === 5,
     },
   };
 };

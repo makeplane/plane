@@ -11,7 +11,7 @@ import { Popover, Transition } from "@headlessui/react";
 // react-color
 import { TwitterPicker } from "react-color";
 // lib
-import { requiredAuth } from "lib/auth";
+import { requiredAdmin, requiredAuth } from "lib/auth";
 // services
 import projectService from "services/project.service";
 import pagesService from "services/pages.service";
@@ -33,7 +33,7 @@ import { renderShortTime } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import type { NextPage, GetServerSidePropsContext } from "next";
-import { IIssueLabels, IPage, IPageBlock } from "types";
+import { IIssueLabels, IPage, IPageBlock, UserAuth } from "types";
 // fetch-keys
 import {
   PAGE_BLOCKS_LIST,
@@ -42,7 +42,7 @@ import {
   PROJECT_ISSUE_LABELS,
 } from "constants/fetch-keys";
 
-const SinglePage: NextPage = () => {
+const SinglePage: NextPage<UserAuth> = (props) => {
   const router = useRouter();
   const { workspaceSlug, projectId, pageId } = router.query;
 
@@ -233,6 +233,7 @@ const SinglePage: NextPage = () => {
       meta={{
         title: "Plane - Pages",
       }}
+      memberType={props}
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
@@ -454,9 +455,17 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     };
   }
 
+  const projectId = ctx.query.projectId as string;
+  const workspaceSlug = ctx.query.workspaceSlug as string;
+
+  const memberDetail = await requiredAdmin(workspaceSlug, projectId, ctx.req?.headers.cookie);
+
   return {
     props: {
-      user,
+      isOwner: memberDetail?.role === 20,
+      isMember: memberDetail?.role === 15,
+      isViewer: memberDetail?.role === 10,
+      isGuest: memberDetail?.role === 5,
     },
   };
 };
