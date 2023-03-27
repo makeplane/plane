@@ -11,9 +11,12 @@ from django.utils import timezone
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from django.conf import settings
 
 # Third party imports
 from sentry_sdk import capture_exception
+from slack_sdk import WebClient
+from slack_sdk.errors import SlackApiError
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -123,6 +126,16 @@ def send_welcome_email(sender, instance, created, **kwargs):
             msg.attach_alternative(html_content, "text/html")
             msg.send()
 
+            # Send message on slack as well
+            if settings.SLACK_BOT_TOKEN:
+                client = WebClient(token=settings.SLACK_BOT_TOKEN)
+                try:
+                    _ = client.chat_postMessage(
+                        channel="#trackers",
+                        text=f"New user {instance.email} has signed up and begun the onboarding journey.",
+                    )
+                except SlackApiError as e:
+                    print(f"Got an error: {e.response['error']}")
         return
     except Exception as e:
         capture_exception(e)
