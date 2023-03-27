@@ -10,6 +10,7 @@ import { mutate } from "swr";
 import { Controller, useForm } from "react-hook-form";
 // services
 import pagesService from "services/pages.service";
+import issuesService from "services/issues.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components
@@ -19,15 +20,14 @@ import { GptAssistantModal } from "components/core";
 import { CustomMenu, Loader, TextArea } from "components/ui";
 // icons
 import { LayerDiagonalIcon, WaterDropIcon } from "components/icons";
+import { ArrowPathIcon } from "@heroicons/react/20/solid";
+import { CheckIcon } from "@heroicons/react/24/outline";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import { IIssue, IPageBlock, IProject } from "types";
 // fetch-keys
 import { PAGE_BLOCKS_LIST } from "constants/fetch-keys";
-import { ArrowTopRightOnSquareIcon, CheckIcon } from "@heroicons/react/24/outline";
-import issuesService from "services/issues.service";
-import { ArrowPathIcon } from "@heroicons/react/20/solid";
 
 type Props = {
   block: IPageBlock;

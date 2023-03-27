@@ -11,10 +11,10 @@ export const GROUP_BY_OPTIONS: Array<{
 
 export const ORDER_BY_OPTIONS: Array<{
   name: string;
-  key: "created_at" | "updated_at" | "priority" | "sort_order";
+  key: TIssueOrderByOptions;
 }> = [
   { name: "Manual", key: "sort_order" },
-  { name: "Last created", key: "created_at" },
+  { name: "Last created", key: "-created_at" },
   { name: "Last updated", key: "updated_at" },
   { name: "Priority", key: "priority" },
 ];
@@ -37,7 +37,7 @@ export const FILTER_ISSUE_OPTIONS: Array<{
   },
 ];
 
-import { IIssue, TIssueGroupByOptions } from "types";
+import { IIssue, TIssueGroupByOptions, TIssueOrderByOptions } from "types";
 
 type THandleIssuesMutation = (
   formData: Partial<IIssue>,
