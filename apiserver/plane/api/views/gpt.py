@@ -44,7 +44,7 @@ class GPTIntegrationEndpoint(BaseAPIView):
             )
 
             text = response.choices[0].text.strip()
-            text_html = text.replace("\n", "<br>")
+            text_html = text.replace("\n", "<br/>")
             return Response(
                 {"response": text, "response_html": text_html},
                 status=status.HTTP_200_OK,
