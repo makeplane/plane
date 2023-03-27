@@ -93,6 +93,7 @@ from plane.api.views import (
     CompletedCyclesEndpoint,
     CycleFavoriteViewSet,
     DraftCyclesEndpoint,
+    TransferCycleIssueEndpoint,
     ## End Cycles
     # Modules
     ModuleViewSet,
@@ -628,6 +629,11 @@ urlpatterns = [
             }
         ),
         name="user-favorite-cycle",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:cycle_id>/transfer-issues/",
+        TransferCycleIssueEndpoint.as_view(),
+        name="transfer-issues",
     ),
     ## End Cycles
     # Issue
