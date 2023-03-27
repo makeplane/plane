@@ -19,6 +19,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const cookie = convertCookieStringToObject(req.headers.cookie);
   const accessToken = cookie?.accessToken;
 
+  if (!accessToken) return res.status(401).json({ message: "Unauthorized" });
+
   const user = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/me/`, {
     method: "GET",
     headers: {
@@ -27,7 +29,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     },
   })
     .then((res) => res.json())
-    .then((data) => data.user);
+    .then((data) => data.user)
+    .catch(() => res.status(401).json({ message: "Unauthorized" }));
+
+  if (!user) return res.status(401).json({ message: "Unauthorized" });
 
   // TODO: cache user info
 
