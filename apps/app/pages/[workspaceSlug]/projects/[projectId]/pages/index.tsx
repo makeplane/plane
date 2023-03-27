@@ -9,7 +9,7 @@ import useSWR from "swr";
 // react-hook-form
 import { useForm } from "react-hook-form";
 // lib
-import { requiredAuth } from "lib/auth";
+import { requiredAdmin, requiredAuth } from "lib/auth";
 // headless ui
 import { Tab } from "@headlessui/react";
 // services
@@ -29,7 +29,7 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { ListBulletIcon, RectangleGroupIcon } from "@heroicons/react/20/solid";
 // types
-import { IPage, TPageViewProps } from "types";
+import { IPage, TPageViewProps, UserAuth } from "types";
 // fetch-keys
 import { PROJECT_DETAILS, RECENT_PAGES_LIST } from "constants/fetch-keys";
 
@@ -61,7 +61,7 @@ const OtherPagesList = dynamic<{ viewType: TPageViewProps }>(
   }
 );
 
-const ProjectPages: NextPage = () => {
+const ProjectPages: NextPage<UserAuth> = (props) => {
   const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
 
   const [viewType, setViewType] = useState<TPageViewProps>("list");
@@ -138,6 +138,7 @@ const ProjectPages: NextPage = () => {
         meta={{
           title: "Plane - Pages",
         }}
+        memberType={props}
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
@@ -260,9 +261,17 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     };
   }
 
+  const projectId = ctx.query.projectId as string;
+  const workspaceSlug = ctx.query.workspaceSlug as string;
+
+  const memberDetail = await requiredAdmin(workspaceSlug, projectId, ctx.req?.headers.cookie);
+
   return {
     props: {
-      user,
+      isOwner: memberDetail?.role === 20,
+      isMember: memberDetail?.role === 15,
+      isViewer: memberDetail?.role === 10,
+      isGuest: memberDetail?.role === 5,
     },
   };
 };
