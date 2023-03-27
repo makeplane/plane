@@ -132,21 +132,6 @@ export const CommandPalette: React.FC = () => {
     router.push("/create-workspace");
   };
 
-  const logout = async () => {
-    await authenticationService
-      .signOut()
-      .then((response) => {
-        console.log("user signed out", response);
-      })
-      .catch((error) => {
-        console.log("Failed to sign out", error);
-      })
-      .finally(() => {
-        mutateUser();
-        router.push("/signin");
-      });
-  };
-
   const createNewProject = () => {
     setIsPaletteOpen(false);
     setIsProjectModalOpen(true);
@@ -378,7 +363,6 @@ export const CommandPalette: React.FC = () => {
                           <Command.Item onSelect={createNewWorkspace}>
                             Create new workspace
                           </Command.Item>
-                          <Command.Item onSelect={logout}>Log out</Command.Item>
                         </Command.Group>
                       </>
                     )}
