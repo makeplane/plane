@@ -2,6 +2,31 @@ import { useRouter } from "next/router";
 import React, { useCallback, useEffect, useState } from "react";
 import useSWR, { mutate } from "swr";
 
+// icons
+import {
+  ChartBarIcon,
+  ClipboardIcon,
+  FolderPlusIcon,
+  InboxIcon,
+  MagnifyingGlassIcon,
+  Squares2X2Icon,
+  TrashIcon,
+  UserMinusIcon,
+  UserPlusIcon,
+  UsersIcon,
+} from "@heroicons/react/24/outline";
+import {
+  AssignmentClipboardIcon,
+  BoltIcon,
+  ContrastIcon,
+  DiscordIcon,
+  DocumentIcon,
+  GithubIcon,
+  LayerDiagonalIcon,
+  PeopleGroupIcon,
+  SettingIcon,
+  ViewListIcon,
+} from "components/icons";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // cmdk
@@ -280,7 +305,7 @@ export const CommandPalette: React.FC = () => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative mx-auto transform overflow-hidden rounded-lg bg-white text-left shadow-2xl ring-1 ring-black ring-opacity-5 transition-all sm:my-8 sm:w-full sm:max-w-lg">
+              <Dialog.Panel className="relative mx-auto max-w-2xl transform divide-y divide-gray-500 divide-opacity-10 rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
                 <Command
                   onKeyDown={(e) => {
                     // when seach is empty and page is undefined
@@ -299,21 +324,27 @@ export const CommandPalette: React.FC = () => {
                 >
                   {issueId && issueDetails && (
                     <div className="p-3">
-                      <span className="rounded bg-slate-100 p-1 px-2 text-xs font-medium text-slate-500">
+                      <span className="rounded-md bg-slate-100 p-1 px-2 text-xs font-medium text-slate-500">
                         {issueDetails.project_detail?.identifier}-{issueDetails.sequence_id}{" "}
                         {issueDetails?.name}
                       </span>
                     </div>
                   )}
-                  <Command.Input
-                    className="w-full rounded-t-lg border-b p-4 text-sm outline-none"
-                    placeholder={placeholder}
-                    value={search}
-                    onValueChange={(e) => {
-                      setSearch(e);
-                    }}
-                    autoFocus
-                  />
+                  <div className="relative">
+                    <MagnifyingGlassIcon
+                      className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-gray-900 text-opacity-40"
+                      aria-hidden="true"
+                    />
+                    <Command.Input
+                      className="w-full border-0 border-b bg-transparent p-4 pl-11 text-gray-900 placeholder-gray-500 outline-none focus:ring-0 sm:text-sm"
+                      placeholder={placeholder}
+                      value={search}
+                      onValueChange={(e) => {
+                        setSearch(e);
+                      }}
+                      autoFocus
+                    />
+                  </div>
                   <Command.List className="max-h-96 overflow-scroll p-2">
                     <Command.Empty className="my-4 text-center text-gray-500">
                       No results found.
@@ -330,7 +361,10 @@ export const CommandPalette: React.FC = () => {
                                 setPages([...pages, "change-issue-state"]);
                               }}
                             >
-                              Change state...
+                              <div className="flex items-center gap-2 text-slate-700">
+                                <Squares2X2Icon className="h-4 w-4" />
+                                Change state...
+                              </div>
                             </Command.Item>
                             <Command.Item
                               onSelect={() => {
@@ -339,7 +373,10 @@ export const CommandPalette: React.FC = () => {
                                 setPages([...pages, "change-issue-priority"]);
                               }}
                             >
-                              Change priority...
+                              <div className="flex items-center gap-2 text-slate-700">
+                                <ChartBarIcon className="h-4 w-4" />
+                                Change priority...
+                              </div>
                             </Command.Item>
                             <Command.Item
                               onSelect={() => {
@@ -348,41 +385,57 @@ export const CommandPalette: React.FC = () => {
                                 setPages([...pages, "change-issue-assignee"]);
                               }}
                             >
-                              Assign to...
+                              <div className="flex items-center gap-2 text-slate-700">
+                                <UsersIcon className="h-4 w-4" />
+                                Assign to...
+                              </div>
                             </Command.Item>
-                            {issueDetails?.assignees.includes(user.id) ? (
-                              <Command.Item
-                                onSelect={() => {
-                                  handleIssueAssignees(user.id);
-                                  setSearch("");
-                                }}
-                              >
-                                Un-assign from me
-                              </Command.Item>
-                            ) : (
-                              <Command.Item
-                                onSelect={() => {
-                                  handleIssueAssignees(user.id);
-                                  setSearch("");
-                                }}
-                              >
-                                Assign to me
-                              </Command.Item>
-                            )}
-                            <Command.Item onSelect={deleteIssue}>Delete issue</Command.Item>
+                            <Command.Item
+                              onSelect={() => {
+                                handleIssueAssignees(user.id);
+                                setSearch("");
+                              }}
+                            >
+                              <div className="flex items-center gap-2 text-slate-700">
+                                {issueDetails?.assignees.includes(user.id) ? (
+                                  <>
+                                    <UserMinusIcon className="h-4 w-4" />
+                                    Un-assign from me
+                                  </>
+                                ) : (
+                                  <>
+                                    <UserPlusIcon className="h-4 w-4" />
+                                    Assign to me
+                                  </>
+                                )}
+                              </div>
+                            </Command.Item>
+
+                            <Command.Item onSelect={deleteIssue}>
+                              <div className="flex items-center gap-2 text-slate-700">
+                                <TrashIcon className="h-4 w-4" />
+                                Delete issue
+                              </div>
+                            </Command.Item>
                             <Command.Item
                               onSelect={() => {
                                 setIsPaletteOpen(false);
                                 copyIssueUrlToClipboard();
                               }}
                             >
-                              Copy issue URL to clipboard
+                              <div className="flex items-center gap-2 text-slate-700">
+                                <ClipboardIcon className="h-4 w-4" />
+                                Copy issue URL to clipboard
+                              </div>
                             </Command.Item>
                           </>
                         )}
                         <Command.Group heading="Issue">
                           <Command.Item onSelect={createNewIssue}>
-                            Create new issue
+                            <div className="flex items-center gap-2 text-slate-700">
+                              <LayerDiagonalIcon className="h-4 w-4" />
+                              Create new issue
+                            </div>
                             <kbd>C</kbd>
                           </Command.Item>
                         </Command.Group>
@@ -390,7 +443,10 @@ export const CommandPalette: React.FC = () => {
                         {workspaceSlug && (
                           <Command.Group heading="Project">
                             <Command.Item onSelect={createNewProject}>
-                              Create new project
+                              <div className="flex items-center gap-2 text-slate-700">
+                                <AssignmentClipboardIcon className="h-4 w-4" />
+                                Create new project
+                              </div>
                               <kbd>P</kbd>
                             </Command.Item>
                           </Command.Group>
@@ -400,21 +456,30 @@ export const CommandPalette: React.FC = () => {
                           <>
                             <Command.Group heading="Cycle">
                               <Command.Item onSelect={createNewCycle}>
-                                Create new cycle
+                                <div className="flex items-center gap-2 text-slate-700">
+                                  <ContrastIcon className="h-4 w-4" />
+                                  Create new cycle
+                                </div>
                                 <kbd>Q</kbd>
                               </Command.Item>
                             </Command.Group>
 
                             <Command.Group heading="Module">
                               <Command.Item onSelect={createNewModule}>
-                                Create new module
+                                <div className="flex items-center gap-2 text-slate-700">
+                                  <PeopleGroupIcon className="h-4 w-4" />
+                                  Create new module
+                                </div>
                                 <kbd>M</kbd>
                               </Command.Item>
                             </Command.Group>
 
                             <Command.Group heading="View">
                               <Command.Item onSelect={createNewView}>
-                                Create new view
+                                <div className="flex items-center gap-2 text-slate-700">
+                                  <ViewListIcon className="h-4 w-4" />
+                                  Create new view
+                                </div>
                                 <kbd>Q</kbd>
                               </Command.Item>
                             </Command.Group>
@@ -429,12 +494,18 @@ export const CommandPalette: React.FC = () => {
                               setPages([...pages, "settings"]);
                             }}
                           >
-                            Search settings...
+                            <div className="flex items-center gap-2 text-slate-700">
+                              <SettingIcon className="h-4 w-4" />
+                              Search settings...
+                            </div>
                           </Command.Item>
                         </Command.Group>
                         <Command.Group heading="Account">
                           <Command.Item onSelect={createNewWorkspace}>
-                            Create new workspace
+                            <div className="flex items-center gap-2 text-slate-700">
+                              <FolderPlusIcon className="h-4 w-4" />
+                              Create new workspace
+                            </div>
                           </Command.Item>
                         </Command.Group>
                         <Command.Group heading="Help">
@@ -447,7 +518,10 @@ export const CommandPalette: React.FC = () => {
                               document.dispatchEvent(e);
                             }}
                           >
-                            Open keyboard shortcuts
+                            <div className="flex items-center gap-2 text-slate-700">
+                              <BoltIcon className="h-4 w-4" />
+                              Open keyboard shortcuts
+                            </div>
                           </Command.Item>
                           <Command.Item
                             onSelect={() => {
@@ -455,7 +529,10 @@ export const CommandPalette: React.FC = () => {
                               window.open("https://docs.plane.so/", "_blank");
                             }}
                           >
-                            Open Plane documentation
+                            <div className="flex items-center gap-2 text-slate-700">
+                              <DocumentIcon className="h-4 w-4" />
+                              Open Plane documentation
+                            </div>
                           </Command.Item>
                           <Command.Item
                             onSelect={() => {
@@ -463,7 +540,10 @@ export const CommandPalette: React.FC = () => {
                               window.open("https://discord.com/invite/A92xrEGCge", "_blank");
                             }}
                           >
-                            Join our discord
+                            <div className="flex items-center gap-2 text-slate-600">
+                              <DiscordIcon className="h-4 w-4" />
+                              Join our discord
+                            </div>
                           </Command.Item>
                           <Command.Item
                             onSelect={() => {
@@ -474,7 +554,10 @@ export const CommandPalette: React.FC = () => {
                               );
                             }}
                           >
-                            Report a bug
+                            <div className="flex items-center gap-2 text-slate-700">
+                              <GithubIcon className="h-4 w-4" />
+                              Report a bug
+                            </div>
                           </Command.Item>
                           <Command.Item
                             onSelect={() => {
@@ -482,7 +565,10 @@ export const CommandPalette: React.FC = () => {
                               window.open("mailto:hello@plane.so", "_blank");
                             }}
                           >
-                            Email us
+                            <div className="flex items-center gap-2 text-slate-700">
+                              <InboxIcon className="h-4 w-4" />
+                              Email us
+                            </div>
                           </Command.Item>
                         </Command.Group>
                       </>
@@ -490,18 +576,35 @@ export const CommandPalette: React.FC = () => {
 
                     {page === "settings" && workspaceSlug && (
                       <>
-                        <Command.Item onSelect={() => goToSettings()}>General</Command.Item>
+                        <Command.Item onSelect={() => goToSettings()}>
+                          <div className="flex items-center gap-2 text-slate-700">
+                            <SettingIcon className="h-4 w-4" />
+                            General
+                          </div>
+                        </Command.Item>
                         <Command.Item onSelect={() => goToSettings("members")}>
-                          Members
+                          <div className="flex items-center gap-2 text-slate-700">
+                            <SettingIcon className="h-4 w-4" />
+                            Members
+                          </div>
                         </Command.Item>
                         <Command.Item onSelect={() => goToSettings("billing")}>
-                          Billings and Plans
+                          <div className="flex items-center gap-2 text-slate-700">
+                            <SettingIcon className="h-4 w-4" />
+                            Billings and Plans
+                          </div>
                         </Command.Item>
                         <Command.Item onSelect={() => goToSettings("integrations")}>
-                          Integrations
+                          <div className="flex items-center gap-2 text-slate-700">
+                            <SettingIcon className="h-4 w-4" />
+                            Integrations
+                          </div>
                         </Command.Item>
                         <Command.Item onSelect={() => goToSettings("import-export")}>
-                          Import/Export
+                          <div className="flex items-center gap-2 text-slate-700">
+                            <SettingIcon className="h-4 w-4" />
+                            Import/Export
+                          </div>
                         </Command.Item>
                       </>
                     )}
