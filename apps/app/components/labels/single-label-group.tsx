@@ -53,7 +53,7 @@ export const SingleLabelGroup: React.FC<Props> = ({
       .patchIssueLabel(workspaceSlug as string, projectId as string, label.id, {
         parent: null,
       })
-      .then((res) => {
+      .then(() => {
         mutate(PROJECT_ISSUE_LABELS(projectId as string));
       });
   };
@@ -108,7 +108,8 @@ export const SingleLabelGroup: React.FC<Props> = ({
                       <span
                         className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
                         style={{
-                          backgroundColor: child.color,
+                          backgroundColor:
+                            child.color && child.color !== "" ? child.color : "#000000",
                         }}
                       />
                       {child.name}
