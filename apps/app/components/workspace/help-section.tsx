@@ -31,8 +31,9 @@ const helpOptions = [
     Icon: GithubIcon,
   },
   {
-    name: "Email us",
-    href: "mailto:hello@plane.so",
+    name: "Chat with us",
+    href: null,
+    onClick: () => (window as any).$crisp.push(["do", "chat:show"]),
     Icon: InboxIcon,
   },
 ];
@@ -119,20 +120,35 @@ export const WorkspaceHelpSection: FC<WorkspaceHelpSectionProps> = (props) => {
           leaveTo="transform opacity-0 scale-95"
         >
           <div
-            className={`absolute bottom-2 ${helpOptionMode}  space-y-2 rounded-sm bg-white py-3 shadow-md`}
+            className={`absolute bottom-2 ${helpOptionMode} space-y-2 rounded-sm bg-white p-1 shadow-md`}
             ref={helpOptionsRef}
           >
-            {helpOptions.map(({ name, Icon, href }) => (
-              <Link href={href} key={name}>
-                <a
-                  target="_blank"
-                  className="mx-3 flex items-center gap-x-2 whitespace-nowrap rounded-md  px-2 py-2 text-xs hover:bg-gray-100"
-                >
-                  <Icon className="h-5 w-5 text-gray-500" />
-                  <span className="text-sm">{name}</span>
-                </a>
-              </Link>
-            ))}
+            {helpOptions.map(({ name, Icon, href, onClick }) => {
+              if (href)
+                return (
+                  <Link href={href} key={name}>
+                    <a
+                      target="_blank"
+                      className="flex items-center gap-x-2 whitespace-nowrap rounded-md px-2 py-1 text-xs hover:bg-gray-100"
+                    >
+                      <Icon className="h-4 w-4 text-gray-500" />
+                      <span className="text-sm">{name}</span>
+                    </a>
+                  </Link>
+                );
+              else
+                return (
+                  <button
+                    key={name}
+                    type="button"
+                    onClick={onClick ? onClick : undefined}
+                    className="flex w-full items-center gap-x-2 whitespace-nowrap rounded-md  px-2 py-1 text-xs hover:bg-gray-100"
+                  >
+                    <Icon className="h-4 w-4 text-gray-500" />
+                    <span className="text-sm">{name}</span>
+                  </button>
+                );
+            })}
           </div>
         </Transition>
       </div>
