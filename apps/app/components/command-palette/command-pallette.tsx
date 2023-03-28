@@ -37,6 +37,7 @@ import { Command } from "cmdk";
 import useTheme from "hooks/use-theme";
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
+import useDebounce from "hooks/use-debounce";
 // components
 import {
   ShortcutsModal,
@@ -50,6 +51,7 @@ import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import { CreateUpdateModuleModal } from "components/modules";
 import { CreateProjectModal } from "components/project";
 import { CreateUpdateViewModal } from "components/views";
+import { Spinner } from "components/ui";
 // helpers
 import {
   capitalizeFirstLetter,
@@ -58,12 +60,11 @@ import {
 } from "helpers/string.helper";
 // services
 import issuesService from "services/issues.service";
+import workspaceService from "services/workspace.service";
 // types
 import { IIssue, IWorkspaceSearchResults } from "types";
 // fetch keys
 import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
-import useDebounce from "hooks/use-debounce";
-import workspaceService from "services/workspace.service";
 
 export const CommandPalette: React.FC = () => {
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
@@ -392,7 +393,7 @@ export const CommandPalette: React.FC = () => {
                   }}
                 >
                   {issueId && issueDetails && (
-                    <div className="p-3 flex">
+                    <div className="flex p-3">
                       <p className="overflow-hidden truncate rounded-md bg-slate-100 p-1 px-2 text-xs font-medium text-slate-500">
                         {issueDetails.project_detail?.identifier}-{issueDetails.sequence_id}{" "}
                         {issueDetails?.name}
@@ -424,7 +425,9 @@ export const CommandPalette: React.FC = () => {
 
                     {(isLoading || isSearching) && (
                       <Command.Loading>
-                        <div className="my-4 text-center text-gray-500">Loading...</div>
+                        <div className="flex h-full w-full items-center justify-center py-8">
+                          <Spinner />
+                        </div>
                       </Command.Loading>
                     )}
 
