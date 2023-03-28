@@ -129,6 +129,36 @@ class CycleViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+    def partial_update(self, request, slug, project_id, pk):
+        try:
+            cycle = Cycle.objects.get(
+                workspace__slug=slug, project_id=project_id, pk=pk
+            )
+
+            if cycle.end_date < timezone.now().date():
+                return Response(
+                    {
+                        "error": "The Cycle has already been completed so it cannot be edited"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            serializer = CycleSerializer(cycle, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Cycle.DoesNotExist:
+            return Response(
+                {"error": "Cycle does not exist"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
 
 class CycleIssueViewSet(BaseViewSet):
     serializer_class = CycleIssueSerializer
@@ -229,6 +259,14 @@ class CycleIssueViewSet(BaseViewSet):
             cycle = Cycle.objects.get(
                 workspace__slug=slug, project_id=project_id, pk=cycle_id
             )
+
+            if cycle.end_date < timezone.now().date():
+                return Response(
+                    {
+                        "error": "The Cycle has already been completed so no new issues can be added"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             # Get all CycleIssues already created
             cycle_issues = list(CycleIssue.objects.filter(issue_id__in=issues))
