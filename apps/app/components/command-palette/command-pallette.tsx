@@ -392,7 +392,7 @@ export const CommandPalette: React.FC = () => {
                   }}
                 >
                   {issueId && issueDetails && (
-                    <div className="p-3">
+                    <div className="p-3 flex">
                       <p className="overflow-hidden truncate rounded-md bg-slate-100 p-1 px-2 text-xs font-medium text-slate-500">
                         {issueDetails.project_detail?.identifier}-{issueDetails.sequence_id}{" "}
                         {issueDetails?.name}
