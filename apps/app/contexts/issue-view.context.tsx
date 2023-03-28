@@ -12,6 +12,7 @@ import viewsService from "services/views.service";
 // types
 import {
   IIssueFilterOptions,
+  TIssueViewOptions,
   IProjectMember,
   TIssueGroupByOptions,
   TIssueOrderByOptions,
@@ -22,7 +23,7 @@ import { USER_PROJECT_VIEW, VIEW_DETAILS } from "constants/fetch-keys";
 export const issueViewContext = createContext<ContextType>({} as ContextType);
 
 type IssueViewProps = {
-  issueView: "list" | "kanban";
+  issueView: TIssueViewOptions;
   groupByProperty: TIssueGroupByOptions;
   orderBy: TIssueOrderByOptions;
   showEmptyGroups: boolean;
@@ -48,12 +49,11 @@ type ContextType = IssueViewProps & {
   setFilters: (filters: Partial<IIssueFilterOptions>, saveToServer?: boolean) => void;
   resetFilterToDefault: () => void;
   setNewFilterDefaultView: () => void;
-  setIssueViewToKanban: () => void;
-  setIssueViewToList: () => void;
+  setIssueView: (property: TIssueViewOptions) => void;
 };
 
 type StateType = {
-  issueView: "list" | "kanban";
+  issueView: TIssueViewOptions;
   groupByProperty: TIssueGroupByOptions;
   orderBy: TIssueOrderByOptions;
   showEmptyGroups: boolean;
@@ -227,66 +227,34 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
       : null
   );
 
-  const setIssueViewToKanban = useCallback(() => {
-    dispatch({
-      type: "SET_ISSUE_VIEW",
-      payload: {
-        issueView: "kanban",
-      },
-    });
-
-    dispatch({
-      type: "SET_GROUP_BY_PROPERTY",
-      payload: {
-        groupByProperty: "state",
-      },
-    });
-
-    if (!workspaceSlug || !projectId) return;
-
-    saveDataToServer(workspaceSlug as string, projectId as string, {
-      ...state,
-      issueView: "kanban",
-      groupByProperty: "state",
-    });
-  }, [workspaceSlug, projectId, state]);
-
-  const setIssueViewToList = useCallback(() => {
-    dispatch({
-      type: "SET_ISSUE_VIEW",
-      payload: {
-        issueView: "list",
-      },
-    });
-
-    dispatch({
-      type: "SET_GROUP_BY_PROPERTY",
-      payload: {
-        groupByProperty: null,
-      },
-    });
-
-    if (!workspaceSlug || !projectId) return;
-
-    mutateMyViewProps((prevData) => {
-      if (!prevData) return prevData;
-
-      return {
-        ...prevData,
-        view_props: {
-          ...state,
-          issueView: "list",
-          groupByProperty: null,
+  const setIssueView = useCallback(
+    (property: TIssueViewOptions) => {
+      dispatch({
+        type: "SET_ISSUE_VIEW",
+        payload: {
+          issueView: property,
         },
-      };
-    }, false);
+      });
 
-    saveDataToServer(workspaceSlug as string, projectId as string, {
-      ...state,
-      issueView: "list",
-      groupByProperty: null,
-    });
-  }, [workspaceSlug, projectId, state, mutateMyViewProps]);
+      if (property === "kanban") {
+        dispatch({
+          type: "SET_GROUP_BY_PROPERTY",
+          payload: {
+            groupByProperty: "state",
+          },
+        });
+      }
+
+      if (!workspaceSlug || !projectId) return;
+
+      saveDataToServer(workspaceSlug as string, projectId as string, {
+        ...state,
+        issueView: property,
+        groupByProperty: "state",
+      });
+    },
+    [workspaceSlug, projectId, state]
+  );
 
   const setGroupByProperty = useCallback(
     (property: TIssueGroupByOptions) => {
@@ -492,8 +460,7 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
         setFilters,
         resetFilterToDefault: resetToDefault,
         setNewFilterDefaultView: setNewDefaultView,
-        setIssueViewToKanban,
-        setIssueViewToList,
+        setIssueView,
       }}
     >
       <ToastAlert />

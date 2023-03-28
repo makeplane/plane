@@ -36,8 +36,7 @@ const useIssuesView = () => {
     setFilters,
     resetFilterToDefault,
     setNewFilterDefaultView,
-    setIssueViewToKanban,
-    setIssueViewToList,
+    setIssueView
   } = useContext(issueViewContext);
 
   const router = useRouter();
@@ -147,8 +146,7 @@ const useIssuesView = () => {
     isNotEmpty: !isEmpty,
     resetFilterToDefault,
     setNewFilterDefaultView,
-    setIssueViewToKanban,
-    setIssueViewToList,
+    setIssueView,
   } as const;
 };
 

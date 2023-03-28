@@ -103,7 +103,6 @@ export const CalendarView = () => {
 
   const onDragEnd = (result: DropResult) => {
     const { source, destination, draggableId } = result;
-    // console.log(result);
 
     if (!destination || !workspaceSlug || !projectId) return;
     if (source.droppableId === destination.droppableId) return;

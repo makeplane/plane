@@ -12,7 +12,7 @@ import { SelectFilters } from "components/views";
 // ui
 import { CustomMenu } from "components/ui";
 // icons
-import { ChevronDownIcon, ListBulletIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon, ListBulletIcon, CalendarDaysIcon } from "@heroicons/react/24/outline";
 import { Squares2X2Icon } from "@heroicons/react/20/solid";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
@@ -27,8 +27,7 @@ export const IssuesFilterView: React.FC = () => {
 
   const {
     issueView,
-    setIssueViewToList,
-    setIssueViewToKanban,
+    setIssueView,
     groupByProperty,
     setGroupByProperty,
     orderBy,
@@ -54,7 +53,7 @@ export const IssuesFilterView: React.FC = () => {
           className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200 ${
             issueView === "list" ? "bg-gray-200" : ""
           }`}
-          onClick={() => setIssueViewToList()}
+          onClick={() => setIssueView("list")}
         >
           <ListBulletIcon className="h-4 w-4" />
         </button>
@@ -63,9 +62,18 @@ export const IssuesFilterView: React.FC = () => {
           className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200 ${
             issueView === "kanban" ? "bg-gray-200" : ""
           }`}
-          onClick={() => setIssueViewToKanban()}
+          onClick={() => setIssueView("kanban")}
         >
           <Squares2X2Icon className="h-4 w-4" />
+        </button>
+        <button
+          type="button"
+          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200 ${
+            issueView === "calendar" ? "bg-gray-200" : ""
+          }`}
+          onClick={() => setIssueView("calendar")}
+        >
+          <CalendarDaysIcon className="h-4 w-4" />
         </button>
       </div>
       <SelectFilters
