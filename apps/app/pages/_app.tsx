@@ -3,6 +3,7 @@ import dynamic from "next/dynamic";
 // styles
 import "styles/globals.css";
 import "styles/editor.css";
+import "styles/command-pallette.css";
 import "styles/nprogress.css";
 
 // router

@@ -12,6 +12,7 @@ import {
   ILastActiveWorkspaceDetails,
   IAppIntegrations,
   IWorkspaceIntegrations,
+  IWorkspaceSearchResults,
 } from "types";
 
 const trackEvent =
@@ -210,6 +211,20 @@ class WorkspaceService extends APIService {
   async deleteWorkspaceIntegration(workspaceSlug: string, integrationId: string): Promise<any> {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/workspace-integrations/${integrationId}/provider/`
+    )
+      .then((res) => res?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async searchWorkspace(
+    workspaceSlug: string,
+    projectId: string,
+    query: string
+  ): Promise<IWorkspaceSearchResults> {
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/search/?search=${query}`
     )
       .then((res) => res?.data)
       .catch((error) => {
