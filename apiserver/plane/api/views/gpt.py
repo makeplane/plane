@@ -28,10 +28,9 @@ class GPTIntegrationEndpoint(BaseAPIView):
             prompt = request.data.get("prompt", False)
             task = request.data.get("task", False)
 
-            if not prompt or not task:
+            if not task:
                 return Response(
-                    {"error": "Task and prompt are required"},
-                    status=status.HTTP_400_BAD_REQUEST,
+                    {"error": "Task is required"}, status=status.HTTP_400_BAD_REQUEST
                 )
 
             final_text = task + "\n" + prompt
@@ -45,7 +44,11 @@ class GPTIntegrationEndpoint(BaseAPIView):
             )
 
             text = response.choices[0].text.strip()
-            return Response({"response": text}, status=status.HTTP_200_OK)
+            text_html = text.replace("\n", "<br/>")
+            return Response(
+                {"response": text, "response_html": text_html},
+                status=status.HTTP_200_OK,
+            )
         except Exception as e:
             capture_exception(e)
             return Response(
