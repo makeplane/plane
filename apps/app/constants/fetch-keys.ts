@@ -105,7 +105,7 @@ export const SUB_ISSUES = (issueId: string) => `SUB_ISSUES_${issueId}`;
 // integrations
 
 // Calendar
-export const CALENDAR_ISSUES = (issueId: string) => `CALENDAR_ISSUES_${issueId}`;
+export const CALENDAR_ISSUES = (projectId: string) => `CALENDAR_ISSUES_${projectId}`;
 
 // Pages
 export const PAGE_LIST = (pageId: string) => `PAGE_LIST_${pageId}`;

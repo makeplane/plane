@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -82,7 +82,7 @@ export const CalendarView = () => {
         : [];
     return {
       date: renderDateFormat(date),
-      issue: filterIssue,
+      issues: filterIssue,
     };
   });
 
@@ -103,18 +103,28 @@ export const CalendarView = () => {
 
   const onDragEnd = (result: DropResult) => {
     const { source, destination, draggableId } = result;
-    console.log(result);
+    // console.log(result);
 
-    if (!result.destination || !workspaceSlug || !projectId) return;
-    if (source.droppableId === destination?.droppableId) return;
+    if (!destination || !workspaceSlug || !projectId) return;
+    if (source.droppableId === destination.droppableId) return;
 
-    issuesService
-      .patchIssue(workspaceSlug as string, projectId as string, draggableId, {
-        target_date: destination?.droppableId,
-      })
-      .then((res) => {
-        console.log(res);
-      });
+    mutate<IIssue[]>(
+      CALENDAR_ISSUES(projectId as string),
+      (prevData) =>
+        (prevData ?? []).map((p) => {
+          if (p.id === draggableId)
+            return {
+              ...p,
+              target_date: destination.droppableId,
+            };
+          return p;
+        }),
+      false
+    );
+
+    issuesService.patchIssue(workspaceSlug as string, projectId as string, draggableId, {
+      target_date: destination?.droppableId,
+    });
   };
   return (
     <DragDropContext onDragEnd={onDragEnd}>
@@ -280,8 +290,8 @@ export const CalendarView = () => {
             showWeekEnds ? "grid-cols-7" : "grid-cols-5"
           } `}
         >
-          {currentViewDaysData.map((d, index) => (
-            <StrictModeDroppable droppableId={d.date}>
+          {currentViewDaysData.map((date, index) => (
+            <StrictModeDroppable droppableId={date.date}>
               {(provided) => (
                 <div
                   key={index}
@@ -297,10 +307,10 @@ export const CalendarView = () => {
                       : "border-r"
                   }`}
                 >
-                  {isMonthlyView && <span>{formatDate(new Date(d.date), "d")}</span>}
-                  {d.issue.length > 0 &&
-                    d.issue.map((i: any, index: any) => (
-                      <Draggable draggableId={i.id} index={index}>
+                  {isMonthlyView && <span>{formatDate(new Date(date.date), "d")}</span>}
+                  {date.issues.length > 0 &&
+                    date.issues.map((issue: IIssue, index) => (
+                      <Draggable draggableId={issue.id} index={index}>
                         {(provided) => (
                           <div
                             key={index}
@@ -310,10 +320,10 @@ export const CalendarView = () => {
                             className="w-full cursor-pointer rounded bg-white p-1.5 hover:scale-105 "
                           >
                             <Link
-                              href={`/${workspaceSlug}/projects/${i?.project_detail?.id}/issues/${i.id}`}
+                              href={`/${workspaceSlug}/projects/${issue?.project_detail?.id}/issues/${issue.id}`}
                               className="w-full"
                             >
-                              {i.name}
+                              {issue.name}
                             </Link>
                           </div>
                         )}
