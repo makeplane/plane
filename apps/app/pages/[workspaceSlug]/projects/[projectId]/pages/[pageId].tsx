@@ -418,7 +418,7 @@ const SinglePage: NextPage<UserAuth> = (props) => {
                 )}
                 <button
                   type="button"
-                  className="flex items-center gap-1 rounded bg-gray-100 px-2.5 py-1 text-xs"
+                  className="flex items-center gap-1 rounded bg-gray-100 px-2.5 py-1 text-xs hover:bg-gray-200"
                   onClick={createPageBlock}
                   disabled={isAddingBlock}
                 >
