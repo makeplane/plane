@@ -120,12 +120,20 @@ const ProjectPages: NextPage<UserAuth> = (props) => {
         mutate(RECENT_PAGES_LIST(projectId as string));
         mutate<IPage[]>(
           MY_PAGES_LIST(projectId as string),
-          (prevData) => [res, ...(prevData as IPage[])],
+          (prevData) => {
+            if (!prevData) return undefined;
+
+            return [res, ...(prevData as IPage[])];
+          },
           false
         );
         mutate<IPage[]>(
           ALL_PAGES_LIST(projectId as string),
-          (prevData) => [res, ...(prevData as IPage[])],
+          (prevData) => {
+            if (!prevData) return undefined;
+
+            return [res, ...(prevData as IPage[])];
+          },
           false
         );
       })

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
+import dynamic from "next/dynamic";
 
 // react-hook-form
 import { useForm } from "react-hook-form";
@@ -16,6 +17,7 @@ type Props = {
   handleClose: () => void;
   inset?: string;
   content: string;
+  htmlContent?: string;
   onResponse: (response: string) => void;
 };
 
@@ -24,11 +26,16 @@ type FormData = {
   task: string;
 };
 
+const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
+  ssr: false,
+});
+
 export const GptAssistantModal: React.FC<Props> = ({
   isOpen,
   handleClose,
   inset = "top-0 left-0",
   content,
+  htmlContent,
   onResponse,
 }) => {
   const [response, setResponse] = useState("");
@@ -62,15 +69,6 @@ export const GptAssistantModal: React.FC<Props> = ({
   const handleResponse = async (formData: FormData) => {
     if (!workspaceSlug || !projectId) return;
 
-    if (!content || content === "") {
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: "Please enter some description to get AI assistance.",
-      });
-      return;
-    }
-
     if (formData.task === "") {
       setToastAlert({
         type: "error",
@@ -82,11 +80,11 @@ export const GptAssistantModal: React.FC<Props> = ({
 
     await aiService
       .createGptTask(workspaceSlug as string, projectId as string, {
-        prompt: content,
+        prompt: content && content !== "" ? content : "",
         task: formData.task,
       })
       .then((res) => {
-        setResponse(res.response);
+        setResponse(res.response_html);
         setFocus("task");
 
         if (res.response === "") setInvalidResponse(true);
@@ -105,12 +103,28 @@ export const GptAssistantModal: React.FC<Props> = ({
       }`}
     >
       <form onSubmit={handleSubmit(handleResponse)} className="space-y-4">
-        <div className="text-sm">
-          Content: <p className="text-gray-500">{content}</p>
-        </div>
+        {content && content !== "" && (
+          <div className="text-sm">
+            Content:
+            <RemirrorRichTextEditor
+              value={htmlContent ?? <p>{content}</p>}
+              customClassName="-mx-3 -my-3"
+              noBorder
+              borderOnFocus={false}
+              editable={false}
+            />
+          </div>
+        )}
         {response !== "" && (
           <div className="text-sm">
-            Response: <p className="text-gray-500">{response}</p>
+            Response:
+            <RemirrorRichTextEditor
+              value={`<p>${response}</p>`}
+              customClassName="-mx-3 -my-3"
+              noBorder
+              borderOnFocus={false}
+              editable={false}
+            />
           </div>
         )}
         {invalidResponse && (
@@ -123,7 +137,11 @@ export const GptAssistantModal: React.FC<Props> = ({
           type="text"
           name="task"
           register={register}
-          placeholder="Tell OpenAI what action to perform on this content..."
+          placeholder={`${
+            content && content !== ""
+              ? "Tell AI what action to perform on this content..."
+              : "Ask AI anything..."
+          }`}
           autoComplete="off"
         />
         <div className={`flex gap-2 ${response === "" ? "justify-end" : "justify-between"}`}>

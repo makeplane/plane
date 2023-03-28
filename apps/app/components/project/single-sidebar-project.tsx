@@ -6,7 +6,7 @@ import { Disclosure, Transition } from "@headlessui/react";
 // ui
 import { CustomMenu } from "components/ui";
 // icons
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon, DocumentTextIcon } from "@heroicons/react/24/outline";
 import {
   ContrastIcon,
   LayerDiagonalIcon,
@@ -53,7 +53,7 @@ const navigation = (workspaceSlug: string, projectId: string) => [
   {
     name: "Pages",
     href: `/${workspaceSlug}/projects/${projectId}/pages`,
-    icon: PencilScribbleIcon,
+    icon: DocumentTextIcon,
   },
   {
     name: "Settings",
