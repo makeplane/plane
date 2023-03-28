@@ -55,28 +55,21 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
   };
 
   const handleAddToFavorites = () => {
-    if (!workspaceSlug && !projectId && !module) return;
+    if (!workspaceSlug || !projectId || !module) return;
+
+    mutate<IModule[]>(
+      MODULE_LIST(projectId as string),
+      (prevData) =>
+        (prevData ?? []).map((m) => ({
+          ...m,
+          is_favorite: m.id === module.id ? true : m.is_favorite,
+        })),
+      false
+    );
 
     modulesService
       .addModuleToFavorites(workspaceSlug as string, projectId as string, {
         module: module.id,
-      })
-      .then(() => {
-        mutate<IModule[]>(
-          MODULE_LIST(projectId as string),
-          (prevData) =>
-            (prevData ?? []).map((m) => ({
-              ...m,
-              is_favorite: m.id === module.id ? true : m.is_favorite,
-            })),
-          false
-        );
-
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Successfully added the module to favorites.",
-        });
       })
       .catch(() => {
         setToastAlert({
@@ -88,26 +81,20 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
   };
 
   const handleRemoveFromFavorites = () => {
-    if (!workspaceSlug || !module) return;
+    if (!workspaceSlug || !projectId || !module) return;
+
+    mutate<IModule[]>(
+      MODULE_LIST(projectId as string),
+      (prevData) =>
+        (prevData ?? []).map((m) => ({
+          ...m,
+          is_favorite: m.id === module.id ? false : m.is_favorite,
+        })),
+      false
+    );
 
     modulesService
       .removeModuleFromFavorites(workspaceSlug as string, projectId as string, module.id)
-      .then(() => {
-        mutate<IModule[]>(
-          MODULE_LIST(projectId as string),
-          (prevData) =>
-            (prevData ?? []).map((m) => ({
-              ...m,
-              is_favorite: m.id === module.id ? false : m.is_favorite,
-            })),
-          false
-        );
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Successfully removed the module from favorites.",
-        });
-      })
       .catch(() => {
         setToastAlert({
           type: "error",
@@ -161,11 +148,11 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
                   <span className="capitalize">{module?.status?.replace("-", " ")}</span>
                 </div>
                 {module.is_favorite ? (
-                  <button onClick={handleRemoveFromFavorites}>
+                  <button type="button" onClick={handleRemoveFromFavorites}>
                     <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
                   </button>
                 ) : (
-                  <button onClick={handleAddToFavorites}>
+                  <button type="button" onClick={handleAddToFavorites}>
                     <StarIcon className="h-4 w-4 " color="#858E96" />
                   </button>
                 )}
