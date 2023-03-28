@@ -102,7 +102,19 @@ export const IssuesPieChart: React.FC<Props> = ({ groupedIssues }) => {
                 />
               ))}
             </Pie>
-            <Legend layout="vertical" verticalAlign="middle" align="right" height={36} />
+            <Legend
+              layout="vertical"
+              verticalAlign="middle"
+              align="right"
+              height={36}
+              payload={[
+                { value: "Backlog", type: "square", color: STATE_GROUP_COLORS.backlog },
+                { value: "Unstarted", type: "square", color: STATE_GROUP_COLORS.unstarted },
+                { value: "Started", type: "square", color: STATE_GROUP_COLORS.started },
+                { value: "Completed", type: "square", color: STATE_GROUP_COLORS.completed },
+                { value: "Cancelled", type: "square", color: STATE_GROUP_COLORS.cancelled },
+              ]}
+            />
           </PieChart>
         </ResponsiveContainer>
       </div>

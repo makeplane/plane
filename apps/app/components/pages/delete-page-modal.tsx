@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-// next
+
 import { useRouter } from "next/router";
-// swr
-import { mutate } from "swr";
+
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
@@ -15,13 +14,12 @@ import { DangerButton, SecondaryButton } from "components/ui";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // types
 import type { IPage } from "types";
+
 type TConfirmPageDeletionProps = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  data?: IPage;
+  data?: IPage | null;
 };
-// fetch-keys
-import { PAGE_LIST } from "constants/fetch-keys";
 
 export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({
   isOpen,
@@ -31,7 +29,7 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, projectId } = router.query;
 
   const { setToastAlert } = useToast();
 
@@ -42,22 +40,16 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({
 
   const handleDeletion = async () => {
     setIsDeleteLoading(true);
-    if (!data || !workspaceSlug) return;
+    if (!data || !workspaceSlug || !projectId) return;
 
     await pagesService
       .deletePage(workspaceSlug as string, data.project, data.id)
       .then(() => {
-        mutate<IPage[]>(
-          PAGE_LIST(data.project),
-          (prevData) => prevData?.filter((page) => page.id !== data?.id),
-          false
-        );
         handleClose();
-
         setToastAlert({
-          title: "Success",
           type: "success",
-          message: "Page deleted successfully",
+          title: "Success!",
+          message: "Page deleted successfully.",
         });
       })
       .catch(() => {

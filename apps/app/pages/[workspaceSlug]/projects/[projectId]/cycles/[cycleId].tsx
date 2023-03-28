@@ -111,6 +111,7 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
         handleOnSubmit={handleAddIssuesToCycle}
       />
       <AppLayout
+        memberType={props}
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem
@@ -159,9 +160,19 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
         }
       >
         <div className={`h-full ${cycleSidebar ? "mr-[24rem]" : ""} duration-300`}>
-          <IssuesView type="cycle" userAuth={props} openIssuesListModal={openIssuesListModal} isCompleted={cycleStatus === "completed" ?? false} />
+          <IssuesView
+            type="cycle"
+            userAuth={props}
+            openIssuesListModal={openIssuesListModal}
+            isCompleted={cycleStatus === "completed" ?? false}
+          />
         </div>
-        <CycleDetailsSidebar cycleStatus={cycleStatus} cycle={cycleDetails} isOpen={cycleSidebar} isCompleted={cycleStatus === "completed" ?? false} />
+        <CycleDetailsSidebar
+          cycleStatus={cycleStatus}
+          cycle={cycleDetails}
+          isOpen={cycleSidebar}
+          isCompleted={cycleStatus === "completed" ?? false}
+        />
       </AppLayout>
     </IssueViewContextProvider>
   );

@@ -9,7 +9,7 @@ import emptyModule from "public/empty-state/empty-module.svg";
 // layouts
 import AppLayout from "layouts/app-layout";
 // lib
-import { requiredAuth } from "lib/auth";
+import { requiredAdmin, requiredAuth } from "lib/auth";
 // services
 import projectService from "services/project.service";
 import modulesService from "services/modules.service";
@@ -21,11 +21,12 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 // types
 import { IModule, SelectModuleType } from "types/modules";
-// fetch-keys
+import { UserAuth } from "types";
 import type { NextPage, GetServerSidePropsContext } from "next";
+// fetch-keys
 import { MODULE_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
 
-const ProjectModules: NextPage = () => {
+const ProjectModules: NextPage<UserAuth> = (props) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   const [selectedModule, setSelectedModule] = useState<SelectModuleType>();
@@ -63,6 +64,7 @@ const ProjectModules: NextPage = () => {
       meta={{
         title: "Plane - Modules",
       }}
+      memberType={props}
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
@@ -140,9 +142,17 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     };
   }
 
+  const projectId = ctx.query.projectId as string;
+  const workspaceSlug = ctx.query.workspaceSlug as string;
+
+  const memberDetail = await requiredAdmin(workspaceSlug, projectId, ctx.req?.headers.cookie);
+
   return {
     props: {
-      user,
+      isOwner: memberDetail?.role === 20,
+      isMember: memberDetail?.role === 15,
+      isViewer: memberDetail?.role === 10,
+      isGuest: memberDetail?.role === 5,
     },
   };
 };

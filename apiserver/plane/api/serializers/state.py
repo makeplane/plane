@@ -12,3 +12,15 @@ class StateSerializer(BaseSerializer):
             "workspace",
             "project",
         ]
+
+
+class StateLiteSerializer(BaseSerializer):
+    class Meta:
+        model = State
+        fields = [
+            "id",
+            "name",
+            "color",
+            "group",
+        ]
+        read_only_fields = fields

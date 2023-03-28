@@ -112,6 +112,7 @@ const SingleModule: React.FC<UserAuth> = (props) => {
         handleOnSubmit={handleAddIssuesToModule}
       />
       <AppLayout
+        memberType={props}
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem

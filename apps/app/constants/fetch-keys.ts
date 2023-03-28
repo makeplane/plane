@@ -1,9 +1,10 @@
 const paramsToKey = (params: any) => {
-  const { state, priority, assignees } = params;
+  const { state, priority, assignees, created_by } = params;
 
   let stateKey = state ? state.split(",") : [];
   let priorityKey = priority ? priority.split(",") : [];
   let assigneesKey = assignees ? assignees.split(",") : [];
+  let createdByKey = created_by ? created_by.split(",") : [];
   const type = params.type ? params.type.toUpperCase() : "NULL";
   const groupBy = params.group_by ? params.group_by.toUpperCase() : "NULL";
   const orderBy = params.order_by ? params.order_by.toUpperCase() : "NULL";
@@ -12,8 +13,9 @@ const paramsToKey = (params: any) => {
   stateKey = stateKey.sort().join("_");
   priorityKey = priorityKey.sort().join("_");
   assigneesKey = assigneesKey.sort().join("_");
+  createdByKey = createdByKey.sort().join("_");
 
-  return `${stateKey}_${priorityKey}_${assigneesKey}_${type}_${groupBy}_${orderBy}`;
+  return `${stateKey}_${priorityKey}_${assigneesKey}_${createdByKey}_${type}_${groupBy}_${orderBy}`;
 };
 
 export const CURRENT_USER = "CURRENT_USER";
@@ -108,7 +110,11 @@ export const SUB_ISSUES = (issueId: string) => `SUB_ISSUES_${issueId}`;
 export const CALENDAR_ISSUES = (projectId: string) => `CALENDAR_ISSUES_${projectId}`;
 
 // Pages
-export const PAGE_LIST = (pageId: string) => `PAGE_LIST_${pageId}`;
+export const RECENT_PAGES_LIST = (projectId: string) => `RECENT_PAGES_LIST_${projectId}`;
+export const ALL_PAGES_LIST = (projectId: string) => `ALL_PAGES_LIST_${projectId}`;
+export const FAVORITE_PAGES_LIST = (projectId: string) => `FAVORITE_PAGES_LIST_${projectId}`;
+export const MY_PAGES_LIST = (projectId: string) => `MY_PAGES_LIST_${projectId}`;
+export const OTHER_PAGES_LIST = (projectId: string) => `OTHER_PAGES_LIST_${projectId}`;
 export const PAGE_DETAILS = (pageId: string) => `PAGE_DETAILS_${pageId}`;
-export const PAGE_BLOCK_LIST = (pageId: string) => `PAGE_BLOCK_LIST_${pageId}`;
+export const PAGE_BLOCKS_LIST = (pageId: string) => `PAGE_BLOCK_LIST_${pageId}`;
 export const PAGE_BLOCK_DETAILS = (pageId: string) => `PAGE_BLOCK_DETAILS_${pageId}`;

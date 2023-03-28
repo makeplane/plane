@@ -45,6 +45,7 @@ class PageBlock(ProjectBaseModel):
     )
     completed_at = models.DateTimeField(null=True)
     sort_order = models.FloatField(default=65535)
+    sync = models.BooleanField(default=True)
 
     def save(self, *args, **kwargs):
         if self._state.adding:

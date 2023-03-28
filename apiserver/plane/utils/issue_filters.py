@@ -96,9 +96,9 @@ def filter_created_at(params, filter, method):
 
 def filter_updated_at(params, filter, method):
     if method == "GET":
-        updated_bys = params.get("updated_at").split(",")
-        if len(updated_bys) and "" not in updated_bys:
-            for query in updated_bys:
+        updated_ats = params.get("updated_at").split(",")
+        if len(updated_ats) and "" not in updated_ats:
+            for query in updated_ats:
                 updated_at_query = query.split(";")
                 if len(updated_at_query) == 2 and "after" in updated_at_query:
                     filter["updated_at__date__gte"] = updated_at_query[0]
@@ -116,41 +116,41 @@ def filter_updated_at(params, filter, method):
 
 def filter_start_date(params, filter, method):
     if method == "GET":
-        start_dates = params.get("start_date").split(";")
+        start_dates = params.get("start_date").split(",")
         if len(start_dates) and "" not in start_dates:
             for query in start_dates:
                 start_date_query = query.split(";")
                 if len(start_date_query) == 2 and "after" in start_date_query:
-                    filter["start_date__date__gte"] = start_date_query[0]
+                    filter["start_date__gte"] = start_date_query[0]
                 else:
-                    filter["start_date__date__lte"] = start_date_query[0]
+                    filter["start_date__lte"] = start_date_query[0]
     else:
         if params.get("start_date", None) and len(params.get("start_date")):
             for query in params.get("start_date"):
                 if query.get("timeline", "after") == "after":
-                    filter["start_date__date__gte"] = query.get("datetime")
+                    filter["start_date__gte"] = query.get("datetime")
                 else:
-                    filter["start_date__date__lte"] = query.get("datetime")
+                    filter["start_date__lte"] = query.get("datetime")
     return filter
 
 
 def filter_target_date(params, filter, method):
     if method == "GET":
-        target_dates = params.get("target_date").split(";")
+        target_dates = params.get("target_date").split(",")
         if len(target_dates) and "" not in target_dates:
             for query in target_dates:
                 target_date_query = query.split(";")
                 if len(target_date_query) == 2 and "after" in target_date_query:
-                    filter["target_date__date__gte"] = target_date_query[0]
+                    filter["target_date__gte"] = target_date_query[0]
                 else:
-                    filter["target_date__date__lte"] = target_date_query[0]
+                    filter["target_date__lte"] = target_date_query[0]
     else:
         if params.get("target_date", None) and len(params.get("target_date")):
             for query in params.get("target_date"):
                 if query.get("timeline", "after") == "after":
-                    filter["target_date__date__gte"] = query.get("datetime")
+                    filter["target_date__gte"] = query.get("datetime")
                 else:
-                    filter["target_date__date__lte"] = query.get("datetime")
+                    filter["target_date__lte"] = query.get("datetime")
 
     return filter
 

@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // lib
-import { requiredAuth } from "lib/auth";
+import { requiredAdmin, requiredAuth } from "lib/auth";
 
 // services
 import viewsService from "services/views.service";
@@ -26,11 +26,11 @@ import { PROJECT_DETAILS, VIEWS_LIST } from "constants/fetch-keys";
 import { CustomMenu, PrimaryButton, Loader, EmptyState } from "components/ui";
 import { DeleteViewModal, CreateUpdateViewModal } from "components/views";
 // types
-import { IView } from "types";
+import { IView, UserAuth } from "types";
 import type { NextPage, GetServerSidePropsContext } from "next";
 import { StackedLayersIcon } from "components/icons";
 
-const ProjectViews: NextPage = () => {
+const ProjectViews: NextPage<UserAuth> = (props) => {
   const [isCreateViewModalOpen, setIsCreateViewModalOpen] = useState(false);
   const [selectedView, setSelectedView] = useState<IView | null>(null);
 
@@ -57,6 +57,7 @@ const ProjectViews: NextPage = () => {
       meta={{
         title: "Plane - Views",
       }}
+      memberType={props}
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
@@ -147,9 +148,17 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     };
   }
 
+  const projectId = ctx.query.projectId as string;
+  const workspaceSlug = ctx.query.workspaceSlug as string;
+
+  const memberDetail = await requiredAdmin(workspaceSlug, projectId, ctx.req?.headers.cookie);
+
   return {
     props: {
-      user,
+      isOwner: memberDetail?.role === 20,
+      isMember: memberDetail?.role === 15,
+      isViewer: memberDetail?.role === 10,
+      isGuest: memberDetail?.role === 5,
     },
   };
 };

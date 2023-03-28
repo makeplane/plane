@@ -7,8 +7,6 @@ import useSWR from "swr";
 
 // services
 import projectService from "services/project.service";
-// hooks
-import useUser from "hooks/use-user";
 // ui
 import { PrimaryButton, Spinner } from "components/ui";
 // icon
@@ -66,8 +64,6 @@ const AppLayout: FC<AppLayoutProps> = ({
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { user } = useUser();
-
   const { data: projectMembers, mutate: projectMembersMutate } = useSWR(
     workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
     workspaceSlug && projectId
@@ -78,7 +74,12 @@ const AppLayout: FC<AppLayoutProps> = ({
     }
   );
   // flags
-  const isMember = projectMembers?.find((member) => member.member.id === user?.id) || !projectId;
+  const isMember =
+    !projectId ||
+    memberType?.isOwner ||
+    memberType?.isMember ||
+    memberType?.isViewer ||
+    memberType?.isGuest;
 
   const handleJoin = () => {
     setIsJoiningProject(true);

@@ -213,7 +213,9 @@ class ImportServiceEndpoint(BaseAPIView):
 
     def get(self, request, slug):
         try:
-            imports = Importer.objects.filter(workspace__slug=slug)
+            imports = Importer.objects.filter(workspace__slug=slug).order_by(
+                "-created_at"
+            )
             serializer = ImporterSerializer(imports, many=True)
             return Response(serializer.data)
         except Exception as e:

@@ -121,6 +121,7 @@ const IssueDetailsPage: NextPage<UserAuth> = (props) => {
 
   return (
     <AppLayout
+      memberType={props}
       noPadding={true}
       bg="secondary"
       breadcrumbs={

@@ -119,6 +119,29 @@ export const SelectFilters: React.FC<Props> = ({
             })) ?? []),
           ],
         },
+        {
+          id: "created_by",
+          label: "Created By",
+          value: members,
+          children: [
+            ...(members?.map((member) => ({
+              id: member.member.id,
+              label: (
+                <div className="flex items-center gap-2">
+                  <Avatar user={member.member} />
+                  {member.member.first_name && member.member.first_name !== ""
+                    ? member.member.first_name
+                    : member.member.email}
+                </div>
+              ),
+              value: {
+                key: "created_by",
+                value: member.member.id,
+              },
+              selected: filters?.created_by?.includes(member.member.id),
+            })) ?? []),
+          ],
+        },
       ]}
     />
   );

@@ -11,7 +11,7 @@ from sentry_sdk import capture_exception
 from . import BaseViewSet, BaseAPIView
 from plane.api.serializers import (
     IssueViewSerializer,
-    IssueSerializer,
+    IssueLiteSerializer,
     IssueViewFavoriteSerializer,
 )
 from plane.api.permissions import ProjectEntityPermission
@@ -53,6 +53,7 @@ class IssueViewViewSet(BaseViewSet):
             .select_related("project")
             .select_related("workspace")
             .annotate(is_favorite=Exists(subquery))
+            .order_by("name", "-is_favorite")
             .distinct()
         )
 
@@ -80,47 +81,9 @@ class ViewIssuesEndpoint(BaseAPIView):
                 .select_related("parent")
                 .prefetch_related("assignees")
                 .prefetch_related("labels")
-                .prefetch_related(
-                    Prefetch(
-                        "blocked_issues",
-                        queryset=IssueBlocker.objects.select_related(
-                            "blocked_by", "block"
-                        ),
-                    )
-                )
-                .prefetch_related(
-                    Prefetch(
-                        "blocker_issues",
-                        queryset=IssueBlocker.objects.select_related(
-                            "block", "blocked_by"
-                        ),
-                    )
-                )
-                .prefetch_related(
-                    Prefetch(
-                        "issue_cycle",
-                        queryset=CycleIssue.objects.select_related("cycle", "issue"),
-                    ),
-                )
-                .prefetch_related(
-                    Prefetch(
-                        "issue_module",
-                        queryset=ModuleIssue.objects.select_related(
-                            "module", "issue"
-                        ).prefetch_related("module__members"),
-                    ),
-                )
-                .prefetch_related(
-                    Prefetch(
-                        "issue_link",
-                        queryset=IssueLink.objects.select_related(
-                            "issue"
-                        ).select_related("created_by"),
-                    )
-                )
             )
 
-            serializer = IssueSerializer(issues, many=True)
+            serializer = IssueLiteSerializer(issues, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except IssueView.DoesNotExist:
             return Response(
