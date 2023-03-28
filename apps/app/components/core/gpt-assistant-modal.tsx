@@ -117,7 +117,14 @@ export const GptAssistantModal: React.FC<Props> = ({
         )}
         {response !== "" && (
           <div className="text-sm">
-            Response: <p className="text-gray-500" dangerouslySetInnerHTML={{ __html: response }} />
+            Response:
+            <RemirrorRichTextEditor
+              value={`<p>${response}</p>`}
+              customClassName="-mx-3 -my-3"
+              noBorder
+              borderOnFocus={false}
+              editable={false}
+            />
           </div>
         )}
         {invalidResponse && (
