@@ -4,6 +4,7 @@ import useSWR, { mutate } from "swr";
 
 // icons
 import {
+  ArrowRightIcon,
   ChartBarIcon,
   ClipboardIcon,
   FolderPlusIcon,
@@ -49,13 +50,19 @@ import { CreateUpdateModuleModal } from "components/modules";
 import { CreateProjectModal } from "components/project";
 import { CreateUpdateViewModal } from "components/views";
 // helpers
-import { copyTextToClipboard } from "helpers/string.helper";
+import {
+  capitalizeFirstLetter,
+  copyTextToClipboard,
+  replaceUnderscoreIfSnakeCase,
+} from "helpers/string.helper";
 // services
 import issuesService from "services/issues.service";
 // types
-import { IIssue } from "types";
+import { IIssue, IWorkspaceSearchResults } from "types";
 // fetch keys
 import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
+import useDebounce from "hooks/use-debounce";
+import workspaceService from "services/workspace.service";
 
 export const CommandPalette: React.FC = () => {
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
@@ -68,7 +75,21 @@ export const CommandPalette: React.FC = () => {
   const [isBulkDeleteIssuesModalOpen, setIsBulkDeleteIssuesModalOpen] = useState(false);
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
 
-  const [search, setSearch] = React.useState<string>("");
+  const [searchTerm, setSearchTerm] = React.useState<string>("");
+  const [results, setResults] = useState<IWorkspaceSearchResults>({
+    results: {
+      workspace: [],
+      project: [],
+      issue: [],
+      cycle: [],
+      module: [],
+      issue_view: [],
+      page: [],
+    },
+  });
+  const [isPendingAPIRequest, setIsPendingAPIRequest] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
   const [placeholder, setPlaceholder] = React.useState("Type a command or search...");
   const [pages, setPages] = React.useState<string[]>([]);
   const page = pages[pages.length - 1];
@@ -195,6 +216,29 @@ export const CommandPalette: React.FC = () => {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
 
+  useEffect(
+    () => {
+      console.log(debouncedSearchTerm);
+      if (!workspaceSlug || !projectId) return;
+
+      // this is done prevent api request when user is clearing input
+      // or searchTerm has not been updated within last 500ms.
+      if (debouncedSearchTerm) {
+        setIsPendingAPIRequest(true);
+        workspaceService
+          .searchWorkspace(workspaceSlug as string, projectId as string, debouncedSearchTerm)
+          .then((results) => {
+            console.log(results);
+            setIsPendingAPIRequest(false);
+            setResults(results);
+          });
+      } else {
+        setIsPendingAPIRequest(false);
+      }
+    },
+    [debouncedSearchTerm, workspaceSlug, projectId] // Only call effect if debounced search term changes
+  );
+
   if (!user) return null;
 
   const createNewWorkspace = () => {
@@ -278,7 +322,7 @@ export const CommandPalette: React.FC = () => {
       <Transition.Root
         show={isPaletteOpen}
         afterLeave={() => {
-          setSearch("");
+          setSearchTerm("");
         }}
         as={React.Fragment}
       >
@@ -307,15 +351,19 @@ export const CommandPalette: React.FC = () => {
             >
               <Dialog.Panel className="relative mx-auto max-w-2xl transform divide-y divide-gray-500 divide-opacity-10 rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
                 <Command
+                  filter={(value, search) => {
+                    if (value.toLowerCase().includes(search.toLowerCase())) return 1;
+                    return 0;
+                  }}
                   onKeyDown={(e) => {
                     // when seach is empty and page is undefined
                     // when user tries to close the modal with esc
-                    if (e.key === "Escape" && !page && !search) {
+                    if (e.key === "Escape" && !page && !searchTerm) {
                       setIsPaletteOpen(false);
                     }
                     // Escape goes to previous page
                     // Backspace goes to previous page when search is empty
-                    if (e.key === "Escape" || (e.key === "Backspace" && !search)) {
+                    if (e.key === "Escape" || (e.key === "Backspace" && !searchTerm)) {
                       e.preventDefault();
                       setPages((pages) => pages.slice(0, -1));
                       setPlaceholder("Type a command or search...");
@@ -338,9 +386,9 @@ export const CommandPalette: React.FC = () => {
                     <Command.Input
                       className="w-full border-0 border-b bg-transparent p-4 pl-11 text-gray-900 placeholder-gray-500 outline-none focus:ring-0 sm:text-sm"
                       placeholder={placeholder}
-                      value={search}
+                      value={searchTerm}
                       onValueChange={(e) => {
-                        setSearch(e);
+                        setSearchTerm(e);
                       }}
                       autoFocus
                     />
@@ -350,6 +398,68 @@ export const CommandPalette: React.FC = () => {
                       No results found.
                     </Command.Empty>
 
+                    {debouncedSearchTerm !== "" && (
+                      <>
+                        {Object.keys(results.results).map((key) => {
+                          const section = (results.results as any)[key];
+                          if (section.length > 0) {
+                            return (
+                              <Command.Group
+                                heading={capitalizeFirstLetter(replaceUnderscoreIfSnakeCase(key))}
+                                key={key}
+                              >
+                                {section.map((item: any) => {
+                                  let path = "";
+                                  let value = item.name;
+                                  let Icon: any = ArrowRightIcon;
+
+                                  if (key === "workspace") {
+                                    path = `/${item.slug}`;
+                                    Icon = FolderPlusIcon;
+                                  } else if (key == "project") {
+                                    path = `/${item.workspace__slug}/projects/${item.id}/issues`;
+                                    Icon = AssignmentClipboardIcon;
+                                  } else if (key === "issue") {
+                                    path = `/${item.workspace__slug}/projects/${item.project_id}/issues/${item.id}`;
+                                    value = `${item.project__identifier}-${item.sequence_id} item.name`;
+                                    Icon = LayerDiagonalIcon;
+                                  } else if (key === "issue_view") {
+                                    path = `/${item.workspace__slug}/projects/${item.project_id}/views/${item.id}`;
+                                    Icon = ViewListIcon;
+                                  } else if (key === "module") {
+                                    path = `/${item.workspace__slug}/projects/${item.project_id}/modules/${item.id}`;
+                                    Icon = PeopleGroupIcon;
+                                  } else if (key === "page") {
+                                    path = `/${item.workspace__slug}/projects/${item.project_id}/pages/${item.id}`;
+                                    Icon = PeopleGroupIcon;
+                                  } else if (key === "cycle") {
+                                    path = `/${item.workspace__slug}/projects/${item.project_id}/cycles/${item.id}`;
+                                    Icon = ContrastIcon;
+                                  }
+
+                                  return (
+                                    <Command.Item
+                                      key={item.id}
+                                      onSelect={() => {
+                                        router.push(path);
+                                        setIsPaletteOpen(false);
+                                      }}
+                                      value={value}
+                                    >
+                                      <div className="flex items-center gap-2 text-slate-700">
+                                        <Icon className="h-4 w-4" />
+                                        {item.name}
+                                      </div>
+                                    </Command.Item>
+                                  );
+                                })}
+                              </Command.Group>
+                            );
+                          }
+                        })}
+                      </>
+                    )}
+
                     {!page && (
                       <>
                         {issueId && (
@@ -357,7 +467,7 @@ export const CommandPalette: React.FC = () => {
                             <Command.Item
                               onSelect={() => {
                                 setPlaceholder("Change state...");
-                                setSearch("");
+                                setSearchTerm("");
                                 setPages([...pages, "change-issue-state"]);
                               }}
                             >
@@ -369,7 +479,7 @@ export const CommandPalette: React.FC = () => {
                             <Command.Item
                               onSelect={() => {
                                 setPlaceholder("Change priority...");
-                                setSearch("");
+                                setSearchTerm("");
                                 setPages([...pages, "change-issue-priority"]);
                               }}
                             >
@@ -381,7 +491,7 @@ export const CommandPalette: React.FC = () => {
                             <Command.Item
                               onSelect={() => {
                                 setPlaceholder("Assign to...");
-                                setSearch("");
+                                setSearchTerm("");
                                 setPages([...pages, "change-issue-assignee"]);
                               }}
                             >
@@ -393,7 +503,7 @@ export const CommandPalette: React.FC = () => {
                             <Command.Item
                               onSelect={() => {
                                 handleIssueAssignees(user.id);
-                                setSearch("");
+                                setSearchTerm("");
                               }}
                             >
                               <div className="flex items-center gap-2 text-slate-700">
@@ -490,7 +600,7 @@ export const CommandPalette: React.FC = () => {
                           <Command.Item
                             onSelect={() => {
                               setPlaceholder("Search workspace settings...");
-                              setSearch("");
+                              setSearchTerm("");
                               setPages([...pages, "settings"]);
                             }}
                           >
