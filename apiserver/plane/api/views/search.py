@@ -26,7 +26,7 @@ class GlobalSearchEndpoint(BaseAPIView):
             q |= Q(**{f"{field}__icontains": query})
         return Workspace.objects.filter(
             q, workspace_member__member=self.request.user
-        ).values("name", "id", "slug")
+        ).distinct().values("name", "id", "slug")
 
     def filter_projects(self, query, slug, project_id):
         fields = ["name"]
@@ -37,7 +37,7 @@ class GlobalSearchEndpoint(BaseAPIView):
             q,
             Q(project_projectmember__member=self.request.user) | Q(network=2),
             workspace__slug=slug,
-        ).values("name", "id", "identifier", "workspace__slug")
+        ).distinct().values("name", "id", "identifier", "workspace__slug")
 
     def filter_issues(self, query, slug, project_id):
         fields = ["name", "sequence_id"]
@@ -54,7 +54,7 @@ class GlobalSearchEndpoint(BaseAPIView):
             project__project_projectmember__member=self.request.user,
             workspace__slug=slug,
             project_id=project_id,
-        ).values(
+        ).distinct().values(
             "name",
             "id",
             "sequence_id",
@@ -73,7 +73,7 @@ class GlobalSearchEndpoint(BaseAPIView):
             project__project_projectmember__member=self.request.user,
             workspace__slug=slug,
             project_id=project_id,
-        ).values(
+        ).distinct().values(
             "name",
             "id",
             "project_id",
@@ -90,7 +90,7 @@ class GlobalSearchEndpoint(BaseAPIView):
             project__project_projectmember__member=self.request.user,
             workspace__slug=slug,
             project_id=project_id,
-        ).values(
+        ).distinct().values(
             "name",
             "id",
             "project_id",
@@ -107,7 +107,7 @@ class GlobalSearchEndpoint(BaseAPIView):
             project__project_projectmember__member=self.request.user,
             workspace__slug=slug,
             project_id=project_id,
-        ).values(
+        ).distinct().values(
             "name",
             "id",
             "project_id",
@@ -124,7 +124,7 @@ class GlobalSearchEndpoint(BaseAPIView):
             project__project_projectmember__member=self.request.user,
             workspace__slug=slug,
             project_id=project_id,
-        ).values(
+        ).distinct().values(
             "name",
             "id",
             "project_id",
