@@ -8,14 +8,12 @@ import { Transition } from "@headlessui/react";
 import useTheme from "hooks/use-theme";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // icons
-import { ArrowLongLeftIcon, ChatBubbleOvalLeftEllipsisIcon } from "@heroicons/react/24/outline";
 import {
-  QuestionMarkCircleIcon,
-  BoltIcon,
-  DocumentIcon,
-  DiscordIcon,
-  GithubIcon,
-} from "components/icons";
+  ArrowLongLeftIcon,
+  ChatBubbleOvalLeftEllipsisIcon,
+  RocketLaunchIcon,
+} from "@heroicons/react/24/outline";
+import { QuestionMarkCircleIcon, DocumentIcon, DiscordIcon, GithubIcon } from "components/icons";
 
 const helpOptions = [
   {
@@ -77,7 +75,7 @@ export const WorkspaceHelpSection: FC<WorkspaceHelpSectionProps> = (props) => {
         }}
         title="Shortcuts"
       >
-        <BoltIcon className="h-4 w-4 text-gray-500" />
+        <RocketLaunchIcon className="h-4 w-4 text-gray-500" />
         {!sidebarCollapse && <span>Shortcuts</span>}
       </button>
       <button
