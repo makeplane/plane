@@ -681,3 +681,60 @@ class CycleFavoriteViewSet(BaseViewSet):
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+class TransferCycleIssueEndpoint(BaseAPIView):
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+
+    def post(self, request, slug, project_id, cycle_id):
+        try:
+            new_cycle_id = request.data.get("new_cycle_id", False)
+
+            if not new_cycle_id:
+                return Response(
+                    {"error": "New Cycle Id is required"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            new_cycle = Cycle.objects.get(
+                workspace__slug=slug, project_id=project_id, pk=new_cycle_id
+            )
+
+            if new_cycle.end_date < timezone.now().date():
+                return Response(
+                    {
+                        "error": "The cycle where the issues are transferred is already completed"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            cycle_issues = CycleIssue.objects.filter(
+                cycle_id=cycle_id,
+                project_id=project_id,
+                workspace__slug=slug,
+                issue__state__group__in=["backlog", "unstarted", "started"],
+            )
+
+            updated_cycles = []
+            for cycle_issue in cycle_issues:
+                cycle_issue.cycle_id = new_cycle_id
+                updated_cycles.append(cycle_issue)
+
+            cycle_issues = CycleIssue.objects.bulk_update(
+                updated_cycles, ["cycle_id"], batch_size=100
+            )
+
+            return Response({"message": "Success"}, status=status.HTTP_200_OK)
+        except Cycle.DoesNotExist:
+            return Response(
+                {"error": "New Cycle Does not exist"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
