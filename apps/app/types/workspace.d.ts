@@ -44,3 +44,35 @@ export interface ILastActiveWorkspaceDetails {
   workspace_details: IWorkspace;
   project_details?: IProjectMember[];
 }
+
+export interface IWorkspaceDefaultSearchResult {
+  name: string;
+  id: string;
+  project_id: string;
+  workspace__slug: string;
+}
+export interface IWorkspaceSearchResult {
+  name: string;
+  id: string;
+  slug: string;
+}
+
+export interface IWorkspaceIssueSearchResult {
+  name: string;
+  id: string;
+  sequence_id: number;
+  project__identifier: string;
+  project_id: string;
+  workspace__slug: string;
+}
+export interface IWorkspaceSearchResults {
+  results: {
+    workspace: IWorkspaceSearchResult[];
+    project: IWorkspaceDefaultSearchResult[];
+    issue: IWorkspaceIssueSearchResult[];
+    cycle: IWorkspaceDefaultSearchResult[];
+    module: IWorkspaceDefaultSearchResult[];
+    issue_view: IWorkspaceDefaultSearchResult[];
+    page: IWorkspaceDefaultSearchResult[];
+  };
+}

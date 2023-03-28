@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 
-import Link from "next/link";
 import { useRouter } from "next/router";
 
 import useSWR from "swr";
@@ -16,19 +15,18 @@ import projectService from "services/project.service";
 import AppLayout from "layouts/app-layout";
 // ui
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-// icons
-import { TrashIcon } from "@heroicons/react/24/outline";
+
 // image
 import emptyView from "public/empty-state/empty-view.svg";
 // fetching keys
 import { PROJECT_DETAILS, VIEWS_LIST } from "constants/fetch-keys";
 // components
-import { CustomMenu, PrimaryButton, Loader, EmptyState } from "components/ui";
-import { DeleteViewModal, CreateUpdateViewModal } from "components/views";
+import { PrimaryButton, Loader, EmptyState } from "components/ui";
+import { DeleteViewModal, CreateUpdateViewModal, SingleViewItem } from "components/views";
+
 // types
 import { IView, UserAuth } from "types";
 import type { NextPage, GetServerSidePropsContext } from "next";
-import { StackedLayersIcon } from "components/icons";
 
 const ProjectViews: NextPage<UserAuth> = (props) => {
   const [isCreateViewModalOpen, setIsCreateViewModalOpen] = useState(false);
@@ -51,6 +49,8 @@ const ProjectViews: NextPage<UserAuth> = (props) => {
       ? () => viewsService.getViews(workspaceSlug as string, projectId as string)
       : null
   );
+
+  console.log(views)
 
   return (
     <AppLayout
@@ -88,29 +88,11 @@ const ProjectViews: NextPage<UserAuth> = (props) => {
             <h3 className="text-3xl font-semibold text-black">Views</h3>
             <div className="rounded-[10px] border">
               {views.map((view) => (
-                <div
-                  className="flex items-center justify-between border-b bg-white p-4 first:rounded-t-[10px] last:rounded-b-[10px]"
+                <SingleViewItem
                   key={view.id}
-                >
-                  <div className="flex items-center gap-2">
-                    <StackedLayersIcon height={18} width={18} />
-                    <Link href={`/${workspaceSlug}/projects/${projectId}/views/${view.id}`}>
-                      <a>{view.name}</a>
-                    </Link>
-                  </div>
-                  <CustomMenu width="auto" verticalEllipsis>
-                    <CustomMenu.MenuItem
-                      onClick={() => {
-                        setSelectedView(view);
-                      }}
-                    >
-                      <span className="flex items-center justify-start gap-2 text-gray-800">
-                        <TrashIcon className="h-4 w-4" />
-                        <span>Delete</span>
-                      </span>
-                    </CustomMenu.MenuItem>
-                  </CustomMenu>
-                </div>
+                  view={view}
+                  setSelectedView={setSelectedView}
+                />
               ))}
             </div>
           </div>
