@@ -692,6 +692,24 @@ class TransferCycleIssueEndpoint(BaseAPIView):
         try:
             new_cycle_id = request.data.get("new_cycle_id", False)
 
+            if not new_cycle_id:
+                return Response(
+                    {"error": "New Cycle Id is required"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            new_cycle = Cycle.objects.get(
+                workspace__slug=slug, project_id=project_id, pk=new_cycle_id
+            )
+
+            if new_cycle.end_date < timezone.now().date():
+                return Response(
+                    {
+                        "error": "The cycle where the issues are transferred is already completed"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
             cycle_issues = CycleIssue.objects.filter(
                 cycle_id=cycle_id,
                 project_id=project_id,
