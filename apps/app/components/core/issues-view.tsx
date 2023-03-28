@@ -30,7 +30,7 @@ import {
   TrashIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { getStateGroupIcon } from "components/icons";
+import { ExclamationIcon, getStateGroupIcon } from "components/icons";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 // types
@@ -683,6 +683,12 @@ export const IssuesView: React.FC<Props> = ({
         {groupedByIssues ? (
           isNotEmpty ? (
             <>
+              {isCompleted && (
+                <div className="flex items-center gap-2 text-sm mb-4 text-gray-500">
+                  <ExclamationIcon height={14} width={14} />
+                  <span>Completed cycles are not editable.</span>
+                </div>
+              )}
               {issueView === "list" ? (
                 <AllLists
                   type={type}
