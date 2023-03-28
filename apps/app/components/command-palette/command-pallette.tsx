@@ -370,10 +370,10 @@ export const CommandPalette: React.FC = () => {
                 >
                   {issueId && issueDetails && (
                     <div className="p-3">
-                      <span className="rounded-md bg-slate-100 p-1 px-2 text-xs font-medium text-slate-500">
+                      <p className="overflow-hidden truncate rounded-md bg-slate-100 p-1 px-2 text-xs font-medium text-slate-500">
                         {issueDetails.project_detail?.identifier}-{issueDetails.sequence_id}{" "}
                         {issueDetails?.name}
-                      </span>
+                      </p>
                     </div>
                   )}
                   <div className="relative">
@@ -446,9 +446,9 @@ export const CommandPalette: React.FC = () => {
                                       className="focus:bg-slate-200 focus:outline-none"
                                       tabIndex={0}
                                     >
-                                      <div className="flex items-center gap-2 text-slate-700">
+                                      <div className="flex items-center gap-2 overflow-hidden text-slate-700">
                                         <Icon className="h-4 w-4" />
-                                        {item.name}
+                                        <p className="block flex-1 truncate">{item.name}</p>
                                       </div>
                                     </Command.Item>
                                   );
