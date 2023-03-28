@@ -88,7 +88,9 @@ export const CommandPalette: React.FC = () => {
       page: [],
     },
   });
-  const [isPendingAPIRequest, setIsPendingAPIRequest] = useState(false);
+  const [resultsCount, setResultsCount] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
   const [placeholder, setPlaceholder] = React.useState("Type a command or search...");
   const [pages, setPages] = React.useState<string[]>([]);
@@ -220,18 +222,39 @@ export const CommandPalette: React.FC = () => {
     () => {
       if (!workspaceSlug || !projectId) return;
 
-      // this is done prevent api request when user is clearing input
+      setIsLoading(true);
+      // this is done prevent subsequent api request
       // or searchTerm has not been updated within last 500ms.
       if (debouncedSearchTerm) {
-        setIsPendingAPIRequest(true);
+        setIsSearching(true);
         workspaceService
           .searchWorkspace(workspaceSlug as string, projectId as string, debouncedSearchTerm)
           .then((results) => {
-            setIsPendingAPIRequest(false);
             setResults(results);
+            const count = Object.keys(results.results).reduce(
+              (accumulator, key) => (results.results as any)[key].length + accumulator,
+              0
+            );
+            setResultsCount(count);
+          })
+          .finally(() => {
+            setIsLoading(false);
+            setIsSearching(false);
           });
       } else {
-        setIsPendingAPIRequest(false);
+        setResults({
+          results: {
+            workspace: [],
+            project: [],
+            issue: [],
+            cycle: [],
+            module: [],
+            issue_view: [],
+            page: [],
+          },
+        });
+        setIsLoading(false);
+        setIsSearching(false);
       }
     },
     [debouncedSearchTerm, workspaceSlug, projectId] // Only call effect if debounced search term changes
@@ -392,9 +415,18 @@ export const CommandPalette: React.FC = () => {
                     />
                   </div>
                   <Command.List className="max-h-96 overflow-scroll p-2">
-                    <Command.Empty className="my-4 text-center text-gray-500">
-                      No results found.
-                    </Command.Empty>
+                    {!isLoading &&
+                      resultsCount === 0 &&
+                      searchTerm !== "" &&
+                      debouncedSearchTerm !== "" && (
+                        <div className="my-4 text-center text-gray-500">No results found.</div>
+                      )}
+
+                    {(isLoading || isSearching) && (
+                      <Command.Loading>
+                        <div className="my-4 text-center text-gray-500">Loading...</div>
+                      </Command.Loading>
+                    )}
 
                     {debouncedSearchTerm !== "" && (
                       <>
@@ -419,7 +451,8 @@ export const CommandPalette: React.FC = () => {
                                     Icon = AssignmentClipboardIcon;
                                   } else if (key === "issue") {
                                     path = `/${item.workspace__slug}/projects/${item.project_id}/issues/${item.id}`;
-                                    value = `${item.project__identifier}-${item.sequence_id} ${item.name}`;
+                                    // user can search id-num idnum or issue name
+                                    value = `${item.project__identifier}-${item.sequence_id} ${item.project__identifier}${item.sequence_id} ${item.name}`;
                                     Icon = LayerDiagonalIcon;
                                   } else if (key === "issue_view") {
                                     path = `/${item.workspace__slug}/projects/${item.project_id}/views/${item.id}`;
