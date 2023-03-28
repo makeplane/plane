@@ -7,15 +7,11 @@ import pagesService from "services/pages.service";
 // components
 import { PagesView } from "components/pages";
 // types
-import { TPageViewProps } from "types";
+import { TPagesListProps } from "./types";
 // fetch-keys
 import { MY_PAGES_LIST } from "constants/fetch-keys";
 
-type Props = {
-  viewType: TPageViewProps;
-};
-
-export const MyPagesList: React.FC<Props> = ({ viewType }) => {
+export const MyPagesList: React.FC<TPagesListProps> = ({ viewType }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 

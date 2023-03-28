@@ -10,7 +10,12 @@ import ToastAlert from "components/toast-alert";
 import projectService from "services/project.service";
 import viewsService from "services/views.service";
 // types
-import { IIssueFilterOptions, IProjectMember, TIssueGroupByOptions } from "types";
+import {
+  IIssueFilterOptions,
+  IProjectMember,
+  TIssueGroupByOptions,
+  TIssueOrderByOptions,
+} from "types";
 // fetch-keys
 import { USER_PROJECT_VIEW, VIEW_DETAILS } from "constants/fetch-keys";
 
@@ -19,7 +24,7 @@ export const issueViewContext = createContext<ContextType>({} as ContextType);
 type IssueViewProps = {
   issueView: "list" | "kanban";
   groupByProperty: TIssueGroupByOptions;
-  orderBy: "created_at" | "updated_at" | "priority" | "sort_order";
+  orderBy: TIssueOrderByOptions;
   showEmptyGroups: boolean;
   filters: IIssueFilterOptions;
 };
@@ -38,7 +43,7 @@ type ReducerActionType = {
 
 type ContextType = IssueViewProps & {
   setGroupByProperty: (property: TIssueGroupByOptions) => void;
-  setOrderBy: (property: "created_at" | "updated_at" | "priority" | "sort_order") => void;
+  setOrderBy: (property: TIssueOrderByOptions) => void;
   setShowEmptyGroups: (property: boolean) => void;
   setFilters: (filters: Partial<IIssueFilterOptions>, saveToServer?: boolean) => void;
   resetFilterToDefault: () => void;
@@ -50,7 +55,7 @@ type ContextType = IssueViewProps & {
 type StateType = {
   issueView: "list" | "kanban";
   groupByProperty: TIssueGroupByOptions;
-  orderBy: "created_at" | "updated_at" | "priority" | "sort_order";
+  orderBy: TIssueOrderByOptions;
   showEmptyGroups: boolean;
   filters: IIssueFilterOptions;
 };
@@ -59,7 +64,7 @@ type ReducerFunctionType = (state: StateType, action: ReducerActionType) => Stat
 export const initialState: StateType = {
   issueView: "list",
   groupByProperty: null,
-  orderBy: "created_at",
+  orderBy: "-created_at",
   showEmptyGroups: true,
   filters: {
     type: null,
@@ -111,7 +116,7 @@ export const reducer: ReducerFunctionType = (state, action) => {
     case "SET_ORDER_BY_PROPERTY": {
       const newState = {
         ...state,
-        orderBy: payload?.orderBy || "created_at",
+        orderBy: payload?.orderBy || "-created_at",
       };
 
       return {
@@ -315,7 +320,7 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
   );
 
   const setOrderBy = useCallback(
-    (property: "created_at" | "updated_at" | "priority" | "sort_order") => {
+    (property: TIssueOrderByOptions) => {
       dispatch({
         type: "SET_ORDER_BY_PROPERTY",
         payload: {

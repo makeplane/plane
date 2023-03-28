@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 
@@ -43,6 +43,8 @@ import {
 } from "constants/fetch-keys";
 
 const SinglePage: NextPage<UserAuth> = (props) => {
+  const [isAddingBlock, setIsAddingBlock] = useState(false);
+
   const router = useRouter();
   const { workspaceSlug, projectId, pageId } = router.query;
 
@@ -132,6 +134,8 @@ const SinglePage: NextPage<UserAuth> = (props) => {
   const createPageBlock = async () => {
     if (!workspaceSlug || !projectId || !pageId) return;
 
+    setIsAddingBlock(true);
+
     await pagesService
       .createPageBlock(workspaceSlug as string, projectId as string, pageId as string, {
         name: "New block",
@@ -149,6 +153,9 @@ const SinglePage: NextPage<UserAuth> = (props) => {
           title: "Error!",
           message: "Page could not be created. Please try again.",
         });
+      })
+      .finally(() => {
+        setIsAddingBlock(false);
       });
   };
 
@@ -392,17 +399,8 @@ const SinglePage: NextPage<UserAuth> = (props) => {
           </div>
           <div className="px-3">
             {pageBlocks ? (
-              pageBlocks.length === 0 ? (
-                <button
-                  type="button"
-                  className="flex items-center gap-1 rounded px-2.5 py-1 text-xs hover:bg-gray-100"
-                  onClick={createPageBlock}
-                >
-                  <PlusIcon className="h-3 w-3" />
-                  Add new block
-                </button>
-              ) : (
-                <>
+              <>
+                {pageBlocks.length !== 0 && (
                   <div className="space-y-4">
                     {pageBlocks.map((block) => (
                       <SinglePageBlock
@@ -412,18 +410,23 @@ const SinglePage: NextPage<UserAuth> = (props) => {
                       />
                     ))}
                   </div>
-                  <div className="">
-                    <button
-                      type="button"
-                      className="flex items-center gap-1 rounded px-2.5 py-1 text-xs hover:bg-gray-100"
-                      onClick={createPageBlock}
-                    >
+                )}
+                <button
+                  type="button"
+                  className="flex items-center gap-1 rounded px-2.5 py-1 text-xs hover:bg-gray-100"
+                  onClick={createPageBlock}
+                  disabled={isAddingBlock}
+                >
+                  {isAddingBlock ? (
+                    "Adding block..."
+                  ) : (
+                    <>
                       <PlusIcon className="h-3 w-3" />
                       Add new block
-                    </button>
-                  </div>
-                </>
-              )
+                    </>
+                  )}
+                </button>
+              </>
             ) : (
               <Loader>
                 <Loader.Item height="150px" />

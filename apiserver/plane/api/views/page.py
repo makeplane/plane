@@ -281,7 +281,7 @@ class RecentPagesEndpoint(BaseAPIView):
                 Page.objects.filter(
                     updated_at__date__range=(
                         (timezone.now() - timedelta(days=7)).date(),
-                        (timezone.now() - timedelta(days=1)).date(),
+                        (timezone.now() - timedelta(days=2)).date(),
                     ),
                     workspace__slug=slug,
                     project_id=project_id,

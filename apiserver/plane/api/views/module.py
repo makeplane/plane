@@ -5,6 +5,8 @@ import json
 from django.db import IntegrityError
 from django.db.models import Prefetch, F, OuterRef, Func, Exists, Count, Q
 from django.core import serializers
+from django.utils.decorators import method_decorator
+from django.views.decorators.gzip import gzip_page
 
 # Third party imports
 from rest_framework.response import Response
@@ -177,6 +179,7 @@ class ModuleIssueViewSet(BaseViewSet):
             .distinct()
         )
 
+    @method_decorator(gzip_page)
     def list(self, request, slug, project_id, module_id):
         try:
             order_by = request.GET.get("order_by", "created_at")

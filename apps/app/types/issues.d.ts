@@ -230,8 +230,10 @@ export interface IIssueFilterOptions {
 
 export type TIssueGroupByOptions = "state" | "priority" | "labels" | "created_by" | null;
 
+export type TIssueOrderByOptions = "-created_at" | "updated_at" | "priority" | "sort_order";
+
 export interface IIssueViewOptions {
   group_by: TIssueGroupByOptions;
-  order_by: "created_at" | "updated_at" | "priority" | "sort_order";
+  order_by: TIssueOrderByOptions;
   filters: IIssueFilterOptions;
 }
