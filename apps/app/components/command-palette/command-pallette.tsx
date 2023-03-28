@@ -27,6 +27,7 @@ import {
   PeopleGroupIcon,
   SettingIcon,
   ViewListIcon,
+  PencilScribbleIcon
 } from "components/icons";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
@@ -88,7 +89,6 @@ export const CommandPalette: React.FC = () => {
     },
   });
   const [isPendingAPIRequest, setIsPendingAPIRequest] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
   const [placeholder, setPlaceholder] = React.useState("Type a command or search...");
   const [pages, setPages] = React.useState<string[]>([]);
@@ -429,7 +429,7 @@ export const CommandPalette: React.FC = () => {
                                     Icon = PeopleGroupIcon;
                                   } else if (key === "page") {
                                     path = `/${item.workspace__slug}/projects/${item.project_id}/pages/${item.id}`;
-                                    Icon = PeopleGroupIcon;
+                                    Icon = PencilScribbleIcon;
                                   } else if (key === "cycle") {
                                     path = `/${item.workspace__slug}/projects/${item.project_id}/cycles/${item.id}`;
                                     Icon = ContrastIcon;
