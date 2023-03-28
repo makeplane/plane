@@ -21,6 +21,7 @@ import { Popover, Transition } from "@headlessui/react";
 import ReactDatePicker from "react-datepicker";
 import { DragDropContext, Draggable, Droppable, DropResult } from "react-beautiful-dnd";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
+import { CustomMenu } from "components/ui";
 // icon
 import { CheckIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 // services
@@ -175,88 +176,76 @@ export const CalendarView = () => {
           </div>
 
           <div className="flex w-full items-center justify-end">
-            <Popover className="relative">
-              {({ open }) => (
-                <>
-                  <Popover.Button
-                    className={`group flex items-center gap-2 rounded-md border bg-white px-3 py-1.5 text-sm  hover:bg-gray-100 hover:text-gray-900 focus:outline-none ${
-                      open ? "bg-gray-100 text-gray-900" : "text-gray-500"
+            <CustomMenu
+              customButton={
+                <div
+                  className={`group flex cursor-pointer items-center gap-2 rounded-md border bg-white px-3 py-1.5 text-sm  hover:bg-gray-100 hover:text-gray-900 focus:outline-none `}
+                >
+                  {isMonthlyView ? "Monthly" : "Weekly"}
+                  <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
+                </div>
+              }
+            >
+              <CustomMenu.MenuItem
+                onClick={() => {
+                  setIsMonthlyView(true);
+                  setCalendarDateRange({
+                    startDate: startOfWeek(currentDate),
+                    endDate: lastDayOfWeek(currentDate),
+                  });
+                }}
+                className="w-64 text-sm text-gray-600"
+              >
+                <div className="flex w-full max-w-[260px] items-center justify-between gap-2">
+                  <span className="flex items-center gap-2">Monthly View</span>
+                  <CheckIcon
+                    className={`h-4 w-4 flex-shrink-0 ${
+                      isMonthlyView ? "opacity-100" : "opacity-0"
                     }`}
-                  >
-                    {isMonthlyView ? "Monthly" : "Weekly"}
-                    <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
-                  </Popover.Button>
-                  <Transition
-                    as={React.Fragment}
-                    enter="transition ease-out duration-200"
-                    enterFrom="opacity-0 translate-y-1"
-                    enterTo="opacity-100 translate-y-0"
-                    leave="transition ease-in duration-150"
-                    leaveFrom="opacity-100 translate-y-0"
-                    leaveTo="opacity-0 translate-y-1"
-                  >
-                    <Popover.Panel className="absolute right-0 z-20 mt-1 flex w-screen max-w-[260px] transform flex-col items-start  gap-2 overflow-hidden rounded-lg bg-white p-3 text-sm shadow-lg">
-                      <button
-                        className="flex w-full items-center justify-between gap-2"
-                        onClick={() => {
-                          setIsMonthlyView(true);
-                          setCalendarDateRange({
-                            startDate: startOfWeek(currentDate),
-                            endDate: lastDayOfWeek(currentDate),
-                          });
-                        }}
-                      >
-                        <div className="flex items-center gap-2">Monthly View</div>
-                        <CheckIcon
-                          className={`h-4 w-4 flex-shrink-0 ${
-                            isMonthlyView ? "opacity-100" : "opacity-0"
-                          }`}
-                        />
-                      </button>
-
-                      <button
-                        className="flex w-full items-center justify-between gap-2"
-                        onClick={() => {
-                          setIsMonthlyView(false);
-                          setCalendarDateRange({
-                            startDate: getCurrentWeekStartDate(),
-                            endDate: getCurrentWeekEndDate(),
-                          });
-                        }}
-                      >
-                        <div className="flex items-center gap-2">Weekly View</div>
-                        <CheckIcon
-                          className={`h-4 w-4 flex-shrink-0 ${
-                            isMonthlyView ? "opacity-0" : "opacity-100"
-                          }`}
-                        />
-                      </button>
-
-                      <div className="flex w-full items-center justify-between">
-                        <h4 className="text-gray-600">Show weekends</h4>
-                        <button
-                          type="button"
-                          className={`relative inline-flex h-3.5 w-6 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                            showWeekEnds ? "bg-green-500" : "bg-gray-200"
-                          }`}
-                          role="switch"
-                          aria-checked={showWeekEnds}
-                          onClick={() => setShowWeekEnds(!showWeekEnds)}
-                        >
-                          <span className="sr-only">Show weekends</span>
-                          <span
-                            aria-hidden="true"
-                            className={`inline-block h-2.5 w-2.5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                              showWeekEnds ? "translate-x-2.5" : "translate-x-0"
-                            }`}
-                          />
-                        </button>
-                      </div>
-                    </Popover.Panel>
-                  </Transition>
-                </>
-              )}
-            </Popover>
+                  />
+                </div>
+              </CustomMenu.MenuItem>
+              <CustomMenu.MenuItem
+                onClick={() => {
+                  setIsMonthlyView(false);
+                  setCalendarDateRange({
+                    startDate: getCurrentWeekStartDate(),
+                    endDate: getCurrentWeekEndDate(),
+                  });
+                }}
+                className="w-64 text-sm text-gray-600"
+              >
+                <div className="flex w-full items-center justify-between gap-2">
+                  <span className="flex items-center gap-2">Weekly View</span>
+                  <CheckIcon
+                    className={`h-4 w-4 flex-shrink-0 ${
+                      isMonthlyView ? "opacity-0" : "opacity-100"
+                    }`}
+                  />
+                </div>
+              </CustomMenu.MenuItem>
+              {/* <CustomMenu.MenuItem className="w-56 border-t border-gray-200 text-sm text-gray-600 rounded-none hover:bg-white"> */}
+              <div className="mt-1 flex w-64 items-center justify-between border-t border-gray-200 py-2 px-1  text-sm text-gray-600">
+                <h4>Show weekends</h4>
+                <button
+                  type="button"
+                  className={`relative inline-flex h-3.5 w-6 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                    showWeekEnds ? "bg-green-500" : "bg-gray-200"
+                  }`}
+                  role="switch"
+                  aria-checked={showWeekEnds}
+                  onClick={() => setShowWeekEnds(!showWeekEnds)}
+                >
+                  <span className="sr-only">Show weekends</span>
+                  <span
+                    aria-hidden="true"
+                    className={`inline-block h-2.5 w-2.5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                      showWeekEnds ? "translate-x-2.5" : "translate-x-0"
+                    }`}
+                  />
+                </button>
+              </div>
+            </CustomMenu>
           </div>
         </div>
 
