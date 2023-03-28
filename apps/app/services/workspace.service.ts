@@ -73,7 +73,10 @@ class WorkspaceService extends APIService {
 
   async inviteWorkspace(workspaceSlug: string, data: any): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/invite/`, data)
-      .then((response) => response?.data)
+      .then((response) => {
+        if (trackEvent) trackEventServices.trackWorkspaceUserInviteEvent(response.data);
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -87,7 +90,10 @@ class WorkspaceService extends APIService {
         headers: {},
       }
     )
-      .then((response) => response?.data)
+      .then((response) => {
+        if (trackEvent) trackEventServices.trackWorkspaceUserJoinEvent(response.data);
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
