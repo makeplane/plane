@@ -27,7 +27,7 @@ import {
   PeopleGroupIcon,
   SettingIcon,
   ViewListIcon,
-  PencilScribbleIcon
+  PencilScribbleIcon,
 } from "components/icons";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
@@ -419,7 +419,7 @@ export const CommandPalette: React.FC = () => {
                                     Icon = AssignmentClipboardIcon;
                                   } else if (key === "issue") {
                                     path = `/${item.workspace__slug}/projects/${item.project_id}/issues/${item.id}`;
-                                    value = `${item.project__identifier}-${item.sequence_id} item.name`;
+                                    value = `${item.project__identifier}-${item.sequence_id} ${item.name}`;
                                     Icon = LayerDiagonalIcon;
                                   } else if (key === "issue_view") {
                                     path = `/${item.workspace__slug}/projects/${item.project_id}/views/${item.id}`;
