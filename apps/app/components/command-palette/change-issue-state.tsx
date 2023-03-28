@@ -72,7 +72,12 @@ export const ChangeIssueState: React.FC<Props> = ({ setIsPaletteOpen, issue }) =
       {states ? (
         states.length > 0 ? (
           states.map((state) => (
-            <Command.Item key={state.id} onSelect={() => handleIssueState(state.id)}>
+            <Command.Item
+              key={state.id}
+              onSelect={() => handleIssueState(state.id)}
+              className="focus:bg-slate-200 focus:outline-none"
+              tabIndex={0}
+            >
               <div className="flex items-center space-x-3">
                 {getStateGroupIcon(state.group, "16", "16", state.color)}
                 <p>{state.name}</p>

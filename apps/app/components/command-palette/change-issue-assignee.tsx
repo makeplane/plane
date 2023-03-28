@@ -95,7 +95,12 @@ export const ChangeIssueAssignee: React.FC<Props> = ({ setIsPaletteOpen, issue }
   return (
     <>
       {options.map((option) => (
-        <Command.Item key={option.value} onSelect={() => handleIssueAssignees(option.value)}>
+        <Command.Item
+          key={option.value}
+          onSelect={() => handleIssueAssignees(option.value)}
+          className="focus:bg-slate-200 focus:outline-none"
+          tabIndex={0}
+        >
           {option.content}
         </Command.Item>
       ))}
