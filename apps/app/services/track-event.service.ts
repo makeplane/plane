@@ -138,6 +138,175 @@ class TrackEventServices extends APIService {
       },
     });
   }
+
+  async trackIssueCreateEvent(data: any): Promise<any> {
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName: "ISSUE_CREATE",
+        extra: {
+          ...data,
+        },
+      },
+    });
+  }
+
+  async trackIssueUpdateEvent(data: any): Promise<any> {
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName: "ISSUE_UPDATE",
+        extra: {
+          ...data,
+        },
+      },
+    });
+  }
+
+  async trackIssueDeleteEvent(data: any): Promise<any> {
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName: "ISSUE_DELETE",
+        extra: {
+          ...data,
+        },
+      },
+    });
+  }
+
+  async trackIssueBulkDeleteEvent(data: any): Promise<any> {
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName: "ISSUE_BULK_DELETE",
+        extra: {
+          ...data,
+        },
+      },
+    });
+  }
+
+  async trackStateCreateEvent(data: any): Promise<any> {
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName: "STATE_CREATE",
+        extra: {
+          ...data,
+        },
+      },
+    });
+  }
+
+  async trackStateUpdateEvent(data: any): Promise<any> {
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName: "STATE_UPDATE",
+        extra: {
+          ...data,
+        },
+      },
+    });
+  }
+
+  async trackStateDeleteEvent(data: any): Promise<any> {
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName: "STATE_DELETE",
+        extra: {
+          ...data,
+        },
+      },
+    });
+  }
+
+  async trackCycleCreateEvent(data: any): Promise<any> {
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName: "CYCLE_CREATE",
+        extra: {
+          ...data,
+        },
+      },
+    });
+  }
+
+  async trackCycleUpdateEvent(data: any): Promise<any> {
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName: "CYCLE_UPDATE",
+        extra: {
+          ...data,
+        },
+      },
+    });
+  }
+
+  async trackCycleDeleteEvent(data: any): Promise<any> {
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName: "CYCLE_DELETE",
+        extra: {
+          ...data,
+        },
+      },
+    });
+  }
+
+  async trackModuleCreateEvent(data: any): Promise<any> {
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName: "MODULE_CREATE",
+        extra: {
+          ...data,
+        },
+      },
+    });
+  }
+
+  async trackModuleUpdateEvent(data: any): Promise<any> {
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName: "MODULE_UPDATE",
+        extra: {
+          ...data,
+        },
+      },
+    });
+  }
+
+  async trackModuleDeleteEvent(data: any): Promise<any> {
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName: "MODULE_DELETE",
+        extra: {
+          ...data,
+        },
+      },
+    });
+  }
 }
 
 const trackEventServices = new TrackEventServices();

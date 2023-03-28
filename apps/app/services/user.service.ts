@@ -1,6 +1,6 @@
 // services
 import APIService from "services/api.service";
-import trackEventServices from "./track-event.service";
+import trackEventServices from "services/track-event.service";
 
 import type { IUser, IUserActivity, IUserWorkspaceDashboard } from "types";
 

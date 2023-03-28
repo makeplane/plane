@@ -1,9 +1,14 @@
 // services
 import APIService from "services/api.service";
+import trackEventServices from "./track-event.service";
+
 // types
 import type { IIssueViewOptions, IModule, IIssue } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
+
+const trackEvent =
+  process.env.NEXT_PUBLIC_TRACK_EVENTS === "true" || process.env.NEXT_PUBLIC_TRACK_EVENTS === "1";
 
 class ProjectIssuesServices extends APIService {
   constructor() {
@@ -20,7 +25,10 @@ class ProjectIssuesServices extends APIService {
 
   async createModule(workspaceSlug: string, projectId: string, data: any): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/`, data)
-      .then((response) => response?.data)
+      .then((response) => {
+        if (trackEvent) trackEventServices.trackModuleCreateEvent(response?.data);
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -36,7 +44,10 @@ class ProjectIssuesServices extends APIService {
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/`,
       data
     )
-      .then((response) => response?.data)
+      .then((response) => {
+        if (trackEvent) trackEventServices.trackModuleUpdateEvent(response?.data);
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -60,7 +71,10 @@ class ProjectIssuesServices extends APIService {
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/`,
       data
     )
-      .then((response) => response?.data)
+      .then((response) => {
+        if (trackEvent) trackEventServices.trackModuleUpdateEvent(response?.data);
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -70,7 +84,10 @@ class ProjectIssuesServices extends APIService {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/`
     )
-      .then((response) => response?.data)
+      .then((response) => {
+        if (trackEvent) trackEventServices.trackModuleDeleteEvent(response?.data);
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
