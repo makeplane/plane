@@ -218,7 +218,6 @@ export const CommandPalette: React.FC = () => {
 
   useEffect(
     () => {
-      console.log(debouncedSearchTerm);
       if (!workspaceSlug || !projectId) return;
 
       // this is done prevent api request when user is clearing input
@@ -228,7 +227,6 @@ export const CommandPalette: React.FC = () => {
         workspaceService
           .searchWorkspace(workspaceSlug as string, projectId as string, debouncedSearchTerm)
           .then((results) => {
-            console.log(results);
             setIsPendingAPIRequest(false);
             setResults(results);
           });
