@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
+import dynamic from "next/dynamic";
 
 // react-hook-form
 import { useForm } from "react-hook-form";
@@ -24,6 +25,10 @@ type FormData = {
   prompt: string;
   task: string;
 };
+
+const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
+  ssr: false,
+});
 
 export const GptAssistantModal: React.FC<Props> = ({
   isOpen,
@@ -101,9 +106,12 @@ export const GptAssistantModal: React.FC<Props> = ({
         {content && content !== "" && (
           <div className="text-sm">
             Content:
-            <p
-              className="text-gray-500"
-              dangerouslySetInnerHTML={{ __html: htmlContent ?? content }}
+            <RemirrorRichTextEditor
+              value={htmlContent ?? <p>{content}</p>}
+              customClassName="-mx-3 -my-3"
+              noBorder
+              borderOnFocus={false}
+              editable={false}
             />
           </div>
         )}
