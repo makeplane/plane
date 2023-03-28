@@ -1,18 +1,32 @@
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+
+import dynamic from "next/dynamic";
+
+// react-hook-form
+import { Controller, useForm } from "react-hook-form";
 // ui
-import { Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
+import { Input, Loader, PrimaryButton, SecondaryButton } from "components/ui";
 // types
-import { IPageForm } from "types";
+import { IPage } from "types";
 
 type Props = {
-  handleFormSubmit: (values: IPageForm) => Promise<void>;
+  handleFormSubmit: (values: IPage) => Promise<void>;
   handleClose: () => void;
   status: boolean;
-  data?: IPageForm;
+  data?: IPage | null;
 };
 
-const defaultValues: IPageForm = {
+// rich-text-editor
+const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
+  ssr: false,
+  loading: () => (
+    <Loader>
+      <Loader.Item height="12rem" width="100%" />
+    </Loader>
+  ),
+});
+
+const defaultValues = {
   name: "",
   description: "",
 };
@@ -23,11 +37,13 @@ export const PageForm: React.FC<Props> = ({ handleFormSubmit, handleClose, statu
     formState: { errors, isSubmitting },
     handleSubmit,
     reset,
-  } = useForm<IPageForm>({
+    control,
+    setValue,
+  } = useForm<IPage>({
     defaultValues,
   });
 
-  const handleCreateUpdatePage = async (formData: IPageForm) => {
+  const handleCreateUpdatePage = async (formData: IPage) => {
     await handleFormSubmit(formData);
 
     reset({
@@ -68,16 +84,20 @@ export const PageForm: React.FC<Props> = ({ handleFormSubmit, handleClose, statu
               }}
             />
           </div>
-          <div>
-            <TextArea
-              id="description"
+          {/* <div>
+            <Controller
               name="description"
-              label="Description"
-              placeholder="Enter description"
-              error={errors.description}
-              register={register}
+              control={control}
+              render={({ field: { value } }) => (
+                <RemirrorRichTextEditor
+                  value={value}
+                  onJSONChange={(jsonValue) => setValue("description", jsonValue)}
+                  onHTMLChange={(htmlValue) => setValue("description_html", htmlValue)}
+                  placeholder="Description"
+                />
+              )}
             />
-          </div>
+          </div> */}
         </div>
       </div>
       <div className="mt-5 flex justify-end gap-2">

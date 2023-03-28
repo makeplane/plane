@@ -106,14 +106,13 @@ export const CreateLabelModal: React.FC<Props> = ({ isOpen, projectId, handleClo
                     </Dialog.Title>
                     <div className="mt-8 flex items-center gap-2">
                       <Popover className="relative">
-                        {({ open }) => (
+                        {({ open, close }) => (
                           <>
                             <Popover.Button
                               className={`group inline-flex items-center rounded-sm bg-white text-base font-medium hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
                                 open ? "text-gray-900" : "text-gray-500"
                               }`}
                             >
-                              <span>Color</span>
                               {watch("color") && watch("color") !== "" && (
                                 <span
                                   className="ml-2 h-4 w-4 rounded"
@@ -146,7 +145,10 @@ export const CreateLabelModal: React.FC<Props> = ({ isOpen, projectId, handleClo
                                   render={({ field: { value, onChange } }) => (
                                     <TwitterPicker
                                       color={value}
-                                      onChange={(value) => onChange(value.hex)}
+                                      onChange={(value) => {
+                                        onChange(value.hex);
+                                        close();
+                                      }}
                                     />
                                   )}
                                 />

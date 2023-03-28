@@ -14,7 +14,7 @@ import AppLayout from "layouts/app-layout";
 import { JoinProjectModal } from "components/project/join-project-modal";
 import { DeleteProjectModal, SingleProjectCard } from "components/project";
 // ui
-import { HeaderButton,  Loader, EmptyState } from "components/ui";
+import { HeaderButton, Loader, EmptyState } from "components/ui";
 import { Breadcrumbs, BreadcrumbItem } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
@@ -83,11 +83,11 @@ const ProjectsPage: NextPage = () => {
         <>
           {projects.length === 0 ? (
             <EmptyState
-            type="project"
-            title="Create New Project"
-            description="Projects are a collection of issues. They can be used to represent the development work for a product, project, or service."
-            imgURL={emptyProject}
-          />
+              type="project"
+              title="Create New Project"
+              description="Projects are a collection of issues. They can be used to represent the development work for a product, project, or service."
+              imgURL={emptyProject}
+            />
           ) : (
             <div className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
               {projects.map((project) => (

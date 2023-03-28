@@ -57,6 +57,7 @@ const SingleView: React.FC<UserAuth> = (props) => {
   return (
     <IssueViewContextProvider>
       <AppLayout
+        memberType={props}
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem

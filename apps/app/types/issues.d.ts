@@ -75,6 +75,7 @@ export interface IIssue {
   cycle_detail: ICycle | null;
   description: any;
   description_html: any;
+  description_stripped: any;
   id: string;
   issue_cycle: IIssueCycle | null;
   issue_link: {
@@ -224,12 +225,15 @@ export interface IIssueFilterOptions {
   issue__assignees__id: string[] | null;
   issue__labels__id: string[] | null;
   priority: string[] | null;
+  created_by: string[] | null;
 }
 
 export type TIssueGroupByOptions = "state" | "priority" | "labels" | "created_by" | null;
 
+export type TIssueOrderByOptions = "-created_at" | "updated_at" | "priority" | "sort_order";
+
 export interface IIssueViewOptions {
   group_by: TIssueGroupByOptions;
-  order_by: "created_at" | "updated_at" | "priority" | "sort_order";
+  order_by: TIssueOrderByOptions;
   filters: IIssueFilterOptions;
 }

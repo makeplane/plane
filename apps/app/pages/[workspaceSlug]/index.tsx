@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 
 // lib
 import { requiredAuth } from "lib/auth";
@@ -10,8 +10,6 @@ import { requiredAuth } from "lib/auth";
 import AppLayout from "layouts/app-layout";
 // services
 import userService from "services/user.service";
-// hooks
-import useIssues from "hooks/use-issues";
 // components
 import {
   CompletedIssuesGraph,
@@ -25,15 +23,19 @@ import type { NextPage, GetServerSidePropsContext } from "next";
 import { USER_WORKSPACE_DASHBOARD } from "constants/fetch-keys";
 
 const WorkspacePage: NextPage = () => {
+  const [month, setMonth] = useState(new Date().getMonth() + 1);
+
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const { myIssues } = useIssues(workspaceSlug as string);
-
   const { data: workspaceDashboardData } = useSWR(
     workspaceSlug ? USER_WORKSPACE_DASHBOARD(workspaceSlug as string) : null,
-    workspaceSlug ? () => userService.userWorkspaceDashboard(workspaceSlug as string) : null
+    workspaceSlug ? () => userService.userWorkspaceDashboard(workspaceSlug as string, month) : null
   );
+
+  useEffect(() => {
+    mutate(USER_WORKSPACE_DASHBOARD(workspaceSlug as string));
+  }, [month, workspaceSlug]);
 
   return (
     <AppLayout noHeader={true}>
@@ -63,7 +65,11 @@ const WorkspacePage: NextPage = () => {
             <IssuesList issues={workspaceDashboardData?.overdue_issues} type="overdue" />
             <IssuesList issues={workspaceDashboardData?.upcoming_issues} type="upcoming" />
             <IssuesPieChart groupedIssues={workspaceDashboardData?.state_distribution} />
-            <CompletedIssuesGraph issues={myIssues} />
+            <CompletedIssuesGraph
+              issues={workspaceDashboardData?.completed_issues}
+              month={month}
+              setMonth={setMonth}
+            />
           </div>
         </div>
       </div>

@@ -6,6 +6,8 @@ from django.db import IntegrityError
 from django.db.models import OuterRef, Func, F, Q, Exists, OuterRef, Count, Prefetch
 from django.core import serializers
 from django.utils import timezone
+from django.utils.decorators import method_decorator
+from django.views.decorators.gzip import gzip_page
 
 # Third party imports
 from rest_framework.response import Response
@@ -26,9 +28,6 @@ from plane.db.models import (
     CycleIssue,
     Issue,
     CycleFavorite,
-    IssueBlocker,
-    IssueLink,
-    ModuleIssue,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
@@ -95,6 +94,7 @@ class CycleViewSet(BaseViewSet):
                     filter=Q(issue_cycle__issue__state__group="backlog"),
                 )
             )
+            .order_by("name", "-is_favorite")
             .distinct()
         )
 
@@ -171,6 +171,7 @@ class CycleIssueViewSet(BaseViewSet):
             .distinct()
         )
 
+    @method_decorator(gzip_page)
     def list(self, request, slug, project_id, cycle_id):
         try:
             order_by = request.GET.get("order_by", "created_at")
@@ -409,6 +410,7 @@ class CurrentUpcomingCyclesEndpoint(BaseAPIView):
                         filter=Q(issue_cycle__issue__state__group="backlog"),
                     )
                 )
+                .order_by("name", "-is_favorite")
             )
 
             upcoming_cycle = (
@@ -452,6 +454,7 @@ class CurrentUpcomingCyclesEndpoint(BaseAPIView):
                         filter=Q(issue_cycle__issue__state__group="backlog"),
                     )
                 )
+                .order_by("name", "-is_favorite")
             )
 
             return Response(
@@ -524,6 +527,7 @@ class CompletedCyclesEndpoint(BaseAPIView):
                         filter=Q(issue_cycle__issue__state__group="backlog"),
                     )
                 )
+                .order_by("name", "-is_favorite")
             )
 
             return Response(
@@ -550,6 +554,12 @@ class DraftCyclesEndpoint(BaseAPIView):
 
     def get(self, request, slug, project_id):
         try:
+            subquery = CycleFavorite.objects.filter(
+                user=self.request.user,
+                cycle_id=OuterRef("pk"),
+                project_id=project_id,
+                workspace__slug=slug,
+            )
             draft_cycles = (
                 Cycle.objects.filter(
                     workspace__slug=slug,
@@ -560,6 +570,7 @@ class DraftCyclesEndpoint(BaseAPIView):
                 .select_related("project")
                 .select_related("workspace")
                 .select_related("owned_by")
+                .annotate(is_favorite=Exists(subquery))
                 .annotate(total_issues=Count("issue_cycle"))
                 .annotate(
                     completed_issues=Count(
@@ -591,6 +602,7 @@ class DraftCyclesEndpoint(BaseAPIView):
                         filter=Q(issue_cycle__issue__state__group="backlog"),
                     )
                 )
+                .order_by("name", "-is_favorite")
             )
 
             return Response(

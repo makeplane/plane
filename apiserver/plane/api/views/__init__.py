@@ -121,3 +121,8 @@ from .page import (
     MyPagesEndpoint,
     CreatedbyOtherPagesEndpoint,
 )
+
+from .search import GlobalSearchEndpoint
+
+
+from .gpt import GPTIntegrationEndpoint

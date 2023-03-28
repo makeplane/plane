@@ -105,7 +105,11 @@ export const getDateRangeStatus = (startDate: string | null, endDate: string | n
   }
 };
 
-export const renderShortDateWithYearFormat = (date: Date) => {
+export const renderShortDateWithYearFormat = (date: string | Date) => {
+  if (!date || date === "") return null;
+
+  date = new Date(date);
+
   const months = [
     "Jan",
     "Feb",
@@ -126,7 +130,11 @@ export const renderShortDateWithYearFormat = (date: Date) => {
   return isNaN(date.getTime()) ? "N/A" : ` ${month} ${day}, ${year}`;
 };
 
-export const renderShortDate = (date: Date) => {
+export const renderShortDate = (date: string | Date) => {
+  if (!date || date === "") return null;
+
+  date = new Date(date);
+
   const months = [
     "Jan",
     "Feb",
@@ -144,4 +152,20 @@ export const renderShortDate = (date: Date) => {
   const day = date.getDate();
   const month = months[date.getMonth()];
   return isNaN(date.getTime()) ? "N/A" : `${day} ${month}`;
+};
+
+export const renderShortTime = (date: string | Date) => {
+  if (!date || date === "") return null;
+
+  date = new Date(date);
+
+  const hours = date.getHours();
+  let minutes: any = date.getMinutes();
+
+  // Add leading zero to single-digit minutes
+  if (minutes < 10) {
+    minutes = "0" + minutes;
+  }
+
+  return hours + ":" + minutes;
 };

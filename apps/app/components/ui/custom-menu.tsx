@@ -25,7 +25,7 @@ type MenuItemProps = {
   children: JSX.Element | string;
   renderAs?: "button" | "a";
   href?: string;
-  onClick?: () => void;
+  onClick?: (args?: any) => void;
   className?: string;
 };
 
