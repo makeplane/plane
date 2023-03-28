@@ -1,28 +1,54 @@
-export const startOfMonth = (date: Date) => {
-  const startOfMonthDate = new Date(date.getFullYear(), date.getMonth(), 1);
-  return startOfMonthDate;
-};
-
-export const lastDayOfMonth = (date: Date) => {
-  const lastDayOfPreviousMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-  return lastDayOfPreviousMonth;
-};
-
 export const startOfWeek = (date: Date) => {
-  const dayOfWeek = date.getDay() % 7;
-  const startOfWeekDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() - dayOfWeek);
-  return startOfWeekDate;
+  const startOfMonthDate = new Date(date.getFullYear(), date.getMonth(), 1);
+  const dayOfWeek = startOfMonthDate.getDay() % 7;
+  const startOfWeekDate = new Date(
+    startOfMonthDate.getFullYear(),
+    startOfMonthDate.getMonth(),
+    startOfMonthDate.getDate() - dayOfWeek
+  );
+  const timezoneOffset = startOfMonthDate.getTimezoneOffset();
+  const timezoneOffsetMilliseconds = timezoneOffset * 60 * 1000;
+  const startOfWeekAdjusted = new Date(startOfWeekDate.getTime() - timezoneOffsetMilliseconds);
+  return startOfWeekAdjusted;
 };
 
 export const lastDayOfWeek = (date: Date) => {
-  const dayOfWeek = date.getDay() % 7;
+  const lastDayOfPreviousMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+  const dayOfWeek = lastDayOfPreviousMonth.getDay() % 7;
   const daysUntilEndOfWeek = 6 - dayOfWeek;
   const lastDayOfWeekDate = new Date(
-    date.getFullYear(),
-    date.getMonth(),
-    date.getDate() + daysUntilEndOfWeek
+    lastDayOfPreviousMonth.getFullYear(),
+    lastDayOfPreviousMonth.getMonth(),
+    lastDayOfPreviousMonth.getDate() + daysUntilEndOfWeek
   );
-  return lastDayOfWeekDate;
+  const timezoneOffset = lastDayOfPreviousMonth.getTimezoneOffset();
+  const timezoneOffsetMilliseconds = timezoneOffset * 60 * 1000;
+  const lastDayOfWeekAdjusted = new Date(lastDayOfWeekDate.getTime() - timezoneOffsetMilliseconds);
+  return lastDayOfWeekAdjusted;
+};
+
+export const getCurrentWeekStartDate = () => {
+  const today = new Date();
+  const dayOfWeek = today.getDay();
+  const startOfWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - dayOfWeek);
+  const timezoneOffset = startOfWeek.getTimezoneOffset();
+  const timezoneOffsetMilliseconds = timezoneOffset * 60 * 1000;
+  const startOfWeekAdjusted = new Date(startOfWeek.getTime() - timezoneOffsetMilliseconds);
+  return startOfWeekAdjusted;
+};
+
+export const getCurrentWeekEndDate = () => {
+  const today = new Date();
+  const dayOfWeek = today.getDay();
+  const endOfWeek = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate() + (6 - dayOfWeek)
+  );
+  const timezoneOffset = endOfWeek.getTimezoneOffset();
+  const timezoneOffsetMilliseconds = timezoneOffset * 60 * 1000;
+  const endOfWeekAdjusted = new Date(endOfWeek.getTime() - timezoneOffsetMilliseconds);
+  return endOfWeekAdjusted;
 };
 
 export const eachDayOfInterval = ({ start, end }: { start: Date; end: Date }) => {

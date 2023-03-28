@@ -1,38 +1,89 @@
 import React, { useState } from "react";
+
+import useSWR from "swr";
+
+import Link from "next/link";
+import { useRouter } from "next/router";
+
+// helper
+import { renderDateFormat } from "helpers/date-time.helper";
 import {
-  startOfMonth,
-  lastDayOfMonth,
   startOfWeek,
   lastDayOfWeek,
   eachDayOfInterval,
   weekDayInterval,
   formatDate,
+  getCurrentWeekStartDate,
+  getCurrentWeekEndDate,
 } from "helpers/calendar.helper";
+// ui
 import { Popover, Transition } from "@headlessui/react";
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import ReactDatePicker from "react-datepicker";
+import { CustomSelect } from "components/ui";
+// icon
+import { CheckIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
+// services
+import issuesService from "services/issues.service";
+// fetch key
+import { CALENDAR_ISSUES } from "constants/fetch-keys";
+// type
+import { IIssue } from "types";
+
+interface ICalendarRange {
+  startDate: Date;
+  endDate: Date;
+}
 
 export const CalendarView = () => {
-  const [showWeekEnds, setShowWeekEnds] = useState(false);
+  const [showWeekEnds, setShowWeekEnds] = useState<boolean>(false);
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
+  const [isMonthlyView, setIsMonthlyView] = useState<boolean>(true);
 
-  const firstDay = startOfMonth(currentDate);
-  //   console.log("firstDay : ", firstDay);
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
 
-  const lastDay = lastDayOfMonth(currentDate);
-  //   console.log("lastDay : ", lastDay);
+  const [calendarDateRange, setCalendarDateRange] = useState<ICalendarRange>({
+    startDate: startOfWeek(currentDate),
+    endDate: lastDayOfWeek(currentDate),
+  });
 
-  const startDate = startOfWeek(firstDay);
-  //   console.log("startDate : ", startDate);
+  const { data: calendarIssues } = useSWR(
+    workspaceSlug && projectId ? CALENDAR_ISSUES(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () =>
+          issuesService.getIssuesWithParams(workspaceSlug as string, projectId as string, {
+            target_date: `${renderDateFormat(calendarDateRange.startDate)};after,${renderDateFormat(
+              calendarDateRange.endDate
+            )};before`,
+          })
+      : null
+  );
 
-  const endDate = lastDayOfWeek(lastDay);
-  //   console.log("endDate : ", endDate);
+  const totalDate = eachDayOfInterval({
+    start: calendarDateRange.startDate,
+    end: calendarDateRange.endDate,
+  });
 
-  const totalDate = eachDayOfInterval({ start: startDate, end: endDate });
-  //   console.log("totalDate : ", totalDate);
+  const onlyWeekDays = weekDayInterval({
+    start: calendarDateRange.startDate,
+    end: calendarDateRange.endDate,
+  });
 
-  const totalWeekDays = weekDayInterval({ start: startDate, end: endDate });
-  //   console.log("totalWeekDays : ", totalWeekDays);
+  const currentViewDays = showWeekEnds ? totalDate : onlyWeekDays;
+
+  const currentViewDaysData = currentViewDays.map((date: Date) => {
+    const filterIssue =
+      calendarIssues && calendarIssues.length > 0
+        ? (calendarIssues as IIssue[]).filter(
+            (issue) =>
+              issue.target_date && renderDateFormat(issue.target_date) === renderDateFormat(date)
+          )
+        : [];
+    return {
+      day: formatDate(new Date(date), "d"),
+      issue: filterIssue,
+    };
+  });
 
   const weeks = ((date: Date[]) => {
     const weeks = [];
@@ -47,23 +98,23 @@ export const CalendarView = () => {
     }
 
     return weeks;
-  })(showWeekEnds ? totalDate : totalWeekDays);
-
-  const currentViewDays = showWeekEnds ? totalDate : totalWeekDays;
+  })(currentViewDays);
 
   return (
     <div className="h-full overflow-y-auto rounded-lg text-gray-600">
-      <div className="mb-6 flex items-center  justify-between">
-        <div className="relative flex h-full w-full items-center justify-center text-sm ">
-          <Popover className="flex h-full w-full items-center  justify-center rounded-lg">
+
+      <div className="mb-4 flex items-center  justify-between">
+        <div className="relative flex h-full w-full items-center justify-start text-sm ">
+          <Popover className="flex h-full items-center  justify-center rounded-lg">
             {({ open }) => (
               <>
                 <Popover.Button
-                  className={`group flex h-full w-full items-center gap-1 px-2.5 py-1.5 text-gray-800`}
+                  className={`group flex h-full items-start gap-1 px-2.5 py-1.5 text-gray-800`}
                 >
-                  <div className="text-3xl font-semibold">
+                  <div className="flex  items-center  justify-center gap-1 text-3xl font-semibold">
                     <span className="text-black">{formatDate(currentDate, "Month")}</span>{" "}
                     <span>{formatDate(currentDate, "yyyy")}</span>
+                    <ChevronDownIcon className="h-4 w-4" />
                   </div>
                 </Popover.Button>
 
@@ -79,7 +130,14 @@ export const CalendarView = () => {
                   <Popover.Panel className="absolute top-10 left-0 z-20 w-full  transform overflow-hidden">
                     <ReactDatePicker
                       selected={currentDate}
-                      onChange={(date) => date && setCurrentDate(date)}
+                      onChange={(date) => {
+                        date && setCurrentDate(date);
+                        date &&
+                          setCalendarDateRange({
+                            startDate: startOfWeek(date),
+                            endDate: lastDayOfWeek(date),
+                          });
+                      }}
                       dateFormat="MM/yyyy"
                       showMonthYearPicker
                       inline
@@ -96,11 +154,11 @@ export const CalendarView = () => {
             {({ open }) => (
               <>
                 <Popover.Button
-                  className={`group flex items-center gap-2 rounded-md border bg-transparent px-3 py-1.5 text-xs hover:bg-gray-100 hover:text-gray-900 focus:outline-none ${
+                  className={`group flex items-center gap-2 rounded-md border bg-white px-3 py-1.5 text-sm  hover:bg-gray-100 hover:text-gray-900 focus:outline-none ${
                     open ? "bg-gray-100 text-gray-900" : "text-gray-500"
                   }`}
                 >
-                  Monthly View
+                  {isMonthlyView ? "Monthly" : "Weekly"}
                   <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
                 </Popover.Button>
                 <Transition
@@ -112,8 +170,44 @@ export const CalendarView = () => {
                   leaveFrom="opacity-100 translate-y-0"
                   leaveTo="opacity-0 translate-y-1"
                 >
-                  <Popover.Panel className="absolute right-0 z-20 mt-1 w-screen max-w-[260px]  transform overflow-hidden rounded-lg bg-white p-3 text-sm shadow-lg">
-                    <div className="flex items-center justify-between">
+                  <Popover.Panel className="absolute right-0 z-20 mt-1 flex w-screen max-w-[260px] transform flex-col items-start  gap-2 overflow-hidden rounded-lg bg-white p-3 text-sm shadow-lg">
+                    <button
+                      className="flex w-full items-center justify-between gap-2"
+                      onClick={() => {
+                        setIsMonthlyView(true);
+                        setCalendarDateRange({
+                          startDate: startOfWeek(currentDate),
+                          endDate: lastDayOfWeek(currentDate),
+                        });
+                      }}
+                    >
+                      <div className="flex items-center gap-2">Monthly View</div>
+                      <CheckIcon
+                        className={`h-4 w-4 flex-shrink-0 ${
+                          isMonthlyView ? "opacity-100" : "opacity-0"
+                        }`}
+                      />
+                    </button>
+
+                    <button
+                      className="flex w-full items-center justify-between gap-2"
+                      onClick={() => {
+                        setIsMonthlyView(false);
+                        setCalendarDateRange({
+                          startDate: getCurrentWeekStartDate(),
+                          endDate: getCurrentWeekEndDate(),
+                        });
+                      }}
+                    >
+                      <div className="flex items-center gap-2">Weekly View</div>
+                      <CheckIcon
+                        className={`h-4 w-4 flex-shrink-0 ${
+                          isMonthlyView ? "opacity-0" : "opacity-100"
+                        }`}
+                      />
+                    </button>
+
+                    <div className="flex w-full items-center justify-between">
                       <h4 className="text-gray-600">Show weekends</h4>
                       <button
                         type="button"
@@ -140,15 +234,16 @@ export const CalendarView = () => {
           </Popover>
         </div>
       </div>
+
       <div
         className={`grid auto-rows-[minmax(50px,1fr)] rounded-lg ${
           showWeekEnds ? "grid-cols-7" : "grid-cols-5"
         }`}
       >
-        {weeks.map((week, index) => (
-          <span
+        {weeks.map((date, index) => (
+          <div
             key={index}
-            className={`flex items-center justify-start border-gray-300 bg-gray-100 px-3 py-4 text-left text-base font-medium ${
+            className={`flex flex-col items-start justify-start gap-1 border-gray-300 bg-gray-100 text-base font-medium text-gray-600 ${
               showWeekEnds
                 ? (index + 1) % 7 === 0
                   ? ""
@@ -156,18 +251,20 @@ export const CalendarView = () => {
                 : (index + 1) % 5 === 0
                 ? ""
                 : "border-r"
-            }`}
+            } ${isMonthlyView ? "px-3 py-4" : "p-1.5"}`}
           >
-            {formatDate(week, "eee")}
-          </span>
+            <span>{formatDate(date, "eee")}</span>
+            {!isMonthlyView && <span>{formatDate(date, "d")}</span>}
+          </div>
         ))}
       </div>
+
       <div
         className={`grid h-full auto-rows-[minmax(170px,1fr)] ${
           showWeekEnds ? "grid-cols-7" : "grid-cols-5"
         } `}
       >
-        {currentViewDays.map((d, index) => (
+        {currentViewDaysData.map((d, index) => (
           <div
             key={index}
             className={`flex flex-col gap-1 border-t border-gray-300 px-3 py-4 text-left text-base font-medium ${
@@ -180,10 +277,20 @@ export const CalendarView = () => {
                 : "border-r"
             }`}
           >
-            <span>{formatDate(d, "d")}</span>
+            {isMonthlyView && <span>{d.day}</span>}
+            {d.issue.length > 0 &&
+              d.issue.map((i: any, index: any) => (
+                <Link
+                  key={index}
+                  href={`/${workspaceSlug}/projects/${i?.project_detail?.id}/issues/${i.id}`}
+                >
+                  <span className="cursor-pointer rounded bg-white p-1.5">{i.name}</span>
+                </Link>
+              ))}
           </div>
         ))}
       </div>
+
     </div>
   );
 };
