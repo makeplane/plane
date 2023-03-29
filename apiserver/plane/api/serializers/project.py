@@ -18,6 +18,8 @@ from plane.db.models import (
 
 
 class ProjectSerializer(BaseSerializer):
+    workspace_detail = WorkSpaceSerializer(source="workspace", read_only=True)
+
     class Meta:
         model = Project
         fields = "__all__"
