@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-
 import useSWR, { mutate } from "swr";
-
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -15,21 +13,33 @@ import {
   formatDate,
   getCurrentWeekStartDate,
   getCurrentWeekEndDate,
+  subtractMonths,
+  addMonths,
+  updateDateWithYear,
+  updateDateWithMonth,
+  isSameMonth,
+  isSameYear,
 } from "helpers/calendar.helper";
 // ui
 import { Popover, Transition } from "@headlessui/react";
-import ReactDatePicker from "react-datepicker";
 import { DragDropContext, Draggable, Droppable, DropResult } from "react-beautiful-dnd";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 import { CustomMenu } from "components/ui";
 // icon
-import { CheckIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
+import {
+  CheckIcon,
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from "@heroicons/react/24/outline";
 // services
 import issuesService from "services/issues.service";
 // fetch key
 import { CALENDAR_ISSUES, ISSUE_DETAILS } from "constants/fetch-keys";
 // type
 import { IIssue } from "types";
+// constant
+import { monthOptions, yearOptions } from "constants/calendar";
 
 interface ICalendarRange {
   startDate: Date;
@@ -126,19 +136,27 @@ export const CalendarView = () => {
       target_date: destination?.droppableId,
     });
   };
+
+  const updateDate = (date: Date) => {
+    setCurrentDate(date);
+    setCalendarDateRange({
+      startDate: startOfWeek(date),
+      endDate: lastDayOfWeek(date),
+    });
+  };
+
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <div className="h-full overflow-y-auto rounded-lg text-gray-600 -m-2">
         <div className="mb-4 flex items-center justify-between">
-          <div className="relative flex h-full w-full items-center justify-start text-sm ">
-            <Popover className="flex h-full items-center  justify-center rounded-lg">
+          <div className="relative flex h-full w-full gap-2 items-center justify-start text-sm ">
+            <Popover className="flex h-full items-center w-48 justify-start rounded-lg">
               {({ open }) => (
                 <>
                   <Popover.Button className={`group flex h-full items-start gap-1 text-gray-800`}>
-                    <div className="flex  items-center  justify-center gap-2 text-2xl font-semibold">
+                    <div className="flex  items-center   justify-center gap-2 text-2xl font-semibold">
                       <span className="text-black">{formatDate(currentDate, "Month")}</span>{" "}
                       <span>{formatDate(currentDate, "yyyy")}</span>
-                      <ChevronDownIcon className="h-4 w-4" />
                     </div>
                   </Popover.Button>
 
@@ -151,29 +169,66 @@ export const CalendarView = () => {
                     leaveFrom="opacity-100 translate-y-0"
                     leaveTo="opacity-0 translate-y-1"
                   >
-                    <Popover.Panel className="absolute top-10 left-0 z-20 w-full  transform overflow-hidden">
-                      <ReactDatePicker
-                        selected={currentDate}
-                        onChange={(date) => {
-                          date && setCurrentDate(date);
-                          date &&
-                            setCalendarDateRange({
-                              startDate: startOfWeek(date),
-                              endDate: lastDayOfWeek(date),
-                            });
-                        }}
-                        dateFormat="MM/yyyy"
-                        showMonthYearPicker
-                        inline
-                      />
+                    <Popover.Panel className="absolute top-10 left-0 z-20 w-full max-w-md flex flex-col transform overflow-hidden bg-white shadow-lg rounded-[10px]">
+                      <div className="flex justify-center items-center text-xl gap-5 px-5 py-4">
+                        {yearOptions.map((year) => (
+                          <button
+                            onClick={() => updateDate(updateDateWithYear(year.label, currentDate))}
+                            className={` ${
+                              isSameYear(year.value, currentDate)
+                                ? "text-xl font-medium text-gray-800"
+                                : "text-base text-gray-400 "
+                            } hover:text-xl hover:text-gray-800 hover:font-medium `}
+                          >
+                            {year.label}
+                          </button>
+                        ))}
+                      </div>
+                      <div className="grid grid-cols-4 gap-y-1 px-5 py-4 border-t border-gray-200">
+                        {monthOptions.map((month) => (
+                          <button
+                            onClick={() =>
+                              updateDate(updateDateWithMonth(month.value, currentDate))
+                            }
+                            className={`text-gray-400 text-base px-2 py-2 hover:font-medium hover:text-gray-800 ${
+                              isSameMonth(month.value, currentDate)
+                                ? "font-medium text-gray-800"
+                                : ""
+                            }`}
+                          >
+                            {month.label}
+                          </button>
+                        ))}
+                      </div>
                     </Popover.Panel>
                   </Transition>
                 </>
               )}
             </Popover>
+
+            <div className="flex items-center gap-2">
+              <button
+                className="cursor-pointer"
+                onClick={() => updateDate(subtractMonths(currentDate, 1))}
+              >
+                <ChevronLeftIcon className="h-4 w-4" />
+              </button>
+              <button
+                className="cursor-pointer"
+                onClick={() => updateDate(addMonths(currentDate, 1))}
+              >
+                <ChevronRightIcon className="h-4 w-4" />
+              </button>
+            </div>
           </div>
 
-          <div className="flex w-full items-center justify-end">
+          <div className="flex w-full gap-2 items-center justify-end">
+            <button
+              className="group flex cursor-pointer items-center gap-2 rounded-md border bg-white px-4 py-1.5 text-sm  hover:bg-gray-100 hover:text-gray-900 focus:outline-none"
+              onClick={() => updateDate(new Date())}
+            >
+              Today{" "}
+            </button>
             <CustomMenu
               customButton={
                 <div
@@ -222,7 +277,6 @@ export const CalendarView = () => {
                   />
                 </div>
               </CustomMenu.MenuItem>
-              {/* <CustomMenu.MenuItem className="w-56 border-t border-gray-200 text-sm text-gray-600 rounded-none hover:bg-white"> */}
               <div className="mt-1 flex w-52 items-center justify-between border-t border-gray-200 py-2 px-1  text-sm text-gray-600">
                 <h4>Show weekends</h4>
                 <button
@@ -267,7 +321,9 @@ export const CalendarView = () => {
                   : ""
               }`}
             >
-              <span>{isMonthlyView ? formatDate(date, "eee").substring(0, 3) : formatDate(date, "eee")}</span>
+              <span>
+                {isMonthlyView ? formatDate(date, "eee").substring(0, 3) : formatDate(date, "eee")}
+              </span>
               {!isMonthlyView && <span>{formatDate(date, "d")}</span>}
             </div>
           ))}
