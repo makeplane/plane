@@ -52,6 +52,7 @@ from .cycle import (
     CycleFavoriteViewSet,
     DraftCyclesEndpoint,
     TransferCycleIssueEndpoint,
+    InCompleteCyclesEndpoint,
 )
 from .asset import FileAssetEndpoint, UserAssetsEndpoint
 from .issue import (
