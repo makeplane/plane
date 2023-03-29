@@ -113,7 +113,9 @@ const ProjectCycles: NextPage<UserAuth> = (props) => {
       />
       <div className="space-y-8">
         <div className="flex flex-col gap-5">
-          <h3 className="text-3xl font-semibold text-black">Current Cycle</h3>
+          {currentAndUpcomingCycles && currentAndUpcomingCycles.current_cycle.length > 0 && (
+            <h3 className="text-3xl font-semibold text-black">Current Cycle</h3>
+          )}
           <div className="space-y-5">
             <CyclesList
               cycles={currentAndUpcomingCycles?.current_cycle}
@@ -124,7 +126,7 @@ const ProjectCycles: NextPage<UserAuth> = (props) => {
           </div>
         </div>
         <div className="flex flex-col gap-5">
-          <h3 className="text-3xl font-semibold text-black">Others</h3>
+          <h3 className="text-3xl font-semibold text-black">Other Cycles</h3>
           <div>
             <Tab.Group>
               <Tab.List
