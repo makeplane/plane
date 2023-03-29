@@ -86,7 +86,7 @@ class SignInEndpoint(BaseAPIView):
                     "user": serialized_user,
                 }
 
-                # Send event to Jitsu for tracking
+                # Send Analytics
                 if settings.ANALYTICS_BASE_API:
                     _ = requests.post(
                         settings.ANALYTICS_BASE_API,
@@ -99,7 +99,7 @@ class SignInEndpoint(BaseAPIView):
                             "event_data": {
                                 "medium": "email",
                             },
-                            "user": {"email": email, "id": user.id},
+                            "user": {"email": email, "id": str(user.id)},
                             "device_ctx": {
                                 "ip": request.META.get("REMOTE_ADDR"),
                                 "user_agent": request.META.get("HTTP_USER_AGENT"),
@@ -137,7 +137,7 @@ class SignInEndpoint(BaseAPIView):
                 user.save()
 
                 access_token, refresh_token = get_tokens_for_user(user)
-                # Send event to Jitsu for tracking
+                # Send Analytics
                 if settings.ANALYTICS_BASE_API:
                     _ = requests.post(
                         settings.ANALYTICS_BASE_API,
@@ -150,7 +150,7 @@ class SignInEndpoint(BaseAPIView):
                             "event_data": {
                                 "medium": "email",
                             },
-                            "user": {"email": email, "id": user.id},
+                            "user": {"email": email, "id": str(user.id)},
                             "device_ctx": {
                                 "ip": request.META.get("REMOTE_ADDR"),
                                 "user_agent": request.META.get("HTTP_USER_AGENT"),
@@ -324,7 +324,7 @@ class MagicSignInEndpoint(BaseAPIView):
                                     "event_data": {
                                         "medium": "code",
                                     },
-                                    "user": {"email": email, "id": user.id},
+                                    "user": {"email": email, "id": str(user.id)},
                                     "device_ctx": {
                                         "ip": request.META.get("REMOTE_ADDR"),
                                         "user_agent": request.META.get(
@@ -354,7 +354,7 @@ class MagicSignInEndpoint(BaseAPIView):
                                     "event_data": {
                                         "medium": "code",
                                     },
-                                    "user": {"email": email, "id": user.id},
+                                    "user": {"email": email, "id": str(user.id)},
                                     "device_ctx": {
                                         "ip": request.META.get("REMOTE_ADDR"),
                                         "user_agent": request.META.get(

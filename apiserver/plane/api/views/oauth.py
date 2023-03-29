@@ -217,7 +217,7 @@ class OauthEndpoint(BaseAPIView):
                         "event_data": {
                             "medium": f"oauth-{medium}",
                         },
-                        "user": {"email": email, "id": user.id},
+                        "user": {"email": email, "id": str(user.id)},
                         "device_ctx": {
                             "ip": request.META.get("REMOTE_ADDR"),
                             "user_agent": request.META.get("HTTP_USER_AGENT"),
@@ -285,7 +285,7 @@ class OauthEndpoint(BaseAPIView):
                         "event_data": {
                             "medium": f"oauth-{medium}",
                         },
-                        "user": {"email": email, "id": user.id},
+                        "user": {"email": email, "id": str(user.id)},
                         "device_ctx": {
                             "ip": request.META.get("REMOTE_ADDR"),
                             "user_agent": request.META.get("HTTP_USER_AGENT"),
