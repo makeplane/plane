@@ -21,6 +21,7 @@ from plane.api.views import (
     # User
     UserEndpoint,
     UpdateUserOnBoardedEndpoint,
+    UserActivityEndpoint,
     ## End User
     # Workspaces
     WorkSpaceViewSet,
@@ -94,6 +95,7 @@ from plane.api.views import (
     CycleFavoriteViewSet,
     DraftCyclesEndpoint,
     TransferCycleIssueEndpoint,
+    InCompleteCyclesEndpoint,
     ## End Cycles
     # Modules
     ModuleViewSet,
@@ -185,6 +187,7 @@ urlpatterns = [
         UpdateUserOnBoardedEndpoint.as_view(),
         name="change-password",
     ),
+    path("users/activities/", UserActivityEndpoint.as_view(), name="user-activities"),
     # user workspaces
     path(
         "users/me/workspaces/",
@@ -633,6 +636,11 @@ urlpatterns = [
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:cycle_id>/transfer-issues/",
         TransferCycleIssueEndpoint.as_view(),
+        name="transfer-issues",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/incomplete-cycles/",
+        InCompleteCyclesEndpoint.as_view(),
         name="transfer-issues",
     ),
     ## End Cycles

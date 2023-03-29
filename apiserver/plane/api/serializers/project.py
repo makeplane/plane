@@ -6,7 +6,7 @@ from rest_framework import serializers
 
 # Module imports
 from .base import BaseSerializer
-from plane.api.serializers.workspace import WorkSpaceSerializer
+from plane.api.serializers.workspace import WorkSpaceSerializer, WorkspaceLiteSerializer
 from plane.api.serializers.user import UserLiteSerializer
 from plane.db.models import (
     Project,
@@ -18,6 +18,8 @@ from plane.db.models import (
 
 
 class ProjectSerializer(BaseSerializer):
+    workspace_detail = WorkspaceLiteSerializer(source="workspace", read_only=True)
+
     class Meta:
         model = Project
         fields = "__all__"

@@ -145,7 +145,8 @@ export const SingleSidebarProject: React.FC<Props> = ({
                 if (
                   (item.name === "Cycles" && !project.cycle_view) ||
                   (item.name === "Modules" && !project.module_view) ||
-                  (item.name === "Views" && !project.issue_views_view)
+                  (item.name === "Views" && !project.issue_views_view) ||
+                  (item.name === "Pages" && !project.page_view)
                 )
                   return;
 

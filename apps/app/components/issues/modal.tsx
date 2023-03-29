@@ -23,13 +23,12 @@ import type { IIssue } from "types";
 import {
   PROJECT_ISSUES_DETAILS,
   PROJECT_ISSUES_LIST,
-  CYCLE_ISSUES,
   USER_ISSUE,
   PROJECTS_LIST,
-  MODULE_ISSUES,
   SUB_ISSUES,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
   CYCLE_ISSUES_WITH_PARAMS,
+  MODULE_ISSUES_WITH_PARAMS,
 } from "constants/fetch-keys";
 
 export interface IssuesModalProps {
@@ -101,27 +100,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
       .addIssueToCycle(workspaceSlug as string, activeProject ?? "", cycleId, {
         issues: [issueId],
       })
-      .then((res) => {
+      .then(() => {
         mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId, params));
-        if (isUpdatingSingleIssue) {
-          mutate<IIssue>(
-            PROJECT_ISSUES_DETAILS,
-            (prevData) => ({ ...(prevData as IIssue), sprints: cycleId }),
-            false
-          );
-        } else
-          mutate<IIssue[]>(
-            PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params),
-            (prevData) =>
-              (prevData ?? []).map((i) => {
-                if (i.id === res.id) return { ...i, sprints: cycleId };
-                return i;
-              }),
-            false
-          );
-      })
-      .catch((err) => {
-        console.log(err);
       });
   };
 
@@ -132,11 +112,9 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
       .addIssuesToModule(workspaceSlug as string, activeProject ?? "", moduleId as string, {
         issues: [issueId],
       })
-      .then((res) => {
-        console.log(res);
-        mutate(MODULE_ISSUES(moduleId as string));
-      })
-      .catch((e) => console.log(e));
+      .then(() => {
+        mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
+      });
   };
 
   const createIssue = async (payload: Partial<IIssue>) => {

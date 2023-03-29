@@ -10,7 +10,6 @@ from plane.db.models import Workspace, WorkspaceMember, Team, WorkspaceMemberInv
 
 
 class WorkSpaceSerializer(BaseSerializer):
-
     owner = UserLiteSerializer(read_only=True)
     total_members = serializers.IntegerField(read_only=True)
 
@@ -28,7 +27,6 @@ class WorkSpaceSerializer(BaseSerializer):
 
 
 class WorkSpaceMemberSerializer(BaseSerializer):
-
     member = UserLiteSerializer(read_only=True)
     workspace = WorkSpaceSerializer(read_only=True)
 
@@ -38,7 +36,6 @@ class WorkSpaceMemberSerializer(BaseSerializer):
 
 
 class WorkSpaceMemberInviteSerializer(BaseSerializer):
-
     workspace = WorkSpaceSerializer(read_only=True)
 
     class Meta:
@@ -47,7 +44,6 @@ class WorkSpaceMemberInviteSerializer(BaseSerializer):
 
 
 class TeamSerializer(BaseSerializer):
-
     members_detail = UserLiteSerializer(read_only=True, source="members", many=True)
     members = serializers.ListField(
         child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()),
@@ -93,3 +89,14 @@ class TeamSerializer(BaseSerializer):
             return super().update(instance, validated_data)
         else:
             return super().update(instance, validated_data)
+
+
+class WorkspaceLiteSerializer(BaseSerializer):
+    class Meta:
+        model = Workspace
+        fields = [
+            "name",
+            "slug",
+            "id",
+        ]
+        read_only_fields = fields

@@ -14,7 +14,7 @@ import { CyclesIcon } from "components/icons";
 // types
 import { ICycle, IIssue, UserAuth } from "types";
 // fetch-keys
-import { CYCLE_ISSUES, CYCLE_LIST, ISSUE_DETAILS } from "constants/fetch-keys";
+import { CYCLE_ISSUES, CYCLE_INCOMPLETE_LIST, ISSUE_DETAILS } from "constants/fetch-keys";
 
 type Props = {
   issueDetail: IIssue | undefined;
@@ -30,10 +30,10 @@ export const SidebarCycleSelect: React.FC<Props> = ({
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
-  const { data: cycles } = useSWR(
-    workspaceSlug && projectId ? CYCLE_LIST(projectId as string) : null,
+  const { data: incompleteCycles } = useSWR(
+    workspaceSlug && projectId ? CYCLE_INCOMPLETE_LIST(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => cyclesService.getCycles(workspaceSlug as string, projectId as string)
+      ? () => cyclesService.getIncompleteCycles(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -77,16 +77,16 @@ export const SidebarCycleSelect: React.FC<Props> = ({
           onChange={(value: any) => {
             !value
               ? removeIssueFromCycle(issueCycle?.id ?? "", issueCycle?.cycle ?? "")
-              : handleCycleChange(cycles?.find((c) => c.id === value) as ICycle);
+              : handleCycleChange(incompleteCycles?.find((c) => c.id === value) as ICycle);
           }}
           width="w-full"
           position="right"
           disabled={isNotAllowed}
         >
-          {cycles ? (
-            cycles.length > 0 ? (
+          {incompleteCycles ? (
+            incompleteCycles.length > 0 ? (
               <>
-                {cycles.map((option) => (
+                {incompleteCycles.map((option) => (
                   <CustomSelect.Option key={option.id} value={option.id}>
                     <Tooltip position="left-bottom" tooltipContent={option.name}>
                       <span className="w-full max-w-[125px] truncate ">{option.name}</span>

@@ -50,8 +50,6 @@ const ProjectViews: NextPage<UserAuth> = (props) => {
       : null
   );
 
-  console.log(views)
-
   return (
     <AppLayout
       meta={{
@@ -88,11 +86,7 @@ const ProjectViews: NextPage<UserAuth> = (props) => {
             <h3 className="text-3xl font-semibold text-black">Views</h3>
             <div className="rounded-[10px] border">
               {views.map((view) => (
-                <SingleViewItem
-                  key={view.id}
-                  view={view}
-                  setSelectedView={setSelectedView}
-                />
+                <SingleViewItem key={view.id} view={view} setSelectedView={setSelectedView} />
               ))}
             </div>
           </div>

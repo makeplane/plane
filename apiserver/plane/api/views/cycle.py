@@ -135,7 +135,7 @@ class CycleViewSet(BaseViewSet):
                 workspace__slug=slug, project_id=project_id, pk=pk
             )
 
-            if cycle.end_date < timezone.now().date():
+            if cycle.end_date is not None and cycle.end_date < timezone.now().date():
                 return Response(
                     {
                         "error": "The Cycle has already been completed so it cannot be edited"
@@ -260,7 +260,7 @@ class CycleIssueViewSet(BaseViewSet):
                 workspace__slug=slug, project_id=project_id, pk=cycle_id
             )
 
-            if cycle.end_date < timezone.now().date():
+            if cycle.end_date is not None and cycle.end_date < timezone.now().date():
                 return Response(
                     {
                         "error": "The Cycle has already been completed so no new issues can be added"
@@ -770,6 +770,25 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                 {"error": "New Cycle Does not exist"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class InCompleteCyclesEndpoint(BaseAPIView):
+    def get(self, request, slug, project_id):
+        try:
+            cycles = Cycle.objects.filter(
+                Q(end_date__gte=timezone.now().date()) | Q(end_date__isnull=True),
+                workspace__slug=slug,
+                project_id=project_id,
+            ).select_related("owned_by")
+
+            serializer = CycleSerializer(cycles, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)
             return Response(

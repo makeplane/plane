@@ -16,6 +16,7 @@ from .project import (
 from .people import (
     UserEndpoint,
     UpdateUserOnBoardedEndpoint,
+    UserActivityEndpoint,
 )
 
 from .oauth import OauthEndpoint
@@ -52,6 +53,7 @@ from .cycle import (
     CycleFavoriteViewSet,
     DraftCyclesEndpoint,
     TransferCycleIssueEndpoint,
+    InCompleteCyclesEndpoint,
 )
 from .asset import FileAssetEndpoint, UserAssetsEndpoint
 from .issue import (

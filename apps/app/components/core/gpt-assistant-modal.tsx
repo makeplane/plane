@@ -19,6 +19,7 @@ type Props = {
   content: string;
   htmlContent?: string;
   onResponse: (response: string) => void;
+  projectId: string;
 };
 
 type FormData = {
@@ -37,12 +38,13 @@ export const GptAssistantModal: React.FC<Props> = ({
   content,
   htmlContent,
   onResponse,
+  projectId,
 }) => {
   const [response, setResponse] = useState("");
   const [invalidResponse, setInvalidResponse] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug } = router.query;
 
   const { setToastAlert } = useToast();
 
@@ -80,7 +82,7 @@ export const GptAssistantModal: React.FC<Props> = ({
 
     await aiService
       .createGptTask(workspaceSlug as string, projectId as string, {
-        prompt: content && content !== "" ? content : "",
+        prompt: content && content !== "" ? content : htmlContent ?? "",
         task: formData.task,
       })
       .then((res) => {
@@ -98,75 +100,77 @@ export const GptAssistantModal: React.FC<Props> = ({
 
   return (
     <div
-      className={`absolute ${inset} z-20 w-full rounded-[10px] border bg-white p-4 shadow ${
+      className={`absolute ${inset} z-20 w-full space-y-4 rounded-[10px] border bg-white p-4 shadow ${
         isOpen ? "block" : "hidden"
       }`}
     >
-      <form onSubmit={handleSubmit(handleResponse)} className="space-y-4">
-        {content && content !== "" && (
-          <div className="text-sm">
-            Content:
-            <RemirrorRichTextEditor
-              value={htmlContent ?? <p>{content}</p>}
-              customClassName="-mx-3 -my-3"
-              noBorder
-              borderOnFocus={false}
-              editable={false}
-            />
-          </div>
-        )}
-        {response !== "" && (
-          <div className="text-sm">
-            Response:
-            <RemirrorRichTextEditor
-              value={`<p>${response}</p>`}
-              customClassName="-mx-3 -my-3"
-              noBorder
-              borderOnFocus={false}
-              editable={false}
-            />
-          </div>
-        )}
-        {invalidResponse && (
-          <div className="text-sm text-red-500">
-            No response could be generated. This may be due to insufficient content or task
-            information. Please try again.
-          </div>
-        )}
-        <Input
-          type="text"
-          name="task"
-          register={register}
-          placeholder={`${
-            content && content !== ""
-              ? "Tell AI what action to perform on this content..."
-              : "Ask AI anything..."
-          }`}
-          autoComplete="off"
-        />
-        <div className={`flex gap-2 ${response === "" ? "justify-end" : "justify-between"}`}>
-          {response !== "" && (
-            <PrimaryButton
-              onClick={() => {
-                onResponse(response);
-                onClose();
-              }}
-            >
-              Use this response
-            </PrimaryButton>
-          )}
-          <div className="flex items-center gap-2">
-            <SecondaryButton onClick={onClose}>Close</SecondaryButton>
-            <PrimaryButton type="submit" loading={isSubmitting}>
-              {isSubmitting
-                ? "Generating response..."
-                : response === ""
-                ? "Generate response"
-                : "Generate again"}
-            </PrimaryButton>
-          </div>
+      {((content && content !== "") || htmlContent) && (
+        <div className="text-sm page-block-section">
+          Content:
+          <RemirrorRichTextEditor
+            value={htmlContent ?? <p>{content}</p>}
+            customClassName="-mx-3 -my-3"
+            noBorder
+            borderOnFocus={false}
+            editable={false}
+          />
         </div>
-      </form>
+      )}
+      {response !== "" && (
+        <div className="text-sm page-block-section">
+          Response:
+          <RemirrorRichTextEditor
+            value={`<p>${response}</p>`}
+            customClassName="-mx-3 -my-3"
+            noBorder
+            borderOnFocus={false}
+            editable={false}
+          />
+        </div>
+      )}
+      {invalidResponse && (
+        <div className="text-sm text-red-500">
+          No response could be generated. This may be due to insufficient content or task
+          information. Please try again.
+        </div>
+      )}
+      <Input
+        type="text"
+        name="task"
+        register={register}
+        placeholder={`${
+          content && content !== ""
+            ? "Tell AI what action to perform on this content..."
+            : "Ask AI anything..."
+        }`}
+        autoComplete="off"
+      />
+      <div className={`flex gap-2 ${response === "" ? "justify-end" : "justify-between"}`}>
+        {response !== "" && (
+          <PrimaryButton
+            onClick={() => {
+              onResponse(response);
+              onClose();
+            }}
+          >
+            Use this response
+          </PrimaryButton>
+        )}
+        <div className="flex items-center gap-2">
+          <SecondaryButton onClick={onClose}>Close</SecondaryButton>
+          <PrimaryButton
+            type="button"
+            onClick={handleSubmit(handleResponse)}
+            loading={isSubmitting}
+          >
+            {isSubmitting
+              ? "Generating response..."
+              : response === ""
+              ? "Generate response"
+              : "Generate again"}
+          </PrimaryButton>
+        </div>
+      </div>
     </div>
   );
 };
