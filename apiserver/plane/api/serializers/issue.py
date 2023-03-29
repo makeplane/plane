@@ -7,7 +7,7 @@ from .user import UserLiteSerializer
 from .state import StateSerializer, StateLiteSerializer
 from .user import UserLiteSerializer
 from .project import ProjectSerializer, ProjectLiteSerializer
-from .workspace import WorkSpaceSerializer
+from .workspace import WorkspaceLiteSerializer
 from plane.db.models import (
     User,
     Issue,
@@ -50,8 +50,8 @@ class IssueFlatSerializer(BaseSerializer):
 class IssueCreateSerializer(BaseSerializer):
     state_detail = StateSerializer(read_only=True, source="state")
     created_by_detail = UserLiteSerializer(read_only=True, source="created_by")
-    project_detail = ProjectSerializer(read_only=True, source="project")
-    workspace_detail = WorkSpaceSerializer(read_only=True, source="workspace")
+    project_detail = ProjectLiteSerializer(read_only=True, source="project")
+    workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
 
     assignees_list = serializers.ListField(
         child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()),
