@@ -12,6 +12,7 @@ import issuesServices from "services/issues.service";
 import projectService from "services/project.service";
 // hooks
 import useLocalStorage from "hooks/use-local-storage";
+import useIssuesView from "hooks/use-issues-view";
 // components
 import { SingleProgressStats } from "components/core";
 // ui
@@ -48,6 +49,8 @@ export const SidebarProgressStats: React.FC<Props> = ({
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+
+  const { filters, setFilters } = useIssuesView();
 
   const { storedValue: tab, setValue: setTab } = useLocalStorage("tab", "Assignees");
 
@@ -111,7 +114,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
         </Tab>
         <Tab
           className={({ selected }) =>
-            `w-full rounded px-3 py-1  text-gray-900 ${
+            `w-full rounded px-3 py-1 text-gray-900 ${
               selected ? " bg-theme text-white" : " hover:bg-hover-gray"
             }`
           }
@@ -128,8 +131,8 @@ export const SidebarProgressStats: React.FC<Props> = ({
           States
         </Tab>
       </Tab.List>
-      <Tab.Panels className="flex w-full items-center justify-between p-1">
-        <Tab.Panel as="div" className="flex w-full flex-col text-xs ">
+      <Tab.Panels className="flex w-full items-center justify-between pt-1">
+        <Tab.Panel as="div" className="flex w-full flex-col text-xs">
           {members?.map((member, index) => {
             const totalArray = issues?.filter((i) => i.assignees?.includes(member.member.id));
             const completeArray = totalArray?.filter((i) => i.state_detail.group === "completed");
@@ -146,6 +149,15 @@ export const SidebarProgressStats: React.FC<Props> = ({
                   }
                   completed={completeArray.length}
                   total={totalArray.length}
+                  onClick={() => {
+                    if (filters.assignees?.includes(member.member.id))
+                      setFilters({
+                        assignees: filters.assignees?.filter((a) => a !== member.member.id),
+                      });
+                    else
+                      setFilters({ assignees: [...(filters?.assignees ?? []), member.member.id] });
+                  }}
+                  selected={filters.assignees?.includes(member.member.id)}
                 />
               );
             }
@@ -177,7 +189,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
             ""
           )}
         </Tab.Panel>
-        <Tab.Panel as="div" className="flex w-full flex-col ">
+        <Tab.Panel as="div" className="w-full space-y-1">
           {issueLabels?.map((label, index) => {
             const totalArray = issues?.filter((i) => i.labels?.includes(label.id));
             const completeArray = totalArray?.filter((i) => i.state_detail.group === "completed");
@@ -189,7 +201,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
                   title={
                     <div className="flex items-center gap-2">
                       <span
-                        className="block h-3 w-3 rounded-full "
+                        className="block h-3 w-3 rounded-full"
                         style={{
                           backgroundColor:
                             label.color && label.color !== "" ? label.color : "#000000",
@@ -200,6 +212,14 @@ export const SidebarProgressStats: React.FC<Props> = ({
                   }
                   completed={completeArray.length}
                   total={totalArray.length}
+                  onClick={() => {
+                    if (filters.labels?.includes(label.id))
+                      setFilters({
+                        labels: filters.labels?.filter((l) => l !== label.id),
+                      });
+                    else setFilters({ labels: [...(filters?.labels ?? []), label.id] });
+                  }}
+                  selected={filters.labels?.includes(label.id)}
                 />
               );
             }

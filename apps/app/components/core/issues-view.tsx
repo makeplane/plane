@@ -630,10 +630,13 @@ export const IssuesView: React.FC<Props> = ({
                               if (!label) return null;
 
                               return (
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-1">
                                   <div
-                                    className="w-4 h-4 rounded-full"
-                                    style={{ backgroundColor: label.color }}
+                                    className="h-2 w-2 rounded-full"
+                                    style={{
+                                      backgroundColor:
+                                        label.color && label.color !== "" ? label.color : "#000000",
+                                    }}
                                   />
                                   {label.name}
                                 </div>

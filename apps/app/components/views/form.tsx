@@ -225,10 +225,13 @@ export const ViewForm: React.FC<Props> = ({
                           const label = issueLabels?.find((l) => l.id === labelId);
                           if (!label) return null;
                           return (
-                            <div className="flex items-center gap-2 rounded-full border bg-white px-1.5 py-1 text-xs">
+                            <div className="flex items-center gap-1 rounded-full border bg-white px-1.5 py-1 text-xs">
                               <div
-                                className="h-4 w-4 rounded-full"
-                                style={{ backgroundColor: label.color }}
+                                className="h-2 w-2 rounded-full"
+                                style={{
+                                  backgroundColor:
+                                    label.color && label.color !== "" ? label.color : "#000000",
+                                }}
                               />
                               {label.name}
                             </div>
