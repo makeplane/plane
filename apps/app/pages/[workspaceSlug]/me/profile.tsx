@@ -151,7 +151,11 @@ const Profile: NextPage = () => {
       meta={{
         title: "Plane - My Profile",
       }}
-      noHeader
+      breadcrumbs={
+        <Breadcrumbs>
+          <BreadcrumbItem title="My Profile" />
+        </Breadcrumbs>
+      }
     >
       <ImageUploadModal
         isOpen={isImageUploadModalOpen}
@@ -166,9 +170,6 @@ const Profile: NextPage = () => {
         userImage
       />
       <div className="w-full space-y-5">
-        <Breadcrumbs>
-          <BreadcrumbItem title="My Profile" />
-        </Breadcrumbs>
         {myProfile ? (
           <>
             <div className="space-y-5">
