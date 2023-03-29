@@ -153,7 +153,7 @@ export const ViewForm: React.FC<Props> = ({
             />
           </div>
           <div>
-            <div className="flex gap-4">
+            <div className="flex gap-4 flex-wrap items-center">
               {Object.keys(filters ?? {}).map((key) => {
                 const queryKey = key as keyof typeof filters;
                 if (queryKey === "state")
@@ -163,7 +163,7 @@ export const ViewForm: React.FC<Props> = ({
                         const state = statesList.find((state) => state.id === stateID);
                         if (!state) return null;
                         return (
-                          <div className="flex items-center gap-2 text-xs" key={state.id}>
+                          <div className="flex items-center gap-2 text-xs border bg-white rounded-full px-2 py-1.5" key={state.id}>
                             {getStateGroupIcon(state?.group, "16", "16", state?.color)}
                             {state?.name}
                           </div>
@@ -175,7 +175,7 @@ export const ViewForm: React.FC<Props> = ({
                   return (
                     <div className="flex gap-3" key={key}>
                       {filters.priority?.map((priority) => (
-                        <div className="flex items-center gap-2 text-xs" key={priority}>
+                        <div className="flex items-center gap-2 text-xs border bg-white rounded-full px-2 py-1.5" key={priority}>
                           {getPriorityIcon(priority)}
                           {priority}
                         </div>
@@ -190,7 +190,7 @@ export const ViewForm: React.FC<Props> = ({
 
                         if (!member) return null;
                         return (
-                          <div className="flex items-center gap-2 text-xs" key={member.member.id}>
+                          <div className="flex items-center gap-2 text-xs border bg-white rounded-full px-1.5 py-1" key={member.member.id}>
                             <Avatar user={member.member} />
                             {member.member.first_name && member.member.first_name !== ""
                               ? member.member.first_name

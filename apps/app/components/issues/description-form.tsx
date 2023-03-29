@@ -3,7 +3,7 @@ import { FC, useCallback, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 
 // react-hook-form
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 // components
 import { Loader, TextArea } from "components/ui";
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
@@ -42,6 +42,8 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
     watch,
     setValue,
     reset,
+    register,
+    control,
     formState: { errors },
   } = useForm<IIssue>({
     defaultValues: {
@@ -64,19 +66,18 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
     [handleFormSubmit]
   );
 
-  useEffect(() => {
-    const alertUser = (e: BeforeUnloadEvent) => {
-      console.log("beforeunload");
-      e.preventDefault();
-      e.returnValue = "";
-      return "Are you sure you want to leave?";
-    };
+  // useEffect(() => {
+  //   const alertUser = (e: BeforeUnloadEvent) => {
+  //     e.preventDefault();
+  //     e.returnValue = "";
+  //     return "Are you sure you want to leave?";
+  //   };
 
-    window.addEventListener("beforeunload", alertUser);
-    return () => {
-      window.removeEventListener("beforeunload", alertUser);
-    };
-  }, [isSubmitting]);
+  //   window.addEventListener("beforeunload", alertUser);
+  //   return () => {
+  //     window.removeEventListener("beforeunload", alertUser);
+  //   };
+  // }, [isSubmitting]);
 
   // reset form values
   useEffect(() => {
@@ -94,7 +95,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
           id="name"
           name="name"
           placeholder="Enter issue name"
-          value={watch("name")}
+          register={register}
           onFocus={() => setCharacterLimit(true)}
           onBlur={() => {
             setCharacterLimit(false);
@@ -107,9 +108,6 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
               .catch(() => {
                 setIsSubmitting(false);
               });
-          }}
-          onChange={(e) => {
-            setValue("name", e.target.value);
           }}
           required={true}
           className="min-h-10 block w-full resize-none
@@ -131,26 +129,34 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
         )}
       </div>
       <span>{errors.name ? errors.name.message : null}</span>
-      <RemirrorRichTextEditor
-        value={
-          watch("description") && watch("description") !== ""
-            ? watch("description")
-            : watch("description_html")
-        }
-        placeholder="Describe the issue..."
-        onBlur={() => {
-          setIsSubmitting(true);
-          handleSubmit(handleDescriptionFormSubmit)()
-            .then(() => {
-              setIsSubmitting(false);
-            })
-            .catch(() => {
-              setIsSubmitting(false);
-            });
-        }}
-        onJSONChange={(json) => setValue("description", json)}
-        onHTMLChange={(html) => setValue("description_html", html)}
-        editable={!isNotAllowed}
+      <Controller
+        name="description"
+        control={control}
+        render={({ field: { value } }) => (
+          <RemirrorRichTextEditor
+            value={
+              !value ||
+              value === "" ||
+              (typeof value === "object" && Object.keys(value).length === 0)
+                ? watch("description_html")
+                : value
+            }
+            onJSONChange={(jsonValue) => setValue("description", jsonValue)}
+            onHTMLChange={(htmlValue) => setValue("description_html", htmlValue)}
+            onBlur={() => {
+              setIsSubmitting(true);
+              handleSubmit(handleDescriptionFormSubmit)()
+                .then(() => {
+                  setIsSubmitting(false);
+                })
+                .catch(() => {
+                  setIsSubmitting(false);
+                });
+            }}
+            placeholder="Describe the issue..."
+            editable={!isNotAllowed}
+          />
+        )}
       />
       <div
         className={`absolute -bottom-8 right-0 text-sm text-gray-500 ${

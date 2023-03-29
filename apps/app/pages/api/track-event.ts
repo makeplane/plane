@@ -5,7 +5,7 @@ import { createClient } from "@jitsu/nextjs";
 import { convertCookieStringToObject } from "lib/cookie";
 
 const jitsu = createClient({
-  key: process.env.JITSU_ACCESS_KEY || "",
+  key: process.env.TRACKER_ACCESS_KEY || "",
   tracking_host: "https://t.jitsu.com",
 });
 
