@@ -1,11 +1,16 @@
 import React, { useState } from "react";
 
-// headless ui
-import { Combobox, Dialog, Transition } from "@headlessui/react";
+import { useRouter } from "next/router";
+
+import { mutate } from "swr";
+
 // react-hook-form
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
+// headless ui
+import { Combobox, Dialog, Transition } from "@headlessui/react";
 // hooks
 import useToast from "hooks/use-toast";
+import useIssuesView from "hooks/use-issues-view";
 // ui
 import { PrimaryButton, SecondaryButton } from "components/ui";
 // icons
@@ -13,6 +18,8 @@ import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { LayerDiagonalIcon } from "components/icons";
 // types
 import { IIssue } from "types";
+// fetch-keys
+import { CYCLE_ISSUES_WITH_PARAMS, MODULE_ISSUES_WITH_PARAMS } from "constants/fetch-keys";
 
 type FormInput = {
   issues: string[];
@@ -33,7 +40,12 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
 }) => {
   const [query, setQuery] = useState("");
 
+  const router = useRouter();
+  const { cycleId, moduleId } = router.query;
+
   const { setToastAlert } = useToast();
+
+  const { params } = useIssuesView();
 
   const handleClose = () => {
     onClose();
@@ -64,6 +76,9 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
     }
 
     await handleOnSubmit(data);
+    if (cycleId) mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
+    if (moduleId) mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
+
     handleClose();
 
     setToastAlert({

@@ -17,6 +17,8 @@ import { requiredAdmin, requiredAuth } from "lib/auth";
 // services
 import modulesService from "services/modules.service";
 import issuesService from "services/issues.service";
+// hooks
+import useToast from "hooks/use-toast";
 // layouts
 import AppLayout from "layouts/app-layout";
 // contexts
@@ -46,6 +48,8 @@ const SingleModule: React.FC<UserAuth> = (props) => {
 
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query;
+
+  const { setToastAlert } = useToast();
 
   const { data: issues } = useSWR(
     workspaceSlug && projectId
@@ -96,7 +100,13 @@ const SingleModule: React.FC<UserAuth> = (props) => {
         console.log(res);
         mutate(MODULE_ISSUES(moduleId as string));
       })
-      .catch((e) => console.log(e));
+      .catch((e) =>
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Selected issues could not be added to the module. Please try again.",
+        })
+      );
   };
 
   const openIssuesListModal = () => {
@@ -108,7 +118,7 @@ const SingleModule: React.FC<UserAuth> = (props) => {
       <ExistingIssuesListModal
         isOpen={moduleIssuesListModal}
         handleClose={() => setModuleIssuesListModal(false)}
-        issues={issues?.filter((i) => !i.issue_module) ?? []}
+        issues={issues?.filter((i) => !i.module_id) ?? []}
         handleOnSubmit={handleAddIssuesToModule}
       />
       <AppLayout
