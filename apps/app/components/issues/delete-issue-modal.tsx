@@ -76,12 +76,6 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data })
             false
           );
 
-        mutate<IIssue[]>(
-          PROJECT_ISSUES_LIST(workspaceSlug as string, projectId),
-          (prevData) => (prevData ?? []).filter((i) => i.id !== data.id),
-          false
-        );
-
         handleClose();
         setToastAlert({
           title: "Success",

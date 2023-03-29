@@ -100,12 +100,6 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) =>
             type: "success",
             message: res.message,
           });
-
-          mutate<IIssue[]>(
-            PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
-            (prevData) => (prevData ?? []).filter((p) => !data.delete_issue_ids.includes(p.id)),
-            false
-          );
           handleClose();
         })
         .catch((e) => {
