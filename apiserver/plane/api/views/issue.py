@@ -42,9 +42,6 @@ from plane.db.models import (
     TimelineIssue,
     IssueProperty,
     Label,
-    IssueBlocker,
-    CycleIssue,
-    ModuleIssue,
     IssueLink,
 )
 from plane.bgtasks.issue_activites_task import issue_activity

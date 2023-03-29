@@ -4,6 +4,8 @@ from rest_framework import serializers
 # Module imports
 from .base import BaseSerializer
 from .issue import IssueFlatSerializer, LabelSerializer
+from .workspace import WorkspaceLiteSerializer
+from .project import ProjectLiteSerializer
 from plane.db.models import Page, PageBlock, PageFavorite, PageLabel, Label
 
 
@@ -29,6 +31,8 @@ class PageSerializer(BaseSerializer):
         required=False,
     )
     blocks = PageBlockSerializer(read_only=True, many=True)
+    project_detail = ProjectLiteSerializer(source="project", read_only=True)
+    workspace_detail = WorkspaceLiteSerializer(source="workspace", read_only=True)
 
     class Meta:
         model = Page
