@@ -134,9 +134,7 @@ export const CalendarView = () => {
             <Popover className="flex h-full items-center  justify-center rounded-lg">
               {({ open }) => (
                 <>
-                  <Popover.Button
-                    className={`group flex h-full items-start gap-1 text-gray-800`}
-                  >
+                  <Popover.Button className={`group flex h-full items-start gap-1 text-gray-800`}>
                     <div className="flex  items-center  justify-center gap-2 text-2xl font-semibold">
                       <span className="text-black">{formatDate(currentDate, "Month")}</span>{" "}
                       <span>{formatDate(currentDate, "yyyy")}</span>
@@ -258,13 +256,15 @@ export const CalendarView = () => {
             <div
               key={index}
               className={`flex  items-center justify-start p-1.5 gap-2 border-gray-300 bg-gray-100 text-base font-medium text-gray-600 ${
-                !isMonthlyView ? showWeekEnds
-                  ? (index + 1) % 7 === 0
+                !isMonthlyView
+                  ? showWeekEnds
+                    ? (index + 1) % 7 === 0
+                      ? ""
+                      : "border-r"
+                    : (index + 1) % 5 === 0
                     ? ""
                     : "border-r"
-                  : (index + 1) % 5 === 0
-                  ? ""
-                  : "border-r" : ""
+                  : ""
               }`}
             >
               <span>{formatDate(date, "eee")}</span>
@@ -280,7 +280,7 @@ export const CalendarView = () => {
         >
           {currentViewDaysData.map((date, index) => (
             <StrictModeDroppable droppableId={date.date}>
-              {(provided) => (
+              {(provided, snapshot) => (
                 <div
                   key={index}
                   ref={provided.innerRef}
@@ -299,13 +299,15 @@ export const CalendarView = () => {
                   {date.issues.length > 0 &&
                     date.issues.map((issue: IIssue, index) => (
                       <Draggable draggableId={issue.id} index={index}>
-                        {(provided) => (
+                        {(provided, snapshot) => (
                           <div
                             key={index}
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
-                            className="w-full cursor-pointer rounded bg-white p-1.5 hover:scale-105 "
+                            className={`w-full cursor-pointer rounded bg-white p-1.5 hover:scale-105 ${
+                              snapshot.isDragging ? "shadow-lg" : ""
+                            }`}
                           >
                             <Link
                               href={`/${workspaceSlug}/projects/${issue?.project_detail?.id}/issues/${issue.id}`}
