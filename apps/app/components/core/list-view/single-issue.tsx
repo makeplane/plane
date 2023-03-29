@@ -125,9 +125,6 @@ export const SingleListIssue: React.FC<Props> = ({
           if (cycleId) mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
           if (moduleId) mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
           mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
-        })
-        .catch((error) => {
-          console.log(error);
         });
     },
     [workspaceSlug, projectId, cycleId, moduleId, issue, groupTitle, index, selectedGroup, params]

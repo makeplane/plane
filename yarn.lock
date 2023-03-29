@@ -1173,6 +1173,19 @@
   resolved "https://registry.npmjs.org/@icons/material/-/material-0.2.4.tgz"
   integrity sha512-QPcGmICAPbGLGb6F/yNf/KzKqvFx8z5qx3D1yFqVAjoFmXK35EgyW+cJ57Te3CNsmzblwtzakLGFqHPqrfb4Tw==
 
+"@jitsu/nextjs@^3.1.5":
+  version "3.1.5"
+  resolved "https://registry.yarnpkg.com/@jitsu/nextjs/-/nextjs-3.1.5.tgz#991e718b28ef5f997c2ed5386416943e78b13ce0"
+  integrity sha512-JdRxa+iy9w9rTf33XBAUQYdHDATPEt1X3HV6UpsoIHYqJQqAwsSBb226Kno/uVoVBrGqjdpa4ae6+7BSprxz0g==
+  dependencies:
+    "@jitsu/sdk-js" "^3.1.5"
+    cookie "^0.5.0"
+
+"@jitsu/sdk-js@^3.1.5":
+  version "3.1.5"
+  resolved "https://registry.yarnpkg.com/@jitsu/sdk-js/-/sdk-js-3.1.5.tgz#3d0d92ccc01b621cbe67484c6e246d5ff8721de8"
+  integrity sha512-e7P8uvGBNwWCC864MItcYSv0IT2+nwYiX8QXZ0lfyG8hutEXXX9Yt2/+MynXuGxMIoIrJ+j0bWVu20k9rrhxSg==
+
 "@jridgewell/gen-mapping@^0.1.0":
   version "0.1.1"
   resolved "https://registry.npmjs.org/@jridgewell/gen-mapping/-/gen-mapping-0.1.1.tgz"
@@ -3797,6 +3810,11 @@ cookie@^0.4.1:
   version "0.4.2"
   resolved "https://registry.npmjs.org/cookie/-/cookie-0.4.2.tgz"
   integrity sha512-aSWTXFzaKWkvHO1Ny/s+ePFpvKsPnjc551iI41v3ny/ow6tBG5Vd+FuqGNhh1LxOmVzOlGUriIlOaokOvhaStA==
+
+cookie@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/cookie/-/cookie-0.5.0.tgz#d1f5d71adec6558c58f389987c366aa47e994f8b"
+  integrity sha512-YZ3GUyn/o8gfKJlnlX7g7xq4gyO6OSuhGPKaaGssGB2qgDUS0gPgtTvoyZLTt9Ab6dC4hfc9dV5arkvc/OCmrw==
 
 copy-to-clipboard@^3.3.1:
   version "3.3.3"
