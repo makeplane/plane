@@ -80,6 +80,38 @@ class ViewServices extends APIService {
         throw error?.response?.data;
       });
   }
+
+  async addViewToFavorites(
+    workspaceSlug: string,
+    projectId: string,
+    data: {
+      view: string;
+    }
+  ): Promise<any> {
+    return this.post(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/user-favorite-views/`,
+      data
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async removeViewFromFavorites(
+    workspaceSlug: string,
+    projectId: string,
+    viewId: string
+  ): Promise<any> {
+    return this.delete(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/user-favorite-views/${viewId}/`
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
 }
 
 export default new ViewServices();

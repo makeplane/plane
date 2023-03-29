@@ -17,11 +17,16 @@ import useToast from "hooks/use-toast";
 import { CreateUpdateIssueModal } from "components/issues";
 import { GptAssistantModal } from "components/core";
 // ui
-import { CustomMenu, Loader, TextArea } from "components/ui";
+import { CustomMenu, Input, Loader, TextArea } from "components/ui";
 // icons
-import { LayerDiagonalIcon, WaterDropIcon } from "components/icons";
+import { LayerDiagonalIcon } from "components/icons";
 import { ArrowPathIcon } from "@heroicons/react/20/solid";
-import { CheckIcon } from "@heroicons/react/24/outline";
+import {
+  BoltIcon,
+  CheckIcon,
+  CursorArrowRaysIcon,
+  SparklesIcon,
+} from "@heroicons/react/24/outline";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
@@ -163,21 +168,8 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails }) => {
   const handleAiAssistance = async (response: string) => {
     if (!workspaceSlug || !projectId) return;
 
-    setValue("description", {
-      type: "doc",
-      content: [
-        {
-          type: "paragraph",
-          content: [
-            {
-              text: response,
-              type: "text",
-            },
-          ],
-        },
-      ],
-    });
-    setValue("description_html", `<p>${response}</p>`);
+    setValue("description", {});
+    setValue("description_html", `${watch("description_html")}<p>${response}</p>`);
     handleSubmit(updatePageBlock)()
       .then(() => {
         setToastAlert({
@@ -253,7 +245,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails }) => {
         }}
       />
       <div className="-mx-3 -mt-2 flex items-center justify-between gap-2">
-        <TextArea
+        <Input
           id="name"
           name="name"
           placeholder="Block title"
@@ -261,11 +253,11 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails }) => {
           onBlur={handleSubmit(updatePageBlock)}
           onChange={(e) => setValue("name", e.target.value)}
           required={true}
-          className="min-h-10 block w-full resize-none overflow-hidden border-none bg-transparent text-base font-medium"
+          className="min-h-10 block w-full resize-none overflow-hidden border-none bg-transparent py-1 text-base font-medium ring-0 focus:ring-1 focus:ring-gray-200"
           role="textbox"
         />
         <div className="flex flex-shrink-0 items-center gap-2">
-          {block.sync && (
+          {block.issue && block.sync && (
             <div className="flex flex-shrink-0 cursor-default items-center gap-1 rounded bg-gray-100 py-1 px-1.5 text-xs">
               {isSyncing ? (
                 <ArrowPathIcon className="h-3 w-3 animate-spin" />
@@ -285,12 +277,13 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails }) => {
           )}
           <button
             type="button"
-            className="-mr-2 rounded px-1.5 py-1 text-xs hover:bg-gray-100"
+            className="-mr-2 flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-gray-100"
             onClick={() => setGptAssistantModal((prevData) => !prevData)}
           >
+            <SparklesIcon className="h-4 w-4" />
             AI
           </button>
-          <CustomMenu label={<WaterDropIcon width={14} height={15} />} noBorder noChevron>
+          <CustomMenu label={<BoltIcon className="h-4.5 w-3.5" />} noBorder noChevron>
             {block.issue ? (
               <>
                 <CustomMenu.MenuItem onClick={handleBlockSync}>
@@ -312,7 +305,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails }) => {
           </CustomMenu>
         </div>
       </div>
-      <div className="page-block-section relative -mx-3 -mt-5">
+      <div className="page-block-section font relative -mx-3 -mt-3">
         <Controller
           name="description"
           control={control}
@@ -327,8 +320,9 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails }) => {
               onJSONChange={(jsonValue) => setValue("description", jsonValue)}
               onHTMLChange={(htmlValue) => setValue("description_html", htmlValue)}
               placeholder="Block description..."
-              customClassName="text-gray-500"
+              customClassName="border border-transparent"
               noBorder
+              borderOnFocus
             />
           )}
         />
@@ -337,6 +331,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails }) => {
           handleClose={() => setGptAssistantModal(false)}
           inset="top-2 left-0"
           content={block.description_stripped}
+          htmlContent={block.description_html}
           onResponse={handleAiAssistance}
         />
       </div>

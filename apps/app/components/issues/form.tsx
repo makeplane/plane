@@ -239,7 +239,11 @@ export const IssueForm: FC<IssueFormProps> = ({
                   control={control}
                   render={({ field: { value } }) => (
                     <RemirrorRichTextEditor
-                      value={value}
+                      value={
+                        !value || (typeof value === "object" && Object.keys(value).length === 0)
+                          ? watch("description_html")
+                          : value
+                      }
                       onJSONChange={(jsonValue) => setValue("description", jsonValue)}
                       onHTMLChange={(htmlValue) => setValue("description_html", htmlValue)}
                       placeholder="Description"
