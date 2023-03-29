@@ -81,6 +81,7 @@ export interface IIssue {
   created_at: Date;
   created_by: string;
   cycle: string | null;
+  cycle_id: string | null;
   cycle_detail: ICycle | null;
   description: any;
   description_html: any;
@@ -100,6 +101,7 @@ export interface IIssue {
   label_details: any[];
   links_list: IIssueLink[];
   module: string | null;
+  module_id: string | null;
   name: string;
   parent: string | null;
   parent_detail: IIssueParent | null;

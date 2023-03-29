@@ -20,6 +20,8 @@ import { CycleDetailsSidebar } from "components/cycles";
 import issuesService from "services/issues.service";
 import cycleServices from "services/cycles.service";
 import projectService from "services/project.service";
+// hooks
+import useToast from "hooks/use-toast";
 // ui
 import { CustomMenu } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -43,6 +45,8 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
+
+  const { setToastAlert } = useToast();
 
   const { data: activeProject } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
@@ -93,12 +97,15 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
 
     await issuesService
       .addIssueToCycle(workspaceSlug as string, projectId as string, cycleId as string, data)
-      .then((res) => {
-        console.log(res);
+      .then(() => {
         mutate(CYCLE_ISSUES(cycleId as string));
       })
-      .catch((e) => {
-        console.log(e);
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Selected issues could not be added to the cycle. Please try again.",
+        });
       });
   };
 
@@ -107,7 +114,7 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
       <ExistingIssuesListModal
         isOpen={cycleIssuesListModal}
         handleClose={() => setCycleIssuesListModal(false)}
-        issues={issues?.filter((i) => !i.issue_cycle) ?? []}
+        issues={issues?.filter((i) => !i.cycle_id) ?? []}
         handleOnSubmit={handleAddIssuesToCycle}
       />
       <AppLayout
