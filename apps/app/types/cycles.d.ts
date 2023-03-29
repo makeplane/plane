@@ -1,4 +1,4 @@
-import type { IUser, IIssue } from ".";
+import type { IUser, IIssue, IProject, IProjectLite, IWorkspace, IWorkspaceLite } from "types";
 
 export interface ICycle {
   backlog_issues: number;
@@ -14,6 +14,7 @@ export interface ICycle {
   name: string;
   owned_by: IUser;
   project: string;
+  project_detail: IProjectLite;
   start_date: string | null;
   started_issues: number;
   total_issues: number;
@@ -21,6 +22,7 @@ export interface ICycle {
   updated_at: Date;
   updated_by: string;
   workspace: string;
+  workspace_detail: IWorkspaceLite;
 }
 
 export interface CurrentAndUpcomingCyclesResponse {
