@@ -12,14 +12,15 @@ export interface IProject {
   created_at: Date;
   created_by: string;
   cycle_view: boolean;
+  issue_views_view: boolean;
+  module_view: boolean;
+  page_view: boolean;
   default_assignee: IUser | string | null;
   description: string;
   icon: string;
   id: string;
   identifier: string;
   is_favorite: boolean;
-  issue_views_view: boolean;
-  module_view: boolean;
   name: string;
   network: number;
   project_lead: IUser | string | null;
