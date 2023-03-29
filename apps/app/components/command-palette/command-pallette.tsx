@@ -6,9 +6,9 @@ import useSWR, { mutate } from "swr";
 import {
   ArrowRightIcon,
   ChartBarIcon,
+  ChatBubbleOvalLeftEllipsisIcon,
   ClipboardIcon,
   FolderPlusIcon,
-  InboxIcon,
   MagnifyingGlassIcon,
   Squares2X2Icon,
   TrashIcon,
@@ -27,7 +27,7 @@ import {
   PeopleGroupIcon,
   SettingIcon,
   ViewListIcon,
-  PencilScribbleIcon
+  PencilScribbleIcon,
 } from "components/icons";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
@@ -37,6 +37,7 @@ import { Command } from "cmdk";
 import useTheme from "hooks/use-theme";
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
+import useDebounce from "hooks/use-debounce";
 // components
 import {
   ShortcutsModal,
@@ -50,6 +51,7 @@ import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import { CreateUpdateModuleModal } from "components/modules";
 import { CreateProjectModal } from "components/project";
 import { CreateUpdateViewModal } from "components/views";
+import { Spinner } from "components/ui";
 // helpers
 import {
   capitalizeFirstLetter,
@@ -58,12 +60,11 @@ import {
 } from "helpers/string.helper";
 // services
 import issuesService from "services/issues.service";
+import workspaceService from "services/workspace.service";
 // types
 import { IIssue, IWorkspaceSearchResults } from "types";
 // fetch keys
 import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
-import useDebounce from "hooks/use-debounce";
-import workspaceService from "services/workspace.service";
 
 export const CommandPalette: React.FC = () => {
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
@@ -88,7 +89,9 @@ export const CommandPalette: React.FC = () => {
       page: [],
     },
   });
-  const [isPendingAPIRequest, setIsPendingAPIRequest] = useState(false);
+  const [resultsCount, setResultsCount] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
   const [placeholder, setPlaceholder] = React.useState("Type a command or search...");
   const [pages, setPages] = React.useState<string[]>([]);
@@ -220,18 +223,39 @@ export const CommandPalette: React.FC = () => {
     () => {
       if (!workspaceSlug || !projectId) return;
 
-      // this is done prevent api request when user is clearing input
+      setIsLoading(true);
+      // this is done prevent subsequent api request
       // or searchTerm has not been updated within last 500ms.
       if (debouncedSearchTerm) {
-        setIsPendingAPIRequest(true);
+        setIsSearching(true);
         workspaceService
           .searchWorkspace(workspaceSlug as string, projectId as string, debouncedSearchTerm)
           .then((results) => {
-            setIsPendingAPIRequest(false);
             setResults(results);
+            const count = Object.keys(results.results).reduce(
+              (accumulator, key) => (results.results as any)[key].length + accumulator,
+              0
+            );
+            setResultsCount(count);
+          })
+          .finally(() => {
+            setIsLoading(false);
+            setIsSearching(false);
           });
       } else {
-        setIsPendingAPIRequest(false);
+        setResults({
+          results: {
+            workspace: [],
+            project: [],
+            issue: [],
+            cycle: [],
+            module: [],
+            issue_view: [],
+            page: [],
+          },
+        });
+        setIsLoading(false);
+        setIsSearching(false);
       }
     },
     [debouncedSearchTerm, workspaceSlug, projectId] // Only call effect if debounced search term changes
@@ -369,11 +393,11 @@ export const CommandPalette: React.FC = () => {
                   }}
                 >
                   {issueId && issueDetails && (
-                    <div className="p-3">
-                      <span className="rounded-md bg-slate-100 p-1 px-2 text-xs font-medium text-slate-500">
+                    <div className="flex p-3">
+                      <p className="overflow-hidden truncate rounded-md bg-slate-100 p-1 px-2 text-xs font-medium text-slate-500">
                         {issueDetails.project_detail?.identifier}-{issueDetails.sequence_id}{" "}
                         {issueDetails?.name}
-                      </span>
+                      </p>
                     </div>
                   )}
                   <div className="relative">
@@ -392,9 +416,20 @@ export const CommandPalette: React.FC = () => {
                     />
                   </div>
                   <Command.List className="max-h-96 overflow-scroll p-2">
-                    <Command.Empty className="my-4 text-center text-gray-500">
-                      No results found.
-                    </Command.Empty>
+                    {!isLoading &&
+                      resultsCount === 0 &&
+                      searchTerm !== "" &&
+                      debouncedSearchTerm !== "" && (
+                        <div className="my-4 text-center text-gray-500">No results found.</div>
+                      )}
+
+                    {(isLoading || isSearching) && (
+                      <Command.Loading>
+                        <div className="flex h-full w-full items-center justify-center py-8">
+                          <Spinner />
+                        </div>
+                      </Command.Loading>
+                    )}
 
                     {debouncedSearchTerm !== "" && (
                       <>
@@ -419,7 +454,8 @@ export const CommandPalette: React.FC = () => {
                                     Icon = AssignmentClipboardIcon;
                                   } else if (key === "issue") {
                                     path = `/${item.workspace__slug}/projects/${item.project_id}/issues/${item.id}`;
-                                    value = `${item.project__identifier}-${item.sequence_id} item.name`;
+                                    // user can search id-num idnum or issue name
+                                    value = `${item.project__identifier}-${item.sequence_id} ${item.project__identifier}${item.sequence_id} ${item.name}`;
                                     Icon = LayerDiagonalIcon;
                                   } else if (key === "issue_view") {
                                     path = `/${item.workspace__slug}/projects/${item.project_id}/views/${item.id}`;
@@ -446,9 +482,9 @@ export const CommandPalette: React.FC = () => {
                                       className="focus:bg-slate-200 focus:outline-none"
                                       tabIndex={0}
                                     >
-                                      <div className="flex items-center gap-2 text-slate-700">
+                                      <div className="flex items-center gap-2 overflow-hidden text-slate-700">
                                         <Icon className="h-4 w-4" />
-                                        {item.name}
+                                        <p className="block flex-1 truncate">{item.name}</p>
                                       </div>
                                     </Command.Item>
                                   );
@@ -720,14 +756,14 @@ export const CommandPalette: React.FC = () => {
                           <Command.Item
                             onSelect={() => {
                               setIsPaletteOpen(false);
-                              window.open("mailto:hello@plane.so", "_blank");
+                              (window as any).$crisp.push(["do", "chat:open"]);
                             }}
                             className="focus:bg-slate-200 focus:outline-none"
                             tabIndex={0}
                           >
                             <div className="flex items-center gap-2 text-slate-700">
-                              <InboxIcon className="h-4 w-4" />
-                              Email us
+                              <ChatBubbleOvalLeftEllipsisIcon className="h-4 w-4" />
+                              Chat with us
                             </div>
                           </Command.Item>
                         </Command.Group>
