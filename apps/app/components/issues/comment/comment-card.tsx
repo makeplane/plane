@@ -57,27 +57,27 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
             alt={comment.actor_detail.first_name}
             height={30}
             width={30}
-            className="grid h-8 w-8 place-items-center rounded-full border-2 border-white bg-gray-500 text-white"
+            className="grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-500 text-white"
           />
         ) : (
           <div
-            className={`grid h-8 w-8 place-items-center rounded-full border-2 border-white bg-gray-500 text-white`}
+            className={`grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-500 text-white`}
           >
             {comment.actor_detail.first_name.charAt(0)}
           </div>
         )}
 
         <span className="absolute -bottom-0.5 -right-1 rounded-tl bg-white px-0.5 py-px">
-          <ChatBubbleLeftEllipsisIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+          <ChatBubbleLeftEllipsisIcon className="h-3.5 w-3.5 text-gray-400" aria-hidden="true" />
         </span>
       </div>
       <div className="min-w-0 flex-1">
         <div>
-          <div className="text-sm">
+          <div className="text-xs">
             {comment.actor_detail.first_name}
             {comment.actor_detail.is_bot ? "Bot" : " " + comment.actor_detail.last_name}
           </div>
-          <p className="mt-0.5 text-sm text-gray-500">Commented {timeAgo(comment.created_at)}</p>
+          <p className="mt-0.5 text-xs text-gray-500">Commented {timeAgo(comment.created_at)}</p>
         </div>
         <div className="issue-comments-section p-0">
           {isEditing ? (
@@ -116,7 +116,8 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
               value={comment.comment_html}
               editable={false}
               onBlur={() => ({})}
-              customClassName="text-sm border-none"
+              noBorder
+              customClassName="text-xs bg-gray-100"
             />
           )}
         </div>

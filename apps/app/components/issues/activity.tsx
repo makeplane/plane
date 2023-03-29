@@ -35,54 +35,54 @@ const activityDetails: {
 } = {
   assignee: {
     message: "removed the assignee",
-    icon: <UserGroupIcon className="h-4 w-4 text-gray-500" aria-hidden="true" />,
+    icon: <UserGroupIcon className="h-3 w-3 text-gray-500" aria-hidden="true" />,
   },
   assignees: {
     message: "added a new assignee",
-    icon: <UserGroupIcon className="h-4 w-4 text-gray-500" aria-hidden="true" />,
+    icon: <UserGroupIcon className="h-3 w-3 text-gray-500" aria-hidden="true" />,
   },
   blocks: {
     message: "marked this issue being blocked by",
-    icon: <BlockedIcon height="16" width="16" className="fill-gray-500" />,
+    icon: <BlockedIcon height="12" width="12" className="fill-gray-500" />,
   },
   blocking: {
     message: "marked this issue is blocking",
-    icon: <BlockerIcon height="16" width="16" />,
+    icon: <BlockerIcon height="12" width="12" />,
   },
   cycles: {
     message: "set the cycle to",
-    icon: <CyclesIcon height="16" width="16" />,
+    icon: <CyclesIcon height="12" width="12" />,
   },
   labels: {
-    icon: <TagIcon height="16" width="16" />,
+    icon: <TagIcon height="12" width="12" />,
   },
   modules: {
     message: "set the module to",
-    icon: <RectangleGroupIcon className="h-4 w-4 text-gray-500" aria-hidden="true" />,
+    icon: <RectangleGroupIcon className="h-3 w-3 text-gray-500" aria-hidden="true" />,
   },
   state: {
     message: "set the state to",
-    icon: <Squares2X2Icon className="h-4 w-4 text-gray-500" aria-hidden="true" />,
+    icon: <Squares2X2Icon className="h-3 w-3 text-gray-500" aria-hidden="true" />,
   },
   priority: {
     message: "set the priority to",
-    icon: <ChartBarIcon className="h-4 w-4 text-gray-500" aria-hidden="true" />,
+    icon: <ChartBarIcon className="h-3 w-3 text-gray-500" aria-hidden="true" />,
   },
   name: {
     message: "set the name to",
-    icon: <ChatBubbleBottomCenterTextIcon className="h-4 w-4 text-gray-500" aria-hidden="true" />,
+    icon: <ChatBubbleBottomCenterTextIcon className="h-3 w-3 text-gray-500" aria-hidden="true" />,
   },
   description: {
     message: "updated the description.",
-    icon: <ChatBubbleBottomCenterTextIcon className="h-4 w-4 text-gray-500" aria-hidden="true" />,
+    icon: <ChatBubbleBottomCenterTextIcon className="h-3 w-3 text-gray-500" aria-hidden="true" />,
   },
   target_date: {
     message: "set the due date to",
-    icon: <CalendarDaysIcon className="h-4 w-4 text-gray-500" aria-hidden="true" />,
+    icon: <CalendarDaysIcon className="h-3 w-3 text-gray-500" aria-hidden="true" />,
   },
   parent: {
     message: "set the parent to",
-    icon: <UserIcon className="h-4 w-4 text-gray-500" aria-hidden="true" />,
+    icon: <UserIcon className="h-3 w-3 text-gray-500" aria-hidden="true" />,
   },
 };
 
@@ -225,7 +225,7 @@ export const IssueActivitySection: React.FC<Props> = () => {
                     aria-hidden="true"
                   />
                 </span>
-                <span className="ml-3 font-semibold text-gray-900">{name}</span>
+                <span className="ml-3 font-medium text-gray-900">{name}</span>
               </span>
             );
           } else if (activityItem.field === "assignees") {
@@ -239,50 +239,52 @@ export const IssueActivitySection: React.FC<Props> = () => {
           if ("field" in activityItem && activityItem.field !== "updated_by") {
             return (
               <li key={activityItem.id}>
-                <div className="relative pb-8">
+                <div className="relative pb-3">
                   {issueActivities.length > 1 && activityItemIdx !== issueActivities.length - 1 ? (
                     <span
                       className="absolute top-5 left-5 -ml-px h-full w-0.5 bg-gray-200"
                       aria-hidden="true"
                     />
                   ) : null}
-                  <div className="relative flex items-start space-x-3">
+                  <div className="relative flex items-start space-x-2">
                     <>
                       <div>
-                        <div className="relative px-1">
-                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 ring-8 ring-white">
-                            {activityItem.field ? (
-                              activityDetails[activityItem.field as keyof typeof activityDetails]
-                                ?.icon
-                            ) : activityItem.actor_detail.avatar &&
-                              activityItem.actor_detail.avatar !== "" ? (
-                              <Image
-                                src={activityItem.actor_detail.avatar}
-                                alt={activityItem.actor_detail.first_name}
-                                height={30}
-                                width={30}
-                                className="rounded-full"
-                              />
-                            ) : (
-                              <div
-                                className={`grid h-8 w-8 place-items-center rounded-full border-2 border-white bg-gray-700 text-white`}
-                              >
-                                {activityItem.actor_detail.first_name.charAt(0)}
-                              </div>
-                            )}
+                        <div className="relative px-1.5">
+                          <div className="mt-1.5">
+                            <div className="ring-6 flex h-7 w-7 items-center justify-center rounded-full bg-gray-100 ring-white">
+                              {activityItem.field ? (
+                                activityDetails[activityItem.field as keyof typeof activityDetails]
+                                  ?.icon
+                              ) : activityItem.actor_detail.avatar &&
+                                activityItem.actor_detail.avatar !== "" ? (
+                                <Image
+                                  src={activityItem.actor_detail.avatar}
+                                  alt={activityItem.actor_detail.first_name}
+                                  height={24}
+                                  width={24}
+                                  className="rounded-full"
+                                />
+                              ) : (
+                                <div
+                                  className={`grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-700 text-xs text-white`}
+                                >
+                                  {activityItem.actor_detail.first_name.charAt(0)}
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </div>
-                      <div className="min-w-0 flex-1 py-1.5">
-                        <div className="text-sm text-gray-500">
-                          <span className="font-medium text-gray-900">
+                      <div className="min-w-0 flex-1 py-3">
+                        <div className="text-xs text-gray-500">
+                          <span className="text-gray font-medium">
                             {activityItem.actor_detail.first_name}
                             {activityItem.actor_detail.is_bot
                               ? " Bot"
                               : " " + activityItem.actor_detail.last_name}
                           </span>
                           <span> {action} </span>
-                          <span className="font-medium text-gray-900"> {value} </span>
+                          <span className="text-xs font-medium text-gray-900"> {value} </span>
                           <span className="whitespace-nowrap">
                             {timeAgo(activityItem.created_at)}
                           </span>
