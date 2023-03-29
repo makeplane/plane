@@ -111,3 +111,39 @@ export const formatDate = (date: Date, format: string): string => {
 
   return formattedDate;
 };
+
+export const subtractMonths = (date: Date, numMonths: number) => {
+  const result = new Date(date);
+  result.setMonth(result.getMonth() - numMonths);
+  return result;
+};
+
+export const addMonths = (date: Date, numMonths: number) => {
+  const result = new Date(date);
+  result.setMonth(result.getMonth() + numMonths);
+  return result;
+};
+
+export const updateDateWithYear = (yearString: string, date: Date) => {
+  const year = parseInt(yearString);
+  const month = date.getMonth();
+  const day = date.getDate();
+  return new Date(year, month, day);
+};
+
+export const updateDateWithMonth = (monthString: string, date: Date) => {
+  const month = parseInt(monthString) - 1;
+  const year = date.getFullYear();
+  const day = date.getDate();
+  return new Date(year, month, day);
+};
+
+export const isSameMonth = (monthString: string, date: Date) => {
+  const month = parseInt(monthString) - 1;
+  return month === date.getMonth();
+};
+
+export const isSameYear = (yearString: string, date: Date) => {
+  const year = parseInt(yearString);
+  return year === date.getFullYear();
+};
