@@ -7,10 +7,18 @@ from sentry_sdk import capture_exception
 # Module imports
 from plane.api.serializers import (
     UserSerializer,
+    IssueActivitySerializer,
 )
 
 from plane.api.views.base import BaseViewSet, BaseAPIView
-from plane.db.models import User, Workspace, WorkspaceMemberInvite, Issue
+from plane.db.models import (
+    User,
+    Workspace,
+    WorkspaceMemberInvite,
+    Issue,
+    IssueActivity,
+)
+from plane.utils.paginator import BasePaginator
 
 
 class UserEndpoint(BaseViewSet):
@@ -66,6 +74,28 @@ class UpdateUserOnBoardedEndpoint(BaseAPIView):
             user.save()
             return Response(
                 {"message": "Updated successfully"}, status=status.HTTP_200_OK
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class UserActivityEndpoint(BaseAPIView, BasePaginator):
+    def get(self, request):
+        try:
+            queryset = IssueActivity.objects.filter(actor=request.user).select_related(
+                "actor"
+            )
+
+            return self.paginate(
+                request=request,
+                queryset=queryset,
+                on_results=lambda issue_activities: IssueActivitySerializer(
+                    issue_activities, many=True
+                ).data,
             )
         except Exception as e:
             capture_exception(e)

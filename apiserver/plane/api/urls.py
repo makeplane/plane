@@ -21,6 +21,7 @@ from plane.api.views import (
     # User
     UserEndpoint,
     UpdateUserOnBoardedEndpoint,
+    UserActivityEndpoint,
     ## End User
     # Workspaces
     WorkSpaceViewSet,
@@ -185,6 +186,7 @@ urlpatterns = [
         UpdateUserOnBoardedEndpoint.as_view(),
         name="change-password",
     ),
+    path("users/activities/", UserActivityEndpoint.as_view(), name="user-activities"),
     # user workspaces
     path(
         "users/me/workspaces/",
