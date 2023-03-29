@@ -28,6 +28,8 @@ class GPTIntegrationEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
+            count = 0
+
             # If logger is enabled check for request limit
             if settings.LOGGER_BASE_URL:
                 try:
@@ -40,6 +42,7 @@ class GPTIntegrationEndpoint(BaseAPIView):
                         json={"user_id": str(request.user.id)},
                         headers=headers,
                     )
+                    count = response.json().get("count", 0)
                     if not response.json().get("success", False):
                         return Response(
                             {
@@ -71,11 +74,10 @@ class GPTIntegrationEndpoint(BaseAPIView):
             text = response.choices[0].text.strip()
             text_html = text.replace("\n", "<br/>")
             return Response(
-                {"response": text, "response_html": text_html},
+                {"response": text, "response_html": text_html, "count": count},
                 status=status.HTTP_200_OK,
             )
         except Exception as e:
-            print(e)
             capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
