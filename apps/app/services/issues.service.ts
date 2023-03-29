@@ -2,7 +2,7 @@
 import APIService from "services/api.service";
 import trackEventServices from "services/track-event.service";
 // type
-import type { IIssue, IIssueActivity, IIssueComment, IIssueViewOptions } from "types";
+import type { IIssue, IIssueActivity, IIssueComment, IIssueLabels, IIssueViewOptions } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -196,7 +196,7 @@ class ProjectIssuesServices extends APIService {
       });
   }
 
-  async getIssueLabels(workspaceSlug: string, projectId: string): Promise<any> {
+  async getIssueLabels(workspaceSlug: string, projectId: string): Promise<IIssueLabels[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-labels/`)
       .then((response) => response?.data)
       .catch((error) => {
