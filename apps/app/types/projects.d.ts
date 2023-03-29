@@ -2,9 +2,10 @@ import type {
   IIssueFilterOptions,
   IUserLite,
   IWorkspace,
+  IWorkspaceLite,
   TIssueGroupByOptions,
   TIssueOrderByOptions,
-} from "./";
+} from "types";
 
 export interface IProject {
   cover_image: string | null;
@@ -26,6 +27,13 @@ export interface IProject {
   updated_at: Date;
   updated_by: string;
   workspace: IWorkspace | string;
+  workspace_detail: IWorkspaceLite;
+}
+
+export interface IProjectLite {
+  id: string;
+  name: string;
+  identifier: string;
 }
 
 export interface IFavoriteProject {

@@ -1,4 +1,4 @@
-import type { IProjectMember, IUser, IUserLite } from "./";
+import type { IProjectMember, IUser, IUserLite } from "types";
 
 export interface IWorkspace {
   readonly id: string;
@@ -14,6 +14,12 @@ export interface IWorkspace {
   readonly created_by: string;
   readonly updated_by: string;
   company_size: number | null;
+}
+
+export interface IWorkspaceLite {
+  readonly id: string;
+  name: string;
+  slug: string;
 }
 
 export interface IWorkspaceMemberInvitation {

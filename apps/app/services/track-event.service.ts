@@ -1,7 +1,7 @@
 // services
 import APIService from "services/api.service";
 // types
-import type { IWorkspace } from "types";
+import type { ICycle, IIssue, IModule, IProject, IState, IWorkspace } from "types";
 
 // TODO: as we add more events, we can refactor this to be divided into different classes
 class TrackEventServices extends APIService {
@@ -10,26 +10,36 @@ class TrackEventServices extends APIService {
   }
 
   async trackCreateWorkspaceEvent(data: IWorkspace): Promise<any> {
+    const payload = {
+      workspaceId: data.id,
+      workspaceSlug: data.slug,
+      workspaceName: data.name,
+    };
     return this.request({
       url: "/api/track-event",
       method: "POST",
       data: {
         eventName: "CREATE_WORKSPACE",
         extra: {
-          ...data,
+          ...payload,
         },
       },
     });
   }
 
-  async trackUpdateWorkspaceEvent(data: IWorkspace): Promise<any> {
+  async trackUpdateWorkspaceEvent(data: Partial<IWorkspace>): Promise<any> {
+    const payload = {
+      workspaceId: data.id,
+      workspaceSlug: data.slug,
+      workspaceName: data.name,
+    };
     return this.request({
       url: "/api/track-event",
       method: "POST",
       data: {
         eventName: "UPDATE_WORKSPACE",
         extra: {
-          ...data,
+          ...payload,
         },
       },
     });
@@ -48,27 +58,41 @@ class TrackEventServices extends APIService {
     });
   }
 
-  async trackCreateProjectEvent(data: any): Promise<any> {
+  async trackCreateProjectEvent(data: IProject): Promise<any> {
+    const payload = {
+      workspaceId: data.workspace_detail.id,
+      workspaceName: data.workspace_detail.name,
+      workspaceSlug: data.workspace_detail.slug,
+      projectId: data.id,
+      projectName: data.name,
+    };
     return this.request({
       url: "/api/track-event",
       method: "POST",
       data: {
         eventName: "CREATE_PROJECT",
         extra: {
-          ...data,
+          ...payload,
         },
       },
     });
   }
 
-  async trackUpdateProjectEvent(data: any): Promise<any> {
+  async trackUpdateProjectEvent(data: Partial<IProject>): Promise<any> {
+    const payload = {
+      workspaceId: data?.workspace_detail?.id,
+      workspaceName: data?.workspace_detail?.name,
+      workspaceSlug: data?.workspace_detail?.slug,
+      projectId: data.id,
+      projectName: data.name,
+    };
     return this.request({
       url: "/api/track-event",
       method: "POST",
       data: {
         eventName: "UPDATE_PROJECT",
         extra: {
-          ...data,
+          ...payload,
         },
       },
     });
@@ -139,27 +163,47 @@ class TrackEventServices extends APIService {
     });
   }
 
-  async trackIssueCreateEvent(data: any): Promise<any> {
+  async trackIssueCreateEvent(data: IIssue): Promise<any> {
+    const payload = {
+      workspaceId: data.workspace_detail.id,
+      workspaceName: data.workspace_detail.name,
+      workspaceSlug: data.workspace_detail.slug,
+      projectId: data.project_detail.id,
+      projectName: data.project_detail.name,
+      projectIdentifier: data.project_detail.identifier,
+      issueId: data.id,
+      issueTitle: data.name,
+    };
     return this.request({
       url: "/api/track-event",
       method: "POST",
       data: {
         eventName: "ISSUE_CREATE",
         extra: {
-          ...data,
+          ...payload,
         },
       },
     });
   }
 
-  async trackIssueUpdateEvent(data: any): Promise<any> {
+  async trackIssueUpdateEvent(data: Partial<IIssue>): Promise<any> {
+    const payload = {
+      workspaceId: data?.workspace_detail?.id,
+      workspaceName: data.workspace_detail?.name,
+      workspaceSlug: data?.workspace_detail?.slug,
+      projectId: data?.project_detail?.id,
+      projectName: data?.project_detail?.name,
+      projectIdentifier: data?.project_detail?.identifier,
+      issueId: data.id,
+      issueTitle: data.name,
+    };
     return this.request({
       url: "/api/track-event",
       method: "POST",
       data: {
         eventName: "ISSUE_UPDATE",
         extra: {
-          ...data,
+          ...payload,
         },
       },
     });
@@ -191,27 +235,47 @@ class TrackEventServices extends APIService {
     });
   }
 
-  async trackStateCreateEvent(data: any): Promise<any> {
+  async trackStateCreateEvent(data: IState): Promise<any> {
+    const payload = {
+      workspaceId: data?.workspace_detail?.id,
+      workspaceName: data?.workspace_detail?.name,
+      workspaceSlug: data?.workspace_detail?.slug,
+      projectId: data?.project_detail?.id,
+      projectName: data?.project_detail?.name,
+      projectIdentifier: data?.project_detail?.identifier,
+      stateId: data.id,
+      stateName: data.name,
+    };
     return this.request({
       url: "/api/track-event",
       method: "POST",
       data: {
         eventName: "STATE_CREATE",
         extra: {
-          ...data,
+          ...payload,
         },
       },
     });
   }
 
-  async trackStateUpdateEvent(data: any): Promise<any> {
+  async trackStateUpdateEvent(data: Partial<IState>): Promise<any> {
+    const payload = {
+      workspaceId: data?.workspace_detail?.id,
+      workspaceName: data?.workspace_detail?.name,
+      workspaceSlug: data?.workspace_detail?.slug,
+      projectId: data?.project_detail?.id,
+      projectName: data?.project_detail?.name,
+      projectIdentifier: data?.project_detail?.identifier,
+      stateId: data.id,
+      stateName: data.name,
+    };
     return this.request({
       url: "/api/track-event",
       method: "POST",
       data: {
         eventName: "STATE_UPDATE",
         extra: {
-          ...data,
+          ...payload,
         },
       },
     });
@@ -230,27 +294,47 @@ class TrackEventServices extends APIService {
     });
   }
 
-  async trackCycleCreateEvent(data: any): Promise<any> {
+  async trackCycleCreateEvent(data: ICycle): Promise<any> {
+    const payload = {
+      workspaceId: data?.workspace_detail?.id,
+      workspaceName: data?.workspace_detail?.name,
+      workspaceSlug: data?.workspace_detail?.slug,
+      projectId: data?.project_detail?.id,
+      projectName: data?.project_detail?.name,
+      projectIdentifier: data?.project_detail?.identifier,
+      cycleId: data.id,
+      cycleName: data.name,
+    };
     return this.request({
       url: "/api/track-event",
       method: "POST",
       data: {
         eventName: "CYCLE_CREATE",
         extra: {
-          ...data,
+          ...payload,
         },
       },
     });
   }
 
-  async trackCycleUpdateEvent(data: any): Promise<any> {
+  async trackCycleUpdateEvent(data: Partial<ICycle>): Promise<any> {
+    const payload = {
+      workspaceId: data?.workspace_detail?.id,
+      workspaceName: data?.workspace_detail?.name,
+      workspaceSlug: data?.workspace_detail?.slug,
+      projectId: data?.project_detail?.id,
+      projectName: data?.project_detail?.name,
+      projectIdentifier: data?.project_detail?.identifier,
+      cycleId: data.id,
+      cycleName: data.name,
+    };
     return this.request({
       url: "/api/track-event",
       method: "POST",
       data: {
         eventName: "CYCLE_UPDATE",
         extra: {
-          ...data,
+          ...payload,
         },
       },
     });
@@ -269,27 +353,45 @@ class TrackEventServices extends APIService {
     });
   }
 
-  async trackModuleCreateEvent(data: any): Promise<any> {
+  async trackModuleCreateEvent(data: IModule): Promise<any> {
+    const payload = {
+      workspaceId: data?.workspace_detail.id,
+      workspaceName: data?.workspace_detail.name,
+      workspaceSlug: data?.workspace_detail.slug,
+      projectId: data?.project_detail?.id,
+      projectName: data.project_detail?.name,
+      moduleId: data.id,
+      moduleName: data.name,
+    };
     return this.request({
       url: "/api/track-event",
       method: "POST",
       data: {
         eventName: "MODULE_CREATE",
         extra: {
-          ...data,
+          ...payload,
         },
       },
     });
   }
 
-  async trackModuleUpdateEvent(data: any): Promise<any> {
+  async trackModuleUpdateEvent(data: Partial<IModule>): Promise<any> {
+    const payload = {
+      workspaceId: data?.workspace_detail?.id,
+      workspaceName: data?.workspace_detail?.name,
+      workspaceSlug: data?.workspace_detail?.slug,
+      projectId: data?.project_detail?.id,
+      projectName: data.project_detail?.name,
+      moduleId: data.id,
+      moduleName: data.name,
+    };
     return this.request({
       url: "/api/track-event",
       method: "POST",
       data: {
         eventName: "MODULE_UPDATE",
         extra: {
-          ...data,
+          ...payload,
         },
       },
     });
