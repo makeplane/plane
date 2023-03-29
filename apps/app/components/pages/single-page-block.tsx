@@ -36,7 +36,6 @@ import { PAGE_BLOCKS_LIST } from "constants/fetch-keys";
 
 type Props = {
   block: IPageBlock;
-  index: number;
   projectDetails: IProject | undefined;
 };
 
@@ -49,7 +48,7 @@ const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor
   ),
 });
 
-export const SinglePageBlock: React.FC<Props> = ({ block, index, projectDetails }) => {
+export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails }) => {
   const [createUpdateIssueModal, setCreateUpdateIssueModal] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
 
