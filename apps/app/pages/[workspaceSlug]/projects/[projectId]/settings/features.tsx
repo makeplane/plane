@@ -16,7 +16,8 @@ import useToast from "hooks/use-toast";
 import { SecondaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { ContrastIcon, PeopleGroupIcon, ViewListIcon, DocumentIcon } from "components/icons";
+import { ContrastIcon, PeopleGroupIcon, ViewListIcon } from "components/icons";
+import { DocumentTextIcon } from "@heroicons/react/24/outline";
 // types
 import { IProject, UserAuth } from "types";
 import type { NextPage, GetServerSidePropsContext } from "next";
@@ -182,7 +183,7 @@ const FeaturesSettings: NextPage<UserAuth> = (props) => {
           </div>
           <div className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border bg-white p-5">
             <div className="flex items-start gap-3">
-              <DocumentIcon color="#FCBE1D" width={28} height={28} className="flex-shrink-0" />
+              <DocumentTextIcon color="#FCBE1D" width={28} height={28} className="flex-shrink-0" />
               <div>
                 <h4 className="text-xl font-semibold">Pages</h4>
                 <p className="text-gray-500">
