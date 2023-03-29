@@ -24,7 +24,7 @@ import AppLayout from "layouts/app-layout";
 import { SinglePageBlock } from "components/pages";
 // ui
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-import { CustomSearchSelect, Loader, PrimaryButton, TextArea } from "components/ui";
+import { CustomSearchSelect, Loader, PrimaryButton, TextArea, Tooltip } from "components/ui";
 // icons
 import { ArrowLeftIcon, PlusIcon, ShareIcon, StarIcon } from "@heroicons/react/24/outline";
 import { ColorPalletteIcon } from "components/icons";
@@ -324,9 +324,14 @@ const SinglePage: NextPage<UserAuth> = (props) => {
               )}
             </div>
             <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-500">
-                {renderShortTime(pageDetails.created_at)}
-              </span>
+              <Tooltip
+                tooltipContent={`Page last updated at ${renderShortTime(pageDetails.updated_at)}`}
+                theme="dark"
+              >
+                <span className="cursor-default text-sm text-gray-500">
+                  {renderShortTime(pageDetails.updated_at)}
+                </span>
+              </Tooltip>
               <PrimaryButton className="flex items-center gap-2" onClick={handleCopyText}>
                 <ShareIcon className="h-4 w-4" />
                 Share
@@ -393,7 +398,7 @@ const SinglePage: NextPage<UserAuth> = (props) => {
               onBlur={handleSubmit(updatePage)}
               onChange={(e) => setValue("name", e.target.value)}
               required={true}
-              className="min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-2xl font-semibold outline-none ring-0 focus:ring-1 focus:ring-theme"
+              className="min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-2xl font-semibold outline-none ring-0 focus:ring-1 focus:ring-gray-200"
               role="textbox"
             />
           </div>
@@ -413,7 +418,7 @@ const SinglePage: NextPage<UserAuth> = (props) => {
                 )}
                 <button
                   type="button"
-                  className="flex items-center gap-1 rounded px-2.5 py-1 text-xs hover:bg-gray-100"
+                  className="flex items-center gap-1 rounded bg-gray-100 px-2.5 py-1 text-xs hover:bg-gray-200"
                   onClick={createPageBlock}
                   disabled={isAddingBlock}
                 >

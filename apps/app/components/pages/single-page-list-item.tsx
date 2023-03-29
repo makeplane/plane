@@ -6,13 +6,12 @@ import { useRouter } from "next/router";
 // ui
 import { CustomMenu, Tooltip } from "components/ui";
 // icons
-import { PencilIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { DocumentTextIcon, PencilIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
 // helpers
 import { truncateText } from "helpers/string.helper";
 import { renderShortDate, renderShortTime } from "helpers/date-time.helper";
 // types
 import { IPage } from "types";
-import { PencilScribbleIcon } from "components/icons";
 
 type TSingleStatProps = {
   page: IPage;
@@ -39,7 +38,7 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
           <div className="relative rounded p-4 hover:bg-gray-100">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <PencilScribbleIcon />
+                <DocumentTextIcon className="h-4 w-4" />
                 <p className="mr-2 truncate text-sm font-medium">{truncateText(page.name, 75)}</p>
                 {page.label_details.length > 0 &&
                   page.label_details.map((label) => (
