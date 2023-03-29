@@ -33,6 +33,7 @@ import {
 import { ExclamationIcon, getStateGroupIcon } from "components/icons";
 // helpers
 import { getStatesList } from "helpers/state.helper";
+import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // types
 import {
   CycleIssueResponse,
@@ -424,8 +425,13 @@ export const IssuesView: React.FC<Props> = ({
             {Object.keys(filters).map((key) => {
               if (filters[key as keyof typeof filters] !== null)
                 return (
-                  <div key={key} className="flex items-center gap-x-2 rounded bg-white px-2 py-1">
-                    <span className="font-medium capitalize text-gray-500">{key}:</span>
+                  <div
+                    key={key}
+                    className="flex items-center gap-x-2 rounded-full border bg-white px-2 py-1"
+                  >
+                    <span className="font-medium capitalize text-gray-500">
+                      {replaceUnderscoreIfSnakeCase(key)}:
+                    </span>
                     {filters[key as keyof IIssueFilterOptions] === null ||
                     (filters[key as keyof IIssueFilterOptions]?.length ?? 0) <= 0 ? (
                       <span>None</span>
@@ -536,7 +542,7 @@ export const IssuesView: React.FC<Props> = ({
                               return (
                                 <p
                                   key={memberId}
-                                  className="inline-flex items-center gap-x-1 rounded-full border px-2 py-0.5 font-medium capitalize"
+                                  className="inline-flex items-center gap-x-1 rounded-full px-0.5 py-0.5 font-medium capitalize"
                                 >
                                   <Avatar user={member} />
                                   <span>{member?.first_name}</span>
@@ -577,7 +583,7 @@ export const IssuesView: React.FC<Props> = ({
                               return (
                                 <p
                                   key={memberId}
-                                  className="inline-flex items-center gap-x-1 rounded-full border px-2 py-0.5 font-medium capitalize"
+                                  className="inline-flex items-center gap-x-1 rounded-full px-2 py-0.5 font-medium capitalize"
                                 >
                                   <Avatar user={member} />
                                   <span>{member?.first_name}</span>
@@ -621,7 +627,6 @@ export const IssuesView: React.FC<Props> = ({
                 );
             })}
           </div>
-
           {Object.keys(filters).length > 0 &&
             nullFilters.length !== Object.keys(filters).length && (
               <PrimaryButton
@@ -653,9 +658,10 @@ export const IssuesView: React.FC<Props> = ({
                 priority: null,
                 assignees: null,
                 labels: null,
+                created_by: null,
               })
             }
-            className="mt-2 flex items-center gap-x-1 text-xs"
+            className="mt-2 flex items-center gap-x-1 rounded-full border bg-white px-3 py-1.5 text-xs"
           >
             <span>Clear all filters</span>
             <XMarkIcon className="h-4 w-4" />
@@ -684,7 +690,7 @@ export const IssuesView: React.FC<Props> = ({
           isNotEmpty ? (
             <>
               {isCompleted && (
-                <div className="flex items-center gap-2 text-sm mb-4 text-gray-500">
+                <div className="mb-4 flex items-center gap-2 text-sm text-gray-500">
                   <ExclamationIcon height={14} width={14} />
                   <span>Completed cycles are not editable.</span>
                 </div>
