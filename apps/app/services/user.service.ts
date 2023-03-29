@@ -1,8 +1,13 @@
 // services
 import APIService from "services/api.service";
+import trackEventServices from "services/track-event.service";
+
 import type { IUser, IUserActivity, IUserWorkspaceDashboard } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
+
+const trackEvent =
+  process.env.NEXT_PUBLIC_TRACK_EVENTS === "true" || process.env.NEXT_PUBLIC_TRACK_EVENTS === "1";
 
 class UserService extends APIService {
   constructor() {
@@ -44,7 +49,10 @@ class UserService extends APIService {
 
   async updateUserOnBoard(): Promise<any> {
     return this.patch("/api/users/me/onboard/", { is_onboarded: true })
-      .then((response) => response?.data)
+      .then((response) => {
+        if (trackEvent) trackEventServices.trackUserOnboardingCompleteEvent(response.data);
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });

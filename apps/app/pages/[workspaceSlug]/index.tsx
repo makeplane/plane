@@ -42,10 +42,10 @@ const WorkspacePage: NextPage = () => {
       <div className="h-full w-full">
         <div className="flex flex-col gap-8">
           <div
-            className="flex flex-col justify-between gap-x-2 gap-y-6 rounded-lg px-8 py-6 text-white md:flex-row md:items-center md:py-3"
-            style={{ background: "linear-gradient(90deg, #8e2de2 0%, #4a00e0 100%)" }}
+            className="flex flex-col bg-white justify-between gap-x-2 gap-y-6 rounded-lg px-8 py-6 text-black md:flex-row md:items-center md:py-3"
+            // style={{ background: "linear-gradient(90deg, #8e2de2 0%, #4a00e0 100%)" }}
           >
-            <p>Plane is a open source application, to support us you can star us on GitHub!</p>
+            <p className="font-semibold">Plane is a open source application, to support us you can star us on GitHub!</p>
             <div className="flex items-center gap-2">
               {/* <a href="#" target="_blank" rel="noopener noreferrer">
                 View roadmap
@@ -53,7 +53,7 @@ const WorkspacePage: NextPage = () => {
               <a
                 href="https://github.com/makeplane/plane"
                 target="_blank"
-                className="rounded-md border-2 border-white px-3 py-1.5 text-sm duration-300 hover:bg-white hover:text-[#4a00e0]"
+                className="rounded-md border-2 border-black font-medium px-3 py-1.5 text-sm duration-300"
                 rel="noopener noreferrer"
               >
                 Star us on GitHub

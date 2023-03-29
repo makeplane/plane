@@ -13,6 +13,7 @@
     "@blueprintjs/popover2": "^1.13.3",
     "@headlessui/react": "^1.7.3",
     "@heroicons/react": "^2.0.12",
+    "@jitsu/nextjs": "^3.1.5",
     "@remirror/core": "^2.0.11",
     "@remirror/extension-react-tables": "^2.2.11",
     "@remirror/pm": "^2.0.3",
