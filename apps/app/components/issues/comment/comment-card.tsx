@@ -108,9 +108,15 @@ export const CommentCard: React.FC<Props> = ({ comment, onSubmit, handleCommentD
               </div>
             </form>
           ) : (
-            <div
-              className="mt-2 mb-6 text-sm text-gray-700"
-              dangerouslySetInnerHTML={{ __html: comment.comment_html }}
+            // <div
+            //   className="mt-2 mb-6 text-sm text-gray-700"
+            //   dangerouslySetInnerHTML={{ __html: comment.comment_html }}
+            // />
+            <RemirrorRichTextEditor
+              value={comment.comment_html}
+              editable={false}
+              onBlur={() => ({})}
+              customClassName="text-sm border-none"
             />
           )}
         </div>
