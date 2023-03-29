@@ -1,5 +1,7 @@
 // services
 import APIService from "services/api.service";
+import trackEventServices from "services/track-event.service";
+
 // types
 import type {
   GithubRepositoriesResponse,
@@ -12,6 +14,9 @@ import type {
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
+const trackEvent =
+  process.env.NEXT_PUBLIC_TRACK_EVENTS === "true" || process.env.NEXT_PUBLIC_TRACK_EVENTS === "1";
+
 class ProjectServices extends APIService {
   constructor() {
     super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
@@ -19,7 +24,10 @@ class ProjectServices extends APIService {
 
   async createProject(workspaceSlug: string, data: Partial<IProject>): Promise<IProject> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/`, data)
-      .then((response) => response?.data)
+      .then((response) => {
+        if (trackEvent) trackEventServices.trackCreateProjectEvent(response.data);
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response;
       });
@@ -59,7 +67,10 @@ class ProjectServices extends APIService {
     data: Partial<IProject>
   ): Promise<IProject> {
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/`, data)
-      .then((response) => response?.data)
+      .then((response) => {
+        if (trackEvent) trackEventServices.trackUpdateProjectEvent(response.data);
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -67,7 +78,10 @@ class ProjectServices extends APIService {
 
   async deleteProject(workspaceSlug: string, projectId: string): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/`)
-      .then((response) => response?.data)
+      .then((response) => {
+        if (trackEvent) trackEventServices.trackDeleteProjectEvent({ projectId });
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
