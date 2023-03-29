@@ -6,9 +6,9 @@ import useSWR, { mutate } from "swr";
 import {
   ArrowRightIcon,
   ChartBarIcon,
+  ChatBubbleOvalLeftEllipsisIcon,
   ClipboardIcon,
   FolderPlusIcon,
-  InboxIcon,
   MagnifyingGlassIcon,
   Squares2X2Icon,
   TrashIcon,
@@ -756,14 +756,14 @@ export const CommandPalette: React.FC = () => {
                           <Command.Item
                             onSelect={() => {
                               setIsPaletteOpen(false);
-                              window.open("mailto:hello@plane.so", "_blank");
+                              (window as any).$crisp.push(["do", "chat:open"]);
                             }}
                             className="focus:bg-slate-200 focus:outline-none"
                             tabIndex={0}
                           >
                             <div className="flex items-center gap-2 text-slate-700">
-                              <InboxIcon className="h-4 w-4" />
-                              Email us
+                              <ChatBubbleOvalLeftEllipsisIcon className="h-4 w-4" />
+                              Chat with us
                             </div>
                           </Command.Item>
                         </Command.Group>
