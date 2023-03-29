@@ -36,6 +36,7 @@ import { PAGE_BLOCKS_LIST } from "constants/fetch-keys";
 
 type Props = {
   block: IPageBlock;
+  index: number;
   projectDetails: IProject | undefined;
 };
 
@@ -48,7 +49,7 @@ const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor
   ),
 });
 
-export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails }) => {
+export const SinglePageBlock: React.FC<Props> = ({ block, index, projectDetails }) => {
   const [createUpdateIssueModal, setCreateUpdateIssueModal] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
 
@@ -244,7 +245,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails }) => {
           description_html: watch("description_html"),
         }}
       />
-      <div className="-mx-3 -mt-2 flex items-center justify-between gap-2">
+      <div className="-mx-3 mt-4 flex items-center justify-between gap-2">
         <Input
           id="name"
           name="name"

@@ -404,15 +404,15 @@ const SinglePage: NextPage<UserAuth> = (props) => {
             {pageBlocks ? (
               <>
                 {pageBlocks.length !== 0 && (
-                  <div className="space-y-4">
-                    {pageBlocks.map((block, i) => (
+                  <div className="space-y-4 divide-y">
+                    {pageBlocks.map((block, index) => (
                       <>
                         <SinglePageBlock
                           key={block.id}
+                          index={index}
                           block={block}
                           projectDetails={projectDetails}
                         />
-                        {i !== pageBlocks.length-1 && <hr />}
                       </>
                     ))}
                   </div>
