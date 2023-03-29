@@ -150,6 +150,8 @@ class IssueViewSet(BaseViewSet):
                 self.get_queryset()
                 .order_by(request.GET.get("order_by", "created_at"))
                 .filter(**filters)
+                .annotate(cycle_id=F("issue_cycle__id"))
+                .annotate(module_id=F("issue_module__id"))
             )
 
             issue_queryset = (
