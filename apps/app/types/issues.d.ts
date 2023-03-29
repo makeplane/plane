@@ -1,4 +1,13 @@
-import type { IState, IUser, IProject, ICycle, IModule, IUserLite } from "./";
+import type {
+  IState,
+  IUser,
+  IProject,
+  ICycle,
+  IModule,
+  IUserLite,
+  IProjectLite,
+  IWorkspaceLite,
+} from "types";
 
 export interface IIssueCycle {
   id: string;
@@ -96,7 +105,7 @@ export interface IIssue {
   parent_detail: IIssueParent | null;
   priority: string | null;
   project: string;
-  project_detail: IProject;
+  project_detail: IProjectLite;
   sequence_id: number;
   sort_order: number;
   sprints: string | null;
@@ -108,6 +117,7 @@ export interface IIssue {
   updated_at: Date;
   updated_by: string;
   workspace: string;
+  workspace_detail: IWorkspaceLite;
   labels: any[];
   labels_list: string[];
 }
