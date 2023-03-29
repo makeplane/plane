@@ -24,7 +24,6 @@ import { ArrowPathIcon } from "@heroicons/react/20/solid";
 import {
   BoltIcon,
   CheckIcon,
-  CursorArrowRaysIcon,
   SparklesIcon,
 } from "@heroicons/react/24/outline";
 // helpers

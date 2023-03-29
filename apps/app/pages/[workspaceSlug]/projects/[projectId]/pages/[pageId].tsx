@@ -409,7 +409,6 @@ const SinglePage: NextPage<UserAuth> = (props) => {
                       <>
                         <SinglePageBlock
                           key={block.id}
-                          index={index}
                           block={block}
                           projectDetails={projectDetails}
                         />
