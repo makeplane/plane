@@ -72,6 +72,7 @@ export const PROJECT_GITHUB_REPOSITORY = (projectId: string) =>
   `PROJECT_GITHUB_REPOSITORY_${projectId.toUpperCase()}`;
 
 export const CYCLE_LIST = (projectId: string) => `CYCLE_LIST_${projectId.toUpperCase()}`;
+export const CYCLE_INCOMPLETE_LIST = (projectId: string) => `CYCLE_INCOMPLETE_LIST_${projectId.toUpperCase()}`;
 export const CYCLE_ISSUES = (cycleId: string) => `CYCLE_ISSUES_${cycleId.toUpperCase()}`;
 export const CYCLE_ISSUES_WITH_PARAMS = (cycleId: string, params?: any) => {
   if (!params) return `CYCLE_ISSUES_WITH_PARAMS_${cycleId.toUpperCase()}`;
