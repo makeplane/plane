@@ -57,7 +57,6 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
   const handleAddToFavorites = (page: IPage) => {
     if (!workspaceSlug || !projectId) return;
 
-    mutate(RECENT_PAGES_LIST(projectId as string));
     mutate<IPage[]>(
       ALL_PAGES_LIST(projectId as string),
       (prevData) =>
@@ -89,6 +88,7 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
         page: page.id,
       })
       .then(() => {
+        mutate(RECENT_PAGES_LIST(projectId as string));
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -107,7 +107,6 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
   const handleRemoveFromFavorites = (page: IPage) => {
     if (!workspaceSlug || !projectId) return;
 
-    mutate(RECENT_PAGES_LIST(projectId as string));
     mutate<IPage[]>(
       ALL_PAGES_LIST(projectId as string),
       (prevData) =>
@@ -137,6 +136,7 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
     pagesService
       .removePageFromFavorites(workspaceSlug as string, projectId as string, page.id)
       .then(() => {
+        mutate(RECENT_PAGES_LIST(projectId as string));
         setToastAlert({
           type: "success",
           title: "Success!",

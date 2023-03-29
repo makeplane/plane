@@ -60,7 +60,7 @@ export const CompletedIssuesGraph: React.FC<Props> = ({ month, issues, setMonth 
           <LineChart data={data}>
             <CartesianGrid stroke="#e2e2e2" />
             <XAxis dataKey="week_in_month" />
-            <YAxis dataKey="completed_count" />
+            <YAxis dataKey="completed_count" allowDecimals={false} />
             <Tooltip content={<CustomTooltip />} />
             <Line
               type="monotone"

@@ -2,6 +2,8 @@ import React, { useState } from "react";
 
 import { useRouter } from "next/router";
 
+import { mutate } from "swr";
+
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
@@ -14,6 +16,13 @@ import { DangerButton, SecondaryButton } from "components/ui";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // types
 import type { IPage } from "types";
+// fetch-keys
+import {
+  ALL_PAGES_LIST,
+  FAVORITE_PAGES_LIST,
+  MY_PAGES_LIST,
+  RECENT_PAGES_LIST,
+} from "constants/fetch-keys";
 
 type TConfirmPageDeletionProps = {
   isOpen: boolean;
@@ -45,6 +54,22 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({
     await pagesService
       .deletePage(workspaceSlug as string, data.project, data.id)
       .then(() => {
+        mutate(RECENT_PAGES_LIST(projectId as string));
+        mutate<IPage[]>(
+          MY_PAGES_LIST(projectId as string),
+          (prevData) => (prevData ?? []).filter((page) => page.id !== data?.id),
+          false
+        );
+        mutate<IPage[]>(
+          ALL_PAGES_LIST(projectId as string),
+          (prevData) => (prevData ?? []).filter((page) => page.id !== data?.id),
+          false
+        );
+        mutate<IPage[]>(
+          FAVORITE_PAGES_LIST(projectId as string),
+          (prevData) => (prevData ?? []).filter((page) => page.id !== data?.id),
+          false
+        );
         handleClose();
         setToastAlert({
           type: "success",

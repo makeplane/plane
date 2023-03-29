@@ -1,5 +1,7 @@
 // services
 import APIService from "services/api.service";
+// types
+import { IGptResponse } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -12,7 +14,7 @@ class AiServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     data: { prompt: string; task: string }
-  ): Promise<any> {
+  ): Promise<IGptResponse> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/ai-assistant/`, data)
       .then((response) => response?.data)
       .catch((error) => {

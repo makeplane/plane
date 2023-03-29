@@ -14,6 +14,7 @@ import {
   ChevronDownIcon,
   DocumentDuplicateIcon,
   DocumentIcon,
+  PlusIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
 
@@ -24,7 +25,7 @@ import modulesService from "services/modules.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components
-import { LinkModal, SidebarProgressStats } from "components/core";
+import { LinkModal, LinksList, SidebarProgressStats } from "components/core";
 import { DeleteModuleModal, SidebarLeadSelect, SidebarMembersSelect } from "components/modules";
 import ProgressChart from "components/core/sidebar/progress-chart";
 import { CustomMenu, CustomSelect, Loader, ProgressBar } from "components/ui";
@@ -414,7 +415,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                       </div>
 
                       {isStartValid && isEndValid ? (
-                        <Disclosure.Button>
+                        <Disclosure.Button className="p-1">
                           <ChevronDownIcon
                             className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`}
                             aria-hidden="true"
@@ -485,7 +486,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                       </div>
 
                       {issues.length > 0 ? (
-                        <Disclosure.Button>
+                        <Disclosure.Button className="p-1">
                           <ChevronDownIcon
                             className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`}
                             aria-hidden="true"
@@ -508,8 +509,6 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                               <SidebarProgressStats
                                 issues={issues}
                                 groupedIssues={groupedIssues}
-                                setModuleLinkModal={setModuleLinkModal}
-                                handleDeleteLink={handleDeleteLink}
                                 userAuth={userAuth}
                                 module={module}
                               />
@@ -523,6 +522,27 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                   </div>
                 )}
               </Disclosure>
+            </div>
+
+            <div className="flex w-full flex-col text-xs border-t border-gray-300 px-6 py-6">
+              <div className="flex justify-between items-center w-full">
+                <h4 className="font-medium text-sm text-gray-500">Links</h4>
+                <button
+                  className="grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-100"
+                  onClick={() => setModuleLinkModal(true)}
+                >
+                  <PlusIcon className="h-4 w-4" />
+                </button>
+              </div>
+              <div className="mt-2 space-y-2 hover:bg-gray-100">
+                {userAuth && module.link_module && module.link_module.length > 0 ? (
+                  <LinksList
+                    links={module.link_module}
+                    handleDeleteLink={handleDeleteLink}
+                    userAuth={userAuth}
+                  />
+                ) : null}
+              </div>
             </div>
           </>
         ) : (
