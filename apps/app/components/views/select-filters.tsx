@@ -5,6 +5,7 @@ import useSWR from "swr";
 // services
 import stateService from "services/state.service";
 import projectService from "services/project.service";
+import issuesService from "services/issues.service";
 // ui
 import { Avatar, MultiLevelDropdown } from "components/ui";
 // icons
@@ -14,7 +15,7 @@ import { getStatesList } from "helpers/state.helper";
 // types
 import { IIssueFilterOptions, IQuery } from "types";
 // fetch-keys
-import { PROJECT_MEMBERS, STATE_LIST } from "constants/fetch-keys";
+import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS, STATE_LIST } from "constants/fetch-keys";
 // constants
 import { PRIORITIES } from "constants/project";
 
@@ -46,6 +47,13 @@ export const SelectFilters: React.FC<Props> = ({
     projectId ? PROJECT_MEMBERS(projectId as string) : null,
     workspaceSlug && projectId
       ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
+      : null
+  );
+
+  const { data: issueLabels } = useSWR(
+    projectId ? PROJECT_ISSUE_LABELS(projectId.toString()) : null,
+    workspaceSlug && projectId
+      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId.toString())
       : null
   );
 
@@ -139,6 +147,27 @@ export const SelectFilters: React.FC<Props> = ({
                 value: member.member.id,
               },
               selected: filters?.created_by?.includes(member.member.id),
+            })) ?? []),
+          ],
+        },
+        {
+          id: "labels",
+          label: "Labels",
+          value: issueLabels,
+          children: [
+            ...(issueLabels?.map((label) => ({
+              id: label.id,
+              label: (
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 rounded-full" style={{ backgroundColor: label.color }} />
+                  {label.name}
+                </div>
+              ),
+              value: {
+                key: "labels",
+                value: label.id,
+              },
+              selected: filters?.labels?.includes(label.id),
             })) ?? []),
           ],
         },

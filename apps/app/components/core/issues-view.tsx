@@ -11,7 +11,6 @@ import issuesService from "services/issues.service";
 import stateService from "services/state.service";
 import projectService from "services/project.service";
 import modulesService from "services/modules.service";
-import viewsService from "services/views.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useIssuesView from "hooks/use-issues-view";
@@ -49,9 +48,9 @@ import {
   MODULE_ISSUES,
   MODULE_ISSUES_WITH_PARAMS,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
+  PROJECT_ISSUE_LABELS,
   PROJECT_MEMBERS,
   STATE_LIST,
-  VIEW_DETAILS,
 } from "constants/fetch-keys";
 import { getPriorityIcon } from "components/icons/priority-icon";
 
@@ -116,6 +115,13 @@ export const IssuesView: React.FC<Props> = ({
     projectId ? PROJECT_MEMBERS(projectId as string) : null,
     workspaceSlug && projectId
       ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
+      : null
+  );
+
+  const { data: issueLabels } = useSWR(
+    projectId ? PROJECT_ISSUE_LABELS(projectId.toString()) : null,
+    workspaceSlug && projectId
+      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId.toString())
       : null
   );
 
@@ -610,6 +616,34 @@ export const IssuesView: React.FC<Props> = ({
                               onClick={() =>
                                 setFilters({
                                   created_by: null,
+                                })
+                              }
+                            >
+                              <XMarkIcon className="h-3 w-3" />
+                            </button>
+                          </div>
+                        ) : key === "labels" ? (
+                          <div className="flex items-center gap-x-1">
+                            {filters.labels?.map((labelId: string) => {
+                              const label = issueLabels?.find((l) => l.id === labelId);
+
+                              if (!label) return null;
+
+                              return (
+                                <div className="flex items-center gap-2">
+                                  <div
+                                    className="w-4 h-4 rounded-full"
+                                    style={{ backgroundColor: label.color }}
+                                  />
+                                  {label.name}
+                                </div>
+                              );
+                            })}
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setFilters({
+                                  labels: null,
                                 })
                               }
                             >
