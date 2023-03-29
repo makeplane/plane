@@ -24,7 +24,6 @@ import { ArrowPathIcon } from "@heroicons/react/20/solid";
 import {
   BoltIcon,
   CheckIcon,
-  CursorArrowRaysIcon,
   SparklesIcon,
 } from "@heroicons/react/24/outline";
 // helpers
@@ -244,7 +243,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails }) => {
           description_html: watch("description_html"),
         }}
       />
-      <div className="-mx-3 -mt-2 flex items-center justify-between gap-2">
+      <div className="-mx-3 mt-4 flex items-center justify-between gap-2">
         <Input
           id="name"
           name="name"
