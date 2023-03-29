@@ -267,7 +267,7 @@ export const CalendarView = () => {
                   : ""
               }`}
             >
-              <span>{formatDate(date, "eee")}</span>
+              <span>{isMonthlyView ? formatDate(date, "eee").substring(0, 3) : formatDate(date, "eee")}</span>
               {!isMonthlyView && <span>{formatDate(date, "d")}</span>}
             </div>
           ))}
