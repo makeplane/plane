@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // components
+import { GptAssistantModal } from "components/core";
 import {
   IssueAssigneeSelect,
   IssueLabelSelect,
@@ -22,7 +23,7 @@ import { CreateLabelModal } from "components/labels";
 // ui
 import { CustomMenu, Input, Loader, PrimaryButton, SecondaryButton } from "components/ui";
 // icons
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { SparklesIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // helpers
 import { cosineSimilarity } from "helpers/string.helper";
 // types
@@ -31,7 +32,7 @@ import type { IIssue } from "types";
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
   ssr: false,
   loading: () => (
-    <Loader>
+    <Loader className="mt-4">
       <Loader.Item height="12rem" width="100%" />
     </Loader>
   ),
@@ -81,6 +82,8 @@ export const IssueForm: FC<IssueFormProps> = ({
   const [labelModal, setLabelModal] = useState(false);
   const [parentIssueListModalOpen, setParentIssueListModalOpen] = useState(false);
 
+  const [gptAssistantModal, setGptAssistantModal] = useState(false);
+
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -113,6 +116,13 @@ export const IssueForm: FC<IssueFormProps> = ({
       description: "",
       description_html: "<p></p>",
     });
+  };
+
+  const handleAiAssistance = async (response: string) => {
+    if (!workspaceSlug || !projectId) return;
+
+    setValue("description", {});
+    setValue("description_html", `${watch("description_html")}<p>${response}</p>`);
   };
 
   useEffect(() => {
@@ -233,7 +243,17 @@ export const IssueForm: FC<IssueFormProps> = ({
                   </div>
                 )}
               </div>
-              <div>
+              <div className="relative">
+                <div className="flex justify-end -mb-2 mr-2">
+                  <button
+                    type="button"
+                    className="-mr-2 flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-gray-100"
+                    onClick={() => setGptAssistantModal((prevData) => !prevData)}
+                  >
+                    <SparklesIcon className="h-4 w-4" />
+                    AI
+                  </button>
+                </div>
                 <Controller
                   name="description"
                   control={control}
@@ -249,6 +269,15 @@ export const IssueForm: FC<IssueFormProps> = ({
                       placeholder="Description"
                     />
                   )}
+                />
+                <GptAssistantModal
+                  isOpen={gptAssistantModal}
+                  handleClose={() => setGptAssistantModal(false)}
+                  inset="top-2 left-0"
+                  content=""
+                  htmlContent={watch("description_html")}
+                  onResponse={handleAiAssistance}
+                  projectId={projectId}
                 />
               </div>
               <div className="flex flex-wrap items-center gap-2">

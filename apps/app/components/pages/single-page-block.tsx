@@ -333,6 +333,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails }) => {
           content={block.description_stripped}
           htmlContent={block.description_html}
           onResponse={handleAiAssistance}
+          projectId={projectId as string}
         />
       </div>
     </div>
