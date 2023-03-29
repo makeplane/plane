@@ -1,3 +1,6 @@
+# Python imports
+import requests
+
 # Third party imports
 from rest_framework.response import Response
 from rest_framework import status
@@ -25,6 +28,28 @@ class GPTIntegrationEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
+            # If logger is enabled check for request limit
+            if settings.LOGGER_BASE_URL:
+                try:
+                    headers = {
+                        "Content-Type": "application/json",
+                    }
+
+                    response = requests.post(
+                        settings.LOGGER_BASE_URL,
+                        json={"user_id": str(request.user.id)},
+                        headers=headers,
+                    )
+                    if not response.json().get("success", False):
+                        return Response(
+                            {
+                                "error": "You have surpassed the monthly limit for AI assistance"
+                            },
+                            status=status.HTTP_429_TOO_MANY_REQUESTS,
+                        )
+                except Exception as e:
+                    capture_exception(e)
+
             prompt = request.data.get("prompt", False)
             task = request.data.get("task", False)
 
@@ -50,6 +75,7 @@ class GPTIntegrationEndpoint(BaseAPIView):
                 status=status.HTTP_200_OK,
             )
         except Exception as e:
+            print(e)
             capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
