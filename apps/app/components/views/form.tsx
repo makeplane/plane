@@ -10,12 +10,13 @@ import { Avatar, Input, PrimaryButton, SecondaryButton, TextArea } from "compone
 // types
 import { IView } from "types";
 // constant
-import { PROJECT_MEMBERS, STATE_LIST } from "constants/fetch-keys";
+import { PROJECT_ISSUE_LABELS, PROJECT_MEMBERS, STATE_LIST } from "constants/fetch-keys";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 // services
 import stateService from "services/state.service";
 import projectService from "services/project.service";
+import issuesService from "services/issues.service";
 // components
 import { SelectFilters } from "components/views";
 // icons
@@ -58,6 +59,13 @@ export const ViewForm: React.FC<Props> = ({
     projectId ? PROJECT_MEMBERS(projectId as string) : null,
     workspaceSlug && projectId
       ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
+      : null
+  );
+
+  const { data: issueLabels } = useSWR(
+    projectId ? PROJECT_ISSUE_LABELS(projectId.toString()) : null,
+    workspaceSlug && projectId
+      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId.toString())
       : null
   );
 
@@ -153,7 +161,7 @@ export const ViewForm: React.FC<Props> = ({
             />
           </div>
           <div>
-            <div className="flex gap-4 flex-wrap items-center">
+            <div className="flex flex-wrap items-center gap-4">
               {Object.keys(filters ?? {}).map((key) => {
                 const queryKey = key as keyof typeof filters;
                 if (queryKey === "state")
@@ -163,7 +171,10 @@ export const ViewForm: React.FC<Props> = ({
                         const state = statesList.find((state) => state.id === stateID);
                         if (!state) return null;
                         return (
-                          <div className="flex items-center gap-2 text-xs border bg-white rounded-full px-2 py-1.5" key={state.id}>
+                          <div
+                            className="flex items-center gap-2 rounded-full border bg-white px-2 py-1.5 text-xs"
+                            key={state.id}
+                          >
                             {getStateGroupIcon(state?.group, "16", "16", state?.color)}
                             {state?.name}
                           </div>
@@ -175,7 +186,10 @@ export const ViewForm: React.FC<Props> = ({
                   return (
                     <div className="flex gap-3" key={key}>
                       {filters.priority?.map((priority) => (
-                        <div className="flex items-center gap-2 text-xs border bg-white rounded-full px-2 py-1.5" key={priority}>
+                        <div
+                          className="flex items-center gap-2 rounded-full border bg-white px-2 py-1.5 text-xs"
+                          key={priority}
+                        >
                           {getPriorityIcon(priority)}
                           {priority}
                         </div>
@@ -190,7 +204,10 @@ export const ViewForm: React.FC<Props> = ({
 
                         if (!member) return null;
                         return (
-                          <div className="flex items-center gap-2 text-xs border bg-white rounded-full px-1.5 py-1" key={member.member.id}>
+                          <div
+                            className="flex items-center gap-2 rounded-full border bg-white px-1.5 py-1 text-xs"
+                            key={member.member.id}
+                          >
                             <Avatar user={member.member} />
                             {member.member.first_name && member.member.first_name !== ""
                               ? member.member.first_name
@@ -198,6 +215,26 @@ export const ViewForm: React.FC<Props> = ({
                           </div>
                         );
                       })}
+                    </div>
+                  );
+                else if (queryKey === "labels")
+                  return (
+                    <div className="flex gap-3" key={key}>
+                      <div className="flex items-center gap-x-1">
+                        {filters.labels?.map((labelId: string) => {
+                          const label = issueLabels?.find((l) => l.id === labelId);
+                          if (!label) return null;
+                          return (
+                            <div className="flex items-center gap-2 rounded-full border bg-white px-1.5 py-1 text-xs">
+                              <div
+                                className="h-4 w-4 rounded-full"
+                                style={{ backgroundColor: label.color }}
+                              />
+                              {label.name}
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
                   );
               })}
