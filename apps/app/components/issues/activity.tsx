@@ -111,8 +111,6 @@ export const IssueActivitySection: React.FC<Props> = () => {
       : null
   );
 
-  console.log(issueActivities);
-
   const handleCommentUpdate = async (comment: IIssueComment) => {
     if (!workspaceSlug || !projectId || !issueId) return;
     await issuesService
