@@ -100,8 +100,7 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                     )}
                   </Menu.Item>
                   {option.children && option.id === openChildFor && (
-                    <Menu.Items
-                      static
+                    <div
                       className={`absolute top-0 w-36 origin-top-right select-none overflow-y-scroll rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ${
                         direction === "left"
                           ? "right-full -translate-x-1"
@@ -120,24 +119,21 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                     >
                       <div className="space-y-1 p-1">
                         {option.children.map((child) => (
-                          <Menu.Item
+                          <button
                             key={child.id}
-                            as="button"
                             type="button"
                             onClick={() => {
                               onSelect(child.value);
                             }}
-                            className={({ active }) =>
-                              `${
-                                active || child.selected ? "bg-gray-100" : "text-gray-900"
-                              } flex w-full items-center break-all rounded px-1 py-1.5 text-left capitalize`
-                            }
+                            className={`${
+                              child.selected ? "bg-gray-100" : "text-gray-900"
+                            } flex w-full items-center break-all rounded px-1 py-1.5 text-left capitalize hover:bg-gray-100`}
                           >
                             {child.label}
-                          </Menu.Item>
+                          </button>
                         ))}
                       </div>
-                    </Menu.Items>
+                    </div>
                   )}
                 </div>
               ))}
