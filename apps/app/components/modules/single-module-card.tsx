@@ -142,7 +142,7 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
               </Tooltip>
 
               <div className="flex items-center gap-1">
-                <div className="mr-2 rounded flex bg-gray-100 px-2.5 py-2">
+                <div className="mr-2 rounded flex bg-gray-100 px-2.5 py-2 whitespace-nowrap">
                   <span className="capitalize">{module?.status?.replace("-", " ")}</span>
                 </div>
                 {module.is_favorite ? (
