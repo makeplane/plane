@@ -27,8 +27,8 @@ export const lastDayOfWeek = (date: Date) => {
   return lastDayOfWeekAdjusted;
 };
 
-export const getCurrentWeekStartDate = () => {
-  const today = new Date();
+export const getCurrentWeekStartDate = (date: Date) => {
+  const today = new Date(date);
   const dayOfWeek = today.getDay();
   const startOfWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - dayOfWeek);
   const timezoneOffset = startOfWeek.getTimezoneOffset();
@@ -37,8 +37,8 @@ export const getCurrentWeekStartDate = () => {
   return startOfWeekAdjusted;
 };
 
-export const getCurrentWeekEndDate = () => {
-  const today = new Date();
+export const getCurrentWeekEndDate = (date: Date) => {
+  const today = new Date(date);
   const dayOfWeek = today.getDay();
   const endOfWeek = new Date(
     today.getFullYear(),
@@ -146,4 +146,16 @@ export const isSameMonth = (monthString: string, date: Date) => {
 export const isSameYear = (yearString: string, date: Date) => {
   const year = parseInt(yearString);
   return year === date.getFullYear();
+};
+
+export const addSevenDaysToDate = (date: Date) => {
+  const currentDate = date;
+  const newDate = new Date(currentDate.setDate(currentDate.getDate() + 7));
+  return newDate;
+};
+
+export const subtract7DaysToDate = (date: Date) => {
+  const currentDate = date;
+  const newDate = new Date(currentDate.getTime() - 7 * 24 * 60 * 60 * 1000);
+  return newDate;
 };

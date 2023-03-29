@@ -19,6 +19,8 @@ import {
   updateDateWithMonth,
   isSameMonth,
   isSameYear,
+  subtract7DaysToDate,
+  addSevenDaysToDate,
 } from "helpers/calendar.helper";
 // ui
 import { Popover, Transition } from "@headlessui/react";
@@ -150,7 +152,7 @@ export const CalendarView = () => {
       <div className="h-full overflow-y-auto rounded-lg text-gray-600 -m-2">
         <div className="mb-4 flex items-center justify-between">
           <div className="relative flex h-full w-full gap-2 items-center justify-start text-sm ">
-            <Popover className="flex h-full items-center w-48 justify-start rounded-lg">
+            <Popover className="flex h-full items-center justify-start rounded-lg">
               {({ open }) => (
                 <>
                   <Popover.Button className={`group flex h-full items-start gap-1 text-gray-800`}>
@@ -169,28 +171,28 @@ export const CalendarView = () => {
                     leaveFrom="opacity-100 translate-y-0"
                     leaveTo="opacity-0 translate-y-1"
                   >
-                    <Popover.Panel className="absolute top-10 left-0 z-20 w-full max-w-md flex flex-col transform overflow-hidden bg-white shadow-lg rounded-[10px]">
-                      <div className="flex justify-center items-center text-xl gap-5 px-5 py-4">
+                    <Popover.Panel className="absolute top-10 left-0 z-20 w-full max-w-xs flex flex-col transform overflow-hidden bg-white shadow-lg rounded-[10px]">
+                      <div className="flex justify-center items-center text-sm gap-5 px-2 py-2">
                         {yearOptions.map((year) => (
                           <button
                             onClick={() => updateDate(updateDateWithYear(year.label, currentDate))}
                             className={` ${
                               isSameYear(year.value, currentDate)
-                                ? "text-xl font-medium text-gray-800"
-                                : "text-base text-gray-400 "
-                            } hover:text-xl hover:text-gray-800 hover:font-medium `}
+                                ? "text-sm font-medium text-gray-800"
+                                : "text-xs text-gray-400 "
+                            } hover:text-sm hover:text-gray-800 hover:font-medium `}
                           >
                             {year.label}
                           </button>
                         ))}
                       </div>
-                      <div className="grid grid-cols-4 gap-y-1 px-5 py-4 border-t border-gray-200">
+                      <div className="grid grid-cols-4  px-2 border-t border-gray-200">
                         {monthOptions.map((month) => (
                           <button
                             onClick={() =>
                               updateDate(updateDateWithMonth(month.value, currentDate))
                             }
-                            className={`text-gray-400 text-base px-2 py-2 hover:font-medium hover:text-gray-800 ${
+                            className={`text-gray-400 text-xs px-2 py-2 hover:font-medium hover:text-gray-800 ${
                               isSameMonth(month.value, currentDate)
                                 ? "font-medium text-gray-800"
                                 : ""
@@ -209,13 +211,33 @@ export const CalendarView = () => {
             <div className="flex items-center gap-2">
               <button
                 className="cursor-pointer"
-                onClick={() => updateDate(subtractMonths(currentDate, 1))}
+                onClick={() => {
+                  if (isMonthlyView) {
+                    updateDate(subtractMonths(currentDate, 1));
+                  } else {
+                    setCurrentDate(subtract7DaysToDate(currentDate));
+                    setCalendarDateRange({
+                      startDate: getCurrentWeekStartDate(subtract7DaysToDate(currentDate)),
+                      endDate: getCurrentWeekEndDate(subtract7DaysToDate(currentDate)),
+                    });
+                  }
+                }}
               >
                 <ChevronLeftIcon className="h-4 w-4" />
               </button>
               <button
                 className="cursor-pointer"
-                onClick={() => updateDate(addMonths(currentDate, 1))}
+                onClick={() => {
+                  if (isMonthlyView) {
+                    updateDate(addMonths(currentDate, 1));
+                  } else {
+                    setCurrentDate(addSevenDaysToDate(currentDate));
+                    setCalendarDateRange({
+                      startDate: getCurrentWeekStartDate(addSevenDaysToDate(currentDate)),
+                      endDate: getCurrentWeekEndDate(addSevenDaysToDate(currentDate)),
+                    });
+                  }
+                }}
               >
                 <ChevronRightIcon className="h-4 w-4" />
               </button>
@@ -225,7 +247,17 @@ export const CalendarView = () => {
           <div className="flex w-full gap-2 items-center justify-end">
             <button
               className="group flex cursor-pointer items-center gap-2 rounded-md border bg-white px-4 py-1.5 text-sm  hover:bg-gray-100 hover:text-gray-900 focus:outline-none"
-              onClick={() => updateDate(new Date())}
+              onClick={() => {
+                if(isMonthlyView){
+                  updateDate(new Date())
+                }else{
+                  setCurrentDate(new Date());
+                  setCalendarDateRange({
+                    startDate: getCurrentWeekStartDate(new Date()),
+                    endDate: getCurrentWeekEndDate(new Date()),
+                  });
+                }
+              }}
             >
               Today{" "}
             </button>
@@ -262,8 +294,8 @@ export const CalendarView = () => {
                 onClick={() => {
                   setIsMonthlyView(false);
                   setCalendarDateRange({
-                    startDate: getCurrentWeekStartDate(),
-                    endDate: getCurrentWeekEndDate(),
+                    startDate: getCurrentWeekStartDate(currentDate),
+                    endDate: getCurrentWeekEndDate(currentDate),
                   });
                 }}
                 className="w-52 text-sm text-gray-600"
