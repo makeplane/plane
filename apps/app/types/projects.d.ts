@@ -5,7 +5,8 @@ import type {
   IWorkspaceLite,
   TIssueGroupByOptions,
   TIssueOrderByOptions,
-} from "types";
+  TIssueViewOptions,
+} from "./";
 
 export interface IProject {
   cover_image: string | null;
@@ -50,7 +51,7 @@ export interface IFavoriteProject {
 }
 
 type ProjectViewTheme = {
-  issueView: "list" | "kanban";
+  issueView: TIssueViewOptions;
   groupByProperty: TIssueGroupByOptions;
   orderBy: TIssueOrderByOptions;
   filters: IIssueFilterOptions;

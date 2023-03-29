@@ -121,6 +121,9 @@ export const SUB_ISSUES = (issueId: string) => `SUB_ISSUES_${issueId.toUpperCase
 
 // integrations
 
+// Calendar
+export const CALENDAR_ISSUES = (projectId: string) => `CALENDAR_ISSUES_${projectId}`;
+
 // Pages
 export const RECENT_PAGES_LIST = (projectId: string) =>
   `RECENT_PAGES_LIST_${projectId.toUpperCase()}`;

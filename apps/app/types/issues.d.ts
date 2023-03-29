@@ -240,6 +240,8 @@ export interface IIssueFilterOptions {
   created_by: string[] | null;
 }
 
+export type TIssueViewOptions = "list" | "kanban" | "calendar";
+
 export type TIssueGroupByOptions = "state" | "priority" | "labels" | "created_by" | null;
 
 export type TIssueOrderByOptions = "-created_at" | "updated_at" | "priority" | "sort_order";

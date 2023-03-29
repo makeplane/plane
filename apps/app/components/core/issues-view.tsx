@@ -21,6 +21,7 @@ import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 import { CreateUpdateViewModal } from "components/views";
 // ui
 import { Avatar, EmptySpace, EmptySpaceItem, PrimaryButton, Spinner } from "components/ui";
+import { CalendarView } from "./calendar-view";
 // icons
 import {
   ListBulletIcon,
@@ -751,7 +752,7 @@ export const IssuesView: React.FC<Props> = ({
                   isCompleted={isCompleted}
                   userAuth={userAuth}
                 />
-              ) : (
+              ) : issueView === "kanban" ? (
                 <AllBoards
                   type={type}
                   states={states}
@@ -771,6 +772,8 @@ export const IssuesView: React.FC<Props> = ({
                   isCompleted={isCompleted}
                   userAuth={userAuth}
                 />
+              ) : (
+                <CalendarView />
               )}
             </>
           ) : (
