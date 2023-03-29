@@ -12,7 +12,7 @@ import useToast from "hooks/use-toast";
 // components
 import { DeleteModuleModal } from "components/modules";
 // ui
-import { Avatar, CustomMenu, Tooltip } from "components/ui";
+import { AssigneesList, Avatar, CustomMenu, Tooltip } from "components/ui";
 // icons
 import {
   DocumentDuplicateIcon,
@@ -20,8 +20,7 @@ import {
   StarIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
-import { CalendarMonthIcon, TargetIcon } from 'components/icons'
-
+import { CalendarMonthIcon, TargetIcon } from "components/icons";
 
 // helpers
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
@@ -146,8 +145,7 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
                 <div className="mr-2 rounded flex bg-gray-100 px-2.5 py-2">
                   <span className="capitalize">{module?.status?.replace("-", " ")}</span>
                 </div>
-                {
-                  module.is_favorite ? (
+                {module.is_favorite ? (
                   <button type="button" onClick={handleRemoveFromFavorites}>
                     <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
                   </button>
@@ -209,24 +207,12 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
           <div className="flex justify-between w-full px-4 pb-4 bg-gray-100 item-center">
             <p className="text-[#858E96]">
               Last updated:
-              <span className="text-black font-medium">{renderShortDateWithYearFormat(lastUpdated)}</span>
+              <span className="text-black font-medium">
+                {renderShortDateWithYearFormat(lastUpdated)}
+              </span>
             </p>
-            <div className="flex items-center">
-              <div className="flex -space-x-1 h-5">
-                {
-                  module.members_detail.map((member,index) =>
-                      index<3 && <div className="flex border-1 border-white rounded-full overflow-hidden items-center justify-center">
-                      <Avatar user={member} />
-                    </div>
-                  )
-                }
-              </div>
-              {
-                module.members_detail.length>3 &&
-                <span className="text-[#858E96] ml-1">
-                  +{module.members_detail.length-3}
-                </span>
-              }
+            <div className="flex items-center gap-1">
+              <AssigneesList users={module.members_detail} length={4} />
             </div>
           </div>
         </div>
