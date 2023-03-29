@@ -128,16 +128,16 @@ export const CalendarView = () => {
   };
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <div className="h-full overflow-y-auto rounded-lg text-gray-600">
-        <div className="mb-4 flex items-center  justify-between">
+      <div className="h-full overflow-y-auto rounded-lg text-gray-600 -m-2">
+        <div className="mb-4 flex items-center justify-between">
           <div className="relative flex h-full w-full items-center justify-start text-sm ">
             <Popover className="flex h-full items-center  justify-center rounded-lg">
               {({ open }) => (
                 <>
                   <Popover.Button
-                    className={`group flex h-full items-start gap-1 px-2.5 py-1.5 text-gray-800`}
+                    className={`group flex h-full items-start gap-1 text-gray-800`}
                   >
-                    <div className="flex  items-center  justify-center gap-1 text-3xl font-semibold">
+                    <div className="flex  items-center  justify-center gap-2 text-2xl font-semibold">
                       <span className="text-black">{formatDate(currentDate, "Month")}</span>{" "}
                       <span>{formatDate(currentDate, "yyyy")}</span>
                       <ChevronDownIcon className="h-4 w-4" />
@@ -194,7 +194,7 @@ export const CalendarView = () => {
                     endDate: lastDayOfWeek(currentDate),
                   });
                 }}
-                className="w-64 text-sm text-gray-600"
+                className="w-52 text-sm text-gray-600"
               >
                 <div className="flex w-full max-w-[260px] items-center justify-between gap-2">
                   <span className="flex items-center gap-2">Monthly View</span>
@@ -213,7 +213,7 @@ export const CalendarView = () => {
                     endDate: getCurrentWeekEndDate(),
                   });
                 }}
-                className="w-64 text-sm text-gray-600"
+                className="w-52 text-sm text-gray-600"
               >
                 <div className="flex w-full items-center justify-between gap-2">
                   <span className="flex items-center gap-2">Weekly View</span>
@@ -225,7 +225,7 @@ export const CalendarView = () => {
                 </div>
               </CustomMenu.MenuItem>
               {/* <CustomMenu.MenuItem className="w-56 border-t border-gray-200 text-sm text-gray-600 rounded-none hover:bg-white"> */}
-              <div className="mt-1 flex w-64 items-center justify-between border-t border-gray-200 py-2 px-1  text-sm text-gray-600">
+              <div className="mt-1 flex w-52 items-center justify-between border-t border-gray-200 py-2 px-1  text-sm text-gray-600">
                 <h4>Show weekends</h4>
                 <button
                   type="button"
@@ -250,22 +250,22 @@ export const CalendarView = () => {
         </div>
 
         <div
-          className={`grid auto-rows-[minmax(50px,1fr)] rounded-lg ${
+          className={`grid auto-rows-[minmax(36px,1fr)] rounded-lg ${
             showWeekEnds ? "grid-cols-7" : "grid-cols-5"
           }`}
         >
           {weeks.map((date, index) => (
             <div
               key={index}
-              className={`flex flex-col items-start justify-start gap-1 border-gray-300 bg-gray-100 text-base font-medium text-gray-600 ${
-                showWeekEnds
+              className={`flex  items-center justify-start p-1.5 gap-2 border-gray-300 bg-gray-100 text-base font-medium text-gray-600 ${
+                !isMonthlyView ? showWeekEnds
                   ? (index + 1) % 7 === 0
                     ? ""
                     : "border-r"
                   : (index + 1) % 5 === 0
                   ? ""
-                  : "border-r"
-              } ${isMonthlyView ? "px-3 py-4" : "p-1.5"}`}
+                  : "border-r" : ""
+              }`}
             >
               <span>{formatDate(date, "eee")}</span>
               {!isMonthlyView && <span>{formatDate(date, "d")}</span>}
@@ -285,7 +285,7 @@ export const CalendarView = () => {
                   key={index}
                   ref={provided.innerRef}
                   {...provided.droppableProps}
-                  className={`flex flex-col gap-1 border-t border-gray-300 px-3 py-4 text-left text-base font-medium ${
+                  className={`flex flex-col gap-1.5 border-t border-gray-300 p-2.5 text-left text-sm font-medium hover:bg-gray-100 ${
                     showWeekEnds
                       ? (index + 1) % 7 === 0
                         ? ""

@@ -82,7 +82,7 @@ export const formatDate = (date: Date, format: string): string => {
   const hours = date.getHours();
   const minutes = date.getMinutes();
   const seconds = date.getSeconds();
-  const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const monthsOfYear = [
     "January",
     "February",
