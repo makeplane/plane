@@ -99,7 +99,7 @@ class SignInEndpoint(BaseAPIView):
                             "event_data": {
                                 "medium": "email",
                             },
-                            "user": {"email": email},
+                            "user": {"email": email, "id": user.id},
                             "device_ctx": {
                                 "ip": request.META.get("REMOTE_ADDR"),
                                 "user_agent": request.META.get("HTTP_USER_AGENT"),
@@ -150,7 +150,7 @@ class SignInEndpoint(BaseAPIView):
                             "event_data": {
                                 "medium": "email",
                             },
-                            "user": {"email": email},
+                            "user": {"email": email, "id": user.id},
                             "device_ctx": {
                                 "ip": request.META.get("REMOTE_ADDR"),
                                 "user_agent": request.META.get("HTTP_USER_AGENT"),
@@ -324,7 +324,7 @@ class MagicSignInEndpoint(BaseAPIView):
                                     "event_data": {
                                         "medium": "code",
                                     },
-                                    "user": {"email": email},
+                                    "user": {"email": email, "id": user.id},
                                     "device_ctx": {
                                         "ip": request.META.get("REMOTE_ADDR"),
                                         "user_agent": request.META.get(
@@ -354,7 +354,7 @@ class MagicSignInEndpoint(BaseAPIView):
                                     "event_data": {
                                         "medium": "code",
                                     },
-                                    "user": {"email": email},
+                                    "user": {"email": email, "id": user.id},
                                     "device_ctx": {
                                         "ip": request.META.get("REMOTE_ADDR"),
                                         "user_agent": request.META.get(
