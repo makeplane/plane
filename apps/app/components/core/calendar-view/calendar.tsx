@@ -24,7 +24,7 @@ import {
 } from "helpers/calendar.helper";
 // ui
 import { Popover, Transition } from "@headlessui/react";
-import { DragDropContext, Draggable, Droppable, DropResult } from "react-beautiful-dnd";
+import { DragDropContext, Draggable, DropResult } from "react-beautiful-dnd";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 import { CustomMenu } from "components/ui";
 // icon
@@ -36,12 +36,18 @@ import {
 } from "@heroicons/react/24/outline";
 // services
 import issuesService from "services/issues.service";
+import cyclesService from "services/cycles.service";
 // fetch key
-import { CALENDAR_ISSUES, ISSUE_DETAILS } from "constants/fetch-keys";
+import {
+  CYCLE_CALENDAR_ISSUES,
+  MODULE_CALENDAR_ISSUES,
+  PROJECT_CALENDAR_ISSUES,
+} from "constants/fetch-keys";
 // type
 import { IIssue } from "types";
 // constant
 import { monthOptions, yearOptions } from "constants/calendar";
+import modulesService from "services/modules.service";
 
 interface ICalendarRange {
   startDate: Date;
@@ -54,15 +60,15 @@ export const CalendarView = () => {
   const [isMonthlyView, setIsMonthlyView] = useState<boolean>(true);
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
   const [calendarDateRange, setCalendarDateRange] = useState<ICalendarRange>({
     startDate: startOfWeek(currentDate),
     endDate: lastDayOfWeek(currentDate),
   });
 
-  const { data: calendarIssues } = useSWR(
-    workspaceSlug && projectId ? CALENDAR_ISSUES(projectId as string) : null,
+  const { data: projectCalendarIssues } = useSWR(
+    workspaceSlug && projectId ? PROJECT_CALENDAR_ISSUES(projectId as string) : null,
     workspaceSlug && projectId
       ? () =>
           issuesService.getIssuesWithParams(workspaceSlug as string, projectId as string, {
@@ -70,6 +76,44 @@ export const CalendarView = () => {
               calendarDateRange.endDate
             )};before`,
           })
+      : null
+  );
+
+  const { data: cycleCalendarIssues } = useSWR(
+    workspaceSlug && projectId && cycleId
+      ? CYCLE_CALENDAR_ISSUES(projectId as string, cycleId as string)
+      : null,
+    workspaceSlug && projectId && cycleId
+      ? () =>
+          cyclesService.getCycleIssuesWithParams(
+            workspaceSlug as string,
+            projectId as string,
+            cycleId as string,
+            {
+              target_date: `${renderDateFormat(
+                calendarDateRange.startDate
+              )};after,${renderDateFormat(calendarDateRange.endDate)};before`,
+            }
+          )
+      : null
+  );
+
+  const { data: moduleCalendarIssues } = useSWR(
+    workspaceSlug && projectId && moduleId
+      ? MODULE_CALENDAR_ISSUES(projectId as string, moduleId as string)
+      : null,
+    workspaceSlug && projectId && moduleId
+      ? () =>
+          modulesService.getModuleIssuesWithParams(
+            workspaceSlug as string,
+            projectId as string,
+            moduleId as string,
+            {
+              target_date: `${renderDateFormat(
+                calendarDateRange.startDate
+              )};after,${renderDateFormat(calendarDateRange.endDate)};before`,
+            }
+          )
       : null
   );
 
@@ -84,6 +128,8 @@ export const CalendarView = () => {
   });
 
   const currentViewDays = showWeekEnds ? totalDate : onlyWeekDays;
+
+  const calendarIssues = cycleCalendarIssues ?? moduleCalendarIssues ?? projectCalendarIssues;
 
   const currentViewDaysData = currentViewDays.map((date: Date) => {
     const filterIssue =
@@ -120,19 +166,48 @@ export const CalendarView = () => {
     if (!destination || !workspaceSlug || !projectId) return;
     if (source.droppableId === destination.droppableId) return;
 
-    mutate<IIssue[]>(
-      CALENDAR_ISSUES(projectId as string),
-      (prevData) =>
-        (prevData ?? []).map((p) => {
-          if (p.id === draggableId)
-            return {
-              ...p,
-              target_date: destination.droppableId,
-            };
-          return p;
-        }),
-      false
-    );
+    if (cycleId)
+      mutate<IIssue[]>(
+        CYCLE_CALENDAR_ISSUES(projectId as string, cycleId as string),
+        (prevData) =>
+          (prevData ?? []).map((p) => {
+            if (p.id === draggableId)
+              return {
+                ...p,
+                target_date: destination.droppableId,
+              };
+            return p;
+          }),
+        false
+      );
+    else if (moduleId)
+      mutate<IIssue[]>(
+        MODULE_CALENDAR_ISSUES(projectId as string, moduleId as string),
+        (prevData) =>
+          (prevData ?? []).map((p) => {
+            if (p.id === draggableId)
+              return {
+                ...p,
+                target_date: destination.droppableId,
+              };
+            return p;
+          }),
+        false
+      );
+    else
+      mutate<IIssue[]>(
+        PROJECT_CALENDAR_ISSUES(projectId as string),
+        (prevData) =>
+          (prevData ?? []).map((p) => {
+            if (p.id === draggableId)
+              return {
+                ...p,
+                target_date: destination.droppableId,
+              };
+            return p;
+          }),
+        false
+      );
 
     issuesService.patchIssue(workspaceSlug as string, projectId as string, draggableId, {
       target_date: destination?.droppableId,
@@ -248,9 +323,9 @@ export const CalendarView = () => {
             <button
               className="group flex cursor-pointer items-center gap-2 rounded-md border bg-white px-4 py-1.5 text-sm  hover:bg-gray-100 hover:text-gray-900 focus:outline-none"
               onClick={() => {
-                if(isMonthlyView){
-                  updateDate(new Date())
-                }else{
+                if (isMonthlyView) {
+                  updateDate(new Date());
+                } else {
                   setCurrentDate(new Date());
                   setCalendarDateRange({
                     startDate: getCurrentWeekStartDate(new Date()),

@@ -250,4 +250,5 @@ export interface IIssueViewOptions {
   group_by: TIssueGroupByOptions;
   order_by: TIssueOrderByOptions;
   filters: IIssueFilterOptions;
+  target_date: string;
 }

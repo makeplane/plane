@@ -111,7 +111,7 @@ class ProjectIssuesServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     moduleId: string,
-    queries?: IIssueViewOptions
+    queries?: Partial<IIssueViewOptions>
   ): Promise<
     | IIssue[]
     | {
