@@ -482,6 +482,7 @@ class IssueSerializer(BaseSerializer):
 
 
 class IssueLiteSerializer(BaseSerializer):
+    workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
     state_detail = StateLiteSerializer(read_only=True, source="state")
     label_details = LabelLiteSerializer(read_only=True, source="labels", many=True)
