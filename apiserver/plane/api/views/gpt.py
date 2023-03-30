@@ -73,7 +73,7 @@ class GPTIntegrationEndpoint(BaseAPIView):
                 max_tokens=1024,
             )
 
-            workspace = Workspace.objects.get(workspace__slug=slug)
+            workspace = Workspace.objects.get(slug=slug)
             project = Project.objects.get(pk=project_id)
 
             text = response.choices[0].text.strip()
