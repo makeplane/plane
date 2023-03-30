@@ -129,7 +129,8 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
                       }`}
                     </a>
                   </Link>
-                  <span
+                  <button
+                    type="button"
                     className="opacity-0 duration-300 group-hover:opacity-100"
                     onClick={() => {
                       const updatedBlockers: string[] = watch("blockers_list").filter(
@@ -141,7 +142,7 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
                     }}
                   >
                     <XMarkIcon className="h-2 w-2" />
-                  </span>
+                  </button>
                 </div>
               ))
             : null}
