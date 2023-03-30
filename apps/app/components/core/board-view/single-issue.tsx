@@ -15,6 +15,7 @@ import {
 // services
 import issuesService from "services/issues.service";
 // hooks
+import useIssuesView from "hooks/use-issues-view";
 import useToast from "hooks/use-toast";
 // components
 import {
@@ -24,41 +25,44 @@ import {
   ViewStateSelect,
 } from "components/issues/view-select";
 // ui
-import { ContextMenu, CustomMenu, Tooltip } from "components/ui";
+import { ContextMenu, CustomMenu } from "components/ui";
 // icons
 import {
   ClipboardDocumentCheckIcon,
   LinkIcon,
   PencilIcon,
   TrashIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 // helpers
+import { handleIssuesMutation } from "constants/issue";
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 // types
-import {
-  CycleIssueResponse,
-  IIssue,
-  ModuleIssueResponse,
-  NestedKeyOf,
-  Properties,
-  UserAuth,
-} from "types";
+import { IIssue, Properties, TIssueGroupByOptions, UserAuth } from "types";
 // fetch-keys
-import { CYCLE_ISSUES, MODULE_ISSUES, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import {
+  CYCLE_DETAILS,
+  CYCLE_ISSUES_WITH_PARAMS,
+  MODULE_DETAILS,
+  MODULE_ISSUES_WITH_PARAMS,
+  PROJECT_ISSUES_LIST_WITH_PARAMS,
+} from "constants/fetch-keys";
 
 type Props = {
   type?: string;
   provided: DraggableProvided;
   snapshot: DraggableStateSnapshot;
   issue: IIssue;
-  selectedGroup: NestedKeyOf<IIssue> | null;
   properties: Properties;
+  groupTitle?: string;
+  index: number;
+  selectedGroup: TIssueGroupByOptions;
   editIssue: () => void;
   makeIssueCopy: () => void;
   removeIssue?: (() => void) | null;
   handleDeleteIssue: (issue: IIssue) => void;
-  orderBy: NestedKeyOf<IIssue> | null;
   handleTrashBox: (isDragging: boolean) => void;
+  isCompleted?: boolean;
   userAuth: UserAuth;
 };
 
@@ -67,19 +71,23 @@ export const SingleBoardIssue: React.FC<Props> = ({
   provided,
   snapshot,
   issue,
-  selectedGroup,
   properties,
+  index,
+  selectedGroup,
   editIssue,
   makeIssueCopy,
   removeIssue,
+  groupTitle,
   handleDeleteIssue,
-  orderBy,
   handleTrashBox,
+  isCompleted = false,
   userAuth,
 }) => {
   // context menu
   const [contextMenu, setContextMenu] = useState(false);
   const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
+
+  const { orderBy, params } = useIssuesView();
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
@@ -91,75 +99,59 @@ export const SingleBoardIssue: React.FC<Props> = ({
       if (!workspaceSlug || !projectId) return;
 
       if (cycleId)
-        mutate<CycleIssueResponse[]>(
-          CYCLE_ISSUES(cycleId as string),
-          (prevData) => {
-            const updatedIssues = (prevData ?? []).map((p) => {
-              if (p.issue_detail.id === issue.id) {
-                return {
-                  ...p,
-                  issue_detail: {
-                    ...p.issue_detail,
-                    ...formData,
-                    assignees: formData.assignees_list ?? p.issue_detail.assignees_list,
-                  },
-                };
-              }
-              return p;
-            });
-            return [...updatedIssues];
-          },
+        mutate<
+          | {
+              [key: string]: IIssue[];
+            }
+          | IIssue[]
+        >(
+          CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params),
+          (prevData) =>
+            handleIssuesMutation(formData, groupTitle ?? "", selectedGroup, index, prevData),
           false
         );
 
       if (moduleId)
-        mutate<ModuleIssueResponse[]>(
-          MODULE_ISSUES(moduleId as string),
-          (prevData) => {
-            const updatedIssues = (prevData ?? []).map((p) => {
-              if (p.issue_detail.id === issue.id) {
-                return {
-                  ...p,
-                  issue_detail: {
-                    ...p.issue_detail,
-                    ...formData,
-                    assignees: formData.assignees_list ?? p.issue_detail.assignees_list,
-                  },
-                };
-              }
-              return p;
-            });
-            return [...updatedIssues];
-          },
+        mutate<
+          | {
+              [key: string]: IIssue[];
+            }
+          | IIssue[]
+        >(
+          MODULE_ISSUES_WITH_PARAMS(moduleId as string),
+          (prevData) =>
+            handleIssuesMutation(formData, groupTitle ?? "", selectedGroup, index, prevData),
           false
         );
 
-      mutate<IIssue[]>(
-        PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
+      mutate<
+        | {
+            [key: string]: IIssue[];
+          }
+        | IIssue[]
+      >(
+        PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params),
         (prevData) =>
-          (prevData ?? []).map((p) => {
-            if (p.id === issue.id)
-              return { ...p, ...formData, assignees: formData.assignees_list ?? p.assignees_list };
-
-            return p;
-          }),
-
+          handleIssuesMutation(formData, groupTitle ?? "", selectedGroup, index, prevData),
         false
       );
 
       issuesService
         .patchIssue(workspaceSlug as string, projectId as string, issue.id, formData)
-        .then((res) => {
-          if (cycleId) mutate(CYCLE_ISSUES(cycleId as string));
-          if (moduleId) mutate(MODULE_ISSUES(moduleId as string));
-
-          mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
+        .then(() => {
+          if (cycleId) {
+            mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
+            mutate(CYCLE_DETAILS(cycleId as string));
+          } else if (moduleId) {
+            mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
+            mutate(MODULE_DETAILS(moduleId as string));
+          } else mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
         })
         .catch((error) => {
           console.log(error);
         });
     },
-    [workspaceSlug, projectId, cycleId, moduleId, issue]
+    [workspaceSlug, projectId, cycleId, moduleId, issue, groupTitle, index, selectedGroup, params]
   );
 
   const getStyle = (
@@ -168,9 +160,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
   ) => {
     if (orderBy === "sort_order") return style;
     if (!snapshot.isDragging) return {};
-    if (!snapshot.isDropAnimating) {
-      return style;
-    }
+    if (!snapshot.isDropAnimating) return style;
 
     return {
       ...style,
@@ -196,7 +186,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
     if (snapshot.isDragging) handleTrashBox(snapshot.isDragging);
   }, [snapshot, handleTrashBox]);
 
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || isCompleted;
 
   return (
     <>
@@ -206,15 +196,19 @@ export const SingleBoardIssue: React.FC<Props> = ({
         isOpen={contextMenu}
         setIsOpen={setContextMenu}
       >
-        <ContextMenu.Item Icon={PencilIcon} onClick={editIssue}>
-          Edit issue
-        </ContextMenu.Item>
-        <ContextMenu.Item Icon={ClipboardDocumentCheckIcon} onClick={makeIssueCopy}>
-          Make a copy...
-        </ContextMenu.Item>
-        <ContextMenu.Item Icon={TrashIcon} onClick={() => handleDeleteIssue(issue)}>
-          Delete issue
-        </ContextMenu.Item>
+        {!isNotAllowed && (
+          <>
+            <ContextMenu.Item Icon={PencilIcon} onClick={editIssue}>
+              Edit issue
+            </ContextMenu.Item>
+            <ContextMenu.Item Icon={ClipboardDocumentCheckIcon} onClick={makeIssueCopy}>
+              Make a copy...
+            </ContextMenu.Item>
+            <ContextMenu.Item Icon={TrashIcon} onClick={() => handleDeleteIssue(issue)}>
+              Delete issue
+            </ContextMenu.Item>
+          </>
+        )}
         <ContextMenu.Item Icon={LinkIcon} onClick={handleCopyText}>
           Copy issue link
         </ContextMenu.Item>
@@ -233,22 +227,36 @@ export const SingleBoardIssue: React.FC<Props> = ({
           setContextMenuPosition({ x: e.pageX, y: e.pageY });
         }}
       >
-        <div className="group/card relative select-none p-4">
+        <div className="group/card relative select-none p-3.5">
           {!isNotAllowed && (
-            <div className="absolute top-1.5 right-1.5 z-10 opacity-0 group-hover/card:opacity-100">
+            <div className="z-1 absolute top-1.5 right-1.5 opacity-0 group-hover/card:opacity-100">
               {type && !isNotAllowed && (
                 <CustomMenu width="auto" ellipsis>
-                  <CustomMenu.MenuItem onClick={editIssue}>Edit issue</CustomMenu.MenuItem>
+                  <CustomMenu.MenuItem onClick={editIssue}>
+                    <div className="flex items-center justify-start gap-2">
+                      <PencilIcon className="h-4 w-4" />
+                      <span>Edit issue</span>
+                    </div>
+                  </CustomMenu.MenuItem>
                   {type !== "issue" && removeIssue && (
                     <CustomMenu.MenuItem onClick={removeIssue}>
-                      <>Remove from {type}</>
+                      <div className="flex items-center justify-start gap-2">
+                        <XMarkIcon className="h-4 w-4" />
+                        <span>Remove from {type}</span>
+                      </div>
                     </CustomMenu.MenuItem>
                   )}
                   <CustomMenu.MenuItem onClick={() => handleDeleteIssue(issue)}>
-                    Delete issue
+                    <div className="flex items-center justify-start gap-2">
+                      <TrashIcon className="h-4 w-4" />
+                      <span>Delete issue</span>
+                    </div>
                   </CustomMenu.MenuItem>
                   <CustomMenu.MenuItem onClick={handleCopyText}>
-                    Copy issue link
+                    <div className="flex items-center justify-start gap-2">
+                      <LinkIcon className="h-4 w-4" />
+                      <span>Copy issue Link</span>
+                    </div>
                   </CustomMenu.MenuItem>
                 </CustomMenu>
               )}
@@ -301,7 +309,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
             {properties.labels && issue.label_details.length > 0 && (
               <div className="flex flex-wrap gap-1">
                 {issue.label_details.map((label) => (
-                  <span
+                  <div
                     key={label.id}
                     className="group flex items-center gap-1 rounded-2xl border px-2 py-0.5 text-xs"
                   >
@@ -312,7 +320,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
                       }}
                     />
                     {label.name}
-                  </span>
+                  </div>
                 ))}
               </div>
             )}

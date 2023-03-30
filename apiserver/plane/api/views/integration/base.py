@@ -25,7 +25,7 @@ from plane.utils.integrations.github import (
     get_github_metadata,
     delete_github_installation,
 )
-
+from plane.api.permissions import WorkSpaceAdminPermission
 
 class IntegrationViewSet(BaseViewSet):
     serializer_class = IntegrationSerializer
@@ -75,10 +75,32 @@ class IntegrationViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+    def destroy(self, request, pk):
+        try:
+            integration = Integration.objects.get(pk=pk)
+            if integration.verified:
+                return Response(
+                    {"error": "Verified integrations cannot be updated"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            integration.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Integration.DoesNotExist:
+            return Response(
+                {"error": "Integration Does not exist"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
 
 class WorkspaceIntegrationViewSet(BaseViewSet):
     serializer_class = WorkspaceIntegrationSerializer
     model = WorkspaceIntegration
+
+    permission_classes = [
+        WorkSpaceAdminPermission,
+    ]
+
 
     def get_queryset(self):
         return (

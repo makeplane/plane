@@ -1,13 +1,15 @@
 import React from "react";
-// next
+
 import Link from "next/link";
+
 // react hook form
 import { useForm } from "react-hook-form";
-// ui
-import { Button, Input } from "components/ui";
+// services
 import authenticationService from "services/authentication.service";
+// hooks
 import useToast from "hooks/use-toast";
-
+// ui
+import { Input, SecondaryButton } from "components/ui";
 // types
 type EmailPasswordFormValues = {
   email: string;
@@ -58,7 +60,7 @@ export const EmailPasswordForm = ({ onSuccess }: any) => {
   };
   return (
     <>
-      <form className="mt-5" onSubmit={handleSubmit(onSubmit)}>
+      <form className="mt-5 py-5 px-5" onSubmit={handleSubmit(onSubmit)}>
         <div>
           <Input
             id="email"
@@ -97,13 +99,13 @@ export const EmailPasswordForm = ({ onSuccess }: any) => {
           </div>
         </div>
         <div className="mt-5">
-          <Button
-            disabled={isSubmitting || (!isValid && isDirty)}
-            className="w-full text-center"
+          <SecondaryButton
             type="submit"
+            className="w-full text-center"
+            loading={isSubmitting || (!isValid && isDirty)}
           >
             {isSubmitting ? "Signing in..." : "Sign In"}
-          </Button>
+          </SecondaryButton>
         </div>
       </form>
     </>

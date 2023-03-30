@@ -15,17 +15,20 @@ import useUser from "hooks/use-user";
 import useToast from "hooks/use-toast";
 // components
 import { IssueForm } from "components/issues";
+// hooks
+import useIssuesView from "hooks/use-issues-view";
 // types
 import type { IIssue } from "types";
 // fetch keys
 import {
   PROJECT_ISSUES_DETAILS,
   PROJECT_ISSUES_LIST,
-  CYCLE_ISSUES,
   USER_ISSUE,
   PROJECTS_LIST,
-  MODULE_ISSUES,
   SUB_ISSUES,
+  PROJECT_ISSUES_LIST_WITH_PARAMS,
+  CYCLE_ISSUES_WITH_PARAMS,
+  MODULE_ISSUES_WITH_PARAMS,
 } from "constants/fetch-keys";
 
 export interface IssuesModalProps {
@@ -49,6 +52,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+
+  const { params } = useIssuesView();
 
   if (cycleId) prePopulateData = { ...prePopulateData, cycle: cycleId as string };
   if (moduleId) prePopulateData = { ...prePopulateData, module: moduleId as string };
@@ -95,27 +100,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
       .addIssueToCycle(workspaceSlug as string, activeProject ?? "", cycleId, {
         issues: [issueId],
       })
-      .then((res) => {
-        mutate(CYCLE_ISSUES(cycleId));
-        if (isUpdatingSingleIssue) {
-          mutate<IIssue>(
-            PROJECT_ISSUES_DETAILS,
-            (prevData) => ({ ...(prevData as IIssue), sprints: cycleId }),
-            false
-          );
-        } else
-          mutate<IIssue[]>(
-            PROJECT_ISSUES_LIST(workspaceSlug as string, activeProject ?? ""),
-            (prevData) =>
-              (prevData ?? []).map((i) => {
-                if (i.id === res.id) return { ...i, sprints: cycleId };
-                return i;
-              }),
-            false
-          );
-      })
-      .catch((err) => {
-        console.log(err);
+      .then(() => {
+        mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId, params));
       });
   };
 
@@ -126,18 +112,16 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
       .addIssuesToModule(workspaceSlug as string, activeProject ?? "", moduleId as string, {
         issues: [issueId],
       })
-      .then((res) => {
-        console.log(res);
-        mutate(MODULE_ISSUES(moduleId as string));
-      })
-      .catch((e) => console.log(e));
+      .then(() => {
+        mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
+      });
   };
 
   const createIssue = async (payload: Partial<IIssue>) => {
     await issuesService
       .createIssues(workspaceSlug as string, activeProject ?? "", payload)
       .then((res) => {
-        mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, activeProject ?? ""));
+        mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
 
         if (payload.cycle && payload.cycle !== "") addIssueToCycle(res.id, payload.cycle);
         if (payload.module && payload.module !== "") addIssueToModule(res.id, payload.module);
@@ -171,7 +155,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
           mutate<IIssue>(PROJECT_ISSUES_DETAILS, (prevData) => ({ ...prevData, ...res }), false);
         } else {
           mutate<IIssue[]>(
-            PROJECT_ISSUES_LIST(workspaceSlug as string, activeProject ?? ""),
+            PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params),
             (prevData) =>
               (prevData ?? []).map((i) => {
                 if (i.id === res.id) return { ...i, ...res };
@@ -231,7 +215,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
         </Transition.Child>
 
         <div className="fixed inset-0 z-10 overflow-y-auto">
-          <div className="mt-10 flex min-h-full items-start justify-center p-4 text-center sm:p-0 md:mt-20">
+          <div className="my-10  flex  items-center justify-center p-4 text-center sm:p-0 md:my-20">
             <Transition.Child
               as={React.Fragment}
               enter="ease-out duration-300"

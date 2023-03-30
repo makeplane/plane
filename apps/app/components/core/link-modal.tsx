@@ -1,15 +1,11 @@
 import React from "react";
 
-import { useRouter } from "next/router";
-
-import { mutate } from "swr";
-
 // react-hook-form
 import { useForm } from "react-hook-form";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // ui
-import { Button, Input } from "components/ui";
+import { Input, PrimaryButton, SecondaryButton } from "components/ui";
 // types
 import type { IIssueLink, ModuleLink } from "types";
 
@@ -116,12 +112,10 @@ export const LinkModal: React.FC<Props> = ({ isOpen, handleClose, onFormSubmit }
                     </div>
                   </div>
                   <div className="mt-5 flex justify-end gap-2">
-                    <Button theme="secondary" onClick={onClose}>
-                      Cancel
-                    </Button>
-                    <Button type="submit" disabled={isSubmitting}>
+                    <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
+                    <PrimaryButton onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
                       {isSubmitting ? "Adding Link..." : "Add Link"}
-                    </Button>
+                    </PrimaryButton>
                   </div>
                 </form>
               </Dialog.Panel>

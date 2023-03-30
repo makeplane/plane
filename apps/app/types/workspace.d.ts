@@ -1,4 +1,4 @@
-import type { IProjectMember, IUser, IUserLite } from "./";
+import type { IProjectMember, IUser, IUserLite } from "types";
 
 export interface IWorkspace {
   readonly id: string;
@@ -14,6 +14,12 @@ export interface IWorkspace {
   readonly created_by: string;
   readonly updated_by: string;
   company_size: number | null;
+}
+
+export interface IWorkspaceLite {
+  readonly id: string;
+  name: string;
+  slug: string;
 }
 
 export interface IWorkspaceMemberInvitation {
@@ -45,37 +51,34 @@ export interface ILastActiveWorkspaceDetails {
   project_details?: IProjectMember[];
 }
 
-export interface IAppIntegrations {
-  author: string;
-  author: "";
-  avatar_url: string | null;
-  created_at: string;
-  created_by: string | null;
-  description: any;
+export interface IWorkspaceDefaultSearchResult {
+  name: string;
   id: string;
-  metadata: any;
-  network: number;
-  provider: string;
-  redirect_url: string;
-  title: string;
-  updated_at: string;
-  updated_by: string | null;
-  verified: boolean;
-  webhook_secret: string;
-  webhook_url: string;
+  project_id: string;
+  workspace__slug: string;
+}
+export interface IWorkspaceSearchResult {
+  name: string;
+  id: string;
+  slug: string;
 }
 
-export interface IWorkspaceIntegrations {
-  actor: string;
-  api_token: string;
-  config: any;
-  created_at: string;
-  created_by: string;
+export interface IWorkspaceIssueSearchResult {
+  name: string;
   id: string;
-  integration: string;
-  integration_detail: IIntegrations;
-  metadata: any;
-  updated_at: string;
-  updated_by: string;
-  workspace: string;
+  sequence_id: number;
+  project__identifier: string;
+  project_id: string;
+  workspace__slug: string;
+}
+export interface IWorkspaceSearchResults {
+  results: {
+    workspace: IWorkspaceSearchResult[];
+    project: IWorkspaceDefaultSearchResult[];
+    issue: IWorkspaceIssueSearchResult[];
+    cycle: IWorkspaceDefaultSearchResult[];
+    module: IWorkspaceDefaultSearchResult[];
+    issue_view: IWorkspaceDefaultSearchResult[];
+    page: IWorkspaceDefaultSearchResult[];
+  };
 }

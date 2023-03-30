@@ -676,8 +676,8 @@ def create_comment_activity(
             verb="created",
             actor=actor,
             field="comment",
-            new_value=requested_data.get("comment_html"),
-            new_identifier=requested_data.get("id"),
+            new_value=requested_data.get("comment_html", ""),
+            new_identifier=requested_data.get("id", None),
             issue_comment_id=requested_data.get("id", None),
         )
     )
@@ -696,11 +696,11 @@ def update_comment_activity(
                 verb="updated",
                 actor=actor,
                 field="comment",
-                old_value=current_instance.get("comment_html"),
+                old_value=current_instance.get("comment_html", ""),
                 old_identifier=current_instance.get("id"),
-                new_value=requested_data.get("comment_html"),
-                new_identifier=current_instance.get("id"),
-                issue_comment_id=current_instance.get("id"),
+                new_value=requested_data.get("comment_html", ""),
+                new_identifier=current_instance.get("id", None),
+                issue_comment_id=current_instance.get("id", None),
             )
         )
 
@@ -742,7 +742,11 @@ def issue_activity(event):
     try:
         issue_activities = []
         type = event.get("type")
-        requested_data = json.loads(event.get("requested_data"))
+        requested_data = (
+            json.loads(event.get("requested_data"))
+            if event.get("current_instance") is not None
+            else None
+        )
         current_instance = (
             json.loads(event.get("current_instance"))
             if event.get("current_instance") is not None

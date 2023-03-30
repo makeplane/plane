@@ -6,8 +6,21 @@ import { Disclosure, Transition } from "@headlessui/react";
 // ui
 import { CustomMenu } from "components/ui";
 // icons
-import { ChevronDownIcon, Cog6ToothIcon } from "@heroicons/react/24/outline";
-import { ContrastIcon, LayerDiagonalIcon, PeopleGroupIcon } from "components/icons";
+import {
+  ChevronDownIcon,
+  DocumentTextIcon,
+  LinkIcon,
+  StarIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
+import {
+  ContrastIcon,
+  LayerDiagonalIcon,
+  PencilScribbleIcon,
+  PeopleGroupIcon,
+  SettingIcon,
+  ViewListIcon,
+} from "components/icons";
 // helpers
 import { truncateText } from "helpers/string.helper";
 // types
@@ -39,9 +52,19 @@ const navigation = (workspaceSlug: string, projectId: string) => [
     icon: PeopleGroupIcon,
   },
   {
+    name: "Views",
+    href: `/${workspaceSlug}/projects/${projectId}/views`,
+    icon: ViewListIcon,
+  },
+  {
+    name: "Pages",
+    href: `/${workspaceSlug}/projects/${projectId}/pages`,
+    icon: DocumentTextIcon,
+  },
+  {
     name: "Settings",
     href: `/${workspaceSlug}/projects/${projectId}/settings`,
-    icon: Cog6ToothIcon,
+    icon: SettingIcon,
   },
 ];
 
@@ -94,20 +117,32 @@ export const SingleSidebarProject: React.FC<Props> = ({
             {!sidebarCollapse && (
               <CustomMenu ellipsis>
                 <CustomMenu.MenuItem onClick={handleDeleteProject}>
-                  Delete project
+                  <span className="flex items-center justify-start gap-2 ">
+                    <TrashIcon className="h-4 w-4" />
+                    <span>Delete project</span>
+                  </span>
                 </CustomMenu.MenuItem>
                 {handleAddToFavorites && (
                   <CustomMenu.MenuItem onClick={handleAddToFavorites}>
-                    Add to favorites
+                    <span className="flex items-center justify-start gap-2">
+                      <StarIcon className="h-4 w-4" />
+                      <span>Add to favorites</span>
+                    </span>
                   </CustomMenu.MenuItem>
                 )}
                 {handleRemoveFromFavorites && (
                   <CustomMenu.MenuItem onClick={handleRemoveFromFavorites}>
-                    Remove from favorites
+                    <span className="flex items-center justify-start gap-2">
+                      <StarIcon className="h-4 w-4" />
+                      <span>Remove from favorites</span>
+                    </span>
                   </CustomMenu.MenuItem>
                 )}
                 <CustomMenu.MenuItem onClick={handleCopyText}>
-                  Copy project link
+                  <span className="flex items-center justify-start gap-2">
+                    <LinkIcon className="h-4 w-4" />
+                    <span>Copy project link</span>
+                  </span>
                 </CustomMenu.MenuItem>
               </CustomMenu>
             )}
@@ -125,13 +160,18 @@ export const SingleSidebarProject: React.FC<Props> = ({
               className={`${sidebarCollapse ? "" : "ml-[2.25rem]"} flex flex-col gap-y-1`}
             >
               {navigation(workspaceSlug as string, project?.id).map((item) => {
-                if (item.name === "Cycles" && !project.cycle_view) return;
-                if (item.name === "Modules" && !project.module_view) return;
+                if (
+                  (item.name === "Cycles" && !project.cycle_view) ||
+                  (item.name === "Modules" && !project.module_view) ||
+                  (item.name === "Views" && !project.issue_views_view) ||
+                  (item.name === "Pages" && !project.page_view)
+                )
+                  return;
 
                 return (
                   <Link key={item.name} href={item.href}>
                     <a
-                      className={`group flex items-center rounded-md px-2 py-2 text-xs font-medium outline-none ${
+                      className={`group flex items-center rounded-md p-2 text-xs font-medium outline-none ${
                         item.href === router.asPath
                           ? "bg-indigo-50 text-gray-900"
                           : "text-gray-500 hover:bg-indigo-50 hover:text-gray-900 focus:bg-indigo-50 focus:text-gray-900"
@@ -144,6 +184,7 @@ export const SingleSidebarProject: React.FC<Props> = ({
                               ? "text-gray-900"
                               : "text-gray-500 group-hover:text-gray-900"
                           } ${!sidebarCollapse ? "mr-3" : ""}`}
+                          color={item.href === router.asPath ? "#111827" : "#858e96"}
                           aria-hidden="true"
                         />
                       </div>

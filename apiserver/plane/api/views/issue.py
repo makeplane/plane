@@ -1,10 +1,13 @@
 # Python imports
 import json
+import random
 from itertools import groupby, chain
 
 # Django imports
 from django.db.models import Prefetch, OuterRef, Func, F, Q
 from django.core.serializers.json import DjangoJSONEncoder
+from django.utils.decorators import method_decorator
+from django.views.decorators.gzip import gzip_page
 
 # Third Party imports
 from rest_framework.response import Response
@@ -24,6 +27,7 @@ from plane.api.serializers import (
     LabelSerializer,
     IssueFlatSerializer,
     IssueLinkSerializer,
+    IssueLiteSerializer,
 )
 from plane.api.permissions import (
     ProjectEntityPermission,
@@ -38,13 +42,11 @@ from plane.db.models import (
     TimelineIssue,
     IssueProperty,
     Label,
-    IssueBlocker,
-    CycleIssue,
-    ModuleIssue,
     IssueLink,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
+from plane.utils.issue_filters import issue_filters
 
 
 class IssueViewSet(BaseViewSet):
@@ -133,59 +135,29 @@ class IssueViewSet(BaseViewSet):
             .select_related("parent")
             .prefetch_related("assignees")
             .prefetch_related("labels")
-            .prefetch_related(
-                Prefetch(
-                    "blocked_issues",
-                    queryset=IssueBlocker.objects.select_related("blocked_by", "block"),
-                )
-            )
-            .prefetch_related(
-                Prefetch(
-                    "blocker_issues",
-                    queryset=IssueBlocker.objects.select_related("block", "blocked_by"),
-                )
-            )
-            .prefetch_related(
-                Prefetch(
-                    "issue_cycle",
-                    queryset=CycleIssue.objects.select_related("cycle", "issue"),
-                ),
-            )
-            .prefetch_related(
-                Prefetch(
-                    "issue_module",
-                    queryset=ModuleIssue.objects.select_related(
-                        "module", "issue"
-                    ).prefetch_related("module__members"),
-                ),
-            )
-            .prefetch_related(
-                Prefetch(
-                    "issue_link",
-                    queryset=IssueLink.objects.select_related("issue").select_related(
-                        "created_by"
-                    ),
-                )
-            )
         )
 
+    @method_decorator(gzip_page)
     def list(self, request, slug, project_id):
         try:
-            # Issue State groups
-            type = request.GET.get("type", "all")
-            group = ["backlog", "unstarted", "started", "completed", "cancelled"]
-            if type == "backlog":
-                group = ["backlog"]
-            if type == "active":
-                group = ["unstarted", "started"]
+            filters = issue_filters(request.query_params, "GET")
+            show_sub_issues = request.GET.get("show_sub_issues", "true")
 
             issue_queryset = (
                 self.get_queryset()
                 .order_by(request.GET.get("order_by", "created_at"))
-                .filter(state__group__in=group)
+                .filter(**filters)
+                .annotate(cycle_id=F("issue_cycle__id"))
+                .annotate(module_id=F("issue_module__id"))
             )
 
-            issues = IssueSerializer(issue_queryset, many=True).data
+            issue_queryset = (
+                issue_queryset
+                if show_sub_issues == "true"
+                else issue_queryset.filter(parent__isnull=True)
+            )
+
+            issues = IssueLiteSerializer(issue_queryset, many=True).data
 
             ## Grouping the results
             group_by = request.GET.get("group_by", False)
@@ -197,7 +169,6 @@ class IssueViewSet(BaseViewSet):
             return Response(issues, status=status.HTTP_200_OK)
 
         except Exception as e:
-            print(e)
             capture_exception(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
@@ -235,8 +206,20 @@ class IssueViewSet(BaseViewSet):
                 {"error": "Project was not found"}, status=status.HTTP_404_NOT_FOUND
             )
 
+    def retrieve(self, request, slug, project_id, pk=None):
+        try:
+            issue = Issue.objects.get(
+                workspace__slug=slug, project_id=project_id, pk=pk
+            )
+            return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
+        except Issue.DoesNotExist:
+            return Response(
+                {"error": "Issue Does not exist"}, status=status.HTTP_404_NOT_FOUND
+            )
+
 
 class UserWorkSpaceIssues(BaseAPIView):
+    @method_decorator(gzip_page)
     def get(self, request, slug):
         try:
             issues = (
@@ -253,44 +236,9 @@ class UserWorkSpaceIssues(BaseAPIView):
                 .select_related("parent")
                 .prefetch_related("assignees")
                 .prefetch_related("labels")
-                .prefetch_related(
-                    Prefetch(
-                        "blocked_issues",
-                        queryset=IssueBlocker.objects.select_related(
-                            "blocked_by", "block"
-                        ),
-                    )
-                )
-                .prefetch_related(
-                    Prefetch(
-                        "blocker_issues",
-                        queryset=IssueBlocker.objects.select_related(
-                            "block", "blocked_by"
-                        ),
-                    )
-                )
-                .prefetch_related(
-                    Prefetch(
-                        "issue_cycle",
-                        queryset=CycleIssue.objects.select_related("cycle", "issue"),
-                    ),
-                )
-                .prefetch_related(
-                    Prefetch(
-                        "issue_module",
-                        queryset=ModuleIssue.objects.select_related("module", "issue"),
-                    ),
-                )
-                .prefetch_related(
-                    Prefetch(
-                        "issue_link",
-                        queryset=IssueLink.objects.select_related(
-                            "issue"
-                        ).select_related("created_by"),
-                    )
-                )
+                .order_by("-created_at")
             )
-            serializer = IssueSerializer(issues, many=True)
+            serializer = IssueLiteSerializer(issues, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)
@@ -305,10 +253,13 @@ class WorkSpaceIssuesEndpoint(BaseAPIView):
         WorkSpaceAdminPermission,
     ]
 
+    @method_decorator(gzip_page)
     def get(self, request, slug):
         try:
-            issues = Issue.objects.filter(workspace__slug=slug).filter(
-                project__project_projectmember__member=self.request.user
+            issues = (
+                Issue.objects.filter(workspace__slug=slug)
+                .filter(project__project_projectmember__member=self.request.user)
+                .order_by("-created_at")
             )
             serializer = IssueSerializer(issues, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -325,6 +276,7 @@ class IssueActivityEndpoint(BaseAPIView):
         ProjectEntityPermission,
     ]
 
+    @method_decorator(gzip_page)
     def get(self, request, slug, project_id, issue_id):
         try:
             issue_activities = (
@@ -333,8 +285,8 @@ class IssueActivityEndpoint(BaseAPIView):
                     ~Q(field="comment"),
                     project__project_projectmember__member=self.request.user,
                 )
-                .select_related("actor")
-            ).order_by("created_by")
+                .select_related("actor", "workspace")
+            ).order_by("created_at")
             issue_comments = (
                 IssueComment.objects.filter(issue_id=issue_id)
                 .filter(project__project_projectmember__member=self.request.user)
@@ -561,6 +513,7 @@ class LabelViewSet(BaseViewSet):
             .select_related("project")
             .select_related("workspace")
             .select_related("parent")
+            .order_by("name")
             .distinct()
         )
 
@@ -605,6 +558,7 @@ class SubIssuesEndpoint(BaseAPIView):
         ProjectEntityPermission,
     ]
 
+    @method_decorator(gzip_page)
     def get(self, request, slug, project_id, issue_id):
         try:
             sub_issues = (
@@ -617,37 +571,9 @@ class SubIssuesEndpoint(BaseAPIView):
                 .select_related("parent")
                 .prefetch_related("assignees")
                 .prefetch_related("labels")
-                .prefetch_related(
-                    Prefetch(
-                        "blocked_issues",
-                        queryset=IssueBlocker.objects.select_related(
-                            "blocked_by", "block"
-                        ),
-                    )
-                )
-                .prefetch_related(
-                    Prefetch(
-                        "blocker_issues",
-                        queryset=IssueBlocker.objects.select_related(
-                            "block", "blocked_by"
-                        ),
-                    )
-                )
-                .prefetch_related(
-                    Prefetch(
-                        "issue_cycle",
-                        queryset=CycleIssue.objects.select_related("cycle", "issue"),
-                    ),
-                )
-                .prefetch_related(
-                    Prefetch(
-                        "issue_module",
-                        queryset=ModuleIssue.objects.select_related("module", "issue"),
-                    ),
-                )
             )
 
-            serializer = IssueSerializer(sub_issues, many=True)
+            serializer = IssueLiteSerializer(sub_issues, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)
@@ -715,5 +641,45 @@ class IssueLinkViewSet(BaseViewSet):
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(issue_id=self.kwargs.get("issue_id"))
             .filter(project__project_projectmember__member=self.request.user)
+            .order_by("-created_at")
             .distinct()
         )
+
+
+class BulkCreateIssueLabelsEndpoint(BaseAPIView):
+    def post(self, request, slug, project_id):
+        try:
+            label_data = request.data.get("label_data", [])
+            project = Project.objects.get(pk=project_id)
+
+            labels = Label.objects.bulk_create(
+                [
+                    Label(
+                        name=label.get("name", "Migrated"),
+                        description=label.get("description", "Migrated Issue"),
+                        color="#" + "%06x" % random.randint(0, 0xFFFFFF),
+                        project_id=project_id,
+                        workspace_id=project.workspace_id,
+                        created_by=request.user,
+                        updated_by=request.user,
+                    )
+                    for label in label_data
+                ],
+                batch_size=50,
+                ignore_conflicts=True,
+            )
+
+            return Response(
+                {"labels": LabelSerializer(labels, many=True).data},
+                status=status.HTTP_201_CREATED,
+            )
+        except Project.DoesNotExist:
+            return Response(
+                {"error": "Project Does not exist"}, status=status.HTTP_404_NOT_FOUND
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )

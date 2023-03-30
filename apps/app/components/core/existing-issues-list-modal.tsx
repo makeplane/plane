@@ -1,17 +1,25 @@
 import React, { useState } from "react";
 
+import { useRouter } from "next/router";
+
+import { mutate } from "swr";
+
 // react-hook-form
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-// hooks
-import { Combobox, Dialog, Transition } from "@headlessui/react";
-import { MagnifyingGlassIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
-import useToast from "hooks/use-toast";
 // headless ui
+import { Combobox, Dialog, Transition } from "@headlessui/react";
+// hooks
+import useToast from "hooks/use-toast";
+import useIssuesView from "hooks/use-issues-view";
 // ui
-import { Button } from "components/ui";
+import { PrimaryButton, SecondaryButton } from "components/ui";
+// icons
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { LayerDiagonalIcon } from "components/icons";
 // types
 import { IIssue } from "types";
+// fetch-keys
+import { CYCLE_ISSUES_WITH_PARAMS, MODULE_ISSUES_WITH_PARAMS } from "constants/fetch-keys";
 
 type FormInput = {
   issues: string[];
@@ -32,7 +40,12 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
 }) => {
   const [query, setQuery] = useState("");
 
+  const router = useRouter();
+  const { cycleId, moduleId } = router.query;
+
   const { setToastAlert } = useToast();
+
+  const { params } = useIssuesView();
 
   const handleClose = () => {
     onClose();
@@ -63,6 +76,9 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
     }
 
     await handleOnSubmit(data);
+    if (cycleId) mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
+    if (moduleId) mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
+
     handleClose();
 
     setToastAlert({
@@ -180,17 +196,10 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                   />
                   {filteredIssues.length > 0 && (
                     <div className="flex items-center justify-end gap-2 p-3">
-                      <Button type="button" theme="secondary" size="sm" onClick={handleClose}>
-                        Cancel
-                      </Button>
-                      <Button
-                        type="button"
-                        size="sm"
-                        onClick={handleSubmit(onSubmit)}
-                        disabled={isSubmitting}
-                      >
+                      <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                      <PrimaryButton onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
                         {isSubmitting ? "Adding..." : "Add selected issues"}
-                      </Button>
+                      </PrimaryButton>
                     </div>
                   )}
                 </form>

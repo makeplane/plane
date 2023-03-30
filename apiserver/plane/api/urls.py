@@ -21,6 +21,7 @@ from plane.api.views import (
     # User
     UserEndpoint,
     UpdateUserOnBoardedEndpoint,
+    UserActivityEndpoint,
     ## End User
     # Workspaces
     WorkSpaceViewSet,
@@ -38,9 +39,13 @@ from plane.api.views import (
     AddTeamToProjectEndpoint,
     UserLastProjectWithWorkspaceEndpoint,
     UserWorkspaceInvitationEndpoint,
+    UserActivityGraphEndpoint,
+    UserIssueCompletedGraphEndpoint,
+    UserWorkspaceDashboardEndpoint,
     ## End Workspaces
     # File Assets
     FileAssetEndpoint,
+    UserAssetsEndpoint,
     ## End File Assets
     # Projects
     ProjectViewSet,
@@ -61,13 +66,14 @@ from plane.api.views import (
     IssueCommentViewSet,
     UserWorkSpaceIssues,
     BulkDeleteIssuesEndpoint,
+    BulkImportIssuesEndpoint,
     ProjectUserViewsEndpoint,
     TimeLineIssueViewSet,
     IssuePropertyViewSet,
     LabelViewSet,
     SubIssuesEndpoint,
     IssueLinkViewSet,
-    ModuleLinkViewSet,
+    BulkCreateIssueLabelsEndpoint,
     ## End Issues
     # States
     StateViewSet,
@@ -76,7 +82,9 @@ from plane.api.views import (
     ShortCutViewSet,
     ## End Shortcuts
     # Views
-    ViewViewSet,
+    IssueViewViewSet,
+    ViewIssuesEndpoint,
+    IssueViewFavoriteViewSet,
     ## End Views
     # Cycles
     CycleViewSet,
@@ -86,12 +94,26 @@ from plane.api.views import (
     CompletedCyclesEndpoint,
     CycleFavoriteViewSet,
     DraftCyclesEndpoint,
+    TransferCycleIssueEndpoint,
+    InCompleteCyclesEndpoint,
     ## End Cycles
     # Modules
     ModuleViewSet,
     ModuleIssueViewSet,
     ModuleFavoriteViewSet,
+    ModuleLinkViewSet,
+    BulkImportModulesEndpoint,
     ## End Modules
+    # Pages
+    PageViewSet,
+    PageBlockViewSet,
+    PageFavoriteViewSet,
+    CreateIssueFromPageBlockEndpoint,
+    RecentPagesEndpoint,
+    FavoritePagesEndpoint,
+    MyPagesEndpoint,
+    CreatedbyOtherPagesEndpoint,
+    ## End Pages
     # Api Tokens
     ApiTokenEndpoint,
     ## End Api Tokens
@@ -102,7 +124,19 @@ from plane.api.views import (
     GithubRepositorySyncViewSet,
     GithubIssueSyncViewSet,
     GithubCommentSyncViewSet,
+    BulkCreateGithubIssueSyncEndpoint,
     ## End Integrations
+    # Importer
+    ServiceIssueImportSummaryEndpoint,
+    ImportServiceEndpoint,
+    UpdateServiceImportStatusEndpoint,
+    ## End importer
+    # Search
+    GlobalSearchEndpoint,
+    ## End Search
+    # Gpt
+    GPTIntegrationEndpoint,
+    ## End Gpt
 )
 
 
@@ -153,6 +187,7 @@ urlpatterns = [
         UpdateUserOnBoardedEndpoint.as_view(),
         name="change-password",
     ),
+    path("users/activities/", UserActivityEndpoint.as_view(), name="user-activities"),
     # user workspaces
     path(
         "users/me/workspaces/",
@@ -176,6 +211,23 @@ urlpatterns = [
         name="workspace",
     ),
     # user join workspace
+    # User Graphs
+    path(
+        "users/me/workspaces/<str:slug>/activity-graph/",
+        UserActivityGraphEndpoint.as_view(),
+        name="user-activity-graph",
+    ),
+    path(
+        "users/me/workspaces/<str:slug>/issues-completed-graph/",
+        UserIssueCompletedGraphEndpoint.as_view(),
+        name="completed-graph",
+    ),
+    path(
+        "users/me/workspaces/<str:slug>/dashboard/",
+        UserWorkspaceDashboardEndpoint.as_view(),
+        name="user-workspace-dashboard",
+    ),
+    ## User  Graph
     path(
         "users/me/invitations/workspaces/<str:slug>/<uuid:pk>/join/",
         JoinWorkspaceEndpoint.as_view(),
@@ -452,7 +504,7 @@ urlpatterns = [
     # Views
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/views/",
-        ViewViewSet.as_view(
+        IssueViewViewSet.as_view(
             {
                 "get": "list",
                 "post": "create",
@@ -462,7 +514,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/views/<uuid:pk>/",
-        ViewViewSet.as_view(
+        IssueViewViewSet.as_view(
             {
                 "get": "retrieve",
                 "put": "update",
@@ -471,6 +523,30 @@ urlpatterns = [
             }
         ),
         name="project-view",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/views/<uuid:view_id>/issues/",
+        ViewIssuesEndpoint.as_view(),
+        name="project-view-issues",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/user-favorite-views/",
+        IssueViewFavoriteViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="user-favorite-view",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/user-favorite-views/<uuid:view_id>/",
+        IssueViewFavoriteViewSet.as_view(
+            {
+                "delete": "destroy",
+            }
+        ),
+        name="user-favorite-view",
     ),
     ## End Views
     ## Cycles
@@ -557,6 +633,16 @@ urlpatterns = [
         ),
         name="user-favorite-cycle",
     ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:cycle_id>/transfer-issues/",
+        TransferCycleIssueEndpoint.as_view(),
+        name="transfer-issues",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/incomplete-cycles/",
+        InCompleteCyclesEndpoint.as_view(),
+        name="transfer-issues",
+    ),
     ## End Cycles
     # Issue
     path(
@@ -609,8 +695,19 @@ urlpatterns = [
         name="project-issue-labels",
     ),
     path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-create-labels/",
+        BulkCreateIssueLabelsEndpoint.as_view(),
+        name="project-bulk-labels",
+    ),
+    path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-delete-issues/",
         BulkDeleteIssuesEndpoint.as_view(),
+        name="project-issues-bulk",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-import-issues/<str:service>/",
+        BulkImportIssuesEndpoint.as_view(),
+        name="project-issues-bulk",
     ),
     path(
         "workspaces/<str:slug>/my-issues/",
@@ -728,12 +825,22 @@ urlpatterns = [
     path(
         "workspaces/<str:slug>/file-assets/",
         FileAssetEndpoint.as_view(),
-        name="File Assets",
+        name="file-assets",
     ),
     path(
-        "workspaces/<str:slug>/file-assets/<uuid:pk>/",
+        "workspaces/file-assets/<uuid:workspace_id>/<str:asset_key>/",
         FileAssetEndpoint.as_view(),
-        name="File Assets",
+        name="file-assets",
+    ),
+    path(
+        "users/file-assets/",
+        UserAssetsEndpoint.as_view(),
+        name="user-file-assets",
+    ),
+    path(
+        "users/file-assets/<str:asset_key>/",
+        UserAssetsEndpoint.as_view(),
+        name="user-file-assets",
     ),
     ## End File Assets
     ## Modules
@@ -822,7 +929,100 @@ urlpatterns = [
         ),
         name="user-favorite-module",
     ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-import-modules/<str:service>/",
+        BulkImportModulesEndpoint.as_view(),
+        name="bulk-modules-create",
+    ),
     ## End Modules
+    # Pages
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/",
+        PageViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="project-pages",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/",
+        PageViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="project-pages",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/page-blocks/",
+        PageBlockViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="project-page-blocks",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/page-blocks/<uuid:pk>/",
+        PageBlockViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="project-page-blocks",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/user-favorite-pages/",
+        PageFavoriteViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="user-favorite-pages",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/user-favorite-pages/<uuid:page_id>/",
+        PageFavoriteViewSet.as_view(
+            {
+                "delete": "destroy",
+            }
+        ),
+        name="user-favorite-pages",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/page-blocks/<uuid:page_block_id>/issues/",
+        CreateIssueFromPageBlockEndpoint.as_view(),
+        name="page-block-issues",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/recent-pages/",
+        RecentPagesEndpoint.as_view(),
+        name="recent-pages",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/favorite-pages/",
+        FavoritePagesEndpoint.as_view(),
+        name="recent-pages",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/my-pages/",
+        MyPagesEndpoint.as_view(),
+        name="user-pages",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/created-by-other-pages/",
+        CreatedbyOtherPagesEndpoint.as_view(),
+        name="created-by-other-pages",
+    ),
+    ## End Pages
     # API Tokens
     path("api-tokens/", ApiTokenEndpoint.as_view(), name="api-tokens"),
     path("api-tokens/<uuid:pk>/", ApiTokenEndpoint.as_view(), name="api-tokens"),
@@ -910,6 +1110,10 @@ urlpatterns = [
         ),
     ),
     path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/github-repository-sync/<uuid:repo_sync_id>/bulk-create-github-issue-sync/",
+        BulkCreateGithubIssueSyncEndpoint.as_view(),
+    ),
+    path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/github-repository-sync/<uuid:repo_sync_id>/github-issue-sync/<uuid:pk>/",
         GithubIssueSyncViewSet.as_view(
             {
@@ -938,4 +1142,40 @@ urlpatterns = [
     ),
     ## End Github Integrations
     ## End Integrations
+    # Importer
+    path(
+        "workspaces/<str:slug>/importers/<str:service>/",
+        ServiceIssueImportSummaryEndpoint.as_view(),
+        name="importer",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/importers/<str:service>/",
+        ImportServiceEndpoint.as_view(),
+        name="importer",
+    ),
+    path(
+        "workspaces/<str:slug>/importers/",
+        ImportServiceEndpoint.as_view(),
+        name="importer",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/service/<str:service>/importers/<uuid:importer_id>/",
+        UpdateServiceImportStatusEndpoint.as_view(),
+        name="importer",
+    ),
+    ##  End Importer
+    # Search
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/search/",
+        GlobalSearchEndpoint.as_view(),
+        name="global-search",
+    ),
+    ## End Search
+    # Gpt
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/ai-assistant/",
+        GPTIntegrationEndpoint.as_view(),
+        name="importer",
+    ),
+    ## End Gpt
 ]

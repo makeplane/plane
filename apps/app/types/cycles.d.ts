@@ -1,23 +1,28 @@
-import type { IUser, IIssue } from ".";
+import type { IUser, IIssue, IProject, IProjectLite, IWorkspace, IWorkspaceLite } from "types";
 
 export interface ICycle {
-  id: string;
-  owned_by: IUser;
+  backlog_issues: number;
+  cancelled_issues: number;
+  completed_issues: number;
   created_at: Date;
-  updated_at: Date;
-  name: string;
-  description: string;
-  start_date: string | null;
-  end_date: string | null;
-  is_favorite: boolean;
   created_by: string;
-  updated_by: string;
-  project: string;
-  workspace: string;
+  description: string;
+  end_date: string | null;
+  id: string;
+  is_favorite: boolean;
   issue: string;
-  current_cycle: [];
-  upcoming_cycle: [];
-  past_cycles: [];
+  name: string;
+  owned_by: IUser;
+  project: string;
+  project_detail: IProjectLite;
+  start_date: string | null;
+  started_issues: number;
+  total_issues: number;
+  unstarted_issues: number;
+  updated_at: Date;
+  updated_by: string;
+  workspace: string;
+  workspace_detail: IWorkspaceLite;
 }
 
 export interface CurrentAndUpcomingCyclesResponse {

@@ -81,7 +81,7 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
   useEffect(() => {
     dispatch({
       type: "REHYDRATE_THEME",
-      payload: myViewProps?.view_props,
+      payload: myViewProps?.view_props as any,
     });
   }, [myViewProps]);
 

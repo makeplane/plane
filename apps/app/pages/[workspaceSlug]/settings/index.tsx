@@ -14,15 +14,16 @@ import { LinkIcon } from "@heroicons/react/24/outline";
 import { requiredWorkspaceAdmin } from "lib/auth";
 // services
 import workspaceService from "services/workspace.service";
-// layouts
-import AppLayout from "layouts/app-layout";
+import fileService from "services/file.service";
 // hooks
 import useToast from "hooks/use-toast";
+// layouts
+import AppLayout from "layouts/app-layout";
 // components
 import { ImageUploadModal } from "components/core";
-import ConfirmWorkspaceDeletion from "components/workspace/confirm-workspace-deletion";
+import { DeleteWorkspaceModal } from "components/workspace";
 // ui
-import { Spinner, Button, Input, CustomSelect, OutlineButton } from "components/ui";
+import { Spinner, Input, CustomSelect, OutlineButton, SecondaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
@@ -46,9 +47,9 @@ const WorkspaceSettings: NextPage<UserAuth> = (props) => {
   const [isImageUploading, setIsImageUploading] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
 
-  const {
-    query: { workspaceSlug },
-  } = useRouter();
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
+
   const { setToastAlert } = useToast();
 
   const { data: activeWorkspace } = useSWR(
@@ -96,6 +97,15 @@ const WorkspaceSettings: NextPage<UserAuth> = (props) => {
       .catch((err) => console.error(err));
   };
 
+  const handleDelete = (url: string | null | undefined) => {
+    if (!url) return;
+
+    const index = url.indexOf(".com");
+    const asset = url.substring(index + 5);
+
+    fileService.deleteFile(asset);
+  };
+
   return (
     <AppLayout
       memberType={props}
@@ -120,7 +130,7 @@ const WorkspaceSettings: NextPage<UserAuth> = (props) => {
         }}
         value={watch("logo")}
       />
-      <ConfirmWorkspaceDeletion
+      <DeleteWorkspaceModal
         isOpen={isOpen}
         onClose={() => {
           setIsOpen(false);
@@ -157,13 +167,13 @@ const WorkspaceSettings: NextPage<UserAuth> = (props) => {
                   )}
                 </button>
                 <div>
-                  <Button
+                  <SecondaryButton
                     onClick={() => {
                       setIsImageUploadModalOpen(true);
                     }}
                   >
                     {isImageUploading ? "Uploading..." : "Upload"}
-                  </Button>
+                  </SecondaryButton>
                 </div>
               </div>
             </div>
@@ -184,9 +194,7 @@ const WorkspaceSettings: NextPage<UserAuth> = (props) => {
                 value={`app.plane.so/${activeWorkspace.slug}`}
                 disabled
               />
-              <Button
-                type="button"
-                theme="secondary"
+              <SecondaryButton
                 className="h-min"
                 onClick={() =>
                   copyTextToClipboard(`https://app.plane.so/${activeWorkspace.slug}`).then(() => {
@@ -197,9 +205,10 @@ const WorkspaceSettings: NextPage<UserAuth> = (props) => {
                     });
                   })
                 }
+                outline
               >
                 <LinkIcon className="h-[18px] w-[18px]" />
-              </Button>
+              </SecondaryButton>
             </div>
           </div>
           <div className="grid grid-cols-12 gap-4 sm:gap-16">
@@ -248,9 +257,9 @@ const WorkspaceSettings: NextPage<UserAuth> = (props) => {
             </div>
           </div>
           <div className="sm:text-right">
-            <Button onClick={handleSubmit(onSubmit)} disabled={isSubmitting}>
+            <SecondaryButton onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
               {isSubmitting ? "Updating..." : "Update Workspace"}
-            </Button>
+            </SecondaryButton>
           </div>
           <div className="grid grid-cols-12 gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">

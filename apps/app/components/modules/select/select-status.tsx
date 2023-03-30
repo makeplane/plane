@@ -26,7 +26,7 @@ export const ModuleStatusSelect: React.FC<Props> = ({ control, error }) => (
         value={value}
         label={
           <div
-            className={`flex items-center justify-center gap-2 text-xs ${
+            className={`flex items-center justify-center h-6 gap-2 text-xs ${
               error ? "text-red-500" : ""
             }`}
           >

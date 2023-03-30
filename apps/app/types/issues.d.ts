@@ -1,4 +1,13 @@
-import type { IState, IUser, IProject, ICycle, IModule, IUserLite } from "./";
+import type {
+  IState,
+  IUser,
+  IProject,
+  ICycle,
+  IModule,
+  IUserLite,
+  IProjectLite,
+  IWorkspaceLite,
+} from "types";
 
 export interface IIssueCycle {
   id: string;
@@ -67,14 +76,16 @@ export interface IIssue {
   blockers: any[];
   blockers_list: string[];
   blocks_list: string[];
-  bridge: string;
+  bridge_id?: string | null;
   completed_at: Date;
   created_at: Date;
   created_by: string;
   cycle: string | null;
+  cycle_id: string | null;
   cycle_detail: ICycle | null;
   description: any;
   description_html: any;
+  description_stripped: any;
   id: string;
   issue_cycle: IIssueCycle | null;
   issue_link: {
@@ -90,12 +101,13 @@ export interface IIssue {
   label_details: any[];
   links_list: IIssueLink[];
   module: string | null;
+  module_id: string | null;
   name: string;
   parent: string | null;
   parent_detail: IIssueParent | null;
   priority: string | null;
   project: string;
-  project_detail: IProject;
+  project_detail: IProjectLite;
   sequence_id: number;
   sort_order: number;
   sprints: string | null;
@@ -107,6 +119,7 @@ export interface IIssue {
   updated_at: Date;
   updated_by: string;
   workspace: string;
+  workspace_detail: IWorkspaceLite;
   labels: any[];
   labels_list: string[];
 }
@@ -137,7 +150,7 @@ export interface BlockeIssueDetail {
 export interface IIssueComment {
   id: string;
   actor: string;
-  actor_detail: IUser;
+  actor_detail: IUserLite;
   created_at: Date;
   updated_at: Date;
   comment: string;
@@ -150,6 +163,7 @@ export interface IIssueComment {
   workspace: string;
   issue: string;
 }
+
 export type IssuePriorities = {
   id: string;
   created_at: Date;
@@ -187,7 +201,7 @@ export interface IIssueLabels {
 
 export interface IIssueActivity {
   id: string;
-  actor_detail: IUser;
+  actor_detail: IUserLite;
   created_at: Date;
   updated_at: Date;
   verb: string;
@@ -205,4 +219,36 @@ export interface IIssueActivity {
   issue: string;
   issue_comment: string | null;
   actor: string;
+}
+
+export interface IIssueLite {
+  id: string;
+  name: string;
+  project_id: string;
+  target_date: string;
+  workspace__slug: string;
+}
+
+export interface IIssueFilterOptions {
+  type: "active" | "backlog" | null;
+  assignees: string[] | null;
+  state: string[] | null;
+  labels: string[] | null;
+  issue__assignees__id: string[] | null;
+  issue__labels__id: string[] | null;
+  priority: string[] | null;
+  created_by: string[] | null;
+}
+
+export type TIssueViewOptions = "list" | "kanban" | "calendar";
+
+export type TIssueGroupByOptions = "state" | "priority" | "labels" | "created_by" | null;
+
+export type TIssueOrderByOptions = "-created_at" | "updated_at" | "priority" | "sort_order";
+
+export interface IIssueViewOptions {
+  group_by: TIssueGroupByOptions;
+  order_by: TIssueOrderByOptions;
+  filters: IIssueFilterOptions;
+  target_date: string;
 }

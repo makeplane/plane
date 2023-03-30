@@ -66,7 +66,7 @@ export const SidebarAssigneeSelect: React.FC<Props> = ({ value, onChange, userAu
           label={
             <div className="flex items-center gap-2 text-gray-500">
               {value && value.length > 0 && Array.isArray(value) ? (
-                <div className="flex items-center justify-center gap-2">
+                <div className="flex items-center justify-center gap-2 -my-0.5">
                   <AssigneesList userIds={value} length={3} showLength={false} />
                   <span className="text-gray-500">{value.length} Assignees</span>
                 </div>

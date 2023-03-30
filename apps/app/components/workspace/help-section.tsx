@@ -1,18 +1,19 @@
 import { useState, useRef, FC } from "react";
-import { Transition } from "@headlessui/react";
+
 import Link from "next/link";
-// icons
-import { ArrowLongLeftIcon, InboxIcon } from "@heroicons/react/24/outline";
-import {
-  QuestionMarkCircleIcon,
-  BoltIcon,
-  DocumentIcon,
-  DiscordIcon,
-  GithubIcon,
-} from "components/icons";
+
+// headless ui
+import { Transition } from "@headlessui/react";
 // hooks
 import useTheme from "hooks/use-theme";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
+// icons
+import {
+  ArrowLongLeftIcon,
+  ChatBubbleOvalLeftEllipsisIcon,
+  RocketLaunchIcon,
+} from "@heroicons/react/24/outline";
+import { QuestionMarkCircleIcon, DocumentIcon, DiscordIcon, GithubIcon } from "components/icons";
 
 const helpOptions = [
   {
@@ -31,9 +32,10 @@ const helpOptions = [
     Icon: GithubIcon,
   },
   {
-    name: "Email us",
-    href: "mailto:hello@plane.so",
-    Icon: InboxIcon,
+    name: "Chat with us",
+    href: null,
+    onClick: () => (window as any).$crisp.push(["do", "chat:show"]),
+    Icon: ChatBubbleOvalLeftEllipsisIcon,
   },
 ];
 
@@ -57,7 +59,7 @@ export const WorkspaceHelpSection: FC<WorkspaceHelpSectionProps> = (props) => {
   return (
     <div
       className={`flex w-full items-center justify-between self-baseline border-t bg-white px-6 py-2 ${
-        sidebarCollapse ? "flex-col-reverse" : ""
+        sidebarCollapse ? "flex-col" : ""
       }`}
     >
       <button
@@ -73,7 +75,7 @@ export const WorkspaceHelpSection: FC<WorkspaceHelpSectionProps> = (props) => {
         }}
         title="Shortcuts"
       >
-        <BoltIcon className={`text-gray-500 ${sidebarCollapse ? "h-4 w-4" : "h-6 w-6"}`} />
+        <RocketLaunchIcon className="h-4 w-4 text-gray-500" />
         {!sidebarCollapse && <span>Shortcuts</span>}
       </button>
       <button
@@ -84,9 +86,7 @@ export const WorkspaceHelpSection: FC<WorkspaceHelpSectionProps> = (props) => {
         onClick={() => setIsNeedHelpOpen((prev) => !prev)}
         title="Help"
       >
-        <QuestionMarkCircleIcon
-          className={`text-gray-500 ${sidebarCollapse ? "h-4 w-4" : "h-6 w-6"}`}
-        />
+        <QuestionMarkCircleIcon className="h-4 w-4 text-gray-500" />
         {!sidebarCollapse && <span>Help</span>}
       </button>
       <button
@@ -94,11 +94,7 @@ export const WorkspaceHelpSection: FC<WorkspaceHelpSectionProps> = (props) => {
         className="flex items-center gap-3 rounded-md px-2 py-2 text-xs font-medium text-gray-500 outline-none hover:bg-gray-100 hover:text-gray-900 md:hidden"
         onClick={() => setSidebarActive(false)}
       >
-        <ArrowLongLeftIcon
-          className={`flex-shrink-0 text-gray-500 group-hover:text-gray-900 ${
-            sidebarCollapse ? "h-4 w-4" : "h-6 w-6"
-          }`}
-        />
+        <ArrowLongLeftIcon className="h-4 w-4 flex-shrink-0 text-gray-500 group-hover:text-gray-900" />
       </button>
       <button
         type="button"
@@ -108,8 +104,8 @@ export const WorkspaceHelpSection: FC<WorkspaceHelpSectionProps> = (props) => {
         onClick={() => toggleCollapsed()}
       >
         <ArrowLongLeftIcon
-          className={`flex-shrink-0 text-gray-500 duration-300 group-hover:text-gray-900 ${
-            sidebarCollapse ? "h-4 w-4 rotate-180" : "h-6 w-6"
+          className={`h-4 w-4 flex-shrink-0 text-gray-500 duration-300 group-hover:text-gray-900 ${
+            sidebarCollapse ? "rotate-180" : ""
           }`}
         />
       </button>
@@ -125,20 +121,35 @@ export const WorkspaceHelpSection: FC<WorkspaceHelpSectionProps> = (props) => {
           leaveTo="transform opacity-0 scale-95"
         >
           <div
-            className={`absolute bottom-2 ${helpOptionMode}  space-y-2 rounded-sm bg-white py-3 shadow-md`}
+            className={`absolute bottom-2 ${helpOptionMode} space-y-2 rounded-sm bg-white p-1 shadow-md`}
             ref={helpOptionsRef}
           >
-            {helpOptions.map(({ name, Icon, href }) => (
-              <Link href={href} key={name}>
-                <a
-                  target="_blank"
-                  className="mx-3 flex items-center gap-x-2 whitespace-nowrap rounded-md  px-2 py-2 text-xs hover:bg-gray-100"
-                >
-                  <Icon className="h-5 w-5 text-gray-500" />
-                  <span className="text-sm">{name}</span>
-                </a>
-              </Link>
-            ))}
+            {helpOptions.map(({ name, Icon, href, onClick }) => {
+              if (href)
+                return (
+                  <Link href={href} key={name}>
+                    <a
+                      target="_blank"
+                      className="flex items-center gap-x-2 whitespace-nowrap rounded-md px-2 py-1 text-xs hover:bg-gray-100"
+                    >
+                      <Icon className="h-4 w-4 text-gray-500" />
+                      <span className="text-sm">{name}</span>
+                    </a>
+                  </Link>
+                );
+              else
+                return (
+                  <button
+                    key={name}
+                    type="button"
+                    onClick={onClick ? onClick : undefined}
+                    className="flex w-full items-center gap-x-2 whitespace-nowrap rounded-md  px-2 py-1 text-xs hover:bg-gray-100"
+                  >
+                    <Icon className="h-4 w-4 text-gray-500" />
+                    <span className="text-sm">{name}</span>
+                  </button>
+                );
+            })}
           </div>
         </Transition>
       </div>

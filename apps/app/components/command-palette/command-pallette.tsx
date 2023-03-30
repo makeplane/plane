@@ -1,99 +1,176 @@
-import React, { useState, useCallback, useEffect } from "react";
-
 import { useRouter } from "next/router";
+import React, { useCallback, useEffect, useState } from "react";
+import useSWR, { mutate } from "swr";
 
-import useSWR from "swr";
-
+// icons
+import {
+  ArrowRightIcon,
+  ChartBarIcon,
+  ChatBubbleOvalLeftEllipsisIcon,
+  DocumentTextIcon,
+  FolderPlusIcon,
+  LinkIcon,
+  MagnifyingGlassIcon,
+  RocketLaunchIcon,
+  Squares2X2Icon,
+  TrashIcon,
+  UserMinusIcon,
+  UserPlusIcon,
+  UsersIcon,
+} from "@heroicons/react/24/outline";
+import {
+  AssignmentClipboardIcon,
+  ContrastIcon,
+  DiscordIcon,
+  DocumentIcon,
+  GithubIcon,
+  LayerDiagonalIcon,
+  PeopleGroupIcon,
+  SettingIcon,
+  ViewListIcon,
+} from "components/icons";
 // headless ui
-import { Combobox, Dialog, Transition } from "@headlessui/react";
-// services
-import userService from "services/user.service";
+import { Dialog, Transition } from "@headlessui/react";
+// cmdk
+import { Command } from "cmdk";
 // hooks
 import useTheme from "hooks/use-theme";
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
+import useDebounce from "hooks/use-debounce";
 // components
-import { ShortcutsModal } from "components/command-palette";
-import { BulkDeleteIssuesModal } from "components/core";
-import { CreateProjectModal } from "components/project";
-import { CreateUpdateIssueModal } from "components/issues";
-import { CreateUpdateCycleModal } from "components/cycles";
-import { CreateUpdateModuleModal } from "components/modules";
-// ui
-import { Button } from "components/ui";
-// icons
 import {
-  FolderIcon,
-  RectangleStackIcon,
-  ClipboardDocumentListIcon,
-  MagnifyingGlassIcon,
-} from "@heroicons/react/24/outline";
+  ShortcutsModal,
+  ChangeIssueState,
+  ChangeIssuePriority,
+  ChangeIssueAssignee,
+} from "components/command-palette";
+import { BulkDeleteIssuesModal } from "components/core";
+import { CreateUpdateCycleModal } from "components/cycles";
+import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
+import { CreateUpdateModuleModal } from "components/modules";
+import { CreateProjectModal } from "components/project";
+import { CreateUpdateViewModal } from "components/views";
+import { Spinner } from "components/ui";
 // helpers
-import { copyTextToClipboard } from "helpers/string.helper";
+import {
+  capitalizeFirstLetter,
+  copyTextToClipboard,
+  replaceUnderscoreIfSnakeCase,
+} from "helpers/string.helper";
+// services
+import issuesService from "services/issues.service";
+import workspaceService from "services/workspace.service";
 // types
-import { IIssue } from "types";
-// fetch-keys
-import { USER_ISSUE } from "constants/fetch-keys";
+import { IIssue, IWorkspaceSearchResults } from "types";
+// fetch keys
+import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 
 export const CommandPalette: React.FC = () => {
-  const [query, setQuery] = useState("");
-
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
   const [isIssueModalOpen, setIsIssueModalOpen] = useState(false);
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [isShortcutsModalOpen, setIsShortcutsModalOpen] = useState(false);
   const [isCreateCycleModalOpen, setIsCreateCycleModalOpen] = useState(false);
+  const [isCreateViewModalOpen, setIsCreateViewModalOpen] = useState(false);
   const [isCreateModuleModalOpen, setIsCreateModuleModalOpen] = useState(false);
   const [isBulkDeleteIssuesModalOpen, setIsBulkDeleteIssuesModalOpen] = useState(false);
+  const [deleteIssueModal, setDeleteIssueModal] = useState(false);
+
+  const [searchTerm, setSearchTerm] = React.useState<string>("");
+  const [results, setResults] = useState<IWorkspaceSearchResults>({
+    results: {
+      workspace: [],
+      project: [],
+      issue: [],
+      cycle: [],
+      module: [],
+      issue_view: [],
+      page: [],
+    },
+  });
+  const [resultsCount, setResultsCount] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  const [placeholder, setPlaceholder] = React.useState("Type a command or search...");
+  const [pages, setPages] = React.useState<string[]>([]);
+  const page = pages[pages.length - 1];
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId, issueId } = router.query;
 
   const { user } = useUser();
   const { setToastAlert } = useToast();
   const { toggleCollapsed } = useTheme();
 
-  const { data: myIssues } = useSWR<IIssue[]>(
-    workspaceSlug ? USER_ISSUE(workspaceSlug as string) : null,
-    workspaceSlug ? () => userService.userIssues(workspaceSlug as string) : null
+  const { data: issueDetails } = useSWR<IIssue | undefined>(
+    workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId as string) : null,
+    workspaceSlug && projectId && issueId
+      ? () =>
+          issuesService.retrieve(workspaceSlug as string, projectId as string, issueId as string)
+      : null
   );
 
-  const filteredIssues: IIssue[] =
-    query === ""
-      ? myIssues ?? []
-      : myIssues?.filter(
-          (issue) =>
-            issue.name.toLowerCase().includes(query.toLowerCase()) ||
-            `${issue.project_detail.identifier}-${issue.sequence_id}`
-              .toLowerCase()
-              .includes(query.toLowerCase())
-        ) ?? [];
+  const updateIssue = useCallback(
+    async (formData: Partial<IIssue>) => {
+      if (!workspaceSlug || !projectId || !issueId) return;
 
-  const quickActions = [
-    {
-      name: "Add new issue...",
-      icon: RectangleStackIcon,
-      hide: !projectId,
-      shortcut: "C",
-      onClick: () => {
-        setIsIssueModalOpen(true);
-      },
-    },
-    {
-      name: "Add new project...",
-      icon: ClipboardDocumentListIcon,
-      hide: !workspaceSlug,
-      shortcut: "P",
-      onClick: () => {
-        setIsProjectModalOpen(true);
-      },
-    },
-  ];
+      mutate(
+        ISSUE_DETAILS(issueId as string),
+        (prevData: IIssue) => ({
+          ...prevData,
+          ...formData,
+        }),
+        false
+      );
 
-  const handleCommandPaletteClose = () => {
+      const payload = { ...formData };
+      await issuesService
+        .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload)
+        .then(() => {
+          mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
+          mutate(ISSUE_DETAILS(issueId as string));
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+    },
+    [workspaceSlug, issueId, projectId]
+  );
+
+  const handleIssueAssignees = (assignee: string) => {
+    if (!issueDetails) return;
+
     setIsPaletteOpen(false);
-    setQuery("");
+    const updatedAssignees = issueDetails.assignees ?? [];
+
+    if (updatedAssignees.includes(assignee)) {
+      updatedAssignees.splice(updatedAssignees.indexOf(assignee), 1);
+    } else {
+      updatedAssignees.push(assignee);
+    }
+    updateIssue({ assignees_list: updatedAssignees });
   };
+
+  const copyIssueUrlToClipboard = useCallback(() => {
+    if (!router.query.issueId) return;
+
+    const url = new URL(window.location.href);
+    copyTextToClipboard(url.href)
+      .then(() => {
+        setToastAlert({
+          type: "success",
+          title: "Copied to clipboard",
+        });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Some error occurred",
+        });
+      });
+  }, [router, setToastAlert]);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -108,22 +185,7 @@ export const CommandPalette: React.FC = () => {
         } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "c") {
           if (e.altKey) {
             e.preventDefault();
-            if (!router.query.issueId) return;
-
-            const url = new URL(window.location.href);
-            copyTextToClipboard(url.href)
-              .then(() => {
-                setToastAlert({
-                  type: "success",
-                  title: "Copied to clipboard",
-                });
-              })
-              .catch(() => {
-                setToastAlert({
-                  type: "error",
-                  title: "Some error occurred",
-                });
-              });
+            copyIssueUrlToClipboard();
           }
         } else if (e.key.toLowerCase() === "c") {
           e.preventDefault();
@@ -149,7 +211,7 @@ export const CommandPalette: React.FC = () => {
         }
       }
     },
-    [toggleCollapsed, setToastAlert, router]
+    [toggleCollapsed, copyIssueUrlToClipboard]
   );
 
   useEffect(() => {
@@ -157,7 +219,89 @@ export const CommandPalette: React.FC = () => {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
 
+  useEffect(
+    () => {
+      if (!workspaceSlug || !projectId) return;
+
+      setIsLoading(true);
+      // this is done prevent subsequent api request
+      // or searchTerm has not been updated within last 500ms.
+      if (debouncedSearchTerm) {
+        setIsSearching(true);
+        workspaceService
+          .searchWorkspace(workspaceSlug as string, projectId as string, debouncedSearchTerm)
+          .then((results) => {
+            setResults(results);
+            const count = Object.keys(results.results).reduce(
+              (accumulator, key) => (results.results as any)[key].length + accumulator,
+              0
+            );
+            setResultsCount(count);
+          })
+          .finally(() => {
+            setIsLoading(false);
+            setIsSearching(false);
+          });
+      } else {
+        setResults({
+          results: {
+            workspace: [],
+            project: [],
+            issue: [],
+            cycle: [],
+            module: [],
+            issue_view: [],
+            page: [],
+          },
+        });
+        setIsLoading(false);
+        setIsSearching(false);
+      }
+    },
+    [debouncedSearchTerm, workspaceSlug, projectId] // Only call effect if debounced search term changes
+  );
+
   if (!user) return null;
+
+  const createNewWorkspace = () => {
+    setIsPaletteOpen(false);
+    router.push("/create-workspace");
+  };
+
+  const createNewProject = () => {
+    setIsPaletteOpen(false);
+    setIsProjectModalOpen(true);
+  };
+
+  const createNewIssue = () => {
+    setIsPaletteOpen(false);
+    setIsIssueModalOpen(true);
+  };
+
+  const createNewCycle = () => {
+    setIsPaletteOpen(false);
+    setIsCreateCycleModalOpen(true);
+  };
+
+  const createNewView = () => {
+    setIsPaletteOpen(false);
+    setIsCreateViewModalOpen(true);
+  };
+
+  const createNewModule = () => {
+    setIsPaletteOpen(false);
+    setIsCreateModuleModalOpen(true);
+  };
+
+  const deleteIssue = () => {
+    setIsPaletteOpen(false);
+    setDeleteIssueModal(true);
+  };
+
+  const goToSettings = (path: string = "") => {
+    setIsPaletteOpen(false);
+    router.push(`/${workspaceSlug}/settings/${path}`);
+  };
 
   return (
     <>
@@ -175,8 +319,20 @@ export const CommandPalette: React.FC = () => {
             isOpen={isCreateModuleModalOpen}
             setIsOpen={setIsCreateModuleModalOpen}
           />
+          <CreateUpdateViewModal
+            handleClose={() => setIsCreateViewModalOpen(false)}
+            isOpen={isCreateViewModalOpen}
+          />
         </>
       )}
+      {issueId && issueDetails && (
+        <DeleteIssueModal
+          handleClose={() => setDeleteIssueModal(false)}
+          isOpen={deleteIssueModal}
+          data={issueDetails}
+        />
+      )}
+
       <CreateUpdateIssueModal
         isOpen={isIssueModalOpen}
         handleClose={() => setIsIssueModalOpen(false)}
@@ -187,11 +343,12 @@ export const CommandPalette: React.FC = () => {
       />
       <Transition.Root
         show={isPaletteOpen}
+        afterLeave={() => {
+          setSearchTerm("");
+        }}
         as={React.Fragment}
-        afterLeave={() => setQuery("")}
-        appear
       >
-        <Dialog as="div" className="relative z-20" onClose={handleCommandPaletteClose}>
+        <Dialog as="div" className="relative z-30" onClose={() => setIsPaletteOpen(false)}>
           <Transition.Child
             as={React.Fragment}
             enter="ease-out duration-300"
@@ -204,158 +361,491 @@ export const CommandPalette: React.FC = () => {
             <div className="fixed inset-0 bg-gray-500 bg-opacity-25 transition-opacity" />
           </Transition.Child>
 
-          <div className="fixed inset-0 z-20 p-4 sm:p-6 md:p-20">
+          <div className="fixed inset-0 z-30 overflow-y-auto p-4 sm:p-6 md:p-20">
             <Transition.Child
               as={React.Fragment}
               enter="ease-out duration-300"
-              enterFrom="opacity-0 scale-95"
-              enterTo="opacity-100 scale-100"
+              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              enterTo="opacity-100 translate-y-0 sm:scale-100"
               leave="ease-in duration-200"
-              leaveFrom="opacity-100 scale-100"
-              leaveTo="opacity-0 scale-95"
+              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel className="relative mx-auto max-w-2xl transform divide-y divide-gray-500 divide-opacity-10 rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
-                <Combobox
-                  onChange={(value: any) => {
-                    if (value?.url) router.push(value.url);
-                    else if (value?.onClick) value.onClick();
-                    handleCommandPaletteClose();
+                <Command
+                  filter={(value, search) => {
+                    if (value.toLowerCase().includes(search.toLowerCase())) return 1;
+                    return 0;
+                  }}
+                  onKeyDown={(e) => {
+                    // when seach is empty and page is undefined
+                    // when user tries to close the modal with esc
+                    if (e.key === "Escape" && !page && !searchTerm) {
+                      setIsPaletteOpen(false);
+                    }
+                    // Escape goes to previous page
+                    // Backspace goes to previous page when search is empty
+                    if (e.key === "Escape" || (e.key === "Backspace" && !searchTerm)) {
+                      e.preventDefault();
+                      setPages((pages) => pages.slice(0, -1));
+                      setPlaceholder("Type a command or search...");
+                    }
                   }}
                 >
-                  <div className="relative m-1">
+                  {issueId && issueDetails && (
+                    <div className="flex p-3">
+                      <p className="overflow-hidden truncate rounded-md bg-gray-100 p-1 px-2 text-xs font-medium text-gray-500">
+                        {issueDetails.project_detail?.identifier}-{issueDetails.sequence_id}{" "}
+                        {issueDetails?.name}
+                      </p>
+                    </div>
+                  )}
+                  <div className="relative">
                     <MagnifyingGlassIcon
                       className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-gray-900 text-opacity-40"
                       aria-hidden="true"
                     />
-                    <Combobox.Input
-                      className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder-gray-500 outline-none focus:ring-0 sm:text-sm"
-                      placeholder="Search..."
-                      autoComplete="off"
-                      onChange={(e) => setQuery(e.target.value)}
+                    <Command.Input
+                      className="w-full border-0 border-b bg-transparent p-4 pl-11 text-gray-900 placeholder-gray-500 outline-none focus:ring-0 sm:text-sm"
+                      placeholder={placeholder}
+                      value={searchTerm}
+                      onValueChange={(e) => {
+                        setSearchTerm(e);
+                      }}
+                      autoFocus
                     />
                   </div>
+                  <Command.List className="max-h-96 overflow-scroll p-2">
+                    {!isLoading &&
+                      resultsCount === 0 &&
+                      searchTerm !== "" &&
+                      debouncedSearchTerm !== "" && (
+                        <div className="my-4 text-center text-gray-500">No results found.</div>
+                      )}
 
-                  <Combobox.Options
-                    static
-                    className="max-h-80 scroll-py-2 divide-y divide-gray-500 divide-opacity-10 overflow-y-auto"
-                  >
-                    {filteredIssues.length > 0 && (
+                    {(isLoading || isSearching) && (
+                      <Command.Loading>
+                        <div className="flex h-full w-full items-center justify-center py-8">
+                          <Spinner />
+                        </div>
+                      </Command.Loading>
+                    )}
+
+                    {debouncedSearchTerm !== "" && (
                       <>
-                        <li className="p-2">
-                          {query === "" && (
-                            <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-gray-900">
-                              Select issues
-                            </h2>
-                          )}
-                          <ul className="text-sm text-gray-700">
-                            {filteredIssues.map((issue) => (
-                              <Combobox.Option
-                                key={issue.id}
-                                as="label"
-                                htmlFor={`issue-${issue.id}`}
-                                value={{
-                                  name: issue.name,
-                                  url: `/${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`,
-                                }}
-                                className={({ active }) =>
-                                  `flex cursor-pointer select-none items-center justify-between rounded-md px-3 py-2 ${
-                                    active ? "bg-gray-500 bg-opacity-5 text-gray-900" : ""
-                                  }`
-                                }
+                        {Object.keys(results.results).map((key) => {
+                          const section = (results.results as any)[key];
+                          if (section.length > 0) {
+                            return (
+                              <Command.Group
+                                heading={capitalizeFirstLetter(replaceUnderscoreIfSnakeCase(key))}
+                                key={key}
                               >
-                                {({ active }) => (
-                                  <>
-                                    <div className="flex items-center gap-2">
-                                      <span
-                                        className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                                        style={{
-                                          backgroundColor: issue.state_detail.color,
-                                        }}
-                                      />
-                                      <span className="flex-shrink-0 text-xs text-gray-500">
-                                        {issue.project_detail?.identifier}-{issue.sequence_id}
-                                      </span>
-                                      <span>{issue.name}</span>
-                                    </div>
-                                    <button
-                                      type="button"
-                                      className={`flex-shrink-0 rounded-md border border-gray-300 px-2 py-1 text-sm text-gray-500 transition-opacity duration-75 hover:bg-gray-500 hover:bg-opacity-5 ${
-                                        active
-                                          ? "pointer-events-auto opacity-100"
-                                          : "pointer-events-none opacity-0"
-                                      }`}
+                                {section.map((item: any) => {
+                                  let path = "";
+                                  let value = item.name;
+                                  let Icon: any = ArrowRightIcon;
+
+                                  if (key === "workspace") {
+                                    path = `/${item.slug}`;
+                                    Icon = FolderPlusIcon;
+                                  } else if (key == "project") {
+                                    path = `/${item.workspace__slug}/projects/${item.id}/issues`;
+                                    Icon = AssignmentClipboardIcon;
+                                  } else if (key === "issue") {
+                                    path = `/${item.workspace__slug}/projects/${item.project_id}/issues/${item.id}`;
+                                    // user can search id-num idnum or issue name
+                                    value = `${item.project__identifier}-${item.sequence_id} ${item.project__identifier}${item.sequence_id} ${item.name}`;
+                                    Icon = LayerDiagonalIcon;
+                                  } else if (key === "issue_view") {
+                                    path = `/${item.workspace__slug}/projects/${item.project_id}/views/${item.id}`;
+                                    Icon = ViewListIcon;
+                                  } else if (key === "module") {
+                                    path = `/${item.workspace__slug}/projects/${item.project_id}/modules/${item.id}`;
+                                    Icon = PeopleGroupIcon;
+                                  } else if (key === "page") {
+                                    path = `/${item.workspace__slug}/projects/${item.project_id}/pages/${item.id}`;
+                                    Icon = DocumentTextIcon;
+                                  } else if (key === "cycle") {
+                                    path = `/${item.workspace__slug}/projects/${item.project_id}/cycles/${item.id}`;
+                                    Icon = ContrastIcon;
+                                  }
+
+                                  return (
+                                    <Command.Item
+                                      key={item.id}
+                                      onSelect={() => {
+                                        router.push(path);
+                                        setIsPaletteOpen(false);
+                                      }}
+                                      value={value}
+                                      className="focus:bg-gray-200 focus:outline-none"
+                                      tabIndex={0}
                                     >
-                                      Jump to
-                                    </button>
-                                  </>
-                                )}
-                              </Combobox.Option>
-                            ))}
-                          </ul>
-                        </li>
+                                      <div className="flex items-center gap-2 overflow-hidden text-gray-700">
+                                        <Icon className="h-4 w-4 text-gray-500" color="#6b7280" />
+                                        <p className="block flex-1 truncate">{item.name}</p>
+                                      </div>
+                                    </Command.Item>
+                                  );
+                                })}
+                              </Command.Group>
+                            );
+                          }
+                        })}
                       </>
                     )}
-                    {query === "" && (
-                      <li className="p-2">
-                        <h2 className="sr-only">Quick actions</h2>
-                        <ul className="text-sm text-gray-700">
-                          {quickActions.map(
-                            (action) =>
-                              !action.hide && (
-                                <Combobox.Option
-                                  key={action.shortcut}
-                                  value={{
-                                    name: action.name,
-                                    onClick: action.onClick,
-                                  }}
-                                  className={({ active }) =>
-                                    `flex cursor-default select-none items-center rounded-md px-3 py-2 ${
-                                      active ? "bg-gray-500 bg-opacity-5 text-gray-900" : ""
-                                    }`
-                                  }
-                                >
-                                  {({ active }) => (
-                                    <>
-                                      <action.icon
-                                        className={`h-6 w-6 flex-none text-gray-900 text-opacity-40 ${
-                                          active ? "text-opacity-100" : ""
-                                        }`}
-                                        aria-hidden="true"
-                                      />
-                                      <span className="ml-3 flex-auto truncate">{action.name}</span>
-                                      <span className="ml-3 flex-none text-xs font-semibold text-gray-500">
-                                        <kbd className="font-sans">{action.shortcut}</kbd>
-                                      </span>
-                                    </>
-                                  )}
-                                </Combobox.Option>
-                              )
-                          )}
-                        </ul>
-                      </li>
+
+                    {!page && (
+                      <>
+                        {issueId && (
+                          <>
+                            <Command.Item
+                              onSelect={() => {
+                                setPlaceholder("Change state...");
+                                setSearchTerm("");
+                                setPages([...pages, "change-issue-state"]);
+                              }}
+                              className="focus:bg-gray-200 focus:outline-none"
+                              tabIndex={0}
+                            >
+                              <div className="flex items-center gap-2 text-gray-700">
+                                <Squares2X2Icon className="h-4 w-4 text-gray-500" />
+                                Change state...
+                              </div>
+                            </Command.Item>
+                            <Command.Item
+                              onSelect={() => {
+                                setPlaceholder("Change priority...");
+                                setSearchTerm("");
+                                setPages([...pages, "change-issue-priority"]);
+                              }}
+                              className="focus:bg-gray-200 focus:outline-none"
+                              tabIndex={0}
+                            >
+                              <div className="flex items-center gap-2 text-gray-700">
+                                <ChartBarIcon className="h-4 w-4 text-gray-500" />
+                                Change priority...
+                              </div>
+                            </Command.Item>
+                            <Command.Item
+                              onSelect={() => {
+                                setPlaceholder("Assign to...");
+                                setSearchTerm("");
+                                setPages([...pages, "change-issue-assignee"]);
+                              }}
+                              className="focus:bg-gray-200 focus:outline-none"
+                              tabIndex={0}
+                            >
+                              <div className="flex items-center gap-2 text-gray-700">
+                                <UsersIcon className="h-4 w-4 text-gray-500" />
+                                Assign to...
+                              </div>
+                            </Command.Item>
+                            <Command.Item
+                              onSelect={() => {
+                                handleIssueAssignees(user.id);
+                                setSearchTerm("");
+                              }}
+                              className="focus:bg-gray-200 focus:outline-none"
+                              tabIndex={0}
+                            >
+                              <div className="flex items-center gap-2 text-gray-700">
+                                {issueDetails?.assignees.includes(user.id) ? (
+                                  <>
+                                    <UserMinusIcon className="h-4 w-4 text-gray-500" />
+                                    Un-assign from me
+                                  </>
+                                ) : (
+                                  <>
+                                    <UserPlusIcon className="h-4 w-4 text-gray-500" />
+                                    Assign to me
+                                  </>
+                                )}
+                              </div>
+                            </Command.Item>
+
+                            <Command.Item
+                              onSelect={deleteIssue}
+                              className="focus:bg-gray-200 focus:outline-none"
+                              tabIndex={0}
+                            >
+                              <div className="flex items-center gap-2 text-gray-700">
+                                <TrashIcon className="h-4 w-4 text-gray-500" />
+                                Delete issue
+                              </div>
+                            </Command.Item>
+                            <Command.Item
+                              onSelect={() => {
+                                setIsPaletteOpen(false);
+                                copyIssueUrlToClipboard();
+                              }}
+                              className="focus:bg-gray-200 focus:outline-none"
+                              tabIndex={0}
+                            >
+                              <div className="flex items-center gap-2 text-gray-700">
+                                <LinkIcon className="h-4 w-4 text-gray-500" />
+                                Copy issue URL to clipboard
+                              </div>
+                            </Command.Item>
+                          </>
+                        )}
+                        <Command.Group heading="Issue">
+                          <Command.Item
+                            onSelect={createNewIssue}
+                            className="focus:bg-gray-200 focus:outline-none"
+                            tabIndex={0}
+                          >
+                            <div className="flex items-center gap-2 text-gray-700">
+                              <LayerDiagonalIcon className="h-4 w-4" color="#6b7280" />
+                              Create new issue
+                            </div>
+                            <kbd>C</kbd>
+                          </Command.Item>
+                        </Command.Group>
+
+                        {workspaceSlug && (
+                          <Command.Group heading="Project">
+                            <Command.Item
+                              onSelect={createNewProject}
+                              className="focus:bg-gray-200 focus:outline-none"
+                              tabIndex={0}
+                            >
+                              <div className="flex items-center gap-2 text-gray-700">
+                                <AssignmentClipboardIcon className="h-4 w-4" color="#6b7280" />
+                                Create new project
+                              </div>
+                              <kbd>P</kbd>
+                            </Command.Item>
+                          </Command.Group>
+                        )}
+
+                        {projectId && (
+                          <>
+                            <Command.Group heading="Cycle">
+                              <Command.Item
+                                onSelect={createNewCycle}
+                                className="focus:bg-gray-200 focus:outline-none"
+                                tabIndex={0}
+                              >
+                                <div className="flex items-center gap-2 text-gray-700">
+                                  <ContrastIcon className="h-4 w-4" color="#6b7280" />
+                                  Create new cycle
+                                </div>
+                                <kbd>Q</kbd>
+                              </Command.Item>
+                            </Command.Group>
+
+                            <Command.Group heading="Module">
+                              <Command.Item
+                                onSelect={createNewModule}
+                                className="focus:bg-gray-200 focus:outline-none"
+                                tabIndex={0}
+                              >
+                                <div className="flex items-center gap-2 text-gray-700">
+                                  <PeopleGroupIcon className="h-4 w-4" color="#6b7280" />
+                                  Create new module
+                                </div>
+                                <kbd>M</kbd>
+                              </Command.Item>
+                            </Command.Group>
+
+                            <Command.Group heading="View">
+                              <Command.Item
+                                onSelect={createNewView}
+                                className="focus:bg-gray-200 focus:outline-none"
+                                tabIndex={0}
+                              >
+                                <div className="flex items-center gap-2 text-gray-700">
+                                  <ViewListIcon className="h-4 w-4" color="#6b7280" />
+                                  Create new view
+                                </div>
+                                <kbd>Q</kbd>
+                              </Command.Item>
+                            </Command.Group>
+                          </>
+                        )}
+
+                        <Command.Group heading="Workspace Settings">
+                          <Command.Item
+                            onSelect={() => {
+                              setPlaceholder("Search workspace settings...");
+                              setSearchTerm("");
+                              setPages([...pages, "settings"]);
+                            }}
+                            className="focus:bg-gray-200 focus:outline-none"
+                            tabIndex={0}
+                          >
+                            <div className="flex items-center gap-2 text-gray-700">
+                              <SettingIcon className="h-4 w-4" color="#6b7280" />
+                              Search settings...
+                            </div>
+                          </Command.Item>
+                        </Command.Group>
+                        <Command.Group heading="Account">
+                          <Command.Item
+                            onSelect={createNewWorkspace}
+                            className="focus:bg-gray-200 focus:outline-none"
+                            tabIndex={0}
+                          >
+                            <div className="flex items-center gap-2 text-gray-700">
+                              <FolderPlusIcon className="h-4 w-4 text-gray-500" />
+                              Create new workspace
+                            </div>
+                          </Command.Item>
+                        </Command.Group>
+                        <Command.Group heading="Help">
+                          <Command.Item
+                            onSelect={() => {
+                              setIsPaletteOpen(false);
+                              const e = new KeyboardEvent("keydown", {
+                                key: "h",
+                              });
+                              document.dispatchEvent(e);
+                            }}
+                            className="focus:bg-gray-200 focus:outline-none"
+                            tabIndex={0}
+                          >
+                            <div className="flex items-center gap-2 text-gray-700">
+                              <RocketLaunchIcon className="h-4 w-4 text-gray-500" />
+                              Open keyboard shortcuts
+                            </div>
+                          </Command.Item>
+                          <Command.Item
+                            onSelect={() => {
+                              setIsPaletteOpen(false);
+                              window.open("https://docs.plane.so/", "_blank");
+                            }}
+                            className="focus:bg-gray-200 focus:outline-none"
+                            tabIndex={0}
+                          >
+                            <div className="flex items-center gap-2 text-gray-700">
+                              <DocumentIcon className="h-4 w-4 text-gray-500" />
+                              Open Plane documentation
+                            </div>
+                          </Command.Item>
+                          <Command.Item
+                            onSelect={() => {
+                              setIsPaletteOpen(false);
+                              window.open("https://discord.com/invite/A92xrEGCge", "_blank");
+                            }}
+                            className="focus:bg-gray-200 focus:outline-none"
+                            tabIndex={0}
+                          >
+                            <div className="flex items-center gap-2 text-gray-700">
+                              <DiscordIcon className="h-4 w-4" color="#6b7280" />
+                              Join our Discord
+                            </div>
+                          </Command.Item>
+                          <Command.Item
+                            onSelect={() => {
+                              setIsPaletteOpen(false);
+                              window.open(
+                                "https://github.com/makeplane/plane/issues/new/choose",
+                                "_blank"
+                              );
+                            }}
+                            className="focus:bg-gray-200 focus:outline-none"
+                            tabIndex={0}
+                          >
+                            <div className="flex items-center gap-2 text-gray-700">
+                              <GithubIcon className="h-4 w-4" color="#6b7280" />
+                              Report a bug
+                            </div>
+                          </Command.Item>
+                          <Command.Item
+                            onSelect={() => {
+                              setIsPaletteOpen(false);
+                              (window as any).$crisp.push(["do", "chat:open"]);
+                            }}
+                            className="focus:bg-gray-200 focus:outline-none"
+                            tabIndex={0}
+                          >
+                            <div className="flex items-center gap-2 text-gray-700">
+                              <ChatBubbleOvalLeftEllipsisIcon className="h-4 w-4 text-gray-500" />
+                              Chat with us
+                            </div>
+                          </Command.Item>
+                        </Command.Group>
+                      </>
                     )}
-                  </Combobox.Options>
 
-                  {query !== "" && filteredIssues.length === 0 && (
-                    <div className="py-14 px-6 text-center sm:px-14">
-                      <FolderIcon
-                        className="mx-auto h-6 w-6 text-gray-500 text-opacity-40"
-                        aria-hidden="true"
+                    {page === "settings" && workspaceSlug && (
+                      <>
+                        <Command.Item
+                          onSelect={() => goToSettings()}
+                          className="focus:bg-gray-200 focus:outline-none"
+                          tabIndex={0}
+                        >
+                          <div className="flex items-center gap-2 text-gray-700">
+                            <SettingIcon className="h-4 w-4 text-gray-500" />
+                            General
+                          </div>
+                        </Command.Item>
+                        <Command.Item
+                          onSelect={() => goToSettings("members")}
+                          className="focus:bg-gray-200 focus:outline-none"
+                          tabIndex={0}
+                        >
+                          <div className="flex items-center gap-2 text-gray-700">
+                            <SettingIcon className="h-4 w-4 text-gray-500" />
+                            Members
+                          </div>
+                        </Command.Item>
+                        <Command.Item
+                          onSelect={() => goToSettings("billing")}
+                          className="focus:bg-gray-200 focus:outline-none"
+                          tabIndex={0}
+                        >
+                          <div className="flex items-center gap-2 text-gray-700">
+                            <SettingIcon className="h-4 w-4 text-gray-500" />
+                            Billings and Plans
+                          </div>
+                        </Command.Item>
+                        <Command.Item
+                          onSelect={() => goToSettings("integrations")}
+                          className="focus:bg-gray-200 focus:outline-none"
+                          tabIndex={0}
+                        >
+                          <div className="flex items-center gap-2 text-gray-700">
+                            <SettingIcon className="h-4 w-4 text-gray-500" />
+                            Integrations
+                          </div>
+                        </Command.Item>
+                        <Command.Item
+                          onSelect={() => goToSettings("import-export")}
+                          className="focus:bg-gray-200 focus:outline-none"
+                          tabIndex={0}
+                        >
+                          <div className="flex items-center gap-2 text-gray-700">
+                            <SettingIcon className="h-4 w-4 text-gray-500" />
+                            Import/Export
+                          </div>
+                        </Command.Item>
+                      </>
+                    )}
+                    {page === "change-issue-state" && issueDetails && (
+                      <>
+                        <ChangeIssueState
+                          issue={issueDetails}
+                          setIsPaletteOpen={setIsPaletteOpen}
+                        />
+                      </>
+                    )}
+                    {page === "change-issue-priority" && issueDetails && (
+                      <ChangeIssuePriority
+                        issue={issueDetails}
+                        setIsPaletteOpen={setIsPaletteOpen}
                       />
-                      <p className="mt-4 text-sm text-gray-900">
-                        We couldn{"'"}t find any issue with that term. Please try again.
-                      </p>
-                    </div>
-                  )}
-                </Combobox>
-
-                <div className="flex items-center justify-end gap-2 p-3">
-                  <div>
-                    <Button type="button" size="sm" onClick={handleCommandPaletteClose}>
-                      Close
-                    </Button>
-                  </div>
-                </div>
+                    )}
+                    {page === "change-issue-assignee" && issueDetails && (
+                      <ChangeIssueAssignee
+                        issue={issueDetails}
+                        setIsPaletteOpen={setIsPaletteOpen}
+                      />
+                    )}
+                  </Command.List>
+                </Command>
               </Dialog.Panel>
             </Transition.Child>
           </div>

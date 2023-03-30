@@ -16,7 +16,8 @@ import {
   ViewPrioritySelect,
   ViewStateSelect,
 } from "components/issues/view-select";
-
+// hooks
+import useIssueView from "hooks/use-issues-view";
 // ui
 import { Tooltip, CustomMenu, ContextMenu } from "components/ui";
 // icons
@@ -25,22 +26,34 @@ import {
   LinkIcon,
   PencilIcon,
   TrashIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 // helpers
-import { copyTextToClipboard } from "helpers/string.helper";
+import { copyTextToClipboard, truncateText } from "helpers/string.helper";
+import { handleIssuesMutation } from "constants/issue";
 // types
-import { CycleIssueResponse, IIssue, ModuleIssueResponse, Properties, UserAuth } from "types";
+import { IIssue, Properties, UserAuth } from "types";
 // fetch-keys
-import { CYCLE_ISSUES, MODULE_ISSUES, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
+import {
+  CYCLE_DETAILS,
+  CYCLE_ISSUES_WITH_PARAMS,
+  MODULE_DETAILS,
+  MODULE_ISSUES_WITH_PARAMS,
+  PROJECT_ISSUES_LIST_WITH_PARAMS,
+} from "constants/fetch-keys";
+import { DIVIDER } from "@blueprintjs/core/lib/esm/common/classes";
 
 type Props = {
   type?: string;
   issue: IIssue;
   properties: Properties;
+  groupTitle?: string;
   editIssue: () => void;
+  index: number;
   makeIssueCopy: () => void;
   removeIssue?: (() => void) | null;
   handleDeleteIssue: (issue: IIssue) => void;
+  isCompleted?: boolean;
   userAuth: UserAuth;
 };
 
@@ -49,9 +62,12 @@ export const SingleListIssue: React.FC<Props> = ({
   issue,
   properties,
   editIssue,
+  index,
   makeIssueCopy,
   removeIssue,
+  groupTitle,
   handleDeleteIssue,
+  isCompleted = false,
   userAuth,
 }) => {
   // context menu
@@ -63,80 +79,63 @@ export const SingleListIssue: React.FC<Props> = ({
 
   const { setToastAlert } = useToast();
 
+  const { groupByProperty: selectedGroup, params } = useIssueView();
+
   const partialUpdateIssue = useCallback(
     (formData: Partial<IIssue>) => {
       if (!workspaceSlug || !projectId) return;
 
       if (cycleId)
-        mutate<CycleIssueResponse[]>(
-          CYCLE_ISSUES(cycleId as string),
-          (prevData) => {
-            const updatedIssues = (prevData ?? []).map((p) => {
-              if (p.issue_detail.id === issue.id) {
-                return {
-                  ...p,
-                  issue_detail: {
-                    ...p.issue_detail,
-                    ...formData,
-                    assignees: formData.assignees_list ?? p.issue_detail.assignees_list,
-                  },
-                };
-              }
-              return p;
-            });
-            return [...updatedIssues];
-          },
+        mutate<
+          | {
+              [key: string]: IIssue[];
+            }
+          | IIssue[]
+        >(
+          CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params),
+          (prevData) =>
+            handleIssuesMutation(formData, groupTitle ?? "", selectedGroup, index, prevData),
           false
         );
 
       if (moduleId)
-        mutate<ModuleIssueResponse[]>(
-          MODULE_ISSUES(moduleId as string),
-          (prevData) => {
-            const updatedIssues = (prevData ?? []).map((p) => {
-              if (p.issue_detail.id === issue.id) {
-                return {
-                  ...p,
-                  issue_detail: {
-                    ...p.issue_detail,
-                    ...formData,
-                    assignees: formData.assignees_list ?? p.issue_detail.assignees_list,
-                  },
-                };
-              }
-              return p;
-            });
-            return [...updatedIssues];
-          },
+        mutate<
+          | {
+              [key: string]: IIssue[];
+            }
+          | IIssue[]
+        >(
+          MODULE_ISSUES_WITH_PARAMS(moduleId as string, params),
+          (prevData) =>
+            handleIssuesMutation(formData, groupTitle ?? "", selectedGroup, index, prevData),
           false
         );
 
-      mutate<IIssue[]>(
-        PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
+      mutate<
+        | {
+            [key: string]: IIssue[];
+          }
+        | IIssue[]
+      >(
+        PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params),
         (prevData) =>
-          (prevData ?? []).map((p) => {
-            if (p.id === issue.id)
-              return { ...p, ...formData, assignees: formData.assignees_list ?? p.assignees_list };
-
-            return p;
-          }),
-
+          handleIssuesMutation(formData, groupTitle ?? "", selectedGroup, index, prevData),
         false
       );
 
       issuesService
         .patchIssue(workspaceSlug as string, projectId as string, issue.id, formData)
-        .then((res) => {
-          if (cycleId) mutate(CYCLE_ISSUES(cycleId as string));
-          if (moduleId) mutate(MODULE_ISSUES(moduleId as string));
-
-          mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
-        })
-        .catch((error) => {
-          console.log(error);
+        .then(() => {
+          if (cycleId) {
+            mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
+            mutate(CYCLE_DETAILS(cycleId as string));
+          } else if (moduleId) {
+            mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
+            mutate(MODULE_DETAILS(moduleId as string));
+          } else mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
         });
     },
-    [workspaceSlug, projectId, cycleId, moduleId, issue]
+    [workspaceSlug, projectId, cycleId, moduleId, issue, groupTitle, index, selectedGroup, params]
   );
 
   const handleCopyText = () => {
@@ -153,7 +152,7 @@ export const SingleListIssue: React.FC<Props> = ({
     });
   };
 
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+  const isNotAllowed = userAuth.isGuest || userAuth.isViewer || isCompleted;
 
   return (
     <>
@@ -163,123 +162,138 @@ export const SingleListIssue: React.FC<Props> = ({
         isOpen={contextMenu}
         setIsOpen={setContextMenu}
       >
-        <ContextMenu.Item Icon={PencilIcon} onClick={editIssue}>
-          Edit issue
-        </ContextMenu.Item>
-        <ContextMenu.Item Icon={ClipboardDocumentCheckIcon} onClick={makeIssueCopy}>
-          Make a copy...
-        </ContextMenu.Item>
-        <ContextMenu.Item Icon={TrashIcon} onClick={() => handleDeleteIssue(issue)}>
-          Delete issue
-        </ContextMenu.Item>
+        {!isNotAllowed && (
+          <>
+            <ContextMenu.Item Icon={PencilIcon} onClick={editIssue}>
+              Edit issue
+            </ContextMenu.Item>
+            <ContextMenu.Item Icon={ClipboardDocumentCheckIcon} onClick={makeIssueCopy}>
+              Make a copy...
+            </ContextMenu.Item>
+            <ContextMenu.Item Icon={TrashIcon} onClick={() => handleDeleteIssue(issue)}>
+              Delete issue
+            </ContextMenu.Item>
+          </>
+        )}
         <ContextMenu.Item Icon={LinkIcon} onClick={handleCopyText}>
           Copy issue link
         </ContextMenu.Item>
       </ContextMenu>
-      <div
-        className="flex items-center justify-between gap-2 px-4 py-3 text-sm"
-        onContextMenu={(e) => {
-          e.preventDefault();
-          setContextMenu(true);
-          setContextMenuPosition({ x: e.pageX, y: e.pageY });
-        }}
-      >
-        <div className="flex items-center gap-2">
-          <span
-            className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
-            style={{
-              backgroundColor: issue.state_detail.color,
-            }}
-          />
+      <div className="border-b border-gray-300 last:border-b-0">
+        <div
+          className="flex items-center justify-between gap-2 px-4 py-3"
+          onContextMenu={(e) => {
+            e.preventDefault();
+            setContextMenu(true);
+            setContextMenuPosition({ x: e.pageX, y: e.pageY });
+          }}
+        >
           <Link href={`/${workspaceSlug}/projects/${issue?.project_detail?.id}/issues/${issue.id}`}>
             <a className="group relative flex items-center gap-2">
               {properties.key && (
                 <Tooltip
-                  tooltipHeading="ID"
+                  tooltipHeading="Issue ID"
                   tooltipContent={`${issue.project_detail?.identifier}-${issue.sequence_id}`}
                 >
-                  <span className="flex-shrink-0 text-xs text-gray-500">
+                  <span className="flex-shrink-0 text-xs text-gray-400">
                     {issue.project_detail?.identifier}-{issue.sequence_id}
                   </span>
                 </Tooltip>
               )}
-              <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
-                <span className="w-auto max-w-lg overflow-hidden text-ellipsis whitespace-nowrap">
-                  {issue.name}
-                </span>
+              <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
+                <span className="text-sm text-gray-800">{truncateText(issue.name, 50)}</span>
               </Tooltip>
             </a>
           </Link>
-        </div>
-        <div className="flex flex-shrink-0 flex-wrap items-center gap-x-1 gap-y-2 text-xs">
-          {properties.priority && (
-            <ViewPrioritySelect
-              issue={issue}
-              partialUpdateIssue={partialUpdateIssue}
-              position="right"
-              isNotAllowed={isNotAllowed}
-            />
-          )}
-          {properties.state && (
-            <ViewStateSelect
-              issue={issue}
-              partialUpdateIssue={partialUpdateIssue}
-              position="right"
-              isNotAllowed={isNotAllowed}
-            />
-          )}
-          {properties.due_date && (
-            <ViewDueDateSelect
-              issue={issue}
-              partialUpdateIssue={partialUpdateIssue}
-              isNotAllowed={isNotAllowed}
-            />
-          )}
-          {properties.sub_issue_count && (
-            <div className="flex flex-shrink-0 items-center gap-1 rounded-md border px-3 py-1.5 text-xs shadow-sm">
-              {issue.sub_issues_count} {issue.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
-            </div>
-          )}
-          {properties.labels && (
-            <div className="flex flex-wrap gap-1">
-              {issue.label_details.map((label) => (
-                <span
-                  key={label.id}
-                  className="group flex items-center gap-1 rounded-2xl border px-2 py-0.5 text-xs"
-                >
+
+          <div className="flex flex-wrap items-center gap-2 text-xs">
+            {properties.priority && (
+              <ViewPrioritySelect
+                issue={issue}
+                partialUpdateIssue={partialUpdateIssue}
+                position="right"
+                isNotAllowed={isNotAllowed}
+              />
+            )}
+            {properties.state && (
+              <ViewStateSelect
+                issue={issue}
+                partialUpdateIssue={partialUpdateIssue}
+                position="right"
+                isNotAllowed={isNotAllowed}
+              />
+            )}
+            {properties.due_date && (
+              <ViewDueDateSelect
+                issue={issue}
+                partialUpdateIssue={partialUpdateIssue}
+                isNotAllowed={isNotAllowed}
+              />
+            )}
+            {properties.sub_issue_count && (
+              <div className="flex  items-center gap-1 rounded-md border px-3 py-1.5 text-xs shadow-sm">
+                {issue.sub_issues_count} {issue.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
+              </div>
+            )}
+            {properties.labels && issue.label_details.length > 0 ? (
+              <div className="flex flex-wrap gap-1">
+                {issue.label_details.map((label) => (
                   <span
-                    className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                    style={{
-                      backgroundColor: label?.color && label.color !== "" ? label.color : "#000",
-                    }}
-                  />
-                  {label.name}
-                </span>
-              ))}
-            </div>
-          )}
-          {properties.assignee && (
-            <ViewAssigneeSelect
-              issue={issue}
-              partialUpdateIssue={partialUpdateIssue}
-              position="right"
-              isNotAllowed={isNotAllowed}
-            />
-          )}
-          {type && !isNotAllowed && (
-            <CustomMenu width="auto" ellipsis>
-              <CustomMenu.MenuItem onClick={editIssue}>Edit issue</CustomMenu.MenuItem>
-              {type !== "issue" && removeIssue && (
-                <CustomMenu.MenuItem onClick={removeIssue}>
-                  <>Remove from {type}</>
+                    key={label.id}
+                    className="group flex items-center gap-1 rounded-2xl border px-2 py-0.5 text-xs"
+                  >
+                    <span
+                      className="h-1.5 w-1.5  rounded-full"
+                      style={{
+                        backgroundColor: label?.color && label.color !== "" ? label.color : "#000",
+                      }}
+                    />
+                    {label.name}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              ""
+            )}
+            {properties.assignee && (
+              <ViewAssigneeSelect
+                issue={issue}
+                partialUpdateIssue={partialUpdateIssue}
+                position="right"
+                isNotAllowed={isNotAllowed}
+              />
+            )}
+            {type && !isNotAllowed && (
+              <CustomMenu width="auto" ellipsis>
+                <CustomMenu.MenuItem onClick={editIssue}>
+                  <div className="flex items-center justify-start gap-2">
+                    <PencilIcon className="h-4 w-4" />
+                    <span>Edit issue</span>
+                  </div>
                 </CustomMenu.MenuItem>
-              )}
-              <CustomMenu.MenuItem onClick={() => handleDeleteIssue(issue)}>
-                Delete issue
-              </CustomMenu.MenuItem>
-              <CustomMenu.MenuItem onClick={handleCopyText}>Copy issue link</CustomMenu.MenuItem>
-            </CustomMenu>
-          )}
+                {type !== "issue" && removeIssue && (
+                  <CustomMenu.MenuItem onClick={removeIssue}>
+                    <div className="flex items-center justify-start gap-2">
+                      <XMarkIcon className="h-4 w-4" />
+                      <span>Remove from {type}</span>
+                    </div>
+                  </CustomMenu.MenuItem>
+                )}
+                <CustomMenu.MenuItem onClick={() => handleDeleteIssue(issue)}>
+                  <div className="flex items-center justify-start gap-2">
+                    <TrashIcon className="h-4 w-4" />
+                    <span>Delete issue</span>
+                  </div>
+                </CustomMenu.MenuItem>
+                <CustomMenu.MenuItem onClick={handleCopyText}>
+                  <div className="flex items-center justify-start gap-2">
+                    <LinkIcon className="h-4 w-4" />
+                    <span>Copy issue link</span>
+                  </div>
+                </CustomMenu.MenuItem>
+              </CustomMenu>
+            )}
+          </div>
         </div>
       </div>
     </>

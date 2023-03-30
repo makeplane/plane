@@ -2,28 +2,31 @@ import React, { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import { PlusIcon, RectangleGroupIcon } from "@heroicons/react/24/outline";
+import { PlusIcon } from "@heroicons/react/24/outline";
+// image
+import emptyModule from "public/empty-state/empty-module.svg";
 
 // layouts
 import AppLayout from "layouts/app-layout";
 // lib
-import { requiredAuth } from "lib/auth";
+import { requiredAdmin, requiredAuth } from "lib/auth";
 // services
 import projectService from "services/project.service";
 import modulesService from "services/modules.service";
 // components
 import { CreateUpdateModuleModal, SingleModuleCard } from "components/modules";
 // ui
-import { EmptySpace, EmptySpaceItem, HeaderButton, Loader } from "components/ui";
+import { EmptyState, Loader, PrimaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 // types
 import { IModule, SelectModuleType } from "types/modules";
-// fetch-keys
+import { UserAuth } from "types";
 import type { NextPage, GetServerSidePropsContext } from "next";
+// fetch-keys
 import { MODULE_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
 
-const ProjectModules: NextPage = () => {
+const ProjectModules: NextPage<UserAuth> = (props) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   const [selectedModule, setSelectedModule] = useState<SelectModuleType>();
@@ -61,6 +64,7 @@ const ProjectModules: NextPage = () => {
       meta={{
         title: "Plane - Modules",
       }}
+      memberType={props}
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
@@ -68,21 +72,20 @@ const ProjectModules: NextPage = () => {
         </Breadcrumbs>
       }
       right={
-        <HeaderButton
-          Icon={PlusIcon}
-          label="Add Module"
+        <PrimaryButton
+          className="flex items-center gap-2"
           onClick={() => {
-            const e = new KeyboardEvent("keydown", {
-              key: "m",
-            });
+            const e = new KeyboardEvent("keydown", { key: "m" });
             document.dispatchEvent(e);
           }}
-        />
+        >
+          <PlusIcon className="w-4 h-4" />
+          Add Module
+        </PrimaryButton>
       }
     >
       <CreateUpdateModuleModal
         isOpen={createUpdateModule}
-        // handleClose={() => setCreateUpdateModule(false)}
         setIsOpen={setCreateUpdateModule}
         data={selectedModule}
       />
@@ -90,9 +93,9 @@ const ProjectModules: NextPage = () => {
         modules.length > 0 ? (
           <div className="space-y-5">
             <div className="flex flex-col gap-5">
-              <h3 className="text-3xl font-semibold text-black">Module</h3>
+              <h3 className="text-3xl font-semibold text-black">Modules</h3>
 
-              <div className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
+              <div className="grid grid-cols-1 gap-9 sm:grid-cols-2 lg:grid-cols-3">
                 {modules.map((module) => (
                   <SingleModuleCard
                     key={module.id}
@@ -104,30 +107,12 @@ const ProjectModules: NextPage = () => {
             </div>
           </div>
         ) : (
-          <div className="flex h-full w-full flex-col items-center justify-center px-4">
-            <EmptySpace
-              title="You don't have any module yet."
-              description="Modules are smaller, focused projects that help you group and organize issues within a specific time frame."
-              Icon={RectangleGroupIcon}
-            >
-              <EmptySpaceItem
-                title="Create a new module"
-                description={
-                  <span>
-                    Use <pre className="inline rounded bg-gray-200 px-2 py-1">M</pre> shortcut to
-                    create a new module
-                  </span>
-                }
-                Icon={PlusIcon}
-                action={() => {
-                  const e = new KeyboardEvent("keydown", {
-                    key: "m",
-                  });
-                  document.dispatchEvent(e);
-                }}
-              />
-            </EmptySpace>
-          </div>
+          <EmptyState
+            type="module"
+            title="Create New Module"
+            description="Modules are smaller, focused projects that help you group and organize issues within a specific time frame."
+            imgURL={emptyModule}
+          />
         )
       ) : (
         <Loader className="grid grid-cols-3 gap-4">
@@ -157,9 +142,17 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     };
   }
 
+  const projectId = ctx.query.projectId as string;
+  const workspaceSlug = ctx.query.workspaceSlug as string;
+
+  const memberDetail = await requiredAdmin(workspaceSlug, projectId, ctx.req?.headers.cookie);
+
   return {
     props: {
-      user,
+      isOwner: memberDetail?.role === 20,
+      isMember: memberDetail?.role === 15,
+      isViewer: memberDetail?.role === 10,
+      isGuest: memberDetail?.role === 5,
     },
   };
 };

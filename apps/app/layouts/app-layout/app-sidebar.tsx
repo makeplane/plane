@@ -20,15 +20,13 @@ const Sidebar: React.FC<SidebarProps> = ({ toggleSidebar, setToggleSidebar }) =>
   return (
     <nav className="relative z-20 h-screen">
       <div
-        className={`${sidebarCollapse ? "" : "w-auto md:w-72"} fixed inset-y-0 top-0 ${
-          toggleSidebar ? "left-0" : "-left-60 md:left-0"
+        className={`${sidebarCollapse ? "" : "w-auto md:w-[17rem]"} fixed inset-y-0 top-0 ${
+          toggleSidebar ? "left-0" : "-left-full md:left-0"
         } flex h-full flex-col bg-white duration-300 md:relative`}
       >
         <div className="flex h-full flex-1 flex-col border-r">
-          <div className="flex h-full flex-1 flex-col pt-2">
-            <div className="px-2">
-              <WorkspaceSidebarDropdown />
-            </div>
+          <div className="flex h-full flex-1 flex-col">
+            <WorkspaceSidebarDropdown />
             <WorkspaceSidebarMenu />
             <ProjectSidebarList />
             <WorkspaceHelpSection setSidebarActive={setToggleSidebar} />

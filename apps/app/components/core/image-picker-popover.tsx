@@ -13,8 +13,7 @@ import { Tab, Transition, Popover } from "@headlessui/react";
 import fileService from "services/file.service";
 
 // components
-import { Input, Spinner } from "components/ui";
-import { PrimaryButton } from "components/ui/button/primary-button";
+import { Input, Spinner, PrimaryButton } from "components/ui";
 // hooks
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 

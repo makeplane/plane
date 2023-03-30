@@ -6,7 +6,7 @@ from rest_framework import serializers
 
 # Module imports
 from .base import BaseSerializer
-from plane.api.serializers.workspace import WorkSpaceSerializer
+from plane.api.serializers.workspace import WorkSpaceSerializer, WorkspaceLiteSerializer
 from plane.api.serializers.user import UserLiteSerializer
 from plane.db.models import (
     Project,
@@ -18,6 +18,8 @@ from plane.db.models import (
 
 
 class ProjectSerializer(BaseSerializer):
+    workspace_detail = WorkspaceLiteSerializer(source="workspace", read_only=True)
+
     class Meta:
         model = Project
         fields = "__all__"
@@ -56,12 +58,15 @@ class ProjectSerializer(BaseSerializer):
         project_identifier = ProjectIdentifier.objects.filter(
             name=identifier, workspace_id=instance.workspace_id
         ).first()
-
         if project_identifier is None:
             project = super().update(instance, validated_data)
-            _ = ProjectIdentifier.objects.update(name=identifier, project=project)
+            project_identifier = ProjectIdentifier.objects.filter(
+                project=project
+            ).first()
+            if project_identifier is not None:
+                project_identifier.name = identifier
+                project_identifier.save()
             return project
-
         # If found check if the project_id to be updated and identifier project id is same
         if project_identifier.project_id == instance.id:
             # If same pass update
@@ -118,3 +123,10 @@ class ProjectFavoriteSerializer(BaseSerializer):
             "workspace",
             "user",
         ]
+
+
+class ProjectLiteSerializer(BaseSerializer):
+    class Meta:
+        model = Project
+        fields = ["id", "identifier", "name"]
+        read_only_fields = fields

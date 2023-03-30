@@ -31,6 +31,7 @@ from .issue import (
     Label,
     IssueBlocker,
     IssueLink,
+    IssueSequence,
 )
 
 from .asset import FileAsset
@@ -43,7 +44,7 @@ from .cycle import Cycle, CycleIssue, CycleFavorite
 
 from .shortcut import Shortcut
 
-from .view import View
+from .view import IssueView, IssueViewFavorite
 
 from .module import Module, ModuleMember, ModuleIssue, ModuleLink, ModuleFavorite
 
@@ -57,3 +58,7 @@ from .integration import (
     GithubIssueSync,
     GithubCommentSync,
 )
+
+from .importer import Importer
+
+from .page import Page, PageBlock, PageFavorite, PageLabel

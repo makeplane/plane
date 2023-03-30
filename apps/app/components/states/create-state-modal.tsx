@@ -13,7 +13,7 @@ import { Dialog, Popover, Transition } from "@headlessui/react";
 // services
 import stateService from "services/state.service";
 // ui
-import { Button, CustomSelect, Input, TextArea } from "components/ui";
+import { CustomSelect, Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
 // icons
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 // types
@@ -215,12 +215,10 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
                     </div>
                   </div>
                   <div className="mt-5 flex justify-end gap-2">
-                    <Button theme="secondary" onClick={onClose}>
-                      Cancel
-                    </Button>
-                    <Button type="submit" disabled={isSubmitting}>
+                    <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
+                    <PrimaryButton type="submit" loading={isSubmitting}>
                       {isSubmitting ? "Creating State..." : "Create State"}
-                    </Button>
+                    </PrimaryButton>
                   </div>
                 </form>
               </Dialog.Panel>

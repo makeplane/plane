@@ -3,6 +3,7 @@ import uuid
 import random
 import string
 import json
+import requests
 
 # Django imports
 from django.utils import timezone
@@ -85,6 +86,28 @@ class SignInEndpoint(BaseAPIView):
                     "user": serialized_user,
                 }
 
+                # Send Analytics
+                if settings.ANALYTICS_BASE_API:
+                    _ = requests.post(
+                        settings.ANALYTICS_BASE_API,
+                        headers={
+                            "Content-Type": "application/json",
+                            "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
+                        },
+                        json={
+                            "event_id": uuid.uuid4().hex,
+                            "event_data": {
+                                "medium": "email",
+                            },
+                            "user": {"email": email, "id": str(user.id)},
+                            "device_ctx": {
+                                "ip": request.META.get("REMOTE_ADDR"),
+                                "user_agent": request.META.get("HTTP_USER_AGENT"),
+                            },
+                            "event_type": "SIGN_UP",
+                        },
+                    )
+
                 return Response(data, status=status.HTTP_200_OK)
             # Sign in Process
             else:
@@ -114,7 +137,27 @@ class SignInEndpoint(BaseAPIView):
                 user.save()
 
                 access_token, refresh_token = get_tokens_for_user(user)
-
+                # Send Analytics
+                if settings.ANALYTICS_BASE_API:
+                    _ = requests.post(
+                        settings.ANALYTICS_BASE_API,
+                        headers={
+                            "Content-Type": "application/json",
+                            "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
+                        },
+                        json={
+                            "event_id": uuid.uuid4().hex,
+                            "event_data": {
+                                "medium": "email",
+                            },
+                            "user": {"email": email, "id": str(user.id)},
+                            "device_ctx": {
+                                "ip": request.META.get("REMOTE_ADDR"),
+                                "user_agent": request.META.get("HTTP_USER_AGENT"),
+                            },
+                            "event_type": "SIGN_IN",
+                        },
+                    )
                 data = {
                     "access_token": access_token,
                     "refresh_token": refresh_token,
@@ -268,6 +311,29 @@ class MagicSignInEndpoint(BaseAPIView):
                 if str(token) == str(user_token):
                     if User.objects.filter(email=email).exists():
                         user = User.objects.get(email=email)
+                        # Send event to Jitsu for tracking
+                        if settings.ANALYTICS_BASE_API:
+                            _ = requests.post(
+                                settings.ANALYTICS_BASE_API,
+                                headers={
+                                    "Content-Type": "application/json",
+                                    "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
+                                },
+                                json={
+                                    "event_id": uuid.uuid4().hex,
+                                    "event_data": {
+                                        "medium": "code",
+                                    },
+                                    "user": {"email": email, "id": str(user.id)},
+                                    "device_ctx": {
+                                        "ip": request.META.get("REMOTE_ADDR"),
+                                        "user_agent": request.META.get(
+                                            "HTTP_USER_AGENT"
+                                        ),
+                                    },
+                                    "event_type": "SIGN_IN",
+                                },
+                            )
                     else:
                         user = User.objects.create(
                             email=email,
@@ -275,6 +341,29 @@ class MagicSignInEndpoint(BaseAPIView):
                             password=make_password(uuid.uuid4().hex),
                             is_password_autoset=True,
                         )
+                        # Send event to Jitsu for tracking
+                        if settings.ANALYTICS_BASE_API:
+                            _ = requests.post(
+                                settings.ANALYTICS_BASE_API,
+                                headers={
+                                    "Content-Type": "application/json",
+                                    "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
+                                },
+                                json={
+                                    "event_id": uuid.uuid4().hex,
+                                    "event_data": {
+                                        "medium": "code",
+                                    },
+                                    "user": {"email": email, "id": str(user.id)},
+                                    "device_ctx": {
+                                        "ip": request.META.get("REMOTE_ADDR"),
+                                        "user_agent": request.META.get(
+                                            "HTTP_USER_AGENT"
+                                        ),
+                                    },
+                                    "event_type": "SIGN_UP",
+                                },
+                            )
 
                     user.last_active = timezone.now()
                     user.last_login_time = timezone.now()

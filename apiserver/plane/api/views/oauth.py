@@ -5,6 +5,7 @@ import os
 
 # Django imports
 from django.utils import timezone
+from django.conf import settings
 
 # Third Party modules
 from rest_framework.response import Response
@@ -204,7 +205,26 @@ class OauthEndpoint(BaseAPIView):
                     "last_login_at": timezone.now(),
                 },
             )
-
+            if settings.ANALYTICS_BASE_API:
+                _ = requests.post(
+                    settings.ANALYTICS_BASE_API,
+                    headers={
+                        "Content-Type": "application/json",
+                        "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
+                    },
+                    json={
+                        "event_id": uuid.uuid4().hex,
+                        "event_data": {
+                            "medium": f"oauth-{medium}",
+                        },
+                        "user": {"email": email, "id": str(user.id)},
+                        "device_ctx": {
+                            "ip": request.META.get("REMOTE_ADDR"),
+                            "user_agent": request.META.get("HTTP_USER_AGENT"),
+                        },
+                        "event_type": "SIGN_IN",
+                    },
+                )
             return Response(data, status=status.HTTP_200_OK)
 
         except User.DoesNotExist:
@@ -253,6 +273,26 @@ class OauthEndpoint(BaseAPIView):
                 "user": serialized_user,
                 "permissions": [],
             }
+            if settings.ANALYTICS_BASE_API:
+                _ = requests.post(
+                    settings.ANALYTICS_BASE_API,
+                    headers={
+                        "Content-Type": "application/json",
+                        "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
+                    },
+                    json={
+                        "event_id": uuid.uuid4().hex,
+                        "event_data": {
+                            "medium": f"oauth-{medium}",
+                        },
+                        "user": {"email": email, "id": str(user.id)},
+                        "device_ctx": {
+                            "ip": request.META.get("REMOTE_ADDR"),
+                            "user_agent": request.META.get("HTTP_USER_AGENT"),
+                        },
+                        "event_type": "SIGN_UP",
+                    },
+                )
 
             SocialLoginConnection.objects.update_or_create(
                 medium=medium,

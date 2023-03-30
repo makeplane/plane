@@ -1,30 +1,30 @@
 // hooks
-import useIssueView from "hooks/use-issue-view";
+import useProjectIssuesView from "hooks/use-issues-view";
 // components
 import { SingleBoard } from "components/core/board-view/single-board";
+// helpers
+import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
-import { IIssue, IProjectMember, IState, UserAuth } from "types";
+import { IIssue, IState, UserAuth } from "types";
+import { getStateGroupIcon } from "components/icons";
 
 type Props = {
   type: "issue" | "cycle" | "module";
-  issues: IIssue[];
   states: IState[] | undefined;
-  members: IProjectMember[] | undefined;
-  addIssueToState: (groupTitle: string, stateId: string | null) => void;
+  addIssueToState: (groupTitle: string) => void;
   makeIssueCopy: (issue: IIssue) => void;
   handleEditIssue: (issue: IIssue) => void;
   openIssuesListModal?: (() => void) | null;
   handleDeleteIssue: (issue: IIssue) => void;
   handleTrashBox: (isDragging: boolean) => void;
   removeIssue: ((bridgeId: string) => void) | null;
+  isCompleted?: boolean;
   userAuth: UserAuth;
 };
 
 export const AllBoards: React.FC<Props> = ({
   type,
-  issues,
   states,
-  members,
   addIssueToState,
   makeIssueCopy,
   handleEditIssue,
@@ -32,58 +32,75 @@ export const AllBoards: React.FC<Props> = ({
   handleDeleteIssue,
   handleTrashBox,
   removeIssue,
+  isCompleted = false,
   userAuth,
 }) => {
-  const { groupedByIssues, groupByProperty: selectedGroup, orderBy } = useIssueView(issues);
+  const {
+    groupedByIssues,
+    groupByProperty: selectedGroup,
+    showEmptyGroups,
+  } = useProjectIssuesView();
 
   return (
     <>
       {groupedByIssues ? (
-        <div className="h-[calc(100vh-157px)] w-full lg:h-[calc(100vh-115px)]">
-          <div className="horizontal-scroll-enable flex h-full gap-x-4 overflow-x-auto overflow-y-hidden">
-            {Object.keys(groupedByIssues).map((singleGroup, index) => {
-              const currentState =
-                selectedGroup === "state_detail.name"
-                  ? states?.find((s) => s.name === singleGroup)
-                  : null;
+        <div className="horizontal-scroll-enable flex h-[calc(100vh-140px)] gap-x-4">
+          {Object.keys(groupedByIssues).map((singleGroup, index) => {
+            const currentState =
+              selectedGroup === "state" ? states?.find((s) => s.id === singleGroup) : null;
 
-              const stateId =
-                selectedGroup === "state_detail.name"
-                  ? states?.find((s) => s.name === singleGroup)?.id ?? null
-                  : null;
+            if (!showEmptyGroups && groupedByIssues[singleGroup].length === 0) return null;
 
-              const bgColor =
-                selectedGroup === "state_detail.name"
-                  ? states?.find((s) => s.name === singleGroup)?.color
-                  : "#000000";
+            return (
+              <SingleBoard
+                key={index}
+                type={type}
+                currentState={currentState}
+                groupTitle={singleGroup}
+                handleEditIssue={handleEditIssue}
+                makeIssueCopy={makeIssueCopy}
+                addIssueToState={() => addIssueToState(singleGroup)}
+                handleDeleteIssue={handleDeleteIssue}
+                openIssuesListModal={openIssuesListModal ?? null}
+                handleTrashBox={handleTrashBox}
+                removeIssue={removeIssue}
+                isCompleted={isCompleted}
+                userAuth={userAuth}
+              />
+            );
+          })}
+          {!showEmptyGroups && (
+            <div className="h-full w-96 flex-shrink-0 space-y-3 p-1">
+              <h2 className="text-lg font-semibold">Hidden groups</h2>
+              <div className="space-y-3">
+                {Object.keys(groupedByIssues).map((singleGroup, index) => {
+                  const currentState =
+                    selectedGroup === "state" ? states?.find((s) => s.id === singleGroup) : null;
 
-              return (
-                <SingleBoard
-                  key={index}
-                  type={type}
-                  currentState={currentState}
-                  bgColor={bgColor}
-                  groupTitle={singleGroup}
-                  groupedByIssues={groupedByIssues}
-                  selectedGroup={selectedGroup}
-                  members={members}
-                  handleEditIssue={handleEditIssue}
-                  makeIssueCopy={makeIssueCopy}
-                  addIssueToState={() => addIssueToState(singleGroup, stateId)}
-                  handleDeleteIssue={handleDeleteIssue}
-                  openIssuesListModal={openIssuesListModal ?? null}
-                  orderBy={orderBy}
-                  handleTrashBox={handleTrashBox}
-                  removeIssue={removeIssue}
-                  userAuth={userAuth}
-                />
-              );
-            })}
-          </div>
+                  if (groupedByIssues[singleGroup].length === 0)
+                    return (
+                      <div
+                        key={index}
+                        className="flex items-center justify-between gap-2 rounded bg-white p-2 shadow"
+                      >
+                        <div className="flex items-center gap-2">
+                          {currentState &&
+                            getStateGroupIcon(currentState.group, "16", "16", currentState.color)}
+                          <h4 className="text-sm capitalize">
+                            {selectedGroup === "state"
+                              ? addSpaceIfCamelCase(currentState?.name ?? "")
+                              : addSpaceIfCamelCase(singleGroup)}
+                          </h4>
+                        </div>
+                        <span className="text-xs text-gray-500">0</span>
+                      </div>
+                    );
+                })}
+              </div>
+            </div>
+          )}
         </div>
-      ) : (
-        <div className="flex h-full w-full items-center justify-center">Loading...</div>
-      )}
+      ) : null}
     </>
   );
 };

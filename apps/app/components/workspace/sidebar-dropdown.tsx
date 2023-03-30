@@ -3,29 +3,35 @@ import { Menu, Transition } from "@headlessui/react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronDownIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { CheckIcon, PlusIcon } from "@heroicons/react/24/outline";
 // hooks
 import useUser from "hooks/use-user";
 import useTheme from "hooks/use-theme";
 import useWorkspaces from "hooks/use-workspaces";
+import useToast from "hooks/use-toast";
 // services
 import userService from "services/user.service";
 import authenticationService from "services/authentication.service";
 // components
-import { Loader } from "components/ui";
-
+import { Avatar, Loader } from "components/ui";
+// helper
+import { truncateText } from "helpers/string.helper";
 // types
 import { IWorkspace } from "types";
 
 // Static Data
 const userLinks = (workspaceSlug: string) => [
   {
-    name: "My Profile",
-    href: `/${workspaceSlug}/me/profile`,
+    name: "Workspace Settings",
+    href: `/${workspaceSlug}/settings`,
   },
   {
     name: "Workspace Invites",
     href: "/invitations",
+  },
+  {
+    name: "My Profile",
+    href: `/${workspaceSlug}/me/profile`,
   },
 ];
 
@@ -36,6 +42,9 @@ export const WorkspaceSidebarDropdown = () => {
   const { user, mutateUser } = useUser();
   // fetching theme context
   const { collapsed: sidebarCollapse } = useTheme();
+
+  const { setToastAlert } = useToast();
+
   // fetching workspaces
   const { activeWorkspace, workspaces } = useWorkspaces();
 
@@ -48,18 +57,25 @@ export const WorkspaceSidebarDropdown = () => {
         mutateUser();
         router.push(`/${workspace.slug}/`);
       })
-      .catch((err) => console.error(err));
+      .catch(() =>
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Failed to navigate to the workspace. Please try again.",
+        })
+      );
   };
 
   const handleSignOut = async () => {
     await authenticationService
       .signOut()
-      .then((response) => {
-        console.log("user signed out", response);
-      })
-      .catch((error) => {
-        console.log("Failed to sign out", error);
-      })
+      .catch(() =>
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Failed to sign out. Please try again.",
+        })
+      )
       .finally(() => {
         mutateUser();
         router.push("/signin");
@@ -68,44 +84,46 @@ export const WorkspaceSidebarDropdown = () => {
 
   return (
     <div className="relative">
-      <Menu as="div" className="col-span-4 inline-block w-full text-left">
-        <Menu.Button
-          className={`inline-flex w-full items-center justify-between rounded-md px-1 py-2 text-sm font-semibold text-gray-700 focus:outline-none ${
-            !sidebarCollapse
-              ? "border border-gray-300 shadow-sm hover:bg-gray-50 focus:bg-gray-50"
-              : ""
-          }`}
-        >
-          <div className="mx-auto flex items-center gap-x-1">
-            <div className="relative flex h-5 w-5 items-center justify-center rounded bg-gray-700 p-4 uppercase text-white">
-              {activeWorkspace?.logo && activeWorkspace.logo !== "" ? (
-                <Image
-                  src={activeWorkspace.logo}
-                  alt="Workspace Logo"
-                  layout="fill"
-                  objectFit="cover"
-                  className="rounded"
-                />
-              ) : (
-                activeWorkspace?.name?.charAt(0) ?? "..."
+      <Menu as="div" className="col-span-4 inline-block w-full p-3 text-left">
+        <div className="flex items-center justify-between gap-2.5">
+          <Menu.Button className="flex w-full items-center rounded-md py-2 text-sm font-semibold text-gray-700 focus:outline-none">
+            <div
+              className={`flex w-full items-center gap-x-2 rounded-md bg-gray-100 px-2 py-1.5 ${
+                sidebarCollapse ? "justify-center" : ""
+              }`}
+            >
+              <div className="relative grid h-6 w-6 place-items-center rounded bg-gray-700 uppercase text-white">
+                {activeWorkspace?.logo && activeWorkspace.logo !== "" ? (
+                  <Image
+                    src={activeWorkspace.logo}
+                    alt="Workspace Logo"
+                    layout="fill"
+                    objectFit="cover"
+                    className="rounded"
+                  />
+                ) : (
+                  activeWorkspace?.name?.charAt(0) ?? "..."
+                )}
+              </div>
+
+              {!sidebarCollapse && (
+                <p>
+                  {activeWorkspace?.name ? truncateText(activeWorkspace.name, 14) : "Loading..."}
+                </p>
               )}
             </div>
-            {!sidebarCollapse && (
-              <p className="ml-1 text-left">
-                {activeWorkspace?.name
-                  ? activeWorkspace.name.length > 17
-                    ? `${activeWorkspace.name.substring(0, 17)}...`
-                    : activeWorkspace.name
-                  : "Loading..."}
-              </p>
-            )}
-          </div>
+          </Menu.Button>
+
           {!sidebarCollapse && (
-            <div className="flex flex-grow justify-end">
-              <ChevronDownIcon className="ml-2 h-3 w-3" aria-hidden="true" />
-            </div>
+            <Link href={`/${workspaceSlug}/me/profile`}>
+              <a>
+                <div className="flex flex-grow justify-end">
+                  <Avatar user={user} height="32px" width="32px" fontSize="14px" />
+                </div>
+              </a>
+            </Link>
           )}
-        </Menu.Button>
+        </div>
 
         <Transition
           as={Fragment}
@@ -116,28 +134,26 @@ export const WorkspaceSidebarDropdown = () => {
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <Menu.Items className="fixed left-2 z-20 mt-1 w-full max-w-[17rem] origin-top-left rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-            <div className="divide-y px-1 py-2">
-              <div>
-                <Menu.Item as="div" className="px-2 pb-2 text-xs">
-                  {user?.email}
-                </Menu.Item>
-              </div>
-              <div className="py-2">
-                {workspaces ? (
-                  <>
-                    {workspaces.length > 0 ? (
-                      workspaces.map((workspace) => (
-                        <Menu.Item key={workspace.id}>
-                          {({ active }) => (
-                            <button
-                              type="button"
-                              onClick={() => handleWorkspaceNavigation(workspace)}
-                              className={`${
-                                active ? "bg-gray-100" : ""
-                              } flex w-full items-center gap-2 rounded-md p-2 text-sm text-gray-900`}
-                            >
-                              <div className="relative flex h-5 w-5 items-center justify-center rounded bg-gray-700 p-4 uppercase text-white">
+          <Menu.Items
+            className="fixed left-2 z-20 mt-1  flex w-full max-w-[17rem] origin-top-left flex-col rounded-md
+          bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+          >
+            <div className="flex flex-col items-start justify-start gap-3 p-3">
+              <div className="text-sm text-gray-500">{user?.email}</div>
+              <span className="text-sm font-semibold text-gray-500">Workspace</span>
+              {workspaces ? (
+                <div className="flex h-full w-full flex-col items-start justify-start gap-3.5">
+                  {workspaces.length > 0 ? (
+                    workspaces.map((workspace) => (
+                      <Menu.Item key={workspace.id}>
+                        {({ active }) => (
+                          <button
+                            type="button"
+                            onClick={() => handleWorkspaceNavigation(workspace)}
+                            className="flex w-full items-center justify-between gap-1 rounded-md text-sm text-gray-900"
+                          >
+                            <div className="flex items-center justify-start gap-2.5">
+                              <span className="relative flex h-6 w-6 items-center justify-center rounded bg-gray-700 p-2 text-xs uppercase text-white">
                                 {workspace?.logo && workspace.logo !== "" ? (
                                   <Image
                                     src={workspace.logo}
@@ -149,61 +165,69 @@ export const WorkspaceSidebarDropdown = () => {
                                 ) : (
                                   activeWorkspace?.name?.charAt(0) ?? "N"
                                 )}
-                              </div>
-                              <div className="text-left">
-                                <h5 className="text-sm">{workspace.name}</h5>
-                                <div className="text-xs text-gray-500">
-                                  {workspace.total_members}{" "}
-                                  {workspace.total_members > 1 ? "members" : "member"}
-                                </div>
-                              </div>
-                            </button>
-                          )}
-                        </Menu.Item>
-                      ))
-                    ) : (
-                      <p>No workspace found!</p>
-                    )}
-                    <Menu.Item
-                      as="button"
-                      type="button"
-                      onClick={() => {
-                        router.push("/create-workspace");
-                      }}
-                      className="flex w-full items-center gap-2 rounded px-2 py-1 text-left text-xs hover:bg-gray-100"
-                    >
-                      <PlusIcon className="h-3 w-3" />
-                      Create Workspace
-                    </Menu.Item>
-                  </>
-                ) : (
-                  <div className="w-full">
-                    <Loader className="space-y-2">
-                      <Loader.Item height="30px" />
-                      <Loader.Item height="30px" />
-                    </Loader>
-                  </div>
-                )}
-              </div>
-              <div className="space-y-1 pt-2 text-xs">
-                {userLinks(workspaceSlug as string).map((link, index) => (
-                  <Menu.Item key={index} as="div">
-                    <Link href={link.href}>
-                      <a className="block rounded px-2 py-1 text-left hover:bg-gray-100">
-                        {link.name}
-                      </a>
-                    </Link>
+                              </span>
+
+                              <h5 className="text-sm">{truncateText(workspace.name, 18)}</h5>
+                            </div>
+                            <span className="p-1">
+                              <CheckIcon
+                                className={`h-3 w-3.5 text-gray-600 ${
+                                  active || workspace.id === activeWorkspace?.id
+                                    ? "opacity-100"
+                                    : "opacity-0"
+                                }`}
+                              />
+                            </span>
+                          </button>
+                        )}
+                      </Menu.Item>
+                    ))
+                  ) : (
+                    <p>No workspace found!</p>
+                  )}
+                  <Menu.Item
+                    as="button"
+                    type="button"
+                    onClick={() => {
+                      router.push("/create-workspace");
+                    }}
+                    className="flex w-full items-center gap-1 text-sm text-gray-600"
+                  >
+                    <PlusIcon className="h-3 w-3 text-gray-600" />
+                    Create Workspace
                   </Menu.Item>
-                ))}
+                </div>
+              ) : (
+                <div className="w-full">
+                  <Loader className="space-y-2">
+                    <Loader.Item height="30px" />
+                    <Loader.Item height="30px" />
+                  </Loader>
+                </div>
+              )}
+            </div>
+            <div className="flex w-full flex-col items-start justify-start gap-2 border-t border-t-gray-200 px-3 py-2 text-sm">
+              {userLinks(workspaceSlug as string).map((link, index) => (
                 <Menu.Item
-                  as="button"
-                  type="button"
-                  className="w-full rounded px-2 py-1 text-left hover:bg-gray-100"
-                  onClick={handleSignOut}
+                  key={index}
+                  as="div"
+                  className="flex w-full items-center justify-start rounded px-2 py-1 text-sm text-gray-600 hover:bg-gray-100"
                 >
-                  Sign out
+                  <Link href={link.href}>
+                    <a className="w-full">{link.name}</a>
+                  </Link>
                 </Menu.Item>
-              </div>
+              ))}
+            </div>
+            <div className="w-full border-t border-t-gray-200 px-3 py-2">
+              <Menu.Item
+                as="button"
+                type="button"
+                className="flex w-full items-center justify-start rounded px-2 py-1 text-sm text-red-600 hover:bg-gray-100"
+                onClick={handleSignOut}
+              >
+                Sign out
+              </Menu.Item>
             </div>
           </Menu.Items>
         </Transition>
