@@ -9,7 +9,9 @@ import pagesService from "services/pages.service";
 // components
 import { PagesView } from "components/pages";
 // ui
-import { Loader } from "components/ui";
+import { EmptyState, Loader } from "components/ui";
+// images
+import emptyPage from "public/empty-state/empty-page.svg";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // types
@@ -29,10 +31,12 @@ export const RecentPagesList: React.FC<TPagesListProps> = ({ viewType }) => {
       : null
   );
 
+  const isEmpty = pages && Object.keys(pages).every((key) => pages[key].length === 0);
+
   return (
     <>
       {pages ? (
-        Object.keys(pages).length > 0 ? (
+        Object.keys(pages).length > 0 && !isEmpty ? (
           <div className="mt-4 space-y-4">
             {Object.keys(pages).map((key) => {
               if (pages[key].length === 0) return null;
@@ -48,7 +52,14 @@ export const RecentPagesList: React.FC<TPagesListProps> = ({ viewType }) => {
             })}
           </div>
         ) : (
-          <p className="mt-4 text-center">No issues found</p>
+          <div className="mt-4">
+            <EmptyState
+              type="page"
+              title="Create New Page"
+              description="Create and document issues effortlessly in one place with Plane Notes, AI-powered for ease."
+              imgURL={emptyPage}
+            />
+          </div>
         )
       ) : (
         <Loader className="mt-8 space-y-4">

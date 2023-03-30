@@ -112,13 +112,13 @@ export const SingleList: React.FC<Props> = ({
               <div className="flex items-center gap-x-3">
                 {selectedGroup !== null && selectedGroup === "state" ? (
                   <span>
-                    {currentState && getStateGroupIcon(currentState.group, "20", "20", bgColor)}
+                    {currentState && getStateGroupIcon(currentState.group, "16", "16", bgColor)}
                   </span>
                 ) : (
                   ""
                 )}
                 {selectedGroup !== null ? (
-                  <h2 className="text-xl font-semibold capitalize leading-6 text-gray-800">
+                  <h2 className="text-base font-semibold capitalize leading-6 text-gray-800">
                     {getGroupTitle()}
                   </h2>
                 ) : (
@@ -142,9 +142,9 @@ export const SingleList: React.FC<Props> = ({
             ) : (
               <CustomMenu
                 customButton={
-                  <span className="flex items-center">
+                  <div className="flex items-center cursor-pointer">
                     <PlusIcon className="h-4 w-4" />
-                  </span>
+                  </div>
                 }
                 optionsPosition="right"
                 noBorder
