@@ -12,7 +12,6 @@ import {
   CalendarDaysIcon,
   ChartPieIcon,
   ChevronDownIcon,
-  DocumentDuplicateIcon,
   DocumentIcon,
   PlusIcon,
   TrashIcon,
@@ -41,6 +40,7 @@ import { IIssue, IModule, ModuleLink, UserAuth } from "types";
 import { MODULE_DETAILS } from "constants/fetch-keys";
 // constant
 import { MODULE_STATUS } from "constants/module";
+import { LinkIcon } from "@heroicons/react/20/solid";
 
 const defaultValues: Partial<IModule> = {
   lead: "",
@@ -334,7 +334,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                     <CustomMenu width="lg" ellipsis>
                       <CustomMenu.MenuItem onClick={handleCopyText}>
                         <span className="flex items-center justify-start gap-2 text-gray-800">
-                          <DocumentDuplicateIcon className="h-4 w-4" />
+                          <LinkIcon className="h-4 w-4" />
                           <span>Copy Link</span>
                         </span>
                       </CustomMenu.MenuItem>
