@@ -72,7 +72,8 @@ export const PROJECT_GITHUB_REPOSITORY = (projectId: string) =>
   `PROJECT_GITHUB_REPOSITORY_${projectId.toUpperCase()}`;
 
 export const CYCLE_LIST = (projectId: string) => `CYCLE_LIST_${projectId.toUpperCase()}`;
-export const CYCLE_INCOMPLETE_LIST = (projectId: string) => `CYCLE_INCOMPLETE_LIST_${projectId.toUpperCase()}`;
+export const CYCLE_INCOMPLETE_LIST = (projectId: string) =>
+  `CYCLE_INCOMPLETE_LIST_${projectId.toUpperCase()}`;
 export const CYCLE_ISSUES = (cycleId: string) => `CYCLE_ISSUES_${cycleId.toUpperCase()}`;
 export const CYCLE_ISSUES_WITH_PARAMS = (cycleId: string, params?: any) => {
   if (!params) return `CYCLE_ISSUES_WITH_PARAMS_${cycleId.toUpperCase()}`;
@@ -122,7 +123,12 @@ export const SUB_ISSUES = (issueId: string) => `SUB_ISSUES_${issueId.toUpperCase
 // integrations
 
 // Calendar
-export const CALENDAR_ISSUES = (projectId: string) => `CALENDAR_ISSUES_${projectId}`;
+export const PROJECT_CALENDAR_ISSUES = (projectId: string) =>
+  `CALENDAR_ISSUES_${projectId.toUpperCase()}`;
+export const CYCLE_CALENDAR_ISSUES = (projectId: string, cycleId: string) =>
+  `CALENDAR_ISSUES_${projectId.toUpperCase()}_${cycleId.toUpperCase()}`;
+export const MODULE_CALENDAR_ISSUES = (projectId: string, moduleId: string) =>
+  `CALENDAR_ISSUES_${projectId.toUpperCase()}_${moduleId.toUpperCase()}`;
 
 // Pages
 export const RECENT_PAGES_LIST = (projectId: string) =>
