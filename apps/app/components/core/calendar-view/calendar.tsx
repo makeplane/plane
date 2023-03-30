@@ -362,7 +362,7 @@ export const CalendarView = () => {
         </div>
 
         <div
-          className={`grid h-full auto-rows-[minmax(170px,1fr)] ${
+          className={`grid h-full auto-rows-[minmax(150px,1fr)] ${
             showWeekEnds ? "grid-cols-7" : "grid-cols-5"
           } `}
         >
