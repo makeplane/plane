@@ -434,7 +434,9 @@ export const IssuesView: React.FC<Props> = ({
         </div>
       </div>
 
-      <div className="mb-5 border-t" />
+      {Object.keys(filters).length > 0 && nullFilters.length !== Object.keys(filters).length && (
+        <div className="mb-5 border-t" />
+      )}
 
       <DragDropContext onDragEnd={handleOnDragEnd}>
         <StrictModeDroppable droppableId="trashBox">
