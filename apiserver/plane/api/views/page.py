@@ -21,6 +21,7 @@ from plane.db.models import (
     PageFavorite,
     Issue,
     IssueAssignee,
+    IssueActivity,
 )
 from plane.api.serializers import (
     PageSerializer,
@@ -213,6 +214,15 @@ class CreateIssueFromPageBlockEndpoint(BaseAPIView):
             _ = IssueAssignee.objects.create(
                 issue=issue, assignee=request.user, project_id=project_id
             )
+
+            _ = IssueActivity.objects.create(
+                issue=issue,
+                actor=request.user,
+                project_id=project_id,
+                comment=f"{request.user.email} created the issue from {page_block.name} block",
+                verb="created",
+            )
+
             page_block.issue = issue
             page_block.save()
 
