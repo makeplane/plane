@@ -26,6 +26,7 @@ import {
   LinkIcon,
   PencilIcon,
   TrashIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 // helpers
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
@@ -38,6 +39,7 @@ import {
   MODULE_ISSUES_WITH_PARAMS,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
 } from "constants/fetch-keys";
+import { DIVIDER } from "@blueprintjs/core/lib/esm/common/classes";
 
 type Props = {
   type?: string;
@@ -258,27 +260,30 @@ export const SingleListIssue: React.FC<Props> = ({
             {type && !isNotAllowed && (
               <CustomMenu width="auto" ellipsis>
                 <CustomMenu.MenuItem onClick={editIssue}>
-                  <span className="flex items-center justify-start gap-2">
+                  <div className="flex items-center justify-start gap-2">
                     <PencilIcon className="h-4 w-4" />
                     <span>Edit issue</span>
-                  </span>
+                  </div>
                 </CustomMenu.MenuItem>
                 {type !== "issue" && removeIssue && (
                   <CustomMenu.MenuItem onClick={removeIssue}>
-                    <>Remove from {type}</>
+                    <div className="flex items-center justify-start gap-2">
+                      <XMarkIcon className="h-4 w-4" />
+                      <span>Remove from {type}</span>
+                    </div>
                   </CustomMenu.MenuItem>
                 )}
                 <CustomMenu.MenuItem onClick={() => handleDeleteIssue(issue)}>
-                  <span className="flex items-center justify-start gap-2">
+                  <div className="flex items-center justify-start gap-2">
                     <TrashIcon className="h-4 w-4" />
                     <span>Delete issue</span>
-                  </span>
+                  </div>
                 </CustomMenu.MenuItem>
                 <CustomMenu.MenuItem onClick={handleCopyText}>
-                  <span className="flex items-center justify-start gap-2">
+                  <div className="flex items-center justify-start gap-2">
                     <LinkIcon className="h-4 w-4" />
                     <span>Copy issue link</span>
-                  </span>
+                  </div>
                 </CustomMenu.MenuItem>
               </CustomMenu>
             )}
