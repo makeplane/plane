@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 
-import Link from "next/link";
 import Image from "next/image";
 
 // react-hook-form
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 // lib
 import { requiredAuth } from "lib/auth";
 // services
@@ -18,27 +17,22 @@ import AppLayout from "layouts/app-layout";
 // components
 import { ImageUploadModal } from "components/core";
 // ui
-import { DangerButton, Input, SecondaryButton, Spinner } from "components/ui";
+import { CustomSelect, DangerButton, Input, SecondaryButton, Spinner } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import {
-  ChevronRightIcon,
-  PencilIcon,
-  RectangleStackIcon,
-  UserIcon,
-  UserPlusIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
+import { UserIcon } from "@heroicons/react/24/outline";
 // types
 import type { NextPage, GetServerSidePropsContext } from "next";
 import type { IUser } from "types";
-import { useRouter } from "next/dist/client/router";
+// constants
+import { USER_ROLES } from "constants/workspace";
 
 const defaultValues: Partial<IUser> = {
   avatar: "",
   first_name: "",
   last_name: "",
   email: "",
+  role: "",
 };
 
 const Profile: NextPage = () => {
@@ -46,20 +40,18 @@ const Profile: NextPage = () => {
   const [isRemoving, setIsRemoving] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
 
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
-
   const {
     register,
     handleSubmit,
     reset,
     watch,
     setValue,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<IUser>({ defaultValues });
 
   const { setToastAlert } = useToast();
-  const { user: myProfile, mutateUser, assignedIssuesLength, workspaceInvitesLength } = useUser();
+  const { user: myProfile, mutateUser } = useUser();
 
   useEffect(() => {
     reset({ ...defaultValues, ...myProfile });
@@ -70,6 +62,7 @@ const Profile: NextPage = () => {
       first_name: formData.first_name,
       last_name: formData.last_name,
       avatar: formData.avatar,
+      role: formData.role,
     };
 
     await userService
@@ -129,23 +122,6 @@ const Profile: NextPage = () => {
           });
     });
   };
-
-  const quickLinks = [
-    {
-      icon: RectangleStackIcon,
-      title: "Assigned Issues",
-      number: assignedIssuesLength,
-      description: "View issues assigned to you.",
-      href: `/${workspaceSlug}/me/my-issues`,
-    },
-    {
-      icon: UserPlusIcon,
-      title: "Workspace Invitations",
-      number: workspaceInvitesLength,
-      description: "View your workspace invitations.",
-      href: "/invitations",
-    },
-  ];
 
   return (
     <AppLayout
@@ -271,17 +247,29 @@ const Profile: NextPage = () => {
           <div className="grid grid-cols-12 gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
               <h4 className="text-xl font-semibold">Role</h4>
-              <p className="text-gray-500">The email address that you are using.</p>
+              <p className="text-gray-500">Add your role.</p>
             </div>
             <div className="col-span-12 sm:col-span-6">
-              <Input
-                id="role"
+              <Controller
                 name="role"
-                autoComplete="off"
-                register={register}
-                error={errors.name}
-                className="w-full"
-                disabled
+                control={control}
+                rules={{ required: "This field is required" }}
+                render={({ field: { value, onChange } }) => (
+                  <CustomSelect
+                    value={value}
+                    onChange={onChange}
+                    label={value ? value.toString() : "Select your role"}
+                    width="w-full"
+                    input
+                    position="right"
+                  >
+                    {USER_ROLES.map((item) => (
+                      <CustomSelect.Option key={item.value} value={item.value}>
+                        {item.label}
+                      </CustomSelect.Option>
+                    ))}
+                  </CustomSelect>
+                )}
               />
             </div>
           </div>
