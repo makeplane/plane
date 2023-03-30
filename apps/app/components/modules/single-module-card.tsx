@@ -191,7 +191,7 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
             </div>
           </div>
         </div>
-        <div className="flex flex-col h-full items-end">
+        <div className="flex flex-col items-end h-20">
           <div className="flex w-full items-center justify-between gap-2 justify-self-end bg-gray-100 p-4">
             <span>Progress</span>
             <div className="bar relative h-1 w-full rounded bg-gray-300">
@@ -204,16 +204,19 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
             </div>
             <span>{isNaN(completionPercentage) ? 0 : completionPercentage.toFixed(0)}%</span>
           </div>
-          <div className="flex justify-between w-full px-4 pb-4 bg-gray-100 item-center">
+          <div className="flex justify-between w-full h-full px-4 pb-4 bg-gray-100 item-center">
             <p className="text-[#858E96]">
               Last updated:
-              <span className="text-black font-medium">
-                {renderShortDateWithYearFormat(lastUpdated)}
-              </span>
+                <span className="text-black font-medium">
+                  {renderShortDateWithYearFormat(lastUpdated)}
+                </span>
             </p>
-            <div className="flex items-center gap-1">
-              <AssigneesList users={module.members_detail} length={4} />
-            </div>
+            {
+              module.members_detail.length>0 &&
+              <div className="flex items-center gap-1">
+                <AssigneesList users={module.members_detail} length={4} />
+              </div>
+            }
           </div>
         </div>
       </div>
