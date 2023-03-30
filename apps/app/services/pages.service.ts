@@ -1,10 +1,14 @@
 // services
 import APIService from "services/api.service";
-import { IIssue } from "types";
+import trackEventServices from "services/track-event.service";
+
 // types
-import { IPage, IPageBlock, RecentPagesResponse } from "types/pages";
+import { IPage, IPageBlock, RecentPagesResponse, IIssue } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
+
+const trackEvent =
+  process.env.NEXT_PUBLIC_TRACK_EVENTS === "true" || process.env.NEXT_PUBLIC_TRACK_EVENTS === "1";
 
 class PageServices extends APIService {
   constructor() {
@@ -13,7 +17,10 @@ class PageServices extends APIService {
 
   async createPage(workspaceSlug: string, projectId: string, data: Partial<IPage>): Promise<IPage> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/`, data)
-      .then((response) => response?.data)
+      .then((response) => {
+        if (trackEvent) trackEventServices.trackPageEvent(response?.data, "PAGE_CREATE");
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -29,7 +36,10 @@ class PageServices extends APIService {
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/`,
       data
     )
-      .then((response) => response?.data)
+      .then((response) => {
+        if (trackEvent) trackEventServices.trackPageEvent(response?.data, "PAGE_UPDATE");
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -37,7 +47,10 @@ class PageServices extends APIService {
 
   async deletePage(workspaceSlug: string, projectId: string, pageId: string): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/`)
-      .then((response) => response?.data)
+      .then((response) => {
+        if (trackEvent) trackEventServices.trackPageEvent(response?.data, "PAGE_DELETE");
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -130,7 +143,10 @@ class PageServices extends APIService {
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/page-blocks/`,
       data
     )
-      .then((response) => response?.data)
+      .then((response) => {
+        if (trackEvent) trackEventServices.trackPageBlockEvent(response?.data, "PAGE_BLOCK_CREATE");
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -162,7 +178,10 @@ class PageServices extends APIService {
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/page-blocks/${pageBlockId}/`,
       data
     )
-      .then((response) => response?.data)
+      .then((response) => {
+        if (trackEvent) trackEventServices.trackPageBlockEvent(response?.data, "PAGE_BLOCK_UPDATE");
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -177,7 +196,10 @@ class PageServices extends APIService {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/page-blocks/${pageBlockId}/`
     )
-      .then((response) => response?.data)
+      .then((response) => {
+        if (trackEvent) trackEventServices.trackPageBlockEvent(response?.data, "PAGE_BLOCK_DELETE");
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -206,7 +228,11 @@ class PageServices extends APIService {
     return this.post(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/page-blocks/${blockId}/issues/`
     )
-      .then((response) => response?.data)
+      .then((response) => {
+        if (trackEvent)
+          trackEventServices.trackPageBlockEvent(response?.data, "PAGE_BLOCK_CONVERTED_TO_ISSUE");
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });

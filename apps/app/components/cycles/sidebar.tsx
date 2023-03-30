@@ -288,9 +288,9 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                 </div>
               </div>
 
-              <div className="flex flex-col gap-6 px-6 py-6">
-                <div className="flex flex-col items-start justify-start gap-2 ">
-                  <div className="flex items-start justify-start gap-2  ">
+              <div className="flex flex-col gap-6 px-6 py-6 w-full">
+                <div className="flex flex-col items-start justify-start gap-2 w-full">
+                  <div className="flex items-start justify-between gap-2 w-full">
                     <h4 className="text-xl font-semibold text-gray-900">{cycle.name}</h4>
                     <CustomMenu width="lg" ellipsis>
                       <CustomMenu.MenuItem onClick={handleCopyText}>
@@ -404,7 +404,9 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                                 </span>
                                 <span>
                                   Pending Issues -{" "}
-                                  {issues?.length ?? 0 - groupedIssues.completed.length}{" "}
+                                  {issues &&
+                                    groupedIssues &&
+                                    issues?.length - groupedIssues.completed.length}
                                 </span>
                               </div>
 

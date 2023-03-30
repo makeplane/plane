@@ -21,6 +21,7 @@ from plane.db.models import (
     PageFavorite,
     Issue,
     IssueAssignee,
+    IssueActivity,
 )
 from plane.api.serializers import (
     PageSerializer,
@@ -63,7 +64,10 @@ class PageViewSet(BaseViewSet):
             .order_by("name", "-is_favorite")
             .prefetch_related(
                 Prefetch(
-                    "blocks", queryset=PageBlock.objects.select_related("page", "issue")
+                    "blocks",
+                    queryset=PageBlock.objects.select_related(
+                        "page", "issue", "workspace", "project"
+                    ),
                 )
             )
             .distinct()
@@ -213,6 +217,16 @@ class CreateIssueFromPageBlockEndpoint(BaseAPIView):
             _ = IssueAssignee.objects.create(
                 issue=issue, assignee=request.user, project_id=project_id
             )
+
+            _ = IssueActivity.objects.create(
+                issue=issue,
+                actor=request.user,
+                project_id=project_id,
+                comment=f"{request.user.email} created the issue from {page_block.name} block",
+                verb="created",
+            )
+
+
             page_block.issue = issue
             page_block.save()
 
@@ -258,6 +272,14 @@ class RecentPagesEndpoint(BaseAPIView):
                 .select_related("workspace")
                 .select_related("owned_by")
                 .prefetch_related("labels")
+                .prefetch_related(
+                    Prefetch(
+                        "blocks",
+                        queryset=PageBlock.objects.select_related(
+                            "page", "issue", "workspace", "project"
+                        ),
+                    )
+                )
                 .order_by("-is_favorite", "-updated_by")
             )
 
@@ -274,6 +296,14 @@ class RecentPagesEndpoint(BaseAPIView):
                 .select_related("workspace")
                 .select_related("owned_by")
                 .prefetch_related("labels")
+                .prefetch_related(
+                    Prefetch(
+                        "blocks",
+                        queryset=PageBlock.objects.select_related(
+                            "page", "issue", "workspace", "project"
+                        ),
+                    )
+                )
                 .order_by("-is_favorite", "-updated_by")
             )
 
@@ -294,6 +324,14 @@ class RecentPagesEndpoint(BaseAPIView):
                 .select_related("workspace")
                 .select_related("owned_by")
                 .prefetch_related("labels")
+                .prefetch_related(
+                    Prefetch(
+                        "blocks",
+                        queryset=PageBlock.objects.select_related(
+                            "page", "issue", "workspace", "project"
+                        ),
+                    )
+                )
                 .order_by("-is_favorite", "-updated_by")
             )
             todays_pages_serializer = PageSerializer(todays_pages, many=True)
@@ -341,6 +379,14 @@ class FavoritePagesEndpoint(BaseAPIView):
                 .select_related("workspace")
                 .select_related("owned_by")
                 .prefetch_related("labels")
+                .prefetch_related(
+                    Prefetch(
+                        "blocks",
+                        queryset=PageBlock.objects.select_related(
+                            "page", "issue", "workspace", "project"
+                        ),
+                    )
+                )
                 .order_by("name", "-is_favorite")
             )
 
@@ -378,6 +424,14 @@ class MyPagesEndpoint(BaseAPIView):
                 .annotate(is_favorite=Exists(subquery))
                 .filter(Q(owned_by=self.request.user) | Q(access=0))
                 .filter(project__project_projectmember__member=request.user)
+                .prefetch_related(
+                    Prefetch(
+                        "blocks",
+                        queryset=PageBlock.objects.select_related(
+                            "page", "issue", "workspace", "project"
+                        ),
+                    )
+                )
                 .order_by("-is_favorite", "name")
             )
             serializer = PageSerializer(pages, many=True)
@@ -415,6 +469,14 @@ class CreatedbyOtherPagesEndpoint(BaseAPIView):
                 .select_related("owned_by")
                 .prefetch_related("labels")
                 .annotate(is_favorite=Exists(subquery))
+                .prefetch_related(
+                    Prefetch(
+                        "blocks",
+                        queryset=PageBlock.objects.select_related(
+                            "page", "issue", "workspace", "project"
+                        ),
+                    )
+                )
                 .order_by("-is_favorite", "name")
             )
             serializer = PageSerializer(pages, many=True)

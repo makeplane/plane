@@ -25,7 +25,7 @@ class ProjectServices extends APIService {
   async createProject(workspaceSlug: string, data: Partial<IProject>): Promise<IProject> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/`, data)
       .then((response) => {
-        if (trackEvent) trackEventServices.trackCreateProjectEvent(response.data);
+        if (trackEvent) trackEventServices.trackProjectEvent(response.data, "CREATE_PROJECT");
         return response?.data;
       })
       .catch((error) => {
@@ -68,7 +68,7 @@ class ProjectServices extends APIService {
   ): Promise<IProject> {
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/`, data)
       .then((response) => {
-        if (trackEvent) trackEventServices.trackUpdateProjectEvent(response.data);
+        if (trackEvent) trackEventServices.trackProjectEvent(response.data, "UPDATE_PROJECT");
         return response?.data;
       })
       .catch((error) => {
@@ -79,7 +79,7 @@ class ProjectServices extends APIService {
   async deleteProject(workspaceSlug: string, projectId: string): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/`)
       .then((response) => {
-        if (trackEvent) trackEventServices.trackDeleteProjectEvent({ projectId });
+        if (trackEvent) trackEventServices.trackProjectEvent({ projectId }, "DELETE_PROJECT");
         return response?.data;
       })
       .catch((error) => {

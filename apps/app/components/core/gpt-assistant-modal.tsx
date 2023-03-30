@@ -7,11 +7,13 @@ import dynamic from "next/dynamic";
 import { useForm } from "react-hook-form";
 // services
 import aiService from "services/ai.service";
+import trackEventServices from "services/track-event.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
 import { Input, PrimaryButton, SecondaryButton } from "components/ui";
 
+import { IIssue, IPageBlock } from "types";
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
@@ -20,6 +22,8 @@ type Props = {
   htmlContent?: string;
   onResponse: (response: string) => void;
   projectId: string;
+  block?: IPageBlock;
+  issue?: IIssue;
 };
 
 type FormData = {
@@ -39,6 +43,8 @@ export const GptAssistantModal: React.FC<Props> = ({
   htmlContent,
   onResponse,
   projectId,
+  block,
+  issue,
 }) => {
   const [response, setResponse] = useState("");
   const [invalidResponse, setInvalidResponse] = useState(false);
@@ -91,6 +97,21 @@ export const GptAssistantModal: React.FC<Props> = ({
 
         if (res.response === "") setInvalidResponse(true);
         else setInvalidResponse(false);
+      })
+      .catch((err) => {
+        if (err.status === 429)
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message:
+              "You have reached the maximum number of requests of 50 requests per month per user.",
+          });
+        else
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message: "Some error occurred. Please try again.",
+          });
       });
   };
 
@@ -151,6 +172,13 @@ export const GptAssistantModal: React.FC<Props> = ({
             onClick={() => {
               onResponse(response);
               onClose();
+              if (block)
+                trackEventServices.trackUseGPTResponseEvent(
+                  block,
+                  "USE_GPT_RESPONSE_IN_PAGE_BLOCK"
+                );
+              else if (issue)
+                trackEventServices.trackUseGPTResponseEvent(issue, "USE_GPT_RESPONSE_IN_ISSUE");
             }}
           >
             Use this response

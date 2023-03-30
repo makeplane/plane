@@ -7,7 +7,13 @@ import useToast from "hooks/use-toast";
 // components
 import { ModuleLeadSelect, ModuleMembersSelect, ModuleStatusSelect } from "components/modules";
 // ui
-import { CustomDatePicker, Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
+import {
+  DateSelect,
+  Input,
+  PrimaryButton,
+  SecondaryButton,
+  TextArea,
+} from "components/ui";
 // helper
 import { isDateRangeValid } from "helpers/date-time.helper";
 // types
@@ -67,18 +73,19 @@ export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, sta
           <div>
             <Input
               id="name"
-              label="Name"
               name="name"
               type="name"
-              placeholder="Enter name"
+              placeholder="Title"
               autoComplete="off"
+              mode="transparent"
+              className="resize-none text-xl"
               error={errors.name}
               register={register}
               validations={{
-                required: "Name is required",
+                required: "Title is required",
                 maxLength: {
                   value: 255,
-                  message: "Name should be less than 255 characters",
+                  message: "Title should be less than 255 characters",
                 },
               }}
             />
@@ -87,75 +94,64 @@ export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, sta
             <TextArea
               id="description"
               name="description"
-              label="Description"
-              placeholder="Enter description"
+              placeholder="Description"
+              className="h-32 resize-none text-sm"
+              mode="transparent"
               error={errors.description}
               register={register}
             />
           </div>
-          <div className="flex gap-x-2">
-            <div className="w-full">
-              <h6 className="text-gray-500">Start Date</h6>
-              <div className="w-full">
-                <Controller
-                  control={control}
-                  name="start_date"
-                  render={({ field: { value, onChange } }) => (
-                    <CustomDatePicker
-                      renderAs="input"
-                      value={value}
-                      onChange={(val) => {
-                        onChange(val);
-                        if (val && watch("target_date")) {
-                          if (isDateRangeValid(val, `${watch("target_date")}`)) {
-                            setIsDateValid(true);
-                          } else {
-                            setIsDateValid(false);
-                            setToastAlert({
-                              type: "error",
-                              title: "Error!",
-                              message: "You have enter invalid date.",
-                            });
-                          }
-                        }
-                      }}
-                    />
-                  )}
-                />
-              </div>
-            </div>
-            <div className="w-full">
-              <h6 className="text-gray-500">Target Date</h6>
-              <div className="w-full">
-                <Controller
-                  control={control}
-                  name="target_date"
-                  render={({ field: { value, onChange } }) => (
-                    <CustomDatePicker
-                      renderAs="input"
-                      value={value}
-                      onChange={(val) => {
-                        onChange(val);
-                        if (watch("start_date") && val) {
-                          if (isDateRangeValid(`${watch("start_date")}`, val)) {
-                            setIsDateValid(true);
-                          } else {
-                            setIsDateValid(false);
-                            setToastAlert({
-                              type: "error",
-                              title: "Error!",
-                              message: "You have enter invalid date.",
-                            });
-                          }
-                        }
-                      }}
-                    />
-                  )}
-                />
-              </div>
-            </div>
-          </div>
           <div className="flex flex-wrap items-center gap-2">
+            <Controller
+              control={control}
+              name="start_date"
+              render={({ field: { value, onChange } }) => (
+                <DateSelect
+                  label="Start date"
+                  value={value}
+                  onChange={(val) => {
+                    onChange(val);
+                    if (val && watch("target_date")) {
+                      if (isDateRangeValid(val, `${watch("target_date")}`)) {
+                        setIsDateValid(true);
+                      } else {
+                        setIsDateValid(false);
+                        setToastAlert({
+                          type: "error",
+                          title: "Error!",
+                          message: "You have enter invalid date.",
+                        });
+                      }
+                    }
+                  }}
+                />
+              )}
+            />
+            <Controller
+              control={control}
+              name="target_date"
+              render={({ field: { value, onChange } }) => (
+                <DateSelect
+                  label="Target date"
+                  value={value}
+                  onChange={(val) => {
+                    onChange(val);
+                    if (watch("start_date") && val) {
+                      if (isDateRangeValid(`${watch("start_date")}`, val)) {
+                        setIsDateValid(true);
+                      } else {
+                        setIsDateValid(false);
+                        setToastAlert({
+                          type: "error",
+                          title: "Error!",
+                          message: "You have enter invalid date.",
+                        });
+                      }
+                    }
+                  }}
+                />
+              )}
+            />
             <ModuleStatusSelect control={control} error={errors.status} />
             <Controller
               control={control}
@@ -174,7 +170,7 @@ export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, sta
           </div>
         </div>
       </div>
-      <div className="mt-5 flex justify-end gap-2">
+      <div className="-mx-5 mt-5 flex justify-end gap-2 border-t px-5 pt-5">
         <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
         <PrimaryButton type="submit" loading={isSubmitting || isDateValid ? false : true}>
           {status

@@ -740,7 +740,10 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                 workspace__slug=slug, project_id=project_id, pk=new_cycle_id
             )
 
-            if new_cycle.end_date < timezone.now().date():
+            if (
+                new_cycle.end_date is not None
+                and new_cycle.end_date < timezone.now().date()
+            ):
                 return Response(
                     {
                         "error": "The cycle where the issues are transferred is already completed"
