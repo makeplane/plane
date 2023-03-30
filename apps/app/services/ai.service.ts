@@ -18,7 +18,7 @@ class AiServices extends APIService {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/ai-assistant/`, data)
       .then((response) => response?.data)
       .catch((error) => {
-        throw error?.response?.data;
+        throw error?.response;
       });
   }
 }
