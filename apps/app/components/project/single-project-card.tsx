@@ -219,7 +219,7 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
                   <CustomMenu width="auto" verticalEllipsis>
                     {isOwner && (
                       <CustomMenu.MenuItem onClick={() => setDeleteProject(project.id)}>
-                        <span className="flex items-center justify-start gap-2 text-gray-700">
+                        <span className="flex items-center justify-start gap-2">
                           <TrashIcon className="h-4 w-4" />
                           <span>Delete project</span>
                         </span>
@@ -227,21 +227,21 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
                     )}
                     {project.is_favorite ? (
                       <CustomMenu.MenuItem onClick={handleRemoveFromFavorites}>
-                        <span className="flex items-center justify-start gap-2 text-gray-700">
+                        <span className="flex items-center justify-start gap-2">
                           <StarIcon className="h-4 w-4" />
                           <span>Remove from favorites</span>
                         </span>
                       </CustomMenu.MenuItem>
                     ) : (
                       <CustomMenu.MenuItem onClick={handleAddToFavorites}>
-                        <span className="flex items-center justify-start gap-2 text-gray-700">
+                        <span className="flex items-center justify-start gap-2">
                           <StarIcon className="h-4 w-4" />
                           <span>Add to favorites</span>
                         </span>
                       </CustomMenu.MenuItem>
                     )}
                     <CustomMenu.MenuItem onClick={handleCopyText}>
-                      <span className="flex items-center justify-start gap-2 text-gray-700">
+                      <span className="flex items-center justify-start gap-2">
                         <LinkIcon className="h-4 w-4" />
                         <span>Copy project link</span>
                       </span>

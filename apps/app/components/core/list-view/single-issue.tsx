@@ -258,7 +258,7 @@ export const SingleListIssue: React.FC<Props> = ({
             {type && !isNotAllowed && (
               <CustomMenu width="auto" ellipsis>
                 <CustomMenu.MenuItem onClick={editIssue}>
-                  <span className="flex items-center justify-start gap-2 text-gray-700">
+                  <span className="flex items-center justify-start gap-2">
                     <PencilIcon className="h-4 w-4" />
                     <span>Edit issue</span>
                   </span>
@@ -269,13 +269,13 @@ export const SingleListIssue: React.FC<Props> = ({
                   </CustomMenu.MenuItem>
                 )}
                 <CustomMenu.MenuItem onClick={() => handleDeleteIssue(issue)}>
-                  <span className="flex items-center justify-start gap-2 text-gray-700">
+                  <span className="flex items-center justify-start gap-2">
                     <TrashIcon className="h-4 w-4" />
                     <span>Delete issue</span>
                   </span>
                 </CustomMenu.MenuItem>
                 <CustomMenu.MenuItem onClick={handleCopyText}>
-                  <span className="flex items-center justify-start gap-2 text-gray-700">
+                  <span className="flex items-center justify-start gap-2">
                     <LinkIcon className="h-4 w-4" />
                     <span>Copy issue link</span>
                   </span>

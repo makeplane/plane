@@ -169,7 +169,7 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
           )}
           <CustomMenu width="auto" ellipsis>
             <CustomMenu.MenuItem onClick={handleCopyText}>
-              <span className="flex items-center justify-start gap-2 text-gray-700">
+              <span className="flex items-center justify-start gap-2">
                 <LinkIcon className="h-4 w-4" />
                 <span>Copy issue link</span>
               </span>
