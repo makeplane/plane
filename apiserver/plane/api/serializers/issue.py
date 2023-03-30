@@ -244,6 +244,7 @@ class IssueCreateSerializer(BaseSerializer):
 
 class IssueActivitySerializer(BaseSerializer):
     actor_detail = UserLiteSerializer(read_only=True, source="actor")
+    workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
 
     class Meta:
         model = IssueActivity

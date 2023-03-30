@@ -32,7 +32,7 @@ import { CustomMenu, CustomSelect, Loader, ProgressBar } from "components/ui";
 // icon
 import { ExclamationIcon } from "components/icons";
 // helpers
-import { renderDateFormat, renderShortDate } from "helpers/date-time.helper";
+import { isDateRangeValid, renderDateFormat, renderShortDate } from "helpers/date-time.helper";
 import { capitalizeFirstLetter, copyTextToClipboard } from "helpers/string.helper";
 import { groupBy } from "helpers/array.helper";
 // types
@@ -67,8 +67,6 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
 }) => {
   const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
   const [moduleLinkModal, setModuleLinkModal] = useState(false);
-  const [startDateRange, setStartDateRange] = useState<Date | null>(new Date());
-  const [endDateRange, setEndDateRange] = useState<Date | null>(null);
 
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query;
@@ -257,17 +255,20 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                         >
                           <Popover.Panel className="absolute top-10 -right-5 z-20  transform overflow-hidden">
                             <DatePicker
-                              selected={startDateRange}
+                              selected={
+                                watch("start_date")
+                                  ? new Date(`${watch("start_date")}`)
+                                  : new Date()
+                              }
                               onChange={(date) => {
                                 submitChanges({
                                   start_date: renderDateFormat(date),
                                 });
-                                setStartDateRange(date);
                               }}
                               selectsStart
-                              startDate={startDateRange}
-                              endDate={endDateRange}
-                              maxDate={endDateRange}
+                              startDate={new Date(`${watch("start_date")}`)}
+                              endDate={new Date(`${watch("target_date")}`)}
+                              maxDate={new Date(`${watch("target_date")}`)}
                               shouldCloseOnSelect
                               inline
                             />
@@ -303,18 +304,19 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                         >
                           <Popover.Panel className="absolute top-10 -right-5 z-20  transform overflow-hidden">
                             <DatePicker
-                              selected={endDateRange}
+                              selected={
+                                watch("target_date") ? new Date(`${watch("target_date")}`) : new Date()
+                              }
                               onChange={(date) => {
                                 submitChanges({
                                   target_date: renderDateFormat(date),
                                 });
-                                setEndDateRange(date);
                               }}
                               selectsEnd
-                              startDate={startDateRange}
-                              endDate={endDateRange}
-                              // minDate={startDateRange}
-
+                              startDate={new Date(`${watch("start_date")}`)}
+                              endDate={new Date(`${watch("target_date")}`)}
+                              minDate={new Date(`${watch("start_date")}`)}
+                              shouldCloseOnSelect
                               inline
                             />
                           </Popover.Panel>

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 
@@ -13,7 +13,6 @@ import { requiredAdmin } from "lib/auth";
 import AppLayout from "layouts/app-layout";
 // services
 import projectService from "services/project.service";
-import workspaceService from "services/workspace.service";
 // components
 import { DeleteProjectModal } from "components/project";
 import EmojiIconPicker from "components/emoji-icon-picker";
@@ -29,12 +28,10 @@ import {
   SecondaryButton,
 } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-// helpers
-import { debounce } from "helpers/common.helper";
 // types
 import type { NextPage, GetServerSidePropsContext } from "next";
 // fetch-keys
-import { PROJECTS_LIST, PROJECT_DETAILS, WORKSPACE_DETAILS } from "constants/fetch-keys";
+import { PROJECTS_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
 // constants
 import { NETWORK_CHOICES } from "constants/project";
 
@@ -45,20 +42,13 @@ const defaultValues: Partial<IProject> = {
   network: 0,
 };
 
-const GeneralSettings: NextPage<UserAuth> = (props) => {
-  const { isMember, isOwner, isViewer, isGuest } = props;
-
+const GeneralSettings: NextPage<UserAuth> = ({ isMember, isOwner, isViewer, isGuest }) => {
   const [selectProject, setSelectedProject] = useState<string | null>(null);
 
   const { setToastAlert } = useToast();
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
-  const { data: activeWorkspace } = useSWR(
-    workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
-    () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null)
-  );
 
   const { data: projectDetails } = useSWR<IProject>(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
@@ -78,14 +68,15 @@ const GeneralSettings: NextPage<UserAuth> = (props) => {
     defaultValues,
   });
 
-  const checkIdentifier = (slug: string, value: string) => {
-    projectService.checkProjectIdentifierAvailability(slug, value).then((response) => {
-      if (response.exists) setError("identifier", { message: "Identifier already exists" });
-    });
-  };
+  const checkIdentifier = (value: string) => {
+    if (!workspaceSlug) return;
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const checkIdentifierAvailability = useCallback(debounce(checkIdentifier, 1500), []);
+    projectService
+      .checkProjectIdentifierAvailability(workspaceSlug as string, value)
+      .then((response) => {
+        if (response.exists) setError("identifier", { message: "Identifier already exists" });
+      });
+  };
 
   useEffect(() => {
     if (projectDetails)
@@ -98,7 +89,7 @@ const GeneralSettings: NextPage<UserAuth> = (props) => {
   }, [projectDetails, reset]);
 
   const onSubmit = async (formData: IProject) => {
-    if (!activeWorkspace || !projectDetails) return;
+    if (!workspaceSlug || !projectDetails) return;
 
     const payload: Partial<IProject> = {
       name: formData.name,
@@ -111,22 +102,32 @@ const GeneralSettings: NextPage<UserAuth> = (props) => {
     };
 
     await projectService
-      .updateProject(activeWorkspace.slug, projectDetails.id, payload)
-      .then((res) => {
-        mutate<IProject>(
-          PROJECT_DETAILS(projectDetails.id),
-          (prevData) => ({ ...prevData, ...res }),
-          false
-        );
-        mutate(PROJECTS_LIST(activeWorkspace.slug));
-        setToastAlert({
-          title: "Success",
-          type: "success",
-          message: "Project updated successfully",
-        });
-      })
-      .catch((err) => {
-        console.error(err);
+      .checkProjectIdentifierAvailability(workspaceSlug as string, payload.identifier ?? "")
+      .then(async (res) => {
+        if (res.exists) setError("identifier", { message: "Identifier already exists" });
+        else
+          await projectService
+            .updateProject(workspaceSlug as string, projectDetails.id, payload)
+            .then((res) => {
+              mutate<IProject>(
+                PROJECT_DETAILS(projectDetails.id),
+                (prevData) => ({ ...prevData, ...res }),
+                false
+              );
+              mutate(PROJECTS_LIST(workspaceSlug as string));
+              setToastAlert({
+                type: "success",
+                title: "Success!",
+                message: "Project updated successfully",
+              });
+            })
+            .catch(() => {
+              setToastAlert({
+                type: "error",
+                title: "Error!",
+                message: "Project could not be updated. Please try again.",
+              });
+            });
       });
   };
 
@@ -233,10 +234,6 @@ const GeneralSettings: NextPage<UserAuth> = (props) => {
                   error={errors.identifier}
                   register={register}
                   placeholder="Enter identifier"
-                  onChange={(e: any) => {
-                    if (!activeWorkspace || !e.target.value) return;
-                    checkIdentifierAvailability(activeWorkspace.slug, e.target.value);
-                  }}
                   validations={{
                     required: "Identifier is required",
                     minLength: {

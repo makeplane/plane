@@ -258,7 +258,7 @@ class RecentPagesEndpoint(BaseAPIView):
                 .select_related("workspace")
                 .select_related("owned_by")
                 .prefetch_related("labels")
-                .order_by("-updated_by")
+                .order_by("-is_favorite", "-updated_by")
             )
 
             yesterdays_pages = (
@@ -274,7 +274,7 @@ class RecentPagesEndpoint(BaseAPIView):
                 .select_related("workspace")
                 .select_related("owned_by")
                 .prefetch_related("labels")
-                .order_by("-updated_by")
+                .order_by("-is_favorite", "-updated_by")
             )
 
             earlier_this_week = (
@@ -294,7 +294,7 @@ class RecentPagesEndpoint(BaseAPIView):
                 .select_related("workspace")
                 .select_related("owned_by")
                 .prefetch_related("labels")
-                .order_by("-updated_by")
+                .order_by("-is_favorite", "-updated_by")
             )
             todays_pages_serializer = PageSerializer(todays_pages, many=True)
             yesterday_pages_serializer = PageSerializer(yesterdays_pages, many=True)
@@ -378,7 +378,7 @@ class MyPagesEndpoint(BaseAPIView):
                 .annotate(is_favorite=Exists(subquery))
                 .filter(Q(owned_by=self.request.user) | Q(access=0))
                 .filter(project__project_projectmember__member=request.user)
-                .order_by("name", "-is_favorite")
+                .order_by("-is_favorite", "name")
             )
             serializer = PageSerializer(pages, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -415,7 +415,7 @@ class CreatedbyOtherPagesEndpoint(BaseAPIView):
                 .select_related("owned_by")
                 .prefetch_related("labels")
                 .annotate(is_favorite=Exists(subquery))
-                .order_by("name", "-is_favorite")
+                .order_by("-is_favorite", "name")
             )
             serializer = PageSerializer(pages, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
