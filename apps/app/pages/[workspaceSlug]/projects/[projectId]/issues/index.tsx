@@ -13,7 +13,7 @@ import { IssueViewContextProvider } from "contexts/issue-view.context";
 // components
 import { IssuesFilterView, IssuesView } from "components/core";
 // ui
-import { HeaderButton } from "components/ui";
+import { PrimaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
@@ -47,16 +47,16 @@ const ProjectIssues: NextPage<UserAuth> = (props) => {
         right={
           <div className="flex items-center gap-2">
             <IssuesFilterView />
-            <HeaderButton
-              Icon={PlusIcon}
-              label="Add Issue"
+            <PrimaryButton
+              className="flex items-center gap-2"
               onClick={() => {
-                const e = new KeyboardEvent("keydown", {
-                  key: "c",
-                });
+                const e = new KeyboardEvent("keydown", { key: "c" });
                 document.dispatchEvent(e);
               }}
-            />
+            >
+              <PlusIcon className="w-4 h-4" />
+              Add Issue
+            </PrimaryButton>
           </div>
         }
       >
