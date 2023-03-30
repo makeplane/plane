@@ -13,13 +13,13 @@ import AppLayout from "layouts/app-layout";
 // contexts
 import { IssueViewContextProvider } from "contexts/issue-view.context";
 // ui
+import { CustomMenu, PrimaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // types
 import { UserAuth } from "types";
 // fetch-keys
 import { PROJECT_DETAILS, VIEWS_LIST, VIEW_DETAILS } from "constants/fetch-keys";
 import { IssuesFilterView, IssuesView } from "components/core";
-import { CustomMenu, HeaderButton } from "components/ui";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { truncateText } from "helpers/string.helper";
 import { StackedLayersIcon } from "components/icons";
@@ -91,16 +91,16 @@ const SingleView: React.FC<UserAuth> = (props) => {
         right={
           <div className="flex items-center gap-2">
             <IssuesFilterView />
-            <HeaderButton
-              Icon={PlusIcon}
-              label="Add Issue"
+            <PrimaryButton
+              className="flex items-center gap-2"
               onClick={() => {
-                const e = new KeyboardEvent("keydown", {
-                  key: "c",
-                });
+                const e = new KeyboardEvent("keydown", { key: "c" });
                 document.dispatchEvent(e);
               }}
-            />
+            >
+              <PlusIcon className="w-4 h-4" />
+              Add Issue
+            </PrimaryButton>
           </div>
         }
       >

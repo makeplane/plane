@@ -19,7 +19,7 @@ import AppLayout from "layouts/app-layout";
 // components
 import { CompletedCyclesListProps, CreateUpdateCycleModal, CyclesList } from "components/cycles";
 // ui
-import { HeaderButton, Loader } from "components/ui";
+import { Loader, PrimaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 // types
@@ -94,16 +94,16 @@ const ProjectCycles: NextPage<UserAuth> = (props) => {
         </Breadcrumbs>
       }
       right={
-        <HeaderButton
-          Icon={PlusIcon}
-          label="Add Cycle"
+        <PrimaryButton
+          className="flex items-center gap-2"
           onClick={() => {
-            const e = new KeyboardEvent("keydown", {
-              key: "q",
-            });
+            const e = new KeyboardEvent("keydown", { key: "q" });
             document.dispatchEvent(e);
           }}
-        />
+        >
+          <PlusIcon className="w-4 h-4" />
+          Add Cycle
+        </PrimaryButton>
       }
     >
       <CreateUpdateCycleModal

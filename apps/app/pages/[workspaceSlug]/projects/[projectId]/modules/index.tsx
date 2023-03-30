@@ -16,7 +16,7 @@ import modulesService from "services/modules.service";
 // components
 import { CreateUpdateModuleModal, SingleModuleCard } from "components/modules";
 // ui
-import { EmptyState, HeaderButton, Loader } from "components/ui";
+import { EmptyState, Loader, PrimaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 // types
@@ -72,16 +72,16 @@ const ProjectModules: NextPage<UserAuth> = (props) => {
         </Breadcrumbs>
       }
       right={
-        <HeaderButton
-          Icon={PlusIcon}
-          label="Add Module"
+        <PrimaryButton
+          className="flex items-center gap-2"
           onClick={() => {
-            const e = new KeyboardEvent("keydown", {
-              key: "m",
-            });
+            const e = new KeyboardEvent("keydown", { key: "m" });
             document.dispatchEvent(e);
           }}
-        />
+        >
+          <PlusIcon className="w-4 h-4" />
+          Add Module
+        </PrimaryButton>
       }
     >
       <CreateUpdateModuleModal

@@ -104,7 +104,7 @@ class ModuleViewSet(BaseViewSet):
                     filter=Q(issue_module__issue__state__group="backlog"),
                 )
             )
-            .order_by("name", "-is_favorite")
+            .order_by("-is_favorite", "name")
         )
 
     def create(self, request, slug, project_id):
