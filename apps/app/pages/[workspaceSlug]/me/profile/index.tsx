@@ -79,13 +79,13 @@ const Profile: NextPage = () => {
           message: "Profile updated successfully.",
         });
       })
-      .catch(() => {
+      .catch(() =>
         setToastAlert({
           type: "error",
           title: "Error!",
           message: "There was some error in updating your profile. Please try again.",
-        });
-      });
+        })
+      );
   };
 
   const handleDelete = (url: string | null | undefined, updateUser: boolean = false) => {
@@ -101,7 +101,6 @@ const Profile: NextPage = () => {
         userService
           .updateUser({ avatar: "" })
           .then((res) => {
-            setIsRemoving(false);
             setToastAlert({
               type: "success",
               title: "Success!",
@@ -113,13 +112,13 @@ const Profile: NextPage = () => {
             }, false);
           })
           .catch(() => {
-            setIsRemoving(false);
             setToastAlert({
               type: "error",
               title: "Error!",
               message: "There was some error in deleting your profile picture. Please try again.",
             });
-          });
+          })
+          .finally(() => setIsRemoving(false));
     });
   };
 
@@ -140,7 +139,6 @@ const Profile: NextPage = () => {
         isOpen={isImageUploadModalOpen}
         onClose={() => setIsImageUploadModalOpen(false)}
         onSuccess={(url) => {
-          handleDelete(myProfile?.avatar);
           setValue("avatar", url);
           handleSubmit(onSubmit)();
           setIsImageUploadModalOpen(false);
