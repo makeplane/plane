@@ -8,6 +8,8 @@ import useSWR from "swr";
 import { Dialog, Transition } from "@headlessui/react";
 // services
 import cyclesService from "services/cycles.service";
+// hooks
+import useToast from "hooks/use-toast";
 //icons
 import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { ContrastIcon, CyclesIcon } from "components/icons";
@@ -27,14 +29,27 @@ export const TransferIssuesModal: React.FC<Props> = ({ isOpen, handleClose }) =>
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
 
+  const { setToastAlert } = useToast();
+
+
   const transferIssue = async (payload: any) => {
     await cyclesService
       .transferIssues(workspaceSlug as string, projectId as string, cycleId as string, payload)
       .then((res) => {
-        console.log(res);
+        setToastAlert({
+          type: "success",
+          title: "Issues transfered successfully",
+          message:
+            "Issues have been transferred successfully",
+        });
       })
       .catch((err) => {
-        console.log(err);
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message:
+            "Issues cannot be transfer. Please try again.",
+        });
       });
   };
 
