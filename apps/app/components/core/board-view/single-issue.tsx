@@ -32,6 +32,7 @@ import {
   LinkIcon,
   PencilIcon,
   TrashIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 // helpers
 import { handleIssuesMutation } from "constants/issue";
@@ -40,7 +41,9 @@ import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 import { IIssue, Properties, TIssueGroupByOptions, UserAuth } from "types";
 // fetch-keys
 import {
+  CYCLE_DETAILS,
   CYCLE_ISSUES_WITH_PARAMS,
+  MODULE_DETAILS,
   MODULE_ISSUES_WITH_PARAMS,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
 } from "constants/fetch-keys";
@@ -135,10 +138,14 @@ export const SingleBoardIssue: React.FC<Props> = ({
 
       issuesService
         .patchIssue(workspaceSlug as string, projectId as string, issue.id, formData)
-        .then((res) => {
-          if (cycleId) mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
-          if (moduleId) mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
-          mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
+        .then(() => {
+          if (cycleId) {
+            mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
+            mutate(CYCLE_DETAILS(cycleId as string));
+          } else if (moduleId) {
+            mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
+            mutate(MODULE_DETAILS(moduleId as string));
+          } else mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
         })
         .catch((error) => {
           console.log(error);
@@ -226,27 +233,30 @@ export const SingleBoardIssue: React.FC<Props> = ({
               {type && !isNotAllowed && (
                 <CustomMenu width="auto" ellipsis>
                   <CustomMenu.MenuItem onClick={editIssue}>
-                    <span className="flex items-center justify-start gap-2">
+                    <div className="flex items-center justify-start gap-2">
                       <PencilIcon className="h-4 w-4" />
                       <span>Edit issue</span>
-                    </span>
+                    </div>
                   </CustomMenu.MenuItem>
                   {type !== "issue" && removeIssue && (
                     <CustomMenu.MenuItem onClick={removeIssue}>
-                      <>Remove from {type}</>
+                      <div className="flex items-center justify-start gap-2">
+                        <XMarkIcon className="h-4 w-4" />
+                        <span>Remove from {type}</span>
+                      </div>
                     </CustomMenu.MenuItem>
                   )}
                   <CustomMenu.MenuItem onClick={() => handleDeleteIssue(issue)}>
-                    <span className="flex items-center justify-start gap-2">
+                    <div className="flex items-center justify-start gap-2">
                       <TrashIcon className="h-4 w-4" />
                       <span>Delete issue</span>
-                    </span>
+                    </div>
                   </CustomMenu.MenuItem>
                   <CustomMenu.MenuItem onClick={handleCopyText}>
-                    <span className="flex items-center justify-start gap-2">
+                    <div className="flex items-center justify-start gap-2">
                       <LinkIcon className="h-4 w-4" />
                       <span>Copy issue Link</span>
-                    </span>
+                    </div>
                   </CustomMenu.MenuItem>
                 </CustomMenu>
               )}

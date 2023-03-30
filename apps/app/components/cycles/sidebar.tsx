@@ -34,7 +34,6 @@ import { DeleteCycleModal } from "components/cycles";
 import { ExclamationIcon } from "components/icons";
 // helpers
 import { capitalizeFirstLetter, copyTextToClipboard } from "helpers/string.helper";
-import { groupBy } from "helpers/array.helper";
 import { isDateRangeValid, renderDateFormat, renderShortDate } from "helpers/date-time.helper";
 // types
 import { ICycle, IIssue } from "types";
@@ -77,15 +76,6 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
           )
       : null
   );
-
-  const groupedIssues = {
-    backlog: [],
-    unstarted: [],
-    started: [],
-    cancelled: [],
-    completed: [],
-    ...groupBy(issues ?? [], "state_detail.group"),
-  };
 
   const { reset, watch } = useForm({
     defaultValues,
@@ -140,8 +130,8 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
   const isStartValid = new Date(`${cycle?.start_date}`) <= new Date();
   const isEndValid = new Date(`${cycle?.end_date}`) >= new Date(`${cycle?.start_date}`);
 
-  const progressPercentage = issues
-    ? Math.round((groupedIssues.completed.length / issues?.length) * 100)
+  const progressPercentage = cycle
+    ? Math.round((cycle.completed_issues / cycle.total_issues) * 100)
     : null;
 
   return (
@@ -205,7 +195,8 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                                     setToastAlert({
                                       type: "error",
                                       title: "Error!",
-                                      message: "The date you have entered is invalid. Please check and enter a valid date.",
+                                      message:
+                                        "The date you have entered is invalid. Please check and enter a valid date.",
                                     });
                                   }
                                 }
@@ -268,7 +259,8 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                                     setToastAlert({
                                       type: "error",
                                       title: "Error!",
-                                      message: "The date you have entered is invalid. Please check and enter a valid date.",
+                                      message:
+                                        "The date you have entered is invalid. Please check and enter a valid date.",
                                     });
                                   }
                                 }
@@ -348,12 +340,9 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
 
                     <div className="flex items-center gap-2.5 text-gray-800">
                       <span className="h-4 w-4">
-                        <ProgressBar
-                          value={groupedIssues.completed.length}
-                          maxValue={issues?.length}
-                        />
+                        <ProgressBar value={cycle.completed_issues} maxValue={cycle.total_issues} />
                       </span>
-                      {groupedIssues.completed.length}/{issues?.length}
+                      {cycle.completed_issues}/{cycle.total_issues}
                     </div>
                   </div>
                 </div>
@@ -369,7 +358,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                     <div className="flex w-full items-center justify-between gap-2    ">
                       <div className="flex items-center justify-start gap-2 text-sm">
                         <span className="font-medium text-gray-500">Progress</span>
-                        {!open && issues && progressPercentage ? (
+                        {!open && progressPercentage ? (
                           <span className="rounded bg-[#09A953]/10 px-1.5 py-0.5 text-xs text-[#09A953]">
                             {progressPercentage ? `${progressPercentage}%` : ""}
                           </span>
@@ -404,9 +393,8 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                                 </span>
                                 <span>
                                   Pending Issues -{" "}
-                                  {issues &&
-                                    groupedIssues &&
-                                    issues?.length - groupedIssues.completed.length}
+                                  {cycle.total_issues -
+                                    (cycle.completed_issues + cycle.cancelled_issues)}
                                 </span>
                               </div>
 
@@ -450,7 +438,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                         <span className="font-medium text-gray-500">Other Information</span>
                       </div>
 
-                      {(issues?.length ?? 0) > 0 ? (
+                      {cycle.total_issues > 0 ? (
                         <Disclosure.Button>
                           <ChevronDownIcon
                             className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`}
@@ -468,11 +456,17 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                     </div>
                     <Transition show={open}>
                       <Disclosure.Panel>
-                        {(issues?.length ?? 0) > 0 ? (
+                        {cycle.total_issues > 0 ? (
                           <div className=" h-full w-full py-4">
                             <SidebarProgressStats
                               issues={issues ?? []}
-                              groupedIssues={groupedIssues}
+                              groupedIssues={{
+                                backlog: cycle.backlog_issues,
+                                unstarted: cycle.unstarted_issues,
+                                started: cycle.started_issues,
+                                completed: cycle.completed_issues,
+                                cancelled: cycle.cancelled_issues,
+                              }}
                             />
                           </div>
                         ) : (

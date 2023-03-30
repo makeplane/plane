@@ -77,15 +77,6 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
     defaultValues,
   });
 
-  const groupedIssues = {
-    backlog: [],
-    unstarted: [],
-    started: [],
-    cancelled: [],
-    completed: [],
-    ...groupBy(moduleIssues ?? [], "issue_detail.state_detail.group"),
-  };
-
   const submitChanges = (data: Partial<IModule>) => {
     if (!workspaceSlug || !projectId || !moduleId) return;
 
@@ -179,8 +170,8 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
   const isStartValid = new Date(`${module?.start_date}`) <= new Date();
   const isEndValid = new Date(`${module?.target_date}`) >= new Date(`${module?.start_date}`);
 
-  const progressPercentage = moduleIssues
-    ? Math.round((groupedIssues.completed.length / moduleIssues?.length) * 100)
+  const progressPercentage = module
+    ? Math.round((module.completed_issues / module.total_issues) * 100)
     : null;
 
   return (
@@ -389,11 +380,11 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                     <div className="flex items-center gap-2.5 text-gray-800">
                       <span className="h-4 w-4">
                         <ProgressBar
-                          value={groupedIssues.completed.length}
-                          maxValue={moduleIssues?.length}
+                          value={module.completed_issues}
+                          maxValue={module.total_issues}
                         />
                       </span>
-                      {groupedIssues.completed.length}/{moduleIssues?.length}
+                      {module.completed_issues}/{module.total_issues}
                     </div>
                   </div>
                 </div>
@@ -445,7 +436,8 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                                 </span>
                                 <span>
                                   Pending Issues -{" "}
-                                  {moduleIssues?.length - groupedIssues.completed.length}{" "}
+                                  {module.total_issues -
+                                    (module.completed_issues + module.cancelled_issues)}{" "}
                                 </span>
                               </div>
 
@@ -489,7 +481,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                         <span className="font-medium text-gray-500">Other Information</span>
                       </div>
 
-                      {issues.length > 0 ? (
+                      {module.total_issues > 0 ? (
                         <Disclosure.Button className="p-1">
                           <ChevronDownIcon
                             className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`}
@@ -507,12 +499,18 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                     </div>
                     <Transition show={open}>
                       <Disclosure.Panel>
-                        {issues.length > 0 ? (
+                        {module.total_issues > 0 ? (
                           <>
                             <div className=" h-full w-full py-4">
                               <SidebarProgressStats
                                 issues={issues}
-                                groupedIssues={groupedIssues}
+                                groupedIssues={{
+                                  backlog: module.backlog_issues,
+                                  unstarted: module.unstarted_issues,
+                                  started: module.started_issues,
+                                  completed: module.completed_issues,
+                                  cancelled: module.cancelled_issues,
+                                }}
                                 userAuth={userAuth}
                                 module={module}
                               />

@@ -35,7 +35,9 @@ import { handleIssuesMutation } from "constants/issue";
 import { IIssue, Properties, UserAuth } from "types";
 // fetch-keys
 import {
+  CYCLE_DETAILS,
   CYCLE_ISSUES_WITH_PARAMS,
+  MODULE_DETAILS,
   MODULE_ISSUES_WITH_PARAMS,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
 } from "constants/fetch-keys";
@@ -123,10 +125,14 @@ export const SingleListIssue: React.FC<Props> = ({
 
       issuesService
         .patchIssue(workspaceSlug as string, projectId as string, issue.id, formData)
-        .then((res) => {
-          if (cycleId) mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
-          if (moduleId) mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
-          mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
+        .then(() => {
+          if (cycleId) {
+            mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
+            mutate(CYCLE_DETAILS(cycleId as string));
+          } else if (moduleId) {
+            mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
+            mutate(MODULE_DETAILS(moduleId as string));
+          } else mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
         });
     },
     [workspaceSlug, projectId, cycleId, moduleId, issue, groupTitle, index, selectedGroup, params]

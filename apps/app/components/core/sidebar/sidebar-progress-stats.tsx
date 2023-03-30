@@ -240,7 +240,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
                   <span className="text-xs capitalize">{group}</span>
                 </div>
               }
-              completed={groupedIssues[group].length}
+              completed={groupedIssues[group]}
               total={issues.length}
             />
           ))}
