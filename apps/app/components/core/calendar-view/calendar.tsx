@@ -362,7 +362,7 @@ export const CalendarView = () => {
         </div>
 
         <div
-          className={`grid h-full auto-rows-[minmax(170px,1fr)] ${
+          className={`grid h-full auto-rows-[minmax(150px,1fr)] ${
             showWeekEnds ? "grid-cols-7" : "grid-cols-5"
           } `}
         >
@@ -393,7 +393,7 @@ export const CalendarView = () => {
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
-                            className={`w-full cursor-pointer rounded bg-white p-1.5 hover:scale-105 ${
+                            className={`w-full cursor-pointer truncate rounded bg-white p-1.5 hover:scale-105 ${
                               snapshot.isDragging ? "shadow-lg" : ""
                             }`}
                           >

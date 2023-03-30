@@ -16,7 +16,7 @@ import modulesService from "services/modules.service";
 // components
 import { CreateUpdateModuleModal, SingleModuleCard } from "components/modules";
 // ui
-import { EmptyState, HeaderButton, Loader } from "components/ui";
+import { EmptyState, Loader, PrimaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 // types
@@ -72,16 +72,16 @@ const ProjectModules: NextPage<UserAuth> = (props) => {
         </Breadcrumbs>
       }
       right={
-        <HeaderButton
-          Icon={PlusIcon}
-          label="Add Module"
+        <PrimaryButton
+          className="flex items-center gap-2"
           onClick={() => {
-            const e = new KeyboardEvent("keydown", {
-              key: "m",
-            });
+            const e = new KeyboardEvent("keydown", { key: "m" });
             document.dispatchEvent(e);
           }}
-        />
+        >
+          <PlusIcon className="w-4 h-4" />
+          Add Module
+        </PrimaryButton>
       }
     >
       <CreateUpdateModuleModal
@@ -95,7 +95,7 @@ const ProjectModules: NextPage<UserAuth> = (props) => {
             <div className="flex flex-col gap-5">
               <h3 className="text-3xl font-semibold text-black">Modules</h3>
 
-              <div className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
+              <div className="grid grid-cols-1 gap-9 sm:grid-cols-2 lg:grid-cols-3">
                 {modules.map((module) => (
                   <SingleModuleCard
                     key={module.id}

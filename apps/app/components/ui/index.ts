@@ -8,7 +8,6 @@ export * from "./custom-search-select";
 export * from "./custom-select";
 export * from "./datepicker";
 export * from "./empty-space";
-export * from "./header-button";
 export * from "./loader";
 export * from "./multi-input";
 export * from "./multi-level-select";
