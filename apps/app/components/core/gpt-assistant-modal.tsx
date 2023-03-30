@@ -91,6 +91,21 @@ export const GptAssistantModal: React.FC<Props> = ({
 
         if (res.response === "") setInvalidResponse(true);
         else setInvalidResponse(false);
+      })
+      .catch((err) => {
+        if (err.status === 429)
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message:
+              "You have reached the maximum number of requests of 50 requests per month per user.",
+          });
+        else
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message: "Some error occurred. Please try again.",
+          });
       });
   };
 
