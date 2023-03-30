@@ -377,7 +377,9 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                         <div className="flex items-center gap-1">
                           <ExclamationIcon height={14} width={14} />
                           <span className="text-xs italic text-gray-500">
-                            Invalid date. Please enter valid date.
+                            {cycleStatus === "upcoming"
+                              ? "Cycle is yet to start."
+                              : "Invalid date. Please enter valid date."}
                           </span>
                         </div>
                       )}
@@ -433,7 +435,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                   <div
                     className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}
                   >
-                    <div className="flex w-full items-center justify-between gap-2    ">
+                    <div className="flex w-full items-center justify-between gap-2">
                       <div className="flex items-center justify-start gap-2 text-sm">
                         <span className="font-medium text-gray-500">Other Information</span>
                       </div>
