@@ -404,7 +404,9 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                                 </span>
                                 <span>
                                   Pending Issues -{" "}
-                                  {issues?.length ?? 0 - groupedIssues.completed.length}{" "}
+                                  {issues &&
+                                    groupedIssues &&
+                                    issues?.length - groupedIssues.completed.length}
                                 </span>
                               </div>
 
