@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 
@@ -17,7 +17,15 @@ import { SecondaryButton, DangerButton } from "components/ui";
 // types
 import type { CycleIssueResponse, IIssue, ModuleIssueResponse } from "types";
 // fetch-keys
-import { CYCLE_ISSUES, PROJECT_ISSUES_LIST, MODULE_ISSUES, USER_ISSUE } from "constants/fetch-keys";
+import {
+  CYCLE_ISSUES,
+  CYCLE_ISSUES_WITH_PARAMS,
+  MODULE_ISSUES,
+  MODULE_ISSUES_WITH_PARAMS,
+  PROJECT_ISSUES_LIST_WITH_PARAMS,
+  USER_ISSUE,
+} from "constants/fetch-keys";
+import useIssuesView from "hooks/use-issues-view";
 
 type Props = {
   isOpen: boolean;
@@ -29,7 +37,9 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data })
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug, projectId: queryProjectId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+
+  const { params } = useIssuesView();
 
   const { setToastAlert } = useToast();
 
@@ -44,37 +54,14 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data })
 
   const handleDeletion = async () => {
     setIsDeleteLoading(true);
-    if (!data || !workspaceSlug) return;
+    if (!workspaceSlug || !projectId || !data) return;
 
-    const projectId = data.project;
     await issueServices
-      .deleteIssue(workspaceSlug as string, projectId, data.id)
+      .deleteIssue(workspaceSlug as string, projectId as string, data.id)
       .then(() => {
-        const cycleId = data?.cycle;
-        const moduleId = data?.module;
-
-        if (cycleId) {
-          mutate<CycleIssueResponse[]>(
-            CYCLE_ISSUES(cycleId),
-            (prevData) => prevData?.filter((i) => i.issue !== data.id),
-            false
-          );
-        }
-
-        if (moduleId) {
-          mutate<ModuleIssueResponse[]>(
-            MODULE_ISSUES(moduleId),
-            (prevData) => prevData?.filter((i) => i.issue !== data.id),
-            false
-          );
-        }
-
-        if (!queryProjectId)
-          mutate<IIssue[]>(
-            USER_ISSUE(workspaceSlug as string),
-            (prevData) => prevData?.filter((i) => i.id !== data.id),
-            false
-          );
+        if (cycleId) mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
+        else if (moduleId) mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
+        else mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
 
         handleClose();
         setToastAlert({
@@ -133,8 +120,8 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data })
                       Are you sure you want to delete issue{" "}
                       <span className="break-all font-semibold">
                         {data?.project_detail.identifier}-{data?.sequence_id}
-                      </span>{""}
-                      ? All of the data related to the issue will be permanently removed. This
+                      </span>
+                      {""}? All of the data related to the issue will be permanently removed. This
                       action cannot be undone.
                     </p>
                   </span>

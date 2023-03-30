@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 
 import { useRouter } from "next/router";
 
@@ -29,7 +29,7 @@ export const DeleteModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data }) 
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, projectId, moduleId } = router.query;
 
   const { setToastAlert } = useToast();
 
@@ -41,22 +41,26 @@ export const DeleteModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data }) 
   const handleDeletion = async () => {
     setIsDeleteLoading(true);
 
-    if (!workspaceSlug || !data) return;
-    await modulesService
-      .deleteModule(workspaceSlug as string, data.project, data.id)
-      .then(() => {
-        mutate(MODULE_LIST(data.project));
-        router.push(`/${workspaceSlug}/projects/${data.project}/modules`);
-        handleClose();
+    if (!workspaceSlug || !projectId || !data) return;
 
-        setToastAlert({
-          title: "Success",
-          type: "success",
-          message: "Module deleted successfully",
-        });
+    mutate<IModule[]>(
+      MODULE_LIST(projectId as string),
+      (prevData) => prevData?.filter((m) => m.id !== data.id),
+      false
+    );
+
+    await modulesService
+      .deleteModule(workspaceSlug as string, projectId as string, data.id)
+      .then(() => {
+        if (moduleId) router.push(`/${workspaceSlug}/projects/${data.project}/modules`);
+        handleClose();
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Module could not be deleted. Please try again.",
+        });
         setIsDeleteLoading(false);
       });
   };
@@ -102,10 +106,9 @@ export const DeleteModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data }) 
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-gray-500">
-                          Are you sure you want to delete module- {" "}
-                          <span className="font-bold">{data?.name}</span>
-                          ? All of the data related to the module will be permanently removed.
-                          This action cannot be undone.
+                          Are you sure you want to delete module-{" "}
+                          <span className="font-bold">{data?.name}</span>? All of the data related
+                          to the module will be permanently removed. This action cannot be undone.
                         </p>
                       </div>
                     </div>

@@ -36,7 +36,7 @@ const useIssuesView = () => {
     setFilters,
     resetFilterToDefault,
     setNewFilterDefaultView,
-    setIssueView
+    setIssueView,
   } = useContext(issueViewContext);
 
   const router = useRouter();
