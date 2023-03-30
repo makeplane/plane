@@ -27,8 +27,10 @@ type Props = {
 
 export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
-  const [confirmProjectName, setConfirmProjectName] = useState("");
-  const [confirmDeleteMyProject, setConfirmDeleteMyProject] = useState(false);
+
+  const [confirmWorkspaceName, setConfirmWorkspaceName] = useState("");
+  const [confirmDeleteMyWorkspace, setConfirmDeleteMyWorkspace] = useState(false);
+
   const [selectedWorkspace, setSelectedWorkspace] = useState<IWorkspace | null>(null);
 
   const router = useRouter();
@@ -44,7 +46,7 @@ export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose })
     }
   }, [data]);
 
-  const canDelete = confirmProjectName === data?.name && confirmDeleteMyProject;
+  const canDelete = confirmWorkspaceName === data?.name && confirmDeleteMyWorkspace;
 
   const handleClose = () => {
     onClose();
@@ -100,71 +102,72 @@ export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose })
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-[40rem]">
-                <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                  <div className="sm:flex sm:items-start">
-                    <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
+                <div className="flex flex-col gap-6 p-6">
+                  <div className="flex w-full items-center justify-start gap-6">
+                    <span className="place-items-center rounded-full bg-red-100 p-4">
                       <ExclamationTriangleIcon
                         className="h-6 w-6 text-red-600"
                         aria-hidden="true"
                       />
-                    </div>
-                    <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                      <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
-                        Delete Workspace
-                      </Dialog.Title>
-                      <div className="mt-2">
-                        <p className="text-sm text-gray-500">
-                          Are you sure you want to delete workspace- {" "}
-                          <span className="font-bold">{data?.name}</span>
-                          ? All of the data related to the workspace will be permanently
-                          removed. This action cannot be undone.
-                        </p>
-                      </div>
-                      <div className="mt-3">
-                        <p className="text-sm text-gray-500">
-                          Enter the workspace name{" "}
-                          <span className="font-semibold">{selectedWorkspace?.name}</span> to
-                          continue:
-                        </p>
-                        <Input
-                          type="text"
-                          placeholder="Project name"
-                          className="mt-2"
-                          value={confirmProjectName}
-                          onChange={(e) => {
-                            setConfirmProjectName(e.target.value);
-                          }}
-                          name="workspaceName"
-                        />
-                      </div>
-                      <div className="mt-3">
-                        <p className="text-sm text-gray-500">
-                          To confirm, type{" "}
-                          <span className="font-semibold">delete my workspace</span> below:
-                        </p>
-                        <Input
-                          type="text"
-                          placeholder="Enter 'delete my workspace'"
-                          className="mt-2"
-                          onChange={(e) => {
-                            if (e.target.value === "delete my workspace") {
-                              setConfirmDeleteMyProject(true);
-                            } else {
-                              setConfirmDeleteMyProject(false);
-                            }
-                          }}
-                          name="typeDelete"
-                        />
-                      </div>
-                    </div>
+                    </span>
+                    <span className="flex items-center justify-start">
+                      <h3 className="text-xl font-medium 2xl:text-2xl">Delete Workspace</h3>
+                    </span>
                   </div>
-                </div>
-                <div className="flex justify-end gap-2 bg-gray-50 p-4 sm:px-6">
-                  <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                  <DangerButton onClick={handleDeletion} loading={isDeleteLoading || !canDelete}>
-                    {isDeleteLoading ? "Deleting..." : "Delete"}
-                  </DangerButton>
+
+                  <span>
+                    <p className="text-sm leading-7 text-gray-500">
+                      Are you sure you want to delete workspace{" "}
+                      <span className="break-all font-semibold">{data?.name}</span>? All of the data
+                      related to the workspace will be permanently removed. This action cannot be
+                      undone.
+                    </p>
+                  </span>
+
+                  <div className="text-gray-600">
+                    <p className="break-all text-sm ">
+                      Enter the workspace name{" "}
+                      <span className="font-medium">{selectedWorkspace?.name}</span> to continue:
+                    </p>
+                    <Input
+                      type="text"
+                      placeholder="Workspace name"
+                      className="mt-2"
+                      value={confirmWorkspaceName}
+                      onChange={(e) => {
+                        setConfirmWorkspaceName(e.target.value);
+                      }}
+                      name="workspaceName"
+                    />
+                  </div>
+
+                  <div className="text-gray-600">
+                    <p className="text-sm">
+                      To confirm, type <span className="font-medium">delete my workspace</span>{" "}
+                      below:
+                    </p>
+                    <Input
+                      type="text"
+                      placeholder="Enter 'delete my workspace'"
+                      className="mt-2"
+                      onChange={(e) => {
+                        if (e.target.value === "delete my workspace") {
+                          setConfirmDeleteMyWorkspace(true);
+                        } else {
+                          setConfirmDeleteMyWorkspace(false);
+                        }
+                      }}
+                      name="typeDelete"
+                    />
+                  </div>
+
+                  <div className="flex justify-end gap-2">
+                    <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                    <DangerButton onClick={handleDeletion} loading={isDeleteLoading || !canDelete}>
+                      {isDeleteLoading ? "Deleting..." : "Delete Workspace"}
+                    </DangerButton>
+                  </div>
                 </div>
               </Dialog.Panel>
             </Transition.Child>
