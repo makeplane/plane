@@ -27,7 +27,7 @@ import { RecentPagesList, CreateUpdatePageModal, TPagesListProps } from "compone
 import { Input, PrimaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { ListBulletIcon, RectangleGroupIcon } from "@heroicons/react/20/solid";
+import { ListBulletIcon, RectangleGroupIcon, Squares2X2Icon } from "@heroicons/react/20/solid";
 // types
 import { IPage, TPageViewProps, UserAuth } from "types";
 // fetch-keys
@@ -115,6 +115,7 @@ const ProjectPages: NextPage<UserAuth> = (props) => {
           title: "Success!",
           message: "Page created successfully.",
         });
+        router.push(`/${workspaceSlug}/projects/${projectId}/pages/${res.id}`);
         reset();
 
         mutate(RECENT_PAGES_LIST(projectId as string));
@@ -222,7 +223,7 @@ const ProjectPages: NextPage<UserAuth> = (props) => {
                   >
                     <ListBulletIcon className="h-4 w-4" />
                   </button>
-                  {/* <button
+                  <button
                     type="button"
                     className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200 ${
                       viewType === "detailed" ? "bg-gray-200" : ""
@@ -230,8 +231,8 @@ const ProjectPages: NextPage<UserAuth> = (props) => {
                     onClick={() => setViewType("detailed")}
                   >
                     <Squares2X2Icon className="h-4 w-4" />
-                  </button> */}
-                  <button
+                  </button>
+                  {/* <button
                     type="button"
                     className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-200 ${
                       viewType === "masonry" ? "bg-gray-200" : ""
@@ -239,7 +240,7 @@ const ProjectPages: NextPage<UserAuth> = (props) => {
                     onClick={() => setViewType("masonry")}
                   >
                     <RectangleGroupIcon className="h-4 w-4" />
-                  </button>
+                  </button> */}
                 </div>
               </Tab.List>
               <Tab.Panels>
