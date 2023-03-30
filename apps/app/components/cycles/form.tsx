@@ -11,7 +11,7 @@ import useToast from "hooks/use-toast";
 // ui
 import { CustomDatePicker, Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
 // helpers
-import { getDateRangeStatus } from "helpers/date-time.helper";
+import { getDateRangeStatus, isDateRangeValid } from "helpers/date-time.helper";
 // types
 import { ICycle } from "types";
 
@@ -141,12 +141,22 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
                       value={value}
                       onChange={(val) => {
                         onChange(val);
-                        val && watch("end_date") && cycleStatus != "current"
-                          ? dateChecker({
-                              start_date: val,
-                              end_date: watch("end_date"),
-                            })
-                          : "";
+                        if (val && watch("end_date")) {
+                          if (isDateRangeValid(val, `${watch("end_date")}`)) {
+                            cycleStatus != "current" &&
+                              dateChecker({
+                                start_date: val,
+                                end_date: watch("end_date"),
+                              });
+                          } else {
+                            setIsDateValid(false);
+                            setToastAlert({
+                              type: "error",
+                              title: "Error!",
+                              message: "You have enter invalid date.",
+                            });
+                          }
+                        }
                       }}
                       error={errors.start_date ? true : false}
                     />
@@ -169,12 +179,22 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
                       value={value}
                       onChange={(val) => {
                         onChange(val);
-                        val && watch("start_date") && cycleStatus != "current"
-                          ? dateChecker({
-                              start_date: watch("start_date"),
-                              end_date: val,
-                            })
-                          : "";
+                        if (watch("start_date") && val) {
+                          if (isDateRangeValid(`${watch("start_date")}`, val)) {
+                            cycleStatus != "current" &&
+                              dateChecker({
+                                start_date: watch("start_date"),
+                                end_date: val,
+                              });
+                          } else {
+                            setIsDateValid(false);
+                            setToastAlert({
+                              type: "error",
+                              title: "Error!",
+                              message: "You have enter invalid date.",
+                            });
+                          }
+                        }
                       }}
                       error={errors.end_date ? true : false}
                     />
