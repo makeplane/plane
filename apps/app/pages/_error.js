@@ -78,7 +78,9 @@ const CustomErrorComponent = () => {
             </p>
           </div>
           <div className="flex items-center gap-2 justify-center">
-            <PrimaryButton size="md">Go back</PrimaryButton>
+            <PrimaryButton size="md" onClick={() => router.back()}>
+              Go back
+            </PrimaryButton>
             <SecondaryButton size="md" onClick={handleSignOut}>
               Sign out
             </SecondaryButton>
