@@ -22,6 +22,7 @@ import { IIssue, Properties } from "types";
 import { USER_ISSUE } from "constants/fetch-keys";
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 import useToast from "hooks/use-toast";
+import { LinkIcon } from "@heroicons/react/24/outline";
 
 type Props = {
   issue: IIssue;
@@ -167,7 +168,12 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
             </Tooltip>
           )}
           <CustomMenu width="auto" ellipsis>
-            <CustomMenu.MenuItem onClick={handleCopyText}>Copy issue link</CustomMenu.MenuItem>
+            <CustomMenu.MenuItem onClick={handleCopyText}>
+              <span className="flex items-center justify-start gap-2 text-gray-700">
+                <LinkIcon className="h-4 w-4" />
+                <span>Copy issue link</span>
+              </span>
+            </CustomMenu.MenuItem>
           </CustomMenu>
         </div>
       </div>

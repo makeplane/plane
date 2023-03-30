@@ -15,10 +15,10 @@ import {
   ChartPieIcon,
   ArrowLongRightIcon,
   TrashIcon,
-  DocumentDuplicateIcon,
   UserCircleIcon,
   ChevronDownIcon,
   DocumentIcon,
+  LinkIcon,
 } from "@heroicons/react/24/outline";
 // ui
 import { CustomMenu, Loader, ProgressBar } from "components/ui";
@@ -295,7 +295,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                     <CustomMenu width="lg" ellipsis>
                       <CustomMenu.MenuItem onClick={handleCopyText}>
                         <span className="flex items-center justify-start gap-2 text-gray-800">
-                          <DocumentDuplicateIcon className="h-4 w-4" />
+                          <LinkIcon className="h-4 w-4" />
                           <span>Copy Link</span>
                         </span>
                       </CustomMenu.MenuItem>

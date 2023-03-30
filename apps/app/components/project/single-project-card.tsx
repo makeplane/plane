@@ -14,8 +14,14 @@ import useToast from "hooks/use-toast";
 // ui
 import { CustomMenu, Loader, Tooltip } from "components/ui";
 // icons
-import { CalendarDaysIcon, PencilIcon, PlusIcon } from "@heroicons/react/24/outline";
-import { StarIcon } from "@heroicons/react/20/solid";
+import {
+  CalendarDaysIcon,
+  LinkIcon,
+  PencilIcon,
+  PlusIcon,
+  StarIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
 // helpers
 import { renderShortNumericDateFormat } from "helpers/date-time.helper";
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
@@ -213,20 +219,32 @@ export const SingleProjectCard: React.FC<ProjectCardProps> = ({
                   <CustomMenu width="auto" verticalEllipsis>
                     {isOwner && (
                       <CustomMenu.MenuItem onClick={() => setDeleteProject(project.id)}>
-                        Delete project
+                        <span className="flex items-center justify-start gap-2 text-gray-700">
+                          <TrashIcon className="h-4 w-4" />
+                          <span>Delete project</span>
+                        </span>
                       </CustomMenu.MenuItem>
                     )}
                     {project.is_favorite ? (
                       <CustomMenu.MenuItem onClick={handleRemoveFromFavorites}>
-                        Remove from favorites
+                        <span className="flex items-center justify-start gap-2 text-gray-700">
+                          <StarIcon className="h-4 w-4" />
+                          <span>Remove from favorites</span>
+                        </span>
                       </CustomMenu.MenuItem>
                     ) : (
                       <CustomMenu.MenuItem onClick={handleAddToFavorites}>
-                        Add to favorites
+                        <span className="flex items-center justify-start gap-2 text-gray-700">
+                          <StarIcon className="h-4 w-4" />
+                          <span>Add to favorites</span>
+                        </span>
                       </CustomMenu.MenuItem>
                     )}
                     <CustomMenu.MenuItem onClick={handleCopyText}>
-                      Copy project link
+                      <span className="flex items-center justify-start gap-2 text-gray-700">
+                        <LinkIcon className="h-4 w-4" />
+                        <span>Copy project link</span>
+                      </span>
                     </CustomMenu.MenuItem>
                   </CustomMenu>
                 </div>

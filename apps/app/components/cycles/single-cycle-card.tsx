@@ -18,7 +18,7 @@ import { CalendarDaysIcon } from "@heroicons/react/20/solid";
 import { TargetIcon } from "components/icons";
 import {
   ChevronDownIcon,
-  DocumentDuplicateIcon,
+  LinkIcon,
   PencilIcon,
   StarIcon,
   TrashIcon,
@@ -318,7 +318,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                 )}
                 <CustomMenu.MenuItem onClick={handleCopyText}>
                   <span className="flex items-center justify-start gap-2 text-gray-800">
-                    <DocumentDuplicateIcon className="h-4 w-4" />
+                    <LinkIcon className="h-4 w-4" />
                     <span>Copy Cycle Link</span>
                   </span>
                 </CustomMenu.MenuItem>
