@@ -102,9 +102,9 @@ export const DeleteModuleModal: React.FC<Props> = ({ isOpen, setIsOpen, data }) 
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-gray-500">
-                          Are you sure you want to delete module - {`"`}
-                          <span className="italic">{data?.name}</span>
-                          {`" ?`} All of the data related to the module will be permanently removed.
+                          Are you sure you want to delete module- {" "}
+                          <span className="font-bold">{data?.name}</span>
+                          ? All of the data related to the module will be permanently removed.
                           This action cannot be undone.
                         </p>
                       </div>
