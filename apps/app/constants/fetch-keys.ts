@@ -94,8 +94,7 @@ export const STATE_LIST = (projectId: string) => `STATE_LIST_${projectId.toUpper
 export const STATE_DETAIL = "STATE_DETAILS";
 
 export const USER_ISSUE = (workspaceSlug: string) => `USER_ISSUE_${workspaceSlug.toUpperCase()}`;
-export const USER_ACTIVITY = (workspaceSlug: string) =>
-  `USER_ACTIVITY_${workspaceSlug.toUpperCase()}`;
+export const USER_ACTIVITY = "USER_ACTIVITY";
 export const USER_WORKSPACE_DASHBOARD = (workspaceSlug: string) =>
   `USER_WORKSPACE_DASHBOARD_${workspaceSlug.toUpperCase()}`;
 export const USER_PROJECT_VIEW = (projectId: string) =>

@@ -61,6 +61,39 @@ export interface IUserWorkspaceDashboard {
   upcoming_issues: IIssueLite[];
 }
 
+export interface IUserDetailedActivity {
+  actor: string;
+  actor_detail: IUserLite;
+  attachments: any[];
+  comment: string;
+  created_at: string;
+  created_by: string | null;
+  field: string;
+  id: string;
+  issue: string;
+  issue_comment: string | null;
+  new_identifier: string | null;
+  new_value: string | null;
+  old_identifier: string | null;
+  old_value: string | null;
+  project: string;
+  updated_at: string;
+  updated_by: string | null;
+  verb: string;
+  workspace: string;
+}
+
+export interface IUserActivityResponse {
+  count: number;
+  extra_stats: null;
+  next_cursor: string;
+  next_page_results: boolean;
+  prev_cursor: string;
+  prev_page_results: boolean;
+  results: IUserDetailedActivity[];
+  total_pages: number;
+}
+
 export type UserAuth = {
   isMember: boolean;
   isOwner: boolean;
