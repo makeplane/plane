@@ -7,7 +7,7 @@ psycopg2==2.9.5
 django-oauth-toolkit==2.2.0
 mistune==2.0.4
 djangorestframework==3.14.0
-redis==4.5.3
+redis==4.5.4
 django-nested-admin==4.0.2
 django-cors-headers==3.13.0
 whitenoise==6.3.0
