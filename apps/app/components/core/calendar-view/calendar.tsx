@@ -67,15 +67,21 @@ export const CalendarView = () => {
     endDate: lastDayOfWeek(currentDate),
   });
 
+  const targetDateFilter = {
+    target_date: `${renderDateFormat(calendarDateRange.startDate)};after,${renderDateFormat(
+      calendarDateRange.endDate
+    )};before`,
+  };
+
   const { data: projectCalendarIssues } = useSWR(
     workspaceSlug && projectId ? PROJECT_CALENDAR_ISSUES(projectId as string) : null,
     workspaceSlug && projectId
       ? () =>
-          issuesService.getIssuesWithParams(workspaceSlug as string, projectId as string, {
-            target_date: `${renderDateFormat(calendarDateRange.startDate)};after,${renderDateFormat(
-              calendarDateRange.endDate
-            )};before`,
-          })
+          issuesService.getIssuesWithParams(
+            workspaceSlug as string,
+            projectId as string,
+            targetDateFilter
+          )
       : null
   );
 
@@ -89,11 +95,7 @@ export const CalendarView = () => {
             workspaceSlug as string,
             projectId as string,
             cycleId as string,
-            {
-              target_date: `${renderDateFormat(
-                calendarDateRange.startDate
-              )};after,${renderDateFormat(calendarDateRange.endDate)};before`,
-            }
+            targetDateFilter
           )
       : null
   );
@@ -108,11 +110,7 @@ export const CalendarView = () => {
             workspaceSlug as string,
             projectId as string,
             moduleId as string,
-            {
-              target_date: `${renderDateFormat(
-                calendarDateRange.startDate
-              )};after,${renderDateFormat(calendarDateRange.endDate)};before`,
-            }
+            targetDateFilter
           )
       : null
   );
@@ -166,48 +164,25 @@ export const CalendarView = () => {
     if (!destination || !workspaceSlug || !projectId) return;
     if (source.droppableId === destination.droppableId) return;
 
-    if (cycleId)
-      mutate<IIssue[]>(
-        CYCLE_CALENDAR_ISSUES(projectId as string, cycleId as string),
-        (prevData) =>
-          (prevData ?? []).map((p) => {
-            if (p.id === draggableId)
-              return {
-                ...p,
-                target_date: destination.droppableId,
-              };
-            return p;
-          }),
-        false
-      );
-    else if (moduleId)
-      mutate<IIssue[]>(
-        MODULE_CALENDAR_ISSUES(projectId as string, moduleId as string),
-        (prevData) =>
-          (prevData ?? []).map((p) => {
-            if (p.id === draggableId)
-              return {
-                ...p,
-                target_date: destination.droppableId,
-              };
-            return p;
-          }),
-        false
-      );
-    else
-      mutate<IIssue[]>(
-        PROJECT_CALENDAR_ISSUES(projectId as string),
-        (prevData) =>
-          (prevData ?? []).map((p) => {
-            if (p.id === draggableId)
-              return {
-                ...p,
-                target_date: destination.droppableId,
-              };
-            return p;
-          }),
-        false
-      );
+    const fetchKey = cycleId
+      ? CYCLE_CALENDAR_ISSUES(projectId as string, cycleId as string)
+      : moduleId
+      ? MODULE_CALENDAR_ISSUES(projectId as string, moduleId as string)
+      : PROJECT_CALENDAR_ISSUES(projectId as string);
+
+    mutate<IIssue[]>(
+      fetchKey,
+      (prevData) =>
+        (prevData ?? []).map((p) => {
+          if (p.id === draggableId)
+            return {
+              ...p,
+              target_date: destination.droppableId,
+            };
+          return p;
+        }),
+      false
+    );
 
     issuesService.patchIssue(workspaceSlug as string, projectId as string, draggableId, {
       target_date: destination?.droppableId,
@@ -216,6 +191,7 @@ export const CalendarView = () => {
 
   const updateDate = (date: Date) => {
     setCurrentDate(date);
+
     setCalendarDateRange({
       startDate: startOfWeek(date),
       endDate: lastDayOfWeek(date),
