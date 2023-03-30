@@ -57,9 +57,17 @@ export const ImageUploadModal: React.FC<Props> = ({
         .uploadUserFile(formData)
         .then((res) => {
           const imageUrl = res.asset;
+
           onSuccess(imageUrl);
           setIsImageUploading(false);
           setImage(null);
+
+          if (value) {
+            const index = value.indexOf(".com");
+            const asset = value.substring(index + 5);
+
+            fileServices.deleteUserFile(asset);
+          }
         })
         .catch((err) => {
           console.error(err);
@@ -72,6 +80,13 @@ export const ImageUploadModal: React.FC<Props> = ({
           onSuccess(imageUrl);
           setIsImageUploading(false);
           setImage(null);
+
+          if (value) {
+            const index = value.indexOf(".com");
+            const asset = value.substring(index + 5);
+
+            fileServices.deleteFile(asset);
+          }
         })
         .catch((err) => {
           console.error(err);
@@ -157,7 +172,11 @@ export const ImageUploadModal: React.FC<Props> = ({
                 </div>
                 <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
                   <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                  <PrimaryButton onClick={handleSubmit} loading={isImageUploading || !image}>
+                  <PrimaryButton
+                    onClick={handleSubmit}
+                    disabled={!image}
+                    loading={isImageUploading}
+                  >
                     {isImageUploading ? "Uploading..." : "Upload & Save"}
                   </PrimaryButton>
                 </div>
