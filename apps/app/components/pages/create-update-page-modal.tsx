@@ -63,6 +63,8 @@ export const CreateUpdatePageModal: React.FC<Props> = ({ isOpen, handleClose, da
         );
         onClose();
 
+        router.push(`/${workspaceSlug}/projects/${projectId}/pages/${res.id}`);
+
         setToastAlert({
           type: "success",
           title: "Success!",

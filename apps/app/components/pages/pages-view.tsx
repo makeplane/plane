@@ -210,8 +210,7 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
           <EmptyState
             type="page"
             title="Create New Page"
-            description="Sprint more effectively with Cycles by confining your project
-      to a fixed amount of time. Create new cycle now."
+            description="Create and document issues effortlessly in one place with Plane Notes, AI-powered for ease."
             imgURL={emptyPage}
           />
         )
