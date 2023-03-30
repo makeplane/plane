@@ -119,7 +119,7 @@ export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, sta
                         setToastAlert({
                           type: "error",
                           title: "Error!",
-                          message: "You have enter invalid date.",
+                          message: "The date you have entered is invalid. Please check and enter a valid date.",
                         });
                       }
                     }
@@ -144,7 +144,7 @@ export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, sta
                         setToastAlert({
                           type: "error",
                           title: "Error!",
-                          message: "You have enter invalid date.",
+                          message: "The date you have entered is invalid. Please check and enter a valid date.",
                         });
                       }
                     }
