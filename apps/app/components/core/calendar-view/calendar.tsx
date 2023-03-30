@@ -393,7 +393,7 @@ export const CalendarView = () => {
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
-                            className={`w-full cursor-pointer rounded bg-white p-1.5 hover:scale-105 ${
+                            className={`w-full cursor-pointer truncate rounded bg-white p-1.5 hover:scale-105 ${
                               snapshot.isDragging ? "shadow-lg" : ""
                             }`}
                           >
