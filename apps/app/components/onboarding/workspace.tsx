@@ -17,7 +17,6 @@ import { CreateWorkspaceForm } from "components/workspace";
 // ui
 import { PrimaryButton } from "components/ui";
 
-
 type Props = {
   setStep: React.Dispatch<React.SetStateAction<number>>;
   setWorkspace: React.Dispatch<React.SetStateAction<any>>;
@@ -64,15 +63,15 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
     <div className="grid w-full place-items-center">
       <Tab.Group
         as="div"
-        className="flex w-full max-w-xl flex-col  rounded-[10px] bg-white shadow-md"
+        className="flex w-full max-w-xl flex-col rounded-[10px] bg-white shadow-md"
       >
         <Tab.List
           as="div"
-          className="text-gray-8 flex items-center justify-start gap-3 px-10 pt-7 text-base"
+          className="text-gray-8 flex items-center justify-start gap-3 px-4 pt-4 text-sm"
         >
           <Tab
             className={({ selected }) =>
-              `rounded-3xl border px-5 py-2 outline-none ${
+              `rounded-3xl border px-4 py-2 outline-none ${
                 selected
                   ? "border-theme bg-theme text-white"
                   : "border-gray-300 bg-white hover:bg-hover-gray"
@@ -103,8 +102,8 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
             />
           </Tab.Panel>
           <Tab.Panel>
-            <div className="mt-6" >
-              <div className="divide-y py-8">
+            <div className="mt-6">
+              <div className="divide-y pb-8 px-4">
                 {invitations && invitations.length > 0 ? (
                   invitations.map((invitation) => (
                     <div key={invitation.id}>
@@ -163,14 +162,10 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
                   </div>
                 )}
               </div>
-              <div className="flex w-full items-center justify-center rounded-b-[10px]  py-7  ">
+              <div className="flex w-full items-center justify-center rounded-b-[10px] py-7">
                 <PrimaryButton
                   type="submit"
-                  className={`flex w-1/2 items-center justify-center text-center text-sm ${
-                    isJoiningWorkspaces || invitationsRespond.length === 0
-                      ? "cursor-not-allowed opacity-80"
-                      : ""
-                  }`}
+                  className="w-1/2 text-center"
                   size="md"
                   disabled={isJoiningWorkspaces || invitationsRespond.length === 0}
                 >

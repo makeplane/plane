@@ -10,7 +10,7 @@ import AppLayout from "layouts/app-layout";
 // hooks
 import useIssues from "hooks/use-issues";
 // ui
-import { Spinner, EmptySpace, EmptySpaceItem, HeaderButton } from "components/ui";
+import { Spinner, EmptySpace, EmptySpaceItem, PrimaryButton } from "components/ui";
 import { Breadcrumbs, BreadcrumbItem } from "components/breadcrumbs";
 // hooks
 import useIssuesProperties from "hooks/use-issue-properties";
@@ -95,17 +95,16 @@ const MyIssuesPage: NextPage = () => {
                 )}
               </Popover>
             )}
-            <HeaderButton
-              Icon={PlusIcon}
-              label="Add Issue"
+            <PrimaryButton
+              className="flex items-center gap-2"
               onClick={() => {
-                const e = new KeyboardEvent("keydown", {
-                  key: "c",
-                });
-
+                const e = new KeyboardEvent("keydown", { key: "c" });
                 document.dispatchEvent(e);
               }}
-            />
+            >
+              <PlusIcon className="w-4 h-4" />
+              Add Issue
+            </PrimaryButton>
           </div>
         }
       >

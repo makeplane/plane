@@ -47,9 +47,9 @@ const WorkspaceSettings: NextPage<UserAuth> = (props) => {
   const [isImageUploading, setIsImageUploading] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
 
-  const {
-    query: { workspaceSlug },
-  } = useRouter();
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
+
   const { setToastAlert } = useToast();
 
   const { data: activeWorkspace } = useSWR(

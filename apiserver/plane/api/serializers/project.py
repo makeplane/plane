@@ -58,12 +58,15 @@ class ProjectSerializer(BaseSerializer):
         project_identifier = ProjectIdentifier.objects.filter(
             name=identifier, workspace_id=instance.workspace_id
         ).first()
-
         if project_identifier is None:
             project = super().update(instance, validated_data)
-            _ = ProjectIdentifier.objects.update(name=identifier, project=project)
+            project_identifier = ProjectIdentifier.objects.filter(
+                project=project
+            ).first()
+            if project_identifier is not None:
+                project_identifier.name = identifier
+                project_identifier.save()
             return project
-
         # If found check if the project_id to be updated and identifier project id is same
         if project_identifier.project_id == instance.id:
             # If same pass update

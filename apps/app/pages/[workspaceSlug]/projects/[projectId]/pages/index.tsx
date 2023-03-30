@@ -24,7 +24,7 @@ import AppLayout from "layouts/app-layout";
 // components
 import { RecentPagesList, CreateUpdatePageModal, TPagesListProps } from "components/pages";
 // ui
-import { HeaderButton, Input, PrimaryButton } from "components/ui";
+import { Input, PrimaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { ListBulletIcon, RectangleGroupIcon } from "@heroicons/react/20/solid";
@@ -164,11 +164,13 @@ const ProjectPages: NextPage<UserAuth> = (props) => {
           </Breadcrumbs>
         }
         right={
-          <HeaderButton
-            Icon={PlusIcon}
-            label="Create Page"
+          <PrimaryButton
+            className="flex items-center gap-2"
             onClick={() => setCreateUpdatePageModal(true)}
-          />
+          >
+            <PlusIcon className="w-4 h-4" />
+            Create Page
+          </PrimaryButton>
         }
       >
         <div className="space-y-4">

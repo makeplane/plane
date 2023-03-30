@@ -91,7 +91,7 @@ class ProjectViewSet(BaseViewSet):
             projects = (
                 self.get_queryset()
                 .annotate(is_favorite=Exists(subquery))
-                .order_by("name", "-is_favorite")
+                .order_by("-is_favorite", "name")
             )
             return Response(ProjectDetailSerializer(projects, many=True).data)
         except Exception as e:

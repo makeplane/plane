@@ -12,14 +12,14 @@ import {
   Squares2X2Icon,
   UserIcon,
 } from "@heroicons/react/24/outline";
+import { BlockedIcon, BlockerIcon, CyclesIcon, TagIcon, UserGroupIcon } from "components/icons";
 // services
 import issuesService from "services/issues.service";
 // components
 import { CommentCard } from "components/issues/comment";
 // ui
 import { Loader } from "components/ui";
-// icons
-import { BlockedIcon, BlockerIcon, CyclesIcon, TagIcon, UserGroupIcon } from "components/icons";
+
 // helpers
 import { renderShortNumericDateFormat, timeAgo } from "helpers/date-time.helper";
 import { addSpaceIfCamelCase } from "helpers/string.helper";
@@ -35,26 +35,26 @@ const activityDetails: {
 } = {
   assignee: {
     message: "removed the assignee",
-    icon: <UserGroupIcon className="h-3 w-3 text-gray-500" aria-hidden="true" />,
+    icon: <UserGroupIcon className="h-3 w-3" color="#6b7280" aria-hidden="true" />,
   },
   assignees: {
     message: "added a new assignee",
-    icon: <UserGroupIcon className="h-3 w-3 text-gray-500" aria-hidden="true" />,
+    icon: <UserGroupIcon className="h-3 w-3" color="#6b7280" aria-hidden="true" />,
   },
   blocks: {
     message: "marked this issue being blocked by",
-    icon: <BlockedIcon height="12" width="12" className="fill-gray-500" />,
+    icon: <BlockedIcon height="12" width="12" color="#6b7280" />,
   },
   blocking: {
     message: "marked this issue is blocking",
-    icon: <BlockerIcon height="12" width="12" />,
+    icon: <BlockerIcon height="12" width="12" color="#6b7280" />,
   },
   cycles: {
     message: "set the cycle to",
-    icon: <CyclesIcon height="12" width="12" />,
+    icon: <CyclesIcon height="12" width="12" color="#6b7280" />,
   },
   labels: {
-    icon: <TagIcon height="12" width="12" />,
+    icon: <TagIcon height="12" width="12" color="#6b7280" />,
   },
   modules: {
     message: "set the module to",
@@ -215,7 +215,7 @@ export const IssueActivitySection: React.FC<Props> = () => {
             }
 
             value = (
-              <span className="relative inline-flex items-center rounded-full px-2.5 py-1 text-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+              <span className="relative inline-flex items-center rounded-full px-2 py-0.5 text-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
                 <span className="absolute flex flex-shrink-0 items-center justify-center">
                   <span
                     className="h-1.5 w-1.5 rounded-full"
@@ -239,7 +239,7 @@ export const IssueActivitySection: React.FC<Props> = () => {
           if ("field" in activityItem && activityItem.field !== "updated_by") {
             return (
               <li key={activityItem.id}>
-                <div className="relative pb-3">
+                <div className="relative pb-1">
                   {issueActivities.length > 1 && activityItemIdx !== issueActivities.length - 1 ? (
                     <span
                       className="absolute top-5 left-5 -ml-px h-full w-0.5 bg-gray-200"

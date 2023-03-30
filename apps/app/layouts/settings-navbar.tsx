@@ -1,7 +1,11 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-const SettingsNavbar: React.FC = () => {
+type Props = {
+  profilePage: boolean;
+};
+
+const SettingsNavbar: React.FC<Props> = ({ profilePage = false }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -65,9 +69,23 @@ const SettingsNavbar: React.FC = () => {
     },
   ];
 
+  const profileLinks: Array<{
+    label: string;
+    href: string;
+  }> = [
+    {
+      label: "General",
+      href: `/${workspaceSlug}/me/profile`,
+    },
+    {
+      label: "Activity",
+      href: `/${workspaceSlug}/me/profile/activity`,
+    },
+  ];
+
   return (
     <div className="flex flex-wrap gap-4">
-      {(projectId ? projectLinks : workspaceLinks).map((link) => (
+      {(profilePage ? profileLinks : projectId ? projectLinks : workspaceLinks).map((link) => (
         <Link key={link.href} href={link.href}>
           <a>
             <div

@@ -2,7 +2,7 @@
 import APIService from "services/api.service";
 import trackEventServices from "services/track-event.service";
 
-import type { IUser, IUserActivity, IUserWorkspaceDashboard } from "types";
+import type { IUser, IUserActivityResponse, IUserWorkspaceDashboard } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -58,8 +58,8 @@ class UserService extends APIService {
       });
   }
 
-  async userActivity(workspaceSlug: string): Promise<IUserActivity[]> {
-    return this.get(`/api/users/me/workspaces/${workspaceSlug}/activity-graph/`)
+  async getUserActivity(): Promise<IUserActivityResponse> {
+    return this.get("/api/users/activities/")
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
