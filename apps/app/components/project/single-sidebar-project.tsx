@@ -9,6 +9,7 @@ import { CustomMenu } from "components/ui";
 import {
   ChevronDownIcon,
   DocumentTextIcon,
+  LinkIcon,
   StarIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
@@ -116,14 +117,14 @@ export const SingleSidebarProject: React.FC<Props> = ({
             {!sidebarCollapse && (
               <CustomMenu ellipsis>
                 <CustomMenu.MenuItem onClick={handleDeleteProject}>
-                  <span className="flex items-center justify-start gap-2 text-gray-700">
+                  <span className="flex items-center justify-start gap-2 ">
                     <TrashIcon className="h-4 w-4" />
                     <span>Delete project</span>
                   </span>
                 </CustomMenu.MenuItem>
                 {handleAddToFavorites && (
                   <CustomMenu.MenuItem onClick={handleAddToFavorites}>
-                    <span className="flex items-center justify-start gap-2 text-gray-700">
+                    <span className="flex items-center justify-start gap-2">
                       <StarIcon className="h-4 w-4" />
                       <span>Add to favorites</span>
                     </span>
@@ -131,15 +132,15 @@ export const SingleSidebarProject: React.FC<Props> = ({
                 )}
                 {handleRemoveFromFavorites && (
                   <CustomMenu.MenuItem onClick={handleRemoveFromFavorites}>
-                    <span className="flex items-center justify-start gap-2 text-gray-700">
+                    <span className="flex items-center justify-start gap-2">
                       <StarIcon className="h-4 w-4" />
                       <span>Remove from favorites</span>
                     </span>
                   </CustomMenu.MenuItem>
                 )}
                 <CustomMenu.MenuItem onClick={handleCopyText}>
-                  <span className="flex items-center justify-start gap-2 text-gray-700">
-                    <TrashIcon className="h-4 w-4" />
+                  <span className="flex items-center justify-start gap-2">
+                    <LinkIcon className="h-4 w-4" />
                     <span>Copy project link</span>
                   </span>
                 </CustomMenu.MenuItem>

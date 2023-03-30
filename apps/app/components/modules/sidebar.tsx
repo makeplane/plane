@@ -305,7 +305,9 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                           <Popover.Panel className="absolute top-10 -right-5 z-20  transform overflow-hidden">
                             <DatePicker
                               selected={
-                                watch("target_date") ? new Date(`${watch("target_date")}`) : new Date()
+                                watch("target_date")
+                                  ? new Date(`${watch("target_date")}`)
+                                  : new Date()
                               }
                               onChange={(date) => {
                                 submitChanges({
@@ -332,16 +334,16 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                   <div className="flex items-start justify-between gap-2 w-full  ">
                     <h4 className="text-xl font-semibold text-gray-900">{module.name}</h4>
                     <CustomMenu width="lg" ellipsis>
-                      <CustomMenu.MenuItem onClick={handleCopyText}>
-                        <span className="flex items-center justify-start gap-2 text-gray-800">
-                          <LinkIcon className="h-4 w-4" />
-                          <span>Copy Link</span>
-                        </span>
-                      </CustomMenu.MenuItem>
                       <CustomMenu.MenuItem onClick={() => setModuleDeleteModal(true)}>
-                        <span className="flex items-center justify-start gap-2 text-gray-800">
+                        <span className="flex items-center justify-start gap-2">
                           <TrashIcon className="h-4 w-4" />
                           <span>Delete</span>
+                        </span>
+                      </CustomMenu.MenuItem>
+                      <CustomMenu.MenuItem onClick={handleCopyText}>
+                        <span className="flex items-center justify-start gap-2">
+                          <LinkIcon className="h-4 w-4" />
+                          <span>Copy link</span>
                         </span>
                       </CustomMenu.MenuItem>
                     </CustomMenu>

@@ -293,20 +293,20 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                   <div className="flex items-start justify-between gap-2 w-full">
                     <h4 className="text-xl font-semibold text-gray-900">{cycle.name}</h4>
                     <CustomMenu width="lg" ellipsis>
-                      <CustomMenu.MenuItem onClick={handleCopyText}>
-                        <span className="flex items-center justify-start gap-2 text-gray-800">
-                          <LinkIcon className="h-4 w-4" />
-                          <span>Copy Link</span>
-                        </span>
-                      </CustomMenu.MenuItem>
                       {!isCompleted && (
                         <CustomMenu.MenuItem onClick={() => setCycleDeleteModal(true)}>
-                          <span className="flex items-center justify-start gap-2 text-gray-800">
+                          <span className="flex items-center justify-start gap-2">
                             <TrashIcon className="h-4 w-4" />
                             <span>Delete</span>
                           </span>
                         </CustomMenu.MenuItem>
                       )}
+                      <CustomMenu.MenuItem onClick={handleCopyText}>
+                        <span className="flex items-center justify-start gap-2">
+                          <LinkIcon className="h-4 w-4" />
+                          <span>Copy link</span>
+                        </span>
+                      </CustomMenu.MenuItem>
                     </CustomMenu>
                   </div>
 
