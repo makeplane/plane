@@ -15,6 +15,7 @@ import { CustomMenu, LinearProgressIndicator, Tooltip } from "components/ui";
 import { Disclosure, Transition } from "@headlessui/react";
 // icons
 import { CalendarDaysIcon } from "@heroicons/react/20/solid";
+import { TargetIcon } from "components/icons";
 import {
   ChevronDownIcon,
   DocumentDuplicateIcon,
@@ -269,7 +270,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
               <span>{renderShortDateWithYearFormat(startDate)}</span>
             </div>
             <div className="flex items-start gap-1 ">
-              <CalendarDaysIcon className="h-4 w-4 text-gray-900" />
+              <TargetIcon className="h-4 w-4 text-gray-900" />
               <span className="text-gray-400">End :</span>
               <span>{renderShortDateWithYearFormat(endDate)}</span>
             </div>
