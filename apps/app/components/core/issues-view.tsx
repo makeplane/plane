@@ -19,6 +19,7 @@ import { AllLists, AllBoards } from "components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 import { CreateUpdateViewModal } from "components/views";
+import { TransferIssuesModal } from "components/cycles";
 // ui
 import { Avatar, EmptySpace, EmptySpaceItem, PrimaryButton, Spinner } from "components/ui";
 import { CalendarView } from "./calendar-view";
@@ -30,7 +31,7 @@ import {
   TrashIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { ExclamationIcon, getStateGroupIcon } from "components/icons";
+import { ExclamationIcon, getStateGroupIcon, TransferIcon } from "components/icons";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
@@ -87,6 +88,9 @@ export const IssuesView: React.FC<Props> = ({
 
   // trash box
   const [trashBox, setTrashBox] = useState(false);
+
+  // transfer issue
+  const [transferIssuesModal, setTransferIssuesModal] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
@@ -426,6 +430,10 @@ export const IssuesView: React.FC<Props> = ({
         isOpen={deleteIssueModal}
         data={issueToDelete}
       />
+      <TransferIssuesModal
+      handleClose={() => setTransferIssuesModal(false)}
+      isOpen={transferIssuesModal}
+      />
       <div className="mb-5 -mt-4">
         <div className="flex items-center justify-between gap-2">
           <div className="flex flex-wrap items-center gap-3 text-xs">
@@ -728,9 +736,17 @@ export const IssuesView: React.FC<Props> = ({
           isNotEmpty ? (
             <>
               {isCompleted && (
-                <div className="mb-4 flex items-center gap-2 text-sm text-gray-500">
-                  <ExclamationIcon height={14} width={14} />
-                  <span>Completed cycles are not editable.</span>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2 text-sm text-gray-500">
+                    <ExclamationIcon height={14} width={14} />
+                    <span>Completed cycles are not editable.</span>
+                  </div>
+                  <div>
+                    <PrimaryButton onClick={()=>setTransferIssuesModal(true)} className="flex items-center gap-3 rounded-lg">
+                      <TransferIcon className="h-4 w-4" />
+                      <span>Transfer Issues</span>
+                    </PrimaryButton>
+                  </div>
                 </div>
               )}
               {issueView === "list" ? (
