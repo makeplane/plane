@@ -210,6 +210,24 @@ class ProjectCycleServices extends APIService {
       });
   }
 
+  async transferIssues(
+    workspaceSlug: string,
+    projectId: string,
+    cycleId: string,
+    data: {
+      new_cycle_id: string;
+    }
+  ): Promise<any> {
+    return this.post(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/transfer-issues/`,
+      data
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async removeCycleFromFavorites(
     workspaceSlug: string,
     projectId: string,

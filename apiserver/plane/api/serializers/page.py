@@ -11,6 +11,8 @@ from plane.db.models import Page, PageBlock, PageFavorite, PageLabel, Label
 
 class PageBlockSerializer(BaseSerializer):
     issue_detail = IssueFlatSerializer(source="issue", read_only=True)
+    project_detail = ProjectLiteSerializer(source="project", read_only=True)
+    workspace_detail = WorkspaceLiteSerializer(source="workspace", read_only=True)
 
     class Meta:
         model = PageBlock

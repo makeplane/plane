@@ -13,6 +13,8 @@ from django.conf import settings
 # Module imports
 from .base import BaseAPIView
 from plane.api.permissions import ProjectEntityPermission
+from plane.db.models import Workspace, Project
+from plane.api.serializers import ProjectLiteSerializer, WorkspaceLiteSerializer
 
 
 class GPTIntegrationEndpoint(BaseAPIView):
@@ -71,11 +73,25 @@ class GPTIntegrationEndpoint(BaseAPIView):
                 max_tokens=1024,
             )
 
+            workspace = Workspace.objects.get(slug=slug)
+            project = Project.objects.get(pk=project_id)
+
             text = response.choices[0].text.strip()
             text_html = text.replace("\n", "<br/>")
             return Response(
-                {"response": text, "response_html": text_html, "count": count},
+                {
+                    "response": text,
+                    "response_html": text_html,
+                    "count": count,
+                    "project_detail": ProjectLiteSerializer(project).data,
+                    "workspace_detail": WorkspaceLiteSerializer(workspace).data,
+                },
                 status=status.HTTP_200_OK,
+            )
+        except (Workspace.DoesNotExist, Project.DoesNotExist) as e:
+            return Response(
+                {"error": "Workspace or Project Does not exist"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
         except Exception as e:
             capture_exception(e)

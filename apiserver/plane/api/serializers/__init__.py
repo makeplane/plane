@@ -10,6 +10,7 @@ from .workspace import (
     WorkSpaceMemberSerializer,
     TeamSerializer,
     WorkSpaceMemberInviteSerializer,
+    WorkspaceLiteSerializer,
 )
 from .project import (
     ProjectSerializer,
