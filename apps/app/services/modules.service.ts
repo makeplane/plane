@@ -26,7 +26,7 @@ class ProjectIssuesServices extends APIService {
   async createModule(workspaceSlug: string, projectId: string, data: any): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/`, data)
       .then((response) => {
-        if (trackEvent) trackEventServices.trackModuleCreateEvent(response?.data);
+        if (trackEvent) trackEventServices.trackModuleEvent(response?.data, "MODULE_CREATE");
         return response?.data;
       })
       .catch((error) => {
@@ -45,7 +45,7 @@ class ProjectIssuesServices extends APIService {
       data
     )
       .then((response) => {
-        if (trackEvent) trackEventServices.trackModuleUpdateEvent(response?.data);
+        if (trackEvent) trackEventServices.trackModuleEvent(response?.data, "MODULE_UPDATE");
         return response?.data;
       })
       .catch((error) => {
@@ -72,7 +72,7 @@ class ProjectIssuesServices extends APIService {
       data
     )
       .then((response) => {
-        if (trackEvent) trackEventServices.trackModuleUpdateEvent(response?.data);
+        if (trackEvent) trackEventServices.trackModuleEvent(response?.data, "MODULE_UPDATE");
         return response?.data;
       })
       .catch((error) => {
@@ -85,7 +85,7 @@ class ProjectIssuesServices extends APIService {
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/`
     )
       .then((response) => {
-        if (trackEvent) trackEventServices.trackModuleDeleteEvent(response?.data);
+        if (trackEvent) trackEventServices.trackModuleEvent(response?.data, "MODULE_DELETE");
         return response?.data;
       })
       .catch((error) => {

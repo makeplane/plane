@@ -26,7 +26,7 @@ class ProjectCycleServices extends APIService {
   async createCycle(workspaceSlug: string, projectId: string, data: any): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/`, data)
       .then((response) => {
-        if (trackEvent) trackEventServices.trackCycleCreateEvent(response?.data);
+        if (trackEvent) trackEventServices.trackCycleEvent(response?.data, "CYCLE_CREATE");
         return response?.data;
       })
       .catch((error) => {
@@ -103,7 +103,7 @@ class ProjectCycleServices extends APIService {
       data
     )
       .then((response) => {
-        if (trackEvent) trackEventServices.trackCycleUpdateEvent(response?.data);
+        if (trackEvent) trackEventServices.trackCycleEvent(response?.data, "CYCLE_UPDATE");
         return response?.data;
       })
       .catch((error) => {
@@ -122,7 +122,7 @@ class ProjectCycleServices extends APIService {
       data
     )
       .then((response) => {
-        if (trackEvent) trackEventServices.trackCycleUpdateEvent(response?.data);
+        if (trackEvent) trackEventServices.trackCycleEvent(response?.data, "CYCLE_UPDATE");
         return response?.data;
       })
       .catch((error) => {
@@ -133,7 +133,7 @@ class ProjectCycleServices extends APIService {
   async deleteCycle(workspaceSlug: string, projectId: string, cycleId: string): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/`)
       .then((response) => {
-        if (trackEvent) trackEventServices.trackCycleDeleteEvent(response?.data);
+        if (trackEvent) trackEventServices.trackCycleEvent(response?.data, "CYCLE_DELETE");
         return response?.data;
       })
       .catch((error) => {
