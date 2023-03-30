@@ -42,7 +42,7 @@ class WorkspaceService extends APIService {
   async createWorkspace(data: Partial<IWorkspace>): Promise<IWorkspace> {
     return this.post("/api/workspaces/", data)
       .then((response) => {
-        if (trackEvent) trackEventServices.trackCreateWorkspaceEvent(response.data);
+        if (trackEvent) trackEventServices.trackWorkspaceEvent(response.data, "CREATE_WORKSPACE");
         return response?.data;
       })
       .catch((error) => {
@@ -53,7 +53,7 @@ class WorkspaceService extends APIService {
   async updateWorkspace(workspaceSlug: string, data: Partial<IWorkspace>): Promise<IWorkspace> {
     return this.patch(`/api/workspaces/${workspaceSlug}/`, data)
       .then((response) => {
-        if (trackEvent) trackEventServices.trackUpdateWorkspaceEvent(response.data);
+        if (trackEvent) trackEventServices.trackWorkspaceEvent(response.data, "UPDATE_WORKSPACE");
         return response?.data;
       })
       .catch((error) => {
@@ -64,7 +64,8 @@ class WorkspaceService extends APIService {
   async deleteWorkspace(workspaceSlug: string): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/`)
       .then((response) => {
-        if (trackEvent) trackEventServices.trackDeleteWorkspaceEvent({ workspaceSlug });
+        if (trackEvent)
+          trackEventServices.trackWorkspaceEvent({ workspaceSlug }, "DELETE_WORKSPACE");
         return response?.data;
       })
       .catch((error) => {
@@ -75,7 +76,8 @@ class WorkspaceService extends APIService {
   async inviteWorkspace(workspaceSlug: string, data: any): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/invite/`, data)
       .then((response) => {
-        if (trackEvent) trackEventServices.trackWorkspaceUserInviteEvent(response.data);
+        if (trackEvent)
+          trackEventServices.trackWorkspaceEvent(response.data, "WORKSPACE_USER_INVITE");
         return response?.data;
       })
       .catch((error) => {
@@ -92,7 +94,8 @@ class WorkspaceService extends APIService {
       }
     )
       .then((response) => {
-        if (trackEvent) trackEventServices.trackWorkspaceUserJoinEvent(response.data);
+        if (trackEvent)
+          trackEventServices.trackWorkspaceEvent(response.data, "WORKSPACE_USER_INVITE_ACCEPT");
         return response?.data;
       })
       .catch((error) => {
