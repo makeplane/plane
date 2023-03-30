@@ -310,16 +310,16 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
               <CustomMenu width="auto" verticalEllipsis>
                 {!isCompleted && (
                   <CustomMenu.MenuItem onClick={handleDeleteCycle}>
-                    <span className="flex items-center justify-start gap-2 text-gray-800">
+                    <span className="flex items-center justify-start gap-2">
                       <TrashIcon className="h-4 w-4" />
-                      <span>Delete Cycle</span>
+                      <span>Delete cycle</span>
                     </span>
                   </CustomMenu.MenuItem>
                 )}
                 <CustomMenu.MenuItem onClick={handleCopyText}>
-                  <span className="flex items-center justify-start gap-2 text-gray-800">
+                  <span className="flex items-center justify-start gap-2">
                     <LinkIcon className="h-4 w-4" />
-                    <span>Copy Cycle Link</span>
+                    <span>Copy cycle link</span>
                   </span>
                 </CustomMenu.MenuItem>
               </CustomMenu>

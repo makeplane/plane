@@ -304,7 +304,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                       <CustomMenu.MenuItem onClick={handleCopyText}>
                         <span className="flex items-center justify-start gap-2">
                           <LinkIcon className="h-4 w-4" />
-                          <span>Copy Link</span>
+                          <span>Copy link</span>
                         </span>
                       </CustomMenu.MenuItem>
                     </CustomMenu>

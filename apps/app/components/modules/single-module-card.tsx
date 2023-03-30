@@ -152,21 +152,21 @@ export const SingleModuleCard: React.FC<Props> = ({ module, handleEditModule }) 
 
                 <CustomMenu width="auto" verticalEllipsis>
                   <CustomMenu.MenuItem onClick={handleEditModule}>
-                    <span className="flex items-center justify-start gap-2 text-gray-700">
+                    <span className="flex items-center justify-start gap-2">
                       <PencilIcon className="h-4 w-4" />
-                      <span>Edit Module</span>
+                      <span>Edit module</span>
                     </span>
                   </CustomMenu.MenuItem>
                   <CustomMenu.MenuItem onClick={handleDeleteModule}>
-                    <span className="flex items-center justify-start gap-2 text-gray-700">
+                    <span className="flex items-center justify-start gap-2">
                       <TrashIcon className="h-4 w-4" />
-                      <span>Delete Module</span>
+                      <span>Delete module</span>
                     </span>
                   </CustomMenu.MenuItem>
                   <CustomMenu.MenuItem onClick={handleCopyText}>
-                    <span className="flex items-center justify-start gap-2 text-gray-700">
+                    <span className="flex items-center justify-start gap-2">
                       <LinkIcon className="h-4 w-4" />
-                      <span>Copy Module Link</span>
+                      <span>Copy module link</span>
                     </span>
                   </CustomMenu.MenuItem>
                 </CustomMenu>
