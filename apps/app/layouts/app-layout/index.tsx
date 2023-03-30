@@ -42,6 +42,7 @@ type AppLayoutProps = {
   left?: JSX.Element;
   right?: JSX.Element;
   settingsLayout?: boolean;
+  profilePage?: boolean;
   memberType?: UserAuth;
 };
 
@@ -55,6 +56,7 @@ const AppLayout: FC<AppLayoutProps> = ({
   left,
   right,
   settingsLayout = false,
+  profilePage = false,
   memberType,
 }) => {
   // states
@@ -152,13 +154,17 @@ const AppLayout: FC<AppLayoutProps> = ({
                   <div className="mb-12 space-y-6">
                     <div>
                       <h3 className="text-3xl font-semibold">
-                        {projectId ? "Project" : "Workspace"} Settings
+                        {profilePage ? "Profile" : projectId ? "Project" : "Workspace"} Settings
                       </h3>
                       <p className="mt-1 text-gray-600">
-                        This information will be displayed to every member of the project.
+                        {profilePage
+                          ? "This information will be visible to only you."
+                          : projectId
+                          ? "This information will be displayed to every member of the project."
+                          : "This information will be displayed to every member of the workspace."}
                       </p>
                     </div>
-                    <SettingsNavbar />
+                    <SettingsNavbar profilePage={profilePage} />
                   </div>
                 )}
                 {children}

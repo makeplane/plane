@@ -1,11 +1,15 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
+// hooks
+import useToast from "hooks/use-toast";
 // components
 import { ModuleLeadSelect, ModuleMembersSelect, ModuleStatusSelect } from "components/modules";
 // ui
 import { CustomDatePicker, Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
+// helper
+import { isDateRangeValid } from "helpers/date-time.helper";
 // types
 import { IModule } from "types";
 
@@ -25,10 +29,13 @@ const defaultValues: Partial<IModule> = {
 };
 
 export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, status, data }) => {
+  const [isDateValid, setIsDateValid] = useState(true);
+  const { setToastAlert } = useToast();
   const {
     register,
     formState: { errors, isSubmitting },
     handleSubmit,
+    watch,
     control,
     reset,
   } = useForm<IModule>({
@@ -94,7 +101,25 @@ export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, sta
                   control={control}
                   name="start_date"
                   render={({ field: { value, onChange } }) => (
-                    <CustomDatePicker renderAs="input" value={value} onChange={onChange} />
+                    <CustomDatePicker
+                      renderAs="input"
+                      value={value}
+                      onChange={(val) => {
+                        onChange(val);
+                        if (val && watch("target_date")) {
+                          if (isDateRangeValid(val, `${watch("target_date")}`)) {
+                            setIsDateValid(true);
+                          } else {
+                            setIsDateValid(false);
+                            setToastAlert({
+                              type: "error",
+                              title: "Error!",
+                              message: "You have enter invalid date.",
+                            });
+                          }
+                        }
+                      }}
+                    />
                   )}
                 />
               </div>
@@ -106,7 +131,25 @@ export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, sta
                   control={control}
                   name="target_date"
                   render={({ field: { value, onChange } }) => (
-                    <CustomDatePicker renderAs="input" value={value} onChange={onChange} />
+                    <CustomDatePicker
+                      renderAs="input"
+                      value={value}
+                      onChange={(val) => {
+                        onChange(val);
+                        if (watch("start_date") && val) {
+                          if (isDateRangeValid(`${watch("start_date")}`, val)) {
+                            setIsDateValid(true);
+                          } else {
+                            setIsDateValid(false);
+                            setToastAlert({
+                              type: "error",
+                              title: "Error!",
+                              message: "You have enter invalid date.",
+                            });
+                          }
+                        }
+                      }}
+                    />
                   )}
                 />
               </div>
@@ -133,7 +176,7 @@ export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, sta
       </div>
       <div className="mt-5 flex justify-end gap-2">
         <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-        <PrimaryButton type="submit" loading={isSubmitting}>
+        <PrimaryButton type="submit" loading={isSubmitting || isDateValid ? false : true}>
           {status
             ? isSubmitting
               ? "Updating Module..."

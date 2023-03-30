@@ -87,7 +87,7 @@ class UserActivityEndpoint(BaseAPIView, BasePaginator):
     def get(self, request):
         try:
             queryset = IssueActivity.objects.filter(actor=request.user).select_related(
-                "actor"
+                "actor", "workspace"
             )
 
             return self.paginate(

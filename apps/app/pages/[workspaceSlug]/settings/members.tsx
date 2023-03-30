@@ -189,57 +189,64 @@ const MembersSettings: NextPage<UserAuth> = (props) => {
                           <p className="text-xs text-gray-500">{member.email}</p>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2 text-xs">
-                        <CustomSelect
-                          label={ROLE[member.role as keyof typeof ROLE]}
-                          value={member.role}
-                          onChange={(value: any) => {
-                            workspaceService
-                              .updateWorkspaceMember(activeWorkspace?.slug as string, member.id, {
-                                role: value,
-                              })
-                              .then(() => {
-                                mutateMembers(
-                                  (prevData) =>
-                                    prevData?.map((m) =>
-                                      m.id === member.id ? { ...m, role: value } : m
-                                    ),
-                                  false
-                                );
-                                setToastAlert({
-                                  title: "Success",
-                                  type: "success",
-                                  message: "Member role updated successfully.",
+                      <div className="flex items-center">
+                        {!member?.status && (
+                          <div className="flex mr-2 px-2 py-1 bg-yellow-200 text-center rounded-full text-xs items-center justify-center">
+                            <p>Pending</p>
+                          </div>
+                        )}
+                        <div className="flex items-center gap-2 text-xs">
+                          <CustomSelect
+                            label={ROLE[member.role as keyof typeof ROLE]}
+                            value={member.role}
+                            onChange={(value: any) => {
+                              workspaceService
+                                .updateWorkspaceMember(activeWorkspace?.slug as string, member.id, {
+                                  role: value,
+                                })
+                                .then(() => {
+                                  mutateMembers(
+                                    (prevData) =>
+                                      prevData?.map((m) =>
+                                        m.id === member.id ? { ...m, role: value } : m
+                                      ),
+                                    false
+                                  );
+                                  setToastAlert({
+                                    title: "Success",
+                                    type: "success",
+                                    message: "Member role updated successfully.",
+                                  });
+                                })
+                                .catch(() => {
+                                  setToastAlert({
+                                    title: "Error",
+                                    type: "error",
+                                    message: "An error occurred while updating member role.",
+                                  });
                                 });
-                              })
-                              .catch(() => {
-                                setToastAlert({
-                                  title: "Error",
-                                  type: "error",
-                                  message: "An error occurred while updating member role.",
-                                });
-                              });
-                          }}
-                        >
-                          {Object.keys(ROLE).map((key) => (
-                            <CustomSelect.Option key={key} value={key}>
-                              <>{ROLE[parseInt(key) as keyof typeof ROLE]}</>
-                            </CustomSelect.Option>
-                          ))}
-                        </CustomSelect>
-                        <CustomMenu ellipsis>
-                          <CustomMenu.MenuItem
-                            onClick={() => {
-                              if (member.member) {
-                                setSelectedRemoveMember(member.id);
-                              } else {
-                                setSelectedInviteRemoveMember(member.id);
-                              }
                             }}
                           >
-                            Remove member
-                          </CustomMenu.MenuItem>
-                        </CustomMenu>
+                            {Object.keys(ROLE).map((key) => (
+                              <CustomSelect.Option key={key} value={key}>
+                                <>{ROLE[parseInt(key) as keyof typeof ROLE]}</>
+                              </CustomSelect.Option>
+                            ))}
+                          </CustomSelect>
+                          <CustomMenu ellipsis>
+                            <CustomMenu.MenuItem
+                              onClick={() => {
+                                if (member.member) {
+                                  setSelectedRemoveMember(member.id);
+                                } else {
+                                  setSelectedInviteRemoveMember(member.id);
+                                }
+                              }}
+                            >
+                              Remove member
+                            </CustomMenu.MenuItem>
+                          </CustomMenu>
+                        </div>
                       </div>
                     </div>
                   ))
