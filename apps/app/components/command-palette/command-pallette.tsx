@@ -734,7 +734,7 @@ export const CommandPalette: React.FC = () => {
                           >
                             <div className="flex items-center gap-2 text-slate-600">
                               <DiscordIcon className="h-4 w-4" />
-                              Join our discord
+                              Join our Discord
                             </div>
                           </Command.Item>
                           <Command.Item
