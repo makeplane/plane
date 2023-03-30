@@ -149,13 +149,13 @@ export const isSameYear = (yearString: string, date: Date) => {
 };
 
 export const addSevenDaysToDate = (date: Date) => {
-  const currentDate = date;
+  const currentDate = new Date(date);
   const newDate = new Date(currentDate.setDate(currentDate.getDate() + 7));
   return newDate;
 };
 
 export const subtract7DaysToDate = (date: Date) => {
-  const currentDate = date;
+  const currentDate = new Date(date);
   const newDate = new Date(currentDate.getTime() - 7 * 24 * 60 * 60 * 1000);
   return newDate;
 };
