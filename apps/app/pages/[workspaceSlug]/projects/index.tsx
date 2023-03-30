@@ -14,7 +14,7 @@ import AppLayout from "layouts/app-layout";
 import { JoinProjectModal } from "components/project/join-project-modal";
 import { DeleteProjectModal, SingleProjectCard } from "components/project";
 // ui
-import { HeaderButton, Loader, EmptyState } from "components/ui";
+import { Loader, EmptyState, PrimaryButton } from "components/ui";
 import { Breadcrumbs, BreadcrumbItem } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
@@ -44,14 +44,16 @@ const ProjectsPage: NextPage = () => {
         </Breadcrumbs>
       }
       right={
-        <HeaderButton
-          Icon={PlusIcon}
-          label="Add Project"
+        <PrimaryButton
+          className="flex items-center gap-2"
           onClick={() => {
             const e = new KeyboardEvent("keydown", { key: "p" });
             document.dispatchEvent(e);
           }}
-        />
+        >
+          <PlusIcon className="w-4 h-4" />
+          Add Project
+        </PrimaryButton>
       }
     >
       <JoinProjectModal
