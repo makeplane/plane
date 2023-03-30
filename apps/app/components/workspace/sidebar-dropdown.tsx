@@ -3,19 +3,19 @@ import { Menu, Transition } from "@headlessui/react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import Link from "next/link";
-import { CheckIcon, ChevronDownIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { CheckIcon, PlusIcon } from "@heroicons/react/24/outline";
 // hooks
 import useUser from "hooks/use-user";
 import useTheme from "hooks/use-theme";
 import useWorkspaces from "hooks/use-workspaces";
+import useToast from "hooks/use-toast";
 // services
 import userService from "services/user.service";
 import authenticationService from "services/authentication.service";
 // components
-import { Avatar, Loader, Tooltip } from "components/ui";
+import { Avatar, Loader } from "components/ui";
 // helper
 import { truncateText } from "helpers/string.helper";
-
 // types
 import { IWorkspace } from "types";
 
@@ -42,6 +42,9 @@ export const WorkspaceSidebarDropdown = () => {
   const { user, mutateUser } = useUser();
   // fetching theme context
   const { collapsed: sidebarCollapse } = useTheme();
+
+  const { setToastAlert } = useToast();
+
   // fetching workspaces
   const { activeWorkspace, workspaces } = useWorkspaces();
 
@@ -54,18 +57,25 @@ export const WorkspaceSidebarDropdown = () => {
         mutateUser();
         router.push(`/${workspace.slug}/`);
       })
-      .catch((err) => console.error(err));
+      .catch(() =>
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Failed to navigate to the workspace. Please try again.",
+        })
+      );
   };
 
   const handleSignOut = async () => {
     await authenticationService
       .signOut()
-      .then((response) => {
-        console.log("user signed out", response);
-      })
-      .catch((error) => {
-        console.log("Failed to sign out", error);
-      })
+      .catch(() =>
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Failed to sign out. Please try again.",
+        })
+      )
       .finally(() => {
         mutateUser();
         router.push("/signin");

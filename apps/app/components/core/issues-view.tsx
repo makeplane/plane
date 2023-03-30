@@ -411,8 +411,8 @@ export const IssuesView: React.FC<Props> = ({
         data={issueToDelete}
       />
       <TransferIssuesModal
-      handleClose={() => setTransferIssuesModal(false)}
-      isOpen={transferIssuesModal}
+        handleClose={() => setTransferIssuesModal(false)}
+        isOpen={transferIssuesModal}
       />
       <div className="mb-5 -mt-4">
         <div className="flex items-center justify-between gap-2">
@@ -474,7 +474,10 @@ export const IssuesView: React.FC<Props> = ({
                     <span>Completed cycles are not editable.</span>
                   </div>
                   <div>
-                    <PrimaryButton onClick={()=>setTransferIssuesModal(true)} className="flex items-center gap-3 rounded-lg">
+                    <PrimaryButton
+                      onClick={() => setTransferIssuesModal(true)}
+                      className="flex items-center gap-3 rounded-lg"
+                    >
                       <TransferIcon className="h-4 w-4" />
                       <span>Transfer Issues</span>
                     </PrimaryButton>
