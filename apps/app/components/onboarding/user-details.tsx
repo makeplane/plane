@@ -11,7 +11,7 @@ import { CustomSelect, Input, PrimaryButton } from "components/ui";
 // types
 import { IUser } from "types";
 // constant
-import { USER_ROLE } from "constants/workspace";
+import { USER_ROLES } from "constants/workspace";
 
 const defaultValues: Partial<IUser> = {
   first_name: "",
@@ -106,7 +106,7 @@ export const UserDetails: React.FC<Props> = ({ user, setStep }) => {
                     input
                     width="w-full"
                   >
-                    {USER_ROLE?.map((item) => (
+                    {USER_ROLES.map((item) => (
                       <CustomSelect.Option key={item.value} value={item.value}>
                         {item.label}
                       </CustomSelect.Option>

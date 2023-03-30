@@ -18,7 +18,7 @@ export const COMPANY_SIZE = [
   { value: 50, label: "50" },
 ];
 
-export const USER_ROLE = [
+export const USER_ROLES = [
   { value: "Founder or leadership team", label: "Founder or leadership team" },
   { value: "Product manager", label: "Product manager" },
   { value: "Designer", label: "Designer" },
