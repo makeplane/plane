@@ -137,7 +137,7 @@ export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, sta
                       onChange={(val) => {
                         onChange(val);
                         if (watch("start_date") && val) {
-                          if (!isDateRangeValid(`${watch("start_date")}`, val)) {
+                          if (isDateRangeValid(`${watch("start_date")}`, val)) {
                             setIsDateValid(true);
                           } else {
                             setIsDateValid(false);

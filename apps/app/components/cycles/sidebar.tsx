@@ -35,7 +35,7 @@ import { ExclamationIcon } from "components/icons";
 // helpers
 import { capitalizeFirstLetter, copyTextToClipboard } from "helpers/string.helper";
 import { groupBy } from "helpers/array.helper";
-import { renderDateFormat, renderShortDate } from "helpers/date-time.helper";
+import { isDateRangeValid, renderDateFormat, renderShortDate } from "helpers/date-time.helper";
 // types
 import { ICycle, IIssue } from "types";
 // fetch-keys
@@ -55,8 +55,6 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
   isCompleted,
 }) => {
   const [cycleDeleteModal, setCycleDeleteModal] = useState(false);
-  const [startDateRange, setStartDateRange] = useState<Date | null>(new Date());
-  const [endDateRange, setEndDateRange] = useState<Date | null>(null);
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
@@ -89,7 +87,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
     ...groupBy(issues ?? [], "state_detail.group"),
   };
 
-  const { reset } = useForm({
+  const { reset, watch } = useForm({
     defaultValues,
   });
 
@@ -190,17 +188,32 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                         >
                           <Popover.Panel className="absolute top-10 -right-5 z-20  transform overflow-hidden">
                             <DatePicker
-                              selected={startDateRange}
+                              selected={
+                                watch("start_date")
+                                  ? new Date(`${watch("start_date")}`)
+                                  : new Date()
+                              }
                               onChange={(date) => {
-                                submitChanges({
-                                  start_date: renderDateFormat(date),
-                                });
-                                setStartDateRange(date);
+                                if (date && watch("end_date")) {
+                                  if (
+                                    isDateRangeValid(renderDateFormat(date), `${watch("end_date")}`)
+                                  ) {
+                                    submitChanges({
+                                      start_date: renderDateFormat(date),
+                                    });
+                                  } else {
+                                    setToastAlert({
+                                      type: "error",
+                                      title: "Error!",
+                                      message: "You have enter invalid date.",
+                                    });
+                                  }
+                                }
                               }}
                               selectsStart
-                              startDate={startDateRange}
-                              endDate={endDateRange}
-                              maxDate={endDateRange}
+                              startDate={new Date(`${watch("start_date")}`)}
+                              endDate={new Date(`${watch("end_date")}`)}
+                              maxDate={new Date(`${watch("end_date")}`)}
                               shouldCloseOnSelect
                               inline
                             />
@@ -237,18 +250,34 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                         >
                           <Popover.Panel className="absolute top-10 -right-5 z-20  transform overflow-hidden">
                             <DatePicker
-                              selected={endDateRange}
+                              selected={
+                                watch("end_date") ? new Date(`${watch("end_date")}`) : new Date()
+                              }
                               onChange={(date) => {
-                                submitChanges({
-                                  end_date: renderDateFormat(date),
-                                });
-                                setEndDateRange(date);
+                                if (watch("start_date") && date) {
+                                  if (
+                                    isDateRangeValid(
+                                      `${watch("start_date")}`,
+                                      renderDateFormat(date)
+                                    )
+                                  ) {
+                                    submitChanges({
+                                      end_date: renderDateFormat(date),
+                                    });
+                                  } else {
+                                    setToastAlert({
+                                      type: "error",
+                                      title: "Error!",
+                                      message: "You have enter invalid date.",
+                                    });
+                                  }
+                                }
                               }}
                               selectsEnd
-                              startDate={startDateRange}
-                              endDate={endDateRange}
-                              // minDate={startDateRange}
-
+                              startDate={new Date(`${watch("start_date")}`)}
+                              endDate={new Date(`${watch("end_date")}`)}
+                              minDate={new Date(`${watch("start_date")}`)}
+                              shouldCloseOnSelect
                               inline
                             />
                           </Popover.Panel>
