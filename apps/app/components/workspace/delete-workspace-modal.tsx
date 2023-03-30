@@ -115,14 +115,14 @@ export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose })
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-gray-500">
-                          Are you sure you want to delete workspace - {`"`}
-                          <span className="italic">{data?.name}</span>
-                          {`"`} ? All of the data related to the workspace will be permanently
+                          Are you sure you want to delete workspace- {" "}
+                          <span className="font-bold">{data?.name}</span>
+                          ? All of the data related to the workspace will be permanently
                           removed. This action cannot be undone.
                         </p>
                       </div>
                       <div className="mt-3">
-                        <p className="text-sm">
+                        <p className="text-sm text-gray-500">
                           Enter the workspace name{" "}
                           <span className="font-semibold">{selectedWorkspace?.name}</span> to
                           continue:
@@ -139,7 +139,7 @@ export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose })
                         />
                       </div>
                       <div className="mt-3">
-                        <p className="text-sm">
+                        <p className="text-sm text-gray-500">
                           To confirm, type{" "}
                           <span className="font-semibold">delete my workspace</span> below:
                         </p>

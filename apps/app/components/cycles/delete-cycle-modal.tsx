@@ -106,9 +106,9 @@ export const DeleteCycleModal: React.FC<TConfirmCycleDeletionProps> = ({
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-gray-500">
-                          Are you sure you want to delete cycle - {`"`}
-                          <span className="italic">{data?.name}</span>
-                          {`"`} ? All of the data related to the cycle will be permanently removed.
+                          Are you sure you want to delete cycle-{" "}
+                          <span className="font-bold">{data?.name}</span>
+                          ? All of the data related to the cycle will be permanently removed.
                           This action cannot be undone.
                         </p>
                       </div>
