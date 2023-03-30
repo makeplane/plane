@@ -21,11 +21,7 @@ import { CustomMenu, Input, Loader, TextArea } from "components/ui";
 // icons
 import { LayerDiagonalIcon } from "components/icons";
 import { ArrowPathIcon } from "@heroicons/react/20/solid";
-import {
-  BoltIcon,
-  CheckIcon,
-  SparklesIcon,
-} from "@heroicons/react/24/outline";
+import { BoltIcon, CheckIcon, SparklesIcon } from "@heroicons/react/24/outline";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
@@ -326,6 +322,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails }) => {
           )}
         />
         <GptAssistantModal
+          block={block}
           isOpen={gptAssistantModal}
           handleClose={() => setGptAssistantModal(false)}
           inset="top-2 left-0"

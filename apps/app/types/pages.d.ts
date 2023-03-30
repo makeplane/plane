@@ -1,5 +1,5 @@
 // types
-import { IIssue, IIssueLabels } from "./issues";
+import { IIssue, IIssueLabels, IWorkspaceLite, IProjectLite } from "types";
 
 export interface IPage {
   access: number;
@@ -18,9 +18,11 @@ export interface IPage {
   name: string;
   owned_by: string;
   project: string;
+  project_detail: IProjectLite;
   updated_at: Date;
   updated_by: string;
   workspace: string;
+  workspace_detail: IWorkspaceLite;
 }
 
 export interface RecentPagesResponse {
@@ -40,11 +42,13 @@ export interface IPageBlock {
   name: string;
   page: string;
   project: string;
+  project_detail: IProjectLite;
   sort_order: number;
   sync: boolean;
   updated_at: Date;
   updated_by: string;
   workspace: string;
+  workspace_detail: IWorkspaceLite;
 }
 
 export type TPageViewProps = "list" | "detailed" | "masonry";
