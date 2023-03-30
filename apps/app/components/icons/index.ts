@@ -56,3 +56,4 @@ export * from "./users";
 export * from "./import-layers";
 export * from "./check";
 export * from "./water-drop-icon";
+export * from "./transfer-icon";
