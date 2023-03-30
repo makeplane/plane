@@ -278,7 +278,7 @@ class RecentPagesEndpoint(BaseAPIView):
                         ),
                     )
                 )
-                .order_by("-is_favorite", "-updated_by")
+                .order_by("-is_favorite", "-updated_at")
             )
 
             yesterdays_pages = (
@@ -302,7 +302,7 @@ class RecentPagesEndpoint(BaseAPIView):
                         ),
                     )
                 )
-                .order_by("-is_favorite", "-updated_by")
+                .order_by("-is_favorite", "-updated_at")
             )
 
             earlier_this_week = (
@@ -330,7 +330,7 @@ class RecentPagesEndpoint(BaseAPIView):
                         ),
                     )
                 )
-                .order_by("-is_favorite", "-updated_by")
+                .order_by("-is_favorite", "-updated_at")
             )
             todays_pages_serializer = PageSerializer(todays_pages, many=True)
             yesterday_pages_serializer = PageSerializer(yesterdays_pages, many=True)
