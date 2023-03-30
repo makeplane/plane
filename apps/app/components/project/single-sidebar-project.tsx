@@ -6,7 +6,13 @@ import { Disclosure, Transition } from "@headlessui/react";
 // ui
 import { CustomMenu } from "components/ui";
 // icons
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import {
+  ChevronDownIcon,
+  DocumentTextIcon,
+  LinkIcon,
+  StarIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
 import {
   ContrastIcon,
   LayerDiagonalIcon,
@@ -53,7 +59,7 @@ const navigation = (workspaceSlug: string, projectId: string) => [
   {
     name: "Pages",
     href: `/${workspaceSlug}/projects/${projectId}/pages`,
-    icon: PencilScribbleIcon,
+    icon: DocumentTextIcon,
   },
   {
     name: "Settings",
@@ -111,20 +117,32 @@ export const SingleSidebarProject: React.FC<Props> = ({
             {!sidebarCollapse && (
               <CustomMenu ellipsis>
                 <CustomMenu.MenuItem onClick={handleDeleteProject}>
-                  Delete project
+                  <span className="flex items-center justify-start gap-2 ">
+                    <TrashIcon className="h-4 w-4" />
+                    <span>Delete project</span>
+                  </span>
                 </CustomMenu.MenuItem>
                 {handleAddToFavorites && (
                   <CustomMenu.MenuItem onClick={handleAddToFavorites}>
-                    Add to favorites
+                    <span className="flex items-center justify-start gap-2">
+                      <StarIcon className="h-4 w-4" />
+                      <span>Add to favorites</span>
+                    </span>
                   </CustomMenu.MenuItem>
                 )}
                 {handleRemoveFromFavorites && (
                   <CustomMenu.MenuItem onClick={handleRemoveFromFavorites}>
-                    Remove from favorites
+                    <span className="flex items-center justify-start gap-2">
+                      <StarIcon className="h-4 w-4" />
+                      <span>Remove from favorites</span>
+                    </span>
                   </CustomMenu.MenuItem>
                 )}
                 <CustomMenu.MenuItem onClick={handleCopyText}>
-                  Copy project link
+                  <span className="flex items-center justify-start gap-2">
+                    <LinkIcon className="h-4 w-4" />
+                    <span>Copy project link</span>
+                  </span>
                 </CustomMenu.MenuItem>
               </CustomMenu>
             )}
@@ -145,7 +163,8 @@ export const SingleSidebarProject: React.FC<Props> = ({
                 if (
                   (item.name === "Cycles" && !project.cycle_view) ||
                   (item.name === "Modules" && !project.module_view) ||
-                  (item.name === "Views" && !project.issue_views_view)
+                  (item.name === "Views" && !project.issue_views_view) ||
+                  (item.name === "Pages" && !project.page_view)
                 )
                   return;
 

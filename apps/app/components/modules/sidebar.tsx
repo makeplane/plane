@@ -12,8 +12,8 @@ import {
   CalendarDaysIcon,
   ChartPieIcon,
   ChevronDownIcon,
-  DocumentDuplicateIcon,
   DocumentIcon,
+  PlusIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
 
@@ -24,14 +24,14 @@ import modulesService from "services/modules.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components
-import { LinkModal, SidebarProgressStats } from "components/core";
+import { LinkModal, LinksList, SidebarProgressStats } from "components/core";
 import { DeleteModuleModal, SidebarLeadSelect, SidebarMembersSelect } from "components/modules";
 import ProgressChart from "components/core/sidebar/progress-chart";
 import { CustomMenu, CustomSelect, Loader, ProgressBar } from "components/ui";
 // icon
 import { ExclamationIcon } from "components/icons";
 // helpers
-import { renderDateFormat, renderShortDate } from "helpers/date-time.helper";
+import { isDateRangeValid, renderDateFormat, renderShortDate } from "helpers/date-time.helper";
 import { capitalizeFirstLetter, copyTextToClipboard } from "helpers/string.helper";
 import { groupBy } from "helpers/array.helper";
 // types
@@ -40,6 +40,7 @@ import { IIssue, IModule, ModuleLink, UserAuth } from "types";
 import { MODULE_DETAILS } from "constants/fetch-keys";
 // constant
 import { MODULE_STATUS } from "constants/module";
+import { LinkIcon } from "@heroicons/react/20/solid";
 
 const defaultValues: Partial<IModule> = {
   lead: "",
@@ -66,8 +67,6 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
 }) => {
   const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
   const [moduleLinkModal, setModuleLinkModal] = useState(false);
-  const [startDateRange, setStartDateRange] = useState<Date | null>(new Date());
-  const [endDateRange, setEndDateRange] = useState<Date | null>(null);
 
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query;
@@ -77,15 +76,6 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
   const { reset, watch, control } = useForm({
     defaultValues,
   });
-
-  const groupedIssues = {
-    backlog: [],
-    unstarted: [],
-    started: [],
-    cancelled: [],
-    completed: [],
-    ...groupBy(moduleIssues ?? [], "issue_detail.state_detail.group"),
-  };
 
   const submitChanges = (data: Partial<IModule>) => {
     if (!workspaceSlug || !projectId || !moduleId) return;
@@ -180,8 +170,8 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
   const isStartValid = new Date(`${module?.start_date}`) <= new Date();
   const isEndValid = new Date(`${module?.target_date}`) >= new Date(`${module?.start_date}`);
 
-  const progressPercentage = moduleIssues
-    ? Math.round((groupedIssues.completed.length / moduleIssues?.length) * 100)
+  const progressPercentage = module
+    ? Math.round((module.completed_issues / module.total_issues) * 100)
     : null;
 
   return (
@@ -256,17 +246,20 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                         >
                           <Popover.Panel className="absolute top-10 -right-5 z-20  transform overflow-hidden">
                             <DatePicker
-                              selected={startDateRange}
+                              selected={
+                                watch("start_date")
+                                  ? new Date(`${watch("start_date")}`)
+                                  : new Date()
+                              }
                               onChange={(date) => {
                                 submitChanges({
                                   start_date: renderDateFormat(date),
                                 });
-                                setStartDateRange(date);
                               }}
                               selectsStart
-                              startDate={startDateRange}
-                              endDate={endDateRange}
-                              maxDate={endDateRange}
+                              startDate={new Date(`${watch("start_date")}`)}
+                              endDate={new Date(`${watch("target_date")}`)}
+                              maxDate={new Date(`${watch("target_date")}`)}
                               shouldCloseOnSelect
                               inline
                             />
@@ -302,18 +295,21 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                         >
                           <Popover.Panel className="absolute top-10 -right-5 z-20  transform overflow-hidden">
                             <DatePicker
-                              selected={endDateRange}
+                              selected={
+                                watch("target_date")
+                                  ? new Date(`${watch("target_date")}`)
+                                  : new Date()
+                              }
                               onChange={(date) => {
                                 submitChanges({
                                   target_date: renderDateFormat(date),
                                 });
-                                setEndDateRange(date);
                               }}
                               selectsEnd
-                              startDate={startDateRange}
-                              endDate={endDateRange}
-                              // minDate={startDateRange}
-
+                              startDate={new Date(`${watch("start_date")}`)}
+                              endDate={new Date(`${watch("target_date")}`)}
+                              minDate={new Date(`${watch("start_date")}`)}
+                              shouldCloseOnSelect
                               inline
                             />
                           </Popover.Panel>
@@ -324,21 +320,21 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                 </div>
               </div>
 
-              <div className="flex flex-col gap-6 px-6 py-6">
-                <div className="flex flex-col items-start justify-start gap-2 ">
-                  <div className="flex items-start justify-start gap-2  ">
+              <div className="flex flex-col gap-6 px-6 py-6 w-full">
+                <div className="flex flex-col items-start justify-start gap-2 w-full">
+                  <div className="flex items-start justify-between gap-2 w-full  ">
                     <h4 className="text-xl font-semibold text-gray-900">{module.name}</h4>
                     <CustomMenu width="lg" ellipsis>
-                      <CustomMenu.MenuItem onClick={handleCopyText}>
-                        <span className="flex items-center justify-start gap-2 text-gray-800">
-                          <DocumentDuplicateIcon className="h-4 w-4" />
-                          <span>Copy Link</span>
-                        </span>
-                      </CustomMenu.MenuItem>
                       <CustomMenu.MenuItem onClick={() => setModuleDeleteModal(true)}>
-                        <span className="flex items-center justify-start gap-2 text-gray-800">
+                        <span className="flex items-center justify-start gap-2">
                           <TrashIcon className="h-4 w-4" />
                           <span>Delete</span>
+                        </span>
+                      </CustomMenu.MenuItem>
+                      <CustomMenu.MenuItem onClick={handleCopyText}>
+                        <span className="flex items-center justify-start gap-2">
+                          <LinkIcon className="h-4 w-4" />
+                          <span>Copy link</span>
                         </span>
                       </CustomMenu.MenuItem>
                     </CustomMenu>
@@ -384,11 +380,11 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                     <div className="flex items-center gap-2.5 text-gray-800">
                       <span className="h-4 w-4">
                         <ProgressBar
-                          value={groupedIssues.completed.length}
-                          maxValue={moduleIssues?.length}
+                          value={module.completed_issues}
+                          maxValue={module.total_issues}
                         />
                       </span>
-                      {groupedIssues.completed.length}/{moduleIssues?.length}
+                      {module.completed_issues}/{module.total_issues}
                     </div>
                   </div>
                 </div>
@@ -414,7 +410,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                       </div>
 
                       {isStartValid && isEndValid ? (
-                        <Disclosure.Button>
+                        <Disclosure.Button className="p-1">
                           <ChevronDownIcon
                             className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`}
                             aria-hidden="true"
@@ -440,7 +436,8 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                                 </span>
                                 <span>
                                   Pending Issues -{" "}
-                                  {moduleIssues?.length - groupedIssues.completed.length}{" "}
+                                  {module.total_issues -
+                                    (module.completed_issues + module.cancelled_issues)}{" "}
                                 </span>
                               </div>
 
@@ -484,8 +481,8 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                         <span className="font-medium text-gray-500">Other Information</span>
                       </div>
 
-                      {issues.length > 0 ? (
-                        <Disclosure.Button>
+                      {module.total_issues > 0 ? (
+                        <Disclosure.Button className="p-1">
                           <ChevronDownIcon
                             className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`}
                             aria-hidden="true"
@@ -502,14 +499,18 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                     </div>
                     <Transition show={open}>
                       <Disclosure.Panel>
-                        {issues.length > 0 ? (
+                        {module.total_issues > 0 ? (
                           <>
                             <div className=" h-full w-full py-4">
                               <SidebarProgressStats
                                 issues={issues}
-                                groupedIssues={groupedIssues}
-                                setModuleLinkModal={setModuleLinkModal}
-                                handleDeleteLink={handleDeleteLink}
+                                groupedIssues={{
+                                  backlog: module.backlog_issues,
+                                  unstarted: module.unstarted_issues,
+                                  started: module.started_issues,
+                                  completed: module.completed_issues,
+                                  cancelled: module.cancelled_issues,
+                                }}
                                 userAuth={userAuth}
                                 module={module}
                               />
@@ -523,6 +524,27 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
                   </div>
                 )}
               </Disclosure>
+            </div>
+
+            <div className="flex w-full flex-col text-xs border-t border-gray-300 px-6 py-6">
+              <div className="flex justify-between items-center w-full">
+                <h4 className="font-medium text-sm text-gray-500">Links</h4>
+                <button
+                  className="grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-100"
+                  onClick={() => setModuleLinkModal(true)}
+                >
+                  <PlusIcon className="h-4 w-4" />
+                </button>
+              </div>
+              <div className="mt-2 space-y-2 hover:bg-gray-100">
+                {userAuth && module.link_module && module.link_module.length > 0 ? (
+                  <LinksList
+                    links={module.link_module}
+                    handleDeleteLink={handleDeleteLink}
+                    userAuth={userAuth}
+                  />
+                ) : null}
+              </div>
             </div>
           </>
         ) : (

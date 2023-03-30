@@ -19,6 +19,13 @@ import { EmptyState, Loader } from "components/ui";
 import emptyPage from "public/empty-state/empty-page.svg";
 // types
 import { IPage, TPageViewProps } from "types";
+import {
+  ALL_PAGES_LIST,
+  FAVORITE_PAGES_LIST,
+  MY_PAGES_LIST,
+  RECENT_PAGES_LIST,
+} from "constants/fetch-keys";
+import { mutate } from "swr";
 
 type Props = {
   pages: IPage[] | undefined;
@@ -50,11 +57,38 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
   const handleAddToFavorites = (page: IPage) => {
     if (!workspaceSlug || !projectId) return;
 
+    mutate<IPage[]>(
+      ALL_PAGES_LIST(projectId as string),
+      (prevData) =>
+        (prevData ?? []).map((p) => {
+          if (p.id === page.id) p.is_favorite = true;
+
+          return p;
+        }),
+      false
+    );
+    mutate<IPage[]>(
+      MY_PAGES_LIST(projectId as string),
+      (prevData) =>
+        (prevData ?? []).map((p) => {
+          if (p.id === page.id) p.is_favorite = true;
+
+          return p;
+        }),
+      false
+    );
+    mutate<IPage[]>(
+      FAVORITE_PAGES_LIST(projectId as string),
+      (prevData) => [page, ...(prevData as IPage[])],
+      false
+    );
+
     pagesService
       .addPageToFavorites(workspaceSlug as string, projectId as string, {
         page: page.id,
       })
       .then(() => {
+        mutate(RECENT_PAGES_LIST(projectId as string));
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -73,9 +107,36 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
   const handleRemoveFromFavorites = (page: IPage) => {
     if (!workspaceSlug || !projectId) return;
 
+    mutate<IPage[]>(
+      ALL_PAGES_LIST(projectId as string),
+      (prevData) =>
+        (prevData ?? []).map((p) => {
+          if (p.id === page.id) p.is_favorite = false;
+
+          return p;
+        }),
+      false
+    );
+    mutate<IPage[]>(
+      MY_PAGES_LIST(projectId as string),
+      (prevData) =>
+        (prevData ?? []).map((p) => {
+          if (p.id === page.id) p.is_favorite = false;
+
+          return p;
+        }),
+      false
+    );
+    mutate<IPage[]>(
+      FAVORITE_PAGES_LIST(projectId as string),
+      (prevData) => (prevData ?? []).filter((p) => p.id !== page.id),
+      false
+    );
+
     pagesService
       .removePageFromFavorites(workspaceSlug as string, projectId as string, page.id)
       .then(() => {
+        mutate(RECENT_PAGES_LIST(projectId as string));
         setToastAlert({
           type: "success",
           title: "Success!",

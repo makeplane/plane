@@ -3,7 +3,7 @@ import useIssuesView from "hooks/use-issues-view";
 // components
 import { SingleList } from "components/core/list-view/single-list";
 // types
-import { IIssue, IProjectMember, IState, UserAuth } from "types";
+import { IIssue, IState, UserAuth } from "types";
 
 // types
 type Props = {

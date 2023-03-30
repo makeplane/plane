@@ -1,4 +1,13 @@
-import type { IState, IUser, IProject, ICycle, IModule, IUserLite } from "./";
+import type {
+  IState,
+  IUser,
+  IProject,
+  ICycle,
+  IModule,
+  IUserLite,
+  IProjectLite,
+  IWorkspaceLite,
+} from "types";
 
 export interface IIssueCycle {
   id: string;
@@ -72,6 +81,7 @@ export interface IIssue {
   created_at: Date;
   created_by: string;
   cycle: string | null;
+  cycle_id: string | null;
   cycle_detail: ICycle | null;
   description: any;
   description_html: any;
@@ -91,12 +101,13 @@ export interface IIssue {
   label_details: any[];
   links_list: IIssueLink[];
   module: string | null;
+  module_id: string | null;
   name: string;
   parent: string | null;
   parent_detail: IIssueParent | null;
   priority: string | null;
   project: string;
-  project_detail: IProject;
+  project_detail: IProjectLite;
   sequence_id: number;
   sort_order: number;
   sprints: string | null;
@@ -108,6 +119,7 @@ export interface IIssue {
   updated_at: Date;
   updated_by: string;
   workspace: string;
+  workspace_detail: IWorkspaceLite;
   labels: any[];
   labels_list: string[];
 }
@@ -228,10 +240,15 @@ export interface IIssueFilterOptions {
   created_by: string[] | null;
 }
 
+export type TIssueViewOptions = "list" | "kanban" | "calendar";
+
 export type TIssueGroupByOptions = "state" | "priority" | "labels" | "created_by" | null;
+
+export type TIssueOrderByOptions = "-created_at" | "updated_at" | "priority" | "sort_order";
 
 export interface IIssueViewOptions {
   group_by: TIssueGroupByOptions;
-  order_by: "created_at" | "updated_at" | "priority" | "sort_order";
+  order_by: TIssueOrderByOptions;
   filters: IIssueFilterOptions;
+  target_date: string;
 }

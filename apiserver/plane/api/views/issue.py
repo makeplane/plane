@@ -6,7 +6,8 @@ from itertools import groupby, chain
 # Django imports
 from django.db.models import Prefetch, OuterRef, Func, F, Q
 from django.core.serializers.json import DjangoJSONEncoder
-
+from django.utils.decorators import method_decorator
+from django.views.decorators.gzip import gzip_page
 
 # Third Party imports
 from rest_framework.response import Response
@@ -41,9 +42,6 @@ from plane.db.models import (
     TimelineIssue,
     IssueProperty,
     Label,
-    IssueBlocker,
-    CycleIssue,
-    ModuleIssue,
     IssueLink,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
@@ -139,6 +137,7 @@ class IssueViewSet(BaseViewSet):
             .prefetch_related("labels")
         )
 
+    @method_decorator(gzip_page)
     def list(self, request, slug, project_id):
         try:
             filters = issue_filters(request.query_params, "GET")
@@ -148,6 +147,8 @@ class IssueViewSet(BaseViewSet):
                 self.get_queryset()
                 .order_by(request.GET.get("order_by", "created_at"))
                 .filter(**filters)
+                .annotate(cycle_id=F("issue_cycle__id"))
+                .annotate(module_id=F("issue_module__id"))
             )
 
             issue_queryset = (
@@ -218,6 +219,7 @@ class IssueViewSet(BaseViewSet):
 
 
 class UserWorkSpaceIssues(BaseAPIView):
+    @method_decorator(gzip_page)
     def get(self, request, slug):
         try:
             issues = (
@@ -251,6 +253,7 @@ class WorkSpaceIssuesEndpoint(BaseAPIView):
         WorkSpaceAdminPermission,
     ]
 
+    @method_decorator(gzip_page)
     def get(self, request, slug):
         try:
             issues = (
@@ -273,6 +276,7 @@ class IssueActivityEndpoint(BaseAPIView):
         ProjectEntityPermission,
     ]
 
+    @method_decorator(gzip_page)
     def get(self, request, slug, project_id, issue_id):
         try:
             issue_activities = (
@@ -281,7 +285,7 @@ class IssueActivityEndpoint(BaseAPIView):
                     ~Q(field="comment"),
                     project__project_projectmember__member=self.request.user,
                 )
-                .select_related("actor")
+                .select_related("actor", "workspace")
             ).order_by("created_at")
             issue_comments = (
                 IssueComment.objects.filter(issue_id=issue_id)
@@ -554,6 +558,7 @@ class SubIssuesEndpoint(BaseAPIView):
         ProjectEntityPermission,
     ]
 
+    @method_decorator(gzip_page)
     def get(self, request, slug, project_id, issue_id):
         try:
             sub_issues = (

@@ -1,4 +1,4 @@
-import type { IProjectMember, IUser, IUserLite } from "./";
+import type { IProjectMember, IUser, IUserLite } from "types";
 
 export interface IWorkspace {
   readonly id: string;
@@ -14,6 +14,12 @@ export interface IWorkspace {
   readonly created_by: string;
   readonly updated_by: string;
   company_size: number | null;
+}
+
+export interface IWorkspaceLite {
+  readonly id: string;
+  name: string;
+  slug: string;
 }
 
 export interface IWorkspaceMemberInvitation {
@@ -43,4 +49,36 @@ export interface IWorkspaceMember {
 export interface ILastActiveWorkspaceDetails {
   workspace_details: IWorkspace;
   project_details?: IProjectMember[];
+}
+
+export interface IWorkspaceDefaultSearchResult {
+  name: string;
+  id: string;
+  project_id: string;
+  workspace__slug: string;
+}
+export interface IWorkspaceSearchResult {
+  name: string;
+  id: string;
+  slug: string;
+}
+
+export interface IWorkspaceIssueSearchResult {
+  name: string;
+  id: string;
+  sequence_id: number;
+  project__identifier: string;
+  project_id: string;
+  workspace__slug: string;
+}
+export interface IWorkspaceSearchResults {
+  results: {
+    workspace: IWorkspaceSearchResult[];
+    project: IWorkspaceDefaultSearchResult[];
+    issue: IWorkspaceIssueSearchResult[];
+    cycle: IWorkspaceDefaultSearchResult[];
+    module: IWorkspaceDefaultSearchResult[];
+    issue_view: IWorkspaceDefaultSearchResult[];
+    page: IWorkspaceDefaultSearchResult[];
+  };
 }

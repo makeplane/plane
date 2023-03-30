@@ -21,6 +21,7 @@ from plane.api.views import (
     # User
     UserEndpoint,
     UpdateUserOnBoardedEndpoint,
+    UserActivityEndpoint,
     ## End User
     # Workspaces
     WorkSpaceViewSet,
@@ -98,6 +99,8 @@ from plane.api.views import (
     CompletedCyclesEndpoint,
     CycleFavoriteViewSet,
     DraftCyclesEndpoint,
+    TransferCycleIssueEndpoint,
+    InCompleteCyclesEndpoint,
     ## End Cycles
     # Modules
     ModuleViewSet,
@@ -189,6 +192,7 @@ urlpatterns = [
         UpdateUserOnBoardedEndpoint.as_view(),
         name="change-password",
     ),
+    path("users/activities/", UserActivityEndpoint.as_view(), name="user-activities"),
     # user workspaces
     path(
         "users/me/workspaces/",
@@ -684,6 +688,16 @@ urlpatterns = [
             }
         ),
         name="user-favorite-cycle",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:cycle_id>/transfer-issues/",
+        TransferCycleIssueEndpoint.as_view(),
+        name="transfer-issues",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/incomplete-cycles/",
+        InCompleteCyclesEndpoint.as_view(),
+        name="transfer-issues",
     ),
     ## End Cycles
     # Issue
@@ -1208,7 +1222,7 @@ urlpatterns = [
     ##  End Importer
     # Search
     path(
-        "workspaces/<str:slug>/search/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/search/",
         GlobalSearchEndpoint.as_view(),
         name="global-search",
     ),

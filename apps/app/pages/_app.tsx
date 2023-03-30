@@ -1,6 +1,9 @@
+import dynamic from "next/dynamic";
+
 // styles
 import "styles/globals.css";
 import "styles/editor.css";
+import "styles/command-pallette.css";
 import "styles/nprogress.css";
 
 // router
@@ -16,6 +19,8 @@ import { ThemeContextProvider } from "contexts/theme.context";
 // types
 import type { AppProps } from "next/app";
 
+const CrispWithNoSSR = dynamic(() => import("constants/crisp"), { ssr: false });
+
 // nprogress
 NProgress.configure({ showSpinner: false });
 Router.events.on("routeChangeStart", NProgress.start);
@@ -27,6 +32,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     <UserProvider>
       <ToastContextProvider>
         <ThemeContextProvider>
+          <CrispWithNoSSR />
           <Component {...pageProps} />
         </ThemeContextProvider>
       </ToastContextProvider>

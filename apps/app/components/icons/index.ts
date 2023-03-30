@@ -43,6 +43,7 @@ export * from "./user-icon";
 export * from "./grid-view-icons";
 export * from "./assignment-clipboard-icon";
 export * from "./tick-mark-icon";
+export * from "./target-icon"
 export * from "./contrast-icon";
 export * from "./people-group-icon";
 export * from "./cmd-icon";
@@ -55,3 +56,4 @@ export * from "./users";
 export * from "./import-layers";
 export * from "./check";
 export * from "./water-drop-icon";
+export * from "./transfer-icon";

@@ -1,9 +1,13 @@
 // services
 import APIService from "services/api.service";
+import trackEventServices from "services/track-event.service";
 // type
-import type { IIssue, IIssueActivity, IIssueComment, IIssueViewOptions } from "types";
+import type { IIssue, IIssueActivity, IIssueComment, IIssueLabels, IIssueViewOptions } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
+
+const trackEvent =
+  process.env.NEXT_PUBLIC_TRACK_EVENTS === "true" || process.env.NEXT_PUBLIC_TRACK_EVENTS === "1";
 
 class ProjectIssuesServices extends APIService {
   constructor() {
@@ -12,7 +16,10 @@ class ProjectIssuesServices extends APIService {
 
   async createIssues(workspaceSlug: string, projectId: string, data: any): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/`, data)
-      .then((response) => response?.data)
+      .then((response) => {
+        if (trackEvent) trackEventServices.trackIssueEvent(response.data, "ISSUE_CREATE");
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -189,7 +196,7 @@ class ProjectIssuesServices extends APIService {
       });
   }
 
-  async getIssueLabels(workspaceSlug: string, projectId: string): Promise<any> {
+  async getIssueLabels(workspaceSlug: string, projectId: string): Promise<IIssueLabels[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-labels/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -241,7 +248,10 @@ class ProjectIssuesServices extends APIService {
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/`,
       data
     )
-      .then((response) => response?.data)
+      .then((response) => {
+        if (trackEvent) trackEventServices.trackIssueEvent(response.data, "ISSUE_UPDATE");
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -257,7 +267,10 @@ class ProjectIssuesServices extends APIService {
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/`,
       data
     )
-      .then((response) => response?.data)
+      .then((response) => {
+        if (trackEvent) trackEventServices.trackIssueEvent(response.data, "ISSUE_UPDATE");
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -265,7 +278,10 @@ class ProjectIssuesServices extends APIService {
 
   async deleteIssue(workspaceSlug: string, projectId: string, issuesId: string): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issuesId}/`)
-      .then((response) => response?.data)
+      .then((response) => {
+        if (trackEvent) trackEventServices.trackIssueEvent({ issuesId }, "ISSUE_DELETE");
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -276,7 +292,10 @@ class ProjectIssuesServices extends APIService {
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/bulk-delete-issues/`,
       data
     )
-      .then((response) => response?.data)
+      .then((response) => {
+        if (trackEvent) trackEventServices.trackIssueBulkDeleteEvent(data);
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });

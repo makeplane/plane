@@ -9,7 +9,7 @@ import cyclesService from "services/cycles.service";
 // components
 import { DeleteCycleModal, SingleCycleCard } from "components/cycles";
 // icons
-import { CompletedCycleIcon } from "components/icons";
+import { CompletedCycleIcon, ExclamationIcon } from "components/icons";
 // types
 import { ICycle, SelectCycleType } from "types";
 // fetch-keys
@@ -63,16 +63,22 @@ export const CompletedCyclesList: React.FC<CompletedCyclesListProps> = ({
       />
       {completedCycles ? (
         completedCycles.completed_cycles.length > 0 ? (
-          <div className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
-            {completedCycles.completed_cycles.map((cycle) => (
-              <SingleCycleCard
-                key={cycle.id}
-                cycle={cycle}
-                handleDeleteCycle={() => handleDeleteCycle(cycle)}
-                handleEditCycle={() => handleEditCycle(cycle)}
-                isCompleted
-              />
-            ))}
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center gap-2 text-sm text-gray-500">
+              <ExclamationIcon height={14} width={14} />
+              <span>Completed cycles are not editable.</span>
+            </div>
+            <div className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
+              {completedCycles.completed_cycles.map((cycle) => (
+                <SingleCycleCard
+                  key={cycle.id}
+                  cycle={cycle}
+                  handleDeleteCycle={() => handleDeleteCycle(cycle)}
+                  handleEditCycle={() => handleEditCycle(cycle)}
+                  isCompleted
+                />
+              ))}
+            </div>
           </div>
         ) : (
           <EmptyState

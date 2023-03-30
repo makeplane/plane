@@ -17,6 +17,7 @@ import { SecondaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { ContrastIcon, PeopleGroupIcon, ViewListIcon } from "components/icons";
+import { DocumentTextIcon } from "@heroicons/react/24/outline";
 // types
 import { IProject, UserAuth } from "types";
 import type { NextPage, GetServerSidePropsContext } from "next";
@@ -65,7 +66,6 @@ const FeaturesSettings: NextPage<UserAuth> = (props) => {
       .then((res) => {
         mutate(PROJECT_DETAILS(projectId as string));
         mutate(PROJECTS_LIST(workspaceSlug as string));
-
         setToastAlert({
           title: "Success!",
           type: "success",
@@ -96,7 +96,7 @@ const FeaturesSettings: NextPage<UserAuth> = (props) => {
         <div className="space-y-5">
           <div className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border bg-white p-5">
             <div className="flex items-start gap-3">
-              <ContrastIcon color="#3f76ff" width={28} height={28} className="flex-shrink-0" />
+              <ContrastIcon color="#3F76FF" width={28} height={28} className="flex-shrink-0" />
               <div>
                 <h4 className="text-xl font-semibold">Cycles</h4>
                 <p className="text-gray-500">
@@ -125,7 +125,7 @@ const FeaturesSettings: NextPage<UserAuth> = (props) => {
           </div>
           <div className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border bg-white p-5">
             <div className="flex items-start gap-3">
-              <PeopleGroupIcon color="#ff6b00" width={28} height={28} className="flex-shrink-0" />
+              <PeopleGroupIcon color="#FF6B00" width={28} height={28} className="flex-shrink-0" />
               <div>
                 <h4 className="-mt-1.5 text-xl font-semibold">Modules</h4>
                 <p className="text-gray-500">
@@ -154,11 +154,11 @@ const FeaturesSettings: NextPage<UserAuth> = (props) => {
           </div>
           <div className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border bg-white p-5">
             <div className="flex items-start gap-3">
-              <ViewListIcon color="#ff6b00" width={28} height={28} className="flex-shrink-0" />
+              <ViewListIcon color="#05C3FF" width={28} height={28} className="flex-shrink-0" />
               <div>
                 <h4 className="-mt-1.5 text-xl font-semibold">Views</h4>
                 <p className="text-gray-500">
-                  Modules are enabled for all the projects in this workspace. Access it from the
+                  Views are enabled for all the projects in this workspace. Access it from the
                   navigation bar.
                 </p>
               </div>
@@ -177,6 +177,35 @@ const FeaturesSettings: NextPage<UserAuth> = (props) => {
                 aria-hidden="true"
                 className={`inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
                   projectDetails?.issue_views_view ? "translate-x-5" : "translate-x-0"
+                }`}
+              />
+            </button>
+          </div>
+          <div className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border bg-white p-5">
+            <div className="flex items-start gap-3">
+              <DocumentTextIcon color="#FCBE1D" width={28} height={28} className="flex-shrink-0" />
+              <div>
+                <h4 className="text-xl font-semibold">Pages</h4>
+                <p className="text-gray-500">
+                  Pages are enabled for all the projects in this workspace. Access them from the
+                  navigation bar.
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                projectDetails?.page_view ? "bg-green-500" : "bg-gray-200"
+              }`}
+              role="switch"
+              aria-checked={projectDetails?.page_view}
+              onClick={() => handleSubmit({ page_view: !projectDetails?.page_view })}
+            >
+              <span className="sr-only">Use cycles</span>
+              <span
+                aria-hidden="true"
+                className={`inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                  projectDetails?.page_view ? "translate-x-5" : "translate-x-0"
                 }`}
               />
             </button>

@@ -169,3 +169,5 @@ export const renderShortTime = (date: string | Date) => {
 
   return hours + ":" + minutes;
 };
+
+export const isDateRangeValid = (startDate: string, endDate: string)=> new Date(startDate) < new Date(endDate);

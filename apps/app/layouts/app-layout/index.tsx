@@ -7,8 +7,6 @@ import useSWR from "swr";
 
 // services
 import projectService from "services/project.service";
-// hooks
-import useUser from "hooks/use-user";
 // ui
 import { PrimaryButton, Spinner } from "components/ui";
 // icon
@@ -44,6 +42,7 @@ type AppLayoutProps = {
   left?: JSX.Element;
   right?: JSX.Element;
   settingsLayout?: boolean;
+  profilePage?: boolean;
   memberType?: UserAuth;
 };
 
@@ -57,6 +56,7 @@ const AppLayout: FC<AppLayoutProps> = ({
   left,
   right,
   settingsLayout = false,
+  profilePage = false,
   memberType,
 }) => {
   // states
@@ -65,8 +65,6 @@ const AppLayout: FC<AppLayoutProps> = ({
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
-  const { user } = useUser();
 
   const { data: projectMembers, mutate: projectMembersMutate } = useSWR(
     workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
@@ -78,7 +76,12 @@ const AppLayout: FC<AppLayoutProps> = ({
     }
   );
   // flags
-  const isMember = projectMembers?.find((member) => member.member.id === user?.id) || !projectId;
+  const isMember =
+    !projectId ||
+    memberType?.isOwner ||
+    memberType?.isMember ||
+    memberType?.isViewer ||
+    memberType?.isGuest;
 
   const handleJoin = () => {
     setIsJoiningProject(true);
@@ -151,13 +154,17 @@ const AppLayout: FC<AppLayoutProps> = ({
                   <div className="mb-12 space-y-6">
                     <div>
                       <h3 className="text-3xl font-semibold">
-                        {projectId ? "Project" : "Workspace"} Settings
+                        {profilePage ? "Profile" : projectId ? "Project" : "Workspace"} Settings
                       </h3>
                       <p className="mt-1 text-gray-600">
-                        This information will be displayed to every member of the project.
+                        {profilePage
+                          ? "This information will be visible to only you."
+                          : projectId
+                          ? "This information will be displayed to every member of the project."
+                          : "This information will be displayed to every member of the workspace."}
                       </p>
                     </div>
-                    <SettingsNavbar />
+                    <SettingsNavbar profilePage={profilePage} />
                   </div>
                 )}
                 {children}

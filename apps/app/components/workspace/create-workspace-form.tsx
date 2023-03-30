@@ -17,7 +17,6 @@ import { USER_WORKSPACES } from "constants/fetch-keys";
 // constants
 import { COMPANY_SIZE } from "constants/workspace";
 
-
 type Props = {
   onSubmit: (res: IWorkspace) => void;
 };
@@ -84,7 +83,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({ onSubmit }) => {
     >
       <div className="flex w-full max-w-xl flex-col">
         <div className="flex flex-col rounded-[10px] bg-white shadow-md">
-          <div className="flex flex-col justify-between gap-3 px-10 py-7">
+          <div className="flex flex-col justify-between gap-3 px-4 py-7">
             <div className="flex flex-col items-start justify-center gap-2.5">
               <span>Workspace name</span>
               <Input
@@ -97,13 +96,14 @@ export const CreateWorkspaceForm: React.FC<Props> = ({ onSubmit }) => {
                 validations={{
                   required: "Workspace name is required",
                 }}
+                placeholder="e.g. My Workspace"
                 error={errors.name}
               />
             </div>
             <div className="flex flex-col items-start justify-center gap-2.5">
               <span>Workspace URL</span>
               <div className="flex w-full items-center rounded-md border border-gray-300 px-3">
-                <span className="text-sm text-slate-600">{"https://app.plane.so/"}</span>
+                <span className="text-sm text-slate-600">https://app.plane.so/</span>
                 <Input
                   mode="trueTransparent"
                   autoComplete="off"
@@ -118,7 +118,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({ onSubmit }) => {
             </div>
           </div>
 
-          <div className="flex flex-col items-start justify-center gap-2.5 border-t border-gray-300 px-10 py-7">
+          <div className="flex flex-col items-start justify-center gap-2.5 border-t border-gray-300 px-4 py-7">
             <span>How large is your company</span>
             <div className="w-full">
               <Controller
@@ -142,12 +142,12 @@ export const CreateWorkspaceForm: React.FC<Props> = ({ onSubmit }) => {
                 )}
               />
               {errors.company_size && (
-              <span className="text-sm text-red-500">{errors.company_size.message}</span>
-            )}
+                <span className="text-sm text-red-500">{errors.company_size.message}</span>
+              )}
             </div>
           </div>
 
-          <div className="flex w-full items-center justify-center rounded-b-[10px]  py-7  ">
+          <div className="flex w-full items-center justify-center rounded-b-[10px] py-7">
             <PrimaryButton
               type="submit"
               className="flex w-1/2 items-center justify-center text-center"

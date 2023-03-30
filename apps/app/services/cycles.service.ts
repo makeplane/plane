@@ -1,5 +1,7 @@
 // services
 import APIService from "services/api.service";
+import trackEventServices from "services/track-event.service";
+
 // types
 import type {
   CycleIssueResponse,
@@ -13,6 +15,9 @@ import type {
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
+const trackEvent =
+  process.env.NEXT_PUBLIC_TRACK_EVENTS === "true" || process.env.NEXT_PUBLIC_TRACK_EVENTS === "1";
+
 class ProjectCycleServices extends APIService {
   constructor() {
     super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
@@ -20,7 +25,10 @@ class ProjectCycleServices extends APIService {
 
   async createCycle(workspaceSlug: string, projectId: string, data: any): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/`, data)
-      .then((response) => response?.data)
+      .then((response) => {
+        if (trackEvent) trackEventServices.trackCycleEvent(response?.data, "CYCLE_CREATE");
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -28,6 +36,14 @@ class ProjectCycleServices extends APIService {
 
   async getCycles(workspaceSlug: string, projectId: string): Promise<ICycle[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getIncompleteCycles(workspaceSlug: string, projectId: string): Promise<ICycle[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/incomplete-cycles/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -64,7 +80,7 @@ class ProjectCycleServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     cycleId: string,
-    queries?: IIssueViewOptions
+    queries?: Partial<IIssueViewOptions>
   ): Promise<IIssue[] | { [key: string]: IIssue[] }> {
     return this.get(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-issues/`,
@@ -86,7 +102,10 @@ class ProjectCycleServices extends APIService {
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/`,
       data
     )
-      .then((response) => response?.data)
+      .then((response) => {
+        if (trackEvent) trackEventServices.trackCycleEvent(response?.data, "CYCLE_UPDATE");
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -102,7 +121,10 @@ class ProjectCycleServices extends APIService {
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/`,
       data
     )
-      .then((response) => response?.data)
+      .then((response) => {
+        if (trackEvent) trackEventServices.trackCycleEvent(response?.data, "CYCLE_UPDATE");
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -110,7 +132,10 @@ class ProjectCycleServices extends APIService {
 
   async deleteCycle(workspaceSlug: string, projectId: string, cycleId: string): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/`)
-      .then((response) => response?.data)
+      .then((response) => {
+        if (trackEvent) trackEventServices.trackCycleEvent(response?.data, "CYCLE_DELETE");
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -177,6 +202,24 @@ class ProjectCycleServices extends APIService {
   ): Promise<any> {
     return this.post(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/user-favorite-cycles/`,
+      data
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async transferIssues(
+    workspaceSlug: string,
+    projectId: string,
+    cycleId: string,
+    data: {
+      new_cycle_id: string;
+    }
+  ): Promise<any> {
+    return this.post(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/transfer-issues/`,
       data
     )
       .then((response) => response?.data)

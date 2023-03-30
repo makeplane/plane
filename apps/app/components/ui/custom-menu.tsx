@@ -25,7 +25,7 @@ type MenuItemProps = {
   children: JSX.Element | string;
   renderAs?: "button" | "a";
   href?: string;
-  onClick?: () => void;
+  onClick?: (args?: any) => void;
   className?: string;
 };
 
@@ -141,7 +141,7 @@ const MenuItem: React.FC<MenuItemProps> = ({
           <a
             className={`${className} ${
               active ? "bg-hover-gray" : ""
-            } inline-block w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-gray-500`}
+            } inline-block w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-gray-500 hover:bg-gray-100 hover:text-gray-900`}
             onClick={close}
           >
             {children}
@@ -152,7 +152,7 @@ const MenuItem: React.FC<MenuItemProps> = ({
           type="button"
           className={`${className} ${
             active ? "bg-hover-gray" : ""
-          } w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-gray-500`}
+          } w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-gray-500 hover:bg-gray-100 hover:text-gray-900`}
           onClick={onClick}
         >
           {children}

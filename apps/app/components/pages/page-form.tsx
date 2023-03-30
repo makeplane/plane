@@ -1,7 +1,11 @@
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+
+import dynamic from "next/dynamic";
+
+// react-hook-form
+import { Controller, useForm } from "react-hook-form";
 // ui
-import { Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
+import { Input, Loader, PrimaryButton, SecondaryButton } from "components/ui";
 // types
 import { IPage } from "types";
 
@@ -11,6 +15,16 @@ type Props = {
   status: boolean;
   data?: IPage | null;
 };
+
+// rich-text-editor
+const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
+  ssr: false,
+  loading: () => (
+    <Loader>
+      <Loader.Item height="12rem" width="100%" />
+    </Loader>
+  ),
+});
 
 const defaultValues = {
   name: "",
@@ -23,6 +37,8 @@ export const PageForm: React.FC<Props> = ({ handleFormSubmit, handleClose, statu
     formState: { errors, isSubmitting },
     handleSubmit,
     reset,
+    control,
+    setValue,
   } = useForm<IPage>({
     defaultValues,
   });
@@ -68,16 +84,20 @@ export const PageForm: React.FC<Props> = ({ handleFormSubmit, handleClose, statu
               }}
             />
           </div>
-          <div>
-            <TextArea
-              id="description"
+          {/* <div>
+            <Controller
               name="description"
-              label="Description"
-              placeholder="Enter description"
-              error={errors.description}
-              register={register}
+              control={control}
+              render={({ field: { value } }) => (
+                <RemirrorRichTextEditor
+                  value={value}
+                  onJSONChange={(jsonValue) => setValue("description", jsonValue)}
+                  onHTMLChange={(htmlValue) => setValue("description_html", htmlValue)}
+                  placeholder="Description"
+                />
+              )}
             />
-          </div>
+          </div> */}
         </div>
       </div>
       <div className="mt-5 flex justify-end gap-2">

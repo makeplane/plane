@@ -15,10 +15,10 @@ import {
   ChartPieIcon,
   ArrowLongRightIcon,
   TrashIcon,
-  DocumentDuplicateIcon,
   UserCircleIcon,
   ChevronDownIcon,
   DocumentIcon,
+  LinkIcon,
 } from "@heroicons/react/24/outline";
 // ui
 import { CustomMenu, Loader, ProgressBar } from "components/ui";
@@ -34,8 +34,7 @@ import { DeleteCycleModal } from "components/cycles";
 import { ExclamationIcon } from "components/icons";
 // helpers
 import { capitalizeFirstLetter, copyTextToClipboard } from "helpers/string.helper";
-import { groupBy } from "helpers/array.helper";
-import { renderDateFormat, renderShortDate } from "helpers/date-time.helper";
+import { isDateRangeValid, renderDateFormat, renderShortDate } from "helpers/date-time.helper";
 // types
 import { ICycle, IIssue } from "types";
 // fetch-keys
@@ -55,8 +54,6 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
   isCompleted,
 }) => {
   const [cycleDeleteModal, setCycleDeleteModal] = useState(false);
-  const [startDateRange, setStartDateRange] = useState<Date | null>(new Date());
-  const [endDateRange, setEndDateRange] = useState<Date | null>(null);
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
@@ -80,16 +77,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
       : null
   );
 
-  const groupedIssues = {
-    backlog: [],
-    unstarted: [],
-    started: [],
-    cancelled: [],
-    completed: [],
-    ...groupBy(issues ?? [], "state_detail.group"),
-  };
-
-  const { reset } = useForm({
+  const { reset, watch } = useForm({
     defaultValues,
   });
 
@@ -142,8 +130,8 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
   const isStartValid = new Date(`${cycle?.start_date}`) <= new Date();
   const isEndValid = new Date(`${cycle?.end_date}`) >= new Date(`${cycle?.start_date}`);
 
-  const progressPercentage = issues
-    ? Math.round((groupedIssues.completed.length / issues?.length) * 100)
+  const progressPercentage = cycle
+    ? Math.round((cycle.completed_issues / cycle.total_issues) * 100)
     : null;
 
   return (
@@ -190,17 +178,33 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                         >
                           <Popover.Panel className="absolute top-10 -right-5 z-20  transform overflow-hidden">
                             <DatePicker
-                              selected={startDateRange}
+                              selected={
+                                watch("start_date")
+                                  ? new Date(`${watch("start_date")}`)
+                                  : new Date()
+                              }
                               onChange={(date) => {
-                                submitChanges({
-                                  start_date: renderDateFormat(date),
-                                });
-                                setStartDateRange(date);
+                                if (date && watch("end_date")) {
+                                  if (
+                                    isDateRangeValid(renderDateFormat(date), `${watch("end_date")}`)
+                                  ) {
+                                    submitChanges({
+                                      start_date: renderDateFormat(date),
+                                    });
+                                  } else {
+                                    setToastAlert({
+                                      type: "error",
+                                      title: "Error!",
+                                      message:
+                                        "The date you have entered is invalid. Please check and enter a valid date.",
+                                    });
+                                  }
+                                }
                               }}
                               selectsStart
-                              startDate={startDateRange}
-                              endDate={endDateRange}
-                              maxDate={endDateRange}
+                              startDate={new Date(`${watch("start_date")}`)}
+                              endDate={new Date(`${watch("end_date")}`)}
+                              maxDate={new Date(`${watch("end_date")}`)}
                               shouldCloseOnSelect
                               inline
                             />
@@ -237,18 +241,35 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                         >
                           <Popover.Panel className="absolute top-10 -right-5 z-20  transform overflow-hidden">
                             <DatePicker
-                              selected={endDateRange}
+                              selected={
+                                watch("end_date") ? new Date(`${watch("end_date")}`) : new Date()
+                              }
                               onChange={(date) => {
-                                submitChanges({
-                                  end_date: renderDateFormat(date),
-                                });
-                                setEndDateRange(date);
+                                if (watch("start_date") && date) {
+                                  if (
+                                    isDateRangeValid(
+                                      `${watch("start_date")}`,
+                                      renderDateFormat(date)
+                                    )
+                                  ) {
+                                    submitChanges({
+                                      end_date: renderDateFormat(date),
+                                    });
+                                  } else {
+                                    setToastAlert({
+                                      type: "error",
+                                      title: "Error!",
+                                      message:
+                                        "The date you have entered is invalid. Please check and enter a valid date.",
+                                    });
+                                  }
+                                }
                               }}
                               selectsEnd
-                              startDate={startDateRange}
-                              endDate={endDateRange}
-                              // minDate={startDateRange}
-
+                              startDate={new Date(`${watch("start_date")}`)}
+                              endDate={new Date(`${watch("end_date")}`)}
+                              minDate={new Date(`${watch("start_date")}`)}
+                              shouldCloseOnSelect
                               inline
                             />
                           </Popover.Panel>
@@ -259,25 +280,25 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                 </div>
               </div>
 
-              <div className="flex flex-col gap-6 px-6 py-6">
-                <div className="flex flex-col items-start justify-start gap-2 ">
-                  <div className="flex items-start justify-start gap-2  ">
+              <div className="flex flex-col gap-6 px-6 py-6 w-full">
+                <div className="flex flex-col items-start justify-start gap-2 w-full">
+                  <div className="flex items-start justify-between gap-2 w-full">
                     <h4 className="text-xl font-semibold text-gray-900">{cycle.name}</h4>
                     <CustomMenu width="lg" ellipsis>
-                      <CustomMenu.MenuItem onClick={handleCopyText}>
-                        <span className="flex items-center justify-start gap-2 text-gray-800">
-                          <DocumentDuplicateIcon className="h-4 w-4" />
-                          <span>Copy Link</span>
-                        </span>
-                      </CustomMenu.MenuItem>
                       {!isCompleted && (
                         <CustomMenu.MenuItem onClick={() => setCycleDeleteModal(true)}>
-                          <span className="flex items-center justify-start gap-2 text-gray-800">
+                          <span className="flex items-center justify-start gap-2">
                             <TrashIcon className="h-4 w-4" />
                             <span>Delete</span>
                           </span>
                         </CustomMenu.MenuItem>
                       )}
+                      <CustomMenu.MenuItem onClick={handleCopyText}>
+                        <span className="flex items-center justify-start gap-2">
+                          <LinkIcon className="h-4 w-4" />
+                          <span>Copy link</span>
+                        </span>
+                      </CustomMenu.MenuItem>
                     </CustomMenu>
                   </div>
 
@@ -319,12 +340,9 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
 
                     <div className="flex items-center gap-2.5 text-gray-800">
                       <span className="h-4 w-4">
-                        <ProgressBar
-                          value={groupedIssues.completed.length}
-                          maxValue={issues?.length}
-                        />
+                        <ProgressBar value={cycle.completed_issues} maxValue={cycle.total_issues} />
                       </span>
-                      {groupedIssues.completed.length}/{issues?.length}
+                      {cycle.completed_issues}/{cycle.total_issues}
                     </div>
                   </div>
                 </div>
@@ -340,7 +358,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                     <div className="flex w-full items-center justify-between gap-2    ">
                       <div className="flex items-center justify-start gap-2 text-sm">
                         <span className="font-medium text-gray-500">Progress</span>
-                        {!open && issues && progressPercentage ? (
+                        {!open && progressPercentage ? (
                           <span className="rounded bg-[#09A953]/10 px-1.5 py-0.5 text-xs text-[#09A953]">
                             {progressPercentage ? `${progressPercentage}%` : ""}
                           </span>
@@ -375,7 +393,8 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                                 </span>
                                 <span>
                                   Pending Issues -{" "}
-                                  {issues?.length ?? 0 - groupedIssues.completed.length}{" "}
+                                  {cycle.total_issues -
+                                    (cycle.completed_issues + cycle.cancelled_issues)}
                                 </span>
                               </div>
 
@@ -419,7 +438,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                         <span className="font-medium text-gray-500">Other Information</span>
                       </div>
 
-                      {(issues?.length ?? 0) > 0 ? (
+                      {cycle.total_issues > 0 ? (
                         <Disclosure.Button>
                           <ChevronDownIcon
                             className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`}
@@ -437,11 +456,17 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                     </div>
                     <Transition show={open}>
                       <Disclosure.Panel>
-                        {(issues?.length ?? 0) > 0 ? (
+                        {cycle.total_issues > 0 ? (
                           <div className=" h-full w-full py-4">
                             <SidebarProgressStats
                               issues={issues ?? []}
-                              groupedIssues={groupedIssues}
+                              groupedIssues={{
+                                backlog: cycle.backlog_issues,
+                                unstarted: cycle.unstarted_issues,
+                                started: cycle.started_issues,
+                                completed: cycle.completed_issues,
+                                cancelled: cycle.cancelled_issues,
+                              }}
                             />
                           </div>
                         ) : (

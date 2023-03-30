@@ -26,6 +26,7 @@ import {
   LinkIcon,
   PencilIcon,
   TrashIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 // helpers
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
@@ -34,10 +35,13 @@ import { handleIssuesMutation } from "constants/issue";
 import { IIssue, Properties, UserAuth } from "types";
 // fetch-keys
 import {
+  CYCLE_DETAILS,
   CYCLE_ISSUES_WITH_PARAMS,
+  MODULE_DETAILS,
   MODULE_ISSUES_WITH_PARAMS,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
 } from "constants/fetch-keys";
+import { DIVIDER } from "@blueprintjs/core/lib/esm/common/classes";
 
 type Props = {
   type?: string;
@@ -121,13 +125,14 @@ export const SingleListIssue: React.FC<Props> = ({
 
       issuesService
         .patchIssue(workspaceSlug as string, projectId as string, issue.id, formData)
-        .then((res) => {
-          if (cycleId) mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
-          if (moduleId) mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
-          mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
-        })
-        .catch((error) => {
-          console.log(error);
+        .then(() => {
+          if (cycleId) {
+            mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
+            mutate(CYCLE_DETAILS(cycleId as string));
+          } else if (moduleId) {
+            mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
+            mutate(MODULE_DETAILS(moduleId as string));
+          } else mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
         });
     },
     [workspaceSlug, projectId, cycleId, moduleId, issue, groupTitle, index, selectedGroup, params]
@@ -260,16 +265,32 @@ export const SingleListIssue: React.FC<Props> = ({
             )}
             {type && !isNotAllowed && (
               <CustomMenu width="auto" ellipsis>
-                <CustomMenu.MenuItem onClick={editIssue}>Edit issue</CustomMenu.MenuItem>
+                <CustomMenu.MenuItem onClick={editIssue}>
+                  <div className="flex items-center justify-start gap-2">
+                    <PencilIcon className="h-4 w-4" />
+                    <span>Edit issue</span>
+                  </div>
+                </CustomMenu.MenuItem>
                 {type !== "issue" && removeIssue && (
                   <CustomMenu.MenuItem onClick={removeIssue}>
-                    <>Remove from {type}</>
+                    <div className="flex items-center justify-start gap-2">
+                      <XMarkIcon className="h-4 w-4" />
+                      <span>Remove from {type}</span>
+                    </div>
                   </CustomMenu.MenuItem>
                 )}
                 <CustomMenu.MenuItem onClick={() => handleDeleteIssue(issue)}>
-                  Delete issue
+                  <div className="flex items-center justify-start gap-2">
+                    <TrashIcon className="h-4 w-4" />
+                    <span>Delete issue</span>
+                  </div>
                 </CustomMenu.MenuItem>
-                <CustomMenu.MenuItem onClick={handleCopyText}>Copy issue link</CustomMenu.MenuItem>
+                <CustomMenu.MenuItem onClick={handleCopyText}>
+                  <div className="flex items-center justify-start gap-2">
+                    <LinkIcon className="h-4 w-4" />
+                    <span>Copy issue link</span>
+                  </div>
+                </CustomMenu.MenuItem>
               </CustomMenu>
             )}
           </div>

@@ -6,6 +6,8 @@ from django.db import IntegrityError
 from django.db.models import OuterRef, Func, F, Q, Exists, OuterRef, Count, Prefetch
 from django.core import serializers
 from django.utils import timezone
+from django.utils.decorators import method_decorator
+from django.views.decorators.gzip import gzip_page
 
 # Third party imports
 from rest_framework.response import Response
@@ -92,7 +94,7 @@ class CycleViewSet(BaseViewSet):
                     filter=Q(issue_cycle__issue__state__group="backlog"),
                 )
             )
-            .order_by("name", "-is_favorite")
+            .order_by("-is_favorite", "name")
             .distinct()
         )
 
@@ -120,6 +122,36 @@ class CycleViewSet(BaseViewSet):
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def partial_update(self, request, slug, project_id, pk):
+        try:
+            cycle = Cycle.objects.get(
+                workspace__slug=slug, project_id=project_id, pk=pk
+            )
+
+            if cycle.end_date is not None and cycle.end_date < timezone.now().date():
+                return Response(
+                    {
+                        "error": "The Cycle has already been completed so it cannot be edited"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            serializer = CycleSerializer(cycle, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Cycle.DoesNotExist:
+            return Response(
+                {"error": "Cycle does not exist"}, status=status.HTTP_400_BAD_REQUEST
+            )
         except Exception as e:
             capture_exception(e)
             return Response(
@@ -169,6 +201,7 @@ class CycleIssueViewSet(BaseViewSet):
             .distinct()
         )
 
+    @method_decorator(gzip_page)
     def list(self, request, slug, project_id, cycle_id):
         try:
             order_by = request.GET.get("order_by", "created_at")
@@ -226,6 +259,14 @@ class CycleIssueViewSet(BaseViewSet):
             cycle = Cycle.objects.get(
                 workspace__slug=slug, project_id=project_id, pk=cycle_id
             )
+
+            if cycle.end_date is not None and cycle.end_date < timezone.now().date():
+                return Response(
+                    {
+                        "error": "The Cycle has already been completed so no new issues can be added"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             # Get all CycleIssues already created
             cycle_issues = list(CycleIssue.objects.filter(issue_id__in=issues))
@@ -672,6 +713,85 @@ class CycleFavoriteViewSet(BaseViewSet):
                 {"error": "Cycle is not in favorites"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class TransferCycleIssueEndpoint(BaseAPIView):
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+
+    def post(self, request, slug, project_id, cycle_id):
+        try:
+            new_cycle_id = request.data.get("new_cycle_id", False)
+
+            if not new_cycle_id:
+                return Response(
+                    {"error": "New Cycle Id is required"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            new_cycle = Cycle.objects.get(
+                workspace__slug=slug, project_id=project_id, pk=new_cycle_id
+            )
+
+            if (
+                new_cycle.end_date is not None
+                and new_cycle.end_date < timezone.now().date()
+            ):
+                return Response(
+                    {
+                        "error": "The cycle where the issues are transferred is already completed"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            cycle_issues = CycleIssue.objects.filter(
+                cycle_id=cycle_id,
+                project_id=project_id,
+                workspace__slug=slug,
+                issue__state__group__in=["backlog", "unstarted", "started"],
+            )
+
+            updated_cycles = []
+            for cycle_issue in cycle_issues:
+                cycle_issue.cycle_id = new_cycle_id
+                updated_cycles.append(cycle_issue)
+
+            cycle_issues = CycleIssue.objects.bulk_update(
+                updated_cycles, ["cycle_id"], batch_size=100
+            )
+
+            return Response({"message": "Success"}, status=status.HTTP_200_OK)
+        except Cycle.DoesNotExist:
+            return Response(
+                {"error": "New Cycle Does not exist"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class InCompleteCyclesEndpoint(BaseAPIView):
+    def get(self, request, slug, project_id):
+        try:
+            cycles = Cycle.objects.filter(
+                Q(end_date__gte=timezone.now().date()) | Q(end_date__isnull=True),
+                workspace__slug=slug,
+                project_id=project_id,
+            ).select_related("owned_by")
+
+            serializer = CycleSerializer(cycles, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)
             return Response(

@@ -1,3 +1,6 @@
+# Python imports
+import re
+
 # Django imports
 from django.db.models import Q
 
@@ -16,16 +19,16 @@ class GlobalSearchEndpoint(BaseAPIView):
     also show related workspace if found
     """
 
-    def filter_workspaces(self, query, slug):
+    def filter_workspaces(self, query, slug, project_id):
         fields = ["name"]
         q = Q()
         for field in fields:
             q |= Q(**{f"{field}__icontains": query})
         return Workspace.objects.filter(
             q, workspace_member__member=self.request.user
-        ).values("name", "id", "slug")
+        ).distinct().values("name", "id", "slug")
 
-    def filter_projects(self, query, slug):
+    def filter_projects(self, query, slug, project_id):
         fields = ["name"]
         q = Q()
         for field in fields:
@@ -34,18 +37,24 @@ class GlobalSearchEndpoint(BaseAPIView):
             q,
             Q(project_projectmember__member=self.request.user) | Q(network=2),
             workspace__slug=slug,
-        ).values("name", "id", "identifier", "workspace__slug")
+        ).distinct().values("name", "id", "identifier", "workspace__slug")
 
-    def filter_issues(self, query, slug):
-        fields = ["name"]
+    def filter_issues(self, query, slug, project_id):
+        fields = ["name", "sequence_id"]
         q = Q()
         for field in fields:
-            q |= Q(**{f"{field}__icontains": query})
+            if field == "sequence_id":
+                sequences = re.findall(r"\d+\.\d+|\d+", query)
+                for sequence_id in sequences:
+                    q |= Q(**{"sequence_id": sequence_id})
+            else:
+                q |= Q(**{f"{field}__icontains": query})
         return Issue.objects.filter(
             q,
             project__project_projectmember__member=self.request.user,
             workspace__slug=slug,
-        ).values(
+            project_id=project_id,
+        ).distinct().values(
             "name",
             "id",
             "sequence_id",
@@ -54,7 +63,7 @@ class GlobalSearchEndpoint(BaseAPIView):
             "workspace__slug",
         )
 
-    def filter_cycles(self, query, slug):
+    def filter_cycles(self, query, slug, project_id):
         fields = ["name"]
         q = Q()
         for field in fields:
@@ -63,14 +72,15 @@ class GlobalSearchEndpoint(BaseAPIView):
             q,
             project__project_projectmember__member=self.request.user,
             workspace__slug=slug,
-        ).values(
+            project_id=project_id,
+        ).distinct().values(
             "name",
             "id",
             "project_id",
             "workspace__slug",
         )
 
-    def filter_modules(self, query, slug):
+    def filter_modules(self, query, slug, project_id):
         fields = ["name"]
         q = Q()
         for field in fields:
@@ -79,14 +89,15 @@ class GlobalSearchEndpoint(BaseAPIView):
             q,
             project__project_projectmember__member=self.request.user,
             workspace__slug=slug,
-        ).values(
+            project_id=project_id,
+        ).distinct().values(
             "name",
             "id",
             "project_id",
             "workspace__slug",
         )
 
-    def filter_pages(self, query, slug):
+    def filter_pages(self, query, slug, project_id):
         fields = ["name"]
         q = Q()
         for field in fields:
@@ -95,14 +106,15 @@ class GlobalSearchEndpoint(BaseAPIView):
             q,
             project__project_projectmember__member=self.request.user,
             workspace__slug=slug,
-        ).values(
+            project_id=project_id,
+        ).distinct().values(
             "name",
             "id",
             "project_id",
             "workspace__slug",
         )
 
-    def filter_views(self, query, slug):
+    def filter_views(self, query, slug, project_id):
         fields = ["name"]
         q = Q()
         for field in fields:
@@ -111,14 +123,15 @@ class GlobalSearchEndpoint(BaseAPIView):
             q,
             project__project_projectmember__member=self.request.user,
             workspace__slug=slug,
-        ).values(
+            project_id=project_id,
+        ).distinct().values(
             "name",
             "id",
             "project_id",
             "workspace__slug",
         )
 
-    def get(self, request, slug):
+    def get(self, request, slug, project_id):
         try:
             query = request.query_params.get("search", False)
             if not query:
@@ -151,11 +164,11 @@ class GlobalSearchEndpoint(BaseAPIView):
 
             for model in MODELS_MAPPER.keys():
                 func = MODELS_MAPPER.get(model, None)
-                results[model] = func(query, slug)
+                results[model] = func(query, slug, project_id)
             return Response({"results": results}, status=status.HTTP_200_OK)
 
         except Exception as e:
-            capture_exception(e)
+            print(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,

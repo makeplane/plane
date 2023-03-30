@@ -6,22 +6,18 @@ import useSWR from "swr";
 
 import { useForm } from "react-hook-form";
 // ui
-import { Avatar, Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
+import { Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
+// components
+import { FilterList } from "components/core";
 // types
 import { IView } from "types";
 // constant
-import { PROJECT_MEMBERS, STATE_LIST } from "constants/fetch-keys";
-// helpers
-import { getStatesList } from "helpers/state.helper";
+import { STATE_LIST } from "constants/fetch-keys";
+
 // services
 import stateService from "services/state.service";
-import projectService from "services/project.service";
 // components
 import { SelectFilters } from "components/views";
-// icons
-import { getStateGroupIcon } from "components/icons";
-import { getPriorityIcon } from "components/icons/priority-icon";
-// components
 
 type Props = {
   handleFormSubmit: (values: IView) => Promise<void>;
@@ -43,24 +39,6 @@ export const ViewForm: React.FC<Props> = ({
   data,
   preLoadedData,
 }) => {
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
-
-  const { data: states } = useSWR(
-    workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
-      : null
-  );
-  const statesList = getStatesList(states ?? {});
-
-  const { data: members } = useSWR(
-    projectId ? PROJECT_MEMBERS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
-      : null
-  );
-
   const {
     register,
     formState: { errors, isSubmitting },
@@ -153,55 +131,15 @@ export const ViewForm: React.FC<Props> = ({
             />
           </div>
           <div>
-            <div className="flex gap-4">
-              {Object.keys(filters ?? {}).map((key) => {
-                const queryKey = key as keyof typeof filters;
-                if (queryKey === "state")
-                  return (
-                    <div className="flex gap-3" key={key}>
-                      {filters.state?.map((stateID) => {
-                        const state = statesList.find((state) => state.id === stateID);
-                        if (!state) return null;
-                        return (
-                          <div className="flex items-center gap-2 text-xs" key={state.id}>
-                            {getStateGroupIcon(state?.group, "16", "16", state?.color)}
-                            {state?.name}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  );
-                else if (queryKey === "priority")
-                  return (
-                    <div className="flex gap-3" key={key}>
-                      {filters.priority?.map((priority) => (
-                        <div className="flex items-center gap-2 text-xs" key={priority}>
-                          {getPriorityIcon(priority)}
-                          {priority}
-                        </div>
-                      ))}
-                    </div>
-                  );
-                else if (queryKey === "assignees")
-                  return (
-                    <div className="flex gap-3" key={key}>
-                      {filters.assignees?.map((assigneeId) => {
-                        const member = members?.find((member) => member.member.id === assigneeId);
-
-                        if (!member) return null;
-                        return (
-                          <div className="flex items-center gap-2 text-xs" key={member.member.id}>
-                            <Avatar user={member.member} />
-                            {member.member.first_name && member.member.first_name !== ""
-                              ? member.member.first_name
-                              : member.member.email}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  );
-              })}
-            </div>
+            <FilterList
+              filters={filters}
+              setFilters={(query: any) => {
+                setValue("query", {
+                  ...filters,
+                  ...query,
+                });
+              }}
+            />
           </div>
         </div>
       </div>

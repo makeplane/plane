@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 
-import Link from "next/link";
 import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
 // lib
-import { requiredAuth } from "lib/auth";
+import { requiredAdmin, requiredAuth } from "lib/auth";
 
 // services
 import viewsService from "services/views.service";
@@ -16,21 +15,20 @@ import projectService from "services/project.service";
 import AppLayout from "layouts/app-layout";
 // ui
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-// icons
-import { TrashIcon } from "@heroicons/react/24/outline";
+
 // image
 import emptyView from "public/empty-state/empty-view.svg";
 // fetching keys
 import { PROJECT_DETAILS, VIEWS_LIST } from "constants/fetch-keys";
 // components
-import { CustomMenu, PrimaryButton, Loader, EmptyState } from "components/ui";
-import { DeleteViewModal, CreateUpdateViewModal } from "components/views";
-// types
-import { IView } from "types";
-import type { NextPage, GetServerSidePropsContext } from "next";
-import { StackedLayersIcon } from "components/icons";
+import { PrimaryButton, Loader, EmptyState } from "components/ui";
+import { DeleteViewModal, CreateUpdateViewModal, SingleViewItem } from "components/views";
 
-const ProjectViews: NextPage = () => {
+// types
+import { IView, UserAuth } from "types";
+import type { NextPage, GetServerSidePropsContext } from "next";
+
+const ProjectViews: NextPage<UserAuth> = (props) => {
   const [isCreateViewModalOpen, setIsCreateViewModalOpen] = useState(false);
   const [selectedView, setSelectedView] = useState<IView | null>(null);
 
@@ -57,6 +55,7 @@ const ProjectViews: NextPage = () => {
       meta={{
         title: "Plane - Views",
       }}
+      memberType={props}
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
@@ -87,29 +86,7 @@ const ProjectViews: NextPage = () => {
             <h3 className="text-3xl font-semibold text-black">Views</h3>
             <div className="rounded-[10px] border">
               {views.map((view) => (
-                <div
-                  className="flex items-center justify-between border-b bg-white p-4 first:rounded-t-[10px] last:rounded-b-[10px]"
-                  key={view.id}
-                >
-                  <div className="flex items-center gap-2">
-                    <StackedLayersIcon height={18} width={18} />
-                    <Link href={`/${workspaceSlug}/projects/${projectId}/views/${view.id}`}>
-                      <a>{view.name}</a>
-                    </Link>
-                  </div>
-                  <CustomMenu width="auto" verticalEllipsis>
-                    <CustomMenu.MenuItem
-                      onClick={() => {
-                        setSelectedView(view);
-                      }}
-                    >
-                      <span className="flex items-center justify-start gap-2 text-gray-800">
-                        <TrashIcon className="h-4 w-4" />
-                        <span>Delete</span>
-                      </span>
-                    </CustomMenu.MenuItem>
-                  </CustomMenu>
-                </div>
+                <SingleViewItem key={view.id} view={view} setSelectedView={setSelectedView} />
               ))}
             </div>
           </div>
@@ -147,9 +124,17 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     };
   }
 
+  const projectId = ctx.query.projectId as string;
+  const workspaceSlug = ctx.query.workspaceSlug as string;
+
+  const memberDetail = await requiredAdmin(workspaceSlug, projectId, ctx.req?.headers.cookie);
+
   return {
     props: {
-      user,
+      isOwner: memberDetail?.role === 20,
+      isMember: memberDetail?.role === 15,
+      isViewer: memberDetail?.role === 10,
+      isGuest: memberDetail?.role === 5,
     },
   };
 };

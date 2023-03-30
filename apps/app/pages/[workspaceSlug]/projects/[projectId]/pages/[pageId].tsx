@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 
@@ -11,7 +11,7 @@ import { Popover, Transition } from "@headlessui/react";
 // react-color
 import { TwitterPicker } from "react-color";
 // lib
-import { requiredAuth } from "lib/auth";
+import { requiredAdmin, requiredAuth } from "lib/auth";
 // services
 import projectService from "services/project.service";
 import pagesService from "services/pages.service";
@@ -24,7 +24,7 @@ import AppLayout from "layouts/app-layout";
 import { SinglePageBlock } from "components/pages";
 // ui
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-import { CustomSearchSelect, Loader, PrimaryButton, TextArea } from "components/ui";
+import { CustomSearchSelect, Loader, PrimaryButton, TextArea, Tooltip } from "components/ui";
 // icons
 import { ArrowLeftIcon, PlusIcon, ShareIcon, StarIcon } from "@heroicons/react/24/outline";
 import { ColorPalletteIcon } from "components/icons";
@@ -33,7 +33,7 @@ import { renderShortTime } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import type { NextPage, GetServerSidePropsContext } from "next";
-import { IIssueLabels, IPage, IPageBlock } from "types";
+import { IIssueLabels, IPage, IPageBlock, UserAuth } from "types";
 // fetch-keys
 import {
   PAGE_BLOCKS_LIST,
@@ -42,7 +42,9 @@ import {
   PROJECT_ISSUE_LABELS,
 } from "constants/fetch-keys";
 
-const SinglePage: NextPage = () => {
+const SinglePage: NextPage<UserAuth> = (props) => {
+  const [isAddingBlock, setIsAddingBlock] = useState(false);
+
   const router = useRouter();
   const { workspaceSlug, projectId, pageId } = router.query;
 
@@ -63,11 +65,11 @@ const SinglePage: NextPage = () => {
     workspaceSlug && projectId && pageId ? PAGE_DETAILS(pageId as string) : null,
     workspaceSlug && projectId
       ? () =>
-          pagesService.getPageDetails(
-            workspaceSlug as string,
-            projectId as string,
-            pageId as string
-          )
+        pagesService.getPageDetails(
+          workspaceSlug as string,
+          projectId as string,
+          pageId as string
+        )
       : null
   );
 
@@ -75,11 +77,11 @@ const SinglePage: NextPage = () => {
     workspaceSlug && projectId && pageId ? PAGE_BLOCKS_LIST(pageId as string) : null,
     workspaceSlug && projectId
       ? () =>
-          pagesService.listPageBlocks(
-            workspaceSlug as string,
-            projectId as string,
-            pageId as string
-          )
+        pagesService.listPageBlocks(
+          workspaceSlug as string,
+          projectId as string,
+          pageId as string
+        )
       : null
   );
 
@@ -132,6 +134,8 @@ const SinglePage: NextPage = () => {
   const createPageBlock = async () => {
     if (!workspaceSlug || !projectId || !pageId) return;
 
+    setIsAddingBlock(true);
+
     await pagesService
       .createPageBlock(workspaceSlug as string, projectId as string, pageId as string, {
         name: "New block",
@@ -149,6 +153,9 @@ const SinglePage: NextPage = () => {
           title: "Error!",
           message: "Page could not be created. Please try again.",
         });
+      })
+      .finally(() => {
+        setIsAddingBlock(false);
       });
   };
 
@@ -233,6 +240,7 @@ const SinglePage: NextPage = () => {
       meta={{
         title: "Plane - Pages",
       }}
+      memberType={props}
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
@@ -264,9 +272,8 @@ const SinglePage: NextPage = () => {
                         key={label.id}
                         className="group flex items-center gap-1 rounded-2xl border px-2 py-0.5 text-xs"
                         style={{
-                          backgroundColor: `${
-                            label?.color && label.color !== "" ? label.color : "#000000"
-                          }20`,
+                          backgroundColor: `${label?.color && label.color !== "" ? label.color : "#000000"
+                            }20`,
                         }}
                       >
                         <span
@@ -316,9 +323,14 @@ const SinglePage: NextPage = () => {
               )}
             </div>
             <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-500">
-                {renderShortTime(pageDetails.created_at)}
-              </span>
+              <Tooltip
+                tooltipContent={`Page last updated at ${renderShortTime(pageDetails.updated_at)}`}
+                theme="dark"
+              >
+                <span className="cursor-default text-sm text-gray-500">
+                  {renderShortTime(pageDetails.updated_at)}
+                </span>
+              </Tooltip>
               <PrimaryButton className="flex items-center gap-2" onClick={handleCopyText}>
                 <ShareIcon className="h-4 w-4" />
                 Share
@@ -329,9 +341,8 @@ const SinglePage: NextPage = () => {
                     <>
                       <Popover.Button
                         type="button"
-                        className={`group inline-flex items-center outline-none ${
-                          open ? "text-gray-900" : "text-gray-500"
-                        }`}
+                        className={`group inline-flex items-center outline-none ${open ? "text-gray-900" : "text-gray-500"
+                          }`}
                       >
                         {watch("color") && watch("color") !== "" ? (
                           <span
@@ -385,44 +396,42 @@ const SinglePage: NextPage = () => {
               onBlur={handleSubmit(updatePage)}
               onChange={(e) => setValue("name", e.target.value)}
               required={true}
-              className="min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-2xl font-semibold outline-none ring-0 focus:ring-1 focus:ring-theme"
+              className="min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-2xl font-semibold outline-none ring-0 focus:ring-1 focus:ring-gray-200"
               role="textbox"
             />
           </div>
           <div className="px-3">
             {pageBlocks ? (
-              pageBlocks.length === 0 ? (
-                <button
-                  type="button"
-                  className="flex items-center gap-1 rounded px-2.5 py-1 text-xs hover:bg-gray-100"
-                  onClick={createPageBlock}
-                >
-                  <PlusIcon className="h-3 w-3" />
-                  Add new block
-                </button>
-              ) : (
-                <>
-                  <div className="space-y-4">
-                    {pageBlocks.map((block) => (
-                      <SinglePageBlock
-                        key={block.id}
-                        block={block}
-                        projectDetails={projectDetails}
-                      />
+              <>
+                {pageBlocks.length !== 0 && (
+                  <div className="space-y-4 divide-y">
+                    {pageBlocks.map((block, index) => (
+                      <>
+                        <SinglePageBlock
+                          key={block.id}
+                          block={block}
+                          projectDetails={projectDetails}
+                        />
+                      </>
                     ))}
                   </div>
-                  <div className="">
-                    <button
-                      type="button"
-                      className="flex items-center gap-1 rounded px-2.5 py-1 text-xs hover:bg-gray-100"
-                      onClick={createPageBlock}
-                    >
+                )}
+                <button
+                  type="button"
+                  className="flex items-center gap-1 rounded bg-gray-100 px-2.5 py-1 text-xs hover:bg-gray-200"
+                  onClick={createPageBlock}
+                  disabled={isAddingBlock}
+                >
+                  {isAddingBlock ? (
+                    "Adding block..."
+                  ) : (
+                    <>
                       <PlusIcon className="h-3 w-3" />
                       Add new block
-                    </button>
-                  </div>
-                </>
-              )
+                    </>
+                  )}
+                </button>
+              </>
             ) : (
               <Loader>
                 <Loader.Item height="150px" />
@@ -454,9 +463,17 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     };
   }
 
+  const projectId = ctx.query.projectId as string;
+  const workspaceSlug = ctx.query.workspaceSlug as string;
+
+  const memberDetail = await requiredAdmin(workspaceSlug, projectId, ctx.req?.headers.cookie);
+
   return {
     props: {
-      user,
+      isOwner: memberDetail?.role === 20,
+      isMember: memberDetail?.role === 15,
+      isViewer: memberDetail?.role === 10,
+      isGuest: memberDetail?.role === 5,
     },
   };
 };
