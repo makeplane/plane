@@ -94,7 +94,7 @@ class CycleViewSet(BaseViewSet):
                     filter=Q(issue_cycle__issue__state__group="backlog"),
                 )
             )
-            .order_by("name", "-is_favorite")
+            .order_by("-is_favorite", "name")
             .distinct()
         )
 

@@ -53,7 +53,7 @@ class IssueViewViewSet(BaseViewSet):
             .select_related("project")
             .select_related("workspace")
             .annotate(is_favorite=Exists(subquery))
-            .order_by("name", "-is_favorite")
+            .order_by("-is_favorite", "name")
             .distinct()
         )
 
