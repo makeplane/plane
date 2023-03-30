@@ -13,7 +13,7 @@ export const SecondaryButton: React.FC<ButtonProps> = ({
 }) => (
   <button
     type={type}
-    className={`${className} border border-gray-300 font-medium duration-300 ${
+    className={`${className} border font-medium duration-300 ${
       size === "sm"
         ? "rounded px-3 py-2 text-xs"
         : size === "md"

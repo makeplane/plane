@@ -32,8 +32,7 @@ export const ONBOARDING_CARDS = {
     imgURL: Welcome,
     step: "1/5",
     title: "Welcome to Plane",
-    description:
-      "Plane helps you plan your issues, cycles, and product modules to ship faster.",
+    description: "Plane helps you plan your issues, cycles, and product modules to ship faster.",
   },
   issue: {
     imgURL: Issue,
@@ -54,7 +53,7 @@ export const ONBOARDING_CARDS = {
     step: "4/5",
     title: "Break into Modules ",
     description:
-      "Modules break your big think into Projects or Features , to help you organize better.",
+      "Modules break your big think into Projects or Features, to help you organize better.",
   },
   commandMenu: {
     imgURL: CommandMenu,
