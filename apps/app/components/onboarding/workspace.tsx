@@ -25,6 +25,11 @@ type Props = {
 export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
+  const [defaultValues, setDefaultValues] = useState({
+    name: "",
+    slug: "",
+    company_size: null,
+  });
 
   const { data: invitations, mutate } = useSWR(USER_WORKSPACE_INVITATIONS, () =>
     workspaceService.userWorkspaceInvitations()
@@ -99,11 +104,13 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
                 setWorkspace(res);
                 setStep(3);
               }}
+              defaultValues={defaultValues}
+              setDefaultValues={setDefaultValues}
             />
           </Tab.Panel>
           <Tab.Panel>
             <div className="mt-6">
-              <div className="divide-y pb-8 px-4">
+              <div className="divide-y px-4 pb-8">
                 {invitations && invitations.length > 0 ? (
                   invitations.map((invitation) => (
                     <div key={invitation.id}>

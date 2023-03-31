@@ -598,7 +598,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
             </form>
           )}
         </div>
-        <div className="py-1 text-xs">
+        <div className="min-h-[116px] py-1 text-xs">
           <div className="flex items-center justify-between gap-2">
             <h4>Links</h4>
             {!isNotAllowed && (

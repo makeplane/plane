@@ -1,5 +1,5 @@
 export const getPriorityIcon = (priority: string | null, className?: string) => {
-  if (!className || className === "") className = "text-xs";
+  if (!className || className === "") className = "text-xs flex items-center";
 
   switch (priority) {
     case "urgent":
