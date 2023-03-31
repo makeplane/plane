@@ -112,7 +112,9 @@ export const SingleViewItem: React.FC<Props> = ({ view, setSelectedView }) => {
               )}
               <CustomMenu width="auto" verticalEllipsis>
                 <CustomMenu.MenuItem
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
                     setSelectedView(view);
                   }}
                 >
