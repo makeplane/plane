@@ -90,58 +90,57 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
   const startDate = new Date(cycle.start_date ?? "");
 
   const handleAddToFavorites = () => {
-    if (!workspaceSlug && !projectId && !cycle) return;
+    if (!workspaceSlug || !projectId || !cycle) return;
+
+    const cycleStatus = getDateRangeStatus(cycle.start_date, cycle.end_date);
+
+    switch (cycleStatus) {
+      case "current":
+      case "upcoming":
+        mutate<CurrentAndUpcomingCyclesResponse>(
+          CYCLE_CURRENT_AND_UPCOMING_LIST(projectId as string),
+          (prevData) => ({
+            current_cycle: (prevData?.current_cycle ?? []).map((c) => ({
+              ...c,
+              is_favorite: c.id === cycle.id ? true : c.is_favorite,
+            })),
+            upcoming_cycle: (prevData?.upcoming_cycle ?? []).map((c) => ({
+              ...c,
+              is_favorite: c.id === cycle.id ? true : c.is_favorite,
+            })),
+          }),
+          false
+        );
+        break;
+      case "completed":
+        mutate<CompletedCyclesResponse>(
+          CYCLE_COMPLETE_LIST(projectId as string),
+          (prevData) => ({
+            completed_cycles: (prevData?.completed_cycles ?? []).map((c) => ({
+              ...c,
+              is_favorite: c.id === cycle.id ? true : c.is_favorite,
+            })),
+          }),
+          false
+        );
+        break;
+      case "draft":
+        mutate<DraftCyclesResponse>(
+          CYCLE_DRAFT_LIST(projectId as string),
+          (prevData) => ({
+            draft_cycles: (prevData?.draft_cycles ?? []).map((c) => ({
+              ...c,
+              is_favorite: c.id === cycle.id ? true : c.is_favorite,
+            })),
+          }),
+          false
+        );
+        break;
+    }
 
     cyclesService
       .addCycleToFavorites(workspaceSlug as string, projectId as string, {
         cycle: cycle.id,
-      })
-      .then(() => {
-        const cycleStatus = getDateRangeStatus(cycle.start_date, cycle.end_date);
-
-        if (cycleStatus === "current" || cycleStatus === "upcoming")
-          mutate<CurrentAndUpcomingCyclesResponse>(
-            CYCLE_CURRENT_AND_UPCOMING_LIST(projectId as string),
-            (prevData) => ({
-              current_cycle: (prevData?.current_cycle ?? []).map((c) => ({
-                ...c,
-                is_favorite: c.id === cycle.id ? true : c.is_favorite,
-              })),
-              upcoming_cycle: (prevData?.upcoming_cycle ?? []).map((c) => ({
-                ...c,
-                is_favorite: c.id === cycle.id ? true : c.is_favorite,
-              })),
-            }),
-            false
-          );
-        else if (cycleStatus === "completed")
-          mutate<CompletedCyclesResponse>(
-            CYCLE_COMPLETE_LIST(projectId as string),
-            (prevData) => ({
-              completed_cycles: (prevData?.completed_cycles ?? []).map((c) => ({
-                ...c,
-                is_favorite: c.id === cycle.id ? true : c.is_favorite,
-              })),
-            }),
-            false
-          );
-        else
-          mutate<DraftCyclesResponse>(
-            CYCLE_DRAFT_LIST(projectId as string),
-            (prevData) => ({
-              draft_cycles: (prevData?.draft_cycles ?? []).map((c) => ({
-                ...c,
-                is_favorite: c.id === cycle.id ? true : c.is_favorite,
-              })),
-            }),
-            false
-          );
-
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Successfully added the cycle to favorites.",
-        });
       })
       .catch(() => {
         setToastAlert({
@@ -153,57 +152,56 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
   };
 
   const handleRemoveFromFavorites = () => {
-    if (!workspaceSlug || !cycle) return;
+    if (!workspaceSlug || !projectId || !cycle) return;
+
+    const cycleStatus = getDateRangeStatus(cycle.start_date, cycle.end_date);
+
+    switch (cycleStatus) {
+      case "current":
+      case "upcoming":
+        mutate<CurrentAndUpcomingCyclesResponse>(
+          CYCLE_CURRENT_AND_UPCOMING_LIST(projectId as string),
+          (prevData) => ({
+            current_cycle: (prevData?.current_cycle ?? []).map((c) => ({
+              ...c,
+              is_favorite: c.id === cycle.id ? false : c.is_favorite,
+            })),
+            upcoming_cycle: (prevData?.upcoming_cycle ?? []).map((c) => ({
+              ...c,
+              is_favorite: c.id === cycle.id ? false : c.is_favorite,
+            })),
+          }),
+          false
+        );
+        break;
+      case "completed":
+        mutate<CompletedCyclesResponse>(
+          CYCLE_COMPLETE_LIST(projectId as string),
+          (prevData) => ({
+            completed_cycles: (prevData?.completed_cycles ?? []).map((c) => ({
+              ...c,
+              is_favorite: c.id === cycle.id ? false : c.is_favorite,
+            })),
+          }),
+          false
+        );
+        break;
+      case "draft":
+        mutate<DraftCyclesResponse>(
+          CYCLE_DRAFT_LIST(projectId as string),
+          (prevData) => ({
+            draft_cycles: (prevData?.draft_cycles ?? []).map((c) => ({
+              ...c,
+              is_favorite: c.id === cycle.id ? false : c.is_favorite,
+            })),
+          }),
+          false
+        );
+        break;
+    }
 
     cyclesService
       .removeCycleFromFavorites(workspaceSlug as string, projectId as string, cycle.id)
-      .then(() => {
-        const cycleStatus = getDateRangeStatus(cycle.start_date, cycle.end_date);
-
-        if (cycleStatus === "current" || cycleStatus === "upcoming")
-          mutate<CurrentAndUpcomingCyclesResponse>(
-            CYCLE_CURRENT_AND_UPCOMING_LIST(projectId as string),
-            (prevData) => ({
-              current_cycle: (prevData?.current_cycle ?? []).map((c) => ({
-                ...c,
-                is_favorite: c.id === cycle.id ? false : c.is_favorite,
-              })),
-              upcoming_cycle: (prevData?.upcoming_cycle ?? []).map((c) => ({
-                ...c,
-                is_favorite: c.id === cycle.id ? false : c.is_favorite,
-              })),
-            }),
-            false
-          );
-        else if (cycleStatus === "completed")
-          mutate<CompletedCyclesResponse>(
-            CYCLE_COMPLETE_LIST(projectId as string),
-            (prevData) => ({
-              completed_cycles: (prevData?.completed_cycles ?? []).map((c) => ({
-                ...c,
-                is_favorite: c.id === cycle.id ? false : c.is_favorite,
-              })),
-            }),
-            false
-          );
-        else
-          mutate<DraftCyclesResponse>(
-            CYCLE_DRAFT_LIST(projectId as string),
-            (prevData) => ({
-              draft_cycles: (prevData?.draft_cycles ?? []).map((c) => ({
-                ...c,
-                is_favorite: c.id === cycle.id ? false : c.is_favorite,
-              })),
-            }),
-            false
-          );
-
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Successfully removed the cycle from favorites.",
-        });
-      })
       .catch(() => {
         setToastAlert({
           type: "error",
