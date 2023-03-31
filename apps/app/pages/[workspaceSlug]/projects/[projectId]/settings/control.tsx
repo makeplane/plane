@@ -53,7 +53,7 @@ const ControlSettings: NextPage<TControlSettingsProps> = (props) => {
   );
 
   const { data: people } = useSWR(
-    workspaceSlug ? WORKSPACE_MEMBERS : null,
+    workspaceSlug ? WORKSPACE_MEMBERS(workspaceSlug as string) : null,
     workspaceSlug ? () => workspaceService.workspaceMembers(workspaceSlug as string) : null
   );
 
