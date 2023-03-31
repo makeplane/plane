@@ -16,6 +16,9 @@ import AppLayout from "layouts/app-layout";
 // ui
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 
+//icons
+import { PlusIcon } from "components/icons";
+
 // image
 import emptyView from "public/empty-state/empty-view.svg";
 // fetching keys
@@ -64,7 +67,8 @@ const ProjectViews: NextPage<UserAuth> = (props) => {
       }
       right={
         <div className="flex items-center gap-2">
-          <PrimaryButton type="button" onClick={() => setIsCreateViewModalOpen(true)}>
+          <PrimaryButton type="button" className="flex items-center gap-2" onClick={() => setIsCreateViewModalOpen(true)}>
+            <PlusIcon className="w-4 h-4" />
             Create View
           </PrimaryButton>
         </div>
