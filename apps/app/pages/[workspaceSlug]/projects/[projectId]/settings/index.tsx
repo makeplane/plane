@@ -68,16 +68,6 @@ const GeneralSettings: NextPage<UserAuth> = ({ isMember, isOwner, isViewer, isGu
     defaultValues,
   });
 
-  const checkIdentifier = (value: string) => {
-    if (!workspaceSlug) return;
-
-    projectService
-      .checkProjectIdentifierAvailability(workspaceSlug as string, value)
-      .then((response) => {
-        if (response.exists) setError("identifier", { message: "Identifier already exists" });
-      });
-  };
-
   useEffect(() => {
     if (projectDetails)
       reset({
@@ -87,6 +77,33 @@ const GeneralSettings: NextPage<UserAuth> = ({ isMember, isOwner, isViewer, isGu
         workspace: (projectDetails.workspace as IWorkspace).id,
       });
   }, [projectDetails, reset]);
+
+  const updateProject = async (payload: Partial<IProject>) => {
+    if (!workspaceSlug || !projectDetails) return;
+
+    await projectService
+      .updateProject(workspaceSlug as string, projectDetails.id, payload)
+      .then((res) => {
+        mutate<IProject>(
+          PROJECT_DETAILS(projectDetails.id),
+          (prevData) => ({ ...prevData, ...res }),
+          false
+        );
+        mutate(PROJECTS_LIST(workspaceSlug as string));
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "Project updated successfully",
+        });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Project could not be updated. Please try again.",
+        });
+      });
+  };
 
   const onSubmit = async (formData: IProject) => {
     if (!workspaceSlug || !projectDetails) return;
@@ -101,34 +118,14 @@ const GeneralSettings: NextPage<UserAuth> = ({ isMember, isOwner, isViewer, isGu
       icon: formData.icon,
     };
 
-    await projectService
-      .checkProjectIdentifierAvailability(workspaceSlug as string, payload.identifier ?? "")
-      .then(async (res) => {
-        if (res.exists) setError("identifier", { message: "Identifier already exists" });
-        else
-          await projectService
-            .updateProject(workspaceSlug as string, projectDetails.id, payload)
-            .then((res) => {
-              mutate<IProject>(
-                PROJECT_DETAILS(projectDetails.id),
-                (prevData) => ({ ...prevData, ...res }),
-                false
-              );
-              mutate(PROJECTS_LIST(workspaceSlug as string));
-              setToastAlert({
-                type: "success",
-                title: "Success!",
-                message: "Project updated successfully",
-              });
-            })
-            .catch(() => {
-              setToastAlert({
-                type: "error",
-                title: "Error!",
-                message: "Project could not be updated. Please try again.",
-              });
-            });
-      });
+    if (projectDetails.identifier !== formData.identifier)
+      await projectService
+        .checkProjectIdentifierAvailability(workspaceSlug as string, payload.identifier ?? "")
+        .then(async (res) => {
+          if (res.exists) setError("identifier", { message: "Identifier already exists" });
+          else await updateProject(payload);
+        });
+    else await updateProject(payload);
   };
 
   return (
