@@ -102,7 +102,7 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
                         handleEditPage();
                       }}
                     >
-                      <span className="flex items-center justify-start gap-2 text-gray-800">
+                      <span className="flex items-center justify-start gap-2">
                         <PencilIcon className="h-3.5 w-3.5" />
                         <span>Edit Page</span>
                       </span>
@@ -114,7 +114,7 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
                         handleDeletePage();
                       }}
                     >
-                      <span className="flex items-center justify-start gap-2 text-gray-800">
+                      <span className="flex items-center justify-start gap-2">
                         <TrashIcon className="h-3.5 w-3.5" />
                         <span>Delete Page</span>
                       </span>

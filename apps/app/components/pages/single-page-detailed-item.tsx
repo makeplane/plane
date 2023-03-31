@@ -89,13 +89,13 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
           )}
           <CustomMenu verticalEllipsis>
             <CustomMenu.MenuItem onClick={handleEditPage}>
-              <span className="flex items-center justify-start gap-2 text-gray-800">
+              <span className="flex items-center justify-start gap-2">
                 <PencilIcon className="h-3.5 w-3.5" />
                 <span>Edit Page</span>
               </span>
             </CustomMenu.MenuItem>
             <CustomMenu.MenuItem onClick={handleDeletePage}>
-              <span className="flex items-center justify-start gap-2 text-gray-800">
+              <span className="flex items-center justify-start gap-2">
                 <TrashIcon className="h-3.5 w-3.5" />
                 <span>Delete Page</span>
               </span>
