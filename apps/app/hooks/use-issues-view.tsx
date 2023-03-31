@@ -118,14 +118,14 @@ const useIssuesView = () => {
         [key: string]: IIssue[];
       }
     | undefined = useMemo(() => {
-    const issuesToGroup = cycleIssues ?? moduleIssues ?? projectIssues;
+    const issuesToGroup = cycleId ? cycleIssues : moduleId ? moduleIssues : projectIssues;
 
     if (Array.isArray(issuesToGroup)) return { allIssues: issuesToGroup };
     if (groupByProperty === "state")
       return issuesToGroup ? Object.assign(emptyStatesObject, issuesToGroup) : undefined;
 
     return issuesToGroup;
-  }, [projectIssues, cycleIssues, moduleIssues, groupByProperty]);
+  }, [projectIssues, cycleIssues, moduleIssues, groupByProperty, cycleId, moduleId]);
 
   const isEmpty =
     Object.values(groupedByIssues ?? {}).every((group) => group.length === 0) ||
