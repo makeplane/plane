@@ -11,8 +11,7 @@ import AppLayout from "layouts/app-layout";
 // ui
 import { Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-// helpers
-import { timeAgo } from "helpers/date-time.helper";
+import { Feeds } from "components/core";
 // fetch-keys
 import { USER_ACTIVITY } from "constants/fetch-keys";
 
@@ -33,21 +32,9 @@ const ProfileActivity = () => {
       profilePage
     >
       {userActivity ? (
-        <div className="divide-y rounded-[10px] border border-gray-200 bg-white px-6 -mt-4">
-          {userActivity.results.length > 0
-            ? userActivity.results.map((activity) => (
-                <div
-                  key={activity.id}
-                  className="flex items-center gap-2 justify-between py-4 text-sm text-gray-500"
-                >
-                  <h4>
-                    <span className="font-medium text-black">{activity.comment}</span>
-                  </h4>
-                  <div className="text-xs">{timeAgo(activity.created_at)}</div>
-                </div>
-              ))
-            : null}
-        </div>
+        userActivity.results.length > 0 ? (
+          <Feeds activities={userActivity.results} />
+        ) : null
       ) : (
         <Loader className="space-y-5">
           <Loader.Item height="40px" />
