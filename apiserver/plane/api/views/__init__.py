@@ -125,7 +125,7 @@ from .page import (
     CreatedbyOtherPagesEndpoint,
 )
 
-from .search import GlobalSearchEndpoint
+from .search import GlobalSearchEndpoint, IssueSearchEndpoint
 
 
 from .gpt import GPTIntegrationEndpoint
