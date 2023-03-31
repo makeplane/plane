@@ -94,6 +94,7 @@ export const IssueForm: FC<IssueFormProps> = ({
     reset,
     watch,
     control,
+    getValues,
     setValue,
     setFocus,
   } = useForm<IIssue>({
@@ -272,7 +273,11 @@ export const IssueForm: FC<IssueFormProps> = ({
                 />
                 <GptAssistantModal
                   isOpen={gptAssistantModal}
-                  handleClose={() => setGptAssistantModal(false)}
+                  handleClose={() => {
+                    setGptAssistantModal(false);
+                    // this is done so that the title do not reset after gpt popover closed
+                    reset(getValues());
+                  }}
                   inset="top-2 left-0"
                   content=""
                   htmlContent={watch("description_html")}

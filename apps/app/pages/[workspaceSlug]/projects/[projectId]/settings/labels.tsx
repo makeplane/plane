@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 
 import { useRouter } from "next/router";
 
@@ -45,6 +45,8 @@ const LabelsSettings: NextPage<UserAuth> = (props) => {
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+
+  const scollToRef = useRef<HTMLDivElement>(null);
 
   const { data: projectDetails } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
@@ -128,6 +130,7 @@ const LabelsSettings: NextPage<UserAuth> = (props) => {
                 setLabelForm={setLabelForm}
                 isUpdating={isUpdating}
                 labelToUpdate={labelToUpdate}
+                ref={scollToRef}
               />
             )}
             <>
@@ -142,7 +145,12 @@ const LabelsSettings: NextPage<UserAuth> = (props) => {
                           key={label.id}
                           label={label}
                           addLabelToGroup={() => addLabelToGroup(label)}
-                          editLabel={editLabel}
+                          editLabel={(label) => {
+                            editLabel(label);
+                            scollToRef.current?.scrollIntoView({
+                              behavior: "smooth",
+                            });
+                          }}
                           handleLabelDelete={handleLabelDelete}
                         />
                       );
@@ -153,7 +161,12 @@ const LabelsSettings: NextPage<UserAuth> = (props) => {
                         label={label}
                         labelChildren={children}
                         addLabelToGroup={addLabelToGroup}
-                        editLabel={editLabel}
+                        editLabel={(label) => {
+                          editLabel(label);
+                          scollToRef.current?.scrollIntoView({
+                            behavior: "smooth",
+                          });
+                        }}
                         handleLabelDelete={handleLabelDelete}
                       />
                     );

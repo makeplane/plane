@@ -4,6 +4,8 @@ import React from "react";
 import { CustomMenu } from "components/ui";
 // types
 import { IIssueLabels } from "types";
+//icons
+import { RectangleGroupIcon, LinkIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 
 type Props = {
   label: IIssueLabels;
@@ -31,11 +33,22 @@ export const SingleLabel: React.FC<Props> = ({
       </div>
       <CustomMenu ellipsis>
         <CustomMenu.MenuItem onClick={() => addLabelToGroup(label)}>
-          Convert to group
+          <span className="flex items-center justify-start gap-2">
+            <RectangleGroupIcon className="h-4 w-4" />
+            <span>Convert to group</span>
+          </span>
         </CustomMenu.MenuItem>
-        <CustomMenu.MenuItem onClick={() => editLabel(label)}>Edit</CustomMenu.MenuItem>
+        <CustomMenu.MenuItem onClick={() => editLabel(label)}>
+          <span className="flex items-center justify-start gap-2">
+            <PencilIcon className="h-4 w-4" />
+            <span>Edit label</span>
+          </span>
+        </CustomMenu.MenuItem>
         <CustomMenu.MenuItem onClick={() => handleLabelDelete(label.id)}>
-          Delete
+          <span className="flex items-center justify-start gap-2">
+            <TrashIcon className="h-4 w-4" />
+            <span>Delete label</span>
+          </span>
         </CustomMenu.MenuItem>
       </CustomMenu>
     </div>

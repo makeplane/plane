@@ -12,7 +12,6 @@ import { requiredAdmin } from "lib/auth";
 import AppLayout from "layouts/app-layout";
 // services
 import projectService from "services/project.service";
-import workspaceService from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -22,7 +21,7 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import { IProject, IWorkspace } from "types";
 import type { NextPage, GetServerSidePropsContext } from "next";
 // fetch-keys
-import { PROJECTS_LIST, PROJECT_DETAILS, WORKSPACE_MEMBERS } from "constants/fetch-keys";
+import { PROJECTS_LIST, PROJECT_DETAILS, PROJECT_MEMBERS } from "constants/fetch-keys";
 
 type TControlSettingsProps = {
   isMember: boolean;
@@ -53,8 +52,10 @@ const ControlSettings: NextPage<TControlSettingsProps> = (props) => {
   );
 
   const { data: people } = useSWR(
-    workspaceSlug ? WORKSPACE_MEMBERS : null,
-    workspaceSlug ? () => workspaceService.workspaceMembers(workspaceSlug as string) : null
+    workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
+      : null
   );
 
   const {
@@ -101,7 +102,6 @@ const ControlSettings: NextPage<TControlSettingsProps> = (props) => {
         console.log(err);
       });
   };
-
   return (
     <AppLayout
       memberType={{ isMember, isOwner, isViewer, isGuest }}
@@ -140,7 +140,7 @@ const ControlSettings: NextPage<TControlSettingsProps> = (props) => {
                     >
                       {people?.map((person) => (
                         <CustomSelect.Option
-                          key={person.id}
+                          key={person.member.id}
                           value={person.member.id}
                           className="flex items-center gap-2"
                         >
@@ -200,7 +200,7 @@ const ControlSettings: NextPage<TControlSettingsProps> = (props) => {
                     >
                       {people?.map((person) => (
                         <CustomSelect.Option
-                          key={person.id}
+                          key={person.member.id}
                           value={person.member.id}
                           className="flex items-center gap-2"
                         >

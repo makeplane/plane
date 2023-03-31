@@ -131,11 +131,11 @@ export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
                               ? "bg-yellow-100 text-yellow-500 hover:bg-yellow-100"
                               : priority === "low"
                               ? "bg-green-100 text-green-500 hover:bg-green-100"
-                              : "bg-gray-100"
+                              : "bg-gray-100 text-gray-700 hover:bg-gray-100"
                           }`}
                         >
                           <span>{getPriorityIcon(priority)}</span>
-                          <span>{priority}</span>
+                          <span>{priority ? priority : "None"}</span>
                           <span
                             className="cursor-pointer"
                             onClick={() =>
