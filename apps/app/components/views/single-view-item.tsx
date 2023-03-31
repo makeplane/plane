@@ -20,16 +20,11 @@ import { VIEWS_LIST } from "constants/fetch-keys";
 import useToast from "hooks/use-toast";
 
 type Props = {
-  view: IView,
-  setSelectedView: React.Dispatch<React.SetStateAction<IView | null>>,
+  view: IView;
+  setSelectedView: React.Dispatch<React.SetStateAction<IView | null>>;
 };
 
-
-export const SingleViewItem: React.FC<Props> = ({
-  view,
-  setSelectedView,
-}) => {
-
+export const SingleViewItem: React.FC<Props> = ({ view, setSelectedView }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -86,47 +81,63 @@ export const SingleViewItem: React.FC<Props> = ({
   };
 
   return (
-    <div
-      className="flex items-center justify-between border-b bg-white p-4 first:rounded-t-[10px] last:rounded-b-[10px]"
-    >
-      <div className="flex flex-col w-full gap-3">
-        <div className="flex justify-between w-full">
-          <div className="flex items-center gap-2">
-            <StackedLayersIcon height={18} width={18} />
-            <Link href={`/${workspaceSlug}/projects/${projectId}/views/${view.id}`}>
-              <a>{view.name}</a>
-            </Link>
-          </div>
-          <div className="flex">
-            {
-              view.is_favorite ? (
-                <button type="button" onClick={handleRemoveFromFavorites}>
-                  <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
-                </button>
-              ) : (
-                <button type="button" onClick={handleAddToFavorites}>
-                  <StarIcon className="h-4 w-4 " color="#858E96" />
-                </button>
-              )
-            }
-            <CustomMenu width="auto" verticalEllipsis>
-              <CustomMenu.MenuItem
-                onClick={() => {
-                  setSelectedView(view);
-                }}
-              >
-                <span className="flex items-center justify-start gap-2">
-                  <TrashIcon className="h-4 w-4" />
-                  <span>Delete</span>
-                </span>
-              </CustomMenu.MenuItem>
-            </CustomMenu>
+    <>
+      <Link href={`/${workspaceSlug}/projects/${projectId}/views/${view.id}`}>
+        <div className="flex items-center cursor-pointer justify-between border-b bg-white p-4 first:rounded-t-[10px] last:rounded-b-[10px]">
+          <div className="flex flex-col w-full gap-3">
+            <div className="flex justify-between w-full">
+              <div className="flex items-center gap-2">
+                <StackedLayersIcon height={18} width={18} />
+                <a>{view.name}</a>
+              </div>
+              <div className="flex">
+                {view.is_favorite ? (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleRemoveFromFavorites();
+                    }}
+                  >
+                    <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleAddToFavorites();
+                    }}
+                  >
+                    <StarIcon className="h-4 w-4 " color="#858E96" />
+                  </button>
+                )}
+                <CustomMenu width="auto" verticalEllipsis>
+                  <CustomMenu.MenuItem
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setSelectedView(view);
+                    }}
+                  >
+                    <span className="flex items-center justify-start gap-2">
+                      <TrashIcon className="h-4 w-4" />
+                      <span>Delete</span>
+                    </span>
+                  </CustomMenu.MenuItem>
+                </CustomMenu>
+              </div>
+            </div>
+            {view?.description && (
+              <p className="text-sm text-[#858E96] font-normal leading-5 px-[27px]">
+                {view.description}
+              </p>
+            )}
           </div>
         </div>
-        {view?.description && <p className="text-sm text-[#858E96] font-normal leading-5 px-[27px]">
-          {view.description}
-        </p>}
-      </div>
-    </div>
-  )
-}
+      </Link>
+    </>
+  );
+};
