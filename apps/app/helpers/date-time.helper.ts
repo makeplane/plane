@@ -89,7 +89,7 @@ export const timeAgo = (time: any) => {
   return time;
 };
 
-export const getDateRangeStatus = (startDate: string | null, endDate: string | null) => {
+export const getDateRangeStatus = (startDate: string | null | undefined, endDate: string | null | undefined) => {
   if (!startDate || !endDate) return "draft";
 
   const today = renderDateFormat(new Date());
