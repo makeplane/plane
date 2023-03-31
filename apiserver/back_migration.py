@@ -3,7 +3,7 @@ import uuid
 import random
 from django.contrib.auth.hashers import make_password
 from plane.db.models import ProjectIdentifier
-from plane.db.models import Issue, IssueComment, User, Project
+from plane.db.models import Issue, IssueComment, User, Project, ProjectMember
 
 
 # Update description and description html values for old descriptions
@@ -130,6 +130,31 @@ def update_project_cover_images():
             updated_projects.append(project)
 
         Project.objects.bulk_update(updated_projects, ["cover_image"], batch_size=100)
+        print("Success")
+    except Exception as e:
+        print(e)
+        print("Failed")
+
+
+def update_user_view_property():
+    try:
+        project_members = ProjectMember.objects.all()
+        updated_project_members = []
+        for project_member in project_members:
+            project_member.default_props = {
+                "filters": {"type": None},
+                "orderBy": "-created_at",
+                "collapsed": True,
+                "issueView": "list",
+                "filterIssue": None,
+                "groupByProperty": True,
+                "showEmptyGroups": True,
+            }
+            updated_project_members.append(project_member)
+
+        ProjectMember.objects.bulk_update(
+            updated_project_members, ["default_props"], batch_size=100
+        )
         print("Success")
     except Exception as e:
         print(e)
