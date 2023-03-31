@@ -340,7 +340,7 @@ export const IssuesView: React.FC<Props> = ({
           console.log(e);
         });
     },
-    [workspaceSlug, projectId, cycleId]
+    [workspaceSlug, projectId, cycleId, params]
   );
 
   const removeIssueFromModule = useCallback(
@@ -363,7 +363,7 @@ export const IssuesView: React.FC<Props> = ({
           console.log(e);
         });
     },
-    [workspaceSlug, projectId, moduleId]
+    [workspaceSlug, projectId, moduleId, params]
   );
 
   const handleTrashBox = useCallback(
