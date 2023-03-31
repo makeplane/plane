@@ -145,9 +145,9 @@ export const IssueActivitySection: React.FC<Props> = () => {
     if (!issueLabels) return;
     const label = issueLabels.find((label) => label.id === labelId);
     if (typeof label !== "undefined") {
-      return label.color;
+      return label.color !== "" ? label.color : "#000000";
     }
-    return "#64748b";
+    return "#000000";
   };
 
   if (!issueActivities) {
@@ -171,7 +171,7 @@ export const IssueActivitySection: React.FC<Props> = () => {
 
   return (
     <div className="flow-root">
-      <ul role="list" className="-mb-8">
+      <ul role="list" className="-mb-4">
         {issueActivities.map((activityItem, activityItemIdx) => {
           // determines what type of action is performed
           let action = activityDetails[activityItem.field as keyof typeof activityDetails]?.message;
@@ -192,6 +192,18 @@ export const IssueActivitySection: React.FC<Props> = () => {
               activityItem.new_value && activityItem.new_value !== ""
                 ? "set the due date to"
                 : "removed the due date";
+          } else if (activityItem.field === "parent") {
+            action =
+              activityItem.new_value && activityItem.new_value !== ""
+                ? "set the parent to"
+                : "removed the parent";
+          } else if (activityItem.field === "priority") {
+            action =
+              activityItem.new_value && activityItem.new_value !== ""
+                ? "set the priority to"
+                : "removed the priority";
+          } else if (activityItem.field === "description") {
+            action = "updated the";
           }
           // for values that are after the action clause
           let value: any = activityItem.new_value ? activityItem.new_value : activityItem.old_value;
@@ -204,8 +216,8 @@ export const IssueActivitySection: React.FC<Props> = () => {
           } else if (activityItem.field === "state") {
             value = activityItem.new_value ? addSpaceIfCamelCase(activityItem.new_value) : "None";
           } else if (activityItem.field === "labels") {
-            let name,
-              id = "#64748b";
+            let name;
+            let id = "#000000";
             if (activityItem.new_value !== "") {
               name = activityItem.new_value;
               id = activityItem.new_identifier ? activityItem.new_identifier : id;
@@ -231,9 +243,13 @@ export const IssueActivitySection: React.FC<Props> = () => {
           } else if (activityItem.field === "assignees") {
             value = activityItem.new_value;
           } else if (activityItem.field === "target_date") {
-            value = renderShortNumericDateFormat(activityItem.new_value as string);
+            const date =
+              activityItem.new_value && activityItem.new_value !== ""
+                ? activityItem.new_value
+                : activityItem.old_value;
+            value = renderShortNumericDateFormat(date as string);
           } else if (activityItem.field === "description") {
-            value = "";
+            value = "description";
           }
 
           if ("field" in activityItem && activityItem.field !== "updated_by") {
