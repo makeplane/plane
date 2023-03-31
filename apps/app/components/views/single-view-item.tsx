@@ -115,7 +115,7 @@ export const SingleViewItem: React.FC<Props> = ({
                   setSelectedView(view);
                 }}
               >
-                <span className="flex items-center justify-start gap-2 text-gray-800">
+                <span className="flex items-center justify-start gap-2">
                   <TrashIcon className="h-4 w-4" />
                   <span>Delete</span>
                 </span>
