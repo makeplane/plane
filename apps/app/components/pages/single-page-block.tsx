@@ -291,9 +291,9 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails }) => {
                 <CustomMenu.MenuItem onClick={pushBlockIntoIssues}>
                   Push into issues
                 </CustomMenu.MenuItem>
-                <CustomMenu.MenuItem onClick={editAndPushBlockIntoIssues}>
+                {/* <CustomMenu.MenuItem onClick={editAndPushBlockIntoIssues}>
                   Edit and push into issues
-                </CustomMenu.MenuItem>
+                </CustomMenu.MenuItem> */}
               </>
             )}
             <CustomMenu.MenuItem onClick={deletePageBlock}>Delete block</CustomMenu.MenuItem>
