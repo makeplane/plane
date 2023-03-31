@@ -16,6 +16,11 @@ import { CreateWorkspaceForm } from "components/workspace";
 
 const CreateWorkspace: NextPage = () => {
   const router = useRouter();
+  const defaultValues = {
+    name: "",
+    slug: "",
+    company_size: null,
+  };
 
   return (
     <DefaultLayout>
@@ -24,7 +29,11 @@ const CreateWorkspace: NextPage = () => {
           <div className="mb-8 text-center">
             <Image src={Logo} height="50" alt="Plane Logo" />
           </div>
-          <CreateWorkspaceForm onSubmit={(res) => router.push(`/${res.slug}`)} />
+          <CreateWorkspaceForm
+            defaultValues={defaultValues}
+            setDefaultValues={() => {}}
+            onSubmit={(res) => router.push(`/${res.slug}`)}
+          />
         </div>
       </div>
     </DefaultLayout>
