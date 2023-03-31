@@ -92,16 +92,17 @@ export const timeAgo = (time: any) => {
 export const getDateRangeStatus = (startDate: string | null, endDate: string | null) => {
   if (!startDate || !endDate) return "draft";
 
-  const now = new Date();
+  const today = renderDateFormat(new Date());
+  const now = new Date(today);
   const start = new Date(startDate);
   const end = new Date(endDate);
 
-  if (end < now) {
-    return "completed";
-  } else if (start <= now && end >= now) {
+  if (start <= now && end >= now) {
     return "current";
-  } else {
+  } else if (start > now) {
     return "upcoming";
+  } else {
+    return "completed";
   }
 };
 
@@ -170,4 +171,5 @@ export const renderShortTime = (date: string | Date) => {
   return hours + ":" + minutes;
 };
 
-export const isDateRangeValid = (startDate: string, endDate: string)=> new Date(startDate) < new Date(endDate);
+export const isDateRangeValid = (startDate: string, endDate: string) =>
+  new Date(startDate) < new Date(endDate);
