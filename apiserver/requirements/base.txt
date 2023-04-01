@@ -23,9 +23,9 @@ django-guardian==2.4.0
 dj_rest_auth==2.2.5
 google-auth==2.16.0
 google-api-python-client==2.75.0
-django-rq==2.6.0
 django-redis==5.2.0
 uvicorn==0.20.0
 channels==4.0.0
 openai==0.27.2
 slack-sdk==3.20.2
+celery==5.2.7

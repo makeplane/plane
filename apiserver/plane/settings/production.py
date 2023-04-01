@@ -236,3 +236,6 @@ GPT_ENGINE = os.environ.get("GPT_ENGINE", "text-davinci-003")
 SLACK_BOT_TOKEN = os.environ.get("SLACK_BOT_TOKEN", False)
 
 LOGGER_BASE_URL = os.environ.get("LOGGER_BASE_URL", False)
+
+CELERY_RESULT_BACKEND = os.environ.get("REDIS_URL")
+CELERY_BROKER_URL = os.environ.get("REDIS_URL")

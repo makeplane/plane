@@ -4,14 +4,14 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 
 # Third party imports
-from django_rq import job
+from celery import shared_task
 from sentry_sdk import capture_exception
 
 # Module imports
 from plane.db.models import User
 
 
-@job("default")
+@shared_task
 def forgot_password(first_name, email, uidb64, token, current_site):
 
     try:

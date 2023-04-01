@@ -59,16 +59,8 @@ if os.environ.get("SENTRY_DSN", False):
 
 REDIS_HOST = "localhost"
 REDIS_PORT = 6379
-REDIS_URL = False
+REDIS_URL = os.environ.get("REDIS_URL")
 
-RQ_QUEUES = {
-    "default": {
-        "HOST": "localhost",
-        "PORT": 6379,
-        "DB": 0,
-        "DEFAULT_TIMEOUT": 360,
-    },
-}
 
 MEDIA_URL = "/uploads/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "uploads")
@@ -88,3 +80,6 @@ GPT_ENGINE = os.environ.get("GPT_ENGINE", "text-davinci-003")
 SLACK_BOT_TOKEN = os.environ.get("SLACK_BOT_TOKEN", False)
 
 LOGGER_BASE_URL = os.environ.get("LOGGER_BASE_URL", False)
+
+CELERY_RESULT_BACKEND = os.environ.get("REDIS_URL")
+CELERY_BROKER_URL = os.environ.get("REDIS_URL")

@@ -7,7 +7,7 @@ from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Third Party imports
-from django_rq import job
+from celery import shared_task
 from sentry_sdk import capture_exception
 
 # Module imports
@@ -737,7 +737,7 @@ def delete_comment_activity(
 
 
 # Receive message from room group
-@job("default")
+@shared_task
 def issue_activity(event):
     try:
         issue_activities = []
