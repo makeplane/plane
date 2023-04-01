@@ -1,84 +1,39 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import Image from "next/image";
 
 import useSWR from "swr";
 
-import { Controller, useForm } from "react-hook-form";
-
+// headless ui
 import { Tab } from "@headlessui/react";
-
-// hooks
-import useToast from "hooks/use-toast";
 // services
 import workspaceService from "services/workspace.service";
-// ui
-import { CustomSelect, Input } from "components/ui";
 // types
-import { IWorkspace, IWorkspaceMemberInvitation } from "types";
+import { IWorkspaceMemberInvitation } from "types";
 // fetch-keys
 import { USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 // constants
-import { COMPANY_SIZE } from "constants/workspace";
+import { CreateWorkspaceForm } from "components/workspace";
+// ui
+import { PrimaryButton } from "components/ui";
 
 type Props = {
   setStep: React.Dispatch<React.SetStateAction<number>>;
   setWorkspace: React.Dispatch<React.SetStateAction<any>>;
 };
 
-const defaultValues: Partial<IWorkspace> = {
-  name: "",
-  slug: "",
-  company_size: null,
-};
-
-const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
-  const [slugError, setSlugError] = useState(false);
+export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
-
-  const { setToastAlert } = useToast();
+  const [defaultValues, setDefaultValues] = useState({
+    name: "",
+    slug: "",
+    company_size: null,
+  });
 
   const { data: invitations, mutate } = useSWR(USER_WORKSPACE_INVITATIONS, () =>
     workspaceService.userWorkspaceInvitations()
   );
-
-  const {
-    register,
-    handleSubmit,
-    control,
-    setValue,
-    reset,
-    formState: { errors, isSubmitting },
-  } = useForm<IWorkspace>({ defaultValues });
-
-  const handleCreateWorkspace = async (formData: IWorkspace) => {
-    await workspaceService
-      .workspaceSlugCheck(formData.slug)
-      .then(async (res) => {
-        if (res.status === true) {
-          setSlugError(false);
-          await workspaceService
-            .createWorkspace(formData)
-            .then((res) => {
-              console.log(res);
-              setToastAlert({
-                type: "success",
-                title: "Success!",
-                message: "Workspace created successfully.",
-              });
-              setWorkspace(res);
-              setStep(3);
-            })
-            .catch((err) => {
-              console.error(err);
-            });
-        } else setSlugError(true);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  };
 
   const handleInvitation = (
     workspace_invitation: IWorkspaceMemberInvitation,
@@ -109,111 +64,53 @@ const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
       });
   };
 
-  useEffect(() => {
-    reset(defaultValues);
-  }, [reset]);
-
   return (
     <div className="grid w-full place-items-center">
-      <Tab.Group as="div" className="w-full rounded-lg bg-white p-8 md:w-2/5">
+      <Tab.Group
+        as="div"
+        className="flex w-full max-w-xl flex-col rounded-[10px] bg-white shadow-md"
+      >
         <Tab.List
           as="div"
-          className="grid grid-cols-2 items-center gap-2 rounded-lg bg-gray-100 p-2 text-sm"
+          className="text-gray-8 flex items-center justify-start gap-3 px-4 pt-4 text-sm"
         >
           <Tab
             className={({ selected }) =>
-              `rounded-lg px-6 py-2 ${selected ? "bg-gray-300" : "hover:bg-gray-200"}`
+              `rounded-3xl border px-4 py-2 outline-none ${
+                selected
+                  ? "border-theme bg-theme text-white"
+                  : "border-gray-300 bg-white hover:bg-hover-gray"
+              }`
             }
           >
-            New workspace
+            New Workspace
           </Tab>
           <Tab
             className={({ selected }) =>
-              `rounded-lg px-6 py-2 ${selected ? "bg-gray-300" : "hover:bg-gray-200"}`
+              `rounded-3xl border px-5 py-2 outline-none ${
+                selected
+                  ? "border-theme bg-theme text-white"
+                  : "border-gray-300 bg-white hover:bg-hover-gray"
+              }`
             }
           >
-            Invited workspaces
+            Invited Workspace
           </Tab>
         </Tab.List>
         <Tab.Panels>
           <Tab.Panel>
-            <form className="mt-4 space-y-8" onSubmit={handleSubmit(handleCreateWorkspace)}>
-              <div className="w-full space-y-4">
-                <div className="grid grid-cols-1 gap-4">
-                  <div>
-                    <Input
-                      label="Workspace name"
-                      name="name"
-                      placeholder="Enter name"
-                      autoComplete="off"
-                      register={register}
-                      onChange={(e) =>
-                        setValue("slug", e.target.value.toLocaleLowerCase().replace(/ /g, "-"))
-                      }
-                      validations={{
-                        required: "Workspace name is required",
-                      }}
-                      error={errors.name}
-                    />
-                  </div>
-                  <div>
-                    <h6 className="text-gray-500">Workspace slug</h6>
-                    <div className="flex items-center rounded-md border border-gray-300 px-3">
-                      <span className="text-sm text-slate-600">{"https://app.plane.so/"}</span>
-                      <Input
-                        name="slug"
-                        mode="trueTransparent"
-                        autoComplete="off"
-                        register={register}
-                        className="block w-full rounded-md bg-transparent py-2 px-0 text-sm focus:outline-none focus:ring-0"
-                      />
-                    </div>
-                    {slugError && (
-                      <span className="-mt-3 text-sm text-red-500">
-                        Workspace URL is already taken!
-                      </span>
-                    )}
-                  </div>
-                  <div>
-                    <Controller
-                      name="company_size"
-                      control={control}
-                      rules={{ required: "This field is required" }}
-                      render={({ field: { value, onChange } }) => (
-                        <CustomSelect
-                          value={value}
-                          onChange={onChange}
-                          label={value ? value.toString() : "Select company size"}
-                          input
-                        >
-                          {COMPANY_SIZE?.map((item) => (
-                            <CustomSelect.Option key={item.value} value={item.value}>
-                              {item.label}
-                            </CustomSelect.Option>
-                          ))}
-                        </CustomSelect>
-                      )}
-                    />
-                    {errors.company_size && (
-                      <span className="text-sm text-red-500">{errors.company_size.message}</span>
-                    )}
-                  </div>
-                </div>
-              </div>
-              <div className="mx-auto h-1/4 lg:w-1/2">
-                <button
-                  type="submit"
-                  className="w-full rounded-md bg-gray-200 px-4 py-2 text-sm"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? "Creating..." : "Continue"}
-                </button>
-              </div>
-            </form>
+            <CreateWorkspaceForm
+              onSubmit={(res) => {
+                setWorkspace(res);
+                setStep(3);
+              }}
+              defaultValues={defaultValues}
+              setDefaultValues={setDefaultValues}
+            />
           </Tab.Panel>
           <Tab.Panel>
-            <div className="mt-4 space-y-8">
-              <div className="divide-y">
+            <div className="mt-6">
+              <div className="divide-y px-4 pb-8">
                 {invitations && invitations.length > 0 ? (
                   invitations.map((invitation) => (
                     <div key={invitation.id}>
@@ -272,19 +169,15 @@ const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
                   </div>
                 )}
               </div>
-              <div className="mx-auto h-1/4 lg:w-1/2">
-                <button
+              <div className="flex w-full items-center justify-center rounded-b-[10px] py-7">
+                <PrimaryButton
                   type="submit"
-                  className={`w-full rounded-md bg-gray-200 px-4 py-2 text-sm ${
-                    isJoiningWorkspaces || invitationsRespond.length === 0
-                      ? "cursor-not-allowed opacity-80"
-                      : ""
-                  }`}
+                  className="w-1/2 text-center"
+                  size="md"
                   disabled={isJoiningWorkspaces || invitationsRespond.length === 0}
-                  onClick={submitInvitations}
                 >
                   Join Workspace
-                </button>
+                </PrimaryButton>
               </div>
             </div>
           </Tab.Panel>
@@ -293,5 +186,3 @@ const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
     </div>
   );
 };
-
-export default Workspace;

@@ -5,12 +5,23 @@ from rest_framework import serializers
 from .base import BaseSerializer
 from .user import UserLiteSerializer
 from .issue import IssueStateSerializer
+from .workspace import WorkspaceLiteSerializer
+from .project import ProjectLiteSerializer
 from plane.db.models import Cycle, CycleIssue, CycleFavorite
 
 
 class CycleSerializer(BaseSerializer):
     owned_by = UserLiteSerializer(read_only=True)
     is_favorite = serializers.BooleanField(read_only=True)
+    total_issues = serializers.IntegerField(read_only=True)
+    cancelled_issues = serializers.IntegerField(read_only=True)
+    completed_issues = serializers.IntegerField(read_only=True)
+    started_issues = serializers.IntegerField(read_only=True)
+    unstarted_issues = serializers.IntegerField(read_only=True)
+    backlog_issues = serializers.IntegerField(read_only=True)
+
+    workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
+    project_detail = ProjectLiteSerializer(read_only=True, source="project")
 
     class Meta:
         model = Cycle

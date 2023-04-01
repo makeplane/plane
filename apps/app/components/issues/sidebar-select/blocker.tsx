@@ -14,7 +14,7 @@ import useToast from "hooks/use-toast";
 // services
 import issuesServices from "services/issues.service";
 // ui
-import { Button } from "components/ui";
+import { PrimaryButton, SecondaryButton } from "components/ui";
 // icons
 import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { BlockerIcon, LayerDiagonalIcon } from "components/icons";
@@ -129,7 +129,8 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
                       }`}
                     </a>
                   </Link>
-                  <span
+                  <button
+                    type="button"
                     className="opacity-0 duration-300 group-hover:opacity-100"
                     onClick={() => {
                       const updatedBlockers: string[] = watch("blockers_list").filter(
@@ -141,7 +142,7 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
                     }}
                   >
                     <XMarkIcon className="h-2 w-2" />
-                  </span>
+                  </button>
                 </div>
               ))
             : null}
@@ -270,14 +271,10 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
 
                   {filteredIssues.length > 0 && (
                     <div className="flex items-center justify-end gap-2 p-3">
-                      <div>
-                        <Button type="button" theme="secondary" size="sm" onClick={handleClose}>
-                          Close
-                        </Button>
-                      </div>
-                      <Button onClick={handleSubmit(onSubmit)} size="sm">
+                      <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                      <PrimaryButton onClick={handleSubmit(onSubmit)}>
                         Add selected issues
-                      </Button>
+                      </PrimaryButton>
                     </div>
                   )}
                 </Dialog.Panel>

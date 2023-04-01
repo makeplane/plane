@@ -3,8 +3,10 @@ import json
 
 # Django Imports
 from django.db import IntegrityError
-from django.db.models import Prefetch, F, OuterRef, Func, Exists
+from django.db.models import Prefetch, F, OuterRef, Func, Exists, Count, Q
 from django.core import serializers
+from django.utils.decorators import method_decorator
+from django.views.decorators.gzip import gzip_page
 
 # Third party imports
 from rest_framework.response import Response
@@ -19,6 +21,7 @@ from plane.api.serializers import (
     ModuleIssueSerializer,
     ModuleLinkSerializer,
     ModuleFavoriteSerializer,
+    IssueStateSerializer,
 )
 from plane.api.permissions import ProjectEntityPermission
 from plane.db.models import (
@@ -31,6 +34,7 @@ from plane.db.models import (
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
+from plane.utils.issue_filters import issue_filters
 
 
 class ModuleViewSet(BaseViewSet):
@@ -47,29 +51,60 @@ class ModuleViewSet(BaseViewSet):
         )
 
     def get_queryset(self):
+        subquery = ModuleFavorite.objects.filter(
+            user=self.request.user,
+            module_id=OuterRef("pk"),
+            project_id=self.kwargs.get("project_id"),
+            workspace__slug=self.kwargs.get("slug"),
+        )
         return (
             super()
             .get_queryset()
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(workspace__slug=self.kwargs.get("slug"))
+            .annotate(is_favorite=Exists(subquery))
             .select_related("project")
             .select_related("workspace")
             .select_related("lead")
             .prefetch_related("members")
             .prefetch_related(
                 Prefetch(
-                    "issue_module",
-                    queryset=ModuleIssue.objects.select_related(
-                        "module", "issue", "issue__state", "issue__project"
-                    ).prefetch_related("issue__assignees", "issue__labels"),
-                )
-            )
-            .prefetch_related(
-                Prefetch(
                     "link_module",
                     queryset=ModuleLink.objects.select_related("module", "created_by"),
                 )
             )
+            .annotate(total_issues=Count("issue_module"))
+            .annotate(
+                completed_issues=Count(
+                    "issue_module__issue__state__group",
+                    filter=Q(issue_module__issue__state__group="completed"),
+                )
+            )
+            .annotate(
+                cancelled_issues=Count(
+                    "issue_module__issue__state__group",
+                    filter=Q(issue_module__issue__state__group="cancelled"),
+                )
+            )
+            .annotate(
+                started_issues=Count(
+                    "issue_module__issue__state__group",
+                    filter=Q(issue_module__issue__state__group="started"),
+                )
+            )
+            .annotate(
+                unstarted_issues=Count(
+                    "issue_module__issue__state__group",
+                    filter=Q(issue_module__issue__state__group="unstarted"),
+                )
+            )
+            .annotate(
+                backlog_issues=Count(
+                    "issue_module__issue__state__group",
+                    filter=Q(issue_module__issue__state__group="backlog"),
+                )
+            )
+            .order_by("-is_favorite", "name")
         )
 
     def create(self, request, slug, project_id):
@@ -94,23 +129,6 @@ class ModuleViewSet(BaseViewSet):
                     {"name": "The module name is already taken"},
                     status=status.HTTP_410_GONE,
                 )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-    def list(self, request, slug, project_id):
-        try:
-            subquery = ModuleFavorite.objects.filter(
-                user=self.request.user,
-                module_id=OuterRef("pk"),
-                project_id=project_id,
-                workspace__slug=slug,
-            )
-            modules = self.get_queryset().annotate(is_favorite=Exists(subquery))
-            return Response(ModuleSerializer(modules, many=True).data)
         except Exception as e:
             capture_exception(e)
             return Response(
@@ -161,22 +179,43 @@ class ModuleIssueViewSet(BaseViewSet):
             .distinct()
         )
 
+    @method_decorator(gzip_page)
     def list(self, request, slug, project_id, module_id):
         try:
-            order_by = request.GET.get("order_by", "issue__created_at")
-            queryset = self.get_queryset().order_by(f"issue__{order_by}")
+            order_by = request.GET.get("order_by", "created_at")
             group_by = request.GET.get("group_by", False)
+            filters = issue_filters(request.query_params, "GET")
+            issues = (
+                Issue.objects.filter(issue_module__module_id=module_id)
+                .annotate(
+                    sub_issues_count=Issue.objects.filter(parent=OuterRef("id"))
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
+                .annotate(bridge_id=F("issue_module__id"))
+                .filter(project_id=project_id)
+                .filter(workspace__slug=slug)
+                .select_related("project")
+                .select_related("workspace")
+                .select_related("state")
+                .select_related("parent")
+                .prefetch_related("assignees")
+                .prefetch_related("labels")
+                .order_by(order_by)
+                .filter(**filters)
+            )
 
-            module_issues = ModuleIssueSerializer(queryset, many=True).data
+            issues_data = IssueStateSerializer(issues, many=True).data
 
             if group_by:
                 return Response(
-                    group_results(module_issues, f"issue_detail.{group_by}"),
+                    group_results(issues_data, group_by),
                     status=status.HTTP_200_OK,
                 )
 
             return Response(
-                module_issues,
+                issues_data,
                 status=status.HTTP_200_OK,
             )
         except Exception as e:
@@ -302,11 +341,16 @@ class ModuleLinkViewSet(BaseViewSet):
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(module_id=self.kwargs.get("module_id"))
             .filter(project__project_projectmember__member=self.request.user)
+            .order_by("-created_at")
             .distinct()
         )
 
 
 class ModuleFavoriteViewSet(BaseViewSet):
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+
     serializer_class = ModuleFavoriteSerializer
     model = ModuleFavorite
 

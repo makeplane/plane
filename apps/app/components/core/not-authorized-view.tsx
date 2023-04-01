@@ -1,13 +1,14 @@
 import React from "react";
 // next
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/router";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 // hooks
 import useUser from "hooks/use-user";
-// icons
-import { LockIcon } from "components/icons";
+// img
+import ProjectSettingImg from "public/project-setting.svg";
 
 type TNotAuthorizedViewProps = {
   actionButton?: React.ReactNode;
@@ -27,25 +28,27 @@ export const NotAuthorizedView: React.FC<TNotAuthorizedViewProps> = (props) => {
       }}
     >
       <div className="flex h-full w-full flex-col items-center justify-center gap-y-5 text-center">
-        <LockIcon className="h-16 w-16 text-gray-400" />
+        <div className="h-44 w-72">
+          <Image src={ProjectSettingImg} height="176" width="288" alt="ProjectSettingImg" />
+        </div>
         <h1 className="text-xl font-medium text-gray-900">
           Oops! You are not authorized to view this page
         </h1>
 
-        <div className="w-full md:w-1/3">
+        <div className="w-full text-base text-gray-500 max-w-md ">
           {user ? (
-            <p className="text-base font-light">
-              You have signed in as <span className="font-medium">{user.email}</span>.{" "}
+            <p className="">
+              You have signed in as {user.email}.{" "}
               <Link href={`/signin?next=${currentPath}`}>
-                <a className="font-medium">Sign in</a>
+                <a className="text-gray-900 font-medium">Sign in</a>
               </Link>{" "}
               with different account that has access to this page.
             </p>
           ) : (
-            <p className="text-base font-light">
+            <p className="">
               You need to{" "}
               <Link href={`/signin?next=${currentPath}`}>
-                <a className="font-medium">Sign in</a>
+                <a className="text-gray-900 font-medium">Sign in</a>
               </Link>{" "}
               with an account that has access to this page.
             </p>

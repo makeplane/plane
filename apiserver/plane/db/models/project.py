@@ -63,7 +63,9 @@ class Project(BaseModel):
     icon = models.CharField(max_length=255, null=True, blank=True)
     module_view = models.BooleanField(default=True)
     cycle_view = models.BooleanField(default=True)
-    cover_image = models.URLField(blank=True, null=True)
+    issue_views_view = models.BooleanField(default=True)
+    page_view = models.BooleanField(default=True)
+    cover_image = models.URLField(blank=True, null=True, max_length=800)
 
     def __str__(self):
         """Return name of the project"""

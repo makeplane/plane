@@ -3,27 +3,32 @@ import React, { useCallback, useState } from "react";
 import NextImage from "next/image";
 import { useRouter } from "next/router";
 
+// react-dropzone
 import { useDropzone } from "react-dropzone";
-
+// headless ui
 import { Transition, Dialog } from "@headlessui/react";
-
 // services
 import fileServices from "services/file.service";
-// icon
-import { UserCircleIcon } from "components/icons";
 // ui
-import { Button } from "components/ui";
+import { PrimaryButton, SecondaryButton } from "components/ui";
+// icons
+import { UserCircleIcon } from "components/icons";
 
-type TImageUploadModalProps = {
+type Props = {
   value?: string | null;
   onClose: () => void;
   isOpen: boolean;
   onSuccess: (url: string) => void;
+  userImage?: boolean;
 };
 
-export const ImageUploadModal: React.FC<TImageUploadModalProps> = (props) => {
-  const { value, onSuccess, isOpen, onClose } = props;
-
+export const ImageUploadModal: React.FC<Props> = ({
+  value,
+  onSuccess,
+  isOpen,
+  onClose,
+  userImage,
+}) => {
   const [image, setImage] = useState<File | null>(null);
   const [isImageUploading, setIsImageUploading] = useState(false);
 
@@ -34,37 +39,62 @@ export const ImageUploadModal: React.FC<TImageUploadModalProps> = (props) => {
     setImage(acceptedFiles[0]);
   }, []);
 
-  const {
-    getRootProps,
-    getInputProps,
-    isDragActive,
-    open: openFileDialog,
-  } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
   });
 
   const handleSubmit = async () => {
     setIsImageUploading(true);
 
-    if (image === null || !workspaceSlug) return;
+    if (!image || !workspaceSlug) return;
 
     const formData = new FormData();
     formData.append("asset", image);
     formData.append("attributes", JSON.stringify({}));
 
-    fileServices
-      .uploadFile(workspaceSlug as string, formData)
-      .then((res) => {
-        const imageUrl = res.asset;
-        onSuccess(imageUrl);
-        setIsImageUploading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+    if (userImage) {
+      fileServices
+        .uploadUserFile(formData)
+        .then((res) => {
+          const imageUrl = res.asset;
+
+          onSuccess(imageUrl);
+          setIsImageUploading(false);
+          setImage(null);
+
+          if (value) {
+            const index = value.indexOf(".com");
+            const asset = value.substring(index + 5);
+
+            fileServices.deleteUserFile(asset);
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    } else
+      fileServices
+        .uploadFile(workspaceSlug as string, formData)
+        .then((res) => {
+          const imageUrl = res.asset;
+          onSuccess(imageUrl);
+          setIsImageUploading(false);
+          setImage(null);
+
+          if (value) {
+            const index = value.indexOf(".com");
+            const asset = value.substring(index + 5);
+
+            fileServices.deleteFile(asset);
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+        });
   };
 
   const handleClose = () => {
+    setImage(null);
     onClose();
   };
 
@@ -109,11 +139,10 @@ export const ImageUploadModal: React.FC<TImageUploadModalProps> = (props) => {
                             : ""
                         }`}
                       >
-                        {image !== null || (value && value !== null && value !== "") ? (
+                        {image !== null || (value && value !== "") ? (
                           <>
                             <button
                               type="button"
-                              onClick={openFileDialog}
                               className="absolute top-0 right-0 z-40 translate-x-1/2 -translate-y-1/2 rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600"
                             >
                               Edit
@@ -142,16 +171,14 @@ export const ImageUploadModal: React.FC<TImageUploadModalProps> = (props) => {
                   </div>
                 </div>
                 <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
-                  <Button theme="secondary" onClick={handleClose}>
-                    Cancel
-                  </Button>
-                  <Button
-                    type="submit"
+                  <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                  <PrimaryButton
                     onClick={handleSubmit}
-                    disabled={isImageUploading || image === null}
+                    disabled={!image}
+                    loading={isImageUploading}
                   >
                     {isImageUploading ? "Uploading..." : "Upload & Save"}
-                  </Button>
+                  </PrimaryButton>
                 </div>
               </Dialog.Panel>
             </Transition.Child>

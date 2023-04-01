@@ -12,13 +12,13 @@ import issuesServices from "services/issues.service";
 import projectService from "services/project.service";
 // hooks
 import useLocalStorage from "hooks/use-local-storage";
+import useIssuesView from "hooks/use-issues-view";
 // components
-import { LinksList, SingleProgressStats } from "components/core";
+import { SingleProgressStats } from "components/core";
 // ui
 import { Avatar } from "components/ui";
 // icons
 import User from "public/user.png";
-import { PlusIcon } from "@heroicons/react/24/outline";
 // types
 import { IIssue, IIssueLabels, IModule, UserAuth } from "types";
 // fetch-keys
@@ -28,8 +28,6 @@ type Props = {
   groupedIssues: any;
   issues: IIssue[];
   module?: IModule;
-  setModuleLinkModal?: any;
-  handleDeleteLink?: any;
   userAuth?: UserAuth;
 };
 
@@ -47,12 +45,12 @@ export const SidebarProgressStats: React.FC<Props> = ({
   groupedIssues,
   issues,
   module,
-  setModuleLinkModal,
-  handleDeleteLink,
   userAuth,
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+
+  const { filters, setFilters } = useIssuesView();
 
   const { storedValue: tab, setValue: setTab } = useLocalStorage("tab", "Assignees");
 
@@ -72,14 +70,12 @@ export const SidebarProgressStats: React.FC<Props> = ({
 
   const currentValue = (tab: string | null) => {
     switch (tab) {
-      case "Links":
-        return 0;
       case "Assignees":
-        return 1;
+        return 0;
       case "Labels":
-        return 2;
+        return 1;
       case "States":
-        return 3;
+        return 2;
 
       default:
         return 3;
@@ -91,12 +87,10 @@ export const SidebarProgressStats: React.FC<Props> = ({
       onChange={(i) => {
         switch (i) {
           case 0:
-            return setTab("Links");
-          case 1:
             return setTab("Assignees");
-          case 2:
+          case 1:
             return setTab("Labels");
-          case 3:
+          case 2:
             return setTab("States");
 
           default:
@@ -109,20 +103,6 @@ export const SidebarProgressStats: React.FC<Props> = ({
         className={`flex w-full items-center justify-between rounded-md bg-gray-100 px-1 py-1.5 
         ${module ? "text-xs" : "text-sm"} `}
       >
-        {module ? (
-          <Tab
-            className={({ selected }) =>
-              `w-full rounded px-3 py-1 text-gray-900  ${
-                selected ? " bg-theme text-white" : "  hover:bg-hover-gray"
-              }`
-            }
-          >
-            Links
-          </Tab>
-        ) : (
-          ""
-        )}
-
         <Tab
           className={({ selected }) =>
             `w-full rounded px-3 py-1 text-gray-900  ${
@@ -134,7 +114,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
         </Tab>
         <Tab
           className={({ selected }) =>
-            `w-full rounded px-3 py-1  text-gray-900 ${
+            `w-full rounded px-3 py-1 text-gray-900 ${
               selected ? " bg-theme text-white" : " hover:bg-hover-gray"
             }`
           }
@@ -151,34 +131,12 @@ export const SidebarProgressStats: React.FC<Props> = ({
           States
         </Tab>
       </Tab.List>
-      <Tab.Panels className="flex w-full items-center justify-between p-1">
-        {module ? (
-          <Tab.Panel as="div" className="flex w-full flex-col text-xs ">
-            <button
-              type="button"
-              className="flex w-full items-center justify-start gap-2 rounded px-4 py-2  hover:bg-theme/5"
-              onClick={() => setModuleLinkModal(true)}
-            >
-              <PlusIcon className="h-4 w-4" /> <span>Add Link</span>
-            </button>
-            <div className="mt-2 space-y-2 hover:bg-theme/5">
-              {userAuth && module.link_module && module.link_module.length > 0 ? (
-                <LinksList
-                  links={module.link_module}
-                  handleDeleteLink={handleDeleteLink}
-                  userAuth={userAuth}
-                />
-              ) : null}
-            </div>
-          </Tab.Panel>
-        ) : (
-          ""
-        )}
-
-        <Tab.Panel as="div" className="flex w-full flex-col text-xs ">
+      <Tab.Panels className="flex w-full items-center justify-between pt-1">
+        <Tab.Panel as="div" className="flex w-full flex-col text-xs">
           {members?.map((member, index) => {
             const totalArray = issues?.filter((i) => i.assignees?.includes(member.member.id));
             const completeArray = totalArray?.filter((i) => i.state_detail.group === "completed");
+
             if (totalArray.length > 0) {
               return (
                 <SingleProgressStats
@@ -191,6 +149,15 @@ export const SidebarProgressStats: React.FC<Props> = ({
                   }
                   completed={completeArray.length}
                   total={totalArray.length}
+                  onClick={() => {
+                    if (filters.assignees?.includes(member.member.id))
+                      setFilters({
+                        assignees: filters.assignees?.filter((a) => a !== member.member.id),
+                      });
+                    else
+                      setFilters({ assignees: [...(filters?.assignees ?? []), member.member.id] });
+                  }}
+                  selected={filters.assignees?.includes(member.member.id)}
                 />
               );
             }
@@ -222,10 +189,11 @@ export const SidebarProgressStats: React.FC<Props> = ({
             ""
           )}
         </Tab.Panel>
-        <Tab.Panel as="div" className="flex w-full flex-col ">
-          {issueLabels?.map((issue, index) => {
-            const totalArray = issues?.filter((i) => i.labels?.includes(issue.id));
+        <Tab.Panel as="div" className="w-full space-y-1">
+          {issueLabels?.map((label, index) => {
+            const totalArray = issues?.filter((i) => i.labels?.includes(label.id));
             const completeArray = totalArray?.filter((i) => i.state_detail.group === "completed");
+
             if (totalArray.length > 0) {
               return (
                 <SingleProgressStats
@@ -233,16 +201,25 @@ export const SidebarProgressStats: React.FC<Props> = ({
                   title={
                     <div className="flex items-center gap-2">
                       <span
-                        className="block h-3 w-3 rounded-full "
+                        className="block h-3 w-3 rounded-full"
                         style={{
-                          backgroundColor: issue.color,
+                          backgroundColor:
+                            label.color && label.color !== "" ? label.color : "#000000",
                         }}
                       />
-                      <span className="text-xs capitalize">{issue.name}</span>
+                      <span className="text-xs capitalize">{label.name}</span>
                     </div>
                   }
                   completed={completeArray.length}
                   total={totalArray.length}
+                  onClick={() => {
+                    if (filters.labels?.includes(label.id))
+                      setFilters({
+                        labels: filters.labels?.filter((l) => l !== label.id),
+                      });
+                    else setFilters({ labels: [...(filters?.labels ?? []), label.id] });
+                  }}
+                  selected={filters.labels?.includes(label.id)}
                 />
               );
             }
@@ -263,7 +240,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
                   <span className="text-xs capitalize">{group}</span>
                 </div>
               }
-              completed={groupedIssues[group].length}
+              completed={groupedIssues[group]}
               total={issues.length}
             />
           ))}

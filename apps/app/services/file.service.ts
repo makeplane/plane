@@ -40,19 +40,43 @@ class FileServices extends APIService {
       });
   }
 
+  async deleteFile(asset: string): Promise<any> {
+    return this.delete(`/api/workspaces/file-assets/${asset}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async uploadUserFile(file: FormData): Promise<any> {
+    return this.mediaUpload(`/api/users/file-assets/`, file)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async deleteUserFile(asset: string): Promise<any> {
+    return this.delete(`/api/users/file-assets/${asset}`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async getUnsplashImages(page: number = 1, query?: string): Promise<UnSplashImage[]> {
-    const clientId = process.env.NEXT_PUBLIC_UNSPLASH_ACCESS;
-    const url = query
-      ? `https://api.unsplash.com/search/photos/?client_id=${clientId}&query=${query}&page=${page}&per_page=20`
-      : `https://api.unsplash.com/photos/?client_id=${clientId}&page=${page}&per_page=20`;
+    const url = "/api/unsplash";
 
     return this.request({
       method: "get",
       url,
+      params: {
+        page,
+        per_page: 20,
+        query,
+      },
     })
-      .then((response) => {
-        return response?.data?.results ?? response?.data;
-      })
+      .then((response) => response?.data?.results ?? response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });

@@ -8,7 +8,7 @@ import useSWR from "swr";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { Tab } from "@headlessui/react";
 // lib
-import { requiredAuth } from "lib/auth";
+import { requiredAdmin, requiredAuth } from "lib/auth";
 
 // services
 import cycleService from "services/cycles.service";
@@ -19,11 +19,11 @@ import AppLayout from "layouts/app-layout";
 // components
 import { CompletedCyclesListProps, CreateUpdateCycleModal, CyclesList } from "components/cycles";
 // ui
-import { HeaderButton, Loader } from "components/ui";
+import { Loader, PrimaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 // types
-import { SelectCycleType } from "types";
+import { SelectCycleType, UserAuth } from "types";
 import type { NextPage, GetServerSidePropsContext } from "next";
 // fetching keys
 import {
@@ -44,7 +44,7 @@ const CompletedCyclesList = dynamic<CompletedCyclesListProps>(
   }
 );
 
-const ProjectCycles: NextPage = () => {
+const ProjectCycles: NextPage<UserAuth> = (props) => {
   const [selectedCycle, setSelectedCycle] = useState<SelectCycleType>();
   const [createUpdateCycleModal, setCreateUpdateCycleModal] = useState(false);
 
@@ -86,6 +86,7 @@ const ProjectCycles: NextPage = () => {
       meta={{
         title: "Plane - Cycles",
       }}
+      memberType={props}
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
@@ -93,16 +94,16 @@ const ProjectCycles: NextPage = () => {
         </Breadcrumbs>
       }
       right={
-        <HeaderButton
-          Icon={PlusIcon}
-          label="Add Cycle"
+        <PrimaryButton
+          className="flex items-center gap-2"
           onClick={() => {
-            const e = new KeyboardEvent("keydown", {
-              key: "q",
-            });
+            const e = new KeyboardEvent("keydown", { key: "q" });
             document.dispatchEvent(e);
           }}
-        />
+        >
+          <PlusIcon className="w-4 h-4" />
+          Add Cycle
+        </PrimaryButton>
       }
     >
       <CreateUpdateCycleModal
@@ -112,7 +113,9 @@ const ProjectCycles: NextPage = () => {
       />
       <div className="space-y-8">
         <div className="flex flex-col gap-5">
-          <h3 className="text-3xl font-semibold text-black">Current Cycle</h3>
+          {currentAndUpcomingCycles && currentAndUpcomingCycles.current_cycle.length > 0 && (
+            <h3 className="text-3xl font-semibold text-black">Current Cycle</h3>
+          )}
           <div className="space-y-5">
             <CyclesList
               cycles={currentAndUpcomingCycles?.current_cycle}
@@ -123,7 +126,7 @@ const ProjectCycles: NextPage = () => {
           </div>
         </div>
         <div className="flex flex-col gap-5">
-          <h3 className="text-3xl font-semibold text-black">Others</h3>
+          <h3 className="text-3xl font-semibold text-black">Other Cycles</h3>
           <div>
             <Tab.Group>
               <Tab.List
@@ -210,9 +213,17 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     };
   }
 
+  const projectId = ctx.query.projectId as string;
+  const workspaceSlug = ctx.query.workspaceSlug as string;
+
+  const memberDetail = await requiredAdmin(workspaceSlug, projectId, ctx.req?.headers.cookie);
+
   return {
     props: {
-      user,
+      isOwner: memberDetail?.role === 20,
+      isMember: memberDetail?.role === 15,
+      isViewer: memberDetail?.role === 10,
+      isGuest: memberDetail?.role === 5,
     },
   };
 };

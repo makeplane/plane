@@ -17,8 +17,9 @@ class FileAssetEndpoint(BaseAPIView):
     A viewset for viewing and editing task instances.
     """
 
-    def get(self, request, slug):
-        files = FileAsset.objects.filter(workspace__slug=slug)
+    def get(self, request, workspace_id, asset_key):
+        asset_key = str(workspace_id) + "/" + asset_key
+        files = FileAsset.objects.filter(asset=asset_key)
         serializer = FileAssetSerializer(files, context={"request": request}, many=True)
         return Response(serializer.data)
 
@@ -42,9 +43,55 @@ class FileAssetEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    def delete(self, request, slug, pk):
+    def delete(self, request, workspace_id, asset_key):
         try:
-            file_asset = FileAsset.objects.get(pk=pk, workspace__slug=slug)
+            asset_key = str(workspace_id) + "/" + asset_key
+            file_asset = FileAsset.objects.get(asset=asset_key)
+            # Delete the file from storage
+            file_asset.asset.delete(save=False)
+            # Delete the file object
+            file_asset.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except FileAsset.DoesNotExist:
+            return Response(
+                {"error": "File Asset doesn't exist"}, status=status.HTTP_404_NOT_FOUND
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class UserAssetsEndpoint(BaseAPIView):
+    def get(self, request, asset_key):
+        try:
+            files = FileAsset.objects.filter(asset=asset_key, created_by=request.user)
+            serializer = FileAssetSerializer(files, context={"request": request})
+            return Response(serializer.data)
+        except FileAsset.DoesNotExist:
+            return Response(
+                {"error": "File Asset does not exist"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+    def post(self, request):
+        try:
+            serializer = FileAssetSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def delete(self, request, asset_key):
+        try:
+            file_asset = FileAsset.objects.get(asset=asset_key, created_by=request.user)
             # Delete the file from storage
             file_asset.asset.delete(save=False)
             # Delete the file object

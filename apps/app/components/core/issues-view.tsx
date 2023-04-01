@@ -9,49 +9,62 @@ import { DragDropContext, DropResult } from "react-beautiful-dnd";
 // services
 import issuesService from "services/issues.service";
 import stateService from "services/state.service";
-import projectService from "services/project.service";
 import modulesService from "services/modules.service";
 // hooks
-import useIssueView from "hooks/use-issue-view";
+import useToast from "hooks/use-toast";
+import useIssuesView from "hooks/use-issues-view";
 // components
-import { AllLists, AllBoards } from "components/core";
+import { AllLists, AllBoards, FilterList } from "components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
+import { CreateUpdateViewModal } from "components/views";
+import { TransferIssuesModal } from "components/cycles";
+// ui
+import { EmptySpace, EmptySpaceItem, PrimaryButton, Spinner } from "components/ui";
+import { CalendarView } from "./calendar-view";
 // icons
-import { TrashIcon } from "@heroicons/react/24/outline";
+import {
+  ListBulletIcon,
+  PlusIcon,
+  RectangleStackIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
+import { ExclamationIcon, TransferIcon } from "components/icons";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 // types
-import { CycleIssueResponse, IIssue, ModuleIssueResponse, UserAuth } from "types";
+import { IIssue, IIssueFilterOptions, UserAuth } from "types";
 // fetch-keys
 import {
-  CYCLE_ISSUES,
-  MODULE_ISSUES,
-  PROJECT_ISSUES_LIST,
-  PROJECT_MEMBERS,
+  CYCLE_DETAILS,
+  CYCLE_ISSUES_WITH_PARAMS,
+  MODULE_DETAILS,
+  MODULE_ISSUES_WITH_PARAMS,
+  PROJECT_ISSUES_LIST_WITH_PARAMS,
   STATE_LIST,
 } from "constants/fetch-keys";
 
 type Props = {
   type?: "issue" | "cycle" | "module";
-  issues: IIssue[];
   openIssuesListModal?: () => void;
+  isCompleted?: boolean;
   userAuth: UserAuth;
 };
 
 export const IssuesView: React.FC<Props> = ({
   type = "issue",
-  issues,
   openIssuesListModal,
+  isCompleted = false,
   userAuth,
 }) => {
   // create issue modal
   const [createIssueModal, setCreateIssueModal] = useState(false);
+  const [createViewModal, setCreateViewModal] = useState<any>(null);
   const [preloadedData, setPreloadedData] = useState<
     (Partial<IIssue> & { actionType: "createIssue" | "edit" | "delete" }) | undefined
   >(undefined);
 
-  // updates issue modal
+  // update issue modal
   const [editIssueModal, setEditIssueModal] = useState(false);
   const [issueToEdit, setIssueToEdit] = useState<
     (IIssue & { actionType: "edit" | "delete" }) | undefined
@@ -64,15 +77,24 @@ export const IssuesView: React.FC<Props> = ({
   // trash box
   const [trashBox, setTrashBox] = useState(false);
 
+  // transfer issue
+  const [transferIssuesModal, setTransferIssuesModal] = useState(false);
+
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
+
+  const { setToastAlert } = useToast();
 
   const {
-    issueView,
     groupedByIssues,
+    issueView,
     groupByProperty: selectedGroup,
     orderBy,
-  } = useIssueView(issues);
+    filters,
+    isNotEmpty,
+    setFilters,
+    params,
+  } = useIssuesView();
 
   const { data: stateGroups } = useSWR(
     workspaceSlug && projectId ? STATE_LIST(projectId as string) : null,
@@ -81,13 +103,6 @@ export const IssuesView: React.FC<Props> = ({
       : null
   );
   const states = getStatesList(stateGroups ?? {});
-
-  const { data: members } = useSWR(
-    projectId ? PROJECT_MEMBERS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
-      : null
-  );
 
   const handleDeleteIssue = useCallback(
     (issue: IIssue) => {
@@ -101,7 +116,7 @@ export const IssuesView: React.FC<Props> = ({
     (result: DropResult) => {
       setTrashBox(false);
 
-      if (!result.destination || !workspaceSlug || !projectId) return;
+      if (!result.destination || !workspaceSlug || !projectId || !groupedByIssues) return;
 
       const { source, destination } = result;
 
@@ -156,90 +171,105 @@ export const IssuesView: React.FC<Props> = ({
           draggedItem.sort_order = newSortOrder;
         }
 
-        if (orderBy === "sort_order" || source.droppableId !== destination.droppableId) {
-          const sourceGroup = source.droppableId; // source group id
-          const destinationGroup = destination.droppableId; // destination group id
+        const destinationGroup = destination.droppableId; // destination group id
 
-          if (!sourceGroup || !destinationGroup) return;
+        if (orderBy === "sort_order" || source.droppableId !== destination.droppableId) {
+          // different group/column;
+
+          // source.droppableId !== destination.droppableId -> even if order by is not sort_order,
+          // if the issue is moved to a different group, then we will change the group of the
+          // dragged item(or issue)
 
           if (selectedGroup === "priority") draggedItem.priority = destinationGroup;
-          else if (selectedGroup === "state_detail.name") {
-            const destinationState = states?.find((s) => s.name === destinationGroup);
+          else if (selectedGroup === "state") draggedItem.state = destinationGroup;
+        }
 
-            if (!destinationState) return;
+        const sourceGroup = source.droppableId; // source group id
 
-            draggedItem.state = destinationState.id;
-            draggedItem.state_detail = destinationState;
-          }
-
-          if (cycleId)
-            mutate<CycleIssueResponse[]>(
-              CYCLE_ISSUES(cycleId as string),
-              (prevData) => {
-                if (!prevData) return prevData;
-                const updatedIssues = prevData.map((issue) => {
-                  if (issue.issue_detail.id === draggedItem.id) {
-                    return {
-                      ...issue,
-                      issue_detail: draggedItem,
-                    };
-                  }
-                  return issue;
-                });
-                return [...updatedIssues];
-              },
-              false
-            );
-
-          if (moduleId)
-            mutate<ModuleIssueResponse[]>(
-              MODULE_ISSUES(moduleId as string),
-              (prevData) => {
-                if (!prevData) return prevData;
-                const updatedIssues = prevData.map((issue) => {
-                  if (issue.issue_detail.id === draggedItem.id) {
-                    return {
-                      ...issue,
-                      issue_detail: draggedItem,
-                    };
-                  }
-                  return issue;
-                });
-                return [...updatedIssues];
-              },
-              false
-            );
-
-          mutate<IIssue[]>(
-            PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
+        // TODO: move this mutation logic to a separate function
+        if (cycleId)
+          mutate<{
+            [key: string]: IIssue[];
+          }>(
+            CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params),
             (prevData) => {
               if (!prevData) return prevData;
 
-              const updatedIssues = prevData.map((i) => {
-                if (i.id === draggedItem.id) return draggedItem;
+              const sourceGroupArray = prevData[sourceGroup];
+              const destinationGroupArray = groupedByIssues[destinationGroup];
 
-                return i;
-              });
+              sourceGroupArray.splice(source.index, 1);
+              destinationGroupArray.splice(destination.index, 0, draggedItem);
 
-              return updatedIssues;
+              return {
+                ...prevData,
+                [sourceGroup]: sourceGroupArray,
+                [destinationGroup]: destinationGroupArray,
+              };
+            },
+            false
+          );
+        else if (moduleId)
+          mutate<{
+            [key: string]: IIssue[];
+          }>(
+            MODULE_ISSUES_WITH_PARAMS(moduleId as string, params),
+            (prevData) => {
+              if (!prevData) return prevData;
+
+              const sourceGroupArray = prevData[sourceGroup];
+              const destinationGroupArray = groupedByIssues[destinationGroup];
+
+              sourceGroupArray.splice(source.index, 1);
+              destinationGroupArray.splice(destination.index, 0, draggedItem);
+
+              return {
+                ...prevData,
+                [sourceGroup]: sourceGroupArray,
+                [destinationGroup]: destinationGroupArray,
+              };
+            },
+            false
+          );
+        else
+          mutate<{ [key: string]: IIssue[] }>(
+            PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params),
+            (prevData) => {
+              if (!prevData) return prevData;
+
+              const sourceGroupArray = prevData[sourceGroup];
+              const destinationGroupArray = groupedByIssues[destinationGroup];
+
+              sourceGroupArray.splice(source.index, 1);
+              destinationGroupArray.splice(destination.index, 0, draggedItem);
+
+              return {
+                ...prevData,
+                [sourceGroup]: sourceGroupArray,
+                [destinationGroup]: destinationGroupArray,
+              };
             },
             false
           );
 
-          // patch request
-          issuesService
-            .patchIssue(workspaceSlug as string, projectId as string, draggedItem.id, {
-              priority: draggedItem.priority,
-              state: draggedItem.state,
-              sort_order: draggedItem.sort_order,
-            })
-            .then((res) => {
-              if (cycleId) mutate(CYCLE_ISSUES(cycleId as string));
-              if (moduleId) mutate(MODULE_ISSUES(moduleId as string));
-
-              mutate(PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string));
-            });
-        }
+        // patch request
+        issuesService
+          .patchIssue(workspaceSlug as string, projectId as string, draggedItem.id, {
+            priority: draggedItem.priority,
+            state: draggedItem.state,
+            sort_order: draggedItem.sort_order,
+          })
+          .then(() => {
+            if (cycleId) {
+              mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
+              mutate(CYCLE_DETAILS(cycleId as string));
+            }
+            if (moduleId) {
+              mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
+              mutate(MODULE_DETAILS(moduleId as string));
+            }
+            mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
+          });
       }
     },
     [
@@ -250,17 +280,16 @@ export const IssuesView: React.FC<Props> = ({
       projectId,
       selectedGroup,
       orderBy,
-      states,
       handleDeleteIssue,
+      params,
     ]
   );
 
   const addIssueToState = useCallback(
-    (groupTitle: string, stateId: string | null) => {
+    (groupTitle: string) => {
       setCreateIssueModal(true);
       if (selectedGroup)
         setPreloadedData({
-          state: stateId ?? undefined,
           [selectedGroup]: groupTitle,
           actionType: "createIssue",
         });
@@ -293,13 +322,9 @@ export const IssuesView: React.FC<Props> = ({
 
   const removeIssueFromCycle = useCallback(
     (bridgeId: string) => {
-      if (!workspaceSlug || !projectId) return;
+      if (!workspaceSlug || !projectId || !cycleId) return;
 
-      mutate<CycleIssueResponse[]>(
-        CYCLE_ISSUES(cycleId as string),
-        (prevData) => prevData?.filter((p) => p.id !== bridgeId),
-        false
-      );
+      mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
 
       issuesService
         .removeIssueFromCycle(
@@ -315,18 +340,14 @@ export const IssuesView: React.FC<Props> = ({
           console.log(e);
         });
     },
-    [workspaceSlug, projectId, cycleId]
+    [workspaceSlug, projectId, cycleId, params]
   );
 
   const removeIssueFromModule = useCallback(
     (bridgeId: string) => {
-      if (!workspaceSlug || !projectId) return;
+      if (!workspaceSlug || !projectId || !moduleId) return;
 
-      mutate<ModuleIssueResponse[]>(
-        MODULE_ISSUES(moduleId as string),
-        (prevData) => prevData?.filter((p) => p.id !== bridgeId),
-        false
-      );
+      mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
 
       modulesService
         .removeIssueFromModule(
@@ -342,7 +363,7 @@ export const IssuesView: React.FC<Props> = ({
           console.log(e);
         });
     },
-    [workspaceSlug, projectId, moduleId]
+    [workspaceSlug, projectId, moduleId, params]
   );
 
   const handleTrashBox = useCallback(
@@ -352,8 +373,17 @@ export const IssuesView: React.FC<Props> = ({
     [trashBox, setTrashBox]
   );
 
+  const nullFilters = Object.keys(filters).filter(
+    (key) => filters[key as keyof IIssueFilterOptions] === null
+  );
+
   return (
     <>
+      <CreateUpdateViewModal
+        isOpen={createViewModal !== null}
+        handleClose={() => setCreateViewModal(null)}
+        preLoadedData={createViewModal}
+      />
       <CreateUpdateIssueModal
         isOpen={createIssueModal && preloadedData?.actionType === "createIssue"}
         handleClose={() => setCreateIssueModal(false)}
@@ -372,69 +402,163 @@ export const IssuesView: React.FC<Props> = ({
         isOpen={deleteIssueModal}
         data={issueToDelete}
       />
-
-      <div className="relative">
-        <DragDropContext onDragEnd={handleOnDragEnd}>
-          <StrictModeDroppable droppableId="trashBox">
-            {(provided, snapshot) => (
-              <div
-                className={`${
-                  trashBox ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
-                } fixed top-9 right-9 z-20 flex h-28 w-96 items-center justify-center gap-2 rounded border-2 border-red-500 bg-red-100 p-3 text-xs font-medium italic text-red-500 ${
-                  snapshot.isDraggingOver ? "bg-red-500 text-white" : ""
-                } duration-200`}
-                ref={provided.innerRef}
-                {...provided.droppableProps}
+      <TransferIssuesModal
+        handleClose={() => setTransferIssuesModal(false)}
+        isOpen={transferIssuesModal}
+      />
+      <div className="mb-5 -mt-4">
+        <div className="flex items-center justify-between gap-2">
+          <FilterList filters={filters} setFilters={setFilters} />
+          {Object.keys(filters).length > 0 &&
+            nullFilters.length !== Object.keys(filters).length && (
+              <PrimaryButton
+                onClick={() => {
+                  if (viewId) {
+                    setFilters({}, true);
+                    setToastAlert({
+                      title: "View updated",
+                      message: "Your view has been updated",
+                      type: "success",
+                    });
+                  } else
+                    setCreateViewModal({
+                      query: filters,
+                    });
+                }}
+                className="flex items-center gap-2 text-sm"
               >
-                <TrashIcon className="h-4 w-4" />
-                Drop issue here to delete
-              </div>
+                {!viewId && <PlusIcon className="h-4 w-4" />}
+                {viewId ? "Update" : "Save"} view
+              </PrimaryButton>
             )}
-          </StrictModeDroppable>
-          {issueView === "list" ? (
-            <AllLists
-              type={type}
-              issues={issues}
-              states={states}
-              members={members}
-              addIssueToState={addIssueToState}
-              makeIssueCopy={makeIssueCopy}
-              handleEditIssue={handleEditIssue}
-              handleDeleteIssue={handleDeleteIssue}
-              openIssuesListModal={type !== "issue" ? openIssuesListModal : null}
-              removeIssue={
-                type === "cycle"
-                  ? removeIssueFromCycle
-                  : type === "module"
-                  ? removeIssueFromModule
-                  : null
-              }
-              userAuth={userAuth}
-            />
-          ) : (
-            <AllBoards
-              type={type}
-              issues={issues}
-              states={states}
-              members={members}
-              addIssueToState={addIssueToState}
-              makeIssueCopy={makeIssueCopy}
-              handleEditIssue={handleEditIssue}
-              openIssuesListModal={type !== "issue" ? openIssuesListModal : null}
-              handleDeleteIssue={handleDeleteIssue}
-              handleTrashBox={handleTrashBox}
-              removeIssue={
-                type === "cycle"
-                  ? removeIssueFromCycle
-                  : type === "module"
-                  ? removeIssueFromModule
-                  : null
-              }
-              userAuth={userAuth}
-            />
-          )}
-        </DragDropContext>
+        </div>
       </div>
+
+      {Object.keys(filters).length > 0 && nullFilters.length !== Object.keys(filters).length && (
+        <div className="mb-5 border-t" />
+      )}
+
+      <DragDropContext onDragEnd={handleOnDragEnd}>
+        <StrictModeDroppable droppableId="trashBox">
+          {(provided, snapshot) => (
+            <div
+              className={`${
+                trashBox ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+              } fixed top-9 right-9 z-20 flex h-28 w-96 flex-col items-center justify-center gap-2 rounded border-2 border-red-500 bg-red-100 p-3 text-xs font-medium italic text-red-500 ${
+                snapshot.isDraggingOver ? "bg-red-500 text-white" : ""
+              } duration-200`}
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+            >
+              <TrashIcon className="h-4 w-4" />
+              Drop issue here to delete
+              {provided.placeholder}
+            </div>
+          )}
+        </StrictModeDroppable>
+        {groupedByIssues ? (
+          isNotEmpty ? (
+            <>
+              {isCompleted && (
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2 text-sm text-gray-500">
+                    <ExclamationIcon height={14} width={14} />
+                    <span>Completed cycles are not editable.</span>
+                  </div>
+                  <div>
+                    <PrimaryButton
+                      onClick={() => setTransferIssuesModal(true)}
+                      className="flex items-center gap-3 rounded-lg"
+                    >
+                      <TransferIcon className="h-4 w-4" />
+                      <span>Transfer Issues</span>
+                    </PrimaryButton>
+                  </div>
+                </div>
+              )}
+              {issueView === "list" ? (
+                <AllLists
+                  type={type}
+                  states={states}
+                  addIssueToState={addIssueToState}
+                  makeIssueCopy={makeIssueCopy}
+                  handleEditIssue={handleEditIssue}
+                  handleDeleteIssue={handleDeleteIssue}
+                  openIssuesListModal={type !== "issue" ? openIssuesListModal : null}
+                  removeIssue={
+                    type === "cycle"
+                      ? removeIssueFromCycle
+                      : type === "module"
+                      ? removeIssueFromModule
+                      : null
+                  }
+                  isCompleted={isCompleted}
+                  userAuth={userAuth}
+                />
+              ) : issueView === "kanban" ? (
+                <AllBoards
+                  type={type}
+                  states={states}
+                  addIssueToState={addIssueToState}
+                  makeIssueCopy={makeIssueCopy}
+                  handleEditIssue={handleEditIssue}
+                  openIssuesListModal={type !== "issue" ? openIssuesListModal : null}
+                  handleDeleteIssue={handleDeleteIssue}
+                  handleTrashBox={handleTrashBox}
+                  removeIssue={
+                    type === "cycle"
+                      ? removeIssueFromCycle
+                      : type === "module"
+                      ? removeIssueFromModule
+                      : null
+                  }
+                  isCompleted={isCompleted}
+                  userAuth={userAuth}
+                />
+              ) : (
+                <CalendarView />
+              )}
+            </>
+          ) : (
+            <div className="grid h-full w-full place-items-center px-4 sm:px-0">
+              <EmptySpace
+                title="You don't have any issue yet."
+                description="Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done."
+                Icon={RectangleStackIcon}
+              >
+                <EmptySpaceItem
+                  title="Create a new issue"
+                  description={
+                    <span>
+                      Use <pre className="inline rounded bg-gray-200 px-2 py-1">C</pre> shortcut to
+                      create a new issue
+                    </span>
+                  }
+                  Icon={PlusIcon}
+                  action={() => {
+                    const e = new KeyboardEvent("keydown", {
+                      key: "c",
+                    });
+                    document.dispatchEvent(e);
+                  }}
+                />
+                {openIssuesListModal && (
+                  <EmptySpaceItem
+                    title="Add an existing issue"
+                    description="Open list"
+                    Icon={ListBulletIcon}
+                    action={openIssuesListModal}
+                  />
+                )}
+              </EmptySpace>
+            </div>
+          )
+        ) : (
+          <div className="flex h-full w-full items-center justify-center">
+            <Spinner />
+          </div>
+        )}
+      </DragDropContext>
     </>
   );
 };

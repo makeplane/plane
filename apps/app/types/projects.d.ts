@@ -1,17 +1,27 @@
-import type { IUserLite, IWorkspace } from "./";
+import type {
+  IIssueFilterOptions,
+  IUserLite,
+  IWorkspace,
+  IWorkspaceLite,
+  TIssueGroupByOptions,
+  TIssueOrderByOptions,
+  TIssueViewOptions,
+} from "./";
 
 export interface IProject {
   cover_image: string | null;
   created_at: Date;
   created_by: string;
   cycle_view: boolean;
+  issue_views_view: boolean;
+  module_view: boolean;
+  page_view: boolean;
   default_assignee: IUser | string | null;
   description: string;
   icon: string;
   id: string;
   identifier: string;
   is_favorite: boolean;
-  module_view: boolean;
   name: string;
   network: number;
   project_lead: IUser | string | null;
@@ -19,6 +29,13 @@ export interface IProject {
   updated_at: Date;
   updated_by: string;
   workspace: IWorkspace | string;
+  workspace_detail: IWorkspaceLite;
+}
+
+export interface IProjectLite {
+  id: string;
+  name: string;
+  identifier: string;
 }
 
 export interface IFavoriteProject {
@@ -34,11 +51,10 @@ export interface IFavoriteProject {
 }
 
 type ProjectViewTheme = {
-  collapsed: boolean;
-  issueView: "list" | "kanban" | null;
-  groupByProperty: NestedKeyOf<IIssue> | null;
-  filterIssue: "activeIssue" | "backlogIssue" | null;
-  orderBy: NestedKeyOf<IIssue> | null;
+  issueView: TIssueViewOptions;
+  groupByProperty: TIssueGroupByOptions;
+  orderBy: TIssueOrderByOptions;
+  filters: IIssueFilterOptions;
 };
 
 export interface IProjectMember {

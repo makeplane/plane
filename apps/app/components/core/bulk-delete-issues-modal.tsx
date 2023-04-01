@@ -13,7 +13,7 @@ import issuesServices from "services/issues.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { Button } from "components/ui";
+import { DangerButton, SecondaryButton } from "components/ui";
 // icons
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { LayerDiagonalIcon } from "components/icons";
@@ -100,12 +100,6 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) =>
             type: "success",
             message: res.message,
           });
-
-          mutate<IIssue[]>(
-            PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string),
-            (prevData) => (prevData ?? []).filter((p) => !data.delete_issue_ids.includes(p.id)),
-            false
-          );
           handleClose();
         })
         .catch((e) => {
@@ -211,17 +205,10 @@ export const BulkDeleteIssuesModal: React.FC<Props> = ({ isOpen, setIsOpen }) =>
 
                 {filteredIssues.length > 0 && (
                   <div className="flex items-center justify-end gap-2 p-3">
-                    <Button type="button" theme="secondary" size="sm" onClick={handleClose}>
-                      Close
-                    </Button>
-                    <Button
-                      onClick={handleSubmit(handleDelete)}
-                      theme="danger"
-                      size="sm"
-                      disabled={isSubmitting}
-                    >
+                    <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                    <DangerButton onClick={handleSubmit(handleDelete)} loading={isSubmitting}>
                       {isSubmitting ? "Deleting..." : "Delete selected issues"}
-                    </Button>
+                    </DangerButton>
                   </div>
                 )}
               </form>

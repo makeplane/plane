@@ -1,5 +1,6 @@
 export const debounce = (func: any, wait: number, immediate: boolean = false) => {
   let timeout: any;
+
   return function executedFunction(...args: any) {
     const later = () => {
       timeout = null;

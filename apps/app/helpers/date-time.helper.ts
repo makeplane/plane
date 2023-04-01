@@ -89,23 +89,28 @@ export const timeAgo = (time: any) => {
   return time;
 };
 
-export const getDateRangeStatus = (startDate: string | null, endDate: string | null) => {
+export const getDateRangeStatus = (startDate: string | null | undefined, endDate: string | null | undefined) => {
   if (!startDate || !endDate) return "draft";
 
-  const now = new Date();
+  const today = renderDateFormat(new Date());
+  const now = new Date(today);
   const start = new Date(startDate);
   const end = new Date(endDate);
 
-  if (end < now) {
-    return "completed";
-  } else if (start <= now && end >= now) {
+  if (start <= now && end >= now) {
     return "current";
-  } else {
+  } else if (start > now) {
     return "upcoming";
+  } else {
+    return "completed";
   }
 };
 
-export const renderShortDateWithYearFormat = (date: Date) => {
+export const renderShortDateWithYearFormat = (date: string | Date) => {
+  if (!date || date === "") return null;
+
+  date = new Date(date);
+
   const months = [
     "Jan",
     "Feb",
@@ -126,7 +131,11 @@ export const renderShortDateWithYearFormat = (date: Date) => {
   return isNaN(date.getTime()) ? "N/A" : ` ${month} ${day}, ${year}`;
 };
 
-export const renderShortDate = (date: Date) => {
+export const renderShortDate = (date: string | Date) => {
+  if (!date || date === "") return null;
+
+  date = new Date(date);
+
   const months = [
     "Jan",
     "Feb",
@@ -145,3 +154,22 @@ export const renderShortDate = (date: Date) => {
   const month = months[date.getMonth()];
   return isNaN(date.getTime()) ? "N/A" : `${day} ${month}`;
 };
+
+export const renderShortTime = (date: string | Date) => {
+  if (!date || date === "") return null;
+
+  date = new Date(date);
+
+  const hours = date.getHours();
+  let minutes: any = date.getMinutes();
+
+  // Add leading zero to single-digit minutes
+  if (minutes < 10) {
+    minutes = "0" + minutes;
+  }
+
+  return hours + ":" + minutes;
+};
+
+export const isDateRangeValid = (startDate: string, endDate: string) =>
+  new Date(startDate) < new Date(endDate);

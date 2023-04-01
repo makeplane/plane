@@ -12,9 +12,11 @@ type Props = {
   className?: string;
   ellipsis?: boolean;
   verticalEllipsis?: boolean;
+  height?: "sm" | "md" | "rg" | "lg";
   width?: "sm" | "md" | "lg" | "xl" | "auto";
   textAlignment?: "left" | "center" | "right";
   noBorder?: boolean;
+  noChevron?: boolean;
   optionsPosition?: "left" | "right";
   customButton?: JSX.Element;
 };
@@ -23,7 +25,7 @@ type MenuItemProps = {
   children: JSX.Element | string;
   renderAs?: "button" | "a";
   href?: string;
-  onClick?: () => void;
+  onClick?: (args?: any) => void;
   className?: string;
 };
 
@@ -33,9 +35,11 @@ const CustomMenu = ({
   className = "",
   ellipsis = false,
   verticalEllipsis = false,
+  height = "md",
   width = "auto",
   textAlignment,
   noBorder = false,
+  noChevron = false,
   optionsPosition = "right",
   customButton,
 }: Props) => (
@@ -54,7 +58,7 @@ const CustomMenu = ({
         ) : (
           <Menu.Button
             type="button"
-            className={`flex cursor-pointer items-center justify-between gap-1 px-2 py-1 text-xs duration-300 hover:bg-gray-100 ${
+            className={`flex cursor-pointer items-center justify-between gap-1 px-2.5 py-1 text-xs duration-300 hover:bg-gray-100 ${
               textAlignment === "right"
                 ? "text-right"
                 : textAlignment === "center"
@@ -77,7 +81,7 @@ const CustomMenu = ({
             }`}
           >
             {label}
-            {!noBorder && <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />}
+            {!noChevron && <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />}
           </Menu.Button>
         )}
       </div>
@@ -93,8 +97,18 @@ const CustomMenu = ({
       leaveTo="transform opacity-0 scale-95"
     >
       <Menu.Items
-        className={`absolute z-20 mt-1 whitespace-nowrap rounded-md bg-white p-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ${
+        className={`absolute z-20 mt-1 overflow-y-scroll whitespace-nowrap rounded-md bg-white p-1 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ${
           optionsPosition === "left" ? "left-0 origin-top-left" : "right-0 origin-top-right"
+        } ${
+          height === "sm"
+            ? "max-h-28"
+            : height === "md"
+            ? "max-h-44"
+            : height === "rg"
+            ? "max-h-56"
+            : height === "lg"
+            ? "max-h-80"
+            : ""
         } ${
           width === "sm"
             ? "w-10"
@@ -127,7 +141,7 @@ const MenuItem: React.FC<MenuItemProps> = ({
           <a
             className={`${className} ${
               active ? "bg-hover-gray" : ""
-            } inline-block w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-gray-500`}
+            } inline-block w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-gray-500 hover:bg-gray-100 hover:text-gray-900`}
             onClick={close}
           >
             {children}
@@ -138,7 +152,7 @@ const MenuItem: React.FC<MenuItemProps> = ({
           type="button"
           className={`${className} ${
             active ? "bg-hover-gray" : ""
-          } w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-gray-500`}
+          } w-full select-none gap-2 truncate rounded px-1 py-1.5 text-left text-gray-500 hover:bg-gray-100 hover:text-gray-900`}
           onClick={onClick}
         >
           {children}

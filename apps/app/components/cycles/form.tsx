@@ -1,18 +1,19 @@
 import { useEffect, useState } from "react";
+
 import { useRouter } from "next/router";
 
-// toast
-import useToast from "hooks/use-toast";
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
-// ui
-import { Button, CustomDatePicker, CustomSelect, Input, TextArea } from "components/ui";
-// types
-import { ICycle } from "types";
 // services
 import cyclesService from "services/cycles.service";
-// helper
-import { getDateRangeStatus } from "helpers/date-time.helper";
+// hooks
+import useToast from "hooks/use-toast";
+// ui
+import { DateSelect, Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
+// helpers
+import { getDateRangeStatus, isDateRangeValid } from "helpers/date-time.helper";
+// types
+import { ICycle } from "types";
 
 type Props = {
   handleFormSubmit: (values: Partial<ICycle>) => Promise<void>;
@@ -56,8 +57,7 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
   };
 
   const cycleStatus =
-    data?.start_date && data?.end_date
-      ? getDateRangeStatus(data?.start_date, data?.end_date) : "";
+    data?.start_date && data?.end_date ? getDateRangeStatus(data?.start_date, data?.end_date) : "";
 
   const dateChecker = async (payload: any) => {
     await cyclesService
@@ -100,12 +100,13 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
         <div className="space-y-3">
           <div>
             <Input
+              mode="transparent"
+              autoComplete="off"
               id="name"
-              label="Name"
               name="name"
               type="name"
-              placeholder="Enter name"
-              autoComplete="off"
+              className="resize-none text-xl"
+              placeholder="Title"
               error={errors.name}
               register={register}
               validations={{
@@ -121,79 +122,83 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
             <TextArea
               id="description"
               name="description"
-              label="Description"
-              placeholder="Enter description"
+              placeholder="Description"
+              className="h-32 resize-none text-sm"
+              mode="transparent"
               error={errors.description}
               register={register}
             />
           </div>
 
-          <div className="flex gap-x-2">
-            <div className="w-full">
-              <h6 className="text-gray-500">Start Date</h6>
-              <div className="w-full">
-                <Controller
-                  control={control}
-                  name="start_date"
-                  render={({ field: { value, onChange } }) => (
-                    <CustomDatePicker
-                      renderAs="input"
-                      value={value}
-                      onChange={(val) => {
-                        onChange(val);
-                        watch("end_date") && cycleStatus != "current"
-                          ? dateChecker({
+          <div className="flex flex-wrap items-center gap-2">
+            <div>
+              <Controller
+                control={control}
+                name="start_date"
+                render={({ field: { value, onChange } }) => (
+                  <DateSelect
+                    label="Start date"
+                    value={value}
+                    onChange={(val) => {
+                      onChange(val);
+                      if (val && watch("end_date")) {
+                        if (isDateRangeValid(val, `${watch("end_date")}`)) {
+                          cycleStatus != "current" &&
+                            dateChecker({
                               start_date: val,
                               end_date: watch("end_date"),
-                            })
-                          : "";
-                      }}
-                      error={errors.start_date ? true : false}
-                    />
-                  )}
-                />
-                {errors.start_date && (
-                  <h6 className="text-sm text-red-500">{errors.start_date.message}</h6>
+                            });
+                        } else {
+                          setIsDateValid(false);
+                          setToastAlert({
+                            type: "error",
+                            title: "Error!",
+                            message: "The date you have entered is invalid. Please check and enter a valid date.",
+                          });
+                        }
+                      }
+                    }}
+                  />
                 )}
-              </div>
+              />
             </div>
-            <div className="w-full">
-              <h6 className="text-gray-500">End Date</h6>
-              <div className="w-full">
-                <Controller
-                  control={control}
-                  name="end_date"
-                  render={({ field: { value, onChange } }) => (
-                    <CustomDatePicker
-                      renderAs="input"
-                      value={value}
-                      onChange={(val) => {
-                        onChange(val);
-                        watch("start_date") && cycleStatus != "current"
-                          ? dateChecker({
+            <div>
+              <Controller
+                control={control}
+                name="end_date"
+                render={({ field: { value, onChange } }) => (
+                  <DateSelect
+                    label="End date"
+                    value={value}
+                    onChange={(val) => {
+                      onChange(val);
+                      if (watch("start_date") && val) {
+                        if (isDateRangeValid(`${watch("start_date")}`, val)) {
+                          cycleStatus != "current" &&
+                            dateChecker({
                               start_date: watch("start_date"),
                               end_date: val,
-                            })
-                          : "";
-                      }}
-                      error={errors.end_date ? true : false}
-                    />
-                  )}
-                />
-                {errors.end_date && (
-                  <h6 className="text-sm text-red-500">{errors.end_date.message}</h6>
+                            });
+                        } else {
+                          setIsDateValid(false);
+                          setToastAlert({
+                            type: "error",
+                            title: "Error!",
+                            message: "The date you have entered is invalid. Please check and enter a valid date.",
+                          });
+                        }
+                      }
+                    }}
+                  />
                 )}
-              </div>
+              />
             </div>
           </div>
         </div>
       </div>
-      <div className="mt-5 flex justify-end gap-2">
-        <Button theme="secondary" onClick={handleClose}>
-          Cancel
-        </Button>
-
-        <Button
+      <div className="-mx-5 mt-5 flex justify-end gap-2 border-t px-5 pt-5">
+        <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+        <PrimaryButton
           type="submit"
           className={
             checkEmptyDate
@@ -202,7 +207,7 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
               ? "cursor-pointer"
               : "cursor-not-allowed"
           }
-          disabled={isSubmitting || checkEmptyDate ? false : isDateValid ? false : true}
+          loading={isSubmitting || checkEmptyDate ? false : isDateValid ? false : true}
         >
           {status
             ? isSubmitting
@@ -211,7 +216,7 @@ export const CycleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, stat
             : isSubmitting
             ? "Creating Cycle..."
             : "Create Cycle"}
-        </Button>
+        </PrimaryButton>
       </div>
     </form>
   );

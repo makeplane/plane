@@ -10,7 +10,7 @@ import workspaceService from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { Button, Loader } from "components/ui";
+import { DangerButton, Loader, SecondaryButton } from "components/ui";
 // icons
 import GithubLogo from "public/logos/github-square.png";
 // types
@@ -133,19 +133,13 @@ const OAuthPopUp = ({ integration }: any) => {
 
       {workspaceIntegrations ? (
         isInstalled ? (
-          <Button
-            theme="danger"
-            size="rg"
-            className="text-xs"
-            onClick={handleRemoveIntegration}
-            disabled={deletingIntegration}
-          >
+          <DangerButton onClick={handleRemoveIntegration} loading={deletingIntegration}>
             {deletingIntegration ? "Removing..." : "Remove installation"}
-          </Button>
+          </DangerButton>
         ) : (
-          <Button theme="secondary" size="rg" className="text-xs" onClick={startAuth}>
+          <SecondaryButton onClick={startAuth} outline>
             Add installation
-          </Button>
+          </SecondaryButton>
         )
       ) : (
         <Loader>

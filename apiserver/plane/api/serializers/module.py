@@ -4,10 +4,18 @@ from rest_framework import serializers
 # Module imports
 from .base import BaseSerializer
 from .user import UserLiteSerializer
-from .project import ProjectSerializer
+from .project import ProjectSerializer, ProjectLiteSerializer
+from .workspace import WorkspaceLiteSerializer
 from .issue import IssueStateSerializer
 
-from plane.db.models import User, Module, ModuleMember, ModuleIssue, ModuleLink, ModuleFavorite
+from plane.db.models import (
+    User,
+    Module,
+    ModuleMember,
+    ModuleIssue,
+    ModuleLink,
+    ModuleFavorite,
+)
 
 
 class ModuleWriteSerializer(BaseSerializer):
@@ -16,6 +24,9 @@ class ModuleWriteSerializer(BaseSerializer):
         write_only=True,
         required=False,
     )
+
+    project_detail = ProjectLiteSerializer(source="project", read_only=True)
+    workspace_detail = WorkspaceLiteSerializer(source="workspace", read_only=True)
 
     class Meta:
         model = Module
@@ -133,9 +144,14 @@ class ModuleSerializer(BaseSerializer):
     project_detail = ProjectSerializer(read_only=True, source="project")
     lead_detail = UserLiteSerializer(read_only=True, source="lead")
     members_detail = UserLiteSerializer(read_only=True, many=True, source="members")
-    issue_module = ModuleIssueSerializer(read_only=True, many=True)
     link_module = ModuleLinkSerializer(read_only=True, many=True)
     is_favorite = serializers.BooleanField(read_only=True)
+    total_issues = serializers.IntegerField(read_only=True)
+    cancelled_issues = serializers.IntegerField(read_only=True)
+    completed_issues = serializers.IntegerField(read_only=True)
+    started_issues = serializers.IntegerField(read_only=True)
+    unstarted_issues = serializers.IntegerField(read_only=True)
+    backlog_issues = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Module
@@ -148,6 +164,7 @@ class ModuleSerializer(BaseSerializer):
             "created_at",
             "updated_at",
         ]
+
 
 class ModuleFavoriteSerializer(BaseSerializer):
     module_detail = ModuleFlatSerializer(source="module", read_only=True)

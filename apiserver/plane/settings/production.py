@@ -22,13 +22,7 @@ DATABASES = {
     }
 }
 
-# CORS WHITELIST ON PROD
-CORS_ORIGIN_WHITELIST = [
-    # "https://example.com",
-    # "https://sub.example.com",
-    # "http://localhost:8080",
-    # "http://127.0.0.1:9000"
-]
+
 # Parse database configuration from $DATABASE_URL
 DATABASES["default"] = dj_database_url.config()
 SITE_ID = 1
@@ -43,12 +37,33 @@ DOCKERIZED = os.environ.get(
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
-# Allow all host headers
-ALLOWED_HOSTS = ["*"]
 
 # TODO: Make it FALSE and LIST DOMAINS IN FULL PROD.
 CORS_ALLOW_ALL_ORIGINS = True
 
+
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+]
+
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+]
+
+CORS_ALLOW_CREDENTIALS = True
 # Simplified static file serving.
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
@@ -211,3 +226,13 @@ RQ_QUEUES = {
 WEB_URL = os.environ.get("WEB_URL")
 
 PROXY_BASE_URL = os.environ.get("PROXY_BASE_URL", False)
+
+ANALYTICS_SECRET_KEY = os.environ.get("ANALYTICS_SECRET_KEY", False)
+ANALYTICS_BASE_API = os.environ.get("ANALYTICS_BASE_API", False)
+
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", False)
+GPT_ENGINE = os.environ.get("GPT_ENGINE", "text-davinci-003")
+
+SLACK_BOT_TOKEN = os.environ.get("SLACK_BOT_TOKEN", False)
+
+LOGGER_BASE_URL = os.environ.get("LOGGER_BASE_URL", False)

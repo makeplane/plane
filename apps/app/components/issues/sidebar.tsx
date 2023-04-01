@@ -29,7 +29,7 @@ import {
   SidebarStateSelect,
 } from "components/issues";
 // ui
-import { Input, Button, Spinner, CustomDatePicker } from "components/ui";
+import { Input, Spinner, CustomDatePicker } from "components/ui";
 // icons
 import {
   TagIcon,
@@ -581,16 +581,24 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 }}
                 autoComplete="off"
               />
-              <Button type="submit" theme="danger" onClick={() => setCreateLabelForm(false)}>
+              <button
+                type="submit"
+                className="grid place-items-center rounded bg-red-500 p-2.5"
+                onClick={() => setCreateLabelForm(false)}
+              >
                 <XMarkIcon className="h-4 w-4 text-white" />
-              </Button>
-              <Button type="submit" theme="success" disabled={isSubmitting}>
+              </button>
+              <button
+                type="submit"
+                className="grid place-items-center rounded bg-green-500 p-2.5"
+                disabled={isSubmitting}
+              >
                 <PlusIcon className="h-4 w-4 text-white" />
-              </Button>
+              </button>
             </form>
           )}
         </div>
-        <div className="py-1 text-xs">
+        <div className="min-h-[116px] py-1 text-xs">
           <div className="flex items-center justify-between gap-2">
             <h4>Links</h4>
             {!isNotAllowed && (

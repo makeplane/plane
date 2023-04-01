@@ -1,7 +1,11 @@
 // services
 import APIService from "services/api.service";
+import trackEventServices from "services/track-event.service";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
+
+const trackEvent =
+  process.env.NEXT_PUBLIC_TRACK_EVENTS === "true" || process.env.NEXT_PUBLIC_TRACK_EVENTS === "1";
 
 // types
 import type { IState, StateResponse } from "types";
@@ -13,7 +17,10 @@ class ProjectStateServices extends APIService {
 
   async createState(workspaceSlug: string, projectId: string, data: any): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/states/`, data)
-      .then((response) => response?.data)
+      .then((response) => {
+        if (trackEvent) trackEventServices.trackStateEvent(response?.data, "STATE_CREATE");
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -54,7 +61,10 @@ class ProjectStateServices extends APIService {
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/states/${stateId}/`,
       data
     )
-      .then((response) => response?.data)
+      .then((response) => {
+        if (trackEvent) trackEventServices.trackStateEvent(response?.data, "STATE_UPDATE");
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -70,7 +80,10 @@ class ProjectStateServices extends APIService {
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/states/${stateId}/`,
       data
     )
-      .then((response) => response?.data)
+      .then((response) => {
+        if (trackEvent) trackEventServices.trackStateEvent(response?.data, "STATE_UPDATE");
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -78,7 +91,10 @@ class ProjectStateServices extends APIService {
 
   async deleteState(workspaceSlug: string, projectId: string, stateId: string): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/states/${stateId}/`)
-      .then((response) => response?.data)
+      .then((response) => {
+        if (trackEvent) trackEventServices.trackStateEvent(response?.data, "STATE_DELETE");
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });

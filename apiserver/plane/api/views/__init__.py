@@ -16,6 +16,7 @@ from .project import (
 from .people import (
     UserEndpoint,
     UpdateUserOnBoardedEndpoint,
+    UserActivityEndpoint,
 )
 
 from .oauth import OauthEndpoint
@@ -36,10 +37,13 @@ from .workspace import (
     UserLastProjectWithWorkspaceEndpoint,
     WorkspaceMemberUserEndpoint,
     WorkspaceMemberUserViewsEndpoint,
+    UserActivityGraphEndpoint,
+    UserIssueCompletedGraphEndpoint,
+    UserWorkspaceDashboardEndpoint,
 )
 from .state import StateViewSet
 from .shortcut import ShortCutViewSet
-from .view import ViewViewSet
+from .view import IssueViewViewSet, ViewIssuesEndpoint, IssueViewFavoriteViewSet
 from .cycle import (
     CycleViewSet,
     CycleIssueViewSet,
@@ -48,8 +52,10 @@ from .cycle import (
     CompletedCyclesEndpoint,
     CycleFavoriteViewSet,
     DraftCyclesEndpoint,
+    TransferCycleIssueEndpoint,
+    InCompleteCyclesEndpoint,
 )
-from .asset import FileAssetEndpoint
+from .asset import FileAssetEndpoint, UserAssetsEndpoint
 from .issue import (
     IssueViewSet,
     WorkSpaceIssuesEndpoint,
@@ -62,6 +68,7 @@ from .issue import (
     UserWorkSpaceIssues,
     SubIssuesEndpoint,
     IssueLinkViewSet,
+    BulkCreateIssueLabelsEndpoint,
 )
 
 from .auth_extended import (
@@ -96,4 +103,29 @@ from .integration import (
     GithubRepositorySyncViewSet,
     GithubCommentSyncViewSet,
     GithubRepositoriesEndpoint,
+    BulkCreateGithubIssueSyncEndpoint,
 )
+
+from .importer import (
+    ServiceIssueImportSummaryEndpoint,
+    ImportServiceEndpoint,
+    UpdateServiceImportStatusEndpoint,
+    BulkImportIssuesEndpoint,
+    BulkImportModulesEndpoint,
+)
+
+from .page import (
+    PageViewSet,
+    PageBlockViewSet,
+    PageFavoriteViewSet,
+    CreateIssueFromPageBlockEndpoint,
+    RecentPagesEndpoint,
+    FavoritePagesEndpoint,
+    MyPagesEndpoint,
+    CreatedbyOtherPagesEndpoint,
+)
+
+from .search import GlobalSearchEndpoint
+
+
+from .gpt import GPTIntegrationEndpoint

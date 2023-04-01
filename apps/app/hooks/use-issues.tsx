@@ -14,7 +14,7 @@ const useIssues = (workspaceSlug: string | undefined) => {
   );
 
   return {
-    myIssues: myIssues || [],
+    myIssues: myIssues,
     mutateMyIssues,
   };
 };

@@ -1,66 +1,69 @@
 // hooks
-import useIssueView from "hooks/use-issue-view";
+import useIssuesView from "hooks/use-issues-view";
 // components
 import { SingleList } from "components/core/list-view/single-list";
 // types
-import { IIssue, IProjectMember, IState, UserAuth } from "types";
+import { IIssue, IState, UserAuth } from "types";
 
 // types
 type Props = {
   type: "issue" | "cycle" | "module";
-  issues: IIssue[];
   states: IState[] | undefined;
-  members: IProjectMember[] | undefined;
-  addIssueToState: (groupTitle: string, stateId: string | null) => void;
+  addIssueToState: (groupTitle: string) => void;
   makeIssueCopy: (issue: IIssue) => void;
   handleEditIssue: (issue: IIssue) => void;
   handleDeleteIssue: (issue: IIssue) => void;
   openIssuesListModal?: (() => void) | null;
   removeIssue: ((bridgeId: string) => void) | null;
+  isCompleted?: boolean;
   userAuth: UserAuth;
 };
 
 export const AllLists: React.FC<Props> = ({
   type,
-  issues,
   states,
-  members,
   addIssueToState,
   makeIssueCopy,
   openIssuesListModal,
   handleEditIssue,
   handleDeleteIssue,
   removeIssue,
+  isCompleted = false,
   userAuth,
 }) => {
-  const { groupedByIssues, groupByProperty: selectedGroup } = useIssueView(issues);
+  const { groupedByIssues, groupByProperty: selectedGroup, showEmptyGroups } = useIssuesView();
 
   return (
-    <div className="flex flex-col space-y-5">
-      {Object.keys(groupedByIssues).map((singleGroup) => {
-        const stateId =
-          selectedGroup === "state_detail.name"
-            ? states?.find((s) => s.name === singleGroup)?.id ?? null
-            : null;
+    <>
+      {groupedByIssues && (
+        <div className="flex flex-col space-y-5">
+          {Object.keys(groupedByIssues).map((singleGroup) => {
+            const currentState =
+              selectedGroup === "state" ? states?.find((s) => s.id === singleGroup) : null;
 
-        return (
-          <SingleList
-            key={singleGroup}
-            type={type}
-            groupTitle={singleGroup}
-            groupedByIssues={groupedByIssues}
-            selectedGroup={selectedGroup}
-            members={members}
-            addIssueToState={() => addIssueToState(singleGroup, stateId)}
-            makeIssueCopy={makeIssueCopy}
-            handleEditIssue={handleEditIssue}
-            handleDeleteIssue={handleDeleteIssue}
-            openIssuesListModal={type !== "issue" ? openIssuesListModal : null}
-            removeIssue={removeIssue}
-            userAuth={userAuth}
-          />
-        );
-      })}
-    </div>
+            if (!showEmptyGroups && groupedByIssues[singleGroup].length === 0) return null;
+
+            return (
+              <SingleList
+                key={singleGroup}
+                type={type}
+                groupTitle={singleGroup}
+                groupedByIssues={groupedByIssues}
+                selectedGroup={selectedGroup}
+                currentState={currentState}
+                addIssueToState={() => addIssueToState(singleGroup)}
+                makeIssueCopy={makeIssueCopy}
+                handleEditIssue={handleEditIssue}
+                handleDeleteIssue={handleDeleteIssue}
+                openIssuesListModal={type !== "issue" ? openIssuesListModal : null}
+                removeIssue={removeIssue}
+                isCompleted={isCompleted}
+                userAuth={userAuth}
+              />
+            );
+          })}
+        </div>
+      )}
+    </>
   );
 };

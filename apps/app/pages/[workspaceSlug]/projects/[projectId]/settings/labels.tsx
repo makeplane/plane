@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 
 import { useRouter } from "next/router";
 
@@ -19,7 +19,7 @@ import {
   SingleLabelGroup,
 } from "components/labels";
 // ui
-import { Loader } from "components/ui";
+import { Loader, PrimaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
@@ -28,7 +28,6 @@ import { IIssueLabels, UserAuth } from "types";
 import type { GetServerSidePropsContext, NextPage } from "next";
 // fetch-keys
 import { PROJECT_DETAILS, PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
-import { PrimaryButton } from "components/ui/button/primary-button";
 
 const LabelsSettings: NextPage<UserAuth> = (props) => {
   const { isMember, isOwner, isViewer, isGuest } = props;
@@ -46,6 +45,8 @@ const LabelsSettings: NextPage<UserAuth> = (props) => {
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+
+  const scollToRef = useRef<HTMLDivElement>(null);
 
   const { data: projectDetails } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
@@ -129,6 +130,7 @@ const LabelsSettings: NextPage<UserAuth> = (props) => {
                 setLabelForm={setLabelForm}
                 isUpdating={isUpdating}
                 labelToUpdate={labelToUpdate}
+                ref={scollToRef}
               />
             )}
             <>
@@ -143,7 +145,12 @@ const LabelsSettings: NextPage<UserAuth> = (props) => {
                           key={label.id}
                           label={label}
                           addLabelToGroup={() => addLabelToGroup(label)}
-                          editLabel={editLabel}
+                          editLabel={(label) => {
+                            editLabel(label);
+                            scollToRef.current?.scrollIntoView({
+                              behavior: "smooth",
+                            });
+                          }}
                           handleLabelDelete={handleLabelDelete}
                         />
                       );
@@ -154,7 +161,12 @@ const LabelsSettings: NextPage<UserAuth> = (props) => {
                         label={label}
                         labelChildren={children}
                         addLabelToGroup={addLabelToGroup}
-                        editLabel={editLabel}
+                        editLabel={(label) => {
+                          editLabel(label);
+                          scollToRef.current?.scrollIntoView({
+                            behavior: "smooth",
+                          });
+                        }}
                         handleLabelDelete={handleLabelDelete}
                       />
                     );

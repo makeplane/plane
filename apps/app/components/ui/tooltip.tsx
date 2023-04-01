@@ -40,7 +40,7 @@ export const Tooltip: React.FC<Props> = ({
     disabled={disabled}
     content={
       <div
-        className={`${className} flex flex-col justify-center items-start gap-1 max-w-[600px] text-xs rounded-md p-2 shadow-md text-left ${
+        className={`${className} flex max-w-[600px] flex-col items-start justify-center gap-1 rounded-md p-2 text-left text-xs shadow-md ${
           theme === "light" ? "bg-white text-gray-700" : "bg-black text-white"
         }`}
       >
@@ -49,8 +49,8 @@ export const Tooltip: React.FC<Props> = ({
       </div>
     }
     position={position}
-    renderTarget={({ isOpen: isTooltipOpen, ref: eleRefernce, ...tooltipProps }) =>
-      React.cloneElement(children, { ref: eleRefernce, ...tooltipProps, ...children.props })
+    renderTarget={({ isOpen: isTooltipOpen, ref: eleReference, ...tooltipProps }) =>
+      React.cloneElement(children, { ref: eleReference, ...tooltipProps, ...children.props })
     }
   />
 );

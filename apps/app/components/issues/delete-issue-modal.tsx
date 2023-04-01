@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
 
@@ -13,11 +13,19 @@ import useToast from "hooks/use-toast";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // ui
-import { Button } from "components/ui";
+import { SecondaryButton, DangerButton } from "components/ui";
 // types
 import type { CycleIssueResponse, IIssue, ModuleIssueResponse } from "types";
 // fetch-keys
-import { CYCLE_ISSUES, PROJECT_ISSUES_LIST, MODULE_ISSUES, USER_ISSUE } from "constants/fetch-keys";
+import {
+  CYCLE_ISSUES,
+  CYCLE_ISSUES_WITH_PARAMS,
+  MODULE_ISSUES,
+  MODULE_ISSUES_WITH_PARAMS,
+  PROJECT_ISSUES_LIST_WITH_PARAMS,
+  USER_ISSUE,
+} from "constants/fetch-keys";
+import useIssuesView from "hooks/use-issues-view";
 
 type Props = {
   isOpen: boolean;
@@ -26,11 +34,12 @@ type Props = {
 };
 
 export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data }) => {
-  const cancelButtonRef = useRef(null);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug, projectId: queryProjectId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+
+  const { params } = useIssuesView();
 
   const { setToastAlert } = useToast();
 
@@ -45,43 +54,14 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data })
 
   const handleDeletion = async () => {
     setIsDeleteLoading(true);
-    if (!data || !workspaceSlug) return;
+    if (!workspaceSlug || !projectId || !data) return;
 
-    const projectId = data.project;
     await issueServices
-      .deleteIssue(workspaceSlug as string, projectId, data.id)
+      .deleteIssue(workspaceSlug as string, projectId as string, data.id)
       .then(() => {
-        const cycleId = data?.cycle;
-        const moduleId = data?.module;
-
-        if (cycleId) {
-          mutate<CycleIssueResponse[]>(
-            CYCLE_ISSUES(cycleId),
-            (prevData) => prevData?.filter((i) => i.issue !== data.id),
-            false
-          );
-        }
-
-        if (moduleId) {
-          mutate<ModuleIssueResponse[]>(
-            MODULE_ISSUES(moduleId),
-            (prevData) => prevData?.filter((i) => i.issue !== data.id),
-            false
-          );
-        }
-
-        if (!queryProjectId)
-          mutate<IIssue[]>(
-            USER_ISSUE(workspaceSlug as string),
-            (prevData) => prevData?.filter((i) => i.id !== data.id),
-            false
-          );
-
-        mutate<IIssue[]>(
-          PROJECT_ISSUES_LIST(workspaceSlug as string, projectId),
-          (prevData) => (prevData ?? []).filter((i) => i.id !== data.id),
-          false
-        );
+        if (cycleId) mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
+        else if (moduleId) mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
+        else mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
 
         handleClose();
         setToastAlert({
@@ -98,7 +78,7 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data })
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-20" initialFocus={cancelButtonRef} onClose={onClose}>
+      <Dialog as="div" className="relative z-20" onClose={onClose}>
         <Transition.Child
           as={React.Fragment}
           enter="ease-out duration-300"
@@ -122,51 +102,35 @@ export const DeleteIssueModal: React.FC<Props> = ({ isOpen, handleClose, data })
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-                <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                  <div className="sm:flex sm:items-start">
-                    <div>
-                      <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-red-100">
-                        <ExclamationTriangleIcon
-                          className="h-8 w-8 text-red-600"
-                          aria-hidden="true"
-                        />
-                      </div>
-                      <Dialog.Title
-                        as="h3"
-                        className="mt-3 text-lg font-medium leading-6 text-gray-900"
-                      >
-                        Are you sure you want to delete {`"`}
-                        {data?.project_detail.identifier}-{data?.sequence_id} - {data?.name}?{`"`}
-                      </Dialog.Title>
-                      <div className="mt-2">
-                        <p className="text-sm text-gray-500">
-                          All of the data related to the issue will be permanently removed. This
-                          action cannot be undone.
-                        </p>
-                      </div>
-                    </div>
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
+                <div className="flex flex-col gap-6 p-6">
+                  <div className="flex w-full items-center justify-start gap-6">
+                    <span className="place-items-center rounded-full bg-red-100 p-4">
+                      <ExclamationTriangleIcon
+                        className="h-6 w-6 text-red-600"
+                        aria-hidden="true"
+                      />
+                    </span>
+                    <span className="flex items-center justify-start">
+                      <h3 className="text-xl font-medium 2xl:text-2xl">Delete Issue</h3>
+                    </span>
                   </div>
-                </div>
-                <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                  <Button
-                    type="button"
-                    onClick={handleDeletion}
-                    theme="danger"
-                    disabled={isDeleteLoading}
-                    className="inline-flex sm:ml-3"
-                  >
-                    {isDeleteLoading ? "Deleting..." : "Delete"}
-                  </Button>
-                  <Button
-                    type="button"
-                    theme="secondary"
-                    className="inline-flex sm:ml-3"
-                    onClick={onClose}
-                    ref={cancelButtonRef}
-                  >
-                    Cancel
-                  </Button>
+                  <span>
+                    <p className="break-all text-sm leading-7 text-gray-500">
+                      Are you sure you want to delete issue{" "}
+                      <span className="break-all font-semibold">
+                        {data?.project_detail.identifier}-{data?.sequence_id}
+                      </span>
+                      {""}? All of the data related to the issue will be permanently removed. This
+                      action cannot be undone.
+                    </p>
+                  </span>
+                  <div className="flex justify-end gap-2">
+                    <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
+                    <DangerButton onClick={handleDeletion} loading={isDeleteLoading}>
+                      {isDeleteLoading ? "Deleting..." : "Delete Issue"}
+                    </DangerButton>
+                  </div>
                 </div>
               </Dialog.Panel>
             </Transition.Child>

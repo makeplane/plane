@@ -1,24 +1,27 @@
-// types
-import { IIssue, NestedKeyOf } from "types";
-
-export const GROUP_BY_OPTIONS: Array<{ name: string; key: NestedKeyOf<IIssue> | null }> = [
-  { name: "State", key: "state_detail.name" },
+export const GROUP_BY_OPTIONS: Array<{
+  name: string;
+  key: TIssueGroupByOptions;
+}> = [
+  { name: "State", key: "state" },
   { name: "Priority", key: "priority" },
-  { name: "Created By", key: "created_by" },
-  { name: "Assignee", key: "assignees" },
+  { name: "Labels", key: "labels" },
+  { name: "Created by", key: "created_by" },
   { name: "None", key: null },
 ];
 
-export const ORDER_BY_OPTIONS: Array<{ name: string; key: NestedKeyOf<IIssue> | null }> = [
+export const ORDER_BY_OPTIONS: Array<{
+  name: string;
+  key: TIssueOrderByOptions;
+}> = [
   { name: "Manual", key: "sort_order" },
-  { name: "Last created", key: "created_at" },
+  { name: "Last created", key: "-created_at" },
   { name: "Last updated", key: "updated_at" },
   { name: "Priority", key: "priority" },
 ];
 
 export const FILTER_ISSUE_OPTIONS: Array<{
   name: string;
-  key: "activeIssue" | "backlogIssue" | null;
+  key: "active" | "backlog" | null;
 }> = [
   {
     name: "All",
@@ -26,10 +29,78 @@ export const FILTER_ISSUE_OPTIONS: Array<{
   },
   {
     name: "Active Issues",
-    key: "activeIssue",
+    key: "active",
   },
   {
     name: "Backlog Issues",
-    key: "backlogIssue",
+    key: "backlog",
   },
 ];
+
+import { IIssue, TIssueGroupByOptions, TIssueOrderByOptions } from "types";
+
+type THandleIssuesMutation = (
+  formData: Partial<IIssue>,
+  oldGroupTitle: string,
+  selectedGroupBy: TIssueGroupByOptions,
+  issueIndex: number,
+  prevData?:
+    | {
+        [key: string]: IIssue[];
+      }
+    | IIssue[]
+) =>
+  | {
+      [key: string]: IIssue[];
+    }
+  | IIssue[]
+  | undefined;
+
+export const handleIssuesMutation: THandleIssuesMutation = (
+  formData,
+  oldGroupTitle,
+  selectedGroupBy,
+  issueIndex,
+  prevData
+) => {
+  if (!prevData) return prevData;
+
+  if (Array.isArray(prevData)) {
+    const updatedIssue = {
+      ...prevData[issueIndex],
+      ...formData,
+      assignees: formData?.assignees_list ?? prevData[issueIndex]?.assignees_list,
+    };
+
+    prevData.splice(issueIndex, 1, updatedIssue);
+
+    return [...prevData];
+  } else {
+    const oldGroup = prevData[oldGroupTitle ?? ""] ?? [];
+
+    let newGroup: IIssue[] = [];
+
+    if (selectedGroupBy === "priority") {
+      newGroup = prevData[formData.priority ?? ""] ?? [];
+    } else if (selectedGroupBy === "state") {
+      newGroup = prevData[formData.state ?? ""] ?? [];
+    }
+
+    const updatedIssue = {
+      ...oldGroup[issueIndex],
+      ...formData,
+      assignees: formData?.assignees_list ?? oldGroup[issueIndex]?.assignees_list,
+    };
+
+    oldGroup.splice(issueIndex, 1);
+    newGroup.push(updatedIssue);
+
+    const groupThatIsUpdated = selectedGroupBy === "priority" ? formData.priority : formData.state;
+
+    return {
+      ...prevData,
+      [oldGroupTitle ?? ""]: oldGroup,
+      [groupThatIsUpdated ?? ""]: newGroup,
+    };
+  }
+};

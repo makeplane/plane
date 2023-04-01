@@ -1,3 +1,6 @@
+# Python imports
+from uuid import uuid4
+
 # Django import
 from django.db import models
 from django.core.exceptions import ValidationError
@@ -7,13 +10,16 @@ from . import BaseModel
 
 
 def get_upload_path(instance, filename):
-    return f"{instance.workspace.id}/{filename}"
+    if instance.workspace_id is not None:
+        return f"{instance.workspace.id}/{uuid4().hex}-{filename}"
+    return f"user-{uuid4().hex}-{filename}"
 
 
 def file_size(value):
     limit = 5 * 1024 * 1024
     if value.size > limit:
         raise ValidationError("File too large. Size should not exceed 5 MB.")
+
 
 class FileAsset(BaseModel):
     """

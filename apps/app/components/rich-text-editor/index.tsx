@@ -48,6 +48,9 @@ export interface IRemirrorRichTextEditor {
   showToolbar?: boolean;
   editable?: boolean;
   customClassName?: string;
+  gptOption?: boolean;
+  noBorder?: boolean;
+  borderOnFocus?: boolean;
 }
 
 // eslint-disable-next-line no-duplicate-imports
@@ -65,6 +68,9 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = (props) => {
     showToolbar = true,
     editable = true,
     customClassName,
+    gptOption = false,
+    noBorder = false,
+    borderOnFocus = true,
   } = props;
 
   const [imageLoader, setImageLoader] = useState(false);
@@ -184,7 +190,9 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = (props) => {
         manager={manager}
         initialContent={state}
         classNames={[
-          `p-4 relative focus:outline-none rounded-md border focus:border-theme ${customClassName}`,
+          `p-4 relative focus:outline-none rounded-md focus:border-gray-200 ${
+            noBorder ? "" : "border"
+          } ${borderOnFocus ? "focus:border" : ""} ${customClassName}`,
         ]}
         editable={editable}
         onBlur={() => {
@@ -211,7 +219,7 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = (props) => {
             renderOutsideEditor
           >
             <FloatingToolbar className="z-[9999] overflow-hidden rounded">
-              <CustomFloatingToolbar />
+              <CustomFloatingToolbar gptOption={gptOption} editorState={state} />
             </FloatingToolbar>
           </FloatingWrapper>
         )}

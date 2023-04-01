@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 // ui
 import { CheckCircleIcon } from "@heroicons/react/20/solid";
-import { Button, Input } from "components/ui";
+import { Input, PrimaryButton, SecondaryButton } from "components/ui";
 // services
 import authenticationService from "services/authentication.service";
 import useToast from "hooks/use-toast";
@@ -90,7 +90,7 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
 
   return (
     <>
-      <form className="mt-5 space-y-5">
+      <form className="space-y-5 py-5 px-5">
         {(codeSent || codeResent) && (
           <div className="rounded-md bg-green-50 p-4">
             <div className="flex">
@@ -121,7 +121,7 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
                 ) || "Email ID is not valid",
             }}
             error={errors.email}
-            placeholder="Enter your Email ID"
+            placeholder="Enter you email Id"
           />
         </div>
 
@@ -140,8 +140,8 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
             />
             <button
               type="button"
-              className={`text-xs mt-5 w-full flex justify-end outline-none ${
-                isResendDisabled ? "text-gray-400 cursor-default" : "cursor-pointer text-theme"
+              className={`mt-5 flex w-full justify-end text-xs outline-none ${
+                isResendDisabled ? "cursor-default text-gray-400" : "cursor-pointer text-theme"
               } `}
               onClick={() => {
                 setIsCodeResending(true);
@@ -169,27 +169,29 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
         )}
         <div>
           {codeSent ? (
-            <Button
+            <PrimaryButton
               type="submit"
               className="w-full text-center"
+              size="md"
               onClick={handleSubmit(handleSignin)}
-              disabled={isSubmitting || (!isValid && isDirty)}
+              loading={isSubmitting || (!isValid && isDirty)}
             >
               {isSubmitting ? "Signing in..." : "Sign in"}
-            </Button>
+            </PrimaryButton>
           ) : (
-            <Button
+            <PrimaryButton
               type="submit"
               className="w-full text-center"
+              size="md"
               onClick={() => {
                 handleSubmit(onSubmit)().then(() => {
                   setResendCodeTimer(30);
                 });
               }}
-              disabled={isSubmitting || (!isValid && isDirty)}
+              loading={isSubmitting || (!isValid && isDirty)}
             >
               {isSubmitting ? "Sending code..." : "Send code"}
-            </Button>
+            </PrimaryButton>
           )}
         </div>
       </form>

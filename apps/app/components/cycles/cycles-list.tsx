@@ -2,11 +2,13 @@ import { useState } from "react";
 
 // components
 import { DeleteCycleModal, SingleCycleCard } from "components/cycles";
-// icons
-import { CompletedCycleIcon, CurrentCycleIcon, UpcomingCycleIcon } from "components/icons";
+import { EmptyState, Loader } from "components/ui";
+// image
+import emptyCycle from "public/empty-state/empty-cycle.svg";
+// icon
+import { XMarkIcon } from "@heroicons/react/24/outline";
 // types
 import { ICycle, SelectCycleType } from "types";
-import { Loader } from "components/ui";
 
 type TCycleStatsViewProps = {
   cycles: ICycle[] | undefined;
@@ -23,6 +25,7 @@ export const CyclesList: React.FC<TCycleStatsViewProps> = ({
 }) => {
   const [cycleDeleteModal, setCycleDeleteModal] = useState(false);
   const [selectedCycleForDelete, setSelectedCycleForDelete] = useState<SelectCycleType>();
+  const [showNoCurrentCycleMessage, setShowNoCurrentCycleMessage] = useState(true);
 
   const handleDeleteCycle = (cycle: ICycle) => {
     setSelectedCycleForDelete({ ...cycle, actionType: "delete" });
@@ -57,24 +60,27 @@ export const CyclesList: React.FC<TCycleStatsViewProps> = ({
               />
             ))}
           </div>
+        ) : type === "current" ? (
+          showNoCurrentCycleMessage && (
+            <div className="flex items-center justify-between bg-white w-full px-6 py-4 rounded-[10px]">
+              <h3 className="text-base font-medium text-black "> No current cycle is present.</h3>
+              <button onClick={() => setShowNoCurrentCycleMessage(false)}>
+                <XMarkIcon className="h-4 w-4" />
+              </button>
+            </div>
+          )
         ) : (
-          <div className="flex flex-col items-center justify-center gap-4 text-center">
-            {type === "upcoming" ? (
-              <UpcomingCycleIcon height="56" width="56" />
-            ) : type === "draft" ? (
-              <CompletedCycleIcon height="56" width="56" />
-            ) : (
-              <CurrentCycleIcon height="56" width="56" />
-            )}
-            <h3 className="text-gray-500">
-              No {type} {type === "current" ? "cycle" : "cycles"} yet. Create with{" "}
-              <pre className="inline rounded bg-gray-200 px-2 py-1">Q</pre>.
-            </h3>
-          </div>
+          <EmptyState
+            type="cycle"
+            title="Create New Cycle"
+            description="Sprint more effectively with Cycles by confining your project
+          to a fixed amount of time. Create new cycle now."
+            imgURL={emptyCycle}
+          />
         )
       ) : (
         <Loader className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
-          <Loader.Item height="300px" />
+          <Loader.Item height="200px" />
         </Loader>
       )}
     </>

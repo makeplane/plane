@@ -14,7 +14,7 @@ import useToast from "hooks/use-toast";
 // services
 import issuesService from "services/issues.service";
 // ui
-import { Button } from "components/ui";
+import { PrimaryButton, SecondaryButton } from "components/ui";
 // icons
 import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { BlockedIcon, LayerDiagonalIcon } from "components/icons";
@@ -113,17 +113,9 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
         <div className="flex flex-wrap gap-1">
           {watch("blocked_list") && watch("blocked_list").length > 0
             ? watch("blocked_list").map((issue) => (
-                <span
+                <div
                   key={issue}
                   className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-white px-1.5 py-0.5 text-xs text-red-500 duration-300 hover:border-red-500 hover:bg-red-50"
-                  onClick={() => {
-                    const updatedBlocked: string[] = watch("blocked_list").filter(
-                      (i) => i !== issue
-                    );
-                    submitChanges({
-                      blocks_list: updatedBlocked,
-                    });
-                  }}
                 >
                   <Link
                     href={`/${workspaceSlug}/projects/${projectId}/issues/${
@@ -137,10 +129,21 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
                       }`}
                     </a>
                   </Link>
-                  <span className="opacity-0 duration-300 group-hover:opacity-100">
+                  <button
+                    type="button"
+                    className="opacity-0 duration-300 group-hover:opacity-100"
+                    onClick={() => {
+                      const updatedBlocked: string[] = watch("blocked_list").filter(
+                        (i) => i !== issue
+                      );
+                      submitChanges({
+                        blocks_list: updatedBlocked,
+                      });
+                    }}
+                  >
                     <XMarkIcon className="h-2 w-2" />
-                  </span>
-                </span>
+                  </button>
+                </div>
               ))
             : null}
         </div>
@@ -270,14 +273,10 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
 
                     {filteredIssues.length > 0 && (
                       <div className="flex items-center justify-end gap-2 p-3">
-                        <div>
-                          <Button type="button" theme="secondary" size="sm" onClick={handleClose}>
-                            Close
-                          </Button>
-                        </div>
-                        <Button onClick={handleSubmit(onSubmit)} size="sm">
+                        <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+                        <PrimaryButton onClick={handleSubmit(onSubmit)}>
                           Add selected issues
-                        </Button>
+                        </PrimaryButton>
                       </div>
                     )}
                   </form>

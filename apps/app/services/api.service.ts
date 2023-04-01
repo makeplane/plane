@@ -39,6 +39,15 @@ abstract class APIService {
     };
   }
 
+  getWithoutBase(url: string, config = {}): Promise<any> {
+    return axios({
+      method: "get",
+      url: url,
+      headers: this.getAccessToken() ? this.getHeaders() : {},
+      ...config,
+    });
+  }
+
   get(url: string, config = {}): Promise<any> {
     return axios({
       method: "get",

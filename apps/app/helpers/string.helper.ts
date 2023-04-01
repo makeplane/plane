@@ -4,8 +4,11 @@ export const replaceUnderscoreIfSnakeCase = (str: string) => str.replace(/_/g, "
 
 export const capitalizeFirstLetter = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
 
-export const truncateText = (str: string, length: number) =>
-  str.length > length ? `${str.substring(0, length)}...` : str;
+export const truncateText = (str: string, length: number) => {
+  if (!str || str === "") return "";
+
+  return str.length > length ? `${str.substring(0, length)}...` : str;
+};
 
 export const createSimilarString = (str: string) => {
   const shuffled = str
