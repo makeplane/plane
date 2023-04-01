@@ -80,6 +80,7 @@ const ProgressChart: React.FC<Props> = ({ issues, start, end }) => {
           tick={{ fontSize: "12px", fill: "#1f2937" }}
           tickSize={10}
           minTickGap={10}
+          allowDecimals={false}
         />
         <Tooltip content={<CustomTooltip />} />
         <Area

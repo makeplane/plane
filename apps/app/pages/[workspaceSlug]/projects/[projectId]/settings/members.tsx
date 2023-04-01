@@ -21,7 +21,7 @@ import SendProjectInvitationModal from "components/project/send-project-invitati
 import { CustomMenu, CustomSelect, Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // types
 import type { NextPage, GetServerSidePropsContext } from "next";
 import { UserAuth } from "types";
@@ -261,7 +261,10 @@ const MembersSettings: NextPage<UserAuth> = ({ isMember, isOwner, isViewer, isGu
                               else setSelectedInviteRemoveMember(member.id);
                             }}
                           >
-                            Remove member
+                            <span className="flex items-center justify-start gap-2">
+                              <XMarkIcon className="h-4 w-4" />
+                              <span>Remove member</span>
+                            </span>
                           </CustomMenu.MenuItem>
                         </CustomMenu>
                       </div>

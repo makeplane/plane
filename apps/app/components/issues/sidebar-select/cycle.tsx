@@ -9,6 +9,8 @@ import issuesService from "services/issues.service";
 import cyclesService from "services/cycles.service";
 // ui
 import { Spinner, CustomSelect, Tooltip } from "components/ui";
+// helper
+import { truncateText } from "helpers/string.helper";
 // icons
 import { CyclesIcon } from "components/icons";
 // types
@@ -65,13 +67,15 @@ export const SidebarCycleSelect: React.FC<Props> = ({
       <div className="space-y-1 sm:basis-1/2">
         <CustomSelect
           label={
-            <span
-              className={`w-full max-w-[125px] truncate text-left sm:block ${
-                issueCycle ? "" : "text-gray-900"
-              }`}
-            >
-              {issueCycle ? issueCycle.cycle_detail.name : "None"}
-            </span>
+            <Tooltip position="left" tooltipContent={`${issueCycle ? issueCycle.cycle_detail.name : ""}`}>
+              <span
+                className={`w-full max-w-[125px] truncate text-left sm:block ${
+                  issueCycle ? "" : "text-gray-900"
+                }`}
+              >
+                {issueCycle ? truncateText(issueCycle.cycle_detail.name, 15) : "None"}
+              </span>
+            </Tooltip>
           }
           value={issueCycle?.cycle_detail.id}
           onChange={(value: any) => {
@@ -81,6 +85,7 @@ export const SidebarCycleSelect: React.FC<Props> = ({
           }}
           width="w-full"
           position="right"
+          maxHeight="rg"
           disabled={isNotAllowed}
         >
           {incompleteCycles ? (
@@ -89,7 +94,7 @@ export const SidebarCycleSelect: React.FC<Props> = ({
                 {incompleteCycles.map((option) => (
                   <CustomSelect.Option key={option.id} value={option.id}>
                     <Tooltip position="left-bottom" tooltipContent={option.name}>
-                      <span className="w-full max-w-[125px] truncate ">{option.name}</span>
+                      <span className="w-full truncate ">{truncateText(option.name, 15)}</span>
                     </Tooltip>
                   </CustomSelect.Option>
                 ))}

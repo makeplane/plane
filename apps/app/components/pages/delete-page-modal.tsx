@@ -115,7 +115,7 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-[40rem]">
                 <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                   <div className="sm:flex sm:items-start">
                     <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
@@ -130,9 +130,9 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-gray-500">
-                          Are you sure you want to delete Page - {`"`}
-                          <span className="italic">{data?.name}</span>
-                          {`"`} ? All of the data related to the page will be permanently removed.
+                          Are you sure you want to delete Page- {" "}
+                          <span className="font-bold">{data?.name}</span>
+                          ? All of the data related to the page will be permanently removed.
                           This action cannot be undone.
                         </p>
                       </div>

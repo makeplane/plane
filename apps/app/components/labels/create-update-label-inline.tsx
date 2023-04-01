@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { forwardRef, useEffect } from "react";
 
 import { useRouter } from "next/router";
 
@@ -31,12 +31,12 @@ const defaultValues: Partial<IIssueLabels> = {
   color: "#ff0000",
 };
 
-export const CreateUpdateLabelInline: React.FC<Props> = ({
-  labelForm,
-  setLabelForm,
-  isUpdating,
-  labelToUpdate,
-}) => {
+type Ref = HTMLDivElement;
+
+export const CreateUpdateLabelInline = forwardRef<Ref, Props>(function CreateUpdateLabelInline(
+  { labelForm, setLabelForm, isUpdating, labelToUpdate },
+  ref
+) {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -109,9 +109,10 @@ export const CreateUpdateLabelInline: React.FC<Props> = ({
 
   return (
     <div
-      className={`flex items-center gap-2 rounded-[10px] border bg-white p-5 ${
+      className={`flex items-center gap-2 scroll-m-8 rounded-[10px] border bg-white p-5 ${
         labelForm ? "" : "hidden"
       }`}
+      ref={ref}
     >
       <div className="h-8 w-8 flex-shrink-0">
         <Popover className="relative z-10 flex h-full w-full items-center justify-center rounded-xl bg-gray-200">
@@ -187,4 +188,4 @@ export const CreateUpdateLabelInline: React.FC<Props> = ({
       )}
     </div>
   );
-};
+});

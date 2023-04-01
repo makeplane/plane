@@ -31,7 +31,7 @@ export const CompletedIssuesGraph: React.FC<Props> = ({ month, issues, setMonth 
 
   for (let i = 1; i <= weeks; i++) {
     data.push({
-      week_in_month: i,
+      week_in_month: `Week ${i}`,
       completed_count: issues?.find((item) => item.week_in_month === i)?.completed_count ?? 0,
     });
   }
@@ -58,8 +58,8 @@ export const CompletedIssuesGraph: React.FC<Props> = ({ month, issues, setMonth 
       <div className="rounded-[10px] border bg-white p-8 pl-4">
         <ResponsiveContainer width="100%" height={250}>
           <LineChart data={data}>
-            <CartesianGrid stroke="#e2e2e2" />
-            <XAxis dataKey="week_in_month" />
+            <CartesianGrid stroke="#e2e2e280" />
+            <XAxis dataKey="week_in_month" padding={{ left: 48, right: 48 }} />
             <YAxis dataKey="completed_count" allowDecimals={false} />
             <Tooltip content={<CustomTooltip />} />
             <Line

@@ -29,22 +29,16 @@ import {
   RectangleStackIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
-import { ExclamationIcon, getStateGroupIcon, TransferIcon } from "components/icons";
+import { ExclamationIcon, TransferIcon } from "components/icons";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 // types
-import {
-  CycleIssueResponse,
-  IIssue,
-  IIssueFilterOptions,
-  ModuleIssueResponse,
-  UserAuth,
-} from "types";
+import { IIssue, IIssueFilterOptions, UserAuth } from "types";
 // fetch-keys
 import {
-  CYCLE_ISSUES,
+  CYCLE_DETAILS,
   CYCLE_ISSUES_WITH_PARAMS,
-  MODULE_ISSUES,
+  MODULE_DETAILS,
   MODULE_ISSUES_WITH_PARAMS,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
   STATE_LIST,
@@ -266,8 +260,14 @@ export const IssuesView: React.FC<Props> = ({
             sort_order: draggedItem.sort_order,
           })
           .then(() => {
-            if (cycleId) mutate(CYCLE_ISSUES(cycleId as string));
-            if (moduleId) mutate(MODULE_ISSUES(moduleId as string));
+            if (cycleId) {
+              mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
+              mutate(CYCLE_DETAILS(cycleId as string));
+            }
+            if (moduleId) {
+              mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
+              mutate(MODULE_DETAILS(moduleId as string));
+            }
             mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
           });
       }
@@ -322,13 +322,9 @@ export const IssuesView: React.FC<Props> = ({
 
   const removeIssueFromCycle = useCallback(
     (bridgeId: string) => {
-      if (!workspaceSlug || !projectId) return;
+      if (!workspaceSlug || !projectId || !cycleId) return;
 
-      mutate<CycleIssueResponse[]>(
-        CYCLE_ISSUES(cycleId as string),
-        (prevData) => prevData?.filter((p) => p.id !== bridgeId),
-        false
-      );
+      mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
 
       issuesService
         .removeIssueFromCycle(
@@ -344,18 +340,14 @@ export const IssuesView: React.FC<Props> = ({
           console.log(e);
         });
     },
-    [workspaceSlug, projectId, cycleId]
+    [workspaceSlug, projectId, cycleId, params]
   );
 
   const removeIssueFromModule = useCallback(
     (bridgeId: string) => {
-      if (!workspaceSlug || !projectId) return;
+      if (!workspaceSlug || !projectId || !moduleId) return;
 
-      mutate<ModuleIssueResponse[]>(
-        MODULE_ISSUES(moduleId as string),
-        (prevData) => prevData?.filter((p) => p.id !== bridgeId),
-        false
-      );
+      mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
 
       modulesService
         .removeIssueFromModule(
@@ -371,7 +363,7 @@ export const IssuesView: React.FC<Props> = ({
           console.log(e);
         });
     },
-    [workspaceSlug, projectId, moduleId]
+    [workspaceSlug, projectId, moduleId, params]
   );
 
   const handleTrashBox = useCallback(

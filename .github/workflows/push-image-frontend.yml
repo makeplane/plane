@@ -5,6 +5,8 @@ on:
     branches:
       - 'develop'
       - 'master'
+    tags:
+      - '*'
 
 jobs:
   build_push_frontend:
