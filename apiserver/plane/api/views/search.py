@@ -207,6 +207,9 @@ class IssueSearchEndpoint(BaseAPIView):
         try:
             query = request.query_params.get("search", False)
             parent = request.query_params.get("parent", False)
+            blocker_blocked_by = request.query_params.get("blocker_blocked_by", False)
+            issue_id = request.query_params.get("issue_id", False)
+
             issues = search_issues(query)
             issues = issues.filter(
                 workspace__slug=slug,
@@ -216,6 +219,8 @@ class IssueSearchEndpoint(BaseAPIView):
 
             if parent:
                 issues.filter(parent__isnull=True)
+            if blocker_blocked_by and issue_id:
+                issues.filter(blocker_issues=issue_id, blocked_issues=issue_id)
 
             return Response(
                 issues.values(
@@ -228,7 +233,13 @@ class IssueSearchEndpoint(BaseAPIView):
                 ),
                 status=status.HTTP_200_OK,
             )
-
+        except Issue.DoesNotExist:
+            return Response(
+                {"error": "Issue Does not exist"}, status=status.HTTP_400_BAD_REQUEST
+            )
         except Exception as e:
             capture_exception(e)
-            return Response({"error": "Something went wrong please try again later"})
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
