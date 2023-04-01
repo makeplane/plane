@@ -35,7 +35,7 @@ services:
       - redisdata:/data
   plane-web:
     container_name: planefrontend
-    image: plane-frontend:latest
+    image: makeplane/plane-frontend:latest
     restart: always
     command: node apps/app/server.js
     env_file:
@@ -44,7 +44,7 @@ services:
       - 3000:3000
   plane-api:
     container_name: planebackend
-    image: plane-backend:latest
+    image: makeplane/plane-backend:latest
     build:
       context: ./apiserver
       dockerfile: Dockerfile.api
@@ -62,7 +62,7 @@ services:
       - redis:redis
   plane-worker:
     container_name: planerqworker
-    image: plane-worker:latest
+    image: makeplane/plane-worker:latest
     depends_on:
       - redis
       - db
