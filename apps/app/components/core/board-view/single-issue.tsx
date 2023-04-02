@@ -110,8 +110,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
             handleIssuesMutation(formData, groupTitle ?? "", selectedGroup, index, prevData),
           false
         );
-
-      if (moduleId)
+      else if (moduleId)
         mutate<
           | {
               [key: string]: IIssue[];
@@ -123,18 +122,18 @@ export const SingleBoardIssue: React.FC<Props> = ({
             handleIssuesMutation(formData, groupTitle ?? "", selectedGroup, index, prevData),
           false
         );
-
-      mutate<
-        | {
-            [key: string]: IIssue[];
-          }
-        | IIssue[]
-      >(
-        PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params),
-        (prevData) =>
-          handleIssuesMutation(formData, groupTitle ?? "", selectedGroup, index, prevData),
-        false
-      );
+      else
+        mutate<
+          | {
+              [key: string]: IIssue[];
+            }
+          | IIssue[]
+        >(
+          PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params),
+          (prevData) =>
+            handleIssuesMutation(formData, groupTitle ?? "", selectedGroup, index, prevData),
+          false
+        );
 
       issuesService
         .patchIssue(workspaceSlug as string, projectId as string, issue.id, formData)
