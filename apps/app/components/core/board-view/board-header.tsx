@@ -9,9 +9,11 @@ import issuesService from "services/issues.service";
 import projectService from "services/project.service";
 // hooks
 import useIssuesView from "hooks/use-issues-view";
+// component
+import { Avatar } from "components/ui";
 // icons
 import { ArrowsPointingInIcon, ArrowsPointingOutIcon, PlusIcon } from "@heroicons/react/24/outline";
-import { getStateGroupIcon } from "components/icons";
+import { getPriorityIcon, getStateGroupIcon } from "components/icons";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
@@ -89,9 +91,39 @@ export const BoardHeader: React.FC<Props> = ({
     return title;
   };
 
+  const getGroupIcon = () => {
+    let icon;
+
+    switch (selectedGroup) {
+      case "state":
+        icon = currentState && getStateGroupIcon(currentState.group, "18", "18", bgColor);
+        break;
+      case "priority":
+        icon = getPriorityIcon(groupTitle, "h-[18px] w-[18px] flex items-center");
+        break;
+      case "labels":
+        const labelColor =
+          issueLabels?.find((label) => label.id === groupTitle)?.color ?? "#000000";
+        icon = (
+          <span
+            className="h-[18px] w-[18px] flex-shrink-0 rounded-full"
+            style={{ backgroundColor: labelColor }}
+          />
+        );
+        break;
+      case "created_by":
+        const member = members?.find((member) => member.member.id === groupTitle)?.member;
+        icon = <Avatar user={member} height="24px" width="24px" fontSize="12px" />;
+
+        break;
+    }
+
+    return icon;
+  };
+
   return (
     <div
-      className={`flex justify-between px-1 ${
+      className={`flex justify-between items-center px-1 ${
         !isCollapsed ? "flex-col rounded-md border bg-gray-50" : ""
       }`}
     >
@@ -101,7 +133,7 @@ export const BoardHeader: React.FC<Props> = ({
             !isCollapsed ? "mb-2 flex-col gap-y-2 py-2" : ""
           }`}
         >
-          {currentState && getStateGroupIcon(currentState.group, "18", "18", bgColor)}
+          <span className="flex items-center">{getGroupIcon()}</span>
           <h2
             className="text-lg font-semibold capitalize"
             style={{

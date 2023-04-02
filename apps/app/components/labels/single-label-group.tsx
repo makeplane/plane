@@ -11,7 +11,14 @@ import issuesService from "services/issues.service";
 // ui
 import { CustomMenu } from "components/ui";
 // icons
-import { ChevronDownIcon, RectangleGroupIcon } from "@heroicons/react/24/outline";
+import {
+  ChevronDownIcon,
+  RectangleGroupIcon,
+  XMarkIcon,
+  PlusIcon,
+  PencilIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
 // types
 import { IIssueLabels } from "types";
 // fetch-keys
@@ -72,11 +79,22 @@ export const SingleLabelGroup: React.FC<Props> = ({
             <div className="flex items-center gap-2">
               <CustomMenu ellipsis>
                 <CustomMenu.MenuItem onClick={() => addLabelToGroup(label)}>
-                  Add more labels
+                  <span className="flex items-center justify-start gap-2">
+                    <PlusIcon className="h-4 w-4" />
+                    <span>Add more labels</span>
+                  </span>
                 </CustomMenu.MenuItem>
-                <CustomMenu.MenuItem onClick={() => editLabel(label)}>Edit</CustomMenu.MenuItem>
+                <CustomMenu.MenuItem onClick={() => editLabel(label)}>
+                  <span className="flex items-center justify-start gap-2">
+                    <PencilIcon className="h-4 w-4" />
+                    <span>Edit label</span>
+                  </span>
+                </CustomMenu.MenuItem>
                 <CustomMenu.MenuItem onClick={() => handleLabelDelete(label.id)}>
-                  Delete
+                  <span className="flex items-center justify-start gap-2">
+                    <TrashIcon className="h-4 w-4" />
+                    <span>Delete label</span>
+                  </span>
                 </CustomMenu.MenuItem>
               </CustomMenu>
               <Disclosure.Button>
@@ -117,13 +135,22 @@ export const SingleLabelGroup: React.FC<Props> = ({
                     <div className="pointer-events-none opacity-0 group-hover:pointer-events-auto group-hover:opacity-100">
                       <CustomMenu ellipsis>
                         <CustomMenu.MenuItem onClick={() => removeFromGroup(child)}>
-                          Remove from group
+                          <span className="flex items-center justify-start gap-2">
+                            <XMarkIcon className="h-4 w-4" />
+                            <span>Remove from group</span>
+                          </span>
                         </CustomMenu.MenuItem>
                         <CustomMenu.MenuItem onClick={() => editLabel(child)}>
-                          Edit
+                          <span className="flex items-center justify-start gap-2">
+                            <PencilIcon className="h-4 w-4" />
+                            <span>Edit label</span>
+                          </span>
                         </CustomMenu.MenuItem>
                         <CustomMenu.MenuItem onClick={() => handleLabelDelete(child.id)}>
-                          Delete
+                          <span className="flex items-center justify-start gap-2">
+                            <TrashIcon className="h-4 w-4" />
+                            <span>Delete label</span>
+                          </span>
                         </CustomMenu.MenuItem>
                       </CustomMenu>
                     </div>
