@@ -492,8 +492,7 @@ export const CommandPalette: React.FC = () => {
                                         setIsPaletteOpen(false);
                                       }}
                                       value={value}
-                                      className="focus:bg-gray-200 focus:outline-none"
-                                      tabIndex={0}
+                                      className="focus:outline-none"
                                     >
                                       <div className="flex items-center gap-2 overflow-hidden text-gray-700">
                                         <Icon className="h-4 w-4 text-gray-500" color="#6b7280" />
@@ -519,8 +518,7 @@ export const CommandPalette: React.FC = () => {
                                 setSearchTerm("");
                                 setPages([...pages, "change-issue-state"]);
                               }}
-                              className="focus:bg-gray-200 focus:outline-none"
-                              tabIndex={0}
+                              className="focus:outline-none"
                             >
                               <div className="flex items-center gap-2 text-gray-700">
                                 <Squares2X2Icon className="h-4 w-4 text-gray-500" />
@@ -533,8 +531,7 @@ export const CommandPalette: React.FC = () => {
                                 setSearchTerm("");
                                 setPages([...pages, "change-issue-priority"]);
                               }}
-                              className="focus:bg-gray-200 focus:outline-none"
-                              tabIndex={0}
+                              className="focus:outline-none"
                             >
                               <div className="flex items-center gap-2 text-gray-700">
                                 <ChartBarIcon className="h-4 w-4 text-gray-500" />
@@ -547,8 +544,7 @@ export const CommandPalette: React.FC = () => {
                                 setSearchTerm("");
                                 setPages([...pages, "change-issue-assignee"]);
                               }}
-                              className="focus:bg-gray-200 focus:outline-none"
-                              tabIndex={0}
+                              className="focus:outline-none"
                             >
                               <div className="flex items-center gap-2 text-gray-700">
                                 <UsersIcon className="h-4 w-4 text-gray-500" />
@@ -560,8 +556,7 @@ export const CommandPalette: React.FC = () => {
                                 handleIssueAssignees(user.id);
                                 setSearchTerm("");
                               }}
-                              className="focus:bg-gray-200 focus:outline-none"
-                              tabIndex={0}
+                              className="focus:outline-none"
                             >
                               <div className="flex items-center gap-2 text-gray-700">
                                 {issueDetails?.assignees.includes(user.id) ? (
@@ -578,11 +573,7 @@ export const CommandPalette: React.FC = () => {
                               </div>
                             </Command.Item>
 
-                            <Command.Item
-                              onSelect={deleteIssue}
-                              className="focus:bg-gray-200 focus:outline-none"
-                              tabIndex={0}
-                            >
+                            <Command.Item onSelect={deleteIssue} className="focus:outline-none">
                               <div className="flex items-center gap-2 text-gray-700">
                                 <TrashIcon className="h-4 w-4 text-gray-500" />
                                 Delete issue
@@ -593,8 +584,7 @@ export const CommandPalette: React.FC = () => {
                                 setIsPaletteOpen(false);
                                 copyIssueUrlToClipboard();
                               }}
-                              className="focus:bg-gray-200 focus:outline-none"
-                              tabIndex={0}
+                              className="focus:outline-none"
                             >
                               <div className="flex items-center gap-2 text-gray-700">
                                 <LinkIcon className="h-4 w-4 text-gray-500" />
@@ -604,11 +594,7 @@ export const CommandPalette: React.FC = () => {
                           </>
                         )}
                         <Command.Group heading="Issue">
-                          <Command.Item
-                            onSelect={createNewIssue}
-                            className="focus:bg-gray-200 focus:outline-none"
-                            tabIndex={0}
-                          >
+                          <Command.Item onSelect={createNewIssue} className="focus:bg-gray-200">
                             <div className="flex items-center gap-2 text-gray-700">
                               <LayerDiagonalIcon className="h-4 w-4" color="#6b7280" />
                               Create new issue
@@ -621,8 +607,7 @@ export const CommandPalette: React.FC = () => {
                           <Command.Group heading="Project">
                             <Command.Item
                               onSelect={createNewProject}
-                              className="focus:bg-gray-200 focus:outline-none"
-                              tabIndex={0}
+                              className="focus:outline-none"
                             >
                               <div className="flex items-center gap-2 text-gray-700">
                                 <AssignmentClipboardIcon className="h-4 w-4" color="#6b7280" />
@@ -638,8 +623,7 @@ export const CommandPalette: React.FC = () => {
                             <Command.Group heading="Cycle">
                               <Command.Item
                                 onSelect={createNewCycle}
-                                className="focus:bg-gray-200 focus:outline-none"
-                                tabIndex={0}
+                                className="focus:outline-none"
                               >
                                 <div className="flex items-center gap-2 text-gray-700">
                                   <ContrastIcon className="h-4 w-4" color="#6b7280" />
@@ -652,8 +636,7 @@ export const CommandPalette: React.FC = () => {
                             <Command.Group heading="Module">
                               <Command.Item
                                 onSelect={createNewModule}
-                                className="focus:bg-gray-200 focus:outline-none"
-                                tabIndex={0}
+                                className="focus:outline-none"
                               >
                                 <div className="flex items-center gap-2 text-gray-700">
                                   <PeopleGroupIcon className="h-4 w-4" color="#6b7280" />
@@ -664,11 +647,7 @@ export const CommandPalette: React.FC = () => {
                             </Command.Group>
 
                             <Command.Group heading="View">
-                              <Command.Item
-                                onSelect={createNewView}
-                                className="focus:bg-gray-200 focus:outline-none"
-                                tabIndex={0}
-                              >
+                              <Command.Item onSelect={createNewView} className="focus:outline-none">
                                 <div className="flex items-center gap-2 text-gray-700">
                                   <ViewListIcon className="h-4 w-4" color="#6b7280" />
                                   Create new view
@@ -686,8 +665,7 @@ export const CommandPalette: React.FC = () => {
                               setSearchTerm("");
                               setPages([...pages, "settings"]);
                             }}
-                            className="focus:bg-gray-200 focus:outline-none"
-                            tabIndex={0}
+                            className="focus:outline-none"
                           >
                             <div className="flex items-center gap-2 text-gray-700">
                               <SettingIcon className="h-4 w-4" color="#6b7280" />
@@ -698,8 +676,7 @@ export const CommandPalette: React.FC = () => {
                         <Command.Group heading="Account">
                           <Command.Item
                             onSelect={createNewWorkspace}
-                            className="focus:bg-gray-200 focus:outline-none"
-                            tabIndex={0}
+                            className="focus:outline-none"
                           >
                             <div className="flex items-center gap-2 text-gray-700">
                               <FolderPlusIcon className="h-4 w-4 text-gray-500" />
@@ -716,8 +693,7 @@ export const CommandPalette: React.FC = () => {
                               });
                               document.dispatchEvent(e);
                             }}
-                            className="focus:bg-gray-200 focus:outline-none"
-                            tabIndex={0}
+                            className="focus:outline-none"
                           >
                             <div className="flex items-center gap-2 text-gray-700">
                               <RocketLaunchIcon className="h-4 w-4 text-gray-500" />
@@ -729,8 +705,7 @@ export const CommandPalette: React.FC = () => {
                               setIsPaletteOpen(false);
                               window.open("https://docs.plane.so/", "_blank");
                             }}
-                            className="focus:bg-gray-200 focus:outline-none"
-                            tabIndex={0}
+                            className="focus:outline-none"
                           >
                             <div className="flex items-center gap-2 text-gray-700">
                               <DocumentIcon className="h-4 w-4 text-gray-500" />
@@ -742,8 +717,7 @@ export const CommandPalette: React.FC = () => {
                               setIsPaletteOpen(false);
                               window.open("https://discord.com/invite/A92xrEGCge", "_blank");
                             }}
-                            className="focus:bg-gray-200 focus:outline-none"
-                            tabIndex={0}
+                            className="focus:outline-none"
                           >
                             <div className="flex items-center gap-2 text-gray-700">
                               <DiscordIcon className="h-4 w-4" color="#6b7280" />
@@ -758,8 +732,7 @@ export const CommandPalette: React.FC = () => {
                                 "_blank"
                               );
                             }}
-                            className="focus:bg-gray-200 focus:outline-none"
-                            tabIndex={0}
+                            className="focus:outline-none"
                           >
                             <div className="flex items-center gap-2 text-gray-700">
                               <GithubIcon className="h-4 w-4" color="#6b7280" />
@@ -771,8 +744,7 @@ export const CommandPalette: React.FC = () => {
                               setIsPaletteOpen(false);
                               (window as any).$crisp.push(["do", "chat:open"]);
                             }}
-                            className="focus:bg-gray-200 focus:outline-none"
-                            tabIndex={0}
+                            className="focus:outline-none"
                           >
                             <div className="flex items-center gap-2 text-gray-700">
                               <ChatBubbleOvalLeftEllipsisIcon className="h-4 w-4 text-gray-500" />
@@ -787,8 +759,7 @@ export const CommandPalette: React.FC = () => {
                       <>
                         <Command.Item
                           onSelect={() => goToSettings()}
-                          className="focus:bg-gray-200 focus:outline-none"
-                          tabIndex={0}
+                          className="focus:outline-none"
                         >
                           <div className="flex items-center gap-2 text-gray-700">
                             <SettingIcon className="h-4 w-4 text-gray-500" />
@@ -797,8 +768,7 @@ export const CommandPalette: React.FC = () => {
                         </Command.Item>
                         <Command.Item
                           onSelect={() => goToSettings("members")}
-                          className="focus:bg-gray-200 focus:outline-none"
-                          tabIndex={0}
+                          className="focus:outline-none"
                         >
                           <div className="flex items-center gap-2 text-gray-700">
                             <SettingIcon className="h-4 w-4 text-gray-500" />
@@ -807,8 +777,7 @@ export const CommandPalette: React.FC = () => {
                         </Command.Item>
                         <Command.Item
                           onSelect={() => goToSettings("billing")}
-                          className="focus:bg-gray-200 focus:outline-none"
-                          tabIndex={0}
+                          className="focus:outline-none"
                         >
                           <div className="flex items-center gap-2 text-gray-700">
                             <SettingIcon className="h-4 w-4 text-gray-500" />
@@ -817,8 +786,7 @@ export const CommandPalette: React.FC = () => {
                         </Command.Item>
                         <Command.Item
                           onSelect={() => goToSettings("integrations")}
-                          className="focus:bg-gray-200 focus:outline-none"
-                          tabIndex={0}
+                          className="focus:outline-none"
                         >
                           <div className="flex items-center gap-2 text-gray-700">
                             <SettingIcon className="h-4 w-4 text-gray-500" />
@@ -827,8 +795,7 @@ export const CommandPalette: React.FC = () => {
                         </Command.Item>
                         <Command.Item
                           onSelect={() => goToSettings("import-export")}
-                          className="focus:bg-gray-200 focus:outline-none"
-                          tabIndex={0}
+                          className="focus:outline-none"
                         >
                           <div className="flex items-center gap-2 text-gray-700">
                             <SettingIcon className="h-4 w-4 text-gray-500" />
