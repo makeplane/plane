@@ -21,6 +21,7 @@ import issuesService from "services/issues.service";
 type Props = {
   handleClose: () => void;
   data?: IPageBlock;
+  setIsSyncing: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const defaultValues = {
@@ -37,7 +38,7 @@ const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor
   ),
 });
 
-export const CreateUpdateBlockInline: React.FC<Props> = ({ handleClose, data }) => {
+export const CreateUpdateBlockInline: React.FC<Props> = ({ handleClose, data, setIsSyncing }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, pageId } = router.query;
 
@@ -50,6 +51,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({ handleClose, data }) 
     watch,
     setValue,
     reset,
+    setFocus,
     formState: { isSubmitting },
   } = useForm<IPageBlock>({
     defaultValues,
@@ -89,7 +91,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({ handleClose, data }) 
   const updatePageBlock = async (formData: Partial<IPageBlock>) => {
     if (!workspaceSlug || !projectId || !pageId || !data) return;
 
-    // if (data.issue && data.sync) setIsSyncing(true);
+    if (data.issue && data.sync) setIsSyncing(true);
 
     mutate<IPageBlock[]>(
       PAGE_BLOCKS_LIST(pageId as string),
@@ -111,16 +113,20 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({ handleClose, data }) 
       .then((res) => {
         mutate(PAGE_BLOCKS_LIST(pageId as string));
         if (data.issue && data.sync)
-          issuesService.patchIssue(workspaceSlug as string, projectId as string, data.issue, {
-            name: res.name,
-            description: res.description,
-            description_html: res.description_html,
-          });
+          issuesService
+            .patchIssue(workspaceSlug as string, projectId as string, data.issue, {
+              name: res.name,
+              description: res.description,
+              description_html: res.description_html,
+            })
+            .finally(() => setIsSyncing(false));
       })
       .finally(() => onClose());
   };
 
   useEffect(() => {
+    setFocus("name");
+
     if (!data) return;
 
     reset({
@@ -129,10 +135,10 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({ handleClose, data }) 
       description: data.description,
       description_html: data.description_html,
     });
-  }, [reset, data]);
+  }, [reset, data, setFocus]);
 
   return (
-    <div className="border rounded-[10px] p-2">
+    <div className="border rounded-[10px] p-2 ml-6">
       <form onSubmit={data ? handleSubmit(updatePageBlock) : handleSubmit(createPageBlock)}>
         <Input
           id="name"

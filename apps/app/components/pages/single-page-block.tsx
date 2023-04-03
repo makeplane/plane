@@ -238,21 +238,36 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
         <>
           {createBlockForm ? (
             <div className="mb-4">
-              <CreateUpdateBlockInline handleClose={() => setCreateBlockForm(false)} data={block} />
+              <CreateUpdateBlockInline
+                handleClose={() => setCreateBlockForm(false)}
+                data={block}
+                setIsSyncing={setIsSyncing}
+              />
             </div>
           ) : (
-            <div className="group relative" ref={provided.innerRef} {...provided.draggableProps}>
-              <button
-                type="button"
-                className="flex p-0.5 hover:bg-gray-100 rounded opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto"
-                {...provided.dragHandleProps}
-              >
-                <EllipsisVerticalIcon className="h-[18px]" />
-                <EllipsisVerticalIcon className="h-[18px] -ml-3" />
-              </button>
+            <div
+              className={`group ${
+                snapshot.isDragging
+                  ? "border-2 bg-white border-theme shadow-lg rounded-md p-4 pl-0"
+                  : ""
+              }`}
+              ref={provided.innerRef}
+              {...provided.draggableProps}
+            >
               <div className="mb-1 flex items-center justify-between gap-2">
-                <h3 className="font-medium">
-                  {block.name} {block.sort_order}
+                <h3
+                  className="font-medium flex items-center gap-2"
+                  onClick={() => setCreateBlockForm(true)}
+                >
+                  <button
+                    type="button"
+                    className="flex p-0.5 hover:bg-gray-100 rounded opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto"
+                    {...provided.dragHandleProps}
+                  >
+                    <EllipsisVerticalIcon className="h-[18px]" />
+                    <EllipsisVerticalIcon className="h-[18px] -ml-3" />
+                  </button>
+                  {block.name}
                 </h3>
                 <div className="flex flex-shrink-0 items-center gap-2">
                   {block.issue && block.sync && (
@@ -309,7 +324,10 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
                   </CustomMenu>
                 </div>
               </div>
-              <div className="page-block-section font relative -mx-3 -mt-3">
+              <div
+                className="page-block-section font relative -mx-3 -mt-3 ml-6"
+                onClick={() => setCreateBlockForm(true)}
+              >
                 <Controller
                   name="description"
                   control={control}

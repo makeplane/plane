@@ -130,13 +130,25 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
                 </button>
               </Tooltip>
               <CustomMenu verticalEllipsis>
-                <CustomMenu.MenuItem onClick={handleEditPage}>
+                <CustomMenu.MenuItem
+                  onClick={(e: any) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleEditPage();
+                  }}
+                >
                   <span className="flex items-center justify-start gap-2">
                     <PencilIcon className="h-3.5 w-3.5" />
                     <span>Edit Page</span>
                   </span>
                 </CustomMenu.MenuItem>
-                <CustomMenu.MenuItem onClick={handleDeletePage}>
+                <CustomMenu.MenuItem
+                  onClick={(e: any) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleDeletePage();
+                  }}
+                >
                   <span className="flex items-center justify-start gap-2">
                     <TrashIcon className="h-3.5 w-3.5" />
                     <span>Delete Page</span>
