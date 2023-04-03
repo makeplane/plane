@@ -121,7 +121,7 @@ export const EmailCodeForm = ({ onSuccess }: any) => {
                 ) || "Email ID is not valid",
             }}
             error={errors.email}
-            placeholder="Enter you email Id"
+            placeholder="Enter your Email ID"
           />
         </div>
 
