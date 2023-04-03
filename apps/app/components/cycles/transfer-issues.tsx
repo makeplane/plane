@@ -43,16 +43,14 @@ export const TransferIssues: React.FC<Props> = ({ handleClick }) => {
         <span>Completed cycles are not editable.</span>
       </div>
 
-      <div>
-        <PrimaryButton
-          onClick={handleClick}
-          className="flex items-center gap-3 rounded-lg"
-          disabled={transferableIssuesCount > 0 ? false : true}
-        >
-          <TransferIcon className="h-4 w-4" />
-          <span className="text-white">Transfer Issues</span>
-        </PrimaryButton>
-      </div>
+      {transferableIssuesCount > 0 && (
+        <div>
+          <PrimaryButton onClick={handleClick} className="flex items-center gap-3 rounded-lg">
+            <TransferIcon className="h-4 w-4" />
+            <span className="text-white">Transfer Issues</span>
+          </PrimaryButton>
+        </div>
+      )}
     </div>
   );
 };
