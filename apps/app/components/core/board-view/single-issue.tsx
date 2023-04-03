@@ -183,12 +183,6 @@ export const SingleBoardIssue: React.FC<Props> = ({
     });
   };
 
-  const handleRedirect = () => {
-    const originURL =
-      typeof window!== "undefined" && window.location.origin? window.location.origin : "";
-    window.open(`${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`,"_blank");
-  }
-
   useEffect(() => {
     if (snapshot.isDragging) handleTrashBox(snapshot.isDragging);
   }, [snapshot, handleTrashBox]);
@@ -219,9 +213,15 @@ export const SingleBoardIssue: React.FC<Props> = ({
         <ContextMenu.Item Icon={LinkIcon} onClick={handleCopyText}>
           Copy issue link
         </ContextMenu.Item>
-        <ContextMenu.Item Icon={ArrowTopRightOnSquareIcon} onClick={handleRedirect}>
-          Open issue in new tab
-        </ContextMenu.Item>
+        <a
+          href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}
+          target="_blank"
+          rel="noreferrer noopener"
+        >
+          <ContextMenu.Item Icon={ArrowTopRightOnSquareIcon}>
+            Open issue in new tab
+          </ContextMenu.Item>
+        </a>
       </ContextMenu>
       <div
         className={`mb-3 rounded bg-white shadow ${
