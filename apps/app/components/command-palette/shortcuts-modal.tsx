@@ -33,6 +33,8 @@ const shortcuts = [
       { keys: "C", description: "To create issue" },
       { keys: "Q", description: "To create cycle" },
       { keys: "M", description: "To create module" },
+      { keys: "V", description: "To create view" },
+      { keys: "D", description: "To create page" },
       { keys: "Delete", description: "To bulk delete issues" },
       { keys: "H", description: "To open shortcuts guide" },
       {
