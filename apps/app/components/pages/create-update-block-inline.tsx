@@ -21,7 +21,7 @@ import issuesService from "services/issues.service";
 type Props = {
   handleClose: () => void;
   data?: IPageBlock;
-  setIsSyncing: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsSyncing?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const defaultValues = {
@@ -90,7 +90,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({ handleClose, data, se
   const updatePageBlock = async (formData: Partial<IPageBlock>) => {
     if (!workspaceSlug || !projectId || !pageId || !data) return;
 
-    if (data.issue && data.sync) setIsSyncing(true);
+    if (data.issue && data.sync && setIsSyncing) setIsSyncing(true);
 
     mutate<IPageBlock[]>(
       PAGE_BLOCKS_LIST(pageId as string),
@@ -118,7 +118,9 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({ handleClose, data, se
               description: res.description,
               description_html: res.description_html,
             })
-            .finally(() => setIsSyncing(false));
+            .finally(() => {
+              if (setIsSyncing) setIsSyncing(false);
+            });
       })
       .finally(() => onClose());
   };
