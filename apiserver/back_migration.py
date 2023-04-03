@@ -6,6 +6,7 @@ from plane.db.models import ProjectIdentifier
 from plane.db.models import Issue, IssueComment, User, Project, ProjectMember
 
 
+
 # Update description and description html values for old descriptions
 def update_description():
     try:
@@ -155,6 +156,20 @@ def update_user_view_property():
         ProjectMember.objects.bulk_update(
             updated_project_members, ["default_props"], batch_size=100
         )
+        print("Success")
+    except Exception as e:
+        print(e)
+        print("Failed")
+
+def update_label_color():
+    try:
+        labels = Label.objects.filter(color="")
+        updated_labels = []
+        for label in labels:
+            label.color = "#" + "%06x" % random.randint(0, 0xFFFFFF)
+            updated_labels.append(label)
+
+        Label.objects.bulk_update(updated_labels, ["color"], batch_size=100)
         print("Success")
     except Exception as e:
         print(e)

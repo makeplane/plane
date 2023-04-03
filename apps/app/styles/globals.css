@@ -128,4 +128,9 @@
 .react-datepicker-popper {
   z-index: 30 !important;
 }
+
+.conical-gradient{
+  background: conic-gradient(from 180deg at 50% 50%, #FF6B00 0deg, #F7AE59 70.5deg, #3F76FF 151.12deg, #05C3FF 213deg, #18914F 289.87deg, #F6F172 329.25deg, #FF6B00 360deg);
+}
+
 /* end react datepicker styling */
