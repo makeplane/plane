@@ -315,9 +315,9 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails }) => {
               onJSONChange={(jsonValue) => setValue("description", jsonValue)}
               onHTMLChange={(htmlValue) => setValue("description_html", htmlValue)}
               placeholder="Block description..."
-              customClassName="border border-transparent"
+              customClassName="border border-transparent text-sm"
               noBorder
-              borderOnFocus
+              borderOnFocus={false}
             />
           )}
         />
