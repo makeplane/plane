@@ -1,10 +1,13 @@
 import React, { useEffect, useState, useRef } from "react";
 // headless ui
 import { Tab, Transition, Popover } from "@headlessui/react";
+// react colors
+import { TwitterPicker } from "react-color";
 // types
 import { Props } from "./types";
 // emojis
 import emojis from "./emojis.json";
+import icons from "./icons.json";
 // helpers
 import { getRecentEmojis, saveRecentEmoji } from "./helpers";
 import { getRandomEmoji } from "helpers/common.helper";
@@ -22,10 +25,18 @@ const tabOptions = [
   },
 ];
 
-const EmojiIconPicker: React.FC<Props> = ({ label, value, onChange }) => {
+const EmojiIconPicker: React.FC<Props> = ({
+  label,
+  value,
+  onChange,
+  onIconColorChange,
+  onIconsClick,
+}) => {
   const ref = useRef<HTMLDivElement>(null);
 
   const [isOpen, setIsOpen] = useState(false);
+  const [openColorPicker, setOpenColorPicker] = useState(false);
+  const [activeColor, setActiveColor] = useState<string>("#020617");
 
   const [recentEmojis, setRecentEmojis] = useState<string[]>([]);
 
@@ -63,15 +74,20 @@ const EmojiIconPicker: React.FC<Props> = ({ label, value, onChange }) => {
             <Tab.Group as="div" className="flex h-full w-full flex-col">
               <Tab.List className="flex-0 -mx-2 flex justify-around gap-1 border-b p-1">
                 {tabOptions.map((tab) => (
-                  <Tab
-                    key={tab.key}
-                    className={({ selected }) =>
-                      `-my-1 w-1/2 border-b py-2 text-center text-sm font-medium outline-none transition-colors ${
-                        selected ? "border-theme" : "border-transparent"
-                      }`
-                    }
-                  >
-                    {tab.title}
+                  <Tab key={tab.key} as={React.Fragment}>
+                    {({ selected }) => (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setOpenColorPicker(false);
+                        }}
+                        className={`-my-1 w-1/2 border-b py-2 text-center text-sm font-medium outline-none transition-colors ${
+                          selected ? "border-theme" : "border-transparent"
+                        }`}
+                      >
+                        {tab.title}
+                      </button>
+                    )}
                   </Tab>
                 ))}
               </Tab.List>
@@ -117,9 +133,50 @@ const EmojiIconPicker: React.FC<Props> = ({ label, value, onChange }) => {
                     </div>
                   </div>
                 </Tab.Panel>
-                <Tab.Panel className="flex h-full w-full flex-col items-center justify-center">
-                  <p>Coming Soon...</p>
-                </Tab.Panel>
+                <div className="py-2">
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={() => setOpenColorPicker((prev) => !prev)}
+                      className="mb-2 flex items-center gap-2"
+                    >
+                      <span>Select Color</span>
+                      <span className="w-7 h-7" style={{ backgroundColor: activeColor }} />
+                    </button>
+                    <div>
+                      <TwitterPicker
+                        className={`m-2 !absolute top-5 z-10 ${
+                          openColorPicker ? "block" : "hidden"
+                        }`}
+                        color={activeColor}
+                        onChange={(color) => {
+                          setActiveColor(color.hex);
+                          if (onIconColorChange) onIconColorChange(color.hex);
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <Tab.Panel className="flex h-full w-full flex-col justify-center">
+                    <h3 className="mb-2">Rounded Icons</h3>
+                    <div className="grid grid-cols-9 gap-2">
+                      {icons.material_rounded.map((icon) => (
+                        <button
+                          type="button"
+                          className="select-none text-lg hover:bg-hover-gray"
+                          key={icon.name}
+                          onClick={() => {
+                            if (onIconsClick) onIconsClick(icon.name);
+                            setIsOpen(false);
+                          }}
+                        >
+                          <span style={{ color: activeColor }} className="material-symbols-rounded">
+                            {icon.name}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </Tab.Panel>
+                </div>
               </Tab.Panels>
             </Tab.Group>
           </div>
