@@ -31,5 +31,10 @@
 }
 
 [cmdk-item]:hover {
-  background-color: rgb(243 244 246);
+  background-color: rgb(229 231 235);
+}
+
+
+[aria-selected="true"] {
+  background-color: rgb(229 231 235);
 }
