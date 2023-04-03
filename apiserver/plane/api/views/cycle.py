@@ -317,21 +317,19 @@ class CycleIssueViewSet(BaseViewSet):
 
             # Capture Issue Activity
             issue_activity.delay(
-                {
-                    "type": "issue.activity",
-                    "requested_data": json.dumps({"cycles_list": issues}),
-                    "actor_id": str(self.request.user.id),
-                    "issue_id": str(self.kwargs.get("pk", None)),
-                    "project_id": str(self.kwargs.get("project_id", None)),
-                    "current_instance": json.dumps(
-                        {
-                            "updated_cycle_issues": update_cycle_issue_activity,
-                            "created_cycle_issues": serializers.serialize(
-                                "json", record_to_create
-                            ),
-                        }
-                    ),
-                },
+                type="issue.activity.updated",
+                requested_data=json.dumps({"cycles_list": issues}),
+                actor_id=str(self.request.user.id),
+                issue_id=str(self.kwargs.get("pk", None)),
+                project_id=str(self.kwargs.get("project_id", None)),
+                current_instance=json.dumps(
+                    {
+                        "updated_cycle_issues": update_cycle_issue_activity,
+                        "created_cycle_issues": serializers.serialize(
+                            "json", record_to_create
+                        ),
+                    }
+                ),
             )
 
             # Return all Cycle Issues

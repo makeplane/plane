@@ -738,26 +738,13 @@ def delete_comment_activity(
 
 # Receive message from room group
 @shared_task
-def issue_activity(event):
+def issue_activity(
+    type, requested_data, current_instance, issue_id, actor_id, project_id
+):
     try:
         issue_activities = []
-        type = event.get("type")
-        requested_data = (
-            json.loads(event.get("requested_data"))
-            if event.get("current_instance") is not None
-            else None
-        )
-        current_instance = (
-            json.loads(event.get("current_instance"))
-            if event.get("current_instance") is not None
-            else None
-        )
-        issue_id = event.get("issue_id", None)
-        actor_id = event.get("actor_id")
-        project_id = event.get("project_id")
 
         actor = User.objects.get(pk=actor_id)
-
         project = Project.objects.get(pk=project_id)
 
         ACTIVITY_MAPPER = {
