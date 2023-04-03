@@ -1,3 +1,6 @@
+# Python import
+from uuid import uuid4
+
 # Django imports
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
@@ -5,6 +8,7 @@ from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 # Module imports
 from . import ProjectBaseModel
@@ -54,7 +58,6 @@ class Issue(ProjectBaseModel):
         through_fields=("issue", "assignee"),
     )
     sequence_id = models.IntegerField(default=1, verbose_name="Issue Sequence ID")
-    attachments = ArrayField(models.URLField(), size=10, blank=True, default=list)
     labels = models.ManyToManyField(
         "db.Label", blank=True, related_name="labels", through="IssueLabel"
     )
@@ -192,6 +195,38 @@ class IssueLink(ProjectBaseModel):
 
     def __str__(self):
         return f"{self.issue.name} {self.url}"
+
+
+def get_upload_path(instance, filename):
+    return f"{instance.workspace.id}/{uuid4().hex}-{filename}"
+
+
+def file_size(value):
+    limit = 5 * 1024 * 1024
+    if value.size > limit:
+        raise ValidationError("File too large. Size should not exceed 5 MB.")
+
+
+class IssueAttachment(ProjectBaseModel):
+    attributes = models.JSONField(default=dict)
+    asset = models.FileField(
+        upload_to=get_upload_path,
+        validators=[
+            file_size,
+        ],
+    )
+    issue = models.ForeignKey(
+        "db.Issue", on_delete=models.CASCADE, related_name="issue_attachment"
+    )
+
+    class Meta:
+        verbose_name = "Issue Attachment"
+        verbose_name_plural = "Issue Attachments"
+        db_table = "issue_attachments"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.issue.name} {self.asset}"
 
 
 class IssueActivity(ProjectBaseModel):
