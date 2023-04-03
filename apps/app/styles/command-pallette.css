@@ -34,7 +34,6 @@
   background-color: rgb(229 231 235);
 }
 
-
-[aria-selected="true"] {
+[cmdk-item][aria-selected="true"] {
   background-color: rgb(229 231 235);
 }
