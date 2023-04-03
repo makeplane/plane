@@ -69,10 +69,10 @@ const EmojiIconPicker: React.FC<Props> = ({
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Popover.Panel className="absolute z-10 mt-2 w-80 rounded-lg bg-white shadow-lg">
-          <div className="h-72 w-80 overflow-auto rounded border bg-white p-2 shadow-2xl">
+        <Popover.Panel className="absolute z-10 mt-2 w-[250px] rounded-[4px] bg-white shadow-lg">
+          <div className="h-[230px] w-[250px] overflow-auto border rounded-[4px] bg-white p-2 shadow-xl">
             <Tab.Group as="div" className="flex h-full w-full flex-col">
-              <Tab.List className="flex-0 -mx-2 flex justify-around gap-1 border-b p-1">
+              <Tab.List className="flex-0 -mx-2 flex justify-around gap-1 p-1">
                 {tabOptions.map((tab) => (
                   <Tab key={tab.key} as={React.Fragment}>
                     {({ selected }) => (
@@ -81,7 +81,7 @@ const EmojiIconPicker: React.FC<Props> = ({
                         onClick={() => {
                           setOpenColorPicker(false);
                         }}
-                        className={`-my-1 w-1/2 border-b py-2 text-center text-sm font-medium outline-none transition-colors ${
+                        className={`-my-1 w-1/2 border-b pb-2 text-center text-sm font-medium outline-none transition-colors ${
                           selected ? "border-theme" : "border-transparent"
                         }`}
                       >
@@ -95,12 +95,12 @@ const EmojiIconPicker: React.FC<Props> = ({
                 <Tab.Panel>
                   {recentEmojis.length > 0 && (
                     <div className="py-2">
-                      <h3 className="mb-2">Recent Emojis</h3>
-                      <div className="grid grid-cols-9 gap-2">
+                      {/* <h3 className="mb-2">Recent Emojis</h3> */}
+                      <div className="grid grid-cols-10">
                         {recentEmojis.map((emoji) => (
                           <button
                             type="button"
-                            className="select-none text-lg hover:bg-hover-gray"
+                            className="h-4 w-4 select-none text-sm hover:bg-hover-gray flex items-center justify-between"
                             key={emoji}
                             onClick={() => {
                               onChange(emoji);
@@ -113,13 +113,14 @@ const EmojiIconPicker: React.FC<Props> = ({
                       </div>
                     </div>
                   )}
+                  <hr className="w-full h-[1px] mb-2" />
                   <div>
-                    <h3 className="mb-2">All Emojis</h3>
-                    <div className="grid grid-cols-9 gap-2">
+                    {/* <h3 className="mb-1">All Emojis</h3> */}
+                    <div className="grid grid-cols-10 gap-y-1">
                       {emojis.map((emoji) => (
                         <button
                           type="button"
-                          className="select-none text-lg hover:bg-hover-gray"
+                          className="h-4 w-4 mb-1 select-none text-sm hover:bg-hover-gray flex items-center"
                           key={emoji}
                           onClick={() => {
                             onChange(emoji);
@@ -135,17 +136,38 @@ const EmojiIconPicker: React.FC<Props> = ({
                 </Tab.Panel>
                 <div className="py-2">
                   <div className="relative">
-                    <button
-                      type="button"
-                      onClick={() => setOpenColorPicker((prev) => !prev)}
-                      className="mb-2 flex items-center gap-2"
-                    >
-                      <span>Select Color</span>
-                      <span className="w-7 h-7" style={{ backgroundColor: activeColor }} />
-                    </button>
+                    <div className="pb-2 flex items-center justify-between">
+                      {[
+                        "#D687FF",
+                        "#F7AE59",
+                        "#FF6B00",
+                        "#8CC1FF",
+                        "#FCBE1D",
+                        "#18904F",
+                        "#ADF672",
+                        "#05C3FF",
+                        "#000000",
+                      ].map((curCol) => (
+                        <span
+                          className="w-4 h-4 rounded-full cursor-pointer"
+                          style={{ backgroundColor: curCol }}
+                          onClick={() => setActiveColor(curCol)}
+                        />
+                      ))}
+                      <button
+                        type="button"
+                        onClick={() => setOpenColorPicker((prev) => !prev)}
+                        className="flex items-center gap-1"
+                      >
+                        <span
+                          className="w-4 h-4 rounded-full conical-gradient"
+                          style={{ backgroundColor: activeColor }}
+                        />
+                      </button>
+                    </div>
                     <div>
                       <TwitterPicker
-                        className={`m-2 !absolute top-5 z-10 ${
+                        className={`m-2 !absolute top-4 left-4 z-10 ${
                           openColorPicker ? "block" : "hidden"
                         }`}
                         color={activeColor}
@@ -153,23 +175,28 @@ const EmojiIconPicker: React.FC<Props> = ({
                           setActiveColor(color.hex);
                           if (onIconColorChange) onIconColorChange(color.hex);
                         }}
+                        triangle="hide"
+                        width="205px"
                       />
                     </div>
                   </div>
+                  <hr className="w-full h-[1px] mb-1" />
                   <Tab.Panel className="flex h-full w-full flex-col justify-center">
-                    <h3 className="mb-2">Rounded Icons</h3>
-                    <div className="grid grid-cols-9 gap-2">
+                    <div className="grid grid-cols-10 mt-1 ml-1 gap-1">
                       {icons.material_rounded.map((icon) => (
                         <button
                           type="button"
-                          className="select-none text-lg hover:bg-hover-gray"
+                          className="h-4 w-4 mb-1 select-none text-lg hover:bg-hover-gray flex items-center"
                           key={icon.name}
                           onClick={() => {
                             if (onIconsClick) onIconsClick(icon.name);
                             setIsOpen(false);
                           }}
                         >
-                          <span style={{ color: activeColor }} className="material-symbols-rounded">
+                          <span
+                            style={{ color: activeColor }}
+                            className="material-symbols-rounded text-base"
+                          >
                             {icon.name}
                           </span>
                         </button>
