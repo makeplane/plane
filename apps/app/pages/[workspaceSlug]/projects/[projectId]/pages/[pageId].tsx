@@ -65,11 +65,11 @@ const SinglePage: NextPage<UserAuth> = (props) => {
     workspaceSlug && projectId && pageId ? PAGE_DETAILS(pageId as string) : null,
     workspaceSlug && projectId
       ? () =>
-        pagesService.getPageDetails(
-          workspaceSlug as string,
-          projectId as string,
-          pageId as string
-        )
+          pagesService.getPageDetails(
+            workspaceSlug as string,
+            projectId as string,
+            pageId as string
+          )
       : null
   );
 
@@ -77,11 +77,11 @@ const SinglePage: NextPage<UserAuth> = (props) => {
     workspaceSlug && projectId && pageId ? PAGE_BLOCKS_LIST(pageId as string) : null,
     workspaceSlug && projectId
       ? () =>
-        pagesService.listPageBlocks(
-          workspaceSlug as string,
-          projectId as string,
-          pageId as string
-        )
+          pagesService.listPageBlocks(
+            workspaceSlug as string,
+            projectId as string,
+            pageId as string
+          )
       : null
   );
 
@@ -272,8 +272,9 @@ const SinglePage: NextPage<UserAuth> = (props) => {
                         key={label.id}
                         className="group flex items-center gap-1 rounded-2xl border px-2 py-0.5 text-xs"
                         style={{
-                          backgroundColor: `${label?.color && label.color !== "" ? label.color : "#000000"
-                            }20`,
+                          backgroundColor: `${
+                            label?.color && label.color !== "" ? label.color : "#000000"
+                          }20`,
                         }}
                       >
                         <span
@@ -341,8 +342,9 @@ const SinglePage: NextPage<UserAuth> = (props) => {
                     <>
                       <Popover.Button
                         type="button"
-                        className={`group inline-flex items-center outline-none ${open ? "text-gray-900" : "text-gray-500"
-                          }`}
+                        className={`group inline-flex items-center outline-none ${
+                          open ? "text-gray-900" : "text-gray-500"
+                        }`}
                       >
                         {watch("color") && watch("color") !== "" ? (
                           <span
@@ -418,7 +420,7 @@ const SinglePage: NextPage<UserAuth> = (props) => {
                 )}
                 <button
                   type="button"
-                  className="flex items-center gap-1 rounded bg-gray-100 px-2.5 py-1 text-xs hover:bg-gray-200"
+                  className="flex items-center gap-1 rounded bg-gray-100 px-2.5 py-1 text-xs hover:bg-gray-200 mt-4"
                   onClick={createPageBlock}
                   disabled={isAddingBlock}
                 >
