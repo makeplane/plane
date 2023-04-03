@@ -107,7 +107,7 @@ export const ImagePickerPopover: React.FC<Props> = ({ label, value, onChange }) 
                       onChange={(e) => setFormData({ ...formData, search: e.target.value })}
                       placeholder="Search for images"
                     />
-                    <PrimaryButton className="bg-indigo-600" size="sm">
+                    <PrimaryButton type="submit" className="bg-indigo-600" size="sm">
                       Search
                     </PrimaryButton>
                   </form>
