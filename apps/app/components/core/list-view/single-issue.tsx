@@ -27,6 +27,7 @@ import {
   PencilIcon,
   TrashIcon,
   XMarkIcon,
+  ArrowTopRightOnSquareIcon,
 } from "@heroicons/react/24/outline";
 // helpers
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
@@ -152,6 +153,12 @@ export const SingleListIssue: React.FC<Props> = ({
     });
   };
 
+  const handleRedirect = () => {
+    const originURL =
+      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    window.open(`${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`, "_blank");
+  };
+
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer || isCompleted;
 
   return (
@@ -177,6 +184,9 @@ export const SingleListIssue: React.FC<Props> = ({
         )}
         <ContextMenu.Item Icon={LinkIcon} onClick={handleCopyText}>
           Copy issue link
+        </ContextMenu.Item>
+        <ContextMenu.Item Icon={ArrowTopRightOnSquareIcon} onClick={handleRedirect}>
+          Open issue in new tab
         </ContextMenu.Item>
       </ContextMenu>
       <div className="border-b border-gray-300 last:border-b-0">
