@@ -29,7 +29,14 @@ import { CreateUpdateBlockInline, SinglePageBlock } from "components/pages";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import { CustomSearchSelect, Loader, PrimaryButton, TextArea, Tooltip } from "components/ui";
 // icons
-import { ArrowLeftIcon, PlusIcon, ShareIcon, StarIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowLeftIcon,
+  LockClosedIcon,
+  LockOpenIcon,
+  PlusIcon,
+  ShareIcon,
+  StarIcon,
+} from "@heroicons/react/24/outline";
 import { ColorPalletteIcon } from "components/icons";
 // helpers
 import { renderShortTime } from "helpers/date-time.helper";
@@ -375,7 +382,7 @@ const SinglePage: NextPage<UserAuth> = (props) => {
                             }}
                           />
                         ) : (
-                          <ColorPalletteIcon height={16} width={16} />
+                          <ColorPalletteIcon height={16} width={16} color="#000000" />
                         )}
                       </Popover.Button>
 
@@ -399,6 +406,19 @@ const SinglePage: NextPage<UserAuth> = (props) => {
                   )}
                 </Popover>
               </div>
+              {pageDetails.access ? (
+                <button onClick={() => partialUpdatePage({ access: 0 })} className="z-10">
+                  <LockClosedIcon className="h-4 w-4" />
+                </button>
+              ) : (
+                <button
+                  onClick={() => partialUpdatePage({ access: 1 })}
+                  type="button"
+                  className="z-10"
+                >
+                  <LockOpenIcon className="h-4 w-4" />
+                </button>
+              )}
               {pageDetails.is_favorite ? (
                 <button onClick={handleRemoveFromFavorites} className="z-10">
                   <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />

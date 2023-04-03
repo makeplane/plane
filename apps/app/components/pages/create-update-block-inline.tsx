@@ -163,16 +163,6 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({ handleClose, data }) 
               />
             )}
           />
-          {/* <GptAssistantModal
-            block={block}
-            isOpen={gptAssistantModal}
-            handleClose={() => setGptAssistantModal(false)}
-            inset="top-2 left-0"
-            content={block.description_stripped}
-            htmlContent={block.description_html}
-            onResponse={handleAiAssistance}
-            projectId={projectId as string}
-          /> */}
         </div>
         <div className="flex justify-end items-center gap-2">
           <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>

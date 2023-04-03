@@ -21,7 +21,13 @@ import { CustomMenu, Input, Loader } from "components/ui";
 // icons
 import { LayerDiagonalIcon } from "components/icons";
 import { ArrowPathIcon } from "@heroicons/react/20/solid";
-import { BoltIcon, CheckIcon, PencilIcon, SparklesIcon } from "@heroicons/react/24/outline";
+import {
+  BoltIcon,
+  CheckIcon,
+  EllipsisVerticalIcon,
+  PencilIcon,
+  SparklesIcon,
+} from "@heroicons/react/24/outline";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
@@ -231,10 +237,20 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
       {(provided, snapshot) => (
         <>
           {createBlockForm ? (
-            <CreateUpdateBlockInline handleClose={() => setCreateBlockForm(false)} data={block} />
+            <div className="mb-4">
+              <CreateUpdateBlockInline handleClose={() => setCreateBlockForm(false)} data={block} />
+            </div>
           ) : (
-            <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
-              <div className="mt-4 mb-1 flex items-center justify-between gap-2">
+            <div className="group relative" ref={provided.innerRef} {...provided.draggableProps}>
+              <button
+                type="button"
+                className="flex p-0.5 hover:bg-gray-100 rounded opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto"
+                {...provided.dragHandleProps}
+              >
+                <EllipsisVerticalIcon className="h-[18px]" />
+                <EllipsisVerticalIcon className="h-[18px] -ml-3" />
+              </button>
+              <div className="mb-1 flex items-center justify-between gap-2">
                 <h3 className="font-medium">
                   {block.name} {block.sort_order}
                 </h3>
