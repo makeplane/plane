@@ -12,3 +12,4 @@ export * from "./not-authorized-view";
 export * from "./image-picker-popover";
 export * from "./filter-list";
 export * from "./feeds";
+export * from "./theme-switch";
