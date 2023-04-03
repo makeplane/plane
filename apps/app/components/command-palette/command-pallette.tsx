@@ -51,6 +51,8 @@ import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import { CreateUpdateModuleModal } from "components/modules";
 import { CreateProjectModal } from "components/project";
 import { CreateUpdateViewModal } from "components/views";
+import { CreateUpdatePageModal } from "components/pages";
+
 import { Spinner } from "components/ui";
 // helpers
 import {
@@ -76,6 +78,7 @@ export const CommandPalette: React.FC = () => {
   const [isCreateModuleModalOpen, setIsCreateModuleModalOpen] = useState(false);
   const [isBulkDeleteIssuesModalOpen, setIsBulkDeleteIssuesModalOpen] = useState(false);
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
+  const [isCreateUpdatePageModalOpen, setIsCreateUpdatePageModalOpen] = useState(false);
 
   const [searchTerm, setSearchTerm] = React.useState<string>("");
   const [results, setResults] = useState<IWorkspaceSearchResults>({
@@ -193,6 +196,12 @@ export const CommandPalette: React.FC = () => {
         } else if (e.key.toLowerCase() === "p") {
           e.preventDefault();
           setIsProjectModalOpen(true);
+        } else if (e.key.toLowerCase() === "v") {
+          e.preventDefault();
+          setIsCreateViewModalOpen(true);
+        } else if (e.key.toLowerCase() === "d") {
+          e.preventDefault();
+          setIsCreateUpdatePageModalOpen(true);
         } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "b") {
           e.preventDefault();
           toggleCollapsed();
@@ -322,6 +331,10 @@ export const CommandPalette: React.FC = () => {
           <CreateUpdateViewModal
             handleClose={() => setIsCreateViewModalOpen(false)}
             isOpen={isCreateViewModalOpen}
+          />
+          <CreateUpdatePageModal
+            isOpen={isCreateUpdatePageModalOpen}
+            handleClose={() => setIsCreateUpdatePageModalOpen(false)}
           />
         </>
       )}
