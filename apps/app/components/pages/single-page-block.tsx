@@ -14,24 +14,26 @@ import issuesService from "services/issues.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components
-import { CreateUpdateIssueModal } from "components/issues";
 import { GptAssistantModal } from "components/core";
+import { CreateUpdateBlockInline } from "components/pages";
 // ui
-import { CustomMenu, Input, Loader, TextArea } from "components/ui";
+import { CustomMenu, Input, Loader } from "components/ui";
 // icons
 import { LayerDiagonalIcon } from "components/icons";
 import { ArrowPathIcon } from "@heroicons/react/20/solid";
-import { BoltIcon, CheckIcon, SparklesIcon } from "@heroicons/react/24/outline";
+import { BoltIcon, CheckIcon, PencilIcon, SparklesIcon } from "@heroicons/react/24/outline";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
 import { IIssue, IPageBlock, IProject } from "types";
 // fetch-keys
 import { PAGE_BLOCKS_LIST } from "constants/fetch-keys";
+import { Draggable } from "react-beautiful-dnd";
 
 type Props = {
   block: IPageBlock;
   projectDetails: IProject | undefined;
+  index: number;
 };
 
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
@@ -43,9 +45,9 @@ const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor
   ),
 });
 
-export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails }) => {
-  const [createUpdateIssueModal, setCreateUpdateIssueModal] = useState(false);
+export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index }) => {
   const [isSyncing, setIsSyncing] = useState(false);
+  const [createBlockForm, setCreateBlockForm] = useState(false);
 
   const [gptAssistantModal, setGptAssistantModal] = useState(false);
 
@@ -54,7 +56,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails }) => {
 
   const { setToastAlert } = useToast();
 
-  const { handleSubmit, watch, reset, setValue, control } = useForm<IPageBlock>({
+  const { handleSubmit, watch, reset, setValue, control, register } = useForm<IPageBlock>({
     defaultValues: {
       name: "",
       description: {},
@@ -134,10 +136,6 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails }) => {
           message: "Page block could not be converted to issue. Please try again.",
         });
       });
-  };
-
-  const editAndPushBlockIntoIssues = async () => {
-    setCreateUpdateIssueModal(true);
   };
 
   const deletePageBlock = async () => {
@@ -229,109 +227,106 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails }) => {
   }, [reset, block]);
 
   return (
-    <div>
-      <CreateUpdateIssueModal
-        isOpen={createUpdateIssueModal}
-        handleClose={() => setCreateUpdateIssueModal(false)}
-        prePopulateData={{
-          name: watch("name"),
-          description: watch("description"),
-          description_html: watch("description_html"),
-        }}
-      />
-      <div className="-mx-3 mt-4 flex items-center justify-between gap-2">
-        <Input
-          id="name"
-          name="name"
-          placeholder="Block title"
-          value={watch("name")}
-          onBlur={handleSubmit(updatePageBlock)}
-          onChange={(e) => setValue("name", e.target.value)}
-          required={true}
-          className="min-h-10 block w-full resize-none overflow-hidden border-none bg-transparent py-1 text-base font-medium ring-0 focus:ring-1 focus:ring-gray-200"
-          role="textbox"
-        />
-        <div className="flex flex-shrink-0 items-center gap-2">
-          {block.issue && block.sync && (
-            <div className="flex flex-shrink-0 cursor-default items-center gap-1 rounded bg-gray-100 py-1 px-1.5 text-xs">
-              {isSyncing ? (
-                <ArrowPathIcon className="h-3 w-3 animate-spin" />
-              ) : (
-                <CheckIcon className="h-3 w-3" />
-              )}
-              {isSyncing ? "Syncing..." : "Synced"}
+    <Draggable draggableId={block.id} index={index}>
+      {(provided, snapshot) => (
+        <>
+          {createBlockForm ? (
+            <CreateUpdateBlockInline handleClose={() => setCreateBlockForm(false)} data={block} />
+          ) : (
+            <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+              <div className="mt-4 mb-1 flex items-center justify-between gap-2">
+                <h3 className="font-medium">
+                  {block.name} {block.sort_order}
+                </h3>
+                <div className="flex flex-shrink-0 items-center gap-2">
+                  {block.issue && block.sync && (
+                    <div className="flex flex-shrink-0 cursor-default items-center gap-1 rounded bg-gray-100 py-1 px-1.5 text-xs">
+                      {isSyncing ? (
+                        <ArrowPathIcon className="h-3 w-3 animate-spin" />
+                      ) : (
+                        <CheckIcon className="h-3 w-3" />
+                      )}
+                      {isSyncing ? "Syncing..." : "Synced"}
+                    </div>
+                  )}
+                  {block.issue && (
+                    <Link href={`/${workspaceSlug}/projects/${projectId}/issues/${block.issue}`}>
+                      <a className="flex flex-shrink-0 items-center gap-1 rounded bg-gray-100 px-1.5 py-1 text-xs">
+                        <LayerDiagonalIcon height="16" width="16" color="black" />
+                        {projectDetails?.identifier}-{block.issue_detail?.sequence_id}
+                      </a>
+                    </Link>
+                  )}
+                  <button
+                    type="button"
+                    className="-mr-2 flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-gray-100"
+                    onClick={() => setGptAssistantModal((prevData) => !prevData)}
+                  >
+                    <SparklesIcon className="h-4 w-4" />
+                    AI
+                  </button>
+                  <button
+                    type="button"
+                    className="-mr-2 flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-gray-100"
+                    onClick={() => setCreateBlockForm(true)}
+                  >
+                    <PencilIcon className="h-3.5 w-3.5" />
+                  </button>
+                  <CustomMenu label={<BoltIcon className="h-4.5 w-3.5" />} noBorder noChevron>
+                    {block.issue ? (
+                      <>
+                        <CustomMenu.MenuItem onClick={handleBlockSync}>
+                          <>Turn sync {block.sync ? "off" : "on"}</>
+                        </CustomMenu.MenuItem>
+                        <CustomMenu.MenuItem onClick={handleCopyText}>
+                          Copy issue link
+                        </CustomMenu.MenuItem>
+                      </>
+                    ) : (
+                      <CustomMenu.MenuItem onClick={pushBlockIntoIssues}>
+                        Push into issues
+                      </CustomMenu.MenuItem>
+                    )}
+                    <CustomMenu.MenuItem onClick={deletePageBlock}>
+                      Delete block
+                    </CustomMenu.MenuItem>
+                  </CustomMenu>
+                </div>
+              </div>
+              <div className="page-block-section font relative -mx-3 -mt-3">
+                <Controller
+                  name="description"
+                  control={control}
+                  render={({ field: { value } }) => (
+                    <RemirrorRichTextEditor
+                      value={
+                        !value || (typeof value === "object" && Object.keys(value).length === 0)
+                          ? watch("description_html")
+                          : value
+                      }
+                      placeholder="Description"
+                      customClassName="text-sm"
+                      noBorder
+                      borderOnFocus={false}
+                      editable={false}
+                    />
+                  )}
+                />
+                <GptAssistantModal
+                  block={block}
+                  isOpen={gptAssistantModal}
+                  handleClose={() => setGptAssistantModal(false)}
+                  inset="top-2 left-0"
+                  content={block.description_stripped}
+                  htmlContent={block.description_html}
+                  onResponse={handleAiAssistance}
+                  projectId={projectId as string}
+                />
+              </div>
             </div>
           )}
-          {block.issue && (
-            <Link href={`/${workspaceSlug}/projects/${projectId}/issues/${block.issue}`}>
-              <a className="flex flex-shrink-0 items-center gap-1 rounded bg-gray-100 px-1.5 py-1 text-xs">
-                <LayerDiagonalIcon height="16" width="16" color="black" />
-                {projectDetails?.identifier}-{block.issue_detail?.sequence_id}
-              </a>
-            </Link>
-          )}
-          <button
-            type="button"
-            className="-mr-2 flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-gray-100"
-            onClick={() => setGptAssistantModal((prevData) => !prevData)}
-          >
-            <SparklesIcon className="h-4 w-4" />
-            AI
-          </button>
-          <CustomMenu label={<BoltIcon className="h-4.5 w-3.5" />} noBorder noChevron>
-            {block.issue ? (
-              <>
-                <CustomMenu.MenuItem onClick={handleBlockSync}>
-                  <>Turn sync {block.sync ? "off" : "on"}</>
-                </CustomMenu.MenuItem>
-                <CustomMenu.MenuItem onClick={handleCopyText}>Copy issue link</CustomMenu.MenuItem>
-              </>
-            ) : (
-              <>
-                <CustomMenu.MenuItem onClick={pushBlockIntoIssues}>
-                  Push into issues
-                </CustomMenu.MenuItem>
-                {/* <CustomMenu.MenuItem onClick={editAndPushBlockIntoIssues}>
-                  Edit and push into issues
-                </CustomMenu.MenuItem> */}
-              </>
-            )}
-            <CustomMenu.MenuItem onClick={deletePageBlock}>Delete block</CustomMenu.MenuItem>
-          </CustomMenu>
-        </div>
-      </div>
-      <div className="page-block-section font relative -mx-3 -mt-3">
-        <Controller
-          name="description"
-          control={control}
-          render={({ field: { value } }) => (
-            <RemirrorRichTextEditor
-              value={
-                !value || (typeof value === "object" && Object.keys(value).length === 0)
-                  ? watch("description_html")
-                  : value
-              }
-              onBlur={handleSubmit(updatePageBlock)}
-              onJSONChange={(jsonValue) => setValue("description", jsonValue)}
-              onHTMLChange={(htmlValue) => setValue("description_html", htmlValue)}
-              placeholder="Block description..."
-              customClassName="border border-transparent text-sm"
-              noBorder
-              borderOnFocus={false}
-            />
-          )}
-        />
-        <GptAssistantModal
-          block={block}
-          isOpen={gptAssistantModal}
-          handleClose={() => setGptAssistantModal(false)}
-          inset="top-2 left-0"
-          content={block.description_stripped}
-          htmlContent={block.description_html}
-          onResponse={handleAiAssistance}
-          projectId={projectId as string}
-        />
-      </div>
-    </div>
+        </>
+      )}
+    </Draggable>
   );
 };
