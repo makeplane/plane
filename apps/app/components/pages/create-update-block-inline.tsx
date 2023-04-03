@@ -15,7 +15,7 @@ import { Input, Loader, PrimaryButton, SecondaryButton } from "components/ui";
 import { IPageBlock } from "types";
 // fetch-keys
 import { PAGE_BLOCKS_LIST } from "constants/fetch-keys";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import issuesService from "services/issues.service";
 
 type Props = {
@@ -51,16 +51,15 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({ handleClose, data, se
     watch,
     setValue,
     reset,
-    setFocus,
     formState: { isSubmitting },
   } = useForm<IPageBlock>({
     defaultValues,
   });
 
-  const onClose = () => {
+  const onClose = useCallback(() => {
     handleClose();
     reset();
-  };
+  }, [handleClose, reset]);
 
   const createPageBlock = async (formData: Partial<IPageBlock>) => {
     if (!workspaceSlug || !projectId || !pageId) return;
@@ -125,8 +124,6 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({ handleClose, data, se
   };
 
   useEffect(() => {
-    setFocus("name");
-
     if (!data) return;
 
     reset({
@@ -135,7 +132,19 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({ handleClose, data, se
       description: data.description,
       description_html: data.description_html,
     });
-  }, [reset, data, setFocus]);
+  }, [reset, data]);
+
+  useEffect(() => {
+    window.addEventListener("keydown", (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    });
+
+    return () => {
+      window.removeEventListener("keydown", (e: KeyboardEvent) => {
+        if (e.key === "Escape") onClose();
+      });
+    };
+  }, [onClose]);
 
   return (
     <div className="border rounded-[10px] p-2 ml-6">

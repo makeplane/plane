@@ -255,10 +255,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
               {...provided.draggableProps}
             >
               <div className="mb-1 flex items-center justify-between gap-2">
-                <h3
-                  className="font-medium flex items-center gap-2"
-                  onClick={() => setCreateBlockForm(true)}
-                >
+                <div className="flex items-center gap-2">
                   <button
                     type="button"
                     className="flex p-0.5 hover:bg-gray-100 rounded opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto"
@@ -267,8 +264,10 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
                     <EllipsisVerticalIcon className="h-[18px]" />
                     <EllipsisVerticalIcon className="h-[18px] -ml-3" />
                   </button>
-                  {block.name}
-                </h3>
+                  <h3 className="font-medium" onClick={() => setCreateBlockForm(true)}>
+                    {block.name}
+                  </h3>
+                </div>
                 <div className="flex flex-shrink-0 items-center gap-2">
                   {block.issue && block.sync && (
                     <div className="flex flex-shrink-0 cursor-default items-center gap-1 rounded bg-gray-100 py-1 px-1.5 text-xs">
