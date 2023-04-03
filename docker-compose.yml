@@ -21,7 +21,7 @@ services:
       POSTGRES_USER: plane
       POSTGRES_DB: plane
       POSTGRES_PASSWORD: xyzzyspoon
-      PGDATA : /var/lib/postgresql/data
+      PGDATA: /var/lib/postgresql/data
     command: postgres -c 'max_connections=1000'
     ports:
       - 5432:5432
@@ -39,7 +39,7 @@ services:
       context: .
       dockerfile: ./apps/app/Dockerfile.web
     restart: always
-    command:  node apps/app/server.js
+    command: node apps/app/server.js
     env_file:
       - ./apps/app/.env
     ports:
@@ -62,7 +62,7 @@ services:
       - db:db
       - redis:redis
   plane-worker:
-    container_name: planerqworker
+    container_name: planebgworker
     build:
       context: ./apiserver
       dockerfile: Dockerfile.api
