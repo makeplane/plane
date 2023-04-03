@@ -175,7 +175,7 @@ class ProjectIssuesServices extends APIService {
     )
       .then((response) => response?.data)
       .catch((error) => {
-        throw error?.response?.data;
+        throw error?.response;
       });
   }
 
