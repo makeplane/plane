@@ -108,7 +108,7 @@ const useIssuesView = () => {
   const statesList = getStatesList(states ?? {});
   const stateIds = statesList.map((state) => state.id);
 
-  const emptyStatesObject: { [key: string]: [] } = useMemo(() => ({}), []);
+  const emptyStatesObject: { [key: string]: [] } = {};
   for (let i = 0; i < stateIds.length; i++) {
     emptyStatesObject[stateIds[i]] = [];
   }
