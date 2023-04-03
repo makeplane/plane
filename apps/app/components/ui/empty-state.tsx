@@ -27,6 +27,8 @@ export const EmptyState: React.FC<Props> = ({ type, title, description, imgURL, 
         return "P";
       case "issue":
         return "C";
+      case "view":
+        return "V";
       case "page":
         return "D"
       default:
