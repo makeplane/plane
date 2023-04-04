@@ -52,7 +52,7 @@ const CustomSelect = ({
         <Listbox.Button
           className={`flex w-full ${
             disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-skin-surface-2"
-          } items-center justify-between gap-1 rounded-md border shadow-sm duration-300 focus:border-skin-accent focus:outline-none focus:ring-1 focus:ring-skin-accent ${
+          } items-center justify-between gap-1 rounded-md border border-skin-base shadow-sm duration-300 focus:border-skin-accent focus:outline-none focus:ring-1 focus:ring-skin-accent ${
             input ? "border-skin-base px-3 py-2 text-sm" : "px-2.5 py-1 text-xs"
           } ${
             textAlignment === "right"

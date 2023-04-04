@@ -25,7 +25,7 @@ export const SecondaryButton: React.FC<ButtonProps> = ({
         : ""
     } ${
       outline
-        ? "bg-transparent hover:bg-gray-300"
+        ? "bg-transparent hover:bg-skin-surface-2"
         : "bg-skin-surface-2 hover:border-opacity-70 hover:bg-opacity-70"
     } ${loading ? "cursor-wait" : ""}`}
     onClick={onClick}
