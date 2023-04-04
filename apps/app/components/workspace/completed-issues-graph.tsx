@@ -37,7 +37,7 @@ export const CompletedIssuesGraph: React.FC<Props> = ({ month, issues, setMonth 
   }
 
   const CustomTooltip = ({ payload, label }: any) => (
-    <div className="space-y-1 rounded bg-white p-3 text-sm shadow-md">
+    <div className="space-y-1 rounded bg-skin-surface-2 p-3 text-sm shadow-md">
       <h4 className="text-gray-500">{label}</h4>
       <h5>Completed issues: {payload[0]?.value}</h5>
     </div>
@@ -55,7 +55,7 @@ export const CompletedIssuesGraph: React.FC<Props> = ({ month, issues, setMonth 
           ))}
         </CustomMenu>
       </div>
-      <div className="rounded-[10px] border bg-white p-8 pl-4">
+      <div className="rounded-[10px] border border-skin-base bg-skin-surface-2 p-8 pl-4">
         <ResponsiveContainer width="100%" height={250}>
           <LineChart data={data}>
             <CartesianGrid stroke="#e2e2e280" />

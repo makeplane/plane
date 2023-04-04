@@ -42,7 +42,7 @@ const WorkspacePage: NextPage = () => {
       <div className="h-full w-full">
         <div className="flex flex-col gap-8">
           <div
-            className="flex flex-col bg-white justify-between gap-x-2 gap-y-6 rounded-lg px-8 py-6 text-black md:flex-row md:items-center md:py-3"
+            className="flex flex-col bg-skin-surface-2 justify-between gap-x-2 gap-y-6 rounded-lg px-8 py-6 text-skin-muted-1 md:flex-row md:items-center md:py-3"
             // style={{ background: "linear-gradient(90deg, #8e2de2 0%, #4a00e0 100%)" }}
           >
             <p className="font-semibold">Plane is a open source application, to support us you can star us on GitHub!</p>
