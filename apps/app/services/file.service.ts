@@ -32,6 +32,51 @@ class FileServices extends APIService {
     super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
   }
 
+  async uploadIssueAttachment(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    file: FormData
+  ): Promise<any> {
+    return this.mediaUpload(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-attachments/`,
+      file
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getIssueAttachment(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string
+  ): Promise<any> {
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-attachments/`
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async deleteIssueAttachment(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    assetId: string
+  ): Promise<any> {
+    return this.delete(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-attachments/${assetId}/`
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async uploadFile(workspaceSlug: string, file: FormData): Promise<any> {
     return this.mediaUpload(`/api/workspaces/${workspaceSlug}/file-assets/`, file)
       .then((response) => response?.data)
