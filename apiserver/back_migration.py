@@ -3,8 +3,7 @@ import uuid
 import random
 from django.contrib.auth.hashers import make_password
 from plane.db.models import ProjectIdentifier
-from plane.db.models import Issue, IssueComment, User, Project, ProjectMember
-
+from plane.db.models import Issue, IssueComment, User, Project, ProjectMember, Label
 
 
 # Update description and description html values for old descriptions
@@ -148,7 +147,7 @@ def update_user_view_property():
                 "collapsed": True,
                 "issueView": "list",
                 "filterIssue": None,
-                "groupByProperty": True,
+                "groupByProperty": None,
                 "showEmptyGroups": True,
             }
             updated_project_members.append(project_member)
@@ -160,6 +159,7 @@ def update_user_view_property():
     except Exception as e:
         print(e)
         print("Failed")
+
 
 def update_label_color():
     try:
