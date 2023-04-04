@@ -79,7 +79,7 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
   const isNotAllowed = false;
 
   return (
-    <div className="border-b border-gray-300 last:border-b-0">
+    <div className="border-b border-skin-base last:border-b-0">
       <div key={issue.id} className="flex items-center justify-between gap-2 px-4 py-3">
         <Link href={`/${workspaceSlug}/projects/${issue?.project_detail?.id}/issues/${issue.id}`}>
           <a className="group relative flex items-center gap-2">
@@ -94,7 +94,7 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
               </Tooltip>
             )}
             <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
-              <span className="break-all text-sm text-gray-800">
+              <span className="break-all text-sm text-skin-base">
                 {truncateText(issue.name, 50)}
               </span>
             </Tooltip>

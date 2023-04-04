@@ -67,8 +67,8 @@ export const CustomSearchSelect = ({
           ) : (
             <Combobox.Button
               className={`flex w-full ${
-                disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-gray-100"
-              } items-center justify-between gap-1 rounded-md border px-3 py-1.5 text-xs shadow-sm duration-300 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
+                disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-skin-surface-2"
+              } items-center justify-between gap-1 rounded-md border border-skin-base px-3 py-1.5 text-xs shadow-sm duration-300 focus:border-skin-accent focus:outline-none focus:ring-1 focus:ring-skin-accent ${
                 textAlignment === "right"
                   ? "text-right"
                   : textAlignment === "center"
@@ -95,12 +95,12 @@ export const CustomSearchSelect = ({
             <Combobox.Options
               className={`${optionsClassName} absolute min-w-[10rem] p-2 ${
                 position === "right" ? "right-0" : "left-0"
-              } z-10 mt-1 origin-top-right rounded-md bg-white text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none`}
+              } z-10 mt-1 origin-top-right rounded-md bg-skin-surface-2 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none`}
             >
-              <div className="flex w-full items-center justify-start rounded-sm border-[0.6px] bg-gray-100 px-2">
-                <MagnifyingGlassIcon className="h-3 w-3 text-gray-500" />
+              <div className="flex w-full items-center justify-start rounded-sm border-[0.6px] border-skin-base bg-skin-surface-1 px-2">
+                <MagnifyingGlassIcon className="h-3 w-3 text-skin-muted-1" />
                 <Combobox.Input
-                  className="w-full  bg-transparent py-1 px-2  text-xs text-gray-500 focus:outline-none"
+                  className="w-full  bg-transparent py-1 px-2  text-xs text-skin-muted-1 focus:outline-none"
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Type to search..."
                   displayValue={(assigned: any) => assigned?.name}
@@ -126,9 +126,9 @@ export const CustomSearchSelect = ({
                         key={option.value}
                         value={option.value}
                         className={({ active, selected }) =>
-                          `${active || selected ? "bg-hover-gray" : ""} ${
+                          `${active || selected ? "bg-skin-surface-1" : ""} ${
                             selected ? "font-medium" : ""
-                          } flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 text-gray-500`
+                          } flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 text-skin-muted-1`
                         }
                       >
                         {({ active, selected }) => (
