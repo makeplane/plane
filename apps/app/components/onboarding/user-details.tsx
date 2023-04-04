@@ -22,9 +22,10 @@ const defaultValues: Partial<IUser> = {
 type Props = {
   user?: IUser;
   setStep: React.Dispatch<React.SetStateAction<number>>;
+  setUserRole: React.Dispatch<React.SetStateAction<string | null>>;
 };
 
-export const UserDetails: React.FC<Props> = ({ user, setStep }) => {
+export const UserDetails: React.FC<Props> = ({ user, setStep, setUserRole }) => {
   const { setToastAlert } = useToast();
 
   const {
@@ -53,13 +54,15 @@ export const UserDetails: React.FC<Props> = ({ user, setStep }) => {
   };
 
   useEffect(() => {
-    if (user)
+    if (user) {
       reset({
         first_name: user.first_name,
         last_name: user.last_name,
         role: user.role,
       });
-  }, [user, reset]);
+      setUserRole(user.role);
+    }
+  }, [user, reset, setUserRole]);
 
   return (
     <form className="flex w-full items-center justify-center" onSubmit={handleSubmit(onSubmit)}>
@@ -101,7 +104,10 @@ export const UserDetails: React.FC<Props> = ({ user, setStep }) => {
                 render={({ field: { value, onChange } }) => (
                   <CustomSelect
                     value={value}
-                    onChange={onChange}
+                    onChange={(value: any) => {
+                      onChange(value);
+                      setUserRole(value ?? null);
+                    }}
                     label={value ? value.toString() : "Select your role"}
                     input
                     width="w-full"

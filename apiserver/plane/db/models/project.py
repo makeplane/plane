@@ -21,10 +21,13 @@ ROLE_CHOICES = (
 
 def get_default_props():
     return {
+        "filters": {"type": None},
+        "orderBy": "-created_at",
+        "collapsed": True,
         "issueView": "list",
-        "groupByProperty": None,
-        "orderBy": None,
         "filterIssue": None,
+        "groupByProperty": True,
+        "showEmptyGroups": True,
     }
 
 

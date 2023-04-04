@@ -80,11 +80,8 @@ export const handleIssuesMutation: THandleIssuesMutation = (
 
     let newGroup: IIssue[] = [];
 
-    if (selectedGroupBy === "priority") {
-      newGroup = prevData[formData.priority ?? ""] ?? [];
-    } else if (selectedGroupBy === "state") {
-      newGroup = prevData[formData.state ?? ""] ?? [];
-    }
+    if (selectedGroupBy === "priority") newGroup = prevData[formData.priority ?? ""] ?? [];
+    else if (selectedGroupBy === "state") newGroup = prevData[formData.state ?? ""] ?? [];
 
     const updatedIssue = {
       ...oldGroup[issueIndex],

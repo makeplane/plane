@@ -125,7 +125,15 @@ const useIssuesView = () => {
       return issuesToGroup ? Object.assign(emptyStatesObject, issuesToGroup) : undefined;
 
     return issuesToGroup;
-  }, [projectIssues, cycleIssues, moduleIssues, groupByProperty, cycleId, moduleId]);
+  }, [
+    projectIssues,
+    cycleIssues,
+    moduleIssues,
+    groupByProperty,
+    cycleId,
+    moduleId,
+    emptyStatesObject,
+  ]);
 
   const isEmpty =
     Object.values(groupedByIssues ?? {}).every((group) => group.length === 0) ||
