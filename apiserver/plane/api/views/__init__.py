@@ -130,3 +130,9 @@ from .search import GlobalSearchEndpoint, IssueSearchEndpoint
 
 
 from .gpt import GPTIntegrationEndpoint
+
+from .estimate import (
+    EstimateViewSet,
+    EstimatePointViewSet,
+    ProjectEstimatePointEndpoint,
+)

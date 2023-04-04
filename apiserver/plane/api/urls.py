@@ -79,6 +79,11 @@ from plane.api.views import (
     # States
     StateViewSet,
     ## End States
+    # Estimates
+    EstimateViewSet,
+    EstimatePointViewSet,
+    ProjectEstimatePointEndpoint,
+    ## End Estimates
     # Shortcuts
     ShortCutViewSet,
     ## End Shortcuts
@@ -477,6 +482,57 @@ urlpatterns = [
             }
         ),
         name="project-state",
+    ),
+    # End States ##
+    #  States
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/estimates/",
+        EstimateViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="project-estimates",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/estimates/<uuid:pk>/",
+        EstimateViewSet.as_view(
+            {
+                "get": "retrieve",
+                "put": "update",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="project-estimates",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/estimates/<uuid:estimate_id>/estimate-points/",
+        EstimatePointViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="project-estimate-points",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/estimates/<uuid:estimate_id>/estimate-points/<uuid:pk>/",
+        EstimatePointViewSet.as_view(
+            {
+                "get": "retrieve",
+                "put": "update",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="project-estimates",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/project-estimates/",
+        ProjectEstimatePointEndpoint.as_view(),
+        name="project-estimate-points",
     ),
     # End States ##
     # Shortcuts

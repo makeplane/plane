@@ -8,6 +8,7 @@ from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ValidationError
 
 # Module imports
@@ -36,6 +37,9 @@ class Issue(ProjectBaseModel):
         null=True,
         blank=True,
         related_name="state_issue",
+    )
+    estimate_point = models.IntegerField(
+        default=0, validators=[MinValueValidator(0), MaxValueValidator(7)]
     )
     name = models.CharField(max_length=255, verbose_name="Issue Name")
     description = models.JSONField(blank=True, default=dict)
