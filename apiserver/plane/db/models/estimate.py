@@ -1,5 +1,6 @@
 # Django imports
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 # Module imports
 from . import ProjectBaseModel
@@ -10,7 +11,7 @@ class Estimate(ProjectBaseModel):
     description = models.TextField(verbose_name="Estimate Description", blank=True)
 
     def __str__(self):
-        """Return name of the state"""
+        """Return name of the estimate"""
         return f"{self.name} <{self.project.name}>"
 
     class Meta:
@@ -23,11 +24,20 @@ class Estimate(ProjectBaseModel):
 
 class EstimatePoint(ProjectBaseModel):
     estimate = models.ForeignKey(
-        "db.Estimate", on_delete=models.CASCADE, related_name="points"
+        "db.Estimate",
+        on_delete=models.CASCADE,
+        related_name="points",
+        limit_choices_to={"estimate__points__count__lt": 10},
     )
-    key = models.CharField(max_length=100)
+    key = models.IntegerField(
+        default=0, validators=[MinValueValidator(0), MaxValueValidator(7)]
+    )
     description = models.TextField(blank=True)
-    value = models.IntegerField(default=0)
+    value = models.CharField(max_length=20)
+
+    def __str__(self):
+        """Return name of the estimate"""
+        return f"{self.estimate.name} <{self.key}> <{self.value}>"
 
     class Meta:
         unique_together = ["value", "estimate"]
