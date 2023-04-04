@@ -9,6 +9,7 @@ import type {
   ICycle,
   IGptResponse,
   IIssue,
+  IIssueComment,
   IModule,
   IPage,
   IPageBlock,
@@ -39,6 +40,8 @@ type ModuleEventType = "MODULE_CREATE" | "MODULE_UPDATE" | "MODULE_DELETE";
 type PagesEventType = "PAGE_CREATE" | "PAGE_UPDATE" | "PAGE_DELETE";
 
 type ViewEventType = "VIEW_CREATE" | "VIEW_UPDATE" | "VIEW_DELETE";
+
+type IssueCommentType = "ISSUE_COMMENT_CREATE" | "ISSUE_COMMENT_UPDATE" | "ISSUE_COMMENT_DELETE";
 
 type PageBlocksEventType =
   | "PAGE_BLOCK_CREATE"
@@ -142,6 +145,89 @@ class TrackEventServices extends APIService {
         eventName,
         extra: {
           ...payload,
+        },
+      },
+    });
+  }
+
+  async trackIssueMarkedAsDoneEvent(data: any): Promise<any> {
+    if (!trackEvent) return;
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName: "ISSUES_MARKED_AS_DONE",
+        extra: {
+          ...data,
+        },
+      },
+    });
+  }
+
+  async trackIssuePartialPropertyUpdateEvent(
+    data: any,
+    propertyName:
+      | "ISSUE_PARTIAL_PROPERTY_UPDATE_PRIORITY"
+      | "ISSUE_PARTIAL_PROPERTY_UPDATE_STATE"
+      | "ISSUE_PARTIAL_PROPERTY_UPDATE_ASSIGNEE"
+      | "ISSUE_PARTIAL_PROPERTY_UPDATE_DUE_DATE"
+  ): Promise<any> {
+    if (!trackEvent) return;
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName: propertyName,
+        extra: {
+          ...data,
+        },
+      },
+    });
+  }
+
+  async trackIssueCommentEvent(
+    data: Partial<IIssueComment> | any,
+    eventName: IssueCommentType
+  ): Promise<any> {
+    let payload: any;
+    if (eventName !== "ISSUE_COMMENT_DELETE")
+      payload = {
+        workspaceId: data?.workspace_detail?.id,
+        workspaceName: data?.workspace_detail?.name,
+        workspaceSlug: data?.workspace_detail?.slug,
+        projectId: data?.project_detail?.id,
+        projectName: data?.project_detail?.name,
+        projectIdentifier: data?.project_detail?.identifier,
+        issueId: data?.issue,
+      };
+    else payload = data;
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName,
+        extra: {
+          ...payload,
+        },
+      },
+    });
+  }
+
+  async trackIssueMovedToCycleOrModuleEvent(
+    data: any,
+    eventName:
+      | "ISSUE_MOVED_TO_CYCLE"
+      | "ISSUE_MOVED_TO_MODULE"
+      | "ISSUE_MOVED_TO_CYCLE_IN_BULK"
+      | "ISSUE_MOVED_TO_MODULE_IN_BULK"
+  ): Promise<any> {
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName,
+        extra: {
+          ...data,
         },
       },
     });

@@ -34,7 +34,6 @@ import {
   TrashIcon,
   XMarkIcon,
   ArrowTopRightOnSquareIcon,
-
 } from "@heroicons/react/24/outline";
 // helpers
 import { handleIssuesMutation } from "constants/issue";
