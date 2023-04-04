@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { useRouter } from "next/router";
 
@@ -54,8 +54,9 @@ import {
 } from "constants/fetch-keys";
 
 const SinglePage: NextPage<UserAuth> = (props) => {
-  const [isAddingBlock, setIsAddingBlock] = useState(false);
   const [createBlockForm, setCreateBlockForm] = useState(false);
+
+  const scrollToRef = useRef<HTMLDivElement>(null);
 
   const router = useRouter();
   const { workspaceSlug, projectId, pageId } = router.query;
@@ -236,6 +237,13 @@ const SinglePage: NextPage<UserAuth> = (props) => {
         });
       }
     );
+  };
+
+  const handleNewBlock = () => {
+    setCreateBlockForm(true);
+    scrollToRef.current?.scrollIntoView({
+      behavior: "smooth",
+    });
   };
 
   const options =
@@ -449,14 +457,15 @@ const SinglePage: NextPage<UserAuth> = (props) => {
                 <DragDropContext onDragEnd={handleOnDragEnd}>
                   {pageBlocks.length !== 0 && (
                     <StrictModeDroppable droppableId="blocks-list">
-                      {(provided, snapshot) => (
-                        <div className="" ref={provided.innerRef} {...provided.droppableProps}>
+                      {(provided) => (
+                        <div ref={provided.innerRef} {...provided.droppableProps}>
                           {pageBlocks.map((block, index) => (
                             <SinglePageBlock
                               key={block.id}
                               block={block}
                               projectDetails={projectDetails}
                               index={index}
+                              handleNewBlock={handleNewBlock}
                             />
                           ))}
                           {provided.placeholder}
@@ -469,20 +478,19 @@ const SinglePage: NextPage<UserAuth> = (props) => {
                   <button
                     type="button"
                     className="flex items-center gap-1 rounded bg-gray-100 px-2.5 py-1 text-xs hover:bg-gray-200 mt-4"
-                    onClick={() => setCreateBlockForm(true)}
+                    onClick={handleNewBlock}
                   >
-                    {isAddingBlock ? (
-                      "Adding block..."
-                    ) : (
-                      <>
-                        <PlusIcon className="h-3 w-3" />
-                        Add new block
-                      </>
-                    )}
+                    <PlusIcon className="h-3 w-3" />
+                    Add new block
                   </button>
                 )}
                 {createBlockForm && (
-                  <CreateUpdateBlockInline handleClose={() => setCreateBlockForm(false)} />
+                  <div ref={scrollToRef}>
+                    <CreateUpdateBlockInline
+                      handleClose={() => setCreateBlockForm(false)}
+                      focus="name"
+                    />
+                  </div>
                 )}
               </>
             ) : (

@@ -22,6 +22,7 @@ type Props = {
   handleClose: () => void;
   data?: IPageBlock;
   setIsSyncing?: React.Dispatch<React.SetStateAction<boolean>>;
+  focus?: keyof IPageBlock;
 };
 
 const defaultValues = {
@@ -38,7 +39,12 @@ const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor
   ),
 });
 
-export const CreateUpdateBlockInline: React.FC<Props> = ({ handleClose, data, setIsSyncing }) => {
+export const CreateUpdateBlockInline: React.FC<Props> = ({
+  handleClose,
+  data,
+  setIsSyncing,
+  focus,
+}) => {
   const router = useRouter();
   const { workspaceSlug, projectId, pageId } = router.query;
 
@@ -50,6 +56,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({ handleClose, data, se
     control,
     watch,
     setValue,
+    setFocus,
     reset,
     formState: { isSubmitting },
   } = useForm<IPageBlock>({
@@ -57,9 +64,10 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({ handleClose, data, se
   });
 
   const onClose = useCallback(() => {
-    handleClose();
+    if (data) handleClose();
+
     reset();
-  }, [handleClose, reset]);
+  }, [handleClose, reset, data]);
 
   const createPageBlock = async (formData: Partial<IPageBlock>) => {
     if (!workspaceSlug || !projectId || !pageId) return;
@@ -126,6 +134,8 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({ handleClose, data, se
   };
 
   useEffect(() => {
+    if (focus) setFocus(focus);
+
     if (!data) return;
 
     reset({
@@ -134,7 +144,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({ handleClose, data, se
       description: data.description,
       description_html: data.description_html,
     });
-  }, [reset, data]);
+  }, [reset, data, focus, setFocus]);
 
   useEffect(() => {
     window.addEventListener("keydown", (e: KeyboardEvent) => {
@@ -156,9 +166,10 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({ handleClose, data, se
           name="name"
           placeholder="Title"
           register={register}
-          required={true}
           className="min-h-10 block w-full resize-none overflow-hidden border-none bg-transparent py-1 text-base ring-0 -ml-2 focus:ring-gray-200"
           role="textbox"
+          autoComplete="off"
+          maxLength={255}
         />
         <div className="page-block-section font relative -mx-3 -mt-3">
           <Controller
@@ -182,8 +193,8 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({ handleClose, data, se
           />
         </div>
         <div className="flex justify-end items-center gap-2">
-          <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
-          <PrimaryButton type="submit" loading={isSubmitting}>
+          <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+          <PrimaryButton type="submit" disabled={watch("name") === ""} loading={isSubmitting}>
             {data
               ? isSubmitting
                 ? "Updating..."

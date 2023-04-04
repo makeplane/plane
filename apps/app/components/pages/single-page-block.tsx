@@ -42,6 +42,7 @@ type Props = {
   block: IPageBlock;
   projectDetails: IProject | undefined;
   index: number;
+  handleNewBlock: () => void;
 };
 
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
@@ -53,7 +54,12 @@ const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor
   ),
 });
 
-export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index }) => {
+export const SinglePageBlock: React.FC<Props> = ({
+  block,
+  projectDetails,
+  index,
+  handleNewBlock,
+}) => {
   const [isSyncing, setIsSyncing] = useState(false);
   const [createBlockForm, setCreateBlockForm] = useState(false);
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
@@ -65,7 +71,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
 
   const { setToastAlert } = useToast();
 
-  const { handleSubmit, watch, reset, setValue, control, register } = useForm<IPageBlock>({
+  const { handleSubmit, watch, reset, setValue, register } = useForm<IPageBlock>({
     defaultValues: {
       name: "",
       description: {},
@@ -273,12 +279,29 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
     reset({ ...block });
   }, [reset, block]);
 
+  useEffect(() => {
+    window.addEventListener("keydown", (e: KeyboardEvent) => {
+      if (e.key === "Enter" && !createBlockForm) handleNewBlock();
+    });
+
+    return () => {
+      window.removeEventListener("keydown", (e: KeyboardEvent) => {
+        if (e.key === "Enter" && !createBlockForm) handleNewBlock();
+      });
+    };
+  }, [handleNewBlock, createBlockForm]);
+
   return (
-    <Draggable draggableId={block.id} index={index}>
+    <Draggable draggableId={block.id} index={index} isDragDisabled={createBlockForm}>
       {(provided, snapshot) => (
         <>
           {createBlockForm ? (
-            <div className="mb-4">
+            <div
+              className="mb-4 pt-4"
+              ref={provided.innerRef}
+              {...provided.draggableProps}
+              {...provided.dragHandleProps}
+            >
               <CreateUpdateBlockInline
                 handleClose={() => setCreateBlockForm(false)}
                 data={block}
@@ -287,131 +310,110 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
             </div>
           ) : (
             <div
-              className={`group ${
-                snapshot.isDragging
-                  ? "border-2 bg-white border-theme shadow-lg rounded-md p-4 pl-0"
-                  : ""
+              className={`group relative pl-6 ${
+                snapshot.isDragging ? "border-2 bg-white border-theme shadow-lg rounded-md p-6" : ""
               }`}
               ref={provided.innerRef}
               {...provided.draggableProps}
             >
-              <div className="mb-1 flex items-center justify-between gap-2">
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    className="flex p-0.5 hover:bg-gray-100 rounded opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto"
-                    {...provided.dragHandleProps}
-                  >
-                    <EllipsisVerticalIcon className="h-[18px]" />
-                    <EllipsisVerticalIcon className="h-[18px] -ml-3" />
-                  </button>
-                  <h3 className="font-medium" onClick={() => setCreateBlockForm(true)}>
-                    {block.name}
-                  </h3>
-                </div>
-                <div className="flex flex-shrink-0 items-center gap-2">
-                  {block.issue && block.sync && (
-                    <div className="flex flex-shrink-0 cursor-default items-center gap-1 rounded bg-gray-100 py-1 px-1.5 text-xs">
-                      {isSyncing ? (
-                        <ArrowPathIcon className="h-3 w-3 animate-spin" />
-                      ) : (
-                        <CheckIcon className="h-3 w-3" />
-                      )}
-                      {isSyncing ? "Syncing..." : "Synced"}
-                    </div>
-                  )}
-                  {block.issue && (
-                    <Link href={`/${workspaceSlug}/projects/${projectId}/issues/${block.issue}`}>
-                      <a className="flex flex-shrink-0 items-center gap-1 rounded bg-gray-100 px-1.5 py-1 text-xs">
-                        <LayerDiagonalIcon height="16" width="16" color="black" />
-                        {projectDetails?.identifier}-{block.issue_detail?.sequence_id}
-                      </a>
-                    </Link>
-                  )}
-                  <button
-                    type="button"
-                    className={`flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-gray-100 ${
-                      iAmFeelingLucky ? "cursor-wait" : ""
-                    }`}
-                    onClick={handelAutoGenerateDescription}
-                    disabled={iAmFeelingLucky}
-                  >
-                    {iAmFeelingLucky ? (
-                      "Generating response..."
+              <button
+                type="button"
+                className="absolute top-4 -left-2 p-0.5 hover:bg-gray-100 rounded hidden group-hover:flex"
+                {...provided.dragHandleProps}
+              >
+                <EllipsisVerticalIcon className="h-[18px]" />
+                <EllipsisVerticalIcon className="h-[18px] -ml-3" />
+              </button>
+              <div className="absolute top-4 right-0 items-center gap-2 hidden group-hover:flex bg-white pl-4">
+                {block.issue && block.sync && (
+                  <div className="flex flex-shrink-0 cursor-default items-center gap-1 rounded bg-gray-100 py-1 px-1.5 text-xs">
+                    {isSyncing ? (
+                      <ArrowPathIcon className="h-3 w-3 animate-spin" />
                     ) : (
-                      <>
-                        <SparklesIcon className="h-4 w-4" />I{"'"}m feeling lucky
-                      </>
+                      <CheckIcon className="h-3 w-3" />
                     )}
-                  </button>
-                  <button
-                    type="button"
-                    className="-mr-2 flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-gray-100"
-                    onClick={() => setGptAssistantModal((prevData) => !prevData)}
-                  >
-                    <SparklesIcon className="h-4 w-4" />
-                    AI
-                  </button>
-                  <button
-                    type="button"
-                    className="-mr-2 flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-gray-100"
-                    onClick={() => setCreateBlockForm(true)}
-                  >
-                    <PencilIcon className="h-3.5 w-3.5" />
-                  </button>
-                  <CustomMenu label={<BoltIcon className="h-4.5 w-3.5" />} noBorder noChevron>
-                    {block.issue ? (
-                      <>
-                        <CustomMenu.MenuItem onClick={handleBlockSync}>
-                          <>Turn sync {block.sync ? "off" : "on"}</>
-                        </CustomMenu.MenuItem>
-                        <CustomMenu.MenuItem onClick={handleCopyText}>
-                          Copy issue link
-                        </CustomMenu.MenuItem>
-                      </>
-                    ) : (
-                      <CustomMenu.MenuItem onClick={pushBlockIntoIssues}>
-                        Push into issues
+                    {isSyncing ? "Syncing..." : "Synced"}
+                  </div>
+                )}
+                <button
+                  type="button"
+                  className={`flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-gray-100 ${
+                    iAmFeelingLucky ? "cursor-wait bg-gray-100" : ""
+                  }`}
+                  onClick={handelAutoGenerateDescription}
+                  disabled={iAmFeelingLucky}
+                >
+                  {iAmFeelingLucky ? (
+                    "Generating response..."
+                  ) : (
+                    <>
+                      <SparklesIcon className="h-4 w-4" />I{"'"}m feeling lucky
+                    </>
+                  )}
+                </button>
+                <button
+                  type="button"
+                  className="-mr-2 flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-gray-100"
+                  onClick={() => setGptAssistantModal((prevData) => !prevData)}
+                >
+                  <SparklesIcon className="h-4 w-4" />
+                  AI
+                </button>
+                <button
+                  type="button"
+                  className="-mr-2 flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-gray-100"
+                  onClick={() => setCreateBlockForm(true)}
+                >
+                  <PencilIcon className="h-3.5 w-3.5" />
+                </button>
+                <CustomMenu label={<BoltIcon className="h-4.5 w-3.5" />} noBorder noChevron>
+                  {block.issue ? (
+                    <>
+                      <CustomMenu.MenuItem onClick={handleBlockSync}>
+                        <>Turn sync {block.sync ? "off" : "on"}</>
                       </CustomMenu.MenuItem>
-                    )}
-                    <CustomMenu.MenuItem onClick={deletePageBlock}>
-                      Delete block
+                      <CustomMenu.MenuItem onClick={handleCopyText}>
+                        Copy issue link
+                      </CustomMenu.MenuItem>
+                    </>
+                  ) : (
+                    <CustomMenu.MenuItem onClick={pushBlockIntoIssues}>
+                      Push into issues
                     </CustomMenu.MenuItem>
-                  </CustomMenu>
-                </div>
+                  )}
+                  <CustomMenu.MenuItem onClick={deletePageBlock}>Delete block</CustomMenu.MenuItem>
+                </CustomMenu>
               </div>
-              <div className="page-block-section font relative -mx-3 -mt-3 ml-6">
-                <div onClick={() => setCreateBlockForm(true)}>
-                  <Controller
-                    name="description"
-                    control={control}
-                    render={({ field: { value } }) => (
-                      <RemirrorRichTextEditor
-                        value={
-                          !value || (typeof value === "object" && Object.keys(value).length === 0)
-                            ? watch("description_html")
-                            : value
-                        }
-                        placeholder="Description"
-                        customClassName="text-sm"
-                        noBorder
-                        borderOnFocus={false}
-                        editable={false}
-                      />
-                    )}
-                  />
-                </div>
-                <GptAssistantModal
-                  block={block}
-                  isOpen={gptAssistantModal}
-                  handleClose={() => setGptAssistantModal(false)}
-                  inset="top-2 left-0"
-                  content={block.description_stripped}
-                  htmlContent={block.description_html}
-                  onResponse={handleAiAssistance}
-                  projectId={projectId as string}
-                />
+              <div
+                className={`flex items-start gap-2 ${
+                  snapshot.isDragging ? "" : "py-4 [&:not(:last-child)]:border-b"
+                }`}
+              >
+                {block.issue && (
+                  <Link href={`/${workspaceSlug}/projects/${projectId}/issues/${block.issue}`}>
+                    <a className="flex flex-shrink-0 items-center gap-1 rounded bg-gray-100 px-1.5 py-1 text-xs">
+                      <LayerDiagonalIcon height="16" width="16" color="black" />
+                      {projectDetails?.identifier}-{block.issue_detail?.sequence_id}
+                    </a>
+                  </Link>
+                )}
+                <h3
+                  className="font-medium text-sm break-all"
+                  onClick={() => setCreateBlockForm(true)}
+                >
+                  {block.name}
+                </h3>
               </div>
+              <GptAssistantModal
+                block={block}
+                isOpen={gptAssistantModal}
+                handleClose={() => setGptAssistantModal(false)}
+                inset="top-8 left-0"
+                content={block.description_stripped}
+                htmlContent={block.description_html}
+                onResponse={handleAiAssistance}
+                projectId={projectId as string}
+              />
             </div>
           )}
         </>
