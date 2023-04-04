@@ -274,11 +274,16 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
   }, [reset, block]);
 
   return (
-    <Draggable draggableId={block.id} index={index}>
+    <Draggable draggableId={block.id} index={index} isDragDisabled={createBlockForm}>
       {(provided, snapshot) => (
         <>
           {createBlockForm ? (
-            <div className="mb-4">
+            <div
+              className="mb-4 pt-4"
+              ref={provided.innerRef}
+              {...provided.draggableProps}
+              {...provided.dragHandleProps}
+            >
               <CreateUpdateBlockInline
                 handleClose={() => setCreateBlockForm(false)}
                 data={block}
@@ -295,17 +300,17 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
               ref={provided.innerRef}
               {...provided.draggableProps}
             >
-              <div className="mb-1 flex items-center justify-between gap-2">
-                <div className="flex items-center gap-2">
+              <div className="mb-1 flex items-center justify-between gap-2 mt-4">
+                <div className="flex items-start gap-2">
                   <button
                     type="button"
-                    className="flex p-0.5 hover:bg-gray-100 rounded opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto"
+                    className="flex p-0.5 hover:bg-gray-100 rounded opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto mt-1"
                     {...provided.dragHandleProps}
                   >
                     <EllipsisVerticalIcon className="h-[18px]" />
                     <EllipsisVerticalIcon className="h-[18px] -ml-3" />
                   </button>
-                  <h3 className="font-medium" onClick={() => setCreateBlockForm(true)}>
+                  <h3 className="font-medium break-all" onClick={() => setCreateBlockForm(true)}>
                     {block.name}
                   </h3>
                 </div>

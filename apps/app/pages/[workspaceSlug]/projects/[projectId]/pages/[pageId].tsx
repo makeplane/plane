@@ -450,7 +450,11 @@ const SinglePage: NextPage<UserAuth> = (props) => {
                   {pageBlocks.length !== 0 && (
                     <StrictModeDroppable droppableId="blocks-list">
                       {(provided, snapshot) => (
-                        <div className="" ref={provided.innerRef} {...provided.droppableProps}>
+                        <div
+                          className="divide-y"
+                          ref={provided.innerRef}
+                          {...provided.droppableProps}
+                        >
                           {pageBlocks.map((block, index) => (
                             <SinglePageBlock
                               key={block.id}
