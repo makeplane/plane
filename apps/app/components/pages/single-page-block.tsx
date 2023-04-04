@@ -281,12 +281,12 @@ export const SinglePageBlock: React.FC<Props> = ({
 
   useEffect(() => {
     window.addEventListener("keydown", (e: KeyboardEvent) => {
-      if (e.altKey && e.key === "b") handleNewBlock();
+      if (e.key === "Enter") handleNewBlock();
     });
 
     return () => {
       window.removeEventListener("keydown", (e: KeyboardEvent) => {
-        if (e.altKey && e.key === "b") handleNewBlock();
+        if (e.key === "Enter") handleNewBlock();
       });
     };
   }, [handleNewBlock]);
@@ -310,26 +310,31 @@ export const SinglePageBlock: React.FC<Props> = ({
             </div>
           ) : (
             <div
-              className={`group ${
-                snapshot.isDragging ? "border-2 bg-white border-theme shadow-lg rounded-md p-4" : ""
+              className={`group relative pl-6 ${
+                snapshot.isDragging ? "border-2 bg-white border-theme shadow-lg rounded-md p-6" : ""
               }`}
               ref={provided.innerRef}
               {...provided.draggableProps}
             >
-              <div className="mb-1 flex items-center justify-between gap-2 mt-4">
-                <div className="flex items-start gap-2">
-                  <button
-                    type="button"
-                    className="flex p-0.5 hover:bg-gray-100 rounded opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto mt-1"
-                    {...provided.dragHandleProps}
-                  >
-                    <EllipsisVerticalIcon className="h-[18px]" />
-                    <EllipsisVerticalIcon className="h-[18px] -ml-3" />
-                  </button>
-                  <h3 className="font-medium break-all" onClick={() => setCreateBlockForm(true)}>
-                    {block.name}
-                  </h3>
-                </div>
+              <button
+                type="button"
+                className="absolute top-2 -left-2 p-0.5 hover:bg-gray-100 rounded hidden group-hover:flex"
+                {...provided.dragHandleProps}
+              >
+                <EllipsisVerticalIcon className="h-[18px]" />
+                <EllipsisVerticalIcon className="h-[18px] -ml-3" />
+              </button>
+              <div
+                className={`flex items-center justify-between gap-2 ${
+                  snapshot.isDragging ? "" : "py-2 [&:not(:last-child)]:border-b"
+                }`}
+              >
+                <h3
+                  className="font-medium text-sm break-all"
+                  onClick={() => setCreateBlockForm(true)}
+                >
+                  {block.name}
+                </h3>
                 <div className="flex flex-shrink-0 items-center gap-2">
                   {block.issue && block.sync && (
                     <div className="flex flex-shrink-0 cursor-default items-center gap-1 rounded bg-gray-100 py-1 px-1.5 text-xs">
@@ -401,38 +406,16 @@ export const SinglePageBlock: React.FC<Props> = ({
                   </CustomMenu>
                 </div>
               </div>
-              <div className="page-block-section font relative -mr-3 -mt-3 ml-6">
-                <div onClick={() => setCreateBlockForm(true)}>
-                  <Controller
-                    name="description"
-                    control={control}
-                    render={({ field: { value } }) => (
-                      <RemirrorRichTextEditor
-                        value={
-                          !value || (typeof value === "object" && Object.keys(value).length === 0)
-                            ? watch("description_html")
-                            : value
-                        }
-                        placeholder="Description"
-                        customClassName="text-sm"
-                        noBorder
-                        borderOnFocus={false}
-                        editable={false}
-                      />
-                    )}
-                  />
-                </div>
-                <GptAssistantModal
-                  block={block}
-                  isOpen={gptAssistantModal}
-                  handleClose={() => setGptAssistantModal(false)}
-                  inset="top-2 left-0"
-                  content={block.description_stripped}
-                  htmlContent={block.description_html}
-                  onResponse={handleAiAssistance}
-                  projectId={projectId as string}
-                />
-              </div>
+              <GptAssistantModal
+                block={block}
+                isOpen={gptAssistantModal}
+                handleClose={() => setGptAssistantModal(false)}
+                inset="top-8 left-0"
+                content={block.description_stripped}
+                htmlContent={block.description_html}
+                onResponse={handleAiAssistance}
+                projectId={projectId as string}
+              />
             </div>
           )}
         </>

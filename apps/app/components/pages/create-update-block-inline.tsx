@@ -64,9 +64,10 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
   });
 
   const onClose = useCallback(() => {
-    handleClose();
+    if (data) handleClose();
+
     reset();
-  }, [handleClose, reset]);
+  }, [handleClose, reset, data]);
 
   const createPageBlock = async (formData: Partial<IPageBlock>) => {
     if (!workspaceSlug || !projectId || !pageId) return;
@@ -165,7 +166,6 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
           name="name"
           placeholder="Title"
           register={register}
-          required={true}
           className="min-h-10 block w-full resize-none overflow-hidden border-none bg-transparent py-1 text-base ring-0 -ml-2 focus:ring-gray-200"
           role="textbox"
           autoComplete="off"
@@ -192,8 +192,8 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
           />
         </div>
         <div className="flex justify-end items-center gap-2">
-          <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
-          <PrimaryButton type="submit" loading={isSubmitting}>
+          <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
+          <PrimaryButton type="submit" disabled={watch("name") === ""} loading={isSubmitting}>
             {data
               ? isSubmitting
                 ? "Updating..."
