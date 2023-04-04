@@ -167,10 +167,10 @@ class TrackEventServices extends APIService {
   async trackIssuePartialPropertyUpdateEvent(
     data: any,
     propertyName:
-      | "ISSUE_PARTIAL_PROPERTY_UPDATE_PRIORITY"
-      | "ISSUE_PARTIAL_PROPERTY_UPDATE_STATE"
-      | "ISSUE_PARTIAL_PROPERTY_UPDATE_ASSIGNEE"
-      | "ISSUE_PARTIAL_PROPERTY_UPDATE_DUE_DATE"
+      | "ISSUE_PROPERTY_UPDATE_PRIORITY"
+      | "ISSUE_PROPERTY_UPDATE_STATE"
+      | "ISSUE_PROPERTY_UPDATE_ASSIGNEE"
+      | "ISSUE_PROPERTY_UPDATE_DUE_DATE"
   ): Promise<any> {
     if (!trackEvent) return;
     return this.request({

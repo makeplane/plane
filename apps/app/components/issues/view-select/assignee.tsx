@@ -82,7 +82,7 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
             projectName: issue.project_detail.name,
             issueId: issue.id,
           },
-          "ISSUE_PARTIAL_PROPERTY_UPDATE_ASSIGNEE"
+          "ISSUE_PROPERTY_UPDATE_ASSIGNEE"
         );
       }}
       options={options}

@@ -74,7 +74,7 @@ export const ViewStateSelect: React.FC<Props> = ({
             projectName: issue.project_detail.name,
             issueId: issue.id,
           },
-          "ISSUE_PARTIAL_PROPERTY_UPDATE_STATE"
+          "ISSUE_PROPERTY_UPDATE_STATE"
         );
 
         const oldState = states.find((s) => s.id === issue.state);

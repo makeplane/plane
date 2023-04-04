@@ -42,7 +42,7 @@ export const ViewDueDateSelect: React.FC<Props> = ({ issue, partialUpdateIssue, 
               projectName: issue.project_detail.name,
               issueId: issue.id,
             },
-            "ISSUE_PARTIAL_PROPERTY_UPDATE_DUE_DATE"
+            "ISSUE_PROPERTY_UPDATE_DUE_DATE"
           );
         }}
         className={issue?.target_date ? "w-[6.5rem]" : "w-[3rem] text-center"}

@@ -39,7 +39,7 @@ export const ViewPrioritySelect: React.FC<Props> = ({
           projectName: issue.project_detail.name,
           issueId: issue.id,
         },
-        "ISSUE_PARTIAL_PROPERTY_UPDATE_PRIORITY"
+        "ISSUE_PROPERTY_UPDATE_PRIORITY"
       );
     }}
     maxHeight="md"
