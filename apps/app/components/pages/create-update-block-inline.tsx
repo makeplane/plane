@@ -169,6 +169,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
           className="min-h-10 block w-full resize-none overflow-hidden border-none bg-transparent py-1 text-base ring-0 -ml-2 focus:ring-gray-200"
           role="textbox"
           autoComplete="off"
+          maxLength={255}
         />
         <div className="page-block-section font relative -mx-3 -mt-3">
           <Controller
