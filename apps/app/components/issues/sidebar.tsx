@@ -153,11 +153,20 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
 
     await issuesService
       .createIssueLink(workspaceSlug as string, projectId as string, issueDetail.id, payload)
-      .then((res) => {
-        mutate(ISSUE_DETAILS(issueDetail.id));
-      })
+      .then(() => mutate(ISSUE_DETAILS(issueDetail.id)))
       .catch((err) => {
-        console.log(err);
+        if (err.status === 400)
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message: "This URL already exists for this issue.",
+          });
+        else
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message: "Something went wrong. Please try again.",
+          });
       });
   };
 

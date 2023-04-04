@@ -24,6 +24,7 @@ import type { NextPage, GetServerSidePropsContext } from "next";
 
 const Onboarding: NextPage = () => {
   const [step, setStep] = useState(1);
+  const [userRole, setUserRole] = useState<string | null>(null);
 
   const [workspace, setWorkspace] = useState();
 
@@ -40,7 +41,7 @@ const Onboarding: NextPage = () => {
               <Image src={Logo} height="50" alt="Plane Logo" />
             </div>
             {step === 1 ? (
-              <UserDetails user={user} setStep={setStep} />
+              <UserDetails user={user} setStep={setStep} setUserRole={setUserRole} />
             ) : step === 2 ? (
               <Workspace setStep={setStep} setWorkspace={setWorkspace} />
             ) : (
@@ -69,7 +70,7 @@ const Onboarding: NextPage = () => {
                   onClick={() => {
                     if (step === 8) {
                       userService
-                        .updateUserOnBoard()
+                        .updateUserOnBoard({ userRole })
                         .then(() => {
                           router.push("/");
                         })

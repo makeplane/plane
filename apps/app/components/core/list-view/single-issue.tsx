@@ -27,6 +27,7 @@ import {
   PencilIcon,
   TrashIcon,
   XMarkIcon,
+  ArrowTopRightOnSquareIcon,
 } from "@heroicons/react/24/outline";
 // helpers
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
@@ -178,6 +179,15 @@ export const SingleListIssue: React.FC<Props> = ({
         <ContextMenu.Item Icon={LinkIcon} onClick={handleCopyText}>
           Copy issue link
         </ContextMenu.Item>
+        <a
+          href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}
+          target="_blank"
+          rel="noreferrer noopener"
+        >
+          <ContextMenu.Item Icon={ArrowTopRightOnSquareIcon}>
+            Open issue in new tab
+          </ContextMenu.Item>
+        </a>
       </ContextMenu>
       <div className="border-b border-gray-300 last:border-b-0">
         <div
