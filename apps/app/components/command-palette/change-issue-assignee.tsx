@@ -98,8 +98,7 @@ export const ChangeIssueAssignee: React.FC<Props> = ({ setIsPaletteOpen, issue }
         <Command.Item
           key={option.value}
           onSelect={() => handleIssueAssignees(option.value)}
-          className="focus:bg-slate-200 focus:outline-none"
-          tabIndex={0}
+          className="focus:outline-none"
         >
           {option.content}
         </Command.Item>

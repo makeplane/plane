@@ -107,15 +107,20 @@ export const ModuleDetailsSidebar: React.FC<Props> = ({
 
     await modulesService
       .createModuleLink(workspaceSlug as string, projectId as string, moduleId as string, payload)
-      .then((res) => {
-        mutate(MODULE_DETAILS(moduleId as string));
-      })
+      .then(() => mutate(MODULE_DETAILS(moduleId as string)))
       .catch((err) => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Couldn't create the link. Please try again.",
-        });
+        if (err.status === 400)
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message: "This URL already exists for this module.",
+          });
+        else
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message: "Something went wrong. Please try again.",
+          });
       });
   };
 

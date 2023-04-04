@@ -60,8 +60,7 @@ export const ChangeIssuePriority: React.FC<Props> = ({ setIsPaletteOpen, issue }
         <Command.Item
           key={priority}
           onSelect={() => handleIssueState(priority)}
-          className="focus:bg-slate-200 focus:outline-none"
-          tabIndex={0}
+          className="focus:outline-none"
         >
           <div className="flex items-center space-x-3">
             {getPriorityIcon(priority)}

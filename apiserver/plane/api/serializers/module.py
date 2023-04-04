@@ -139,6 +139,16 @@ class ModuleLinkSerializer(BaseSerializer):
             "module",
         ]
 
+    # Validation if url already exists
+    def create(self, validated_data):
+        if ModuleLink.objects.filter(
+            url=validated_data.get("url"), module_id=validated_data.get("module_id")
+        ).exists():
+            raise serializers.ValidationError(
+                {"error": "URL already exists for this Issue"}
+            )
+        return ModuleLink.objects.create(**validated_data)
+
 
 class ModuleSerializer(BaseSerializer):
     project_detail = ProjectSerializer(read_only=True, source="project")

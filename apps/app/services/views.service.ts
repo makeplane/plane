@@ -1,9 +1,14 @@
 // services
 import APIService from "services/api.service";
+import trackEventServices from "services/track-event.service";
+
 // types
 import { IView } from "types/views";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
+
+const trackEvent =
+  process.env.NEXT_PUBLIC_TRACK_EVENTS === "true" || process.env.NEXT_PUBLIC_TRACK_EVENTS === "1";
 
 class ViewServices extends APIService {
   constructor() {
@@ -12,7 +17,10 @@ class ViewServices extends APIService {
 
   async createView(workspaceSlug: string, projectId: string, data: IView): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/`, data)
-      .then((response) => response?.data)
+      .then((response) => {
+        if (trackEvent) trackEventServices.trackViewEvent(response?.data, "VIEW_CREATE");
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -25,7 +33,10 @@ class ViewServices extends APIService {
     data: IView
   ): Promise<any> {
     return this.put(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/`, data)
-      .then((response) => response?.data)
+      .then((response) => {
+        if (trackEvent) trackEventServices.trackViewEvent(response?.data, "VIEW_UPDATE");
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -41,7 +52,10 @@ class ViewServices extends APIService {
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/`,
       data
     )
-      .then((response) => response?.data)
+      .then((response) => {
+        if (trackEvent) trackEventServices.trackViewEvent(response?.data, "VIEW_UPDATE");
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -49,7 +63,10 @@ class ViewServices extends APIService {
 
   async deleteView(workspaceSlug: string, projectId: string, viewId: string): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/`)
-      .then((response) => response?.data)
+      .then((response) => {
+        if (trackEvent) trackEventServices.trackViewEvent(response?.data, "VIEW_DELETE");
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -111,7 +128,6 @@ class ViewServices extends APIService {
         throw error?.response?.data;
       });
   }
-
 }
 
 export default new ViewServices();

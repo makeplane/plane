@@ -14,6 +14,7 @@ import type {
   IPageBlock,
   IProject,
   IState,
+  IView,
   IWorkspace,
 } from "types";
 
@@ -36,6 +37,8 @@ type StateEventType = "STATE_CREATE" | "STATE_UPDATE" | "STATE_DELETE";
 type ModuleEventType = "MODULE_CREATE" | "MODULE_UPDATE" | "MODULE_DELETE";
 
 type PagesEventType = "PAGE_CREATE" | "PAGE_UPDATE" | "PAGE_DELETE";
+
+type ViewEventType = "VIEW_CREATE" | "VIEW_UPDATE" | "VIEW_DELETE";
 
 type PageBlocksEventType =
   | "PAGE_BLOCK_CREATE"
@@ -353,6 +356,30 @@ class TrackEventServices extends APIService {
         pageBlockId: data.id,
       };
     }
+
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName,
+        extra: {
+          ...payload,
+        },
+      },
+    });
+  }
+
+  async trackViewEvent(data: IView, eventName: ViewEventType): Promise<any> {
+    let payload: any;
+    if (eventName === "VIEW_DELETE") payload = data;
+    else
+      payload = {
+        labels: Boolean(data.query_data.labels),
+        assignees: Boolean(data.query_data.assignees),
+        priority: Boolean(data.query_data.priority),
+        state: Boolean(data.query_data.state),
+        created_by: Boolean(data.query_data.created_by),
+      };
 
     return this.request({
       url: "/api/track-event",

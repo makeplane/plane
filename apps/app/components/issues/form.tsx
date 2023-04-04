@@ -332,7 +332,7 @@ export const IssueForm: FC<IssueFormProps> = ({
                       }
                       onJSONChange={(jsonValue) => setValue("description", jsonValue)}
                       onHTMLChange={(htmlValue) => setValue("description_html", htmlValue)}
-                      placeholder="Description"
+                      placeholder="Describe the issue..."
                     />
                   )}
                 />

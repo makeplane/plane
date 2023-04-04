@@ -185,25 +185,23 @@ const RemirrorRichTextEditor: FC<IRemirrorRichTextEditor> = (props) => {
   };
 
   return (
-    <div className="mt-2 mb-4">
+    <div className="relative">
       <Remirror
         manager={manager}
         initialContent={state}
         classNames={[
           `p-4 relative focus:outline-none rounded-md focus:border-gray-200 ${
             noBorder ? "" : "border"
-          } ${borderOnFocus ? "focus:border" : ""} ${customClassName}`,
+          } ${borderOnFocus ? "focus:border" : "focus:border-0"} ${customClassName}`,
         ]}
         editable={editable}
         onBlur={() => {
           onBlur(jsonValue, htmlValue);
         }}
       >
-        {/* {(!value || value === "" || value?.content?.[0]?.content === undefined) && (
-          <p className="pointer-events-none absolute top-[8.8rem] left-12 text-gray-300">
-            {placeholder || "Enter text..."}
-          </p>
-        )} */}
+        {(!value || value === "" || value?.content?.[0]?.content === undefined) && placeholder && (
+          <p className="absolute pointer-events-none top-4 left-4 text-gray-300">{placeholder}</p>
+        )}
         <EditorComponent />
 
         {imageLoader && (

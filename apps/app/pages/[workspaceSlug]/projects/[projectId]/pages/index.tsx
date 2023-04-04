@@ -167,7 +167,10 @@ const ProjectPages: NextPage<UserAuth> = (props) => {
         right={
           <PrimaryButton
             className="flex items-center gap-2"
-            onClick={() => setCreateUpdatePageModal(true)}
+            onClick={() => {
+              const e = new KeyboardEvent("keydown", { key: "d" });
+              document.dispatchEvent(e);
+            }}
           >
             <PlusIcon className="w-4 h-4" />
             Create Page

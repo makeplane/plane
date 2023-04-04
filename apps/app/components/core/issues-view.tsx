@@ -18,7 +18,7 @@ import { AllLists, AllBoards, FilterList } from "components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 import { CreateUpdateViewModal } from "components/views";
-import { TransferIssuesModal } from "components/cycles";
+import { TransferIssues, TransferIssuesModal } from "components/cycles";
 // ui
 import { EmptySpace, EmptySpaceItem, PrimaryButton, Spinner } from "components/ui";
 import { CalendarView } from "./calendar-view";
@@ -459,23 +459,7 @@ export const IssuesView: React.FC<Props> = ({
         {groupedByIssues ? (
           isNotEmpty ? (
             <>
-              {isCompleted && (
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2 text-sm text-gray-500">
-                    <ExclamationIcon height={14} width={14} />
-                    <span>Completed cycles are not editable.</span>
-                  </div>
-                  <div>
-                    <PrimaryButton
-                      onClick={() => setTransferIssuesModal(true)}
-                      className="flex items-center gap-3 rounded-lg"
-                    >
-                      <TransferIcon className="h-4 w-4" />
-                      <span>Transfer Issues</span>
-                    </PrimaryButton>
-                  </div>
-                </div>
-              )}
+              {isCompleted && <TransferIssues handleClick={() => setTransferIssuesModal(true)} />}
               {issueView === "list" ? (
                 <AllLists
                   type={type}

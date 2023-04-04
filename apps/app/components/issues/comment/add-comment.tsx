@@ -96,7 +96,7 @@ export const AddComment: React.FC = () => {
                   setValue("comment_json", jsonValue);
                   setValue("comment_html", htmlValue);
                 }}
-                // placeholder="Enter Your comment..."
+                placeholder="Enter your comment..."
               />
             )}
           />
@@ -104,7 +104,7 @@ export const AddComment: React.FC = () => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="rounded-md bg-gray-300 p-2 px-4 text-sm text-black hover:bg-gray-300"
+            className="rounded-md bg-gray-300 p-2 px-4 text-sm text-black hover:bg-gray-300 mt-4"
           >
             {isSubmitting ? "Adding..." : "Comment"}
           </button>

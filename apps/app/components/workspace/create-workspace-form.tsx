@@ -27,6 +27,15 @@ type Props = {
   setDefaultValues: Dispatch<SetStateAction<any>>;
 };
 
+const restrictedUrls = [
+  "create-workspace",
+  "error",
+  "invitations",
+  "magic-sign-in",
+  "onboarding",
+  "signin",
+];
+
 export const CreateWorkspaceForm: React.FC<Props> = ({
   onSubmit,
   defaultValues,
@@ -49,7 +58,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
     await workspaceService
       .workspaceSlugCheck(formData.slug)
       .then(async (res) => {
-        if (res.status === true) {
+        if (res.status === true && !restrictedUrls.includes(formData.slug)) {
           setSlugError(false);
           await workspaceService
             .createWorkspace(formData)

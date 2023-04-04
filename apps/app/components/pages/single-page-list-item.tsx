@@ -6,7 +6,14 @@ import { useRouter } from "next/router";
 // ui
 import { CustomMenu, Tooltip } from "components/ui";
 // icons
-import { DocumentTextIcon, PencilIcon, StarIcon, TrashIcon } from "@heroicons/react/24/outline";
+import {
+  DocumentTextIcon,
+  LockClosedIcon,
+  LockOpenIcon,
+  PencilIcon,
+  StarIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
 // helpers
 import { truncateText } from "helpers/string.helper";
 import { renderShortDate, renderShortTime } from "helpers/date-time.helper";
@@ -19,6 +26,7 @@ type TSingleStatProps = {
   handleDeletePage: () => void;
   handleAddToFavorites: () => void;
   handleRemoveFromFavorites: () => void;
+  partialUpdatePage: (page: IPage, formData: Partial<IPage>) => void;
 };
 
 export const SinglePageListItem: React.FC<TSingleStatProps> = ({
@@ -27,6 +35,7 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
   handleDeletePage,
   handleAddToFavorites,
   handleRemoveFromFavorites,
+  partialUpdatePage,
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -94,6 +103,29 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
                       <StarIcon className="h-4 w-4 " color="#858e96" />
                     </button>
                   )}
+                  <Tooltip
+                    tooltipContent={`${
+                      page.access
+                        ? "This page is only visible to you."
+                        : "This page can be viewed by anyone in the project."
+                    }`}
+                    theme="dark"
+                  >
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        partialUpdatePage(page, { access: page.access ? 0 : 1 });
+                      }}
+                    >
+                      {page.access ? (
+                        <LockClosedIcon className="h-4 w-4" color="#858e96" />
+                      ) : (
+                        <LockOpenIcon className="h-4 w-4" color="#858e96" />
+                      )}
+                    </button>
+                  </Tooltip>
                   <CustomMenu width="auto" verticalEllipsis>
                     <CustomMenu.MenuItem
                       onClick={(e: any) => {
