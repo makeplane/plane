@@ -22,11 +22,11 @@ export const PrimaryButton: React.FC<ButtonProps> = ({
     } ${
       disabled
         ? "cursor-not-allowed border-gray-300 bg-gray-300 text-black hover:border-gray-300 hover:border-opacity-100 hover:bg-gray-300 hover:bg-opacity-100 hover:text-black"
-        : "border-theme"
+        : "border-skin-accent"
     } ${
       outline
-        ? "bg-transparent hover:bg-theme hover:text-white"
-        : "bg-theme hover:border-opacity-90 hover:bg-opacity-90"
+        ? "bg-transparent hover:bg-skin-accent hover:text-white"
+        : "bg-skin-accent hover:border-opacity-90 hover:bg-opacity-90"
     } ${!disabled && !outline ? "text-white" : ""} ${loading ? "cursor-wait" : ""}`}
     onClick={onClick}
     disabled={disabled || loading}
