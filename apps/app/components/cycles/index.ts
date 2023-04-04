@@ -8,3 +8,4 @@ export * from "./sidebar";
 export * from "./single-cycle-card";
 export * from "./empty-cycle";
 export * from "./transfer-issues-modal";
+export * from "./transfer-issues";

@@ -152,6 +152,32 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
       });
   };
 
+  const partialUpdatePage = (page: IPage, formData: Partial<IPage>) => {
+    if (!workspaceSlug || !projectId) return;
+
+    mutate<IPage[]>(
+      ALL_PAGES_LIST(projectId as string),
+      (prevData) => (prevData ?? []).map((p) => ({ ...p, ...formData })),
+      false
+    );
+    mutate<IPage[]>(
+      MY_PAGES_LIST(projectId as string),
+      (prevData) => (prevData ?? []).map((p) => ({ ...p, ...formData })),
+      false
+    );
+    mutate<IPage[]>(
+      FAVORITE_PAGES_LIST(projectId as string),
+      (prevData) => (prevData ?? []).map((p) => ({ ...p, ...formData })),
+      false
+    );
+
+    pagesService
+      .patchPage(workspaceSlug as string, projectId as string, page.id, formData)
+      .then(() => {
+        mutate(RECENT_PAGES_LIST(projectId as string));
+      });
+  };
+
   return (
     <>
       <CreateUpdatePageModal
@@ -176,6 +202,7 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
                   handleDeletePage={() => handleDeletePage(page)}
                   handleAddToFavorites={() => handleAddToFavorites(page)}
                   handleRemoveFromFavorites={() => handleRemoveFromFavorites(page)}
+                  partialUpdatePage={partialUpdatePage}
                 />
               ))}
             </ul>
@@ -189,6 +216,7 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
                   handleDeletePage={() => handleDeletePage(page)}
                   handleAddToFavorites={() => handleAddToFavorites(page)}
                   handleRemoveFromFavorites={() => handleRemoveFromFavorites(page)}
+                  partialUpdatePage={partialUpdatePage}
                 />
               ))}
             </div>
@@ -202,6 +230,7 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
                   handleDeletePage={() => handleDeletePage(page)}
                   handleAddToFavorites={() => handleAddToFavorites(page)}
                   handleRemoveFromFavorites={() => handleRemoveFromFavorites(page)}
+                  partialUpdatePage={partialUpdatePage}
                 />
               ))}
             </div>

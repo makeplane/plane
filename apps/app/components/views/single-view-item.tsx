@@ -81,8 +81,8 @@ export const SingleViewItem: React.FC<Props> = ({ view, setSelectedView }) => {
   };
 
   return (
-    <>
-      <Link href={`/${workspaceSlug}/projects/${projectId}/views/${view.id}`}>
+    <Link href={`/${workspaceSlug}/projects/${projectId}/views/${view.id}`}>
+      <a>
         <div className="flex items-center cursor-pointer justify-between border-b bg-white p-4 first:rounded-t-[10px] last:rounded-b-[10px]">
           <div className="flex flex-col w-full gap-3">
             <div className="flex justify-between w-full">
@@ -137,7 +137,7 @@ export const SingleViewItem: React.FC<Props> = ({ view, setSelectedView }) => {
             )}
           </div>
         </div>
-      </Link>
-    </>
+      </a>
+    </Link>
   );
 };

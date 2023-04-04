@@ -33,6 +33,8 @@ import {
   PencilIcon,
   TrashIcon,
   XMarkIcon,
+  ArrowTopRightOnSquareIcon,
+
 } from "@heroicons/react/24/outline";
 // helpers
 import { handleIssuesMutation } from "constants/issue";
@@ -110,8 +112,7 @@ export const SingleBoardIssue: React.FC<Props> = ({
             handleIssuesMutation(formData, groupTitle ?? "", selectedGroup, index, prevData),
           false
         );
-
-      if (moduleId)
+      else if (moduleId)
         mutate<
           | {
               [key: string]: IIssue[];
@@ -123,18 +124,18 @@ export const SingleBoardIssue: React.FC<Props> = ({
             handleIssuesMutation(formData, groupTitle ?? "", selectedGroup, index, prevData),
           false
         );
-
-      mutate<
-        | {
-            [key: string]: IIssue[];
-          }
-        | IIssue[]
-      >(
-        PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params),
-        (prevData) =>
-          handleIssuesMutation(formData, groupTitle ?? "", selectedGroup, index, prevData),
-        false
-      );
+      else
+        mutate<
+          | {
+              [key: string]: IIssue[];
+            }
+          | IIssue[]
+        >(
+          PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params),
+          (prevData) =>
+            handleIssuesMutation(formData, groupTitle ?? "", selectedGroup, index, prevData),
+          false
+        );
 
       issuesService
         .patchIssue(workspaceSlug as string, projectId as string, issue.id, formData)
@@ -212,6 +213,15 @@ export const SingleBoardIssue: React.FC<Props> = ({
         <ContextMenu.Item Icon={LinkIcon} onClick={handleCopyText}>
           Copy issue link
         </ContextMenu.Item>
+        <a
+          href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}
+          target="_blank"
+          rel="noreferrer noopener"
+        >
+          <ContextMenu.Item Icon={ArrowTopRightOnSquareIcon}>
+            Open issue in new tab
+          </ContextMenu.Item>
+        </a>
       </ContextMenu>
       <div
         className={`mb-3 rounded bg-white shadow ${

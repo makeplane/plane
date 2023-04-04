@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { useRouter } from "next/router";
 
@@ -10,6 +10,9 @@ import { useForm } from "react-hook-form";
 import { Popover, Transition } from "@headlessui/react";
 // react-color
 import { TwitterPicker } from "react-color";
+// react-beautiful-dnd
+import { DragDropContext, DropResult } from "react-beautiful-dnd";
+import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 // lib
 import { requiredAdmin, requiredAuth } from "lib/auth";
 // services
@@ -21,16 +24,24 @@ import useToast from "hooks/use-toast";
 // layouts
 import AppLayout from "layouts/app-layout";
 // components
-import { SinglePageBlock } from "components/pages";
+import { CreateUpdateBlockInline, SinglePageBlock } from "components/pages";
 // ui
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import { CustomSearchSelect, Loader, PrimaryButton, TextArea, Tooltip } from "components/ui";
 // icons
-import { ArrowLeftIcon, PlusIcon, ShareIcon, StarIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowLeftIcon,
+  LockClosedIcon,
+  LockOpenIcon,
+  PlusIcon,
+  ShareIcon,
+  StarIcon,
+} from "@heroicons/react/24/outline";
 import { ColorPalletteIcon } from "components/icons";
 // helpers
 import { renderShortTime } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
+import { orderArrayBy } from "helpers/array.helper";
 // types
 import type { NextPage, GetServerSidePropsContext } from "next";
 import { IIssueLabels, IPage, IPageBlock, UserAuth } from "types";
@@ -43,14 +54,16 @@ import {
 } from "constants/fetch-keys";
 
 const SinglePage: NextPage<UserAuth> = (props) => {
-  const [isAddingBlock, setIsAddingBlock] = useState(false);
+  const [createBlockForm, setCreateBlockForm] = useState(false);
+
+  const scrollToRef = useRef<HTMLDivElement>(null);
 
   const router = useRouter();
   const { workspaceSlug, projectId, pageId } = router.query;
 
   const { setToastAlert } = useToast();
 
-  const { handleSubmit, reset, watch, setValue, control } = useForm<IPage>({
+  const { handleSubmit, reset, watch, setValue } = useForm<IPage>({
     defaultValues: { name: "" },
   });
 
@@ -65,11 +78,11 @@ const SinglePage: NextPage<UserAuth> = (props) => {
     workspaceSlug && projectId && pageId ? PAGE_DETAILS(pageId as string) : null,
     workspaceSlug && projectId
       ? () =>
-        pagesService.getPageDetails(
-          workspaceSlug as string,
-          projectId as string,
-          pageId as string
-        )
+          pagesService.getPageDetails(
+            workspaceSlug as string,
+            projectId as string,
+            pageId as string
+          )
       : null
   );
 
@@ -77,11 +90,11 @@ const SinglePage: NextPage<UserAuth> = (props) => {
     workspaceSlug && projectId && pageId ? PAGE_BLOCKS_LIST(pageId as string) : null,
     workspaceSlug && projectId
       ? () =>
-        pagesService.listPageBlocks(
-          workspaceSlug as string,
-          projectId as string,
-          pageId as string
-        )
+          pagesService.listPageBlocks(
+            workspaceSlug as string,
+            projectId as string,
+            pageId as string
+          )
       : null
   );
 
@@ -131,34 +144,6 @@ const SinglePage: NextPage<UserAuth> = (props) => {
       });
   };
 
-  const createPageBlock = async () => {
-    if (!workspaceSlug || !projectId || !pageId) return;
-
-    setIsAddingBlock(true);
-
-    await pagesService
-      .createPageBlock(workspaceSlug as string, projectId as string, pageId as string, {
-        name: "New block",
-      })
-      .then((res) => {
-        mutate<IPageBlock[]>(
-          PAGE_BLOCKS_LIST(pageId as string),
-          (prevData) => [...(prevData as IPageBlock[]), res],
-          false
-        );
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Page could not be created. Please try again.",
-        });
-      })
-      .finally(() => {
-        setIsAddingBlock(false);
-      });
-  };
-
   const handleAddToFavorites = () => {
     if (!workspaceSlug || !projectId || !pageId) return;
 
@@ -195,6 +180,50 @@ const SinglePage: NextPage<UserAuth> = (props) => {
     );
   };
 
+  const handleOnDragEnd = (result: DropResult) => {
+    if (!result.destination || !workspaceSlug || !projectId || !pageId || !pageBlocks) return;
+
+    const { source, destination } = result;
+
+    let newSortOrder = pageBlocks.find((p) => p.id === result.draggableId)?.sort_order ?? 65535;
+
+    if (destination.index === 0) newSortOrder = pageBlocks[0].sort_order - 10000;
+    else if (destination.index === pageBlocks.length - 1)
+      newSortOrder = pageBlocks[pageBlocks.length - 1].sort_order + 10000;
+    else {
+      if (destination.index > source.index)
+        newSortOrder =
+          (pageBlocks[destination.index].sort_order +
+            pageBlocks[destination.index + 1].sort_order) /
+          2;
+      else if (destination.index < source.index)
+        newSortOrder =
+          (pageBlocks[destination.index - 1].sort_order +
+            pageBlocks[destination.index].sort_order) /
+          2;
+    }
+
+    const newBlocksList = pageBlocks.map((p) => ({
+      ...p,
+      sort_order: p.id === result.draggableId ? newSortOrder : p.sort_order,
+    }));
+    mutate<IPageBlock[]>(
+      PAGE_BLOCKS_LIST(pageId as string),
+      orderArrayBy(newBlocksList, "sort_order", "ascending"),
+      false
+    );
+
+    pagesService.patchPageBlock(
+      workspaceSlug as string,
+      projectId as string,
+      pageId as string,
+      result.draggableId,
+      {
+        sort_order: newSortOrder,
+      }
+    );
+  };
+
   const handleCopyText = () => {
     const originURL =
       typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
@@ -208,6 +237,13 @@ const SinglePage: NextPage<UserAuth> = (props) => {
         });
       }
     );
+  };
+
+  const handleNewBlock = () => {
+    setCreateBlockForm(true);
+    scrollToRef.current?.scrollIntoView({
+      behavior: "smooth",
+    });
   };
 
   const options =
@@ -272,8 +308,9 @@ const SinglePage: NextPage<UserAuth> = (props) => {
                         key={label.id}
                         className="group flex items-center gap-1 rounded-2xl border px-2 py-0.5 text-xs"
                         style={{
-                          backgroundColor: `${label?.color && label.color !== "" ? label.color : "#000000"
-                            }20`,
+                          backgroundColor: `${
+                            label?.color && label.color !== "" ? label.color : "#000000"
+                          }20`,
                         }}
                       >
                         <span
@@ -341,8 +378,9 @@ const SinglePage: NextPage<UserAuth> = (props) => {
                     <>
                       <Popover.Button
                         type="button"
-                        className={`group inline-flex items-center outline-none ${open ? "text-gray-900" : "text-gray-500"
-                          }`}
+                        className={`group inline-flex items-center outline-none ${
+                          open ? "text-gray-900" : "text-gray-500"
+                        }`}
                       >
                         {watch("color") && watch("color") !== "" ? (
                           <span
@@ -352,7 +390,7 @@ const SinglePage: NextPage<UserAuth> = (props) => {
                             }}
                           />
                         ) : (
-                          <ColorPalletteIcon height={16} width={16} />
+                          <ColorPalletteIcon height={16} width={16} color="#000000" />
                         )}
                       </Popover.Button>
 
@@ -376,6 +414,19 @@ const SinglePage: NextPage<UserAuth> = (props) => {
                   )}
                 </Popover>
               </div>
+              {pageDetails.access ? (
+                <button onClick={() => partialUpdatePage({ access: 0 })} className="z-10">
+                  <LockClosedIcon className="h-4 w-4" />
+                </button>
+              ) : (
+                <button
+                  onClick={() => partialUpdatePage({ access: 1 })}
+                  type="button"
+                  className="z-10"
+                >
+                  <LockOpenIcon className="h-4 w-4" />
+                </button>
+              )}
               {pageDetails.is_favorite ? (
                 <button onClick={handleRemoveFromFavorites} className="z-10">
                   <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
@@ -403,34 +454,44 @@ const SinglePage: NextPage<UserAuth> = (props) => {
           <div className="px-3">
             {pageBlocks ? (
               <>
-                {pageBlocks.length !== 0 && (
-                  <div className="space-y-4 divide-y">
-                    {pageBlocks.map((block, index) => (
-                      <>
-                        <SinglePageBlock
-                          key={block.id}
-                          block={block}
-                          projectDetails={projectDetails}
-                        />
-                      </>
-                    ))}
+                <DragDropContext onDragEnd={handleOnDragEnd}>
+                  {pageBlocks.length !== 0 && (
+                    <StrictModeDroppable droppableId="blocks-list">
+                      {(provided) => (
+                        <div ref={provided.innerRef} {...provided.droppableProps}>
+                          {pageBlocks.map((block, index) => (
+                            <SinglePageBlock
+                              key={block.id}
+                              block={block}
+                              projectDetails={projectDetails}
+                              index={index}
+                              handleNewBlock={handleNewBlock}
+                            />
+                          ))}
+                          {provided.placeholder}
+                        </div>
+                      )}
+                    </StrictModeDroppable>
+                  )}
+                </DragDropContext>
+                {!createBlockForm && (
+                  <button
+                    type="button"
+                    className="flex items-center gap-1 rounded bg-gray-100 px-2.5 py-1 ml-6 text-xs hover:bg-gray-200 mt-4"
+                    onClick={handleNewBlock}
+                  >
+                    <PlusIcon className="h-3 w-3" />
+                    Add new block
+                  </button>
+                )}
+                {createBlockForm && (
+                  <div className="mt-4" ref={scrollToRef}>
+                    <CreateUpdateBlockInline
+                      handleClose={() => setCreateBlockForm(false)}
+                      focus="name"
+                    />
                   </div>
                 )}
-                <button
-                  type="button"
-                  className="flex items-center gap-1 rounded bg-gray-100 px-2.5 py-1 text-xs hover:bg-gray-200"
-                  onClick={createPageBlock}
-                  disabled={isAddingBlock}
-                >
-                  {isAddingBlock ? (
-                    "Adding block..."
-                  ) : (
-                    <>
-                      <PlusIcon className="h-3 w-3" />
-                      Add new block
-                    </>
-                  )}
-                </button>
               </>
             ) : (
               <Loader>

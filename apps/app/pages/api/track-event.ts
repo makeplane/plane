@@ -37,15 +37,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // TODO: cache user info
 
   jitsu
-    .id(
-      {
-        id: user.id,
-        email: user.email,
-        first_name: user.first_name,
-        last_name: user.last_name,
-      },
-      true
-    )
+    .id({
+      id: user.id,
+      email: user.email,
+      first_name: user.first_name,
+      last_name: user.last_name,
+    })
     .then(() => {
       jitsu.track(eventName, {
         ...extra,
