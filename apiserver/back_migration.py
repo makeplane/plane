@@ -3,7 +3,7 @@ import uuid
 import random
 from django.contrib.auth.hashers import make_password
 from plane.db.models import ProjectIdentifier
-from plane.db.models import Issue, IssueComment, User, Project, ProjectMember
+from plane.db.models import Issue, IssueComment, User, Project, ProjectMember, Label
 
 
 
