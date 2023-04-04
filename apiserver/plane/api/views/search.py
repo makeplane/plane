@@ -218,7 +218,7 @@ class IssueSearchEndpoint(BaseAPIView):
             )
 
             if parent:
-                issues.filter(parent__isnull=True)
+                issues.filter(parent__isnull=False)
             if blocker_blocked_by and issue_id:
                 issues.filter(blocker_issues=issue_id, blocked_issues=issue_id)
 
