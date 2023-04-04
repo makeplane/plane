@@ -1,4 +1,4 @@
-import React, {  useCallback } from "react";
+import React, { useCallback, useState } from "react";
 
 import { useRouter } from "next/router";
 
@@ -18,7 +18,8 @@ import fileServices from "services/file.service";
 // const acceptedFileTypes = ["application/pdf", "text/csv", "application/vnd.ms-excel"];
 const maxFileSize = 5 * 1024 * 1024; // 5 MB
 
-export const IssueAttachmentUpload= () => {
+export const IssueAttachmentUpload = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
@@ -26,7 +27,7 @@ export const IssueAttachmentUpload= () => {
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (!acceptedFiles[0] || !workspaceSlug) return;
-
+    setIsLoading(true);
     const formData = new FormData();
     formData.append("asset", acceptedFiles[0]);
     formData.append(
@@ -51,6 +52,7 @@ export const IssueAttachmentUpload= () => {
           title: "Success!",
           message: "File added successfully.",
         });
+        setIsLoading(false);
       })
       .catch((err) => {
         setToastAlert({
@@ -82,8 +84,15 @@ export const IssueAttachmentUpload= () => {
     >
       <input {...getInputProps()} />
       <span className="flex items-center gap-2">
-        <PlusIcon className="h-5 w-5 text-blue-500" />
-        {isDragActive ? <p>Drop here...</p> : <p className="text-center">Drag & Drop or Click to add new file</p>}
+        
+        {isDragActive ? (
+          <p>Drop here...</p>
+        ) : isLoading ? (<p className="text-center">Uploading....</p>) : (
+          <>
+          {/* <PlusIcon className="h-5 w-5 text-blue-500" /> */}
+          <p className="text-center">Drag & Drop or Click to add new file</p>
+          </>
+        )}
         {fileError && <p className="text-red-500 mt-2">{fileError}</p>}
       </span>
     </div>
