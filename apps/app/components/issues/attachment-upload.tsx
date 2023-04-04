@@ -76,14 +76,14 @@ export const IssueAttachmentUpload= () => {
   return (
     <div
       {...getRootProps()}
-      className={`flex items-center border-2 border-dashed border-theme text-theme text-xs rounded-md px-4 py-2 ${
+      className={`flex items-center justify-center border-2 border-dashed border-theme text-blue-500 text-sm rounded-md px-4 py-2 ${
         isDragActive ? "bg-theme/10" : ""
       } ${isDragReject ? "bg-red-100" : ""}`}
     >
       <input {...getInputProps()} />
       <span className="flex items-center gap-2">
-        <PlusIcon className="h-4 w-4 text-theme" />
-        {isDragActive ? <p>Drop here...</p> : <p>Add new file</p>}
+        <PlusIcon className="h-5 w-5 text-blue-500" />
+        {isDragActive ? <p>Drop here...</p> : <p className="text-center">Drag & Drop or Click to add new file</p>}
         {fileError && <p className="text-red-500 mt-2">{fileError}</p>}
       </span>
     </div>
