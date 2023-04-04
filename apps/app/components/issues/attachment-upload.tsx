@@ -76,7 +76,7 @@ export const IssueAttachmentUpload= () => {
   return (
     <div
       {...getRootProps()}
-      className={`flex items-center justify-center border-2 border-dashed border-theme text-blue-500 text-sm rounded-md px-4 py-2 ${
+      className={`flex items-center justify-center cursor-pointer border-2 border-dashed border-theme text-blue-500 text-sm rounded-md px-4 py-2 ${
         isDragActive ? "bg-theme/10" : ""
       } ${isDragReject ? "bg-red-100" : ""}`}
     >
