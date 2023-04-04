@@ -17,6 +17,9 @@ module.exports = {
         "hover-gray": "#f5f5f5",
         primary: "#f9fafb", // gray-50
         secondary: "white",
+        skin: {
+          accent: withOpacity("--color-accent-base"),
+        },
       },
       borderColor: {
         skin: {
@@ -28,7 +31,6 @@ module.exports = {
           base: withOpacity("--color-bg-base"),
           "surface-1": withOpacity("--color-bg-surface-1"),
           "surface-2": withOpacity("--color-bg-surface-2"),
-          accent: withOpacity("--color-accent-base"),
         },
       },
       textColor: {

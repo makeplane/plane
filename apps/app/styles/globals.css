@@ -37,7 +37,7 @@
 
     --color-text-base: 255, 255, 255;
     --color-text-muted-1: 243, 244, 246;
-    --color-text-muted-2: 209, 213, 219;
+    --color-text-muted-2: 156, 163, 175;
   }
 }
 
@@ -153,8 +153,17 @@
   z-index: 30 !important;
 }
 
-.conical-gradient{
-  background: conic-gradient(from 180deg at 50% 50%, #FF6B00 0deg, #F7AE59 70.5deg, #3F76FF 151.12deg, #05C3FF 213deg, #18914F 289.87deg, #F6F172 329.25deg, #FF6B00 360deg);
+.conical-gradient {
+  background: conic-gradient(
+    from 180deg at 50% 50%,
+    #ff6b00 0deg,
+    #f7ae59 70.5deg,
+    #3f76ff 151.12deg,
+    #05c3ff 213deg,
+    #18914f 289.87deg,
+    #f6f172 329.25deg,
+    #ff6b00 360deg
+  );
 }
 
 /* end react datepicker styling */

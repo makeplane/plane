@@ -153,10 +153,10 @@ const AppLayout: FC<AppLayoutProps> = ({
                 {settingsLayout && (
                   <div className="mb-12 space-y-6">
                     <div>
-                      <h3 className="text-3xl font-semibold">
+                      <h3 className="text-3xl font-semibold text-skin-base">
                         {profilePage ? "Profile" : projectId ? "Project" : "Workspace"} Settings
                       </h3>
-                      <p className="mt-1 text-gray-600">
+                      <p className="mt-1 text-skin-muted-2">
                         {profilePage
                           ? "This information will be visible to only you."
                           : projectId
