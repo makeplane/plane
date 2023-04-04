@@ -74,6 +74,7 @@ from plane.api.views import (
     SubIssuesEndpoint,
     IssueLinkViewSet,
     BulkCreateIssueLabelsEndpoint,
+    IssueAttachmentEndpoint,
     ## End Issues
     # States
     StateViewSet,
@@ -138,6 +139,7 @@ from plane.api.views import (
     ## End importer
     # Search
     GlobalSearchEndpoint,
+    IssueSearchEndpoint,
     ## End Search
     # Gpt
     GPTIntegrationEndpoint,
@@ -797,6 +799,16 @@ urlpatterns = [
         ),
         name="project-issue-links",
     ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-attachments/",
+        IssueAttachmentEndpoint.as_view(),
+        name="project-issue-attachments",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-attachments/<uuid:pk>/",
+        IssueAttachmentEndpoint.as_view(),
+        name="project-issue-attachments",
+    ),
     ## End Issues
     ## Issue Activity
     path(
@@ -1225,6 +1237,11 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/search/",
         GlobalSearchEndpoint.as_view(),
         name="global-search",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/search-issues/",
+        IssueSearchEndpoint.as_view(),
+        name="project-issue-search",
     ),
     ## End Search
     # Gpt

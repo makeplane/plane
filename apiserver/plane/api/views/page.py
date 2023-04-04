@@ -1,6 +1,5 @@
 # Python imports
-from datetime import timedelta, datetime
-from django.utils import timezone
+from datetime import timedelta, datetime, date
 
 # Django imports
 from django.db import IntegrityError
@@ -226,7 +225,6 @@ class CreateIssueFromPageBlockEndpoint(BaseAPIView):
                 verb="created",
             )
 
-
             page_block.issue = issue
             page_block.save()
 
@@ -256,12 +254,12 @@ class RecentPagesEndpoint(BaseAPIView):
                 project_id=project_id,
                 workspace__slug=slug,
             )
-            current_time = timezone.now()
+            current_time = date.today()
             day_before = current_time - timedelta(days=1)
 
             todays_pages = (
                 Page.objects.filter(
-                    updated_at__date=timezone.now().date(),
+                    updated_at__date=date.today(),
                     workspace__slug=slug,
                     project_id=project_id,
                 )
@@ -280,12 +278,12 @@ class RecentPagesEndpoint(BaseAPIView):
                         ),
                     )
                 )
-                .order_by("-is_favorite", "-updated_by")
+                .order_by("-is_favorite", "-updated_at")
             )
 
             yesterdays_pages = (
                 Page.objects.filter(
-                    updated_at__date=day_before.date(),
+                    updated_at__date=day_before,
                     workspace__slug=slug,
                     project_id=project_id,
                 )
@@ -304,14 +302,14 @@ class RecentPagesEndpoint(BaseAPIView):
                         ),
                     )
                 )
-                .order_by("-is_favorite", "-updated_by")
+                .order_by("-is_favorite", "-updated_at")
             )
 
             earlier_this_week = (
                 Page.objects.filter(
                     updated_at__date__range=(
-                        (timezone.now() - timedelta(days=7)).date(),
-                        (timezone.now() - timedelta(days=2)).date(),
+                        (timezone.now() - timedelta(days=7)),
+                        (timezone.now() - timedelta(days=2)),
                     ),
                     workspace__slug=slug,
                     project_id=project_id,
@@ -332,7 +330,7 @@ class RecentPagesEndpoint(BaseAPIView):
                         ),
                     )
                 )
-                .order_by("-is_favorite", "-updated_by")
+                .order_by("-is_favorite", "-updated_at")
             )
             todays_pages_serializer = PageSerializer(todays_pages, many=True)
             yesterday_pages_serializer = PageSerializer(yesterdays_pages, many=True)
@@ -346,7 +344,7 @@ class RecentPagesEndpoint(BaseAPIView):
                 status=status.HTTP_200_OK,
             )
         except Exception as e:
-            capture_exception(e)
+            print(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,

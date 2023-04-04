@@ -69,6 +69,7 @@ from .issue import (
     SubIssuesEndpoint,
     IssueLinkViewSet,
     BulkCreateIssueLabelsEndpoint,
+    IssueAttachmentEndpoint,
 )
 
 from .auth_extended import (
@@ -125,7 +126,7 @@ from .page import (
     CreatedbyOtherPagesEndpoint,
 )
 
-from .search import GlobalSearchEndpoint
+from .search import GlobalSearchEndpoint, IssueSearchEndpoint
 
 
 from .gpt import GPTIntegrationEndpoint

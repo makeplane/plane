@@ -12,10 +12,10 @@ import useIssuesProperties from "hooks/use-issue-properties";
 // components
 import { SingleListIssue } from "components/core";
 // ui
-import { CustomMenu } from "components/ui";
+import { Avatar, CustomMenu } from "components/ui";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
-import { getStateGroupIcon } from "components/icons";
+import { getPriorityIcon, getStateGroupIcon } from "components/icons";
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
@@ -99,6 +99,36 @@ export const SingleList: React.FC<Props> = ({
     return title;
   };
 
+  const getGroupIcon = () => {
+    let icon;
+
+    switch (selectedGroup) {
+      case "state":
+        icon = currentState && getStateGroupIcon(currentState.group, "18", "18", bgColor);
+        break;
+      case "priority":
+        icon = getPriorityIcon(groupTitle, "h-[18px] w-[18px] flex items-center");
+        break;
+      case "labels":
+        const labelColor =
+          issueLabels?.find((label) => label.id === groupTitle)?.color ?? "#000000";
+        icon = (
+          <span
+            className="h-[18px] w-[18px] flex-shrink-0 rounded-full"
+            style={{ backgroundColor: labelColor }}
+          />
+        );
+        break;
+      case "created_by":
+        const member = members?.find((member) => member.member.id === groupTitle)?.member;
+        icon = <Avatar user={member} height="24px" width="24px" fontSize="12px" />;
+
+        break;
+    }
+
+    return icon;
+  };
+
   return (
     <Disclosure key={groupTitle} as="div" defaultOpen>
       {({ open }) => (
@@ -110,15 +140,11 @@ export const SingleList: React.FC<Props> = ({
           >
             <Disclosure.Button>
               <div className="flex items-center gap-x-3">
-                {selectedGroup !== null && selectedGroup === "state" ? (
-                  <span>
-                    {currentState && getStateGroupIcon(currentState.group, "20", "20", bgColor)}
-                  </span>
-                ) : (
-                  ""
+                {selectedGroup !== null && (
+                  <span className="flex items-center">{getGroupIcon()}</span>
                 )}
                 {selectedGroup !== null ? (
-                  <h2 className="text-xl font-semibold capitalize leading-6 text-gray-800">
+                  <h2 className="text-base font-semibold capitalize leading-6 text-gray-800">
                     {getGroupTitle()}
                   </h2>
                 ) : (
@@ -142,9 +168,9 @@ export const SingleList: React.FC<Props> = ({
             ) : (
               <CustomMenu
                 customButton={
-                  <span className="flex items-center">
+                  <div className="flex items-center cursor-pointer">
                     <PlusIcon className="h-4 w-4" />
-                  </span>
+                  </div>
                 }
                 optionsPosition="right"
                 noBorder

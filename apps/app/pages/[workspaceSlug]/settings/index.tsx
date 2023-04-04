@@ -124,7 +124,6 @@ const WorkspaceSettings: NextPage<UserAuth> = (props) => {
         onClose={() => setIsImageUploadModalOpen(false)}
         onSuccess={(imageUrl) => {
           setIsImageUploading(true);
-          handleDelete(activeWorkspace?.logo);
           setValue("logo", imageUrl);
           setIsImageUploadModalOpen(false);
           handleSubmit(onSubmit)().then(() => setIsImageUploading(false));

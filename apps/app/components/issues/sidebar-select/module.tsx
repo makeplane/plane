@@ -8,6 +8,8 @@ import useSWR, { mutate } from "swr";
 import modulesService from "services/modules.service";
 // ui
 import { Spinner, CustomSelect, Tooltip } from "components/ui";
+// helper
+import { truncateText } from "helpers/string.helper";
 // icons
 import { RectangleGroupIcon } from "@heroicons/react/24/outline";
 // types
@@ -64,13 +66,15 @@ export const SidebarModuleSelect: React.FC<Props> = ({
       <div className="space-y-1 sm:basis-1/2">
         <CustomSelect
           label={
+            <Tooltip position="left" tooltipContent={`${modules?.find((m) => m.id === issueModule?.module)?.name ?? "None"}`}>
             <span
               className={`w-full max-w-[125px] truncate text-left sm:block ${
                 issueModule ? "" : "text-gray-900"
               }`}
             >
-              {modules?.find((m) => m.id === issueModule?.module)?.name ?? "None"}
+              {truncateText(`${modules?.find((m) => m.id === issueModule?.module)?.name ?? "None"}`, 15)}
             </span>
+            </Tooltip>
           }
           value={issueModule?.module_detail?.id}
           onChange={(value: any) => {
@@ -80,6 +84,7 @@ export const SidebarModuleSelect: React.FC<Props> = ({
           }}
           width="w-full"
           position="right"
+          maxHeight="rg"
           disabled={isNotAllowed}
         >
           {modules ? (
@@ -88,7 +93,7 @@ export const SidebarModuleSelect: React.FC<Props> = ({
                 {modules.map((option) => (
                   <CustomSelect.Option key={option.id} value={option.id}>
                     <Tooltip position="left-bottom" tooltipContent={option.name}>
-                      <span className="w-full max-w-[125px] truncate">{option.name}</span>
+                      <span className="w-full max-w-[125px] truncate">{truncateText(option.name, 15)}</span>
                     </Tooltip>
                   </CustomSelect.Option>
                 ))}

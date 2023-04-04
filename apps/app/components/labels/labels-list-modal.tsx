@@ -146,7 +146,7 @@ export const LabelsListModal: React.FC<Props> = ({ isOpen, handleClose, parent }
                                   <span
                                     className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
                                     style={{
-                                      backgroundColor: label.color,
+                                      backgroundColor: label.color !== "" ? label.color : "#000000",
                                     }}
                                   />
                                   {label.name}

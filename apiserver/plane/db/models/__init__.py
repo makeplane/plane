@@ -32,6 +32,7 @@ from .issue import (
     IssueBlocker,
     IssueLink,
     IssueSequence,
+    IssueAttachment,
 )
 
 from .asset import FileAsset

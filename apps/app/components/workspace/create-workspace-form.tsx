@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 import { mutate } from "swr";
 
@@ -19,15 +19,28 @@ import { COMPANY_SIZE } from "constants/workspace";
 
 type Props = {
   onSubmit: (res: IWorkspace) => void;
+  defaultValues: {
+    name: string;
+    slug: string;
+    company_size: number | null;
+  };
+  setDefaultValues: Dispatch<SetStateAction<any>>;
 };
 
-const defaultValues = {
-  name: "",
-  slug: "",
-  company_size: null,
-};
+const restrictedUrls = [
+  "create-workspace",
+  "error",
+  "invitations",
+  "magic-sign-in",
+  "onboarding",
+  "signin",
+];
 
-export const CreateWorkspaceForm: React.FC<Props> = ({ onSubmit }) => {
+export const CreateWorkspaceForm: React.FC<Props> = ({
+  onSubmit,
+  defaultValues,
+  setDefaultValues,
+}) => {
   const [slugError, setSlugError] = useState(false);
 
   const { setToastAlert } = useToast();
@@ -37,7 +50,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({ onSubmit }) => {
     handleSubmit,
     control,
     setValue,
-    reset,
+    getValues,
     formState: { errors, isSubmitting },
   } = useForm<IWorkspace>({ defaultValues });
 
@@ -45,7 +58,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({ onSubmit }) => {
     await workspaceService
       .workspaceSlugCheck(formData.slug)
       .then(async (res) => {
-        if (res.status === true) {
+        if (res.status === true && !restrictedUrls.includes(formData.slug)) {
           setSlugError(false);
           await workspaceService
             .createWorkspace(formData)
@@ -72,9 +85,13 @@ export const CreateWorkspaceForm: React.FC<Props> = ({ onSubmit }) => {
       });
   };
 
-  useEffect(() => {
-    reset(defaultValues);
-  }, [reset]);
+  useEffect(
+    () => () => {
+      // when the component unmounts set the default values to whatever user typed in
+      setDefaultValues(getValues());
+    },
+    [getValues, setDefaultValues]
+  );
 
   return (
     <form
