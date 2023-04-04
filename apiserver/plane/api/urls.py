@@ -74,6 +74,7 @@ from plane.api.views import (
     SubIssuesEndpoint,
     IssueLinkViewSet,
     BulkCreateIssueLabelsEndpoint,
+    IssueAttachmentEndpoint,
     ## End Issues
     # States
     StateViewSet,
@@ -741,6 +742,16 @@ urlpatterns = [
             }
         ),
         name="project-issue-links",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-attachments/",
+        IssueAttachmentEndpoint.as_view(),
+        name="project-issue-attachments",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-attachments/<uuid:pk>/",
+        IssueAttachmentEndpoint.as_view(),
+        name="project-issue-attachments",
     ),
     ## End Issues
     ## Issue Activity

@@ -69,6 +69,7 @@ from .issue import (
     SubIssuesEndpoint,
     IssueLinkViewSet,
     BulkCreateIssueLabelsEndpoint,
+    IssueAttachmentEndpoint,
 )
 
 from .auth_extended import (

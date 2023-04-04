@@ -25,6 +25,7 @@ from plane.db.models import (
     Module,
     ModuleIssue,
     IssueLink,
+    IssueAttachment,
 )
 
 
@@ -439,6 +440,21 @@ class IssueLinkSerializer(BaseSerializer):
         return IssueLink.objects.create(**validated_data)
 
 
+class IssueAttachmentSerializer(BaseSerializer):
+    class Meta:
+        model = IssueAttachment
+        fields = "__all__"
+        read_only_fields = [
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+            "workspace",
+            "project",
+            "issue",
+        ]
+
+
 # Issue Serializer with state details
 class IssueStateSerializer(BaseSerializer):
     state_detail = StateSerializer(read_only=True, source="state")
@@ -466,6 +482,7 @@ class IssueSerializer(BaseSerializer):
     issue_cycle = IssueCycleDetailSerializer(read_only=True)
     issue_module = IssueModuleDetailSerializer(read_only=True)
     issue_link = IssueLinkSerializer(read_only=True, many=True)
+    issue_attachment = IssueAttachmentSerializer(read_only=True, many=True)
     sub_issues_count = serializers.IntegerField(read_only=True)
 
     class Meta:
