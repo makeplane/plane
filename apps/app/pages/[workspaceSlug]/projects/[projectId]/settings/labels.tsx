@@ -46,7 +46,7 @@ const LabelsSettings: NextPage<UserAuth> = (props) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const scollToRef = useRef<HTMLDivElement>(null);
+  const scrollToRef = useRef<HTMLDivElement>(null);
 
   const { data: projectDetails } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
@@ -130,7 +130,7 @@ const LabelsSettings: NextPage<UserAuth> = (props) => {
                 setLabelForm={setLabelForm}
                 isUpdating={isUpdating}
                 labelToUpdate={labelToUpdate}
-                ref={scollToRef}
+                ref={scrollToRef}
               />
             )}
             <>
@@ -147,7 +147,7 @@ const LabelsSettings: NextPage<UserAuth> = (props) => {
                           addLabelToGroup={() => addLabelToGroup(label)}
                           editLabel={(label) => {
                             editLabel(label);
-                            scollToRef.current?.scrollIntoView({
+                            scrollToRef.current?.scrollIntoView({
                               behavior: "smooth",
                             });
                           }}
@@ -163,7 +163,7 @@ const LabelsSettings: NextPage<UserAuth> = (props) => {
                         addLabelToGroup={addLabelToGroup}
                         editLabel={(label) => {
                           editLabel(label);
-                          scollToRef.current?.scrollIntoView({
+                          scrollToRef.current?.scrollIntoView({
                             behavior: "smooth",
                           });
                         }}
