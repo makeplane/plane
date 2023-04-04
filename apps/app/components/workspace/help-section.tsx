@@ -58,7 +58,7 @@ export const WorkspaceHelpSection: FC<WorkspaceHelpSectionProps> = (props) => {
 
   return (
     <div
-      className={`flex w-full items-center justify-between self-baseline border-t bg-white px-6 py-2 ${
+      className={`flex w-full items-center justify-between self-baseline border-t border-skin-base bg-skin-surface-2 px-6 py-2 ${
         sidebarCollapse ? "flex-col" : ""
       }`}
     >

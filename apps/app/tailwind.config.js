@@ -18,12 +18,24 @@ module.exports = {
         primary: "#f9fafb", // gray-50
         secondary: "white",
       },
+      borderColor: {
+        skin: {
+          base: withOpacity("--color-border-base"),
+        },
+      },
       backgroundColor: {
         skin: {
-          default: withOpacity("--color-bg-default"),
-          surface: withOpacity("--color-bg-surface"),
-          primary: withOpacity("--color-primary"),
-          secondary: withOpacity("---color-secondary"),
+          base: withOpacity("--color-bg-base"),
+          "surface-1": withOpacity("--color-bg-surface-1"),
+          "surface-2": withOpacity("--color-bg-surface-2"),
+          accent: withOpacity("--color-accent-base"),
+        },
+      },
+      textColor: {
+        skin: {
+          base: withOpacity("--color-text-base"),
+          "muted-1": withOpacity("--color-text-muted-1"),
+          "muted-2": withOpacity("--color-text-muted-2"),
         },
       },
       keyframes: {

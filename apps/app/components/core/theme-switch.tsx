@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 import { useTheme } from "next-themes";
 import { THEMES } from "constants/themes";
+import { CustomSelect } from "components/ui";
 
 export const ThemeSwitch = () => {
   const [mounted, setMounted] = useState(false);
@@ -16,10 +17,21 @@ export const ThemeSwitch = () => {
   }
 
   return (
-    <select value={theme} onChange={(e) => setTheme(e.target.value)}>
+    <CustomSelect
+      value={theme}
+      label={theme ? theme : "Select your theme"}
+      onChange={(value: string) => {
+        setTheme(value);
+      }}
+      input
+      width="w-full"
+      position="right"
+    >
       {THEMES.map((themeName) => (
-        <option value={themeName}>{themeName}</option>
+        <CustomSelect.Option key={themeName} value={themeName}>
+          {themeName}
+        </CustomSelect.Option>
       ))}
-    </select>
+    </CustomSelect>
   );
 };

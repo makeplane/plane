@@ -64,7 +64,7 @@ export const UserDetails: React.FC<Props> = ({ user, setStep }) => {
   return (
     <form className="flex w-full items-center justify-center" onSubmit={handleSubmit(onSubmit)}>
       <div className="flex w-full max-w-xl flex-col gap-12">
-        <div className="flex flex-col  rounded-[10px] bg-white shadow-md">
+        <div className="flex flex-col  rounded-[10px] bg-skin-base shadow-md">
           <div className="flex flex-col justify-between gap-3 px-10 py-7 sm:flex-row">
             <div className="flex flex-col items-start justify-center gap-2.5">
               <span>First name</span>
@@ -91,7 +91,7 @@ export const UserDetails: React.FC<Props> = ({ user, setStep }) => {
               />
             </div>
           </div>
-          <div className="flex flex-col items-start justify-center gap-2.5 border-t border-gray-300 px-10 py-7">
+          <div className="flex flex-col items-start justify-center gap-2.5 border-t border-skin-base px-10 py-7">
             <span>What is your role?</span>
             <div className="w-full">
               <Controller

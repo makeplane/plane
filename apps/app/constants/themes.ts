@@ -1,1 +1,1 @@
-export const THEMES = ["light", "dark", "slate", "ash"];
+export const THEMES = ["light", "dark", "urban", "metro"];

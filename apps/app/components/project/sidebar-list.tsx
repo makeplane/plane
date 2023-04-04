@@ -142,7 +142,7 @@ export const ProjectSidebarList: FC = () => {
         onClose={() => setDeleteProjectModal(false)}
         data={projectToDelete}
       />
-      <div className="mt-2.5 h-full overflow-y-auto border-t bg-white pt-2.5">
+      <div className="mt-2.5 h-full overflow-y-auto border-t border-skin-base bg-skin-surface-2 pt-2.5">
         {favoriteProjects && favoriteProjects.length > 0 && (
           <div className="mt-3 flex flex-col space-y-2 px-3">
             {!sidebarCollapse && <h5 className="text-sm font-semibold text-gray-400">Favorites</h5>}

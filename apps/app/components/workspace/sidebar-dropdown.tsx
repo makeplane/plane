@@ -86,13 +86,13 @@ export const WorkspaceSidebarDropdown = () => {
     <div className="relative">
       <Menu as="div" className="col-span-4 inline-block w-full p-3 text-left">
         <div className="flex items-center justify-between gap-2.5">
-          <Menu.Button className="flex w-full items-center rounded-md py-2 text-sm font-semibold text-gray-700 focus:outline-none">
+          <Menu.Button className="flex w-full items-center rounded-md py-2 text-sm font-semibold text-skin-muted-1 focus:outline-none">
             <div
-              className={`flex w-full items-center gap-x-2 rounded-md bg-gray-100 px-2 py-1.5 ${
+              className={`flex w-full items-center gap-x-2 rounded-md bg-skin-base px-2 py-1.5 ${
                 sidebarCollapse ? "justify-center" : ""
               }`}
             >
-              <div className="relative grid h-6 w-6 place-items-center rounded bg-gray-700 uppercase text-white">
+              <div className="relative grid h-6 w-6 place-items-center rounded bg-gray-700 dark:bg-gray-200 uppercase text-white dark:text-gray-800">
                 {activeWorkspace?.logo && activeWorkspace.logo !== "" ? (
                   <Image
                     src={activeWorkspace.logo}
@@ -206,7 +206,7 @@ export const WorkspaceSidebarDropdown = () => {
                 </div>
               )}
             </div>
-            <div className="flex w-full flex-col items-start justify-start gap-2 border-t border-t-gray-200 px-3 py-2 text-sm">
+            <div className="flex w-full flex-col items-start justify-start gap-2 border-t border-t-skin-base px-3 py-2 text-sm">
               {userLinks(workspaceSlug as string).map((link, index) => (
                 <Menu.Item
                   key={index}
@@ -219,7 +219,7 @@ export const WorkspaceSidebarDropdown = () => {
                 </Menu.Item>
               ))}
             </div>
-            <div className="w-full border-t border-t-gray-200 px-3 py-2">
+            <div className="w-full border-t border-t-skin-base px-3 py-2">
               <Menu.Item
                 as="button"
                 type="button"

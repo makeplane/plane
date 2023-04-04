@@ -144,10 +144,10 @@ const AppLayout: FC<AppLayoutProps> = ({
                   noPadding ? "" : settingsLayout ? "p-8 lg:px-28" : "p-8"
                 } ${
                   bg === "primary"
-                    ? "bg-primary"
+                    ? "bg-skin-base"
                     : bg === "secondary"
                     ? "bg-secondary"
-                    : "bg-primary"
+                    : "bg-skin-base"
                 }`}
               >
                 {settingsLayout && (
