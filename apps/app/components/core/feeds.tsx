@@ -10,6 +10,7 @@ import {
   ChatBubbleLeftEllipsisIcon,
   RectangleGroupIcon,
   Squares2X2Icon,
+  TrashIcon,
   UserIcon,
 } from "@heroicons/react/24/outline";
 import { BlockedIcon, BlockerIcon, CyclesIcon, TagIcon, UserGroupIcon } from "components/icons";
@@ -76,6 +77,10 @@ const activityDetails: {
   parent: {
     message: "set the parent to",
     icon: <UserIcon className="h-3 w-3 text-gray-500" aria-hidden="true" />,
+  },
+  issue: {
+    message: "deleted the issue.",
+    icon: <TrashIcon className="h-3 w-3 text-gray-500" aria-hidden="true" />,
   },
 };
 
