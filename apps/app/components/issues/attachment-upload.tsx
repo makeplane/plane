@@ -1,0 +1,91 @@
+import React, {  useCallback } from "react";
+
+import { useRouter } from "next/router";
+
+import { mutate } from "swr";
+
+// react-dropzone
+import { useDropzone } from "react-dropzone";
+// toast
+import useToast from "hooks/use-toast";
+// icons
+import { PlusIcon } from "@heroicons/react/24/outline";
+// fetch key
+import { ISSUE_ATTACHMENTS } from "constants/fetch-keys";
+// services
+import fileServices from "services/file.service";
+
+// const acceptedFileTypes = ["application/pdf", "text/csv", "application/vnd.ms-excel"];
+const maxFileSize = 5 * 1024 * 1024; // 5 MB
+
+export const IssueAttachmentUpload= () => {
+  const router = useRouter();
+  const { workspaceSlug, projectId, issueId } = router.query;
+
+  const { setToastAlert } = useToast();
+
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    if (!acceptedFiles[0] || !workspaceSlug) return;
+
+    const formData = new FormData();
+    formData.append("asset", acceptedFiles[0]);
+    formData.append(
+      "attributes",
+      JSON.stringify({
+        name: acceptedFiles[0].name,
+        size: acceptedFiles[0].size,
+      })
+    );
+
+    fileServices
+      .uploadIssueAttachment(
+        workspaceSlug as string,
+        projectId as string,
+        issueId as string,
+        formData
+      )
+      .then((res) => {
+        mutate(ISSUE_ATTACHMENTS(issueId as string));
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "File added successfully.",
+        });
+      })
+      .catch((err) => {
+        setToastAlert({
+          type: "error",
+          title: "error!",
+          message: "Something went wrong. please check file type & size (max 5 MB)",
+        });
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const { getRootProps, getInputProps, isDragActive, isDragReject, fileRejections } = useDropzone({
+    onDrop,
+    maxSize: maxFileSize,
+    multiple: false,
+  });
+
+  const fileError =
+    fileRejections.length > 0
+      ? `Invalid file type or size (max ${maxFileSize / 1024 / 1024} MB)`
+      : null;
+
+  return (
+    <div
+      {...getRootProps()}
+      className={`flex items-center border-2 border-dashed border-theme text-theme text-xs rounded-md px-4 py-2 ${
+        isDragActive ? "bg-theme/10" : ""
+      } ${isDragReject ? "bg-red-100" : ""}`}
+    >
+      <input {...getInputProps()} />
+      <span className="flex items-center gap-2">
+        <PlusIcon className="h-4 w-4 text-theme" />
+        {isDragActive ? <p>Drop here...</p> : <p>Add new file</p>}
+        {fileError && <p className="text-red-500 mt-2">{fileError}</p>}
+      </span>
+    </div>
+  );
+};
