@@ -1,10 +1,11 @@
-// next imports
-import type { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/router";
-// swr
+
 import useSWR from "swr";
+
 // lib
 import { requiredWorkspaceAdmin } from "lib/auth";
+// services
+import WorkspaceIntegrationService from "services/integration";
 // hooks
 import useToast from "hooks/use-toast";
 // layouts
@@ -13,9 +14,10 @@ import IntegrationGuide from "components/integration/guide";
 // ui
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // types
-import { UserAuth, IAppIntegrations } from "types";
-// api services
-import WorkspaceIntegrationService from "services/integration";
+import { UserAuth } from "types";
+import type { GetServerSideProps, NextPage } from "next";
+// fetch-keys
+import { APP_INTEGRATIONS, WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
 
 const ImportExport: NextPage<UserAuth> = (props) => {
   const { setToastAlert } = useToast();
@@ -26,21 +28,14 @@ const ImportExport: NextPage<UserAuth> = (props) => {
     provider: string;
   };
 
-  // fetching all the integrations available
-  const { data: allIntegrations, error: allIntegrationsError } = useSWR<
-    IAppIntegrations[] | undefined,
-    Error
-  >(
-    workspaceSlug ? `ALL_INTEGRATIONS_${workspaceSlug.toUpperCase()}` : null,
-    workspaceSlug ? () => WorkspaceIntegrationService.listAllIntegrations() : null
+  // fetching all the app integrations available
+  const { data: allIntegrations, error: allIntegrationsError } = useSWR(APP_INTEGRATIONS, () =>
+    WorkspaceIntegrationService.listAllIntegrations()
   );
 
-  // fetching all the integrations available
-  const { data: allWorkspaceIntegrations, error: allWorkspaceIntegrationsError } = useSWR<
-    any | undefined,
-    Error
-  >(
-    workspaceSlug ? `WORKSPACE_INTEGRATIONS_${workspaceSlug.toUpperCase()}` : null,
+  // fetching all the workspace integrations
+  const { data: allWorkspaceIntegrations, error: allWorkspaceIntegrationsError } = useSWR(
+    workspaceSlug ? WORKSPACE_INTEGRATIONS(workspaceSlug as string) : null,
     workspaceSlug
       ? () => WorkspaceIntegrationService.listWorkspaceIntegrations(workspaceSlug)
       : null

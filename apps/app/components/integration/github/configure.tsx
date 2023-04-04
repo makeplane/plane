@@ -3,6 +3,7 @@ import { FC } from "react";
 import { IIntegrationData, GithubAuth } from "components/integration";
 // types
 import { IAppIntegrations } from "types";
+import { PrimaryButton } from "components/ui";
 
 type Props = {
   state: IIntegrationData;
@@ -29,19 +30,14 @@ export const GithubConfigure: FC<Props> = ({
   const integration =
     allIntegrations &&
     allIntegrations.length > 0 &&
-    allIntegrations.find((_integration) => _integration.provider === provider);
+    allIntegrations.find((i) => i.provider === provider);
 
   // current integration from workspace integrations
   const workspaceIntegration =
     integration &&
     allWorkspaceIntegrations &&
     allWorkspaceIntegrations.length > 0 &&
-    allWorkspaceIntegrations.find(
-      (_integration: any) => _integration.integration_detail.id === integration.id
-    );
-
-  console.log("integration", integration);
-  console.log("workspaceIntegration", workspaceIntegration);
+    allWorkspaceIntegrations.find((i: any) => i.integration_detail.id === integration.id);
 
   return (
     <div className="space-y-5">
@@ -56,18 +52,12 @@ export const GithubConfigure: FC<Props> = ({
       </div>
 
       <div className="flex items-center justify-end">
-        <button
-          type="button"
-          className={`rounded-sm bg-theme px-3 py-1.5 text-sm text-white transition-colors hover:bg-opacity-80 ${
-            workspaceIntegration && workspaceIntegration?.id
-              ? `bg-opacity-100`
-              : `cursor-not-allowed bg-opacity-80`
-          }`}
+        <PrimaryButton
           onClick={() => handleState("state", "import-import-data")}
           disabled={workspaceIntegration && workspaceIntegration?.id ? false : true}
         >
           Next
-        </button>
+        </PrimaryButton>
       </div>
     </div>
   );

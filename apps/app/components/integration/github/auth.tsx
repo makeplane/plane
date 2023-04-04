@@ -47,9 +47,9 @@ export const GithubAuth: FC<Props> = ({ workspaceSlug, workspaceIntegration }) =
         </button>
       ) : (
         <button
-          onClick={startAuth}
           type="button"
           className={`rounded-sm bg-theme px-3 py-1.5 text-sm text-white transition-colors hover:bg-opacity-80`}
+          onClick={startAuth}
           disabled={authLoader}
         >
           {authLoader ? "Connecting..." : "Connect"}

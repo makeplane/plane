@@ -12,3 +12,4 @@ export * from "./github/import-data";
 export * from "./github/issues-select";
 export * from "./github/users-select";
 export * from "./github/confirm";
+export * from "./github/select-repository";

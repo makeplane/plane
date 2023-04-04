@@ -1,4 +1,5 @@
 import APIService from "services/api.service";
+import { IGithubServiceImportFormData } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -30,11 +31,14 @@ class GithubIntegrationService extends APIService {
   }
 
   // migrating repository data in workspace project
-  async migrateRepositoryStatToProject(
+  async createGithubServiceImport(
     workspaceSlug: string,
-    integrationSlug: string
+    data: IGithubServiceImportFormData
   ): Promise<any> {
-    return this.post(`/api/workspaces/${workspaceSlug}/importers/${integrationServiceType}/`)
+    return this.post(
+      `/api/workspaces/${workspaceSlug}/projects/importers/${integrationServiceType}/`,
+      data
+    )
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
