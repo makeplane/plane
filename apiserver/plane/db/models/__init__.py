@@ -32,6 +32,7 @@ from .issue import (
     IssueBlocker,
     IssueLink,
     IssueSequence,
+    IssueAttachment,
 )
 
 from .asset import FileAsset
@@ -62,3 +63,5 @@ from .integration import (
 from .importer import Importer
 
 from .page import Page, PageBlock, PageFavorite, PageLabel
+
+from .estimate import Estimate, EstimatePoint

@@ -363,6 +363,10 @@ img.ProseMirror-separator {
   min-height: 50px;
 }
 
+.remirror-section .remirror-editor-wrapper .remirror-editor {
+  min-height: 0 !important;
+}
+
 .remirror-editor-wrapper {
   padding-top: 8px;
 }

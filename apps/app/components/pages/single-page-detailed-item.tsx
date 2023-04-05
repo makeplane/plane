@@ -50,9 +50,9 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
   const { workspaceSlug, projectId } = router.query;
 
   return (
-    <Link href={`/${workspaceSlug}/projects/${projectId}/pages/${page.id}`}>
-      <a>
-        <div className="relative rounded border p-4">
+    <div className="relative first:rounded-t last:rounded-b border">
+      <Link href={`/${workspaceSlug}/projects/${projectId}/pages/${page.id}`}>
+        <a className="block p-4">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <p className="mr-2 truncate text-sm font-medium">{truncateText(page.name, 75)}</p>
@@ -157,26 +157,13 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
               </CustomMenu>
             </div>
           </div>
-          <div className="relative mt-6 space-y-2 text-sm text-gray-600">
-            <div className="page-block-section -m-4 -mt-6">
-              {page.blocks.length > 0 ? (
-                <RemirrorRichTextEditor
-                  value={
-                    !page.blocks[0].description ||
-                    (typeof page.blocks[0].description === "object" &&
-                      Object.keys(page.blocks[0].description).length === 0)
-                      ? page.blocks[0].description_html
-                      : page.blocks[0].description
-                  }
-                  editable={false}
-                  customClassName="text-gray-500"
-                  noBorder
-                />
-              ) : null}
-            </div>
+          <div className="relative mt-2 space-y-2 text-sm text-gray-600">
+            {page.blocks.length > 0
+              ? page.blocks.slice(0, 3).map((block) => <h4>{block.name}</h4>)
+              : null}
           </div>
-        </div>
-      </a>
-    </Link>
+        </a>
+      </Link>
+    </div>
   );
 };

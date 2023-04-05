@@ -148,15 +148,15 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
 
   useEffect(() => {
     window.addEventListener("keydown", (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") handleClose();
     });
 
     return () => {
       window.removeEventListener("keydown", (e: KeyboardEvent) => {
-        if (e.key === "Escape") onClose();
+        if (e.key === "Escape") handleClose();
       });
     };
-  }, [onClose]);
+  }, [handleClose]);
 
   return (
     <div className="border rounded-[10px] p-2 ml-6">

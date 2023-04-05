@@ -74,10 +74,16 @@ from plane.api.views import (
     SubIssuesEndpoint,
     IssueLinkViewSet,
     BulkCreateIssueLabelsEndpoint,
+    IssueAttachmentEndpoint,
     ## End Issues
     # States
     StateViewSet,
     ## End States
+    # Estimates
+    EstimateViewSet,
+    EstimatePointViewSet,
+    ProjectEstimatePointEndpoint,
+    ## End Estimates
     # Shortcuts
     ShortCutViewSet,
     ## End Shortcuts
@@ -133,6 +139,7 @@ from plane.api.views import (
     ## End importer
     # Search
     GlobalSearchEndpoint,
+    IssueSearchEndpoint,
     ## End Search
     # Gpt
     GPTIntegrationEndpoint,
@@ -477,6 +484,57 @@ urlpatterns = [
         name="project-state",
     ),
     # End States ##
+    #  States
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/estimates/",
+        EstimateViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="project-estimates",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/estimates/<uuid:pk>/",
+        EstimateViewSet.as_view(
+            {
+                "get": "retrieve",
+                "put": "update",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="project-estimates",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/estimates/<uuid:estimate_id>/estimate-points/",
+        EstimatePointViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="project-estimate-points",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/estimates/<uuid:estimate_id>/estimate-points/<uuid:pk>/",
+        EstimatePointViewSet.as_view(
+            {
+                "get": "retrieve",
+                "put": "update",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="project-estimates",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/project-estimates/",
+        ProjectEstimatePointEndpoint.as_view(),
+        name="project-estimate-points",
+    ),
+    # End States ##
     # Shortcuts
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/shortcuts/",
@@ -740,6 +798,16 @@ urlpatterns = [
             }
         ),
         name="project-issue-links",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-attachments/",
+        IssueAttachmentEndpoint.as_view(),
+        name="project-issue-attachments",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-attachments/<uuid:pk>/",
+        IssueAttachmentEndpoint.as_view(),
+        name="project-issue-attachments",
     ),
     ## End Issues
     ## Issue Activity
@@ -1169,6 +1237,11 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/search/",
         GlobalSearchEndpoint.as_view(),
         name="global-search",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/search-issues/",
+        IssueSearchEndpoint.as_view(),
+        name="project-issue-search",
     ),
     ## End Search
     # Gpt

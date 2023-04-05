@@ -65,6 +65,8 @@ class FileAssetEndpoint(BaseAPIView):
 
 
 class UserAssetsEndpoint(BaseAPIView):
+    parser_classes = (MultiPartParser, FormParser)
+
     def get(self, request, asset_key):
         try:
             files = FileAsset.objects.filter(asset=asset_key, created_by=request.user)

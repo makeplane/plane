@@ -12,6 +12,7 @@ from django.views.decorators.gzip import gzip_page
 # Third Party imports
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.parsers import MultiPartParser, FormParser
 from sentry_sdk import capture_exception
 
 # Module imports
@@ -28,6 +29,7 @@ from plane.api.serializers import (
     IssueFlatSerializer,
     IssueLinkSerializer,
     IssueLiteSerializer,
+    IssueAttachmentSerializer,
 )
 from plane.api.permissions import (
     ProjectEntityPermission,
@@ -43,6 +45,7 @@ from plane.db.models import (
     IssueProperty,
     Label,
     IssueLink,
+    IssueAttachment,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.utils.grouper import group_results
@@ -677,6 +680,54 @@ class BulkCreateIssueLabelsEndpoint(BaseAPIView):
             return Response(
                 {"error": "Project Does not exist"}, status=status.HTTP_404_NOT_FOUND
             )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class IssueAttachmentEndpoint(BaseAPIView):
+    serializer_class = IssueAttachmentSerializer
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+    model = IssueAttachment
+    parser_classes = (MultiPartParser, FormParser)
+
+    def post(self, request, slug, project_id, issue_id):
+        try:
+            serializer = IssueAttachmentSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save(project_id=project_id, issue_id=issue_id)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def delete(self, request, slug, project_id, issue_id, pk):
+        try:
+            issue_attachment = IssueAttachment.objects.get(pk=pk)
+            issue_attachment.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except IssueAttachment.DoesNotExist:
+            return Response(
+                {"error": "Issue Attachment does not exist"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def get(self, request, slug, project_id, issue_id):
+        try:
+            issue_attachments = IssueAttachment.objects.filter(
+                issue_id=issue_id, workspace__slug=slug, project_id=project_id
+            )
+            serilaizer = IssueAttachmentSerializer(issue_attachments, many=True)
+            return Response(serilaizer.data, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)
             return Response(
