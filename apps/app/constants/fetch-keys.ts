@@ -121,6 +121,10 @@ export const APP_INTEGRATIONS = "APP_INTEGRATIONS";
 export const WORKSPACE_INTEGRATIONS = (workspaceSlug: string) =>
   `WORKSPACE_INTEGRATIONS_${workspaceSlug.toUpperCase()}`;
 
+//import-export
+export const IMPORTER_SERVICES_LIST = (workspaceSlug: string) =>
+  `IMPORTER_SERVICES_LIST_${workspaceSlug.toUpperCase()}`;
+
 // Calendar
 export const PROJECT_CALENDAR_ISSUES = (projectId: string) =>
   `CALENDAR_ISSUES_${projectId.toUpperCase()}`;

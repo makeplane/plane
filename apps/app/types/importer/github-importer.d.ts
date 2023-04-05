@@ -17,3 +17,17 @@ export interface IGithubServiceImportFormData {
   };
   project_id: string;
 }
+
+export interface IGithubRepoCollaborator {
+  avatar_url: string;
+  html_url: string;
+  id: number;
+  login: string;
+  url: string;
+}
+
+export interface IGithubRepoInfo {
+  issue_count: number;
+  labels: number;
+  collaborators: IGithubRepoCollaborator[];
+}

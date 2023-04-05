@@ -1,42 +1,66 @@
 import { FC, useState } from "react";
-// next imports
+
 import Link from "next/link";
 import Image from "next/image";
-// icons
-import GithubLogo from "public/logos/github-square.png";
-import { CogIcon, CloudUploadIcon, UsersIcon, ImportLayersIcon, CheckIcon } from "components/icons";
-import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+import { useRouter } from "next/router";
+
+import { mutate } from "swr";
+
+// react-hook-form
+import { useForm } from "react-hook-form";
+// services
+import GithubIntegrationService from "services/integration/github.service";
+// hooks
+import useToast from "hooks/use-toast";
 // components
 import {
   GithubConfigure,
   GithubImportData,
-  GithubIssuesSelect,
-  GithubUsersSelect,
+  GithubRepoDetails,
+  GithubImportUsers,
   GithubConfirm,
 } from "components/integration";
+// icons
+import { CogIcon, CloudUploadIcon, UsersIcon, CheckIcon } from "components/icons";
+import { ArrowLeftIcon, ListBulletIcon } from "@heroicons/react/24/outline";
+// images
+import GithubLogo from "public/logos/github-square.png";
 // types
-import { IAppIntegrations, IGithubServiceImportFormData, IWorkspaceIntegrations } from "types";
-import { useForm } from "react-hook-form";
+import {
+  IAppIntegrations,
+  IGithubRepoCollaborator,
+  IGithubServiceImportFormData,
+  IWorkspaceIntegrations,
+} from "types";
+// fetch-keys
+import { IMPORTER_SERVICES_LIST } from "constants/fetch-keys";
 
 type Props = {
-  workspaceSlug: string | undefined;
   provider: string | undefined;
-  allIntegrations: IAppIntegrations[] | undefined;
-  allIntegrationsError: Error | undefined;
-  allWorkspaceIntegrations: IWorkspaceIntegrations[] | undefined;
-  allWorkspaceIntegrationsError: Error | undefined;
-  allIntegrationImporters: any | undefined;
-  allIntegrationImportersError: Error | undefined;
+  appIntegrations: IAppIntegrations[] | undefined;
+  workspaceIntegrations: IWorkspaceIntegrations[] | undefined;
 };
 
+export type TIntegrationSteps =
+  | "import-configure"
+  | "import-data"
+  | "repo-details"
+  | "import-users"
+  | "import-confirm";
 export interface IIntegrationData {
-  state: string;
+  state: TIntegrationSteps;
 }
 
 export type TFormValues = {
   github: any;
   project: string | null;
   sync: boolean;
+  collaborators: IGithubRepoCollaborator[];
+  users: {
+    username: string;
+    import: any;
+    email: string;
+  }[];
 };
 
 const defaultFormValues = {
@@ -53,72 +77,70 @@ const integrationWorkflowData = [
   },
   {
     title: "Import Data",
-    key: "import-import-data",
+    key: "import-data",
     icon: CloudUploadIcon,
   },
-  { title: "Issues", key: "migrate-issues", icon: UsersIcon },
+  { title: "Issues", key: "repo-details", icon: ListBulletIcon },
   {
     title: "Users",
-    key: "migrate-users",
-    icon: ImportLayersIcon,
+    key: "import-users",
+    icon: UsersIcon,
   },
   {
     title: "Confirm",
-    key: "migrate-confirm",
+    key: "import-confirm",
     icon: CheckIcon,
   },
 ];
 
 export const GithubIntegrationRoot: FC<Props> = ({
-  workspaceSlug,
   provider,
-  allIntegrations,
-  allIntegrationsError,
-  allWorkspaceIntegrations,
-  allWorkspaceIntegrationsError,
-  allIntegrationImporters,
-  allIntegrationImportersError,
+  appIntegrations,
+  workspaceIntegrations,
 }) => {
-  const { handleSubmit, setValue, watch } = useForm<TFormValues>({
+  const [currentStep, setCurrentStep] = useState<IIntegrationData>({
+    state: "import-configure",
+  });
+
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
+
+  const { setToastAlert } = useToast();
+
+  const { handleSubmit, control, setValue, watch } = useForm<TFormValues>({
     defaultValues: defaultFormValues,
   });
 
   const activeIntegrationState = () => {
     const currentElementIndex = integrationWorkflowData.findIndex(
-      (i) => i?.key === integrationData?.state
+      (i) => i?.key === currentStep?.state
     );
 
     return currentElementIndex;
   };
 
-  const [integrationData, setIntegrationData] = useState<IIntegrationData>({
-    state: "import-configure",
-  });
-
-  const handleIntegrationData = (key: string = "state", value: string) => {
-    setIntegrationData((previousData) => ({ ...previousData, [key]: value }));
+  const handleStepChange = (value: TIntegrationSteps) => {
+    setCurrentStep((prevData) => ({ ...prevData, state: value }));
   };
 
   // current integration from all the integrations available
   const integration =
-    allIntegrations &&
-    allIntegrations.length > 0 &&
-    allIntegrations.find((i) => i.provider === provider);
+    appIntegrations &&
+    appIntegrations.length > 0 &&
+    appIntegrations.find((i) => i.provider === provider);
 
   // current integration from workspace integrations
   const workspaceIntegration =
     integration &&
-    allWorkspaceIntegrations?.find((i: any) => i.integration_detail.id === integration.id);
+    workspaceIntegrations?.find((i: any) => i.integration_detail.id === integration.id);
 
-  const createGithubImporterService = (formData: TFormValues) => {
-    console.log(formData);
-
+  const createGithubImporterService = async (formData: TFormValues) => {
     if (!formData.github || !formData.project) return;
 
     const payload: IGithubServiceImportFormData = {
       metadata: {
         owner: formData.github.owner.login,
-        name: "",
+        name: formData.github.name,
         repository_id: formData.github.id,
         url: formData.github.html_url,
       },
@@ -131,26 +153,39 @@ export const GithubIntegrationRoot: FC<Props> = ({
       project_id: formData.project,
     };
 
-    console.log(payload);
+    await GithubIntegrationService.createGithubServiceImport(workspaceSlug as string, payload)
+      .then(() => {
+        router.push(`/${workspaceSlug}/settings/import-export`);
+        mutate(IMPORTER_SERVICES_LIST(workspaceSlug as string));
+      })
+      .catch(() =>
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Import was unsuccessful. Please try again.",
+        })
+      );
   };
 
-  console.log(watch("github"), "github");
-  console.log(watch("project"), "project");
-  console.log(watch("sync"), "sync");
+  // console.log(watch("github"), "github");
+  // console.log(watch("project"), "project");
+  // console.log(watch("sync"), "sync");
+  // console.log(watch("collaborators"), "collaborators");
+  // console.log(watch("users"), "users");
 
   return (
     <form onSubmit={handleSubmit(createGithubImporterService)}>
-      <div className="space-y-4">
+      <div className="space-y-2">
         <Link href={`/${workspaceSlug}/settings/import-export`}>
           <div className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900">
             <div>
               <ArrowLeftIcon className="h-3 w-3" />
             </div>
-            <div>Back</div>
+            <div>Cancel import & go back</div>
           </div>
         </Link>
 
-        <div className="space-y-4 rounded border border-gray-200 bg-white p-4">
+        <div className="space-y-4 rounded-[10px] border border-gray-200 bg-white p-4">
           <div className="flex items-center gap-2">
             <div className="h-10 w-10 flex-shrink-0">
               <Image src={GithubLogo} alt="GithubLogo" />
@@ -168,8 +203,7 @@ export const GithubIntegrationRoot: FC<Props> = ({
                               : "border-opacity-80 bg-opacity-80"
                           }`
                         : "border-gray-300"
-                    }
-              `}
+                    }`}
                   >
                     <integration.icon
                       width="18px"
@@ -196,34 +230,38 @@ export const GithubIntegrationRoot: FC<Props> = ({
 
           <div className="relative w-full space-y-4">
             <div className="w-full">
-              {integrationData?.state === "import-configure" && (
+              {currentStep?.state === "import-configure" && (
                 <GithubConfigure
-                  state={integrationData}
-                  handleState={handleIntegrationData}
-                  workspaceSlug={workspaceSlug}
+                  handleStepChange={handleStepChange}
                   provider={provider}
-                  allIntegrations={allIntegrations}
-                  allIntegrationsError={allIntegrationsError}
-                  allWorkspaceIntegrations={allWorkspaceIntegrations}
-                  allWorkspaceIntegrationsError={allWorkspaceIntegrationsError}
+                  appIntegrations={appIntegrations}
+                  workspaceIntegrations={workspaceIntegrations}
                 />
               )}
-              {integrationData?.state === "import-import-data" && (
+              {currentStep?.state === "import-data" && (
                 <GithubImportData
-                  handleState={handleIntegrationData}
+                  handleStepChange={handleStepChange}
                   integration={workspaceIntegration}
+                  control={control}
+                />
+              )}
+              {currentStep?.state === "repo-details" && (
+                <GithubRepoDetails
+                  selectedRepo={watch("github")}
+                  handleStepChange={handleStepChange}
                   watch={watch}
                   setValue={setValue}
                 />
               )}
-              {integrationData?.state === "migrate-issues" && (
-                <GithubIssuesSelect state={integrationData} handleState={handleIntegrationData} />
+              {currentStep?.state === "import-users" && (
+                <GithubImportUsers
+                  handleStepChange={handleStepChange}
+                  watch={watch}
+                  setValue={setValue}
+                />
               )}
-              {integrationData?.state === "migrate-users" && (
-                <GithubUsersSelect state={integrationData} handleState={handleIntegrationData} />
-              )}
-              {integrationData?.state === "migrate-confirm" && (
-                <GithubConfirm state={integrationData} handleState={handleIntegrationData} />
+              {currentStep?.state === "import-confirm" && (
+                <GithubConfirm handleStepChange={handleStepChange} />
               )}
             </div>
           </div>

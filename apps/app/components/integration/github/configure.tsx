@@ -1,59 +1,61 @@
 import { FC } from "react";
+
+import { useRouter } from "next/router";
+
 // components
-import { IIntegrationData, GithubAuth } from "components/integration";
-// types
-import { IAppIntegrations } from "types";
+import { GithubAuth, TIntegrationSteps } from "components/integration";
+// ui
 import { PrimaryButton } from "components/ui";
+// types
+import { IAppIntegrations, IWorkspaceIntegrations } from "types";
 
 type Props = {
-  state: IIntegrationData;
   provider: string | undefined;
-  handleState: (key: string, valve: any) => void;
-  workspaceSlug: string | undefined;
-  allIntegrations: IAppIntegrations[] | undefined;
-  allIntegrationsError: Error | undefined;
-  allWorkspaceIntegrations: any | undefined;
-  allWorkspaceIntegrationsError: Error | undefined;
+  handleStepChange: (value: TIntegrationSteps) => void;
+  appIntegrations: IAppIntegrations[] | undefined;
+  workspaceIntegrations: IWorkspaceIntegrations[] | undefined;
 };
 
 export const GithubConfigure: FC<Props> = ({
-  state,
-  handleState,
-  workspaceSlug,
+  handleStepChange,
   provider,
-  allIntegrations,
-  allIntegrationsError,
-  allWorkspaceIntegrations,
-  allWorkspaceIntegrationsError,
+  appIntegrations,
+  workspaceIntegrations,
 }) => {
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
+
   // current integration from all the integrations available
   const integration =
-    allIntegrations &&
-    allIntegrations.length > 0 &&
-    allIntegrations.find((i) => i.provider === provider);
+    appIntegrations &&
+    appIntegrations.length > 0 &&
+    appIntegrations.find((i) => i.provider === provider);
 
   // current integration from workspace integrations
   const workspaceIntegration =
     integration &&
-    allWorkspaceIntegrations &&
-    allWorkspaceIntegrations.length > 0 &&
-    allWorkspaceIntegrations.find((i: any) => i.integration_detail.id === integration.id);
+    workspaceIntegrations &&
+    workspaceIntegrations.length > 0 &&
+    workspaceIntegrations.find((i: any) => i.integration_detail.id === integration.id);
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       <div className="flex items-center gap-2 py-5">
         <div className="w-full">
           <div className="font-medium">Configure</div>
           <div className="text-sm text-gray-600">Set up your Github import</div>
         </div>
         <div className="flex-shrink-0">
-          <GithubAuth workspaceSlug={workspaceSlug} workspaceIntegration={workspaceIntegration} />
+          <GithubAuth
+            workspaceSlug={workspaceSlug as string}
+            workspaceIntegration={workspaceIntegration}
+          />
         </div>
       </div>
 
       <div className="flex items-center justify-end">
         <PrimaryButton
-          onClick={() => handleState("state", "import-import-data")}
+          onClick={() => handleStepChange("import-data")}
           disabled={workspaceIntegration && workspaceIntegration?.id ? false : true}
         >
           Next

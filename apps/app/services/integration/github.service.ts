@@ -1,5 +1,5 @@
 import APIService from "services/api.service";
-import { IGithubServiceImportFormData } from "types";
+import { IGithubRepoInfo, IGithubServiceImportFormData } from "types";
 
 const { NEXT_PUBLIC_API_BASE_URL } = process.env;
 
@@ -10,7 +10,6 @@ class GithubIntegrationService extends APIService {
     super(NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000");
   }
 
-  // fetching all the repositories under the github
   async listAllRepositories(workspaceSlug: string, integrationSlug: string): Promise<any> {
     return this.get(
       `/api/workspaces/${workspaceSlug}/workspace-integrations/${integrationSlug}/github-repositories`
@@ -21,16 +20,19 @@ class GithubIntegrationService extends APIService {
       });
   }
 
-  // fetching repository stats under the repository eg: users, labels and issues
-  async fetchRepositoryStats(workspaceSlug: string): Promise<any> {
-    return this.get(`/api/workspaces/${workspaceSlug}/importers/${integrationServiceType}/`)
+  async getGithubRepoInfo(
+    workspaceSlug: string,
+    params: { owner: string; repo: string }
+  ): Promise<IGithubRepoInfo> {
+    return this.get(`/api/workspaces/${workspaceSlug}/importers/${integrationServiceType}/`, {
+      params,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  // migrating repository data in workspace project
   async createGithubServiceImport(
     workspaceSlug: string,
     data: IGithubServiceImportFormData
