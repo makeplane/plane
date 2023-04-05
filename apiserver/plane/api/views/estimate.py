@@ -135,3 +135,50 @@ class ProjectEstimatePointEndpoint(BaseAPIView):
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+class BulkCreateEstimatePointEndpoint(BaseAPIView):
+    def post(self, request, slug, project_id, estimate_id):
+        try:
+            estimate = Estimate.objects.get(
+                pk=estimate_id, workspace__slug=slug, project=project_id
+            )
+
+            estimate_points = request.data.get("estimate_points", [])
+
+            if not len(estimate_points) or len(estimate_points) > 8:
+                return Response(
+                    {"error": "Estimate points are required"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            estimate_points = EstimatePoint.objects.bulk_create(
+                [
+                    EstimatePoint(
+                        estimate=estimate,
+                        key=estimate_point.get("key", 0),
+                        value=estimate_point.get("value", ""),
+                        description=estimate_point.get("description", ""),
+                        project_id=project_id,
+                        workspace_id=estimate.workspace_id,
+                    )
+                    for estimate_point in estimate_points
+                ],
+                batch_size=10,
+                ignore_conflicts=True,
+            )
+
+            serializer = EstimatePointSerializer(estimate_points, many=True)
+
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Estimate.DoesNotExist:
+            return Response(
+                {"error": "Estimate does not exist"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
