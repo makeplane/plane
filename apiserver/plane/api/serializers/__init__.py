@@ -41,6 +41,7 @@ from .issue import (
     IssueStateSerializer,
     IssueLinkSerializer,
     IssueLiteSerializer,
+    IssueAttachmentSerializer,
 )
 
 from .module import (
@@ -65,3 +66,5 @@ from .integration import (
 from .importer import ImporterSerializer
 
 from .page import PageSerializer, PageBlockSerializer, PageFavoriteSerializer
+
+from .estimate import EstimateSerializer, EstimatePointSerializer

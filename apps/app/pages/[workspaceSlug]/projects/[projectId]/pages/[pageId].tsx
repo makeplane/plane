@@ -477,7 +477,7 @@ const SinglePage: NextPage<UserAuth> = (props) => {
                 {!createBlockForm && (
                   <button
                     type="button"
-                    className="flex items-center gap-1 rounded bg-gray-100 px-2.5 py-1 text-xs hover:bg-gray-200 mt-4"
+                    className="flex items-center gap-1 rounded bg-gray-100 px-2.5 py-1 ml-6 text-xs hover:bg-gray-200 mt-4"
                     onClick={handleNewBlock}
                   >
                     <PlusIcon className="h-3 w-3" />
@@ -485,7 +485,7 @@ const SinglePage: NextPage<UserAuth> = (props) => {
                   </button>
                 )}
                 {createBlockForm && (
-                  <div ref={scrollToRef}>
+                  <div className="mt-4" ref={scrollToRef}>
                     <CreateUpdateBlockInline
                       handleClose={() => setCreateBlockForm(false)}
                       focus="name"
