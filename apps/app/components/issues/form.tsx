@@ -14,12 +14,13 @@ import useToast from "hooks/use-toast";
 import { GptAssistantModal } from "components/core";
 import {
   IssueAssigneeSelect,
+  IssueDateSelect,
+  IssueEstimateSelect,
   IssueLabelSelect,
   IssueParentSelect,
   IssuePrioritySelect,
   IssueProjectSelect,
   IssueStateSelect,
-  IssueDateSelect,
 } from "components/issues/select";
 import { CreateStateModal } from "components/states";
 import { CreateUpdateCycleModal } from "components/cycles";
@@ -47,6 +48,7 @@ const defaultValues: Partial<IIssue> = {
   name: "",
   description: "",
   description_html: "<p></p>",
+  estimate_point: 0,
   state: "",
   cycle: null,
   priority: null,
@@ -395,6 +397,15 @@ export const IssueForm: FC<IssueFormProps> = ({
                     name="target_date"
                     render={({ field: { value, onChange } }) => (
                       <IssueDateSelect value={value} onChange={onChange} />
+                    )}
+                  />
+                </div>
+                <div>
+                  <Controller
+                    control={control}
+                    name="estimate_point"
+                    render={({ field: { value, onChange } }) => (
+                      <IssueEstimateSelect value={value} onChange={onChange} />
                     )}
                   />
                 </div>
