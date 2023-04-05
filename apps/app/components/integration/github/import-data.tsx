@@ -1,7 +1,7 @@
 import { FC, useState } from "react";
 
 // react-hook-form
-import { Control, Controller } from "react-hook-form";
+import { Control, Controller, UseFormWatch } from "react-hook-form";
 // hooks
 import useProjects from "hooks/use-projects";
 // components
@@ -17,12 +17,10 @@ type Props = {
   handleStepChange: (value: TIntegrationSteps) => void;
   integration: IWorkspaceIntegrations | false | undefined;
   control: Control<TFormValues, any>;
+  watch: UseFormWatch<TFormValues>;
 };
 
-export const GithubImportData: FC<Props> = ({ handleStepChange, integration, control }) => {
-  const [selectedRepo, setSelectedRepo] = useState<any>(null);
-  const [selectedProject, setSelectedProject] = useState<any>(null);
-
+export const GithubImportData: FC<Props> = ({ handleStepChange, integration, control, watch }) => {
   const { projects } = useProjects();
 
   const options =
@@ -52,10 +50,7 @@ export const GithubImportData: FC<Props> = ({ handleStepChange, integration, con
                     integration={integration}
                     value={value ? value.id : null}
                     label={value ? `${value.full_name}` : "Select Repository"}
-                    onChange={(val: any) => {
-                      onChange(val);
-                      setSelectedRepo(val);
-                    }}
+                    onChange={onChange}
                     characterLimit={50}
                   />
                 )}
@@ -77,10 +72,7 @@ export const GithubImportData: FC<Props> = ({ handleStepChange, integration, con
                   <CustomSearchSelect
                     value={value}
                     label={value ? projects.find((p) => p.id === value)?.name : "Select Project"}
-                    onChange={(val: string) => {
-                      onChange(val);
-                      setSelectedProject(val);
-                    }}
+                    onChange={onChange}
                     options={options}
                     optionsClassName="w-full"
                   />
@@ -125,7 +117,7 @@ export const GithubImportData: FC<Props> = ({ handleStepChange, integration, con
         <SecondaryButton onClick={() => handleStepChange("import-configure")}>Back</SecondaryButton>
         <PrimaryButton
           onClick={() => handleStepChange("repo-details")}
-          disabled={!selectedRepo || !selectedProject}
+          disabled={!watch("github") || !watch("project")}
         >
           Next
         </PrimaryButton>

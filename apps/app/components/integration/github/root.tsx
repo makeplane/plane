@@ -240,6 +240,7 @@ export const GithubIntegrationRoot: FC<Props> = ({
                   handleStepChange={handleStepChange}
                   integration={workspaceIntegration}
                   control={control}
+                  watch={watch}
                 />
               )}
               {currentStep?.state === "repo-details" && (
