@@ -131,6 +131,17 @@ class IssueCreateSerializer(BaseSerializer):
                 ],
                 batch_size=10,
             )
+        else:
+            # Then assign it to default assignee
+            if project.default_assignee is not None:
+                IssueAssignee.objects.create(
+                    assignee=project.default_assignee,
+                    issue=issue,
+                    project=project,
+                    workspace=project.workspace,
+                    created_by=issue.created_by,
+                    updated_by=issue.updated_by,
+                )
 
         if labels is not None:
             IssueLabel.objects.bulk_create(
