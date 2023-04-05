@@ -13,7 +13,7 @@ export const DangerButton: React.FC<ButtonProps> = ({
 }) => (
   <button
     type={type}
-    className={`${className} border font-medium duration-300 ${
+    className={`${className} border border-red-500 font-medium duration-300 ${
       size === "sm"
         ? "rounded px-3 py-2 text-xs"
         : size === "md"
@@ -21,13 +21,13 @@ export const DangerButton: React.FC<ButtonProps> = ({
         : "rounded-lg px-4 py-2 text-base"
     } ${
       disabled
-        ? "cursor-not-allowed border-gray-300 bg-gray-300 text-black hover:border-gray-300 hover:border-opacity-100 hover:bg-gray-300 hover:bg-opacity-100 hover:text-black"
-        : "border-red-500"
+        ? "cursor-not-allowed bg-opacity-70 border-opacity-70 hover:bg-opacity-70 hover:border-opacity-70"
+        : ""
     } ${
       outline
-        ? "bg-transparent hover:bg-red-500 hover:text-white"
-        : "bg-red-500 hover:border-opacity-90 hover:bg-opacity-90"
-    } ${!disabled && !outline ? "text-white" : ""} ${loading ? "cursor-wait" : ""}`}
+        ? "bg-transparent text-red-500 hover:bg-red-500 hover:text-white"
+        : "text-white bg-red-500 hover:border-opacity-90 hover:bg-opacity-90"
+    } ${loading ? "cursor-wait" : ""}`}
     onClick={onClick}
     disabled={disabled || loading}
   >
