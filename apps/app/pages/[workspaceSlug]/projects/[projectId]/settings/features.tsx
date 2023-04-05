@@ -6,6 +6,7 @@ import useSWR, { mutate } from "swr";
 
 // services
 import projectService from "services/project.service";
+import trackEventServices from "services/track-event.service";
 // lib
 import { requiredAdmin } from "lib/auth";
 // layouts
@@ -112,7 +113,19 @@ const FeaturesSettings: NextPage<UserAuth> = (props) => {
               }`}
               role="switch"
               aria-checked={projectDetails?.cycle_view}
-              onClick={() => handleSubmit({ cycle_view: !projectDetails?.cycle_view })}
+              onClick={() => {
+                trackEventServices.trackMiscellaneousEvent(
+                  {
+                    workspaceId: (projectDetails?.workspace as any)?.id,
+                    workspaceSlug,
+                    projectId,
+                    projectIdentifier: projectDetails?.identifier,
+                    projectName: projectDetails?.name,
+                  },
+                  !projectDetails?.cycle_view ? "TOGGLE_CYCLE_ON" : "TOGGLE_CYCLE_OFF"
+                );
+                handleSubmit({ cycle_view: !projectDetails?.cycle_view });
+              }}
             >
               <span className="sr-only">Use cycles</span>
               <span
@@ -141,7 +154,19 @@ const FeaturesSettings: NextPage<UserAuth> = (props) => {
               }`}
               role="switch"
               aria-checked={projectDetails?.module_view}
-              onClick={() => handleSubmit({ module_view: !projectDetails?.module_view })}
+              onClick={() => {
+                trackEventServices.trackMiscellaneousEvent(
+                  {
+                    workspaceId: (projectDetails?.workspace as any)?.id,
+                    workspaceSlug,
+                    projectId,
+                    projectIdentifier: projectDetails?.identifier,
+                    projectName: projectDetails?.name,
+                  },
+                  !projectDetails?.module_view ? "TOGGLE_MODULE_ON" : "TOGGLE_MODULE_OFF"
+                );
+                handleSubmit({ module_view: !projectDetails?.module_view });
+              }}
             >
               <span className="sr-only">Use cycles</span>
               <span
@@ -170,7 +195,19 @@ const FeaturesSettings: NextPage<UserAuth> = (props) => {
               }`}
               role="switch"
               aria-checked={projectDetails?.issue_views_view}
-              onClick={() => handleSubmit({ issue_views_view: !projectDetails?.issue_views_view })}
+              onClick={() => {
+                trackEventServices.trackMiscellaneousEvent(
+                  {
+                    workspaceId: (projectDetails?.workspace as any)?.id,
+                    workspaceSlug,
+                    projectId,
+                    projectIdentifier: projectDetails?.identifier,
+                    projectName: projectDetails?.name,
+                  },
+                  !projectDetails?.issue_views_view ? "TOGGLE_VIEW_ON" : "TOGGLE_VIEW_OFF"
+                );
+                handleSubmit({ issue_views_view: !projectDetails?.issue_views_view });
+              }}
             >
               <span className="sr-only">Use views</span>
               <span
@@ -199,7 +236,19 @@ const FeaturesSettings: NextPage<UserAuth> = (props) => {
               }`}
               role="switch"
               aria-checked={projectDetails?.page_view}
-              onClick={() => handleSubmit({ page_view: !projectDetails?.page_view })}
+              onClick={() => {
+                trackEventServices.trackMiscellaneousEvent(
+                  {
+                    workspaceId: (projectDetails?.workspace as any)?.id,
+                    workspaceSlug,
+                    projectId,
+                    projectIdentifier: projectDetails?.identifier,
+                    projectName: projectDetails?.name,
+                  },
+                  !projectDetails?.page_view ? "TOGGLE_PAGES_ON" : "TOGGLE_PAGES_OFF"
+                );
+                handleSubmit({ page_view: !projectDetails?.page_view });
+              }}
             >
               <span className="sr-only">Use cycles</span>
               <span

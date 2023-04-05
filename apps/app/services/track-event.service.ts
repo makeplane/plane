@@ -43,6 +43,22 @@ type ViewEventType = "VIEW_CREATE" | "VIEW_UPDATE" | "VIEW_DELETE";
 
 type IssueCommentType = "ISSUE_COMMENT_CREATE" | "ISSUE_COMMENT_UPDATE" | "ISSUE_COMMENT_DELETE";
 
+type MiscellaneousEventType =
+  | "TOGGLE_CYCLE_ON"
+  | "TOGGLE_CYCLE_OFF"
+  | "TOGGLE_MODULE_ON"
+  | "TOGGLE_MODULE_OFF"
+  | "TOGGLE_VIEW_ON"
+  | "TOGGLE_VIEW_OFF"
+  | "TOGGLE_PAGES_ON"
+  | "TOGGLE_PAGES_OFF"
+  | "TOGGLE_STATE_ON"
+  | "TOGGLE_STATE_OFF";
+
+type IntegrationEventType = "ADD_WORKSPACE_INTEGRATION" | "REMOVE_WORKSPACE_INTEGRATION";
+
+type GitHubSyncEventType = "GITHUB_REPO_SYNC";
+
 type PageBlocksEventType =
   | "PAGE_BLOCK_CREATE"
   | "PAGE_BLOCK_UPDATE"
@@ -134,7 +150,6 @@ class TrackEventServices extends APIService {
         projectName: data?.project_detail?.name,
         projectIdentifier: data?.project_detail?.identifier,
         issueId: data?.id,
-        issueTitle: data?.name,
       };
     else payload = data;
 
@@ -257,7 +272,6 @@ class TrackEventServices extends APIService {
         projectName: data?.project_detail?.name,
         projectIdentifier: data?.project_detail?.identifier,
         stateId: data.id,
-        stateName: data.name,
       };
     else payload = data;
 
@@ -284,7 +298,6 @@ class TrackEventServices extends APIService {
         projectName: data?.project_detail?.name,
         projectIdentifier: data?.project_detail?.identifier,
         cycleId: data.id,
-        cycleName: data.name,
       };
     else payload = data;
 
@@ -311,7 +324,6 @@ class TrackEventServices extends APIService {
         projectName: data.project_detail?.name,
         projectIdentifier: data?.project_detail?.identifier,
         moduleId: data.id,
-        moduleName: data.name,
       };
     else payload = data;
 
@@ -474,6 +486,45 @@ class TrackEventServices extends APIService {
         eventName,
         extra: {
           ...payload,
+        },
+      },
+    });
+  }
+
+  async trackMiscellaneousEvent(data: any, eventName: MiscellaneousEventType): Promise<any> {
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName,
+        extra: {
+          ...data,
+        },
+      },
+    });
+  }
+
+  async trackAppIntegrationEvent(data: any, eventName: IntegrationEventType): Promise<any> {
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName,
+        extra: {
+          ...data,
+        },
+      },
+    });
+  }
+
+  async trackGitHubSyncEvent(data: any, eventName: GitHubSyncEventType): Promise<any> {
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName,
+        extra: {
+          ...data,
         },
       },
     });
