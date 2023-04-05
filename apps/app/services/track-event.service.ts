@@ -27,7 +27,11 @@ type WorkspaceEventType =
   | "WORKSPACE_USER_INVITE_ACCEPT"
   | "WORKSPACE_USER_BULK_INVITE_ACCEPT";
 
-type ProjectEventType = "CREATE_PROJECT" | "UPDATE_PROJECT" | "DELETE_PROJECT";
+type ProjectEventType =
+  | "CREATE_PROJECT"
+  | "UPDATE_PROJECT"
+  | "DELETE_PROJECT"
+  | "PROJECT_MEMBER_INVITE";
 
 type IssueEventType = "ISSUE_CREATE" | "ISSUE_UPDATE" | "ISSUE_DELETE";
 
@@ -64,6 +68,8 @@ type PageBlocksEventType =
   | "PAGE_BLOCK_UPDATE"
   | "PAGE_BLOCK_DELETE"
   | "PAGE_BLOCK_CONVERTED_TO_ISSUE";
+
+type IssueLabelEventType = "ISSUE_LABEL_CREATE" | "ISSUE_LABEL_UPDATE" | "ISSUE_LABEL_DELETE";
 
 type GptEventType = "ASK_GPT" | "USE_GPT_RESPONSE_IN_ISSUE" | "USE_GPT_RESPONSE_IN_PAGE_BLOCK";
 
@@ -104,7 +110,7 @@ class TrackEventServices extends APIService {
     eventName: ProjectEventType
   ): Promise<any> {
     let payload: any;
-    if (eventName !== "DELETE_PROJECT")
+    if (eventName !== "DELETE_PROJECT" && eventName !== "PROJECT_MEMBER_INVITE")
       payload = {
         workspaceId: data?.workspace_detail?.id,
         workspaceName: data?.workspace_detail?.name,
@@ -254,6 +260,19 @@ class TrackEventServices extends APIService {
       method: "POST",
       data: {
         eventName: "ISSUE_BULK_DELETE",
+        extra: {
+          ...data,
+        },
+      },
+    });
+  }
+
+  async trackIssueLabelEvent(data: any, eventName: IssueLabelEventType): Promise<any> {
+    return this.request({
+      url: "/api/track-event",
+      method: "POST",
+      data: {
+        eventName,
         extra: {
           ...data,
         },

@@ -89,7 +89,20 @@ class ProjectServices extends APIService {
 
   async inviteProject(workspaceSlug: string, projectId: string, data: any): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/add/`, data)
-      .then((response) => response?.data)
+      .then((response) => {
+        if (trackEvent)
+          trackEventServices.trackProjectEvent(
+            {
+              workspaceId: response?.data?.workspace?.id,
+              workspaceSlug,
+              projectId,
+              projectName: response?.data?.project?.name,
+              memberEmail: response?.data?.member?.email,
+            },
+            "PROJECT_MEMBER_INVITE"
+          );
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
