@@ -14,6 +14,8 @@ import useToast from "hooks/use-toast";
 import { SecondaryButton, DangerButton } from "components/ui";
 // icons
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+// helper
+import { getFileName } from "helpers/attachment.helper";
 // types
 import type { IIssueAttachment } from "types";
 // fetch-keys
@@ -71,14 +73,6 @@ export const DeleteAttachmentModal: React.FC<Props> = ({ isOpen, setIsOpen, data
       });
   };
 
-  const extractFileNameWithExtension = (fileName: string) => {
-    const dotIndex = fileName.lastIndexOf(".");
-
-    const nameWithoutExtension = fileName.substring(0, dotIndex);
-
-    return nameWithoutExtension;
-  };
-
   return (
     data && (
       <Transition.Root show={isOpen} as={React.Fragment}>
@@ -125,10 +119,8 @@ export const DeleteAttachmentModal: React.FC<Props> = ({ isOpen, setIsOpen, data
                         <div className="mt-2">
                           <p className="text-sm text-gray-500">
                             Are you sure you want to delete attachment-{" "}
-                            <span className="font-bold">
-                              {extractFileNameWithExtension(data.attributes.name)}
-                            </span>
-                            ? This attachment will be permanently removed. This action cannot be
+                            <span className="font-bold">{getFileName(data.attributes.name)}</span>?
+                            This attachment will be permanently removed. This action cannot be
                             undone.
                           </p>
                         </div>

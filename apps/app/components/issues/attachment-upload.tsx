@@ -8,26 +8,26 @@ import { mutate } from "swr";
 import { useDropzone } from "react-dropzone";
 // toast
 import useToast from "hooks/use-toast";
-// icons
-import { PlusIcon } from "@heroicons/react/24/outline";
 // fetch key
 import { ISSUE_ATTACHMENTS } from "constants/fetch-keys";
 // services
 import fileServices from "services/file.service";
+import { IIssueAttachment } from "types";
 
-// const acceptedFileTypes = ["application/pdf", "text/csv", "application/vnd.ms-excel"];
 const maxFileSize = 5 * 1024 * 1024; // 5 MB
 
 export const IssueAttachmentUpload = () => {
   const [isLoading, setIsLoading] = useState(false);
+
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
   const { setToastAlert } = useToast();
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
-    if (!acceptedFiles[0] || !workspaceSlug) return;
     setIsLoading(true);
+    if (!acceptedFiles[0] || !workspaceSlug) return;
+
     const formData = new FormData();
     formData.append("asset", acceptedFiles[0]);
     formData.append(
@@ -46,7 +46,7 @@ export const IssueAttachmentUpload = () => {
         formData
       )
       .then((res) => {
-        mutate(ISSUE_ATTACHMENTS(issueId as string));
+        mutate<IIssueAttachment[]>(ISSUE_ATTACHMENTS(issueId as string));
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -55,6 +55,7 @@ export const IssueAttachmentUpload = () => {
         setIsLoading(false);
       })
       .catch((err) => {
+        setIsLoading(false);
         setToastAlert({
           type: "error",
           title: "error!",
@@ -78,20 +79,18 @@ export const IssueAttachmentUpload = () => {
   return (
     <div
       {...getRootProps()}
-      className={`flex items-center justify-center cursor-pointer border-2 border-dashed border-theme text-blue-500 text-sm rounded-md px-4 py-2 ${
+      className={`flex items-center justify-center h-[60px] cursor-pointer border-2 border-dashed border-theme text-blue-500 bg-blue-500/5 text-sm rounded-md px-4 ${
         isDragActive ? "bg-theme/10" : ""
       } ${isDragReject ? "bg-red-100" : ""}`}
     >
       <input {...getInputProps()} />
       <span className="flex items-center gap-2">
-        
         {isDragActive ? (
           <p>Drop here...</p>
-        ) : isLoading ? (<p className="text-center">Uploading....</p>) : (
-          <>
-          {/* <PlusIcon className="h-5 w-5 text-blue-500" /> */}
+        ) : isLoading ? (
+          <p className="text-center">Uploading....</p>
+        ) : (
           <p className="text-center">Drag & Drop or Click to add new file</p>
-          </>
         )}
         {fileError && <p className="text-red-500 mt-2">{fileError}</p>}
       </span>

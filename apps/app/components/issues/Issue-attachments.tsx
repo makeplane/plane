@@ -7,9 +7,10 @@ import useSWR from "swr";
 
 // ui
 import { Tooltip } from "components/ui";
+import { DeleteAttachmentModal } from "./delete-attachment-modal";
 // icons
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { CsvIcon, ExcelIcon, ExclamationIcon, PdfIcon } from "components/icons";
+import { ExclamationIcon, getFileIcon } from "components/icons";
 // services
 import fileServices from "services/file.service";
 import projectService from "services/project.service";
@@ -18,7 +19,8 @@ import { ISSUE_ATTACHMENTS, PROJECT_MEMBERS } from "constants/fetch-keys";
 // helper
 import { truncateText } from "helpers/string.helper";
 import { formatDateLong } from "helpers/date-time.helper";
-import { DeleteAttachmentModal } from "./delete-attachment-modal";
+import { convertBytesToSize, getFileExtension, getFileName } from "helpers/attachment.helper";
+// type
 import { IIssueAttachment } from "types";
 
 export const IssueAttachments = () => {
@@ -47,45 +49,6 @@ export const IssueAttachments = () => {
       : null
   );
 
-  const getFileExtension = (filename: string) =>
-    filename.slice(((filename.lastIndexOf(".") - 1) >>> 0) + 2);
-
-  const extractFileNameWithExtension = (fileName: string) => {
-    const dotIndex = fileName.lastIndexOf(".");
-
-    const nameWithoutExtension = fileName.substring(0, dotIndex);
-
-    return nameWithoutExtension;
-  };
-
-  const convertBytesToSize = (bytes: number) => {
-    let size;
-
-    if (bytes < 1024 * 1024) {
-      size = Math.round(bytes / 1024) + " KB";
-    } else {
-      size = Math.round(bytes / (1024 * 1024)) + " MB";
-    }
-
-    return size;
-  };
-
-  const getFileIcon = (type: string) => {
-    switch (type) {
-      case "pdf":
-        return <PdfIcon />;
-
-      case "csv":
-        return <CsvIcon />;
-
-      case "xlsx":
-        return <ExcelIcon />;
-
-      default:
-        return <PdfIcon />;
-    }
-  };
-
   return (
     <>
       <DeleteAttachmentModal
@@ -95,41 +58,38 @@ export const IssueAttachments = () => {
       />
       {attachments &&
         attachments.length > 0 &&
-        attachments.map((a) => (
+        attachments.map((file) => (
           <div
-            key={a.id}
-            className="flex items-center justify-between gap-1 px-4 py-2 text-sm border border-gray-200 bg-white rounded-md"
+            key={file.id}
+            className="flex items-center justify-between h-[60px] gap-1 px-4 py-2 text-sm border border-gray-200 bg-white rounded-md"
           >
-            <Link href={a.asset}>
+            <Link href={file.asset}>
               <a target="_blank">
                 <div className="flex items-center gap-3">
-                  <div className="h-7 w-6">{getFileIcon(getFileExtension(a.asset))}</div>
+                  <div className="h-7 w-7">{getFileIcon(getFileExtension(file.asset))}</div>
                   <div className="flex flex-col gap-1">
                     <div className="flex items-center gap-2">
-                      <Tooltip
-                        theme="dark"
-                        tooltipContent={extractFileNameWithExtension(a.attributes.name)}
-                      >
+                      <Tooltip theme="dark" tooltipContent={getFileName(file.attributes.name)}>
                         <span className="text-sm">
-                          {truncateText(`${extractFileNameWithExtension(a.attributes.name)}`, 10)}
+                          {truncateText(`${getFileName(file.attributes.name)}`, 10)}
                         </span>
                       </Tooltip>
                       <Tooltip
                         theme="dark"
                         tooltipContent={`${
-                          people?.find((person) => person.member.id === a.updated_by)?.member
+                          people?.find((person) => person.member.id === file.updated_by)?.member
                             .first_name ?? ""
-                        } uploaded on ${formatDateLong(a.updated_at)}`}
+                        } uploaded on ${formatDateLong(file.updated_at)}`}
                       >
                         <span>
-                          <ExclamationIcon className="h-4 w-4" />
+                          <ExclamationIcon className="h-3 w-3" />
                         </span>
                       </Tooltip>
                     </div>
 
                     <div className="flex items-center gap-3 text-gray-500 text-xs">
-                      <span>{getFileExtension(a.asset).toUpperCase()}</span>
-                      <span>{convertBytesToSize(a.attributes.size)}</span>
+                      <span>{getFileExtension(file.asset).toUpperCase()}</span>
+                      <span>{convertBytesToSize(file.attributes.size)}</span>
                     </div>
                   </div>
                 </div>
@@ -138,7 +98,7 @@ export const IssueAttachments = () => {
 
             <button
               onClick={() => {
-                setDeleteAttachment(a);
+                setDeleteAttachment(file);
                 setAttachmentDeleteModal(true);
               }}
             >
