@@ -1,10 +1,11 @@
-// next imports
-import type { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/router";
-// swr
+
 import useSWR from "swr";
+
 // lib
 import { requiredWorkspaceAdmin } from "lib/auth";
+// services
+import IntegrationService from "services/integration";
 // hooks
 import useToast from "hooks/use-toast";
 // layouts
@@ -13,76 +14,55 @@ import IntegrationGuide from "components/integration/guide";
 // ui
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // types
-import { UserAuth, IAppIntegrations } from "types";
-// api services
-import WorkspaceIntegrationService from "services/integration";
+import { UserAuth } from "types";
+import type { GetServerSideProps, NextPage } from "next";
+// fetch-keys
+import {
+  APP_INTEGRATIONS,
+  IMPORTER_SERVICES_LIST,
+  WORKSPACE_INTEGRATIONS,
+} from "constants/fetch-keys";
 
 const ImportExport: NextPage<UserAuth> = (props) => {
   const { setToastAlert } = useToast();
 
   const router = useRouter();
-  const { workspaceSlug, provider } = router.query as {
-    workspaceSlug: string;
-    provider: string;
-  };
+  const { workspaceSlug, provider } = router.query;
 
-  // fetching all the integrations available
-  const { data: allIntegrations, error: allIntegrationsError } = useSWR<
-    IAppIntegrations[] | undefined,
-    Error
-  >(
-    workspaceSlug ? `ALL_INTEGRATIONS_${workspaceSlug.toUpperCase()}` : null,
-    workspaceSlug ? () => WorkspaceIntegrationService.listAllIntegrations() : null
+  const { data: appIntegrations } = useSWR(APP_INTEGRATIONS, () =>
+    IntegrationService.getAppIntegrationsList()
   );
 
-  // fetching all the integrations available
-  const { data: allWorkspaceIntegrations, error: allWorkspaceIntegrationsError } = useSWR<
-    any | undefined,
-    Error
-  >(
-    workspaceSlug ? `WORKSPACE_INTEGRATIONS_${workspaceSlug.toUpperCase()}` : null,
+  const { data: workspaceIntegrations } = useSWR(
+    workspaceSlug ? WORKSPACE_INTEGRATIONS(workspaceSlug as string) : null,
     workspaceSlug
-      ? () => WorkspaceIntegrationService.listWorkspaceIntegrations(workspaceSlug)
+      ? () => IntegrationService.getWorkspaceIntegrationsList(workspaceSlug as string)
       : null
   );
 
-  // fetching list of importers that already initialized
-  const { data: allIntegrationImporters, error: allIntegrationImportersError } = useSWR<
-    any | undefined,
-    Error
-  >(
-    workspaceSlug ? `INTEGRATION_IMPORTERS_${workspaceSlug.toUpperCase()}` : null,
-    workspaceSlug
-      ? () => WorkspaceIntegrationService.fetchImportExportIntegrationStatus(workspaceSlug)
-      : null
+  const { data: importerServices } = useSWR(
+    workspaceSlug ? IMPORTER_SERVICES_LIST(workspaceSlug as string) : null,
+    workspaceSlug ? () => IntegrationService.getImporterServicesList(workspaceSlug as string) : null
   );
 
   return (
-    <>
-      <AppLayout
-        memberType={props}
-        breadcrumbs={
-          <Breadcrumbs>
-            <BreadcrumbItem title={`${workspaceSlug ?? "Workspace"}`} link={`/${workspaceSlug}`} />
-            <BreadcrumbItem title="Members Settings" />
-          </Breadcrumbs>
-        }
-        settingsLayout
-      >
-        <section className="space-y-5">
-          <IntegrationGuide
-            workspaceSlug={workspaceSlug}
-            provider={provider}
-            allIntegrations={allIntegrations}
-            allIntegrationsError={allIntegrationsError}
-            allWorkspaceIntegrations={allWorkspaceIntegrations}
-            allWorkspaceIntegrationsError={allWorkspaceIntegrationsError}
-            allIntegrationImporters={allIntegrationImporters}
-            allIntegrationImportersError={allIntegrationImportersError}
-          />
-        </section>
-      </AppLayout>
-    </>
+    <AppLayout
+      memberType={props}
+      breadcrumbs={
+        <Breadcrumbs>
+          <BreadcrumbItem title={`${workspaceSlug ?? "Workspace"}`} link={`/${workspaceSlug}`} />
+          <BreadcrumbItem title="Members Settings" />
+        </Breadcrumbs>
+      }
+      settingsLayout
+    >
+      <IntegrationGuide
+        provider={provider as string}
+        appIntegrations={appIntegrations}
+        workspaceIntegrations={workspaceIntegrations}
+        importerServices={importerServices}
+      />
+    </AppLayout>
   );
 };
 

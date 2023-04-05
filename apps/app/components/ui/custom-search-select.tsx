@@ -134,15 +134,21 @@ export const CustomSearchSelect = ({
                         {({ active, selected }) => (
                           <>
                             {option.content}
-                            <div
-                              className={`flex items-center justify-center rounded border border-gray-500 p-0.5 ${
-                                active || selected ? "opacity-100" : "opacity-0"
-                              }`}
-                            >
+                            {multiple ? (
+                              <div
+                                className={`flex items-center justify-center rounded border border-gray-500 p-0.5 ${
+                                  active || selected ? "opacity-100" : "opacity-0"
+                                }`}
+                              >
+                                <CheckIcon
+                                  className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`}
+                                />
+                              </div>
+                            ) : (
                               <CheckIcon
                                 className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`}
                               />
-                            </div>
+                            )}
                           </>
                         )}
                       </Combobox.Option>

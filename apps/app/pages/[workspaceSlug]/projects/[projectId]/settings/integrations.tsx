@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 import { useRouter } from "next/router";
 
@@ -9,8 +9,10 @@ import { requiredAdmin } from "lib/auth";
 // layouts
 import AppLayout from "layouts/app-layout";
 // services
-import workspaceService from "services/workspace.service";
+import IntegrationService from "services/integration";
 import projectService from "services/project.service";
+// components
+import { SingleIntegration } from "components/project";
 // ui
 import { EmptySpace, EmptySpaceItem, Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
@@ -21,7 +23,6 @@ import { IProject, UserAuth } from "types";
 import type { NextPageContext, NextPage } from "next";
 // fetch-keys
 import { PROJECT_DETAILS, WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
-import { SingleIntegration } from "components/project";
 
 const ProjectIntegrations: NextPage<UserAuth> = (props) => {
   const { isMember, isOwner, isViewer, isGuest } = props;
@@ -39,7 +40,9 @@ const ProjectIntegrations: NextPage<UserAuth> = (props) => {
   const { data: workspaceIntegrations } = useSWR(
     workspaceSlug ? WORKSPACE_INTEGRATIONS(workspaceSlug as string) : null,
     () =>
-      workspaceSlug ? workspaceService.getWorkspaceIntegrations(workspaceSlug as string) : null
+      workspaceSlug
+        ? IntegrationService.getWorkspaceIntegrationsList(workspaceSlug as string)
+        : null
   );
 
   return (
