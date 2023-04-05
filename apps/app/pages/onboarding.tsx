@@ -90,25 +90,25 @@ const Onboarding: NextPage = () => {
   );
 };
 
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const user = await requiredAuth(ctx.req?.headers.cookie);
+// export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+//   const user = await requiredAuth(ctx.req?.headers.cookie);
 
-  const redirectAfterSignIn = ctx.resolvedUrl;
+//   const redirectAfterSignIn = ctx.resolvedUrl;
 
-  if (!user) {
-    return {
-      redirect: {
-        destination: `/signin?next=${redirectAfterSignIn}`,
-        permanent: false,
-      },
-    };
-  }
+//   if (!user) {
+//     return {
+//       redirect: {
+//         destination: `/signin?next=${redirectAfterSignIn}`,
+//         permanent: false,
+//       },
+//     };
+//   }
 
-  return {
-    props: {
-      user,
-    },
-  };
-};
+//   return {
+//     props: {
+//       user,
+//     },
+//   };
+// };
 
 export default Onboarding;
