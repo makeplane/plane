@@ -18,9 +18,16 @@ type Props = {
   value: any;
   label: string;
   onChange: (repo: any) => void;
+  characterLimit?: number;
 };
 
-export const SelectRepository: React.FC<Props> = ({ integration, value, label, onChange }) => {
+export const SelectRepository: React.FC<Props> = ({
+  integration,
+  value,
+  label,
+  onChange,
+  characterLimit = 25,
+}) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -54,7 +61,7 @@ export const SelectRepository: React.FC<Props> = ({ integration, value, label, o
     userRepositories.map((repo) => ({
       value: repo.id,
       query: repo.full_name,
-      content: <p>{truncateText(repo.full_name, 25)}</p>,
+      content: <p>{truncateText(repo.full_name, characterLimit)}</p>,
     })) ?? [];
 
   return (

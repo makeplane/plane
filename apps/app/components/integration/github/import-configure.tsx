@@ -16,7 +16,7 @@ type Props = {
   workspaceIntegrations: IWorkspaceIntegrations[] | undefined;
 };
 
-export const GithubConfigure: FC<Props> = ({
+export const GithubImportConfigure: FC<Props> = ({
   handleStepChange,
   provider,
   appIntegrations,
@@ -43,7 +43,7 @@ export const GithubConfigure: FC<Props> = ({
       <div className="flex items-center gap-2 py-5">
         <div className="w-full">
           <div className="font-medium">Configure</div>
-          <div className="text-sm text-gray-600">Set up your Github import</div>
+          <div className="text-sm text-gray-600">Set up your GitHub import.</div>
         </div>
         <div className="flex-shrink-0">
           <GithubAuth

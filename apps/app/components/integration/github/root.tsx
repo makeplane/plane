@@ -14,11 +14,11 @@ import GithubIntegrationService from "services/integration/github.service";
 import useToast from "hooks/use-toast";
 // components
 import {
-  GithubConfigure,
+  GithubImportConfigure,
   GithubImportData,
   GithubRepoDetails,
   GithubImportUsers,
-  GithubConfirm,
+  GithubImportConfirm,
 } from "components/integration";
 // icons
 import { CogIcon, CloudUploadIcon, UsersIcon, CheckIcon } from "components/icons";
@@ -51,16 +51,18 @@ export interface IIntegrationData {
   state: TIntegrationSteps;
 }
 
+export interface IUserDetails {
+  username: string;
+  import: any;
+  email: string;
+}
+
 export type TFormValues = {
   github: any;
   project: string | null;
   sync: boolean;
   collaborators: IGithubRepoCollaborator[];
-  users: {
-    username: string;
-    import: any;
-    email: string;
-  }[];
+  users: IUserDetails[];
 };
 
 const defaultFormValues = {
@@ -101,6 +103,7 @@ export const GithubIntegrationRoot: FC<Props> = ({
   const [currentStep, setCurrentStep] = useState<IIntegrationData>({
     state: "import-configure",
   });
+  const [users, setUsers] = useState<IUserDetails[]>([]);
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -145,7 +148,7 @@ export const GithubIntegrationRoot: FC<Props> = ({
         url: formData.github.html_url,
       },
       data: {
-        users: [],
+        users: users,
       },
       config: {
         sync: formData.sync,
@@ -166,12 +169,6 @@ export const GithubIntegrationRoot: FC<Props> = ({
         })
       );
   };
-
-  // console.log(watch("github"), "github");
-  // console.log(watch("project"), "project");
-  // console.log(watch("sync"), "sync");
-  // console.log(watch("collaborators"), "collaborators");
-  // console.log(watch("users"), "users");
 
   return (
     <form onSubmit={handleSubmit(createGithubImporterService)}>
@@ -231,7 +228,7 @@ export const GithubIntegrationRoot: FC<Props> = ({
           <div className="relative w-full space-y-4">
             <div className="w-full">
               {currentStep?.state === "import-configure" && (
-                <GithubConfigure
+                <GithubImportConfigure
                   handleStepChange={handleStepChange}
                   provider={provider}
                   appIntegrations={appIntegrations}
@@ -249,19 +246,20 @@ export const GithubIntegrationRoot: FC<Props> = ({
                 <GithubRepoDetails
                   selectedRepo={watch("github")}
                   handleStepChange={handleStepChange}
-                  watch={watch}
+                  setUsers={setUsers}
                   setValue={setValue}
                 />
               )}
               {currentStep?.state === "import-users" && (
                 <GithubImportUsers
                   handleStepChange={handleStepChange}
+                  users={users}
+                  setUsers={setUsers}
                   watch={watch}
-                  setValue={setValue}
                 />
               )}
               {currentStep?.state === "import-confirm" && (
-                <GithubConfirm handleStepChange={handleStepChange} />
+                <GithubImportConfirm handleStepChange={handleStepChange} watch={watch} />
               )}
             </div>
           </div>

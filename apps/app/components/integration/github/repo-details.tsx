@@ -5,25 +5,27 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // react-hook-form
-import { UseFormSetValue, UseFormWatch } from "react-hook-form";
+import { UseFormSetValue } from "react-hook-form";
 // services
 import GithubIntegrationService from "services/integration/github.service";
 // ui
 import { Loader, PrimaryButton, SecondaryButton } from "components/ui";
 // types
-import { TFormValues, TIntegrationSteps } from "components/integration";
+import { IUserDetails, TFormValues, TIntegrationSteps } from "components/integration";
+// fetch-keys
+import { GITHUB_REPOSITORY_INFO } from "constants/fetch-keys";
 
 type Props = {
   selectedRepo: any;
   handleStepChange: (value: TIntegrationSteps) => void;
-  watch: UseFormWatch<TFormValues>;
+  setUsers: React.Dispatch<React.SetStateAction<IUserDetails[]>>;
   setValue: UseFormSetValue<TFormValues>;
 };
 
 export const GithubRepoDetails: FC<Props> = ({
   selectedRepo,
   handleStepChange,
-  watch,
+  setUsers,
   setValue,
 }) => {
   const router = useRouter();
@@ -31,9 +33,7 @@ export const GithubRepoDetails: FC<Props> = ({
 
   const { data: repoInfo } = useSWR(
     workspaceSlug && selectedRepo
-      ? `GITHUB_REPO_INFO_${workspaceSlug
-          .toString()
-          .toUpperCase()}_${selectedRepo.name.toUpperCase()}`
+      ? GITHUB_REPOSITORY_INFO(workspaceSlug as string, selectedRepo.name)
       : null,
     workspaceSlug && selectedRepo
       ? () =>
@@ -47,21 +47,25 @@ export const GithubRepoDetails: FC<Props> = ({
   useEffect(() => {
     if (!repoInfo) return;
 
-    setValue("collaborators", repoInfo?.collaborators ?? []);
-    const users = watch("collaborators").map((collaborator) => ({
+    setValue("collaborators", repoInfo.collaborators);
+
+    const fetchedUsers = repoInfo.collaborators.map((collaborator) => ({
       username: collaborator.login,
       import: "map",
       email: "",
     }));
-    setValue("users", users);
-  }, [setValue, repoInfo, watch]);
+    setUsers(fetchedUsers);
+  }, [repoInfo, setUsers, setValue]);
 
   return (
     <div className="mt-6">
       {repoInfo ? (
         repoInfo.issue_count > 0 ? (
           <div className="flex items-center justify-between gap-4">
-            <h5 className="text-sm">Import completed. We have found:</h5>
+            <div>
+              <div className="font-medium">Repository Details</div>
+              <div className="text-sm text-gray-600">Import completed. We have found:</div>
+            </div>
             <div className="flex gap-16 mt-4">
               <div className="text-center flex-shrink-0">
                 <p className="text-3xl font-bold">{repoInfo.issue_count}</p>

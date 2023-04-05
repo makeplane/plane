@@ -30,6 +30,10 @@ type Props = {
   importerServices: IImporterService[] | undefined;
 };
 
+const importersList: { [key: string]: string } = {
+  github: "GitHub",
+};
+
 const IntegrationGuide: FC<Props> = ({
   provider,
   appIntegrations,
@@ -45,7 +49,6 @@ const IntegrationGuide: FC<Props> = ({
     <div className="space-y-5">
       {!provider && (
         <>
-          <div className="text-2xl font-semibold">Import</div>
           <div className="flex items-center gap-2">
             <div className="h-full w-full space-y-1">
               <div className="text-lg font-medium">Relocation Guide</div>
@@ -88,10 +91,11 @@ const IntegrationGuide: FC<Props> = ({
                       </div>
                     </div>
 
-                    <h3 className="mt-6 mb-2 font-medium text-lg flex justify-between gap-2">
+                    <h3 className="mt-6 mb-2 font-medium text-lg flex gap-2">
                       Previous Imports
-                      <SecondaryButton
-                        className="flex items-center gap-2"
+                      <button
+                        type="button"
+                        className="flex-shrink-0 flex items-center gap-1 outline-none text-xs py-1 px-1.5 bg-gray-100 rounded"
                         onClick={() => {
                           setRefreshing(true);
                           mutate(IMPORTER_SERVICES_LIST(workspaceSlug as string)).then(() =>
@@ -101,9 +105,9 @@ const IntegrationGuide: FC<Props> = ({
                       >
                         <ArrowPathIcon className={`h-3 w-3 ${refreshing ? "animate-spin" : ""}`} />{" "}
                         {refreshing ? "Refreshing..." : "Refresh status"}
-                      </SecondaryButton>
+                      </button>
                     </h3>
-                    {importerServices && !refreshing ? (
+                    {importerServices ? (
                       importerServices.length > 0 ? (
                         <div className="space-y-2">
                           <div className="divide-y">
@@ -112,8 +116,8 @@ const IntegrationGuide: FC<Props> = ({
                                 <h4 className="text-sm flex items-center gap-2">
                                   <span>
                                     Import from{" "}
-                                    <span className="font-medium capitalize">
-                                      {service.service}
+                                    <span className="font-medium">
+                                      {importersList[service.service]}
                                     </span>{" "}
                                     to{" "}
                                     <span className="font-medium">
@@ -131,7 +135,7 @@ const IntegrationGuide: FC<Props> = ({
                                         : ""
                                     }`}
                                   >
-                                    {service.status}
+                                    {refreshing ? "Refreshing..." : service.status}
                                   </span>
                                 </h4>
                                 <div className="text-gray-500 text-xs mt-2 flex items-center gap-2">

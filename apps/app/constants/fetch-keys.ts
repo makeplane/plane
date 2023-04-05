@@ -125,6 +125,10 @@ export const WORKSPACE_INTEGRATIONS = (workspaceSlug: string) =>
 export const IMPORTER_SERVICES_LIST = (workspaceSlug: string) =>
   `IMPORTER_SERVICES_LIST_${workspaceSlug.toUpperCase()}`;
 
+// github-importer
+export const GITHUB_REPOSITORY_INFO = (workspaceSlug: string, repoName: string) =>
+  `GITHUB_REPO_INFO_${workspaceSlug.toString().toUpperCase()}_${repoName.toUpperCase()}`;
+
 // Calendar
 export const PROJECT_CALENDAR_ISSUES = (projectId: string) =>
   `CALENDAR_ISSUES_${projectId.toUpperCase()}`;
