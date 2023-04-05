@@ -225,6 +225,18 @@ class ImportServiceEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+    def delete(self, request, slug, pk):
+        try:
+            importer = Importer.objects.filter(pk=pk)
+            importer.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
 
 class UpdateServiceImportStatusEndpoint(BaseAPIView):
     def post(self, request, slug, project_id, service, importer_id):
