@@ -29,10 +29,10 @@ const SettingsNavbar: React.FC<Props> = ({ profilePage = false }) => {
       label: "Integrations",
       href: `/${workspaceSlug}/settings/integrations`,
     },
-    // {
-    //   label: "Import/Export",
-    //   href: `/${workspaceSlug}/settings/import-export`,
-    // },
+    {
+      label: "Import/Export",
+      href: `/${workspaceSlug}/settings/import-export`,
+    },
   ];
 
   const projectLinks: Array<{

@@ -6,6 +6,7 @@ import useSWR from "swr";
 
 // services
 import workspaceService from "services/workspace.service";
+import IntegrationService from "services/integration";
 // lib
 import { requiredWorkspaceAdmin } from "lib/auth";
 // layouts
@@ -30,8 +31,8 @@ const WorkspaceIntegrations: NextPage<UserAuth> = (props) => {
     () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null)
   );
 
-  const { data: integrations } = useSWR(workspaceSlug ? APP_INTEGRATIONS : null, () =>
-    workspaceSlug ? workspaceService.getIntegrations() : null
+  const { data: appIntegrations } = useSWR(workspaceSlug ? APP_INTEGRATIONS : null, () =>
+    workspaceSlug ? IntegrationService.getAppIntegrationsList() : null
   );
 
   return (
@@ -52,8 +53,8 @@ const WorkspaceIntegrations: NextPage<UserAuth> = (props) => {
         <section className="space-y-8">
           <h3 className="text-2xl font-semibold">Integrations</h3>
           <div className="space-y-5">
-            {integrations ? (
-              integrations.map((integration) => (
+            {appIntegrations ? (
+              appIntegrations.map((integration) => (
                 <OAuthPopUp
                   key={integration.id}
                   workspaceSlug={workspaceSlug}

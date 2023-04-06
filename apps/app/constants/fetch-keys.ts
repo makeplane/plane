@@ -23,12 +23,9 @@ const paramsToKey = (params: any) => {
 export const CURRENT_USER = "CURRENT_USER";
 export const USER_WORKSPACE_INVITATIONS = "USER_WORKSPACE_INVITATIONS";
 export const USER_WORKSPACES = "USER_WORKSPACES";
-export const APP_INTEGRATIONS = "APP_INTEGRATIONS";
 
 export const WORKSPACE_DETAILS = (workspaceSlug: string) =>
   `WORKSPACE_DETAILS_${workspaceSlug.toUpperCase()}`;
-export const WORKSPACE_INTEGRATIONS = (workspaceSlug: string) =>
-  `WORKSPACE_INTEGRATIONS_${workspaceSlug.toUpperCase()}`;
 
 export const WORKSPACE_MEMBERS = (workspaceSlug: string) =>
   `WORKSPACE_MEMBERS_${workspaceSlug.toUpperCase()}`;
@@ -120,6 +117,17 @@ export const ISSUE_DETAILS = (issueId: string) => `ISSUE_DETAILS_${issueId.toUpp
 export const SUB_ISSUES = (issueId: string) => `SUB_ISSUES_${issueId.toUpperCase()}`;
 
 // integrations
+export const APP_INTEGRATIONS = "APP_INTEGRATIONS";
+export const WORKSPACE_INTEGRATIONS = (workspaceSlug: string) =>
+  `WORKSPACE_INTEGRATIONS_${workspaceSlug.toUpperCase()}`;
+
+//import-export
+export const IMPORTER_SERVICES_LIST = (workspaceSlug: string) =>
+  `IMPORTER_SERVICES_LIST_${workspaceSlug.toUpperCase()}`;
+
+// github-importer
+export const GITHUB_REPOSITORY_INFO = (workspaceSlug: string, repoName: string) =>
+  `GITHUB_REPO_INFO_${workspaceSlug.toString().toUpperCase()}_${repoName.toUpperCase()}`;
 
 // Calendar
 export const PROJECT_CALENDAR_ISSUES = (projectId: string) =>

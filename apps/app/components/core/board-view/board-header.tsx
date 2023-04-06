@@ -142,7 +142,9 @@ export const BoardHeader: React.FC<Props> = ({
           >
             {getGroupTitle()}
           </h2>
-          <span className="ml-0.5 rounded-full bg-gray-100 py-1 px-3 text-sm">
+          <span
+            className={`${isCollapsed ? "ml-0.5" : ""} rounded-full bg-gray-100 py-1 px-3 text-sm`}
+          >
             {groupedByIssues?.[groupTitle].length ?? 0}
           </span>
         </div>

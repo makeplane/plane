@@ -10,6 +10,7 @@ const nextConfig = {
       "planefs-staging.s3.ap-south-1.amazonaws.com",
       "planefs.s3.amazonaws.com",
       "images.unsplash.com",
+      "avatars.githubusercontent.com",
     ],
   },
   output: "standalone",
