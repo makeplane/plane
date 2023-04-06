@@ -225,9 +225,11 @@ class ImportServiceEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    def delete(self, request, slug, pk):
+    def delete(self, request, slug, service, pk):
         try:
-            importer = Importer.objects.filter(pk=pk)
+            importer = Importer.objects.filter(
+                pk=pk, service=service, workspace__slug=slug
+            )
             importer.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Exception as e:

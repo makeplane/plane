@@ -1227,7 +1227,7 @@ urlpatterns = [
         name="importer",
     ),
     path(
-        "workspaces/<str:slug>/importers/<uuid:pk>/",
+        "workspaces/<str:slug>/importers/<str:service>/<uuid:pk>/",
         ImportServiceEndpoint.as_view(),
         name="importer",
     ),
