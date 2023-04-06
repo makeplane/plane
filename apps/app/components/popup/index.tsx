@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 
 // services
-import workspaceService from "services/workspace.service";
+import IntegrationService from "services/integration";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -56,7 +56,9 @@ const OAuthPopUp = ({ integration }: any) => {
   const { data: workspaceIntegrations } = useSWR(
     workspaceSlug ? WORKSPACE_INTEGRATIONS(workspaceSlug as string) : null,
     () =>
-      workspaceSlug ? workspaceService.getWorkspaceIntegrations(workspaceSlug as string) : null
+      workspaceSlug
+        ? IntegrationService.getWorkspaceIntegrationsList(workspaceSlug as string)
+        : null
   );
 
   const handleRemoveIntegration = async () => {
@@ -68,8 +70,10 @@ const OAuthPopUp = ({ integration }: any) => {
 
     setDeletingIntegration(true);
 
-    await workspaceService
-      .deleteWorkspaceIntegration(workspaceSlug as string, workspaceIntegrationId ?? "")
+    await IntegrationService.deleteWorkspaceIntegration(
+      workspaceSlug as string,
+      workspaceIntegrationId ?? ""
+    )
       .then(() => {
         mutate<IWorkspaceIntegrations[]>(
           WORKSPACE_INTEGRATIONS(workspaceSlug as string),

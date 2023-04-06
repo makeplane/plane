@@ -125,12 +125,12 @@ export const GptAssistantModal: React.FC<Props> = ({
         isOpen ? "block" : "hidden"
       }`}
     >
-      {((content && content !== "") || htmlContent) && (
-        <div className="text-sm page-block-section">
+      {((content && content !== "") || htmlContent !== "<p></p>") && (
+        <div className="remirror-section text-sm">
           Content:
           <RemirrorRichTextEditor
             value={htmlContent ?? <p>{content}</p>}
-            customClassName="-mx-3 -my-3"
+            customClassName="-m-3"
             noBorder
             borderOnFocus={false}
             editable={false}
