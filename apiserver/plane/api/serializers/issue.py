@@ -310,6 +310,9 @@ class IssuePropertySerializer(BaseSerializer):
 
 
 class LabelSerializer(BaseSerializer):
+    workspace_detail = WorkspaceLiteSerializer(source="workspace", read_only=True)
+    project_detail = ProjectLiteSerializer(source="project", read_only=True)
+
     class Meta:
         model = Label
         fields = "__all__"
