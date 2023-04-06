@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 
+import Image from "next/image";
 import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
@@ -15,6 +16,7 @@ import AppLayout from "layouts/app-layout";
 import projectService from "services/project.service";
 // components
 import { DeleteProjectModal } from "components/project";
+import { ImageUploadModal } from "components/core";
 import EmojiIconPicker from "components/emoji-icon-picker";
 // hooks
 import useToast from "hooks/use-toast";
@@ -44,6 +46,8 @@ const defaultValues: Partial<IProject> = {
 
 const GeneralSettings: NextPage<UserAuth> = ({ isMember, isOwner, isViewer, isGuest }) => {
   const [selectProject, setSelectedProject] = useState<string | null>(null);
+  const [isImageUploading, setIsImageUploading] = useState(false);
+  const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
 
   const { setToastAlert } = useToast();
 
@@ -61,7 +65,9 @@ const GeneralSettings: NextPage<UserAuth> = ({ isMember, isOwner, isViewer, isGu
     register,
     handleSubmit,
     reset,
+    watch,
     control,
+    setValue,
     setError,
     formState: { errors, isSubmitting },
   } = useForm<IProject>({
@@ -116,6 +122,7 @@ const GeneralSettings: NextPage<UserAuth> = ({ isMember, isOwner, isViewer, isGu
       default_assignee: formData.default_assignee,
       project_lead: formData.project_lead,
       icon: formData.icon,
+      cover_image: formData.cover_image,
     };
 
     if (projectDetails.identifier !== formData.identifier)
@@ -149,6 +156,17 @@ const GeneralSettings: NextPage<UserAuth> = ({ isMember, isOwner, isViewer, isGu
         onSuccess={() => {
           router.push(`/${workspaceSlug}/projects`);
         }}
+      />
+      <ImageUploadModal
+        isOpen={isImageUploadModalOpen}
+        onClose={() => setIsImageUploadModalOpen(false)}
+        onSuccess={(imageUrl) => {
+          setIsImageUploading(true);
+          setValue("cover_image", imageUrl);
+          setIsImageUploadModalOpen(false);
+          handleSubmit(onSubmit)().then(() => setIsImageUploading(false));
+        }}
+        value={watch("cover_image")}
       />
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="space-y-8 sm:space-y-12">
@@ -209,6 +227,40 @@ const GeneralSettings: NextPage<UserAuth> = ({ isMember, isOwner, isViewer, isGu
                   validations={{}}
                   className="min-h-[46px]"
                 />
+              ) : (
+                <Loader className="w-full">
+                  <Loader.Item height="46px" width="full" light />
+                </Loader>
+              )}
+            </div>
+          </div>
+          <div className="grid grid-cols-12 gap-4 sm:gap-16">
+            <div className="col-span-12 sm:col-span-6">
+              <h4 className="text-xl font-semibold">Cover Photo</h4>
+              <p className="text-gray-500">Select your cover photo from the given library.</p>
+            </div>
+            <div className="col-span-12 sm:col-span-6">
+              {watch("cover_image") ? (
+                <div className="w-32 h-32 rounded border p-1">
+                  <div className="w-full h-full relative rounded">
+                    <Image
+                      src={watch("cover_image")!}
+                      alt={projectDetails?.name ?? "Cover image"}
+                      objectFit="cover"
+                      layout="fill"
+                    />
+                    <div className="absolute bottom-1 w-full flex justify-center">
+                      <button
+                        type="button"
+                        disabled={isImageUploading}
+                        onClick={() => setIsImageUploadModalOpen(true)}
+                        className="bg-white rounded text-sm border-2 border-gray-300 text-gray-400 p-1 py-0.5"
+                      >
+                        {isImageUploading ? "Uploading..." : "Change Cover"}
+                      </button>
+                    </div>
+                  </div>
+                </div>
               ) : (
                 <Loader className="w-full">
                   <Loader.Item height="46px" width="full" light />
