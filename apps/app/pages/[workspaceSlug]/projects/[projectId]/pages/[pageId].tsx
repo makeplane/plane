@@ -489,6 +489,7 @@ const SinglePage: NextPage<UserAuth> = (props) => {
                     <CreateUpdateBlockInline
                       handleClose={() => setCreateBlockForm(false)}
                       focus="name"
+                      setGptAssistantModal={()=>{}}
                     />
                   </div>
                 )}
