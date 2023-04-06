@@ -12,13 +12,13 @@ import { DeleteAttachmentModal } from "./delete-attachment-modal";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { ExclamationIcon, getFileIcon } from "components/icons";
 // services
-import fileServices from "services/file.service";
+import issuesService from "services/issues.service";
 import projectService from "services/project.service";
 // fetch-key
 import { ISSUE_ATTACHMENTS, PROJECT_MEMBERS } from "constants/fetch-keys";
 // helper
 import { truncateText } from "helpers/string.helper";
-import { formatDateLong } from "helpers/date-time.helper";
+import { renderLongDateFormat } from "helpers/date-time.helper";
 import { convertBytesToSize, getFileExtension, getFileName } from "helpers/attachment.helper";
 // type
 import { IIssueAttachment } from "types";
@@ -34,7 +34,7 @@ export const IssueAttachments = () => {
     workspaceSlug && projectId && issueId ? ISSUE_ATTACHMENTS(issueId as string) : null,
     workspaceSlug && projectId && issueId
       ? () =>
-          fileServices.getIssueAttachment(
+      issuesService.getIssueAttachment(
             workspaceSlug as string,
             projectId as string,
             issueId as string
@@ -79,7 +79,7 @@ export const IssueAttachments = () => {
                         tooltipContent={`${
                           people?.find((person) => person.member.id === file.updated_by)?.member
                             .first_name ?? ""
-                        } uploaded on ${formatDateLong(file.updated_at)}`}
+                        } uploaded on ${renderLongDateFormat(file.updated_at)}`}
                       >
                         <span>
                           <ExclamationIcon className="h-3 w-3" />

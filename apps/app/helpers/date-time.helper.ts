@@ -177,7 +177,7 @@ export const renderShortTime = (date: string | Date) => {
 export const isDateRangeValid = (startDate: string, endDate: string) =>
   new Date(startDate) < new Date(endDate);
 
-export const formatDateLong = (dateString: string) => {
+export const renderLongDateFormat = (dateString: string) => {
   const date = new Date(dateString);
   const day = date.getDate();
   const year = date.getFullYear();

@@ -7,7 +7,7 @@ import { mutate } from "swr";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import fileServices from "services/file.service";
+import issuesService from "services/issues.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -47,7 +47,7 @@ export const DeleteAttachmentModal: React.FC<Props> = ({ isOpen, setIsOpen, data
 
     mutate<IIssueAttachment[]>(ISSUE_ATTACHMENTS(issueId as string));
 
-    await fileServices
+    await issuesService
       .deleteIssueAttachment(
         workspaceSlug as string,
         projectId as string,

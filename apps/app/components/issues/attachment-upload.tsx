@@ -11,7 +11,8 @@ import useToast from "hooks/use-toast";
 // fetch key
 import { ISSUE_ATTACHMENTS } from "constants/fetch-keys";
 // services
-import fileServices from "services/file.service";
+import issuesService from "services/issues.service";
+// type
 import { IIssueAttachment } from "types";
 
 const maxFileSize = 5 * 1024 * 1024; // 5 MB
@@ -38,7 +39,7 @@ export const IssueAttachmentUpload = () => {
       })
     );
 
-    fileServices
+    issuesService
       .uploadIssueAttachment(
         workspaceSlug as string,
         projectId as string,
