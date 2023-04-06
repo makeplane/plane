@@ -150,3 +150,9 @@ export const OTHER_PAGES_LIST = (projectId: string) =>
 export const PAGE_DETAILS = (pageId: string) => `PAGE_DETAILS_${pageId.toUpperCase()}`;
 export const PAGE_BLOCKS_LIST = (pageId: string) => `PAGE_BLOCK_LIST_${pageId.toUpperCase()}`;
 export const PAGE_BLOCK_DETAILS = (pageId: string) => `PAGE_BLOCK_DETAILS_${pageId.toUpperCase()}`;
+
+// estimates
+export const ESTIMATES_LIST = (projectId: string) => `ESTIMATES_LIST_${projectId.toUpperCase()}`;
+export const ESTIMATE_DETAILS = (estimateId: string) => `ESTIMATE_DETAILS_${estimateId.toUpperCase()}`;
+export const ESTIMATE_POINTS_LIST = (estimateId: string) =>
+  `ESTIMATES_POINTS_LIST_${estimateId.toUpperCase()}`;

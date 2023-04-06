@@ -27,6 +27,7 @@ import {
   SidebarParentSelect,
   SidebarPrioritySelect,
   SidebarStateSelect,
+  SidebarEstimateSelect,
 } from "components/issues";
 // ui
 import { Input, Spinner, CustomDatePicker } from "components/ui";
@@ -281,6 +282,17 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 <SidebarPrioritySelect
                   value={value}
                   onChange={(val: string) => submitChanges({ priority: val })}
+                  userAuth={userAuth}
+                />
+              )}
+            />
+            <Controller
+              control={control}
+              name="estimate_point"
+              render={({ field: { value } }) => (
+                <SidebarEstimateSelect
+                  value={value}
+                  onChange={(val: number) => submitChanges({ estimate_point: val })}
                   userAuth={userAuth}
                 />
               )}
