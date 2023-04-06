@@ -217,9 +217,12 @@ class IssueSearchEndpoint(BaseAPIView):
                 project__project_projectmember__member=self.request.user,
             )
 
-            if parent == "true":
-                issues = issues.filter(parent__isnull=True)
-            if blocker_blocked_by and issue_id:
+            if parent == "true" and issue_id:
+                issue = Issue.objects.get(pk=issue_id)
+                issues = issues.filter(
+                    ~Q(pk=issue_id), ~Q(pk=issue.parent_id), parent__isnull=True
+                )
+            if blocker_blocked_by == "true" and issue_id:
                 issues = issues.filter(blocker_issues=issue_id, blocked_issues=issue_id)
 
             return Response(
