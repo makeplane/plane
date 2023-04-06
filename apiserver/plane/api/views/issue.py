@@ -85,16 +85,14 @@ class IssueViewSet(BaseViewSet):
         )
         if current_instance is not None:
             issue_activity.delay(
-                {
-                    "type": "issue.activity.updated",
-                    "requested_data": requested_data,
-                    "actor_id": str(self.request.user.id),
-                    "issue_id": str(self.kwargs.get("pk", None)),
-                    "project_id": str(self.kwargs.get("project_id", None)),
-                    "current_instance": json.dumps(
-                        IssueSerializer(current_instance).data, cls=DjangoJSONEncoder
-                    ),
-                },
+                type="issue.activity.updated",
+                requested_data=requested_data,
+                actor_id=str(self.request.user.id),
+                issue_id=str(self.kwargs.get("pk", None)),
+                project_id=str(self.kwargs.get("project_id", None)),
+                current_instance=json.dumps(
+                    IssueSerializer(current_instance).data, cls=DjangoJSONEncoder
+                ),
             )
 
         return super().perform_update(serializer)
@@ -105,18 +103,16 @@ class IssueViewSet(BaseViewSet):
         )
         if current_instance is not None:
             issue_activity.delay(
-                {
-                    "type": "issue.activity.deleted",
-                    "requested_data": json.dumps(
-                        {"issue_id": str(self.kwargs.get("pk", None))}
-                    ),
-                    "actor_id": str(self.request.user.id),
-                    "issue_id": str(self.kwargs.get("pk", None)),
-                    "project_id": str(self.kwargs.get("project_id", None)),
-                    "current_instance": json.dumps(
-                        IssueSerializer(current_instance).data, cls=DjangoJSONEncoder
-                    ),
-                },
+                type="issue.activity.deleted",
+                requested_data=json.dumps(
+                    {"issue_id": str(self.kwargs.get("pk", None))}
+                ),
+                actor_id=str(self.request.user.id),
+                issue_id=str(self.kwargs.get("pk", None)),
+                project_id=str(self.kwargs.get("project_id", None)),
+                current_instance=json.dumps(
+                    IssueSerializer(current_instance).data, cls=DjangoJSONEncoder
+                ),
             )
         return super().perform_destroy(instance)
 
@@ -190,16 +186,12 @@ class IssueViewSet(BaseViewSet):
 
                 # Track the issue
                 issue_activity.delay(
-                    {
-                        "type": "issue.activity.created",
-                        "requested_data": json.dumps(
-                            self.request.data, cls=DjangoJSONEncoder
-                        ),
-                        "actor_id": str(request.user.id),
-                        "issue_id": str(serializer.data.get("id", None)),
-                        "project_id": str(project_id),
-                        "current_instance": None,
-                    },
+                    type="issue.activity.created",
+                    requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
+                    actor_id=str(request.user.id),
+                    issue_id=str(serializer.data.get("id", None)),
+                    project_id=str(project_id),
+                    current_instance=None,
                 )
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -331,14 +323,12 @@ class IssueCommentViewSet(BaseViewSet):
             actor=self.request.user if self.request.user is not None else None,
         )
         issue_activity.delay(
-            {
-                "type": "comment.activity.created",
-                "requested_data": json.dumps(serializer.data, cls=DjangoJSONEncoder),
-                "actor_id": str(self.request.user.id),
-                "issue_id": str(self.kwargs.get("issue_id")),
-                "project_id": str(self.kwargs.get("project_id")),
-                "current_instance": None,
-            },
+            type="comment.activity.created",
+            requested_data=json.dumps(serializer.data, cls=DjangoJSONEncoder),
+            actor_id=str(self.request.user.id),
+            issue_id=str(self.kwargs.get("issue_id")),
+            project_id=str(self.kwargs.get("project_id")),
+            current_instance=None,
         )
 
     def perform_update(self, serializer):
@@ -348,17 +338,15 @@ class IssueCommentViewSet(BaseViewSet):
         )
         if current_instance is not None:
             issue_activity.delay(
-                {
-                    "type": "comment.activity.updated",
-                    "requested_data": requested_data,
-                    "actor_id": str(self.request.user.id),
-                    "issue_id": str(self.kwargs.get("issue_id", None)),
-                    "project_id": str(self.kwargs.get("project_id", None)),
-                    "current_instance": json.dumps(
-                        IssueCommentSerializer(current_instance).data,
-                        cls=DjangoJSONEncoder,
-                    ),
-                },
+                type="comment.activity.updated",
+                requested_data=requested_data,
+                actor_id=str(self.request.user.id),
+                issue_id=str(self.kwargs.get("issue_id", None)),
+                project_id=str(self.kwargs.get("project_id", None)),
+                current_instance=json.dumps(
+                    IssueCommentSerializer(current_instance).data,
+                    cls=DjangoJSONEncoder,
+                ),
             )
 
         return super().perform_update(serializer)
@@ -369,19 +357,17 @@ class IssueCommentViewSet(BaseViewSet):
         )
         if current_instance is not None:
             issue_activity.delay(
-                {
-                    "type": "comment.activity.deleted",
-                    "requested_data": json.dumps(
-                        {"comment_id": str(self.kwargs.get("pk", None))}
-                    ),
-                    "actor_id": str(self.request.user.id),
-                    "issue_id": str(self.kwargs.get("issue_id", None)),
-                    "project_id": str(self.kwargs.get("project_id", None)),
-                    "current_instance": json.dumps(
-                        IssueCommentSerializer(current_instance).data,
-                        cls=DjangoJSONEncoder,
-                    ),
-                },
+                type="comment.activity.deleted",
+                requested_data=json.dumps(
+                    {"comment_id": str(self.kwargs.get("pk", None))}
+                ),
+                actor_id=str(self.request.user.id),
+                issue_id=str(self.kwargs.get("issue_id", None)),
+                project_id=str(self.kwargs.get("project_id", None)),
+                current_instance=json.dumps(
+                    IssueCommentSerializer(current_instance).data,
+                    cls=DjangoJSONEncoder,
+                ),
             )
         return super().perform_destroy(instance)
 

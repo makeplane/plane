@@ -5,7 +5,7 @@ from django.utils.html import strip_tags
 from django.conf import settings
 
 # Third party imports
-from django_rq import job
+from celery import shared_task
 from sentry_sdk import capture_exception
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
@@ -14,7 +14,7 @@ from slack_sdk.errors import SlackApiError
 from plane.db.models import Workspace, User, WorkspaceMemberInvite
 
 
-@job("default")
+@shared_task
 def workspace_invitation(email, workspace_id, token, current_site, invitor):
     try:
         workspace = Workspace.objects.get(pk=workspace_id)
