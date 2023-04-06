@@ -27,8 +27,8 @@ import {
   SidebarParentSelect,
   SidebarPrioritySelect,
   SidebarStateSelect,
+  SidebarEstimateSelect,
 } from "components/issues";
-import { IssueEstimateSelect } from "components/issues/select";
 // ui
 import { Input, Spinner, CustomDatePicker } from "components/ui";
 // icons
@@ -41,7 +41,6 @@ import {
   PlusIcon,
   XMarkIcon,
   RectangleGroupIcon,
-  BanknotesIcon,
 } from "@heroicons/react/24/outline";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
@@ -287,19 +286,17 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 />
               )}
             />
-            <div className="flex justify-between items-center">
-              <div className="flex gap-2 items-center">
-                <BanknotesIcon className="h-4 w-4" />
-                <div className="text-sm">Estimates</div>
-              </div>
-              <Controller
-                control={control}
-                name="estimate_point"
-                render={({ field: { value, onChange } }) => (
-                  <IssueEstimateSelect value={value} onChange={onChange} />
-                )}
-              />
-            </div>
+            <Controller
+              control={control}
+              name="estimate_point"
+              render={({ field: { value } }) => (
+                <SidebarEstimateSelect
+                  value={value}
+                  onChange={(val: number) => submitChanges({ estimate_point: val })}
+                  userAuth={userAuth}
+                />
+              )}
+            />
           </div>
           <div className="py-1">
             <SidebarParentSelect

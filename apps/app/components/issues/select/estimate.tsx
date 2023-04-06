@@ -10,13 +10,12 @@ import estimatesService from "services/estimates.service";
 // ui
 import { CustomSelect } from "components/ui";
 // icons
-import { getPriorityIcon } from "components/icons/priority-icon";
 // fetch-keys
 import { ESTIMATE_POINTS_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
 
 type Props = {
   value: number;
-  onChange: (value: string) => void;
+  onChange: (value: number) => void;
 };
 
 export const IssueEstimateSelect: React.FC<Props> = ({ value, onChange }) => {
@@ -49,17 +48,18 @@ export const IssueEstimateSelect: React.FC<Props> = ({ value, onChange }) => {
       value={value}
       label={
         <div className="flex items-center  gap-2 text-xs w-[111px]">
-          <span className={`${value ? "text-gray-600" : "text-gray-500"} capitalize`}>
+          <span className={`${value ? "text-gray-600" : "text-gray-500"}`}>
             {estimatePoints?.find((e) => e.key === value)?.value ?? "Estimate points"}
           </span>
         </div>
       }
       onChange={onChange}
       position="right"
+      width="w-full"
     >
       {estimatePoints &&
         estimatePoints.map((point) => (
-          <CustomSelect.Option className="w-[130px]" key={point.key} value={point.key}>
+          <CustomSelect.Option className="w-full" key={point.key} value={point.key}>
             {point.value}
           </CustomSelect.Option>
         ))}

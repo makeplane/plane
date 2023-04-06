@@ -125,9 +125,44 @@ export const EstimatePointsModal: React.FC<Props> = ({ isOpen, data, estimate, o
       });
   };
 
-  const updateEstimatePoints = async (formData:any) => {
+  const updateEstimatePoints = async (formData: FormValues) => {
     if (!workspaceSlug || !projectId) return;
-    const payload = formData as string;
+    const payload = {
+      estimate_points: [
+        {
+          key: 0,
+          value: formData.value1,
+        },
+        {
+          key: 1,
+          value: formData.value2,
+        },
+        {
+          key: 2,
+          value: formData.value3,
+        },
+        {
+          key: 3,
+          value: formData.value4,
+        },
+        {
+          key: 4,
+          value: formData.value5,
+        },
+        {
+          key: 5,
+          value: formData.value6,
+        },
+        {
+          key: 6,
+          value: formData.value7,
+        },
+        {
+          key: 7,
+          value: formData.value8,
+        },
+      ],
+    };
     await estimatesService
       .updateEstimatesPoints(
         workspaceSlug as string,
