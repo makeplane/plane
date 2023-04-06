@@ -115,6 +115,7 @@ export const VIEW_DETAILS = (viewId: string) => `VIEW_DETAILS_${viewId.toUpperCa
 // Issues
 export const ISSUE_DETAILS = (issueId: string) => `ISSUE_DETAILS_${issueId.toUpperCase()}`;
 export const SUB_ISSUES = (issueId: string) => `SUB_ISSUES_${issueId.toUpperCase()}`;
+export const ISSUE_ATTACHMENTS = (issueId: string) => `ISSUE_ATTACHMENTS_${issueId.toUpperCase()}`;
 
 // integrations
 export const APP_INTEGRATIONS = "APP_INTEGRATIONS";

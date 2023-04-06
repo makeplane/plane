@@ -256,3 +256,19 @@ export interface IIssueViewOptions {
   filters: IIssueFilterOptions;
   target_date: string;
 }
+
+export interface IIssueAttachment {
+  asset: string;
+  attributes: {
+    name: string;
+    size: number;
+  };
+  created_at: string;
+  created_by: string;
+  id: string;
+  issue: string;
+  project: string;
+  updated_at: string;
+  updated_by: string;
+  workspace: string;
+}

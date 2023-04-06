@@ -20,6 +20,8 @@ import {
   IssueDetailsSidebar,
   IssueActivitySection,
   AddComment,
+  IssueAttachmentUpload,
+  IssueAttachments,
 } from "components/issues";
 // ui
 import { Loader, CustomMenu } from "components/ui";
@@ -196,6 +198,13 @@ const IssueDetailsPage: NextPage<UserAuth> = (props) => {
               />
               <div className="mt-2 space-y-2">
                 <SubIssuesList parentIssue={issueDetails} userAuth={props} />
+              </div>
+            </div>
+            <div className="flex flex-col gap-3 py-3">
+              <h3 className="text-lg">Attachments</h3>
+              <div className="grid  gap-3 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+              <IssueAttachmentUpload/>
+              <IssueAttachments />
               </div>
             </div>
             <div className="space-y-5 bg-secondary pt-3">

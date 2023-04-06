@@ -9,3 +9,6 @@ export * from "./my-issues-list-item";
 export * from "./parent-issues-list-modal";
 export * from "./sidebar";
 export * from "./sub-issues-list";
+export * from "./attachment-upload";
+export * from "./attachments";
+export * from "./delete-attachment-modal";
