@@ -193,26 +193,32 @@ export const CommandPalette: React.FC = () => {
         } else if (e.key.toLowerCase() === "c") {
           e.preventDefault();
           setIsIssueModalOpen(true);
+        } else if (e.key.toLowerCase() === "p" && (e.ctrlKey || e.altKey || e.shiftKey)) {
+          e.preventDefault();
         } else if (e.key.toLowerCase() === "p") {
-          e.preventDefault();
           setIsProjectModalOpen(true);
+        } else if (e.key.toLowerCase() === "v" && (e.ctrlKey || e.altKey || e.shiftKey)) {
+          e.preventDefault();
         } else if (e.key.toLowerCase() === "v") {
-          e.preventDefault();
           setIsCreateViewModalOpen(true);
-        } else if (e.key.toLowerCase() === "d") {
+        } else if (e.key.toLowerCase() === "d" && (e.ctrlKey || e.altKey || e.shiftKey)) {
           e.preventDefault();
+        } else if (e.key.toLowerCase() === "d") {
           setIsCreateUpdatePageModalOpen(true);
         } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "b") {
           e.preventDefault();
           toggleCollapsed();
+        } else if (e.key.toLowerCase() === "h" && (e.ctrlKey || e.altKey || e.shiftKey)) {
+          e.preventDefault();
         } else if (e.key.toLowerCase() === "h") {
-          e.preventDefault();
           setIsShortcutsModalOpen(true);
+        } else if (e.key.toLowerCase() === "q" && (e.ctrlKey || e.altKey || e.shiftKey)) {
+          e.preventDefault();
         } else if (e.key.toLowerCase() === "q") {
-          e.preventDefault();
           setIsCreateCycleModalOpen(true);
-        } else if (e.key.toLowerCase() === "m") {
+        } else if (e.key.toLowerCase() === "m" && (e.ctrlKey || e.altKey || e.shiftKey)) {
           e.preventDefault();
+        } else if (e.key.toLowerCase() === "m") {
           setIsCreateModuleModalOpen(true);
         } else if (e.key === "Delete") {
           e.preventDefault();
