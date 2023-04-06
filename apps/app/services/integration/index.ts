@@ -42,6 +42,14 @@ class IntegrationService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  async deleteImporterService(workspaceSlug: string, importerId: string): Promise<any> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/importers/${importerId}/`)
+      .then((res) => res?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }
 
 export default new IntegrationService();
