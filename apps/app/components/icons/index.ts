@@ -70,3 +70,6 @@ export * from "./png-file-icon";
 export * from "./jpg-file-icon";
 export * from "./svg-file-icon";
 export * from "./txt-file-icon";
+export * from "./default-file-icon";
+export * from "./video-file-icon";
+export * from "./audio-file-icon";
