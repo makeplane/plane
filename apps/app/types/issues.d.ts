@@ -160,7 +160,9 @@ export interface IIssueComment {
   created_by: string;
   updated_by: string;
   project: string;
+  project_detail: IProjectLite;
   workspace: string;
+  workspace_detail: IWorkspaceLite;
   issue: string;
 }
 
@@ -195,7 +197,9 @@ export interface IIssueLabels {
   created_by: string;
   updated_by: string;
   project: string;
+  project_detail: IProjectLite;
   workspace: string;
+  workspace_detail: IWorkspaceLite;
   parent: string | null;
 }
 

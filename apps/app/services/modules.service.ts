@@ -138,7 +138,22 @@ class ProjectIssuesServices extends APIService {
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/module-issues/`,
       data
     )
-      .then((response) => response?.data)
+      .then((response) => {
+        if (trackEvent)
+          trackEventServices.trackIssueMovedToCycleOrModuleEvent(
+            {
+              workspaceSlug,
+              workspaceName: response?.data?.[0]?.issue_detail?.workspace_detail?.name,
+              projectId,
+              projectIdentifier: response?.data?.[0]?.issue_detail?.project_detail?.identifier,
+              projectName: response?.data?.[0]?.issue_detail?.project_detail?.name,
+              issueId: response?.data?.[0]?.issue_detail?.id,
+              moduleId,
+            },
+            response?.data?.length > 1 ? "ISSUE_MOVED_TO_MODULE_IN_BULK" : "ISSUE_MOVED_TO_MODULE"
+          );
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
