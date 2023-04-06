@@ -65,12 +65,12 @@ class ServiceIssueImportSummaryEndpoint(BaseAPIView):
                 )
 
             if service == "jira":
-                project_name = request.data.get("project_name", "")
+                project_key = request.data.get("project_key", "")
                 api_token = request.data.get("api_token", "")
                 email = request.data.get("email", "")
                 cloud_hostname = request.data.get("cloud_hostname", "")
                 if (
-                    not bool(project_name)
+                    not bool(project_key)
                     or not bool(api_token)
                     or not bool(email)
                     or not bool(cloud_hostname)
@@ -84,7 +84,7 @@ class ServiceIssueImportSummaryEndpoint(BaseAPIView):
 
                 return Response(
                     jira_project_issue_summary(
-                        email, api_token, project_name, cloud_hostname
+                        email, api_token, project_key, cloud_hostname
                     ),
                     status=status.HTTP_200_OK,
                 )
