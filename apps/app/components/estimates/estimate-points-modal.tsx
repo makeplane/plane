@@ -184,8 +184,7 @@ export const EstimatePointsModal: React.FC<Props> = ({ isOpen, data, estimate, o
   };
 
   useEffect(() => {
-    if (!data) return;
-
+    if(!data) return
     reset({
       ...defaultValues,
       ...data,
