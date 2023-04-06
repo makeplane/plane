@@ -93,7 +93,7 @@ const IntegrationGuide: FC<Props> = ({
                         </div>
                         <div className="flex-shrink-0">
                           <Link href={`/${workspaceSlug}/settings/import-export?provider=github`}>
-                            <PrimaryButton>Integrate Now</PrimaryButton>
+                            <PrimaryButton>Import Now</PrimaryButton>
                           </Link>
                         </div>
                       </div>
