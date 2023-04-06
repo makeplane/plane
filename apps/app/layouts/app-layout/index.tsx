@@ -146,7 +146,7 @@ const AppLayout: FC<AppLayoutProps> = ({
                   bg === "primary"
                     ? "bg-skin-base"
                     : bg === "secondary"
-                    ? "bg-secondary"
+                    ? "bg-skin-base"
                     : "bg-skin-base"
                 }`}
               >

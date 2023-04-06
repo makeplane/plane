@@ -184,7 +184,7 @@ export const ProjectSidebarList: FC = () => {
                   )}
                   <button
                     type="button"
-                    className="group flex w-full items-center justify-center gap-2 rounded-md bg-gray-200 p-2 text-xs text-gray-900"
+                    className="group flex w-full items-center justify-center gap-2 rounded-md bg-skin-surface-2 p-2 text-xs text-skin-base"
                     onClick={() => setCreateProjectModal(true)}
                   >
                     <PlusIcon className="h-4 w-4" />

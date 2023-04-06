@@ -55,7 +55,7 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
       onChange={onChange}
       options={options}
       label={
-        <div className="flex items-center gap-2 text-gray-500">
+        <div className="flex items-center gap-2 text-skin-muted-2">
           {selectedOption ? (
             getStateGroupIcon(selectedOption.group, "16", "16", selectedOption.color)
           ) : (
@@ -68,7 +68,7 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
       footerOption={
         <button
           type="button"
-          className="flex w-full select-none items-center gap-2 rounded px-1 py-1.5 text-xs text-gray-500 hover:bg-hover-gray"
+          className="flex w-full select-none items-center gap-2 rounded px-1 py-1.5 text-xs text-skin-muted-2 hover:bg-skin-surface-2"
           onClick={() => setIsOpen(true)}
         >
           <PlusIcon className="h-4 w-4" aria-hidden="true" />

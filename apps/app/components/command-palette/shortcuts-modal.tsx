@@ -85,29 +85,29 @@ export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-                <div className="bg-white p-5">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-skin-surface-2 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                <div className="bg-skin-surface-2 p-5">
                   <div className="sm:flex sm:items-start">
                     <div className="flex w-full flex-col gap-y-4 text-center sm:text-left">
                       <Dialog.Title
                         as="h3"
-                        className="flex justify-between text-lg font-medium leading-6 text-gray-900"
+                        className="flex justify-between text-lg font-medium leading-6 text-skin-base"
                       >
                         <span>Keyboard Shortcuts</span>
                         <span>
                           <button type="button" onClick={() => setIsOpen(false)}>
                             <XMarkIcon
-                              className="h-6 w-6 text-gray-400 hover:text-gray-500"
+                              className="h-6 w-6 text-gray-400 hover:text-skin-muted-2"
                               aria-hidden="true"
                             />
                           </button>
                         </span>
                       </Dialog.Title>
                       <div>
-                        <div className="flex w-full items-center justify-start gap-1 rounded border-[0.6px] border-gray-200 bg-gray-100 px-3 py-2">
-                          <MagnifyingGlassIcon className="h-3.5 w-3.5 text-gray-500" />
+                        <div className="flex w-full items-center justify-start gap-1 rounded border-[0.6px] border-skin-base bg-skin-surface-1 px-3 py-2">
+                          <MagnifyingGlassIcon className="h-3.5 w-3.5 text-skin-muted-2" />
                           <Input
-                            className="w-full  border-none bg-transparent py-1 px-2 text-xs text-gray-500 focus:outline-none"
+                            className="w-full  border-none bg-transparent py-1 px-2 text-xs text-skin-muted-2 focus:outline-none"
                             id="search"
                             name="search"
                             type="text"
@@ -123,16 +123,16 @@ export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                               <div key={shortcut.keys} className="flex w-full flex-col">
                                 <div className="flex flex-col gap-y-3">
                                   <div className="flex items-center justify-between">
-                                    <p className="text-sm text-gray-500">{shortcut.description}</p>
+                                    <p className="text-sm text-skin-muted-2">{shortcut.description}</p>
                                     <div className="flex items-center gap-x-2.5">
                                       {shortcut.keys.split(",").map((key, index) => (
                                         <span key={index} className="flex items-center gap-1">
                                           {key === "Ctrl" ? (
-                                            <span className="flex h-full items-center rounded-sm border border-gray-200 bg-gray-100 p-2">
+                                            <span className="flex h-full items-center rounded-sm border border-skin-base bg-skin-surface-1 p-2">
                                               <MacCommandIcon />
                                             </span>
                                           ) : (
-                                            <kbd className="rounded-sm border border-gray-200 bg-gray-100 px-2 py-1 text-sm font-medium text-gray-800">
+                                            <kbd className="rounded-sm border border-skin-base bg-skin-surface-1 px-2 py-1 text-sm font-medium text-gray-800">
                                               {key === "Ctrl" ? <MacCommandIcon /> : key}
                                             </kbd>
                                           )}
@@ -145,7 +145,7 @@ export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                             ))
                           ) : (
                             <div className="flex flex-col gap-y-3">
-                              <p className="text-sm text-gray-500">
+                              <p className="text-sm text-skin-muted-2">
                                 No shortcuts found for{" "}
                                 <span className="font-semibold italic">
                                   {`"`}
@@ -162,16 +162,16 @@ export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                               <div className="flex flex-col gap-y-3">
                                 {shortcuts.map(({ keys, description }, index) => (
                                   <div key={index} className="flex items-center justify-between">
-                                    <p className="text-sm text-gray-500">{description}</p>
+                                    <p className="text-sm text-skin-muted-2">{description}</p>
                                     <div className="flex items-center gap-x-2.5">
                                       {keys.split(",").map((key, index) => (
                                         <span key={index} className="flex items-center gap-1">
                                           {key === "Ctrl" ? (
-                                            <span className="flex h-full items-center rounded-sm border border-gray-200 bg-gray-100 p-2">
+                                            <span className="flex h-full items-center rounded-sm border border-skin-base text-skin-muted-2 bg-skin-surface-1 p-2">
                                               <MacCommandIcon />
                                             </span>
                                           ) : (
-                                            <kbd className="rounded-sm border border-gray-200 bg-gray-100 px-2 py-1 text-sm font-medium text-gray-800">
+                                            <kbd className="rounded-sm border border-skin-base bg-skin-surface-1 px-2 py-1 text-sm font-medium text-skin-muted-2">
                                               {key === "Ctrl" ? <MacCommandIcon /> : key}
                                             </kbd>
                                           )}

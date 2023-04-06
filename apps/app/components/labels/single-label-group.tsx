@@ -66,7 +66,7 @@ export const SingleLabelGroup: React.FC<Props> = ({
   };
 
   return (
-    <Disclosure as="div" className="rounded-[10px] border bg-white p-5 text-gray-900" defaultOpen>
+    <Disclosure as="div" className="rounded-[10px] border border-skin-base bg-skin-surface-2 p-5 text-skin-base" defaultOpen>
       {({ open }) => (
         <>
           <div className="flex cursor-pointer items-center justify-between gap-2">
@@ -100,7 +100,7 @@ export const SingleLabelGroup: React.FC<Props> = ({
               <Disclosure.Button>
                 <span>
                   <ChevronDownIcon
-                    className={`h-4 w-4 text-gray-500 ${!open ? "rotate-90 transform" : ""}`}
+                    className={`h-4 w-4 text-skin-muted-2 ${!open ? "rotate-90 transform" : ""}`}
                   />
                 </span>
               </Disclosure.Button>
@@ -120,7 +120,7 @@ export const SingleLabelGroup: React.FC<Props> = ({
                 {labelChildren.map((child) => (
                   <div
                     key={child.id}
-                    className="group flex items-center justify-between rounded-md border p-2 text-sm"
+                    className="group flex items-center justify-between rounded-md border border-skin-base p-2 text-sm"
                   >
                     <h5 className="flex items-center gap-3 text-gray-600">
                       <span

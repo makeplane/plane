@@ -41,7 +41,7 @@ export const EmptyState: React.FC<Props> = ({ type, title, description, imgURL, 
         <Image src={imgURL} height="128" width="288" alt={type} />
       </div>
 
-      <h3 className="text-xl font-semibold">{title}</h3>
+      <h3 className="text-xl font-semibold text-skin-muted-2">{title}</h3>
       {shortcutKey(type) && (
         <span>
           Use shortcut{" "}

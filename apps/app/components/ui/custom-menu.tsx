@@ -67,7 +67,7 @@ const CustomMenu = ({
             } ${
               noBorder
                 ? "rounded"
-                : "rounded-md border shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                : "rounded-md border border-skin-base shadow-sm focus:border-skin-accent focus:outline-none focus:ring-1 focus:ring-skinborder-skin-accent"
             } ${
               width === "sm"
                 ? "w-10"

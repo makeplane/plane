@@ -58,7 +58,7 @@ export const GithubConfigure: FC<Props> = ({
       <div className="flex items-center justify-end">
         <button
           type="button"
-          className={`rounded-sm bg-theme px-3 py-1.5 text-sm text-white transition-colors hover:bg-opacity-80 ${
+          className={`rounded-sm bg-skin-accent px-3 py-1.5 text-sm text-white transition-colors hover:bg-opacity-80 ${
             workspaceIntegration && workspaceIntegration?.id
               ? `bg-opacity-100`
               : `cursor-not-allowed bg-opacity-80`

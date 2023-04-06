@@ -92,7 +92,7 @@ export const WorkspaceSidebarDropdown = () => {
                 sidebarCollapse ? "justify-center" : ""
               }`}
             >
-              <div className="relative grid h-6 w-6 place-items-center rounded bg-gray-700 dark:bg-gray-200 uppercase text-white dark:text-gray-800">
+              <div className="relative grid h-6 w-6 place-items-center rounded bg-gray-700 dark:bg-skin-surface-2 uppercase text-white dark:text-gray-800">
                 {activeWorkspace?.logo && activeWorkspace.logo !== "" ? (
                   <Image
                     src={activeWorkspace.logo}
@@ -136,11 +136,11 @@ export const WorkspaceSidebarDropdown = () => {
         >
           <Menu.Items
             className="fixed left-2 z-20 mt-1  flex w-full max-w-[17rem] origin-top-left flex-col rounded-md
-          bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+          bg-skin-surface-2 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
           >
             <div className="flex flex-col items-start justify-start gap-3 p-3">
-              <div className="text-sm text-gray-500">{user?.email}</div>
-              <span className="text-sm font-semibold text-gray-500">Workspace</span>
+              <div className="text-sm text-skin-muted-2">{user?.email}</div>
+              <span className="text-sm font-semibold text-skin-muted-2">Workspace</span>
               {workspaces ? (
                 <div className="flex h-full w-full flex-col items-start justify-start gap-3.5">
                   {workspaces.length > 0 ? (
@@ -150,7 +150,7 @@ export const WorkspaceSidebarDropdown = () => {
                           <button
                             type="button"
                             onClick={() => handleWorkspaceNavigation(workspace)}
-                            className="flex w-full items-center justify-between gap-1 rounded-md text-sm text-gray-900"
+                            className="flex w-full items-center justify-between gap-1 rounded-md text-sm text-skin-base"
                           >
                             <div className="flex items-center justify-start gap-2.5">
                               <span className="relative flex h-6 w-6 items-center justify-center rounded bg-gray-700 p-2 text-xs uppercase text-white">
@@ -211,7 +211,7 @@ export const WorkspaceSidebarDropdown = () => {
                 <Menu.Item
                   key={index}
                   as="div"
-                  className="flex w-full items-center justify-start rounded px-2 py-1 text-sm text-gray-600 hover:bg-gray-100"
+                  className="flex w-full items-center justify-start rounded px-2 py-1 text-sm text-gray-600 hover:bg-skin-surface-1"
                 >
                   <Link href={link.href}>
                     <a className="w-full">{link.name}</a>
@@ -223,7 +223,7 @@ export const WorkspaceSidebarDropdown = () => {
               <Menu.Item
                 as="button"
                 type="button"
-                className="flex w-full items-center justify-start rounded px-2 py-1 text-sm text-red-600 hover:bg-gray-100"
+                className="flex w-full items-center justify-start rounded px-2 py-1 text-sm text-red-600 hover:bg-skin-surface-1"
                 onClick={handleSignOut}
               >
                 Sign out

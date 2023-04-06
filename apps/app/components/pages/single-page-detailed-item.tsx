@@ -52,7 +52,7 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
   return (
     <Link href={`/${workspaceSlug}/projects/${projectId}/pages/${page.id}`}>
       <a>
-        <div className="relative rounded border p-4">
+        <div className="relative rounded border border-skin-base p-4">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <p className="mr-2 truncate text-sm font-medium">{truncateText(page.name, 75)}</p>
@@ -60,7 +60,7 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
                 page.label_details.map((label) => (
                   <div
                     key={label.id}
-                    className="group flex items-center gap-1 rounded-2xl border px-2 py-0.5 text-xs"
+                    className="group flex items-center gap-1 rounded-2xl border border-skin-base px-2 py-0.5 text-xs"
                     style={{
                       backgroundColor: `${
                         label?.color && label.color !== "" ? label.color : "#000000"
@@ -169,7 +169,7 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
                       : page.blocks[0].description
                   }
                   editable={false}
-                  customClassName="text-gray-500"
+                  customClassName="text-skin-muted-2"
                   noBorder
                 />
               ) : null}

@@ -186,7 +186,7 @@ const MembersSettings: NextPage<UserAuth> = (props) => {
                           <h4 className="text-sm">
                             {member.first_name} {member.last_name}
                           </h4>
-                          <p className="text-xs text-gray-500">{member.email}</p>
+                          <p className="text-xs text-skin-muted-2">{member.email}</p>
                         </div>
                       </div>
                       <div className="flex items-center">

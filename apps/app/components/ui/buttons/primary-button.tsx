@@ -13,7 +13,7 @@ export const PrimaryButton: React.FC<ButtonProps> = ({
 }) => (
   <button
     type={type}
-    className={`${className} border font-medium duration-300 ${
+    className={`${className} border border-skin-base font-medium duration-300 ${
       size === "sm"
         ? "rounded px-3 py-2 text-xs"
         : size === "md"
@@ -21,7 +21,7 @@ export const PrimaryButton: React.FC<ButtonProps> = ({
         : "rounded-lg px-4 py-2 text-base"
     } ${
       disabled
-        ? "cursor-not-allowed border-gray-300 bg-gray-300 text-black hover:border-gray-300 hover:border-opacity-100 hover:bg-gray-300 hover:bg-opacity-100 hover:text-black"
+        ? "cursor-not-allowed border-skin-base bg-gray-300 text-skin-base hover:border-skin-base hover:border-opacity-100 hover:bg-gray-300 hover:bg-opacity-100 hover:text-skin-base"
         : "border-skin-accent"
     } ${
       outline

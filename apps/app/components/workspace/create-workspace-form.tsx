@@ -99,7 +99,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
       onSubmit={handleSubmit(handleCreateWorkspace)}
     >
       <div className="flex w-full max-w-xl flex-col">
-        <div className="flex flex-col rounded-[10px] bg-white shadow-md">
+        <div className="flex flex-col rounded-[10px] bg-skin-surface-2 shadow-md">
           <div className="flex flex-col justify-between gap-3 px-4 py-7">
             <div className="flex flex-col items-start justify-center gap-2.5">
               <span>Workspace name</span>
@@ -119,7 +119,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
             </div>
             <div className="flex flex-col items-start justify-center gap-2.5">
               <span>Workspace URL</span>
-              <div className="flex w-full items-center rounded-md border border-gray-300 px-3">
+              <div className="flex w-full items-center rounded-md border border-skin-base px-3">
                 <span className="text-sm text-slate-600">https://app.plane.so/</span>
                 <Input
                   mode="trueTransparent"
@@ -135,7 +135,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
             </div>
           </div>
 
-          <div className="flex flex-col items-start justify-center gap-2.5 border-t border-gray-300 px-4 py-7">
+          <div className="flex flex-col items-start justify-center gap-2.5 border-t border-skin-base px-4 py-7">
             <span>How large is your company</span>
             <div className="w-full">
               <Controller

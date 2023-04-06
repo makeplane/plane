@@ -31,16 +31,16 @@ export const NotAuthorizedView: React.FC<TNotAuthorizedViewProps> = (props) => {
         <div className="h-44 w-72">
           <Image src={ProjectSettingImg} height="176" width="288" alt="ProjectSettingImg" />
         </div>
-        <h1 className="text-xl font-medium text-gray-900">
+        <h1 className="text-xl font-medium text-skin-base">
           Oops! You are not authorized to view this page
         </h1>
 
-        <div className="w-full text-base text-gray-500 max-w-md ">
+        <div className="w-full text-base text-skin-muted-2 max-w-md ">
           {user ? (
             <p className="">
               You have signed in as {user.email}.{" "}
               <Link href={`/signin?next=${currentPath}`}>
-                <a className="text-gray-900 font-medium">Sign in</a>
+                <a className="text-skin-base font-medium">Sign in</a>
               </Link>{" "}
               with different account that has access to this page.
             </p>
@@ -48,7 +48,7 @@ export const NotAuthorizedView: React.FC<TNotAuthorizedViewProps> = (props) => {
             <p className="">
               You need to{" "}
               <Link href={`/signin?next=${currentPath}`}>
-                <a className="text-gray-900 font-medium">Sign in</a>
+                <a className="text-skin-base font-medium">Sign in</a>
               </Link>{" "}
               with an account that has access to this page.
             </p>

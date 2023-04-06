@@ -94,8 +94,8 @@ const ProjectViews: NextPage<UserAuth> = (props) => {
       {views ? (
         views.length > 0 ? (
           <div className="space-y-5">
-            <h3 className="text-3xl font-semibold text-black">Views</h3>
-            <div className="rounded-[10px] border">
+            <h3 className="text-3xl font-semibold text-skin-base">Views</h3>
+            <div className="rounded-[10px] border border-skin-base">
               {views.map((view) => (
                 <SingleViewItem key={view.id} view={view} setSelectedView={setSelectedView} />
               ))}

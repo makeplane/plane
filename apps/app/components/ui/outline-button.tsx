@@ -32,9 +32,9 @@ export const OutlineButton = React.forwardRef<HTMLButtonElement, Props>(
         theme === "primary"
           ? `${
               disabled ? "opacity-70" : ""
-            } border border-theme text-white shadow-sm hover:bg-theme focus:outline-none`
+            } border border-skin-accent text-white shadow-sm hover:bg-skin-accent focus:outline-none`
           : theme === "secondary"
-          ? "border bg-transparent hover:bg-gray-100"
+          ? "border bg-transparent hover:bg-skin-surface-1"
           : theme === "success"
           ? `${
               disabled ? "opacity-70" : ""

@@ -124,7 +124,7 @@ export const BoardHeader: React.FC<Props> = ({
   return (
     <div
       className={`flex justify-between items-center px-1 ${
-        !isCollapsed ? "flex-col rounded-md border bg-gray-50" : ""
+        !isCollapsed ? "flex-col rounded-md border bg-skin-surface-2 border-skin-base" : ""
       }`}
     >
       <div className={`flex items-center ${!isCollapsed ? "flex-col gap-2" : "gap-1"}`}>
@@ -142,7 +142,7 @@ export const BoardHeader: React.FC<Props> = ({
           >
             {getGroupTitle()}
           </h2>
-          <span className="ml-0.5 rounded-full bg-gray-100 py-1 px-3 text-sm">
+          <span className="ml-0.5 rounded-full bg-skin-surface-2 py-1 px-3 text-sm">
             {groupedByIssues?.[groupTitle].length ?? 0}
           </span>
         </div>
@@ -151,7 +151,7 @@ export const BoardHeader: React.FC<Props> = ({
       <div className={`flex items-center ${!isCollapsed ? "flex-col pb-2" : ""}`}>
         <button
           type="button"
-          className="grid h-7 w-7 place-items-center rounded p-1 text-gray-700 outline-none duration-300 hover:bg-gray-100"
+          className="grid h-7 w-7 place-items-center rounded p-1 text-skin-muted-2 outline-none duration-300 hover:bg-skin-surface-2"
           onClick={() => {
             setIsCollapsed((prevData) => !prevData);
           }}
@@ -165,7 +165,7 @@ export const BoardHeader: React.FC<Props> = ({
         {!isCompleted && (
           <button
             type="button"
-            className="grid h-7 w-7 place-items-center rounded p-1 text-gray-700 outline-none duration-300 hover:bg-gray-100"
+            className="grid h-7 w-7 place-items-center rounded p-1 text-skin-muted-2 outline-none duration-300 hover:bg-skin-surface-2"
             onClick={addIssueToState}
           >
             <PlusIcon className="h-4 w-4" />

@@ -68,7 +68,7 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
     <div className="grid w-full place-items-center">
       <Tab.Group
         as="div"
-        className="flex w-full max-w-xl flex-col rounded-[10px] bg-white shadow-md"
+        className="flex w-full max-w-xl flex-col rounded-[10px] bg-skin-surface-2 shadow-md"
       >
         <Tab.List
           as="div"
@@ -78,8 +78,8 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
             className={({ selected }) =>
               `rounded-3xl border px-4 py-2 outline-none ${
                 selected
-                  ? "border-theme bg-theme text-white"
-                  : "border-gray-300 bg-white hover:bg-hover-gray"
+                  ? "border-skin-accent bg-skin-accent text-white"
+                  : "border-skin-base bg-skin-surface-2 hover:bg-skin-surface-1"
               }`
             }
           >
@@ -89,8 +89,8 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
             className={({ selected }) =>
               `rounded-3xl border px-5 py-2 outline-none ${
                 selected
-                  ? "border-theme bg-theme text-white"
-                  : "border-gray-300 bg-white hover:bg-hover-gray"
+                  ? "border-skin-accent bg-skin-accent text-white"
+                  : "border-skin-base bg-skin-surface-2 hover:bg-skin-surface-1"
               }`
             }
           >
@@ -136,10 +136,10 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
                           </span>
                         </div>
                         <div className="min-w-0 flex-1">
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-sm font-medium text-skin-base">
                             {invitation.workspace.name}
                           </div>
-                          <p className="text-sm text-gray-500">
+                          <p className="text-sm text-skin-muted-2">
                             Invited by {invitation.workspace.owner.first_name}
                           </p>
                         </div>
@@ -157,7 +157,7 @@ export const Workspace: React.FC<Props> = ({ setStep, setWorkspace }) => {
                               );
                             }}
                             type="checkbox"
-                            className="h-4 w-4 rounded border-gray-300 text-theme focus:ring-indigo-500"
+                            className="h-4 w-4 rounded border-skin-base text-skin-accent focus:ring-skin-accent"
                           />
                         </div>
                       </label>

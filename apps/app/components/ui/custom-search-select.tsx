@@ -135,7 +135,7 @@ export const CustomSearchSelect = ({
                           <>
                             {option.content}
                             <div
-                              className={`flex items-center justify-center rounded border border-gray-500 p-0.5 ${
+                              className={`flex items-center justify-center rounded border border-skin-base p-0.5 ${
                                 active || selected ? "opacity-100" : "opacity-0"
                               }`}
                             >
@@ -148,10 +148,10 @@ export const CustomSearchSelect = ({
                       </Combobox.Option>
                     ))
                   ) : (
-                    <p className="text-center text-gray-500">No matching results</p>
+                    <p className="text-center text-skin-muted-2">No matching results</p>
                   )
                 ) : (
-                  <p className="text-center text-gray-500">Loading...</p>
+                  <p className="text-center text-skin-muted-2">Loading...</p>
                 )}
               </div>
               {footerOption}

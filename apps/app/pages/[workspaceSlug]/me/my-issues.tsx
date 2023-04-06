@@ -125,7 +125,7 @@ const MyIssuesPage: NextPage = () => {
                             <div className="flex items-center gap-x-2">
                               <span>
                                 <ChevronDownIcon
-                                  className={`h-4 w-4 text-gray-500 ${
+                                  className={`h-4 w-4 text-skin-muted-2 ${
                                     !open ? "-rotate-90 transform" : ""
                                   }`}
                                 />
@@ -172,7 +172,7 @@ const MyIssuesPage: NextPage = () => {
                       title="Create a new issue"
                       description={
                         <span>
-                          Use <pre className="inline rounded bg-gray-200 px-2 py-1">C</pre> shortcut
+                          Use <pre className="inline rounded bg-skin-surface-2 px-2 py-1">C</pre> shortcut
                           to create a new issue
                         </span>
                       }

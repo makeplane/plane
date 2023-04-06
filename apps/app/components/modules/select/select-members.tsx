@@ -51,16 +51,16 @@ export const ModuleMembersSelect: React.FC<Props> = ({ value, onChange }) => {
     <CustomSearchSelect
       value={value}
       label={
-        <div className="flex items-center gap-2 text-gray-500">
+        <div className="flex items-center gap-2 text-skin-muted-2">
           {value && value.length > 0 && Array.isArray(value) ? (
             <div className="flex items-center justify-center gap-2">
               <AssigneesList userIds={value} length={3} showLength={false} />
-              <span className="text-gray-500">{value.length} Assignees</span>
+              <span className="text-skin-muted-2">{value.length} Assignees</span>
             </div>
           ) : (
             <div className="flex items-center justify-center gap-2">
-              <UserGroupIcon className="h-4 w-4 text-gray-500" />
-              <span className="text-gray-500">Assignee</span>
+              <UserGroupIcon className="h-4 w-4 text-skin-muted-2" />
+              <span className="text-skin-muted-2">Assignee</span>
             </div>
           )}
         </div>

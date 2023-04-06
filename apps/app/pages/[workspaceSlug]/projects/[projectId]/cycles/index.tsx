@@ -114,7 +114,7 @@ const ProjectCycles: NextPage<UserAuth> = (props) => {
       <div className="space-y-8">
         <div className="flex flex-col gap-5">
           {currentAndUpcomingCycles && currentAndUpcomingCycles.current_cycle.length > 0 && (
-            <h3 className="text-3xl font-semibold text-black">Current Cycle</h3>
+            <h3 className="text-3xl font-semibold text-skin-base">Current Cycle</h3>
           )}
           <div className="space-y-5">
             <CyclesList
@@ -126,7 +126,7 @@ const ProjectCycles: NextPage<UserAuth> = (props) => {
           </div>
         </div>
         <div className="flex flex-col gap-5">
-          <h3 className="text-3xl font-semibold text-black">Other Cycles</h3>
+          <h3 className="text-3xl font-semibold text-skin-base">Other Cycles</h3>
           <div>
             <Tab.Group>
               <Tab.List
@@ -137,8 +137,8 @@ const ProjectCycles: NextPage<UserAuth> = (props) => {
                   className={({ selected }) =>
                     `rounded-3xl border px-5 py-1.5 text-sm outline-none sm:px-7 sm:py-2 sm:text-base ${
                       selected
-                        ? "border-theme bg-theme text-white"
-                        : "border-gray-300 bg-white hover:bg-hover-gray"
+                        ? "border-skin-accent bg-skin-accent text-white"
+                        : "border-skin-base bg-skin-surface-2 hover:bg-skin-surface-1"
                     }`
                   }
                 >
@@ -148,8 +148,8 @@ const ProjectCycles: NextPage<UserAuth> = (props) => {
                   className={({ selected }) =>
                     `rounded-3xl border px-5 py-1.5 text-sm outline-none sm:px-7 sm:py-2 sm:text-base ${
                       selected
-                        ? "border-theme bg-theme text-white"
-                        : "border-gray-300 bg-white hover:bg-hover-gray"
+                        ? "border-skin-accent bg-skin-accent text-white"
+                        : "border-skin-base bg-skin-surface-2 hover:bg-skin-surface-1"
                     }`
                   }
                 >
@@ -159,8 +159,8 @@ const ProjectCycles: NextPage<UserAuth> = (props) => {
                   className={({ selected }) =>
                     `rounded-3xl border px-5 py-1.5 text-sm outline-none sm:px-7 sm:py-2 sm:text-base ${
                       selected
-                        ? "border-theme bg-theme text-white"
-                        : "border-gray-300 bg-white hover:bg-hover-gray"
+                        ? "border-skin-accent bg-skin-accent text-white"
+                        : "border-skin-base bg-skin-surface-2 hover:bg-skin-surface-1"
                     }`
                   }
                 >

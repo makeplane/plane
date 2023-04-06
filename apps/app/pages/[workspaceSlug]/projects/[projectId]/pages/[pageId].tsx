@@ -277,11 +277,11 @@ const SinglePage: NextPage<UserAuth> = (props) => {
       }
     >
       {pageDetails ? (
-        <div className="h-full w-full space-y-4 rounded-md border bg-white p-4">
+        <div className="h-full w-full space-y-4 rounded-md border border-skin-base bg-skin-surface-1 p-4">
           <div className="flex items-center justify-between gap-2 px-3">
             <button
               type="button"
-              className="flex items-center gap-2 text-sm text-gray-500"
+              className="flex items-center gap-2 text-sm text-skin-muted-2"
               onClick={() => router.back()}
             >
               <ArrowLeftIcon className="h-4 w-4" />
@@ -298,7 +298,7 @@ const SinglePage: NextPage<UserAuth> = (props) => {
                     return (
                       <div
                         key={label.id}
-                        className="group flex items-center gap-1 rounded-2xl border px-2 py-0.5 text-xs"
+                        className="group flex items-center gap-1 rounded-2xl border border-skin-base px-2 py-0.5 text-xs"
                         style={{
                           backgroundColor: `${
                             label?.color && label.color !== "" ? label.color : "#000000"
@@ -320,7 +320,7 @@ const SinglePage: NextPage<UserAuth> = (props) => {
                     customButton={
                       <button
                         type="button"
-                        className="flex items-center gap-1 rounded-md bg-gray-100 p-1.5 text-xs hover:bg-gray-200"
+                        className="flex items-center gap-1 rounded-md bg-skin-surface-1 p-1.5 text-xs hover:bg-skin-surface-2"
                       >
                         <PlusIcon className="h-3.5 w-3.5" />
                       </button>
@@ -337,7 +337,7 @@ const SinglePage: NextPage<UserAuth> = (props) => {
                   customButton={
                     <button
                       type="button"
-                      className="flex items-center gap-1 rounded-md bg-gray-100 px-3 py-1.5 text-xs hover:bg-gray-200"
+                      className="flex items-center gap-1 rounded-md bg-skin-surface-1 px-3 py-1.5 text-xs hover:bg-skin-surface-2"
                     >
                       <PlusIcon className="h-3 w-3" />
                       Add new label
@@ -356,7 +356,7 @@ const SinglePage: NextPage<UserAuth> = (props) => {
                 tooltipContent={`Page last updated at ${renderShortTime(pageDetails.updated_at)}`}
                 theme="dark"
               >
-                <span className="cursor-default text-sm text-gray-500">
+                <span className="cursor-default text-sm text-skin-muted-2">
                   {renderShortTime(pageDetails.updated_at)}
                 </span>
               </Tooltip>
@@ -371,7 +371,7 @@ const SinglePage: NextPage<UserAuth> = (props) => {
                       <Popover.Button
                         type="button"
                         className={`group inline-flex items-center outline-none ${
-                          open ? "text-gray-900" : "text-gray-500"
+                          open ? "text-skin-base" : "text-skin-muted-2"
                         }`}
                       >
                         {watch("color") && watch("color") !== "" ? (
@@ -439,7 +439,7 @@ const SinglePage: NextPage<UserAuth> = (props) => {
               onBlur={handleSubmit(updatePage)}
               onChange={(e) => setValue("name", e.target.value)}
               required={true}
-              className="min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-2xl font-semibold outline-none ring-0 focus:ring-1 focus:ring-gray-200"
+              className="min-h-10 block w-full resize-none overflow-hidden rounded border-none border-skin-base bg-transparent px-3 py-2 text-2xl font-semibold outline-none ring-0 focus:ring-1 focus:ring-gray-200"
               role="textbox"
             />
           </div>
@@ -468,7 +468,7 @@ const SinglePage: NextPage<UserAuth> = (props) => {
                 {!createBlockForm && (
                   <button
                     type="button"
-                    className="flex items-center gap-1 rounded bg-gray-100 px-2.5 py-1 text-xs hover:bg-gray-200 mt-4"
+                    className="flex items-center gap-1 rounded bg-skin-surface-1 px-2.5 py-1 text-xs hover:bg-skin-surface-2 mt-4"
                     onClick={() => setCreateBlockForm(true)}
                   >
                     {isAddingBlock ? (

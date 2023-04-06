@@ -125,7 +125,7 @@ export const SingleIntegration: React.FC<Props> = ({ integration }) => {
   return (
     <>
       {integration && (
-        <div className="flex items-center justify-between gap-2 rounded-[10px] border bg-white p-5">
+        <div className="flex items-center justify-between gap-2 rounded-[10px] border border-skin-base bg-skin-surface-2 p-5">
           <div className="flex items-start gap-4">
             <div className="h-12 w-12 flex-shrink-0">
               <Image src={GithubLogo} alt="GithubLogo" />
@@ -153,7 +153,7 @@ export const SingleIntegration: React.FC<Props> = ({ integration }) => {
           >
             {({ open }: any) => (
               <>
-                <Combobox.Button className="flex w-full cursor-pointer items-center justify-between gap-1 rounded-md border px-3 py-1.5 text-xs shadow-sm duration-300 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                <Combobox.Button className="flex w-full cursor-pointer items-center justify-between gap-1 rounded-md border  border-skin-base px-3 py-1.5 text-xs shadow-sm duration-300 hover:bg-skin-surface-1 focus:border-skin-base focus:outline-none focus:ring-1 focus:ring-skin-base">
                   {syncedGithubRepository && syncedGithubRepository.length > 0
                     ? `${syncedGithubRepository[0].repo_detail.owner}/${syncedGithubRepository[0].repo_detail.name}`
                     : "Select Repository"}
@@ -170,8 +170,8 @@ export const SingleIntegration: React.FC<Props> = ({ integration }) => {
                   leaveFrom="opacity-100 translate-y-0"
                   leaveTo="opacity-0 translate-y-1"
                 >
-                  <Combobox.Options className="absolute right-0 z-10 mt-1 min-w-[10rem] origin-top-right rounded-md bg-white p-2 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                    <div className="flex w-full items-center justify-start rounded-sm border bg-gray-100 px-2 text-gray-500">
+                  <Combobox.Options className="absolute right-0 z-10 mt-1 min-w-[10rem] origin-top-right rounded-md bg-skin-surface-2 p-2 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <div className="flex w-full items-center justify-start rounded-sm border bg-skin-surface-1 px-2 text-skin-muted-2">
                       <MagnifyingGlassIcon className="h-3 w-3" />
                       <Combobox.Input
                         className="w-full bg-transparent py-1 px-2 text-xs focus:outline-none"
@@ -181,7 +181,7 @@ export const SingleIntegration: React.FC<Props> = ({ integration }) => {
                       />
                     </div>
                     <div className="vertical-scroll-enable mt-2 max-h-44 space-y-1 overflow-y-scroll">
-                      <p className="px-1 text-[0.6rem] text-gray-500">
+                      <p className="px-1 text-[0.6rem] text-skin-muted-2">
                         {options.length} of {totalCount} repositories
                       </p>
                       {paginatedData ? (
@@ -191,9 +191,9 @@ export const SingleIntegration: React.FC<Props> = ({ integration }) => {
                               key={option.value}
                               value={option.value}
                               className={({ active, selected }) =>
-                                `${active || selected ? "bg-hover-gray" : ""} ${
+                                `${active || selected ? "bg-skin-surface-2" : ""} ${
                                   selected ? "font-medium" : ""
-                                } flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 text-gray-500`
+                                } flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 text-skin-muted-2`
                               }
                             >
                               {({ selected }) => (
@@ -205,15 +205,15 @@ export const SingleIntegration: React.FC<Props> = ({ integration }) => {
                             </Combobox.Option>
                           ))
                         ) : (
-                          <p className="text-center text-gray-500">No matching results</p>
+                          <p className="text-center text-skin-muted-2">No matching results</p>
                         )
                       ) : (
-                        <p className="text-center text-gray-500">Loading...</p>
+                        <p className="text-center text-skin-muted-2">Loading...</p>
                       )}
                       {userRepositories && options.length < totalCount && (
                         <button
                           type="button"
-                          className="w-full p-1 text-center text-[0.6rem] text-gray-500 hover:bg-hover-gray"
+                          className="w-full p-1 text-center text-[0.6rem] text-skin-muted-2 hover:bg-skin-surface-2"
                           onClick={() => setSize(size + 1)}
                           disabled={isValidating}
                         >

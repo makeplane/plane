@@ -156,7 +156,7 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
             <IssuesFilterView />
             <button
               type="button"
-              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-gray-100 ${
+              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-skin-surface-1 ${
                 cycleSidebar ? "rotate-180" : ""
               }`}
               onClick={() => setCycleSidebar((prevData) => !prevData)}

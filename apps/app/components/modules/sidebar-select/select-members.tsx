@@ -58,11 +58,11 @@ export const SidebarMembersSelect: React.FC<Props> = ({ value, onChange }) => {
         <CustomSearchSelect
           value={value}
           label={
-            <div className="flex items-center gap-2 text-gray-500">
+            <div className="flex items-center gap-2 text-skin-muted-2">
               {value && value.length > 0 && Array.isArray(value) ? (
                 <div className="flex items-center justify-center gap-2">
                   <AssigneesList userIds={value} length={3} showLength={false} />
-                  <span className="text-gray-500">{value.length} Assignees</span>
+                  <span className="text-skin-muted-2">{value.length} Assignees</span>
                 </div>
               ) : (
                 "No members"

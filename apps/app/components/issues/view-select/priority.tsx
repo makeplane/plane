@@ -44,7 +44,7 @@ export const ViewPrioritySelect: React.FC<Props> = ({
             ? "bg-yellow-100 text-yellow-500 hover:bg-yellow-100"
             : issue.priority === "low"
             ? "bg-green-100 text-green-500 hover:bg-green-100"
-            : "bg-gray-100"
+            : "bg-skin-surface-1"
         } border-none`}
       >
         <Tooltip tooltipHeading="Priority" tooltipContent={issue.priority ?? "None"}>

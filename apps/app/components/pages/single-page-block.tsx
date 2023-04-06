@@ -248,7 +248,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
             <div
               className={`group ${
                 snapshot.isDragging
-                  ? "border-2 bg-white border-theme shadow-lg rounded-md p-4 pl-0"
+                  ? "border-2 bg-skin-surface-2 border-theme shadow-lg rounded-md p-4 pl-0"
                   : ""
               }`}
               ref={provided.innerRef}
@@ -258,7 +258,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
-                    className="flex p-0.5 hover:bg-gray-100 rounded opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto"
+                    className="flex p-0.5 hover:bg-skin-surface-1 rounded opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto"
                     {...provided.dragHandleProps}
                   >
                     <EllipsisVerticalIcon className="h-[18px]" />
@@ -270,7 +270,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
                 </div>
                 <div className="flex flex-shrink-0 items-center gap-2">
                   {block.issue && block.sync && (
-                    <div className="flex flex-shrink-0 cursor-default items-center gap-1 rounded bg-gray-100 py-1 px-1.5 text-xs">
+                    <div className="flex flex-shrink-0 cursor-default items-center gap-1 rounded bg-skin-surface-1 py-1 px-1.5 text-xs">
                       {isSyncing ? (
                         <ArrowPathIcon className="h-3 w-3 animate-spin" />
                       ) : (
@@ -281,7 +281,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
                   )}
                   {block.issue && (
                     <Link href={`/${workspaceSlug}/projects/${projectId}/issues/${block.issue}`}>
-                      <a className="flex flex-shrink-0 items-center gap-1 rounded bg-gray-100 px-1.5 py-1 text-xs">
+                      <a className="flex flex-shrink-0 items-center gap-1 rounded bg-skin-surface-1 px-1.5 py-1 text-xs">
                         <LayerDiagonalIcon height="16" width="16" color="black" />
                         {projectDetails?.identifier}-{block.issue_detail?.sequence_id}
                       </a>
@@ -289,7 +289,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
                   )}
                   <button
                     type="button"
-                    className="-mr-2 flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-gray-100"
+                    className="-mr-2 flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-skin-surface-1"
                     onClick={() => setGptAssistantModal((prevData) => !prevData)}
                   >
                     <SparklesIcon className="h-4 w-4" />
@@ -297,7 +297,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index 
                   </button>
                   <button
                     type="button"
-                    className="-mr-2 flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-gray-100"
+                    className="-mr-2 flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-skin-surface-1"
                     onClick={() => setCreateBlockForm(true)}
                   >
                     <PencilIcon className="h-3.5 w-3.5" />

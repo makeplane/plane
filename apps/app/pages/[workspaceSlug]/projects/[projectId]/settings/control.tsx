@@ -121,7 +121,7 @@ const ControlSettings: NextPage<TControlSettingsProps> = (props) => {
           <div className="grid grid-cols-12 items-start gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
               <h4 className="text-xl font-semibold">Project Lead</h4>
-              <p className="text-gray-500">Select the project leader.</p>
+              <p className="text-skin-muted-2">Select the project leader.</p>
             </div>
             <div className="col-span-12 sm:col-span-6">
               {projectDetails ? (
@@ -181,7 +181,7 @@ const ControlSettings: NextPage<TControlSettingsProps> = (props) => {
           <div className="grid grid-cols-12 items-start gap-4 sm:gap-16">
             <div className="col-span-12 sm:col-span-6">
               <h4 className="text-xl font-semibold">Default Assignee</h4>
-              <p className="text-gray-500">Select the default assignee for the project.</p>
+              <p className="text-skin-muted-2">Select the default assignee for the project.</p>
             </div>
             <div className="col-span-12 sm:col-span-6">
               {projectDetails ? (

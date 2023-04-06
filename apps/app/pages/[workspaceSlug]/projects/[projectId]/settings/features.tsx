@@ -94,12 +94,12 @@ const FeaturesSettings: NextPage<UserAuth> = (props) => {
       <section className="space-y-8">
         <h3 className="text-2xl font-semibold">Features</h3>
         <div className="space-y-5">
-          <div className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border bg-white p-5">
+          <div className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border border-skin-base bg-skin-surface-2 p-5">
             <div className="flex items-start gap-3">
               <ContrastIcon color="#3F76FF" width={28} height={28} className="flex-shrink-0" />
               <div>
                 <h4 className="text-xl font-semibold">Cycles</h4>
-                <p className="text-gray-500">
+                <p className="text-skin-muted-2">
                   Cycles are enabled for all the projects in this workspace. Access them from the
                   navigation bar.
                 </p>
@@ -108,7 +108,7 @@ const FeaturesSettings: NextPage<UserAuth> = (props) => {
             <button
               type="button"
               className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                projectDetails?.cycle_view ? "bg-green-500" : "bg-gray-200"
+                projectDetails?.cycle_view ? "bg-green-500" : "bg-skin-surface-2"
               }`}
               role="switch"
               aria-checked={projectDetails?.cycle_view}
@@ -117,18 +117,18 @@ const FeaturesSettings: NextPage<UserAuth> = (props) => {
               <span className="sr-only">Use cycles</span>
               <span
                 aria-hidden="true"
-                className={`inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                className={`inline-block h-5 w-5 transform rounded-full bg-skin-surface-2 shadow ring-0 transition duration-200 ease-in-out ${
                   projectDetails?.cycle_view ? "translate-x-5" : "translate-x-0"
                 }`}
               />
             </button>
           </div>
-          <div className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border bg-white p-5">
+          <div className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border border-skin-base bg-skin-surface-2 p-5">
             <div className="flex items-start gap-3">
               <PeopleGroupIcon color="#FF6B00" width={28} height={28} className="flex-shrink-0" />
               <div>
                 <h4 className="-mt-1.5 text-xl font-semibold">Modules</h4>
-                <p className="text-gray-500">
+                <p className="text-skin-muted-2">
                   Modules are enabled for all the projects in this workspace. Access it from the
                   navigation bar.
                 </p>
@@ -137,7 +137,7 @@ const FeaturesSettings: NextPage<UserAuth> = (props) => {
             <button
               type="button"
               className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                projectDetails?.module_view ? "bg-green-500" : "bg-gray-200"
+                projectDetails?.module_view ? "bg-green-500" : "bg-skin-surface-2"
               }`}
               role="switch"
               aria-checked={projectDetails?.module_view}
@@ -146,18 +146,18 @@ const FeaturesSettings: NextPage<UserAuth> = (props) => {
               <span className="sr-only">Use cycles</span>
               <span
                 aria-hidden="true"
-                className={`inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                className={`inline-block h-5 w-5 transform rounded-full bg-skin-surface-2 shadow ring-0 transition duration-200 ease-in-out ${
                   projectDetails?.module_view ? "translate-x-5" : "translate-x-0"
                 }`}
               />
             </button>
           </div>
-          <div className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border bg-white p-5">
+          <div className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border border-skin-base bg-skin-surface-2 p-5">
             <div className="flex items-start gap-3">
               <ViewListIcon color="#05C3FF" width={28} height={28} className="flex-shrink-0" />
               <div>
                 <h4 className="-mt-1.5 text-xl font-semibold">Views</h4>
-                <p className="text-gray-500">
+                <p className="text-skin-muted-2">
                   Views are enabled for all the projects in this workspace. Access it from the
                   navigation bar.
                 </p>
@@ -166,7 +166,7 @@ const FeaturesSettings: NextPage<UserAuth> = (props) => {
             <button
               type="button"
               className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                projectDetails?.issue_views_view ? "bg-green-500" : "bg-gray-200"
+                projectDetails?.issue_views_view ? "bg-green-500" : "bg-skin-surface-2"
               }`}
               role="switch"
               aria-checked={projectDetails?.issue_views_view}
@@ -175,18 +175,18 @@ const FeaturesSettings: NextPage<UserAuth> = (props) => {
               <span className="sr-only">Use views</span>
               <span
                 aria-hidden="true"
-                className={`inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                className={`inline-block h-5 w-5 transform rounded-full bg-skin-surface-2 shadow ring-0 transition duration-200 ease-in-out ${
                   projectDetails?.issue_views_view ? "translate-x-5" : "translate-x-0"
                 }`}
               />
             </button>
           </div>
-          <div className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border bg-white p-5">
+          <div className="flex items-center justify-between gap-x-8 gap-y-2 rounded-[10px] border border-skin-base bg-skin-surface-2 p-5">
             <div className="flex items-start gap-3">
               <DocumentTextIcon color="#FCBE1D" width={28} height={28} className="flex-shrink-0" />
               <div>
                 <h4 className="text-xl font-semibold">Pages</h4>
-                <p className="text-gray-500">
+                <p className="text-skin-muted-2">
                   Pages are enabled for all the projects in this workspace. Access them from the
                   navigation bar.
                 </p>
@@ -195,7 +195,7 @@ const FeaturesSettings: NextPage<UserAuth> = (props) => {
             <button
               type="button"
               className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                projectDetails?.page_view ? "bg-green-500" : "bg-gray-200"
+                projectDetails?.page_view ? "bg-green-500" : "bg-skin-surface-2"
               }`}
               role="switch"
               aria-checked={projectDetails?.page_view}
@@ -204,7 +204,7 @@ const FeaturesSettings: NextPage<UserAuth> = (props) => {
               <span className="sr-only">Use cycles</span>
               <span
                 aria-hidden="true"
-                className={`inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                className={`inline-block h-5 w-5 transform rounded-full bg-skin-surface-2 shadow ring-0 transition duration-200 ease-in-out ${
                   projectDetails?.page_view ? "translate-x-5" : "translate-x-0"
                 }`}
               />

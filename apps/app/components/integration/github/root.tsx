@@ -83,7 +83,7 @@ export const GithubIntegrationRoot: FC<Props> = ({
   return (
     <div className="space-y-4">
       <Link href={`/${workspaceSlug}/settings/import-export`}>
-        <div className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900">
+        <div className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-gray-600 hover:text-skin-base">
           <div>
             <ArrowLeftIcon className="h-3 w-3" />
           </div>
@@ -91,7 +91,7 @@ export const GithubIntegrationRoot: FC<Props> = ({
         </div>
       </Link>
 
-      <div className="space-y-4 rounded border border-gray-200 bg-white p-4">
+      <div className="space-y-4 rounded border border-skin-base bg-skin-surface-2 p-4">
         <div className="flex items-center gap-2">
           <div className="h-10 w-10 flex-shrink-0">
             <Image src={GithubLogo} alt="GithubLogo" />
@@ -109,7 +109,7 @@ export const GithubIntegrationRoot: FC<Props> = ({
                         ? `border-opacity-100 bg-opacity-100`
                         : `border-opacity-80 bg-opacity-80`
                     }`
-                  : `border-gray-300`
+                  : `border-skin-base`
               }
               `}
                 >
@@ -123,7 +123,7 @@ export const GithubIntegrationRoot: FC<Props> = ({
                   <div
                     key={_idx}
                     className={`border-b  px-7 ${
-                      _idx <= activeIntegrationState() - 1 ? `border-[#3F76FF]` : `border-gray-300`
+                      _idx <= activeIntegrationState() - 1 ? `border-[#3F76FF]` : `border-skin-base`
                     }`}
                   >
                     {" "}

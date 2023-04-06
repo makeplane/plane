@@ -124,7 +124,7 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
             />
           )}
           {properties.sub_issue_count && (
-            <div className="flex items-center gap-1 rounded-md border px-3 py-1.5 text-xs shadow-sm">
+            <div className="flex items-center gap-1 rounded-md border border-skin-base px-3 py-1.5 text-xs shadow-sm">
               {issue?.sub_issues_count} {issue?.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
             </div>
           )}
@@ -132,8 +132,8 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
             <div className="flex flex-wrap gap-1">
               {issue.label_details.map((label) => (
                 <span
-                  key={label.id}
-                  className="group flex items-center gap-1 rounded-2xl border px-2 py-0.5 text-xs"
+                key={label.id}
+                  className="group flex items-center gap-1 rounded-2xl border border-skin-base px-2 py-0.5 text-xs"
                 >
                   <span
                     className="h-1.5 w-1.5 flex-shrink-0 rounded-full"

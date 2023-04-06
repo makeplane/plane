@@ -52,8 +52,8 @@ export const WorkspaceSidebarMenu: React.FC = () => {
             <span className="grid h-5 w-5 flex-shrink-0 place-items-center">
               <link.icon
                 className={`${
-                  link.href === router.asPath ? "text-gray-900" : "text-gray-600"
-                } group-hover:text-gray-900`}
+                  link.href === router.asPath ? "text-skin-base" : "text-gray-600"
+                } group-hover:text-skin-base`}
                 aria-hidden="true"
                 height="20"
                 width="20"

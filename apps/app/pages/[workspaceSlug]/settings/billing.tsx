@@ -64,14 +64,14 @@ const BillingSettings: NextPage<TBillingSettingsProps> = (props) => {
             </div>
             <div>
               <h4 className="text-md mb-1 leading-6 text-skin-base">Current plan</h4>
-              <p className="mb-3 text-sm text-gray-500">You are currently using the free plan</p>
+              <p className="mb-3 text-sm text-skin-muted-2">You are currently using the free plan</p>
               <a href="https://plane.so/pricing" target="_blank" rel="noreferrer">
                 <SecondaryButton outline>View Plans and Upgrade</SecondaryButton>
               </a>
             </div>
             <div>
               <h4 className="text-md mb-1 leading-6 text-skin-base">Billing history</h4>
-              <p className="mb-3 text-sm text-gray-500">There are no invoices to display</p>
+              <p className="mb-3 text-sm text-skin-muted-2">There are no invoices to display</p>
             </div>
           </div>
         </section>

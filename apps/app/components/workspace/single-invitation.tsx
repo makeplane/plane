@@ -45,8 +45,8 @@ const SingleInvitation: React.FC<Props> = ({
             </span>
           </div>
           <div className="min-w-0 flex-1">
-            <div className="text-sm font-medium text-gray-900">{invitation.workspace.name}</div>
-            <p className="text-sm text-gray-500">
+            <div className="text-sm font-medium text-skin-base">{invitation.workspace.name}</div>
+            <p className="text-sm text-skin-muted-2">
               Invited by {invitation.workspace.owner.first_name}
             </p>
           </div>
@@ -65,7 +65,7 @@ const SingleInvitation: React.FC<Props> = ({
                 setIsChecked(e.target.checked);
               }}
               type="checkbox"
-              className="h-4 w-4 rounded border-gray-300 text-theme focus:ring-indigo-500"
+              className="h-4 w-4 rounded border-skin-base text-skin-accent focus:ring-indigo-500"
             />
           </div>
         </label>

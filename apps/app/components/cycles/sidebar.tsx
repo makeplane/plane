@@ -140,7 +140,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
       <div
         className={`fixed top-0 ${
           isOpen ? "right-0" : "-right-[24rem]"
-        } z-20 h-full w-[24rem] overflow-y-auto border-l bg-gray-50 py-5 duration-300`}
+        } z-20 h-full w-[24rem] overflow-y-auto border-l border-skin-base bg-skin-surface-2 py-5 duration-300`}
       >
         {cycle ? (
           <>
@@ -148,19 +148,19 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
               <div className="flex gap-2.5 px-5 text-sm">
                 <div className="flex items-center ">
                   <span
-                    className={`flex items-center rounded border-[0.5px] border-gray-200 bg-gray-100 px-2.5 py-1.5 text-center text-sm capitalize text-gray-800 `}
+                    className={`flex items-center rounded border-[0.5px] border-skin-base bg-skin-surface-1 px-2.5 py-1.5 text-center text-sm capitalize text-skin-muted-1 `}
                   >
                     {capitalizeFirstLetter(cycleStatus)}
                   </span>
                 </div>
-                <div className="relative flex h-full w-52 items-center justify-center gap-2 text-sm text-gray-800">
+                <div className="relative flex h-full w-52 items-center justify-center gap-2 text-sm text-skin-muted-1">
                   <Popover className="flex h-full items-center  justify-center rounded-lg">
                     {({ open }) => (
                       <>
                         <Popover.Button
                           disabled={isCompleted ?? false}
-                          className={`group flex h-full items-center gap-1 rounded border-[0.5px]  border-gray-200 bg-gray-100 px-2.5 py-1.5 text-gray-800   ${
-                            open ? "bg-gray-100" : ""
+                          className={`group flex h-full items-center gap-1 rounded border-[0.5px]  border-skin-base bg-skin-surface-1 px-2.5 py-1.5 text-skin-muted-1   ${
+                            open ? "bg-skin-surface-1" : ""
                           }`}
                         >
                           <CalendarDaysIcon className="h-3 w-3" />
@@ -221,8 +221,8 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                       <>
                         <Popover.Button
                           disabled={isCompleted ?? false}
-                          className={`group flex items-center gap-1 rounded border-[0.5px] border-gray-200 bg-gray-100 px-2.5 py-1.5 text-gray-800  ${
-                            open ? "bg-gray-100" : ""
+                          className={`group flex items-center gap-1 rounded border-[0.5px] border-skin-base bg-skin-surface-1 px-2.5 py-1.5 text-skin-muted-1  ${
+                            open ? "bg-skin-surface-1" : ""
                           }`}
                         >
                           <CalendarDaysIcon className="h-3 w-3 " />
@@ -283,7 +283,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
               <div className="flex flex-col gap-6 px-6 py-6 w-full">
                 <div className="flex flex-col items-start justify-start gap-2 w-full">
                   <div className="flex items-start justify-between gap-2 w-full">
-                    <h4 className="text-xl font-semibold text-gray-900">{cycle.name}</h4>
+                    <h4 className="text-xl font-semibold text-skin-base">{cycle.name}</h4>
                     <CustomMenu width="lg" ellipsis>
                       {!isCompleted && (
                         <CustomMenu.MenuItem onClick={() => setCycleDeleteModal(true)}>
@@ -302,7 +302,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                     </CustomMenu>
                   </div>
 
-                  <span className="whitespace-normal text-sm leading-5 text-black">
+                  <span className="whitespace-normal text-sm leading-5 text-skin-base">
                     {cycle.description}
                   </span>
                 </div>
@@ -328,7 +328,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                           {cycle.owned_by.first_name.charAt(0)}
                         </span>
                       )}
-                      <span className="text-gray-900">{cycle.owned_by.first_name}</span>
+                      <span className="text-skin-base">{cycle.owned_by.first_name}</span>
                     </div>
                   </div>
 
@@ -338,7 +338,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                       <span>Progress</span>
                     </div>
 
-                    <div className="flex items-center gap-2.5 text-gray-800">
+                    <div className="flex items-center gap-2.5 text-skin-muted-1">
                       <span className="h-4 w-4">
                         <ProgressBar value={cycle.completed_issues} maxValue={cycle.total_issues} />
                       </span>
@@ -349,7 +349,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
               </div>
             </div>
 
-            <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-gray-300 px-6 py-6 ">
+            <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-skin-base px-6 py-6 ">
               <Disclosure>
                 {({ open }) => (
                   <div
@@ -357,7 +357,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                   >
                     <div className="flex w-full items-center justify-between gap-2    ">
                       <div className="flex items-center justify-start gap-2 text-sm">
-                        <span className="font-medium text-gray-500">Progress</span>
+                        <span className="font-medium text-skin-muted-2">Progress</span>
                         {!open && progressPercentage ? (
                           <span className="rounded bg-[#09A953]/10 px-1.5 py-0.5 text-xs text-[#09A953]">
                             {progressPercentage ? `${progressPercentage}%` : ""}
@@ -376,7 +376,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                       ) : (
                         <div className="flex items-center gap-1">
                           <ExclamationIcon height={14} width={14} />
-                          <span className="text-xs italic text-gray-500">
+                          <span className="text-xs italic text-skin-muted-2">
                             {cycleStatus === "upcoming"
                               ? "Cycle is yet to start."
                               : "Invalid date. Please enter valid date."}
@@ -391,7 +391,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                             <div className="flex  items-start justify-between gap-4 py-2 text-xs">
                               <div className="flex items-center gap-1">
                                 <span>
-                                  <DocumentIcon className="h-3 w-3 text-gray-500" />
+                                  <DocumentIcon className="h-3 w-3 text-skin-muted-2" />
                                 </span>
                                 <span>
                                   Pending Issues -{" "}
@@ -400,7 +400,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                                 </span>
                               </div>
 
-                              <div className="flex items-center gap-3 text-gray-900">
+                              <div className="flex items-center gap-3 text-skin-base">
                                 <div className="flex items-center justify-center gap-1">
                                   <span className="h-2.5 w-2.5 rounded-full bg-[#A9BBD0]" />
                                   <span>Ideal</span>
@@ -429,7 +429,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
               </Disclosure>
             </div>
 
-            <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-gray-300 px-6 py-6 ">
+            <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-skin-base px-6 py-6 ">
               <Disclosure>
                 {({ open }) => (
                   <div
@@ -437,7 +437,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                   >
                     <div className="flex w-full items-center justify-between gap-2">
                       <div className="flex items-center justify-start gap-2 text-sm">
-                        <span className="font-medium text-gray-500">Other Information</span>
+                        <span className="font-medium text-skin-muted-2">Other Information</span>
                       </div>
 
                       {cycle.total_issues > 0 ? (
@@ -450,7 +450,7 @@ export const CycleDetailsSidebar: React.FC<Props> = ({
                       ) : (
                         <div className="flex items-center gap-1">
                           <ExclamationIcon height={14} width={14} />
-                          <span className="text-xs italic text-gray-500">
+                          <span className="text-xs italic text-skin-muted-2">
                             No issues found. Please add issue.
                           </span>
                         </div>

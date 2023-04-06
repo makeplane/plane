@@ -62,7 +62,7 @@ const IntegrationGuide: FC<Props> = ({
                   {allIntegrations.map((_integration, _idx) => (
                     <div
                       key={_idx}
-                      className="space-y-4 rounded border border-gray-200 bg-white p-4"
+                      className="space-y-4 rounded border border-skin-base bg-skin-surface-2 p-4"
                     >
                       <div className="flex items-center gap-4 whitespace-nowrap">
                         <div className="h-[40px] w-[40px] flex-shrink-0">
@@ -73,11 +73,11 @@ const IntegrationGuide: FC<Props> = ({
                         <div className="w-full space-y-1">
                           <div className="flex items-center gap-2 font-medium">
                             <div>{_integration?.title}</div>
-                            <div className="rounded-full border border-gray-200 bg-gray-200 px-3 text-[12px]">
+                            <div className="rounded-full border border-skin-base bg-skin-surface-2 px-3 text-[12px]">
                               0
                             </div>
                           </div>
-                          <div className="text-sm text-gray-500">
+                          <div className="text-sm text-skin-muted-2">
                             Activate GitHub integrations on individual projects to sync with
                             specific repositories.
                           </div>
@@ -92,7 +92,7 @@ const IntegrationGuide: FC<Props> = ({
                             </button>
                           </Link>
                         </div>
-                        <div className="flex h-[24px] w-[24px] flex-shrink-0 cursor-pointer items-center justify-center rounded-sm bg-gray-100 hover:bg-gray-200">
+                        <div className="flex h-[24px] w-[24px] flex-shrink-0 cursor-pointer items-center justify-center rounded-sm bg-skin-surface-1 hover:bg-skin-surface-2">
                           <ChevronDownIcon className="h-4 w-4" />
                         </div>
                       </div>

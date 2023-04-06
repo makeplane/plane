@@ -41,7 +41,7 @@ export const GithubAuth: FC<Props> = ({ workspaceSlug, workspaceIntegration }) =
       {workspaceIntegration && workspaceIntegration?.id ? (
         <button
           type="button"
-          className={`cursor-not-allowed rounded-sm bg-theme bg-opacity-80 px-3 py-1.5 text-sm text-white transition-colors`}
+          className={`cursor-not-allowed rounded-sm bg-skin-accent bg-opacity-80 px-3 py-1.5 text-sm text-white transition-colors`}
         >
           Successfully Connected
         </button>
@@ -49,7 +49,7 @@ export const GithubAuth: FC<Props> = ({ workspaceSlug, workspaceIntegration }) =
         <button
           onClick={startAuth}
           type="button"
-          className={`rounded-sm bg-theme px-3 py-1.5 text-sm text-white transition-colors hover:bg-opacity-80`}
+          className={`rounded-sm bg-skin-accent px-3 py-1.5 text-sm text-white transition-colors hover:bg-opacity-80`}
           disabled={authLoader}
         >
           {authLoader ? "Connecting..." : "Connect"}
