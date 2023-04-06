@@ -27,7 +27,6 @@ class EstimatePoint(ProjectBaseModel):
         "db.Estimate",
         on_delete=models.CASCADE,
         related_name="points",
-        limit_choices_to={"estimate__points__count__lt": 10},
     )
     key = models.IntegerField(
         default=0, validators=[MinValueValidator(0), MaxValueValidator(7)]

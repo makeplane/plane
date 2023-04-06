@@ -2,6 +2,8 @@
 import { CustomDatePicker, Tooltip } from "components/ui";
 // helpers
 import { findHowManyDaysLeft } from "helpers/date-time.helper";
+// services
+import trackEventServices from "services/track-event.service";
 // types
 import { IIssue } from "types";
 
@@ -25,13 +27,24 @@ export const ViewDueDateSelect: React.FC<Props> = ({ issue, partialUpdateIssue, 
       <CustomDatePicker
         placeholder="N/A"
         value={issue?.target_date}
-        onChange={(val) =>
+        onChange={(val) => {
           partialUpdateIssue({
             target_date: val,
             priority: issue.priority,
             state: issue.state,
-          })
-        }
+          });
+          trackEventServices.trackIssuePartialPropertyUpdateEvent(
+            {
+              workspaceSlug: issue.workspace_detail.slug,
+              workspaceId: issue.workspace_detail.id,
+              projectId: issue.project_detail.id,
+              projectIdentifier: issue.project_detail.identifier,
+              projectName: issue.project_detail.name,
+              issueId: issue.id,
+            },
+            "ISSUE_PROPERTY_UPDATE_DUE_DATE"
+          );
+        }}
         className={issue?.target_date ? "w-[6.5rem]" : "w-[3rem] text-center"}
         disabled={isNotAllowed}
       />
