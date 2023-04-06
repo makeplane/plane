@@ -100,7 +100,7 @@ class IssueCreateSerializer(BaseSerializer):
         project = self.context["project"]
         issue = Issue.objects.create(**validated_data, project=project)
 
-        if blockers is not None:
+        if blockers is not None and len(blockers):
             IssueBlocker.objects.bulk_create(
                 [
                     IssueBlocker(
@@ -116,7 +116,7 @@ class IssueCreateSerializer(BaseSerializer):
                 batch_size=10,
             )
 
-        if assignees is not None:
+        if assignees is not None and len(assignees):
             IssueAssignee.objects.bulk_create(
                 [
                     IssueAssignee(
@@ -131,8 +131,19 @@ class IssueCreateSerializer(BaseSerializer):
                 ],
                 batch_size=10,
             )
+        else:
+            # Then assign it to default assignee
+            if project.default_assignee is not None:
+                IssueAssignee.objects.create(
+                    assignee=project.default_assignee,
+                    issue=issue,
+                    project=project,
+                    workspace=project.workspace,
+                    created_by=issue.created_by,
+                    updated_by=issue.updated_by,
+                )
 
-        if labels is not None:
+        if labels is not None and len(labels):
             IssueLabel.objects.bulk_create(
                 [
                     IssueLabel(
@@ -148,7 +159,7 @@ class IssueCreateSerializer(BaseSerializer):
                 batch_size=10,
             )
 
-        if blocks is not None:
+        if blocks is not None and len(blocks):
             IssueBlocker.objects.bulk_create(
                 [
                     IssueBlocker(
@@ -172,7 +183,7 @@ class IssueCreateSerializer(BaseSerializer):
         labels = validated_data.pop("labels_list", None)
         blocks = validated_data.pop("blocks_list", None)
 
-        if blockers is not None:
+        if blockers is not None and len(blockers):
             IssueBlocker.objects.filter(block=instance).delete()
             IssueBlocker.objects.bulk_create(
                 [
@@ -189,7 +200,7 @@ class IssueCreateSerializer(BaseSerializer):
                 batch_size=10,
             )
 
-        if assignees is not None:
+        if assignees is not None and len(assignees):
             IssueAssignee.objects.filter(issue=instance).delete()
             IssueAssignee.objects.bulk_create(
                 [
@@ -206,7 +217,7 @@ class IssueCreateSerializer(BaseSerializer):
                 batch_size=10,
             )
 
-        if labels is not None:
+        if labels is not None and len(labels):
             IssueLabel.objects.filter(issue=instance).delete()
             IssueLabel.objects.bulk_create(
                 [
@@ -223,7 +234,7 @@ class IssueCreateSerializer(BaseSerializer):
                 batch_size=10,
             )
 
-        if blocks is not None:
+        if blocks is not None and len(blocks):
             IssueBlocker.objects.filter(blocked_by=instance).delete()
             IssueBlocker.objects.bulk_create(
                 [
