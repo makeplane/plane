@@ -10,8 +10,6 @@ import {
   IWorkspaceMember,
   IWorkspaceMemberInvitation,
   ILastActiveWorkspaceDetails,
-  IAppIntegrations,
-  IWorkspaceIntegrations,
   IWorkspaceSearchResults,
 } from "types";
 
@@ -190,32 +188,6 @@ class WorkspaceService extends APIService {
   async workspaceSlugCheck(slug: string): Promise<any> {
     return this.get(`/api/workspace-slug-check/?slug=${slug}`)
       .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async getIntegrations(): Promise<IAppIntegrations[]> {
-    return this.get(`/api/integrations/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async getWorkspaceIntegrations(workspaceSlug: string): Promise<IWorkspaceIntegrations[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/workspace-integrations/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async deleteWorkspaceIntegration(workspaceSlug: string, integrationId: string): Promise<any> {
-    return this.delete(
-      `/api/workspaces/${workspaceSlug}/workspace-integrations/${integrationId}/provider/`
-    )
-      .then((res) => res?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
