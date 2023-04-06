@@ -15,6 +15,7 @@ const initialValues: Properties = {
   priority: false,
   state: true,
   sub_issue_count: false,
+  estimate: false,
 };
 
 const useIssuesProperties = (workspaceSlug?: string, projectId?: string) => {
@@ -90,6 +91,7 @@ const useIssuesProperties = (workspaceSlug?: string, projectId?: string) => {
     priority: properties.priority,
     state: properties.state,
     sub_issue_count: properties.sub_issue_count,
+    estimate: properties.estimate,
   };
 
   return [newProperties, updateIssueProperties] as const;

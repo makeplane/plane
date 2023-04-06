@@ -186,6 +186,7 @@ export type Properties = {
   priority: boolean;
   state: boolean;
   sub_issue_count: boolean;
+  estimate: boolean;
 };
 
 export interface IIssueLabels {
