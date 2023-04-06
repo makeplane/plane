@@ -1233,6 +1233,11 @@ urlpatterns = [
         name="importer",
     ),
     path(
+        "workspaces/<str:slug>/importers/<str:service>/<uuid:pk>/",
+        ImportServiceEndpoint.as_view(),
+        name="importer",
+    ),
+    path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/service/<str:service>/importers/<uuid:importer_id>/",
         UpdateServiceImportStatusEndpoint.as_view(),
         name="importer",
