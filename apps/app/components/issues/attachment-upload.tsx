@@ -26,7 +26,6 @@ export const IssueAttachmentUpload = () => {
   const { setToastAlert } = useToast();
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
-    setIsLoading(true);
     if (!acceptedFiles[0] || !workspaceSlug) return;
 
     const formData = new FormData();
@@ -38,7 +37,7 @@ export const IssueAttachmentUpload = () => {
         size: acceptedFiles[0].size,
       })
     );
-
+    setIsLoading(true);
     issuesService
       .uploadIssueAttachment(
         workspaceSlug as string,
@@ -88,12 +87,13 @@ export const IssueAttachmentUpload = () => {
       <span className="flex items-center gap-2">
         {isDragActive ? (
           <p>Drop here...</p>
+        ) : fileError ? (
+          <p className="text-center text-red-500">{fileError}</p>
         ) : isLoading ? (
           <p className="text-center">Uploading....</p>
         ) : (
           <p className="text-center">Drag & Drop or Click to add new file</p>
         )}
-        {fileError && <p className="text-red-500 mt-2">{fileError}</p>}
       </span>
     </div>
   );
