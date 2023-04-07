@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import { useRouter } from "next/router";
 
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 
 // component
 import { Dialog, Transition } from "@headlessui/react";
@@ -12,11 +12,14 @@ import cyclesService from "services/cycles.service";
 import useToast from "hooks/use-toast";
 //icons
 import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { ContrastIcon, CyclesIcon, ExclamationIcon } from "components/icons";
+import { ContrastIcon, CyclesIcon, ExclamationIcon, TransferIcon } from "components/icons";
 // fetch-key
-import { CYCLE_INCOMPLETE_LIST } from "constants/fetch-keys";
+import { CYCLE_INCOMPLETE_LIST, CYCLE_ISSUES_WITH_PARAMS } from "constants/fetch-keys";
 // types
 import { ICycle } from "types";
+//helper
+import { getDateRangeStatus } from "helpers/date-time.helper";
+import useIssuesView from "hooks/use-issues-view";
 
 type Props = {
   isOpen: boolean;
@@ -29,12 +32,15 @@ export const TransferIssuesModal: React.FC<Props> = ({ isOpen, handleClose }) =>
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
 
+  const { params } = useIssuesView();
+
   const { setToastAlert } = useToast();
 
   const transferIssue = async (payload: any) => {
     await cyclesService
       .transferIssues(workspaceSlug as string, projectId as string, cycleId as string, payload)
       .then((res) => {
+        mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
         setToastAlert({
           type: "success",
           title: "Issues transfered successfully",
@@ -100,12 +106,15 @@ export const TransferIssuesModal: React.FC<Props> = ({ isOpen, handleClose }) =>
               <Dialog.Panel className="relative transform rounded-lg bg-white py-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
                 <div className="flex flex-col gap-4">
                   <div className="flex items-center justify-between px-5">
-                    <h4 className="text-gray-700 text-base">Transfer Issues</h4>
+                    <div className="flex items-center gap-2">
+                      <TransferIcon className="h-4 w-5" color="#495057" />
+                      <h4 className="text-gray-700 font-medium text-[1.50rem]">Transfer Issues</h4>
+                    </div>
                     <button onClick={handleClose}>
                       <XMarkIcon className="h-4 w-4" />
                     </button>
                   </div>
-                  <div className="flex items-center gap-2 pb-3 px-5 border-b border-gray-200">
+                  <div className="flex items-center gap-2 pb-3 mt-2 px-5 border-b border-gray-200">
                     <MagnifyingGlassIcon className="h-4 w-4 text-gray-500" />
                     <input
                       className="outline-none"
@@ -120,16 +129,21 @@ export const TransferIssuesModal: React.FC<Props> = ({ isOpen, handleClose }) =>
                         filteredOptions.map((option: ICycle) => (
                           <button
                             key={option.id}
-                            className="flex items-center gap-4 px-4 py-3 text-gray-600 text-sm rounded w-full hover:bg-gray-100"
+                            className="flex items-center gap-4 py-3 px-2 text-gray-600 text-sm rounded w-full hover:bg-gray-100"
                             onClick={() => {
                               transferIssue({
-                                new_cycle_id: option.id,
+                                new_cycle_id: option?.id,
                               });
                               handleClose();
                             }}
                           >
                             <ContrastIcon className="h-5 w-5" />
-                            <span>{option.name}</span>
+                            <div className="flex justify-between w-full">
+                              <span>{option?.name}</span>
+                              <span className=" flex bg-gray-200 capitalize px-2 rounded-full items-center">
+                                {getDateRangeStatus(option?.start_date, option?.end_date)}
+                              </span>
+                            </div>
                           </button>
                         ))
                       ) : (
