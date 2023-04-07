@@ -1,8 +1,12 @@
+// onboarding images
 import Welcome from "public/onboarding/welcome.svg";
 import Issue from "public/onboarding/issue.svg";
 import Cycle from "public/onboarding/cycle.svg";
 import Module from "public/onboarding/module.svg";
 import CommandMenu from "public/onboarding/command-menu.svg";
+// services images
+import GithubLogo from "public/services/github.png";
+import JiraLogo from "public/services/jira.png";
 
 export const ROLE = {
   5: "Guest",
@@ -62,3 +66,20 @@ export const ONBOARDING_CARDS = {
     description: "With Command Menu, you can create, update and navigate across the platform.",
   },
 };
+
+export const IMPORTERS_EXPORTERS_LIST = [
+  {
+    provider: "github",
+    type: "import",
+    title: "GitHub",
+    description: "Import issues from GitHub repositories and sync them.",
+    logo: GithubLogo,
+  },
+  {
+    provider: "jira",
+    type: "import",
+    title: "Jira",
+    description: "Import issues and epics from Jira projects and epics.",
+    logo: JiraLogo,
+  },
+];
