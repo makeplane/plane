@@ -62,6 +62,7 @@ const WorkspaceAuthorizationLayout: React.FC<Props> = (props) => {
     );
   }
 
+  // TODO: if user doesn't have access to workspace settings page show them them sidebar and header but not the main content
   return <>{children}</>;
 };
 
