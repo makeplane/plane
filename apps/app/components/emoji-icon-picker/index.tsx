@@ -136,7 +136,7 @@ const EmojiIconPicker: React.FC<Props> = ({
                 </Tab.Panel>
                 <div className="py-2">
                   <div className="relative">
-                    <div className="pb-2 flex items-center justify-between">
+                    <div className="pb-2 px-[2px] flex items-center justify-between">
                       {[
                         "#D687FF",
                         "#F7AE59",
@@ -149,7 +149,10 @@ const EmojiIconPicker: React.FC<Props> = ({
                         "#000000",
                       ].map((curCol) => (
                         <span
-                          className="w-4 h-4 rounded-full cursor-pointer"
+                          className={`w-4 h-4 rounded-full cursor-pointer ${
+                            activeColor === curCol &&
+                            "border-[2px] border-white outline-[2px] outline outline-[#858E96]"
+                          }`}
                           style={{ backgroundColor: curCol }}
                           onClick={() => setActiveColor(curCol)}
                         />
