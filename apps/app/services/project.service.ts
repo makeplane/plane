@@ -136,7 +136,7 @@ class ProjectServices extends APIService {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/project-members/me/`)
       .then((response) => response?.data)
       .catch((error) => {
-        throw error?.response?.data;
+        throw error?.response;
       });
   }
 

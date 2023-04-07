@@ -23,6 +23,8 @@ import type { GetServerSidePropsContext, NextPage } from "next";
 // fetch-keys
 import { PROJECT_DETAILS } from "constants/fetch-keys";
 
+import ProjectAuthorizationWrapper from "layouts/auth-layout/project-authorization-wrapper";
+
 const ProjectIssues: NextPage<UserAuth> = (props) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -35,34 +37,36 @@ const ProjectIssues: NextPage<UserAuth> = (props) => {
   );
 
   return (
-    <IssueViewContextProvider>
-      <AppLayout
-        memberType={props}
-        breadcrumbs={
-          <Breadcrumbs>
-            <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
-            <BreadcrumbItem title={`${projectDetails?.name ?? "Project"} Issues`} />
-          </Breadcrumbs>
-        }
-        right={
-          <div className="flex items-center gap-2">
-            <IssuesFilterView />
-            <PrimaryButton
-              className="flex items-center gap-2"
-              onClick={() => {
-                const e = new KeyboardEvent("keydown", { key: "c" });
-                document.dispatchEvent(e);
-              }}
-            >
-              <PlusIcon className="w-4 h-4" />
-              Add Issue
-            </PrimaryButton>
-          </div>
-        }
-      >
-        <IssuesView userAuth={props} />
-      </AppLayout>
-    </IssueViewContextProvider>
+    <ProjectAuthorizationWrapper>
+      <IssueViewContextProvider>
+        <AppLayout
+          memberType={props}
+          breadcrumbs={
+            <Breadcrumbs>
+              <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
+              <BreadcrumbItem title={`${projectDetails?.name ?? "Project"} Issues`} />
+            </Breadcrumbs>
+          }
+          right={
+            <div className="flex items-center gap-2">
+              <IssuesFilterView />
+              <PrimaryButton
+                className="flex items-center gap-2"
+                onClick={() => {
+                  const e = new KeyboardEvent("keydown", { key: "c" });
+                  document.dispatchEvent(e);
+                }}
+              >
+                <PlusIcon className="w-4 h-4" />
+                Add Issue
+              </PrimaryButton>
+            </div>
+          }
+        >
+          <IssuesView userAuth={props} />
+        </AppLayout>
+      </IssueViewContextProvider>
+    </ProjectAuthorizationWrapper>
   );
 };
 
