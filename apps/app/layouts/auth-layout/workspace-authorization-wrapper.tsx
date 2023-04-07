@@ -15,8 +15,7 @@ import AppSidebar from "layouts/app-layout/app-sidebar";
 import AppHeader from "layouts/app-layout/app-header";
 import SettingsNavbar from "layouts/settings-navbar";
 // components
-import { NotAuthorizedView } from "components/core";
-import { NotAWorkspaceMember } from "components/auth-screens";
+import { NotAuthorizedView, NotAWorkspaceMember } from "components/auth-screens";
 import { CommandPalette } from "components/command-palette";
 // icons
 import { PrimaryButton } from "components/ui";
@@ -115,6 +114,7 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
                 </a>
               </Link>
             }
+            type="workspace"
           />
         ) : (
           <main className="flex h-screen w-full min-w-0 flex-col overflow-y-auto">

@@ -13,7 +13,7 @@ import AppHeader from "layouts/app-layout/app-header";
 import AppSidebar from "layouts/app-layout/app-sidebar";
 import SettingsNavbar from "layouts/settings-navbar";
 // components
-import { NotAuthorizedView } from "components/core";
+import { NotAuthorizedView, JoinProject } from "components/auth-screens";
 import { CommandPalette } from "components/command-palette";
 // ui
 import { PrimaryButton } from "components/ui";
@@ -75,12 +75,20 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
             <p>Loading...</p>
           </div>
         ) : error?.status === 401 || error?.status === 403 ? (
-          <div className="container h-screen flex justify-center items-center">
-            <p className="text-2xl font-semibold">You are not authorized to access this project.</p>
-          </div>
+          <JoinProject />
         ) : error?.status === 404 ? (
-          <div className="container h-screen flex justify-center items-center">
-            <p className="text-2xl font-semibold">No such project exist. Create one?</p>
+          <div className="container h-screen grid place-items-center">
+            <div className="text-center space-y-4">
+              <p className="text-2xl font-semibold">No such project exist. Create one?</p>
+              <PrimaryButton
+                onClick={() => {
+                  const e = new KeyboardEvent("keydown", { key: "p" });
+                  document.dispatchEvent(e);
+                }}
+              >
+                Create project
+              </PrimaryButton>
+            </div>
           </div>
         ) : settingsLayout && (memberType?.isGuest || memberType?.isViewer) ? (
           <NotAuthorizedView
@@ -93,6 +101,7 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
                 </a>
               </Link>
             }
+            type="project"
           />
         ) : (
           <main className="flex h-screen w-full min-w-0 flex-col overflow-y-auto">
