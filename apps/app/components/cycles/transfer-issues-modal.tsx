@@ -70,10 +70,6 @@ export const TransferIssuesModal: React.FC<Props> = ({ isOpen, handleClose }) =>
           option.name.toLowerCase().includes(query.toLowerCase())
         );
 
-  // useEffect(() => {
-  //   if(transferIssue)
-  // },[transferIssue])
-
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
