@@ -3,14 +3,11 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
-import { GetServerSidePropsContext } from "next";
 // icons
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { CyclesIcon } from "components/icons";
-// lib
-import { requiredAdmin, requiredAuth } from "lib/auth";
 // layouts
-import AppLayout from "layouts/app-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // contexts
 import { IssueViewContextProvider } from "contexts/issue-view.context";
 // components
@@ -20,6 +17,8 @@ import { CycleDetailsSidebar } from "components/cycles";
 import issuesService from "services/issues.service";
 import cycleServices from "services/cycles.service";
 import projectService from "services/project.service";
+// contexts
+import { useProjectMyMembership } from "contexts/project-member.context";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -28,8 +27,6 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // helpers
 import { truncateText } from "helpers/string.helper";
 import { getDateRangeStatus } from "helpers/date-time.helper";
-// types
-import { UserAuth } from "types";
 // fetch-keys
 import {
   CYCLE_ISSUES,
@@ -39,12 +36,14 @@ import {
   PROJECT_ISSUES_LIST,
 } from "constants/fetch-keys";
 
-const SingleCycle: React.FC<UserAuth> = (props) => {
+const SingleCycle: React.FC = () => {
   const [cycleIssuesListModal, setCycleIssuesListModal] = useState(false);
   const [cycleSidebar, setCycleSidebar] = useState(true);
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
+
+  const { memberRole } = useProjectMyMembership();
 
   const { setToastAlert } = useToast();
 
@@ -117,8 +116,7 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
         issues={issues?.filter((i) => !i.cycle_id) ?? []}
         handleOnSubmit={handleAddIssuesToCycle}
       />
-      <AppLayout
-        memberType={props}
+      <ProjectAuthorizationWrapper
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem
@@ -169,7 +167,7 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
         <div className={`h-full ${cycleSidebar ? "mr-[24rem]" : ""} duration-300`}>
           <IssuesView
             type="cycle"
-            userAuth={props}
+            userAuth={memberRole}
             openIssuesListModal={openIssuesListModal}
             isCompleted={cycleStatus === "completed" ?? false}
           />
@@ -180,38 +178,9 @@ const SingleCycle: React.FC<UserAuth> = (props) => {
           isOpen={cycleSidebar}
           isCompleted={cycleStatus === "completed" ?? false}
         />
-      </AppLayout>
+      </ProjectAuthorizationWrapper>
     </IssueViewContextProvider>
   );
-};
-
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const user = await requiredAuth(ctx.req?.headers.cookie);
-
-  const redirectAfterSignIn = ctx.resolvedUrl;
-
-  if (!user) {
-    return {
-      redirect: {
-        destination: `/signin?next=${redirectAfterSignIn}`,
-        permanent: false,
-      },
-    };
-  }
-
-  const projectId = ctx.query.projectId as string;
-  const workspaceSlug = ctx.query.workspaceSlug as string;
-
-  const memberDetail = await requiredAdmin(workspaceSlug, projectId, ctx.req?.headers.cookie);
-
-  return {
-    props: {
-      isOwner: memberDetail?.role === 20,
-      isMember: memberDetail?.role === 15,
-      isViewer: memberDetail?.role === 10,
-      isGuest: memberDetail?.role === 5,
-    },
-  };
 };
 
 export default SingleCycle;

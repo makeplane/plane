@@ -10,7 +10,7 @@ import projectService from "services/project.service";
 import useProjects from "hooks/use-projects";
 import useWorkspaces from "hooks/use-workspaces";
 // layouts
-import WorkspaceAuthorizationLayout from "layouts/auth-layout";
+import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 // components
 import { JoinProjectModal } from "components/project/join-project-modal";
 import { DeleteProjectModal, SingleProjectCard } from "components/project";

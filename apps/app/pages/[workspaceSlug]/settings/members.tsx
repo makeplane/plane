@@ -10,7 +10,7 @@ import useToast from "hooks/use-toast";
 // services
 import workspaceService from "services/workspace.service";
 // layouts
-import WorkspaceAuthorizationLayout from "layouts/auth-layout";
+import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 // components
 import ConfirmWorkspaceMemberRemove from "components/workspace/confirm-workspace-member-remove";
 import SendWorkspaceInvitationModal from "components/workspace/send-workspace-invitation-modal";

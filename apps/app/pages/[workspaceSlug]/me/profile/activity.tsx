@@ -3,7 +3,7 @@ import useSWR from "swr";
 // services
 import userService from "services/user.service";
 // layouts
-import WorkspaceAuthorizationLayout from "layouts/auth-layout";
+import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 // components
 import { Feeds } from "components/core";
 // ui

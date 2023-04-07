@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 
 // layouts
-import WorkspaceAuthorizationLayout from "layouts/auth-layout";
+import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 // components
 import IntegrationGuide from "components/integration/guide";
 // ui

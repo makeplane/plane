@@ -8,29 +8,25 @@ import useSWR, { mutate } from "swr";
 import estimatesService from "services/estimates.service";
 import projectService from "services/project.service";
 
-// lib
-import { requiredAdmin } from "lib/auth";
 // layouts
-import AppLayout from "layouts/app-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // components
 import { CreateUpdateEstimateModal, SingleEstimate } from "components/estimates";
 
 //hooks
 import useToast from "hooks/use-toast";
 // ui
-import { Loader, PrimaryButton } from "components/ui";
+import { Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 // types
-import { IEstimate, UserAuth, IProject } from "types";
-import type { GetServerSidePropsContext, NextPage } from "next";
+import { IEstimate, IProject } from "types";
+import type { NextPage } from "next";
 // fetch-keys
 import { ESTIMATES_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
 
-const EstimatesSettings: NextPage<UserAuth> = (props) => {
-  const { isMember, isOwner, isViewer, isGuest } = props;
-
+const EstimatesSettings: NextPage = () => {
   const [estimateFormOpen, setEstimateFormOpen] = useState(false);
 
   const [isUpdating, setIsUpdating] = useState(false);
@@ -87,8 +83,7 @@ const EstimatesSettings: NextPage<UserAuth> = (props) => {
 
   return (
     <>
-      <AppLayout
-        memberType={{ isMember, isOwner, isViewer, isGuest }}
+      <ProjectAuthorizationWrapper
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem
@@ -98,7 +93,6 @@ const EstimatesSettings: NextPage<UserAuth> = (props) => {
             <BreadcrumbItem title="Estimates Settings" />
           </Breadcrumbs>
         }
-        settingsLayout
       >
         <CreateUpdateEstimateModal
           isCreate={estimateToUpdate ? true : false}
@@ -154,25 +148,9 @@ const EstimatesSettings: NextPage<UserAuth> = (props) => {
             </>
           </section>
         )}
-      </AppLayout>
+      </ProjectAuthorizationWrapper>
     </>
   );
-};
-
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const projectId = ctx.query.projectId as string;
-  const workspaceSlug = ctx.query.workspaceSlug as string;
-
-  const memberDetail = await requiredAdmin(workspaceSlug, projectId, ctx.req?.headers.cookie);
-
-  return {
-    props: {
-      isOwner: memberDetail?.role === 20,
-      isMember: memberDetail?.role === 15,
-      isViewer: memberDetail?.role === 10,
-      isGuest: memberDetail?.role === 5,
-    },
-  };
 };
 
 export default EstimatesSettings;

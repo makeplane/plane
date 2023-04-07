@@ -7,7 +7,7 @@ import { Disclosure, Popover, Transition } from "@headlessui/react";
 // icons
 import { ChevronDownIcon, PlusIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
 // layouts
-import WorkspaceAuthorizationLayout from "layouts/auth-layout";
+import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 // hooks
 import useIssues from "hooks/use-issues";
 // ui

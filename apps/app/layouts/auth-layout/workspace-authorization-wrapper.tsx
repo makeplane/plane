@@ -13,15 +13,16 @@ import useUser from "hooks/use-user";
 import Container from "layouts/container";
 import AppSidebar from "layouts/app-layout/app-sidebar";
 import AppHeader from "layouts/app-layout/app-header";
+import SettingsNavbar from "layouts/settings-navbar";
 // components
+import { NotAuthorizedView } from "components/core";
 import { NotAWorkspaceMember } from "components/auth-screens";
 import { CommandPalette } from "components/command-palette";
-// fetch-keys
-import { WORKSPACE_MEMBERS_ME } from "constants/fetch-keys";
-import { NotAuthorizedView } from "components/core";
+// icons
 import { PrimaryButton } from "components/ui";
 import { LayerDiagonalIcon } from "components/icons";
-import SettingsNavbar from "layouts/settings-navbar";
+// fetch-keys
+import { WORKSPACE_MEMBERS_ME } from "constants/fetch-keys";
 
 type Meta = {
   title?: string | null;
@@ -42,7 +43,7 @@ type Props = {
   profilePage?: boolean;
 };
 
-const WorkspaceAuthorizationLayout: React.FC<Props> = ({
+export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
   meta,
   children,
   noPadding = false,
@@ -155,5 +156,3 @@ const WorkspaceAuthorizationLayout: React.FC<Props> = ({
     </Container>
   );
 };
-
-export default WorkspaceAuthorizationLayout;

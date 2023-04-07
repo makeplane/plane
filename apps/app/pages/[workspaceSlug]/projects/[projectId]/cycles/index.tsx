@@ -5,27 +5,24 @@ import dynamic from "next/dynamic";
 
 import useSWR from "swr";
 
-import { PlusIcon } from "@heroicons/react/24/outline";
+// headless ui
 import { Tab } from "@headlessui/react";
-// lib
-import { requiredAdmin, requiredAuth } from "lib/auth";
-
 // services
 import cycleService from "services/cycles.service";
 import projectService from "services/project.service";
-
 // layouts
-import AppLayout from "layouts/app-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // components
 import { CompletedCyclesListProps, CreateUpdateCycleModal, CyclesList } from "components/cycles";
 // ui
 import { Loader, PrimaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
+import { PlusIcon } from "@heroicons/react/24/outline";
 // types
-import { SelectCycleType, UserAuth } from "types";
-import type { NextPage, GetServerSidePropsContext } from "next";
-// fetching keys
+import { SelectCycleType } from "types";
+import type { NextPage } from "next";
+// fetch-keys
 import {
   CYCLE_CURRENT_AND_UPCOMING_LIST,
   CYCLE_DRAFT_LIST,
@@ -44,13 +41,12 @@ const CompletedCyclesList = dynamic<CompletedCyclesListProps>(
   }
 );
 
-const ProjectCycles: NextPage<UserAuth> = (props) => {
+const ProjectCycles: NextPage = () => {
   const [selectedCycle, setSelectedCycle] = useState<SelectCycleType>();
   const [createUpdateCycleModal, setCreateUpdateCycleModal] = useState(false);
 
-  const {
-    query: { workspaceSlug, projectId },
-  } = useRouter();
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
 
   const { data: activeProject } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
@@ -82,11 +78,10 @@ const ProjectCycles: NextPage<UserAuth> = (props) => {
   }, [createUpdateCycleModal]);
 
   return (
-    <AppLayout
+    <ProjectAuthorizationWrapper
       meta={{
         title: "Plane - Cycles",
       }}
-      memberType={props}
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
@@ -195,37 +190,8 @@ const ProjectCycles: NextPage<UserAuth> = (props) => {
           </div>
         </div>
       </div>
-    </AppLayout>
+    </ProjectAuthorizationWrapper>
   );
-};
-
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const user = await requiredAuth(ctx.req?.headers.cookie);
-
-  const redirectAfterSignIn = ctx.resolvedUrl;
-
-  if (!user) {
-    return {
-      redirect: {
-        destination: `/signin?next=${redirectAfterSignIn}`,
-        permanent: false,
-      },
-    };
-  }
-
-  const projectId = ctx.query.projectId as string;
-  const workspaceSlug = ctx.query.workspaceSlug as string;
-
-  const memberDetail = await requiredAdmin(workspaceSlug, projectId, ctx.req?.headers.cookie);
-
-  return {
-    props: {
-      isOwner: memberDetail?.role === 20,
-      isMember: memberDetail?.role === 15,
-      isViewer: memberDetail?.role === 10,
-      isGuest: memberDetail?.role === 5,
-    },
-  };
 };
 
 export default ProjectCycles;

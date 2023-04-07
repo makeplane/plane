@@ -2,12 +2,10 @@ import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
-// lib
-import { requiredAdmin, requiredAuth } from "lib/auth";
 // services
 import projectService from "services/project.service";
 // layouts
-import AppLayout from "layouts/app-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // contexts
 import { IssueViewContextProvider } from "contexts/issue-view.context";
 // components
@@ -19,11 +17,9 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import { PlusIcon } from "@heroicons/react/24/outline";
 // types
 import type { UserAuth } from "types";
-import type { GetServerSidePropsContext, NextPage } from "next";
+import type { NextPage } from "next";
 // fetch-keys
 import { PROJECT_DETAILS } from "constants/fetch-keys";
-
-import ProjectAuthorizationWrapper from "layouts/auth-layout/project-authorization-wrapper";
 
 const ProjectIssues: NextPage<UserAuth> = (props) => {
   const router = useRouter();
@@ -37,66 +33,34 @@ const ProjectIssues: NextPage<UserAuth> = (props) => {
   );
 
   return (
-    <ProjectAuthorizationWrapper>
-      <IssueViewContextProvider>
-        <AppLayout
-          memberType={props}
-          breadcrumbs={
-            <Breadcrumbs>
-              <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
-              <BreadcrumbItem title={`${projectDetails?.name ?? "Project"} Issues`} />
-            </Breadcrumbs>
-          }
-          right={
-            <div className="flex items-center gap-2">
-              <IssuesFilterView />
-              <PrimaryButton
-                className="flex items-center gap-2"
-                onClick={() => {
-                  const e = new KeyboardEvent("keydown", { key: "c" });
-                  document.dispatchEvent(e);
-                }}
-              >
-                <PlusIcon className="w-4 h-4" />
-                Add Issue
-              </PrimaryButton>
-            </div>
-          }
-        >
-          <IssuesView userAuth={props} />
-        </AppLayout>
-      </IssueViewContextProvider>
-    </ProjectAuthorizationWrapper>
+    <IssueViewContextProvider>
+      <ProjectAuthorizationWrapper
+        breadcrumbs={
+          <Breadcrumbs>
+            <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
+            <BreadcrumbItem title={`${projectDetails?.name ?? "Project"} Issues`} />
+          </Breadcrumbs>
+        }
+        right={
+          <div className="flex items-center gap-2">
+            <IssuesFilterView />
+            <PrimaryButton
+              className="flex items-center gap-2"
+              onClick={() => {
+                const e = new KeyboardEvent("keydown", { key: "c" });
+                document.dispatchEvent(e);
+              }}
+            >
+              <PlusIcon className="w-4 h-4" />
+              Add Issue
+            </PrimaryButton>
+          </div>
+        }
+      >
+        <IssuesView userAuth={props} />
+      </ProjectAuthorizationWrapper>
+    </IssueViewContextProvider>
   );
-};
-
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const user = await requiredAuth(ctx.req?.headers.cookie);
-
-  const redirectAfterSignIn = ctx.resolvedUrl;
-
-  if (!user) {
-    return {
-      redirect: {
-        destination: `/signin?next=${redirectAfterSignIn}`,
-        permanent: false,
-      },
-    };
-  }
-
-  const projectId = ctx.query.projectId as string;
-  const workspaceSlug = ctx.query.workspaceSlug as string;
-
-  const memberDetail = await requiredAdmin(workspaceSlug, projectId, ctx.req?.headers.cookie);
-
-  return {
-    props: {
-      isOwner: memberDetail?.role === 20,
-      isMember: memberDetail?.role === 15,
-      isViewer: memberDetail?.role === 10,
-      isGuest: memberDetail?.role === 5,
-    },
-  };
 };
 
 export default ProjectIssues;

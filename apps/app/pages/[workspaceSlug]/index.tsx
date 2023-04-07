@@ -4,11 +4,8 @@ import { useRouter } from "next/router";
 
 import useSWR, { mutate } from "swr";
 
-// lib
-import { requiredAuth } from "lib/auth";
 // layouts
-import AppLayout from "layouts/app-layout";
-import WorkspaceAuthorizationLayout from "layouts/auth-layout";
+import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 // services
 import userService from "services/user.service";
 // components
@@ -19,7 +16,7 @@ import {
   IssuesStats,
 } from "components/workspace";
 // types
-import type { NextPage, GetServerSidePropsContext } from "next";
+import type { NextPage } from "next";
 // fetch-keys
 import { USER_WORKSPACE_DASHBOARD } from "constants/fetch-keys";
 
@@ -78,27 +75,6 @@ const WorkspacePage: NextPage = () => {
       </div>
     </WorkspaceAuthorizationLayout>
   );
-};
-
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const user = await requiredAuth(ctx.req?.headers.cookie);
-
-  const redirectAfterSignIn = ctx.resolvedUrl;
-
-  if (!user) {
-    return {
-      redirect: {
-        destination: `/signin?next=${redirectAfterSignIn}`,
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {
-      user,
-    },
-  };
 };
 
 export default WorkspacePage;

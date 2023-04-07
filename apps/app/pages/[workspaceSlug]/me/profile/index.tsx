@@ -11,7 +11,7 @@ import userService from "services/user.service";
 import useUser from "hooks/use-user";
 import useToast from "hooks/use-toast";
 // layouts
-import WorkspaceAuthorizationLayout from "layouts/auth-layout";
+import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 // components
 import { ImageUploadModal } from "components/core";
 // ui

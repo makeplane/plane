@@ -1,15 +1,12 @@
 import { useState } from "react";
 
 import { useRouter } from "next/router";
-import type { GetServerSidePropsContext, NextPage } from "next";
 import dynamic from "next/dynamic";
 
 import useSWR, { mutate } from "swr";
 
 // react-hook-form
 import { useForm } from "react-hook-form";
-// lib
-import { requiredAdmin, requiredAuth } from "lib/auth";
 // headless ui
 import { Tab } from "@headlessui/react";
 // services
@@ -20,16 +17,17 @@ import useToast from "hooks/use-toast";
 // icons
 import { PlusIcon } from "components/icons";
 // layouts
-import AppLayout from "layouts/app-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // components
 import { RecentPagesList, CreateUpdatePageModal, TPagesListProps } from "components/pages";
 // ui
 import { Input, PrimaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
-import { ListBulletIcon, RectangleGroupIcon, Squares2X2Icon } from "@heroicons/react/20/solid";
+import { ListBulletIcon, Squares2X2Icon } from "@heroicons/react/20/solid";
 // types
-import { IPage, TPageViewProps, UserAuth } from "types";
+import { IPage, TPageViewProps } from "types";
+import type { NextPage } from "next";
 // fetch-keys
 import {
   ALL_PAGES_LIST,
@@ -66,7 +64,7 @@ const OtherPagesList = dynamic<TPagesListProps>(
   }
 );
 
-const ProjectPages: NextPage<UserAuth> = (props) => {
+const ProjectPages: NextPage = () => {
   const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
 
   const [viewType, setViewType] = useState<TPageViewProps>("list");
@@ -153,11 +151,10 @@ const ProjectPages: NextPage<UserAuth> = (props) => {
         isOpen={createUpdatePageModal}
         handleClose={() => setCreateUpdatePageModal(false)}
       />
-      <AppLayout
+      <ProjectAuthorizationWrapper
         meta={{
           title: "Plane - Pages",
         }}
-        memberType={props}
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
@@ -266,38 +263,9 @@ const ProjectPages: NextPage<UserAuth> = (props) => {
             </Tab.Group>
           </div>
         </div>
-      </AppLayout>
+      </ProjectAuthorizationWrapper>
     </>
   );
-};
-
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const user = await requiredAuth(ctx.req?.headers.cookie);
-
-  const redirectAfterSignIn = ctx.resolvedUrl;
-
-  if (!user) {
-    return {
-      redirect: {
-        destination: `/signin?next=${redirectAfterSignIn}`,
-        permanent: false,
-      },
-    };
-  }
-
-  const projectId = ctx.query.projectId as string;
-  const workspaceSlug = ctx.query.workspaceSlug as string;
-
-  const memberDetail = await requiredAdmin(workspaceSlug, projectId, ctx.req?.headers.cookie);
-
-  return {
-    props: {
-      isOwner: memberDetail?.role === 20,
-      isMember: memberDetail?.role === 15,
-      isViewer: memberDetail?.role === 10,
-      isGuest: memberDetail?.role === 5,
-    },
-  };
 };
 
 export default ProjectPages;

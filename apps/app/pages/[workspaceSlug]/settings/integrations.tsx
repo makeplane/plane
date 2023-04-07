@@ -8,7 +8,7 @@ import useSWR from "swr";
 import workspaceService from "services/workspace.service";
 import IntegrationService from "services/integration";
 // layouts
-import WorkspaceAuthorizationLayout from "layouts/auth-layout";
+import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 // components
 import OAuthPopUp from "components/popup";
 // ui

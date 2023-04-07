@@ -61,5 +61,13 @@ export const useProjectMyMembership = () => {
   if (context === undefined)
     throw new Error(`useProjectMember must be used within a ProjectMemberProvider.`);
 
-  return context;
+  return {
+    ...context,
+    memberRole: {
+      isOwner: context.memberDetails?.role === 20,
+      isMember: context.memberDetails?.role === 15,
+      isViewer: context.memberDetails?.role === 10,
+      isGuest: context.memberDetails?.role === 5,
+    },
+  };
 };

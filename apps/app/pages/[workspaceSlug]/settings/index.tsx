@@ -13,7 +13,7 @@ import fileService from "services/file.service";
 // hooks
 import useToast from "hooks/use-toast";
 // layouts
-import WorkspaceAuthorizationLayout from "layouts/auth-layout";
+import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 // components
 import { ImageUploadModal } from "components/core";
 import { DeleteWorkspaceModal } from "components/workspace";
