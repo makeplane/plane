@@ -16,7 +16,7 @@ import AppLayout from "layouts/app-layout";
 import projectService from "services/project.service";
 // components
 import { DeleteProjectModal } from "components/project";
-import { ImageUploadModal } from "components/core";
+import { ImagePickerPopover } from "components/core";
 import EmojiIconPicker from "components/emoji-icon-picker";
 // hooks
 import useToast from "hooks/use-toast";
@@ -157,17 +157,6 @@ const GeneralSettings: NextPage<UserAuth> = ({ isMember, isOwner, isViewer, isGu
           router.push(`/${workspaceSlug}/projects`);
         }}
       />
-      <ImageUploadModal
-        isOpen={isImageUploadModalOpen}
-        onClose={() => setIsImageUploadModalOpen(false)}
-        onSuccess={(imageUrl) => {
-          setIsImageUploading(true);
-          setValue("cover_image", imageUrl);
-          setIsImageUploadModalOpen(false);
-          handleSubmit(onSubmit)().then(() => setIsImageUploading(false));
-        }}
-        value={watch("cover_image")}
-      />
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="space-y-8 sm:space-y-12">
           <div className="grid grid-cols-12 items-start gap-4 sm:gap-16">
@@ -241,23 +230,23 @@ const GeneralSettings: NextPage<UserAuth> = ({ isMember, isOwner, isViewer, isGu
             </div>
             <div className="col-span-12 sm:col-span-6">
               {watch("cover_image") ? (
-                <div className="w-32 h-32 rounded border p-1">
+                <div className="w-full h-32 rounded border p-1">
                   <div className="w-full h-full relative rounded">
                     <Image
                       src={watch("cover_image")!}
                       alt={projectDetails?.name ?? "Cover image"}
                       objectFit="cover"
                       layout="fill"
+                      className="rounded"
                     />
-                    <div className="absolute bottom-1 w-full flex justify-center">
-                      <button
-                        type="button"
-                        disabled={isImageUploading}
-                        onClick={() => setIsImageUploadModalOpen(true)}
-                        className="bg-white rounded text-sm border-2 border-gray-300 text-gray-400 p-1 py-0.5"
-                      >
-                        {isImageUploading ? "Uploading..." : "Change Cover"}
-                      </button>
+                    <div className="absolute bottom-0 w-full flex justify-end">
+                      <ImagePickerPopover
+                        label={"Change cover"}
+                        onChange={(imageUrl) => {
+                          setValue("cover_image", imageUrl);
+                        }}
+                        value={watch("cover_image")}
+                      />
                     </div>
                   </div>
                 </div>

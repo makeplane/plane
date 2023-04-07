@@ -59,7 +59,7 @@ export const ImagePickerPopover: React.FC<Props> = ({ label, value, onChange }) 
   return (
     <Popover className="relative z-[2]" ref={ref}>
       <Popover.Button
-        className="rounded-md border border-gray-500 bg-white px-2 py-1 text-xs text-gray-700"
+        className="rounded border border-gray-500 bg-white px-2 py-1 text-xs text-gray-700"
         onClick={() => setIsOpen((prev) => !prev)}
       >
         {label}
@@ -92,11 +92,7 @@ export const ImagePickerPopover: React.FC<Props> = ({ label, value, onChange }) 
               </Tab.List>
               <Tab.Panels className="h-full w-full flex-1 overflow-y-auto overflow-x-hidden">
                 <Tab.Panel className="h-full w-full space-y-4">
-                  <form
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      setSearchParams(formData.search);
-                    }}
+                  <div
                     className="flex gap-x-2 pt-7"
                   >
                     <Input
@@ -107,10 +103,10 @@ export const ImagePickerPopover: React.FC<Props> = ({ label, value, onChange }) 
                       onChange={(e) => setFormData({ ...formData, search: e.target.value })}
                       placeholder="Search for images"
                     />
-                    <PrimaryButton type="submit" className="bg-indigo-600" size="sm">
+                    <PrimaryButton type="button" onClick={()=>setSearchParams(formData.search)} className="bg-indigo-600" size="sm">
                       Search
                     </PrimaryButton>
-                  </form>
+                  </div>
                   {images ? (
                     <div className="grid grid-cols-4 gap-4">
                       {images.map((image) => (
