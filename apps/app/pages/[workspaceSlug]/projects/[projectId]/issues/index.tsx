@@ -16,12 +16,11 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 // types
-import type { UserAuth } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { PROJECT_DETAILS } from "constants/fetch-keys";
 
-const ProjectIssues: NextPage<UserAuth> = (props) => {
+const ProjectIssues: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -57,7 +56,7 @@ const ProjectIssues: NextPage<UserAuth> = (props) => {
           </div>
         }
       >
-        <IssuesView userAuth={props} />
+        <IssuesView />
       </ProjectAuthorizationWrapper>
     </IssueViewContextProvider>
   );

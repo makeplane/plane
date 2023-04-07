@@ -42,7 +42,6 @@ const AppPostInstallation = ({
 };
 
 export async function getServerSideProps(context: any) {
-  console.log(context.query);
   return {
     props: context.query,
   };

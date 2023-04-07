@@ -9,7 +9,6 @@ import viewsService from "services/views.service";
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // contexts
 import { IssueViewContextProvider } from "contexts/issue-view.context";
-import { useProjectMyMembership } from "contexts/project-member.context";
 // components
 import { IssuesFilterView, IssuesView } from "components/core";
 // ui
@@ -26,8 +25,6 @@ import { PROJECT_DETAILS, VIEWS_LIST, VIEW_DETAILS } from "constants/fetch-keys"
 const SingleView: React.FC = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, viewId } = router.query;
-
-  const { memberRole } = useProjectMyMembership();
 
   const { data: activeProject } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
@@ -104,7 +101,7 @@ const SingleView: React.FC = () => {
           </div>
         }
       >
-        <IssuesView userAuth={memberRole} />
+        <IssuesView />
       </ProjectAuthorizationWrapper>
     </IssueViewContextProvider>
   );

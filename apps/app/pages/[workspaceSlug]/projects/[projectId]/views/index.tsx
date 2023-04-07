@@ -28,9 +28,8 @@ const ProjectViews: NextPage = () => {
   const [isCreateViewModalOpen, setIsCreateViewModalOpen] = useState(false);
   const [selectedView, setSelectedView] = useState<IView | null>(null);
 
-  const {
-    query: { workspaceSlug, projectId },
-  } = useRouter();
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
 
   const { data: activeProject } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,

@@ -15,8 +15,6 @@ import {
 // services
 import modulesService from "services/modules.service";
 import issuesService from "services/issues.service";
-// contexts
-import { useProjectMyMembership } from "contexts/project-member.context";
 // hooks
 import useToast from "hooks/use-toast";
 // layouts
@@ -48,8 +46,6 @@ const SingleModule: React.FC = () => {
 
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query;
-
-  const { memberRole } = useProjectMyMembership();
 
   const { setToastAlert } = useToast();
 
@@ -174,11 +170,7 @@ const SingleModule: React.FC = () => {
         {moduleIssues ? (
           moduleIssues.length > 0 ? (
             <div className={`h-full ${moduleSidebar ? "mr-[24rem]" : ""} duration-300`}>
-              <IssuesView
-                type="module"
-                userAuth={memberRole}
-                openIssuesListModal={openIssuesListModal}
-              />
+              <IssuesView type="module" openIssuesListModal={openIssuesListModal} />
             </div>
           ) : (
             <div
@@ -221,7 +213,6 @@ const SingleModule: React.FC = () => {
           module={moduleDetails}
           isOpen={moduleSidebar}
           moduleIssues={moduleIssues}
-          userAuth={memberRole}
         />
       </ProjectAuthorizationWrapper>
     </IssueViewContextProvider>

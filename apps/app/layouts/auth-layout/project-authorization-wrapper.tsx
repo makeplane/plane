@@ -61,7 +61,7 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
 
   const user = useUser();
 
-  const { memberDetails, loading, error, memberRole: memberType } = useProjectMyMembership();
+  const { loading, error, memberRole: memberType } = useProjectMyMembership();
 
   const settingsLayout = router.pathname.includes("/settings");
 

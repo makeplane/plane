@@ -17,8 +17,6 @@ import { CycleDetailsSidebar } from "components/cycles";
 import issuesService from "services/issues.service";
 import cycleServices from "services/cycles.service";
 import projectService from "services/project.service";
-// contexts
-import { useProjectMyMembership } from "contexts/project-member.context";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -42,8 +40,6 @@ const SingleCycle: React.FC = () => {
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
-
-  const { memberRole } = useProjectMyMembership();
 
   const { setToastAlert } = useToast();
 
@@ -167,7 +163,6 @@ const SingleCycle: React.FC = () => {
         <div className={`h-full ${cycleSidebar ? "mr-[24rem]" : ""} duration-300`}>
           <IssuesView
             type="cycle"
-            userAuth={memberRole}
             openIssuesListModal={openIssuesListModal}
             isCompleted={cycleStatus === "completed" ?? false}
           />

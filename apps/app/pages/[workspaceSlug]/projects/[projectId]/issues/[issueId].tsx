@@ -7,8 +7,6 @@ import useSWR, { mutate } from "swr";
 
 // react-hook-form
 import { useForm } from "react-hook-form";
-// contexts
-import { useProjectMyMembership } from "contexts/project-member.context";
 // services
 import issuesService from "services/issues.service";
 // layouts
@@ -50,8 +48,6 @@ const defaultValues = {
 const IssueDetailsPage: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
-
-  const { memberRole } = useProjectMyMembership();
 
   const { data: issueDetails, mutate: mutateIssueDetails } = useSWR<IIssue | undefined>(
     workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId as string) : null,
@@ -192,13 +188,9 @@ const IssueDetailsPage: NextPage = () => {
                   </CustomMenu>
                 </div>
               ) : null}
-              <IssueDescriptionForm
-                issue={issueDetails}
-                handleFormSubmit={submitChanges}
-                userAuth={memberRole}
-              />
+              <IssueDescriptionForm issue={issueDetails} handleFormSubmit={submitChanges} />
               <div className="mt-2 space-y-2">
-                <SubIssuesList parentIssue={issueDetails} userAuth={memberRole} />
+                <SubIssuesList parentIssue={issueDetails} />
               </div>
             </div>
             <div className="flex flex-col gap-3 py-3">
@@ -220,7 +212,6 @@ const IssueDetailsPage: NextPage = () => {
               issueDetail={issueDetails}
               submitChanges={submitChanges}
               watch={watch}
-              userAuth={memberRole}
             />
           </div>
         </div>
