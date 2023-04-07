@@ -4,15 +4,14 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import workspaceService from "services/workspace.service";
+import projectService from "services/project.service";
 // ui
 import { Avatar, CustomSearchSelect, CustomSelect, Input } from "components/ui";
 // types
 import { IGithubRepoCollaborator } from "types";
 import { IUserDetails } from "./root";
 // fetch-keys
-import { PROJECT_MEMBERS, WORKSPACE_MEMBERS } from "constants/fetch-keys";
-import projectService from "services/project.service";
+import { PROJECT_MEMBERS } from "constants/fetch-keys";
 
 type Props = {
   collaborator: IGithubRepoCollaborator;
