@@ -138,8 +138,6 @@ const EmojiIconPicker: React.FC<Props> = ({
                     <div className="relative">
                       <div className="pb-2 px-1 flex items-center justify-between">
                         {[
-                          // "#D687FF",
-                          // "#F7AE59",
                           "#FF6B00",
                           "#8CC1FF",
                           "#FCBE1D",
