@@ -7,7 +7,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "plane.settings.production")
 
 ri = redis_instance()
 
-app = Celery("plane", broker=ri, backend=ri)
+app = Celery("plane")
 
 # Using a string here means the worker will not have to
 # pickle the object when using Windows.
