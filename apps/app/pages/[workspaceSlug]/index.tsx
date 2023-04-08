@@ -32,6 +32,8 @@ const WorkspacePage: NextPage = () => {
   );
 
   useEffect(() => {
+    if (!workspaceSlug) return;
+
     mutate(USER_WORKSPACE_DASHBOARD(workspaceSlug as string));
   }, [month, workspaceSlug]);
 
