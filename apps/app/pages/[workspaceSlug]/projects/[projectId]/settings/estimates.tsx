@@ -6,13 +6,12 @@ import useSWR, { mutate } from "swr";
 
 // services
 import estimatesService from "services/estimates.service";
-import projectService from "services/project.service";
-
+// hooks
+import useProjectDetails from "hooks/use-project-details";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // components
 import { CreateUpdateEstimateModal, SingleEstimate } from "components/estimates";
-
 //hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -21,10 +20,10 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 // types
-import { IEstimate, IProject } from "types";
+import { IEstimate } from "types";
 import type { NextPage } from "next";
 // fetch-keys
-import { ESTIMATES_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
+import { ESTIMATES_LIST } from "constants/fetch-keys";
 
 const EstimatesSettings: NextPage = () => {
   const [estimateFormOpen, setEstimateFormOpen] = useState(false);
@@ -32,14 +31,14 @@ const EstimatesSettings: NextPage = () => {
   const [isUpdating, setIsUpdating] = useState(false);
   const [estimateToUpdate, setEstimateToUpdate] = useState<IEstimate | undefined>();
 
-  const [activeEstimate, setActiveEstimate] = useState<IEstimate | null>(null);
-
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
   const { setToastAlert } = useToast();
 
-  const scollToRef = useRef<HTMLDivElement>(null);
+  const { projectDetails } = useProjectDetails();
+
+  const scrollToRef = useRef<HTMLDivElement>(null);
 
   const { data: estimatesList } = useSWR<IEstimate[]>(
     workspaceSlug && projectId ? ESTIMATES_LIST(projectId as string) : null,
@@ -73,13 +72,6 @@ const EstimatesSettings: NextPage = () => {
         });
       });
   };
-
-  const { data: projectDetails } = useSWR<IProject>(
-    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
-      : null
-  );
 
   return (
     <>
@@ -122,7 +114,6 @@ const EstimatesSettings: NextPage = () => {
             </div>
           </div>
         </section>
-        <hr className="h-[1px] w-full mt-4" />
         {estimatesList && estimatesList.length > 0 && (
           <section className="mt-4 divide-y px-6 mb-8 rounded-xl border bg-white">
             <>
@@ -131,8 +122,6 @@ const EstimatesSettings: NextPage = () => {
                   <SingleEstimate
                     key={estimate.id}
                     estimate={estimate}
-                    activeEstimate={activeEstimate}
-                    setActiveEstimate={setActiveEstimate}
                     editEstimate={(estimate) => editEstimate(estimate)}
                     handleEstimateDelete={(estimateId) => removeEstimate(estimateId)}
                   />
