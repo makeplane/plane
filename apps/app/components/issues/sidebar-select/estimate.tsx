@@ -28,7 +28,7 @@ export const SidebarEstimateSelect: React.FC<Props> = ({ value, onChange, userAu
         <p>Estimate</p>
       </div>
       <div className="sm:basis-1/2">
-        <IssueEstimateSelect value={value} onChange={onChange} />
+        <IssueEstimateSelect chevron={true} value={value} onChange={onChange} />
       </div>
     </div>
   );

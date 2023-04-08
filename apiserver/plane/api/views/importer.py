@@ -65,12 +65,12 @@ class ServiceIssueImportSummaryEndpoint(BaseAPIView):
                 )
 
             if service == "jira":
-                project_name = request.data.get("project_name", "")
+                project_key = request.data.get("project_key", "")
                 api_token = request.data.get("api_token", "")
                 email = request.data.get("email", "")
                 cloud_hostname = request.data.get("cloud_hostname", "")
                 if (
-                    not bool(project_name)
+                    not bool(project_key)
                     or not bool(api_token)
                     or not bool(email)
                     or not bool(cloud_hostname)
@@ -84,7 +84,7 @@ class ServiceIssueImportSummaryEndpoint(BaseAPIView):
 
                 return Response(
                     jira_project_issue_summary(
-                        email, api_token, project_name, cloud_hostname
+                        email, api_token, project_key, cloud_hostname
                     ),
                     status=status.HTTP_200_OK,
                 )
@@ -213,11 +213,27 @@ class ImportServiceEndpoint(BaseAPIView):
 
     def get(self, request, slug):
         try:
-            imports = Importer.objects.filter(workspace__slug=slug).order_by(
-                "-created_at"
+            imports = (
+                Importer.objects.filter(workspace__slug=slug)
+                .order_by("-created_at")
+                .select_related("initiated_by", "project", "workspace")
             )
             serializer = ImporterSerializer(imports, many=True)
             return Response(serializer.data)
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def delete(self, request, slug, service, pk):
+        try:
+            importer = Importer.objects.filter(
+                pk=pk, service=service, workspace__slug=slug
+            )
+            importer.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
         except Exception as e:
             capture_exception(e)
             return Response(

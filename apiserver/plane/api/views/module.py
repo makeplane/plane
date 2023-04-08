@@ -286,21 +286,19 @@ class ModuleIssueViewSet(BaseViewSet):
 
             # Capture Issue Activity
             issue_activity.delay(
-                {
-                    "type": "issue.activity",
-                    "requested_data": json.dumps({"modules_list": issues}),
-                    "actor_id": str(self.request.user.id),
-                    "issue_id": str(self.kwargs.get("pk", None)),
-                    "project_id": str(self.kwargs.get("project_id", None)),
-                    "current_instance": json.dumps(
-                        {
-                            "updated_module_issues": update_module_issue_activity,
-                            "created_module_issues": serializers.serialize(
-                                "json", record_to_create
-                            ),
-                        }
-                    ),
-                },
+                type="issue.activity.updated",
+                requested_data=json.dumps({"modules_list": issues}),
+                actor_id=str(self.request.user.id),
+                issue_id=str(self.kwargs.get("pk", None)),
+                project_id=str(self.kwargs.get("project_id", None)),
+                current_instance=json.dumps(
+                    {
+                        "updated_module_issues": update_module_issue_activity,
+                        "created_module_issues": serializers.serialize(
+                            "json", record_to_create
+                        ),
+                    }
+                ),
             )
 
             return Response(

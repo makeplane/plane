@@ -11,7 +11,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.hashers import make_password
 
 # Third Party imports
-from django_rq import job
+from celery import shared_task
 from sentry_sdk import capture_exception
 
 # Module imports
@@ -29,7 +29,7 @@ from plane.db.models import (
 from .workspace_invitation_task import workspace_invitation
 
 
-@job("default")
+@shared_task
 def service_importer(service, importer_id):
     try:
         importer = Importer.objects.get(pk=importer_id)

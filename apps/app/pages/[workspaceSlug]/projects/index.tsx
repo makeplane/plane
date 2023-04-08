@@ -1,15 +1,16 @@
 import React, { useState } from "react";
+
 import { useRouter } from "next/router";
+
 import { mutate } from "swr";
-// lib
-import { requiredAuth } from "lib/auth";
+
 // services
 import projectService from "services/project.service";
 // hooks
 import useProjects from "hooks/use-projects";
 import useWorkspaces from "hooks/use-workspaces";
 // layouts
-import AppLayout from "layouts/app-layout";
+import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 // components
 import { JoinProjectModal } from "components/project/join-project-modal";
 import { DeleteProjectModal, SingleProjectCard } from "components/project";
@@ -19,7 +20,7 @@ import { Breadcrumbs, BreadcrumbItem } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 // types
-import type { GetServerSidePropsContext, NextPage } from "next";
+import type { NextPage } from "next";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 // image
@@ -37,7 +38,7 @@ const ProjectsPage: NextPage = () => {
   const [selectedProjectToJoin, setSelectedProjectToJoin] = useState<string | null>(null);
 
   return (
-    <AppLayout
+    <WorkspaceAuthorizationLayout
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem title={`${activeWorkspace?.name ?? "Workspace"} Projects`} />
@@ -113,29 +114,8 @@ const ProjectsPage: NextPage = () => {
           <Loader.Item height="100px" />
         </Loader>
       )}
-    </AppLayout>
+    </WorkspaceAuthorizationLayout>
   );
-};
-
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const user = await requiredAuth(ctx.req?.headers.cookie);
-
-  const redirectAfterSignIn = ctx.resolvedUrl;
-
-  if (!user) {
-    return {
-      redirect: {
-        destination: `/signin?next=${redirectAfterSignIn}`,
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {
-      user,
-    },
-  };
 };
 
 export default ProjectsPage;

@@ -7,7 +7,7 @@ from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Third Party imports
-from django_rq import job
+from celery import shared_task
 from sentry_sdk import capture_exception
 
 # Module imports
@@ -136,6 +136,7 @@ def track_priority(
                     comment=f"{actor.email} updated the priority to {requested_data.get('priority')}",
                 )
             )
+    print(issue_activities)
 
 
 # Track chnages in state of the issue
@@ -651,6 +652,18 @@ def update_issue_activity(
         "cycles_list": track_cycles,
         "modules_list": track_modules,
     }
+
+    requested_data = (
+        json.loads(requested_data)
+        if requested_data is not None
+        else None
+    )
+    current_instance = (
+        json.loads(current_instance)
+        if current_instance is not None
+        else None
+    )
+
     for key in requested_data:
         func = ISSUE_ACTIVITY_MAPPER.get(key, None)
         if func is not None:
@@ -737,27 +750,14 @@ def delete_comment_activity(
 
 
 # Receive message from room group
-@job("default")
-def issue_activity(event):
+@shared_task
+def issue_activity(
+    type, requested_data, current_instance, issue_id, actor_id, project_id
+):
     try:
         issue_activities = []
-        type = event.get("type")
-        requested_data = (
-            json.loads(event.get("requested_data"))
-            if event.get("current_instance") is not None
-            else None
-        )
-        current_instance = (
-            json.loads(event.get("current_instance"))
-            if event.get("current_instance") is not None
-            else None
-        )
-        issue_id = event.get("issue_id", None)
-        actor_id = event.get("actor_id")
-        project_id = event.get("project_id")
 
         actor = User.objects.get(pk=actor_id)
-
         project = Project.objects.get(pk=project_id)
 
         ACTIVITY_MAPPER = {
@@ -799,5 +799,6 @@ def issue_activity(event):
                     )
         return
     except Exception as e:
+        print(e)
         capture_exception(e)
         return

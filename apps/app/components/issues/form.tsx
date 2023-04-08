@@ -405,7 +405,7 @@ export const IssueForm: FC<IssueFormProps> = ({
                     control={control}
                     name="estimate_point"
                     render={({ field: { value, onChange } }) => (
-                      <IssueEstimateSelect value={value} onChange={onChange} />
+                      <IssueEstimateSelect chevron={false} value={value} onChange={onChange} />
                     )}
                   />
                 </div>

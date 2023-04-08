@@ -1,6 +1,8 @@
 import {
+  AudioIcon,
   CssIcon,
   CsvIcon,
+  DefaultIcon,
   DocIcon,
   FigmaIcon,
   HtmlIcon,
@@ -11,6 +13,7 @@ import {
   SheetIcon,
   SvgIcon,
   TxtIcon,
+  VideoIcon,
 } from "components/icons";
 
 export const getFileIcon = (fileType: string) => {
@@ -39,8 +42,18 @@ export const getFileIcon = (fileType: string) => {
       return <TxtIcon height={28} width={28} />;
     case "svg":
       return <SvgIcon height={28} width={28} />;
+    case "mp3":
+      return <AudioIcon height={28} width={28} />;
+    case "wav":
+      return <AudioIcon height={28} width={28} />;
+    case "mp4":
+      return <VideoIcon height={28} width={28} />;
+    case "wmv":
+      return <VideoIcon height={28} width={28} />;
+    case "mkv":
+      return <VideoIcon height={28} width={28} />;
 
     default:
-      return <DocIcon height={28} width={28}/>;
+      return <DefaultIcon height={28} width={28} />;
   }
 };

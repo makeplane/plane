@@ -7,16 +7,13 @@ import useSWR, { mutate } from "swr";
 
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
-import { IProject, IWorkspace, UserAuth } from "types";
-// lib
-import { requiredAdmin } from "lib/auth";
 // layouts
-import AppLayout from "layouts/app-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // services
 import projectService from "services/project.service";
 // components
 import { DeleteProjectModal } from "components/project";
-import { ImageUploadModal } from "components/core";
+import { ImagePickerPopover } from "components/core";
 import EmojiIconPicker from "components/emoji-icon-picker";
 // hooks
 import useToast from "hooks/use-toast";
@@ -31,7 +28,8 @@ import {
 } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // types
-import type { NextPage, GetServerSidePropsContext } from "next";
+import { IProject, IWorkspace } from "types";
+import type { NextPage } from "next";
 // fetch-keys
 import { PROJECTS_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
 // constants
@@ -44,10 +42,8 @@ const defaultValues: Partial<IProject> = {
   network: 0,
 };
 
-const GeneralSettings: NextPage<UserAuth> = ({ isMember, isOwner, isViewer, isGuest }) => {
+const GeneralSettings: NextPage = () => {
   const [selectProject, setSelectedProject] = useState<string | null>(null);
-  const [isImageUploading, setIsImageUploading] = useState(false);
-  const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
 
   const { setToastAlert } = useToast();
 
@@ -136,8 +132,7 @@ const GeneralSettings: NextPage<UserAuth> = ({ isMember, isOwner, isViewer, isGu
   };
 
   return (
-    <AppLayout
-      memberType={{ isMember, isOwner, isViewer, isGuest }}
+    <ProjectAuthorizationWrapper
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem
@@ -147,7 +142,6 @@ const GeneralSettings: NextPage<UserAuth> = ({ isMember, isOwner, isViewer, isGu
           <BreadcrumbItem title="General Settings" />
         </Breadcrumbs>
       }
-      settingsLayout
     >
       <DeleteProjectModal
         data={projectDetails ?? null}
@@ -156,17 +150,6 @@ const GeneralSettings: NextPage<UserAuth> = ({ isMember, isOwner, isViewer, isGu
         onSuccess={() => {
           router.push(`/${workspaceSlug}/projects`);
         }}
-      />
-      <ImageUploadModal
-        isOpen={isImageUploadModalOpen}
-        onClose={() => setIsImageUploadModalOpen(false)}
-        onSuccess={(imageUrl) => {
-          setIsImageUploading(true);
-          setValue("cover_image", imageUrl);
-          setIsImageUploadModalOpen(false);
-          handleSubmit(onSubmit)().then(() => setIsImageUploading(false));
-        }}
-        value={watch("cover_image")}
       />
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="space-y-8 sm:space-y-12">
@@ -241,23 +224,23 @@ const GeneralSettings: NextPage<UserAuth> = ({ isMember, isOwner, isViewer, isGu
             </div>
             <div className="col-span-12 sm:col-span-6">
               {watch("cover_image") ? (
-                <div className="w-32 h-32 rounded border p-1">
+                <div className="w-full h-32 rounded border p-1">
                   <div className="w-full h-full relative rounded">
                     <Image
                       src={watch("cover_image")!}
                       alt={projectDetails?.name ?? "Cover image"}
                       objectFit="cover"
                       layout="fill"
+                      className="rounded"
                     />
-                    <div className="absolute bottom-1 w-full flex justify-center">
-                      <button
-                        type="button"
-                        disabled={isImageUploading}
-                        onClick={() => setIsImageUploadModalOpen(true)}
-                        className="bg-white rounded text-sm border-2 border-gray-300 text-gray-400 p-1 py-0.5"
-                      >
-                        {isImageUploading ? "Uploading..." : "Change Cover"}
-                      </button>
+                    <div className="absolute bottom-0 w-full flex justify-end">
+                      <ImagePickerPopover
+                        label={"Change cover"}
+                        onChange={(imageUrl) => {
+                          setValue("cover_image", imageUrl);
+                        }}
+                        value={watch("cover_image")}
+                      />
                     </div>
                   </div>
                 </div>
@@ -377,24 +360,8 @@ const GeneralSettings: NextPage<UserAuth> = ({ isMember, isOwner, isViewer, isGu
           </div>
         </div>
       </form>
-    </AppLayout>
+    </ProjectAuthorizationWrapper>
   );
-};
-
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const projectId = ctx.query.projectId as string;
-  const workspaceSlug = ctx.query.workspaceSlug as string;
-
-  const memberDetail = await requiredAdmin(workspaceSlug, projectId, ctx.req?.headers.cookie);
-
-  return {
-    props: {
-      isOwner: memberDetail?.role === 20,
-      isMember: memberDetail?.role === 15,
-      isViewer: memberDetail?.role === 10,
-      isGuest: memberDetail?.role === 5,
-    },
-  };
 };
 
 export default GeneralSettings;
