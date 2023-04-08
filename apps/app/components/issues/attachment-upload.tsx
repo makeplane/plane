@@ -38,6 +38,7 @@ export const IssueAttachmentUpload = () => {
       })
     );
     setIsLoading(true);
+
     issuesService
       .uploadIssueAttachment(
         workspaceSlug as string,
@@ -46,7 +47,11 @@ export const IssueAttachmentUpload = () => {
         formData
       )
       .then((res) => {
-        mutate<IIssueAttachment[]>(ISSUE_ATTACHMENTS(issueId as string));
+        mutate<IIssueAttachment[]>(
+          ISSUE_ATTACHMENTS(issueId as string),
+          (prevData) => [res, ...(prevData ?? [])],
+          false
+        );
         setToastAlert({
           type: "success",
           title: "Success!",
