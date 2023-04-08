@@ -74,6 +74,7 @@ export const IssueAttachmentUpload = () => {
     onDrop,
     maxSize: maxFileSize,
     multiple: false,
+    disabled: isLoading
   });
 
   const fileError =
