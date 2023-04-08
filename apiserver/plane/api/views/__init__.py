@@ -135,5 +135,5 @@ from .estimate import (
     EstimateViewSet,
     EstimatePointViewSet,
     ProjectEstimatePointEndpoint,
-    BulkCreateEstimatePointEndpoint,
+    BulkEstimatePointEndpoint,
 )
