@@ -3,6 +3,8 @@ import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 
+import { mutate } from "swr";
+
 // services
 import userService from "services/user.service";
 // hooks
@@ -20,6 +22,8 @@ import { ONBOARDING_CARDS } from "constants/workspace";
 import Logo from "public/onboarding/logo.svg";
 // types
 import type { NextPage } from "next";
+// fetch-keys
+import { CURRENT_USER } from "constants/fetch-keys";
 
 const Onboarding: NextPage = () => {
   const [step, setStep] = useState(1);
@@ -72,6 +76,7 @@ const Onboarding: NextPage = () => {
                         userService
                           .updateUserOnBoard({ userRole })
                           .then(() => {
+                            mutate(CURRENT_USER);
                             router.push("/");
                           })
                           .catch((err) => {

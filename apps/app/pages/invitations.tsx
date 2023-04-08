@@ -22,6 +22,8 @@ import { CubeIcon, PlusIcon } from "@heroicons/react/24/outline";
 // types
 import type { NextPage } from "next";
 import type { IWorkspaceMemberInvitation } from "types";
+// fetch-keys
+import { USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 
 const OnBoard: NextPage = () => {
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
@@ -32,9 +34,8 @@ const OnBoard: NextPage = () => {
 
   const { setToastAlert } = useToast();
 
-  const { data: invitations, mutate: mutateInvitations } = useSWR(
-    "USER_WORKSPACE_INVITATIONS",
-    () => workspaceService.userWorkspaceInvitations()
+  const { data: invitations, mutate: mutateInvitations } = useSWR(USER_WORKSPACE_INVITATIONS, () =>
+    workspaceService.userWorkspaceInvitations()
   );
 
   const { data: workspaces, mutate: mutateWorkspaces } = useSWR("USER_WORKSPACES", () =>
