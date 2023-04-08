@@ -1,8 +1,13 @@
+import { useRouter } from "next/router";
+
 import useSWR from "swr";
 
-import { CURRENT_USER } from "constants/fetch-keys";
+// services
 import userService from "services/user.service";
-import { useRouter } from "next/router";
+// ui
+import { Spinner } from "components/ui";
+// fetch-keys
+import { CURRENT_USER } from "constants/fetch-keys";
 
 type Props = {
   children: React.ReactNode;
@@ -14,7 +19,14 @@ export const UserAuthorizationLayout: React.FC<Props> = ({ children }) => {
   const { data: currentUser, error } = useSWR(CURRENT_USER, () => userService.currentUser());
 
   if (!currentUser && !error) {
-    return <div className="grid place-items-center h-screen">Loading...</div>;
+    return (
+      <div className="h-screen grid place-items-center p-4">
+        <div className="flex flex-col items-center gap-3 text-center">
+          <h3 className="text-xl">Loading your profile...</h3>
+          <Spinner />
+        </div>
+      </div>
+    );
   }
 
   if (error?.status === 401) {

@@ -12,15 +12,15 @@ import Container from "layouts/container";
 import AppSidebar from "layouts/app-layout/app-sidebar";
 import AppHeader from "layouts/app-layout/app-header";
 import SettingsNavbar from "layouts/settings-navbar";
+import { UserAuthorizationLayout } from "./user-authorization-wrapper";
 // components
 import { NotAuthorizedView, NotAWorkspaceMember } from "components/auth-screens";
 import { CommandPalette } from "components/command-palette";
 // icons
-import { PrimaryButton } from "components/ui";
+import { PrimaryButton, Spinner } from "components/ui";
 import { LayerDiagonalIcon } from "components/icons";
 // fetch-keys
 import { WORKSPACE_MEMBERS_ME } from "constants/fetch-keys";
-import { UserAuthorizationLayout } from "./user-authorization-wrapper";
 
 type Meta = {
   title?: string | null;
@@ -69,10 +69,12 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
   );
 
   if (!workspaceMemberMe && !error)
-    // TODO: show good loading UI
     return (
-      <div className="container h-screen flex justify-center items-center p-4 text-2xl font-semibold">
-        <p>Loading...</p>
+      <div className="h-screen grid place-items-center p-4">
+        <div className="flex flex-col items-center gap-3 text-center">
+          <h3 className="text-xl">Setting up your workspace...</h3>
+          <Spinner />
+        </div>
       </div>
     );
 
