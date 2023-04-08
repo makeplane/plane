@@ -10,12 +10,11 @@ import Container from "layouts/container";
 import AppHeader from "layouts/app-layout/app-header";
 import AppSidebar from "layouts/app-layout/app-sidebar";
 import SettingsNavbar from "layouts/settings-navbar";
-import { WorkspaceAuthorizationLayout } from "./workspace-authorization-wrapper";
 // components
 import { NotAuthorizedView, JoinProject } from "components/auth-screens";
 import { CommandPalette } from "components/command-palette";
 // ui
-import { PrimaryButton } from "components/ui";
+import { PrimaryButton, Spinner } from "components/ui";
 // icons
 import { LayerDiagonalIcon } from "components/icons";
 
@@ -63,82 +62,79 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
   const settingsLayout = router.pathname.includes("/settings");
 
   return (
-    <WorkspaceAuthorizationLayout>
-      <Container meta={meta}>
-        <CommandPalette />
-        <div className="flex h-screen w-full overflow-x-hidden">
-          <AppSidebar toggleSidebar={toggleSidebar} setToggleSidebar={setToggleSidebar} />
-          {loading ? (
-            <div className="container h-screen flex justify-center items-center p-4 text-2xl font-semibold">
-              <p>Loading...</p>
+    <Container meta={meta}>
+      <CommandPalette />
+      <div className="flex h-screen w-full overflow-x-hidden">
+        <AppSidebar toggleSidebar={toggleSidebar} setToggleSidebar={setToggleSidebar} />
+        {loading ? (
+          <div className="h-full w-full grid place-items-center p-4">
+            <div className="flex flex-col items-center gap-3 text-center">
+              <h3 className="text-xl">Setting up your project...</h3>
+              <Spinner />
             </div>
-          ) : error?.status === 401 || error?.status === 403 ? (
-            <JoinProject />
-          ) : error?.status === 404 ? (
-            <div className="container h-screen grid place-items-center">
-              <div className="text-center space-y-4">
-                <p className="text-2xl font-semibold">No such project exist. Create one?</p>
-                <PrimaryButton
-                  onClick={() => {
-                    const e = new KeyboardEvent("keydown", { key: "p" });
-                    document.dispatchEvent(e);
-                  }}
-                >
-                  Create project
-                </PrimaryButton>
-              </div>
-            </div>
-          ) : settingsLayout && (memberType?.isGuest || memberType?.isViewer) ? (
-            <NotAuthorizedView
-              actionButton={
-                <Link href={`/${workspaceSlug}/projects/${projectId}/issues`}>
-                  <a>
-                    <PrimaryButton className="flex items-center gap-1">
-                      <LayerDiagonalIcon height={16} width={16} color="white" /> Go to issues
-                    </PrimaryButton>
-                  </a>
-                </Link>
-              }
-              type="project"
-            />
-          ) : (
-            <main className="flex h-screen w-full min-w-0 flex-col overflow-y-auto">
-              {!noHeader && (
-                <AppHeader
-                  breadcrumbs={breadcrumbs}
-                  left={left}
-                  right={right}
-                  setToggleSidebar={setToggleSidebar}
-                />
-              )}
-              <div
-                className={`flex w-full flex-grow flex-col ${
-                  noPadding ? "" : settingsLayout ? "p-8 lg:px-28" : "p-8"
-                } ${
-                  bg === "primary"
-                    ? "bg-primary"
-                    : bg === "secondary"
-                    ? "bg-secondary"
-                    : "bg-primary"
-                }`}
+          </div>
+        ) : error?.status === 401 || error?.status === 403 ? (
+          <JoinProject />
+        ) : error?.status === 404 ? (
+          <div className="container h-screen grid place-items-center">
+            <div className="text-center space-y-4">
+              <p className="text-2xl font-semibold">No such project exist. Create one?</p>
+              <PrimaryButton
+                onClick={() => {
+                  const e = new KeyboardEvent("keydown", { key: "p" });
+                  document.dispatchEvent(e);
+                }}
               >
-                {settingsLayout && (
-                  <div className="mb-12 space-y-6">
-                    <div>
-                      <h3 className="text-3xl font-semibold">Project Settings</h3>
-                      <p className="mt-1 text-gray-600">
-                        This information will be displayed to every member of the project.
-                      </p>
-                    </div>
-                    <SettingsNavbar />
+                Create project
+              </PrimaryButton>
+            </div>
+          </div>
+        ) : settingsLayout && (memberType?.isGuest || memberType?.isViewer) ? (
+          <NotAuthorizedView
+            actionButton={
+              <Link href={`/${workspaceSlug}/projects/${projectId}/issues`}>
+                <a>
+                  <PrimaryButton className="flex items-center gap-1">
+                    <LayerDiagonalIcon height={16} width={16} color="white" /> Go to issues
+                  </PrimaryButton>
+                </a>
+              </Link>
+            }
+            type="project"
+          />
+        ) : (
+          <main className="flex h-screen w-full min-w-0 flex-col overflow-y-auto">
+            {!noHeader && (
+              <AppHeader
+                breadcrumbs={breadcrumbs}
+                left={left}
+                right={right}
+                setToggleSidebar={setToggleSidebar}
+              />
+            )}
+            <div
+              className={`flex w-full flex-grow flex-col ${
+                noPadding ? "" : settingsLayout ? "p-8 lg:px-28" : "p-8"
+              } ${
+                bg === "primary" ? "bg-primary" : bg === "secondary" ? "bg-secondary" : "bg-primary"
+              }`}
+            >
+              {settingsLayout && (
+                <div className="mb-12 space-y-6">
+                  <div>
+                    <h3 className="text-3xl font-semibold">Project Settings</h3>
+                    <p className="mt-1 text-gray-600">
+                      This information will be displayed to every member of the project.
+                    </p>
                   </div>
-                )}
-                {children}
-              </div>
-            </main>
-          )}
-        </div>
-      </Container>
-    </WorkspaceAuthorizationLayout>
+                  <SettingsNavbar />
+                </div>
+              )}
+              {children}
+            </div>
+          </main>
+        )}
+      </div>
+    </Container>
   );
 };
