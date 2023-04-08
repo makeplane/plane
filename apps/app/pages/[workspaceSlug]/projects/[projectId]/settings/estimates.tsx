@@ -124,7 +124,7 @@ const EstimatesSettings: NextPage = () => {
         </section>
         <hr className="h-[1px] w-full mt-4" />
         {estimatesList && estimatesList.length > 0 && (
-          <section className="mt-4 divide-y px-6 py-4 mb-8 rounded-xl border bg-white">
+          <section className="mt-4 divide-y px-6 mb-8 rounded-xl border bg-white">
             <>
               {estimatesList ? (
                 estimatesList.map((estimate) => (

@@ -83,7 +83,7 @@ export const SingleEstimate: React.FC<Props> = ({
         estimate={estimate}
         onClose={() => setIsEstimatePointsModalOpen(false)}
       />
-      <div className="gap-2 space-y-3 bg-white">
+      <div className="gap-2 space-y-3 my-3 bg-white">
         <div className="flex justify-between items-center">
           <div className="items-start">
             <h6 className="font-medium text-base w-[40vw] truncate">{estimate.name}</h6>
@@ -129,7 +129,7 @@ export const SingleEstimate: React.FC<Props> = ({
           </div>
         </div>
         {estimatePoints && estimatePoints.length > 0 ? (
-          <div className="flex gap-2 mt-2">
+          <div className="flex gap-2">
             {estimatePoints.length > 0 && "Estimate points ("}
             {estimatePoints.map((point, i) => (
               <h6 key={point.id}>
