@@ -1,5 +1,6 @@
 export * from "./comment";
 export * from "./sidebar-select";
+export * from "./view-select";
 export * from "./activity";
 export * from "./delete-issue-modal";
 export * from "./description-form";

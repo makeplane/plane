@@ -21,9 +21,10 @@ import useToast from "hooks/use-toast";
 import {
   ViewAssigneeSelect,
   ViewDueDateSelect,
+  ViewEstimateSelect,
   ViewPrioritySelect,
   ViewStateSelect,
-} from "components/issues/view-select";
+} from "components/issues";
 // ui
 import { ContextMenu, CustomMenu } from "components/ui";
 // icons
@@ -48,6 +49,7 @@ import {
   MODULE_ISSUES_WITH_PARAMS,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
 } from "constants/fetch-keys";
+import useEstimateOption from "hooks/use-estimate-option";
 
 type Props = {
   type?: string;
@@ -89,6 +91,8 @@ export const SingleBoardIssue: React.FC<Props> = ({
   const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
 
   const { orderBy, params } = useIssuesView();
+
+  const { estimateValue } = useEstimateOption(issue.estimate_point);
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
@@ -339,6 +343,14 @@ export const SingleBoardIssue: React.FC<Props> = ({
                 partialUpdateIssue={partialUpdateIssue}
                 isNotAllowed={isNotAllowed}
                 tooltipPosition="left"
+                selfPositioned
+              />
+            )}
+            {properties.estimate && (
+              <ViewEstimateSelect
+                issue={issue}
+                partialUpdateIssue={partialUpdateIssue}
+                isNotAllowed={isNotAllowed}
                 selfPositioned
               />
             )}
