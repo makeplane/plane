@@ -12,6 +12,7 @@ interface IGithuPostInstallationProps {
   provider: string;
 }
 
+// TODO:Change getServerSideProps to router.query
 const AppPostInstallation = ({
   installation_id,
   setup_action,
