@@ -1,9 +1,11 @@
 import os
 from celery import Celery
-from django.conf import settings
+from plane.settings.redis import redis_instance
 
 # Set the default Django settings module for the 'celery' program.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "plane.settings.production")
+
+ri = redis_instance()
 
 app = Celery("plane")
 

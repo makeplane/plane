@@ -136,6 +136,7 @@ def track_priority(
                     comment=f"{actor.email} updated the priority to {requested_data.get('priority')}",
                 )
             )
+    print(issue_activities)
 
 
 # Track chnages in state of the issue
@@ -651,6 +652,18 @@ def update_issue_activity(
         "cycles_list": track_cycles,
         "modules_list": track_modules,
     }
+
+    requested_data = (
+        json.loads(requested_data)
+        if requested_data is not None
+        else None
+    )
+    current_instance = (
+        json.loads(current_instance)
+        if current_instance is not None
+        else None
+    )
+
     for key in requested_data:
         func = ISSUE_ACTIVITY_MAPPER.get(key, None)
         if func is not None:
@@ -786,5 +799,6 @@ def issue_activity(
                     )
         return
     except Exception as e:
+        print(e)
         capture_exception(e)
         return
