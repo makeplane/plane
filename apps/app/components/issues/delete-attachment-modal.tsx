@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 import { useRouter } from "next/router";
 
@@ -28,8 +28,6 @@ type Props = {
 };
 
 export const DeleteAttachmentModal: React.FC<Props> = ({ isOpen, setIsOpen, data }) => {
-  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
-
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
@@ -37,15 +35,16 @@ export const DeleteAttachmentModal: React.FC<Props> = ({ isOpen, setIsOpen, data
 
   const handleClose = () => {
     setIsOpen(false);
-    setIsDeleteLoading(false);
   };
 
   const handleDeletion = async (assetId: string) => {
-    setIsDeleteLoading(true);
-
     if (!workspaceSlug || !projectId || !data) return;
 
-    mutate<IIssueAttachment[]>(ISSUE_ATTACHMENTS(issueId as string));
+    mutate<IIssueAttachment[]>(
+      ISSUE_ATTACHMENTS(issueId as string),
+      (prevData) => (prevData ?? [])?.filter((p) => p.id !== assetId),
+      false
+    );
 
     await issuesService
       .deleteIssueAttachment(
@@ -54,22 +53,12 @@ export const DeleteAttachmentModal: React.FC<Props> = ({ isOpen, setIsOpen, data
         issueId as string,
         assetId as string
       )
-      .then((res) => {
-        mutate(ISSUE_ATTACHMENTS(issueId as string));
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "File removed successfully.",
-        });
-        handleClose();
-      })
-      .catch((err) => {
+      .catch(() => {
         setToastAlert({
           type: "error",
           title: "error!",
           message: "Something went wrong please try again.",
         });
-        setIsDeleteLoading(false);
       });
   };
 
@@ -129,8 +118,13 @@ export const DeleteAttachmentModal: React.FC<Props> = ({ isOpen, setIsOpen, data
                   </div>
                   <div className="flex justify-end gap-2 bg-gray-50 p-4 sm:px-6">
                     <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                    <DangerButton onClick={() => handleDeletion(data.id)} loading={isDeleteLoading}>
-                      {isDeleteLoading ? "Deleting..." : "Delete"}
+                    <DangerButton
+                      onClick={() => {
+                        handleDeletion(data.id);
+                        handleClose();
+                      }}
+                    >
+                      Delete
                     </DangerButton>
                   </div>
                 </Dialog.Panel>
