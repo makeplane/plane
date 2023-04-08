@@ -15,6 +15,8 @@ import useToast from "hooks/use-toast";
 // services
 import issuesService from "services/issues.service";
 import modulesService from "services/modules.service";
+// contexts
+import { useProjectMyMembership } from "contexts/project-member.context";
 // components
 import { LinkModal, LinksList } from "components/core";
 import {
@@ -45,7 +47,7 @@ import {
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import type { ICycle, IIssue, IIssueLabels, IIssueLink, IModule, UserAuth } from "types";
+import type { ICycle, IIssue, IIssueLabels, IIssueLink, IModule } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS, PROJECT_ISSUES_LIST, ISSUE_DETAILS } from "constants/fetch-keys";
 
@@ -54,7 +56,6 @@ type Props = {
   submitChanges: (formData: Partial<IIssue>) => void;
   issueDetail: IIssue | undefined;
   watch: UseFormWatch<IIssue>;
-  userAuth: UserAuth;
 };
 
 const defaultValues: Partial<IIssueLabels> = {
@@ -67,7 +68,6 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
   submitChanges,
   issueDetail,
   watch: watchIssue,
-  userAuth,
 }) => {
   const [createLabelForm, setCreateLabelForm] = useState(false);
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
@@ -75,6 +75,8 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
 
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
+
+  const { memberRole } = useProjectMyMembership();
 
   const { setToastAlert } = useToast();
 
@@ -213,7 +215,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
     reset();
   }, [createLabelForm, reset]);
 
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+  const isNotAllowed = memberRole.isGuest || memberRole.isViewer;
 
   return (
     <>
@@ -260,7 +262,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 <SidebarStateSelect
                   value={value}
                   onChange={(val: string) => submitChanges({ state: val })}
-                  userAuth={userAuth}
+                  userAuth={memberRole}
                 />
               )}
             />
@@ -271,7 +273,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 <SidebarAssigneeSelect
                   value={value}
                   onChange={(val: string[]) => submitChanges({ assignees_list: val })}
-                  userAuth={userAuth}
+                  userAuth={memberRole}
                 />
               )}
             />
@@ -282,7 +284,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 <SidebarPrioritySelect
                   value={value}
                   onChange={(val: string) => submitChanges({ priority: val })}
-                  userAuth={userAuth}
+                  userAuth={memberRole}
                 />
               )}
             />
@@ -293,7 +295,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 <SidebarEstimateSelect
                   value={value}
                   onChange={(val: number) => submitChanges({ estimate_point: val })}
-                  userAuth={userAuth}
+                  userAuth={memberRole}
                 />
               )}
             />
@@ -327,19 +329,19 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                 )
               }
               watch={watchIssue}
-              userAuth={userAuth}
+              userAuth={memberRole}
             />
             <SidebarBlockerSelect
               submitChanges={submitChanges}
               issuesList={issues?.filter((i) => i.id !== issueDetail?.id) ?? []}
               watch={watchIssue}
-              userAuth={userAuth}
+              userAuth={memberRole}
             />
             <SidebarBlockedSelect
               submitChanges={submitChanges}
               issuesList={issues?.filter((i) => i.id !== issueDetail?.id) ?? []}
               watch={watchIssue}
-              userAuth={userAuth}
+              userAuth={memberRole}
             />
             <div className="flex flex-wrap items-center py-2">
               <div className="flex items-center gap-x-2 text-sm sm:basis-1/2">
@@ -369,12 +371,12 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
             <SidebarCycleSelect
               issueDetail={issueDetail}
               handleCycleChange={handleCycleChange}
-              userAuth={userAuth}
+              userAuth={memberRole}
             />
             <SidebarModuleSelect
               issueDetail={issueDetail}
               handleModuleChange={handleModuleChange}
-              userAuth={userAuth}
+              userAuth={memberRole}
             />
           </div>
         </div>
@@ -637,7 +639,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
               <LinksList
                 links={issueDetail.issue_link}
                 handleDeleteLink={handleDeleteLink}
-                userAuth={userAuth}
+                userAuth={memberRole}
               />
             ) : null}
           </div>

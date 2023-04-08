@@ -1,15 +1,11 @@
 import React, { useEffect, useState } from "react";
 
 import { useRouter } from "next/router";
+
 import useSWR from "swr";
-import { PlusIcon } from "@heroicons/react/24/outline";
-// image
-import emptyModule from "public/empty-state/empty-module.svg";
 
 // layouts
-import AppLayout from "layouts/app-layout";
-// lib
-import { requiredAdmin, requiredAuth } from "lib/auth";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // services
 import projectService from "services/project.service";
 import modulesService from "services/modules.service";
@@ -19,18 +15,21 @@ import { CreateUpdateModuleModal, SingleModuleCard } from "components/modules";
 import { EmptyState, Loader, PrimaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
+import { PlusIcon } from "@heroicons/react/24/outline";
+// images
+import emptyModule from "public/empty-state/empty-module.svg";
 // types
 import { IModule, SelectModuleType } from "types/modules";
-import { UserAuth } from "types";
-import type { NextPage, GetServerSidePropsContext } from "next";
+import type { NextPage } from "next";
 // fetch-keys
 import { MODULE_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
 
-const ProjectModules: NextPage<UserAuth> = (props) => {
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+const ProjectModules: NextPage = () => {
   const [selectedModule, setSelectedModule] = useState<SelectModuleType>();
   const [createUpdateModule, setCreateUpdateModule] = useState(false);
+
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
 
   const { data: activeProject } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
@@ -60,11 +59,10 @@ const ProjectModules: NextPage<UserAuth> = (props) => {
   }, [createUpdateModule]);
 
   return (
-    <AppLayout
+    <ProjectAuthorizationWrapper
       meta={{
         title: "Plane - Modules",
       }}
-      memberType={props}
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
@@ -124,37 +122,8 @@ const ProjectModules: NextPage<UserAuth> = (props) => {
           <Loader.Item height="100px" />
         </Loader>
       )}
-    </AppLayout>
+    </ProjectAuthorizationWrapper>
   );
-};
-
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const user = await requiredAuth(ctx.req?.headers.cookie);
-
-  const redirectAfterSignIn = ctx.resolvedUrl;
-
-  if (!user) {
-    return {
-      redirect: {
-        destination: `/signin?next=${redirectAfterSignIn}`,
-        permanent: false,
-      },
-    };
-  }
-
-  const projectId = ctx.query.projectId as string;
-  const workspaceSlug = ctx.query.workspaceSlug as string;
-
-  const memberDetail = await requiredAdmin(workspaceSlug, projectId, ctx.req?.headers.cookie);
-
-  return {
-    props: {
-      isOwner: memberDetail?.role === 20,
-      isMember: memberDetail?.role === 15,
-      isViewer: memberDetail?.role === 10,
-      isGuest: memberDetail?.role === 5,
-    },
-  };
 };
 
 export default ProjectModules;

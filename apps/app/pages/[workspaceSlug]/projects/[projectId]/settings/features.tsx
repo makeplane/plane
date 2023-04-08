@@ -7,10 +7,8 @@ import useSWR, { mutate } from "swr";
 // services
 import projectService from "services/project.service";
 import trackEventServices from "services/track-event.service";
-// lib
-import { requiredAdmin } from "lib/auth";
 // layouts
-import AppLayout from "layouts/app-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -20,12 +18,12 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import { ContrastIcon, PeopleGroupIcon, ViewListIcon } from "components/icons";
 import { DocumentTextIcon } from "@heroicons/react/24/outline";
 // types
-import { IProject, UserAuth } from "types";
-import type { NextPage, GetServerSidePropsContext } from "next";
+import { IProject } from "types";
+import type { NextPage } from "next";
 // fetch-keys
 import { PROJECTS_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
 
-const FeaturesSettings: NextPage<UserAuth> = (props) => {
+const FeaturesSettings: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -79,8 +77,7 @@ const FeaturesSettings: NextPage<UserAuth> = (props) => {
   };
 
   return (
-    <AppLayout
-      memberType={props}
+    <ProjectAuthorizationWrapper
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem
@@ -90,7 +87,6 @@ const FeaturesSettings: NextPage<UserAuth> = (props) => {
           <BreadcrumbItem title="Features Settings" />
         </Breadcrumbs>
       }
-      settingsLayout
     >
       <section className="space-y-8">
         <h3 className="text-2xl font-semibold">Features</h3>
@@ -269,24 +265,8 @@ const FeaturesSettings: NextPage<UserAuth> = (props) => {
           </a>
         </div>
       </section>
-    </AppLayout>
+    </ProjectAuthorizationWrapper>
   );
-};
-
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const projectId = ctx.query.projectId as string;
-  const workspaceSlug = ctx.query.workspaceSlug as string;
-
-  const memberDetail = await requiredAdmin(workspaceSlug, projectId, ctx.req?.headers.cookie);
-
-  return {
-    props: {
-      isOwner: memberDetail?.role === 20,
-      isMember: memberDetail?.role === 15,
-      isViewer: memberDetail?.role === 10,
-      isGuest: memberDetail?.role === 5,
-    },
-  };
 };
 
 export default FeaturesSettings;

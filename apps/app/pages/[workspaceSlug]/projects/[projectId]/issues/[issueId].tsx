@@ -9,10 +9,8 @@ import useSWR, { mutate } from "swr";
 import { useForm } from "react-hook-form";
 // services
 import issuesService from "services/issues.service";
-// lib
-import { requiredAdmin, requiredAuth } from "lib/auth";
 // layouts
-import AppLayout from "layouts/app-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // components
 import {
   IssueDescriptionForm,
@@ -27,8 +25,8 @@ import {
 import { Loader, CustomMenu } from "components/ui";
 import { Breadcrumbs } from "components/breadcrumbs";
 // types
-import { IIssue, UserAuth } from "types";
-import type { GetServerSidePropsContext, NextPage } from "next";
+import { IIssue } from "types";
+import type { NextPage } from "next";
 // fetch-keys
 import { PROJECT_ISSUES_ACTIVITY, ISSUE_DETAILS, SUB_ISSUES } from "constants/fetch-keys";
 
@@ -47,7 +45,7 @@ const defaultValues = {
   labels_list: [],
 };
 
-const IssueDetailsPage: NextPage<UserAuth> = (props) => {
+const IssueDetailsPage: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
@@ -122,8 +120,7 @@ const IssueDetailsPage: NextPage<UserAuth> = (props) => {
   }, [issueDetails, reset, issueId]);
 
   return (
-    <AppLayout
-      memberType={props}
+    <ProjectAuthorizationWrapper
       noPadding={true}
       bg="secondary"
       breadcrumbs={
@@ -191,20 +188,16 @@ const IssueDetailsPage: NextPage<UserAuth> = (props) => {
                   </CustomMenu>
                 </div>
               ) : null}
-              <IssueDescriptionForm
-                issue={issueDetails}
-                handleFormSubmit={submitChanges}
-                userAuth={props}
-              />
+              <IssueDescriptionForm issue={issueDetails} handleFormSubmit={submitChanges} />
               <div className="mt-2 space-y-2">
-                <SubIssuesList parentIssue={issueDetails} userAuth={props} />
+                <SubIssuesList parentIssue={issueDetails} />
               </div>
             </div>
             <div className="flex flex-col gap-3 py-3">
               <h3 className="text-lg">Attachments</h3>
               <div className="grid  gap-3 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-              <IssueAttachmentUpload/>
-              <IssueAttachments />
+                <IssueAttachmentUpload />
+                <IssueAttachments />
               </div>
             </div>
             <div className="space-y-5 bg-secondary pt-3">
@@ -219,7 +212,6 @@ const IssueDetailsPage: NextPage<UserAuth> = (props) => {
               issueDetail={issueDetails}
               submitChanges={submitChanges}
               watch={watch}
-              userAuth={props}
             />
           </div>
         </div>
@@ -239,37 +231,8 @@ const IssueDetailsPage: NextPage<UserAuth> = (props) => {
           </div>
         </Loader>
       )}
-    </AppLayout>
+    </ProjectAuthorizationWrapper>
   );
-};
-
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const user = await requiredAuth(ctx.req?.headers.cookie);
-
-  const redirectAfterSignIn = ctx.resolvedUrl;
-
-  if (!user) {
-    return {
-      redirect: {
-        destination: `/signin?next=${redirectAfterSignIn}`,
-        permanent: false,
-      },
-    };
-  }
-
-  const projectId = ctx.query.projectId as string;
-  const workspaceSlug = ctx.query.workspaceSlug as string;
-
-  const memberDetail = await requiredAdmin(workspaceSlug, projectId, ctx.req?.headers.cookie);
-
-  return {
-    props: {
-      isOwner: memberDetail?.role === 20,
-      isMember: memberDetail?.role === 15,
-      isViewer: memberDetail?.role === 10,
-      isGuest: memberDetail?.role === 5,
-    },
-  };
 };
 
 export default IssueDetailsPage;
