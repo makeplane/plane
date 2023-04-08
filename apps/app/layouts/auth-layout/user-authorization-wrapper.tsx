@@ -29,7 +29,7 @@ export const UserAuthorizationLayout: React.FC<Props> = ({ children }) => {
     );
   }
 
-  if (error?.status === 401) {
+  if (error) {
     const redirectTo = router.asPath;
 
     router.push(`/signin?next=${redirectTo}`);
