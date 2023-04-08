@@ -44,6 +44,7 @@ export const GithubImportUsers: FC<Props> = ({ handleStepChange, users, setUsers
               index={index}
               users={users}
               setUsers={setUsers}
+              project={watch("project")}
             />
           ))}
         </div>
