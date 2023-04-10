@@ -10,6 +10,9 @@ import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import issuesService from "services/issues.service";
 import stateService from "services/state.service";
 import modulesService from "services/modules.service";
+import trackEventServices from "services/track-event.service";
+// contexts
+import { useProjectMyMembership } from "contexts/project-member.context";
 // hooks
 import useToast from "hooks/use-toast";
 import useIssuesView from "hooks/use-issues-view";
@@ -48,14 +51,12 @@ type Props = {
   type?: "issue" | "cycle" | "module";
   openIssuesListModal?: () => void;
   isCompleted?: boolean;
-  userAuth: UserAuth;
 };
 
 export const IssuesView: React.FC<Props> = ({
   type = "issue",
   openIssuesListModal,
   isCompleted = false,
-  userAuth,
 }) => {
   // create issue modal
   const [createIssueModal, setCreateIssueModal] = useState(false);
@@ -82,6 +83,8 @@ export const IssuesView: React.FC<Props> = ({
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
+
+  const { memberRole } = useProjectMyMembership();
 
   const { setToastAlert } = useToast();
 
@@ -259,7 +262,22 @@ export const IssuesView: React.FC<Props> = ({
             state: draggedItem.state,
             sort_order: draggedItem.sort_order,
           })
-          .then(() => {
+          .then((response) => {
+            const sourceStateBeforeDrag = states.find((state) => state.name === source.droppableId);
+
+            if (
+              sourceStateBeforeDrag?.group !== "completed" &&
+              response?.state_detail?.group === "completed"
+            )
+              trackEventServices.trackIssueMarkedAsDoneEvent({
+                workspaceSlug,
+                workspaceId: draggedItem.workspace_detail.id,
+                projectName: draggedItem.project_detail.name,
+                projectIdentifier: draggedItem.project_detail.identifier,
+                projectId,
+                issueId: draggedItem.id,
+              });
+
             if (cycleId) {
               mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
               mutate(CYCLE_DETAILS(cycleId as string));
@@ -282,6 +300,7 @@ export const IssuesView: React.FC<Props> = ({
       orderBy,
       handleDeleteIssue,
       params,
+      states,
     ]
   );
 
@@ -477,7 +496,7 @@ export const IssuesView: React.FC<Props> = ({
                       : null
                   }
                   isCompleted={isCompleted}
-                  userAuth={userAuth}
+                  userAuth={memberRole}
                 />
               ) : issueView === "kanban" ? (
                 <AllBoards
@@ -497,7 +516,7 @@ export const IssuesView: React.FC<Props> = ({
                       : null
                   }
                   isCompleted={isCompleted}
-                  userAuth={userAuth}
+                  userAuth={memberRole}
                 />
               ) : (
                 <CalendarView />

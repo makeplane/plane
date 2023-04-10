@@ -7,29 +7,26 @@ import useSWR, { mutate } from "swr";
 
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
-
-// icons
-import { LinkIcon } from "@heroicons/react/24/outline";
-// lib
-import { requiredWorkspaceAdmin } from "lib/auth";
 // services
 import workspaceService from "services/workspace.service";
 import fileService from "services/file.service";
 // hooks
 import useToast from "hooks/use-toast";
 // layouts
-import AppLayout from "layouts/app-layout";
+import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 // components
 import { ImageUploadModal } from "components/core";
 import { DeleteWorkspaceModal } from "components/workspace";
 // ui
 import { Spinner, Input, CustomSelect, OutlineButton, SecondaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+// icons
+import { LinkIcon } from "@heroicons/react/24/outline";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import type { IWorkspace, UserAuth } from "types";
-import type { GetServerSideProps, NextPage } from "next";
+import type { IWorkspace } from "types";
+import type { NextPage } from "next";
 // fetch-keys
 import { WORKSPACE_DETAILS, USER_WORKSPACES } from "constants/fetch-keys";
 // constants
@@ -42,7 +39,7 @@ const defaultValues: Partial<IWorkspace> = {
   logo: null,
 };
 
-const WorkspaceSettings: NextPage<UserAuth> = (props) => {
+const WorkspaceSettings: NextPage = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isImageUploading, setIsImageUploading] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
@@ -107,8 +104,7 @@ const WorkspaceSettings: NextPage<UserAuth> = (props) => {
   };
 
   return (
-    <AppLayout
-      memberType={props}
+    <WorkspaceAuthorizationLayout
       meta={{
         title: "Plane - Workspace Settings",
       }}
@@ -117,7 +113,6 @@ const WorkspaceSettings: NextPage<UserAuth> = (props) => {
           <BreadcrumbItem title={`${activeWorkspace?.name ?? "Workspace"} Settings`} />
         </Breadcrumbs>
       }
-      settingsLayout
     >
       <ImageUploadModal
         isOpen={isImageUploadModalOpen}
@@ -282,32 +277,8 @@ const WorkspaceSettings: NextPage<UserAuth> = (props) => {
           <Spinner />
         </div>
       )}
-    </AppLayout>
+    </WorkspaceAuthorizationLayout>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const workspaceSlug = ctx.params?.workspaceSlug as string;
-
-  const memberDetail = await requiredWorkspaceAdmin(workspaceSlug, ctx.req.headers.cookie);
-
-  if (memberDetail === null) {
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {
-      isOwner: memberDetail?.role === 20,
-      isMember: memberDetail?.role === 15,
-      isViewer: memberDetail?.role === 10,
-      isGuest: memberDetail?.role === 5,
-    },
-  };
 };
 
 export default WorkspaceSettings;

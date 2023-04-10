@@ -12,9 +12,8 @@ import { PrimaryButton, Spinner } from "components/ui";
 // icon
 import { LayerDiagonalIcon } from "components/icons";
 // components
-import { NotAuthorizedView } from "components/core";
+import { NotAuthorizedView, JoinProject } from "components/auth-screens";
 import { CommandPalette } from "components/command-palette";
-import { JoinProject } from "components/project";
 // local components
 import Container from "layouts/container";
 import AppSidebar from "layouts/app-layout/app-sidebar";
@@ -61,7 +60,6 @@ const AppLayout: FC<AppLayoutProps> = ({
 }) => {
   // states
   const [toggleSidebar, setToggleSidebar] = useState(false);
-  const [isJoiningProject, setIsJoiningProject] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -82,21 +80,6 @@ const AppLayout: FC<AppLayoutProps> = ({
     memberType?.isMember ||
     memberType?.isViewer ||
     memberType?.isGuest;
-
-  const handleJoin = () => {
-    setIsJoiningProject(true);
-    projectService
-      .joinProject(workspaceSlug as string, {
-        project_ids: [projectId as string],
-      })
-      .then(() => {
-        setIsJoiningProject(false);
-        projectMembersMutate();
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  };
 
   return (
     <Container meta={meta}>
@@ -123,6 +106,7 @@ const AppLayout: FC<AppLayoutProps> = ({
                 )
               )
             }
+            type="project"
           />
         ) : (
           <main className="flex h-screen w-full min-w-0 flex-col overflow-y-auto">
@@ -170,7 +154,7 @@ const AppLayout: FC<AppLayoutProps> = ({
                 {children}
               </div>
             ) : (
-              <JoinProject isJoiningProject={isJoiningProject} handleJoin={handleJoin} />
+              <JoinProject />
             )}
           </main>
         )}

@@ -7,7 +7,7 @@ from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Third Party imports
-from django_rq import job
+from celery import shared_task
 from sentry_sdk import capture_exception
 
 # Module imports
@@ -136,6 +136,7 @@ def track_priority(
                     comment=f"{actor.email} updated the priority to {requested_data.get('priority')}",
                 )
             )
+    print(issue_activities)
 
 
 # Track chnages in state of the issue
@@ -651,6 +652,12 @@ def update_issue_activity(
         "cycles_list": track_cycles,
         "modules_list": track_modules,
     }
+
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+    current_instance = (
+        json.loads(current_instance) if current_instance is not None else None
+    )
+
     for key in requested_data:
         func = ISSUE_ACTIVITY_MAPPER.get(key, None)
         if func is not None:
@@ -664,9 +671,29 @@ def update_issue_activity(
             )
 
 
+def delete_issue_activity(
+    requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+    issue_activities.append(
+        IssueActivity(
+            project=project,
+            workspace=project.workspace,
+            comment=f"{actor.email} deleted the issue",
+            verb="deleted",
+            actor=actor,
+            field="issue",
+        )
+    )
+
+
 def create_comment_activity(
     requested_data, current_instance, issue_id, project, actor, issue_activities
 ):
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+    current_instance = (
+        json.loads(current_instance) if current_instance is not None else None
+    )
+
     issue_activities.append(
         IssueActivity(
             issue_id=issue_id,
@@ -686,6 +713,11 @@ def create_comment_activity(
 def update_comment_activity(
     requested_data, current_instance, issue_id, project, actor, issue_activities
 ):
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+    current_instance = (
+        json.loads(current_instance) if current_instance is not None else None
+    )
+
     if current_instance.get("comment_html") != requested_data.get("comment_html"):
         issue_activities.append(
             IssueActivity(
@@ -705,21 +737,6 @@ def update_comment_activity(
         )
 
 
-def delete_issue_activity(
-    requested_data, current_instance, issue_id, project, actor, issue_activities
-):
-    issue_activities.append(
-        IssueActivity(
-            project=project,
-            workspace=project.workspace,
-            comment=f"{actor.email} deleted the issue",
-            verb="deleted",
-            actor=actor,
-            field="issue",
-        )
-    )
-
-
 def delete_comment_activity(
     requested_data, current_instance, issue_id, project, actor, issue_activities
 ):
@@ -736,28 +753,122 @@ def delete_comment_activity(
     )
 
 
+def create_link_activity(
+    requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+    current_instance = (
+        json.loads(current_instance) if current_instance is not None else None
+    )
+
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            project=project,
+            workspace=project.workspace,
+            comment=f"{actor.email} created a link",
+            verb="created",
+            actor=actor,
+            field="link",
+            new_value=requested_data.get("url", ""),
+            new_identifier=requested_data.get("id", None),
+            issue_comment_id=requested_data.get("id", None),
+        )
+    )
+
+
+def update_link_activity(
+    requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+    current_instance = (
+        json.loads(current_instance) if current_instance is not None else None
+    )
+
+    if current_instance.get("url") != requested_data.get("url"):
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                project=project,
+                workspace=project.workspace,
+                comment=f"{actor.email} updated a link",
+                verb="updated",
+                actor=actor,
+                field="link",
+                old_value=current_instance.get("url", ""),
+                old_identifier=current_instance.get("id"),
+                new_value=requested_data.get("url", ""),
+                new_identifier=current_instance.get("id", None),
+                issue_comment_id=current_instance.get("id", None),
+            )
+        )
+
+
+def delete_link_activity(
+    requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            project=project,
+            workspace=project.workspace,
+            comment=f"{actor.email} deleted the link",
+            verb="deleted",
+            actor=actor,
+            field="link",
+        )
+    )
+
+
+def create_attachment_activity(
+    requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+    current_instance = (
+        json.loads(current_instance) if current_instance is not None else None
+    )
+
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            project=project,
+            workspace=project.workspace,
+            comment=f"{actor.email} created a attachment",
+            verb="created",
+            actor=actor,
+            field="attachment",
+            new_value=requested_data.get("url", ""),
+            new_identifier=requested_data.get("id", None),
+            issue_comment_id=requested_data.get("id", None),
+        )
+    )
+
+
+def delete_attachment_activity(
+    requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            project=project,
+            workspace=project.workspace,
+            comment=f"{actor.email} deleted the attachment",
+            verb="deleted",
+            actor=actor,
+            field="attachment",
+        )
+    )
+
+
 # Receive message from room group
-@job("default")
-def issue_activity(event):
+@shared_task
+def issue_activity(
+    type, requested_data, current_instance, issue_id, actor_id, project_id
+):
     try:
         issue_activities = []
-        type = event.get("type")
-        requested_data = (
-            json.loads(event.get("requested_data"))
-            if event.get("current_instance") is not None
-            else None
-        )
-        current_instance = (
-            json.loads(event.get("current_instance"))
-            if event.get("current_instance") is not None
-            else None
-        )
-        issue_id = event.get("issue_id", None)
-        actor_id = event.get("actor_id")
-        project_id = event.get("project_id")
 
         actor = User.objects.get(pk=actor_id)
-
         project = Project.objects.get(pk=project_id)
 
         ACTIVITY_MAPPER = {
@@ -767,6 +878,11 @@ def issue_activity(event):
             "comment.activity.created": create_comment_activity,
             "comment.activity.updated": update_comment_activity,
             "comment.activity.deleted": delete_comment_activity,
+            "link.activity.created": create_link_activity,
+            "link.activity.updated": update_link_activity,
+            "link.activity.deleted": delete_link_activity,
+            "attachment.activity.created": create_attachment_activity,
+            "attachment.activity.deleted": delete_attachment_activity,
         }
 
         func = ACTIVITY_MAPPER.get(type)
@@ -799,5 +915,6 @@ def issue_activity(event):
                     )
         return
     except Exception as e:
+        print(e)
         capture_exception(e)
         return

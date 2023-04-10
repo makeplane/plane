@@ -4,18 +4,16 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 
 # Third party imports
-from django_rq import job
+from celery import shared_task
 from sentry_sdk import capture_exception
 
 # Module imports
 from plane.db.models import Project, User, ProjectMemberInvite
 
 
-@job("default")
+@shared_task
 def project_invitation(email, project_id, token, current_site):
-
     try:
-
         project = Project.objects.get(pk=project_id)
         project_member_invite = ProjectMemberInvite.objects.get(
             token=token, email=email
@@ -35,7 +33,9 @@ def project_invitation(email, project_id, token, current_site):
             "invitation_url": abs_url,
         }
 
-        html_content = render_to_string("emails/invitations/project_invitation.html", context)
+        html_content = render_to_string(
+            "emails/invitations/project_invitation.html", context
+        )
 
         text_content = strip_tags(html_content)
 

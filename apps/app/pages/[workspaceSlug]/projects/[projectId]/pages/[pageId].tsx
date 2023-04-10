@@ -13,8 +13,6 @@ import { TwitterPicker } from "react-color";
 // react-beautiful-dnd
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
-// lib
-import { requiredAdmin, requiredAuth } from "lib/auth";
 // services
 import projectService from "services/project.service";
 import pagesService from "services/pages.service";
@@ -22,7 +20,7 @@ import issuesService from "services/issues.service";
 // hooks
 import useToast from "hooks/use-toast";
 // layouts
-import AppLayout from "layouts/app-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // components
 import { CreateUpdateBlockInline, SinglePageBlock } from "components/pages";
 // ui
@@ -43,8 +41,8 @@ import { renderShortTime } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
 import { orderArrayBy } from "helpers/array.helper";
 // types
-import type { NextPage, GetServerSidePropsContext } from "next";
-import { IIssueLabels, IPage, IPageBlock, UserAuth } from "types";
+import type { NextPage } from "next";
+import { IIssueLabels, IPage, IPageBlock } from "types";
 // fetch-keys
 import {
   PAGE_BLOCKS_LIST,
@@ -53,7 +51,7 @@ import {
   PROJECT_ISSUE_LABELS,
 } from "constants/fetch-keys";
 
-const SinglePage: NextPage<UserAuth> = (props) => {
+const SinglePage: NextPage = () => {
   const [createBlockForm, setCreateBlockForm] = useState(false);
 
   const scrollToRef = useRef<HTMLDivElement>(null);
@@ -272,11 +270,10 @@ const SinglePage: NextPage<UserAuth> = (props) => {
   }, [reset, pageDetails]);
 
   return (
-    <AppLayout
+    <ProjectAuthorizationWrapper
       meta={{
         title: "Plane - Pages",
       }}
-      memberType={props}
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
@@ -506,37 +503,8 @@ const SinglePage: NextPage<UserAuth> = (props) => {
           <Loader.Item height="200px" />
         </Loader>
       )}
-    </AppLayout>
+    </ProjectAuthorizationWrapper>
   );
-};
-
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const user = await requiredAuth(ctx.req?.headers.cookie);
-
-  const redirectAfterSignIn = ctx.resolvedUrl;
-
-  if (!user) {
-    return {
-      redirect: {
-        destination: `/signin?next=${redirectAfterSignIn}`,
-        permanent: false,
-      },
-    };
-  }
-
-  const projectId = ctx.query.projectId as string;
-  const workspaceSlug = ctx.query.workspaceSlug as string;
-
-  const memberDetail = await requiredAdmin(workspaceSlug, projectId, ctx.req?.headers.cookie);
-
-  return {
-    props: {
-      isOwner: memberDetail?.role === 20,
-      isMember: memberDetail?.role === 15,
-      isViewer: memberDetail?.role === 10,
-      isGuest: memberDetail?.role === 5,
-    },
-  };
 };
 
 export default SinglePage;

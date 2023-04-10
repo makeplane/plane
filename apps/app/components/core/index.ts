@@ -8,7 +8,6 @@ export * from "./image-upload-modal";
 export * from "./issues-view-filter";
 export * from "./issues-view";
 export * from "./link-modal";
-export * from "./not-authorized-view";
 export * from "./image-picker-popover";
 export * from "./filter-list";
 export * from "./feeds";

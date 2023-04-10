@@ -4,6 +4,8 @@ import dynamic from "next/dynamic";
 
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
+// contexts
+import { useProjectMyMembership } from "contexts/project-member.context";
 // components
 import { Loader, TextArea } from "components/ui";
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
@@ -15,7 +17,7 @@ const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor
   ),
 });
 // types
-import { IIssue, UserAuth } from "types";
+import { IIssue } from "types";
 
 export interface IssueDescriptionFormValues {
   name: string;
@@ -26,16 +28,13 @@ export interface IssueDescriptionFormValues {
 export interface IssueDetailsProps {
   issue: IIssue;
   handleFormSubmit: (value: IssueDescriptionFormValues) => Promise<void>;
-  userAuth: UserAuth;
 }
 
-export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
-  issue,
-  handleFormSubmit,
-  userAuth,
-}) => {
+export const IssueDescriptionForm: FC<IssueDetailsProps> = ({ issue, handleFormSubmit }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [characterLimit, setCharacterLimit] = useState(false);
+
+  const { memberRole } = useProjectMyMembership();
 
   const {
     handleSubmit,
@@ -86,7 +85,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
     reset(issue);
   }, [issue, reset]);
 
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+  const isNotAllowed = memberRole.isGuest || memberRole.isViewer;
 
   return (
     <div className="relative">

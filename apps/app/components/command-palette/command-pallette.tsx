@@ -177,46 +177,48 @@ export const CommandPalette: React.FC = () => {
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
+      const singleShortcutKeys = ["p", "v", "d", "h", "q", "m"];
+      const { key, ctrlKey, metaKey, altKey, shiftKey } = e;
+      const keyPressed = key.toLowerCase();
       if (
         !(e.target instanceof HTMLTextAreaElement) &&
         !(e.target instanceof HTMLInputElement) &&
         !(e.target as Element).classList?.contains("remirror-editor")
       ) {
-        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+        if ((ctrlKey || metaKey) && keyPressed === "k") {
           e.preventDefault();
           setIsPaletteOpen(true);
-        } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "c") {
-          if (e.altKey) {
+        } else if ((ctrlKey || metaKey) && keyPressed === "c") {
+          if (altKey) {
             e.preventDefault();
             copyIssueUrlToClipboard();
           }
-        } else if (e.key.toLowerCase() === "c") {
+        } else if (keyPressed === "c") {
           e.preventDefault();
           setIsIssueModalOpen(true);
-        } else if (e.key.toLowerCase() === "p") {
-          e.preventDefault();
-          setIsProjectModalOpen(true);
-        } else if (e.key.toLowerCase() === "v") {
-          e.preventDefault();
-          setIsCreateViewModalOpen(true);
-        } else if (e.key.toLowerCase() === "d") {
-          e.preventDefault();
-          setIsCreateUpdatePageModalOpen(true);
-        } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "b") {
+        } else if ((ctrlKey || metaKey) && keyPressed === "b") {
           e.preventDefault();
           toggleCollapsed();
-        } else if (e.key.toLowerCase() === "h") {
-          e.preventDefault();
-          setIsShortcutsModalOpen(true);
-        } else if (e.key.toLowerCase() === "q") {
-          e.preventDefault();
-          setIsCreateCycleModalOpen(true);
-        } else if (e.key.toLowerCase() === "m") {
-          e.preventDefault();
-          setIsCreateModuleModalOpen(true);
-        } else if (e.key === "Delete") {
+        } else if (key === "Delete") {
           e.preventDefault();
           setIsBulkDeleteIssuesModalOpen(true);
+        } else if (
+          singleShortcutKeys.includes(keyPressed) &&
+          (ctrlKey || metaKey || altKey || shiftKey)
+        ) {
+          e.preventDefault();
+        } else if (keyPressed === "p") {
+          setIsProjectModalOpen(true);
+        } else if (keyPressed === "v") {
+          setIsCreateViewModalOpen(true);
+        } else if (keyPressed === "d") {
+          setIsCreateUpdatePageModalOpen(true);
+        } else if (keyPressed === "h") {
+          setIsShortcutsModalOpen(true);
+        } else if (keyPressed === "q") {
+          setIsCreateCycleModalOpen(true);
+        } else if (keyPressed === "m") {
+          setIsCreateModuleModalOpen(true);
         }
       }
     },

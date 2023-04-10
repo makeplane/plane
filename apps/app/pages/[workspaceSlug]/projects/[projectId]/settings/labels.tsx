@@ -10,7 +10,7 @@ import issuesService from "services/issues.service";
 // lib
 import { requiredAdmin } from "lib/auth";
 // layouts
-import AppLayout from "layouts/app-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // components
 import {
   CreateUpdateLabelInline,
@@ -29,9 +29,7 @@ import type { GetServerSidePropsContext, NextPage } from "next";
 // fetch-keys
 import { PROJECT_DETAILS, PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 
-const LabelsSettings: NextPage<UserAuth> = (props) => {
-  const { isMember, isOwner, isViewer, isGuest } = props;
-
+const LabelsSettings: NextPage = () => {
   // create/edit label form
   const [labelForm, setLabelForm] = useState(false);
 
@@ -99,8 +97,7 @@ const LabelsSettings: NextPage<UserAuth> = (props) => {
         handleClose={() => setLabelsListModal(false)}
         parent={parentLabel}
       />
-      <AppLayout
-        memberType={{ isMember, isOwner, isViewer, isGuest }}
+      <ProjectAuthorizationWrapper
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem
@@ -110,7 +107,6 @@ const LabelsSettings: NextPage<UserAuth> = (props) => {
             <BreadcrumbItem title="Labels Settings" />
           </Breadcrumbs>
         }
-        settingsLayout
       >
         <section className="grid grid-cols-12 gap-10">
           <div className="col-span-12 sm:col-span-5">
@@ -182,25 +178,9 @@ const LabelsSettings: NextPage<UserAuth> = (props) => {
             </>
           </div>
         </section>
-      </AppLayout>
+      </ProjectAuthorizationWrapper>
     </>
   );
-};
-
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const projectId = ctx.query.projectId as string;
-  const workspaceSlug = ctx.query.workspaceSlug as string;
-
-  const memberDetail = await requiredAdmin(workspaceSlug, projectId, ctx.req?.headers.cookie);
-
-  return {
-    props: {
-      isOwner: memberDetail?.role === 20,
-      isMember: memberDetail?.role === 15,
-      isViewer: memberDetail?.role === 10,
-      isGuest: memberDetail?.role === 5,
-    },
-  };
 };
 
 export default LabelsSettings;

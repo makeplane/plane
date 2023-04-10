@@ -4,40 +4,32 @@ import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
-// lib
-import { requiredAdmin, requiredAuth } from "lib/auth";
-
 // services
 import viewsService from "services/views.service";
 import projectService from "services/project.service";
-
 // layouts
-import AppLayout from "layouts/app-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // ui
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-
 //icons
 import { PlusIcon } from "components/icons";
-
-// image
+// images
 import emptyView from "public/empty-state/empty-view.svg";
 // fetching keys
 import { PROJECT_DETAILS, VIEWS_LIST } from "constants/fetch-keys";
 // components
 import { PrimaryButton, Loader, EmptyState } from "components/ui";
 import { DeleteViewModal, CreateUpdateViewModal, SingleViewItem } from "components/views";
-
 // types
-import { IView, UserAuth } from "types";
-import type { NextPage, GetServerSidePropsContext } from "next";
+import { IView } from "types";
+import type { NextPage } from "next";
 
-const ProjectViews: NextPage<UserAuth> = (props) => {
+const ProjectViews: NextPage = () => {
   const [isCreateViewModalOpen, setIsCreateViewModalOpen] = useState(false);
   const [selectedView, setSelectedView] = useState<IView | null>(null);
 
-  const {
-    query: { workspaceSlug, projectId },
-  } = useRouter();
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
 
   const { data: activeProject } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
@@ -54,11 +46,10 @@ const ProjectViews: NextPage<UserAuth> = (props) => {
   );
 
   return (
-    <AppLayout
+    <ProjectAuthorizationWrapper
       meta={{
         title: "Plane - Views",
       }}
-      memberType={props}
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
@@ -116,37 +107,8 @@ const ProjectViews: NextPage<UserAuth> = (props) => {
           <Loader.Item height="30px" />
         </Loader>
       )}
-    </AppLayout>
+    </ProjectAuthorizationWrapper>
   );
-};
-
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const user = await requiredAuth(ctx.req?.headers.cookie);
-
-  const redirectAfterSignIn = ctx.resolvedUrl;
-
-  if (!user) {
-    return {
-      redirect: {
-        destination: `/signin?next=${redirectAfterSignIn}`,
-        permanent: false,
-      },
-    };
-  }
-
-  const projectId = ctx.query.projectId as string;
-  const workspaceSlug = ctx.query.workspaceSlug as string;
-
-  const memberDetail = await requiredAdmin(workspaceSlug, projectId, ctx.req?.headers.cookie);
-
-  return {
-    props: {
-      isOwner: memberDetail?.role === 20,
-      isMember: memberDetail?.role === 15,
-      isViewer: memberDetail?.role === 10,
-      isGuest: memberDetail?.role === 5,
-    },
-  };
 };
 
 export default ProjectViews;

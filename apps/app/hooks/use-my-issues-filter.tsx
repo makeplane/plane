@@ -24,6 +24,7 @@ const initialValues: Properties = {
   priority: false,
   state: true,
   sub_issue_count: false,
+  estimate: false,
 };
 
 // TODO: Refactor this logic

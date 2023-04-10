@@ -89,7 +89,10 @@ export const timeAgo = (time: any) => {
   return time;
 };
 
-export const getDateRangeStatus = (startDate: string | null | undefined, endDate: string | null | undefined) => {
+export const getDateRangeStatus = (
+  startDate: string | null | undefined,
+  endDate: string | null | undefined
+) => {
   if (!startDate || !endDate) return "draft";
 
   const today = renderDateFormat(new Date());
@@ -173,3 +176,37 @@ export const renderShortTime = (date: string | Date) => {
 
 export const isDateRangeValid = (startDate: string, endDate: string) =>
   new Date(startDate) < new Date(endDate);
+
+export const renderLongDateFormat = (dateString: string) => {
+  const date = new Date(dateString);
+  const day = date.getDate();
+  const year = date.getFullYear();
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+  const monthIndex = date.getMonth();
+  const monthName = monthNames[monthIndex];
+  const suffixes = ["st", "nd", "rd", "th"];
+  let suffix = "";
+  if (day === 1 || day === 21 || day === 31) {
+    suffix = suffixes[0];
+  } else if (day === 2 || day === 22) {
+    suffix = suffixes[1];
+  } else if (day === 3 || day === 23) {
+    suffix = suffixes[2];
+  } else {
+    suffix = suffixes[3];
+  }
+  return `${day}${suffix} ${monthName} ${year}`;
+};

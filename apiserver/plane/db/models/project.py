@@ -26,7 +26,7 @@ def get_default_props():
         "collapsed": True,
         "issueView": "list",
         "filterIssue": None,
-        "groupByProperty": True,
+        "groupByProperty": None,
         "showEmptyGroups": True,
     }
 
@@ -133,7 +133,7 @@ class ProjectMember(ProjectBaseModel):
     )
     comment = models.TextField(blank=True, null=True)
     role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=10)
-    view_props = models.JSONField(null=True)
+    view_props = models.JSONField(default=get_default_props)
     default_props = models.JSONField(default=get_default_props)
 
     class Meta:

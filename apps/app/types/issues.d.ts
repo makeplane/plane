@@ -86,6 +86,7 @@ export interface IIssue {
   description: any;
   description_html: any;
   description_stripped: any;
+  estimate_point: number;
   id: string;
   issue_cycle: IIssueCycle | null;
   issue_link: {
@@ -160,7 +161,9 @@ export interface IIssueComment {
   created_by: string;
   updated_by: string;
   project: string;
+  project_detail: IProjectLite;
   workspace: string;
+  workspace_detail: IWorkspaceLite;
   issue: string;
 }
 
@@ -183,6 +186,7 @@ export type Properties = {
   priority: boolean;
   state: boolean;
   sub_issue_count: boolean;
+  estimate: boolean;
 };
 
 export interface IIssueLabels {
@@ -195,7 +199,9 @@ export interface IIssueLabels {
   created_by: string;
   updated_by: string;
   project: string;
+  project_detail: IProjectLite;
   workspace: string;
+  workspace_detail: IWorkspaceLite;
   parent: string | null;
 }
 
@@ -251,4 +257,20 @@ export interface IIssueViewOptions {
   order_by: TIssueOrderByOptions;
   filters: IIssueFilterOptions;
   target_date: string;
+}
+
+export interface IIssueAttachment {
+  asset: string;
+  attributes: {
+    name: string;
+    size: number;
+  };
+  created_at: string;
+  created_by: string;
+  id: string;
+  issue: string;
+  project: string;
+  updated_at: string;
+  updated_by: string;
+  workspace: string;
 }

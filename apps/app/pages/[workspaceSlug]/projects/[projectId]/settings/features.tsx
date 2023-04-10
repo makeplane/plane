@@ -6,10 +6,9 @@ import useSWR, { mutate } from "swr";
 
 // services
 import projectService from "services/project.service";
-// lib
-import { requiredAdmin } from "lib/auth";
+import trackEventServices from "services/track-event.service";
 // layouts
-import AppLayout from "layouts/app-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -19,12 +18,12 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import { ContrastIcon, PeopleGroupIcon, ViewListIcon } from "components/icons";
 import { DocumentTextIcon } from "@heroicons/react/24/outline";
 // types
-import { IProject, UserAuth } from "types";
-import type { NextPage, GetServerSidePropsContext } from "next";
+import { IProject } from "types";
+import type { NextPage } from "next";
 // fetch-keys
 import { PROJECTS_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
 
-const FeaturesSettings: NextPage<UserAuth> = (props) => {
+const FeaturesSettings: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -78,8 +77,7 @@ const FeaturesSettings: NextPage<UserAuth> = (props) => {
   };
 
   return (
-    <AppLayout
-      memberType={props}
+    <ProjectAuthorizationWrapper
       breadcrumbs={
         <Breadcrumbs>
           <BreadcrumbItem
@@ -89,7 +87,6 @@ const FeaturesSettings: NextPage<UserAuth> = (props) => {
           <BreadcrumbItem title="Features Settings" />
         </Breadcrumbs>
       }
-      settingsLayout
     >
       <section className="space-y-8">
         <h3 className="text-2xl font-semibold">Features</h3>
@@ -112,7 +109,19 @@ const FeaturesSettings: NextPage<UserAuth> = (props) => {
               }`}
               role="switch"
               aria-checked={projectDetails?.cycle_view}
-              onClick={() => handleSubmit({ cycle_view: !projectDetails?.cycle_view })}
+              onClick={() => {
+                trackEventServices.trackMiscellaneousEvent(
+                  {
+                    workspaceId: (projectDetails?.workspace as any)?.id,
+                    workspaceSlug,
+                    projectId,
+                    projectIdentifier: projectDetails?.identifier,
+                    projectName: projectDetails?.name,
+                  },
+                  !projectDetails?.cycle_view ? "TOGGLE_CYCLE_ON" : "TOGGLE_CYCLE_OFF"
+                );
+                handleSubmit({ cycle_view: !projectDetails?.cycle_view });
+              }}
             >
               <span className="sr-only">Use cycles</span>
               <span
@@ -141,7 +150,19 @@ const FeaturesSettings: NextPage<UserAuth> = (props) => {
               }`}
               role="switch"
               aria-checked={projectDetails?.module_view}
-              onClick={() => handleSubmit({ module_view: !projectDetails?.module_view })}
+              onClick={() => {
+                trackEventServices.trackMiscellaneousEvent(
+                  {
+                    workspaceId: (projectDetails?.workspace as any)?.id,
+                    workspaceSlug,
+                    projectId,
+                    projectIdentifier: projectDetails?.identifier,
+                    projectName: projectDetails?.name,
+                  },
+                  !projectDetails?.module_view ? "TOGGLE_MODULE_ON" : "TOGGLE_MODULE_OFF"
+                );
+                handleSubmit({ module_view: !projectDetails?.module_view });
+              }}
             >
               <span className="sr-only">Use cycles</span>
               <span
@@ -170,7 +191,19 @@ const FeaturesSettings: NextPage<UserAuth> = (props) => {
               }`}
               role="switch"
               aria-checked={projectDetails?.issue_views_view}
-              onClick={() => handleSubmit({ issue_views_view: !projectDetails?.issue_views_view })}
+              onClick={() => {
+                trackEventServices.trackMiscellaneousEvent(
+                  {
+                    workspaceId: (projectDetails?.workspace as any)?.id,
+                    workspaceSlug,
+                    projectId,
+                    projectIdentifier: projectDetails?.identifier,
+                    projectName: projectDetails?.name,
+                  },
+                  !projectDetails?.issue_views_view ? "TOGGLE_VIEW_ON" : "TOGGLE_VIEW_OFF"
+                );
+                handleSubmit({ issue_views_view: !projectDetails?.issue_views_view });
+              }}
             >
               <span className="sr-only">Use views</span>
               <span
@@ -199,7 +232,19 @@ const FeaturesSettings: NextPage<UserAuth> = (props) => {
               }`}
               role="switch"
               aria-checked={projectDetails?.page_view}
-              onClick={() => handleSubmit({ page_view: !projectDetails?.page_view })}
+              onClick={() => {
+                trackEventServices.trackMiscellaneousEvent(
+                  {
+                    workspaceId: (projectDetails?.workspace as any)?.id,
+                    workspaceSlug,
+                    projectId,
+                    projectIdentifier: projectDetails?.identifier,
+                    projectName: projectDetails?.name,
+                  },
+                  !projectDetails?.page_view ? "TOGGLE_PAGES_ON" : "TOGGLE_PAGES_OFF"
+                );
+                handleSubmit({ page_view: !projectDetails?.page_view });
+              }}
             >
               <span className="sr-only">Use cycles</span>
               <span
@@ -220,24 +265,8 @@ const FeaturesSettings: NextPage<UserAuth> = (props) => {
           </a>
         </div>
       </section>
-    </AppLayout>
+    </ProjectAuthorizationWrapper>
   );
-};
-
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const projectId = ctx.query.projectId as string;
-  const workspaceSlug = ctx.query.workspaceSlug as string;
-
-  const memberDetail = await requiredAdmin(workspaceSlug, projectId, ctx.req?.headers.cookie);
-
-  return {
-    props: {
-      isOwner: memberDetail?.role === 20,
-      isMember: memberDetail?.role === 15,
-      isViewer: memberDetail?.role === 10,
-      isGuest: memberDetail?.role === 5,
-    },
-  };
 };
 
 export default FeaturesSettings;

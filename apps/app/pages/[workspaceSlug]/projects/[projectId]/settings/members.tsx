@@ -8,12 +8,10 @@ import useSWR from "swr";
 // services
 import projectService from "services/project.service";
 import workspaceService from "services/workspace.service";
-// lib
-import { requiredAdmin } from "lib/auth";
 // hooks
 import useToast from "hooks/use-toast";
 // layouts
-import AppLayout from "layouts/app-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // components
 import ConfirmProjectMemberRemove from "components/project/confirm-project-member-remove";
 import SendProjectInvitationModal from "components/project/send-project-invitation-modal";
@@ -23,8 +21,7 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 // types
-import type { NextPage, GetServerSidePropsContext } from "next";
-import { UserAuth } from "types";
+import type { NextPage } from "next";
 // fetch-keys
 import {
   PROJECT_DETAILS,
@@ -35,7 +32,7 @@ import {
 // constants
 import { ROLE } from "constants/workspace";
 
-const MembersSettings: NextPage<UserAuth> = ({ isMember, isOwner, isViewer, isGuest }) => {
+const MembersSettings: NextPage = () => {
   const [inviteModal, setInviteModal] = useState(false);
   const [selectedRemoveMember, setSelectedRemoveMember] = useState<string | null>(null);
   const [selectedInviteRemoveMember, setSelectedInviteRemoveMember] = useState<string | null>(null);
@@ -148,8 +145,7 @@ const MembersSettings: NextPage<UserAuth> = ({ isMember, isOwner, isViewer, isGu
         setIsOpen={setInviteModal}
         members={members}
       />
-      <AppLayout
-        memberType={{ isMember, isOwner, isViewer, isGuest }}
+      <ProjectAuthorizationWrapper
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem
@@ -159,7 +155,6 @@ const MembersSettings: NextPage<UserAuth> = ({ isMember, isOwner, isViewer, isGu
             <BreadcrumbItem title="Members Settings" />
           </Breadcrumbs>
         }
-        settingsLayout
       >
         <section className="space-y-8">
           <div className="flex items-end justify-between gap-4">
@@ -274,25 +269,9 @@ const MembersSettings: NextPage<UserAuth> = ({ isMember, isOwner, isViewer, isGu
             </div>
           )}
         </section>
-      </AppLayout>
+      </ProjectAuthorizationWrapper>
     </>
   );
-};
-
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const projectId = ctx.query.projectId as string;
-  const workspaceSlug = ctx.query.workspaceSlug as string;
-
-  const memberDetail = await requiredAdmin(workspaceSlug, projectId, ctx.req?.headers.cookie);
-
-  return {
-    props: {
-      isOwner: memberDetail?.role === 20,
-      isMember: memberDetail?.role === 15,
-      isViewer: memberDetail?.role === 10,
-      isGuest: memberDetail?.role === 5,
-    },
-  };
 };
 
 export default MembersSettings;

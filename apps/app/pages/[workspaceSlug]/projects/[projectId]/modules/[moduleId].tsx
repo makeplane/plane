@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 import { useRouter } from "next/router";
-import { GetServerSidePropsContext } from "next";
+
 import useSWR, { mutate } from "swr";
 
 // icons
@@ -12,15 +12,13 @@ import {
   RectangleGroupIcon,
   RectangleStackIcon,
 } from "@heroicons/react/24/outline";
-// lib
-import { requiredAdmin, requiredAuth } from "lib/auth";
 // services
 import modulesService from "services/modules.service";
 import issuesService from "services/issues.service";
 // hooks
 import useToast from "hooks/use-toast";
 // layouts
-import AppLayout from "layouts/app-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // contexts
 import { IssueViewContextProvider } from "contexts/issue-view.context";
 // components
@@ -32,7 +30,7 @@ import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // helpers
 import { truncateText } from "helpers/string.helper";
 // types
-import { IModule, UserAuth } from "types";
+import { IModule } from "types";
 
 // fetch-keys
 import {
@@ -42,7 +40,7 @@ import {
   PROJECT_ISSUES_LIST,
 } from "constants/fetch-keys";
 
-const SingleModule: React.FC<UserAuth> = (props) => {
+const SingleModule: React.FC = () => {
   const [moduleIssuesListModal, setModuleIssuesListModal] = useState(false);
   const [moduleSidebar, setModuleSidebar] = useState(true);
 
@@ -121,8 +119,7 @@ const SingleModule: React.FC<UserAuth> = (props) => {
         issues={issues?.filter((i) => !i.module_id) ?? []}
         handleOnSubmit={handleAddIssuesToModule}
       />
-      <AppLayout
-        memberType={props}
+      <ProjectAuthorizationWrapper
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem
@@ -173,11 +170,7 @@ const SingleModule: React.FC<UserAuth> = (props) => {
         {moduleIssues ? (
           moduleIssues.length > 0 ? (
             <div className={`h-full ${moduleSidebar ? "mr-[24rem]" : ""} duration-300`}>
-              <IssuesView
-                type="module"
-                userAuth={props}
-                openIssuesListModal={openIssuesListModal}
-              />
+              <IssuesView type="module" openIssuesListModal={openIssuesListModal} />
             </div>
           ) : (
             <div
@@ -220,40 +213,10 @@ const SingleModule: React.FC<UserAuth> = (props) => {
           module={moduleDetails}
           isOpen={moduleSidebar}
           moduleIssues={moduleIssues}
-          userAuth={props}
         />
-      </AppLayout>
+      </ProjectAuthorizationWrapper>
     </IssueViewContextProvider>
   );
-};
-
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const user = await requiredAuth(ctx.req?.headers.cookie);
-
-  const redirectAfterSignIn = ctx.resolvedUrl;
-
-  if (!user) {
-    return {
-      redirect: {
-        destination: `/signin?next=${redirectAfterSignIn}`,
-        permanent: false,
-      },
-    };
-  }
-
-  const projectId = ctx.query.projectId as string;
-  const workspaceSlug = ctx.query.workspaceSlug as string;
-
-  const memberDetail = await requiredAdmin(workspaceSlug, projectId, ctx.req?.headers.cookie);
-
-  return {
-    props: {
-      isOwner: memberDetail?.role === 20,
-      isMember: memberDetail?.role === 15,
-      isViewer: memberDetail?.role === 10,
-      isGuest: memberDetail?.role === 5,
-    },
-  };
 };
 
 export default SingleModule;

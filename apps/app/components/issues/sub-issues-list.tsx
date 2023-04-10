@@ -9,6 +9,8 @@ import useSWR, { mutate } from "swr";
 import { Disclosure, Transition } from "@headlessui/react";
 // services
 import issuesService from "services/issues.service";
+// contexts
+import { useProjectMyMembership } from "contexts/project-member.context";
 // components
 import { ExistingIssuesListModal } from "components/core";
 import { CreateUpdateIssueModal } from "components/issues";
@@ -19,16 +21,15 @@ import { ChevronRightIcon, PlusIcon, XMarkIcon } from "@heroicons/react/24/outli
 // helpers
 import { orderArrayBy } from "helpers/array.helper";
 // types
-import { IIssue, UserAuth } from "types";
+import { IIssue } from "types";
 // fetch-keys
 import { PROJECT_ISSUES_LIST, SUB_ISSUES } from "constants/fetch-keys";
 
 type Props = {
   parentIssue: IIssue;
-  userAuth: UserAuth;
 };
 
-export const SubIssuesList: FC<Props> = ({ parentIssue, userAuth }) => {
+export const SubIssuesList: FC<Props> = ({ parentIssue }) => {
   // states
   const [createIssueModal, setCreateIssueModal] = useState(false);
   const [subIssuesListModal, setSubIssuesListModal] = useState(false);
@@ -36,6 +37,8 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, userAuth }) => {
 
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
+
+  const { memberRole } = useProjectMyMembership();
 
   const { data: subIssues } = useSWR<IIssue[] | undefined>(
     workspaceSlug && projectId && issueId ? SUB_ISSUES(issueId as string) : null,
@@ -143,7 +146,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, userAuth }) => {
     });
   };
 
-  const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+  const isNotAllowed = memberRole.isGuest || memberRole.isViewer;
 
   return (
     <>

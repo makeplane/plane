@@ -4,13 +4,12 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 
 # Third party imports
-from django_rq import job
+from celery import shared_task
 from sentry_sdk import capture_exception
 
 
-@job("default")
+@shared_task
 def magic_link(email, key, token, current_site):
-
     try:
         realtivelink = f"/magic-sign-in/?password={token}&key={key}"
         abs_url = "http://" + current_site + realtivelink

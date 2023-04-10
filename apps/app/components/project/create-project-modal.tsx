@@ -147,7 +147,6 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
       });
   };
 
-  // FIXME: remove this and authorize using getServerSideProps
   if (myWorkspaceMembership && isOpen) {
     if (myWorkspaceMembership.role <= 10) return <IsGuestCondition setIsOpen={setIsOpen} />;
   }

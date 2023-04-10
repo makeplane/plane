@@ -8,6 +8,8 @@ import { getPriorityIcon } from "components/icons/priority-icon";
 import { IIssue } from "types";
 // constants
 import { PRIORITIES } from "constants/project";
+// services
+import trackEventServices from "services/track-event.service";
 
 type Props = {
   issue: IIssue;
@@ -26,9 +28,20 @@ export const ViewPrioritySelect: React.FC<Props> = ({
 }) => (
   <CustomSelect
     value={issue.priority}
-    onChange={(data: string) =>
-      partialUpdateIssue({ priority: data, state: issue.state, target_date: issue.target_date })
-    }
+    onChange={(data: string) => {
+      partialUpdateIssue({ priority: data, state: issue.state, target_date: issue.target_date });
+      trackEventServices.trackIssuePartialPropertyUpdateEvent(
+        {
+          workspaceSlug: issue.workspace_detail.slug,
+          workspaceId: issue.workspace_detail.id,
+          projectId: issue.project_detail.id,
+          projectIdentifier: issue.project_detail.identifier,
+          projectName: issue.project_detail.name,
+          issueId: issue.id,
+        },
+        "ISSUE_PROPERTY_UPDATE_PRIORITY"
+      );
+    }}
     maxHeight="md"
     customButton={
       <button

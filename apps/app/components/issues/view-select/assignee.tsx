@@ -6,6 +6,7 @@ import useSWR from "swr";
 
 // services
 import projectService from "services/project.service";
+import trackEventServices from "services/track-event.service";
 // ui
 import { AssigneesList, Avatar, CustomSearchSelect, Tooltip } from "components/ui";
 // icons
@@ -71,6 +72,18 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
         else newData.push(data);
 
         partialUpdateIssue({ assignees_list: data });
+
+        trackEventServices.trackIssuePartialPropertyUpdateEvent(
+          {
+            workspaceSlug: issue.workspace_detail.slug,
+            workspaceId: issue.workspace_detail.id,
+            projectId: issue.project_detail.id,
+            projectIdentifier: issue.project_detail.identifier,
+            projectName: issue.project_detail.name,
+            issueId: issue.id,
+          },
+          "ISSUE_PROPERTY_UPDATE_ASSIGNEE"
+        );
       }}
       options={options}
       label={

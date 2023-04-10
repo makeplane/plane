@@ -117,6 +117,10 @@ class EstimatePointViewSet(BaseViewSet):
 
 
 class ProjectEstimatePointEndpoint(BaseAPIView):
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+
     def get(self, request, slug, project_id):
         try:
             project = Project.objects.get(workspace__slug=slug, pk=project_id)
@@ -131,6 +135,110 @@ class ProjectEstimatePointEndpoint(BaseAPIView):
             return Response([], status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class BulkEstimatePointEndpoint(BaseAPIView):
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+
+    def post(self, request, slug, project_id, estimate_id):
+        try:
+            estimate = Estimate.objects.get(
+                pk=estimate_id, workspace__slug=slug, project=project_id
+            )
+
+            estimate_points = request.data.get("estimate_points", [])
+
+            if not len(estimate_points) or len(estimate_points) > 8:
+                return Response(
+                    {"error": "Estimate points are required"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            estimate_points = EstimatePoint.objects.bulk_create(
+                [
+                    EstimatePoint(
+                        estimate=estimate,
+                        key=estimate_point.get("key", 0),
+                        value=estimate_point.get("value", ""),
+                        description=estimate_point.get("description", ""),
+                        project_id=project_id,
+                        workspace_id=estimate.workspace_id,
+                        created_by=request.user,
+                        updated_by=request.user,
+                    )
+                    for estimate_point in estimate_points
+                ],
+                batch_size=10,
+                ignore_conflicts=True,
+            )
+
+            serializer = EstimatePointSerializer(estimate_points, many=True)
+
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Estimate.DoesNotExist:
+            return Response(
+                {"error": "Estimate does not exist"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def patch(self, request, slug, project_id, estimate_id):
+        try:
+            if not len(request.data.get("estimate_points", [])):
+                return Response(
+                    {"error": "Estimate points are required"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            estimate_points_data = request.data.get("estimate_points", [])
+
+            estimate_points = EstimatePoint.objects.filter(
+                pk__in=[
+                    estimate_point.get("id") for estimate_point in estimate_points_data
+                ],
+                workspace__slug=slug,
+                project_id=project_id,
+                estimate_id=estimate_id,
+            )
+
+            print(estimate_points)
+            updated_estimate_points = []
+            for estimate_point in estimate_points:
+                # Find the data for that estimate point
+                estimate_point_data = [
+                    point
+                    for point in estimate_points_data
+                    if point.get("id") == str(estimate_point.id)
+                ]
+                print(estimate_point_data)
+                if len(estimate_point_data):
+                    estimate_point.value = estimate_point_data[0].get(
+                        "value", estimate_point.value
+                    )
+                    updated_estimate_points.append(estimate_point)
+
+            EstimatePoint.objects.bulk_update(
+                updated_estimate_points, ["value"], batch_size=10
+            )
+            serializer = EstimatePointSerializer(estimate_points, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Estimate.DoesNotExist:
+            return Response(
+                {"error": "Estimate does not exist"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        except Exception as e:
+            print(e)
             return Response(
                 {"error": "Something went wrong please try again later"},
                 status=status.HTTP_400_BAD_REQUEST,

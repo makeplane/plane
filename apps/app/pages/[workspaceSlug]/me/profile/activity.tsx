@@ -1,17 +1,14 @@
-import { GetServerSidePropsContext } from "next";
-
 import useSWR from "swr";
 
 // services
 import userService from "services/user.service";
-// lib
-import { requiredAuth } from "lib/auth";
 // layouts
-import AppLayout from "layouts/app-layout";
+import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
+// components
+import { Feeds } from "components/core";
 // ui
 import { Loader } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-import { Feeds } from "components/core";
 // fetch-keys
 import { USER_ACTIVITY } from "constants/fetch-keys";
 
@@ -19,7 +16,7 @@ const ProfileActivity = () => {
   const { data: userActivity } = useSWR(USER_ACTIVITY, () => userService.getUserActivity());
 
   return (
-    <AppLayout
+    <WorkspaceAuthorizationLayout
       meta={{
         title: "Plane - My Profile",
       }}
@@ -28,7 +25,6 @@ const ProfileActivity = () => {
           <BreadcrumbItem title="My Profile Activity" />
         </Breadcrumbs>
       }
-      settingsLayout
       profilePage
     >
       {userActivity ? (
@@ -43,29 +39,8 @@ const ProfileActivity = () => {
           <Loader.Item height="40px" />
         </Loader>
       )}
-    </AppLayout>
+    </WorkspaceAuthorizationLayout>
   );
-};
-
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const user = await requiredAuth(ctx.req?.headers.cookie);
-
-  const redirectAfterSignIn = ctx.resolvedUrl;
-
-  if (!user) {
-    return {
-      redirect: {
-        destination: `/signin?next=${redirectAfterSignIn}`,
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {
-      user,
-    },
-  };
 };
 
 export default ProfileActivity;

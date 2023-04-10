@@ -1,14 +1,15 @@
-import { FC, useState } from "react";
+import React, { useState } from "react";
 
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
 
-import { mutate } from "swr";
+import useSWR, { mutate } from "swr";
 
 // react-hook-form
 import { useForm } from "react-hook-form";
 // services
+import IntegrationService from "services/integration";
 import GithubIntegrationService from "services/integration/github.service";
 // hooks
 import useToast from "hooks/use-toast";
@@ -24,22 +25,15 @@ import {
 import { CogIcon, CloudUploadIcon, UsersIcon, CheckIcon } from "components/icons";
 import { ArrowLeftIcon, ListBulletIcon } from "@heroicons/react/24/outline";
 // images
-import GithubLogo from "public/logos/github-square.png";
+import GithubLogo from "public/services/github.png";
 // types
-import {
-  IAppIntegrations,
-  IGithubRepoCollaborator,
-  IGithubServiceImportFormData,
-  IWorkspaceIntegrations,
-} from "types";
+import { IGithubRepoCollaborator, IGithubServiceImportFormData } from "types";
 // fetch-keys
-import { IMPORTER_SERVICES_LIST } from "constants/fetch-keys";
-
-type Props = {
-  provider: string | undefined;
-  appIntegrations: IAppIntegrations[] | undefined;
-  workspaceIntegrations: IWorkspaceIntegrations[] | undefined;
-};
+import {
+  APP_INTEGRATIONS,
+  IMPORTER_SERVICES_LIST,
+  WORKSPACE_INTEGRATIONS,
+} from "constants/fetch-keys";
 
 export type TIntegrationSteps =
   | "import-configure"
@@ -95,24 +89,31 @@ const integrationWorkflowData = [
   },
 ];
 
-export const GithubIntegrationRoot: FC<Props> = ({
-  provider,
-  appIntegrations,
-  workspaceIntegrations,
-}) => {
+export const GithubImporterRoot = () => {
   const [currentStep, setCurrentStep] = useState<IIntegrationData>({
     state: "import-configure",
   });
   const [users, setUsers] = useState<IUserDetails[]>([]);
 
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, provider } = router.query;
 
   const { setToastAlert } = useToast();
 
   const { handleSubmit, control, setValue, watch } = useForm<TFormValues>({
     defaultValues: defaultFormValues,
   });
+
+  const { data: appIntegrations } = useSWR(APP_INTEGRATIONS, () =>
+    IntegrationService.getAppIntegrationsList()
+  );
+
+  const { data: workspaceIntegrations } = useSWR(
+    workspaceSlug ? WORKSPACE_INTEGRATIONS(workspaceSlug as string) : null,
+    workspaceSlug
+      ? () => IntegrationService.getWorkspaceIntegrationsList(workspaceSlug as string)
+      : null
+  );
 
   const activeIntegrationState = () => {
     const currentElementIndex = integrationWorkflowData.findIndex(
@@ -189,9 +190,8 @@ export const GithubIntegrationRoot: FC<Props> = ({
             </div>
             <div className="flex h-full w-full items-center justify-center">
               {integrationWorkflowData.map((integration, index) => (
-                <>
+                <React.Fragment key={integration.key}>
                   <div
-                    key={integration.key}
                     className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border ${
                       index <= activeIntegrationState()
                         ? `border-[#3F76FF] bg-[#3F76FF] text-white ${
@@ -220,7 +220,7 @@ export const GithubIntegrationRoot: FC<Props> = ({
                       {" "}
                     </div>
                   )}
-                </>
+                </React.Fragment>
               ))}
             </div>
           </div>
@@ -230,7 +230,7 @@ export const GithubIntegrationRoot: FC<Props> = ({
               {currentStep?.state === "import-configure" && (
                 <GithubImportConfigure
                   handleStepChange={handleStepChange}
-                  provider={provider}
+                  provider={provider as string}
                   appIntegrations={appIntegrations}
                   workspaceIntegrations={workspaceIntegrations}
                 />

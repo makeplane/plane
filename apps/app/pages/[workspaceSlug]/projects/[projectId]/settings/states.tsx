@@ -4,13 +4,11 @@ import { useRouter } from "next/router";
 
 import useSWR from "swr";
 
-// lib
-import { requiredAdmin } from "lib/auth";
 // services
 import stateService from "services/state.service";
 import projectService from "services/project.service";
 // layouts
-import AppLayout from "layouts/app-layout";
+import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // components
 import {
   CreateUpdateStateInline,
@@ -26,14 +24,11 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 // helpers
 import { getStatesList, orderStateGroups } from "helpers/state.helper";
 // types
-import { UserAuth } from "types";
-import type { NextPage, GetServerSidePropsContext } from "next";
+import type { NextPage } from "next";
 // fetch-keys
 import { PROJECT_DETAILS, STATE_LIST } from "constants/fetch-keys";
 
-const StatesSettings: NextPage<UserAuth> = (props) => {
-  const { isMember, isOwner, isViewer, isGuest } = props;
-
+const StatesSettings: NextPage = () => {
   const [activeGroup, setActiveGroup] = useState<StateGroup>(null);
   const [selectedState, setSelectedState] = useState<string | null>(null);
   const [selectDeleteState, setSelectDeleteState] = useState<string | null>(null);
@@ -64,8 +59,7 @@ const StatesSettings: NextPage<UserAuth> = (props) => {
         data={statesList?.find((s) => s.id === selectDeleteState) ?? null}
         onClose={() => setSelectDeleteState(null)}
       />
-      <AppLayout
-        memberType={{ isMember, isOwner, isViewer, isGuest }}
+      <ProjectAuthorizationWrapper
         breadcrumbs={
           <Breadcrumbs>
             <BreadcrumbItem
@@ -75,7 +69,6 @@ const StatesSettings: NextPage<UserAuth> = (props) => {
             <BreadcrumbItem title="States Settings" />
           </Breadcrumbs>
         }
-        settingsLayout
       >
         <div className="grid grid-cols-12 gap-10">
           <div className="col-span-12 sm:col-span-5">
@@ -149,25 +142,9 @@ const StatesSettings: NextPage<UserAuth> = (props) => {
             )}
           </div>
         </div>
-      </AppLayout>
+      </ProjectAuthorizationWrapper>
     </>
   );
-};
-
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const projectId = ctx.query.projectId as string;
-  const workspaceSlug = ctx.query.workspaceSlug as string;
-
-  const memberDetail = await requiredAdmin(workspaceSlug, projectId, ctx.req?.headers.cookie);
-
-  return {
-    props: {
-      isOwner: memberDetail?.role === 20,
-      isMember: memberDetail?.role === 15,
-      isViewer: memberDetail?.role === 10,
-      isGuest: memberDetail?.role === 5,
-    },
-  };
 };
 
 export default StatesSettings;

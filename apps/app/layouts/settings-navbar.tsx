@@ -2,7 +2,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 type Props = {
-  profilePage: boolean;
+  profilePage?: boolean;
 };
 
 const SettingsNavbar: React.FC<Props> = ({ profilePage = false }) => {
@@ -66,6 +66,10 @@ const SettingsNavbar: React.FC<Props> = ({ profilePage = false }) => {
     {
       label: "Integrations",
       href: `/${workspaceSlug}/projects/${projectId}/settings/integrations`,
+    },
+    {
+      label: "Estimates",
+      href: `/${workspaceSlug}/projects/${projectId}/settings/estimates`,
     },
   ];
 
