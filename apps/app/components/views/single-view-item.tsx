@@ -93,6 +93,16 @@ export const SingleViewItem: React.FC<Props> = ({ view, setSelectedView }) => {
               </div>
               <div className="ml-2 flex flex-shrink-0">
                 <div className="flex items-center gap-2">
+                  <p className="text-xs bg-gray-300 text-gray-600 py-0.5 px-2 rounded-full">
+                    {Object.keys(view.query_data)
+                      .map((key: string) =>
+                        view.query_data[key as keyof typeof view.query_data] !== null
+                          ? (view.query_data[key as keyof typeof view.query_data] as any).length
+                          : 0
+                      )
+                      .reduce((curr, prev) => curr + prev, 0)}{" "}
+                    filters
+                  </p>
                   <Tooltip
                     tooltipContent={`Last updated at ${renderShortTime(
                       view.updated_at
@@ -124,7 +134,7 @@ export const SingleViewItem: React.FC<Props> = ({ view, setSelectedView }) => {
                     </button>
                   )}
                   <CustomMenu width="auto" verticalEllipsis>
-                    <CustomMenu.MenuItem
+                    {/* <CustomMenu.MenuItem
                       onClick={(e: any) => {
                         e.preventDefault();
                         e.stopPropagation();
@@ -135,7 +145,7 @@ export const SingleViewItem: React.FC<Props> = ({ view, setSelectedView }) => {
                         <PencilIcon className="h-3.5 w-3.5" />
                         <span>Edit View</span>
                       </span>
-                    </CustomMenu.MenuItem>
+                    </CustomMenu.MenuItem> */}
                     <CustomMenu.MenuItem
                       onClick={(e: any) => {
                         e.preventDefault();
