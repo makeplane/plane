@@ -3,7 +3,7 @@
 }
 
 [cmdk-group-heading] {
-  color: rgb(var(--color-text-muted-2));
+  color: rgb(var(--color-text-secondary));
   font-size: 0.75rem;
   margin: 0 0 0.25rem 0.25rem;
 }
@@ -27,13 +27,13 @@
   font-size: 0.75rem;
   line-height: 1rem;
   border-radius: 0.25rem;
-  background-color: rgba(var(--color-border-base));
+  background-color: rgba(var(--color-bg-base));
 }
 
 [cmdk-item]:hover {
-  background-color: rgba(var(--color-border-base));
+  background-color: rgba(var(--color-bg-base));
 }
 
 [cmdk-item][aria-selected="true"] {
-  background-color: rgba(var(--color-border-base));
+  background-color: rgba(var(--color-bg-base));
 }
