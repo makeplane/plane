@@ -772,7 +772,6 @@ def create_link_activity(
             field="link",
             new_value=requested_data.get("url", ""),
             new_identifier=requested_data.get("id", None),
-            issue_comment_id=requested_data.get("id", None),
         )
     )
 
@@ -799,7 +798,6 @@ def update_link_activity(
                 old_identifier=current_instance.get("id"),
                 new_value=requested_data.get("url", ""),
                 new_identifier=current_instance.get("id", None),
-                issue_comment_id=current_instance.get("id", None),
             )
         )
 
