@@ -255,7 +255,7 @@ const GeneralSettings: NextPage = () => {
             <div className="col-span-12 sm:col-span-6">
               <h4 className="text-xl font-semibold">Identifier</h4>
               <p className="text-gray-500">
-                Create a 1-6 characters{"'"} identifier for the project.
+                Create a 1-5 characters{"'"} identifier for the project.
               </p>
             </div>
             <div className="col-span-12 sm:col-span-6">
