@@ -833,13 +833,12 @@ def create_attachment_activity(
             issue_id=issue_id,
             project=project,
             workspace=project.workspace,
-            comment=f"{actor.email} created a attachment",
+            comment=f"{actor.email} created an attachment",
             verb="created",
             actor=actor,
             field="attachment",
-            new_value=requested_data.get("url", ""),
-            new_identifier=requested_data.get("id", None),
-            issue_comment_id=requested_data.get("id", None),
+            new_value=current_instance.get("access", ""),
+            new_identifier=current_instance.get("id", None),
         )
     )
 
