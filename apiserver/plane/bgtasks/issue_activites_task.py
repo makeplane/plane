@@ -634,13 +634,9 @@ def create_issue_activity(
     )
 
 
-def track_estimate_points(    requested_data,
-    current_instance,
-    issue_id,
-    project,
-    actor,
-    issue_activities):
-    
+def track_estimate_points(
+    requested_data, current_instance, issue_id, project, actor, issue_activities
+):
     if current_instance.get("estimate_point") != requested_data.get("estimate_point"):
         if requested_data.get("estimate_point") == None:
             issue_activities.append(
@@ -667,7 +663,7 @@ def track_estimate_points(    requested_data,
                     field="estimate_point",
                     project=project,
                     workspace=project.workspace,
-                    comment=f"{actor.email} updated the estimate point to {requested_data.get('start_date')}",
+                    comment=f"{actor.email} updated the estimate point to {requested_data.get('estimate_point')}",
                 )
             )
 
