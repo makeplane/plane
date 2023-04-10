@@ -268,13 +268,15 @@ const GeneralSettings: NextPage = () => {
                   placeholder="Enter identifier"
                   validations={{
                     required: "Identifier is required",
+                    validate: (value) =>
+                      /^[A-Z]+$/.test(value) || "Identifier must be uppercase text.",
                     minLength: {
                       value: 1,
                       message: "Identifier must at least be of 1 character",
                     },
                     maxLength: {
-                      value: 9,
-                      message: "Identifier must at most be of 9 characters",
+                      value: 5,
+                      message: "Identifier must at most be of 5 characters",
                     },
                   }}
                 />
