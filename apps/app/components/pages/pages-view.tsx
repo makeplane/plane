@@ -207,7 +207,7 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
               ))}
             </ul>
           ) : viewType === "detailed" ? (
-            <div className="rounded-[10px] border border-gray-200 bg-white">
+            <div className="rounded-[10px] border divide-y  border-gray-200 bg-white">
               {pages.map((page) => (
                 <SinglePageDetailedItem
                   key={page.id}

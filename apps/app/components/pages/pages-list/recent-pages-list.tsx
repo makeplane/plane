@@ -37,16 +37,21 @@ export const RecentPagesList: React.FC<TPagesListProps> = ({ viewType }) => {
     <>
       {pages ? (
         Object.keys(pages).length > 0 && !isEmpty ? (
-          <div className="mt-4 space-y-4">
+          <div className="mt-4 space-y-4 flex flex-col gap-5">
             {Object.keys(pages).map((key) => {
               if (pages[key].length === 0) return null;
 
               return (
                 <React.Fragment key={key}>
-                  <h2 className="text-xl font-medium capitalize">
-                    {replaceUnderscoreIfSnakeCase(key)}
-                  </h2>
-                  <PagesView pages={pages[key as keyof RecentPagesResponse]} viewType={viewType} />
+                  <div>
+                    <h2 className="text-xl font-semibold capitalize mb-4">
+                      {replaceUnderscoreIfSnakeCase(key)}
+                    </h2>
+                    <PagesView
+                      pages={pages[key as keyof RecentPagesResponse]}
+                      viewType={viewType}
+                    />
+                  </div>
                 </React.Fragment>
               );
             })}

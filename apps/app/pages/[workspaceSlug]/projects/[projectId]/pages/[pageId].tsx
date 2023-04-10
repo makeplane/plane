@@ -32,12 +32,12 @@ import {
   LockClosedIcon,
   LockOpenIcon,
   PlusIcon,
-  ShareIcon,
   StarIcon,
+  LinkIcon
 } from "@heroicons/react/24/outline";
-import { ColorPalletteIcon } from "components/icons";
+import { ColorPalletteIcon, ClipboardIcon } from "components/icons";
 // helpers
-import { renderShortTime } from "helpers/date-time.helper";
+import { renderShortTime, renderShortDate } from "helpers/date-time.helper";
 import { copyTextToClipboard } from "helpers/string.helper";
 import { orderArrayBy } from "helpers/array.helper";
 // types
@@ -342,10 +342,10 @@ const SinglePage: NextPage = () => {
                   customButton={
                     <button
                       type="button"
-                      className="flex items-center gap-1 rounded-md bg-gray-100 px-3 py-1.5 text-xs hover:bg-gray-200"
+                      className="flex items-center gap-1 rounded-full bg-gray-100 px-2  pr-2.5 py-1 text-xs hover:bg-gray-200"
                     >
                       <PlusIcon className="h-3 w-3" />
-                      Add new label
+                      Add label
                     </button>
                   }
                   value={pageDetails.labels}
@@ -356,19 +356,21 @@ const SinglePage: NextPage = () => {
                 />
               )}
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-6">
               <Tooltip
-                tooltipContent={`Page last updated at ${renderShortTime(pageDetails.updated_at)}`}
-                theme="dark"
+                tooltipContent={`Last updated at ${
+                  renderShortTime(pageDetails.updated_at) +
+                  ` ${new Date(pageDetails.updated_at).getHours() < 12 ? "am" : "pm"}`
+                } on ${renderShortDate(pageDetails.updated_at)}`}
               >
-                <span className="cursor-default text-sm text-gray-500">
-                  {renderShortTime(pageDetails.updated_at)}
-                </span>
+                <p className="text-sm text-gray-500">
+                  {renderShortTime(pageDetails.updated_at) +
+                    ` ${new Date(pageDetails.updated_at).getHours() < 12 ? "am" : "pm"}`}
+                </p>
               </Tooltip>
-              <PrimaryButton className="flex items-center gap-2" onClick={handleCopyText}>
-                <ShareIcon className="h-4 w-4" />
-                Share
-              </PrimaryButton>
+              <button className="flex items-center gap-2" onClick={handleCopyText}>
+                <LinkIcon className="h-4 w-4" />
+              </button>
               <div className="flex-shrink-0">
                 <Popover className="relative grid place-items-center">
                   {({ open }) => (
@@ -435,20 +437,20 @@ const SinglePage: NextPage = () => {
               )}
             </div>
           </div>
-          <div>
+          <div className="px-4 pt-6">
             <TextArea
               id="name"
               name="name"
-              placeholder="Enter issue name"
+              placeholder="Page Title"
               value={watch("name")}
               onBlur={handleSubmit(updatePage)}
               onChange={(e) => setValue("name", e.target.value)}
               required={true}
-              className="min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-2xl font-semibold outline-none ring-0 focus:ring-1 focus:ring-gray-200"
+              className="min-h-10 block w-full resize-none overflow-hidden placeholder:text-[#858E96] rounded border-none bg-transparent px-3 py-2 text-3xl font-semibold outline-none ring-0 "
               role="textbox"
             />
           </div>
-          <div className="px-3">
+          <div className="px-7">
             {pageBlocks ? (
               <>
                 <DragDropContext onDragEnd={handleOnDragEnd}>
@@ -474,7 +476,7 @@ const SinglePage: NextPage = () => {
                 {!createBlockForm && (
                   <button
                     type="button"
-                    className="flex items-center gap-1 rounded bg-gray-100 px-2.5 py-1 ml-6 text-xs hover:bg-gray-200 mt-4"
+                    className="flex items-center gap-1 rounded-full bg-gray-100 px-2 py-1 pr-2.5 text-xs hover:bg-gray-200 mt-4"
                     onClick={handleNewBlock}
                   >
                     <PlusIcon className="h-3 w-3" />
@@ -486,7 +488,7 @@ const SinglePage: NextPage = () => {
                     <CreateUpdateBlockInline
                       handleClose={() => setCreateBlockForm(false)}
                       focus="name"
-                      setGptAssistantModal={()=>{}}
+                      setGptAssistantModal={() => {}}
                     />
                   </div>
                 )}
