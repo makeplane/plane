@@ -368,13 +368,10 @@ const SinglePage: NextPage = () => {
             <div className="flex items-center gap-6">
               <Tooltip
                 tooltipContent={`Last updated at ${
-                  renderShortTime(pageDetails.updated_at) +
-                  ` ${new Date(pageDetails.updated_at).getHours() < 12 ? "am" : "pm"}`
-                } on ${renderShortDate(pageDetails.updated_at)}`}
+                  renderShortTime(pageDetails.updated_at)} on ${renderShortDate(pageDetails.updated_at)}`}
               >
                 <p className="text-sm text-gray-500">
-                  {renderShortTime(pageDetails.updated_at) +
-                    ` ${new Date(pageDetails.updated_at).getHours() < 12 ? "am" : "pm"}`}
+                  {renderShortTime(pageDetails.updated_at)}
                 </p>
               </Tooltip>
               <button className="flex items-center gap-2" onClick={handleCopyText}>

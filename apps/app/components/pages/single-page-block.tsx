@@ -64,6 +64,7 @@ export const SinglePageBlock: React.FC<Props> = ({
   const [isSyncing, setIsSyncing] = useState(false);
   const [createBlockForm, setCreateBlockForm] = useState(false);
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
+  const [preLoadedData, setPreLoadedData] = useState<Partial<IPageBlock | null>>(null);
 
   const [gptAssistantModal, setGptAssistantModal] = useState(false);
 
@@ -419,7 +420,7 @@ export const SinglePageBlock: React.FC<Props> = ({
                     {block.issue && (
                       <div className="flex mr-1.5">
                         <Link
-                            href={`/${workspaceSlug}/projects/${projectId}/issues/${block.issue}`}
+                          href={`/${workspaceSlug}/projects/${projectId}/issues/${block.issue}`}
                         >
                           <a className="flex flex-shrink-0 items-center gap-1 rounded h-6 bg-gray-100 px-1.5 py-1 text-xs">
                             <LayerDiagonalIcon height="16" width="16" color="black" />
@@ -428,7 +429,9 @@ export const SinglePageBlock: React.FC<Props> = ({
                         </Link>
                       </div>
                     )}
-                    <h3 className="font-medium text-base overflow-hidden max-w-[1000px]">{block.name}</h3>
+                    <h3 className="font-medium text-base overflow-hidden max-w-[1000px]">
+                      {block.name}
+                    </h3>
                   </div>
                   {block?.description_stripped.length > 0 && (
                     <p className="mt-3 text-sm text-gray-500 font-normal h-5 truncate">

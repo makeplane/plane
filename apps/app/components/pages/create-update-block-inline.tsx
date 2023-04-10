@@ -1,3 +1,5 @@
+import React, { useCallback, useEffect } from "react";
+
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 
@@ -18,12 +20,11 @@ import pagesService from "services/pages.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { Input, Loader, PrimaryButton, SecondaryButton, CustomMenu } from "components/ui";
+import { Loader, PrimaryButton, SecondaryButton, CustomMenu, TextArea } from "components/ui";
 // types
 import { IPageBlock } from "types";
 // fetch-keys
 import { PAGE_BLOCKS_LIST } from "constants/fetch-keys";
-import { useCallback, useEffect } from "react";
 import issuesService from "services/issues.service";
 
 type Props = {
@@ -38,7 +39,7 @@ type Props = {
   handleCopyText?: () => void;
   pushBlockIntoIssues?: () => void;
   deletePageBlock?: () => void;
-}
+};
 
 const defaultValues = {
   name: "",
@@ -188,7 +189,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
       >
         <div className="px-4 pt-4">
           <div className="flex justify-between">
-            <Input
+            <TextArea
               id="name"
               name="name"
               placeholder="Title"

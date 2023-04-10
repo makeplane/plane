@@ -78,9 +78,7 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
                 <div className="flex items-center gap-2">
                   <Tooltip
                     tooltipContent={`Last updated at ${
-                      renderShortTime(page.updated_at) +
-                      ` ${new Date(page.updated_at).getHours() < 12 ? "am" : "pm"}`
-                    } on ${renderShortDate(page.updated_at)}`}
+                      renderShortTime(page.updated_at)} on ${renderShortDate(page.updated_at)}`}
                   >
                     <p className="text-sm text-gray-400">{renderShortTime(page.updated_at)}</p>
                   </Tooltip>
