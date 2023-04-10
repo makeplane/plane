@@ -152,7 +152,13 @@ const SinglePage: NextPage = () => {
         is_favorite: true,
       }),
       false
-    );
+    ).then(() => {
+      setToastAlert({
+        type: "success",
+        title: "Success",
+        message: "Added to favorites",
+      });
+    });;
 
     pagesService.addPageToFavorites(workspaceSlug as string, projectId as string, {
       page: pageId as string,
@@ -169,13 +175,16 @@ const SinglePage: NextPage = () => {
         is_favorite: false,
       }),
       false
-    );
+    ).then(() => {
+      setToastAlert({
+        type: "success",
+        title: "Success",
+        message: "Removed from favorites",
+      });
+    });;
 
-    pagesService.removePageFromFavorites(
-      workspaceSlug as string,
-      projectId as string,
-      pageId as string
-    );
+    pagesService
+      .removePageFromFavorites(workspaceSlug as string, projectId as string, pageId as string);
   };
 
   const handleOnDragEnd = (result: DropResult) => {
@@ -413,19 +422,28 @@ const SinglePage: NextPage = () => {
                   )}
                 </Popover>
               </div>
-              {pageDetails.access ? (
-                <button onClick={() => partialUpdatePage({ access: 0 })} className="z-10">
-                  <LockClosedIcon className="h-4 w-4" />
-                </button>
-              ) : (
-                <button
-                  onClick={() => partialUpdatePage({ access: 1 })}
-                  type="button"
-                  className="z-10"
-                >
-                  <LockOpenIcon className="h-4 w-4" />
-                </button>
-              )}
+              <Tooltip
+                tooltipContent={`${
+                  pageDetails.access
+                    ? "This page is only visible to you."
+                    : "This page can be viewed by anyone in the project."
+                }`}
+                theme="dark"
+              >
+                {pageDetails.access ? (
+                  <button onClick={() => partialUpdatePage({ access: 0 })} className="z-10">
+                    <LockClosedIcon className="h-4 w-4" />
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => partialUpdatePage({ access: 1 })}
+                    type="button"
+                    className="z-10"
+                  >
+                    <LockOpenIcon className="h-4 w-4" />
+                  </button>
+                )}
+              </Tooltip>
               {pageDetails.is_favorite ? (
                 <button onClick={handleRemoveFromFavorites} className="z-10">
                   <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
