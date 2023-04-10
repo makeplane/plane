@@ -786,33 +786,3 @@ class WorkspaceThemeViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-
-class UserWorkspaceThemeEndpoint(BaseAPIView):
-    def post(self, request, slug):
-        try:
-            workspace_theme_id = request.data.get("workspace_theme_id", False)
-
-            if not workspace_theme_id:
-                return Response(
-                    {"error": "Workspace Theme ID is required"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            workspace_theme = WorkspaceTheme.objects.get(
-                workspace__slug=slug, pk=workspace_theme_id
-            )
-
-            # Update at member level
-            workspace_member = WorkspaceMember.objects.get(
-                workspace__slug=slug, member=request.user
-            )
-            workspace_member.workspace_theme = workspace_theme
-            workspace_member.save()
-            serializer = WorkSpaceMemberSerializer(workspace_member)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )

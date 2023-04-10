@@ -41,7 +41,6 @@ from .workspace import (
     UserIssueCompletedGraphEndpoint,
     UserWorkspaceDashboardEndpoint,
     WorkspaceThemeViewSet,
-    UserWorkspaceThemeEndpoint,
 )
 from .state import StateViewSet
 from .shortcut import ShortCutViewSet

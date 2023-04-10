@@ -43,7 +43,6 @@ from plane.api.views import (
     UserIssueCompletedGraphEndpoint,
     UserWorkspaceDashboardEndpoint,
     WorkspaceThemeViewSet,
-    UserWorkspaceThemeEndpoint,
     ## End Workspaces
     # File Assets
     FileAssetEndpoint,
@@ -372,11 +371,6 @@ urlpatterns = [
             }
         ),
         name="workspace-themes",
-    ),
-    path(
-        "users/me/workspaces/<str:slug>/workspace-themes/",
-        UserWorkspaceThemeEndpoint.as_view(),
-        name="user-workspace-themes",
     ),
     ## End Workspaces ##
     # Projects

@@ -48,9 +48,6 @@ class WorkspaceMember(BaseModel):
     role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=10)
     company_role = models.TextField(null=True, blank=True)
     view_props = models.JSONField(null=True, blank=True)
-    workspace_theme = models.ForeignKey(
-        "db.WorkspaceTheme", on_delete=models.SET_NULL, related_name="theme", null=True
-    )
 
     class Meta:
         unique_together = ["workspace", "member"]
