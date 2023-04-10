@@ -124,14 +124,6 @@ For full documentation, visit [docs.plane.so](https://docs.plane.so/)
 
 To see how to Contribute, visit [here](https://github.com/makeplane/plane/blob/master/CONTRIBUTING.md).
 
-## 🔋 Status
-
-- [x] Early Community Previews: We are open-sourcing and sharing the development version of Plane
-- [ ] Alpha: We are testing Plane with a closed set of customers
-- [ ] Public Alpha: Anyone can sign up over at [app.plane.so](https://app.plane.so). But go easy on us, there are a few hiccups
-- [ ] Public Beta: Stable enough for most non-enterprise use-cases
-- [ ] Public: Production-ready
-
 ## ❤️ Community
 
 The Plane community can be found on GitHub Discussions, where you can ask questions, voice ideas, and share your projects.
