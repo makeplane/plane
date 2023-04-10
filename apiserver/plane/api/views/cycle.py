@@ -368,7 +368,8 @@ class CycleDateCheckEndpoint(BaseAPIView):
 
             cycles = Cycle.objects.filter(
                 Q(start_date__lte=start_date, end_date__gte=start_date)
-                | Q(start_date__gte=end_date, end_date__lte=end_date),
+                | Q(start_date__lte=end_date, end_date__gte=end_date)
+                | Q(start_date__gte=start_date, end_date__lte=end_date),
                 workspace__slug=slug,
                 project_id=project_id,
             )
