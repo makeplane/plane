@@ -46,13 +46,40 @@
     --color-bg-base: 25, 27, 27;
     --color-bg-surface-1: 31, 32, 35;
     --color-bg-surface-2: 39, 42, 45;
-    
+
     --color-border: 46, 50, 52;
     --color-bg-sidebar: 19, 20, 22;
     --color-accent: 60, 133, 217;
 
     --color-text-base: 255, 255, 255;
     --color-text-secondary: 142, 148, 146;
+  }
+
+  [data-theme="light-contrast"] {
+    --color-bg-base: 250, 250, 250;
+    --color-bg-surface-1: 250, 250, 250;
+    --color-bg-surface-2: 206, 212, 218;
+
+    --color-border: 0, 0, 0;
+    --color-bg-sidebar: 255, 255, 255;
+    --color-accent: 63, 118, 255;
+
+    --color-text-base: 0, 0, 0;
+    --color-text-secondary: 0, 0, 0;
+  }
+
+  [data-theme="dark-contrast"] {
+    --color-bg-base: 25, 27, 27;
+    --color-bg-surface-1: 31, 32, 35;
+    --color-bg-surface-2: 39, 42, 45;
+
+    --color-border: 255, 255, 255;
+    --color-bg-sidebar: 19, 20, 22;
+    --color-accent: 60, 133, 217;
+
+    --color-text-base: 255, 255, 255;
+    --color-text-secondary: 142, 148, 146;
+    color-scheme: dark !important;
   }
 }
 
