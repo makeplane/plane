@@ -131,10 +131,10 @@ export const WorkspaceAuthorizationLayout: React.FC<Props> = ({
                   noPadding ? "" : settingsLayout || profilePage ? "p-8 lg:px-28" : "p-8"
                 } ${
                   bg === "primary"
-                    ? "bg-primary"
+                    ? "bg-brand-base"
                     : bg === "secondary"
-                    ? "bg-secondary"
-                    : "bg-primary"
+                    ? "bg-brand-surface-1"
+                    : "bg-brand-base"
                 }`}
               >
                 {(settingsLayout || profilePage) && (

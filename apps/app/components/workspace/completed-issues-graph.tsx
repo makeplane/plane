@@ -55,7 +55,7 @@ export const CompletedIssuesGraph: React.FC<Props> = ({ month, issues, setMonth 
           ))}
         </CustomMenu>
       </div>
-      <div className="rounded-[10px] border border-brand-base bg-brand-surface-1 p-8 pl-4">
+      <div className="rounded-[10px] border border-brand-base bg-brand-sidebar p-8 pl-4">
         <ResponsiveContainer width="100%" height={250}>
           <LineChart data={data}>
             <CartesianGrid stroke="#e2e2e280" />
