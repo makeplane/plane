@@ -36,6 +36,7 @@ from plane.api.serializers import (
     WorkSpaceMemberInviteSerializer,
     UserLiteSerializer,
     ProjectMemberSerializer,
+    WorkspaceThemeSerializer,
 )
 from plane.api.views.base import BaseAPIView
 from . import BaseViewSet
@@ -48,6 +49,7 @@ from plane.db.models import (
     ProjectMember,
     IssueActivity,
     Issue,
+    WorkspaceTheme,
 )
 from plane.api.permissions import WorkSpaceBasePermission, WorkSpaceAdminPermission
 from plane.bgtasks.workspace_invitation_task import workspace_invitation
@@ -746,6 +748,68 @@ class UserWorkspaceDashboardEndpoint(BaseAPIView):
                 status=status.HTTP_200_OK,
             )
 
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class WorkspaceThemeViewSet(BaseViewSet):
+    permission_classes = [
+        WorkSpaceAdminPermission,
+    ]
+    model = WorkspaceTheme
+    serializer_class = WorkspaceThemeSerializer
+
+    def get_queryset(self):
+        return super().get_queryset().filter(workspace__slug=self.kwargs.get("slug"))
+
+    def create(self, request, slug):
+        try:
+            workspace = Workspace.objects.get(slug=slug)
+            serializer = WorkspaceThemeSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save(workspace=workspace, actor=request.user)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Workspace.DoesNotExist:
+            return Response(
+                {"error": "Workspace does not exist"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            print(e)
+            return Response(
+                {"error": "Something went wrong please try again later"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class UserWorkspaceThemeEndpoint(BaseAPIView):
+    def post(self, request, slug):
+        try:
+            workspace_theme_id = request.data.get("workspace_theme_id", False)
+
+            if not workspace_theme_id:
+                return Response(
+                    {"error": "Workspace Theme ID is required"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            workspace_theme = WorkspaceTheme.objects.get(
+                workspace__slug=slug, pk=workspace_theme_id
+            )
+
+            # Update at member level
+            workspace_member = WorkspaceMember.objects.get(
+                workspace__slug=slug, member=request.user
+            )
+            workspace_member.workspace_theme = workspace_theme
+            workspace_member.save()
+            serializer = WorkSpaceMemberSerializer(workspace_member)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)
             return Response(

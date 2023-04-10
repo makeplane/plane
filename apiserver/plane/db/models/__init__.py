@@ -8,6 +8,7 @@ from .workspace import (
     Team,
     WorkspaceMemberInvite,
     TeamMember,
+    WorkspaceTheme,
 )
 
 from .project import (

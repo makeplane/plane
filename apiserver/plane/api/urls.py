@@ -42,6 +42,8 @@ from plane.api.views import (
     UserActivityGraphEndpoint,
     UserIssueCompletedGraphEndpoint,
     UserWorkspaceDashboardEndpoint,
+    WorkspaceThemeViewSet,
+    UserWorkspaceThemeEndpoint,
     ## End Workspaces
     # File Assets
     FileAssetEndpoint,
@@ -349,6 +351,32 @@ urlpatterns = [
         "workspaces/<str:slug>/workspace-views/",
         WorkspaceMemberUserViewsEndpoint.as_view(),
         name="workspace-member-details",
+    ),
+    path(
+        "workspaces/<str:slug>/workspace-themes/",
+        WorkspaceThemeViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="workspace-themes",
+    ),
+    path(
+        "workspaces/<str:slug>/workspace-themes/<uuid:pk>/",
+        WorkspaceThemeViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="workspace-themes",
+    ),
+    path(
+        "users/me/workspaces/<str:slug>/workspace-themes/",
+        UserWorkspaceThemeEndpoint.as_view(),
+        name="user-workspace-themes",
     ),
     ## End Workspaces ##
     # Projects

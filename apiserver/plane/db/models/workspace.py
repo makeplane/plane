@@ -36,7 +36,6 @@ class Workspace(BaseModel):
         ordering = ("-created_at",)
 
 
-
 class WorkspaceMember(BaseModel):
     workspace = models.ForeignKey(
         "db.Workspace", on_delete=models.CASCADE, related_name="workspace_member"
@@ -49,6 +48,9 @@ class WorkspaceMember(BaseModel):
     role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=10)
     company_role = models.TextField(null=True, blank=True)
     view_props = models.JSONField(null=True, blank=True)
+    workspace_theme = models.ForeignKey(
+        "db.WorkspaceTheme", on_delete=models.SET_NULL, related_name="theme", null=True
+    )
 
     class Meta:
         unique_together = ["workspace", "member"]
@@ -111,7 +113,6 @@ class Team(BaseModel):
 
 
 class TeamMember(BaseModel):
-
     workspace = models.ForeignKey(
         Workspace, on_delete=models.CASCADE, related_name="team_member"
     )
@@ -128,4 +129,25 @@ class TeamMember(BaseModel):
         verbose_name = "Team Member"
         verbose_name_plural = "Team Members"
         db_table = "team_members"
+        ordering = ("-created_at",)
+
+
+class WorkspaceTheme(BaseModel):
+    workspace = models.ForeignKey(
+        "db.Workspace", on_delete=models.CASCADE, related_name="themes"
+    )
+    name = models.CharField(max_length=300)
+    actor = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="themes"
+    )
+    colors = models.JSONField(default=dict)
+
+    def __str__(self):
+        return str(self.name) + str(self.actor.email)
+
+    class Meta:
+        unique_together = ["workspace", "name"]
+        verbose_name = "Workspace Theme"
+        verbose_name_plural = "Workspace Themes"
+        db_table = "workspace_themes"
         ordering = ("-created_at",)
