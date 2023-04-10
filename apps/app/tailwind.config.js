@@ -17,27 +17,27 @@ module.exports = {
         "hover-gray": "#f5f5f5",
         primary: "#f9fafb", // gray-50
         secondary: "white",
-        skin: {
-          accent: withOpacity("--color-accent-base"),
+        brand: {
+          accent: withOpacity("--color-accent"),
         },
       },
       borderColor: {
-        skin: {
-          base: withOpacity("--color-border-base"),
+        brand: {
+          base: withOpacity("--color-border"),
         },
       },
       backgroundColor: {
-        skin: {
+        brand: {
           base: withOpacity("--color-bg-base"),
           "surface-1": withOpacity("--color-bg-surface-1"),
           "surface-2": withOpacity("--color-bg-surface-2"),
+          sidebar: withOpacity("--color-bg-sidebar"),
         },
       },
       textColor: {
-        skin: {
+        brand: {
           base: withOpacity("--color-text-base"),
-          "muted-1": withOpacity("--color-text-muted-1"),
-          "muted-2": withOpacity("--color-text-muted-2"),
+          secondary: withOpacity("--color-text-secondary"),
         },
       },
       keyframes: {

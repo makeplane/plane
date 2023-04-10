@@ -173,16 +173,16 @@ export const SingleSidebarProject: React.FC<Props> = ({
                     <a
                       className={`group flex items-center rounded-md p-2 text-xs font-medium outline-none ${
                         item.href === router.asPath
-                          ? "bg-skin-base text-skin-muted-2"
-                          : "text-skin-muted-2 hover:bg-skin-surface-1 hover:text-skin-muted-2 focus:bg-skin-base focus:text-skin-muted-2"
+                          ? "bg-brand-base text-brand-secondary"
+                          : "text-brand-secondary hover:bg-brand-surface-1 hover:text-brand-secondary focus:bg-brand-base focus:text-brand-secondary"
                       } ${sidebarCollapse ? "justify-center" : ""}`}
                     >
                       <div className="grid place-items-center">
                         <item.icon
                           className={`h-5 w-5 flex-shrink-0 ${
                             item.href === router.asPath
-                              ? "text-skin-muted-2"
-                              : "text-skin-muted-2 group-hover:text-skin-base"
+                              ? "text-brand-secondary"
+                              : "text-brand-secondary group-hover:text-brand-base"
                           } ${!sidebarCollapse ? "mr-3" : ""}`}
                           color="#858e96"
                           aria-hidden="true"

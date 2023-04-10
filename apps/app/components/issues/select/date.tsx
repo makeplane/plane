@@ -18,11 +18,11 @@ export const IssueDateSelect: React.FC<Props> = ({ value, onChange }) => (
       <>
         <Popover.Button
           className={({ open }) =>
-            `flex cursor-pointer items-center rounded-md border border-skin-base text-xs shadow-sm duration-200 
+            `flex cursor-pointer items-center rounded-md border border-brand-base text-xs shadow-sm duration-200 
               ${
                 open
-                  ? "border-skin-accent bg-skin-accent/5 outline-none ring-1 ring-skin-accent "
-                  : "hover:bg-skin-accent/5 "
+                  ? "border-brand-accent bg-brand-accent/5 outline-none ring-1 ring-brand-accent "
+                  : "hover:bg-brand-accent/5 "
               }`
           }
         >
@@ -37,7 +37,7 @@ export const IssueDateSelect: React.FC<Props> = ({ value, onChange }) => (
             ) : (
               <>
                 <CalendarDaysIcon className="h-4 w-4 flex-shrink-0 " />
-                <span className="text-skin-muted-2">Due Date</span>
+                <span className="text-brand-secondary">Due Date</span>
               </>
             )}
           </span>

@@ -52,26 +52,26 @@ const BillingSettings: NextPage<TBillingSettingsProps> = (props) => {
       >
         <section className="space-y-8">
           <div>
-            <h3 className="text-3xl font-bold leading-6 text-skin-base">Billing & Plans</h3>
-            <p className="mt-4 text-sm text-skin-muted-2">[Free launch preview] plan Pro</p>
+            <h3 className="text-3xl font-bold leading-6 text-brand-base">Billing & Plans</h3>
+            <p className="mt-4 text-sm text-brand-secondary">[Free launch preview] plan Pro</p>
           </div>
           <div className="space-y-8 md:w-2/3">
             <div>
-              <div className="w-80 rounded-md border border-skin-base bg-skin-surface-2 p-4 text-center">
-                <h4 className="text-md mb-1 leading-6 text-skin-base">Payment due</h4>
+              <div className="w-80 rounded-md border border-brand-base bg-brand-surface-2 p-4 text-center">
+                <h4 className="text-md mb-1 leading-6 text-brand-base">Payment due</h4>
                 <h2 className="text-3xl font-extrabold">--</h2>
               </div>
             </div>
             <div>
-              <h4 className="text-md mb-1 leading-6 text-skin-base">Current plan</h4>
-              <p className="mb-3 text-sm text-skin-muted-2">You are currently using the free plan</p>
+              <h4 className="text-md mb-1 leading-6 text-brand-base">Current plan</h4>
+              <p className="mb-3 text-sm text-brand-secondary">You are currently using the free plan</p>
               <a href="https://plane.so/pricing" target="_blank" rel="noreferrer">
                 <SecondaryButton outline>View Plans and Upgrade</SecondaryButton>
               </a>
             </div>
             <div>
-              <h4 className="text-md mb-1 leading-6 text-skin-base">Billing history</h4>
-              <p className="mb-3 text-sm text-skin-muted-2">There are no invoices to display</p>
+              <h4 className="text-md mb-1 leading-6 text-brand-base">Billing history</h4>
+              <p className="mb-3 text-sm text-brand-secondary">There are no invoices to display</p>
             </div>
           </div>
         </section>

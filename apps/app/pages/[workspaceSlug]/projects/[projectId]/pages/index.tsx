@@ -180,13 +180,13 @@ const ProjectPages: NextPage<UserAuth> = (props) => {
         <div className="space-y-4">
           <form
             onSubmit={handleSubmit(createPage)}
-            className="flex items-center justify-between gap-2 rounded-[10px] border border-skin-base bg-skin-surface-2 p-2 shadow-sm"
+            className="flex items-center justify-between gap-2 rounded-[10px] border border-brand-base bg-brand-surface-2 p-2 shadow-sm"
           >
             <Input
               type="text"
               name="name"
               register={register}
-              className="border-none outline-none focus:ring-0 ring-skin-base"
+              className="border-none outline-none focus:ring-0 ring-brand-base"
               placeholder="Type to create a new page..."
             />
             {watch("name") !== "" && (
@@ -206,8 +206,8 @@ const ProjectPages: NextPage<UserAuth> = (props) => {
                         className={({ selected }) =>
                           `rounded-full border px-5 py-1.5 text-sm outline-none ${
                             selected
-                              ? "border-skin-accent bg-skin-accent text-white"
-                              : "border-skin-base bg-skin-surface-2 hover:bg-skin-surface-1"
+                              ? "border-brand-accent bg-brand-accent text-white"
+                              : "border-brand-base bg-brand-surface-2 hover:bg-brand-surface-1"
                           }`
                         }
                       >
@@ -219,8 +219,8 @@ const ProjectPages: NextPage<UserAuth> = (props) => {
                 <div className="flex items-center gap-x-1">
                   <button
                     type="button"
-                    className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-skin-surface-2 ${
-                      viewType === "list" ? "bg-skin-surface-2" : ""
+                    className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
+                      viewType === "list" ? "bg-brand-surface-2" : ""
                     }`}
                     onClick={() => setViewType("list")}
                   >
@@ -228,8 +228,8 @@ const ProjectPages: NextPage<UserAuth> = (props) => {
                   </button>
                   <button
                     type="button"
-                    className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-skin-surface-2 ${
-                      viewType === "detailed" ? "bg-skin-surface-2" : ""
+                    className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
+                      viewType === "detailed" ? "bg-brand-surface-2" : ""
                     }`}
                     onClick={() => setViewType("detailed")}
                   >
@@ -237,8 +237,8 @@ const ProjectPages: NextPage<UserAuth> = (props) => {
                   </button>
                   {/* <button
                     type="button"
-                    className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-skin-surface-2 ${
-                      viewType === "masonry" ? "bg-skin-surface-2" : ""
+                    className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-2 ${
+                      viewType === "masonry" ? "bg-brand-surface-2" : ""
                     }`}
                     onClick={() => setViewType("masonry")}
                   >

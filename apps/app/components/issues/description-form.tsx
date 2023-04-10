@@ -116,7 +116,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
           role="textbox"
         />
         {characterLimit && (
-          <div className="pointer-events-none absolute bottom-0 right-0 z-[2] rounded bg-skin-surface-2 p-1 text-xs">
+          <div className="pointer-events-none absolute bottom-0 right-0 z-[2] rounded bg-brand-surface-2 p-1 text-xs">
             <span
               className={`${
                 watch("name").length === 0 || watch("name").length > 255 ? "text-red-500" : ""
@@ -159,7 +159,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = ({
         )}
       />
       <div
-        className={`absolute -bottom-8 right-0 text-sm text-skin-muted-2 ${
+        className={`absolute -bottom-8 right-0 text-sm text-brand-secondary ${
           isSubmitting ? "block" : "hidden"
         }`}
       >

@@ -86,7 +86,7 @@ const OnBoard: NextPage = () => {
     >
       <div className="flex min-h-full flex-col items-center justify-center p-4 sm:p-0">
         {user && (
-          <div className="mb-10 w-96 rounded-lg bg-indigo-100 p-2 text-skin-accent">
+          <div className="mb-10 w-96 rounded-lg bg-indigo-100 p-2 text-brand-accent">
             <p className="text-center text-sm">logged in as {user.email}</p>
           </div>
         )}
@@ -95,8 +95,8 @@ const OnBoard: NextPage = () => {
           {invitations && workspaces ? (
             invitations.length > 0 ? (
               <div>
-                <h2 className="text-lg font-medium text-skin-base">Workspace Invitations</h2>
-                <p className="mt-1 text-sm text-skin-muted-2">
+                <h2 className="text-lg font-medium text-brand-base">Workspace Invitations</h2>
+                <p className="mt-1 text-sm text-brand-secondary">
                   Select invites that you want to accept.
                 </p>
                 <ul role="list" className="mt-6 divide-y divide-gray-200 border-t border-b">
@@ -126,7 +126,7 @@ const OnBoard: NextPage = () => {
                 {workspaces.map((workspace) => (
                   <Link key={workspace.id} href={workspace.slug}>
                     <a>
-                      <div className="mb-2 flex items-center justify-between rounded border border-skin-base px-4 py-2">
+                      <div className="mb-2 flex items-center justify-between rounded border border-brand-base px-4 py-2">
                         <div className="flex items-center gap-x-2">
                           <CubeIcon className="h-5 w-5 text-gray-400" />
                           {workspace.name}

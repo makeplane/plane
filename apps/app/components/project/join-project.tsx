@@ -19,9 +19,9 @@ export const JoinProject: FC<JoinProjectProps> = ({ isJoiningProject, handleJoin
     <div className="h-44 w-72">
       <Image src={JoinProjectImg} height="176" width="288" alt="JoinProject" />
     </div>
-    <h1 className="text-xl font-medium text-skin-base">You are not a member of this project</h1>
+    <h1 className="text-xl font-medium text-brand-base">You are not a member of this project</h1>
 
-    <div className="w-full max-w-md text-base text-skin-muted-2 ">
+    <div className="w-full max-w-md text-base text-brand-secondary ">
       <p className="mx-auto w-full text-sm md:w-3/4">
         You are not a member of this project, but you can join this project by clicking the button
         below.

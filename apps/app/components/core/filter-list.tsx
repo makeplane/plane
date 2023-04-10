@@ -57,9 +57,9 @@ export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
           return (
             <div
               key={key}
-              className="flex items-center gap-x-2 rounded-full border border-skin-base bg-skin-surface-2 px-2 py-1"
+              className="flex items-center gap-x-2 rounded-full border border-brand-base bg-brand-surface-2 px-2 py-1"
             >
-              <span className="font-medium capitalize text-skin-muted-2">
+              <span className="font-medium capitalize text-brand-secondary">
                 {replaceUnderscoreIfSnakeCase(key)}:
               </span>
               {filters[key as keyof IIssueFilterOptions] === null ||
@@ -131,7 +131,7 @@ export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
                               ? "bg-yellow-100 text-yellow-500 hover:bg-yellow-100"
                               : priority === "low"
                               ? "bg-green-100 text-green-500 hover:bg-green-100"
-                              : "bg-skin-surface-1 text-gray-700 hover:bg-skin-surface-1"
+                              : "bg-brand-surface-1 text-gray-700 hover:bg-brand-surface-1"
                           }`}
                         >
                           <span>{getPriorityIcon(priority)}</span>
@@ -326,7 +326,7 @@ export const FilterList: React.FC<any> = ({ filters, setFilters }) => {
               created_by: null,
             })
           }
-          className="flex items-center gap-x-1 rounded-full border border-skin-base bg-skin-surface-2 px-3 py-1.5 text-xs"
+          className="flex items-center gap-x-1 rounded-full border border-brand-base bg-brand-surface-2 px-3 py-1.5 text-xs"
         >
           <span className="font-medium">Clear all filters</span>
           <XMarkIcon className="h-4 w-4" />

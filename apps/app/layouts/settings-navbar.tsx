@@ -89,10 +89,10 @@ const SettingsNavbar: React.FC<Props> = ({ profilePage = false }) => {
         <Link key={link.href} href={link.href}>
           <a>
             <div
-              className={`rounded-3xl border border-skin-base px-5 py-1.5 text-sm sm:px-7 sm:py-2 sm:text-base ${
+              className={`rounded-3xl border border-brand-base px-5 py-1.5 text-sm sm:px-7 sm:py-2 sm:text-base ${
                 router.asPath === link.href
-                  ? "border-skin-accent bg-skin-accent text-white"
-                  : "border-skin-base bg-skin-surface-2 hover:bg-skin-surface-1"
+                  ? "border-brand-accent bg-brand-accent text-white"
+                  : "border-brand-base bg-brand-surface-2 hover:bg-brand-surface-1"
               }`}
             >
               {link.label}

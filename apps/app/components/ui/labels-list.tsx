@@ -17,7 +17,7 @@ export const IssueLabelsList: React.FC<IssueLabelsListProps> = ({
         {labels.map((color, index) => (
           <div className={`flex h-4 w-4 rounded-full ${index ? "-ml-3.5" : ""}`}>
             <span
-              className={`h-4 w-4 flex-shrink-0 rounded-full border border-skin-base
+              className={`h-4 w-4 flex-shrink-0 rounded-full border border-brand-base
               `}
               style={{
                 backgroundColor: color && color !== "" ? color : "#000000",

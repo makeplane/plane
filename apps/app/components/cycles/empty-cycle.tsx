@@ -37,30 +37,30 @@ export const EmptyCycle = () => {
   return (
     <div className="flex h-full w-full flex-col items-center justify-center gap-5 ">
       <div className="relative h-32 w-72">
-        <div className="absolute right-0 top-0 flex w-64 flex-col rounded-[10px] bg-skin-surface-2 text-xs shadow">
+        <div className="absolute right-0 top-0 flex w-64 flex-col rounded-[10px] bg-brand-surface-2 text-xs shadow">
           <div className="flex flex-col items-start justify-center gap-2.5 p-3.5">
-            <span className="text-sm font-semibold text-skin-base">Cycle Name</span>
+            <span className="text-sm font-semibold text-brand-base">Cycle Name</span>
             <div className="flex h-full w-full items-center gap-4">
-              <span className="h-2 w-20 rounded-full bg-skin-surface-2" />
-              <span className="h-2 w-20 rounded-full bg-skin-surface-2" />
+              <span className="h-2 w-20 rounded-full bg-brand-surface-2" />
+              <span className="h-2 w-20 rounded-full bg-brand-surface-2" />
             </div>
           </div>
 
-          <div className="border-t border-skin-base bg-skin-surface-1 px-4 py-3">
+          <div className="border-t border-brand-base bg-brand-surface-1 px-4 py-3">
             <LinearProgressIndicator data={emptyCycleData} />
           </div>
         </div>
 
-        <div className="absolute left-0 bottom-0 flex w-64 flex-col rounded-[10px] bg-skin-surface-2 text-xs shadow">
+        <div className="absolute left-0 bottom-0 flex w-64 flex-col rounded-[10px] bg-brand-surface-2 text-xs shadow">
           <div className="flex flex-col items-start justify-center gap-2.5 p-3.5">
-            <span className="text-sm font-semibold text-skin-base">Cycle Name</span>
+            <span className="text-sm font-semibold text-brand-base">Cycle Name</span>
             <div className="flex h-full w-full items-center gap-4">
-              <span className="h-2 w-20 rounded-full bg-skin-surface-2" />
-              <span className="h-2 w-20 rounded-full bg-skin-surface-2" />
+              <span className="h-2 w-20 rounded-full bg-brand-surface-2" />
+              <span className="h-2 w-20 rounded-full bg-brand-surface-2" />
             </div>
           </div>
 
-          <div className="border-t border-skin-base bg-skin-surface-1 px-4 py-3">
+          <div className="border-t border-brand-base bg-brand-surface-1 px-4 py-3">
             <LinearProgressIndicator data={emptyCycleData} />
           </div>
         </div>
@@ -68,7 +68,7 @@ export const EmptyCycle = () => {
 
       <div className="flex flex-col items-center justify-center gap-4 text-center ">
         <h3 className="text-xl font-semibold">Create New Cycle</h3>
-        <p className="text-sm text-skin-muted-2">
+        <p className="text-sm text-brand-secondary">
           Sprint more effectively with Cycles by confining your project <br /> to a fixed amount of
           time. Create new cycle now.
         </p>

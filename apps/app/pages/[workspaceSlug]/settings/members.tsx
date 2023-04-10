@@ -147,7 +147,7 @@ const MembersSettings: NextPage<UserAuth> = (props) => {
             <h3 className="text-2xl font-semibold">Members</h3>
             <button
               type="button"
-              className="flex items-center gap-2 text-skin-accent outline-none"
+              className="flex items-center gap-2 text-brand-accent outline-none"
               onClick={() => setInviteModal(true)}
             >
               <PlusIcon className="h-4 w-4" />
@@ -162,7 +162,7 @@ const MembersSettings: NextPage<UserAuth> = (props) => {
               <Loader.Item height="40px" />
             </Loader>
           ) : (
-            <div className="divide-y rounded-[10px] divide-skin-base border border-skin-base bg-skin-surface-1 px-6">
+            <div className="divide-y rounded-[10px] divide-brand-base border border-brand-base bg-brand-surface-1 px-6">
               {members.length > 0
                 ? members.map((member) => (
                     <div key={member.id} className="flex items-center justify-between py-6">
@@ -186,7 +186,7 @@ const MembersSettings: NextPage<UserAuth> = (props) => {
                           <h4 className="text-sm">
                             {member.first_name} {member.last_name}
                           </h4>
-                          <p className="text-xs text-skin-muted-2">{member.email}</p>
+                          <p className="text-xs text-brand-secondary">{member.email}</p>
                         </div>
                       </div>
                       <div className="flex items-center">

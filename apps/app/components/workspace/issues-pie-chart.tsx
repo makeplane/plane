@@ -79,7 +79,7 @@ export const IssuesPieChart: React.FC<Props> = ({ groupedIssues }) => {
   return (
     <div>
       <h3 className="mb-2 font-semibold">Issues by States</h3>
-      <div className="rounded-[10px] border border-skin-base bg-skin-surface-2 p-4">
+      <div className="rounded-[10px] border border-brand-base bg-brand-surface-1 p-4">
         <ResponsiveContainer width="100%" height={320}>
           <PieChart>
             <Pie

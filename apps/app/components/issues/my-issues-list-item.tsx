@@ -79,7 +79,7 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
   const isNotAllowed = false;
 
   return (
-    <div className="border-b border-skin-base last:border-b-0">
+    <div className="border-b border-brand-base last:border-b-0">
       <div key={issue.id} className="flex items-center justify-between gap-2 px-4 py-3">
         <Link href={`/${workspaceSlug}/projects/${issue?.project_detail?.id}/issues/${issue.id}`}>
           <a className="group relative flex items-center gap-2">
@@ -94,7 +94,7 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
               </Tooltip>
             )}
             <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
-              <span className="break-all text-sm text-skin-base">
+              <span className="break-all text-sm text-brand-base">
                 {truncateText(issue.name, 50)}
               </span>
             </Tooltip>
@@ -124,7 +124,7 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
             />
           )}
           {properties.sub_issue_count && (
-            <div className="flex items-center gap-1 rounded-md border border-skin-base px-3 py-1.5 text-xs shadow-sm">
+            <div className="flex items-center gap-1 rounded-md border border-brand-base px-3 py-1.5 text-xs shadow-sm">
               {issue?.sub_issues_count} {issue?.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
             </div>
           )}
@@ -133,7 +133,7 @@ export const MyIssuesListItem: React.FC<Props> = ({ issue, properties, projectId
               {issue.label_details.map((label) => (
                 <span
                 key={label.id}
-                  className="group flex items-center gap-1 rounded-2xl border border-skin-base px-2 py-0.5 text-xs"
+                  className="group flex items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs"
                 >
                   <span
                     className="h-1.5 w-1.5 flex-shrink-0 rounded-full"

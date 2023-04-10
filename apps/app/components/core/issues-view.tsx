@@ -435,7 +435,7 @@ export const IssuesView: React.FC<Props> = ({
       </div>
 
       {Object.keys(filters).length > 0 && nullFilters.length !== Object.keys(filters).length && (
-        <div className="mb-5 border-t border-skin-base" />
+        <div className="mb-5 border-t border-brand-base" />
       )}
 
       <DragDropContext onDragEnd={handleOnDragEnd}>
@@ -514,7 +514,7 @@ export const IssuesView: React.FC<Props> = ({
                   title="Create a new issue"
                   description={
                     <span>
-                      Use <pre className="inline rounded bg-skin-surface-2 px-2 py-1">C</pre> shortcut to
+                      Use <pre className="inline rounded bg-brand-surface-2 px-2 py-1">C</pre> shortcut to
                       create a new issue
                     </span>
                   }

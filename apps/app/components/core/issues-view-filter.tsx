@@ -49,30 +49,30 @@ export const IssuesFilterView: React.FC = () => {
       <div className="flex items-center gap-x-1">
         <button
           type="button"
-          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-skin-surface-1 ${
-            issueView === "list" ? "bg-skin-base" : ""
+          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-surface-1 ${
+            issueView === "list" ? "bg-brand-base" : ""
           }`}
           onClick={() => setIssueView("list")}
         >
-          <ListBulletIcon className="h-4 w-4 text-skin-muted-2" />
+          <ListBulletIcon className="h-4 w-4 text-brand-secondary" />
         </button>
         <button
           type="button"
-          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-skin-base ${
-            issueView === "kanban" ? "bg-skin-base" : ""
+          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-base ${
+            issueView === "kanban" ? "bg-brand-base" : ""
           }`}
           onClick={() => setIssueView("kanban")}
         >
-          <Squares2X2Icon className="h-4 w-4 text-skin-muted-2" />
+          <Squares2X2Icon className="h-4 w-4 text-brand-secondary" />
         </button>
         <button
           type="button"
-          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-skin-base ${
-            issueView === "calendar" ? "bg-skin-base" : ""
+          className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-brand-base ${
+            issueView === "calendar" ? "bg-brand-base" : ""
           }`}
           onClick={() => setIssueView("calendar")}
         >
-          <CalendarDaysIcon className="h-4 w-4 text-skin-muted-2" />
+          <CalendarDaysIcon className="h-4 w-4 text-brand-secondary" />
         </button>
       </div>
       <SelectFilters
@@ -109,8 +109,8 @@ export const IssuesFilterView: React.FC = () => {
         {({ open }) => (
           <>
             <Popover.Button
-              className={`group flex items-center gap-2 rounded-md border border-skin-base bg-transparent px-3 py-1.5 text-xs hover:bg-skin-surface-1 hover:text-skin-base focus:outline-none ${
-                open ? "bg-skin-surface-1 text-skin-base" : "text-skin-muted-1"
+              className={`group flex items-center gap-2 rounded-md border border-brand-base bg-transparent px-3 py-1.5 text-xs hover:bg-brand-surface-1 hover:text-brand-base focus:outline-none ${
+                open ? "bg-brand-surface-1 text-brand-base" : "text-brand-muted-1"
               }`}
             >
               View
@@ -126,11 +126,11 @@ export const IssuesFilterView: React.FC = () => {
               leaveFrom="opacity-100 translate-y-0"
               leaveTo="opacity-0 translate-y-1"
             >
-              <Popover.Panel className="absolute right-0 z-20 mt-1 w-screen max-w-xs transform overflow-hidden rounded-lg bg-skin-surface-2 p-3 shadow-lg">
-                <div className="relative divide-y-2 divide-skin-base">
+              <Popover.Panel className="absolute right-0 z-20 mt-1 w-screen max-w-xs transform overflow-hidden rounded-lg bg-brand-surface-2 p-3 shadow-lg">
+                <div className="relative divide-y-2 divide-brand-base">
                   <div className="space-y-4 pb-3 text-xs">
                     <div className="flex items-center justify-between">
-                      <h4 className="text-skin-muted-2">Group by</h4>
+                      <h4 className="text-brand-secondary">Group by</h4>
                       <CustomMenu
                         label={
                           GROUP_BY_OPTIONS.find((option) => option.key === groupByProperty)?.name ??
@@ -151,7 +151,7 @@ export const IssuesFilterView: React.FC = () => {
                       </CustomMenu>
                     </div>
                     <div className="flex items-center justify-between">
-                      <h4 className="text-skin-muted-2">Order by</h4>
+                      <h4 className="text-brand-secondary">Order by</h4>
                       <CustomMenu
                         label={
                           ORDER_BY_OPTIONS.find((option) => option.key === orderBy)?.name ??
@@ -174,7 +174,7 @@ export const IssuesFilterView: React.FC = () => {
                       </CustomMenu>
                     </div>
                     <div className="flex items-center justify-between">
-                      <h4 className="text-skin-muted-2">Issue type</h4>
+                      <h4 className="text-brand-secondary">Issue type</h4>
                       <CustomMenu
                         label={
                           FILTER_ISSUE_OPTIONS.find((option) => option.key === filters.type)
@@ -197,11 +197,11 @@ export const IssuesFilterView: React.FC = () => {
                       </CustomMenu>
                     </div>
                     <div className="flex items-center justify-between">
-                      <h4 className="text-skin-muted-2">Show empty states</h4>
+                      <h4 className="text-brand-secondary">Show empty states</h4>
                       <button
                         type="button"
                         className={`relative inline-flex h-3.5 w-6 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                          showEmptyGroups ? "bg-green-500" : "bg-skin-surface-2"
+                          showEmptyGroups ? "bg-green-500" : "bg-brand-surface-2"
                         }`}
                         role="switch"
                         aria-checked={showEmptyGroups}
@@ -210,7 +210,7 @@ export const IssuesFilterView: React.FC = () => {
                         <span className="sr-only">Show empty groups</span>
                         <span
                           aria-hidden="true"
-                          className={`inline-block h-2.5 w-2.5 transform rounded-full bg-skin-surface-2 shadow ring-0 transition duration-200 ease-in-out ${
+                          className={`inline-block h-2.5 w-2.5 transform rounded-full bg-brand-surface-2 shadow ring-0 transition duration-200 ease-in-out ${
                             showEmptyGroups ? "translate-x-2.5" : "translate-x-0"
                           }`}
                         />
@@ -222,7 +222,7 @@ export const IssuesFilterView: React.FC = () => {
                       </button>
                       <button
                         type="button"
-                        className="font-medium text-skin-accent"
+                        className="font-medium text-brand-accent"
                         onClick={() => setNewFilterDefaultView()}
                       >
                         Set as default
@@ -230,16 +230,16 @@ export const IssuesFilterView: React.FC = () => {
                     </div>
                   </div>
                   <div className="space-y-2 py-3">
-                    <h4 className="text-sm text-skin-muted-2">Display Properties</h4>
+                    <h4 className="text-sm text-brand-secondary">Display Properties</h4>
                     <div className="flex flex-wrap items-center gap-2">
                       {Object.keys(properties).map((key) => (
                         <button
                           key={key}
                           type="button"
-                          className={`rounded border border-skin-base px-2 py-1 text-xs capitalize ${
+                          className={`rounded border border-brand-base px-2 py-1 text-xs capitalize ${
                             properties[key as keyof Properties]
-                              ? "border-skin-accent bg-skin-accent text-white"
-                              : "border-skin-base"
+                              ? "border-brand-accent bg-brand-accent text-white"
+                              : "border-brand-base"
                           }`}
                           onClick={() => setProperties(key as keyof Properties)}
                         >

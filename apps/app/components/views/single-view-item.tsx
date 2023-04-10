@@ -83,7 +83,7 @@ export const SingleViewItem: React.FC<Props> = ({ view, setSelectedView }) => {
   return (
     <Link href={`/${workspaceSlug}/projects/${projectId}/views/${view.id}`}>
       <a>
-        <div className="flex items-center cursor-pointer justify-between border-b border-skin-base  bg-skin-surface-2 p-4 first:rounded-t-[10px] last:rounded-b-[10px]">
+        <div className="flex items-center cursor-pointer justify-between border-b border-brand-base  bg-brand-surface-2 p-4 first:rounded-t-[10px] last:rounded-b-[10px]">
           <div className="flex flex-col w-full gap-3">
             <div className="flex justify-between w-full">
               <div className="flex items-center gap-2">

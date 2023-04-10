@@ -98,8 +98,8 @@ const SignInPage: NextPage = () => {
       }}
     >
       {isLoading && (
-        <div className="absolute top-0 left-0 z-50 flex h-full w-full flex-col items-center justify-center gap-y-3 bg-skin-surface-2">
-          <h2 className="text-2xl text-skin-base">Signing in. Please wait...</h2>
+        <div className="absolute top-0 left-0 z-50 flex h-full w-full flex-col items-center justify-center gap-y-3 bg-brand-surface-2">
+          <h2 className="text-2xl text-brand-base">Signing in. Please wait...</h2>
           <Spinner />
         </div>
       )}
@@ -108,17 +108,17 @@ const SignInPage: NextPage = () => {
           <div className="flex flex-col gap-10 sm:mx-auto sm:w-full sm:max-w-md">
             <div className="flex flex-col items-center justify-center gap-10">
               <Image src={Logo} height={80} width={80} alt="Plane Web Logo" />
-              <h2 className="text-center text-xl font-medium text-skin-base">
+              <h2 className="text-center text-xl font-medium text-brand-base">
                 Sign In to your Plane Account
               </h2>
             </div>
 
-            <div className="flex flex-col rounded-[10px] bg-skin-surface-2  shadow-md">
+            <div className="flex flex-col rounded-[10px] bg-brand-surface-2  shadow-md">
               {parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0") ? (
                 <>
                   <EmailSignInForm handleSuccess={onSignInSuccess} />
 
-                  <div className="flex flex-col gap-3 py-5 px-5 border-t items-center justify-center border-skin-base ">
+                  <div className="flex flex-col gap-3 py-5 px-5 border-t items-center justify-center border-brand-base ">
                     <GoogleLoginButton handleSignIn={handleGoogleSignIn} />
 
                     <GithubLoginButton handleSignIn={handleGithubSignIn} />

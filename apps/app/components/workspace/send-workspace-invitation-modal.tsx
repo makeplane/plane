@@ -84,7 +84,7 @@ const SendWorkspaceInvitationModal: React.FC<Props> = ({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          <div className="fixed inset-0 bg-[#131313] bg-opacity-50 transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -98,14 +98,14 @@ const SendWorkspaceInvitationModal: React.FC<Props> = ({
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg bg-skin-surface-2 p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative transform rounded-lg bg-brand-surface-1 p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="space-y-5">
                     <div>
-                      <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-skin-base">
+                      <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-brand-base">
                         Members
                       </Dialog.Title>
-                      <p className="text-sm text-skin-muted-2">
+                      <p className="text-sm text-brand-secondary">
                         Invite members to work on your workspace.
                       </p>
                     </div>

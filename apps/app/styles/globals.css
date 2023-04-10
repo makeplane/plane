@@ -16,28 +16,44 @@
     font-family: "Inter", sans-serif;
   }
 
+  :root {
+    --color-bg-base: 243, 244, 246;
+    --color-bg-surface-1: 249, 250, 251;
+    --color-bg-surface-2: 255, 255, 255;
+
+    --color-border: 229, 231, 235;
+    --color-bg-sidebar: 255, 255, 255;
+    --color-accent: 63, 118, 255;
+
+    --color-text-base: 3, 7, 18;
+    --color-text-secondary: 55, 65, 81;
+  }
+
   [data-theme="light"] {
     --color-bg-base: 243, 244, 246;
     --color-bg-surface-1: 249, 250, 251;
     --color-bg-surface-2: 255, 255, 255;
-    --color-border-base: 229, 231, 235;
-    --color-accent-base: 63, 118, 255;
+
+    --color-border: 229, 231, 235;
+    --color-bg-sidebar: 255, 255, 255;
+    --color-accent: 63, 118, 255;
 
     --color-text-base: 3, 7, 18;
-    --color-text-muted-1: 55, 65, 81;
-    --color-text-muted-2: 107, 114, 128;
+    --color-text-secondary: 55, 65, 81;
   }
 
   [data-theme="dark"] {
-    --color-bg-base: 3, 7, 18;
-    --color-bg-surface-1: 17, 24, 39;
-    --color-bg-surface-2: 31, 41, 55;
-    --color-border-base: 55, 65, 81;
-    --color-accent-base: 63, 118, 255;
+    --color-bg-base: 25, 27, 27;
+    --color-bg-surface-1: 31, 32, 35;
+    --color-bg-surface-2: 39, 42, 45;
+
+    --color-bg-sidebar: 19, 20, 22;
+
+    --color-border: 46, 50, 52;
+    --color-accent: 60, 133, 217;
 
     --color-text-base: 255, 255, 255;
-    --color-text-muted-1: 243, 244, 246;
-    --color-text-muted-2: 156, 163, 175;
+    --color-text-secondary: 142, 148, 146;
   }
 }
 

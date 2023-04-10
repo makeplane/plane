@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useState, useEffect } from "react";
 
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -144,19 +144,19 @@ const AppLayout: FC<AppLayoutProps> = ({
                   noPadding ? "" : settingsLayout ? "p-8 lg:px-28" : "p-8"
                 } ${
                   bg === "primary"
-                    ? "bg-skin-base"
+                    ? "bg-brand-base"
                     : bg === "secondary"
-                    ? "bg-skin-base"
-                    : "bg-skin-base"
+                    ? "bg-brand-base"
+                    : "bg-brand-base"
                 }`}
               >
                 {settingsLayout && (
                   <div className="mb-12 space-y-6">
                     <div>
-                      <h3 className="text-3xl font-semibold text-skin-base">
+                      <h3 className="text-3xl font-semibold text-brand-base">
                         {profilePage ? "Profile" : projectId ? "Project" : "Workspace"} Settings
                       </h3>
-                      <p className="mt-1 text-skin-muted-2">
+                      <p className="mt-1 text-brand-secondary">
                         {profilePage
                           ? "This information will be visible to only you."
                           : projectId

@@ -189,7 +189,7 @@ export const SingleListIssue: React.FC<Props> = ({
           </ContextMenu.Item>
         </a>
       </ContextMenu>
-      <div className="border-b border-skin-base last:border-b-0">
+      <div className="border-b border-brand-base last:border-b-0">
         <div
           className="flex items-center justify-between gap-2 px-4 py-3"
           onContextMenu={(e) => {
@@ -211,7 +211,7 @@ export const SingleListIssue: React.FC<Props> = ({
                 </Tooltip>
               )}
               <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
-                <span className="text-sm text-skin-muted-1">{truncateText(issue.name, 50)}</span>
+                <span className="text-sm text-brand-muted-1">{truncateText(issue.name, 50)}</span>
               </Tooltip>
             </a>
           </Link>
@@ -241,7 +241,7 @@ export const SingleListIssue: React.FC<Props> = ({
               />
             )}
             {properties.sub_issue_count && (
-              <div className="flex  items-center gap-1 rounded-md border border-skin-base px-3 py-1.5 text-xs shadow-sm">
+              <div className="flex  items-center gap-1 rounded-md border border-brand-base px-3 py-1.5 text-xs shadow-sm">
                 {issue.sub_issues_count} {issue.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
               </div>
             )}
@@ -250,7 +250,7 @@ export const SingleListIssue: React.FC<Props> = ({
                 {issue.label_details.map((label) => (
                   <span
                     key={label.id}
-                    className="group flex items-center gap-1 rounded-2xl border border-skin-base px-2 py-0.5 text-xs"
+                    className="group flex items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs"
                   >
                     <span
                       className="h-1.5 w-1.5  rounded-full"

@@ -51,9 +51,9 @@ const CustomSelect = ({
       ) : (
         <Listbox.Button
           className={`flex w-full ${
-            disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-skin-surface-2"
-          } items-center justify-between gap-1 rounded-md border border-skin-base shadow-sm duration-300 focus:border-skin-accent focus:outline-none focus:ring-1 focus:ring-skin-accent ${
-            input ? "border-skin-base px-3 py-2 text-sm" : "px-2.5 py-1 text-xs"
+            disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-brand-surface-2"
+          } items-center justify-between gap-1 rounded-md border border-brand-base shadow-sm duration-300 focus:border-brand-accent focus:outline-none focus:ring-1 focus:ring-brand-accent ${
+            input ? "border-brand-base px-3 py-2 text-sm" : "px-2.5 py-1 text-xs"
           } ${
             textAlignment === "right"
               ? "text-right"
@@ -80,7 +80,7 @@ const CustomSelect = ({
       <Listbox.Options
         className={`${optionsClassName} absolute ${
           position === "right" ? "right-0" : "left-0"
-        } z-10 mt-1 origin-top-right overflow-y-auto rounded-md bg-skin-surface-2 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ${
+        } z-10 mt-1 origin-top-right overflow-y-auto rounded-md bg-brand-surface-2 text-xs shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ${
           width === "auto" ? "min-w-[8rem] whitespace-nowrap" : width
         } ${input ? "max-h-48" : ""} ${
           maxHeight === "lg"
@@ -110,9 +110,9 @@ const Option: React.FC<OptionProps> = ({ children, value, className }) => (
   <Listbox.Option
     value={value}
     className={({ active, selected }) =>
-      `${className} ${active || selected ? "bg-skin-surface-1" : ""} ${
+      `${className} ${active || selected ? "bg-brand-surface-1" : ""} ${
         selected ? "font-medium" : ""
-      } cursor-pointer select-none truncate rounded px-1 py-1.5 text-skin-muted-2`
+      } cursor-pointer select-none truncate rounded px-1 py-1.5 text-brand-secondary`
     }
   >
     {({ selected }) => (

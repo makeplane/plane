@@ -132,9 +132,9 @@ export const SingleList: React.FC<Props> = ({
   return (
     <Disclosure key={groupTitle} as="div" defaultOpen>
       {({ open }) => (
-        <div className="rounded-[10px] border border-skin-base bg-skin-surface-2">
+        <div className="rounded-[10px] border border-brand-base bg-brand-surface-2">
           <div
-            className={`flex items-center justify-between bg-skin-surface-1 px-5 py-3 ${
+            className={`flex items-center justify-between bg-brand-surface-1 px-5 py-3 ${
               open ? "rounded-t-[10px]" : "rounded-[10px]"
             }`}
           >
@@ -144,13 +144,13 @@ export const SingleList: React.FC<Props> = ({
                   <span className="flex items-center">{getGroupIcon()}</span>
                 )}
                 {selectedGroup !== null ? (
-                  <h2 className="text-base font-semibold capitalize leading-6 text-skin-base">
+                  <h2 className="text-base font-semibold capitalize leading-6 text-brand-base">
                     {getGroupTitle()}
                   </h2>
                 ) : (
                   <h2 className="font-medium leading-5">All Issues</h2>
                 )}
-                <span className="rounded-full bg-skin-surface-2 py-0.5 px-3 text-sm text-skin-2">
+                <span className="rounded-full bg-brand-surface-2 py-0.5 px-3 text-sm text-brand-2">
                   {groupedByIssues[groupTitle as keyof IIssue].length}
                 </span>
               </div>
@@ -158,7 +158,7 @@ export const SingleList: React.FC<Props> = ({
             {type === "issue" ? (
               <button
                 type="button"
-                className="p-1  text-skin-muted-2 hover:bg-skin-surface-2"
+                className="p-1  text-brand-secondary hover:bg-brand-surface-2"
                 onClick={addIssueToState}
               >
                 <PlusIcon className="h-4 w-4" />
@@ -215,7 +215,7 @@ export const SingleList: React.FC<Props> = ({
                     />
                   ))
                 ) : (
-                  <p className="px-4 py-3 text-sm text-skin-muted-2">No issues.</p>
+                  <p className="px-4 py-3 text-sm text-brand-secondary">No issues.</p>
                 )
               ) : (
                 <div className="flex h-full w-full items-center justify-center">Loading...</div>

@@ -90,17 +90,17 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
           <div
             className={`flex ${
               isNotAllowed ? "cursor-not-allowed" : "cursor-pointer"
-            } items-center gap-2 text-skin-muted-2`}
+            } items-center gap-2 text-brand-secondary`}
           >
             {issue.assignees && issue.assignees.length > 0 && Array.isArray(issue.assignees) ? (
               <div className="flex items-center justify-center gap-2">
                 <AssigneesList userIds={issue.assignees} length={3} showLength={false} />
-                <span className="text-skin-muted-2">{issue.assignees.length} Assignees</span>
+                <span className="text-brand-secondary">{issue.assignees.length} Assignees</span>
               </div>
             ) : (
               <div className="flex items-center justify-center gap-2">
-                <UserGroupIcon className="h-4 w-4 text-skin-muted-2" />
-                <span className="text-skin-muted-2">Assignee</span>
+                <UserGroupIcon className="h-4 w-4 text-brand-secondary" />
+                <span className="text-brand-secondary">Assignee</span>
               </div>
             )}
           </div>

@@ -50,7 +50,7 @@ const Onboarding: NextPage = () => {
           </div>
         ) : (
           <div className="flex w-full max-w-2xl flex-col gap-12">
-            <div className="flex flex-col items-center justify-center gap-7 rounded-[10px] bg-skin-surface-2 px-14 py-10 text-center shadow-md">
+            <div className="flex flex-col items-center justify-center gap-7 rounded-[10px] bg-brand-surface-2 px-14 py-10 text-center shadow-md">
               {step === 4 ? (
                 <OnboardingCard data={ONBOARDING_CARDS.welcome} />
               ) : step === 5 ? (

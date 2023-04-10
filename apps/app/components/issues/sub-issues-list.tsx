@@ -170,7 +170,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, userAuth }) => {
           {({ open }) => (
             <>
               <div className="flex items-center justify-between">
-                <Disclosure.Button className="flex items-center gap-1 rounded px-2 py-1 text-xs font-medium hover:bg-skin-surface-1">
+                <Disclosure.Button className="flex items-center gap-1 rounded px-2 py-1 text-xs font-medium hover:bg-brand-surface-1">
                   <ChevronRightIcon className={`h-3 w-3 ${open ? "rotate-90" : ""}`} />
                   Sub-issues <span className="ml-1 text-gray-600">{subIssues.length}</span>
                 </Disclosure.Button>
@@ -178,7 +178,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, userAuth }) => {
                   <div className="flex items-center">
                     <button
                       type="button"
-                      className="flex items-center gap-1 rounded px-2 py-1 text-xs font-medium hover:bg-skin-surface-1"
+                      className="flex items-center gap-1 rounded px-2 py-1 text-xs font-medium hover:bg-brand-surface-1"
                       onClick={handleCreateIssueModal}
                     >
                       <PlusIcon className="h-3 w-3" />
@@ -207,7 +207,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, userAuth }) => {
                       key={issue.id}
                       href={`/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`}
                     >
-                      <a className="group flex items-center justify-between gap-2 rounded p-2 hover:bg-skin-surface-1">
+                      <a className="group flex items-center justify-between gap-2 rounded p-2 hover:bg-brand-surface-1">
                         <div className="flex items-center gap-2 rounded text-xs">
                           <span
                             className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
@@ -231,7 +231,7 @@ export const SubIssuesList: FC<Props> = ({ parentIssue, userAuth }) => {
                               handleSubIssueRemove(issue.id);
                             }}
                           >
-                            <XMarkIcon className="h-4 w-4 text-skin-muted-2 hover:text-skin-base" />
+                            <XMarkIcon className="h-4 w-4 text-brand-secondary hover:text-brand-base" />
                           </button>
                         )}
                       </a>

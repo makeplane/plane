@@ -285,11 +285,11 @@ const SinglePage: NextPage<UserAuth> = (props) => {
       }
     >
       {pageDetails ? (
-        <div className="h-full w-full space-y-4 rounded-md border border-skin-base bg-skin-surface-1 p-4">
+        <div className="h-full w-full space-y-4 rounded-md border border-brand-base bg-brand-surface-1 p-4">
           <div className="flex items-center justify-between gap-2 px-3">
             <button
               type="button"
-              className="flex items-center gap-2 text-sm text-skin-muted-2"
+              className="flex items-center gap-2 text-sm text-brand-secondary"
               onClick={() => router.back()}
             >
               <ArrowLeftIcon className="h-4 w-4" />
@@ -306,7 +306,7 @@ const SinglePage: NextPage<UserAuth> = (props) => {
                     return (
                       <div
                         key={label.id}
-                        className="group flex items-center gap-1 rounded-2xl border border-skin-base px-2 py-0.5 text-xs"
+                        className="group flex items-center gap-1 rounded-2xl border border-brand-base px-2 py-0.5 text-xs"
                         style={{
                           backgroundColor: `${
                             label?.color && label.color !== "" ? label.color : "#000000"
@@ -328,7 +328,7 @@ const SinglePage: NextPage<UserAuth> = (props) => {
                     customButton={
                       <button
                         type="button"
-                        className="flex items-center gap-1 rounded-md bg-skin-surface-1 p-1.5 text-xs hover:bg-skin-surface-2"
+                        className="flex items-center gap-1 rounded-md bg-brand-surface-1 p-1.5 text-xs hover:bg-brand-surface-2"
                       >
                         <PlusIcon className="h-3.5 w-3.5" />
                       </button>
@@ -345,7 +345,7 @@ const SinglePage: NextPage<UserAuth> = (props) => {
                   customButton={
                     <button
                       type="button"
-                      className="flex items-center gap-1 rounded-md bg-skin-surface-1 px-3 py-1.5 text-xs hover:bg-skin-surface-2"
+                      className="flex items-center gap-1 rounded-md bg-brand-surface-1 px-3 py-1.5 text-xs hover:bg-brand-surface-2"
                     >
                       <PlusIcon className="h-3 w-3" />
                       Add new label
@@ -364,7 +364,7 @@ const SinglePage: NextPage<UserAuth> = (props) => {
                 tooltipContent={`Page last updated at ${renderShortTime(pageDetails.updated_at)}`}
                 theme="dark"
               >
-                <span className="cursor-default text-sm text-skin-muted-2">
+                <span className="cursor-default text-sm text-brand-secondary">
                   {renderShortTime(pageDetails.updated_at)}
                 </span>
               </Tooltip>
@@ -379,7 +379,7 @@ const SinglePage: NextPage<UserAuth> = (props) => {
                       <Popover.Button
                         type="button"
                         className={`group inline-flex items-center outline-none ${
-                          open ? "text-skin-base" : "text-skin-muted-2"
+                          open ? "text-brand-base" : "text-brand-secondary"
                         }`}
                       >
                         {watch("color") && watch("color") !== "" ? (
@@ -447,7 +447,7 @@ const SinglePage: NextPage<UserAuth> = (props) => {
               onBlur={handleSubmit(updatePage)}
               onChange={(e) => setValue("name", e.target.value)}
               required={true}
-              className="min-h-10 block w-full resize-none overflow-hidden rounded border-none border-skin-base bg-transparent px-3 py-2 text-2xl font-semibold outline-none ring-0 focus:ring-1 focus:ring-gray-200"
+              className="min-h-10 block w-full resize-none overflow-hidden rounded border-none border-brand-base bg-transparent px-3 py-2 text-2xl font-semibold outline-none ring-0 focus:ring-1 focus:ring-gray-200"
               role="textbox"
             />
           </div>

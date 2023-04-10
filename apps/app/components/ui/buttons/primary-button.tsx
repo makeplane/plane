@@ -13,7 +13,7 @@ export const PrimaryButton: React.FC<ButtonProps> = ({
 }) => (
   <button
     type={type}
-    className={`${className} border border-theme font-medium duration-300 ${
+    className={`${className} border border-brand-accent font-medium duration-300 ${
       size === "sm"
         ? "rounded px-3 py-2 text-xs"
         : size === "md"
@@ -25,8 +25,8 @@ export const PrimaryButton: React.FC<ButtonProps> = ({
         : ""
     } ${
       outline
-        ? "bg-transparent text-theme hover:bg-theme hover:text-white"
-        : "text-white bg-theme hover:border-opacity-90 hover:bg-opacity-90"
+        ? "bg-transparent text-brand-accent hover:bg-brand-accent hover:text-white"
+        : "text-white bg-brand-accent hover:border-opacity-90 hover:bg-opacity-90"
     }  ${loading ? "cursor-wait" : ""}`}
     onClick={onClick}
     disabled={disabled || loading}

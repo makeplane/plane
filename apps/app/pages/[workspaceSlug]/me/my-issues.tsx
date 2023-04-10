@@ -50,8 +50,8 @@ const MyIssuesPage: NextPage = () => {
                 {({ open }) => (
                   <>
                     <Popover.Button
-                      className={`group flex items-center gap-2 rounded-md border border-skin-base bg-transparent p-2 text-xs font-medium hover:bg-skin-surface-1 hover:text-skin-muted-1 focus:outline-none ${
-                        open ? "bg-skin-surface-1 text-skin-muted-2" : "text-skin-muted-1"
+                      className={`group flex items-center gap-2 rounded-md border border-brand-base bg-transparent p-2 text-xs font-medium hover:bg-brand-surface-1 hover:text-brand-muted-1 focus:outline-none ${
+                        open ? "bg-brand-surface-1 text-brand-secondary" : "text-brand-muted-1"
                       }`}
                     >
                       <span>View</span>
@@ -67,18 +67,18 @@ const MyIssuesPage: NextPage = () => {
                       leaveFrom="opacity-100 translate-y-0"
                       leaveTo="opacity-0 translate-y-1"
                     >
-                      <Popover.Panel className="absolute right-1/2 z-10 mr-5 mt-1 w-screen max-w-xs translate-x-1/2 transform overflow-hidden rounded-lg bg-skin-surface-2 p-3 shadow-lg">
+                      <Popover.Panel className="absolute right-1/2 z-10 mr-5 mt-1 w-screen max-w-xs translate-x-1/2 transform overflow-hidden rounded-lg bg-brand-surface-2 p-3 shadow-lg">
                         <div className="relative flex flex-col gap-1 gap-y-4">
                           <div className="relative flex flex-col gap-1">
-                            <h4 className="text-base text-skin-muted-2">Properties</h4>
+                            <h4 className="text-base text-brand-secondary">Properties</h4>
                             <div className="flex flex-wrap items-center gap-2">
                               {Object.keys(properties).map((key) => (
                                 <button
                                   key={key}
                                   type="button"
-                                  className={`rounded border border-skin-accent px-2 py-1 text-xs capitalize ${
+                                  className={`rounded border border-brand-accent px-2 py-1 text-xs capitalize ${
                                     properties[key as keyof Properties]
-                                      ? "border-skin-accent bg-skin-accent text-white"
+                                      ? "border-brand-accent bg-brand-accent text-white"
                                       : ""
                                   }`}
                                   onClick={() => setProperties(key as keyof Properties)}
@@ -115,9 +115,9 @@ const MyIssuesPage: NextPage = () => {
                 <div className="flex flex-col space-y-5">
                   <Disclosure as="div" defaultOpen>
                     {({ open }) => (
-                      <div className="rounded-[10px] border border-skin-base bg-skin-surface-2">
+                      <div className="rounded-[10px] border border-brand-base bg-brand-surface-1">
                         <div
-                          className={`flex items-center justify-start bg-skin-surface-1 px-5 py-3 ${
+                          className={`flex items-center justify-start bg-brand-surface-2 px-5 py-3 ${
                             open ? "rounded-t-[10px]" : "rounded-[10px]"
                           }`}
                         >
@@ -125,13 +125,13 @@ const MyIssuesPage: NextPage = () => {
                             <div className="flex items-center gap-x-2">
                               <span>
                                 <ChevronDownIcon
-                                  className={`h-4 w-4 text-skin-muted-2 ${
+                                  className={`h-4 w-4 text-brand-secondary ${
                                     !open ? "-rotate-90 transform" : ""
                                   }`}
                                 />
                               </span>
                               <h2 className="font-medium leading-5">My Issues</h2>
-                              <span className="rounded-full bg-skin-surface-2 py-0.5 px-3 text-sm text-skin-muted-2">
+                              <span className="rounded-full bg-brand-surface-2 py-0.5 px-3 text-sm text-brand-secondary">
                                 {myIssues.length}
                               </span>
                             </div>
@@ -172,7 +172,7 @@ const MyIssuesPage: NextPage = () => {
                       title="Create a new issue"
                       description={
                         <span>
-                          Use <pre className="inline rounded bg-skin-surface-2 px-2 py-1">C</pre> shortcut
+                          Use <pre className="inline rounded bg-brand-surface-2 px-2 py-1">C</pre> shortcut
                           to create a new issue
                         </span>
                       }
