@@ -337,7 +337,7 @@ export const EstimatePointsModal: React.FC<Props> = ({ isOpen, data, estimate, o
                   <div className="mt-5 flex justify-end gap-2">
                     <SecondaryButton onClick={() => handleClose()}>Cancel</SecondaryButton>
                     <PrimaryButton type="submit" loading={isSubmitting}>
-                      {data
+                      {data && data.length > 0
                         ? isSubmitting
                           ? "Updating Points..."
                           : "Update Points"

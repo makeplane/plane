@@ -107,14 +107,16 @@ export const SingleEstimate: React.FC<Props> = ({
             </p>
           </div>
           <CustomMenu ellipsis>
-            {projectDetails?.estimate !== estimate.id && (
-              <CustomMenu.MenuItem onClick={handleUseEstimate}>
-                <div className="flex items-center justify-start gap-2">
-                  <SquaresPlusIcon className="h-3.5 w-3.5" />
-                  <span>Use estimate</span>
-                </div>
-              </CustomMenu.MenuItem>
-            )}
+            {projectDetails?.estimate !== estimate.id &&
+              estimatePoints &&
+              estimatePoints.length > 0 && (
+                <CustomMenu.MenuItem onClick={handleUseEstimate}>
+                  <div className="flex items-center justify-start gap-2">
+                    <SquaresPlusIcon className="h-3.5 w-3.5" />
+                    <span>Use estimate</span>
+                  </div>
+                </CustomMenu.MenuItem>
+              )}
             <CustomMenu.MenuItem onClick={() => setIsEstimatePointsModalOpen(true)}>
               <div className="flex items-center justify-start gap-2">
                 <ListBulletIcon className="h-3.5 w-3.5" />
