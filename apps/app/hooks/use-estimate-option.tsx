@@ -28,7 +28,7 @@ const useEstimateOption = (estimateKey?: number) => {
           estimatesService.getEstimatesPointsList(
             workspaceSlug as string,
             projectId as string,
-            projectDetails.estimate
+            projectDetails.estimate as string
           )
       : null
   );
