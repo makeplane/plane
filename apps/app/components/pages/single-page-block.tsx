@@ -43,7 +43,6 @@ type Props = {
   block: IPageBlock;
   projectDetails: IProject | undefined;
   index: number;
-  handleNewBlock: () => void;
 };
 
 const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
@@ -55,12 +54,7 @@ const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor
   ),
 });
 
-export const SinglePageBlock: React.FC<Props> = ({
-  block,
-  projectDetails,
-  index,
-  handleNewBlock,
-}) => {
+export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, index }) => {
   const [isSyncing, setIsSyncing] = useState(false);
   const [createBlockForm, setCreateBlockForm] = useState(false);
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
@@ -280,18 +274,6 @@ export const SinglePageBlock: React.FC<Props> = ({
     reset({ ...block });
   }, [reset, block]);
 
-  useEffect(() => {
-    window.addEventListener("keydown", (e: KeyboardEvent) => {
-      if (e.key === "Enter" && !createBlockForm) handleNewBlock();
-    });
-
-    return () => {
-      window.removeEventListener("keydown", (e: KeyboardEvent) => {
-        if (e.key === "Enter" && !createBlockForm) handleNewBlock();
-      });
-    };
-  }, [handleNewBlock, createBlockForm]);
-
   return (
     <Draggable draggableId={block.id} index={index} isDragDisabled={createBlockForm}>
       {(provided, snapshot) => (
@@ -308,10 +290,6 @@ export const SinglePageBlock: React.FC<Props> = ({
                 handleClose={() => setCreateBlockForm(false)}
                 data={block}
                 setIsSyncing={setIsSyncing}
-                deletePageBlock={deletePageBlock}
-                handleBlockSync={handleBlockSync}
-                handleCopyText={handleCopyText}
-                pushBlockIntoIssues={pushBlockIntoIssues}
               />
             </div>
           ) : (
