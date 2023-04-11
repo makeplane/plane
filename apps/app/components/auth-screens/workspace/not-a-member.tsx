@@ -28,9 +28,7 @@ export const NotAWorkspaceMember = () => {
           <div className="flex items-center gap-2 justify-center">
             <Link href="/invitations">
               <a>
-                <SecondaryButton onClick={() => router.back()}>
-                  Check pending invites
-                </SecondaryButton>
+                <SecondaryButton>Check pending invites</SecondaryButton>
               </a>
             </Link>
             <Link href="/create-workspace">

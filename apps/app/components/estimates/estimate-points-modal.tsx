@@ -18,6 +18,7 @@ import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import type { IEstimate, IEstimatePoint } from "types";
 
 import estimatesService from "services/estimates.service";
+import { ESTIMATE_POINTS_LIST } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
@@ -33,8 +34,6 @@ interface FormValues {
   value4: string;
   value5: string;
   value6: string;
-  value7: string;
-  value8: string;
 }
 
 const defaultValues: FormValues = {
@@ -44,8 +43,6 @@ const defaultValues: FormValues = {
   value4: "",
   value5: "",
   value6: "",
-  value7: "",
-  value8: "",
 };
 
 export const EstimatePointsModal: React.FC<Props> = ({ isOpen, data, estimate, onClose }) => {
@@ -56,7 +53,7 @@ export const EstimatePointsModal: React.FC<Props> = ({ isOpen, data, estimate, o
 
   const {
     register,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
     handleSubmit,
     reset,
   } = useForm<FormValues>({ defaultValues });
@@ -95,14 +92,6 @@ export const EstimatePointsModal: React.FC<Props> = ({ isOpen, data, estimate, o
           key: 5,
           value: formData.value6,
         },
-        {
-          key: 6,
-          value: formData.value7,
-        },
-        {
-          key: 7,
-          value: formData.value8,
-        },
       ],
     };
 
@@ -126,49 +115,20 @@ export const EstimatePointsModal: React.FC<Props> = ({ isOpen, data, estimate, o
   };
 
   const updateEstimatePoints = async (formData: FormValues) => {
-    if (!workspaceSlug || !projectId) return;
+    if (!workspaceSlug || !projectId || !data || data.length === 0) return;
+
     const payload = {
-      estimate_points: [
-        {
-          key: 0,
-          value: formData.value1,
-        },
-        {
-          key: 1,
-          value: formData.value2,
-        },
-        {
-          key: 2,
-          value: formData.value3,
-        },
-        {
-          key: 3,
-          value: formData.value4,
-        },
-        {
-          key: 4,
-          value: formData.value5,
-        },
-        {
-          key: 5,
-          value: formData.value6,
-        },
-        {
-          key: 6,
-          value: formData.value7,
-        },
-        {
-          key: 7,
-          value: formData.value8,
-        },
-      ],
+      estimate_points: data.map((d, index) => ({
+        id: d.id,
+        value: (formData as any)[`value${index + 1}`],
+      })),
     };
+
     await estimatesService
-      .updateEstimatesPoints(
+      .patchEstimatePoints(
         workspaceSlug as string,
         projectId as string,
         estimate?.id as string,
-        data?.[0]?.id as string,
         payload
       )
       .then(() => {
@@ -183,14 +143,26 @@ export const EstimatePointsModal: React.FC<Props> = ({ isOpen, data, estimate, o
       });
   };
 
+  const onSubmit = async (formData: FormValues) => {
+    if (data && data.length !== 0) await updateEstimatePoints(formData);
+    else await createEstimatePoints(formData);
+
+    if (estimate) mutate(ESTIMATE_POINTS_LIST(estimate.id));
+  };
+
   useEffect(() => {
-    if(!data) return
+    if (!data || data.length < 6) return;
+
     reset({
       ...defaultValues,
-      ...data,
+      value1: data[0].value,
+      value2: data[1].value,
+      value3: data[2].value,
+      value4: data[3].value,
+      value5: data[4].value,
+      value6: data[5].value,
     });
   }, [data, reset]);
-
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
@@ -219,18 +191,16 @@ export const EstimatePointsModal: React.FC<Props> = ({ isOpen, data, estimate, o
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel className="relative transform rounded-lg bg-white px-5 py-8 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
-                <form
-                  onSubmit={
-                    data ? handleSubmit(updateEstimatePoints) : handleSubmit(createEstimatePoints)
-                  }
-                >
+                <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="space-y-3">
                     <div className="flex flex-col gap-3">
-                      <h4 className="text-2xl font-medium">Create Estimate Points</h4>
-                      <div className="grid grid-cols-4 gap-3">
+                      <h4 className="text-lg font-medium leading-6">
+                        {data ? "Update" : "Create"} Estimate Points
+                      </h4>
+                      <div className="grid grid-cols-3 gap-3">
                         <div className="flex items-center">
                           <span className="bg-gray-100 h-full flex items-center rounded-lg">
-                            <span className="pl-2 pr-1 rounded-lg text-sm  text-gray-600">V0</span>
+                            <span className="px-2 rounded-lg text-sm  text-gray-600">1</span>
                             <span className="bg-white rounded-lg">
                               <Input
                                 id="name"
@@ -243,7 +213,7 @@ export const EstimatePointsModal: React.FC<Props> = ({ isOpen, data, estimate, o
                                   required: "value is required",
                                   maxLength: {
                                     value: 10,
-                                    message: "value should be less than 10 characters",
+                                    message: "Name should be less than 10 characters",
                                   },
                                 }}
                               />
@@ -252,7 +222,7 @@ export const EstimatePointsModal: React.FC<Props> = ({ isOpen, data, estimate, o
                         </div>
                         <div className="flex items-center">
                           <span className="bg-gray-100 h-full flex items-center rounded-lg">
-                            <span className="pl-2 pr-1 rounded-lg text-sm  text-gray-600">V1</span>
+                            <span className="px-2 rounded-lg text-sm  text-gray-600">2</span>
                             <span className="bg-white rounded-lg">
                               <Input
                                 id="name"
@@ -274,7 +244,7 @@ export const EstimatePointsModal: React.FC<Props> = ({ isOpen, data, estimate, o
                         </div>
                         <div className="flex items-center">
                           <span className="bg-gray-100 h-full flex items-center rounded-lg">
-                            <span className="pl-2 pr-1 rounded-lg text-sm  text-gray-600">V2</span>
+                            <span className="px-2 rounded-lg text-sm text-gray-600">3</span>
                             <span className="bg-white rounded-lg">
                               <Input
                                 id="name"
@@ -296,7 +266,7 @@ export const EstimatePointsModal: React.FC<Props> = ({ isOpen, data, estimate, o
                         </div>
                         <div className="flex items-center">
                           <span className="bg-gray-100 h-full flex items-center rounded-lg">
-                            <span className="pl-2 pr-1 rounded-lg text-sm  text-gray-600">V3</span>
+                            <span className="px-2 rounded-lg text-sm  text-gray-600">4</span>
                             <span className="bg-white rounded-lg">
                               <Input
                                 id="name"
@@ -318,7 +288,7 @@ export const EstimatePointsModal: React.FC<Props> = ({ isOpen, data, estimate, o
                         </div>
                         <div className="flex items-center">
                           <span className="bg-gray-100 h-full flex items-center rounded-lg">
-                            <span className="pl-2 pr-1 rounded-lg text-sm  text-gray-600">V4</span>
+                            <span className="px-2 rounded-lg text-sm  text-gray-600">5</span>
                             <span className="bg-white rounded-lg">
                               <Input
                                 id="name"
@@ -340,7 +310,7 @@ export const EstimatePointsModal: React.FC<Props> = ({ isOpen, data, estimate, o
                         </div>
                         <div className="flex items-center">
                           <span className="bg-gray-100 h-full flex items-center rounded-lg">
-                            <span className="pl-2 pr-1 rounded-lg text-sm  text-gray-600">V5</span>
+                            <span className="px-2 rounded-lg text-sm  text-gray-600">6</span>
                             <span className="bg-white rounded-lg">
                               <Input
                                 id="name"
@@ -354,50 +324,6 @@ export const EstimatePointsModal: React.FC<Props> = ({ isOpen, data, estimate, o
                                   maxLength: {
                                     value: 10,
                                     message: "Name should be less than 10 characters",
-                                  },
-                                }}
-                              />
-                            </span>
-                          </span>
-                        </div>
-                        <div className="flex items-center">
-                          <span className="bg-gray-100 h-full flex items-center rounded-lg">
-                            <span className="pl-2 pr-1 rounded-lg text-sm  text-gray-600">V6</span>
-                            <span className="bg-white rounded-lg">
-                              <Input
-                                id="name"
-                                name="value7"
-                                type="name"
-                                placeholder="Value"
-                                autoComplete="off"
-                                register={register}
-                                validations={{
-                                  required: "value is required",
-                                  maxLength: {
-                                    value: 10,
-                                    message: "Name should be less than 10 characters",
-                                  },
-                                }}
-                              />
-                            </span>
-                          </span>
-                        </div>
-                        <div className="flex items-center">
-                          <span className="bg-gray-100 h-full flex items-center rounded-lg">
-                            <span className="pl-2 pr-1 rounded-lg text-sm  text-gray-600">V7</span>
-                            <span className="bg-white rounded-lg">
-                              <Input
-                                id="name"
-                                name="value8"
-                                type="name"
-                                placeholder="Value"
-                                autoComplete="off"
-                                register={register}
-                                validations={{
-                                  required: "value is required",
-                                  maxLength: {
-                                    value: 20,
-                                    message: "Name should be less than 20 characters",
                                   },
                                 }}
                               />

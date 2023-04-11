@@ -25,6 +25,7 @@ import {
 import { IEstimate, IProject } from "types";
 // fetch-keys
 import { ESTIMATE_POINTS_LIST } from "constants/fetch-keys";
+import { orderArrayBy } from "helpers/array.helper";
 
 type Props = {
   estimate: IEstimate;
@@ -88,6 +89,7 @@ export const SingleEstimate: React.FC<Props> = ({
         isOpen={isEstimatePointsModalOpen}
         estimate={estimate}
         onClose={() => setIsEstimatePointsModalOpen(false)}
+        data={estimatePoints ? orderArrayBy(estimatePoints, "key") : undefined}
       />
       <div className="gap-2 py-3">
         <div className="flex justify-between items-center">
@@ -105,7 +107,7 @@ export const SingleEstimate: React.FC<Props> = ({
             </p>
           </div>
           <CustomMenu ellipsis>
-            {projectDetails?.estimate && projectDetails?.estimate !== estimate.id && (
+            {projectDetails?.estimate !== estimate.id && (
               <CustomMenu.MenuItem onClick={handleUseEstimate}>
                 <div className="flex items-center justify-start gap-2">
                   <SquaresPlusIcon className="h-3.5 w-3.5" />
@@ -116,7 +118,9 @@ export const SingleEstimate: React.FC<Props> = ({
             <CustomMenu.MenuItem onClick={() => setIsEstimatePointsModalOpen(true)}>
               <div className="flex items-center justify-start gap-2">
                 <ListBulletIcon className="h-3.5 w-3.5" />
-                <span>{estimatePoints?.length === 8 ? "Update points" : "Create points"}</span>
+                <span>
+                  {estimatePoints && estimatePoints?.length > 0 ? "Edit points" : "Create points"}
+                </span>
               </div>
             </CustomMenu.MenuItem>
             <CustomMenu.MenuItem
@@ -129,32 +133,34 @@ export const SingleEstimate: React.FC<Props> = ({
                 <span>Edit estimate</span>
               </div>
             </CustomMenu.MenuItem>
-            <CustomMenu.MenuItem
-              onClick={() => {
-                handleEstimateDelete(estimate.id);
-              }}
-            >
-              <div className="flex items-center justify-start gap-2">
-                <TrashIcon className="h-3.5 w-3.5" />
-                <span>Delete estimate</span>
-              </div>
-            </CustomMenu.MenuItem>
+            {projectDetails?.estimate !== estimate.id && (
+              <CustomMenu.MenuItem
+                onClick={() => {
+                  handleEstimateDelete(estimate.id);
+                }}
+              >
+                <div className="flex items-center justify-start gap-2">
+                  <TrashIcon className="h-3.5 w-3.5" />
+                  <span>Delete estimate</span>
+                </div>
+              </CustomMenu.MenuItem>
+            )}
           </CustomMenu>
         </div>
         {estimatePoints && estimatePoints.length > 0 ? (
-          <div className="flex gap-2">
-            {estimatePoints.length > 0 && "Estimate points ("}
-            {estimatePoints.map((point, i) => (
+          <div className="flex gap-2 text-sm text-gray-400">
+            Estimate points(
+            {estimatePoints.map((point, index) => (
               <h6 key={point.id}>
                 {point.value}
-                {i !== estimatePoints.length - 1 && ","}{" "}
+                {index !== estimatePoints.length - 1 && ","}{" "}
               </h6>
             ))}
-            {estimatePoints.length > 0 && ")"}
+            )
           </div>
         ) : (
           <div>
-            <p className=" text-sm text-gray-300">No estimate points</p>
+            <p className="text-sm text-gray-400">No estimate points</p>
           </div>
         )}
       </div>
