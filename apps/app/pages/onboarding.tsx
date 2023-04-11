@@ -24,6 +24,7 @@ import Logo from "public/onboarding/logo.svg";
 import type { NextPage } from "next";
 // fetch-keys
 import { CURRENT_USER } from "constants/fetch-keys";
+import { ICurrentUserResponse } from "types";
 
 const Onboarding: NextPage = () => {
   const [step, setStep] = useState(1);
@@ -76,7 +77,21 @@ const Onboarding: NextPage = () => {
                         userService
                           .updateUserOnBoard({ userRole })
                           .then(() => {
-                            mutate(CURRENT_USER);
+                            mutate<ICurrentUserResponse>(
+                              CURRENT_USER,
+                              (prevData) => {
+                                if (!prevData) return prevData;
+
+                                return {
+                                  ...prevData,
+                                  user: {
+                                    ...prevData.user,
+                                    is_onboarded: true,
+                                  },
+                                };
+                              },
+                              false
+                            );
                             router.push("/");
                           })
                           .catch((err) => {
