@@ -51,7 +51,7 @@ export const IssueEstimateSelect: React.FC<Props> = ({ value, onChange, chevron 
       label={
         <div className="flex items-center  gap-2 text-xs min-w-[calc(100%+10px)]">
           <span>
-            <PlayIcon className="h-4 w-4 text-gray-700 -rotate-90" />
+            <PlayIcon className="h-4 w-4 text-gray-500 -rotate-90" />
           </span>
           <span className={`${value ? "text-gray-600" : "text-gray-500"}`}>
             {estimatePoints?.find((e) => e.key === value)?.value ?? "Estimate points"}
