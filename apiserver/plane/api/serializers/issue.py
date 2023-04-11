@@ -522,6 +522,8 @@ class IssueLiteSerializer(BaseSerializer):
     sub_issues_count = serializers.IntegerField(read_only=True)
     cycle_id = serializers.UUIDField(read_only=True)
     module_id = serializers.UUIDField(read_only=True)
+    attachment_count = serializers.IntegerField(read_only=True)
+    link_count = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Issue
