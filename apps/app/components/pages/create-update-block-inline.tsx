@@ -3,30 +3,24 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 
-import useSWR, { mutate } from "swr";
+import { mutate } from "swr";
 
-import { LayerDiagonalIcon } from "components/icons";
-import { ArrowPathIcon, LinkIcon } from "@heroicons/react/20/solid";
-import {
-  BoltIcon,
-  SparklesIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
+import { SparklesIcon } from "@heroicons/react/24/outline";
 
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // services
 import pagesService from "services/pages.service";
+import issuesService from "services/issues.service";
+import aiService from "services/ai.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { Loader, PrimaryButton, SecondaryButton, CustomMenu, TextArea } from "components/ui";
+import { Loader, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
 // types
 import { IPageBlock } from "types";
 // fetch-keys
 import { PAGE_BLOCKS_LIST } from "constants/fetch-keys";
-import issuesService from "services/issues.service";
-import aiService from "services/ai.service";
 
 type Props = {
   handleClose: () => void;
@@ -34,10 +28,6 @@ type Props = {
   setIsSyncing?: React.Dispatch<React.SetStateAction<boolean>>;
   focus?: keyof IPageBlock;
   setGptAssistantModal: () => void;
-  handleBlockSync?: () => void;
-  handleCopyText?: () => void;
-  pushBlockIntoIssues?: () => void;
-  deletePageBlock?: () => void;
 };
 
 const defaultValues = {
@@ -60,12 +50,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
   setIsSyncing,
   focus,
   setGptAssistantModal,
-  handleBlockSync,
-  handleCopyText,
-  pushBlockIntoIssues,
-  deletePageBlock,
 }) => {
-
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
 
   const router = useRouter();
@@ -92,69 +77,75 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
     reset();
   }, [handleClose, reset, data]);
 
-  const createPageBlock = async (formData: Partial<IPageBlock>) => {
-    if (!workspaceSlug || !projectId || !pageId) return;
+  const createPageBlock = useCallback(
+    async (formData: Partial<IPageBlock>) => {
+      if (!workspaceSlug || !projectId || !pageId) return;
 
-    await pagesService
-      .createPageBlock(workspaceSlug as string, projectId as string, pageId as string, {
-        name: formData.name,
-        description: formData.description ?? "",
-        description_html: formData.description_html ?? "<p></p>",
-      })
-      .then((res) => {
-        mutate<IPageBlock[]>(
-          PAGE_BLOCKS_LIST(pageId as string),
-          (prevData) => [...(prevData as IPageBlock[]), res],
-          false
-        );
-      })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Page could not be created. Please try again.",
-        });
-      })
-      .finally(() => onClose());
-  };
+      await pagesService
+        .createPageBlock(workspaceSlug as string, projectId as string, pageId as string, {
+          name: formData.name,
+          description: formData.description ?? "",
+          description_html: formData.description_html ?? "<p></p>",
+        })
+        .then((res) => {
+          mutate<IPageBlock[]>(
+            PAGE_BLOCKS_LIST(pageId as string),
+            (prevData) => [...(prevData as IPageBlock[]), res],
+            false
+          );
+        })
+        .catch(() => {
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message: "Page could not be created. Please try again.",
+          });
+        })
+        .finally(() => onClose());
+    },
+    [workspaceSlug, projectId, pageId, onClose, setToastAlert]
+  );
 
-  const updatePageBlock = async (formData: Partial<IPageBlock>) => {
-    if (!workspaceSlug || !projectId || !pageId || !data) return;
+  const updatePageBlock = useCallback(
+    async (formData: Partial<IPageBlock>) => {
+      if (!workspaceSlug || !projectId || !pageId || !data) return;
 
-    if (data.issue && data.sync && setIsSyncing) setIsSyncing(true);
+      if (data.issue && data.sync && setIsSyncing) setIsSyncing(true);
 
-    mutate<IPageBlock[]>(
-      PAGE_BLOCKS_LIST(pageId as string),
-      (prevData) =>
-        prevData?.map((p) => {
-          if (p.id === data.id) return { ...p, ...formData };
+      mutate<IPageBlock[]>(
+        PAGE_BLOCKS_LIST(pageId as string),
+        (prevData) =>
+          prevData?.map((p) => {
+            if (p.id === data.id) return { ...p, ...formData };
 
-          return p;
-        }),
-      false
-    );
+            return p;
+          }),
+        false
+      );
 
-    await pagesService
-      .patchPageBlock(workspaceSlug as string, projectId as string, pageId as string, data.id, {
-        name: formData.name,
-        description: formData.description,
-        description_html: formData.description_html,
-      })
-      .then((res) => {
-        mutate(PAGE_BLOCKS_LIST(pageId as string));
-        if (data.issue && data.sync)
-          issuesService
-            .patchIssue(workspaceSlug as string, projectId as string, data.issue, {
-              name: res.name,
-              description: res.description,
-              description_html: res.description_html,
-            })
-            .finally(() => {
-              if (setIsSyncing) setIsSyncing(false);
-            });
-      })
-      .finally(() => onClose());
-  };
+      await pagesService
+        .patchPageBlock(workspaceSlug as string, projectId as string, pageId as string, data.id, {
+          name: formData.name,
+          description: formData.description,
+          description_html: formData.description_html,
+        })
+        .then((res) => {
+          mutate(PAGE_BLOCKS_LIST(pageId as string));
+          if (data.issue && data.sync)
+            issuesService
+              .patchIssue(workspaceSlug as string, projectId as string, data.issue, {
+                name: res.name,
+                description: res.description,
+                description_html: res.description_html,
+              })
+              .finally(() => {
+                if (setIsSyncing) setIsSyncing(false);
+              });
+        })
+        .finally(() => onClose());
+    },
+    [workspaceSlug, projectId, pageId, data, onClose, setIsSyncing]
+  );
 
   const handleAutoGenerateDescription = async () => {
     if (!workspaceSlug || !projectId) return;
@@ -193,7 +184,8 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
             title: "Error!",
             message: "Some error occurred. Please try again.",
           });
-      }).finally(()=>setIAmFeelingLucky(false));
+      })
+      .finally(() => setIAmFeelingLucky(false));
   };
 
   useEffect(() => {
@@ -221,57 +213,41 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
     };
   }, [handleClose]);
 
+  useEffect(() => {
+    const submitForm = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+        if (data) handleSubmit(updatePageBlock)();
+        else handleSubmit(createPageBlock)();
+      }
+    };
+
+    window.addEventListener("keydown", submitForm);
+
+    return () => {
+      window.removeEventListener("keydown", submitForm);
+    };
+  }, [createPageBlock, updatePageBlock, data, handleSubmit]);
+
   return (
     <div>
       <form
-        className="border divide-y rounded-md shadow-md"
+        className="border divide-y rounded-[10px] shadow"
         onSubmit={data ? handleSubmit(updatePageBlock) : handleSubmit(createPageBlock)}
       >
-        <div className="px-4 pt-4">
+        <div className="px-2 pt-2">
           <div className="flex justify-between">
             <TextArea
               id="name"
               name="name"
               placeholder="Title"
               register={register}
-              className="min-h-10 block w-full resize-none overflow-hidden border-none bg-transparent py-1 text-xl font-semibold ring-0 focus:ring-gray-200"
+              className="min-h-10 block w-full resize-none overflow-hidden border-none bg-transparent py-1 text-lg font-medium ring-0 focus:ring-gray-200"
               role="textbox"
               autoComplete="off"
               maxLength={255}
             />
-            <CustomMenu label={<BoltIcon className="h-4.5 w-3.5" />} noBorder noChevron>
-              {data?.issue ? (
-                <>
-                  <CustomMenu.MenuItem onClick={handleBlockSync}>
-                    <span className="flex items-center gap-1">
-                      <ArrowPathIcon className="h-4 w-4" />
-                      <span>Turn sync {data?.sync ? "off" : "on"}</span>
-                    </span>
-                  </CustomMenu.MenuItem>
-                  <CustomMenu.MenuItem onClick={handleCopyText}>
-                    <span className="flex items-center gap-1">
-                      <LinkIcon className="h-4 w-4" />
-                      Copy issue link
-                    </span>
-                  </CustomMenu.MenuItem>
-                </>
-              ) : (
-                <CustomMenu.MenuItem onClick={pushBlockIntoIssues}>
-                  <span className="flex items-center gap-1">
-                    <LayerDiagonalIcon className="h-4 w-4" />
-                    Push into issues
-                  </span>
-                </CustomMenu.MenuItem>
-              )}
-              <CustomMenu.MenuItem onClick={deletePageBlock}>
-                <span className="flex items-center gap-1">
-                  <TrashIcon className="h-4 w-4" />
-                  Delete block
-                </span>
-              </CustomMenu.MenuItem>
-            </CustomMenu>
           </div>
-          <div className="page-block-section text-[#495057] relative">
+          <div className="page-block-section text-gray-500 relative -mt-2">
             <Controller
               name="description"
               control={control}
@@ -308,17 +284,19 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
                   </>
                 )}
               </button>
-              {data && <button
-                type="button"
-                className="-mr-2 flex items-center gap-1 rounded px-1.5 py-1 text-xs border ml-4 hover:bg-gray-100"
-                onClick={() => {
-                  onClose();
-                  setGptAssistantModal();
-                }}
-              >
-                <SparklesIcon className="h-4 w-4" />
-                AI
-              </button>}
+              {data && (
+                <button
+                  type="button"
+                  className="-mr-2 flex items-center gap-1 rounded px-1.5 py-1 text-xs border ml-4 hover:bg-gray-100"
+                  onClick={() => {
+                    onClose();
+                    setGptAssistantModal();
+                  }}
+                >
+                  <SparklesIcon className="h-4 w-4" />
+                  AI
+                </button>
+              )}
             </div>
           </div>
         </div>

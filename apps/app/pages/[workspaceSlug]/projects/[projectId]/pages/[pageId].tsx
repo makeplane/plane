@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import { useRouter } from "next/router";
 
@@ -34,7 +34,7 @@ import {
   LockOpenIcon,
   PlusIcon,
   StarIcon,
-  LinkIcon
+  LinkIcon,
 } from "@heroicons/react/24/outline";
 import { ColorPalletteIcon, ClipboardIcon } from "components/icons";
 // helpers
@@ -161,7 +161,7 @@ const SinglePage: NextPage = () => {
         title: "Success",
         message: "Added to favorites",
       });
-    });;
+    });
 
     pagesService.addPageToFavorites(workspaceSlug as string, projectId as string, {
       page: pageId as string,
@@ -184,10 +184,13 @@ const SinglePage: NextPage = () => {
         title: "Success",
         message: "Removed from favorites",
       });
-    });;
+    });
 
-    pagesService
-      .removePageFromFavorites(workspaceSlug as string, projectId as string, pageId as string);
+    pagesService.removePageFromFavorites(
+      workspaceSlug as string,
+      projectId as string,
+      pageId as string
+    );
   };
 
   const handleOnDragEnd = (result: DropResult) => {
@@ -249,12 +252,12 @@ const SinglePage: NextPage = () => {
     );
   };
 
-  const handleNewBlock = () => {
+  const handleNewBlock = useCallback(() => {
     setCreateBlockForm(true);
     scrollToRef.current?.scrollIntoView({
       behavior: "smooth",
     });
-  };
+  }, [setCreateBlockForm, scrollToRef]);
 
   const options =
     labels?.map((label) => ({
@@ -280,6 +283,18 @@ const SinglePage: NextPage = () => {
       ...pageDetails,
     });
   }, [reset, pageDetails]);
+
+  useEffect(() => {
+    const openCreateBlockForm = (e: KeyboardEvent) => {
+      if (e.shiftKey && e.key === "Enter") handleNewBlock();
+    };
+
+    window.addEventListener("keydown", openCreateBlockForm);
+
+    return () => {
+      window.removeEventListener("keydown", openCreateBlockForm);
+    };
+  }, [handleNewBlock, createBlockForm]);
 
   return (
     <ProjectAuthorizationWrapper
@@ -465,7 +480,7 @@ const SinglePage: NextPage = () => {
               onBlur={handleSubmit(updatePage)}
               onChange={(e) => setValue("name", e.target.value)}
               required={true}
-              className="min-h-10 block w-full resize-none overflow-hidden placeholder:text-[#858E96] rounded border-none bg-transparent px-3 py-2 text-3xl font-semibold outline-none ring-0 "
+              className="min-h-10 block w-full resize-none overflow-hidden placeholder:text-[#858E96] rounded border-none bg-transparent px-3 py-2 text-2xl font-semibold outline-none ring-0 "
               role="textbox"
             />
           </div>
@@ -483,7 +498,6 @@ const SinglePage: NextPage = () => {
                               block={block}
                               projectDetails={projectDetails}
                               index={index}
-                              handleNewBlock={handleNewBlock}
                             />
                           ))}
                           {provided.placeholder}

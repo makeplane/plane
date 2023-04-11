@@ -177,21 +177,17 @@ const ProjectPages: NextPage = () => {
         <div className="space-y-4">
           <form
             onSubmit={handleSubmit(createPage)}
-            className="flex relative justify-between gap-2 mb-12 rounded-[6px] h-[80px] border border-gray-200 bg-white p-2 shadow-md"
+            className="flex items-center relative justify-between gap-2 mb-12 rounded-[6px] border border-gray-200 bg-white p-2 shadow"
           >
             <Input
               type="text"
               name="name"
               register={register}
-              className="border-none text-start font-semibold flex break-all text-2xl outline-none focus:ring-0"
+              className="border-none font-medium flex break-all text-xl outline-none focus:ring-0"
               placeholder="Title"
             />
             {watch("name") !== "" && (
-              <PrimaryButton
-                type="submit"
-                loading={isSubmitting}
-                className="h-8 absolute top-6 right-2"
-              >
+              <PrimaryButton type="submit" loading={isSubmitting}>
                 {isSubmitting ? "Creating..." : "Create"}
               </PrimaryButton>
             )}
