@@ -28,11 +28,11 @@ export const JoinProject: React.FC = () => {
         project_ids: [projectId as string],
       })
       .then(() => {
-        setIsJoiningProject(false);
         mutate(PROJECT_MEMBERS(projectId as string));
       })
       .catch((err) => {
         console.error(err);
+        setIsJoiningProject(false);
       });
   };
 
