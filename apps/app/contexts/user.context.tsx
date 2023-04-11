@@ -7,12 +7,12 @@ import userService from "services/user.service";
 // constants
 import { CURRENT_USER } from "constants/fetch-keys";
 // types
-import type { IUser } from "types";
+import type { ICurrentUserResponse, IUser } from "types";
 
 interface IUserContextProps {
   user?: IUser;
   isUserLoading: boolean;
-  mutateUser: KeyedMutator<IUser>;
+  mutateUser: KeyedMutator<ICurrentUserResponse>;
   assignedIssuesLength?: number;
   workspaceInvitesLength?: number;
 }
@@ -21,7 +21,7 @@ export const UserContext = createContext<IUserContextProps>({} as IUserContextPr
 
 export const UserProvider = ({ children }: { children: ReactElement }) => {
   // API to fetch user information
-  const { data, error, mutate } = useSWR<IUser>(CURRENT_USER, () => userService.currentUser(), {
+  const { data, error, mutate } = useSWR(CURRENT_USER, () => userService.currentUser(), {
     shouldRetryOnError: false,
   });
 

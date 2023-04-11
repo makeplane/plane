@@ -19,6 +19,7 @@ import pagesService from "services/pages.service";
 import issuesService from "services/issues.service";
 // hooks
 import useToast from "hooks/use-toast";
+import useUser from "hooks/use-user";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // components
@@ -60,6 +61,8 @@ const SinglePage: NextPage = () => {
   const { workspaceSlug, projectId, pageId } = router.query;
 
   const { setToastAlert } = useToast();
+
+  const { user } = useUser();
 
   const { handleSubmit, reset, watch, setValue } = useForm<IPage>({
     defaultValues: { name: "" },
@@ -411,18 +414,22 @@ const SinglePage: NextPage = () => {
                   )}
                 </Popover>
               </div>
-              {pageDetails.access ? (
-                <button onClick={() => partialUpdatePage({ access: 0 })} className="z-10">
-                  <LockClosedIcon className="h-4 w-4" />
-                </button>
-              ) : (
-                <button
-                  onClick={() => partialUpdatePage({ access: 1 })}
-                  type="button"
-                  className="z-10"
-                >
-                  <LockOpenIcon className="h-4 w-4" />
-                </button>
+              {pageDetails.created_by === user?.id && (
+                <>
+                  {pageDetails.access ? (
+                    <button onClick={() => partialUpdatePage({ access: 0 })} className="z-10">
+                      <LockClosedIcon className="h-4 w-4" />
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => partialUpdatePage({ access: 1 })}
+                      type="button"
+                      className="z-10"
+                    >
+                      <LockOpenIcon className="h-4 w-4" />
+                    </button>
+                  )}
+                </>
               )}
               {pageDetails.is_favorite ? (
                 <button onClick={handleRemoveFromFavorites} className="z-10">

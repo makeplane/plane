@@ -112,6 +112,9 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
                 }
                 validations={{
                   required: "Workspace name is required",
+                  validate: (value) =>
+                    /^[\w\s-]*$/.test(value) ||
+                    `Name can only contain (" "), ( - ), ( _ ) & Alphanumeric characters.`,
                 }}
                 placeholder="e.g. My Workspace"
                 error={errors.name}

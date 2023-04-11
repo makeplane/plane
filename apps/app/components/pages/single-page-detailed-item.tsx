@@ -2,10 +2,11 @@ import React from "react";
 
 import Link from "next/link";
 import { useRouter } from "next/router";
-import dynamic from "next/dynamic";
 
+// hooks
+import useUser from "hooks/use-user";
 // ui
-import { CustomMenu, Loader, Tooltip } from "components/ui";
+import { CustomMenu, Tooltip } from "components/ui";
 // icons
 import {
   LockClosedIcon,
@@ -29,15 +30,6 @@ type TSingleStatProps = {
   partialUpdatePage: (page: IPage, formData: Partial<IPage>) => void;
 };
 
-const RemirrorRichTextEditor = dynamic(() => import("components/rich-text-editor"), {
-  ssr: false,
-  loading: () => (
-    <Loader className="p-4">
-      <Loader.Item height="100px" width="100%" />
-    </Loader>
-  ),
-});
-
 export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
   page,
   handleEditPage,
@@ -48,6 +40,8 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+
+  const { user } = useUser();
 
   return (
     <div className="relative first:rounded-t last:rounded-b border">
@@ -106,29 +100,31 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
                   <StarIcon className="h-4 w-4 " color="#858E96" />
                 </button>
               )}
-              <Tooltip
-                tooltipContent={`${
-                  page.access
-                    ? "This page is only visible to you."
-                    : "This page can be viewed by anyone in the project."
-                }`}
-                theme="dark"
-              >
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    partialUpdatePage(page, { access: page.access ? 0 : 1 });
-                  }}
+              {page.created_by === user?.id && (
+                <Tooltip
+                  tooltipContent={`${
+                    page.access
+                      ? "This page is only visible to you."
+                      : "This page can be viewed by anyone in the project."
+                  }`}
+                  theme="dark"
                 >
-                  {page.access ? (
-                    <LockClosedIcon className="h-4 w-4" color="#858e96" />
-                  ) : (
-                    <LockOpenIcon className="h-4 w-4" color="#858e96" />
-                  )}
-                </button>
-              </Tooltip>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      partialUpdatePage(page, { access: page.access ? 0 : 1 });
+                    }}
+                  >
+                    {page.access ? (
+                      <LockClosedIcon className="h-4 w-4" color="#858e96" />
+                    ) : (
+                      <LockOpenIcon className="h-4 w-4" color="#858e96" />
+                    )}
+                  </button>
+                </Tooltip>
+              )}
               <CustomMenu verticalEllipsis>
                 <CustomMenu.MenuItem
                   onClick={(e: any) => {

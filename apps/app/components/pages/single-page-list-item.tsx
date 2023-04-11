@@ -3,6 +3,8 @@ import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
+// hooks
+import useUser from "hooks/use-user";
 // ui
 import { CustomMenu, Tooltip } from "components/ui";
 // icons
@@ -39,6 +41,8 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+
+  const { user } = useUser();
 
   return (
     <li>
@@ -103,29 +107,32 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
                       <StarIcon className="h-4 w-4 " color="#858e96" />
                     </button>
                   )}
-                  <Tooltip
-                    tooltipContent={`${
-                      page.access
-                        ? "This page is only visible to you."
-                        : "This page can be viewed by anyone in the project."
-                    }`}
-                    theme="dark"
-                  >
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        partialUpdatePage(page, { access: page.access ? 0 : 1 });
-                      }}
+                  {page.created_by === user?.id && (
+                    <Tooltip
+                      tooltipContent={`${
+                        page.access
+                          ? "This page is only visible to you."
+                          : "This page can be viewed by anyone in the project."
+                      }`}
+                      theme="dark"
                     >
-                      {page.access ? (
-                        <LockClosedIcon className="h-4 w-4" color="#858e96" />
-                      ) : (
-                        <LockOpenIcon className="h-4 w-4" color="#858e96" />
-                      )}
-                    </button>
-                  </Tooltip>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          partialUpdatePage(page, { access: page.access ? 0 : 1 });
+                        }}
+                      >
+                        {page.access ? (
+                          <LockClosedIcon className="h-4 w-4" color="#858e96" />
+                        ) : (
+                          <LockOpenIcon className="h-4 w-4" color="#858e96" />
+                        )}
+                      </button>
+                    </Tooltip>
+                  )}
+
                   <CustomMenu width="auto" verticalEllipsis>
                     <CustomMenu.MenuItem
                       onClick={(e: any) => {
