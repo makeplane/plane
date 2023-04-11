@@ -19,6 +19,7 @@ import pagesService from "services/pages.service";
 import issuesService from "services/issues.service";
 // hooks
 import useToast from "hooks/use-toast";
+import useUser from "hooks/use-user";
 // layouts
 import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
 // components
@@ -60,6 +61,8 @@ const SinglePage: NextPage = () => {
   const { workspaceSlug, projectId, pageId } = router.query;
 
   const { setToastAlert } = useToast();
+
+  const { user } = useUser();
 
   const { handleSubmit, reset, watch, setValue } = useForm<IPage>({
     defaultValues: { name: "" },
@@ -367,12 +370,11 @@ const SinglePage: NextPage = () => {
             </div>
             <div className="flex items-center gap-6">
               <Tooltip
-                tooltipContent={`Last updated at ${
-                  renderShortTime(pageDetails.updated_at)} on ${renderShortDate(pageDetails.updated_at)}`}
+                tooltipContent={`Last updated at ${renderShortTime(
+                  pageDetails.updated_at
+                )} on ${renderShortDate(pageDetails.updated_at)}`}
               >
-                <p className="text-sm text-gray-500">
-                  {renderShortTime(pageDetails.updated_at)}
-                </p>
+                <p className="text-sm text-gray-500">{renderShortTime(pageDetails.updated_at)}</p>
               </Tooltip>
               <button className="flex items-center gap-2" onClick={handleCopyText}>
                 <LinkIcon className="h-4 w-4" />
@@ -419,28 +421,30 @@ const SinglePage: NextPage = () => {
                   )}
                 </Popover>
               </div>
-              <Tooltip
-                tooltipContent={`${
-                  pageDetails.access
-                    ? "This page is only visible to you."
-                    : "This page can be viewed by anyone in the project."
-                }`}
-                theme="dark"
-              >
-                {pageDetails.access ? (
-                  <button onClick={() => partialUpdatePage({ access: 0 })} className="z-10">
-                    <LockClosedIcon className="h-4 w-4" />
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => partialUpdatePage({ access: 1 })}
-                    type="button"
-                    className="z-10"
-                  >
-                    <LockOpenIcon className="h-4 w-4" />
-                  </button>
-                )}
-              </Tooltip>
+              {pageDetails.created_by === user?.id && (
+                <Tooltip
+                  tooltipContent={`${
+                    pageDetails.access
+                      ? "This page is only visible to you."
+                      : "This page can be viewed by anyone in the project."
+                  }`}
+                  theme="dark"
+                >
+                  {pageDetails.access ? (
+                    <button onClick={() => partialUpdatePage({ access: 0 })} className="z-10">
+                      <LockClosedIcon className="h-4 w-4" />
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => partialUpdatePage({ access: 1 })}
+                      type="button"
+                      className="z-10"
+                    >
+                      <LockOpenIcon className="h-4 w-4" />
+                    </button>
+                  )}
+                </Tooltip>
+              )}
               {pageDetails.is_favorite ? (
                 <button onClick={handleRemoveFromFavorites} className="z-10">
                   <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
