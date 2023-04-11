@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 
 import { useRouter } from "next/router";
 
@@ -15,20 +15,20 @@ import { CreateUpdateEstimateModal, SingleEstimate } from "components/estimates"
 //hooks
 import useToast from "hooks/use-toast";
 // ui
-import { Loader } from "components/ui";
+import { Loader, SecondaryButton } from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { PlusIcon } from "@heroicons/react/24/outline";
 // types
-import { IEstimate } from "types";
+import { IEstimate, IProject } from "types";
 import type { NextPage } from "next";
 // fetch-keys
-import { ESTIMATES_LIST } from "constants/fetch-keys";
+import { ESTIMATES_LIST, PROJECT_DETAILS } from "constants/fetch-keys";
+import projectService from "services/project.service";
 
 const EstimatesSettings: NextPage = () => {
   const [estimateFormOpen, setEstimateFormOpen] = useState(false);
 
-  const [isUpdating, setIsUpdating] = useState(false);
   const [estimateToUpdate, setEstimateToUpdate] = useState<IEstimate | undefined>();
 
   const router = useRouter();
@@ -38,8 +38,6 @@ const EstimatesSettings: NextPage = () => {
 
   const { projectDetails } = useProjectDetails();
 
-  const scrollToRef = useRef<HTMLDivElement>(null);
-
   const { data: estimatesList } = useSWR<IEstimate[]>(
     workspaceSlug && projectId ? ESTIMATES_LIST(projectId as string) : null,
     workspaceSlug && projectId
@@ -48,7 +46,6 @@ const EstimatesSettings: NextPage = () => {
   );
 
   const editEstimate = (estimate: IEstimate) => {
-    setIsUpdating(true);
     setEstimateToUpdate(estimate);
     setEstimateFormOpen(true);
   };
@@ -73,6 +70,30 @@ const EstimatesSettings: NextPage = () => {
       });
   };
 
+  const disableEstimates = () => {
+    if (!workspaceSlug || !projectId) return;
+
+    mutate<IProject>(
+      PROJECT_DETAILS(projectId as string),
+      (prevData) => {
+        if (!prevData) return prevData;
+
+        return { ...prevData, estimate: null };
+      },
+      false
+    );
+
+    projectService
+      .updateProject(workspaceSlug as string, projectId as string, { estimate: null })
+      .catch(() =>
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Estimate could not be disabled. Please try again",
+        })
+      );
+  };
+
   return (
     <>
       <ProjectAuthorizationWrapper
@@ -87,7 +108,6 @@ const EstimatesSettings: NextPage = () => {
         }
       >
         <CreateUpdateEstimateModal
-          isCreate={estimateToUpdate ? true : false}
           isOpen={estimateFormOpen}
           data={estimateToUpdate}
           handleClose={() => {
@@ -95,14 +115,12 @@ const EstimatesSettings: NextPage = () => {
             setEstimateToUpdate(undefined);
           }}
         />
-        <section className="grid grid-cols-12 gap-10">
-          <div className="col-span-12 sm:col-span-5">
-            <h3 className="text-[28px] font-semibold">Estimates</h3>
-          </div>
+        <section className="flex items-center justify-between">
+          <h3 className="text-2xl font-semibold">Estimates</h3>
           <div className="col-span-12 space-y-5 sm:col-span-7">
-            <div className="flex sm:justify-end sm:items-end sm:h-full text-theme">
+            <div className="flex items-center gap-2">
               <span
-                className="flex items-center cursor-pointer gap-2"
+                className="flex items-center cursor-pointer gap-2 text-theme"
                 onClick={() => {
                   setEstimateToUpdate(undefined);
                   setEstimateFormOpen(true);
@@ -111,6 +129,9 @@ const EstimatesSettings: NextPage = () => {
                 <PlusIcon className="h-4 w-4" />
                 Create New Estimate
               </span>
+              {projectDetails?.estimate && (
+                <SecondaryButton onClick={disableEstimates}>Disable Estimates</SecondaryButton>
+              )}
             </div>
           </div>
         </section>

@@ -10,6 +10,7 @@ import Container from "layouts/container";
 import AppHeader from "layouts/app-layout/app-header";
 import AppSidebar from "layouts/app-layout/app-sidebar";
 import SettingsNavbar from "layouts/settings-navbar";
+import { WorkspaceAuthorizationLayout } from "./workspace-authorization-wrapper";
 // components
 import { NotAuthorizedView, JoinProject } from "components/auth-screens";
 import { CommandPalette } from "components/command-palette";
@@ -71,6 +72,22 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
             <div className="flex flex-col items-center gap-3 text-center">
               <h3 className="text-xl">Setting up your project...</h3>
               <Spinner />
+            </div>
+          </div>
+        ) : error?.status === 401 || error?.status === 403 ? (
+          <JoinProject />
+        ) : error?.status === 404 ? (
+          <div className="container h-screen grid place-items-center">
+            <div className="text-center space-y-4">
+              <p className="text-2xl font-semibold">No such project exist. Create one?</p>
+              <PrimaryButton
+                onClick={() => {
+                  const e = new KeyboardEvent("keydown", { key: "p" });
+                  document.dispatchEvent(e);
+                }}
+              >
+                Create project
+              </PrimaryButton>
             </div>
           </div>
         ) : error?.status === 401 || error?.status === 403 ? (

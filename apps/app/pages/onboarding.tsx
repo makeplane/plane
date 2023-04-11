@@ -22,9 +22,9 @@ import { ONBOARDING_CARDS } from "constants/workspace";
 import Logo from "public/onboarding/logo.svg";
 // types
 import type { NextPage } from "next";
+import { ICurrentUserResponse } from "types";
 // fetch-keys
 import { CURRENT_USER } from "constants/fetch-keys";
-import { ICurrentUserResponse } from "types";
 
 const Onboarding: NextPage = () => {
   const [step, setStep] = useState(1);

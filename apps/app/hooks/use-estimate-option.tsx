@@ -8,6 +8,8 @@ import useSWR from "swr";
 import estimatesService from "services/estimates.service";
 // hooks
 import useProjectDetails from "hooks/use-project-details";
+// helpers
+import { orderArrayBy } from "helpers/array.helper";
 // fetch-keys
 import { ESTIMATE_POINTS_LIST } from "constants/fetch-keys";
 
@@ -26,7 +28,7 @@ const useEstimateOption = (estimateKey?: number) => {
           estimatesService.getEstimatesPointsList(
             workspaceSlug as string,
             projectId as string,
-            projectDetails.estimate
+            projectDetails.estimate as string
           )
       : null
   );
@@ -41,7 +43,7 @@ const useEstimateOption = (estimateKey?: number) => {
 
   return {
     isEstimateActive: projectDetails?.estimate ? true : false,
-    estimatePoints,
+    estimatePoints: orderArrayBy(estimatePoints ?? [], "key"),
     estimateValue,
   };
 };

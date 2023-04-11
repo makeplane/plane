@@ -11,6 +11,7 @@ import { PRIORITIES } from "constants/project";
 // services
 import trackEventServices from "services/track-event.service";
 import useEstimateOption from "hooks/use-estimate-option";
+import { PlayIcon } from "@heroicons/react/24/outline";
 
 type Props = {
   issue: IIssue;
@@ -27,15 +28,17 @@ export const ViewEstimateSelect: React.FC<Props> = ({
   selfPositioned = false,
   isNotAllowed,
 }) => {
-  const { isEstimateActive, estimatePoints, estimateValue } = useEstimateOption(
-    issue.estimate_point
-  );
+  const { isEstimateActive, estimatePoints } = useEstimateOption(issue.estimate_point);
+
+  const estimateValue = estimatePoints?.find((e) => e.key === issue.estimate_point)?.value;
+
+  if (!isEstimateActive) return null;
 
   return (
     <CustomSelect
-      value={issue.priority}
-      onChange={(data: string) => {
-        partialUpdateIssue({ priority: data, state: issue.state, target_date: issue.target_date });
+      value={issue.estimate_point}
+      onChange={(val: number) => {
+        partialUpdateIssue({ estimate_point: val });
         trackEventServices.trackIssuePartialPropertyUpdateEvent(
           {
             workspaceSlug: issue.workspace_detail.slug,
@@ -45,12 +48,15 @@ export const ViewEstimateSelect: React.FC<Props> = ({
             projectName: issue.project_detail.name,
             issueId: issue.id,
           },
-          "ISSUE_PROPERTY_UPDATE_PRIORITY"
+          "ISSUE_PROPERTY_UPDATE_ESTIMATE"
         );
       }}
       label={
         <Tooltip tooltipHeading="Estimate" tooltipContent={estimateValue}>
-          <>{estimateValue}</>
+          <div className="flex items-center gap-1 text-gray-500">
+            <PlayIcon className="h-3.5 w-3.5 -rotate-90" />
+            {estimateValue}
+          </div>
         </Tooltip>
       }
       maxHeight="md"
@@ -58,6 +64,7 @@ export const ViewEstimateSelect: React.FC<Props> = ({
       disabled={isNotAllowed}
       position={position}
       selfPositioned={selfPositioned}
+      width="w-full min-w-[6rem]"
     >
       {estimatePoints?.map((estimate) => (
         <CustomSelect.Option key={estimate.id} value={estimate.key} className="capitalize">

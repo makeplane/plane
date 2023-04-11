@@ -13,6 +13,7 @@ import useToast from "hooks/use-toast";
 import {
   ViewAssigneeSelect,
   ViewDueDateSelect,
+  ViewEstimateSelect,
   ViewPrioritySelect,
   ViewStateSelect,
 } from "components/issues/view-select";
@@ -267,6 +268,14 @@ export const SingleListIssue: React.FC<Props> = ({
             )}
             {properties.assignee && (
               <ViewAssigneeSelect
+                issue={issue}
+                partialUpdateIssue={partialUpdateIssue}
+                position="right"
+                isNotAllowed={isNotAllowed}
+              />
+            )}
+            {properties.estimate && (
+              <ViewEstimateSelect
                 issue={issue}
                 partialUpdateIssue={partialUpdateIssue}
                 position="right"
