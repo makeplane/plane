@@ -16,6 +16,7 @@ import {
   StarIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
+import { PencilScribbleIcon } from "components/icons";
 // helpers
 import { truncateText } from "helpers/string.helper";
 import { renderShortDate, renderShortTime } from "helpers/date-time.helper";
@@ -48,11 +49,13 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
     <li>
       <Link href={`/${workspaceSlug}/projects/${projectId}/pages/${page.id}`}>
         <a>
-          <div className="relative rounded p-4 hover:bg-gray-100">
+          <div className="relative rounded p-4 hover:bg-[#E9ECEF]">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <DocumentTextIcon className="h-4 w-4" />
-                <p className="mr-2 truncate text-sm font-medium">{truncateText(page.name, 75)}</p>
+                <PencilScribbleIcon className="h-4 w-4" />
+                <p className="mr-2 truncate text-base text-[#212529] font-medium">
+                  {truncateText(page.name, 75)}
+                </p>
                 {page.label_details.length > 0 &&
                   page.label_details.map((label) => (
                     <div
@@ -78,9 +81,8 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
               <div className="ml-2 flex flex-shrink-0">
                 <div className="flex items-center gap-2">
                   <Tooltip
-                    tooltipContent={`Last updated at ${renderShortTime(
-                      page.updated_at
-                    )} ${renderShortDate(page.updated_at)}`}
+                    tooltipContent={`Last updated at ${
+                      renderShortTime(page.updated_at)} on ${renderShortDate(page.updated_at)}`}
                   >
                     <p className="text-sm text-gray-400">{renderShortTime(page.updated_at)}</p>
                   </Tooltip>
