@@ -85,7 +85,7 @@ export const IssueAttachmentUpload = () => {
   return (
     <div
       {...getRootProps()}
-      className={`flex items-center justify-center h-[60px] cursor-pointer border-2 border-dashed border-theme text-blue-500 bg-blue-500/5 text-sm rounded-md px-4 ${
+      className={`flex items-center justify-center h-[60px] cursor-pointer border-2 border-dashed border-theme text-blue-500 bg-blue-500/5 text-xs rounded-md px-4 ${
         isDragActive ? "bg-theme/10" : ""
       } ${isDragReject ? "bg-red-100" : ""}`}
     >
@@ -98,7 +98,7 @@ export const IssueAttachmentUpload = () => {
         ) : isLoading ? (
           <p className="text-center">Uploading....</p>
         ) : (
-          <p className="text-center">Drag & Drop or Click to add new file</p>
+          <p className="text-center">Drag and drop/Click to add</p>
         )}
       </span>
     </div>

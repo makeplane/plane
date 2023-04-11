@@ -653,15 +653,9 @@ def update_issue_activity(
         "modules_list": track_modules,
     }
 
-    requested_data = (
-        json.loads(requested_data)
-        if requested_data is not None
-        else None
-    )
+    requested_data = json.loads(requested_data) if requested_data is not None else None
     current_instance = (
-        json.loads(current_instance)
-        if current_instance is not None
-        else None
+        json.loads(current_instance) if current_instance is not None else None
     )
 
     for key in requested_data:
@@ -677,9 +671,29 @@ def update_issue_activity(
             )
 
 
+def delete_issue_activity(
+    requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+    issue_activities.append(
+        IssueActivity(
+            project=project,
+            workspace=project.workspace,
+            comment=f"{actor.email} deleted the issue",
+            verb="deleted",
+            actor=actor,
+            field="issue",
+        )
+    )
+
+
 def create_comment_activity(
     requested_data, current_instance, issue_id, project, actor, issue_activities
 ):
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+    current_instance = (
+        json.loads(current_instance) if current_instance is not None else None
+    )
+
     issue_activities.append(
         IssueActivity(
             issue_id=issue_id,
@@ -699,6 +713,11 @@ def create_comment_activity(
 def update_comment_activity(
     requested_data, current_instance, issue_id, project, actor, issue_activities
 ):
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+    current_instance = (
+        json.loads(current_instance) if current_instance is not None else None
+    )
+
     if current_instance.get("comment_html") != requested_data.get("comment_html"):
         issue_activities.append(
             IssueActivity(
@@ -718,21 +737,6 @@ def update_comment_activity(
         )
 
 
-def delete_issue_activity(
-    requested_data, current_instance, issue_id, project, actor, issue_activities
-):
-    issue_activities.append(
-        IssueActivity(
-            project=project,
-            workspace=project.workspace,
-            comment=f"{actor.email} deleted the issue",
-            verb="deleted",
-            actor=actor,
-            field="issue",
-        )
-    )
-
-
 def delete_comment_activity(
     requested_data, current_instance, issue_id, project, actor, issue_activities
 ):
@@ -745,6 +749,113 @@ def delete_comment_activity(
             verb="deleted",
             actor=actor,
             field="comment",
+        )
+    )
+
+
+def create_link_activity(
+    requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+    current_instance = (
+        json.loads(current_instance) if current_instance is not None else None
+    )
+
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            project=project,
+            workspace=project.workspace,
+            comment=f"{actor.email} created a link",
+            verb="created",
+            actor=actor,
+            field="link",
+            new_value=requested_data.get("url", ""),
+            new_identifier=requested_data.get("id", None),
+            issue_comment_id=requested_data.get("id", None),
+        )
+    )
+
+
+def update_link_activity(
+    requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+    current_instance = (
+        json.loads(current_instance) if current_instance is not None else None
+    )
+
+    if current_instance.get("url") != requested_data.get("url"):
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                project=project,
+                workspace=project.workspace,
+                comment=f"{actor.email} updated a link",
+                verb="updated",
+                actor=actor,
+                field="link",
+                old_value=current_instance.get("url", ""),
+                old_identifier=current_instance.get("id"),
+                new_value=requested_data.get("url", ""),
+                new_identifier=current_instance.get("id", None),
+                issue_comment_id=current_instance.get("id", None),
+            )
+        )
+
+
+def delete_link_activity(
+    requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            project=project,
+            workspace=project.workspace,
+            comment=f"{actor.email} deleted the link",
+            verb="deleted",
+            actor=actor,
+            field="link",
+        )
+    )
+
+
+def create_attachment_activity(
+    requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+    requested_data = json.loads(requested_data) if requested_data is not None else None
+    current_instance = (
+        json.loads(current_instance) if current_instance is not None else None
+    )
+
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            project=project,
+            workspace=project.workspace,
+            comment=f"{actor.email} created a attachment",
+            verb="created",
+            actor=actor,
+            field="attachment",
+            new_value=requested_data.get("url", ""),
+            new_identifier=requested_data.get("id", None),
+            issue_comment_id=requested_data.get("id", None),
+        )
+    )
+
+
+def delete_attachment_activity(
+    requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id,
+            project=project,
+            workspace=project.workspace,
+            comment=f"{actor.email} deleted the attachment",
+            verb="deleted",
+            actor=actor,
+            field="attachment",
         )
     )
 
@@ -767,6 +878,11 @@ def issue_activity(
             "comment.activity.created": create_comment_activity,
             "comment.activity.updated": update_comment_activity,
             "comment.activity.deleted": delete_comment_activity,
+            "link.activity.created": create_link_activity,
+            "link.activity.updated": update_link_activity,
+            "link.activity.deleted": delete_link_activity,
+            "attachment.activity.created": create_attachment_activity,
+            "attachment.activity.deleted": delete_attachment_activity,
         }
 
         func = ACTIVITY_MAPPER.get(type)

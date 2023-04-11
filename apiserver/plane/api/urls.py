@@ -83,7 +83,7 @@ from plane.api.views import (
     EstimateViewSet,
     EstimatePointViewSet,
     ProjectEstimatePointEndpoint,
-    BulkCreateEstimatePointEndpoint,
+    BulkEstimatePointEndpoint,
     ## End Estimates
     # Shortcuts
     ShortCutViewSet,
@@ -536,8 +536,8 @@ urlpatterns = [
         name="project-estimate-points",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/estimates/<uuid:estimate_id>/bulk-create-estimate-points/",
-        BulkCreateEstimatePointEndpoint.as_view(),
+        "workspaces/<str:slug>/projects/<uuid:project_id>/estimates/<uuid:estimate_id>/bulk-estimate-points/",
+        BulkEstimatePointEndpoint.as_view(),
         name="bulk-create-estimate-points",
     ),
     # End States ##
