@@ -148,6 +148,20 @@ class IssueViewSet(BaseViewSet):
                 .filter(**filters)
                 .annotate(cycle_id=F("issue_cycle__id"))
                 .annotate(module_id=F("issue_module__id"))
+                .annotate(
+                    link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
+                .annotate(
+                    attachment_count=IssueAttachment.objects.filter(
+                        issue=OuterRef("id")
+                    )
+                    .order_by()
+                    .annotate(count=Func(F("id"), function="Count"))
+                    .values("count")
+                )
             )
 
             issue_queryset = (
