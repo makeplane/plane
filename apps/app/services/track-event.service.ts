@@ -192,6 +192,7 @@ class TrackEventServices extends APIService {
       | "ISSUE_PROPERTY_UPDATE_STATE"
       | "ISSUE_PROPERTY_UPDATE_ASSIGNEE"
       | "ISSUE_PROPERTY_UPDATE_DUE_DATE"
+      | "ISSUE_PROPERTY_UPDATE_ESTIMATE"
   ): Promise<any> {
     if (!trackEvent) return;
     return this.request({
