@@ -184,13 +184,12 @@ export const EstimatePointsModal: React.FC<Props> = ({ isOpen, data, estimate, o
   };
 
   useEffect(() => {
-    if(!data) return
+    if (!data) return;
     reset({
       ...defaultValues,
       ...data,
     });
   }, [data, reset]);
-
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
