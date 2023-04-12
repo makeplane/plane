@@ -11,7 +11,7 @@ import projectService from "services/project.service";
 import useToast from "hooks/use-toast";
 import useProjectDetails from "hooks/use-project-details";
 // components
-import { EstimatePointsModal } from "components/estimates";
+import { EstimatePointsModal, DeleteEstimateModal } from "components/estimates";
 // ui
 import { CustomMenu } from "components/ui";
 //icons
@@ -39,6 +39,8 @@ export const SingleEstimate: React.FC<Props> = ({
   handleEstimateDelete,
 }) => {
   const [isEstimatePointsModalOpen, setIsEstimatePointsModalOpen] = useState(false);
+  const [isDeleteEstimateModalOpen, setIsDeleteEstimateModalOpen] = useState(false);
+
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -138,7 +140,7 @@ export const SingleEstimate: React.FC<Props> = ({
             {projectDetails?.estimate !== estimate.id && (
               <CustomMenu.MenuItem
                 onClick={() => {
-                  handleEstimateDelete(estimate.id);
+                  setIsDeleteEstimateModalOpen(true);
                 }}
               >
                 <div className="flex items-center justify-start gap-2">
@@ -166,6 +168,16 @@ export const SingleEstimate: React.FC<Props> = ({
           </div>
         )}
       </div>
+
+      <DeleteEstimateModal
+        isOpen={isDeleteEstimateModalOpen}
+        handleClose={() => setIsDeleteEstimateModalOpen(false)}
+        data={estimate}
+        handleDelete={() => {
+          handleEstimateDelete(estimate.id);
+          setIsDeleteEstimateModalOpen(false);
+        }}
+      />
     </>
   );
 };
