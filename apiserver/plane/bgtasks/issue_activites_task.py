@@ -634,6 +634,40 @@ def create_issue_activity(
     )
 
 
+def track_estimate_points(
+    requested_data, current_instance, issue_id, project, actor, issue_activities
+):
+    if current_instance.get("estimate_point") != requested_data.get("estimate_point"):
+        if requested_data.get("estimate_point") == None:
+            issue_activities.append(
+                IssueActivity(
+                    issue_id=issue_id,
+                    actor=actor,
+                    verb="updated",
+                    old_value=current_instance.get("estimate_point"),
+                    new_value=requested_data.get("estimate_point"),
+                    field="estimate_point",
+                    project=project,
+                    workspace=project.workspace,
+                    comment=f"{actor.email} updated the estimate point to None",
+                )
+            )
+        else:
+            issue_activities.append(
+                IssueActivity(
+                    issue_id=issue_id,
+                    actor=actor,
+                    verb="updated",
+                    old_value=current_instance.get("estimate_point"),
+                    new_value=requested_data.get("estimate_point"),
+                    field="estimate_point",
+                    project=project,
+                    workspace=project.workspace,
+                    comment=f"{actor.email} updated the estimate point to {requested_data.get('estimate_point')}",
+                )
+            )
+
+
 def update_issue_activity(
     requested_data, current_instance, issue_id, project, actor, issue_activities
 ):
@@ -651,6 +685,7 @@ def update_issue_activity(
         "blockers_list": track_blockings,
         "cycles_list": track_cycles,
         "modules_list": track_modules,
+        "estimate_point": track_estimate_points,
     }
 
     requested_data = json.loads(requested_data) if requested_data is not None else None
