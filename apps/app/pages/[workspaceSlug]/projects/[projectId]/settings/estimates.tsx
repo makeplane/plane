@@ -61,6 +61,13 @@ const EstimatesSettings: NextPage = () => {
 
     estimatesService
       .deleteEstimate(workspaceSlug as string, projectId as string, estimateId)
+      .then(() => {
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "Estimate Deleted successfully.",
+        });
+      })
       .catch(() => {
         setToastAlert({
           type: "error",
