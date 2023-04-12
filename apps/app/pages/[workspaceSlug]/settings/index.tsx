@@ -18,7 +18,14 @@ import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
 import { ImageUploadModal } from "components/core";
 import { DeleteWorkspaceModal } from "components/workspace";
 // ui
-import { Spinner, Input, CustomSelect, OutlineButton, SecondaryButton } from "components/ui";
+import {
+  Spinner,
+  Input,
+  CustomSelect,
+  OutlineButton,
+  SecondaryButton,
+  DangerButton,
+} from "components/ui";
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 // icons
 import { LinkIcon } from "@heroicons/react/24/outline";
@@ -42,6 +49,7 @@ const defaultValues: Partial<IWorkspace> = {
 const WorkspaceSettings: NextPage = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isImageUploading, setIsImageUploading] = useState(false);
+  const [isImageRemoving, setIsImageRemoving] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
 
   const router = useRouter();
@@ -85,6 +93,14 @@ const WorkspaceSettings: NextPage = () => {
         mutate<IWorkspace[]>(USER_WORKSPACES, (prevData) =>
           prevData?.map((workspace) => (workspace.id === res.id ? res : workspace))
         );
+        mutate<IWorkspace>(WORKSPACE_DETAILS(workspaceSlug as string), (prevData) => {
+          if (!prevData) return prevData;
+
+          return {
+            ...prevData,
+            logo: formData.logo,
+          };
+        });
         setToastAlert({
           title: "Success",
           type: "success",
@@ -95,12 +111,43 @@ const WorkspaceSettings: NextPage = () => {
   };
 
   const handleDelete = (url: string | null | undefined) => {
-    if (!url) return;
+    if (!activeWorkspace || !url) return;
+
+    setIsImageRemoving(true);
 
     const index = url.indexOf(".com");
     const asset = url.substring(index + 5);
 
-    fileService.deleteFile(asset);
+    fileService.deleteFile(asset).then(() => {
+      workspaceService
+        .updateWorkspace(activeWorkspace.slug, { logo: "" })
+        .then((res) => {
+          setToastAlert({
+            type: "success",
+            title: "Success!",
+            message: "Workspace picture removed successfully.",
+          });
+          mutate<IWorkspace[]>(USER_WORKSPACES, (prevData) =>
+            prevData?.map((workspace) => (workspace.id === res.id ? res : workspace))
+          );
+          mutate<IWorkspace>(WORKSPACE_DETAILS(workspaceSlug as string), (prevData) => {
+            if (!prevData) return prevData;
+
+            return {
+              ...prevData,
+              logo: "",
+            };
+          });
+        })
+        .catch(() => {
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message: "There was some error in deleting your profile picture. Please try again.",
+          });
+        })
+        .finally(() => setIsImageRemoving(false));
+    });
   };
 
   return (
@@ -161,7 +208,7 @@ const WorkspaceSettings: NextPage = () => {
                     </div>
                   )}
                 </button>
-                <div>
+                <div className="flex gap-4">
                   <SecondaryButton
                     onClick={() => {
                       setIsImageUploadModalOpen(true);
@@ -169,6 +216,11 @@ const WorkspaceSettings: NextPage = () => {
                   >
                     {isImageUploading ? "Uploading..." : "Upload"}
                   </SecondaryButton>
+                  {activeWorkspace.logo && activeWorkspace.logo !== "" && (
+                    <DangerButton onClick={() => handleDelete(activeWorkspace.logo)}>
+                      {isImageRemoving ? "Removing..." : "Remove"}
+                    </DangerButton>
+                  )}
                 </div>
               </div>
             </div>

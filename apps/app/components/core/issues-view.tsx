@@ -401,7 +401,7 @@ export const IssuesView: React.FC<Props> = ({
       <CreateUpdateViewModal
         isOpen={createViewModal !== null}
         handleClose={() => setCreateViewModal(null)}
-        preLoadedData={createViewModal}
+        data={createViewModal}
       />
       <CreateUpdateIssueModal
         isOpen={createIssueModal && preloadedData?.actionType === "createIssue"}

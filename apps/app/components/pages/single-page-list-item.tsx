@@ -3,6 +3,8 @@ import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
+// hooks
+import useUser from "hooks/use-user";
 // ui
 import { CustomMenu, Tooltip } from "components/ui";
 // icons
@@ -14,6 +16,7 @@ import {
   StarIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
+import { PencilScribbleIcon } from "components/icons";
 // helpers
 import { truncateText } from "helpers/string.helper";
 import { renderShortDate, renderShortTime } from "helpers/date-time.helper";
@@ -40,6 +43,8 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
+  const { user } = useUser();
+
   return (
     <li>
       <Link href={`/${workspaceSlug}/projects/${projectId}/pages/${page.id}`}>
@@ -47,8 +52,10 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
           <div className="relative rounded p-4 hover:bg-brand-surface-1">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <DocumentTextIcon className="h-4 w-4" />
-                <p className="mr-2 truncate text-sm font-medium">{truncateText(page.name, 75)}</p>
+                <PencilScribbleIcon className="h-4 w-4" />
+                <p className="mr-2 truncate text-base text-[#212529] font-medium">
+                  {truncateText(page.name, 75)}
+                </p>
                 {page.label_details.length > 0 &&
                   page.label_details.map((label) => (
                     <div
@@ -74,9 +81,8 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
               <div className="ml-2 flex flex-shrink-0">
                 <div className="flex items-center gap-2">
                   <Tooltip
-                    tooltipContent={`Last updated at ${renderShortTime(
-                      page.updated_at
-                    )} ${renderShortDate(page.updated_at)}`}
+                    tooltipContent={`Last updated at ${
+                      renderShortTime(page.updated_at)} on ${renderShortDate(page.updated_at)}`}
                   >
                     <p className="text-sm text-gray-400">{renderShortTime(page.updated_at)}</p>
                   </Tooltip>
@@ -103,29 +109,32 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
                       <StarIcon className="h-4 w-4 " color="#858e96" />
                     </button>
                   )}
-                  <Tooltip
-                    tooltipContent={`${
-                      page.access
-                        ? "This page is only visible to you."
-                        : "This page can be viewed by anyone in the project."
-                    }`}
-                    theme="dark"
-                  >
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        partialUpdatePage(page, { access: page.access ? 0 : 1 });
-                      }}
+                  {page.created_by === user?.id && (
+                    <Tooltip
+                      tooltipContent={`${
+                        page.access
+                          ? "This page is only visible to you."
+                          : "This page can be viewed by anyone in the project."
+                      }`}
+                      theme="dark"
                     >
-                      {page.access ? (
-                        <LockClosedIcon className="h-4 w-4" color="#858e96" />
-                      ) : (
-                        <LockOpenIcon className="h-4 w-4" color="#858e96" />
-                      )}
-                    </button>
-                  </Tooltip>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          partialUpdatePage(page, { access: page.access ? 0 : 1 });
+                        }}
+                      >
+                        {page.access ? (
+                          <LockClosedIcon className="h-4 w-4" color="#858e96" />
+                        ) : (
+                          <LockOpenIcon className="h-4 w-4" color="#858e96" />
+                        )}
+                      </button>
+                    </Tooltip>
+                  )}
+
                   <CustomMenu width="auto" verticalEllipsis>
                     <CustomMenu.MenuItem
                       onClick={(e: any) => {

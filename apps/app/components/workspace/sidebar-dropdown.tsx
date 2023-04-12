@@ -77,8 +77,8 @@ export const WorkspaceSidebarDropdown = () => {
         })
       )
       .finally(() => {
-        mutateUser();
         router.push("/signin");
+        mutateUser();
       });
   };
 

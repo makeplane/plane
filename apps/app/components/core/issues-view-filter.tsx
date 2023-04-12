@@ -19,6 +19,7 @@ import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 import { Properties } from "types";
 // constants
 import { GROUP_BY_OPTIONS, ORDER_BY_OPTIONS, FILTER_ISSUE_OPTIONS } from "constants/issue";
+import useEstimateOption from "hooks/use-estimate-option";
 
 export const IssuesFilterView: React.FC = () => {
   const router = useRouter();
@@ -43,6 +44,8 @@ export const IssuesFilterView: React.FC = () => {
     workspaceSlug as string,
     projectId as string
   );
+
+  const { isEstimateActive } = useEstimateOption();
 
   return (
     <div className="flex items-center gap-2">
@@ -232,20 +235,24 @@ export const IssuesFilterView: React.FC = () => {
                   <div className="space-y-2 py-3">
                     <h4 className="text-sm text-brand-secondary">Display Properties</h4>
                     <div className="flex flex-wrap items-center gap-2">
-                      {Object.keys(properties).map((key) => (
-                        <button
-                          key={key}
-                          type="button"
-                          className={`rounded border border-brand-base px-2 py-1 text-xs capitalize ${
-                            properties[key as keyof Properties]
-                              ? "border-brand-accent bg-brand-accent text-white"
-                              : "border-brand-base"
-                          }`}
-                          onClick={() => setProperties(key as keyof Properties)}
-                        >
-                          {key === "key" ? "ID" : replaceUnderscoreIfSnakeCase(key)}
-                        </button>
-                      ))}
+                      {Object.keys(properties).map((key) => {
+                        if (key === "estimate" && !isEstimateActive) return null;
+
+                        return (
+                          <button
+                            key={key}
+                            type="button"
+                            className={`rounded border px-2 py-1 text-xs capitalize ${
+                              properties[key as keyof Properties]
+                                ? "border-theme bg-theme text-white"
+                                : "border-gray-300"
+                            }`}
+                            onClick={() => setProperties(key as keyof Properties)}
+                          >
+                            {key === "key" ? "ID" : replaceUnderscoreIfSnakeCase(key)}
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>

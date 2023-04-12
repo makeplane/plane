@@ -67,6 +67,7 @@ export interface IIssue {
   assignees: string[];
   assignee_details: IUser[];
   assignees_list: string[];
+  attachment_count: number;
   attachments: any[];
   blocked_by_issue_details: any[];
   blocked_issue_details: any[];
@@ -101,6 +102,7 @@ export interface IIssue {
   issue_module: IIssueModule | null;
   label_details: any[];
   links_list: IIssueLink[];
+  link_count: number;
   module: string | null;
   module_id: string | null;
   name: string;
@@ -186,6 +188,8 @@ export type Properties = {
   priority: boolean;
   state: boolean;
   sub_issue_count: boolean;
+  link: boolean;
+  attachment_count: boolean;
   estimate: boolean;
 };
 
