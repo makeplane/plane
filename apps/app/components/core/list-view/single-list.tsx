@@ -132,10 +132,10 @@ export const SingleList: React.FC<Props> = ({
   return (
     <Disclosure key={groupTitle} as="div" defaultOpen>
       {({ open }) => (
-        <div className="rounded-[10px] border border-gray-300 bg-white">
+        <div className="bg-white">
           <div
             className={`flex items-center justify-between bg-gray-100 px-5 py-3 ${
-              open ? "rounded-t-[10px]" : "rounded-[10px]"
+              open ? "" : "rounded-[10px]"
             }`}
           >
             <Disclosure.Button>

@@ -5,6 +5,8 @@ import { useRouter } from "next/router";
 
 // contexts
 import { useProjectMyMembership, ProjectMemberProvider } from "contexts/project-member.context";
+// hooks
+import useIssuesView from "hooks/use-issues-view";
 // layouts
 import Container from "layouts/container";
 import AppHeader from "layouts/app-layout/app-header";
@@ -19,6 +21,7 @@ import { PrimaryButton, Spinner } from "components/ui";
 // icons
 import { LayerDiagonalIcon } from "components/icons";
 
+
 type Meta = {
   title?: string | null;
   description?: string | null;
@@ -29,7 +32,6 @@ type Meta = {
 type Props = {
   meta?: Meta;
   children: React.ReactNode;
-  noPadding?: boolean;
   noHeader?: boolean;
   bg?: "primary" | "secondary";
   breadcrumbs?: JSX.Element;
@@ -46,7 +48,6 @@ export const ProjectAuthorizationWrapper: React.FC<Props> = (props) => (
 const ProjectAuthorizationWrapped: React.FC<Props> = ({
   meta,
   children,
-  noPadding = false,
   noHeader = false,
   bg = "primary",
   breadcrumbs,
@@ -58,8 +59,13 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
+  const {
+    issueView,
+  } = useIssuesView();
+
   const { loading, error, memberRole: memberType } = useProjectMyMembership();
 
+  const noPadding = issueView === "list";
   const settingsLayout = router.pathname.includes("/settings");
 
   return (

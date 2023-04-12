@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useRouter } from "next/router";
 
 import useSWR from "swr";
@@ -21,6 +22,7 @@ import type { NextPage } from "next";
 import { PROJECT_DETAILS } from "constants/fetch-keys";
 
 const ProjectIssues: NextPage = () => {
+
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 

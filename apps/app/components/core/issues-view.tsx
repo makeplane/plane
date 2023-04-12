@@ -425,7 +425,7 @@ export const IssuesView: React.FC<Props> = ({
         handleClose={() => setTransferIssuesModal(false)}
         isOpen={transferIssuesModal}
       />
-      <div className="mb-5 -mt-4">
+      <div className="">
         <div className="flex items-center justify-between gap-2">
           <FilterList filters={filters} setFilters={setFilters} />
           {Object.keys(filters).length > 0 &&
@@ -480,24 +480,26 @@ export const IssuesView: React.FC<Props> = ({
             <>
               {isCompleted && <TransferIssues handleClick={() => setTransferIssuesModal(true)} />}
               {issueView === "list" ? (
-                <AllLists
-                  type={type}
-                  states={states}
-                  addIssueToState={addIssueToState}
-                  makeIssueCopy={makeIssueCopy}
-                  handleEditIssue={handleEditIssue}
-                  handleDeleteIssue={handleDeleteIssue}
-                  openIssuesListModal={type !== "issue" ? openIssuesListModal : null}
-                  removeIssue={
-                    type === "cycle"
-                      ? removeIssueFromCycle
-                      : type === "module"
-                      ? removeIssueFromModule
-                      : null
-                  }
-                  isCompleted={isCompleted}
-                  userAuth={memberRole}
-                />
+                <div className="">
+                  <AllLists
+                    type={type}
+                    states={states}
+                    addIssueToState={addIssueToState}
+                    makeIssueCopy={makeIssueCopy}
+                    handleEditIssue={handleEditIssue}
+                    handleDeleteIssue={handleDeleteIssue}
+                    openIssuesListModal={type !== "issue" ? openIssuesListModal : null}
+                    removeIssue={
+                      type === "cycle"
+                        ? removeIssueFromCycle
+                        : type === "module"
+                        ? removeIssueFromModule
+                        : null
+                    }
+                    isCompleted={isCompleted}
+                    userAuth={memberRole}
+                  />
+                </div>
               ) : issueView === "kanban" ? (
                 <AllBoards
                   type={type}
