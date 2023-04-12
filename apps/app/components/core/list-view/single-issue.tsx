@@ -29,6 +29,7 @@ import {
   TrashIcon,
   XMarkIcon,
   ArrowTopRightOnSquareIcon,
+  PaperClipIcon
 } from "@heroicons/react/24/outline";
 // helpers
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
@@ -281,6 +282,26 @@ export const SingleListIssue: React.FC<Props> = ({
                 position="right"
                 isNotAllowed={isNotAllowed}
               />
+            )}
+            {properties.link && (
+              <div className="flex items-center rounded-md shadow-sm px-2.5 py-1 cursor-default text-xs border border-gray-200">
+                <Tooltip tooltipHeading="Link" tooltipContent={`${issue.link_count}`}>
+                  <div className="flex items-center gap-1 text-gray-500">
+                    <LinkIcon className="h-3.5 w-3.5 text-gray-500" />
+                    {issue.link_count}
+                  </div>
+                </Tooltip>
+              </div>
+            )}
+            {properties.attachment_count && (
+              <div className="flex items-center rounded-md shadow-sm px-2.5 py-1 cursor-default text-xs border border-gray-200">
+                <Tooltip tooltipHeading="Attachment" tooltipContent={`${issue.attachment_count}`}>
+                  <div className="flex items-center gap-1 text-gray-500">
+                    <PaperClipIcon className="h-3.5 w-3.5 text-gray-500 -rotate-45" />
+                    {issue.attachment_count}
+                  </div>
+                </Tooltip>
+              </div>
             )}
             {type && !isNotAllowed && (
               <CustomMenu width="auto" ellipsis>

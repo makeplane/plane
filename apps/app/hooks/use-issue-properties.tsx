@@ -15,6 +15,8 @@ const initialValues: Properties = {
   priority: false,
   state: true,
   sub_issue_count: false,
+  attachment_count: false,
+  link: false,
   estimate: false,
 };
 
@@ -91,6 +93,8 @@ const useIssuesProperties = (workspaceSlug?: string, projectId?: string) => {
     priority: properties.priority,
     state: properties.state,
     sub_issue_count: properties.sub_issue_count,
+    attachment_count: properties.attachment_count,
+    link: properties.link,
     estimate: properties.estimate,
   };
 
