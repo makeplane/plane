@@ -6,8 +6,10 @@ from urllib.parse import urlparse
 
 def redis_instance():
     # connect to redis
-    if settings.DOCKERIZED or os.environ.get(
-        "DJANGO_SETTINGS_MODULE", "plane.settings.local"
+    if (
+        settings.DOCKERIZED
+        or os.environ.get("DJANGO_SETTINGS_MODULE", "plane.settings.production")
+        == "plane.settings.local"
     ):
         ri = redis.Redis.from_url(settings.REDIS_URL, db=0)
     else:
