@@ -44,6 +44,7 @@ import {
   ChangeIssueState,
   ChangeIssuePriority,
   ChangeIssueAssignee,
+  ChangeInterfaceTheme,
 } from "components/command-palette";
 import { BulkDeleteIssuesModal } from "components/core";
 import { CreateUpdateCycleModal } from "components/cycles";
@@ -435,7 +436,9 @@ export const CommandPalette: React.FC = () => {
                       resultsCount === 0 &&
                       searchTerm !== "" &&
                       debouncedSearchTerm !== "" && (
-                        <div className="my-4 text-center text-brand-secondary">No results found.</div>
+                        <div className="my-4 text-center text-brand-secondary">
+                          No results found.
+                        </div>
                       )}
 
                     {(isLoading || isSearching) && (
@@ -497,7 +500,10 @@ export const CommandPalette: React.FC = () => {
                                       className="focus:outline-none"
                                     >
                                       <div className="flex items-center gap-2 overflow-hidden text-brand-secondary">
-                                        <Icon className="h-4 w-4 text-brand-secondary" color="#6b7280" />
+                                        <Icon
+                                          className="h-4 w-4 text-brand-secondary"
+                                          color="#6b7280"
+                                        />
                                         <p className="block flex-1 truncate">{item.name}</p>
                                       </div>
                                     </Command.Item>
@@ -596,7 +602,10 @@ export const CommandPalette: React.FC = () => {
                           </>
                         )}
                         <Command.Group heading="Issue">
-                          <Command.Item onSelect={createNewIssue} className="focus:bg-brand-surface-2">
+                          <Command.Item
+                            onSelect={createNewIssue}
+                            className="focus:bg-brand-surface-2"
+                          >
                             <div className="flex items-center gap-2 text-brand-secondary">
                               <LayerDiagonalIcon className="h-4 w-4" color="#6b7280" />
                               Create new issue
@@ -683,6 +692,19 @@ export const CommandPalette: React.FC = () => {
                             <div className="flex items-center gap-2 text-brand-secondary">
                               <FolderPlusIcon className="h-4 w-4 text-brand-secondary" />
                               Create new workspace
+                            </div>
+                          </Command.Item>
+                          <Command.Item
+                            onSelect={() => {
+                              setPlaceholder("Change interface theme...");
+                              setSearchTerm("");
+                              setPages([...pages, "change-interface-theme"]);
+                            }}
+                            className="focus:outline-none"
+                          >
+                            <div className="flex items-center gap-2 text-brand-secondary">
+                              <SettingIcon className="h-4 w-4 text-brand-secondary" />
+                              Change interface theme...
                             </div>
                           </Command.Item>
                         </Command.Group>
@@ -825,6 +847,9 @@ export const CommandPalette: React.FC = () => {
                         issue={issueDetails}
                         setIsPaletteOpen={setIsPaletteOpen}
                       />
+                    )}
+                    {page === "change-interface-theme" && (
+                      <ChangeInterfaceTheme setIsPaletteOpen={setIsPaletteOpen} />
                     )}
                   </Command.List>
                 </Command>
