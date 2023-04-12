@@ -25,8 +25,11 @@ import { IView } from "types";
 import type { NextPage } from "next";
 
 const ProjectViews: NextPage = () => {
-  const [isCreateViewModalOpen, setIsCreateViewModalOpen] = useState(false);
-  const [selectedView, setSelectedView] = useState<IView | null>(null);
+  const [createUpdateViewModal, setCreateUpdateViewModal] = useState(false);
+  const [selectedViewToUpdate, setSelectedViewToUpdate] = useState<IView | null>(null);
+
+  const [deleteViewModal, setDeleteViewModal] = useState(false);
+  const [selectedViewToDelete, setSelectedViewToDelete] = useState<IView | null>(null);
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -44,6 +47,16 @@ const ProjectViews: NextPage = () => {
       ? () => viewsService.getViews(workspaceSlug as string, projectId as string)
       : null
   );
+
+  const handleEditView = (view: IView) => {
+    setSelectedViewToUpdate(view);
+    setCreateUpdateViewModal(true);
+  };
+
+  const handleDeleteView = (view: IView) => {
+    setSelectedViewToDelete(view);
+    setDeleteViewModal(true);
+  };
 
   return (
     <ProjectAuthorizationWrapper
@@ -73,14 +86,14 @@ const ProjectViews: NextPage = () => {
       }
     >
       <CreateUpdateViewModal
-        isOpen={isCreateViewModalOpen}
-        handleClose={() => setIsCreateViewModalOpen(false)}
+        isOpen={createUpdateViewModal}
+        handleClose={() => setCreateUpdateViewModal(false)}
+        data={selectedViewToUpdate}
       />
       <DeleteViewModal
-        isOpen={!!selectedView}
-        data={selectedView}
-        onClose={() => setSelectedView(null)}
-        onSuccess={() => setSelectedView(null)}
+        isOpen={deleteViewModal}
+        data={selectedViewToDelete}
+        setIsOpen={setDeleteViewModal}
       />
       {views ? (
         views.length > 0 ? (
@@ -88,7 +101,12 @@ const ProjectViews: NextPage = () => {
             <h3 className="text-3xl font-semibold text-black">Views</h3>
             <ul role="list" className="divide-y">
               {views.map((view) => (
-                <SingleViewItem key={view.id} view={view} setSelectedView={setSelectedView} />
+                <SingleViewItem
+                  key={view.id}
+                  view={view}
+                  handleEditView={() => handleEditView(view)}
+                  handleDeleteView={() => handleDeleteView(view)}
+                />
               ))}
             </ul>
           </div>

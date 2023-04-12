@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { mutate } from "swr";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -22,10 +22,11 @@ import { renderShortDate, renderShortTime } from "helpers/date-time.helper";
 
 type Props = {
   view: IView;
-  setSelectedView: React.Dispatch<React.SetStateAction<IView | null>>;
+  handleEditView: () => void;
+  handleDeleteView: () => void;
 };
 
-export const SingleViewItem: React.FC<Props> = ({ view, setSelectedView }) => {
+export const SingleViewItem: React.FC<Props> = ({ view, handleEditView, handleDeleteView }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -134,23 +135,23 @@ export const SingleViewItem: React.FC<Props> = ({ view, setSelectedView }) => {
                     </button>
                   )}
                   <CustomMenu width="auto" verticalEllipsis>
-                    {/* <CustomMenu.MenuItem
+                    <CustomMenu.MenuItem
                       onClick={(e: any) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        // handleEditView();
+                        handleEditView();
                       }}
                     >
                       <span className="flex items-center justify-start gap-2">
                         <PencilIcon className="h-3.5 w-3.5" />
                         <span>Edit View</span>
                       </span>
-                    </CustomMenu.MenuItem> */}
+                    </CustomMenu.MenuItem>
                     <CustomMenu.MenuItem
                       onClick={(e: any) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        setSelectedView(view);
+                        handleDeleteView();
                       }}
                     >
                       <span className="flex items-center justify-start gap-2">
