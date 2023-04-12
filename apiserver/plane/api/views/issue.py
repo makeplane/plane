@@ -751,7 +751,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
                 serializer.save(project_id=project_id, issue_id=issue_id)
                 issue_activity.delay(
                     type="attachment.activity.created",
-                    requested_data=request.data,
+                    requested_data=None,
                     actor_id=str(self.request.user.id),
                     issue_id=str(self.kwargs.get("issue_id", None)),
                     project_id=str(self.kwargs.get("project_id", None)),
@@ -776,7 +776,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
             issue_attachment.delete()
             issue_activity.delay(
                 type="attachment.activity.deleted",
-                requested_data=request.data,
+                requested_data=None,
                 actor_id=str(self.request.user.id),
                 issue_id=str(self.kwargs.get("issue_id", None)),
                 project_id=str(self.kwargs.get("project_id", None)),
