@@ -42,7 +42,7 @@ export const NotAuthorizedView: React.FC<Props> = ({ actionButton, type }) => {
 
         <div className="w-full text-base text-gray-500 max-w-md ">
           {user ? (
-            <p className="">
+            <p>
               You have signed in as {user.email}. <br />
               <Link href={`/signin?next=${currentPath}`}>
                 <a className="text-gray-900 font-medium">Sign in</a>
@@ -50,7 +50,7 @@ export const NotAuthorizedView: React.FC<Props> = ({ actionButton, type }) => {
               with different account that has access to this page.
             </p>
           ) : (
-            <p className="">
+            <p>
               You need to{" "}
               <Link href={`/signin?next=${currentPath}`}>
                 <a className="text-gray-900 font-medium">Sign in</a>

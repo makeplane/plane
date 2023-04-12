@@ -32,6 +32,7 @@ type Meta = {
 type Props = {
   meta?: Meta;
   children: React.ReactNode;
+  noPadding?: boolean;
   noHeader?: boolean;
   bg?: "primary" | "secondary";
   breadcrumbs?: JSX.Element;
@@ -48,6 +49,7 @@ export const ProjectAuthorizationWrapper: React.FC<Props> = (props) => (
 const ProjectAuthorizationWrapped: React.FC<Props> = ({
   meta,
   children,
+  noPadding = false,
   noHeader = false,
   bg = "primary",
   breadcrumbs,
@@ -65,7 +67,6 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
 
   const { loading, error, memberRole: memberType } = useProjectMyMembership();
 
-  const noPadding = issueView === "list";
   const settingsLayout = router.pathname.includes("/settings");
 
   return (
@@ -137,7 +138,7 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
             )}
             <div
               className={`flex w-full flex-grow flex-col ${
-                noPadding ? "" : settingsLayout ? "p-8 lg:px-28" : "p-8"
+                noPadding || issueView === "list" ? "" : settingsLayout ? "p-8 lg:px-28" : "p-8"
               } ${
                 bg === "primary" ? "bg-primary" : bg === "secondary" ? "bg-secondary" : "bg-primary"
               }`}
