@@ -772,6 +772,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
     def delete(self, request, slug, project_id, issue_id, pk):
         try:
             issue_attachment = IssueAttachment.objects.get(pk=pk)
+            issue_attachment.asset.delete(save=False)
             issue_attachment.delete()
             issue_activity.delay(
                 type="attachment.activity.deleted",
