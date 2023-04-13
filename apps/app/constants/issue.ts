@@ -95,7 +95,10 @@ export const handleIssuesMutation: THandleIssuesMutation = (
     if (selectedGroupBy !== Object.keys(formData)[0])
       return {
         ...prevData,
-        [oldGroupTitle ?? ""]: oldGroup.map((i) => (i.id === updatedIssue.id ? updatedIssue : i)),
+        [oldGroupTitle ?? ""]: orderArrayBy(
+          oldGroup.map((i) => (i.id === updatedIssue.id ? updatedIssue : i)),
+          orderBy
+        ),
       };
 
     const groupThatIsUpdated = selectedGroupBy === "priority" ? formData.priority : formData.state;
@@ -104,14 +107,9 @@ export const handleIssuesMutation: THandleIssuesMutation = (
       ...prevData,
       [oldGroupTitle ?? ""]: orderArrayBy(
         oldGroup.filter((i) => i.id !== updatedIssue.id),
-        "created_at",
-        "descending"
+        orderBy
       ),
-      [groupThatIsUpdated ?? ""]: orderArrayBy(
-        [...newGroup, updatedIssue],
-        "created_at",
-        "descending"
-      ),
+      [groupThatIsUpdated ?? ""]: orderArrayBy([...newGroup, updatedIssue], orderBy),
     };
   }
 };

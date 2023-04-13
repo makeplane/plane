@@ -48,6 +48,7 @@ import {
 } from "constants/fetch-keys";
 // image
 import emptyCycle from "public/empty-state/empty-cycle.svg";
+import { orderArrayBy } from "helpers/array.helper";
 
 type Props = {
   type?: "issue" | "cycle" | "module";
@@ -208,8 +209,8 @@ export const IssuesView: React.FC<Props> = ({
 
               return {
                 ...prevData,
-                [sourceGroup]: sourceGroupArray,
-                [destinationGroup]: destinationGroupArray,
+                [sourceGroup]: orderArrayBy(sourceGroupArray, orderBy),
+                [destinationGroup]: orderArrayBy(destinationGroupArray, orderBy),
               };
             },
             false
@@ -230,8 +231,8 @@ export const IssuesView: React.FC<Props> = ({
 
               return {
                 ...prevData,
-                [sourceGroup]: sourceGroupArray,
-                [destinationGroup]: destinationGroupArray,
+                [sourceGroup]: orderArrayBy(sourceGroupArray, orderBy),
+                [destinationGroup]: orderArrayBy(destinationGroupArray, orderBy),
               };
             },
             false
@@ -250,8 +251,8 @@ export const IssuesView: React.FC<Props> = ({
 
               return {
                 ...prevData,
-                [sourceGroup]: sourceGroupArray,
-                [destinationGroup]: destinationGroupArray,
+                [sourceGroup]: orderArrayBy(sourceGroupArray, orderBy),
+                [destinationGroup]: orderArrayBy(destinationGroupArray, orderBy),
               };
             },
             false
@@ -482,24 +483,24 @@ export const IssuesView: React.FC<Props> = ({
             <>
               {isCompleted && <TransferIssues handleClick={() => setTransferIssuesModal(true)} />}
               {issueView === "list" ? (
-                  <AllLists
-                    type={type}
-                    states={states}
-                    addIssueToState={addIssueToState}
-                    makeIssueCopy={makeIssueCopy}
-                    handleEditIssue={handleEditIssue}
-                    handleDeleteIssue={handleDeleteIssue}
-                    openIssuesListModal={type !== "issue" ? openIssuesListModal : null}
-                    removeIssue={
-                      type === "cycle"
-                        ? removeIssueFromCycle
-                        : type === "module"
-                        ? removeIssueFromModule
-                        : null
-                    }
-                    isCompleted={isCompleted}
-                    userAuth={memberRole}
-                  />
+                <AllLists
+                  type={type}
+                  states={states}
+                  addIssueToState={addIssueToState}
+                  makeIssueCopy={makeIssueCopy}
+                  handleEditIssue={handleEditIssue}
+                  handleDeleteIssue={handleDeleteIssue}
+                  openIssuesListModal={type !== "issue" ? openIssuesListModal : null}
+                  removeIssue={
+                    type === "cycle"
+                      ? removeIssueFromCycle
+                      : type === "module"
+                      ? removeIssueFromModule
+                      : null
+                  }
+                  isCompleted={isCompleted}
+                  userAuth={memberRole}
+                />
               ) : issueView === "kanban" ? (
                 <AllBoards
                   type={type}
