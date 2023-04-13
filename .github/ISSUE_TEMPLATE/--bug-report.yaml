@@ -44,7 +44,7 @@ body:
       - Deploy preview
   validations:
     required: true
-  type: textarea
+  type: dropdown
   id: browser
   attributes:
     label: Browser
