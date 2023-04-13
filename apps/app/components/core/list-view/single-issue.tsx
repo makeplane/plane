@@ -29,7 +29,7 @@ import {
   TrashIcon,
   XMarkIcon,
   ArrowTopRightOnSquareIcon,
-  PaperClipIcon
+  PaperClipIcon,
 } from "@heroicons/react/24/outline";
 // helpers
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
@@ -82,7 +82,7 @@ export const SingleListIssue: React.FC<Props> = ({
 
   const { setToastAlert } = useToast();
 
-  const { groupByProperty: selectedGroup, params } = useIssueView();
+  const { groupByProperty: selectedGroup, orderBy, params } = useIssueView();
 
   const partialUpdateIssue = useCallback(
     (formData: Partial<IIssue>) => {
@@ -97,7 +97,14 @@ export const SingleListIssue: React.FC<Props> = ({
         >(
           CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params),
           (prevData) =>
-            handleIssuesMutation(formData, groupTitle ?? "", selectedGroup, index, prevData),
+            handleIssuesMutation(
+              formData,
+              groupTitle ?? "",
+              selectedGroup,
+              index,
+              orderBy,
+              prevData
+            ),
           false
         );
 
@@ -110,7 +117,14 @@ export const SingleListIssue: React.FC<Props> = ({
         >(
           MODULE_ISSUES_WITH_PARAMS(moduleId as string, params),
           (prevData) =>
-            handleIssuesMutation(formData, groupTitle ?? "", selectedGroup, index, prevData),
+            handleIssuesMutation(
+              formData,
+              groupTitle ?? "",
+              selectedGroup,
+              index,
+              orderBy,
+              prevData
+            ),
           false
         );
 
@@ -122,7 +136,7 @@ export const SingleListIssue: React.FC<Props> = ({
       >(
         PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params),
         (prevData) =>
-          handleIssuesMutation(formData, groupTitle ?? "", selectedGroup, index, prevData),
+          handleIssuesMutation(formData, groupTitle ?? "", selectedGroup, index, orderBy, prevData),
         false
       );
 
@@ -138,7 +152,18 @@ export const SingleListIssue: React.FC<Props> = ({
           } else mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
         });
     },
-    [workspaceSlug, projectId, cycleId, moduleId, issue, groupTitle, index, selectedGroup, params]
+    [
+      workspaceSlug,
+      projectId,
+      cycleId,
+      moduleId,
+      issue,
+      groupTitle,
+      index,
+      selectedGroup,
+      orderBy,
+      params,
+    ]
   );
 
   const handleCopyText = () => {
