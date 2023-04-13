@@ -121,7 +121,7 @@ const IssueDetailsPage: NextPage = () => {
 
   return (
     <ProjectAuthorizationWrapper
-      noPadding={true}
+      noPadding
       bg="secondary"
       breadcrumbs={
         <Breadcrumbs>

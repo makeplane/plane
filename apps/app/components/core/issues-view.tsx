@@ -23,7 +23,7 @@ import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 import { CreateUpdateViewModal } from "components/views";
 import { TransferIssues, TransferIssuesModal } from "components/cycles";
 // ui
-import { EmptySpace, EmptySpaceItem, PrimaryButton, Spinner } from "components/ui";
+import { EmptySpace, EmptySpaceItem, EmptyState, PrimaryButton, Spinner } from "components/ui";
 import { CalendarView } from "./calendar-view";
 // icons
 import {
@@ -46,6 +46,8 @@ import {
   PROJECT_ISSUES_LIST_WITH_PARAMS,
   STATE_LIST,
 } from "constants/fetch-keys";
+// image
+import emptyCycle from "public/empty-state/empty-cycle.svg";
 
 type Props = {
   type?: "issue" | "cycle" | "module";
@@ -425,7 +427,7 @@ export const IssuesView: React.FC<Props> = ({
         handleClose={() => setTransferIssuesModal(false)}
         isOpen={transferIssuesModal}
       />
-      <div className="mb-5 -mt-4">
+      <div>
         <div className="flex items-center justify-between gap-2">
           <FilterList filters={filters} setFilters={setFilters} />
           {Object.keys(filters).length > 0 &&
@@ -480,24 +482,24 @@ export const IssuesView: React.FC<Props> = ({
             <>
               {isCompleted && <TransferIssues handleClick={() => setTransferIssuesModal(true)} />}
               {issueView === "list" ? (
-                <AllLists
-                  type={type}
-                  states={states}
-                  addIssueToState={addIssueToState}
-                  makeIssueCopy={makeIssueCopy}
-                  handleEditIssue={handleEditIssue}
-                  handleDeleteIssue={handleDeleteIssue}
-                  openIssuesListModal={type !== "issue" ? openIssuesListModal : null}
-                  removeIssue={
-                    type === "cycle"
-                      ? removeIssueFromCycle
-                      : type === "module"
-                      ? removeIssueFromModule
-                      : null
-                  }
-                  isCompleted={isCompleted}
-                  userAuth={memberRole}
-                />
+                  <AllLists
+                    type={type}
+                    states={states}
+                    addIssueToState={addIssueToState}
+                    makeIssueCopy={makeIssueCopy}
+                    handleEditIssue={handleEditIssue}
+                    handleDeleteIssue={handleDeleteIssue}
+                    openIssuesListModal={type !== "issue" ? openIssuesListModal : null}
+                    removeIssue={
+                      type === "cycle"
+                        ? removeIssueFromCycle
+                        : type === "module"
+                        ? removeIssueFromModule
+                        : null
+                    }
+                    isCompleted={isCompleted}
+                    userAuth={memberRole}
+                  />
               ) : issueView === "kanban" ? (
                 <AllBoards
                   type={type}
@@ -523,38 +525,12 @@ export const IssuesView: React.FC<Props> = ({
               )}
             </>
           ) : (
-            <div className="grid h-full w-full place-items-center px-4 sm:px-0">
-              <EmptySpace
-                title="You don't have any issue yet."
-                description="Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done."
-                Icon={RectangleStackIcon}
-              >
-                <EmptySpaceItem
-                  title="Create a new issue"
-                  description={
-                    <span>
-                      Use <pre className="inline rounded bg-gray-200 px-2 py-1">C</pre> shortcut to
-                      create a new issue
-                    </span>
-                  }
-                  Icon={PlusIcon}
-                  action={() => {
-                    const e = new KeyboardEvent("keydown", {
-                      key: "c",
-                    });
-                    document.dispatchEvent(e);
-                  }}
-                />
-                {openIssuesListModal && (
-                  <EmptySpaceItem
-                    title="Add an existing issue"
-                    description="Open list"
-                    Icon={ListBulletIcon}
-                    action={openIssuesListModal}
-                  />
-                )}
-              </EmptySpace>
-            </div>
+            <EmptyState
+              type="issue"
+              title="Create New Issue"
+              description="Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done."
+              imgURL={emptyCycle}
+            />
           )
         ) : (
           <div className="flex h-full w-full items-center justify-center">
