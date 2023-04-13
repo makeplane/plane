@@ -124,7 +124,9 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
             <div className="flex flex-col items-start justify-center gap-2.5">
               <span>Workspace URL</span>
               <div className="flex w-full items-center rounded-md border border-gray-300 px-3">
-                <span className="text-sm text-slate-600">https://app.plane.so/</span>
+                <span className="text-sm text-slate-600">
+                  {typeof window !== "undefined" && window.location.origin}/
+                </span>
                 <Input
                   mode="trueTransparent"
                   autoComplete="off"
@@ -135,7 +137,9 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
                     required: "Workspace URL is required",
                   }}
                   onChange={(e) =>
-                    /^[a-zA-Z0-9_-]+$/.test(e.target.value) ? setInvalidSlug(false) : setInvalidSlug(true)
+                    /^[a-zA-Z0-9_-]+$/.test(e.target.value)
+                      ? setInvalidSlug(false)
+                      : setInvalidSlug(true)
                   }
                 />
               </div>
