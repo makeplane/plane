@@ -124,7 +124,7 @@ export const CreateWorkspaceForm: React.FC<Props> = ({
             <div className="flex flex-col items-start justify-center gap-2.5">
               <span>Workspace URL</span>
               <div className="flex w-full items-center rounded-md border border-gray-300 px-3">
-                <span className="text-sm text-slate-600">
+                <span className="text-sm whitespace-nowrap text-slate-600">
                   {typeof window !== "undefined" && window.location.origin}/
                 </span>
                 <Input
