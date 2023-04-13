@@ -89,7 +89,7 @@ export const JiraImportUsers: FC = () => {
             <div className="col-span-1 text-gray-500">Import as</div>
           </div>
 
-          <div className="mt-5">
+          <div className="mt-5 space-y-3">
             {fields.map((user, index) => (
               <div className="grid grid-cols-3 gap-3" key={`${user.email}-${user.username}`}>
                 <div className="col-span-1">

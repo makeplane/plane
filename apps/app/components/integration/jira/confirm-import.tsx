@@ -37,7 +37,9 @@ export const JiraConfirmImport: React.FC = () => {
             <p className="text-sm text-gray-500">Labels</p>
           </div>
           <div>
-            <h4 className="mb-2 text-xl font-semibold">{watch("data.users").length}</h4>
+            <h4 className="mb-2 text-xl font-semibold">
+              {watch("data.users").filter((user) => user.import).length}
+            </h4>
             <p className="text-sm text-gray-500">User</p>
           </div>
         </div>
