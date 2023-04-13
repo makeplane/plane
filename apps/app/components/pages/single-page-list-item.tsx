@@ -1,5 +1,7 @@
 import React from "react";
 
+import useSWR from "swr";
+
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -9,22 +11,22 @@ import useUser from "hooks/use-user";
 import { CustomMenu, Tooltip } from "components/ui";
 // icons
 import {
-  DocumentTextIcon,
   LockClosedIcon,
   LockOpenIcon,
   PencilIcon,
   StarIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
-import { PencilScribbleIcon } from "components/icons";
+import { ExclamationIcon, PencilScribbleIcon } from "components/icons";
 // helpers
 import { truncateText } from "helpers/string.helper";
-import { renderShortDate, renderShortTime } from "helpers/date-time.helper";
+import { renderLongDateFormat, renderShortDate, renderShortTime } from "helpers/date-time.helper";
 // types
-import { IPage } from "types";
+import { IPage, IProjectMember } from "types";
 
 type TSingleStatProps = {
   page: IPage;
+  people: IProjectMember[] | undefined;
   handleEditPage: () => void;
   handleDeletePage: () => void;
   handleAddToFavorites: () => void;
@@ -34,6 +36,7 @@ type TSingleStatProps = {
 
 export const SinglePageListItem: React.FC<TSingleStatProps> = ({
   page,
+  people,
   handleEditPage,
   handleDeletePage,
   handleAddToFavorites,
@@ -49,11 +52,11 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
     <li>
       <Link href={`/${workspaceSlug}/projects/${projectId}/pages/${page.id}`}>
         <a>
-          <div className="relative rounded p-4 hover:bg-[#E9ECEF]">
+          <div className="relative rounded p-4 hover:bg-gray-200">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <PencilScribbleIcon className="h-4 w-4" />
-                <p className="mr-2 truncate text-base text-[#212529] font-medium">
+                <p className="mr-2 truncate text-base text-gray-800 font-medium">
                   {truncateText(page.name, 75)}
                 </p>
                 {page.label_details.length > 0 &&
@@ -81,8 +84,9 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
               <div className="ml-2 flex flex-shrink-0">
                 <div className="flex items-center gap-2">
                   <Tooltip
-                    tooltipContent={`Last updated at ${
-                      renderShortTime(page.updated_at)} on ${renderShortDate(page.updated_at)}`}
+                    tooltipContent={`Last updated at ${renderShortTime(
+                      page.updated_at
+                    )} on ${renderShortDate(page.updated_at)}`}
                   >
                     <p className="text-sm text-gray-400">{renderShortTime(page.updated_at)}</p>
                   </Tooltip>
@@ -134,6 +138,18 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
                       </button>
                     </Tooltip>
                   )}
+                  <Tooltip
+                    theme="dark"
+                    position="top-right"
+                    tooltipContent={`Created by ${
+                      people?.find((person) => person.member.id === page.created_by)?.member
+                        .first_name ?? ""
+                    } on ${renderLongDateFormat(`${page.created_at}`)}`}
+                  >
+                    <span>
+                      <ExclamationIcon className="h-4 w-4 text-gray-400" />
+                    </span>
+                  </Tooltip>
 
                   <CustomMenu width="auto" verticalEllipsis>
                     <CustomMenu.MenuItem

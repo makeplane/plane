@@ -19,26 +19,28 @@ import { USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 const Home: NextPage = () => {
   const router = useRouter();
 
-  const { user } = useUser();
-  const { workspaces } = useWorkspaces();
+  const { user, isUserLoading } = useUser();
+  const { workspaces, error: workspacesError } = useWorkspaces();
 
   const lastActiveWorkspace =
     user && workspaces.find((workspace) => workspace.id === user.last_workspace_id);
 
-  const { data: invitations } = useSWR(USER_WORKSPACE_INVITATIONS, () =>
+  const { data: invitations, error: invitationsError } = useSWR(USER_WORKSPACE_INVITATIONS, () =>
     workspaceService.userWorkspaceInvitations()
   );
 
   useEffect(() => {
+    if (isUserLoading) return;
+
     if (!user) {
       router.push("/signin");
       return;
-    }
-
-    if (!user.is_onboarded) {
+    } else if (!user.is_onboarded) {
       router.push("/onboarding");
       return;
     }
+
+    if (!user || (!workspaces && !workspacesError)) return;
 
     if (lastActiveWorkspace) {
       router.push(`/${lastActiveWorkspace.slug}`);
@@ -46,19 +48,26 @@ const Home: NextPage = () => {
     } else if (workspaces.length > 0) {
       router.push(`/${workspaces[0].slug}`);
       return;
-    }
-
-    if (invitations && invitations.length > 0) {
+    } else if (!invitationsError && invitations && invitations.length > 0) {
       router.push("/invitations");
       return;
     } else {
       router.push("/create-workspace");
       return;
     }
-  }, [user, router, lastActiveWorkspace, workspaces, invitations]);
+  }, [
+    invitations,
+    invitationsError,
+    isUserLoading,
+    lastActiveWorkspace,
+    user,
+    workspaces,
+    router,
+    workspacesError,
+  ]);
 
   return (
-    <div className="h-screen grid place-items-center">
+    <div className="grid h-screen place-items-center">
       <Spinner />
     </div>
   );

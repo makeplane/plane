@@ -759,7 +759,7 @@ urlpatterns = [
         name="project-issue-labels",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/lk-create-labels/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-create-labels/",
         BulkCreateIssueLabelsEndpoint.as_view(),
         name="project-bulk-labels",
     ),

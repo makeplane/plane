@@ -1,9 +1,11 @@
 import { useState } from "react";
 
+import useSWR, { mutate } from "swr";
 import { useRouter } from "next/router";
 
 // services
 import pagesService from "services/pages.service";
+import projectService from "services/project.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components
@@ -23,9 +25,9 @@ import {
   ALL_PAGES_LIST,
   FAVORITE_PAGES_LIST,
   MY_PAGES_LIST,
+  PROJECT_MEMBERS,
   RECENT_PAGES_LIST,
 } from "constants/fetch-keys";
-import { mutate } from "swr";
 
 type Props = {
   pages: IPage[] | undefined;
@@ -43,6 +45,13 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
   const { workspaceSlug, projectId } = router.query;
 
   const { setToastAlert } = useToast();
+
+  const { data: people } = useSWR(
+    workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
+    workspaceSlug && projectId
+      ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
+      : null
+  );
 
   const handleEditPage = (page: IPage) => {
     setSelectedPageToUpdate(page);
@@ -198,6 +207,7 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
                 <SinglePageListItem
                   key={page.id}
                   page={page}
+                  people={people}
                   handleEditPage={() => handleEditPage(page)}
                   handleDeletePage={() => handleDeletePage(page)}
                   handleAddToFavorites={() => handleAddToFavorites(page)}
@@ -212,6 +222,7 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
                 <SinglePageDetailedItem
                   key={page.id}
                   page={page}
+                  people={people}
                   handleEditPage={() => handleEditPage(page)}
                   handleDeletePage={() => handleDeletePage(page)}
                   handleAddToFavorites={() => handleAddToFavorites(page)}
@@ -226,6 +237,7 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
                 <SinglePageDetailedItem
                   key={page.id}
                   page={page}
+                  people={people}
                   handleEditPage={() => handleEditPage(page)}
                   handleDeletePage={() => handleDeletePage(page)}
                   handleAddToFavorites={() => handleAddToFavorites(page)}

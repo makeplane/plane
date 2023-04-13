@@ -35,6 +35,7 @@ import {
   PlusIcon,
   StarIcon,
   LinkIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { ColorPalletteIcon, ClipboardIcon } from "components/icons";
 // helpers
@@ -330,7 +331,11 @@ const SinglePage: NextPage = () => {
                     return (
                       <div
                         key={label.id}
-                        className="group flex items-center gap-1 rounded-2xl border px-2 py-0.5 text-xs"
+                        className="group flex items-center gap-1 cursor-pointer rounded-2xl border px-2 py-0.5 text-xs hover:border-red-500 hover:bg-red-50"
+                        onClick={() => {
+                          const updatedLabels = pageDetails.labels.filter((l) => l !== labelId);
+                          partialUpdatePage({ labels_list: updatedLabels });
+                        }}
                         style={{
                           backgroundColor: `${
                             label?.color && label.color !== "" ? label.color : "#000000"
@@ -345,6 +350,7 @@ const SinglePage: NextPage = () => {
                           }}
                         />
                         {label.name}
+                        <XMarkIcon className="h-2.5 w-2.5 group-hover:text-red-500" />
                       </div>
                     );
                   })}
