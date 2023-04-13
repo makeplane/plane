@@ -50,7 +50,6 @@ import {
   MODULE_ISSUES_WITH_PARAMS,
   PROJECT_ISSUES_LIST_WITH_PARAMS,
 } from "constants/fetch-keys";
-import useEstimateOption from "hooks/use-estimate-option";
 
 type Props = {
   type?: string;
@@ -93,8 +92,6 @@ export const SingleBoardIssue: React.FC<Props> = ({
 
   const { orderBy, params } = useIssuesView();
 
-  const { estimateValue } = useEstimateOption(issue.estimate_point);
-
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
@@ -113,7 +110,14 @@ export const SingleBoardIssue: React.FC<Props> = ({
         >(
           CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params),
           (prevData) =>
-            handleIssuesMutation(formData, groupTitle ?? "", selectedGroup, index, prevData),
+            handleIssuesMutation(
+              formData,
+              groupTitle ?? "",
+              selectedGroup,
+              index,
+              orderBy,
+              prevData
+            ),
           false
         );
       else if (moduleId)
@@ -125,10 +129,17 @@ export const SingleBoardIssue: React.FC<Props> = ({
         >(
           MODULE_ISSUES_WITH_PARAMS(moduleId as string),
           (prevData) =>
-            handleIssuesMutation(formData, groupTitle ?? "", selectedGroup, index, prevData),
+            handleIssuesMutation(
+              formData,
+              groupTitle ?? "",
+              selectedGroup,
+              index,
+              orderBy,
+              prevData
+            ),
           false
         );
-      else
+      else {
         mutate<
           | {
               [key: string]: IIssue[];
@@ -136,10 +147,21 @@ export const SingleBoardIssue: React.FC<Props> = ({
           | IIssue[]
         >(
           PROJECT_ISSUES_LIST_WITH_PARAMS(projectId as string, params),
-          (prevData) =>
-            handleIssuesMutation(formData, groupTitle ?? "", selectedGroup, index, prevData),
+          (prevData) => {
+            if (!prevData) return prevData;
+
+            return handleIssuesMutation(
+              formData,
+              groupTitle ?? "",
+              selectedGroup,
+              index,
+              orderBy,
+              prevData
+            );
+          },
           false
         );
+      }
 
       issuesService
         .patchIssue(workspaceSlug as string, projectId as string, issue.id, formData)
@@ -156,7 +178,18 @@ export const SingleBoardIssue: React.FC<Props> = ({
           console.log(error);
         });
     },
-    [workspaceSlug, projectId, cycleId, moduleId, issue, groupTitle, index, selectedGroup, params]
+    [
+      workspaceSlug,
+      projectId,
+      cycleId,
+      moduleId,
+      issue,
+      groupTitle,
+      index,
+      selectedGroup,
+      orderBy,
+      params,
+    ]
   );
 
   const getStyle = (
